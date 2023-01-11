@@ -1,0 +1,29 @@
+.hand {
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	justify-content: center;
+	height: 260px;
+	background: beige;
+	font-size: 24px; /* 44.445px; */
+	padding: 10px;
+	overflow-x: scroll;
+	overflow-y: visible;
+	white-space: nowrap;
+}
+
+.hand > * {
+	display: inline-block;
+	justify-content: flex-start;
+	align-items: flex-start;
+	margin-right: -10px;
+	transition: transform 0.25s;
+	cursor: pointer;
+	will-change: transform;
+	vertical-align: bottom;
+}
+
+.hand > *:hover {
+	z-index: 2;
+	transform: scale(1.05) translateY(-10px) rotate(-3deg);
+}
