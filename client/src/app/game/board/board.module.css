@@ -1,0 +1,54 @@
+.slot {
+	width: 80px;
+	height: 80px;
+	background: grey;
+	flex: 0 0 auto;
+	padding: 7px;
+	cursor: pointer;
+}
+.slot.item {
+	background: #aeb4b4;
+}
+.slot.hermit {
+	background: #aeb4b4;
+}
+.slot.effect {
+	background: #353536;
+}
+.slot.health {
+	background: #6d6e64;
+}
+.slot img {
+	width: 100%;
+	height: 100%;
+}
+.slot:hover img {
+	box-shadow: 0 0 5px #333;
+}
+.slot.effect:hover img {
+	box-shadow: 0 0 3px #ddd;
+}
+
+.hermitRow {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+.hermitRow:hover {
+	filter: brightness(120%);
+}
+
+.board {
+	background: #080b0d;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: space-between;
+	width: 1100px;
+	margin: 0 auto;
+}
+
+.playerLeft,
+.playerRight {
+	width: 500px;
+	flex: 0 0 auto;
+}

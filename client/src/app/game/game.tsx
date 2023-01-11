@@ -4,6 +4,7 @@ import {RootState} from 'store'
 import CARDS from 'server/cards'
 import {CardT} from 'types/cards'
 import Card from 'components/card'
+import Board from './board'
 import css from './game.module.css'
 
 const TYPED_CARDS = CARDS as Record<string, CardT>
@@ -33,10 +34,10 @@ function Game(props: Props) {
 	})
 
 	return (
-		<main>
-			<div>Board</div>
+		<div className={css.game}>
+			<Board />
 			<div className={css.hand}>{playerHandJsx}</div>
-		</main>
+		</div>
 	)
 }
 
