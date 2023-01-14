@@ -33,13 +33,6 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				gameState: action.gameState,
 				availableActions: action.availableActions,
 			}
-		case 'GAME_STATE':
-			return {
-				...state,
-				opponentId: action.opponentId,
-				gameState: action.gameState,
-				availableActions: action.availableActions,
-			}
 		case 'GAME_END':
 			return {
 				...state,

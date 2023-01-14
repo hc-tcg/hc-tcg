@@ -111,6 +111,7 @@
 	width: 2em;
 	flex: 0 0 2em;
 	text-align: center;
+	white-space: nowrap;
 }
 
 .attackCost img {

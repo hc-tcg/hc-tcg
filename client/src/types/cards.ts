@@ -54,4 +54,4 @@ export type HermitCardT = {
 	secondary: HermitAttackT
 }
 
-export type CardT = ItemCardT | EffectCardT | HermitCardT | HealthCardT
+export type CardInfoT = ItemCardT | EffectCardT | HermitCardT | HealthCardT

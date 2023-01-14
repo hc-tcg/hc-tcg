@@ -2,13 +2,14 @@ import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from 'store'
 import CARDS from 'server/cards'
-import {CardT} from 'types/cards'
+import {CardInfoT} from 'types/cards'
+import {CardT} from 'types/game-state'
 import Card from 'components/card'
 import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 
-const TYPED_CARDS = CARDS as Record<string, CardT>
+const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 const renderModal = (
 	openedModalId: string | null,
@@ -17,6 +18,13 @@ const renderModal = (
 	const closeModal = () => setOpenedModalId(null)
 	if (openedModalId === 'attack') return <AttackModal closeModal={closeModal} />
 	return null
+}
+
+function equalCard(card1: CardT | null, card2: CardT | null): boolean {
+	if (card1 === null || card2 === null) return false
+	return (
+		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
+	)
 }
 
 type Props = {
@@ -30,7 +38,7 @@ function Game(props: Props) {
 	)
 	const playerId = useSelector((state: RootState) => state.playerId)
 	// select caard in players hand
-	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
+	const [selectedCard, setSelectedCard] = useState<CardT | null>(null)
 	const [openedModalId, setOpenedModalId] = useState<string | null>(null)
 	const dispatch = useDispatch()
 
@@ -38,17 +46,10 @@ function Game(props: Props) {
 
 	const playerState = gameState.players[playerId]
 
-	const playerHand = playerState.hand.map((cardId) => {
-		if (!TYPED_CARDS.hasOwnProperty(cardId)) {
-			throw new Error('Unsupported card id: ' + cardId)
-		}
-		return TYPED_CARDS[cardId]
-	})
-
 	const handleBoardClick = (meta: any) => {
 		console.log('Slot selected: ', meta)
-		if (!selectedCardId) {
-			const clickedOnHermit = meta.slotType === 'hermit' && meta.hermitId
+		if (!selectedCard) {
+			const clickedOnHermit = meta.slotType === 'hermit' && meta.rowHermitCard
 			if (clickedOnHermit) {
 				if (playerState.board.activeRow === meta.rowIndex) {
 					setOpenedModalId('attack')
@@ -58,29 +59,32 @@ function Game(props: Props) {
 			}
 			return
 		}
-		dispatch({type: 'PLAY_CARD', payload: {cardId: selectedCardId, ...meta}})
-		setSelectedCardId(null)
+		dispatch({type: 'PLAY_CARD', payload: {card: selectedCard, ...meta}})
+		setSelectedCard(null)
 	}
 
 	const endTurn = () => {
 		dispatch({type: 'END_TURN'})
 	}
 
-	const selectCard = (cardId: string) => {
-		console.log('Card selected: ', cardId)
-		setSelectedCardId((currentCardId) =>
-			currentCardId === cardId ? null : cardId
+	const selectCard = (card: CardT) => {
+		console.log('Card selected: ', card.cardId)
+		setSelectedCard((currentCard) =>
+			equalCard(currentCard, card) ? null : card
 		)
 	}
 
-	const playerHandJsx = playerHand.map((card) => {
-		// TODO - support duplicates (each individual card should have unique id)
+	const playerHandJsx = playerState.hand.map((card) => {
+		if (!TYPED_CARDS.hasOwnProperty(card.cardId)) {
+			throw new Error('Unsupported card id: ' + card.cardId)
+		}
+		const cardInfo = TYPED_CARDS[card.cardId]
 		return (
 			<Card
-				selected={card.id === selectedCardId}
-				key={card.id}
-				card={card}
-				onClick={() => selectCard(card.id)}
+				selected={equalCard(card, selectedCard)}
+				key={card.cardInstance}
+				card={cardInfo}
+				onClick={() => selectCard(card)}
 			/>
 		)
 	})

@@ -1,12 +1,12 @@
 import CARDS from 'server/cards'
-import {CardT} from 'types/cards'
+import {CardInfoT} from 'types/cards'
 import Card from 'components/card'
 import HealthBar from 'components/health-bar'
 import css from './board.module.css'
 import classnames from 'classnames'
 import {GameState, PlayerState, BoardRow} from 'types/game-state'
 
-const TYPED_CARDS = CARDS as Record<string, CardT>
+const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type SlotType = 'item' | 'hermit' | 'effect' | 'health'
 type SlotProps = {
@@ -51,10 +51,9 @@ const getCardIdBySlot = (
 	rowState: BoardRow | null
 ): string | null => {
 	if (!rowState) return null
-	if (slotType === 'hermit') return rowState.hermitCard || null
-	if (slotType === 'effect') return rowState.effectCard || null
-	if (slotType === 'item')
-		return rowState.itemCards ? rowState.itemCards[index] || null : null
+	if (slotType === 'hermit') return rowState.hermitCard?.cardId || null
+	if (slotType === 'effect') return rowState.effectCard?.cardId || null
+	if (slotType === 'item') return rowState.itemCards[index]?.cardId || null
 	return null
 }
 
@@ -107,7 +106,7 @@ function Board({onClick, gameState}: Props) {
 			...meta,
 			playerId,
 			rowIndex,
-			hermitId: rowState?.hermitCard || null,
+			rowHermitCard: rowState?.hermitCard || null,
 		})
 	}
 

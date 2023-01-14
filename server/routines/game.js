@@ -31,7 +31,8 @@ type GameState = {
 // 'PLAY_SINGLE_USE_CARD',
 // 'END_TURN'
 
-function hasEnoughItems(itemCardIds, cost) {
+function hasEnoughItems(itemCards, cost) {
+	const itemCardIds = itemCards.map((card) => card.cardId)
 	// transform item cards into cost
 	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
 	const energy = itemCardIds.reduce((result, cardId) => {
@@ -58,7 +59,12 @@ function hasEnoughItems(itemCardIds, cost) {
 	return energy.length >= anyCost.length
 }
 
-function getAvailableActions(pastTurnActions, playerState, opponentState) {
+function getAvailableActions(
+	turn,
+	pastTurnActions,
+	playerState,
+	opponentState
+) {
 	// TODO - You can't end turn wihtout active hermit
 	const actions = ['END_TURN']
 	if (
@@ -78,15 +84,17 @@ function getAvailableActions(pastTurnActions, playerState, opponentState) {
 		actions.push('CHANGE_ACTIVE_HERMIT')
 		actions.push('PLAY_EFFECT_CARD')
 
-		const hermitInfo = CARDS[rows[activeRow].hermitCard]
-		const itemCards = rows[activeRow].itemCards.filter(Boolean)
+		if (turn > 1) {
+			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
+			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-		// TODO - check attack cost & item cards available
-		if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
-			actions.push('PRIMARY_ATTACK')
-		}
-		if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
-			actions.push('SECONDARY_ATTACK')
+			// TODO - check attack cost & item cards available
+			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+				actions.push('PRIMARY_ATTACK')
+			}
+			if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+				actions.push('SECONDARY_ATTACK')
+			}
 		}
 	}
 
@@ -100,7 +108,12 @@ function getAvailableActions(pastTurnActions, playerState, opponentState) {
 
 function getStarertPack() {
 	// ['zombiecleo_common', 'zedaphplays_rare', 'ethoslab_ultra_rare']
-	return Object.values(CARDS).map((card) => card.id)
+	return Object.values(CARDS).map((card) => ({
+		// type of card
+		cardId: card.id,
+		// unique identifier of this specific card instance
+		cardInstance: Math.random() + '_' + Math.random(),
+	}))
 	// .filter((card) => card.type === 'hermit')
 }
 
@@ -124,6 +137,7 @@ function getPlayerState(players, playerId) {
 		playerName: players[playerId].playerName,
 		lives: 3,
 		hand: pack.slice(0, 160), // 0.7
+		// TODO - hand out reward cards on kill
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),
@@ -152,6 +166,13 @@ function makePlayerTake(playerId) {
 	}
 }
 
+function equalCard(card1, card2) {
+	if (card1 === null || card2 === null) return false
+	return (
+		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
+	)
+}
+
 function playCardSaga(
 	action,
 	currentPlayer,
@@ -159,48 +180,50 @@ function playCardSaga(
 	pastTurnActions,
 	availableActions
 ) {
-	const {cardId, hermitId, rowIndex, slotIndex} = action.payload
-	const card = CARDS[cardId]
-	console.log('Playing card: ', card)
+	const {card, rowHermitCard, rowIndex, slotIndex} = action.payload
+	const cardInfo = CARDS[card.cardId]
+	console.log('Playing card: ', card.cardId)
 
-	if (card.type === 'hermit') {
-		if (hermitId) return
+	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return
+
+	if (cardInfo.type === 'hermit') {
+		if (rowHermitCard) return
 		if (!currentPlayer.board.rows[rowIndex]) return
 		if (currentPlayer.board.rows[rowIndex].hermitCard) return
 		if (!availableActions.includes('ADD_HERMIT')) return
 		currentPlayer.board.rows[rowIndex] = {
 			...currentPlayer.board.rows[rowIndex],
-			hermitCard: cardId,
-			health: card.health,
+			hermitCard: card,
+			health: cardInfo.health,
 		}
 		if (currentPlayer.board.activeRow === null) {
 			currentPlayer.board.activeRow = rowIndex
 		}
 		pastTurnActions.push('ADD_HERMIT')
-	} else if (card.type === 'item') {
-		if (!hermitId) return
-		const hermitRow = currentPlayer.board.rows.find(
-			(row) => row.hermitCard === hermitId
+	} else if (cardInfo.type === 'item') {
+		if (!rowHermitCard) return
+		const hermitRow = currentPlayer.board.rows.find((row) =>
+			equalCard(row.hermitCard, rowHermitCard)
 		)
 		if (!hermitRow) return
 		if (hermitRow.itemCards[slotIndex] !== null) return
 		if (!availableActions.includes('PLAY_ITEM_CARD')) return
-		hermitRow.itemCards[slotIndex] = cardId
+		hermitRow.itemCards[slotIndex] = card
 		pastTurnActions.push('PLAY_ITEM_CARD')
-	} else if (card.type === 'effect') {
-		if (!hermitId) return
-		const hermitRow = currentPlayer.board.rows.find(
-			(row) => row.hermitCard === hermitId
+	} else if (cardInfo.type === 'effect') {
+		if (!rowHermitCard) return
+		const hermitRow = currentPlayer.board.rows.find((row) =>
+			equalCard(row.hermitCard, rowHermitCard)
 		)
 		if (!hermitRow) return
 		if (hermitRow.effectCard) return
 		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
-		hermitRow.effectCard = cardId
+		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
-	} else if (card.type === 'single_use') {
+	} else if (cardInfo.type === 'single_use') {
 		const targetRow = oppositePlayer.board.rows[oppositePlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
-		switch (card.id) {
+		switch (cardInfo.id) {
 			case 'iron_sword':
 				targetRow.health -= 20
 				break
@@ -211,13 +234,15 @@ function playCardSaga(
 				targetRow.health -= 60
 				break
 			default:
-				console.log('Unknown effect: ', card.id)
+				console.log('Unknown effect: ', cardInfo.id)
 		}
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
 	}
 
 	// TODO change to card instance rather than card id
-	currentPlayer.hand = currentPlayer.hand.filter((cardId) => cardId != card.id)
+	currentPlayer.hand = currentPlayer.hand.filter(
+		(handCard) => !equalCard(handCard, card)
+	)
 }
 
 // return false in case one player is dead
@@ -281,6 +306,7 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 			// TODO - Make sure on servver that player waiting for turn can't make actions
 
 			const availableActions = getAvailableActions(
+				gameState.turn,
 				pastTurnActions,
 				currentPlayer,
 				oppositePlayer
@@ -325,10 +351,11 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 				)
 			} else if (turnAction.changeActiveHermit) {
 				if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) continue
-				const hermitId = turnAction.changeActiveHermit.payload.hermitId
+				const rowHermitCard =
+					turnAction.changeActiveHermit.payload.rowHermitCard
 				// handle if no result
 				currentPlayer.board.activeRow = currentPlayer.board.rows.findIndex(
-					(row) => row.hermitCard === hermitId
+					(row) => equalCard(row.hermitCard, rowHermitCard)
 				)
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
 			} else if (turnAction.attack) {
@@ -336,17 +363,15 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 				const typeAction =
 					type === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
 				if (!availableActions.includes(typeAction)) continue
-				// TODO - send hermitId from frontend for validation?
-				const hermitId =
+				// TODO - send hermitCard from frontend for validation?
+				const hermitCard =
 					currentPlayer.board.rows[currentPlayer.board.activeRow].hermitCard
-				const hermitInfo = CARDS[hermitId]
+				const hermitInfo = CARDS[hermitCard.cardId]
 				const attackInfo =
 					hermitInfo[type === 'primary' ? 'primary' : 'secondary']
 				const targetRow =
 					oppositePlayer.board.rows[oppositePlayer.board.activeRow]
-				// you can't attack on first turn
-				// handle if not enough items
-				// handle if no result
+				if (!targetRow) continue
 				targetRow.health -= attackInfo.damage
 
 				pastTurnActions.push(typeAction)

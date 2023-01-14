@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {CardT} from 'types/cards'
+import {CardInfoT} from 'types/cards'
 import HermitCard, {HermitCardProps} from './hermit-card'
 import EffectCard, {EffectCardProps} from './effect-card'
 import ItemCard, {ItemCardProps} from './item-card'
@@ -7,7 +7,7 @@ import HealthCard, {HealthCardProps} from './health-card'
 import css from './card.module.css'
 
 type CardProps = {
-	card: CardT
+	card: CardInfoT
 	selected?: boolean
 	onClick?: () => void
 }
