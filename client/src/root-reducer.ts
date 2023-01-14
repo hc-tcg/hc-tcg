@@ -1,26 +1,5 @@
 import {AnyAction} from 'redux'
-
-type BoardRow = {
-	hermitCard: string
-	effectCard: string
-	itemCards: Array<string>
-}
-
-type PlayerState = {
-	hand: Array<string>
-	rewards: Array<string>
-	pile: Array<string>
-	discarded: Array<string>
-	board: {
-		activeRow: number
-		rows: Array<BoardRow>
-	}
-}
-
-type GameState = {
-	turn: number
-	players: Record<string, PlayerState>
-}
+import {GameState} from 'types/game-state'
 
 const defaultState = {
 	playerName: '',
@@ -53,6 +32,21 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				opponentId: action.opponentId,
 				gameState: action.gameState,
 				availableActions: action.availableActions,
+			}
+		case 'GAME_STATE':
+			return {
+				...state,
+				opponentId: action.opponentId,
+				gameState: action.gameState,
+				availableActions: action.availableActions,
+			}
+		case 'GAME_END':
+			return {
+				...state,
+				gameType: null,
+				opponentId: '',
+				gameState: null,
+				availableActions: [],
 			}
 		default:
 			return state

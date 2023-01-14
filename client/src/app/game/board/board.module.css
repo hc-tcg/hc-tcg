@@ -3,8 +3,10 @@
 	height: 80px;
 	background: grey;
 	flex: 0 0 auto;
-	padding: 7px;
 	cursor: pointer;
+}
+.slot.empty {
+	padding: 7px;
 }
 .slot.item {
 	background: #aeb4b4;
@@ -12,21 +14,30 @@
 .slot.hermit {
 	background: #aeb4b4;
 }
+.leftPlayer .slot.hermit.afk {
+	transform: rotate(90deg);
+}
+.rightPlayer .slot.hermit.afk {
+	transform: rotate(-90deg);
+}
 .slot.effect {
 	background: #353536;
 }
 .slot.health {
 	background: #6d6e64;
 }
-.slot img {
+.slot .frame {
 	width: 100%;
 	height: 100%;
 }
-.slot:hover img {
+.slot:hover .frame {
 	box-shadow: 0 0 5px #333;
 }
-.slot.effect:hover img {
+.slot.effect:hover .frame {
 	box-shadow: 0 0 3px #ddd;
+}
+.cardWrapper {
+	font-size: 8.8px;
 }
 
 .hermitRow {
@@ -47,8 +58,16 @@
 	margin: 0 auto;
 }
 
-.playerLeft,
-.playerRight {
-	width: 500px;
+.leftPlayer,
+.rightPlayer {
 	flex: 0 0 auto;
+}
+
+.playerInfo {
+	display: flex;
+	background: white;
+	align-items: center;
+	justify-content: space-between;
+	padding: 4px 10px;
+	font-weight: bold;
 }

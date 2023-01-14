@@ -34,11 +34,20 @@ app.get('/', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-	console.log('a user connected')
+	store.dispatch({
+		type: 'PLAYER_CONNECTED',
+		payload: {socket, playerName: socket.handshake.auth.playerName},
+	})
 	socket.onAny((event, message) => {
 		console.log('[received] ', event, ': ', message)
 		if (!message.type) return
 		store.dispatch({...message, socket})
+	})
+	socket.on('disconnect', () => {
+		store.dispatch({
+			type: 'PLAYER_DISCONNECTED',
+			payload: {socket},
+		})
 	})
 })
 

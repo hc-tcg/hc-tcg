@@ -1,0 +1,43 @@
+.modalWrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background: rgba(0, 0, 0, 0.3);
+	top: 0;
+	left: 0;
+}
+
+.modal {
+	overflow: hidden;
+	min-width: 300px;
+	min-height: 100px;
+	background: beige;
+	border: 5px solid #a9957b;
+	box-shadow: 0 0 3px black;
+}
+
+.topLine {
+	display: flex;
+	justify-content: space-between;
+	padding: 5px 10px;
+}
+
+.closeButton {
+	cursor: pointer;
+}
+
+.closeButton:hover {
+	text-shadow: 0 0 2px black;
+}
+
+.title {
+	font-weight: bold;
+	font-size: 13px;
+}
+
+.content {
+	padding: 15px;
+}

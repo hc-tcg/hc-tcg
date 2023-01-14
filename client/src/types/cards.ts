@@ -27,6 +27,12 @@ export type EffectCardT = {
 	id: string
 }
 
+export type HealthCardT = {
+	type: 'health'
+	health: number
+	id: string
+}
+
 export type HermitAttackT = {
 	name: string
 	cost: Array<string>
@@ -48,4 +54,4 @@ export type HermitCardT = {
 	secondary: HermitAttackT
 }
 
-export type CardT = ItemCardT | EffectCardT | HermitCardT
+export type CardT = ItemCardT | EffectCardT | HermitCardT | HealthCardT

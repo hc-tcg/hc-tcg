@@ -30,7 +30,11 @@ const scrappedList = [
 ]
 
 const makeItemCard = (source) => ({
-	id: source[0].toLowerCase().replaceAll(' ', '_'),
+	id:
+		'item_' +
+		source[2].split(' ')[0].toLowerCase() +
+		'_' +
+		source[1].toLowerCase().replaceAll(' ', '_'),
 	rarity: source[1].toLowerCase().replaceAll(' ', '_'),
 	hermitType: source[2].split(' ')[0].toLowerCase(),
 	type: 'item',
