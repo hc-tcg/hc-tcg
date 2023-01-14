@@ -91,8 +91,13 @@ function Game(props: Props) {
 
 	return (
 		<div className={css.game}>
-			{availableActions.includes('END_TURN') ? (
-				<button onClick={endTurn}>End Turn</button>
+			{!availableActions.includes('WAIT_FOR_TURN') ? (
+				<button
+					onClick={endTurn}
+					disabled={!availableActions.includes('END_TURN')}
+				>
+					End Turn
+				</button>
 			) : null}
 			<Board onClick={handleBoardClick} gameState={gameState} />
 			<div className={css.hand}>{playerHandJsx}</div>

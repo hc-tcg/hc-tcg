@@ -65,8 +65,10 @@ function getAvailableActions(
 	playerState,
 	opponentState
 ) {
-	// TODO - You can't end turn wihtout active hermit
-	const actions = ['END_TURN']
+	const actions = []
+	if (playerState.board.activeRow !== null) {
+		actions.push('END_TURN')
+	}
 	if (
 		pastTurnActions.includes('PRIMARY_ATTACK') ||
 		pastTurnActions.includes('SECONDARY_ATTACK') ||
@@ -79,9 +81,17 @@ function getAvailableActions(
 	// or you can't add more hermits if all rows are filled)
 	actions.push('ADD_HERMIT')
 
+	// nemuzu zmenit aktivniho hermita kdyz neni zadne ve hre
+	// nebo kdyz mam jen jendoho ktery uz je aktivni
+	const hasOtherHermit = playerState.board.rows.some(
+		(row, index) => row.hermitCard && index !== playerState.board.activeRow
+	)
+	if (hasOtherHermit) {
+		actions.push('CHANGE_ACTIVE_HERMIT')
+	}
+
 	const {activeRow, rows} = playerState.board
 	if (activeRow !== null) {
-		actions.push('CHANGE_ACTIVE_HERMIT')
 		actions.push('PLAY_EFFECT_CARD')
 
 		if (turn > 1) {
@@ -261,7 +271,7 @@ function* checkHermitHealth(gameState) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
 				playerRows[rowIndex] = getEmptyRow()
-				if (rowIndex === activeRow) {
+				if (Number(rowIndex) === activeRow) {
 					playerState.board.activeRow = null
 				}
 				playerState.lives -= 1

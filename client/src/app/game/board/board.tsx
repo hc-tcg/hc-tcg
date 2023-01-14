@@ -6,6 +6,12 @@ import css from './board.module.css'
 import classnames from 'classnames'
 import {GameState, PlayerState, BoardRow} from 'types/game-state'
 
+/*
+TODO:
+- Indicate when it is players turn
+	- Don't allow clicking on slots on the other side
+*/
+
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type SlotType = 'item' | 'hermit' | 'effect' | 'health'

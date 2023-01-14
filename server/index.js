@@ -34,6 +34,8 @@ app.get('/', (req, res) => {
 })
 
 io.on('connection', (socket) => {
+	// TODO - use playerSecret to verify requests
+	// TODO - Validate json of all requests
 	store.dispatch({
 		type: 'PLAYER_CONNECTED',
 		payload: {socket, playerName: socket.handshake.auth.playerName},
