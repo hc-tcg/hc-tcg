@@ -1,3 +1,5 @@
+export type PlatyerId = string
+
 export type CardT = {
 	cardId: string
 	cardInstance: string
@@ -11,7 +13,7 @@ export type BoardRow = {
 }
 
 export type PlayerState = {
-	id: string
+	id: PlatyerId
 	playerName: string
 	hand: Array<CardT>
 	lives: number
@@ -26,5 +28,6 @@ export type PlayerState = {
 
 export type GameState = {
 	turn: number
+	order: Array<PlatyerId>
 	players: Record<string, PlayerState>
 }

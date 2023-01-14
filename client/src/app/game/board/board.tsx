@@ -126,7 +126,9 @@ function Board({onClick, gameState}: Props) {
 		})
 	}
 
-	const [player1, player2] = Object.values(gameState.players)
+	const [player1, player2] = gameState.order.map(
+		(playerId) => gameState.players[playerId]
+	)
 	return (
 		<div className={css.board}>
 			<div className={css.leftPlayer}>

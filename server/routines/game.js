@@ -127,14 +127,14 @@ function getEmptyRow() {
 	}
 }
 
-function getPlayerState(players, playerId) {
+function getPlayerState(allPlayers, playerId) {
 	const pack = getStarertPack()
 	// TODO - ensure there is at least one hermit on the hand
 
 	const TOTAL_ROWS = 5
 	return {
 		id: playerId,
-		playerName: players[playerId].playerName,
+		playerName: allPlayers[playerId].playerName,
 		lives: 3,
 		hand: pack.slice(0, 160), // 0.7
 		// TODO - hand out reward cards on kill
@@ -148,13 +148,18 @@ function getPlayerState(players, playerId) {
 	}
 }
 
-function getGameState(players, playerOneId, playerTwoId) {
+function getGameState(allPlayers, gamePlayerIds) {
+	if (Math.random() > 0.5) gamePlayerIds.reverse()
 	return {
 		turn: 0,
-		players: {
-			[playerOneId]: getPlayerState(players, playerOneId),
-			[playerTwoId]: getPlayerState(players, playerTwoId),
-		},
+		order: gamePlayerIds,
+		players: gamePlayerIds.reduce(
+			(playerStates, playerId) => ({
+				...playerStates,
+				[playerId]: getPlayerState(allPlayers, playerId),
+			}),
+			{}
+		),
 	}
 }
 
@@ -176,7 +181,7 @@ function equalCard(card1, card2) {
 function playCardSaga(
 	action,
 	currentPlayer,
-	oppositePlayer,
+	opponentPlayer,
 	pastTurnActions,
 	availableActions
 ) {
@@ -221,7 +226,7 @@ function playCardSaga(
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (cardInfo.type === 'single_use') {
-		const targetRow = oppositePlayer.board.rows[oppositePlayer.board.activeRow]
+		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		switch (cardInfo.id) {
 			case 'iron_sword':
@@ -280,54 +285,44 @@ function* checkHermitHealth(gameState) {
 	return true
 }
 
-// TODO - send list of allowed actions together with game state
-function* startGameSaga(players, playerOneId, playerTwoId) {
-	const gameState = getGameState(players, playerOneId, playerTwoId)
+function* startGameSaga(allPlayers, gamePlayerIds) {
+	const gameState = getGameState(allPlayers, gamePlayerIds)
 
 	while (true) {
 		gameState.turn++
 		const pastTurnActions = []
 
-		const currentPlayer =
-			gameState.turn % 2 === 0
-				? gameState.players[playerOneId]
-				: gameState.players[playerTwoId]
-		const oppositePlayer =
-			gameState.turn % 2 === 0
-				? gameState.players[playerTwoId]
-				: gameState.players[playerOneId]
+		// TODO - respect gameState.order
+		const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
+		const opponentPlayerId = gameState.order[gameState.turn % 2]
+		const currentPlayer = gameState.players[currentPlayerId]
+		const opponentPlayer = gameState.players[opponentPlayerId]
 
-		console.log('NEW TURN: ', playerOneId, 'vs', playerTwoId)
+		console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
 		const takeP = makePlayerTake(currentPlayer.id)
 
 		while (true) {
-			// TODO - check availableActions on server
 			// TODO - Decide player order
-			// TODO - Make sure on servver that player waiting for turn can't make actions
+			// TODO - Make sure on server that player waiting for turn can't make actions
 
 			const availableActions = getAvailableActions(
 				gameState.turn,
 				pastTurnActions,
 				currentPlayer,
-				oppositePlayer
+				opponentPlayer
 			)
-			players[playerOneId].socket.emit('GAME_STATE', {
-				type: 'GAME_STATE',
-				payload: {
-					gameState,
-					opponentId: playerTwoId,
-					availableActions:
-						gameState.turn % 2 === 0 ? availableActions : ['WAIT_FOR_TURN'],
-				},
-			})
-			players[playerTwoId].socket.emit('GAME_STATE', {
-				type: 'GAME_STATE',
-				payload: {
-					gameState,
-					opponentId: playerOneId,
-					availableActions:
-						gameState.turn % 2 !== 0 ? availableActions : ['WAIT_FOR_TURN'],
-				},
+			gamePlayerIds.forEach((playerId) => {
+				allPlayers[playerId].socket.emit('GAME_STATE', {
+					type: 'GAME_STATE',
+					payload: {
+						gameState,
+						opponentId: gamePlayerIds.find((id) => id !== playerId),
+						availableActions:
+							playerId === currentPlayerId
+								? availableActions
+								: ['WAIT_FOR_TURN'],
+					},
+				})
 			})
 
 			console.log('Waiting for turn action')
@@ -345,7 +340,7 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 					playCardSaga,
 					turnAction.playCard,
 					currentPlayer,
-					oppositePlayer,
+					opponentPlayer,
 					pastTurnActions,
 					availableActions
 				)
@@ -370,7 +365,7 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 				const attackInfo =
 					hermitInfo[type === 'primary' ? 'primary' : 'secondary']
 				const targetRow =
-					oppositePlayer.board.rows[oppositePlayer.board.activeRow]
+					opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 				if (!targetRow) continue
 				targetRow.health -= attackInfo.damage
 
@@ -389,17 +384,13 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 		// TODO - Inform player if he won
 		const playersAlive = yield call(checkHermitHealth, gameState)
 		if (!playersAlive) {
-			players[playerOneId].socket.emit('GAME_END', {
-				type: 'GAME_END',
-				payload: {
-					gameState,
-				},
-			})
-			players[playerTwoId].socket.emit('GAME_END', {
-				type: 'GAME_END',
-				payload: {
-					gameState,
-				},
+			gamePlayerIds.forEach((playerId) => {
+				allPlayers[playerId].socket.emit('GAME_END', {
+					type: 'GAME_END',
+					payload: {
+						gameState,
+					},
+				})
 			})
 			break
 		}
@@ -407,7 +398,7 @@ function* startGameSaga(players, playerOneId, playerTwoId) {
 	}
 }
 
-function* gameSaga(players) {
+function* gameSaga(allPlayers) {
 	while (true) {
 		const firstRequest = yield take('JOIN_GAME')
 		console.log('first player waiting')
@@ -421,12 +412,11 @@ function* gameSaga(players) {
 		})
 		if (result.secondRequest) {
 			console.log('second player connected, starting game')
-			yield spawn(
-				startGameSaga,
-				players,
+			// TODO - use singleton for all players map instead?
+			yield spawn(startGameSaga, allPlayers, [
 				firstRequest.playerId,
-				result.secondRequest.playerId
-			)
+				result.secondRequest.playerId,
+			])
 		}
 	}
 }
