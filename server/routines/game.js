@@ -98,7 +98,6 @@ function getAvailableActions(
 			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-			// TODO - check attack cost & item cards available
 			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
 				actions.push('PRIMARY_ATTACK')
 			}
@@ -116,14 +115,51 @@ function getAvailableActions(
 	return actions
 }
 
-function getStarertPack() {
+function getStarterPack() {
 	// ['zombiecleo_common', 'zedaphplays_rare', 'ethoslab_ultra_rare']
+	/*
+	// Give all cards
 	return Object.values(CARDS).map((card) => ({
 		// type of card
 		cardId: card.id,
 		// unique identifier of this specific card instance
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
+	*/
+	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
+	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 6)
+	let items = allCards
+		.filter(
+			(card) =>
+				card.type === 'item' &&
+				hermits.find((hermitCard) => hermitCard.hermitType === card.hermitType)
+		)
+		.slice(0, 6)
+	items = [...items, ...items]
+	const otherCards = allCards
+		.filter((card) => !['hermit', 'item'].includes(card.type))
+		.slice(0, 10)
+
+	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
+		// type of card
+		cardId: card.id,
+		// unique identifier of this specific card instance
+		cardInstance: Math.random() + '_' + Math.random(),
+	}))
+
+	// shuffle cards
+	pack.sort(() => 0.5 - Math.random())
+
+	// ensure a hermit in first 5 cards
+	const firstHermitIndex = pack.findIndex(
+		(card) => CARDS[card.cardId].type === 'hermit'
+	)
+	if (firstHermitIndex > 5) {
+		;[pack[0], pack[firstHermitIndex]] = [pack[firstHermitIndex], pack[0]]
+	}
+
+	return pack
+
 	// .filter((card) => card.type === 'hermit')
 }
 
@@ -138,15 +174,16 @@ function getEmptyRow() {
 }
 
 function getPlayerState(allPlayers, playerId) {
-	const pack = getStarertPack()
+	const pack = getStarterPack()
 	// TODO - ensure there is at least one hermit on the hand
+	// TODO - put discarded cards into discarded array
 
 	const TOTAL_ROWS = 5
 	return {
 		id: playerId,
 		playerName: allPlayers[playerId].playerName,
 		lives: 3,
-		hand: pack.slice(0, 160), // 0.7
+		hand: pack.slice(0, 7), // 0.7
 		// TODO - hand out reward cards on kill
 		rewards: pack.slice(7, 10),
 		discarded: [],
@@ -236,6 +273,7 @@ function playCardSaga(
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (cardInfo.type === 'single_use') {
+		// TODO - dont apply single_use card on effect slot (or any other row slot)
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		switch (cardInfo.id) {
@@ -296,6 +334,7 @@ function* checkHermitHealth(gameState) {
 }
 
 function* startGameSaga(allPlayers, gamePlayerIds) {
+	// TODO - gameState should be changed only in immutable way so that we can check its history
 	const gameState = getGameState(allPlayers, gamePlayerIds)
 
 	while (true) {
@@ -404,7 +443,10 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 			})
 			break
 		}
-		// TODO - draw card
+
+		// TODO - Find out if game should end once pile runs out
+		const drawCard = currentPlayer.pile.shift()
+		if (drawCard) currentPlayer.hand.push(drawCard)
 	}
 }
 
