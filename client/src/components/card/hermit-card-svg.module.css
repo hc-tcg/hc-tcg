@@ -1,0 +1,58 @@
+/* X: 10 - 60 - 10 - 240 - 10 - 60 - 10 */
+/* Y: 10 - 44 - M - N - 10 - N - 10 */
+
+.card {
+	background: white;
+	letter-spacing: 1px;
+	position: relative;
+}
+
+.card text {
+	/* TODO - Check other browsers */
+	dominant-baseline: hanging;
+}
+
+.cardBackground {
+	fill: rgb(226, 202, 139);
+}
+
+.name {
+	text-transform: uppercase;
+	font-weight: bold;
+	fill: black;
+	font-size: 45px;
+	display: inline-block;
+	letter-spacing: 2px;
+}
+
+.health {
+	fill: rgb(246, 4, 1);
+	font-size: 45px;
+	font-weight: bold;
+	text-anchor: end;
+}
+
+.hermitTypeBackground {
+	fill: white;
+}
+
+.hermitAttacks text {
+	font-size: 45px;
+	font-weight: bold;
+}
+
+.attackName {
+	text-transform: uppercase;
+	font-weight: bold;
+	fill: black;
+	letter-spacing: 0;
+	text-anchor: middle;
+}
+
+.attackDamage {
+	text-transform: uppercase;
+	font-weight: bold;
+	fill: rgb(246, 4, 1);
+	letter-spacing: 0;
+	text-anchor: end;
+}

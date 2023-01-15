@@ -1,6 +1,6 @@
 .slot {
-	width: 80px;
-	height: 80px;
+	width: 90px;
+	height: 90px;
 	background: grey;
 	flex: 0 0 auto;
 	cursor: pointer;
@@ -49,11 +49,14 @@
 }
 
 .board {
+	border: 5px solid white;
+	border-top: none;
+	user-select: none;
 	background: #080b0d;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: space-between;
-	width: 1100px;
+	width: 1226px;
 	margin: 0 auto;
 }
 
@@ -65,7 +68,8 @@
 .middle {
 	display: flex;
 	flex-flow: column nowrap;
-	justify-content: flex-end;
+	align-items: center;
+	justify-content: space-between;
 	flex: 0 0 auto;
 }
 

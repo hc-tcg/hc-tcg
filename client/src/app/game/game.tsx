@@ -33,9 +33,6 @@ type Props = {
 }
 function Game(props: Props) {
 	const gameState = useSelector((state: RootState) => state.gameState)
-	const availableActions = useSelector(
-		(state: RootState) => state.availableActions
-	)
 	const playerId = useSelector((state: RootState) => state.playerId)
 	// select caard in players hand
 	const [selectedCard, setSelectedCard] = useState<CardT | null>(null)
@@ -63,10 +60,6 @@ function Game(props: Props) {
 		setSelectedCard(null)
 	}
 
-	const endTurn = () => {
-		dispatch({type: 'END_TURN'})
-	}
-
 	const selectCard = (card: CardT) => {
 		console.log('Card selected: ', card.cardId)
 		setSelectedCard((currentCard) =>
@@ -91,14 +84,6 @@ function Game(props: Props) {
 
 	return (
 		<div className={css.game}>
-			{!availableActions.includes('WAIT_FOR_TURN') ? (
-				<button
-					onClick={endTurn}
-					disabled={!availableActions.includes('END_TURN')}
-				>
-					End Turn
-				</button>
-			) : null}
 			<Board onClick={handleBoardClick} gameState={gameState} />
 			<div className={css.hand}>{playerHandJsx}</div>
 			{renderModal(openedModalId, setOpenedModalId)}

@@ -1,9 +1,9 @@
 import classnames from 'classnames'
 import {CardInfoT} from 'types/cards'
-import HermitCard, {HermitCardProps} from './hermit-card'
-import EffectCard, {EffectCardProps} from './effect-card'
-import ItemCard, {ItemCardProps} from './item-card'
-import HealthCard, {HealthCardProps} from './health-card'
+import HermitCard, {HermitCardProps} from './hermit-card-svg'
+import EffectCard, {EffectCardProps} from './effect-card-svg'
+import ItemCard, {ItemCardProps} from './item-card-svg'
+import HealthCard, {HealthCardProps} from './health-card-svg'
 import css from './card.module.css'
 
 type CardProps = {

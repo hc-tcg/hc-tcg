@@ -22,16 +22,19 @@ function App() {
 
 	return (
 		<main>
-			<header>HermitCraft TCG</header>
 			<div className={css.form}>
 				{!playerName ? (
-					<form onSubmit={handlePlayerName}>
-						<input name="playerName" placeholder="Player name..." autoFocus />
-						<button>Next</button>
-					</form>
+					<>
+						<header>HermitCraft TCG</header>
+						<form onSubmit={handlePlayerName}>
+							<input name="playerName" placeholder="Player name..." autoFocus />
+							<button>Next</button>
+						</form>
+					</>
 				) : null}
 				{playerName && !gameType ? (
 					<>
+						<header>HermitCraft TCG</header>
 						<button onClick={handleStranger}>Play with a stranger</button>
 						<button onClick={handleFriend}>Play with a friend</button>
 					</>

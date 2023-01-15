@@ -5,6 +5,10 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+
+	background: url('https://static.wikia.nocookie.net/minecraft/images/a/ab/Badlands-island-chain-minecraft-seed-2000x1200.jpeg')
+		no-repeat;
+	background-size: cover;
 }
 
 code {

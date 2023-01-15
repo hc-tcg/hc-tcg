@@ -107,20 +107,20 @@ function getStarterPack() {
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
 	*/
-	// TODO - Beef had 42 cards in decks for TangoVsXisuma match
+	// TODO - Beef had 42 cards in decks for TangoVsXisuma match (also in EP41 he said 42 is max)
 	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
-	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 6)
+	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 9)
 	let items = allCards
 		.filter(
 			(card) =>
 				card.type === 'item' &&
 				hermits.find((hermitCard) => hermitCard.hermitType === card.hermitType)
 		)
-		.slice(0, 6)
+		.slice(0, 8)
 	items = [...items, ...items]
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.slice(0, 10)
+		.slice(0, 17)
 
 	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
 		// type of card
@@ -259,6 +259,7 @@ function playCardSaga(
 	} else if (cardInfo.type === 'single_use') {
 		// TODO - dont apply single_use card on effect slot (or any other row slot)
 		// TODO - INFO - fire/poison damage is applied first when it is used and then at the beginning of a turn of the player that use the effect
+		// TODO - INFO - Golden Axe ignored totem of undying (that is it kills the opponent's hermit regardless)
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		switch (cardInfo.id) {

@@ -1,0 +1,25 @@
+.card {
+	position: relative;
+	background: rgb(226, 202, 139);
+}
+
+.card text {
+	/* TODO - Check other browsers */
+	dominant-baseline: hanging;
+	text-anchor: middle;
+	fill: white;
+	font-weight: bold;
+	letter-spacing: 8px;
+}
+
+.cardBackground {
+	fill: white;
+}
+
+.type {
+	font-size: 72px;
+}
+
+.typeBackground {
+	fill: rgb(226, 202, 139);
+}

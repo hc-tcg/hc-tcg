@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {useSelector} from 'react-redux'
+import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from 'store'
 import HealthBar from 'components/health-bar'
 import {GameState, PlayerState, BoardRowT, CardT} from 'types/game-state'
@@ -20,6 +20,10 @@ type Props = {
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector((state: RootState) => state.playerId)
 	const [singelUseCard, setSIngleUseCard] = useState<CardT | null>(null)
+	const availableActions = useSelector(
+		(state: RootState) => state.availableActions
+	)
+	const dispatch = useDispatch()
 
 	const handeRowClick = (
 		playerId: string,
@@ -33,6 +37,10 @@ function Board({onClick, gameState}: Props) {
 			rowIndex,
 			rowHermitCard: rowState?.hermitCard || null,
 		})
+	}
+
+	const endTurn = () => {
+		dispatch({type: 'END_TURN'})
 	}
 
 	const makeRows = (playerState: PlayerState, type: 'left' | 'right') => {
@@ -73,6 +81,15 @@ function Board({onClick, gameState}: Props) {
 			</div>
 
 			<div className={css.middle}>
+				<img src="images/tcg1.png" draggable="false" width="100" />
+				{!availableActions.includes('WAIT_FOR_TURN') ? (
+					<button
+						onClick={endTurn}
+						disabled={!availableActions.includes('END_TURN')}
+					>
+						End Turn
+					</button>
+				) : null}
 				<Slot
 					onClick={() => onClick({slotType: 'single_use'})}
 					cardId={singelUseCard ? singelUseCard.cardId : null}
