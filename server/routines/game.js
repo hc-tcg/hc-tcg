@@ -1,25 +1,6 @@
 import {take, spawn, race, call} from 'redux-saga/effects'
 import CARDS from '../cards'
 
-/*
-type PlayerState = {
-	hand: Array<string>
-	rewards: Array<string>
-	pile: Array<string>
-	discared: Array<string>
-	board: {
-		actionRow: number
-		rows: Array<BoardRow>
-	}
-}
-
-type GameState = {
-	turn: number
-	players: Record<string, PlayerState>
-}
-
-*/
-
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
 // 'ADD_HERMIT',
@@ -337,7 +318,7 @@ function* checkHermitHealth(gameState) {
 	return true
 }
 
-function* startGameSaga(allPlayers, gamePlayerIds) {
+function* gameSaga(allPlayers, gamePlayerIds) {
 	// TODO - gameState should be changed only in immutable way so that we can check its history
 	const gameState = getGameState(allPlayers, gamePlayerIds)
 
@@ -456,29 +437,6 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 		// TODO - Find out if game should end once pile runs out
 		const drawCard = currentPlayer.pile.shift()
 		if (drawCard) currentPlayer.hand.push(drawCard)
-	}
-}
-
-function* gameSaga(allPlayers) {
-	while (true) {
-		const firstRequest = yield take('JOIN_GAME')
-		console.log('first player waiting')
-		const result = yield race({
-			secondRequest: take('JOIN_GAME'),
-			disconnected: take(
-				(action) =>
-					action.type === 'PLAYER_DISCONNECTED' &&
-					firstRequest.playerId === action.playerId
-			),
-		})
-		if (result.secondRequest) {
-			console.log('second player connected, starting game')
-			// TODO - use singleton for all players map instead?
-			yield spawn(startGameSaga, allPlayers, [
-				firstRequest.playerId,
-				result.secondRequest.playerId,
-			])
-		}
 	}
 }
 
