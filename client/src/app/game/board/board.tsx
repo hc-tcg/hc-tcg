@@ -1,5 +1,7 @@
 import CARDS from 'server/cards'
 import {CardInfoT} from 'types/cards'
+import {useSelector} from 'react-redux'
+import {RootState} from 'store'
 import Card from 'components/card'
 import HealthBar from 'components/health-bar'
 import css from './board.module.css'
@@ -102,6 +104,8 @@ type Props = {
 	gameState: GameState
 }
 function Board({onClick, gameState}: Props) {
+	const playerId = useSelector((state: RootState) => state.playerId)
+
 	const handeRowClick = (
 		playerId: string,
 		rowIndex: number,
@@ -140,6 +144,14 @@ function Board({onClick, gameState}: Props) {
 			<div className={css.leftPlayer}>
 				<div className={css.playerInfo}>
 					<div className={css.playerName}>{player1.playerName}</div>
+					{gameState.turnPlayerId === player1.id ? (
+						<div className={css.currentTurn}>
+							{gameState.turnPlayerId === playerId
+								? 'Your turn'
+								: "Opponent's turn"}
+						</div>
+					) : null}
+					<div className={css.dynamicSpace} />
 					<HealthBar lives={player1.lives} />
 				</div>
 				{makeRows(player1, 'left')}
@@ -147,6 +159,14 @@ function Board({onClick, gameState}: Props) {
 			<div className={css.rightPlayer}>
 				<div className={css.playerInfo}>
 					<HealthBar lives={player2.lives} />
+					<div className={css.dynamicSpace} />
+					{gameState.turnPlayerId === player2.id ? (
+						<div className={css.currentTurn}>
+							{gameState.turnPlayerId === playerId
+								? 'Your turn'
+								: "Opponent's turn"}
+						</div>
+					) : null}
 					<div className={css.playerName}>{player2.playerName}</div>
 				</div>
 				{makeRows(player2, 'right')}

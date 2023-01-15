@@ -126,6 +126,7 @@ function getStarterPack() {
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
 	*/
+	// TODO - Beef had 42 cards in decks for TangoVsXisuma match
 	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
 	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 6)
 	let items = allCards
@@ -176,7 +177,9 @@ function getEmptyRow() {
 function getPlayerState(allPlayers, playerId) {
 	const pack = getStarterPack()
 	// TODO - ensure there is at least one hermit on the hand
+	// OR - If there is no hermit, show the cards to the opposite player, reshuffle and draw again
 	// TODO - put discarded cards into discarded array
+	// TODO - strenghs/weaknesses -> 20 extra damage for prmary/secondayr attack
 
 	const TOTAL_ROWS = 5
 	return {
@@ -274,6 +277,7 @@ function playCardSaga(
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (cardInfo.type === 'single_use') {
 		// TODO - dont apply single_use card on effect slot (or any other row slot)
+		// TODO - INFO - fire/poison damage is applied first when it is used and then at the beginning of a turn of the player that use the effect
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		switch (cardInfo.id) {
@@ -347,6 +351,8 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 		const currentPlayer = gameState.players[currentPlayerId]
 		const opponentPlayer = gameState.players[opponentPlayerId]
 
+		gameState.turnPlayerId = currentPlayer.id
+
 		console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
 		const takeP = makePlayerTake(currentPlayer.id)
 
@@ -360,6 +366,7 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 				currentPlayer,
 				opponentPlayer
 			)
+			// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 			gamePlayerIds.forEach((playerId) => {
 				allPlayers[playerId].socket.emit('GAME_STATE', {
 					type: 'GAME_STATE',
@@ -401,6 +408,7 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 				currentPlayer.board.activeRow = currentPlayer.board.rows.findIndex(
 					(row) => equalCard(row.hermitCard, rowHermitCard)
 				)
+				// TODO - Don't block other actions if this happens after a hermit is killed
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
 			} else if (turnAction.attack) {
 				const {type} = turnAction.attack.payload
@@ -408,6 +416,7 @@ function* startGameSaga(allPlayers, gamePlayerIds) {
 					type === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
 				if (!availableActions.includes(typeAction)) continue
 				// TODO - send hermitCard from frontend for validation?
+				// TODO - Handle case when opponet's hermit is killed with effect (e.g. sword) but you still have attack available (just remove the available action)
 				const hermitCard =
 					currentPlayer.board.rows[currentPlayer.board.activeRow].hermitCard
 				const hermitInfo = CARDS[hermitCard.cardId]

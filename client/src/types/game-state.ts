@@ -28,6 +28,7 @@ export type PlayerState = {
 
 export type GameState = {
 	turn: number
+	turnPlayerId: string
 	order: Array<PlatyerId>
 	players: Record<string, PlayerState>
 }

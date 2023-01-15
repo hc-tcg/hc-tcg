@@ -67,7 +67,28 @@
 	display: flex;
 	background: white;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-start;
 	padding: 4px 10px;
 	font-weight: bold;
+}
+
+.playerName {
+	line-height: 1;
+}
+
+.currentTurn {
+	border-radius: 10px;
+	text-transform: uppercase;
+	border: 1px solid #999;
+	padding: 3px 10px;
+	font-size: 12px;
+	line-height: 1;
+	text-align: center;
+	margin: 0 10px;
+}
+
+.dynamicSpace {
+	flex: 1 1 0;
+	width: 0;
+	min-width: 0;
 }
