@@ -8,10 +8,9 @@
 .slot.empty {
 	padding: 7px;
 }
-.slot.item {
-	background: #aeb4b4;
-}
-.slot.hermit {
+.slot.item,
+.slot.hermit,
+.slot.single_use {
 	background: #aeb4b4;
 }
 .leftPlayer .slot.hermit.afk {
@@ -60,6 +59,13 @@
 
 .leftPlayer,
 .rightPlayer {
+	flex: 0 0 auto;
+}
+
+.middle {
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: flex-end;
 	flex: 0 0 auto;
 }
 

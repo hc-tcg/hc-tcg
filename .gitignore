@@ -9,8 +9,8 @@
 /coverage
 
 # production
-dist
-dist-ssr
+client/dist
+client/dist-ssr
 *.local
 
 # misc

@@ -1,12 +1,11 @@
-import CARDS from 'server/cards'
-import {CardInfoT} from 'types/cards'
+import {useState} from 'react'
 import {useSelector} from 'react-redux'
 import {RootState} from 'store'
-import Card from 'components/card'
 import HealthBar from 'components/health-bar'
+import {GameState, PlayerState, BoardRowT, CardT} from 'types/game-state'
 import css from './board.module.css'
-import classnames from 'classnames'
-import {GameState, PlayerState, BoardRow} from 'types/game-state'
+import Slot from './board-slot'
+import BoardRow from './board-row'
 
 /*
 TODO:
@@ -14,102 +13,18 @@ TODO:
 	- Don't allow clicking on slots on the other side
 */
 
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-
-type SlotType = 'item' | 'hermit' | 'effect' | 'health'
-type SlotProps = {
-	type: SlotType
-	onClick: () => void
-	cardId: string | null
-	rowState: BoardRow
-	active: boolean
-}
-const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
-	let card = cardId ? TYPED_CARDS[cardId] : null
-	if (type === 'health' && rowState.health) {
-		card = {
-			type: 'health',
-			health: rowState.health,
-			id: 'health_' + rowState.health,
-		}
-	}
-	return (
-		<div
-			onClick={onClick}
-			className={classnames(css.slot, {
-				[css[type]]: true,
-				[css.empty]: !card,
-				[css.afk]: card?.type === 'hermit' && !active,
-			})}
-		>
-			{card ? (
-				<div className={css.cardWrapper}>
-					<Card card={card} />
-				</div>
-			) : (
-				<img className={css.frame} src="/images/frame.png" />
-			)}
-		</div>
-	)
-}
-
-const getCardIdBySlot = (
-	slotType: SlotType,
-	index: number,
-	rowState: BoardRow | null
-): string | null => {
-	if (!rowState) return null
-	if (slotType === 'hermit') return rowState.hermitCard?.cardId || null
-	if (slotType === 'effect') return rowState.effectCard?.cardId || null
-	if (slotType === 'item') return rowState.itemCards[index]?.cardId || null
-	return null
-}
-
-type HermitRowProps = {
-	type: 'left' | 'right'
-	onClick: (meta: any) => void
-	rowState: BoardRow
-	active: boolean
-}
-const HermitRow = ({type, onClick, rowState, active}: HermitRowProps) => {
-	const handleSlotClick = (slotType: SlotType, slotIndex: number) => {
-		onClick({slotType, slotIndex})
-	}
-	const slotTypes: Array<SlotType> = [
-		'item',
-		'item',
-		'item',
-		'effect',
-		'hermit',
-		'health',
-	]
-	const slots = slotTypes.map((slotType, index) => {
-		return (
-			<Slot
-				onClick={() => handleSlotClick(slotType, index)}
-				cardId={getCardIdBySlot(slotType, index, rowState)}
-				rowState={rowState}
-				active={active}
-				key={slotType + '-' + index}
-				type={slotType}
-			/>
-		)
-	})
-	if (type === 'right') slots.reverse()
-	return <div className={css.hermitRow}>{slots}</div>
-}
-
 type Props = {
 	onClick: (meta: any) => void
 	gameState: GameState
 }
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector((state: RootState) => state.playerId)
+	const [singelUseCard, setSIngleUseCard] = useState<CardT | null>(null)
 
 	const handeRowClick = (
 		playerId: string,
 		rowIndex: number,
-		rowState: BoardRow | null,
+		rowState: BoardRowT | null,
 		meta: any
 	) => {
 		onClick({
@@ -125,7 +40,7 @@ function Board({onClick, gameState}: Props) {
 		return new Array(5).fill(null).map((_, index) => {
 			if (!rows[index]) throw new Error('Rendering board row failed')
 			return (
-				<HermitRow
+				<BoardRow
 					key={index}
 					rowState={rows[index]}
 					active={index === playerState.board.activeRow}
@@ -155,6 +70,14 @@ function Board({onClick, gameState}: Props) {
 					<HealthBar lives={player1.lives} />
 				</div>
 				{makeRows(player1, 'left')}
+			</div>
+
+			<div className={css.middle}>
+				<Slot
+					onClick={() => onClick({slotType: 'single_use'})}
+					cardId={singelUseCard ? singelUseCard.cardId : null}
+					type={'single_use'}
+				/>
 			</div>
 			<div className={css.rightPlayer}>
 				<div className={css.playerInfo}>

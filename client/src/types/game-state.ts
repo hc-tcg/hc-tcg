@@ -5,7 +5,7 @@ export type CardT = {
 	cardInstance: string
 }
 
-export type BoardRow = {
+export type BoardRowT = {
 	hermitCard: CardT | null
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
@@ -22,7 +22,7 @@ export type PlayerState = {
 	discarded: Array<CardT>
 	board: {
 		activeRow: number | null
-		rows: Array<BoardRow>
+		rows: Array<BoardRowT>
 	}
 }
 
