@@ -1,5 +1,8 @@
-import {take, spawn, race, call} from 'redux-saga/effects'
+import {take, spawn, actionChannel, call} from 'redux-saga/effects'
+import {buffers} from 'redux-saga'
 import CARDS from '../cards'
+import DAMAGE from '../const/damage'
+import PROTECTION from '../const/protection'
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
@@ -11,6 +14,12 @@ import CARDS from '../cards'
 // 'PLAY_EFFECT_CARD',
 // 'PLAY_SINGLE_USE_CARD',
 // 'END_TURN'
+
+const ATTACK_TO_ACTION = {
+	primary: 'PRIMARY_ATTACK',
+	secondary: 'SECONDARY_ATTACK',
+	zero: 'ZERO_ATTACK',
+}
 
 function hasEnoughItems(itemCards, cost) {
 	const itemCardIds = itemCards.map((card) => card.cardId)
@@ -53,6 +62,7 @@ function getAvailableActions(
 	if (
 		pastTurnActions.includes('PRIMARY_ATTACK') ||
 		pastTurnActions.includes('SECONDARY_ATTACK') ||
+		pastTurnActions.includes('ZERO_ATTACK') ||
 		pastTurnActions.includes('CHANGE_ACTIVE_HERMIT')
 	) {
 		return actions
@@ -79,6 +89,7 @@ function getAvailableActions(
 			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
+			actions.push('ZERO_ATTACK')
 			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
 				actions.push('PRIMARY_ATTACK')
 			}
@@ -120,6 +131,9 @@ function getStarterPack() {
 	items = [...items, ...items]
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
+		.filter((card) =>
+			[...Object.keys(DAMAGE), ...Object.keys(PROTECTION)].includes(card.id)
+		)
 		.slice(0, 17)
 
 	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
@@ -174,6 +188,8 @@ function getPlayerState(allPlayers, playerId) {
 		pile: pack.slice(10),
 		board: {
 			activeRow: null,
+			singleUseCard: null,
+			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
 	}
@@ -194,12 +210,8 @@ function getGameState(allPlayers, gamePlayerIds) {
 	}
 }
 
-function makePlayerTake(playerId) {
-	return (actionType) => {
-		return take(
-			(action) => action.type === actionType && action.playerId === playerId
-		)
-	}
+function playerAction(actionType, playerId) {
+	return (action) => action.type === actionType && action.playerId === playerId
 }
 
 function equalCard(card1, card2) {
@@ -262,23 +274,11 @@ function playCardSaga(
 		// TODO - INFO - Golden Axe ignored totem of undying (that is it kills the opponent's hermit regardless)
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
-		switch (cardInfo.id) {
-			case 'iron_sword':
-				targetRow.health -= 20
-				break
-			case 'diamond_sword':
-				targetRow.health -= 40
-				break
-			case 'netherite_sword':
-				targetRow.health -= 60
-				break
-			default:
-				console.log('Unknown effect: ', cardInfo.id)
-		}
+		if (currentPlayer.board.singleUseCard) return
+		currentPlayer.board.singleUseCard = card
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
 	}
 
-	// TODO change to card instance rather than card id
 	currentPlayer.hand = currentPlayer.hand.filter(
 		(handCard) => !equalCard(handCard, card)
 	)
@@ -322,6 +322,7 @@ function* checkHermitHealth(gameState) {
 function* gameSaga(allPlayers, gamePlayerIds) {
 	// TODO - gameState should be changed only in immutable way so that we can check its history
 	const gameState = getGameState(allPlayers, gamePlayerIds)
+	let turnActionChannel = null
 
 	while (true) {
 		gameState.turn++
@@ -336,7 +337,14 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 		gameState.turnPlayerId = currentPlayer.id
 
 		console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
-		const takeP = makePlayerTake(currentPlayer.id)
+
+		if (turnActionChannel) turnActionChannel.close()
+		turnActionChannel = yield actionChannel(
+			['PLAY_CARD', 'CHANGE_ACTIVE_HERMIT', 'ATTACK', 'END_TURN'].map((type) =>
+				playerAction(type, currentPlayer.id)
+			),
+			buffers.dropping(10)
+		)
 
 		while (true) {
 			// TODO - Decide player order
@@ -365,52 +373,77 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 
 			console.log('Waiting for turn action')
 
-			const turnAction = yield race({
-				playCard: takeP('PLAY_CARD'),
-				changeActiveHermit: takeP('CHANGE_ACTIVE_HERMIT'),
-				attack: takeP('ATTACK'),
-				endTurn: takeP('END_TURN'),
-			})
+			const turnAction = yield take(turnActionChannel)
 
-			console.log('TURN ACTION: ', Object.keys(turnAction)[0])
-			if (turnAction.playCard) {
+			// TODO - avoid having socket in actions
+			const {socket, ...logTurnAction} = turnAction
+			console.log('TURN ACTION: ', logTurnAction)
+			if (turnAction.type === 'PLAY_CARD') {
 				yield call(
 					playCardSaga,
-					turnAction.playCard,
+					turnAction,
 					currentPlayer,
 					opponentPlayer,
 					pastTurnActions,
 					availableActions
 				)
-			} else if (turnAction.changeActiveHermit) {
+			} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 				if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) continue
-				const rowHermitCard =
-					turnAction.changeActiveHermit.payload.rowHermitCard
-				// handle if no result
-				currentPlayer.board.activeRow = currentPlayer.board.rows.findIndex(
-					(row) => equalCard(row.hermitCard, rowHermitCard)
+				const rowHermitCard = turnAction.payload.rowHermitCard
+				const result = currentPlayer.board.rows.findIndex((row) =>
+					equalCard(row.hermitCard, rowHermitCard)
 				)
+				if (result >= 0) {
+					currentPlayer.board.activeRow = result
+				}
 				// TODO - Don't block other actions if this happens after a hermit is killed
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
-			} else if (turnAction.attack) {
-				const {type} = turnAction.attack.payload
-				const typeAction =
-					type === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
+			} else if (turnAction.type === 'ATTACK') {
+				const {type} = turnAction.payload
+				const typeAction = ATTACK_TO_ACTION[type]
+				if (!typeAction) {
+					console.log('Unknown attack type: ', type)
+					continue
+				}
 				if (!availableActions.includes(typeAction)) continue
 				// TODO - send hermitCard from frontend for validation?
-				// TODO - Handle case when opponet's hermit is killed with effect (e.g. sword) but you still have attack available (just remove the available action)
 				const hermitCard =
 					currentPlayer.board.rows[currentPlayer.board.activeRow].hermitCard
 				const hermitInfo = CARDS[hermitCard.cardId]
-				const attackInfo =
-					hermitInfo[type === 'primary' ? 'primary' : 'secondary']
+
+				const singleUseCard = !currentPlayer.board.singleUseCardUsed
+					? currentPlayer.board.singleUseCard
+					: null
+				const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
+				const singleUseDamage = singleUseInfo ? DAMAGE[singleUseInfo.id] : null
+
+				if (singleUseDamage) currentPlayer.board.singleUseCardUsed = true
+				if (!hermitInfo.hasOwnProperty(type) && !singleUseDamage) {
+					console.log('Invalid attack')
+					continue
+				}
+
+				const targetDamage =
+					(hermitInfo[type]?.damage || 0) + (singleUseDamage?.target || 0)
+
 				const targetRow =
 					opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-				if (!targetRow) continue
-				targetRow.health -= attackInfo.damage
+				const attackerRow =
+					currentPlayer.board.rows[currentPlayer.board.activeRow]
+				if (!targetRow || !attackerRow) continue
+
+				const protection = PROTECTION[targetRow.effectCard?.cardId]
+				let targetProtection = protection?.target || 0
+				if (singleUseInfo?.id === 'golden_axe') targetProtection = 0
+				// TODO - Move to discard pile
+				if (protection?.discard) targetRow.effectCard = null
+
+				// Math.max to avoid healing
+				targetRow.health -= Math.max(targetDamage - targetProtection, 0)
+				attackerRow.health -= singleUseDamage ? singleUseDamage.self || 0 : 0
 
 				pastTurnActions.push(typeAction)
-			} else if (turnAction.endTurn) {
+			} else if (turnAction.type === 'END_TURN') {
 				if (!availableActions.includes('END_TURN')) continue
 				break
 			} else {
@@ -435,9 +468,19 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			break
 		}
 
+		// Draw a card fropm deck when turn ends
 		// TODO - Find out if game should end once pile runs out
 		const drawCard = currentPlayer.pile.shift()
 		if (drawCard) currentPlayer.hand.push(drawCard)
+
+		// If player has not used his single use card return it to hand
+		if (currentPlayer.board.singleUseCard) {
+			if (currentPlayer.board.singleUseCardUsed === false) {
+				currentPlayer.hand.push(currentPlayer.board.singleUseCard)
+			}
+			currentPlayer.board.singleUseCard = null
+			currentPlayer.board.singleUseCardUsed = false
+		}
 	}
 }
 

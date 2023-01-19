@@ -219,6 +219,7 @@ const scrappedList = [
 
 const makeEffectCard = (source) => ({
 	id: source[0].toLowerCase().replaceAll(' ', '_'),
+	name: source[0],
 	rarity: source[1].toLowerCase().replaceAll(' ', '_'),
 	description: source[3],
 	type: source[3].endsWith('Discard after use.') ? 'single_use' : 'effect',

@@ -34,9 +34,7 @@ const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
 			})}
 		>
 			{card ? (
-				<div className={css.cardWrapper}>
-					<Card card={card} />
-				</div>
+				<Card card={card} />
 			) : (
 				<img draggable="false" className={css.frame} src="/images/frame.png" />
 			)}

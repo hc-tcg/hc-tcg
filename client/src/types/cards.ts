@@ -22,6 +22,7 @@ export type ItemCardT = {
 
 export type EffectCardT = {
 	type: 'effect' | 'single_use'
+	name: string
 	rarity: CardRarityT
 	description: string
 	id: string

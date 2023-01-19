@@ -56,7 +56,18 @@ function Game(props: Props) {
 			}
 			return
 		}
-		dispatch({type: 'PLAY_CARD', payload: {card: selectedCard, ...meta}})
+		const selectedCardInfo = TYPED_CARDS[selectedCard.cardId]
+		if (!selectedCardInfo) {
+			console.log('Unknown card id: ', selectedCard)
+			return
+		}
+		if (meta.slotType === 'single_use') {
+			if (selectedCardInfo.type !== 'single_use') return
+			dispatch({type: 'PLAY_CARD', payload: {card: selectedCard}})
+		} else {
+			dispatch({type: 'PLAY_CARD', payload: {card: selectedCard, ...meta}})
+		}
+
 		setSelectedCard(null)
 	}
 

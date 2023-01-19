@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux'
-import {GameState} from 'types/game-state'
+import {GameState, CardT} from 'types/game-state'
 
 const defaultState = {
 	playerName: '',

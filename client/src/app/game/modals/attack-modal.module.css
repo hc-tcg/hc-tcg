@@ -1,0 +1,84 @@
+.attackModal {
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: stretch;
+	min-width: 350px;
+}
+
+.turnEndNotification {
+	font-size: 12px;
+	margin: 0 auto;
+	padding: 10px;
+}
+
+.attack {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: flex-start;
+	cursor: pointer;
+	padding: 5px 10px;
+}
+
+.attack:hover {
+	background: rgb(183, 183, 165);
+}
+
+.icon {
+	flex: 0 0 auto;
+	width: 60px;
+	height: 60px;
+	background: linear-gradient(to bottom, yellow, orange);
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+}
+
+.hermitIcon {
+	border: 4px solid darkblue;
+	align-items: flex-start;
+}
+
+.hermitIcon img {
+	flex: 0 0 auto;
+	margin-top: 5px;
+	width: 85px;
+	height: auto;
+}
+
+.effectIcon {
+	border: 4px solid darkred;
+	align-items: center;
+}
+
+.effectIcon img {
+	width: 45px;
+	height: 45px;
+}
+
+.info {
+	margin-left: 10px;
+	flex: 1 1 auto;
+}
+
+.name {
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.damage {
+	color: rgb(246, 4, 1);
+}
+
+.hermitDamage {
+	display: inline-flex;
+	justify-content: center;
+	align-items: flex-start;
+	width: 16px;
+	height: 16px;
+	overflow: hidden;
+}
+
+.description img {
+	object-fit: scale-down;
+	vertical-align: bottom;
+}

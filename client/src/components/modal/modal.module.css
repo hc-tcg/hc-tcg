@@ -1,7 +1,7 @@
 .modalWrapper {
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 	width: 100%;
 	height: 100%;
 	position: fixed;
@@ -11,6 +11,7 @@
 }
 
 .modal {
+	margin-top: 100px;
 	overflow: hidden;
 	min-width: 300px;
 	min-height: 100px;
@@ -39,5 +40,5 @@
 }
 
 .content {
-	padding: 15px;
+	padding: 0px;
 }

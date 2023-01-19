@@ -22,6 +22,8 @@ export type PlayerState = {
 	discarded: Array<CardT>
 	board: {
 		activeRow: number | null
+		singleUseCard: CardT | null
+		singleUseCardUsed: boolean
 		rows: Array<BoardRowT>
 	}
 }

@@ -34,7 +34,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 			<text x="45" y="17" className={css.name}>
 				{card.name}
 			</text>
-			<text x="310" y="17" className={css.health}>
+			<text x="300" y="17" className={css.health}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
@@ -57,18 +57,18 @@ const HermitCard = ({card}: HermitCardProps) => {
 			<g id="hermit-type">
 				<rect
 					className={css.hermitTypeBackground}
-					x="325"
-					y="5"
-					width="80"
-					height="80"
-					rx="40"
-					ry="40"
+					x="315"
+					y="-5"
+					width="100"
+					height="100"
+					rx="50"
+					ry="50"
 				/>
 				<image
-					x="335"
-					y="15"
-					width="58"
-					height="58"
+					x="327"
+					y="12"
+					width="68"
+					height="68"
 					href={`/images/types/type-${card.hermitType}.png`}
 					className={css.hermitType}
 				/>
@@ -80,7 +80,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 					width="60"
 					height="60"
 					href={`/images/rarities/${card.rarity}.png`}
-					className={css.hermitType}
+					className={css.rarity}
 				/>
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>

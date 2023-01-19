@@ -4,6 +4,8 @@
 	background: grey;
 	flex: 0 0 auto;
 	cursor: pointer;
+	position: relative;
+	overflow: hidden;
 }
 .slot.empty {
 	padding: 7px;
@@ -35,8 +37,13 @@
 .slot.effect:hover .frame {
 	box-shadow: 0 0 3px #ddd;
 }
-.cardWrapper {
-	font-size: 8.8px;
+.slot .lock {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	width: 15px;
+	height: 15px;
+	filter: brightness(75%);
 }
 
 .hermitRow {
@@ -71,6 +78,10 @@
 	align-items: center;
 	justify-content: space-between;
 	flex: 0 0 auto;
+}
+
+.singleUseSlot.used {
+	filter: brightness(50%);
 }
 
 .playerInfo {

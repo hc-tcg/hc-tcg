@@ -1,5 +1,5 @@
-import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
+import classnames from 'classnames'
 import {RootState} from 'store'
 import HealthBar from 'components/health-bar'
 import {GameState, PlayerState, BoardRowT, CardT} from 'types/game-state'
@@ -17,9 +17,14 @@ type Props = {
 	onClick: (meta: any) => void
 	gameState: GameState
 }
+
+// TODO - Use selecotrs instead of passing gameState
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector((state: RootState) => state.playerId)
-	const [singelUseCard, setSIngleUseCard] = useState<CardT | null>(null)
+	const boardState = gameState.players[gameState.turnPlayerId].board
+	const singleUseCard = boardState.singleUseCard
+	const singleUseCardUsed = boardState.singleUseCardUsed
+
 	const availableActions = useSelector(
 		(state: RootState) => state.availableActions
 	)
@@ -90,11 +95,17 @@ function Board({onClick, gameState}: Props) {
 						End Turn
 					</button>
 				) : null}
-				<Slot
-					onClick={() => onClick({slotType: 'single_use'})}
-					cardId={singelUseCard ? singelUseCard.cardId : null}
-					type={'single_use'}
-				/>
+				<div
+					className={classnames(css.singleUseSlot, {
+						[css.used]: singleUseCardUsed,
+					})}
+				>
+					<Slot
+						onClick={() => onClick({slotType: 'single_use'})}
+						cardId={singleUseCard ? singleUseCard.cardId : null}
+						type={'single_use'}
+					/>
+				</div>
 			</div>
 			<div className={css.rightPlayer}>
 				<div className={css.playerInfo}>
