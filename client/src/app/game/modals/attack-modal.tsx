@@ -4,6 +4,7 @@ import {RootState} from 'store'
 import {CardInfoT, EffectCardT, HermitCardT} from 'types/cards'
 import classnames from 'classnames'
 import CARDS from 'server/cards'
+import DAMAGE from 'server/const/damage'
 import Strengths from 'server/cards/strengths'
 import {getActiveRow, getOpponentActiveRow} from '../game-selectors'
 import css from './attack-modal.module.css'
@@ -17,11 +18,12 @@ function AttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const activeRow = useSelector(getActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
-	const singleUseCard = useSelector(
-		(state: RootState) =>
-			state?.gameState?.players[state?.gameState.turnPlayerId].board
-				.singleUseCard
-	)
+	const singleUseCard = useSelector((state: RootState) => {
+		if (!state.gameState) return null
+		const {players, turnPlayerId} = state.gameState
+		if (!players || !turnPlayerId) return null
+		return players[turnPlayerId].board.singleUseCard
+	})
 
 	if (!activeRow || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
@@ -40,32 +42,38 @@ function AttackModal({closeModal}: Props) {
 	const opponentEffectInfo = opponentRow.effectCard
 		? TYPED_CARDS[opponentRow.effectCard.cardId]
 		: null
-	const singleUseEffect = singleUseCard
+	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
 
-	const suAttackInfo = singleUseEffect
+	const suAttackInfo = singleUseInfo
 		? {
-				name: singleUseEffect.name,
+				name: singleUseInfo.name,
 				damage: 20,
 		  }
 		: null
 
-	const effectAttack = () => {
-		dispatch({type: 'ATTACK', payload: {type: 'zero'}})
+	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
+		// TODO - use DAMAGES..afkTarget
+		const damageInfo = singleUseInfo && DAMAGE[singleUseInfo.id]
+		if (damageInfo?.afkTarget) {
+			dispatch({
+				type: 'SET_PICK_PROCESS',
+				payload: 'pick_afk',
+				callback: (result: any) => {
+					console.log('PROCESS: ', result)
+					dispatch({type: 'ATTACK', payload: {type, singleUsePick: result}})
+				},
+			})
+		} else {
+			dispatch({type: 'ATTACK', payload: {type}})
+		}
 		closeModal()
 	}
 
-	const primaryAttack = () => {
-		// TODO - apply single use card here too
-		dispatch({type: 'ATTACK', payload: {type: 'primary'}})
-		closeModal()
-	}
-
-	const secondaryAttack = () => {
-		dispatch({type: 'ATTACK', payload: {type: 'secondary'}})
-		closeModal()
-	}
+	const effectAttack = () => handleAttack('zero')
+	const primaryAttack = () => handleAttack('primary')
+	const secondaryAttack = () => handleAttack('secondary')
 
 	const renderAttack = (
 		attackInfo: any,
@@ -99,11 +107,11 @@ function AttackModal({closeModal}: Props) {
 								{attackInfo.damage}
 							</>
 						)}
-						{singleUseEffect ? (
+						{singleUseInfo ? (
 							<>
 								{!icon ? <span> + </span> : null}
 								<img
-									src={`/images/effects/${singleUseEffect?.id}.png`}
+									src={`/images/effects/${singleUseInfo?.id}.png`}
 									width="16"
 									height="16"
 								/>
@@ -144,11 +152,11 @@ function AttackModal({closeModal}: Props) {
 					Note that after attacking you won't be able to do any other actions
 					this turn.
 				</div>
-				{singleUseEffect
+				{singleUseInfo
 					? renderAttack(
 							suAttackInfo,
 							effectAttack,
-							`/images/effects/${singleUseEffect.id}.png`
+							`/images/effects/${singleUseInfo.id}.png`
 					  )
 					: null}
 				{renderAttack(playerHermitInfo.primary, primaryAttack)}

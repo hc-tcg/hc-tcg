@@ -1,3 +1,8 @@
+@font-face {
+	font-family: Minecraft;
+	src: url(fonts/MinecraftRegular-Bmg3.otf);
+}
+
 .modalWrapper {
 	display: flex;
 	justify-content: center;
@@ -15,19 +20,25 @@
 	overflow: hidden;
 	min-width: 300px;
 	min-height: 100px;
-	background: beige;
-	border: 5px solid #a9957b;
+	background: rgb(198, 198, 198);
+	border-radius: 10px;
+	border: 1px solid black;
 	box-shadow: 0 0 3px black;
+	position: relative;
+	padding: 5px;
+	font-family: Minecraft;
+	font-size: 16px;
 }
 
 .topLine {
 	display: flex;
 	justify-content: space-between;
-	padding: 5px 10px;
+	padding: 5px 10px 0px 10px;
 }
 
 .closeButton {
 	cursor: pointer;
+	font-size: 24px;
 }
 
 .closeButton:hover {
@@ -36,9 +47,60 @@
 
 .title {
 	font-weight: bold;
-	font-size: 13px;
+	font-size: 22px;
 }
 
 .content {
 	padding: 0px;
+}
+
+.topBevel,
+.leftBevel,
+.bottomBevel,
+.rightBevel {
+	position: absolute;
+}
+
+.topBevel,
+.bottomBevel {
+	height: 5px;
+	left: 0;
+	right: 0;
+}
+
+.leftBevel,
+.rightBevel {
+	width: 5px;
+	top: 0;
+	bottom: 0;
+}
+
+.topBevel,
+.leftBevel {
+	background: white;
+}
+
+.bottomBevel,
+.rightBevel {
+	background: rgb(86, 86, 86);
+}
+
+.topBevel {
+	top: 0;
+	right: 5px;
+}
+
+.leftBevel {
+	left: 0;
+	bottom: 5px;
+}
+
+.bottomBevel {
+	bottom: 0;
+	left: 5px;
+}
+
+.rightBevel {
+	right: 0;
+	top: 5px;
 }

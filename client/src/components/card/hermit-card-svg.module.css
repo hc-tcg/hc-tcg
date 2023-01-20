@@ -41,7 +41,8 @@
 	font-weight: bold;
 }
 
-.attackName {
+text.attackName {
+	font-size: 40px;
 	text-transform: uppercase;
 	font-weight: bold;
 	fill: black;

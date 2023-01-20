@@ -1,5 +1,6 @@
 import {AnyAction} from 'redux'
 import {GameState, CardT} from 'types/game-state'
+import {equalCard} from 'server/utils'
 
 const defaultState = {
 	playerName: '',
@@ -9,6 +10,9 @@ const defaultState = {
 	opponentId: '',
 	gameState: null as GameState | null,
 	availableActions: [] as Array<string>,
+	selectedCard: null as CardT | null,
+	openedModalId: null as string | null,
+	pickProcess: null as string | null,
 }
 
 const rootReducer = (state = defaultState, action: AnyAction) => {
@@ -40,6 +44,23 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				opponentId: '',
 				gameState: null,
 				availableActions: [],
+			}
+		case 'SET_SELECTED_CARD':
+			return {
+				...state,
+				selectedCard: equalCard(action.payload, state.selectedCard)
+					? null
+					: action.payload,
+			}
+		case 'SET_OPENED_MODAL_ID':
+			return {
+				...state,
+				openedModalId: action.payload,
+			}
+		case 'SET_PICK_PROCESS':
+			return {
+				...state,
+				pickProcess: action.payload,
 			}
 		default:
 			return state

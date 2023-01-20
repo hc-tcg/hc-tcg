@@ -96,7 +96,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 						/>
 					))}
 				</g>
-				<text x="200" y="275" className={css.attackName}>
+				<text x="200" y="278" className={css.attackName}>
 					{card.primary.name}
 				</text>
 				<text x="380" y="275" className={css.attackDamage}>
@@ -113,7 +113,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 						height={COST_SIZE}
 					/>
 				))}
-				<text x="200" y="345" className={css.attackName}>
+				<text x="200" y="348" className={css.attackName}>
 					{card.secondary.name}
 				</text>
 				<text x="380" y="345" className={css.attackDamage}>

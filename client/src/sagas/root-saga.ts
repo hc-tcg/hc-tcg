@@ -1,43 +1,10 @@
-import {take, call, put, select, race, cancelled} from 'redux-saga/effects'
+import {take, fork, call, put, race, cancel} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import socket from './socket'
-
-// todo show connection indicator in top right corner
-function* sendMsg(type: string, payload?: any): any {
-	while (true) {
-		if (socket.connected) {
-			console.log('[send]', type, payload)
-			const {playerId, playerSecret} = yield select()
-			socket.emit(type, {
-				type,
-				payload,
-				playerId,
-				playerSecret,
-			})
-			break
-		}
-		yield new Promise((resolve: any) => {
-			socket.once('connect', resolve)
-		})
-	}
-}
-
-function* receiveMsg(type: string): any {
-	let listener
-	try {
-		return yield new Promise((resolve: any) => {
-			listener = (message: string) => {
-				console.log('[receive]', type, message)
-				resolve(message)
-			}
-			socket.once(type, listener)
-		})
-	} finally {
-		if (yield cancelled()) socket.off(type, listener)
-	}
-}
+import slotSaga from './slot-saga'
+import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
 
 function* gameSaga(): SagaIterator {
+	const slotTask = yield fork(slotSaga)
 	while (true) {
 		const gameAction = yield race({
 			gameState: call(receiveMsg, 'GAME_STATE'),
@@ -77,12 +44,12 @@ function* gameSaga(): SagaIterator {
 			)
 		}
 	}
+	yield cancel(slotTask)
 }
 
 function* rootSaga(): SagaIterator {
 	const {playerName} = yield take('SET_NAME')
-	socket.auth = {playerName}
-	socket.connect()
+	yield call(socketSaga, playerName)
 	const {playerId, playerSecret} = yield call(receiveMsg, 'PLAYER_INFO')
 	yield put({type: 'SET_PLAYER_INFO', playerId, playerSecret})
 	while (true) {

@@ -55,14 +55,14 @@ const ItemCard = ({card}: ItemCardProps) => {
 				<g>
 					<rect
 						className={css.rarity}
-						x="325"
-						y="325"
-						width="80"
-						height="80"
-						rx="40"
-						ry="40"
+						x="302"
+						y="302"
+						width="100"
+						height="100"
+						rx="50"
+						ry="50"
 					/>
-					<text x="363" y="345" className={css.x2} fill="black">
+					<text x="351" y="331" className={css.x2} fill="black">
 						x2
 					</text>
 				</g>

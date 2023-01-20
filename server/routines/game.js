@@ -3,6 +3,7 @@ import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import DAMAGE from '../const/damage'
 import PROTECTION from '../const/protection'
+import {equalCard} from '../utils'
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
@@ -214,13 +215,6 @@ function playerAction(actionType, playerId) {
 	return (action) => action.type === actionType && action.playerId === playerId
 }
 
-function equalCard(card1, card2) {
-	if (card1 === null || card2 === null) return false
-	return (
-		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
-	)
-}
-
 function playCardSaga(
 	action,
 	currentPlayer,
@@ -399,7 +393,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 				// TODO - Don't block other actions if this happens after a hermit is killed
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
 			} else if (turnAction.type === 'ATTACK') {
-				const {type} = turnAction.payload
+				const {type, singleUsePick} = turnAction.payload
 				const typeAction = ATTACK_TO_ACTION[type]
 				if (!typeAction) {
 					console.log('Unknown attack type: ', type)
@@ -430,16 +424,26 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 					opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 				const attackerRow =
 					currentPlayer.board.rows[currentPlayer.board.activeRow]
+				const afkTargetRow =
+					singleUsePick && singleUseDamage?.afkTarget
+						? opponentPlayer.board.rows[singleUsePick.rowIndex]
+						: null
 				if (!targetRow || !attackerRow) continue
 
-				const protection = PROTECTION[targetRow.effectCard?.cardId]
-				let targetProtection = protection?.target || 0
-				if (singleUseInfo?.id === 'golden_axe') targetProtection = 0
-				// TODO - Move to discard pile
-				if (protection?.discard) targetRow.effectCard = null
+				const targets = [{row: targetRow, damage: targetDamage}]
+				if (afkTargetRow)
+					targets.push({row: afkTargetRow, damage: singleUseDamage.afkTarget})
 
-				// Math.max to avoid healing
-				targetRow.health -= Math.max(targetDamage - targetProtection, 0)
+				for (let target of targets) {
+					const protection = PROTECTION[target.row.effectCard?.cardId]
+					let targetProtection = protection?.target || 0
+					if (singleUseInfo?.id === 'golden_axe') targetProtection = 0
+					// TODO - Move to discard pile
+					if (protection?.discard) target.row.effectCard = null
+					target.row.health -= Math.max(target.damage - targetProtection, 0)
+				}
+
+				// I assume that armor/shield is not applied when receiving backlash
 				attackerRow.health -= singleUseDamage ? singleUseDamage.self || 0 : 0
 
 				pastTurnActions.push(typeAction)

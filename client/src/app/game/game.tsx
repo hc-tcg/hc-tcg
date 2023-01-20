@@ -8,8 +8,14 @@ import Card from 'components/card'
 import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
+import MouseIndicator from './mouse-indicator'
+import {equalCard} from 'server/utils'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
+
+const PICK_PROCESSES: Record<string, string> = {
+	pick_afk: 'Select afk hermit to attack',
+}
 
 const renderModal = (
 	openedModalId: string | null,
@@ -20,13 +26,6 @@ const renderModal = (
 	return null
 }
 
-function equalCard(card1: CardT | null, card2: CardT | null): boolean {
-	if (card1 === null || card2 === null) return false
-	return (
-		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
-	)
-}
-
 type Props = {
 	name: string
 	gameType: 'stranger' | 'friend'
@@ -34,48 +33,27 @@ type Props = {
 function Game(props: Props) {
 	const gameState = useSelector((state: RootState) => state.gameState)
 	const playerId = useSelector((state: RootState) => state.playerId)
-	// select caard in players hand
-	const [selectedCard, setSelectedCard] = useState<CardT | null>(null)
-	const [openedModalId, setOpenedModalId] = useState<string | null>(null)
+	const selectedCard = useSelector((state: RootState) => state.selectedCard)
+	const openedModalId = useSelector((state: RootState) => state.openedModalId)
+	const pickProcess = useSelector((state: RootState) => state.pickProcess)
 	const dispatch = useDispatch()
 
 	if (!gameState) return <main>Loading</main>
 
 	const playerState = gameState.players[playerId]
 
+	const setOpenedModalId = (id: string | null) => {
+		dispatch({type: 'SET_OPENED_MODAL_ID', payload: id})
+	}
+
 	const handleBoardClick = (meta: any) => {
 		console.log('Slot selected: ', meta)
-		if (!selectedCard) {
-			const clickedOnHermit = meta.slotType === 'hermit' && meta.rowHermitCard
-			if (clickedOnHermit) {
-				if (playerState.board.activeRow === meta.rowIndex) {
-					setOpenedModalId('attack')
-				} else {
-					dispatch({type: 'CHANGE_ACTIVE_HERMIT', payload: meta})
-				}
-			}
-			return
-		}
-		const selectedCardInfo = TYPED_CARDS[selectedCard.cardId]
-		if (!selectedCardInfo) {
-			console.log('Unknown card id: ', selectedCard)
-			return
-		}
-		if (meta.slotType === 'single_use') {
-			if (selectedCardInfo.type !== 'single_use') return
-			dispatch({type: 'PLAY_CARD', payload: {card: selectedCard}})
-		} else {
-			dispatch({type: 'PLAY_CARD', payload: {card: selectedCard, ...meta}})
-		}
-
-		setSelectedCard(null)
+		dispatch({type: 'SLOT_PICKED', payload: meta})
 	}
 
 	const selectCard = (card: CardT) => {
 		console.log('Card selected: ', card.cardId)
-		setSelectedCard((currentCard) =>
-			equalCard(currentCard, card) ? null : card
-		)
+		dispatch({type: 'SET_SELECTED_CARD', payload: card})
 	}
 
 	const playerHandJsx = playerState.hand.map((card) => {
@@ -98,6 +76,11 @@ function Game(props: Props) {
 			<Board onClick={handleBoardClick} gameState={gameState} />
 			<div className={css.hand}>{playerHandJsx}</div>
 			{renderModal(openedModalId, setOpenedModalId)}
+			{pickProcess ? (
+				<MouseIndicator
+					message={PICK_PROCESSES[pickProcess] || 'Unknown pick process'}
+				/>
+			) : null}
 		</div>
 	)
 }

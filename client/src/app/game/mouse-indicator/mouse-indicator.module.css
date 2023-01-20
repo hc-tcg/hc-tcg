@@ -1,0 +1,9 @@
+.mouseIndicator {
+	position: fixed;
+	z-index: 10000;
+	transform: translate(25px, -35px);
+	background: rgba(140, 140, 220, 0.8);
+	font-weight: bold;
+	padding: 7px 10px;
+	pointer-events: none;
+}

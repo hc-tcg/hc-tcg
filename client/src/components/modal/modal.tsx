@@ -13,6 +13,10 @@ function Modal({children, closeModal, title}: Props) {
 	return ReactDOM.createPortal(
 		<div className={css.modalWrapper}>
 			<div className={css.modal}>
+				<div className={css.topBevel} />
+				<div className={css.rightBevel} />
+				<div className={css.bottomBevel} />
+				<div className={css.leftBevel} />
 				<div className={css.topLine}>
 					{title ? <div className={css.title}>{title}</div> : null}
 					{closeModal ? (
