@@ -1,5 +1,5 @@
 import {select, take} from 'typed-redux-saga'
-import {put, takeLeading, call} from 'redux-saga/effects'
+import {put, takeLeading, takeLatest, call, cancel} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {RootState as RS} from 'store'
 import {CardT, PlayerState} from 'types/game-state'
@@ -41,6 +41,18 @@ function* pickWithSelectedSaga(
 
 	if (slotType === 'single_use') {
 		yield put({type: 'PLAY_CARD', payload: {card: selectedCard}})
+		if (
+			['instant_health', 'instant_health_ii', 'golden_apple'].includes(
+				selectedCard.cardId
+			)
+		) {
+			yield put({type: 'SET_PICK_PROCESS', payload: 'any_player_hermit'})
+			const result = yield call(pickProcessSaga, {
+				type: 'SET_PICK_PROCESS',
+				payload: 'any_player_hermit',
+			})
+			yield put({type: 'APPLY_EFFECT', payload: {singleUsePick: result}})
+		}
 	} else {
 		yield put({
 			type: 'PLAY_CARD',
@@ -67,14 +79,6 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	}
 }
 
-function* pickProcessSaga(action: PickProcessAction): SagaIterator {
-	const pickProcess = action.payload
-	if (pickProcess !== 'pick_afk') return
-	const result = yield* take('SLOT_PICKED')
-	yield put({type: 'SET_PICK_PROCESS', payload: null})
-	action.callback?.(result.payload)
-}
-
 function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	const availableActions = yield* select((state: RS) => state.availableActions)
 	const selectedCard = yield* select((state: RS) => state.selectedCard)
@@ -90,9 +94,26 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	}
 }
 
+function* pickProcessSaga(action: PickProcessAction): SagaIterator {
+	const pickProcess = action.payload
+	if (!pickProcess) return
+	// TODO - Proper validations for individual pick processes
+	// if (pickProcess !== 'afk_opponent_hermit') return
+	const result = yield* take('SLOT_PICKED')
+	const statePickProcess = yield* select((state: RS) => state.pickProcess)
+	// failsafe, e.g. if someone ends turn while picking
+	if (pickProcess !== statePickProcess) yield cancel()
+	yield put({type: 'SET_PICK_PROCESS', payload: null})
+	action.callback?.(result.payload)
+	return result.payload
+}
+
 function* slotSaga(): SagaIterator {
 	yield takeLeading('SLOT_PICKED', slotPickedSaga)
-	yield takeLeading('SET_PICK_PROCESS', pickProcessSaga)
+	yield takeLatest(
+		(action: any) => action.type === 'SET_PICK_PROCESS' && action.callback,
+		pickProcessSaga
+	)
 }
 
 export default slotSaga

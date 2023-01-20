@@ -61,6 +61,13 @@ function getAvailableActions(
 		actions.push('END_TURN')
 	}
 	if (
+		!pastTurnActions.includes('APPLY_EFFECT') &&
+		playerState.board.singleUseCard &&
+		!playerState.board.singleUseCardUsed
+	) {
+		actions.push('APPLY_EFFECT')
+	}
+	if (
 		pastTurnActions.includes('PRIMARY_ATTACK') ||
 		pastTurnActions.includes('SECONDARY_ATTACK') ||
 		pastTurnActions.includes('ZERO_ATTACK') ||
@@ -133,7 +140,13 @@ function getStarterPack() {
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
 		.filter((card) =>
-			[...Object.keys(DAMAGE), ...Object.keys(PROTECTION)].includes(card.id)
+			[
+				...Object.keys(DAMAGE),
+				...Object.keys(PROTECTION),
+				'instant_health',
+				'instant_health_ii',
+				'golden_apple',
+			].includes(card.id)
 		)
 		.slice(0, 17)
 
@@ -280,7 +293,7 @@ function playCardSaga(
 
 // return false in case one player is dead
 function* checkHermitHealth(gameState) {
-	// TODO - In next turn the oponnent must pick new active hermit
+	// TODO - In next turn the opponent must pick new active hermit
 	const playerStates = Object.values(gameState.players)
 	for (let playerState of playerStates) {
 		const playerRows = playerState.board.rows
@@ -334,9 +347,13 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 
 		if (turnActionChannel) turnActionChannel.close()
 		turnActionChannel = yield actionChannel(
-			['PLAY_CARD', 'CHANGE_ACTIVE_HERMIT', 'ATTACK', 'END_TURN'].map((type) =>
-				playerAction(type, currentPlayer.id)
-			),
+			[
+				'PLAY_CARD',
+				'CHANGE_ACTIVE_HERMIT',
+				'APPLY_EFFECT',
+				'ATTACK',
+				'END_TURN',
+			].map((type) => playerAction(type, currentPlayer.id)),
 			buffers.dropping(10)
 		)
 
@@ -392,6 +409,45 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 				}
 				// TODO - Don't block other actions if this happens after a hermit is killed
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
+			} else if (turnAction.type === 'APPLY_EFFECT') {
+				if (!availableActions.includes('APPLY_EFFECT')) continue
+				const singleUseCard = currentPlayer.board.singleUseCard
+				const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
+				const {singleUsePick} = turnAction.payload
+
+				// Get active player hermit card for effects that affect active hermit
+				const activeRow =
+					currentPlayer.board.rows[currentPlayer.board.activeRow]
+				const hermitCard = activeRow ? activeRow.hermitCard : null
+				const hermitInfo = hermitCard ? CARDS[hermitCard.cardId] : null
+
+				// Get picked hermit card for effects that affect selected hermit
+				// NOTE - currently only player's hermits are supported
+				const pickedRow = currentPlayer.board.rows[singleUsePick.rowIndex]
+				const pickedCard = pickedRow?.hermitCard
+				const pickedCardInfo = pickedCard ? CARDS[pickedCard.cardId] : null
+
+				if (singleUseInfo.id === 'instant_health') {
+					activeRow.health = Math.min(
+						pickedRow.health + 30,
+						pickedCardInfo.health // max health
+					)
+				} else if (singleUseInfo.id === 'instant_health_ii') {
+					activeRow.health = Math.min(
+						pickedRow.health + 60,
+						pickedCardInfo.health // max health
+					)
+				} else if (singleUseInfo.id === 'golden_apple') {
+					activeRow.health = Math.min(
+						pickedRow.health + 100,
+						pickedCardInfo.health // max health
+					)
+				} else {
+					continue
+				}
+
+				currentPlayer.board.singleUseCardUsed = true
+				pastTurnActions.push('APPLY_EFFECT')
 			} else if (turnAction.type === 'ATTACK') {
 				const {type, singleUsePick} = turnAction.payload
 				const typeAction = ATTACK_TO_ACTION[type]
@@ -425,7 +481,9 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 				const attackerRow =
 					currentPlayer.board.rows[currentPlayer.board.activeRow]
 				const afkTargetRow =
-					singleUsePick && singleUseDamage?.afkTarget
+					singleUsePick &&
+					singleUseDamage?.afkTarget &&
+					singleUsePick.rowIndex !== opponentPlayer.board.activeRow
 						? opponentPlayer.board.rows[singleUsePick.rowIndex]
 						: null
 				if (!targetRow || !attackerRow) continue

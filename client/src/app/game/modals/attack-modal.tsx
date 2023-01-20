@@ -59,7 +59,7 @@ function AttackModal({closeModal}: Props) {
 		if (damageInfo?.afkTarget) {
 			dispatch({
 				type: 'SET_PICK_PROCESS',
-				payload: 'pick_afk',
+				payload: 'afk_opponent_hermit',
 				callback: (result: any) => {
 					console.log('PROCESS: ', result)
 					dispatch({type: 'ATTACK', payload: {type, singleUsePick: result}})

@@ -14,7 +14,8 @@ import {equalCard} from 'server/utils'
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 const PICK_PROCESSES: Record<string, string> = {
-	pick_afk: 'Select afk hermit to attack',
+	afk_opponent_hermit: 'Select afk hermit to attack',
+	any_player_hermit: 'Select one of your hermits to apply the effect',
 }
 
 const renderModal = (

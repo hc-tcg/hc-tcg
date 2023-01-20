@@ -31,11 +31,19 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				gameType: action.gameType,
 			}
 		case 'GAME_STATE':
-			return {
+			const newState = {
 				...state,
 				opponentId: action.opponentId,
 				gameState: action.gameState,
 				availableActions: action.availableActions,
+			}
+			if (state.gameState?.turnPlayerId === action.gameState?.turnPlayerId)
+				return newState
+			return {
+				...newState,
+				selectedCard: null,
+				openedModalId: null,
+				pickProcess: null,
 			}
 		case 'GAME_END':
 			return {

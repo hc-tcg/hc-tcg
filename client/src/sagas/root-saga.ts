@@ -24,6 +24,7 @@ function* gameSaga(): SagaIterator {
 
 		const turnAction = yield race({
 			playCard: take('PLAY_CARD'),
+			applyEffect: take('APPLY_EFFECT'),
 			attack: take('ATTACK'),
 			endTurn: take('END_TURN'),
 			changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
@@ -32,6 +33,8 @@ function* gameSaga(): SagaIterator {
 		// TODO - consider what is being send to backend and in which format
 		if (turnAction.playCard) {
 			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
+		} else if (turnAction.applyEffect) {
+			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
 		} else if (turnAction.attack) {
 			yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
 		} else if (turnAction.endTurn) {
