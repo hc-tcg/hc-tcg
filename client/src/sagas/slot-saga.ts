@@ -51,6 +51,7 @@ function* pickWithSelectedSaga(
 				type: 'SET_PICK_PROCESS',
 				payload: 'any_player_hermit',
 			})
+			if (!result) return
 			yield put({type: 'APPLY_EFFECT', payload: {singleUsePick: result}})
 		}
 	} else {
@@ -99,10 +100,11 @@ function* pickProcessSaga(action: PickProcessAction): SagaIterator {
 	if (!pickProcess) return
 	// TODO - Proper validations for individual pick processes
 	// if (pickProcess !== 'afk_opponent_hermit') return
+	// TODO - Stop waiting on new turn
 	const result = yield* take('SLOT_PICKED')
 	const statePickProcess = yield* select((state: RS) => state.pickProcess)
 	// failsafe, e.g. if someone ends turn while picking
-	if (pickProcess !== statePickProcess) yield cancel()
+	if (pickProcess !== statePickProcess) return
 	yield put({type: 'SET_PICK_PROCESS', payload: null})
 	action.callback?.(result.payload)
 	return result.payload

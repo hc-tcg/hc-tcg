@@ -5,7 +5,7 @@ import {CardInfoT, EffectCardT, HermitCardT} from 'types/cards'
 import classnames from 'classnames'
 import CARDS from 'server/cards'
 import DAMAGE from 'server/const/damage'
-import Strengths from 'server/cards/strengths'
+import Strengths from 'server/const/strengths'
 import {getActiveRow, getOpponentActiveRow} from '../game-selectors'
 import css from './attack-modal.module.css'
 
@@ -23,6 +23,12 @@ function AttackModal({closeModal}: Props) {
 		const {players, turnPlayerId} = state.gameState
 		if (!players || !turnPlayerId) return null
 		return players[turnPlayerId].board.singleUseCard
+	})
+	const singleUseCardUsed = useSelector((state: RootState) => {
+		if (!state.gameState) return false
+		const {players, turnPlayerId} = state.gameState
+		if (!players || !turnPlayerId) return false
+		return players[turnPlayerId].board.singleUseCardUsed
 	})
 
 	if (!activeRow || !activeRow.hermitCard) return null
@@ -152,7 +158,7 @@ function AttackModal({closeModal}: Props) {
 					Note that after attacking you won't be able to do any other actions
 					this turn.
 				</div>
-				{singleUseInfo
+				{singleUseInfo && !singleUseCardUsed
 					? renderAttack(
 							suAttackInfo,
 							effectAttack,

@@ -1,9 +1,12 @@
 import {take, spawn, actionChannel, call} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
-import DAMAGE from '../const/damage'
-import PROTECTION from '../const/protection'
-import {equalCard} from '../utils'
+import {equalCard, hasEnoughItems} from '../utils'
+import {getGameState, getEmptyRow} from '../utils/state-gen'
+import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
+import playCardSaga from './turn-actions/play-card'
+import changeActiveHermitSaga from './turn-actions/change-active-hermit'
+import applyEffectSaga from './turn-actions/apply-effect'
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
@@ -15,40 +18,6 @@ import {equalCard} from '../utils'
 // 'PLAY_EFFECT_CARD',
 // 'PLAY_SINGLE_USE_CARD',
 // 'END_TURN'
-
-const ATTACK_TO_ACTION = {
-	primary: 'PRIMARY_ATTACK',
-	secondary: 'SECONDARY_ATTACK',
-	zero: 'ZERO_ATTACK',
-}
-
-function hasEnoughItems(itemCards, cost) {
-	const itemCardIds = itemCards.map((card) => card.cardId)
-	// transform item cards into cost
-	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
-	const energy = itemCardIds.reduce((result, cardId) => {
-		const itemCard = CARDS[cardId]
-		result.push(itemCard.hermitType)
-		// all rare item cards are x2
-		if (itemCard.rarity === 'rare') {
-			result.push(itemCard.hermitType)
-		}
-		return result
-	}, [])
-
-	const specificCost = cost.filter((item) => item !== 'any')
-	const anyCost = cost.filter((item) => item === 'any')
-	const hasEnoughSpecific = specificCost.every((costItem) => {
-		const index = energy.findIndex((energyItem) => energyItem === costItem)
-		if (index === -1) return false
-		energy.splice(index, 1)
-		return true
-	})
-	if (!hasEnoughSpecific) return false
-
-	// check if remaining energy is enough to cover required "any" cost
-	return energy.length >= anyCost.length
-}
 
 function getAvailableActions(
 	turn,
@@ -115,180 +84,8 @@ function getAvailableActions(
 	return actions
 }
 
-function getStarterPack() {
-	// ['zombiecleo_common', 'zedaphplays_rare', 'ethoslab_ultra_rare']
-	/*
-	// Give all cards
-	return Object.values(CARDS).map((card) => ({
-		// type of card
-		cardId: card.id,
-		// unique identifier of this specific card instance
-		cardInstance: Math.random() + '_' + Math.random(),
-	}))
-	*/
-	// TODO - Beef had 42 cards in decks for TangoVsXisuma match (also in EP41 he said 42 is max)
-	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
-	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 9)
-	let items = allCards
-		.filter(
-			(card) =>
-				card.type === 'item' &&
-				hermits.find((hermitCard) => hermitCard.hermitType === card.hermitType)
-		)
-		.slice(0, 8)
-	items = [...items, ...items]
-	const otherCards = allCards
-		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.filter((card) =>
-			[
-				...Object.keys(DAMAGE),
-				...Object.keys(PROTECTION),
-				'instant_health',
-				'instant_health_ii',
-				'golden_apple',
-			].includes(card.id)
-		)
-		.slice(0, 17)
-
-	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
-		// type of card
-		cardId: card.id,
-		// unique identifier of this specific card instance
-		cardInstance: Math.random() + '_' + Math.random(),
-	}))
-
-	// shuffle cards
-	pack.sort(() => 0.5 - Math.random())
-
-	// ensure a hermit in first 5 cards
-	const firstHermitIndex = pack.findIndex(
-		(card) => CARDS[card.cardId].type === 'hermit'
-	)
-	if (firstHermitIndex > 5) {
-		;[pack[0], pack[firstHermitIndex]] = [pack[firstHermitIndex], pack[0]]
-	}
-
-	return pack
-
-	// .filter((card) => card.type === 'hermit')
-}
-
-function getEmptyRow() {
-	const MAX_ITEMS = 3
-	return {
-		hermitCard: null,
-		effectCard: null,
-		itemCards: new Array(MAX_ITEMS).fill(null),
-		health: null,
-	}
-}
-
-function getPlayerState(allPlayers, playerId) {
-	const pack = getStarterPack()
-	// TODO - ensure there is at least one hermit on the hand
-	// OR - If there is no hermit, show the cards to the opposite player, reshuffle and draw again
-	// TODO - put discarded cards into discarded array
-	// TODO - strenghs/weaknesses -> 20 extra damage for prmary/secondayr attack
-
-	const TOTAL_ROWS = 5
-	return {
-		id: playerId,
-		playerName: allPlayers[playerId].playerName,
-		lives: 3,
-		hand: pack.slice(0, 7), // 0.7
-		// TODO - hand out reward cards on kill
-		rewards: pack.slice(7, 10),
-		discarded: [],
-		pile: pack.slice(10),
-		board: {
-			activeRow: null,
-			singleUseCard: null,
-			singleUseCardUsed: false,
-			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
-		},
-	}
-}
-
-function getGameState(allPlayers, gamePlayerIds) {
-	if (Math.random() > 0.5) gamePlayerIds.reverse()
-	return {
-		turn: 0,
-		order: gamePlayerIds,
-		players: gamePlayerIds.reduce(
-			(playerStates, playerId) => ({
-				...playerStates,
-				[playerId]: getPlayerState(allPlayers, playerId),
-			}),
-			{}
-		),
-	}
-}
-
 function playerAction(actionType, playerId) {
 	return (action) => action.type === actionType && action.playerId === playerId
-}
-
-function playCardSaga(
-	action,
-	currentPlayer,
-	opponentPlayer,
-	pastTurnActions,
-	availableActions
-) {
-	const {card, rowHermitCard, rowIndex, slotIndex} = action.payload
-	const cardInfo = CARDS[card.cardId]
-	console.log('Playing card: ', card.cardId)
-
-	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return
-
-	if (cardInfo.type === 'hermit') {
-		if (rowHermitCard) return
-		if (!currentPlayer.board.rows[rowIndex]) return
-		if (currentPlayer.board.rows[rowIndex].hermitCard) return
-		if (!availableActions.includes('ADD_HERMIT')) return
-		currentPlayer.board.rows[rowIndex] = {
-			...currentPlayer.board.rows[rowIndex],
-			hermitCard: card,
-			health: cardInfo.health,
-		}
-		if (currentPlayer.board.activeRow === null) {
-			currentPlayer.board.activeRow = rowIndex
-		}
-		pastTurnActions.push('ADD_HERMIT')
-	} else if (cardInfo.type === 'item') {
-		if (!rowHermitCard) return
-		const hermitRow = currentPlayer.board.rows.find((row) =>
-			equalCard(row.hermitCard, rowHermitCard)
-		)
-		if (!hermitRow) return
-		if (hermitRow.itemCards[slotIndex] !== null) return
-		if (!availableActions.includes('PLAY_ITEM_CARD')) return
-		hermitRow.itemCards[slotIndex] = card
-		pastTurnActions.push('PLAY_ITEM_CARD')
-	} else if (cardInfo.type === 'effect') {
-		if (!rowHermitCard) return
-		const hermitRow = currentPlayer.board.rows.find((row) =>
-			equalCard(row.hermitCard, rowHermitCard)
-		)
-		if (!hermitRow) return
-		if (hermitRow.effectCard) return
-		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
-		hermitRow.effectCard = card
-		pastTurnActions.push('PLAY_EFFECT_CARD')
-	} else if (cardInfo.type === 'single_use') {
-		// TODO - dont apply single_use card on effect slot (or any other row slot)
-		// TODO - INFO - fire/poison damage is applied first when it is used and then at the beginning of a turn of the player that use the effect
-		// TODO - INFO - Golden Axe ignored totem of undying (that is it kills the opponent's hermit regardless)
-		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
-		if (currentPlayer.board.singleUseCard) return
-		currentPlayer.board.singleUseCard = card
-		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
-	}
-
-	currentPlayer.hand = currentPlayer.hand.filter(
-		(handCard) => !equalCard(handCard, card)
-	)
 }
 
 // return false in case one player is dead
@@ -389,121 +186,34 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			// TODO - avoid having socket in actions
 			const {socket, ...logTurnAction} = turnAction
 			console.log('TURN ACTION: ', logTurnAction)
+
+			const state = {
+				gameState,
+				currentPlayer,
+				opponentPlayer,
+				pastTurnActions,
+				availableActions,
+			}
+
 			if (turnAction.type === 'PLAY_CARD') {
-				yield call(
-					playCardSaga,
-					turnAction,
-					currentPlayer,
-					opponentPlayer,
-					pastTurnActions,
-					availableActions
-				)
+				// TODO - continue on invalid?
+				yield call(playCardSaga, turnAction, state)
 			} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 				if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) continue
-				const rowHermitCard = turnAction.payload.rowHermitCard
-				const result = currentPlayer.board.rows.findIndex((row) =>
-					equalCard(row.hermitCard, rowHermitCard)
-				)
-				if (result >= 0) {
-					currentPlayer.board.activeRow = result
-				}
+				const result = yield call(changeActiveHermitSaga, turnAction, state)
+				if (result === 'INVALID') continue
 				// TODO - Don't block other actions if this happens after a hermit is killed
 				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
 			} else if (turnAction.type === 'APPLY_EFFECT') {
 				if (!availableActions.includes('APPLY_EFFECT')) continue
-				const singleUseCard = currentPlayer.board.singleUseCard
-				const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
-				const {singleUsePick} = turnAction.payload
-
-				// Get active player hermit card for effects that affect active hermit
-				const activeRow =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]
-				const hermitCard = activeRow ? activeRow.hermitCard : null
-				const hermitInfo = hermitCard ? CARDS[hermitCard.cardId] : null
-
-				// Get picked hermit card for effects that affect selected hermit
-				// NOTE - currently only player's hermits are supported
-				const pickedRow = currentPlayer.board.rows[singleUsePick.rowIndex]
-				const pickedCard = pickedRow?.hermitCard
-				const pickedCardInfo = pickedCard ? CARDS[pickedCard.cardId] : null
-
-				if (singleUseInfo.id === 'instant_health') {
-					activeRow.health = Math.min(
-						pickedRow.health + 30,
-						pickedCardInfo.health // max health
-					)
-				} else if (singleUseInfo.id === 'instant_health_ii') {
-					activeRow.health = Math.min(
-						pickedRow.health + 60,
-						pickedCardInfo.health // max health
-					)
-				} else if (singleUseInfo.id === 'golden_apple') {
-					activeRow.health = Math.min(
-						pickedRow.health + 100,
-						pickedCardInfo.health // max health
-					)
-				} else {
-					continue
-				}
-
-				currentPlayer.board.singleUseCardUsed = true
+				const result = yield call(applyEffectSaga, turnAction, state)
+				if (result === 'INVALID') continue
 				pastTurnActions.push('APPLY_EFFECT')
 			} else if (turnAction.type === 'ATTACK') {
-				const {type, singleUsePick} = turnAction.payload
-				const typeAction = ATTACK_TO_ACTION[type]
-				if (!typeAction) {
-					console.log('Unknown attack type: ', type)
-					continue
-				}
-				if (!availableActions.includes(typeAction)) continue
-				// TODO - send hermitCard from frontend for validation?
-				const hermitCard =
-					currentPlayer.board.rows[currentPlayer.board.activeRow].hermitCard
-				const hermitInfo = CARDS[hermitCard.cardId]
-
-				const singleUseCard = !currentPlayer.board.singleUseCardUsed
-					? currentPlayer.board.singleUseCard
-					: null
-				const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
-				const singleUseDamage = singleUseInfo ? DAMAGE[singleUseInfo.id] : null
-
-				if (singleUseDamage) currentPlayer.board.singleUseCardUsed = true
-				if (!hermitInfo.hasOwnProperty(type) && !singleUseDamage) {
-					console.log('Invalid attack')
-					continue
-				}
-
-				const targetDamage =
-					(hermitInfo[type]?.damage || 0) + (singleUseDamage?.target || 0)
-
-				const targetRow =
-					opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-				const attackerRow =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]
-				const afkTargetRow =
-					singleUsePick &&
-					singleUseDamage?.afkTarget &&
-					singleUsePick.rowIndex !== opponentPlayer.board.activeRow
-						? opponentPlayer.board.rows[singleUsePick.rowIndex]
-						: null
-				if (!targetRow || !attackerRow) continue
-
-				const targets = [{row: targetRow, damage: targetDamage}]
-				if (afkTargetRow)
-					targets.push({row: afkTargetRow, damage: singleUseDamage.afkTarget})
-
-				for (let target of targets) {
-					const protection = PROTECTION[target.row.effectCard?.cardId]
-					let targetProtection = protection?.target || 0
-					if (singleUseInfo?.id === 'golden_axe') targetProtection = 0
-					// TODO - Move to discard pile
-					if (protection?.discard) target.row.effectCard = null
-					target.row.health -= Math.max(target.damage - targetProtection, 0)
-				}
-
-				// I assume that armor/shield is not applied when receiving backlash
-				attackerRow.health -= singleUseDamage ? singleUseDamage.self || 0 : 0
-
+				const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
+				if (!typeAction || !availableActions.includes(typeAction)) continue
+				const result = yield call(attackSaga, turnAction, state)
+				if (result === 'INVALID') continue
 				pastTurnActions.push(typeAction)
 			} else if (turnAction.type === 'END_TURN') {
 				if (!availableActions.includes('END_TURN')) continue
