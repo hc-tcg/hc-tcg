@@ -70,6 +70,7 @@ function* pickWithSelectedSaga(
 				'splash_potion_of_healing',
 				'lava_bucket',
 				'splash_potion_of_poison',
+				'clock',
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})

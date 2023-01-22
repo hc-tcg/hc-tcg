@@ -141,8 +141,9 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 	// TODO - gameState should be changed only in immutable way so that we can check its history
 	const gameState = getGameState(allPlayers, gamePlayerIds)
 	let turnActionChannel = null
+	let skipTurn = false
 
-	while (true) {
+	turn_cycle: while (true) {
 		gameState.turn++
 		const pastTurnActions = []
 
@@ -156,6 +157,12 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 
 		console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
 
+		if (skipTurn) {
+			console.log('Turn skipped')
+			skipTurn = false
+			continue
+		}
+
 		if (turnActionChannel) turnActionChannel.close()
 		turnActionChannel = yield actionChannel(
 			[
@@ -168,7 +175,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			buffers.dropping(10)
 		)
 
-		while (true) {
+		turn_actions_cycle: while (true) {
 			// TODO - Decide player order
 			// TODO - Make sure on server that player waiting for turn can't make actions
 
@@ -236,6 +243,9 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			const playersAlive = yield call(checkHermitHealth, gameState)
 			if (!playersAlive) break
 		}
+
+		const clockActivated = hasSingleUse(currentPlayer, 'clock', true)
+		if (clockActivated) skipTurn = true
 
 		// Apply damage from ailments
 		for (let row of opponentPlayer.board.rows) {

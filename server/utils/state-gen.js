@@ -54,22 +54,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'lava_bucket',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'splash_potion_of_poison',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'milk_bucket',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'water_bucket',
+		cardId: 'clock',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

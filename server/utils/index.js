@@ -35,10 +35,10 @@ export function hasEnoughItems(itemCards, cost) {
 	return energy.length >= anyCost.length
 }
 
-export function hasSingleUse(playerState, id) {
+export function hasSingleUse(playerState, id, isUsed = false) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
-	return suCard?.cardId === id && !suUsed
+	return suCard?.cardId === id && suUsed === isUsed
 }
 
 export function applySingleUse(playerState) {

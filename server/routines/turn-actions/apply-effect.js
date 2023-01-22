@@ -93,6 +93,10 @@ function* applyEffectSaga(turnAction, state) {
 	} else if (singleUseInfo.id === 'milk_bucket') {
 		if (pickedRow === null) return 'INVALID'
 		pickedRow.ailments = pickedRow.ailments.filter((a) => a !== 'poison')
+	} else if (singleUseInfo.id === 'clock') {
+		// TODO - Message on FE
+		if (gameState.turn < 2) return 'INVALID'
+		// skip turn logic in turn cycle
 	} else {
 		return 'INVALID'
 	}
