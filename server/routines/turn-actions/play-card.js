@@ -4,11 +4,17 @@ import {equalCard} from '../../utils'
 function* playCardSaga(action, state) {
 	const {currentPlayer, opponentPlayer, pastTurnActions, availableActions} =
 		state
-	const {card, rowHermitCard, rowIndex, slotIndex} = action.payload
+	const {card, rowHermitCard, rowIndex, slotIndex, slotType} = action.payload
 	const cardInfo = CARDS[card.cardId]
 	console.log('Playing card: ', card.cardId)
 
-	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return
+	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
+		return 'INVALID'
+
+	const suBucket =
+		slotType == 'single_use' &&
+		['water_bucket', 'milk_bucket'].includes(cardInfo.id)
+	if (cardInfo.type !== slotType && !suBucket) return 'INVALID'
 
 	if (cardInfo.type === 'hermit') {
 		if (rowHermitCard) return
@@ -34,7 +40,7 @@ function* playCardSaga(action, state) {
 		if (!availableActions.includes('PLAY_ITEM_CARD')) return
 		hermitRow.itemCards[slotIndex] = card
 		pastTurnActions.push('PLAY_ITEM_CARD')
-	} else if (cardInfo.type === 'effect') {
+	} else if (cardInfo.type === 'effect' && !suBucket) {
 		if (!rowHermitCard) return
 		const hermitRow = currentPlayer.board.rows.find((row) =>
 			equalCard(row.hermitCard, rowHermitCard)
@@ -44,7 +50,7 @@ function* playCardSaga(action, state) {
 		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
-	} else if (cardInfo.type === 'single_use') {
+	} else if (cardInfo.type === 'single_use' || suBucket) {
 		// TODO - dont apply single_use card on effect slot (or any other row slot)
 		// TODO - INFO - fire/poison damage is applied first when it is used and then at the beginning of a turn of the player that use the effect
 		// TODO - INFO - Golden Axe ignored totem of undying (that is it kills the opponent's hermit regardless)

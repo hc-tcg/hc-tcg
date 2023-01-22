@@ -35,6 +35,10 @@ export function getStarterPack() {
 				'golden_apple',
 				'splash_potion_of_healing',
 				'chorus_fruit',
+				'lava_bucket',
+				'splash_potion_of_poison',
+				'milk_bucket',
+				'water_bucket',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -50,7 +54,22 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'chorus_fruit',
+		cardId: 'lava_bucket',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'splash_potion_of_poison',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'milk_bucket',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'water_bucket',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
@@ -74,6 +93,7 @@ export function getEmptyRow() {
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
+		ailments: [],
 	}
 }
 

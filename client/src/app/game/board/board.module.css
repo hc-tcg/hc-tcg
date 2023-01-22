@@ -113,3 +113,25 @@
 	width: 0;
 	min-width: 0;
 }
+
+.fireAilment {
+	position: absolute;
+	left: -20px;
+	bottom: -40px;
+	width: 75px;
+	background: url(images/fire-anim.gif) no-repeat;
+	filter: blur(1px);
+	height: 75px;
+	background-size: contain;
+}
+
+.poisonAilment {
+	position: absolute;
+	right: -40px;
+	bottom: -45px;
+	width: 75px;
+	background: url(images/poison-anim.gif) no-repeat;
+	filter: blur(1px);
+	height: 75px;
+	background-size: contain;
+}

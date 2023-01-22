@@ -237,6 +237,12 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			if (!playersAlive) break
 		}
 
+		// Apply damage from ailments
+		for (let row of opponentPlayer.board.rows) {
+			if (row.ailments.includes('fire')) row.health -= 20
+			if (row.ailments.includes('poison')) row.health -= 20
+		}
+
 		// TODO - Inform player if he won
 		const playersAlive = yield call(checkHermitHealth, gameState)
 		if (!playersAlive) {

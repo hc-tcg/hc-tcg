@@ -17,6 +17,7 @@ const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 const PICK_PROCESSES: Record<string, string> = {
 	afk_opponent_hermit: 'Select afk hermit to attack',
 	any_player_hermit: 'Select one of your hermits to apply the effect',
+	any_opponent_hermit: "Select one of opponent's hermits to apply the effect",
 }
 
 const renderModal = (

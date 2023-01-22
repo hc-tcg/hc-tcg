@@ -34,7 +34,19 @@ const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
 			})}
 		>
 			{card ? (
-				<Card card={card} />
+				<>
+					<Card card={card} />
+					{type === 'health' &&
+					rowState &&
+					rowState.ailments.includes('fire') ? (
+						<div className={css.fireAilment} />
+					) : null}
+					{type === 'health' &&
+					rowState &&
+					rowState.ailments.includes('poison') ? (
+						<div className={css.poisonAilment} />
+					) : null}
+				</>
 			) : (
 				<img draggable="false" className={css.frame} src="/images/frame.png" />
 			)}

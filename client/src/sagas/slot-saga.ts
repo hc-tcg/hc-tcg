@@ -32,19 +32,31 @@ function* pickWithSelectedSaga(
 		console.log('Unknown card id: ', selectedCard)
 		return
 	}
-	if (selectedCardInfo.type !== slotType) {
+
+	const suBucket =
+		slotType == 'single_use' &&
+		['water_bucket', 'milk_bucket'].includes(selectedCardInfo.id)
+	if (selectedCardInfo.type !== slotType && !suBucket) {
 		console.log(
 			`Invalid slot. Trying to place card of type [${selectedCardInfo.type}] to a slot of type [${slotType}]`
 		)
 		return
 	}
 
+	yield put({
+		type: 'PLAY_CARD',
+		payload: {card: selectedCard, ...action.payload},
+	})
+
 	if (slotType === 'single_use') {
-		yield put({type: 'PLAY_CARD', payload: {card: selectedCard}})
 		if (
-			['instant_health', 'instant_health_ii', 'golden_apple'].includes(
-				selectedCard.cardId
-			)
+			[
+				'instant_health',
+				'instant_health_ii',
+				'golden_apple',
+				'milk_bucket',
+				'water_bucket',
+			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_PICK_PROCESS', payload: 'any_player_hermit'})
 			const result = yield call(pickProcessSaga, {
@@ -53,14 +65,15 @@ function* pickWithSelectedSaga(
 			})
 			if (!result) return
 			yield put({type: 'APPLY_EFFECT', payload: {singleUsePick: result}})
-		} else if (['splash_potion_of_healing'].includes(selectedCard.cardId)) {
+		} else if (
+			[
+				'splash_potion_of_healing',
+				'lava_bucket',
+				'splash_potion_of_poison',
+			].includes(selectedCard.cardId)
+		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
 		}
-	} else {
-		yield put({
-			type: 'PLAY_CARD',
-			payload: {card: selectedCard, ...action.payload},
-		})
 	}
 
 	yield put({type: 'SET_SELECTED_CARD', payload: null})
