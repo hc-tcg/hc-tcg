@@ -1,7 +1,13 @@
 import {take, spawn, actionChannel, call} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
-import {equalCard, hasEnoughItems} from '../utils'
+import DAMAGE from '../const/damage'
+import {
+	equalCard,
+	hasEnoughItems,
+	discardSingleUse,
+	hasSingleUse,
+} from '../utils'
 import {getGameState, getEmptyRow} from '../utils/state-gen'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
@@ -36,12 +42,22 @@ function getAvailableActions(
 	) {
 		actions.push('APPLY_EFFECT')
 	}
+
+	// Player can't change active hermit if I he has no other hermits
+	const hasOtherHermit = playerState.board.rows.some(
+		(row, index) => row.hermitCard && index !== playerState.board.activeRow
+	)
+	const chorusFruit = hasSingleUse(playerState, 'chorus_fruit')
 	if (
-		pastTurnActions.includes('PRIMARY_ATTACK') ||
-		pastTurnActions.includes('SECONDARY_ATTACK') ||
-		pastTurnActions.includes('ZERO_ATTACK') ||
+		pastTurnActions.includes('ATTACK') ||
 		pastTurnActions.includes('CHANGE_ACTIVE_HERMIT')
 	) {
+		if (
+			chorusFruit &&
+			hasOtherHermit &&
+			!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT')
+		)
+			actions.push('CHANGE_ACTIVE_HERMIT')
 		return actions
 	}
 
@@ -49,14 +65,7 @@ function getAvailableActions(
 	// or you can't add more hermits if all rows are filled)
 	actions.push('ADD_HERMIT')
 
-	// nemuzu zmenit aktivniho hermita kdyz neni zadne ve hre
-	// nebo kdyz mam jen jendoho ktery uz je aktivni
-	const hasOtherHermit = playerState.board.rows.some(
-		(row, index) => row.hermitCard && index !== playerState.board.activeRow
-	)
-	if (hasOtherHermit) {
-		actions.push('CHANGE_ACTIVE_HERMIT')
-	}
+	if (hasOtherHermit) actions.push('CHANGE_ACTIVE_HERMIT')
 
 	const {activeRow, rows} = playerState.board
 	if (activeRow !== null) {
@@ -66,7 +75,12 @@ function getAvailableActions(
 			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-			actions.push('ZERO_ATTACK')
+			if (
+				!playerState.board.singleUseCardUsed &&
+				DAMAGE[playerState.board.singleUseCard?.cardId]
+			) {
+				actions.push('ZERO_ATTACK')
+			}
 			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
 				actions.push('PRIMARY_ATTACK')
 			}
@@ -199,11 +213,8 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 				// TODO - continue on invalid?
 				yield call(playCardSaga, turnAction, state)
 			} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
-				if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) continue
 				const result = yield call(changeActiveHermitSaga, turnAction, state)
 				if (result === 'INVALID') continue
-				// TODO - Don't block other actions if this happens after a hermit is killed
-				pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
 			} else if (turnAction.type === 'APPLY_EFFECT') {
 				if (!availableActions.includes('APPLY_EFFECT')) continue
 				const result = yield call(applyEffectSaga, turnAction, state)
@@ -214,7 +225,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 				if (!typeAction || !availableActions.includes(typeAction)) continue
 				const result = yield call(attackSaga, turnAction, state)
 				if (result === 'INVALID') continue
-				pastTurnActions.push(typeAction)
+				pastTurnActions.push('ATTACK')
 			} else if (turnAction.type === 'END_TURN') {
 				if (!availableActions.includes('END_TURN')) continue
 				break
@@ -246,13 +257,8 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 		if (drawCard) currentPlayer.hand.push(drawCard)
 
 		// If player has not used his single use card return it to hand
-		if (currentPlayer.board.singleUseCard) {
-			if (currentPlayer.board.singleUseCardUsed === false) {
-				currentPlayer.hand.push(currentPlayer.board.singleUseCard)
-			}
-			currentPlayer.board.singleUseCard = null
-			currentPlayer.board.singleUseCardUsed = false
-		}
+		// otherwise move it to discarded pile
+		discardSingleUse(currentPlayer)
 	}
 }
 

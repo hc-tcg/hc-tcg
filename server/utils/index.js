@@ -34,3 +34,29 @@ export function hasEnoughItems(itemCards, cost) {
 	// check if remaining energy is enough to cover required "any" cost
 	return energy.length >= anyCost.length
 }
+
+export function hasSingleUse(playerState, id) {
+	const suCard = playerState.board.singleUseCard
+	const suUsed = playerState.board.singleUseCardUsed
+	return suCard?.cardId === id && !suUsed
+}
+
+export function applySingleUse(playerState) {
+	const suCard = playerState.board.singleUseCard
+	const suUsed = playerState.board.singleUseCardUsed
+	if (!suCard) return
+	playerState.board.singleUseCardUsed = true
+}
+
+export function discardSingleUse(playerState) {
+	const suCard = playerState.board.singleUseCard
+	const suUsed = playerState.board.singleUseCardUsed
+	if (!suCard) return
+	if (suUsed) {
+		playerState.discarded.push(suCard)
+	} else {
+		playerState.hand.push(suCard)
+	}
+	playerState.board.singleUseCardUsed = false
+	playerState.board.singleUseCard = null
+}

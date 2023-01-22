@@ -8,6 +8,7 @@ import Card from 'components/card'
 import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
+import ConfirmModal from './modals/confirm-modal'
 import MouseIndicator from './mouse-indicator'
 import {equalCard} from 'server/utils'
 
@@ -24,6 +25,8 @@ const renderModal = (
 ) => {
 	const closeModal = () => setOpenedModalId(null)
 	if (openedModalId === 'attack') return <AttackModal closeModal={closeModal} />
+	else if (openedModalId === 'confirm')
+		return <ConfirmModal closeModal={closeModal} />
 	return null
 }
 

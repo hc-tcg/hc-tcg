@@ -33,6 +33,8 @@ export function getStarterPack() {
 				'instant_health',
 				'instant_health_ii',
 				'golden_apple',
+				'splash_potion_of_healing',
+				'chorus_fruit',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -46,6 +48,11 @@ export function getStarterPack() {
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
+
+	pack.unshift({
+		cardId: 'chorus_fruit',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
 
 	// ensure a hermit in first 5 cards
 	const firstHermitIndex = pack.findIndex(

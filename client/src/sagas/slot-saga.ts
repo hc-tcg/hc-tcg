@@ -53,6 +53,8 @@ function* pickWithSelectedSaga(
 			})
 			if (!result) return
 			yield put({type: 'APPLY_EFFECT', payload: {singleUsePick: result}})
+		} else if (['splash_potion_of_healing'].includes(selectedCard.cardId)) {
+			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
 		}
 	} else {
 		yield put({

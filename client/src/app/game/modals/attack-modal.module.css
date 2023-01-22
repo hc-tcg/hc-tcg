@@ -78,6 +78,20 @@
 	width: 16px;
 	height: 16px;
 	overflow: hidden;
+	margin-right: 2px;
+	transform: translateY(-1px);
+}
+
+.attackOperator {
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
+.description {
+	display: flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	line-height: 1;
 }
 
 .description img {

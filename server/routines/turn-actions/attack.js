@@ -2,6 +2,7 @@ import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
 import PROTECTION from '../../const/protection'
 import DAMAGE from '../../const/damage'
+import {hasSingleUse, applySingleUse} from '../../utils'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
@@ -30,7 +31,7 @@ function* attackSaga(turnAction, state) {
 	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
 	const singleUseDamage = singleUseInfo ? DAMAGE[singleUseInfo.id] : null
 
-	if (singleUseDamage) currentPlayer.board.singleUseCardUsed = true
+	if (singleUseDamage) applySingleUse(currentPlayer)
 	if (!hermitInfo.hasOwnProperty(type) && !singleUseDamage) {
 		console.log('Invalid attack')
 		return 'INVALID'
