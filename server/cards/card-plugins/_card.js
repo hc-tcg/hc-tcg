@@ -16,3 +16,5 @@ class Card {
 		this.type = defs.type
 	}
 }
+
+export default Card

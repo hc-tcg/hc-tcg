@@ -1,11 +1,11 @@
 import CARDS from '../../cards'
 import {equalCard} from '../../utils'
 
-function* applyEffectSaga(turnAction, state) {
+function* applyEffectSaga(game, turnAction, derivedState) {
 	// TODO - This shouldn't be needed
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer, opponentPlayer, gameState} = state
+	const {currentPlayer, opponentPlayer, gameState} = derivedState
 	const singleUseCard = currentPlayer.board.singleUseCard
 	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
 	const {singleUsePick} = turnAction.payload
@@ -49,57 +49,18 @@ function* applyEffectSaga(turnAction, state) {
 	const pickedCard = pickedRow?.hermitCard
 	const pickedCardInfo = pickedCard ? CARDS[pickedCard.cardId] : null
 
-	if (singleUseInfo.id === 'instant_health') {
-		pickedRow.health = Math.min(
-			pickedRow.health + 30,
-			pickedCardInfo.health // max health
-		)
-	} else if (singleUseInfo.id === 'instant_health_ii') {
-		pickedRow.health = Math.min(
-			pickedRow.health + 60,
-			pickedCardInfo.health // max health
-		)
-	} else if (singleUseInfo.id === 'golden_apple') {
-		pickedRow.health = Math.min(
-			pickedRow.health + 100,
-			pickedCardInfo.health // max health
-		)
-	} else if (singleUseInfo.id === 'splash_potion_of_healing') {
-		for (let row of currentPlayer.board.rows) {
-			if (!row.hermitCard) continue
-			const currentRowInfo = CARDS[row.hermitCard.cardId]
-			if (!currentRowInfo) continue
-			row.health = Math.min(row.health + 20, currentRowInfo.health)
-		}
-	} else if (singleUseInfo.id === 'splash_potion_of_poison') {
-		if (opponentActiveRow === null) return 'INVALID'
-		if (opponentEffectCardInfo?.id === 'milk_bucket') {
-			// TODO - move to discard pile
-			opponentActiveRow.effectCard = null
-		} else {
-			opponentActiveRow.ailments.push('poison')
-		}
-	} else if (singleUseInfo.id === 'lava_bucket') {
-		if (opponentActiveRow === null) return 'INVALID'
-		if (opponentEffectCardInfo?.id === 'water_bucket') {
-			// TODO - move to discard pile
-			opponentActiveRow.effectCard = null
-		} else {
-			opponentActiveRow.ailments.push('fire')
-		}
-	} else if (singleUseInfo.id === 'water_bucket') {
-		if (pickedRow === null) return 'INVALID'
-		pickedRow.ailments = pickedRow.ailments.filter((a) => a !== 'fire')
-	} else if (singleUseInfo.id === 'milk_bucket') {
-		if (pickedRow === null) return 'INVALID'
-		pickedRow.ailments = pickedRow.ailments.filter((a) => a !== 'poison')
-	} else if (singleUseInfo.id === 'clock') {
-		// TODO - Message on FE
-		if (gameState.turn < 2) return 'INVALID'
-		// skip turn logic in turn cycle
-	} else {
-		return 'INVALID'
-	}
+	if (!singleUseInfo) return 'INVALID'
+	const applyEffectResult = game.hooks.applyEffect.call(turnAction, {
+		...derivedState,
+		pickedRow,
+		pickedCard,
+		pickedCardInfo,
+		singleUseInfo,
+		opponentActiveRow,
+		opponentEffectCardInfo,
+	})
+
+	if (applyEffectResult !== 'DONE') return 'INVALID'
 
 	currentPlayer.board.singleUseCardUsed = true
 }

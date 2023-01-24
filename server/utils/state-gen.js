@@ -1,6 +1,7 @@
 import CARDS from '../cards'
 import DAMAGE from '../const/damage'
 import PROTECTION from '../const/protection'
+import STRENGTHS from '../const/strengths'
 
 export function getStarterPack() {
 	// ['zombiecleo_common', 'zedaphplays_rare', 'ethoslab_ultra_rare']
@@ -15,7 +16,19 @@ export function getStarterPack() {
 	*/
 	// TODO - Beef had 42 cards in decks for TangoVsXisuma match (also in EP41 he said 42 is max)
 	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
-	const hermits = allCards.filter((card) => card.type === 'hermit').slice(0, 9)
+
+	// HERMITS
+	const hermitTypes = Object.keys(STRENGTHS)
+		.sort(() => 0.5 - Math.random())
+		.slice(0, 3)
+
+	const hermits = allCards
+		.filter(
+			(card) => card.type === 'hermit' && hermitTypes.includes(card.hermitType)
+		)
+		.slice(0, 9)
+
+	// ITEMS
 	let items = allCards
 		.filter(
 			(card) =>
@@ -24,6 +37,8 @@ export function getStarterPack() {
 		)
 		.slice(0, 8)
 	items = [...items, ...items]
+
+	// EFFECTS
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
 		.filter((card) =>
@@ -39,6 +54,8 @@ export function getStarterPack() {
 				'splash_potion_of_poison',
 				'milk_bucket',
 				'water_bucket',
+				'wolf',
+				'totem',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -54,7 +71,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'clock',
+		cardId: 'golden_axe',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'totem',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

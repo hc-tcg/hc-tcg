@@ -1,7 +1,7 @@
 import {equalCard, hasSingleUse, applySingleUse} from '../../utils'
 
-function* changeActiveHermit(turnAction, state) {
-	const {currentPlayer, availableActions, pastTurnActions} = state
+function* changeActiveHermit(game, turnAction, derivedState) {
+	const {currentPlayer, availableActions, pastTurnActions} = derivedState
 	if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) return 'INVALID'
 
 	const rowHermitCard = turnAction.payload.rowHermitCard
@@ -13,10 +13,7 @@ function* changeActiveHermit(turnAction, state) {
 		currentPlayer.board.activeRow = result
 	}
 
-	const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
-	if (pastTurnActions.includes('ATTACK') && chorusFruit) {
-		applySingleUse(currentPlayer)
-	}
+	game.hooks.changeActiveHermit.call(turnAction, derivedState)
 
 	// After a player has a hermit killed, he can acitve next one
 	// without losing the ability to attack again

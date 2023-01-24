@@ -1,7 +1,5 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
-import PROTECTION from '../../const/protection'
-import DAMAGE from '../../const/damage'
 import {hasSingleUse, applySingleUse} from '../../utils'
 
 export const ATTACK_TO_ACTION = {
@@ -12,8 +10,8 @@ export const ATTACK_TO_ACTION = {
 
 export const WEAKNESS_DAMAGE = 20
 
-function* attackSaga(turnAction, state) {
-	const {currentPlayer, opponentPlayer} = state
+function* attackSaga(game, turnAction, derivedState) {
+	const {currentPlayer, opponentPlayer} = derivedState
 	const {type, singleUsePick} = turnAction.payload
 	const typeAction = ATTACK_TO_ACTION[type]
 	if (!typeAction) {
@@ -21,62 +19,98 @@ function* attackSaga(turnAction, state) {
 		return 'INVALID'
 	}
 	// TODO - send hermitCard from frontend for validation?
-	const hermitCard =
-		currentPlayer.board.rows[currentPlayer.board.activeRow].hermitCard
-	const hermitInfo = CARDS[hermitCard.cardId]
+
+	const attackerActiveRow =
+		currentPlayer.board.rows[currentPlayer.board.activeRow]
+	const opponentActiveRow =
+		opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+	const afkTargetRow =
+		singleUsePick && singleUsePick.rowIndex !== opponentPlayer.board.activeRow
+			? opponentPlayer.board.rows[singleUsePick.rowIndex]
+			: null
+
+	if (!attackerActiveRow) return 'INVALID'
+
+	const attackerHermitCard = attackerActiveRow.hermitCard
+	const attackerHermitInfo = CARDS[attackerHermitCard.cardId]
+	if (!attackerHermitInfo) return 'INVALID'
+	const strengths = STRENGTHS[attackerHermitInfo.hermitType]
 
 	const singleUseCard = !currentPlayer.board.singleUseCardUsed
 		? currentPlayer.board.singleUseCard
 		: null
 	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
-	const singleUseDamage = singleUseInfo ? DAMAGE[singleUseInfo.id] : null
 
-	if (singleUseDamage) applySingleUse(currentPlayer)
-	if (!hermitInfo.hasOwnProperty(type) && !singleUseDamage) {
-		console.log('Invalid attack')
-		return 'INVALID'
+	const makeTarget = (row) => ({
+		row,
+		effectCardId: row.effectCard?.cardId,
+		isActive: row === opponentActiveRow,
+		damage: 0,
+		protection: 0,
+		recover: 0,
+		discardProtection: false,
+		ignoreProtection: false,
+		backlash: 0,
+	})
+	const targets = []
+	if (opponentActiveRow?.hermitCard) {
+		targets.push(makeTarget(opponentActiveRow))
+	}
+	if (afkTargetRow?.hermitCard) {
+		targets.push(makeTarget(afkTargetRow))
 	}
 
-	const targetDamage =
-		(hermitInfo[type]?.damage || 0) + (singleUseDamage?.target || 0)
-
-	const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-	const attackerRow = currentPlayer.board.rows[currentPlayer.board.activeRow]
-	const afkTargetRow =
-		singleUsePick &&
-		singleUseDamage?.afkTarget &&
-		singleUsePick.rowIndex !== opponentPlayer.board.activeRow
-			? opponentPlayer.board.rows[singleUsePick.rowIndex]
-			: null
-	if (!targetRow || !attackerRow) return 'INVALID'
-
-	const targets = [{row: targetRow, damage: targetDamage}]
-	if (afkTargetRow)
-		targets.push({row: afkTargetRow, damage: singleUseDamage.afkTarget})
+	if (!targets.length) return 'INVALID'
 
 	for (let target of targets) {
-		const targetHermitInfo = CARDS[target.row.hermitCard?.cardId]
-		if (!targetHermitInfo) continue
+		const result = game.hooks.attack.call(target, turnAction, {
+			...derivedState,
+			singleUseInfo,
+		})
 
-		// PROTECTIONS
-		const protection = PROTECTION[target.row.effectCard?.cardId]
-		let targetProtection = protection?.target || 0
-		if (singleUseInfo?.id === 'golden_axe') targetProtection = 0
-		// TODO - Move to discard pile
-		if (protection?.discard) target.row.effectCard = null
-
-		// STRENGTHS & WEAKNESSES
-		const strengths = STRENGTHS[hermitInfo.hermitType]
+		const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
+		const hermitAttack = target.isActive
+			? attackerHermitInfo[type]?.damage || 0
+			: 0
+		const health = target.row.health
+		const maxHealth = targetHermitInfo.health
+		const protection = target.ignoreProtection ? 0 : target.protection
 		const weaknessDamage = strengths.includes(targetHermitInfo.hermitType)
 			? WEAKNESS_DAMAGE
 			: 0
+		const totalDamage = Math.max(
+			hermitAttack + target.damage + weaknessDamage - protection
+		)
+		target.row.health = Math.min(maxHealth, health - totalDamage)
 
-		const totalDamage = target.damage + weaknessDamage - targetProtection
-		target.row.health -= Math.max(totalDamage, 0)
+		// hacky way to make golden_axe bypass totem
+		if (target.row.health < 0 && !target.ignoreProtection && target.recover) {
+			target.row.health = target.recover
+			target.row.ailments = []
+			// TODO - move to discard pile
+			target.row.effectCard = null
+		}
+
+		console.log('ATTACK: ', {
+			target,
+			hermitAttack,
+			health,
+			maxHealth,
+			protection,
+			weaknessDamage,
+			totalDamage,
+		})
+
+		if (target.discardProtection) {
+			// TODO - move to discard pile
+			target.row.effectCard = null
+		}
+
+		attackerActiveRow.health -= target.backlash
 	}
 
-	// I assume that armor/shield is not applied when receiving backlash
-	attackerRow.health -= singleUseDamage ? singleUseDamage.self || 0 : 0
+	const anyDamage = targets.some((target) => target.damage)
+	if (anyDamage) applySingleUse(currentPlayer)
 
 	return 'DONE'
 }

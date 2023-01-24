@@ -8,7 +8,7 @@ Splash Potion of Healing - heal all your hermits
 Chorus fruit - allow to change hermit after attack
 Lava Bucket
 Splash Potion of Poison
-Clock (note, handle case when clock is used in the same turn enemy hermit dies -> activeRow can be null)
+Clock (TODO - handle cases when clock is used in the same turn enemy hermit dies -> activeRow can be null)
 Composter
 Flint & Steel
 Fishing Rod

@@ -23,3 +23,4 @@
 	https://www.youtube.com/watch?v=TiOUq2DsWKw&t=21s - 12:10 - says no
 # Crossbow - Are weaknesses applied to the damage to afk (so 30dmg instead of 10?) If so if both active or afkf hermit are weak do both receive extra 20dmg?
 # Does hermit keep shield/golden_armor after being attacked with golden axe?
+# When I kill myself using TNT attack, should I pick new active hermit this turn or wait for the next one?

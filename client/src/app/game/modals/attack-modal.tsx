@@ -61,7 +61,9 @@ function AttackModal({closeModal}: Props) {
 			: null
 
 	const protectionAmount =
-		PROTECTION[opponentRow.effectCard?.cardId as any]?.target || 0
+		suAttackInfo && singleUseInfo?.id === 'golden_axe'
+			? 0
+			: PROTECTION[opponentRow.effectCard?.cardId as any]?.target || 0
 
 	const hasWeakness = Strengths[playerHermitInfo.hermitType].includes(
 		opponentHermitInfo.hermitType
@@ -147,7 +149,7 @@ function AttackModal({closeModal}: Props) {
 								<div className={css.damageAmount}>20</div>
 							</>
 						) : null}
-						{opponentEffectInfo ? (
+						{opponentEffectInfo && protectionAmount ? (
 							<>
 								<div className={css.attackOperator}>-</div>
 								<img
