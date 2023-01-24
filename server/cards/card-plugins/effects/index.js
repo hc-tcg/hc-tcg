@@ -7,6 +7,7 @@ import DiamondArmorEffectCard from './diamond-armor'
 import NetheriteArmorEffectCard from './netherite-armor'
 import WolfEffectCard from './wolf'
 import TotemEffectCard from './totem'
+import BedEffectCard from './bed'
 
 function registerCards(game) {
 	new WaterBucketEffectCard().register(game)
@@ -16,7 +17,7 @@ function registerCards(game) {
 	new GoldArmorEffectCard().register(game)
 	new DiamondArmorEffectCard().register(game)
 	new NetheriteArmorEffectCard().register(game)
-	new TotemEffectCard().register(game)
+	new BedEffectCard().register(game)
 }
 
 export default registerCards

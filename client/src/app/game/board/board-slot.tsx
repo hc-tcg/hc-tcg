@@ -41,10 +41,17 @@ const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
 					rowState.ailments.includes('fire') ? (
 						<div className={css.fireAilment} />
 					) : null}
+
 					{type === 'health' &&
 					rowState &&
 					rowState.ailments.includes('poison') ? (
 						<div className={css.poisonAilment} />
+					) : null}
+
+					{type === 'health' &&
+					rowState &&
+					rowState.ailments.includes('sleeping') ? (
+						<div className={css.sleepingAilment} />
 					) : null}
 				</>
 			) : (

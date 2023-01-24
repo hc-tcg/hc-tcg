@@ -1,16 +1,18 @@
 import CARDS from '../../cards'
 import {equalCard} from '../../utils'
 
-function* playCardSaga(action, state) {
+function* playCardSaga(game, turnAction, derivedState) {
 	const {currentPlayer, opponentPlayer, pastTurnActions, availableActions} =
-		state
-	const {card, rowHermitCard, rowIndex, slotIndex, slotType} = action.payload
+		derivedState
+	const {card, rowHermitCard, rowIndex, slotIndex, slotType} =
+		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
 	console.log('Playing card: ', card.cardId)
 
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'
 
+	// TODO - move logic to water/milk bucket plugins
 	const suBucket =
 		slotType == 'single_use' &&
 		['water_bucket', 'milk_bucket'].includes(cardInfo.id)
@@ -21,6 +23,7 @@ function* playCardSaga(action, state) {
 		if (!currentPlayer.board.rows[rowIndex]) return
 		if (currentPlayer.board.rows[rowIndex].hermitCard) return
 		if (!availableActions.includes('ADD_HERMIT')) return
+
 		currentPlayer.board.rows[rowIndex] = {
 			...currentPlayer.board.rows[rowIndex],
 			hermitCard: card,
@@ -64,6 +67,8 @@ function* playCardSaga(action, state) {
 	currentPlayer.hand = currentPlayer.hand.filter(
 		(handCard) => !equalCard(handCard, card)
 	)
+
+	game.hooks.playCard.get(cardInfo.type)?.call(turnAction, derivedState)
 
 	return 'DONE'
 }

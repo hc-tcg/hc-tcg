@@ -135,3 +135,14 @@
 	height: 75px;
 	background-size: contain;
 }
+
+.sleepingAilment {
+	position: absolute;
+	left: -3px;
+	top: 20px;
+	width: 22px;
+	background: url(images/sleeping-anim.gif) no-repeat;
+	height: 22px;
+	filter: grayscale(100%);
+	background-size: contain;
+}

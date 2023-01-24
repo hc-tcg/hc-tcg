@@ -10,7 +10,7 @@ export type BoardRowT = {
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
 	health: number | null
-	ailments: Array<'poison' | 'fire'>
+	ailments: Array<'poison' | 'fire' | 'sleeping'>
 }
 
 export type PlayerState = {

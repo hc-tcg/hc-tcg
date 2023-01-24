@@ -71,12 +71,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'golden_axe',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'totem',
+		cardId: 'bed',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

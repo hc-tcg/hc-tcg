@@ -9,13 +9,12 @@ class ClockSingleUseCard extends SingleUseCard {
 			rarity: 'ultra_rare',
 			description: 'Opponent skips their next turn.\n\nDiscard after use.',
 		})
-		this.skipTurn = false
 	}
 	register(game) {
 		game.hooks.turnStart.tap(this.id, () => {
-			if (this.skipTurn) {
+			if (game.skipTurn) {
 				console.log('Turn skipped')
-				this.skipTurn = false
+				delete game.skipTurn
 				return 'SKIP'
 			}
 		})
@@ -23,7 +22,7 @@ class ClockSingleUseCard extends SingleUseCard {
 		game.hooks.turnEnd.tap(this.id, (derivedState) => {
 			const {currentPlayer} = derivedState
 			const clockActivated = hasSingleUse(currentPlayer, 'clock', true)
-			if (clockActivated) this.skipTurn = true
+			if (clockActivated) game.skipTurn = true
 		})
 
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

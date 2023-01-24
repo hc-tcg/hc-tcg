@@ -13,7 +13,7 @@ import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
-import {SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
+import {HookMap, SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
 import registerCards from '../cards/card-plugins'
 
 // TURN ACTIONS:
@@ -135,8 +135,7 @@ function* checkHermitHealth(gameState) {
 
 function* turnActionSaga(game, turnAction, derivedState) {
 	// TODO - avoid having socket in actions
-	const {socket, ...logTurnAction} = turnAction
-	console.log('TURN ACTION: ', logTurnAction)
+	console.log('TURN ACTION: ', turnAction.type)
 
 	const {availableActions, pastTurnActions} = derivedState
 
@@ -144,7 +143,7 @@ function* turnActionSaga(game, turnAction, derivedState) {
 
 	if (turnAction.type === 'PLAY_CARD') {
 		// TODO - continue on invalid?
-		yield call(playCardSaga, turnAction, derivedState)
+		yield call(playCardSaga, game, turnAction, derivedState)
 		//
 	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 		yield call(changeActiveHermitSaga, game, turnAction, derivedState)
@@ -209,7 +208,12 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	turn_actions_cycle: while (true) {
 		if (turnStart === 'SKIP') break
 
-		const availableActions = getAvailableActions(game, derivedState)
+		let availableActions = getAvailableActions(game, derivedState)
+		availableActions = game.hooks.availableActions.call(
+			availableActions,
+			derivedState
+		)
+
 		// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 		gamePlayerIds.forEach((playerId) => {
 			allPlayers[playerId].socket.emit('GAME_STATE', {
@@ -267,9 +271,13 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 		hooks: {
 			gameStart: new SyncHook([]),
 			turnStart: new SyncBailHook(['derived']),
+			availableActions: new SyncWaterfallHook(['availableActions', 'derived']),
 			actionStart: new SyncHook(['turnAction', 'derived']),
 			applyEffect: new SyncBailHook(['turnAction', 'derived']),
 			attack: new SyncWaterfallHook(['result', 'turnAction', 'derived']),
+			playCard: new HookMap(
+				(cardType) => new SyncHook(['turnAction', 'derived'])
+			),
 			changeActiveHermit: new SyncHook(['turnAction', 'derived']),
 			actionEnd: new SyncHook(['turnAction', 'derived']),
 			turnEnd: new SyncHook(['derived']),

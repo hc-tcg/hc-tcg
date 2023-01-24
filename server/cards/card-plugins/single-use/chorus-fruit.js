@@ -20,23 +20,27 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			}
 		})
 
-		game.hooks.actionStart.tap(this.id, (turnAction, derivedState) => {
-			const {availableActions, pastTurnActions, currentPlayer} = derivedState
-			const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
-			const hasOtherHermit = currentPlayer.board.rows.some(
-				(row, index) =>
-					row.hermitCard && index !== currentPlayer.board.activeRow
-			)
-			if (
-				chorusFruit &&
-				hasOtherHermit &&
-				pastTurnActions.includes('ATTACK') &&
-				!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-				!availableActions.push('CHANGE_ACTIVE_HERMIT')
-			) {
-				availableActions.push('CHANGE_ACTIVE_HERMIT')
+		game.hooks.availableActions.tap(
+			this.id,
+			(availableActions, derivedState) => {
+				const {pastTurnActions, currentPlayer} = derivedState
+				const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
+				const hasOtherHermit = currentPlayer.board.rows.some(
+					(row, index) =>
+						row.hermitCard && index !== currentPlayer.board.activeRow
+				)
+				if (
+					chorusFruit &&
+					hasOtherHermit &&
+					pastTurnActions.includes('ATTACK') &&
+					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+				) {
+					availableActions.push('CHANGE_ACTIVE_HERMIT')
+				}
+				return availableActions
 			}
-		})
+		)
 	}
 }
 
