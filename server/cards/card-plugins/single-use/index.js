@@ -14,6 +14,7 @@ import GoldenAxeSingleUseCard from './golden-axe'
 import TNTSingleUseCard from './tnt'
 import ChorusFruitSingleUseCard from './chorus-fruit'
 import InvisibilityPotionSingleUseCard from './invisibility-potion'
+import FishingRodSingleUseCard from './fishing-rod'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -32,6 +33,7 @@ function registerCards(game) {
 	new TNTSingleUseCard().register(game)
 	new ChorusFruitSingleUseCard().register(game)
 	new InvisibilityPotionSingleUseCard().register(game)
+	new FishingRodSingleUseCard().register(game)
 }
 
 export default registerCards

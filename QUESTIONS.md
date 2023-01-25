@@ -25,3 +25,4 @@
 # Does hermit keep shield/golden_armor after being attacked with golden axe?
 # When I kill myself using TNT attack, should I pick new active hermit this turn or wait for the next one?
 # Does Bed sleeping activate after end turns or immediately (so player can't attack in the turn he used the bed?)
+# When you swap effect cards using an Emerald effect card, wehn the effect is discarded does it go the the original owner or the current one?

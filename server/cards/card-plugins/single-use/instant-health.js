@@ -1,5 +1,4 @@
 import SingleUseCard from './_single-use-card'
-import CARDS from '../../index'
 
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
