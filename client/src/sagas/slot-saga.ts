@@ -74,6 +74,7 @@ function* pickWithSelectedSaga(
 				'invisibility_potion',
 				'fishing_rod',
 				'emerald',
+				'flint_&_steel',
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})

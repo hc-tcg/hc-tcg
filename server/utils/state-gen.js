@@ -59,6 +59,7 @@ export function getStarterPack() {
 				'invisibility_potion',
 				'fishing_rod',
 				'emerald',
+				'flint_&_steel',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -74,7 +75,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'emerald',
+		cardId: 'flint_&_steel',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

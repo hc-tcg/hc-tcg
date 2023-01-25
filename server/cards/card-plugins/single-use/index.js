@@ -16,6 +16,7 @@ import ChorusFruitSingleUseCard from './chorus-fruit'
 import InvisibilityPotionSingleUseCard from './invisibility-potion'
 import FishingRodSingleUseCard from './fishing-rod'
 import EmeraldSingleUseCard from './emerald'
+import FlintAndSteelSingleUseCard from './flint-and-steel'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -36,6 +37,7 @@ function registerCards(game) {
 	new InvisibilityPotionSingleUseCard().register(game)
 	new FishingRodSingleUseCard().register(game)
 	new EmeraldSingleUseCard().register(game)
+	new FlintAndSteelSingleUseCard().register(game)
 }
 
 export default registerCards
