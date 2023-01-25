@@ -1,7 +1,9 @@
+import {useEffect, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import {RootState} from 'store'
 import HealthBar from 'components/health-bar'
+import Coin from 'components/coin'
 import {GameState, PlayerState, BoardRowT, CardT} from 'types/game-state'
 import css from './board.module.css'
 import Slot from './board-slot'
@@ -24,11 +26,25 @@ function Board({onClick, gameState}: Props) {
 	const boardState = gameState.players[gameState.turnPlayerId].board
 	const singleUseCard = boardState.singleUseCard
 	const singleUseCardUsed = boardState.singleUseCardUsed
+	const currentPlayer = useSelector((state: RootState) => {
+		if (!state.gameState) return null
+		const {players, turnPlayerId} = state.gameState
+		return players[turnPlayerId]
+	})
 
 	const availableActions = useSelector(
 		(state: RootState) => state.availableActions
 	)
 	const dispatch = useDispatch()
+
+	const [coinFlip, setCoinFlip] = useState<string | null>(null)
+	useEffect(() => {
+		setCoinFlip(currentPlayer?.coinFlip || null)
+		const timeout = setTimeout(() => {
+			setCoinFlip(null)
+		}, 3000)
+		return () => clearTimeout(timeout)
+	}, [currentPlayer?.coinFlip])
 
 	const handeRowClick = (
 		playerId: string,
@@ -87,7 +103,9 @@ function Board({onClick, gameState}: Props) {
 
 			<div className={css.middle}>
 				<img src="images/tcg1.png" draggable="false" width="100" />
-				{!availableActions.includes('WAIT_FOR_TURN') ? (
+				{coinFlip ? (
+					<Coin face={coinFlip} />
+				) : !availableActions.includes('WAIT_FOR_TURN') ? (
 					<button
 						onClick={endTurn}
 						disabled={!availableActions.includes('END_TURN')}

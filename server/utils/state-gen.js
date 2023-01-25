@@ -56,6 +56,7 @@ export function getStarterPack() {
 				'water_bucket',
 				'wolf',
 				'totem',
+				'invisibility_potion',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -71,7 +72,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'bed',
+		cardId: 'invisibility_potion',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
@@ -110,6 +111,7 @@ export function getPlayerState(allPlayers, playerId) {
 	return {
 		id: playerId,
 		playerName: allPlayers[playerId].playerName,
+		coinFlip: null,
 		lives: 3,
 		hand: pack.slice(0, 7), // 0.7
 		// TODO - hand out reward cards on kill

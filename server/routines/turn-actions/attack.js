@@ -51,6 +51,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		discardProtection: false,
 		ignoreProtection: false,
 		backlash: 0,
+		multiplier: 1,
 	})
 	const targets = []
 	if (opponentActiveRow?.hermitCard) {
@@ -78,9 +79,9 @@ function* attackSaga(game, turnAction, derivedState) {
 		const weaknessDamage = strengths.includes(targetHermitInfo.hermitType)
 			? WEAKNESS_DAMAGE
 			: 0
-		const totalDamage = Math.max(
-			hermitAttack + target.damage + weaknessDamage - protection
-		)
+		const totalDamage =
+			Math.max(hermitAttack + target.damage + weaknessDamage - protection, 0) *
+			target.multiplier
 		target.row.health = Math.min(maxHealth, health - totalDamage)
 
 		// hacky way to make golden_axe bypass totem
@@ -91,15 +92,15 @@ function* attackSaga(game, turnAction, derivedState) {
 			target.row.effectCard = null
 		}
 
-		console.log('ATTACK: ', {
-			target,
-			hermitAttack,
-			health,
-			maxHealth,
-			protection,
-			weaknessDamage,
-			totalDamage,
-		})
+		// console.log('ATTACK: ', {
+		// 	target,
+		// 	hermitAttack,
+		// 	health,
+		// 	maxHealth,
+		// 	protection,
+		// 	weaknessDamage,
+		// 	totalDamage,
+		// })
 
 		if (target.discardProtection) {
 			// TODO - move to discard pile

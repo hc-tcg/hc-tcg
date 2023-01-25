@@ -246,6 +246,8 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		if (row.ailments.includes('poison')) row.health -= 20
 	}
 
+	currentPlayer.coinFlip = null
+
 	game.hooks.turnEnd.call(derivedState)
 
 	// TODO - Inform player if he won

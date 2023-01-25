@@ -60,7 +60,10 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 		opponentEffectCardInfo,
 	})
 
-	if (applyEffectResult !== 'DONE') return 'INVALID'
+	if (applyEffectResult !== 'DONE') {
+		console.log('Invalid effect: ', singleUseInfo?.id)
+		return 'INVALID'
+	}
 
 	currentPlayer.board.singleUseCardUsed = true
 }

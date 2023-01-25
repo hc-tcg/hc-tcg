@@ -13,6 +13,7 @@ import NetheriteSwordSingleUseCard from './netherite-sword'
 import GoldenAxeSingleUseCard from './golden-axe'
 import TNTSingleUseCard from './tnt'
 import ChorusFruitSingleUseCard from './chorus-fruit'
+import InvisibilityPotionSingleUseCard from './invisibility-potion'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -30,6 +31,7 @@ function registerCards(game) {
 	new GoldenAxeSingleUseCard().register(game)
 	new TNTSingleUseCard().register(game)
 	new ChorusFruitSingleUseCard().register(game)
+	new InvisibilityPotionSingleUseCard().register(game)
 }
 
 export default registerCards
