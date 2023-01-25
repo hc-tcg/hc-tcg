@@ -58,6 +58,7 @@ export function getStarterPack() {
 				'totem',
 				'invisibility_potion',
 				'fishing_rod',
+				'emerald',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -73,7 +74,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'fishing_rod',
+		cardId: 'emerald',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

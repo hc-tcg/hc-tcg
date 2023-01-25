@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import CARDS from '../../../cards'
 
+// TODO - test this doesn't introduce issues when sleeping hermit dies
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({

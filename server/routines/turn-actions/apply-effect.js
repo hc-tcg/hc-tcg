@@ -56,6 +56,7 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 		pickedCard,
 		pickedCardInfo,
 		singleUseInfo,
+		playerActiveRow,
 		opponentActiveRow,
 		opponentEffectCardInfo,
 	})
