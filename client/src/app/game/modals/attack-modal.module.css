@@ -98,3 +98,7 @@
 	object-fit: scale-down;
 	vertical-align: bottom;
 }
+
+.multiplier {
+	color: rgb(1, 4, 246);
+}

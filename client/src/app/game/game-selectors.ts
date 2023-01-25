@@ -20,3 +20,20 @@ export const getOpponentActiveRow = (state: RootState) => {
 	if (!activeHermit) return null
 	return activeHermit
 }
+
+export const getMultiplier = (state: RootState) => {
+	if (!state.gameState) return null
+	const {players, turnPlayerId} = state.gameState
+	const playerState = players[turnPlayerId]
+	const {singleUseCard, singleUseCardUsed} = playerState.board
+
+	if (
+		singleUseCard?.cardId === 'invisibility_potion' &&
+		singleUseCardUsed &&
+		playerState.coinFlip
+	) {
+		return playerState.coinFlip === 'heads' ? '2' : '0'
+	}
+
+	return null
+}

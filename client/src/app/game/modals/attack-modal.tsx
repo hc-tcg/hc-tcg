@@ -7,7 +7,11 @@ import CARDS from 'server/cards'
 import DAMAGE from 'server/const/damage'
 import PROTECTION from 'server/const/protection'
 import Strengths from 'server/const/strengths'
-import {getActiveRow, getOpponentActiveRow} from '../game-selectors'
+import {
+	getActiveRow,
+	getOpponentActiveRow,
+	getMultiplier,
+} from '../game-selectors'
 import css from './attack-modal.module.css'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
@@ -29,6 +33,7 @@ function AttackModal({closeModal}: Props) {
 		if (!players || !turnPlayerId) return null
 		return players[turnPlayerId].board.singleUseCard
 	})
+	const multiplier = useSelector(getMultiplier)
 
 	if (!activeRow || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
@@ -117,6 +122,9 @@ function AttackModal({closeModal}: Props) {
 					<div className={css.name}>
 						{attackInfo.name} -{' '}
 						<span className={css.damage}>{totalDamage}</span>
+						{multiplier ? (
+							<span className={css.multiplier}> x{multiplier}</span>
+						) : null}
 					</div>
 					<div className={css.description}>
 						{icon ? null : (

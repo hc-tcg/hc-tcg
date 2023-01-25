@@ -16,7 +16,7 @@ export type BoardRowT = {
 export type PlayerState = {
 	id: PlatyerId
 	playerName: string
-	coinFlip: string | null
+	coinFlip: 'heads' | 'tails' | null
 	hand: Array<CardT>
 	lives: number
 	rewards: Array<CardT>
