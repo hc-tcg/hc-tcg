@@ -1,16 +1,17 @@
 import {BoardRowT} from 'types/game-state'
 import Slot, {SlotType} from './board-slot'
 import css from './board.module.css'
+import {CardT} from 'types/game-state'
 
-const getCardIdBySlot = (
+const getCardBySlot = (
 	slotType: SlotType,
 	index: number,
 	rowState: BoardRowT | null
-): string | null => {
+): CardT | null => {
 	if (!rowState) return null
-	if (slotType === 'hermit') return rowState.hermitCard?.cardId || null
-	if (slotType === 'effect') return rowState.effectCard?.cardId || null
-	if (slotType === 'item') return rowState.itemCards[index]?.cardId || null
+	if (slotType === 'hermit') return rowState.hermitCard || null
+	if (slotType === 'effect') return rowState.effectCard || null
+	if (slotType === 'item') return rowState.itemCards[index] || null
 	return null
 }
 
@@ -21,8 +22,12 @@ type BoardRowProps = {
 	active: boolean
 }
 const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
-	const handleSlotClick = (slotType: SlotType, slotIndex: number) => {
-		onClick({slotType, slotIndex})
+	const handleSlotClick = (
+		slotType: SlotType,
+		slotIndex: number,
+		card: CardT | null
+	) => {
+		onClick({slotType, slotIndex, card})
 	}
 	const slotTypes: Array<SlotType> = [
 		'item',
@@ -33,10 +38,11 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 		'health',
 	]
 	const slots = slotTypes.map((slotType, index) => {
+		const card = getCardBySlot(slotType, index, rowState)
 		return (
 			<Slot
-				onClick={() => handleSlotClick(slotType, index)}
-				cardId={getCardIdBySlot(slotType, index, rowState)}
+				onClick={() => handleSlotClick(slotType, index, card)}
+				card={card}
 				rowState={rowState}
 				active={active}
 				key={slotType + '-' + index}

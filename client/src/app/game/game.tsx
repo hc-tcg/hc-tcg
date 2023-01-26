@@ -4,6 +4,7 @@ import {RootState} from 'store'
 import CARDS from 'server/cards'
 import {CardInfoT} from 'types/cards'
 import {CardT} from 'types/game-state'
+import {PickProcessT} from 'types/pick-process'
 import Card from 'components/card'
 import Board from './board'
 import css from './game.module.css'
@@ -19,6 +20,30 @@ const PICK_PROCESSES: Record<string, string> = {
 	any_player_hermit: 'Select one of your hermits to apply the effect',
 	any_opponent_hermit: "Select one of opponent's hermits to apply the effect",
 }
+
+const getPickProcessMessage = (pickProcess: PickProcessT) => {
+	const firstReq = pickProcess.requirments[0]
+	const target = firstReq.target === 'opponent' ? "opponent's" : 'your'
+	const location = firstReq.target === 'hand' ? 'hand' : 'side of the board'
+	const type = firstReq.type === 'any' ? '' : firstReq.type
+	return `Pick ${firstReq.amount} ${type} card${
+		firstReq.amount > 1 ? 's' : ''
+	} from ${target} ${location}.`
+}
+
+type ClickInfoT =
+	| {
+			slotType: 'single_use'
+			card: CardT | null
+	  }
+	| {
+			slotType: 'item' | 'hermit' | 'effect' | 'health'
+			playerId: string
+			rowIndex: number
+			rowHermitCard: CardT | null
+			slotIndex: number
+			card: CardT | null
+	  }
 
 const renderModal = (
 	openedModalId: string | null,
@@ -39,6 +64,9 @@ function Game(props: Props) {
 	const gameState = useSelector((state: RootState) => state.gameState)
 	const playerId = useSelector((state: RootState) => state.playerId)
 	const selectedCard = useSelector((state: RootState) => state.selectedCard)
+	const pickedCards = useSelector(
+		(state: RootState) => state.pickProcess?.pickedCards || []
+	)
 	const openedModalId = useSelector((state: RootState) => state.openedModalId)
 	const pickProcess = useSelector((state: RootState) => state.pickProcess)
 	const dispatch = useDispatch()
@@ -51,7 +79,7 @@ function Game(props: Props) {
 		dispatch({type: 'SET_OPENED_MODAL_ID', payload: id})
 	}
 
-	const handleBoardClick = (meta: any) => {
+	const handleBoardClick = (meta: ClickInfoT) => {
 		console.log('Slot selected: ', meta)
 		dispatch({type: 'SLOT_PICKED', payload: meta})
 	}
@@ -66,8 +94,12 @@ function Game(props: Props) {
 			throw new Error('Unsupported card id: ' + card.cardId)
 		}
 		const cardInfo = TYPED_CARDS[card.cardId]
+		const isPicked = pickedCards.some((pickedCard) =>
+			equalCard(card, pickedCard)
+		)
 		return (
 			<Card
+				picked={isPicked}
 				selected={equalCard(card, selectedCard)}
 				key={card.cardInstance}
 				card={cardInfo}
@@ -82,9 +114,7 @@ function Game(props: Props) {
 			<div className={css.hand}>{playerHandJsx}</div>
 			{renderModal(openedModalId, setOpenedModalId)}
 			{pickProcess ? (
-				<MouseIndicator
-					message={PICK_PROCESSES[pickProcess] || 'Unknown pick process'}
-				/>
+				<MouseIndicator message={getPickProcessMessage(pickProcess)} />
 			) : null}
 		</div>
 	)

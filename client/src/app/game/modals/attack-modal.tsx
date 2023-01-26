@@ -77,13 +77,13 @@ function AttackModal({closeModal}: Props) {
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
 		// TODO - use DAMAGES..afkTarget
 		const damageInfo = singleUseInfo && DAMAGE[singleUseInfo.id]
-		if (damageInfo?.afkTarget) {
+		if (singleUseInfo && damageInfo?.afkTarget) {
 			dispatch({
-				type: 'SET_PICK_PROCESS',
-				payload: 'afk_opponent_hermit',
+				type: 'RUN_PICK_PROCESS',
+				payload: singleUseInfo.id,
 				callback: (result: any) => {
-					console.log('PROCESS: ', result)
-					dispatch({type: 'ATTACK', payload: {type, singleUsePick: result}})
+					console.log('CALLBACK: ', result)
+					dispatch({type: 'ATTACK', payload: {type, pickedCards: result}})
 				},
 			})
 		} else {

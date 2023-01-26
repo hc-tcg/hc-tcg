@@ -9,12 +9,13 @@ import css from './card.module.css'
 type CardProps = {
 	card: CardInfoT
 	selected?: boolean
+	picked?: boolean
 	onClick?: () => void
 }
 
 const Card = (props: CardProps) => {
 	const {type} = props.card
-	const {onClick, selected, ...otherProps} = props
+	const {onClick, selected, picked, ...otherProps} = props
 	let card = null
 	if (type === 'hermit')
 		card = <HermitCard {...(otherProps as HermitCardProps)} />
@@ -27,7 +28,10 @@ const Card = (props: CardProps) => {
 	else throw new Error('Unsupported card type: ' + type)
 	return (
 		<div
-			className={classnames(css.card, {[css.selected]: selected})}
+			className={classnames(css.card, {
+				[css.selected]: selected,
+				[css.picked]: picked,
+			})}
 			onClick={onClick}
 			title={props.card.id}
 		>

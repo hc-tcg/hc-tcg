@@ -17,6 +17,7 @@ import InvisibilityPotionSingleUseCard from './invisibility-potion'
 import FishingRodSingleUseCard from './fishing-rod'
 import EmeraldSingleUseCard from './emerald'
 import FlintAndSteelSingleUseCard from './flint-and-steel'
+import ComposterSingleUseCard from './composter'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -38,6 +39,7 @@ function registerCards(game) {
 	new FishingRodSingleUseCard().register(game)
 	new EmeraldSingleUseCard().register(game)
 	new FlintAndSteelSingleUseCard().register(game)
+	new ComposterSingleUseCard().register(game)
 }
 
 export default registerCards

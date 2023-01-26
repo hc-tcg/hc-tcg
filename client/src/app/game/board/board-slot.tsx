@@ -2,6 +2,7 @@ import classnames from 'classnames'
 import CARDS from 'server/cards'
 import Card from 'components/card'
 import {CardInfoT} from 'types/cards'
+import {CardT} from 'types/game-state'
 import {BoardRowT} from 'types/game-state'
 import css from './board.module.css'
 
@@ -11,14 +12,14 @@ export type SlotType = 'item' | 'hermit' | 'effect' | 'health' | 'single_use'
 export type SlotProps = {
 	type: SlotType
 	onClick: () => void
-	cardId: string | null
+	card: CardT | null
 	rowState?: BoardRowT
 	active?: boolean
 }
-const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
-	let card = cardId ? TYPED_CARDS[cardId] : null
+const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
+	let cardInfo = card?.cardId ? TYPED_CARDS[card.cardId] : null
 	if (type === 'health' && rowState?.health) {
-		card = {
+		cardInfo = {
 			type: 'health',
 			health: rowState.health,
 			id: 'health_' + rowState.health,
@@ -29,13 +30,13 @@ const Slot = ({type, onClick, cardId, rowState, active}: SlotProps) => {
 			onClick={onClick}
 			className={classnames(css.slot, {
 				[css[type]]: true,
-				[css.empty]: !card,
-				[css.afk]: card?.type === 'hermit' && !active,
+				[css.empty]: !cardInfo,
+				[css.afk]: cardInfo?.type === 'hermit' && !active,
 			})}
 		>
-			{card ? (
+			{cardInfo ? (
 				<>
-					<Card card={card} />
+					<Card card={cardInfo} />
 					{type === 'health' &&
 					rowState &&
 					rowState.ailments.includes('fire') ? (

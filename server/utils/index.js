@@ -1,7 +1,7 @@
 import CARDS from '../cards'
 
 export function equalCard(card1, card2) {
-	if (card1 === null || card2 === null) return false
+	if (!card1 || !card2) return false
 	return (
 		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
 	)
@@ -59,4 +59,40 @@ export function discardSingleUse(playerState) {
 	}
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
+}
+
+/*
+Takes a list of card instances & looks them up in the current game (board/hand).
+If found it maps it to {card, cardInfo playerId, row, rowIndex} info.
+*/
+export function getPickedCardsInfo(gameState, pickedCards) {
+	return (pickedCards || [])
+		.map((card) => {
+			const cardInfo = CARDS[card.cardId]
+			if (!cardInfo) return null
+
+			const playerStates = Object.values(gameState.players)
+			let rowIndex = null
+			const pState = playerStates.find((pState) => {
+				rowIndex =
+					pState.board.rows.findIndex((row) => {
+						return (
+							equalCard(row.hermitCard, card) ||
+							equalCard(row.effectCard, card) ||
+							row.itemCards.some((itemCard) => equalCard(itemCard, card))
+						)
+					}) || null
+				const inHand = pState.hand.some((handCard) => equalCard(handCard, card))
+				return rowIndex !== -1 || inHand
+			})
+			if (!pState) return null
+			return {
+				card,
+				cardInfo,
+				playerId: pState.id,
+				rowIndex,
+				row: pState.board.rows[rowIndex],
+			}
+		})
+		.filter(Boolean)
 }

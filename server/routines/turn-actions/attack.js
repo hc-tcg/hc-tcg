@@ -1,6 +1,6 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
-import {hasSingleUse, applySingleUse} from '../../utils'
+import {hasSingleUse, applySingleUse, getPickedCardsInfo} from '../../utils'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
@@ -12,7 +12,7 @@ export const WEAKNESS_DAMAGE = 20
 
 function* attackSaga(game, turnAction, derivedState) {
 	const {currentPlayer, opponentPlayer} = derivedState
-	const {type, singleUsePick} = turnAction.payload
+	const {type, pickedCards} = turnAction.payload
 	const typeAction = ATTACK_TO_ACTION[type]
 	if (!typeAction) {
 		console.log('Unknown attack type: ', type)
@@ -24,9 +24,13 @@ function* attackSaga(game, turnAction, derivedState) {
 		currentPlayer.board.rows[currentPlayer.board.activeRow]
 	const opponentActiveRow =
 		opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+
+	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
 	const afkTargetRow =
-		singleUsePick && singleUsePick.rowIndex !== opponentPlayer.board.activeRow
-			? opponentPlayer.board.rows[singleUsePick.rowIndex]
+		pickedCardsInfo.length === 1 &&
+		pickedCardsInfo[0].playerId == opponentPlayer.id &&
+		pickedCardsInfo[0].rowIndex !== opponentPlayer.board.activeRow
+			? pickedCardsInfo[0].row
 			: null
 
 	if (!attackerActiveRow) return 'INVALID'

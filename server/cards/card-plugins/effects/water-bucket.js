@@ -12,10 +12,11 @@ class WaterBucketEffectCard extends EffectCard {
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, pickedRow} = derivedState
+			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo.id === this.id) {
-				if (pickedRow === null) return 'INVALID'
-				pickedRow.ailments = pickedRow.ailments.filter((a) => a !== 'fire')
+				if (pickedCardsInfo?.length !== 1) return 'INVALID'
+				const {row} = pickedCardsInfo[0]
+				row.ailments = row.ailments.filter((a) => a !== 'fire')
 				return 'DONE'
 			}
 		})

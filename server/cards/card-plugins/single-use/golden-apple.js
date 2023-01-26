@@ -9,14 +9,17 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			description:
 				'Heals +100hp.\n\nCan be used on active or AFK Hermits.\n\nDiscard after use.',
 		})
+		this.heal = 100
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, pickedRow, pickedCardInfo} = derivedState
+			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo?.id === this.id) {
-				pickedRow.health = Math.min(
-					pickedRow.health + 100,
-					pickedCardInfo.health // max health
+				if (pickedCardsInfo?.length !== 1) return 'INVALID'
+				const {row, cardInfo} = pickedCardsInfo[0]
+				row.health = Math.min(
+					row.health + this.heal,
+					cardInfo.health // max health
 				)
 				return 'DONE'
 			}

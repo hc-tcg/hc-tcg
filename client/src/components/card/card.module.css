@@ -2,6 +2,10 @@
 	outline: 3px solid rgba(50, 50, 255, 0.7);
 }
 
+.picked {
+	outline: 3px dashed rgba(50, 50, 255, 0.7);
+}
+
 .card {
 	/* height: 9em;
 	width: 9em; */

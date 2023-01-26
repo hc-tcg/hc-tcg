@@ -24,7 +24,7 @@ type Props = {
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector((state: RootState) => state.playerId)
 	const boardState = gameState.players[gameState.turnPlayerId].board
-	const singleUseCard = boardState.singleUseCard
+	const singleUseCard = boardState.singleUseCard || null
 	const singleUseCardUsed = boardState.singleUseCardUsed
 	const currentPlayer = useSelector((state: RootState) => {
 		if (!state.gameState) return null
@@ -37,7 +37,7 @@ function Board({onClick, gameState}: Props) {
 	)
 	const dispatch = useDispatch()
 
-	const [coinFlip, setCoinFlip] = useState<string | null>(null)
+	const [coinFlip, setCoinFlip] = useState<'heads' | 'tails' | null>(null)
 	useEffect(() => {
 		setCoinFlip(currentPlayer?.coinFlip || null)
 		const timeout = setTimeout(() => {
@@ -119,8 +119,10 @@ function Board({onClick, gameState}: Props) {
 					})}
 				>
 					<Slot
-						onClick={() => onClick({slotType: 'single_use'})}
-						cardId={singleUseCard ? singleUseCard.cardId : null}
+						onClick={() =>
+							onClick({slotType: 'single_use', card: singleUseCard})
+						}
+						card={singleUseCard}
 						type={'single_use'}
 					/>
 				</div>

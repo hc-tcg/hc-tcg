@@ -1,10 +1,12 @@
-import {take, fork, call, put, race, cancel} from 'redux-saga/effects'
+import {take, all, fork, call, put, race, cancel} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import slotSaga from './slot-saga'
+import pickProcessSaga from './pick-process-saga'
 import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
 
 function* gameSaga(): SagaIterator {
-	const slotTask = yield fork(slotSaga)
+	const slotTask = yield all([fork(slotSaga), fork(pickProcessSaga)])
+
 	while (true) {
 		const gameAction = yield race({
 			gameState: call(receiveMsg, 'GAME_STATE'),

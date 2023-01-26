@@ -60,6 +60,7 @@ export function getStarterPack() {
 				'fishing_rod',
 				'emerald',
 				'flint_&_steel',
+				'composter',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -75,7 +76,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'flint_&_steel',
+		cardId: 'bow',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'crossbow',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

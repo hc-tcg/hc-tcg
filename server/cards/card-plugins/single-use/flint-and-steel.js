@@ -12,9 +12,10 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer} = derivedState
-			// TODO - move to discard
-			currentPlayer.hand = []
+
 			if (singleUseInfo?.id === this.id) {
+				// TODO - move to discard
+				currentPlayer.hand = []
 				for (let i = 0; i < 3; i++) {
 					const drawCard = currentPlayer.pile.shift()
 					if (drawCard) currentPlayer.hand.push(drawCard)

@@ -1,14 +1,14 @@
 import CARDS from '../../cards'
-import {equalCard} from '../../utils'
+import {getPickedCardsInfo} from '../../utils'
 
 function* applyEffectSaga(game, turnAction, derivedState) {
 	// TODO - This shouldn't be needed
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer, opponentPlayer, gameState} = derivedState
+	const {currentPlayer, opponentPlayer} = derivedState
 	const singleUseCard = currentPlayer.board.singleUseCard
 	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
-	const {singleUsePick} = turnAction.payload
+	const {pickedCards} = turnAction.payload
 
 	// Get active player hermit card for effects that affect active hermit
 	const playerActiveRow =
@@ -38,23 +38,12 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 		? CARDS[opponentEffectCard.cardId]
 		: null
 
-	// Get picked hermit card for effects that affect selected hermit
-	// NOTE - currently only player's hermits are supported
-	const pickedPlayer = singleUsePick
-		? gameState.players[singleUsePick.playerId]
-		: null
-	const pickedRow = pickedPlayer
-		? pickedPlayer.board.rows[singleUsePick.rowIndex]
-		: null
-	const pickedCard = pickedRow?.hermitCard
-	const pickedCardInfo = pickedCard ? CARDS[pickedCard.cardId] : null
+	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
 
 	if (!singleUseInfo) return 'INVALID'
 	const applyEffectResult = game.hooks.applyEffect.call(turnAction, {
 		...derivedState,
-		pickedRow,
-		pickedCard,
-		pickedCardInfo,
+		pickedCardsInfo,
 		singleUseInfo,
 		playerActiveRow,
 		opponentActiveRow,
@@ -62,7 +51,11 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 	})
 
 	if (applyEffectResult !== 'DONE') {
-		console.log('Invalid effect: ', singleUseInfo?.id)
+		if (applyEffectResult === 'INVALID') {
+			console.log('Validation failed for: ', singleUseInfo?.id)
+		} else {
+			console.log('Effect not implemented: ', singleUseInfo?.id)
+		}
 		return 'INVALID'
 	}
 
