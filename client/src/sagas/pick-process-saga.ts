@@ -12,6 +12,7 @@ type RunPickProcessAction = {
 	callback?: (result: any) => void
 }
 
+// TODO - special donitions (only afk hermit, only empty item slot)
 export const REQS: Record<string, Array<PickRequirmentT>> = {
 	instant_health: [{target: 'player', type: 'hermit', amount: 1}],
 	instant_health_ii: [{target: 'player', type: 'hermit', amount: 1}],
@@ -19,6 +20,10 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 	milk_bucket: [{target: 'player', type: 'hermit', amount: 1}],
 	water_bucket: [{target: 'player', type: 'hermit', amount: 1}],
 	composter: [{target: 'hand', type: 'any', amount: 2}],
+	lead: [
+		{target: 'opponent', type: 'item', amount: 1},
+		{target: 'opponent', type: 'item', amount: 1, empty: true},
+	],
 	bow: [{target: 'opponent', type: 'hermit', amount: 1}],
 	crossbow: [{target: 'opponent', type: 'hermit', amount: 1}],
 }
@@ -29,7 +34,8 @@ export function* runPickProcessSaga(singleUseCardId: string): SagaIterator {
 	const turnPlayerId = yield* select(
 		(state: RS) => state.gameState?.turnPlayerId
 	)
-	if (!singleUseCardId || !turnPlayerId) return
+	const playerId = yield* select((state: RS) => state.playerId)
+	if (!singleUseCardId || !turnPlayerId || !playerId) return
 	// TODO - Proper validations for individual pick processes
 	// if (pickProcess !== 'afk_opponent_hermit') return
 	// TODO - Stop waiting on new turn
@@ -53,18 +59,6 @@ export function* runPickProcessSaga(singleUseCardId: string): SagaIterator {
 				req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
 			)
 
-			// check card
-			const card =
-				pickAction.type === 'SET_SELECTED_CARD'
-					? pickAction.payload
-					: pickAction.payload.card
-			if (!card) continue
-
-			// check card info
-			const cardInfo = CARDS[card.cardId]
-			const correctType = req.type === 'any' ? true : req.type === cardInfo.type
-			if (!correctType) continue
-
 			// check ownership
 			const cardPlayerId = pickAction.payload.playerId
 			if (cardPlayerId) {
@@ -72,7 +66,33 @@ export function* runPickProcessSaga(singleUseCardId: string): SagaIterator {
 				if (req.target === 'opponent' && turnPlayerId === cardPlayerId) continue
 			}
 
-			pickedReqCards.push(card)
+			if (req.empty) {
+				// check card info
+				const slotType = pickAction.payload.slotType
+				const correctType = req.type === 'any' ? true : req.type === slotType
+				if (!correctType) continue
+
+				pickedReqCards.push(pickAction.payload)
+			} else {
+				// check card
+				const card =
+					pickAction.type === 'SET_SELECTED_CARD'
+						? pickAction.payload
+						: pickAction.payload.card
+				if (!card) continue
+
+				// check card info
+				const cardInfo = CARDS[card.cardId]
+				const correctType =
+					req.type === 'any' ? true : req.type === cardInfo.type
+				if (!correctType) continue
+
+				pickedReqCards.push(
+					req.target === 'hand'
+						? {slotType: 'hand', card, playerId}
+						: pickAction.payload
+				)
+			}
 			yield put({
 				type: 'UPDATE_PICK_PROCESS',
 				payload: [...pickedCards, ...pickedReqCards],

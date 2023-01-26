@@ -95,7 +95,7 @@ function Game(props: Props) {
 		}
 		const cardInfo = TYPED_CARDS[card.cardId]
 		const isPicked = pickedCards.some((pickedCard) =>
-			equalCard(card, pickedCard)
+			equalCard(card, pickedCard.card)
 		)
 		return (
 			<Card

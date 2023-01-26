@@ -67,31 +67,57 @@ If found it maps it to {card, cardInfo playerId, row, rowIndex} info.
 */
 export function getPickedCardsInfo(gameState, pickedCards) {
 	return (pickedCards || [])
-		.map((card) => {
-			const cardInfo = CARDS[card.cardId]
-			if (!cardInfo) return null
+		.map((pickedCard) => {
+			const {slotType, playerId, card} = pickedCard
+			const pState = gameState.players[playerId]
+			if (!slotType || !playerId || !pState) return null
 
-			const playerStates = Object.values(gameState.players)
-			let rowIndex = null
-			const pState = playerStates.find((pState) => {
-				rowIndex =
-					pState.board.rows.findIndex((row) => {
-						return (
-							equalCard(row.hermitCard, card) ||
-							equalCard(row.effectCard, card) ||
-							row.itemCards.some((itemCard) => equalCard(itemCard, card))
-						)
-					}) || null
+			const cardInfo = CARDS[card?.cardId]
+			if (card && !cardInfo) return null
+
+			if (slotType === 'hand') {
+				if (!card) return null
 				const inHand = pState.hand.some((handCard) => equalCard(handCard, card))
-				return rowIndex !== -1 || inHand
-			})
-			if (!pState) return null
+				if (!inHand) return null
+				return {
+					card,
+					cardInfo,
+					playerId,
+					slotType,
+				}
+			}
+
+			if (!['item', 'effect', 'hermit'].includes(slotType)) {
+				console.log(`Picking ${slotType} slot is not supported`)
+				return null
+			}
+
+			const {rowIndex, slotIndex} = pickedCard
+			if (typeof rowIndex !== 'number' || typeof slotIndex !== 'number')
+				return null
+
+			const row = pState.board.rows[rowIndex]
+			if (!row) return null
+
+			// Validate that received card & position match with server state
+			let cardOnPosition = null
+			if (slotType === 'hermit') cardOnPosition = row.hermitCard
+			else if (slotType === 'effect') cardOnPosition = row.effectCard
+			else if (slotType === 'item') cardOnPosition = row.itemCards[slotIndex]
+			if (card) {
+				if (!cardOnPosition || !equalCard(card, cardOnPosition)) return null
+			} else if (cardOnPosition) {
+				return null
+			}
+
 			return {
 				card,
 				cardInfo,
-				playerId: pState.id,
-				rowIndex,
-				row: pState.board.rows[rowIndex],
+				rowIndex: pickedCard.rowIndex,
+				slotIndex: pickedCard.slotIndex,
+				slotType,
+				row,
+				playerId,
 			}
 		})
 		.filter(Boolean)

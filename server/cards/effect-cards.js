@@ -171,7 +171,7 @@ const scrappedList = [
 		'Lead',
 		'Common',
 		'Hand',
-		"Move 1 of your opponents active Hermit's item cards to any their AFK Hermit.\n\nReceiving Hermit must have open item card slot.\n\nDiscard after use.",
+		"Move 1 of your opponents active Hermit's item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.\n\nDiscard after use.",
 	],
 	[
 		'Chest',

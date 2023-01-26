@@ -12,9 +12,18 @@ export type PickRequirmentT = {
 	target: 'player' | 'opponent' | 'hand'
 	type: CardTypeT
 	amount: number
+	empty?: boolean
+}
+
+type PickedCardT = {
+	card: CardT
+	slotType: CardTypeT
+	rowIndex?: number
+	slowIndex?: number
+	playerId?: string
 }
 
 export type PickProcessT = {
 	requirments: Array<PickRequirmentT>
-	pickedCards: Array<CardT>
+	pickedCards: Array<PickedCardT>
 }
