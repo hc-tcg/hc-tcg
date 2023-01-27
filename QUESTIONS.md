@@ -28,3 +28,4 @@
 # When you swap effect cards using an Emerald effect card, wehn the effect is discarded does it go the the original owner or the current one?
 # What happens when a sleeping hermit (bed effect) gets his bad stolen using an emerald?
 # Does game end even when you use effect cards to draw more cards or only at end of a turn?
+# Can you use composter if there is not enough ccards in your hand?

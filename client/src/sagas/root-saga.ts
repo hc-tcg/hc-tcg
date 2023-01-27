@@ -3,6 +3,7 @@ import {SagaIterator} from 'redux-saga'
 import slotSaga from './slot-saga'
 import pickProcessSaga from './pick-process-saga'
 import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
+import gameStateSaga from './game-state-saga'
 
 function* gameSaga(): SagaIterator {
 	const slotTask = yield all([fork(slotSaga), fork(pickProcessSaga)])
@@ -21,6 +22,8 @@ function* gameSaga(): SagaIterator {
 		const {payload} = gameAction.gameState
 
 		yield put({type: 'GAME_STATE', ...payload})
+
+		yield call(gameStateSaga, payload.gameState)
 
 		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
 

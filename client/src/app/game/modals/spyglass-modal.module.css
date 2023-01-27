@@ -1,0 +1,22 @@
+.description {
+	padding: 10px;
+}
+
+.options {
+	text-align: center;
+	padding: 10px;
+}
+
+.cards {
+	display: flex;
+	justify-content: center;
+}
+
+.card {
+	width: 120px;
+	height: 120px;
+}
+
+.card + .card {
+	margin-left: 10px;
+}

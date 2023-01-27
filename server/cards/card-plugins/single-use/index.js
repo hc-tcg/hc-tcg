@@ -19,6 +19,7 @@ import EmeraldSingleUseCard from './emerald'
 import FlintAndSteelSingleUseCard from './flint-and-steel'
 import ComposterSingleUseCard from './composter'
 import LeadSingleUseCard from './lead'
+import SpyglassSingleUseCard from './spyglass'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -42,6 +43,7 @@ function registerCards(game) {
 	new FlintAndSteelSingleUseCard().register(game)
 	new ComposterSingleUseCard().register(game)
 	new LeadSingleUseCard().register(game)
+	new SpyglassSingleUseCard().register(game)
 }
 
 export default registerCards

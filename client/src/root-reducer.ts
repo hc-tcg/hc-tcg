@@ -37,6 +37,10 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				opponentId: action.opponentId,
 				gameState: action.gameState,
 				availableActions: action.availableActions,
+				openedModalId: action.gameState?.players[state.playerId]?.custom
+					.spyglass
+					? 'spyglass'
+					: state.openedModalId,
 			}
 			if (state.gameState?.turnPlayerId === action.gameState?.turnPlayerId)
 				return newState

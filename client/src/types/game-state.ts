@@ -17,6 +17,7 @@ export type PlayerState = {
 	id: PlatyerId
 	playerName: string
 	coinFlip: 'heads' | 'tails' | null
+	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
 	rewards: Array<CardT>

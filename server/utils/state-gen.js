@@ -62,6 +62,7 @@ export function getStarterPack() {
 				'flint_&_steel',
 				'composter',
 				'lead',
+				'spyglass',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -77,7 +78,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'lead',
+		cardId: 'spyglass',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
@@ -123,6 +124,7 @@ export function getPlayerState(allPlayers, playerId) {
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),
+		custom: {},
 		board: {
 			activeRow: null,
 			singleUseCard: null,

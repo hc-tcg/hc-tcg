@@ -10,6 +10,7 @@ import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
+import SpyglassModal from './modals/spyglass-modal'
 import MouseIndicator from './mouse-indicator'
 import {equalCard} from 'server/utils'
 
@@ -53,6 +54,8 @@ const renderModal = (
 	if (openedModalId === 'attack') return <AttackModal closeModal={closeModal} />
 	else if (openedModalId === 'confirm')
 		return <ConfirmModal closeModal={closeModal} />
+	else if (openedModalId === 'spyglass')
+		return <SpyglassModal closeModal={closeModal} />
 	return null
 }
 
