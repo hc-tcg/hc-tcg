@@ -249,7 +249,7 @@ const scrappedList = [
 		'Loyalty',
 		'Rare',
 		'Book',
-		"When the Hermit that this card is attached to is knocked out, user flips a coin. If heads, 1 of Hertmi's attached item cards is chosen to return to user's hand.\n\nDiscard after user is knocked out.",
+		"When the Hermit that this card is attached to is knocked out, user flips a coin. If heads, 1 of Hermit's attached item cards is chosen to return to user's hand.\n\nDiscard after user is knocked out.",
 	],
 ]
 
