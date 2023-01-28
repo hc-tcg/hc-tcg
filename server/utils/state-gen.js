@@ -62,7 +62,7 @@ export function getStarterPack() {
 				'flint_&_steel',
 				'composter',
 				'lead',
-				'spyglass',
+				'chest',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -78,7 +78,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'spyglass',
+		cardId: 'chest',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
@@ -110,7 +110,6 @@ export function getPlayerState(allPlayers, playerId) {
 	const pack = getStarterPack()
 	// TODO - ensure there is at least one hermit on the hand
 	// OR - If there is no hermit, show the cards to the opposite player, reshuffle and draw again
-	// TODO - put discarded cards into discarded array
 	// TODO - strenghs/weaknesses -> 20 extra damage for prmary/secondayr attack
 
 	const TOTAL_ROWS = 5
@@ -121,6 +120,7 @@ export function getPlayerState(allPlayers, playerId) {
 		lives: 3,
 		hand: pack.slice(0, 7), // 0.7
 		// TODO - hand out reward cards on kill
+		// TODO - should be three cards from opponents deck
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),

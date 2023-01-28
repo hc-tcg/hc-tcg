@@ -1,4 +1,5 @@
 import SingleUseCard from './_single-use-card'
+import {discardCard} from '../../../utils'
 
 class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,8 +15,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, currentPlayer} = derivedState
 
 			if (singleUseInfo?.id === this.id) {
-				// TODO - move to discard
-				currentPlayer.hand = []
+				currentPlayer.hand.forEach((card) => discardCard(game.state, card))
 				for (let i = 0; i < 3; i++) {
 					const drawCard = currentPlayer.pile.shift()
 					if (drawCard) currentPlayer.hand.push(drawCard)

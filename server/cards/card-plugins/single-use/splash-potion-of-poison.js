@@ -1,4 +1,5 @@
 import SingleUseCard from './_single-use-card'
+import {discardCard} from '../../../utils'
 
 class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -17,8 +18,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
 				if (opponentEffectCardInfo?.id === 'milk_bucket') {
-					// TODO - move to discard pile
-					opponentActiveRow.effectCard = null
+					discardCard(game.state, opponentActiveRow.effectCard)
 				} else {
 					opponentActiveRow.ailments.push('poison')
 				}

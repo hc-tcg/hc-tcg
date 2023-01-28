@@ -14,11 +14,11 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 	removeSpyglass(game) {
 		Object.values(game.state.players).forEach((pState) => {
-			if (pState.custom.spyglass) delete pState.custom.spyglass
+			delete pState.custom[this.id]
 		})
 	}
+
 	register(game) {
-		console.log('spyglass registered')
 		game.hooks.turnStart.tap(this.id, (action, derivedState) => {
 			this.removeSpyglass(game)
 		})
@@ -30,15 +30,12 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
 
-			console.log({sui: singleUseInfo?.id, thisId: this.id})
 			if (singleUseInfo?.id === this.id) {
 				const randomCards = opponentPlayer.hand
 					.slice()
 					.sort(() => 0.5 - Math.random())
 					.slice(0, 3)
-
-				console.log({randomCards})
-				currentPlayer.custom.spyglass = randomCards
+				currentPlayer.custom[this.id] = randomCards
 				return 'DONE'
 			}
 		})

@@ -1,6 +1,11 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
-import {hasSingleUse, applySingleUse, getPickedCardsInfo} from '../../utils'
+import {
+	hasSingleUse,
+	applySingleUse,
+	getPickedCardsInfo,
+	discardCard,
+} from '../../utils'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
@@ -52,7 +57,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		damage: 0,
 		protection: 0,
 		recover: 0,
-		discardProtection: false,
 		ignoreProtection: false,
 		backlash: 0,
 		multiplier: 1,
@@ -92,8 +96,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		if (target.row.health < 0 && !target.ignoreProtection && target.recover) {
 			target.row.health = target.recover
 			target.row.ailments = []
-			// TODO - move to discard pile
-			target.row.effectCard = null
+			discardCard(game.state, target.row.effectCard)
 		}
 
 		// console.log('ATTACK: ', {
@@ -105,11 +108,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		// 	weaknessDamage,
 		// 	totalDamage,
 		// })
-
-		if (target.discardProtection) {
-			// TODO - move to discard pile
-			target.row.effectCard = null
-		}
 
 		attackerActiveRow.health -= target.backlash
 	}

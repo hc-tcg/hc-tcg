@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import CARDS from '../../../cards'
+import {discardCard} from '../../../utils'
 
 // TODO - test this doesn't introduce issues when sleeping hermit dies
 class BedEffectCard extends EffectCard {
@@ -40,8 +41,8 @@ class BedEffectCard extends EffectCard {
 				} else if (sleeping === 0) {
 					row.health = CARDS[row.hermitCard.cardId].health
 					row.ailments = row.ailments.filter((a) => a != 'sleeping')
-					// TODO - discard pile
-					row.effectCard = null
+					delete row.effectCard.sleeping
+					discardCard(game.state, row.effectCard)
 				}
 			}
 		})

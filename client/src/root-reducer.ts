@@ -16,6 +16,13 @@ const defaultState = {
 	pickProcess: null as PickProcessT | null,
 }
 
+const getModalId = (state: any, action: AnyAction) => {
+	const custom = action.gameState?.players[state.playerId]?.custom
+	if (state.openedModalId || !custom) return state.openedModalId
+	if (custom.spyglass) return 'spyglass'
+	return null
+}
+
 const rootReducer = (state = defaultState, action: AnyAction) => {
 	switch (action.type) {
 		case 'SET_NAME':
@@ -37,10 +44,7 @@ const rootReducer = (state = defaultState, action: AnyAction) => {
 				opponentId: action.opponentId,
 				gameState: action.gameState,
 				availableActions: action.availableActions,
-				openedModalId: action.gameState?.players[state.playerId]?.custom
-					.spyglass
-					? 'spyglass'
-					: state.openedModalId,
+				openedModalId: getModalId(state, action),
 			}
 			if (state.gameState?.turnPlayerId === action.gameState?.turnPlayerId)
 				return newState

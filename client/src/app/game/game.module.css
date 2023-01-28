@@ -2,30 +2,10 @@
 	position: fixed;
 	bottom: 0;
 	width: 100%;
-	justify-content: center;
 	height: 240px;
 	background: beige;
-	font-size: 20px; /* 44.445px; */
 	padding: 10px;
 	overflow-x: scroll;
-	overflow-y: visible;
-	white-space: nowrap;
+	overflow-y: hidden;
 	text-align: center;
-}
-
-.hand > * {
-	display: inline-block;
-	margin-right: 1px;
-	width: 200px;
-	height: 200px;
-	transition: transform 0.25s;
-	cursor: pointer;
-	will-change: transform;
-	vertical-align: bottom;
-	position: relative;
-}
-
-.hand > *:hover {
-	z-index: 5;
-	transform: scale(1.05) translateY(-10px) rotate(-3deg);
 }

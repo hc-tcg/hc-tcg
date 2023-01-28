@@ -7,6 +7,7 @@ import {
 	hasEnoughItems,
 	discardSingleUse,
 	hasSingleUse,
+	discardCard,
 } from '../utils'
 import {getGameState, getEmptyRow} from '../utils/state-gen'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
@@ -108,6 +109,9 @@ function* checkHermitHealth(gameState) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
+				discardCard(gameState, row.hermitCard)
+				discardCard(gameState, row.effectCard)
+				row.itemCards.forEach((itemCard) => discardCard(gameState, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
 					playerState.board.activeRow = null

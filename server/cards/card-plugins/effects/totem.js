@@ -1,4 +1,5 @@
 import EffectCard from './_effect-card'
+import {discardCard} from '../../../utils'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -22,9 +23,8 @@ class TotemEffectCard extends EffectCard {
 				const hasTotem = row.effectCard?.cardId === this.id
 				if (row.hermitCard && row.health <= 0 && hasTotem) {
 					row.health = this.recoverAmount
-					// TODO - move to discard
 					row.ailments = []
-					row.effectCard = null
+					discardCard(game.state, row.effectCard)
 				}
 			}
 		}

@@ -67,6 +67,8 @@ function* pickWithSelectedSaga(
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
+		} else if (selectedCard.cardId === 'chest') {
+			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'chest'})
 		}
 	}
 

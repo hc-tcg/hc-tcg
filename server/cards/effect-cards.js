@@ -201,7 +201,13 @@ const scrappedList = [
 		'Thorns',
 		'Common',
 		'Book',
-		'Opposing Hermit takes +10HP damage after attack.\n\nDiscard after user is knocked out.',
+		'Opposing Hermit takes +10hp damage after attack.\n\nDiscard after user is knocked out.',
+	],
+	[
+		'Fortune',
+		'Ultra Rare',
+		'Book',
+		'Any coin flip(s) necessary for user\'s attack are not needed and "heads" is assummed.\n\nDiscard after use.',
 	],
 	[
 		'Knockback',
@@ -211,9 +217,39 @@ const scrappedList = [
 	],
 	[
 		'Efficiency',
+		'Rare',
+		'Book',
+		'User can execute attack without having the necessary item cards attached.\n\nCurent turn only.\n\nDiscard after use.',
+	],
+	[
+		'Looting',
+		'Rare',
+		'Book',
+		"Flip a coin.\n\nIf heads, user picks 1 item card from opposing active Hermit and adds it to user's hand.\n\nDiscard after use.",
+	],
+	[
+		'Mending',
 		'Ultra Rare',
 		'Book',
-		'A coin flip is no longer required and "heads" is assumed.\n\nDiscard after use.',
+		'When attached, user returns any "single use" card used to their deck.\n\nMending is then discarded.',
+	],
+	[
+		'Curse Of Binding',
+		'Common',
+		'Book',
+		'Opposing active Hermit can not go AFK on the following turn.\n\nDiscard after use.',
+	],
+	[
+		'Curse Of Vanishing',
+		'Common',
+		'Book',
+		"Opponent is forced to discard their active Hermit's attached effect card.\n\nDiscard after use.",
+	],
+	[
+		'Loyalty',
+		'Rare',
+		'Book',
+		"When the Hermit that this card is attached to is knocked out, user flips a coin. If heads, 1 of Hertmi's attached item cards is chosen to return to user's hand.\n\nDiscard after user is knocked out.",
 	],
 ]
 

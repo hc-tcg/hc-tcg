@@ -31,6 +31,7 @@ const Card = (props: CardProps) => {
 			className={classnames(css.card, {
 				[css.selected]: selected,
 				[css.picked]: picked,
+				[css.selectable]: !!onClick,
 			})}
 			onClick={onClick}
 			title={props.card.id}

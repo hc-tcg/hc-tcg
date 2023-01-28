@@ -1,6 +1,7 @@
 import CARDS from '../../cards'
 import {getPickedCardsInfo} from '../../utils'
 
+// TODO - You can "apply effect" by putting on in the slot, then selecting another clicking the sotteded one and confirmiing modal
 function* applyEffectSaga(game, turnAction, derivedState) {
 	// TODO - This shouldn't be needed
 	turnAction.payload = turnAction.payload || {}

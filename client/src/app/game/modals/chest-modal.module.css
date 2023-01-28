@@ -9,4 +9,7 @@
 
 .cards {
 	padding: 5px;
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }

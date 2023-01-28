@@ -48,6 +48,46 @@ export function applySingleUse(playerState) {
 	playerState.board.singleUseCardUsed = true
 }
 
+/*
+Return reference to the object holding the card and key at which it is located
+Looks only through hand and item/effect/hermit slots.
+*/
+export function findCard(gameState, card) {
+	const pStates = Object.values(gameState.players)
+	for (let pState of pStates) {
+		const playerId = pState.id
+		const handIndex = pState.hand.findIndex((handCard) =>
+			equalCard(handCard, card)
+		)
+		if (handIndex !== -1) return {playerId, target: pState.hand, key: handIndex}
+
+		const rows = pState.board.rows
+		for (let row of rows) {
+			let key = null
+			if (equalCard(row.hermitCard, card))
+				return {playerId, target: row, key: 'hermitCard'}
+			if (equalCard(row.effectCard, card))
+				return {playerId, target: row, key: 'effectCard'}
+			const itemIndex = row.itemCards.findIndex((itemCard) =>
+				equalCard(itemCard, card)
+			)
+			if (itemIndex !== -1)
+				return {playerId, target: row.itemCards, key: itemIndex}
+		}
+	}
+	return null
+}
+
+export function discardCard(gameState, card) {
+	const loc = findCard(gameState, card)
+	if (!loc) return console.log('Cannot find card: ', card)
+	loc.target[loc.key] = null
+	Object.values(gameState.players).forEach((pState) => {
+		pState.hand = pState.hand.filter(Boolean)
+	})
+	gameState.players[loc.playerId].discarded.push(card)
+}
+
 export function discardSingleUse(playerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed

@@ -1,4 +1,5 @@
 import EffectCard from './_effect-card'
+import {discardCard} from '../../../utils'
 
 class GoldArmorEffectCard extends EffectCard {
 	constructor() {
@@ -15,7 +16,8 @@ class GoldArmorEffectCard extends EffectCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
-				target.discardProtection = true
+				// TODO - what to do in case of invis potion 0x?
+				discardCard(game.state, target.row.effectCard)
 			}
 			return target
 		})

@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {equalCard} from '../../../utils'
+import {equalCard, discardCard} from '../../../utils'
 
 // TODO - don't allow selecting the same card twice
 // TODO - If there is is less cards in hand (1,0) limit the requirment or don't allow to use it
@@ -20,11 +20,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				if (pickedCardsInfo.length !== 2) return 'INVALID'
 
-				// TODO - move to discard
 				// discard two cards
-				currentPlayer.hand = currentPlayer.hand.filter((card) => {
-					return !pickedCardsInfo.find((info) => equalCard(card, info.card))
-				})
+				pickedCardsInfo.forEach((info) => discardCard(game.state, info.card))
 
 				// draw two cards
 				for (let i = 0; i < 2; i++) {

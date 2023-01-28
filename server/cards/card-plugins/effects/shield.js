@@ -1,4 +1,5 @@
 import EffectCard from './_effect-card'
+import {discardCard} from '../../../utils'
 
 class ShieldEffectCard extends EffectCard {
 	constructor() {
@@ -15,7 +16,7 @@ class ShieldEffectCard extends EffectCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
-				target.discardProtection = true
+				discardCard(game.state, target.row.effectCard)
 			}
 			return target
 		})

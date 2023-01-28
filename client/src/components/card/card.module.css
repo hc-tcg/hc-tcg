@@ -15,3 +15,7 @@
 	font-family: 'Bangers', Helvetica, serif;
 	user-select: none;
 }
+
+.selectable {
+	cursor: pointer;
+}

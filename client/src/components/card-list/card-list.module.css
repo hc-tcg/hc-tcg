@@ -1,0 +1,39 @@
+.cardList {
+	display: inline-flex;
+	justify-content: flex-start;
+	align-items: center;
+	flex-flow: row wrap;
+	gap: 5px;
+}
+
+.cardList.noWrap {
+	flex-flow: row nowrap;
+}
+
+.card {
+	flex: 0 0 auto;
+	display: inline-block;
+	vertical-align: middle;
+	width: 200px;
+	height: 200px;
+}
+
+.small {
+	grid-template-columns: repeat(auto-fill, 120px);
+}
+
+.small .card {
+	width: 120px;
+	height: 120px;
+}
+
+.clickable {
+	transition: 0.25s transform;
+	transform: scale(100%);
+}
+
+.clickable:hover {
+	box-shadow: 0 0 4px #777;
+	transform: scale(105%);
+	z-index: 10;
+}

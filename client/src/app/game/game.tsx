@@ -6,21 +6,17 @@ import {CardInfoT} from 'types/cards'
 import {CardT} from 'types/game-state'
 import {PickProcessT} from 'types/pick-process'
 import Card from 'components/card'
+import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
+import ChestModal from './modals/chest-modal'
 import MouseIndicator from './mouse-indicator'
 import {equalCard} from 'server/utils'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-
-const PICK_PROCESSES: Record<string, string> = {
-	afk_opponent_hermit: 'Select afk hermit to attack',
-	any_player_hermit: 'Select one of your hermits to apply the effect',
-	any_opponent_hermit: "Select one of opponent's hermits to apply the effect",
-}
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const firstReq = pickProcess.requirments[0]
@@ -56,6 +52,8 @@ const renderModal = (
 		return <ConfirmModal closeModal={closeModal} />
 	else if (openedModalId === 'spyglass')
 		return <SpyglassModal closeModal={closeModal} />
+	else if (openedModalId === 'chest')
+		return <ChestModal closeModal={closeModal} />
 	return null
 }
 
@@ -92,29 +90,21 @@ function Game(props: Props) {
 		dispatch({type: 'SET_SELECTED_CARD', payload: card})
 	}
 
-	const playerHandJsx = playerState.hand.map((card) => {
-		if (!TYPED_CARDS.hasOwnProperty(card.cardId)) {
-			throw new Error('Unsupported card id: ' + card.cardId)
-		}
-		const cardInfo = TYPED_CARDS[card.cardId]
-		const isPicked = pickedCards.some((pickedCard) =>
-			equalCard(card, pickedCard.card)
-		)
-		return (
-			<Card
-				picked={isPicked}
-				selected={equalCard(card, selectedCard)}
-				key={card.cardInstance}
-				card={cardInfo}
-				onClick={() => selectCard(card)}
-			/>
-		)
-	})
+	const pickedCardsInstances = pickedCards.map((pickedCard) => pickedCard.card)
 
 	return (
 		<div className={css.game}>
 			<Board onClick={handleBoardClick} gameState={gameState} />
-			<div className={css.hand}>{playerHandJsx}</div>
+			<div className={css.hand}>
+				<CardList
+					wrap={false}
+					size="medium"
+					cards={playerState.hand}
+					onClick={(card: CardT) => selectCard(card)}
+					selected={selectedCard}
+					picked={pickedCardsInstances}
+				/>
+			</div>
 			{renderModal(openedModalId, setOpenedModalId)}
 			{pickProcess ? (
 				<MouseIndicator message={getPickProcessMessage(pickProcess)} />

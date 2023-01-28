@@ -17,6 +17,8 @@ function registerCards(game) {
 	new GoldArmorEffectCard().register(game)
 	new DiamondArmorEffectCard().register(game)
 	new NetheriteArmorEffectCard().register(game)
+	new WolfEffectCard().register(game)
+	new TotemEffectCard().register(game)
 	new BedEffectCard().register(game)
 }
 
