@@ -8,6 +8,7 @@ import NetheriteArmorEffectCard from './netherite-armor'
 import WolfEffectCard from './wolf'
 import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
+import ThornsEffectCard from './thorns'
 
 function registerCards(game) {
 	new WaterBucketEffectCard().register(game)
@@ -20,6 +21,7 @@ function registerCards(game) {
 	new WolfEffectCard().register(game)
 	new TotemEffectCard().register(game)
 	new BedEffectCard().register(game)
+	new ThornsEffectCard().register(game)
 }
 
 export default registerCards
