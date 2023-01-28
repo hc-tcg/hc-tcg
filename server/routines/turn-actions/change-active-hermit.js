@@ -15,7 +15,7 @@ function* changeActiveHermit(game, turnAction, derivedState) {
 
 	game.hooks.changeActiveHermit.call(turnAction, derivedState)
 
-	// After a player has a hermit killed, he can acitve next one
+	// After a player has a hermit killed/knockout, he can activate next one
 	// without losing the ability to attack again
 	if (hadActiveHermit) {
 		pastTurnActions.push('CHANGE_ACTIVE_HERMIT')

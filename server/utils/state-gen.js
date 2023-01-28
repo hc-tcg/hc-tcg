@@ -64,6 +64,7 @@ export function getStarterPack() {
 				'lead',
 				'chest',
 				'thorns',
+				'knockback',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -79,7 +80,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'thorns',
+		cardId: 'knockback',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

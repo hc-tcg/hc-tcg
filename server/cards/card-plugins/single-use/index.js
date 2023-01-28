@@ -21,6 +21,7 @@ import ComposterSingleUseCard from './composter'
 import LeadSingleUseCard from './lead'
 import SpyglassSingleUseCard from './spyglass'
 import ChestSingleUseCard from './chest'
+import KnockbackSingleUseCard from './knockback'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -46,6 +47,7 @@ function registerCards(game) {
 	new LeadSingleUseCard().register(game)
 	new SpyglassSingleUseCard().register(game)
 	new ChestSingleUseCard().register(game)
+	new KnockbackSingleUseCard().register(game)
 }
 
 export default registerCards
