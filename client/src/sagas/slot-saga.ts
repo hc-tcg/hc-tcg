@@ -65,6 +65,7 @@ function* pickWithSelectedSaga(
 				'flint_&_steel',
 				'spyglass',
 				'efficiency',
+				'curse_of_binding',
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
