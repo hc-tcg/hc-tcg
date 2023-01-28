@@ -9,6 +9,7 @@ import WolfEffectCard from './wolf'
 import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
+import MendingEffectCard from './mending'
 
 function registerCards(game) {
 	new WaterBucketEffectCard().register(game)
@@ -22,6 +23,7 @@ function registerCards(game) {
 	new TotemEffectCard().register(game)
 	new BedEffectCard().register(game)
 	new ThornsEffectCard().register(game)
+	new MendingEffectCard().register(game)
 }
 
 export default registerCards

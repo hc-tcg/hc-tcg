@@ -29,3 +29,5 @@
 # What happens when a sleeping hermit (bed effect) gets his bad stolen using an emerald?
 # Does game end even when you use effect cards to draw more cards or only at end of a turn?
 # Can you use composter if there is not enough ccards in your hand?
+# When Mending is used, does the single use card return to end of players deck or at random spot?
+# Does Mending work only on acitve hermit or one on afk hermit will also return cards?
