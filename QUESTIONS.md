@@ -33,3 +33,5 @@
 # Does Mending work only on acitve hermit or one on afk hermit will also return cards?
 # Do attack special moves - like Ethos blue fire or docs double damage - also affect afk hermit if e.g. used together with bow?
 # Does fortune affect all coin flips for special moves that have multiple coin flips? Like ultra rare Etho's "Slab" attack.
+# Does chorus fruit overwrite curse of binding?
+# Does Gems rare ability include offensive singel_use cards? E.g. can I attack again with a sword?

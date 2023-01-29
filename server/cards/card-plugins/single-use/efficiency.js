@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse, hasSingleUse} from '../../../utils'
+import {applySingleUse} from '../../../utils'
 
 class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {

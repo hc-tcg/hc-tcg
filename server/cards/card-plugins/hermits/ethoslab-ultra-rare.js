@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardCard} from '../../../utils'
+import {flipCoin} from '../../../utils'
 
 class EthosLabUltraRareHermitCard extends HermitCard {
 	constructor() {

@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
 
+// TODO - Must work with Gemintay ability to use two single use cards per turn (should mend the first one)
 class MendingEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -12,31 +13,29 @@ class MendingEffectCard extends EffectCard {
 		})
 	}
 	register(game) {
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.discardCard.for('single_use').tap(this.id, (card) => {
+			const currentPlayer = game.state.players[game.state.turnPlayerId]
 
 			const activeRow = currentPlayer.board.activeRow
 			if (activeRow === null) return
 			const effectCard = currentPlayer.board.rows[activeRow]?.effectCard
 			if (effectCard?.cardId !== this.id) return
 
-			// get single use card
-			const suCard = currentPlayer.board.singleUseCard
-			const suUsed = currentPlayer.board.singleUseCardUsed
-			if (!suCard || !suUsed) return
-
 			// return single use card to deck at random location
 			const randomIndex = Math.floor(
 				Math.random() * (currentPlayer.pile.length + 1)
 			)
-			currentPlayer.pile.splice(randomIndex, 0, suCard)
+			currentPlayer.pile.splice(randomIndex, 0, card)
 
 			// clear single use card slot
 			currentPlayer.board.singleUseCardUsed = false
 			currentPlayer.board.singleUseCard = null
 
 			// discard mending card from board
-			discardCard(game.state, effectCard)
+			discardCard(game, effectCard)
+
+			// return anything to prevent card being moved to discard pile
+			return this.id
 		})
 	}
 }

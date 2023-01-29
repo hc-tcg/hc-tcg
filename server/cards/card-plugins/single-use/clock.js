@@ -1,5 +1,4 @@
 import SingleUseCard from './_single-use-card'
-import {hasSingleUse} from '../../../utils'
 
 class ClockSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -11,27 +10,23 @@ class ClockSingleUseCard extends SingleUseCard {
 		})
 	}
 	register(game) {
-		game.hooks.turnStart.tap(this.id, () => {
-			if (game.skipTurn) {
+		game.hooks.turnStart.tap(this.id, (derivedState) => {
+			const {currentPlayer} = derivedState
+			if (currentPlayer.custom[this.id]) {
 				console.log('Turn skipped')
-				delete game.skipTurn
+				delete currentPlayer.custom[this.id]
 				return 'SKIP'
 			}
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
-			const clockActivated = hasSingleUse(currentPlayer, 'clock', true)
-			if (clockActivated) game.skipTurn = true
-		})
-
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo} = derivedState
+			const {singleUseInfo, opponentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
 				if (game.state.turn < 2) {
 					console.log("Can't play clock on first turn")
 					return 'INVALID'
 				}
+				opponentPlayer.custom[this.id] = true
 				return 'DONE'
 			}
 		})

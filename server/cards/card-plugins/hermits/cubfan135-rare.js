@@ -63,7 +63,8 @@ class Cubfan135RareHermitCard extends HermitCard {
 					usedPower &&
 					hasOtherHermit &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+					availableActions.includes('END_TURN') &&
+					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}

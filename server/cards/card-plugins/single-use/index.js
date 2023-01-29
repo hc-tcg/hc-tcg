@@ -55,6 +55,7 @@ function registerCards(game) {
 	new KnockbackSingleUseCard().register(game)
 	new EfficiencySingleUseCard().register(game)
 	new CurseOfBindingSingleUseCard().register(game)
+	new CurseOfVanishingSingleUseCard().register(game)
 	new LootingSingleUseCard().register(game)
 	new FortuneSingleUseCard().register(game)
 }

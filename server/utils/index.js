@@ -78,33 +78,43 @@ export function findCard(gameState, card) {
 	return null
 }
 
-export function discardCard(gameState, card) {
-	const loc = findCard(gameState, card)
+export function discardCard(game, card) {
+	const loc = findCard(game.state, card)
 	if (!loc) {
 		const err = new Error()
-		return console.log('Cannot find card: ', card, err.stack)
+		console.log('Cannot find card: ', card, err.stack)
+		return
 	}
+
 	loc.target[loc.key] = null
-	Object.values(gameState.players).forEach((pState) => {
+	Object.values(game.state.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
 	})
-	gameState.players[loc.playerId].discarded.push({
+
+	const cardInfo = CARDS[card.cardId]
+	const result = game.hooks.discardCard.get(cardInfo.type)?.call(card)
+	if (result) return
+
+	game.state.players[loc.playerId].discarded.push({
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})
 }
 
-export function discardSingleUse(playerState) {
+export function discardSingleUse(game, playerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
+
+	playerState.board.singleUseCardUsed = false
+	playerState.board.singleUseCard = null
+
 	if (suUsed) {
-		playerState.discarded.push(suCard)
+		const result = game.hooks.discardCard.get('single_use')?.call(suCard)
+		if (!result) playerState.discarded.push(suCard)
 	} else {
 		playerState.hand.push(suCard)
 	}
-	playerState.board.singleUseCardUsed = false
-	playerState.board.singleUseCard = null
 }
 
 /*

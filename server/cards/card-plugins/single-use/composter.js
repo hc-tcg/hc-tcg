@@ -21,7 +21,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 				if (pickedCardsInfo.length !== 2) return 'INVALID'
 
 				// discard two cards
-				pickedCardsInfo.forEach((info) => discardCard(game.state, info.card))
+				pickedCardsInfo.forEach((info) => discardCard(game, info.card))
 
 				// draw two cards
 				for (let i = 0; i < 2; i++) {

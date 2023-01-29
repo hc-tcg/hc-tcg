@@ -18,7 +18,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
 				if (opponentEffectCardInfo?.id === 'water_bucket') {
-					discardCard(game.state, opponentActiveRow.effectCard)
+					discardCard(game, opponentActiveRow.effectCard)
 				} else {
 					opponentActiveRow.ailments.push('fire')
 				}

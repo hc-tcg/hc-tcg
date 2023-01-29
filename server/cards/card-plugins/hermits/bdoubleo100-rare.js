@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 
+// TODO - can't be used consecutively
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
 		super({

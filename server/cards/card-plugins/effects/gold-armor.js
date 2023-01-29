@@ -17,7 +17,7 @@ class GoldArmorEffectCard extends EffectCard {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
 				// TODO - what to do in case of invis potion 0x?
-				discardCard(game.state, target.row.effectCard)
+				discardCard(game, target.row.effectCard)
 			}
 			return target
 		})

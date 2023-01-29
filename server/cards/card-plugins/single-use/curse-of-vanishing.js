@@ -21,7 +21,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 				const activeRowState = opponentPlayer.board.rows[activeRow]
 				if (!activeRowState) return 'INVALID'
 				if (activeRowState.effectCard) {
-					discardCard(game.state, activeRowState.effectCard)
+					discardCard(game, activeRowState.effectCard)
 				}
 				return 'DONE'
 			}

@@ -15,7 +15,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, currentPlayer} = derivedState
 
 			if (singleUseInfo?.id === this.id) {
-				currentPlayer.hand.forEach((card) => discardCard(game.state, card))
+				currentPlayer.hand.forEach((card) => discardCard(game, card))
 				for (let i = 0; i < 3; i++) {
 					const drawCard = currentPlayer.pile.shift()
 					if (drawCard) currentPlayer.hand.push(drawCard)

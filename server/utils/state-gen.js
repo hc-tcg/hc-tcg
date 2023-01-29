@@ -55,12 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'falsesymmetry_rare',
+		cardId: 'geminitay_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_builder_rare',
+		cardId: 'item_terraform_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'mending',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

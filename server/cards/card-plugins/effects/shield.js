@@ -16,7 +16,7 @@ class ShieldEffectCard extends EffectCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
-				discardCard(game.state, target.row.effectCard)
+				discardCard(game, target.row.effectCard)
 			}
 			return target
 		})

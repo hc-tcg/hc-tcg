@@ -1,11 +1,6 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
-import {
-	hasSingleUse,
-	applySingleUse,
-	getPickedCardsInfo,
-	discardCard,
-} from '../../utils'
+import {applySingleUse, getPickedCardsInfo, discardCard} from '../../utils'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
@@ -101,7 +96,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		if (target.row.health < 0 && !target.ignoreProtection && target.recover) {
 			target.row.health = target.recover
 			target.row.ailments = []
-			discardCard(game.state, target.row.effectCard)
+			discardCard(game, target.row.effectCard)
 		}
 
 		// console.log('ATTACK: ', {

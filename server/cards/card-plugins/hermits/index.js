@@ -4,6 +4,7 @@ import Docm77RareHermitCard from './docm77-rare'
 import EthosLabRareHermitCard from './ethoslab-rare'
 import EthosLabUltraRareHermitCard from './ethoslab-ultra-rare'
 import FalseSymmetryRareHermitCard from './falsesymmetry-rare'
+import GeminiTayRareHermitCard from './geminitay-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -12,6 +13,7 @@ function registerCards(game) {
 	new EthosLabRareHermitCard().register(game)
 	new EthosLabUltraRareHermitCard().register(game)
 	new FalseSymmetryRareHermitCard().register(game)
+	new GeminiTayRareHermitCard().register(game)
 }
 
 export default registerCards

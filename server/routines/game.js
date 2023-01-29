@@ -2,13 +2,7 @@ import {take, spawn, actionChannel, call} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import DAMAGE from '../const/damage'
-import {
-	equalCard,
-	hasEnoughItems,
-	discardSingleUse,
-	hasSingleUse,
-	discardCard,
-} from '../utils'
+import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getGameState, getEmptyRow} from '../utils/state-gen'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
@@ -42,7 +36,6 @@ function getAvailableActions(game, derivedState) {
 		actions.push('END_TURN')
 	}
 	if (
-		!pastTurnActions.includes('APPLY_EFFECT') &&
 		currentPlayer.board.singleUseCard &&
 		!currentPlayer.board.singleUseCardUsed
 	) {
@@ -96,7 +89,10 @@ function getAvailableActions(game, derivedState) {
 
 	if (!pastTurnActions.includes('PLAY_ITEM_CARD'))
 		actions.push('PLAY_ITEM_CARD')
-	if (!pastTurnActions.includes('PLAY_SINGLE_USE_CARD'))
+	if (
+		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
+		!currentPlayer.board.singleUseCard
+	)
 		actions.push('PLAY_SINGLE_USE_CARD')
 
 	return actions
@@ -107,18 +103,18 @@ function playerAction(actionType, playerId) {
 }
 
 // return false in case one player is dead
-function* checkHermitHealth(gameState) {
-	const playerStates = Object.values(gameState.players)
+function* checkHermitHealth(game) {
+	const playerStates = Object.values(game.state.players)
 	for (let playerState of playerStates) {
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				if (row.hermitCard) discardCard(gameState, row.hermitCard)
-				if (row.effectCard) discardCard(gameState, row.effectCard)
+				if (row.hermitCard) discardCard(game, row.hermitCard)
+				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach(
-					(itemCard) => itemCard && discardCard(gameState, itemCard)
+					(itemCard) => itemCard && discardCard(game, itemCard)
 				)
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
@@ -130,13 +126,13 @@ function* checkHermitHealth(gameState) {
 
 		const isDead = playerState.lives <= 0
 		const noHermitsLeft =
-			gameState.turn > 2 &&
+			game.state.turn > 2 &&
 			playerState.board.rows.every((row) => !row.hermitCard)
 		if (isDead || noHermitsLeft) {
 			console.log('Player dead: ', {
 				isDead,
 				noHermitsLeft,
-				turn: gameState.turn,
+				turn: game.state.turn,
 			})
 			return false
 		}
@@ -184,7 +180,7 @@ function* turnActionSaga(game, turnAction, derivedState) {
 
 	game.hooks.actionEnd.call(turnAction, derivedState)
 
-	const playersAlive = yield call(checkHermitHealth, game.state)
+	const playersAlive = yield call(checkHermitHealth, game)
 	if (!playersAlive) return 'END_TURN'
 	return 'DONE'
 }
@@ -268,7 +264,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	game.hooks.turnEnd.call(derivedState)
 
 	// TODO - Inform player if he won
-	const playersAlive = yield call(checkHermitHealth, game.state)
+	const playersAlive = yield call(checkHermitHealth, game)
 	if (!playersAlive) return 'GAME_END'
 
 	// Draw a card from deck when turn ends
@@ -278,7 +274,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	discardSingleUse(currentPlayer)
+	discardSingleUse(game, currentPlayer)
 
 	return 'DONE'
 }
@@ -297,6 +293,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			playCard: new HookMap(
 				(cardType) => new SyncHook(['turnAction', 'derived'])
 			),
+			discardCard: new HookMap((cardType) => new SyncBailHook(['card'])),
 			changeActiveHermit: new SyncHook(['turnAction', 'derived']),
 			actionEnd: new SyncHook(['turnAction', 'derived']),
 			turnEnd: new SyncHook(['derived']),

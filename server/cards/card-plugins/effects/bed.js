@@ -49,7 +49,7 @@ class BedEffectCard extends EffectCard {
 					row.health = CARDS[row.hermitCard.cardId].health
 					row.ailments = row.ailments.filter((a) => a != 'sleeping')
 					delete row.effectCard.sleeping
-					discardCard(game.state, row.effectCard)
+					discardCard(game, row.effectCard)
 				}
 			}
 		})

@@ -24,7 +24,7 @@ class TotemEffectCard extends EffectCard {
 				if (row.hermitCard && row.health <= 0 && hasTotem) {
 					row.health = this.recoverAmount
 					row.ailments = []
-					discardCard(game.state, row.effectCard)
+					discardCard(game, row.effectCard)
 				}
 			}
 		}
