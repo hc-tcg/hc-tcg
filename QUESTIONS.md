@@ -31,3 +31,4 @@
 # Can you use composter if there is not enough ccards in your hand?
 # When Mending is used, does the single use card return to end of players deck or at random spot?
 # Does Mending work only on acitve hermit or one on afk hermit will also return cards?
+# Do attack special moves - like Ethos blue fire or docs double damage - also affect afk hermit if e.g. used together with bow?

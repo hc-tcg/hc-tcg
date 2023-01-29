@@ -76,6 +76,7 @@ function* attackSaga(game, turnAction, derivedState) {
 			...derivedState,
 			typeAction,
 			singleUseInfo,
+			opponentActiveRow,
 			attackerActiveRow,
 			attackerHermitCard,
 			attackerHermitInfo,
