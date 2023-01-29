@@ -32,6 +32,12 @@ function getAvailableActions(game, derivedState) {
 	const {turn} = game.state
 	const {pastTurnActions, currentPlayer} = derivedState
 	const actions = []
+
+	if (currentPlayer.effectStep) {
+		actions.push('EFFECT_STEP')
+		return actions
+	}
+
 	if (currentPlayer.board.activeRow !== null) {
 		actions.push('END_TURN')
 	}
@@ -157,6 +163,10 @@ function* turnActionSaga(game, turnAction, derivedState) {
 		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
 		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
 		//
+	} else if (turnAction.type === 'EFFECT_STEP') {
+		if (!availableActions.includes('EFFECT_STEP')) return
+		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
+		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
 		if (!typeAction || !availableActions.includes(typeAction)) return
@@ -201,6 +211,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 			'PLAY_CARD',
 			'CHANGE_ACTIVE_HERMIT',
 			'APPLY_EFFECT',
+			'EFFECT_STEP',
 			'ATTACK',
 			'END_TURN',
 		].map((type) => playerAction(type, currentPlayer.id)),

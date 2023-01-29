@@ -24,6 +24,8 @@ import ChestSingleUseCard from './chest'
 import KnockbackSingleUseCard from './knockback'
 import EfficiencySingleUseCard from './efficiency'
 import CurseOfBindingSingleUseCard from './curse-of-binding'
+import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
+import LootingSingleUseCard from './looting'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -52,6 +54,7 @@ function registerCards(game) {
 	new KnockbackSingleUseCard().register(game)
 	new EfficiencySingleUseCard().register(game)
 	new CurseOfBindingSingleUseCard().register(game)
+	new LootingSingleUseCard().register(game)
 }
 
 export default registerCards

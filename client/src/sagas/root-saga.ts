@@ -23,13 +23,14 @@ function* gameSaga(): SagaIterator {
 
 		yield put({type: 'GAME_STATE', ...payload})
 
-		yield call(gameStateSaga, payload.gameState)
+		yield fork(gameStateSaga, payload.gameState)
 
 		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
 
 		const turnAction = yield race({
 			playCard: take('PLAY_CARD'),
 			applyEffect: take('APPLY_EFFECT'),
+			effectStep: take('EFFECT_STEP'),
 			attack: take('ATTACK'),
 			endTurn: take('END_TURN'),
 			changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
@@ -40,6 +41,8 @@ function* gameSaga(): SagaIterator {
 			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
 		} else if (turnAction.applyEffect) {
 			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+		} else if (turnAction.effectStep) {
+			yield call(sendMsg, 'EFFECT_STEP', turnAction.effectStep.payload)
 		} else if (turnAction.attack) {
 			yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
 		} else if (turnAction.endTurn) {

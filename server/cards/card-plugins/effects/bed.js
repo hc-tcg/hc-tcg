@@ -3,6 +3,7 @@ import CARDS from '../../../cards'
 import {discardCard} from '../../../utils'
 
 // TODO - test this doesn't introduce issues when sleeping hermit dies
+// TODO - make this work with curse-of-vanishing
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({

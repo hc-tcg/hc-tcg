@@ -68,6 +68,8 @@ export function getStarterPack() {
 				'efficiency',
 				'mending',
 				'curse_of_binding',
+				'curse_of_vanishing',
+				'looting',
 			].includes(card.id)
 		)
 		.slice(0, 17)
@@ -83,7 +85,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'curse_of_binding',
+		cardId: 'looting',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

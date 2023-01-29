@@ -42,8 +42,10 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
 
 	if (!singleUseInfo) return 'INVALID'
+
 	const applyEffectResult = game.hooks.applyEffect.call(turnAction, {
 		...derivedState,
+		step: currentPlayer.effectStep || 0,
 		pickedCardsInfo,
 		singleUseInfo,
 		playerActiveRow,
@@ -51,16 +53,21 @@ function* applyEffectSaga(game, turnAction, derivedState) {
 		opponentEffectCardInfo,
 	})
 
-	if (applyEffectResult !== 'DONE') {
-		if (applyEffectResult === 'INVALID') {
-			console.log('Validation failed for: ', singleUseInfo?.id)
-		} else {
-			console.log('Effect not implemented: ', singleUseInfo?.id)
-		}
-		return 'INVALID'
+	if (applyEffectResult === 'INVALID') {
+		console.log('Validation failed for: ', singleUseInfo?.id)
+	} else if (applyEffectResult === 'DONE') {
+		currentPlayer.board.singleUseCardUsed = true
+	} else if (applyEffectResult === 'NEXT') {
+		currentPlayer.board.singleUseCardUsed = true
+		currentPlayer.effectStep = (currentPlayer.effectStep || 0) + 1
+	} else {
+		console.log('Effect not implemented: ', singleUseInfo?.id)
 	}
 
-	currentPlayer.board.singleUseCardUsed = true
+	if (applyEffectResult !== 'NEXT') {
+		delete currentPlayer.effectStep
+	}
+	return applyEffectResult
 }
 
 export default applyEffectSaga

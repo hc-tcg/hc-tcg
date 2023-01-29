@@ -46,14 +46,8 @@ function* pickWithSelectedSaga(
 	})
 
 	if (slotType === 'single_use') {
-		// TODO - hacky check for now to avoid instant selection for attack effects
 		const damageInfo = DAMAGE[selectedCardInfo.id]
-		if (REQS[selectedCard.cardId] && !damageInfo) {
-			const result = yield call(runPickProcessSaga, selectedCard.cardId)
-			if (!result || !result.length) return
-			// problem je ze v REQS je i bow/crossbow takze se zavola apply effect
-			yield put({type: 'APPLY_EFFECT', payload: {pickedCards: result}})
-		} else if (
+		if (
 			[
 				'splash_potion_of_healing',
 				'lava_bucket',
@@ -66,11 +60,20 @@ function* pickWithSelectedSaga(
 				'spyglass',
 				'efficiency',
 				'curse_of_binding',
+				'curse_of_vanishing',
+				'looting',
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
 		} else if (selectedCard.cardId === 'chest') {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'chest'})
+
+			// TODO - damageInfo - hacky check for now to avoid instant selection for attack effects
+		} else if (REQS[selectedCard.cardId] && !damageInfo) {
+			const result = yield call(runPickProcessSaga, selectedCard.cardId)
+			if (!result || !result.length) return
+			// problem je ze v REQS je i bow/crossbow takze se zavola apply effect
+			yield put({type: 'APPLY_EFFECT', payload: {pickedCards: result}})
 		}
 	}
 

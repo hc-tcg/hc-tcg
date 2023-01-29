@@ -15,6 +15,7 @@ export type BoardRowT = {
 
 export type PlayerState = {
 	id: PlatyerId
+	effectStep?: number
 	playerName: string
 	coinFlip: 'heads' | 'tails' | null
 	custom: Record<string, any>

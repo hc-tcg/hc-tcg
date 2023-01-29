@@ -26,6 +26,7 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 	],
 	bow: [{target: 'opponent', type: 'hermit', amount: 1}],
 	crossbow: [{target: 'opponent', type: 'hermit', amount: 1}],
+	looting: [{target: 'opponent', type: 'item', amount: 1}],
 }
 
 // TODO - clicking on the single use card slot while picking should stop the picking process (as should pressing ESC)

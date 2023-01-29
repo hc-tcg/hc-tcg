@@ -1,5 +1,4 @@
 import SingleUseCard from './_single-use-card'
-import {equalCard, discardCard} from '../../../utils'
 
 class CurseOfBindingSingleUseCard extends SingleUseCard {
 	constructor() {
