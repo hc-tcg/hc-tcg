@@ -67,7 +67,6 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				const activeRow =
 					currentPlayer.board.rows[currentPlayer.board.activeRow]
 
-				console.log('@ACTIVE_ROW: ', activeRow)
 				if (!activeRow || activeRow.hermitCard?.cardId !== this.id)
 					return availableActions
 

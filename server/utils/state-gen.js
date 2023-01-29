@@ -55,17 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'bdoubleo100_rare',
+		cardId: 'cubfan135_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_balanced_rare',
+		cardId: 'item_speedrunner_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_balanced_rare',
+		cardId: 'item_speedrunner_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
