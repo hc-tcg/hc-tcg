@@ -16,7 +16,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
-				currentPlayer.coinFlips[this.id] = flipCoin()
+				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
 				return 'DONE'
 			}
 		})

@@ -62,6 +62,7 @@ function* pickWithSelectedSaga(
 				'curse_of_binding',
 				'curse_of_vanishing',
 				'looting',
+				'fortune',
 			].includes(selectedCard.cardId)
 		) {
 			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})

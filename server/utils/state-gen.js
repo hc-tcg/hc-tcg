@@ -41,7 +41,7 @@ export function getStarterPack() {
 	// EFFECTS
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.filter((card) => !['fortune'].includes(card.id))
+		.filter((card) => !['bed'].includes(card.id))
 		.slice(0, 17)
 
 	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
@@ -65,7 +65,7 @@ export function getStarterPack() {
 	})
 
 	pack.unshift({
-		cardId: 'invisibility_potion',
+		cardId: 'fortune',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

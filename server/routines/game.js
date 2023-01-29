@@ -130,7 +130,7 @@ function* checkHermitHealth(gameState) {
 
 		const isDead = playerState.lives <= 0
 		const noHermitsLeft =
-			gameState.turn > 1 &&
+			gameState.turn > 2 &&
 			playerState.board.rows.every((row) => !row.hermitCard)
 		if (isDead || noHermitsLeft) {
 			console.log('Player dead: ', {

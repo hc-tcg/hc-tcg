@@ -58,8 +58,8 @@ function Board({onClick, gameState}: Props) {
 		setCoinFlipInfo(newInfo)
 
 		const timeout = setTimeout(() => {
-			const newInfo = Object.entries(coinFlipInfo).reduce(
-				(result, [key, value]) => {
+			setCoinFlipInfo((oldInfo) =>
+				Object.entries(oldInfo).reduce((result, [key, value]) => {
 					return {
 						...result,
 						[key]: {
@@ -67,15 +67,12 @@ function Board({onClick, gameState}: Props) {
 							shown: true,
 						},
 					}
-				},
-				{}
+				}, {})
 			)
-			setCoinFlipInfo(newInfo)
 		}, 3000)
 		return () => clearTimeout(timeout)
 	}, [currentPlayer?.coinFlips])
 
-	console.log({coinFlipInfo})
 	const coinFlip =
 		Object.values(coinFlipInfo).find((info) => !info.shown)?.value || null
 

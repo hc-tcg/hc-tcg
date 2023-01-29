@@ -26,6 +26,7 @@ import EfficiencySingleUseCard from './efficiency'
 import CurseOfBindingSingleUseCard from './curse-of-binding'
 import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
 import LootingSingleUseCard from './looting'
+import FortuneSingleUseCard from './fortune'
 
 function registerCards(game) {
 	new ClockSingleUseCard().register(game)
@@ -55,6 +56,7 @@ function registerCards(game) {
 	new EfficiencySingleUseCard().register(game)
 	new CurseOfBindingSingleUseCard().register(game)
 	new LootingSingleUseCard().register(game)
+	new FortuneSingleUseCard().register(game)
 }
 
 export default registerCards

@@ -169,6 +169,8 @@ export function getPickedCardsInfo(gameState, pickedCards) {
 		.filter(Boolean)
 }
 
-export function flipCoin() {
+export function flipCoin(currentPlayer) {
+	// TODO - possibly replace with hook to avoid explicit card ids in code
+	if (currentPlayer.coinFlips['fortune'] === 'heads') return 'heads'
 	return Math.random() > 0.5 ? 'heads' : 'tails'
 }
