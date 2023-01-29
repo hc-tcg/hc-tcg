@@ -11,6 +11,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 				'Any coin flip(s) necessary for user\'s attack are not needed and "heads" is assummed.\n\nDiscard after use.',
 		})
 	}
+
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer} = derivedState

@@ -1,6 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse, flipCoin} from '../../../utils'
 
+// TODO - whoops, this is supposed to affect opponent not current player!
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -26,10 +27,10 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			const isInvisCard = board.singleUseCard?.cardId === this.id
 			const isUsed = board.singleUseCardUsed
 
-			if (isInvisCard && isUsed && coinFlips[this.id]) {
-				if (coinFlips[this.id] === 'heads') {
+			if (isInvisCard && isUsed && coinFlips[this.id][0]) {
+				if (coinFlips[this.id][0] === 'heads') {
 					target.multiplier *= this.multiplier
-				} else if (coinFlips[this.id] === 'tails') {
+				} else if (coinFlips[this.id][0] === 'tails') {
 					target.multiplier = 0
 				}
 				delete derivedState.currentPlayer.coinFlips[this.id]

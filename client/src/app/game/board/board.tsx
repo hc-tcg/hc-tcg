@@ -22,7 +22,7 @@ type Props = {
 
 type FlipInfo = {
 	shown: boolean
-	value: 'heads' | 'tails'
+	value: Array<'heads' | 'tails'>
 }
 
 // TODO - Use selecotrs instead of passing gameState
@@ -73,6 +73,7 @@ function Board({onClick, gameState}: Props) {
 		return () => clearTimeout(timeout)
 	}, [currentPlayer?.coinFlips])
 
+	console.log(coinFlipInfo)
 	const coinFlip =
 		Object.values(coinFlipInfo).find((info) => !info.shown)?.value || null
 
@@ -136,7 +137,7 @@ function Board({onClick, gameState}: Props) {
 			<div className={css.middle}>
 				<img src="images/tcg1.png" draggable="false" width="100" />
 				{coinFlip ? (
-					<Coin face={coinFlip} />
+					<Coin value={coinFlip} />
 				) : !availableActions.includes('WAIT_FOR_TURN') ? (
 					<button
 						onClick={endTurn}

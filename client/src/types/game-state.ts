@@ -19,7 +19,7 @@ export type PlayerState = {
 	id: PlatyerId
 	effectStep?: number
 	playerName: string
-	coinFlips: Record<string, CoinFlipT>
+	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number

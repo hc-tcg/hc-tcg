@@ -169,8 +169,13 @@ export function getPickedCardsInfo(gameState, pickedCards) {
 		.filter(Boolean)
 }
 
-export function flipCoin(currentPlayer) {
+export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
-	if (currentPlayer.coinFlips['fortune'] === 'heads') return 'heads'
-	return Math.random() > 0.5 ? 'heads' : 'tails'
+	const fortune = currentPlayer.coinFlips['fortune']?.[0] === 'heads'
+	const result = []
+	for (let i = 0; i < times; i++) {
+		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
+		result.push(coinFlip)
+	}
+	return result
 }

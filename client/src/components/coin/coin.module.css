@@ -9,6 +9,13 @@
 		transform: rotate3d(0, 1, 0, 360deg);
 	}
 }
+.coins {
+	display: flex;
+	flex-flow: row wrap;
+	max-width: 130px;
+	gap: 10px;
+	justify-content: center;
+}
 .coin {
 	position: relative;
 	width: 60px;

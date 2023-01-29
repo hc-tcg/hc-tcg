@@ -55,22 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'ethoslab_rare',
+		cardId: 'ethoslab_ultra_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_redstone_rare',
+		cardId: 'item_pvp_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
 		cardId: 'fortune',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'water_bucket',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

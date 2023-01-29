@@ -38,9 +38,9 @@ class Docm77RareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
-			if (coinFlip === 'heads') {
+			if (coinFlip[0] === 'heads') {
 				target.multiplier *= this.headsMultiplier
-			} else if (coinFlip === 'tails') {
+			} else if (coinFlip[0] === 'tails') {
 				target.multiplier *= this.tailsMultiplier
 			}
 
