@@ -74,7 +74,11 @@ function* attackSaga(game, turnAction, derivedState) {
 	for (let target of targets) {
 		const result = game.hooks.attack.call(target, turnAction, {
 			...derivedState,
+			typeAction,
 			singleUseInfo,
+			attackerActiveRow,
+			attackerHermitCard,
+			attackerHermitInfo,
 		})
 
 		const targetHermitInfo = CARDS[target.row.hermitCard.cardId]

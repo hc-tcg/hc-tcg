@@ -85,7 +85,10 @@ export function discardCard(gameState, card) {
 	Object.values(gameState.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
 	})
-	gameState.players[loc.playerId].discarded.push(card)
+	gameState.players[loc.playerId].discarded.push({
+		cardId: card.cardId,
+		cardInstance: card.cardInstance,
+	})
 }
 
 export function discardSingleUse(playerState) {

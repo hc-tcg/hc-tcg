@@ -41,37 +41,7 @@ export function getStarterPack() {
 	// EFFECTS
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.filter((card) =>
-			[
-				...Object.keys(DAMAGE),
-				...Object.keys(PROTECTION),
-				'instant_health',
-				'instant_health_ii',
-				'golden_apple',
-				'splash_potion_of_healing',
-				'chorus_fruit',
-				'lava_bucket',
-				'splash_potion_of_poison',
-				'milk_bucket',
-				'water_bucket',
-				'wolf',
-				'totem',
-				'invisibility_potion',
-				'fishing_rod',
-				'emerald',
-				'flint_&_steel',
-				'composter',
-				'lead',
-				'chest',
-				'thorns',
-				'knockback',
-				'efficiency',
-				'mending',
-				'curse_of_binding',
-				'curse_of_vanishing',
-				'loyalty',
-			].includes(card.id)
-		)
+		.filter((card) => !['fortune'].includes(card.id))
 		.slice(0, 17)
 
 	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
@@ -85,14 +55,24 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'loyalty',
+		cardId: 'bdoubleo100_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'item_balanced_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'item_balanced_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	// ensure a hermit in first 5 cards
-	const firstHermitIndex = pack.findIndex(
-		(card) => CARDS[card.cardId].type === 'hermit'
-	)
+	const firstHermitIndex = pack.findIndex((card) => {
+		return CARDS[card.cardId].type === 'hermit'
+	})
 	if (firstHermitIndex > 5) {
 		;[pack[0], pack[firstHermitIndex]] = [pack[firstHermitIndex], pack[0]]
 	}

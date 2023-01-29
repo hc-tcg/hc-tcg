@@ -58,6 +58,10 @@ text.attackName {
 	text-anchor: end;
 }
 
+.attackDamage.specialMove {
+	fill: rgb(23, 66, 234);
+}
+
 .rarity {
 	filter: drop-shadow(0 0 0.02em black) brightness(150%);
 }

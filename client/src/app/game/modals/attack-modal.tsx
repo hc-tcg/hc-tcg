@@ -121,7 +121,13 @@ function AttackModal({closeModal}: Props) {
 				<div className={css.info}>
 					<div className={css.name}>
 						{attackInfo.name} -{' '}
-						<span className={css.damage}>{totalDamage}</span>
+						<span
+							className={classnames(css.damage, {
+								[css.specialMove]: !!attackInfo.power,
+							})}
+						>
+							{totalDamage}
+						</span>
 						{multiplier ? (
 							<span className={css.multiplier}> x{multiplier}</span>
 						) : null}

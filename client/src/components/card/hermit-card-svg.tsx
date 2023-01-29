@@ -1,5 +1,6 @@
 import {HermitCardT} from 'types/cards'
 import css from './hermit-card-svg.module.css'
+import classnames from 'classnames'
 
 export type HermitCardProps = {
 	card: HermitCardT
@@ -99,8 +100,14 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text x="200" y="278" className={css.attackName}>
 					{card.primary.name}
 				</text>
-				<text x="380" y="275" className={css.attackDamage}>
-					{card.primary.damage}
+				<text
+					x="380"
+					y="275"
+					className={classnames(css.attackDamage, {
+						[css.specialMove]: !!card.primary.power,
+					})}
+				>
+					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="320" width="360" height="10" fill="white" />
 				{card.secondary.cost.map((type, i) => (
@@ -116,8 +123,14 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text x="200" y="348" className={css.attackName}>
 					{card.secondary.name}
 				</text>
-				<text x="380" y="345" className={css.attackDamage}>
-					{card.secondary.damage}
+				<text
+					x="380"
+					y="345"
+					className={classnames(css.attackDamage, {
+						[css.specialMove]: !!card.secondary.power,
+					})}
+				>
+					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
 				</text>
 			</g>
 		</svg>

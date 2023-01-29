@@ -71,6 +71,10 @@
 	color: rgb(246, 4, 1);
 }
 
+.specialMove {
+	color: rgb(23, 66, 234);
+}
+
 .hermitDamage {
 	display: inline-flex;
 	justify-content: center;

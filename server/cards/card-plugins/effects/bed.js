@@ -4,6 +4,8 @@ import {discardCard} from '../../../utils'
 
 // TODO - test this doesn't introduce issues when sleeping hermit dies
 // TODO - make this work with curse-of-vanishing
+// TODO - handle diamond steel
+// TODO - it says "NEXT two turns" so probs shouldnt sleep emmediatelly
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -25,6 +27,10 @@ class BedEffectCard extends EffectCard {
 				const {card, rowIndex} = turnAction.payload
 				if (card?.cardId === this.id) {
 					const row = currentPlayer.board.rows[rowIndex]
+
+					// e.g. if bdubs used his atttack
+					if (row.ailments.includes('sleeping')) return
+
 					row.ailments.push('sleeping')
 					card.sleeping = this.turnDuration
 				}
