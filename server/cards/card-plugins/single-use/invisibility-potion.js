@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse} from '../../../utils'
+import {applySingleUse, flipCoin} from '../../../utils'
 
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -16,23 +16,23 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
-				currentPlayer.coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
+				currentPlayer.coinFlips[this.id] = flipCoin()
 				return 'DONE'
 			}
 		})
 
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {board, coinFlip} = derivedState.currentPlayer
+			const {board, coinFlips} = derivedState.currentPlayer
 			const isInvisCard = board.singleUseCard?.cardId === this.id
 			const isUsed = board.singleUseCardUsed
 
-			if (isInvisCard && isUsed && coinFlip !== null) {
-				if (coinFlip === 'heads') {
+			if (isInvisCard && isUsed && coinFlips[this.id]) {
+				if (coinFlips[this.id] === 'heads') {
 					target.multiplier *= this.multiplier
-				} else if (coinFlip === 'tails') {
+				} else if (coinFlips[this.id] === 'tails') {
 					target.multiplier = 0
 				}
-				derivedState.currentPlayer.coinFlip = null
+				delete derivedState.currentPlayer.coinFlips[this.id]
 			}
 			return target
 		})

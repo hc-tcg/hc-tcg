@@ -13,11 +13,13 @@ export type BoardRowT = {
 	ailments: Array<'poison' | 'fire' | 'sleeping'>
 }
 
+export type CoinFlipT = 'heads' | 'tails'
+
 export type PlayerState = {
 	id: PlatyerId
 	effectStep?: number
 	playerName: string
-	coinFlip: 'heads' | 'tails' | null
+	coinFlips: Record<string, CoinFlipT>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number

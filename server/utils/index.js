@@ -80,7 +80,10 @@ export function findCard(gameState, card) {
 
 export function discardCard(gameState, card) {
 	const loc = findCard(gameState, card)
-	if (!loc) return console.log('Cannot find card: ', card)
+	if (!loc) {
+		const err = new Error()
+		return console.log('Cannot find card: ', card, err.stack)
+	}
 	loc.target[loc.key] = null
 	Object.values(gameState.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
@@ -164,4 +167,8 @@ export function getPickedCardsInfo(gameState, pickedCards) {
 			}
 		})
 		.filter(Boolean)
+}
+
+export function flipCoin() {
+	return Math.random() > 0.5 ? 'heads' : 'tails'
 }

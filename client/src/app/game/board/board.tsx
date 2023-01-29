@@ -20,6 +20,11 @@ type Props = {
 	gameState: GameState
 }
 
+type FlipInfo = {
+	shown: boolean
+	value: 'heads' | 'tails'
+}
+
 // TODO - Use selecotrs instead of passing gameState
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector((state: RootState) => state.playerId)
@@ -37,14 +42,44 @@ function Board({onClick, gameState}: Props) {
 	)
 	const dispatch = useDispatch()
 
-	const [coinFlip, setCoinFlip] = useState<'heads' | 'tails' | null>(null)
+	// --- coin flip logic start ---
+	const [coinFlipInfo, setCoinFlipInfo] = useState<Record<string, FlipInfo>>({})
 	useEffect(() => {
-		setCoinFlip(currentPlayer?.coinFlip || null)
+		const coinFlips = currentPlayer?.coinFlips || {}
+		const newInfo = {} as Record<string, FlipInfo>
+		Object.entries(coinFlips).forEach(([key, flip]) => {
+			if (!coinFlipInfo[key]) {
+				newInfo[key] = {shown: false, value: flip}
+			} else {
+				newInfo[key] = coinFlipInfo[key]
+			}
+		})
+
+		setCoinFlipInfo(newInfo)
+
 		const timeout = setTimeout(() => {
-			setCoinFlip(null)
+			const newInfo = Object.entries(coinFlipInfo).reduce(
+				(result, [key, value]) => {
+					return {
+						...result,
+						[key]: {
+							...value,
+							shown: true,
+						},
+					}
+				},
+				{}
+			)
+			setCoinFlipInfo(newInfo)
 		}, 3000)
 		return () => clearTimeout(timeout)
-	}, [currentPlayer?.coinFlip])
+	}, [currentPlayer?.coinFlips])
+
+	console.log({coinFlipInfo})
+	const coinFlip =
+		Object.values(coinFlipInfo).find((info) => !info.shown)?.value || null
+
+	// --- coin flip logic end ---
 
 	const handeRowClick = (
 		playerId: string,

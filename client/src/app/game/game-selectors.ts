@@ -27,13 +27,16 @@ export const getMultiplier = (state: RootState) => {
 	const playerState = players[turnPlayerId]
 	const {singleUseCard, singleUseCardUsed} = playerState.board
 
-	if (
-		singleUseCard?.cardId === 'invisibility_potion' &&
-		singleUseCardUsed &&
-		playerState.coinFlip
-	) {
-		return playerState.coinFlip === 'heads' ? '2' : '0'
+	const flips = playerState.coinFlips
+	let multiplier = 1
+	if (flips['invisibility_potion']) {
+		multiplier *= flips['invisibility_potion'] === 'heads' ? 2 : 0
 	}
 
-	return null
+	// this won't have effect as the flip happens during the attack not before
+	if (flips['docm77_rare']) {
+		multiplier *= flips['docm77_rare'] === 'heads' ? 2 : 0.5
+	}
+
+	return multiplier === 1 ? null : multiplier
 }

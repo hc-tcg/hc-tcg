@@ -115,9 +115,11 @@ function* checkHermitHealth(gameState) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				discardCard(gameState, row.hermitCard)
-				discardCard(gameState, row.effectCard)
-				row.itemCards.forEach((itemCard) => discardCard(gameState, itemCard))
+				if (row.hermitCard) discardCard(gameState, row.hermitCard)
+				if (row.effectCard) discardCard(gameState, row.effectCard)
+				row.itemCards.forEach(
+					(itemCard) => itemCard && discardCard(gameState, itemCard)
+				)
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
 					playerState.board.activeRow = null
@@ -261,7 +263,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		if (row.ailments.includes('poison')) row.health -= 20
 	}
 
-	currentPlayer.coinFlip = null
+	currentPlayer.coinFlips = {}
 
 	game.hooks.turnEnd.call(derivedState)
 

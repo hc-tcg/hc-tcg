@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse} from '../../../utils'
+import {applySingleUse, flipCoin} from '../../../utils'
 
 class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -11,15 +11,6 @@ class LootingSingleUseCard extends SingleUseCard {
 				"Flip a coin.\n\nIf heads, user picks 1 item card from opposing active Hermit and adds it to user's hand.\n\nDiscard after use.",
 		})
 	}
-
-	/*
-	FE: apply card
-	BE: Flip a coin
-	FE: If heads, select item
-	BE: give item to player
-	DONE
-
-	*/
 
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
@@ -40,10 +31,11 @@ class LootingSingleUseCard extends SingleUseCard {
 					const anyItemCards = opponentActiveRow.itemCards.some(Boolean)
 					if (!anyItemCards) return 'INVALID'
 
-					currentPlayer.coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
-					return currentPlayer.coinFlip === 'heads' ? 'NEXT' : 'DONE'
+					const coinFlip = flipCoin()
+					currentPlayer.coinFlips[this.id] = coinFlip
+					return coinFlip === 'heads' ? 'NEXT' : 'DONE'
 				} else if (step === 1) {
-					currentPlayer.coinFlip = null
+					currentPlayer.coinFlips[this.id] = null
 					if (pickedCardsInfo.length !== 1) return 'INVALID'
 					const pickedCard = pickedCardsInfo[0]
 					if (pickedCard.cardInfo.type !== 'item') return 'INVALID'

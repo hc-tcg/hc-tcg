@@ -55,17 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'cubfan135_rare',
+		cardId: 'docm77_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_speedrunner_rare',
+		cardId: 'item_farm_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_speedrunner_rare',
+		cardId: 'invisibility_potion',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
@@ -103,7 +103,7 @@ export function getPlayerState(allPlayers, playerId) {
 	return {
 		id: playerId,
 		playerName: allPlayers[playerId].playerName,
-		coinFlip: null,
+		coinFlips: {},
 		lives: 3,
 		hand: pack.slice(0, 7), // 0.7
 		// TODO - hand out reward cards on kill
