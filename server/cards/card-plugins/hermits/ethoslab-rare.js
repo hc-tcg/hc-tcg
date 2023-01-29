@@ -36,6 +36,7 @@ class EthosLabRareHermitCard extends HermitCard {
 			} = derivedState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
+			if (!target.isActive) return target
 
 			if (attackerHermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)

@@ -73,7 +73,6 @@ function Board({onClick, gameState}: Props) {
 		return () => clearTimeout(timeout)
 	}, [currentPlayer?.coinFlips])
 
-	console.log(coinFlipInfo)
 	const coinFlip =
 		Object.values(coinFlipInfo).find((info) => !info.shown)?.value || null
 

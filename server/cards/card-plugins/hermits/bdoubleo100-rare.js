@@ -31,6 +31,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				derivedState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
+			if (!target.isActive) return target
 
 			// e.g. if bed was used
 			if (attackerActiveRow.ailments.includes('sleeping')) return target
