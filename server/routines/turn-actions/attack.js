@@ -93,23 +93,6 @@ function* attackSaga(game, turnAction, derivedState) {
 			target.multiplier
 		target.row.health = Math.min(maxHealth, health - totalDamage)
 
-		// hacky way to make golden_axe bypass totem
-		if (target.row.health < 0 && !target.ignoreProtection && target.recover) {
-			target.row.health = target.recover
-			target.row.ailments = []
-			discardCard(game, target.row.effectCard)
-		}
-
-		// console.log('ATTACK: ', {
-		// 	target,
-		// 	hermitAttack,
-		// 	health,
-		// 	maxHealth,
-		// 	protection,
-		// 	weaknessDamage,
-		// 	totalDamage,
-		// })
-
 		attackerActiveRow.health -= target.backlash
 	}
 

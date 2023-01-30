@@ -6,6 +6,7 @@ import EthosLabUltraRareHermitCard from './ethoslab-ultra-rare'
 import FalseSymmetryRareHermitCard from './falsesymmetry-rare'
 import GeminiTayRareHermitCard from './geminitay-rare'
 import GrianRareHermitCard from './grian-rare'
+import GoodTimesWithScarRareHermitCard from './goodtimeswithscar-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -16,6 +17,7 @@ function registerCards(game) {
 	new FalseSymmetryRareHermitCard().register(game)
 	new GeminiTayRareHermitCard().register(game)
 	new GrianRareHermitCard().register(game)
+	new GoodTimesWithScarRareHermitCard().register(game)
 }
 
 export default registerCards

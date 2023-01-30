@@ -3,9 +3,9 @@ import registerEffectCards from './effects'
 import registerHermitCards from './hermits'
 
 function registerCards(game) {
+	registerHermitCards(game)
 	registerSingleUseCards(game)
 	registerEffectCards(game)
-	registerHermitCards(game)
 }
 
 export default registerCards

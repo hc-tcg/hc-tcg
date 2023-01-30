@@ -112,6 +112,26 @@ function* checkHermitHealth(game) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
+				// recovery array {amount: number, effectCard?: CardT}
+				let result = game.hooks.hermitDeath.call([], {
+					playerState,
+					row,
+				})
+
+				// for golden_axe -_-
+				const ignoreEffects = row.ailments.includes('ignoreProtection')
+				if (ignoreEffects) result = result.filter((item) => !item.effectCard)
+
+				// we want to apply the highest recovery amount
+				result.sort((a, b) => b.amount - a.amount)
+
+				if (result[0]) {
+					row.health = result[0].amount
+					row.ailments = []
+					if (result[0].effectCard) discardCard(game, result[0].effectCard)
+					continue
+				}
+
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach(
@@ -298,6 +318,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			discardCard: new HookMap((cardType) => new SyncBailHook(['card'])),
 			changeActiveHermit: new SyncHook(['turnAction', 'derived']),
 			actionEnd: new SyncHook(['turnAction', 'derived']),
+			hermitDeath: new SyncWaterfallHook(['recovery', 'deathInfo']),
 			turnEnd: new SyncHook(['derived']),
 			gameEnd: new SyncHook([]),
 		},

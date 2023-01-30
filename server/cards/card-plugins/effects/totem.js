@@ -13,35 +13,14 @@ class TotemEffectCard extends EffectCard {
 		this.recoverAmount = 10
 	}
 
-	reviveHermits(game) {
-		const playerStates = Object.values(game.state.players)
-		for (let playerState of playerStates) {
-			const playerRows = playerState.board.rows
-			const activeRow = playerState.board.activeRow
-			for (let rowIndex in playerRows) {
-				const row = playerRows[rowIndex]
-				const hasTotem = row.effectCard?.cardId === this.id
-				if (row.hermitCard && row.health <= 0 && hasTotem) {
-					row.health = this.recoverAmount
-					row.ailments = []
-					discardCard(game, row.effectCard)
-				}
-			}
-		}
-	}
-
 	register(game) {
-		// attacks
-		game.hooks.attack.tap(this.id, (target) => {
-			if (target.effectCardId === this.id) {
-				target.recover = Math.max(target.recover, this.recoverAmount)
-			}
-			return target
-		})
-
-		// ailments
-		game.hooks.turnEnd.tap(this.id, () => {
-			this.reviveHermits(game)
+		// TODO - make golden axe bypass totem
+		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
+			const {playerState, row} = deathInfo
+			const hasTotem = row.effectCard?.cardId === this.id
+			if (!hasTotem) return
+			recovery.push({amount: this.recoverAmount, effectCard: row.effectCard})
+			return recovery
 		})
 	}
 }

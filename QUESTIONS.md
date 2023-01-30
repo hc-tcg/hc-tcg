@@ -21,7 +21,7 @@
 	https://www.youtube.com/watch?v=TiOUq2DsWKw&t=21s - 12:10 - says no
 # Does Bed restore full health instantly or once the two turns pass?
 # Does Water/Milk bucket remove fire/posion from all your hermits or only one you pick?
-# Crossbow - Are weaknesses applied to the damage to afk (so 30dmg instead of 10?) If so if both active or afkf hermit are weak do both receive extra 20dmg?
+# Crossbow - Are weaknesses applied to the damage to afk (so 30dmg instead of 10?) If so if both active or afk hermit are weak do both receive extra 20dmg?
 # Does hermit keep shield/golden_armor after being attacked with golden axe?
 # When I kill myself using TNT attack, should I pick new active hermit this turn or wait for the next one?
 # Does Bed sleeping activate after end turns or immediately (so player can't attack in the turn he used the bed?)
@@ -36,3 +36,4 @@
 # Does chorus fruit overwrite curse of binding?
 # Does Gems rare ability include offensive singel_use cards? E.g. can I attack again with a sword?
 # Does Grian's borrow steal gold_armor/shield before attack, or is it destroyed before he can steal it?
+# When scar use shis deathloop ability and also holds a totem, should the totem be removed or stay when knocked out?

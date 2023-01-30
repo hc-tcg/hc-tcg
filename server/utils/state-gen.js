@@ -55,22 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'grian_rare',
+		cardId: 'goodtimeswithscar_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_prankster_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'item_prankster_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'diamond_armor',
+		cardId: 'item_builder_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

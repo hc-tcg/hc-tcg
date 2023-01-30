@@ -17,8 +17,17 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id && target.isActive) {
 				target.damage += this.damage.target
 				target.ignoreProtection = true
+				target.row.ailments.push('ignoreProtection')
 			}
 			return target
+		})
+
+		// Not a fan of using the ailemnts to keep the state, but it works for now and I am tired -_-
+		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+			const {opponentPlayer} = derivedState
+			opponentPlayer.board.rows.forEach((row) => {
+				row.ailments = row.ailments.filter((a) => a !== 'ignoreProtection')
+			})
 		})
 	}
 }
