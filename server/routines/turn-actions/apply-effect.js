@@ -1,73 +1,38 @@
 import CARDS from '../../cards'
-import {getPickedCardsInfo} from '../../utils'
+import {applySingleUse} from '../../utils'
+import {getDerivedState} from '../../utils/derived-state'
 
-// TODO - You can "apply effect" by putting on in the slot, then selecting another clicking the sotteded one and confirmiing modal
-function* applyEffectSaga(game, turnAction, derivedState) {
+// TODO - You can "apply effect" by putting it on in the slot, then selecting another clicking the slotteded one and confirmiing modal
+function* applyEffectSaga(game, turnAction, baseDerivedState) {
 	// TODO - This shouldn't be needed
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer, opponentPlayer} = derivedState
-	const singleUseCard = currentPlayer.board.singleUseCard
-	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
-	const {pickedCards} = turnAction.payload
-
-	// Get active player hermit card for effects that affect active hermit
-	const playerActiveRow =
-		currentPlayer.board.activeRow !== null
-			? currentPlayer.board.rows[currentPlayer.board.activeRow]
-			: null
-	const playerHermitCard = playerActiveRow ? playerActiveRow.hermitCard : null
-	const playerHermitInfo = playerHermitCard
-		? CARDS[playerHermitCard.cardId]
-		: null
-
-	// Get active opponent's hermit card for effects that affect opponent's active hermit
-	const opponentActiveRow =
-		opponentPlayer.board.activeRow !== null
-			? opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			: null
-	const opponentHermitCard = opponentActiveRow
-		? opponentActiveRow.hermitCard
-		: null
-	const opponentHermitInfo = opponentHermitCard
-		? CARDS[opponentHermitCard.cardId]
-		: null
-	const opponentEffectCard = opponentActiveRow
-		? opponentActiveRow.effectCard
-		: null
-	const opponentEffectCardInfo = opponentEffectCard
-		? CARDS[opponentEffectCard.cardId]
-		: null
-
-	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
+	const {currentPlayer} = baseDerivedState
+	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
+	const {singleUseInfo} = derivedState
 
 	if (!singleUseInfo) return 'INVALID'
 
-	const applyEffectResult = game.hooks.applyEffect.call(turnAction, {
-		...derivedState,
-		step: currentPlayer.effectStep || 0,
-		pickedCardsInfo,
-		singleUseInfo,
-		playerActiveRow,
-		opponentActiveRow,
-		opponentEffectCardInfo,
-	})
+	const applyEffectResult = game.hooks.applyEffect.call(
+		turnAction,
+		derivedState
+	)
 
 	if (applyEffectResult === 'INVALID') {
 		console.log('Validation failed for: ', singleUseInfo?.id)
+		return 'INVALID'
 	} else if (applyEffectResult === 'DONE') {
 		currentPlayer.board.singleUseCardUsed = true
-	} else if (applyEffectResult === 'NEXT') {
+		return 'DONE'
+	} else if (applyEffectResult) {
 		currentPlayer.board.singleUseCardUsed = true
-		currentPlayer.effectStep = (currentPlayer.effectStep || 0) + 1
-	} else {
-		console.log('Effect not implemented: ', singleUseInfo?.id)
+		currentPlayer.followUp = applyEffectResult
+		return 'DONE'
 	}
 
-	if (applyEffectResult !== 'NEXT') {
-		delete currentPlayer.effectStep
-	}
-	return applyEffectResult
+	console.log('Effect not implemented: ', singleUseInfo?.id)
+	delete currentPlayer.followUp
+	return 'INVALID'
 }
 
 export default applyEffectSaga

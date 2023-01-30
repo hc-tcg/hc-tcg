@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse, flipCoin} from '../../../utils'
+import {flipCoin} from '../../../utils'
 
 class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,35 +14,33 @@ class LootingSingleUseCard extends SingleUseCard {
 
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {
-				singleUseInfo,
-				pickedCardsInfo,
-				currentPlayer,
-				opponentActiveRow,
-				step,
-			} = derivedState
+			const {singleUseInfo, currentPlayer, opponentActiveRow} = derivedState
 
 			if (singleUseInfo?.id === this.id) {
-				if (step === 0) {
-					// If opponent has no active hermit, can't activate
-					if (!opponentActiveRow) return 'INVALID'
+				// If opponent has no active hermit, can't activate
+				if (!opponentActiveRow) return 'INVALID'
 
-					// If opponent has no items on ctive ehrmit, can't activate
-					const anyItemCards = opponentActiveRow.itemCards.some(Boolean)
-					if (!anyItemCards) return 'INVALID'
+				// If opponent has no items on ctive ehrmit, can't activate
+				const anyItemCards = opponentActiveRow.itemCards.some(Boolean)
+				if (!anyItemCards) return 'INVALID'
 
-					const coinFlip = flipCoin(currentPlayer)
-					currentPlayer.coinFlips[this.id] = coinFlip
-					return coinFlip[0] === 'heads' ? 'NEXT' : 'DONE'
-				} else if (step === 1) {
-					delete currentPlayer.coinFlips[this.id]
-					if (pickedCardsInfo.length !== 1) return 'INVALID'
-					const pickedCard = pickedCardsInfo[0]
-					if (pickedCard.cardInfo.type !== 'item') return 'INVALID'
-					pickedCard.row.itemCards[pickedCard.slotIndex] = null
-					currentPlayer.hand.push(pickedCard.card)
-					return 'DONE'
-				}
+				const coinFlip = flipCoin(currentPlayer)
+				currentPlayer.coinFlips[this.id] = coinFlip
+				return coinFlip[0] === 'heads' ? this.id : 'DONE'
+			}
+		})
+
+		game.hooks.followUp.tap(this.id, (action, derivedState) => {
+			const {followUp, pickedCardsInfo, currentPlayer} = derivedState
+
+			if (followUp === this.id) {
+				delete currentPlayer.coinFlips[this.id]
+				if (pickedCardsInfo.length !== 1) return 'INVALID'
+				const pickedCard = pickedCardsInfo[0]
+				if (pickedCard.cardInfo.type !== 'item') return 'INVALID'
+				pickedCard.row.itemCards[pickedCard.slotIndex] = null
+				currentPlayer.hand.push(pickedCard.card)
+				return 'DONE'
 			}
 		})
 	}

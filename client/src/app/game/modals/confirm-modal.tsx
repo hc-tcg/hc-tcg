@@ -6,7 +6,6 @@ type Props = {
 	closeModal: () => void
 }
 function AttackModal({closeModal}: Props) {
-	// TODO - This whole file needs to be rafactored
 	const dispatch = useDispatch()
 
 	const handleYes = () => {

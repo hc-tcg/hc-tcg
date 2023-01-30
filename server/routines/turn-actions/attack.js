@@ -1,6 +1,7 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
-import {applySingleUse, getPickedCardsInfo, discardCard} from '../../utils'
+import {applySingleUse, discardCard} from '../../utils'
+import {getPickedCardsInfo} from '../../utils/derived-state'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',

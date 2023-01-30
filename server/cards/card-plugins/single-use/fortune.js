@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse, flipCoin} from '../../../utils'
+import {flipCoin} from '../../../utils'
 
 class FortuneSingleUseCard extends SingleUseCard {
 	constructor() {

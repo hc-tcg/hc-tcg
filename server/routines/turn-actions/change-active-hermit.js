@@ -1,4 +1,4 @@
-import {equalCard, applySingleUse} from '../../utils'
+import {equalCard} from '../../utils'
 
 function* changeActiveHermit(game, turnAction, derivedState) {
 	const {currentPlayer, availableActions, pastTurnActions} = derivedState

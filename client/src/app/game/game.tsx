@@ -1,11 +1,7 @@
-import React, {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {RootState} from 'store'
-import CARDS from 'server/cards'
-import {CardInfoT} from 'types/cards'
 import {CardT} from 'types/game-state'
 import {PickProcessT} from 'types/pick-process'
-import Card from 'components/card'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
@@ -13,19 +9,18 @@ import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
+import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
-import {equalCard} from 'server/utils'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const firstReq = pickProcess.requirments[0]
 	const target = firstReq.target === 'opponent' ? "opponent's" : 'your'
 	const location = firstReq.target === 'hand' ? 'hand' : 'side of the board'
 	const type = firstReq.type === 'any' ? '' : firstReq.type
-	return `Pick ${firstReq.amount} ${type} card${
-		firstReq.amount > 1 ? 's' : ''
-	} from ${target} ${location}.`
+	const empty = firstReq.empty || false
+	return `Pick ${firstReq.amount} ${empty ? 'empty' : ''} ${type} ${
+		empty ? 'slot' : 'card'
+	}${firstReq.amount > 1 ? 's' : ''} from ${target} ${location}.`
 }
 
 type ClickInfoT =
@@ -54,6 +49,8 @@ const renderModal = (
 		return <SpyglassModal closeModal={closeModal} />
 	else if (openedModalId === 'chest')
 		return <ChestModal closeModal={closeModal} />
+	else if (openedModalId === 'borrow')
+		return <BorrowModal closeModal={closeModal} />
 	return null
 }
 

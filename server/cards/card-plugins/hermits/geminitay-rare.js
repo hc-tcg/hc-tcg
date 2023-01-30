@@ -60,7 +60,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 			const {currentPlayer} = derivedState
 			const usedPower = currentPlayer.custom[this.id]
 			const suUsed = currentPlayer.board.singleUseCardUsed
-			if (usedPower === 1 && suUsed) {
+			if (usedPower === 1 && suUsed && !currentPlayer.followUp) {
 				discardSingleUse(game, currentPlayer)
 				currentPlayer.custom[this.id] = 2
 			}

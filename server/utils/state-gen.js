@@ -55,17 +55,22 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'geminitay_rare',
+		cardId: 'grian_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_terraform_rare',
+		cardId: 'item_prankster_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'mending',
+		cardId: 'item_prankster_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'diamond_armor',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

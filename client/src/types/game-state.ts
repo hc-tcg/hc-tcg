@@ -17,7 +17,7 @@ export type CoinFlipT = 'heads' | 'tails'
 
 export type PlayerState = {
 	id: PlatyerId
-	effectStep?: number
+	followUp?: any
 	playerName: string
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>

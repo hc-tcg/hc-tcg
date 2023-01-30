@@ -8,6 +8,7 @@ import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
+import followUpSaga from './turn-actions/follow-up'
 import {HookMap, SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
 import registerCards from '../cards/card-plugins'
 
@@ -27,8 +28,8 @@ function getAvailableActions(game, derivedState) {
 	const {pastTurnActions, currentPlayer} = derivedState
 	const actions = []
 
-	if (currentPlayer.effectStep) {
-		actions.push('EFFECT_STEP')
+	if (currentPlayer.followUp) {
+		actions.push('FOLLOW_UP')
 		return actions
 	}
 
@@ -161,9 +162,9 @@ function* turnActionSaga(game, turnAction, derivedState) {
 		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
 		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
 		//
-	} else if (turnAction.type === 'EFFECT_STEP') {
-		if (!availableActions.includes('EFFECT_STEP')) return
-		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
+	} else if (turnAction.type === 'FOLLOW_UP') {
+		if (!availableActions.includes('FOLLOW_UP')) return
+		const result = yield call(followUpSaga, game, turnAction, derivedState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
@@ -209,7 +210,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 			'PLAY_CARD',
 			'CHANGE_ACTIVE_HERMIT',
 			'APPLY_EFFECT',
-			'EFFECT_STEP',
+			'FOLLOW_UP',
 			'ATTACK',
 			'END_TURN',
 		].map((type) => playerAction(type, currentPlayer.id)),
@@ -289,6 +290,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			availableActions: new SyncWaterfallHook(['availableActions', 'derived']),
 			actionStart: new SyncHook(['turnAction', 'derived']),
 			applyEffect: new SyncBailHook(['turnAction', 'derived']),
+			followUp: new SyncBailHook(['turnAction', 'derived']),
 			attack: new SyncWaterfallHook(['result', 'turnAction', 'derived']),
 			playCard: new HookMap(
 				(cardType) => new SyncHook(['turnAction', 'derived'])

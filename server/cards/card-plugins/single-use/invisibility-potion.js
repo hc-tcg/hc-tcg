@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse, flipCoin} from '../../../utils'
+import {flipCoin} from '../../../utils'
 
 // TODO - whoops, this is supposed to affect opponent not current player!
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
