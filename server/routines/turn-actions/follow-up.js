@@ -1,11 +1,9 @@
 import CARDS from '../../cards'
-import {getDerivedState} from '../../utils/derived-state'
 
-function* followUpSaga(game, turnAction, baseDerivedState) {
+function* followUpSaga(game, turnAction, derivedState) {
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer} = baseDerivedState
-	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
+	const {currentPlayer} = derivedState
 	const {followUp} = currentPlayer
 
 	if (!followUp) return 'INVALID'
@@ -17,15 +15,17 @@ function* followUpSaga(game, turnAction, baseDerivedState) {
 
 	if (followUpResult === 'INVALID') {
 		console.log('Validation failed for: ', followUp)
+		currentPlayer.followUp = null
 		return 'INVALID'
 	} else if (followUpResult === 'DONE') {
-		delete currentPlayer.followUp
+		currentPlayer.followUp = null
 		return 'DONE'
 	} else if (followUpResult) {
 		currentPlayer.followUp = followUpResult
 		return 'NEXT'
 	}
 	console.log('Followup not implemented: ', followUp)
+	currentPlayer.followUp = null
 	return 'INVALID'
 }
 

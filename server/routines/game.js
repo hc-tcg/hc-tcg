@@ -4,6 +4,7 @@ import CARDS from '../cards'
 import DAMAGE from '../const/damage'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getGameState, getEmptyRow} from '../utils/state-gen'
+import {getDerivedState} from '../utils/derived-state'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -118,17 +119,13 @@ function* checkHermitHealth(game) {
 					row,
 				})
 
-				// for golden_axe -_-
-				const ignoreEffects = row.ailments.includes('ignoreProtection')
-				if (ignoreEffects) result = result.filter((item) => !item.effectCard)
-
 				// we want to apply the highest recovery amount
 				result.sort((a, b) => b.amount - a.amount)
 
 				if (result[0]) {
 					row.health = result[0].amount
 					row.ailments = []
-					if (result[0].effectCard) discardCard(game, result[0].effectCard)
+					if (result[0].discardEffect) discardCard(game, row.effectCard)
 					continue
 				}
 
@@ -162,9 +159,11 @@ function* checkHermitHealth(game) {
 	return true
 }
 
-function* turnActionSaga(game, turnAction, derivedState) {
+function* turnActionSaga(game, turnAction, baseDerivedState) {
 	// TODO - avoid having socket in actions
 	console.log('TURN ACTION: ', turnAction.type)
+
+	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
 
 	const {availableActions, pastTurnActions} = derivedState
 
@@ -281,6 +280,8 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	}
 
 	currentPlayer.coinFlips = {}
+	// failsafe, should be always null at this point unless it is game over
+	currentPlayer.followUp = null
 
 	game.hooks.turnEnd.call(derivedState)
 

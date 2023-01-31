@@ -14,12 +14,19 @@ class TotemEffectCard extends EffectCard {
 	}
 
 	register(game) {
-		// TODO - make golden axe bypass totem
+		// attacks
+		game.hooks.attack.tap(this.id, (target) => {
+			if (target.effectCardId === this.id) {
+				target.recovery.push({amount: this.recoverAmount, discardEffect: true})
+			}
+			return target
+		})
+
 		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
 			const {playerState, row} = deathInfo
 			const hasTotem = row.effectCard?.cardId === this.id
 			if (!hasTotem) return
-			recovery.push({amount: this.recoverAmount, effectCard: row.effectCard})
+			recovery.push({amount: this.recoverAmount, discardEffect: true})
 			return recovery
 		})
 	}

@@ -22,12 +22,10 @@ function* gameStateSaga(gameState: GameState): SagaIterator {
 	const playerId = yield* select((state: RootState) => state.playerId)
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {
-		console.log('@followup')
 		if (['looting'].includes(pState.followUp)) {
 			const pickedCards = yield call(runPickProcessSaga, pState.followUp)
 			yield put({type: 'FOLLOW_UP', payload: {pickedCards}})
 		} else if (pState.followUp === 'grian_rare') {
-			console.log('@grian_rare')
 			yield fork(borrowSaga, pState)
 		}
 	}

@@ -69,7 +69,7 @@ function Board({onClick, gameState}: Props) {
 					}
 				}, {})
 			)
-		}, 3000)
+		}, 2500)
 		return () => clearTimeout(timeout)
 	}, [currentPlayer?.coinFlips])
 

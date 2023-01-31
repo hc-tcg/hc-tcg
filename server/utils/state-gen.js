@@ -64,6 +64,16 @@ export function getStarterPack() {
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
+	pack.unshift({
+		cardId: 'chest',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'ethoslab_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
 	// ensure a hermit in first 5 cards
 	const firstHermitIndex = pack.findIndex((card) => {
 		return CARDS[card.cardId].type === 'hermit'
@@ -99,6 +109,7 @@ export function getPlayerState(allPlayers, playerId) {
 		id: playerId,
 		playerName: allPlayers[playerId].playerName,
 		coinFlips: {},
+		followUp: null,
 		lives: 3,
 		hand: pack.slice(0, 7), // 0.7
 		// TODO - hand out reward cards on kill

@@ -1,15 +1,12 @@
 import CARDS from '../../cards'
 import {applySingleUse} from '../../utils'
-import {getDerivedState} from '../../utils/derived-state'
 
 // TODO - You can "apply effect" by putting it on in the slot, then selecting another clicking the slotteded one and confirmiing modal
-function* applyEffectSaga(game, turnAction, baseDerivedState) {
+function* applyEffectSaga(game, turnAction, derivedState) {
 	// TODO - This shouldn't be needed
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer} = baseDerivedState
-	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
-	const {singleUseInfo} = derivedState
+	const {singleUseInfo, currentPlayer} = derivedState
 
 	if (!singleUseInfo) return 'INVALID'
 
@@ -31,7 +28,7 @@ function* applyEffectSaga(game, turnAction, baseDerivedState) {
 	}
 
 	console.log('Effect not implemented: ', singleUseInfo?.id)
-	delete currentPlayer.followUp
+	currentPlayer.followUp = null
 	return 'INVALID'
 }
 

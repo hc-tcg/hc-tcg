@@ -44,7 +44,6 @@ function* attackSaga(game, turnAction, derivedState) {
 	const singleUseCard = !currentPlayer.board.singleUseCardUsed
 		? currentPlayer.board.singleUseCard
 		: null
-	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
 
 	const makeTarget = (row) => ({
 		row,
@@ -52,7 +51,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		isActive: row === opponentActiveRow,
 		damage: 0,
 		protection: 0,
-		recover: 0,
+		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreProtection: false,
 		backlash: 0,
 		multiplier: 1,
@@ -71,8 +70,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		const result = game.hooks.attack.call(target, turnAction, {
 			...derivedState,
 			typeAction,
-			singleUseInfo,
-			opponentActiveRow,
 			attackerActiveRow,
 			attackerHermitCard,
 			attackerHermitInfo,
@@ -92,6 +89,19 @@ function* attackSaga(game, turnAction, derivedState) {
 			Math.max(hermitAttack + target.damage + weaknessDamage - protection, 0) *
 			target.multiplier
 		target.row.health = Math.min(maxHealth, health - totalDamage)
+
+		target.recovery.sort((a, b) => b.amount - a.amount)
+
+		const isDead = target.row.health < 0
+		const recovery = target.recovery[0]
+		const ignoreRecovery = target.ignoreProtection && recovery?.discardEffect
+		if (isDead && !ignoreRecovery && recovery) {
+			target.row.health = recovery.amount
+			target.row.ailments = []
+			if (recovery.discardEffect) {
+				discardCard(game, target.row.effectCard)
+			}
+		}
 
 		attackerActiveRow.health -= target.backlash
 	}

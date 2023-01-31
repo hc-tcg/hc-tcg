@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
 		payload: {socket, playerName: socket.handshake.auth.playerName},
 	})
 	socket.onAny((event, message) => {
-		console.log('[received] ', event, ': ', message)
+		// console.log('[received] ', event, ': ', message)
 		if (!message.type) return
 		store.dispatch({...message, socket})
 	})
