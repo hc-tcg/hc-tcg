@@ -55,17 +55,22 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'ijevin_rare',
+		cardId: 'impulsesv_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_speedrunner_rare',
+		cardId: 'item_redstone_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'bow',
+		cardId: 'tangotek_common',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'bdoubleo100_common',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
