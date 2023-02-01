@@ -10,6 +10,7 @@ import GoodTimesWithScarRareHermitCard from './goodtimeswithscar-rare'
 import HypnotizdRareHermitCard from './hypnotizd-rare'
 import IJevinRareHermitCard from './ijvevin-rare'
 import ImpulseSVRareHermitCard from './impulsesv-rare'
+import Iskall85RareHermitCard from './iskall85-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -24,6 +25,7 @@ function registerCards(game) {
 	new HypnotizdRareHermitCard().register(game)
 	new IJevinRareHermitCard().register(game)
 	new ImpulseSVRareHermitCard().register(game)
+	new Iskall85RareHermitCard().register(game)
 }
 
 export default registerCards

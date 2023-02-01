@@ -55,17 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'impulsesv_rare',
+		cardId: 'iskall85_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_redstone_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'tangotek_common',
+		cardId: 'item_farm_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

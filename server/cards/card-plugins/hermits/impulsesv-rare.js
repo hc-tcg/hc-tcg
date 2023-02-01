@@ -1,5 +1,4 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../utils'
 
 class ImpulseSVRareHermitCard extends HermitCard {
 	constructor() {

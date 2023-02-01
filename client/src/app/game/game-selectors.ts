@@ -1,5 +1,6 @@
 import {RootState} from 'store'
 import {PlayerState} from 'types/game-state'
+import CARDS from 'server/cards'
 
 export const getPlayerState = (state: RootState) => {
 	const gameState = state.gameState
@@ -39,17 +40,31 @@ export const getMultiplier = (state: RootState) => {
 	const {players, turnPlayerId} = state.gameState
 	const playerState = players[turnPlayerId]
 	const {singleUseCard, singleUseCardUsed} = playerState.board
+	const playerActiveRow = getPlayerActiveRow(state)
+	const opponentActiveRow = getOpponentActiveRow(state)
 
 	const flips = playerState.coinFlips
 	let multiplier = 1
 	if (flips['invisibility_potion']) {
-		multiplier *= flips['invisibility_potion'] === 'heads' ? 2 : 0
+		multiplier *= flips['invisibility_potion']?.[0] === 'heads' ? 2 : 0
 	}
 
 	// this won't have effect as the flip happens during the attack not before
 	if (flips['docm77_rare']) {
-		multiplier *= flips['docm77_rare'] === 'heads' ? 2 : 0.5
+		multiplier *= flips['docm77_rare']?.[0] === 'heads' ? 2 : 0.5
 	}
+
+	// Iskalls ability 2x against builders
+	/*
+	TODO - 
+	if (
+		playerActiveRow?.hermitCard?.cardId === 'iskall85_rare' &&
+		opponentActiveRow?.hermitCard?.cardId &&
+		CARDS[opponentActiveRow.hermitCard.cardId]?.hermitType === 'builder'
+	) {
+		multiplier *= 2
+	}
+	*/
 
 	return multiplier === 1 ? null : multiplier
 }
