@@ -8,11 +8,17 @@ function* changeActiveHermit(game, turnAction, derivedState) {
 	const result = currentPlayer.board.rows.findIndex((row) =>
 		equalCard(row.hermitCard, rowHermitCard)
 	)
-	const hadActiveHermit = currentPlayer.board.activeRow != null
-	if (result >= 0) {
-		currentPlayer.board.activeRow = result
-	}
+	if (result === -1) return 'INVALID'
 
+	const isKnockedout =
+		currentPlayer.board.rows[result].ailments.includes('knockedout')
+	const hasOtherHermits = currentPlayer.board.rows.some(
+		(row) => !!row.hermitCard && !row.ailments.includes('knockedout')
+	)
+	if (isKnockedout && hasOtherHermits) return 'INVALID'
+
+	const hadActiveHermit = currentPlayer.board.activeRow !== null
+	currentPlayer.board.activeRow = result
 	game.hooks.changeActiveHermit.call(turnAction, derivedState)
 
 	// After a player has a hermit killed/knockout, he can activate next one

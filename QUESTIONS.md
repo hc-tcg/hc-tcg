@@ -31,7 +31,8 @@
 # Does Mending work only when attached to active hermit, or even when it is attached to an afk hermit?
 # Do special moves - like Ethos blue fire or docs double damage - also affect afk hermit if e.g. used together with bow?
 # Does fortune affect all coin flips for special moves that have multiple coin flips? Like ultra rare Etho's "Slab" attack?
-# Does chorus fruit overwrite curse of binding?
+# Does chorus fruit/cub overwrite curse of binding?
+# Does chorus fruit/cub overwrite knockback?
 # Does Gems rare ability to use additional effect include offensive single use cards? E.g. can I attack again with a sword?
 # Does Grian's borrow steal gold_armor/shield before attack, or is it destroyed before he can steal it?
 # When scar uses shis deathloop ability and also holds a totem, should the totem be removed or stay when knocked out?

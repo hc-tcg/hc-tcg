@@ -8,6 +8,7 @@ import GeminiTayRareHermitCard from './geminitay-rare'
 import GrianRareHermitCard from './grian-rare'
 import GoodTimesWithScarRareHermitCard from './goodtimeswithscar-rare'
 import HypnotizdRareHermitCard from './hypnotizd-rare'
+import IJevinRareHermitCard from './ijvevin-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -20,6 +21,7 @@ function registerCards(game) {
 	new GrianRareHermitCard().register(game)
 	new GoodTimesWithScarRareHermitCard().register(game)
 	new HypnotizdRareHermitCard().register(game)
+	new IJevinRareHermitCard().register(game)
 }
 
 export default registerCards

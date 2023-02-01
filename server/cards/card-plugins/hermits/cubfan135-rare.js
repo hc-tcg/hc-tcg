@@ -30,10 +30,9 @@ class Cubfan135RareHermitCard extends HermitCard {
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
+			if (attackerHermitCard.cardId !== this.id) return target
 
-			if (attackerHermitCard.cardId === this.id) {
-				currentPlayer.custom[this.id] = true
-			}
+			currentPlayer.custom[this.id] = true
 			return target
 		})
 

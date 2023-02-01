@@ -3,11 +3,8 @@ import {flipCoin, discardCard} from '../../../utils'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
-- Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
-*/
-/*
-TODO -
-- if bow & hypno attack the same target don't apply weakness twice
+- If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
+- TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
 */
 class HypnotizdRareHermitCard extends HermitCard {
 	constructor() {

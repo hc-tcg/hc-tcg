@@ -44,11 +44,6 @@ function getAvailableActions(game, derivedState) {
 		actions.push('APPLY_EFFECT')
 	}
 
-	// Player can't change active hermit if I he has no other hermits
-	const hasOtherHermit = currentPlayer.board.rows.some(
-		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
-	)
-
 	if (
 		pastTurnActions.includes('ATTACK') ||
 		pastTurnActions.includes('CHANGE_ACTIVE_HERMIT')
@@ -63,6 +58,11 @@ function getAvailableActions(game, derivedState) {
 	// TODO - add more conditions (e.g. you can't change active hermit if there is only one.
 	// or you can't add more hermits if all rows are filled)
 	actions.push('ADD_HERMIT')
+
+	// Player can't change active hermit if I he has no other hermits
+	const hasOtherHermit = currentPlayer.board.rows.some(
+		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
+	)
 
 	if (hasOtherHermit) actions.push('CHANGE_ACTIVE_HERMIT')
 
@@ -277,6 +277,13 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	for (let row of opponentPlayer.board.rows) {
 		if (row.ailments.includes('fire')) row.health -= 20
 		if (row.ailments.includes('poison')) row.health -= 20
+	}
+
+	// TODO - ailments should have optional duration
+	for (let row of currentPlayer.board.rows) {
+		if (row.ailments.includes('knockedout')) {
+			row.ailments = row.ailments.filter((a) => a !== 'knockedout')
+		}
 	}
 
 	currentPlayer.coinFlips = {}

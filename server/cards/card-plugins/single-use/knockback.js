@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse} from '../../../utils'
 
+/*
+- Don't allow to change to knocked out hermit during next turn
+- Chorus fruit/Cubfun probably shouldn't allow that either
+*/
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -13,11 +17,18 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
+			const {
+				singleUseInfo,
+				currentPlayer,
+				opponentPlayer,
+				opponentHermitCard,
+				opponentActiveRow,
+			} = derivedState
 			if (singleUseInfo?.id === this.id && target.isActive) {
 				const hasOtherHermits =
 					opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-				if (!hasOtherHermits) return target
+				if (!hasOtherHermits || !opponentActiveRow) return target
+				opponentActiveRow.ailments.push('knockedout')
 				opponentPlayer.board.activeRow = null
 				applySingleUse(currentPlayer)
 			}
