@@ -15,7 +15,10 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 	}
 
 	const pickedCards = yield call(runPickProcessSaga, pState.followUp)
-	yield put({type: 'FOLLOW_UP', payload: {pickedCards}})
+	yield put({
+		type: 'FOLLOW_UP',
+		payload: {pickedCards: {[pState.followUp]: pickedCards}},
+	})
 }
 
 function* gameStateSaga(gameState: GameState): SagaIterator {
@@ -24,7 +27,10 @@ function* gameStateSaga(gameState: GameState): SagaIterator {
 	if (pState.followUp) {
 		if (['looting'].includes(pState.followUp)) {
 			const pickedCards = yield call(runPickProcessSaga, pState.followUp)
-			yield put({type: 'FOLLOW_UP', payload: {pickedCards}})
+			yield put({
+				type: 'FOLLOW_UP',
+				payload: {pickedCards: {[pState.followUp]: pickedCards}},
+			})
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga, pState)
 		}

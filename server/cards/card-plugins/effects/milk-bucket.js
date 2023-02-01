@@ -14,8 +14,9 @@ class MilkBucketEffectCard extends EffectCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo.id === this.id) {
-				if (pickedCardsInfo?.length !== 1) return 'INVALID'
-				const {row} = pickedCardsInfo[0]
+				const suPickedCards = pickedCardsInfo[this.id] || []
+				if (suPickedCards?.length !== 1) return 'INVALID'
+				const {row} = suPickedCards[0]
 				row.ailments = row.ailments.filter((a) => a !== 'poison')
 				return 'DONE'
 			}

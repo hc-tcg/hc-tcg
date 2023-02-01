@@ -94,12 +94,14 @@ class GrianRareHermitCard extends HermitCard {
 
 			if (followUp !== this.id) return
 			if (!effectCard) return 'INVALID'
-			if (pickedCardsInfo.length !== 1) {
+
+			const grianPickedCards = pickedCardsInfo[this.id] || []
+			if (grianPickedCards.length !== 1) {
 				currentPlayer.discarded.push(effectCard)
 				return 'DONE'
 			}
 
-			const targetSlotInfo = pickedCardsInfo[0]
+			const targetSlotInfo = grianPickedCards[0]
 			if (targetSlotInfo.card !== null) return 'INVALID'
 			if (targetSlotInfo.slotType !== 'effect') return 'INVALID'
 			if (targetSlotInfo.playerId !== currentPlayer.id) return 'INVALID'

@@ -112,7 +112,11 @@ export function getDerivedState(game, turnAction, baseDerivedState) {
 	const singleUseInfo = singleUseCard ? CARDS[singleUseCard.cardId] : null
 
 	// Picked cards
-	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
+	const pickedCardsInfo = {}
+	Object.keys(pickedCards || {}).forEach((cardId) => {
+		const pickedCardsForId = pickedCards[cardId]
+		pickedCardsInfo[cardId] = getPickedCardsInfo(game.state, pickedCardsForId)
+	})
 
 	return {
 		...baseDerivedState,

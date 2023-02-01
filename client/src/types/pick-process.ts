@@ -24,6 +24,7 @@ type PickedCardT = {
 }
 
 export type PickProcessT = {
+	id: string
 	requirments: Array<PickRequirmentT>
 	pickedCards: Array<PickedCardT>
 }

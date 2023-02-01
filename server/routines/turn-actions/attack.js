@@ -1,7 +1,6 @@
 import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
 import {applySingleUse, discardCard} from '../../utils'
-import {getPickedCardsInfo} from '../../utils/derived-state'
 
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
@@ -12,8 +11,15 @@ export const ATTACK_TO_ACTION = {
 export const WEAKNESS_DAMAGE = 20
 
 function* attackSaga(game, turnAction, derivedState) {
-	const {currentPlayer, opponentPlayer} = derivedState
-	const {type, pickedCards} = turnAction.payload
+	const {
+		currentPlayer,
+		opponentPlayer,
+		pickedCardsInfo,
+		playerActiveRow,
+		opponentActiveRow,
+		playerHermitInfo,
+	} = derivedState
+	const {type} = turnAction.payload
 	const typeAction = ATTACK_TO_ACTION[type]
 	if (!typeAction) {
 		console.log('Unknown attack type: ', type)
@@ -21,17 +27,19 @@ function* attackSaga(game, turnAction, derivedState) {
 	}
 	// TODO - send hermitCard from frontend for validation?
 
-	const attackerActiveRow =
-		currentPlayer.board.rows[currentPlayer.board.activeRow]
-	const opponentActiveRow =
-		opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+	const attackerActiveRow = playerActiveRow
 
-	const pickedCardsInfo = getPickedCardsInfo(game.state, pickedCards)
+	const singleUseCard = !currentPlayer.board.singleUseCardUsed
+		? currentPlayer.board.singleUseCard
+		: null
+
+	const suPickedCards = pickedCardsInfo[singleUseCard?.cardId] || []
+
 	const afkTargetRow =
-		pickedCardsInfo.length === 1 &&
-		pickedCardsInfo[0].playerId == opponentPlayer.id &&
-		pickedCardsInfo[0].rowIndex !== opponentPlayer.board.activeRow
-			? pickedCardsInfo[0].row
+		suPickedCards.length === 1 &&
+		suPickedCards[0].playerId == opponentPlayer.id &&
+		suPickedCards[0].rowIndex !== opponentPlayer.board.activeRow
+			? suPickedCards[0].row
 			: null
 
 	if (!attackerActiveRow) return 'INVALID'
@@ -40,10 +48,6 @@ function* attackSaga(game, turnAction, derivedState) {
 	const attackerHermitInfo = CARDS[attackerHermitCard.cardId]
 	if (!attackerHermitInfo) return 'INVALID'
 	const strengths = STRENGTHS[attackerHermitInfo.hermitType]
-
-	const singleUseCard = !currentPlayer.board.singleUseCardUsed
-		? currentPlayer.board.singleUseCard
-		: null
 
 	const makeTarget = (row) => ({
 		row,
@@ -55,6 +59,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		ignoreProtection: false,
 		backlash: 0,
 		multiplier: 1,
+		invalid: false,
 	})
 	const targets = []
 	if (opponentActiveRow?.hermitCard) {
@@ -66,7 +71,27 @@ function* attackSaga(game, turnAction, derivedState) {
 
 	if (!targets.length) return 'INVALID'
 
+	const processedTargets = []
 	for (let target of targets) {
+		const result = game.hooks.attack.call(target, turnAction, {
+			...derivedState,
+			typeAction,
+			attackerActiveRow,
+			attackerHermitCard,
+			attackerHermitInfo,
+		})
+		if (result.invalid) return 'INVALID'
+
+		// e.g. when hypno attacks the same afk hermit with his ability and a bow
+		const sameTarget = processedTargets.find((pt) => pt.row === target.row)
+		if (sameTarget) {
+			sameTarget.damage += target.damage
+		} else {
+			processedTargets.push(target)
+		}
+	}
+
+	for (let target of processedTargets) {
 		const result = game.hooks.attack.call(target, turnAction, {
 			...derivedState,
 			typeAction,

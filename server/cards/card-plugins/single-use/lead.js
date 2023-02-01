@@ -16,10 +16,11 @@ class LeadSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, currentPlayer, pickedCardsInfo} = derivedState
 
 			if (singleUseInfo?.id === this.id) {
-				if (pickedCardsInfo.length !== 2) return 'INVALID'
+				const suPickedCards = pickedCardsInfo[this.id] || []
+				if (suPickedCards.length !== 2) return 'INVALID'
 
-				const itemCardInfo = pickedCardsInfo[0]
-				const targetSlotInfo = pickedCardsInfo[1]
+				const itemCardInfo = suPickedCards[0]
+				const targetSlotInfo = suPickedCards[1]
 				if (itemCardInfo.cardInfo.type !== 'item') return 'INVALID'
 				if (targetSlotInfo.card !== null) return 'INVALID'
 				if (targetSlotInfo.row.hermitCard === null) return 'INVALID'

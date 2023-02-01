@@ -8,7 +8,7 @@ import DAMAGE from 'server/const/damage'
 import PROTECTION from 'server/const/protection'
 import Strengths from 'server/const/strengths'
 import {
-	getActiveRow,
+	getPlayerActiveRow,
 	getOpponentActiveRow,
 	getMultiplier,
 } from '../game-selectors'
@@ -22,7 +22,7 @@ type Props = {
 function AttackModal({closeModal}: Props) {
 	// TODO - This whole file needs to be rafactored
 	const dispatch = useDispatch()
-	const activeRow = useSelector(getActiveRow)
+	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const availableActions = useSelector(
 		(state: RootState) => state.availableActions
@@ -75,20 +75,8 @@ function AttackModal({closeModal}: Props) {
 	)
 
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
-		// TODO - use DAMAGES..afkTarget
-		const damageInfo = singleUseInfo && DAMAGE[singleUseInfo.id]
-		if (singleUseInfo && damageInfo?.afkTarget) {
-			dispatch({
-				type: 'RUN_PICK_PROCESS',
-				payload: singleUseInfo.id,
-				callback: (result: any) => {
-					console.log('CALLBACK: ', result)
-					dispatch({type: 'ATTACK', payload: {type, pickedCards: result}})
-				},
-			})
-		} else {
-			dispatch({type: 'ATTACK', payload: {type}})
-		}
+		dispatch({type: 'ATTACK', payload: {type}})
+
 		closeModal()
 	}
 

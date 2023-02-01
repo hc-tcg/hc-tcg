@@ -18,10 +18,11 @@ class ComposterSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, currentPlayer, pickedCardsInfo} = derivedState
 
 			if (singleUseInfo?.id === this.id) {
-				if (pickedCardsInfo.length !== 2) return 'INVALID'
+				const suPickedCards = pickedCardsInfo[this.id] || []
+				if (suPickedCards.length !== 2) return 'INVALID'
 
 				// discard two cards
-				pickedCardsInfo.forEach((info) => discardCard(game, info.card))
+				suPickedCards.forEach((info) => discardCard(game, info.card))
 
 				// draw two cards
 				for (let i = 0; i < 2; i++) {

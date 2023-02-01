@@ -4,6 +4,7 @@ import slotSaga from './slot-saga'
 import pickProcessSaga from './pick-process-saga'
 import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
 import gameStateSaga from './game-state-saga'
+import attackSaga from './attack-saga'
 
 function* gameSaga(): SagaIterator {
 	const slotTask = yield all([fork(slotSaga), fork(pickProcessSaga)])
@@ -44,7 +45,8 @@ function* gameSaga(): SagaIterator {
 		} else if (turnAction.followUp) {
 			yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
 		} else if (turnAction.attack) {
-			yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
+			const result = yield call(attackSaga, turnAction.attack)
+			yield call(sendMsg, 'ATTACK', result)
 		} else if (turnAction.endTurn) {
 			yield call(sendMsg, 'END_TURN')
 		} else if (turnAction.changeActiveHermit) {

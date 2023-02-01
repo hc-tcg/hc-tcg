@@ -1,24 +1,37 @@
 import {RootState} from 'store'
-export const getActiveRow = (state: RootState) => {
+import {PlayerState} from 'types/game-state'
+
+export const getPlayerState = (state: RootState) => {
 	const gameState = state.gameState
 	const playerId = state.playerId
 	if (!gameState || !playerId) return null
-	const playerBoard = gameState.players[playerId].board
-	if (playerBoard.activeRow === null) return null
-	const activeHermit = playerBoard.rows[playerBoard.activeRow]
+	return gameState.players[playerId]
+}
+
+export const getOpponentState = (state: RootState) => {
+	const gameState = state.gameState
+	const opponentId = state.opponentId
+	if (!gameState || !opponentId) return null
+	return gameState.players[opponentId]
+}
+
+const getActiveRow = (playerState: PlayerState | null) => {
+	if (!playerState) return null
+	const {rows, activeRow} = playerState.board
+	if (activeRow === null) return null
+	const activeHermit = rows[activeRow]
 	if (!activeHermit) return null
 	return activeHermit
 }
 
+export const getPlayerActiveRow = (state: RootState) => {
+	const playerState = getPlayerState(state)
+	return getActiveRow(playerState)
+}
+
 export const getOpponentActiveRow = (state: RootState) => {
-	const gameState = state.gameState
-	const opponentId = state.opponentId
-	if (!gameState || !opponentId) return null
-	const playerBoard = gameState.players[opponentId].board
-	if (playerBoard.activeRow === null) return null
-	const activeHermit = playerBoard.rows[playerBoard.activeRow]
-	if (!activeHermit) return null
-	return activeHermit
+	const playerState = getOpponentState(state)
+	return getActiveRow(playerState)
 }
 
 export const getMultiplier = (state: RootState) => {

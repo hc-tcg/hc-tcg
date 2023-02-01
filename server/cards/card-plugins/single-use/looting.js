@@ -35,8 +35,9 @@ class LootingSingleUseCard extends SingleUseCard {
 
 			if (followUp === this.id) {
 				delete currentPlayer.coinFlips[this.id]
-				if (pickedCardsInfo.length !== 1) return 'INVALID'
-				const pickedCard = pickedCardsInfo[0]
+				const suPickedCards = pickedCardsInfo[this.id] || []
+				if (suPickedCards.length !== 1) return 'INVALID'
+				const pickedCard = suPickedCards[0]
 				if (pickedCard.cardInfo.type !== 'item') return 'INVALID'
 				pickedCard.row.itemCards[pickedCard.slotIndex] = null
 				currentPlayer.hand.push(pickedCard.card)

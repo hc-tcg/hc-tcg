@@ -55,22 +55,22 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'goodtimeswithscar_rare',
+		cardId: 'hypnotizd_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_builder_rare',
+		cardId: 'tangotek_common',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'chest',
+		cardId: 'item_miner_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'ethoslab_rare',
+		cardId: 'bow',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

@@ -74,7 +74,10 @@ function* pickWithSelectedSaga(
 			const result = yield call(runPickProcessSaga, selectedCard.cardId)
 			if (!result || !result.length) return
 			// problem je ze v REQS je i bow/crossbow takze se zavola apply effect
-			yield put({type: 'APPLY_EFFECT', payload: {pickedCards: result}})
+			yield put({
+				type: 'APPLY_EFFECT',
+				payload: {pickedCards: {[selectedCard.cardId]: result}},
+			})
 		}
 	}
 

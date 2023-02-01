@@ -28,26 +28,31 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 	crossbow: [{target: 'opponent', type: 'hermit', amount: 1}],
 	looting: [{target: 'opponent', type: 'item', amount: 1}],
 	grian_rare: [{target: 'player', type: 'effect', amount: 1, empty: true}],
+	hypnotizd_rare: [
+		{target: 'opponent', type: 'hermit', amount: 1},
+		{target: 'player', type: 'item', amount: 1},
+	],
 }
 
 // TODO - clicking on the single use card slot while picking should stop the picking process (as should pressing ESC)
 // and it will remove the singel use effect card from the slot and return it to players hand
-export function* runPickProcessSaga(singleUseCardId: string): SagaIterator {
+export function* runPickProcessSaga(cardId: string): SagaIterator {
 	const turnPlayerId = yield* select(
 		(state: RS) => state.gameState?.turnPlayerId
 	)
 	const playerId = yield* select((state: RS) => state.playerId)
-	if (!singleUseCardId || !turnPlayerId || !playerId) return
+	if (!cardId || !turnPlayerId || !playerId) return
 	// TODO - Proper validations for individual pick processes
 	// if (pickProcess !== 'afk_opponent_hermit') return
 	// TODO - Stop waiting on new turn
 
-	const reqs = REQS[singleUseCardId]
+	const reqs = REQS[cardId]
 	if (!reqs) return
 
 	yield put({
 		type: 'SET_PICK_PROCESS',
 		payload: {
+			id: cardId,
 			requirments: reqs,
 			pickedCards: [],
 		},
@@ -116,8 +121,8 @@ export function* runActionPickProcessSaga(
 	action: RunPickProcessAction
 ): SagaIterator {
 	console.log('>>>: ', 'RUN_PICK_PROCESS', action)
-	const singleUseCardId = action.payload
-	const result = yield call(runPickProcessSaga, singleUseCardId)
+	const cardId = action.payload
+	const result = yield call(runPickProcessSaga, cardId)
 	action.callback?.(result)
 }
 

@@ -1,6 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {discardCard} from '../../../utils'
 
+// TODO - Can't use with no active hermit
 class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({

@@ -13,14 +13,16 @@ import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
-	const firstReq = pickProcess.requirments[0]
+	const firstReq = pickProcess.requirments[pickProcess.pickedCards.length]
 	const target = firstReq.target === 'opponent' ? "opponent's" : 'your'
 	const location = firstReq.target === 'hand' ? 'hand' : 'side of the board'
 	const type = firstReq.type === 'any' ? '' : firstReq.type
 	const empty = firstReq.empty || false
-	return `Pick ${firstReq.amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${firstReq.amount > 1 ? 's' : ''} from ${target} ${location}.`
+	return `${pickProcess.id}: Pick ${firstReq.amount} ${
+		empty ? 'empty' : ''
+	} ${type} ${empty ? 'slot' : 'card'}${
+		firstReq.amount > 1 ? 's' : ''
+	} from ${target} ${location}.`
 }
 
 type ClickInfoT =

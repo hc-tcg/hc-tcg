@@ -15,8 +15,9 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo?.id === this.id) {
-				if (pickedCardsInfo?.length !== 1) return 'INVALID'
-				const {row, cardInfo} = pickedCardsInfo[0]
+				const suPickedCards = pickedCardsInfo[this.id] || []
+				if (suPickedCards.length !== 1) return 'INVALID'
+				const {row, cardInfo} = suPickedCards[0]
 				row.health = Math.min(
 					row.health + this.heal,
 					cardInfo.health // max health
