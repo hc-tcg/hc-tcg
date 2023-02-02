@@ -53,6 +53,8 @@ export function getPickedCardsInfo(gameState, pickedCards) {
 			return {
 				card,
 				cardInfo,
+				isActive:
+					pState.activeRow !== null && pickedCard.rowIndex === pState.activeRow,
 				rowIndex: pickedCard.rowIndex,
 				slotIndex: pickedCard.slotIndex,
 				slotType,

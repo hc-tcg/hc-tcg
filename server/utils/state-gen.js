@@ -55,17 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'joehills_rare',
+		cardId: 'keralis_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_farm_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'bdoubleo100_common',
+		cardId: 'item_terraform_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

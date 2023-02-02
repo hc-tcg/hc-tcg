@@ -12,6 +12,7 @@ import IJevinRareHermitCard from './ijvevin-rare'
 import ImpulseSVRareHermitCard from './impulsesv-rare'
 import Iskall85RareHermitCard from './iskall85-rare'
 import JoeHillsRareHermitCard from './joehills-rare'
+import KeralisRareHermitCard from './keralis-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -28,6 +29,7 @@ function registerCards(game) {
 	new ImpulseSVRareHermitCard().register(game)
 	new Iskall85RareHermitCard().register(game)
 	new JoeHillsRareHermitCard().register(game)
+	new KeralisRareHermitCard().register(game)
 }
 
 export default registerCards

@@ -13,6 +13,7 @@ export type PickRequirmentT = {
 	type: CardTypeT
 	amount: number
 	empty?: boolean
+	active?: boolean
 }
 
 type PickedCardT = {

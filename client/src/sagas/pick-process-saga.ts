@@ -24,14 +24,15 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 		{target: 'opponent', type: 'item', amount: 1},
 		{target: 'opponent', type: 'item', amount: 1, empty: true},
 	],
-	bow: [{target: 'opponent', type: 'hermit', amount: 1}],
-	crossbow: [{target: 'opponent', type: 'hermit', amount: 1}],
-	looting: [{target: 'opponent', type: 'item', amount: 1}],
+	bow: [{target: 'opponent', type: 'hermit', amount: 1, active: false}],
+	crossbow: [{target: 'opponent', type: 'hermit', amount: 1, active: false}],
+	looting: [{target: 'opponent', type: 'item', amount: 1, active: true}],
 	grian_rare: [{target: 'player', type: 'effect', amount: 1, empty: true}],
 	hypnotizd_rare: [
 		{target: 'opponent', type: 'hermit', amount: 1},
-		{target: 'player', type: 'item', amount: 1},
+		{target: 'player', type: 'item', amount: 1, active: true},
 	],
+	keralis_rare: [{target: 'player', type: 'hermit', amount: 1, active: false}],
 }
 
 // TODO - clicking on the single use card slot while picking should stop the picking process (as should pressing ESC)
@@ -71,8 +72,18 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 			if (cardPlayerId) {
 				if (req.target === 'player' && turnPlayerId !== cardPlayerId) continue
 				if (req.target === 'opponent' && turnPlayerId === cardPlayerId) continue
+
+				const pState = yield* select(
+					(state: RS) => state.gameState?.players[cardPlayerId]
+				)
+
+				const isActive =
+					pState?.board.activeRow !== null &&
+					pickAction.payload.rowIndex === pState?.board.activeRow
+				if (req.hasOwnProperty('active') && req.active !== isActive) continue
 			}
 
+			// TODO - I don't think we are checking if the slot is really empty
 			if (req.empty) {
 				// check card info
 				const slotType = pickAction.payload.slotType

@@ -35,8 +35,12 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		result[singleUseInfo.id] = yield call(runPickProcessSaga, singleUseInfo.id)
 	}
 
-	if (hermitCard.cardId === 'hypnotizd_rare' && type === 'secondary') {
-		result['hypnotizd_rare'] = yield call(runPickProcessSaga, 'hypnotizd_rare')
+	const cardId = hermitCard.cardId
+	if (
+		['hypnotizd_rare', 'keralis_rare'].includes(cardId) &&
+		type === 'secondary'
+	) {
+		result[cardId] = yield call(runPickProcessSaga, cardId)
 	}
 
 	return {
