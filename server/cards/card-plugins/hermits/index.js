@@ -24,6 +24,7 @@ import VintageBeefRareHermitCard from './vintagebeef-rare'
 import VintageBeefUltraRareHermitCard from './vintagebeef-ultra-rare'
 import WelsknightRareHermitCard from './welsknight-rare'
 import XBCraftedRareHermitCard from './xbcrafted-rare'
+import XisumavoidRareHermitCard from './xisumavoid-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -52,6 +53,7 @@ function registerCards(game) {
 	new VintageBeefUltraRareHermitCard().register(game)
 	new WelsknightRareHermitCard().register(game)
 	new XBCraftedRareHermitCard().register(game)
+	new XisumavoidRareHermitCard().register(game)
 }
 
 export default registerCards

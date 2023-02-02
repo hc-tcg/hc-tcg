@@ -1,26 +1,26 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardCard} from '../../../utils'
 
-class EthosLabRareHermitCard extends HermitCard {
+class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'ethoslab_rare',
-			name: 'Etho',
+			id: 'xisumavoid_rare',
+			name: 'Xisuma',
 			rarity: 'rare',
 			hermitType: 'redstone',
 			health: 280,
 			primary: {
-				name: 'Oh Snappers',
+				name: 'Goodness Me',
 				cost: ['redstone'],
-				damage: 50,
+				damage: 60,
 				power: null,
 			},
 			secondary: {
-				name: 'Blue Fire',
+				name: 'Cup of Tea',
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a Coin.\n\nIf heads, this attack also BURNs the opponent. Does an additional +20HP damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the BURN.',
+					'Flip a Coin.\n\nIf heads, this attack also POISONS the opponent. Does an additional +20HP damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON.',
 			},
 		})
 	}
@@ -43,10 +43,10 @@ class EthosLabRareHermitCard extends HermitCard {
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				if (target.row.effectCard?.cardId === 'water_bucket') {
+				if (target.row.effectCard?.cardId === 'milk_bucket') {
 					discardCard(game, target.row.effectCard)
 				} else {
-					target.row.ailments.push('fire')
+					target.row.ailments.push('poison')
 				}
 			}
 
@@ -55,4 +55,4 @@ class EthosLabRareHermitCard extends HermitCard {
 	}
 }
 
-export default EthosLabRareHermitCard
+export default XisumavoidRareHermitCard
