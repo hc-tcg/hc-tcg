@@ -2,25 +2,26 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
-class RendogRareHermitCard extends HermitCard {
+class StressMonster101RareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'rendog_rare',
-			name: 'Rendog',
+			id: 'stressmonster101_rare',
+			name: 'StressMonster101',
 			rarity: 'rare',
-			hermitType: 'builder',
-			health: 290,
+			hermitType: 'prankster',
+			health: 300,
 			primary: {
-				name: "Comin' At Ya",
-				cost: ['builder'],
+				name: 'Plonker',
+				cost: ['prankster'],
 				damage: 50,
 				power: null,
 			},
 			secondary: {
-				name: 'Role Play',
-				cost: ['builder', 'builder', 'builder'],
+				name: 'Yolo',
+				cost: ['prankster', 'prankster', 'prankster'],
 				damage: 0,
-				power: 'Ren mimics special move of the opposing Hermit.',
+				power:
+					'This attack instantly knocks out opposing Hermit as well as the player.',
 			},
 		})
 	}
@@ -38,11 +39,11 @@ class RendogRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			// uhmm, yeah...
-
+			playerActiveRow.health = 0
+			opponentActiveRow.health = 0
 			return target
 		})
 	}
 }
 
-export default RendogRareHermitCard
+export default StressMonster101RareHermitCard

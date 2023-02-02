@@ -55,17 +55,28 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'pearlescentmoon_rare',
+		cardId: 'stressmonster101_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_terraform_rare',
+		cardId: 'item_prankster_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'item_prankster_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'totem',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	// ensure a hermit in first 5 cards
 	const firstHermitIndex = pack.findIndex((card) => {
+		if (!CARDS[card.cardId]) throw new Error('Unknown card id: ' + card.cardId)
 		return CARDS[card.cardId].type === 'hermit'
 	})
 	if (firstHermitIndex > 5) {
