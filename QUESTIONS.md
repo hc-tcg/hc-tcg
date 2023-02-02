@@ -38,3 +38,4 @@
 # When scar uses shis deathloop ability and also holds a totem, should the totem be removed or stay when knocked out?
 # Using Hypno & Bow/Crossbow, can I decide to attack two different afk hermits?
 # When I use Efficiency with Hypno without any items, can I still attack an AFK hermit?
+# What does it mean that "attack misses" for Pearl's special move. Does it just mean damage is 0, or that also special move actions won't happen? (e.g. etho's blue fire is not applied)

@@ -15,6 +15,7 @@ import JoeHillsRareHermitCard from './joehills-rare'
 import KeralisRareHermitCard from './keralis-rare'
 import MumboJumboRareHermitCard from './mumbojumbo-rare'
 import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
+import RendogRareHermitCard from './rendog-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -34,6 +35,7 @@ function registerCards(game) {
 	new KeralisRareHermitCard().register(game)
 	new MumboJumboRareHermitCard().register(game)
 	new PearlescentMoonRareHermitCard().register(game)
+	new RendogRareHermitCard().register(game)
 }
 
 export default registerCards

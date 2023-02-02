@@ -24,8 +24,6 @@ class MumboJumboRareHermitCard extends HermitCard {
 					'Flip a Coin twice.\n\n+40 HP damage for every heads.\n\nTotal damage doubles if at least 1 other Prankster type is AFK.\n\nIf player does not roll heads at least once, the above does not apply.',
 			},
 		})
-
-		this.heal = 40
 	}
 
 	register(game) {
