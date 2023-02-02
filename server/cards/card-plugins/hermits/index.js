@@ -25,6 +25,7 @@ import VintageBeefUltraRareHermitCard from './vintagebeef-ultra-rare'
 import WelsknightRareHermitCard from './welsknight-rare'
 import XBCraftedRareHermitCard from './xbcrafted-rare'
 import XisumavoidRareHermitCard from './xisumavoid-rare'
+import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -54,6 +55,7 @@ function registerCards(game) {
 	new WelsknightRareHermitCard().register(game)
 	new XBCraftedRareHermitCard().register(game)
 	new XisumavoidRareHermitCard().register(game)
+	new ZedaphPlaysRareHermitCard().register(game)
 }
 
 export default registerCards

@@ -39,3 +39,6 @@
 # Using Hypno & Bow/Crossbow, can I decide to attack two different afk hermits?
 # When I use Efficiency with Hypno without any items, can I still attack an AFK hermit?
 # What does it mean that "attack misses" for Pearl's special move. Does it just mean damage is 0, or that also special move actions won't happen? (e.g. etho's blue fire is not applied)
+# Zedaph's ability - does the seocnd coin flip happen on attack on start of a turn (so that oppopnent knows NOT to attack).
+# Zedaph's ability - does the back damage also include damage to afk hermits (e.g. from bow/crossbow)
+# Zedaph's ability - does the back damage include both the 20 & 60 from TNT attack?

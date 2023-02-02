@@ -55,17 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'xisumavoid_rare',
+		cardId: 'zedaphplays_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_redstone_rare',
+		cardId: 'item_explorer_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'milk_bucket',
+		cardId: 'tnt',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
