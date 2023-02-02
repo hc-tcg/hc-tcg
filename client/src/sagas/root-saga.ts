@@ -1,11 +1,11 @@
-import {take, all, fork, call, put, race, cancel} from 'redux-saga/effects'
-import {SagaIterator} from 'redux-saga'
+import {take, fork, call, put, race, cancel} from 'redux-saga/effects'
+import {SagaIterator, Task} from 'redux-saga'
 import slotSaga from './slot-saga'
 import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
 import gameStateSaga from './game-state-saga'
 import attackSaga from './attack-saga'
 
-function* actionSaga(): SagaIterator {
+function* actionSaga(actionTask: Task | null): SagaIterator {
 	const turnAction = yield race({
 		playCard: take('PLAY_CARD'),
 		applyEffect: take('APPLY_EFFECT'),
@@ -34,11 +34,12 @@ function* actionSaga(): SagaIterator {
 			turnAction.changeActiveHermit.payload
 		)
 	}
+
+	if (actionTask) yield cancel(actionTask)
 }
 
 function* gameSaga(): SagaIterator {
-	yield fork(slotSaga)
-
+	let slotTask = null
 	let actionTask = null
 	while (true) {
 		const gameAction = yield race({
@@ -46,6 +47,7 @@ function* gameSaga(): SagaIterator {
 			gameEnd: call(receiveMsg, 'GAME_END'),
 		})
 
+		if (actionTask) yield cancel(actionTask)
 		if (actionTask) yield cancel(actionTask)
 
 		if (gameAction.gameEnd) {
@@ -56,12 +58,15 @@ function* gameSaga(): SagaIterator {
 		const {payload} = gameAction.gameState
 
 		yield put({type: 'GAME_STATE', ...payload})
-		yield fork(gameStateSaga, payload.gameState)
+
 		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
 		if (payload.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP'))
 			continue
 
-		actionTask = yield fork(actionSaga)
+		slotTask = yield fork(slotSaga)
+		yield fork(gameStateSaga, payload.gameState)
+
+		actionTask = yield fork(actionSaga, actionTask)
 	}
 	yield cancel()
 }

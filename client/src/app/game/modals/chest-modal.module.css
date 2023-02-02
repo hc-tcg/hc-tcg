@@ -7,6 +7,10 @@
 	padding: 10px;
 }
 
+.options button + button {
+	margin-left: 5px;
+}
+
 .cards {
 	padding: 5px;
 	max-height: 400px;

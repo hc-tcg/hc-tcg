@@ -26,4 +26,26 @@ code {
 }
 
 button {
+	font-family: Minecraft;
+	padding: 5px 10px;
+	overflow: hidden;
+	white-space: nowrap;
+	background: #999 url('/images/bgbtn.png') center / cover;
+	image-rendering: pixelated;
+	border: 2px solid #000;
+	color: #ddd;
+	text-shadow: 2px 2px #000a;
+	box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
+}
+
+button:disabled {
+	opacity: 0.7;
+	box-shadow: none;
+}
+
+button:not(:disabled):hover {
+	cursor: pointer;
+	background-color: rgba(100, 100, 255, 0.45);
+	text-shadow: 2px 2px #202013cc;
+	color: #ffffa0;
 }

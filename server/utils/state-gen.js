@@ -69,6 +69,16 @@ export function getStarterPack() {
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
+	pack.unshift({
+		cardId: 'lead',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'clock',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
 	// ensure a hermit in first 5 cards
 	const firstHermitIndex = pack.findIndex((card) => {
 		if (!CARDS[card.cardId]) throw new Error('Unknown card id: ' + card.cardId)
