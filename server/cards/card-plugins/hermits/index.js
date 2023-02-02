@@ -18,6 +18,7 @@ import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
 import RendogRareHermitCard from './rendog-rare'
 import StressMonster101RareHermitCard from './stressmonster101-rare'
 import TangoTekRareHermitCard from './tangotek-rare'
+import TinFoilChefRareHermitCard from './tinfoilchef-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -40,6 +41,7 @@ function registerCards(game) {
 	new RendogRareHermitCard().register(game)
 	new StressMonster101RareHermitCard().register(game)
 	new TangoTekRareHermitCard().register(game)
+	new TinFoilChefRareHermitCard().register(game)
 }
 
 export default registerCards
