@@ -16,7 +16,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			const {singleUseInfo} = derivedState
 			if (singleUseInfo?.id === this.id && target.isActive) {
 				target.damage += this.damage.target
-				target.ignoreProtection = true
+				target.ignoreEffects = true
 			}
 			return target
 		})

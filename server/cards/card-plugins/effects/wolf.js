@@ -14,7 +14,7 @@ class WolfEffectCard extends EffectCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			if (target.effectCardId === this.id) {
-				target.backlash += this.protection.backlash
+				target.counter += this.protection.backlash
 			}
 			return target
 		})

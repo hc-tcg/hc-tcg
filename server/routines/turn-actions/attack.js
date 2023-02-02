@@ -56,8 +56,9 @@ function* attackSaga(game, turnAction, derivedState) {
 		damage: 0,
 		protection: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
-		ignoreProtection: false,
+		ignoreEffects: false,
 		backlash: 0,
+		counter: 0,
 		multiplier: 1,
 		invalid: false,
 	})
@@ -98,7 +99,7 @@ function* attackSaga(game, turnAction, derivedState) {
 			: 0
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
-		const protection = target.ignoreProtection ? 0 : target.protection
+		const protection = target.ignoreEffects ? 0 : target.protection
 		const weaknessDamage = strengths.includes(targetHermitInfo.hermitType)
 			? WEAKNESS_DAMAGE
 			: 0
@@ -111,15 +112,18 @@ function* attackSaga(game, turnAction, derivedState) {
 
 		const isDead = target.row.health < 0
 		const recovery = target.recovery[0]
-		const ignoreRecovery = target.ignoreProtection && recovery?.discardEffect
-		if (isDead && !ignoreRecovery && recovery) {
-			target.row.health = recovery.amount
-			target.row.ailments = []
-			if (recovery.discardEffect) {
-				discardCard(game, target.row.effectCard)
+		const ignoreRecovery = target.ignoreEffects && recovery?.discardEffect
+		if (isDead && recovery) {
+			if (!ignoreRecovery) {
+				target.row.health = recovery.amount
+				target.row.ailments = []
 			}
+			if (recovery.discardEffect) discardCard(game, target.row.effectCard)
 		}
 
+		// from opponent's effects
+		if (!target.ignoreEffects) attackerActiveRow.health -= target.counter
+		// from su items/special moves
 		attackerActiveRow.health -= target.backlash
 	}
 

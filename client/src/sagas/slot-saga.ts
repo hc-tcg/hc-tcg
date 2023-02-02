@@ -92,6 +92,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	)
 	const clickedOnHermit = slotType === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
+	if (playerId !== action.payload.playerId) return
 
 	if (playerState.board.activeRow === rowIndex) {
 		yield put({type: 'SET_OPENED_MODAL_ID', payload: 'attack'})

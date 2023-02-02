@@ -72,6 +72,9 @@ Gives:
 - Info about opponent player
 - Info about single use card
 - Info about picked cards
+
+Note that as it is right now it is a potential source of bugs as hooks receive values from start of action,
+that are not updated. So e.g. activeRow may no longer be active etc. Perhaps using getters/setters instead?
 */
 export function getDerivedState(game, turnAction, baseDerivedState) {
 	const {currentPlayer, opponentPlayer} = baseDerivedState

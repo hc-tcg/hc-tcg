@@ -670,7 +670,7 @@ const scrappedList = [
 		'#Cup of Tea',
 		'2 Red',
 		'80',
-		'',
+		'Flip a Coin.\n\nIf heads, this attack also POISONS the opponent. Does an additional +20HP damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON.',
 	],
 	[
 		'ZedaphPlays',
