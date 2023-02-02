@@ -4,6 +4,7 @@
 	"private": true,
 	"type": "module",
 	"dependencies": {
+		"@floating-ui/react": "^0.19.1",
 		"@react-spring/web": "^9.6.1",
 		"@types/node": "^16.18.11",
 		"@types/react": "^18.0.26",

@@ -55,17 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'zedaphplays_rare',
+		cardId: 'zombiecleo_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_explorer_rare',
+		cardId: 'item_pvp_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'tnt',
+		cardId: 'item_pvp_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

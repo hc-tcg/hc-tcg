@@ -1,0 +1,10 @@
+.tooltip {
+	font-family: Minecraft;
+	background-color: rgba(15, 3, 20, 0.95);
+	color: rgb(161, 161, 161);
+	font-size: 18px;
+	padding: 8px 12px;
+	border-radius: 4px;
+	width: max-content;
+	max-width: 400px;
+}

@@ -14,6 +14,7 @@ export type HermitTypeT =
 	| 'any'
 
 export type ItemCardT = {
+	name: string
 	type: 'item'
 	rarity: CardRarityT
 	hermitType: HermitTypeT
@@ -21,14 +22,15 @@ export type ItemCardT = {
 }
 
 export type EffectCardT = {
-	type: 'effect' | 'single_use'
 	name: string
+	type: 'effect' | 'single_use'
 	rarity: CardRarityT
 	description: string
 	id: string
 }
 
 export type HealthCardT = {
+	name: string
 	type: 'health'
 	health: number
 	id: string

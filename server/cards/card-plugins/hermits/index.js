@@ -26,6 +26,7 @@ import WelsknightRareHermitCard from './welsknight-rare'
 import XBCraftedRareHermitCard from './xbcrafted-rare'
 import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
+import ZombieCleoRareHermitCard from './zombiecleo-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -56,6 +57,7 @@ function registerCards(game) {
 	new XBCraftedRareHermitCard().register(game)
 	new XisumavoidRareHermitCard().register(game)
 	new ZedaphPlaysRareHermitCard().register(game)
+	new ZombieCleoRareHermitCard().register(game)
 }
 
 export default registerCards

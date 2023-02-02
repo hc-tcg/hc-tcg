@@ -19,3 +19,13 @@
 .selectable {
 	cursor: pointer;
 }
+
+.cardTooltip .cardName {
+	color: white;
+	font-weight: bold;
+	font-size: 20px;
+}
+
+.cardTooltip .cardDescription {
+	font-size: 16px;
+}
