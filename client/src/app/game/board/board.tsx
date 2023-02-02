@@ -112,6 +112,33 @@ function Board({onClick, gameState}: Props) {
 		})
 	}
 
+	const renderMiddle = () => {
+		if (coinFlip) {
+			return <Coin value={coinFlip} />
+		}
+
+		if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
+			return (
+				<div className={css.opponentFollowup}>
+					Waiting for opponent's action.
+				</div>
+			)
+		}
+
+		if (availableActions.includes('WAIT_FOR_TURN')) {
+			return null
+		}
+
+		return (
+			<button
+				onClick={endTurn}
+				disabled={!availableActions.includes('END_TURN')}
+			>
+				End Turn
+			</button>
+		)
+	}
+
 	const [player1, player2] = gameState.order.map(
 		(playerId) => gameState.players[playerId]
 	)
@@ -135,16 +162,7 @@ function Board({onClick, gameState}: Props) {
 
 			<div className={css.middle}>
 				<img src="images/tcg1.png" draggable="false" width="100" />
-				{coinFlip ? (
-					<Coin value={coinFlip} />
-				) : !availableActions.includes('WAIT_FOR_TURN') ? (
-					<button
-						onClick={endTurn}
-						disabled={!availableActions.includes('END_TURN')}
-					>
-						End Turn
-					</button>
-				) : null}
+				{renderMiddle()}
 				<div
 					className={classnames(css.singleUseSlot, {
 						[css.used]: singleUseCardUsed,

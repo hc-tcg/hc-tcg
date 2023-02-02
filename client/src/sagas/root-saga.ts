@@ -1,19 +1,52 @@
 import {take, all, fork, call, put, race, cancel} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import slotSaga from './slot-saga'
-import pickProcessSaga from './pick-process-saga'
 import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
 import gameStateSaga from './game-state-saga'
 import attackSaga from './attack-saga'
 
-function* gameSaga(): SagaIterator {
-	const slotTask = yield all([fork(slotSaga), fork(pickProcessSaga)])
+function* actionSaga(): SagaIterator {
+	const turnAction = yield race({
+		playCard: take('PLAY_CARD'),
+		applyEffect: take('APPLY_EFFECT'),
+		followUp: take('FOLLOW_UP'),
+		attack: take('ATTACK'),
+		endTurn: take('END_TURN'),
+		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
+	})
 
+	// TODO - consider what is being send to backend and in which format
+	if (turnAction.playCard) {
+		yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
+	} else if (turnAction.applyEffect) {
+		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+	} else if (turnAction.followUp) {
+		yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
+	} else if (turnAction.attack) {
+		const result = yield call(attackSaga, turnAction.attack)
+		yield call(sendMsg, 'ATTACK', result)
+	} else if (turnAction.endTurn) {
+		yield call(sendMsg, 'END_TURN')
+	} else if (turnAction.changeActiveHermit) {
+		yield call(
+			sendMsg,
+			'CHANGE_ACTIVE_HERMIT',
+			turnAction.changeActiveHermit.payload
+		)
+	}
+}
+
+function* gameSaga(): SagaIterator {
+	yield fork(slotSaga)
+
+	let actionTask = null
 	while (true) {
 		const gameAction = yield race({
 			gameState: call(receiveMsg, 'GAME_STATE'),
 			gameEnd: call(receiveMsg, 'GAME_END'),
 		})
+
+		if (actionTask) yield cancel(actionTask)
 
 		if (gameAction.gameEnd) {
 			yield put({type: 'GAME_END'})
@@ -23,41 +56,14 @@ function* gameSaga(): SagaIterator {
 		const {payload} = gameAction.gameState
 
 		yield put({type: 'GAME_STATE', ...payload})
-
 		yield fork(gameStateSaga, payload.gameState)
-
 		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
+		if (payload.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP'))
+			continue
 
-		const turnAction = yield race({
-			playCard: take('PLAY_CARD'),
-			applyEffect: take('APPLY_EFFECT'),
-			followUp: take('FOLLOW_UP'),
-			attack: take('ATTACK'),
-			endTurn: take('END_TURN'),
-			changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
-		})
-
-		// TODO - consider what is being send to backend and in which format
-		if (turnAction.playCard) {
-			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
-		} else if (turnAction.applyEffect) {
-			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
-		} else if (turnAction.followUp) {
-			yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
-		} else if (turnAction.attack) {
-			const result = yield call(attackSaga, turnAction.attack)
-			yield call(sendMsg, 'ATTACK', result)
-		} else if (turnAction.endTurn) {
-			yield call(sendMsg, 'END_TURN')
-		} else if (turnAction.changeActiveHermit) {
-			yield call(
-				sendMsg,
-				'CHANGE_ACTIVE_HERMIT',
-				turnAction.changeActiveHermit.payload
-			)
-		}
+		actionTask = yield fork(actionSaga)
 	}
-	yield cancel(slotTask)
+	yield cancel()
 }
 
 function* rootSaga(): SagaIterator {

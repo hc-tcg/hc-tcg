@@ -1,3 +1,8 @@
+@font-face {
+	font-family: Minecraft;
+	src: url(fonts/MinecraftRegular-Bmg3.otf);
+}
+
 .slot {
 	width: 90px;
 	height: 90px;
@@ -78,6 +83,14 @@
 	align-items: center;
 	justify-content: space-between;
 	flex: 0 0 auto;
+	width: 130px;
+}
+
+.opponentFollowup {
+	font-family: Minecraft;
+	text-align: center;
+	color: white;
+	font-size: 12px;
 }
 
 .singleUseSlot.used {

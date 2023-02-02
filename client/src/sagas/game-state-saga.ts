@@ -25,7 +25,7 @@ function* gameStateSaga(gameState: GameState): SagaIterator {
 	const playerId = yield* select((state: RootState) => state.playerId)
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {
-		if (['looting'].includes(pState.followUp)) {
+		if (['looting', 'tangotek_rare'].includes(pState.followUp)) {
 			const pickedCards = yield call(runPickProcessSaga, pState.followUp)
 			yield put({
 				type: 'FOLLOW_UP',

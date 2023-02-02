@@ -17,6 +17,7 @@ import MumboJumboRareHermitCard from './mumbojumbo-rare'
 import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
 import RendogRareHermitCard from './rendog-rare'
 import StressMonster101RareHermitCard from './stressmonster101-rare'
+import TangoTekRareHermitCard from './tangotek-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -38,6 +39,7 @@ function registerCards(game) {
 	new PearlescentMoonRareHermitCard().register(game)
 	new RendogRareHermitCard().register(game)
 	new StressMonster101RareHermitCard().register(game)
+	new TangoTekRareHermitCard().register(game)
 }
 
 export default registerCards

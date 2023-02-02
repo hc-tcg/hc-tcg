@@ -2,10 +2,13 @@ import CARDS from '../../cards'
 
 function* followUpSaga(game, turnAction, derivedState) {
 	turnAction.payload = turnAction.payload || {}
+	if (!turnAction.playerId) return
 
 	const {currentPlayer} = derivedState
-	const {followUp} = currentPlayer
+	const followUpPlayer = game.state.players[turnAction.playerId]
+	if (!followUpPlayer) return 'INVALID'
 
+	const {followUp} = followUpPlayer
 	if (!followUp) return 'INVALID'
 
 	const followUpResult = game.hooks.followUp.call(turnAction, {
@@ -14,18 +17,17 @@ function* followUpSaga(game, turnAction, derivedState) {
 	})
 
 	if (followUpResult === 'INVALID') {
-		console.log('Validation failed for: ', followUp)
-		currentPlayer.followUp = null
 		return 'INVALID'
 	} else if (followUpResult === 'DONE') {
-		currentPlayer.followUp = null
+		followUpPlayer.followUp = null
 		return 'DONE'
 	} else if (followUpResult) {
+		followUpPlayer.followUp = null
 		currentPlayer.followUp = followUpResult
 		return 'NEXT'
 	}
 	console.log('Followup not implemented: ', followUp)
-	currentPlayer.followUp = null
+	followUpPlayer.followUp = null
 	return 'INVALID'
 }
 

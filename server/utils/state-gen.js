@@ -55,22 +55,17 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'stressmonster101_rare',
+		cardId: 'tangotek_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_prankster_rare',
+		cardId: 'item_farm_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_prankster_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'totem',
+		cardId: 'item_farm_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

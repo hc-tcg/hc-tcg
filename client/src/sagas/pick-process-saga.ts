@@ -6,12 +6,6 @@ import {PickProcessT, PickRequirmentT} from 'types/pick-process'
 import {CardT} from 'types/game-state'
 import CARDS from 'server/cards'
 
-type RunPickProcessAction = {
-	type: 'SET_PICK_PROCESS'
-	payload: string
-	callback?: (result: any) => void
-}
-
 // TODO - special donitions (only afk hermit, only empty item slot)
 export const REQS: Record<string, Array<PickRequirmentT>> = {
 	instant_health: [{target: 'player', type: 'hermit', amount: 1}],
@@ -33,16 +27,14 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 		{target: 'player', type: 'item', amount: 1, active: true},
 	],
 	keralis_rare: [{target: 'player', type: 'hermit', amount: 1, active: false}],
+	tangotek_rare: [{target: 'player', type: 'hermit', amount: 1, active: false}],
 }
 
 // TODO - clicking on the single use card slot while picking should stop the picking process (as should pressing ESC)
 // and it will remove the singel use effect card from the slot and return it to players hand
 export function* runPickProcessSaga(cardId: string): SagaIterator {
-	const turnPlayerId = yield* select(
-		(state: RS) => state.gameState?.turnPlayerId
-	)
 	const playerId = yield* select((state: RS) => state.playerId)
-	if (!cardId || !turnPlayerId || !playerId) return
+	if (!cardId || !playerId) return
 	// TODO - Proper validations for individual pick processes
 	// if (pickProcess !== 'afk_opponent_hermit') return
 	// TODO - Stop waiting on new turn
@@ -70,8 +62,8 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 			// check ownership
 			const cardPlayerId = pickAction.payload.playerId
 			if (cardPlayerId) {
-				if (req.target === 'player' && turnPlayerId !== cardPlayerId) continue
-				if (req.target === 'opponent' && turnPlayerId === cardPlayerId) continue
+				if (req.target === 'player' && playerId !== cardPlayerId) continue
+				if (req.target === 'opponent' && playerId === cardPlayerId) continue
 
 				const pState = yield* select(
 					(state: RS) => state.gameState?.players[cardPlayerId]
@@ -127,18 +119,3 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 	yield put({type: 'SET_PICK_PROCESS', payload: null})
 	return pickedCards
 }
-
-export function* runActionPickProcessSaga(
-	action: RunPickProcessAction
-): SagaIterator {
-	console.log('>>>: ', 'RUN_PICK_PROCESS', action)
-	const cardId = action.payload
-	const result = yield call(runPickProcessSaga, cardId)
-	action.callback?.(result)
-}
-
-function* pickProcessSaga(): SagaIterator {
-	yield takeLatest('RUN_PICK_PROCESS', runActionPickProcessSaga)
-}
-
-export default pickProcessSaga

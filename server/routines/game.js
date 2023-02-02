@@ -26,8 +26,13 @@ import registerCards from '../cards/card-plugins'
 
 function getAvailableActions(game, derivedState) {
 	const {turn} = game.state
-	const {pastTurnActions, currentPlayer} = derivedState
+	const {pastTurnActions, currentPlayer, opponentPlayer} = derivedState
 	const actions = []
+
+	if (opponentPlayer.followUp) {
+		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
+		return actions
+	}
 
 	if (currentPlayer.followUp) {
 		actions.push('FOLLOW_UP')
@@ -165,7 +170,8 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 
 	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
 
-	const {availableActions, pastTurnActions} = derivedState
+	const {availableActions, opponentAvailableActions, pastTurnActions} =
+		derivedState
 
 	game.hooks.actionStart.call(turnAction, derivedState)
 
@@ -182,7 +188,11 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
 		//
 	} else if (turnAction.type === 'FOLLOW_UP') {
-		if (!availableActions.includes('FOLLOW_UP')) return
+		if (
+			!availableActions.includes('FOLLOW_UP') &&
+			!opponentAvailableActions.includes('FOLLOW_UP')
+		)
+			return
 		const result = yield call(followUpSaga, game, turnAction, derivedState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
@@ -226,13 +236,15 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 
 	const turnActionChannel = yield actionChannel(
 		[
-			'PLAY_CARD',
-			'CHANGE_ACTIVE_HERMIT',
-			'APPLY_EFFECT',
 			'FOLLOW_UP',
-			'ATTACK',
-			'END_TURN',
-		].map((type) => playerAction(type, currentPlayer.id)),
+			...[
+				'PLAY_CARD',
+				'CHANGE_ACTIVE_HERMIT',
+				'APPLY_EFFECT',
+				'ATTACK',
+				'END_TURN',
+			].map((type) => playerAction(type, currentPlayer.id)),
+		],
 		buffers.dropping(10)
 	)
 
@@ -247,6 +259,10 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 			derivedState
 		)
 
+		const opponentAvailableActions = opponentPlayer.followUp
+			? ['FOLLOW_UP']
+			: ['WAIT_FOR_TURN']
+
 		// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 		gamePlayerIds.forEach((playerId) => {
 			allPlayers[playerId].socket.emit('GAME_STATE', {
@@ -257,7 +273,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 					availableActions:
 						playerId === currentPlayer.id
 							? availableActions
-							: ['WAIT_FOR_TURN'],
+							: opponentAvailableActions,
 				},
 			})
 		})
@@ -267,6 +283,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		const result = yield call(turnActionSaga, game, turnAction, {
 			...derivedState,
 			availableActions,
+			opponentAvailableActions,
 		})
 		if (result === 'END_TURN') break
 	}
