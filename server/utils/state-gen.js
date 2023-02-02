@@ -55,7 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'tinfoilchef_rare',
+		cardId: 'tinfoilchef_ultra_rare',
+		cardInstance: Math.random() + '_' + Math.random(),
+	})
+
+	pack.unshift({
+		cardId: 'item_miner_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
