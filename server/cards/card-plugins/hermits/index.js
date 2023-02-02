@@ -21,6 +21,7 @@ import TangoTekRareHermitCard from './tangotek-rare'
 import TinFoilChefRareHermitCard from './tinfoilchef-rare'
 import TinFoilChefUltraRareHermitCard from './tinfoilchef-ultra-rare'
 import VintageBeefRareHermitCard from './vintagebeef-rare'
+import VintageBeefUltraRareHermitCard from './vintagebeef-ultra-rare'
 
 function registerCards(game) {
 	new BdoubleO100RareHermitCard().register(game)
@@ -46,6 +47,7 @@ function registerCards(game) {
 	new TinFoilChefRareHermitCard().register(game)
 	new TinFoilChefUltraRareHermitCard().register(game)
 	new VintageBeefRareHermitCard().register(game)
+	new VintageBeefUltraRareHermitCard().register(game)
 }
 
 export default registerCards

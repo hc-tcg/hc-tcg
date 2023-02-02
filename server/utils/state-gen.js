@@ -55,17 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'vintagebeef_rare',
+		cardId: 'vintagebeef_ultra_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_builder_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'lava_bucket',
+		cardId: 'item_explorer_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
