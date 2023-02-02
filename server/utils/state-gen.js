@@ -55,7 +55,7 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'iskall85_rare',
+		cardId: 'joehills_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
