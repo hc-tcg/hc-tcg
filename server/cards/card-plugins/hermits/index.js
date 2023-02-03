@@ -8,7 +8,7 @@ import GeminiTayCommonHermitCard from './geminitay-common'
 import GrianCommonHermitCard from './grian-common'
 import GoodTimesWithScarCommonHermitCard from './goodtimeswithscar-common'
 import HypnotizdCommonHermitCard from './hypnotizd-common'
-import iJevinCommonHermitCard from './ijevin-common'
+import IJevinCommonHermitCard from './ijevin-common'
 import ImpulseSVCommonHermitCard from './impulsesv-common'
 import Iskall85CommonHermitCard from './iskall85-common'
 import JoeHillsCommonHermitCard from './joehills-common'
@@ -56,63 +56,62 @@ import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 import ZombieCleoRareHermitCard from './zombiecleo-rare'
 
-function registerCards(game) {
-	new BdoubleO100CommonHermitCard().register(game)
-	new Cubfan135CommonHermitCard().register(game)
-	new Docm77CommonHermitCard().register(game)
-	new EthosLabCommonHermitCard().register(game)
-	new FalseSymmetryCommonHermitCard().register(game)
-	new GeminiTayCommonHermitCard().register(game)
-	new GrianCommonHermitCard().register(game)
-	new GoodTimesWithScarCommonHermitCard().register(game)
-	new HypnotizdCommonHermitCard().register(game)
-	new iJevinCommonHermitCard().register(game)
-	new ImpulseSVCommonHermitCard().register(game)
-	new Iskall85CommonHermitCard().register(game)
-	new JoeHillsCommonHermitCard().register(game)
-	new KeralisCommonHermitCard().register(game)
-	new MumboJumboCommonHermitCard().register(game)
-	new PearlescentMoonCommonHermitCard().register(game)
-	new RendogCommonHermitCard().register(game)
-	new StressMonster101CommonHermitCard().register(game)
-	new TangoTekCommonHermitCard().register(game)
-	new TinFoilChefCommonHermitCard().register(game)
-	new VintageBeefCommonHermitCard().register(game)
-	new WelsknightCommonHermitCard().register(game)
-	new XBCraftedCommonHermitCard().register(game)
-	new XisumavoidCommonHermitCard().register(game)
-	new ZedaphPlaysCommonHermitCard().register(game)
-	new ZombieCleoCommonHermitCard().register(game)
-	//
-	new BdoubleO100RareHermitCard().register(game)
-	new Cubfan135RareHermitCard().register(game)
-	new Docm77RareHermitCard().register(game)
-	new EthosLabRareHermitCard().register(game)
-	new EthosLabUltraRareHermitCard().register(game)
-	new FalseSymmetryRareHermitCard().register(game)
-	new GeminiTayRareHermitCard().register(game)
-	new GrianRareHermitCard().register(game)
-	new GoodTimesWithScarRareHermitCard().register(game)
-	new HypnotizdRareHermitCard().register(game)
-	new IJevinRareHermitCard().register(game)
-	new ImpulseSVRareHermitCard().register(game)
-	new Iskall85RareHermitCard().register(game)
-	new JoeHillsRareHermitCard().register(game)
-	new KeralisRareHermitCard().register(game)
-	new MumboJumboRareHermitCard().register(game)
-	new PearlescentMoonRareHermitCard().register(game)
-	new RendogRareHermitCard().register(game)
-	new StressMonster101RareHermitCard().register(game)
-	new TangoTekRareHermitCard().register(game)
-	new TinFoilChefRareHermitCard().register(game)
-	new TinFoilChefUltraRareHermitCard().register(game)
-	new VintageBeefRareHermitCard().register(game)
-	new VintageBeefUltraRareHermitCard().register(game)
-	new WelsknightRareHermitCard().register(game)
-	new XBCraftedRareHermitCard().register(game)
-	new XisumavoidRareHermitCard().register(game)
-	new ZedaphPlaysRareHermitCard().register(game)
-	new ZombieCleoRareHermitCard().register(game)
-}
+const HERMIT_CARDS = [
+	new BdoubleO100CommonHermitCard(),
+	new BdoubleO100RareHermitCard(),
+	new Cubfan135CommonHermitCard(),
+	new Cubfan135RareHermitCard(),
+	new Docm77CommonHermitCard(),
+	new Docm77RareHermitCard(),
+	new EthosLabCommonHermitCard(),
+	new EthosLabRareHermitCard(),
+	new EthosLabUltraRareHermitCard(),
+	new FalseSymmetryCommonHermitCard(),
+	new FalseSymmetryRareHermitCard(),
+	new GeminiTayCommonHermitCard(),
+	new GeminiTayRareHermitCard(),
+	new GrianCommonHermitCard(),
+	new GrianRareHermitCard(),
+	new GoodTimesWithScarCommonHermitCard(),
+	new GoodTimesWithScarRareHermitCard(),
+	new HypnotizdCommonHermitCard(),
+	new HypnotizdRareHermitCard(),
+	new IJevinCommonHermitCard(),
+	new IJevinRareHermitCard(),
+	new ImpulseSVCommonHermitCard(),
+	new ImpulseSVRareHermitCard(),
+	new Iskall85CommonHermitCard(),
+	new Iskall85RareHermitCard(),
+	new JoeHillsCommonHermitCard(),
+	new JoeHillsRareHermitCard(),
+	new KeralisCommonHermitCard(),
+	new KeralisRareHermitCard(),
+	new MumboJumboCommonHermitCard(),
+	new MumboJumboRareHermitCard(),
+	new PearlescentMoonCommonHermitCard(),
+	new PearlescentMoonRareHermitCard(),
+	new RendogCommonHermitCard(),
+	new RendogRareHermitCard(),
+	new StressMonster101CommonHermitCard(),
+	new StressMonster101RareHermitCard(),
+	new TangoTekCommonHermitCard(),
+	new TangoTekRareHermitCard(),
+	new TinFoilChefCommonHermitCard(),
+	new TinFoilChefRareHermitCard(),
+	new TinFoilChefUltraRareHermitCard(),
+	new VintageBeefCommonHermitCard(),
+	new VintageBeefRareHermitCard(),
+	new VintageBeefUltraRareHermitCard(),
+	new WelsknightCommonHermitCard(),
+	new WelsknightRareHermitCard(),
+	new XBCraftedCommonHermitCard(),
+	new XBCraftedRareHermitCard(),
+	new XisumavoidCommonHermitCard(),
+	new XisumavoidRareHermitCard(),
+	new ZedaphPlaysCommonHermitCard(),
+	new ZedaphPlaysRareHermitCard(),
+	new ZombieCleoCommonHermitCard(),
+	new ZombieCleoRareHermitCard(),
+]
 
-export default registerCards
+export default HERMIT_CARDS

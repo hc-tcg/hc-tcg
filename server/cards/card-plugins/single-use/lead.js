@@ -1,6 +1,12 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard} from '../../../utils'
 
+/*
+EP43 20:49:
+Move 1 of active Hertmit's attached item cards to any AFK Hermit.\n\n
+Receiving Hermit must have open item card slot.\n\n
+Discard after use.
+*/
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({

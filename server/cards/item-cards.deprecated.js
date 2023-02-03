@@ -6,6 +6,10 @@ copy(Array.from(temp2.children).map((row, index, arr) => {
 }))
 */
 
+function capitalizeFirstLetter(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 const scrappedList = [
 	['Oak Stairs', 'Common', 'Builder Type'],
 	['Oak Stairs x 2', 'Rare', 'Builder Type'],
@@ -35,6 +39,7 @@ const makeItemCard = (source) => ({
 		source[2].split(' ')[0].toLowerCase() +
 		'_' +
 		source[1].toLowerCase().replaceAll(' ', '_'),
+	name: source[2].split(' ')[0],
 	rarity: source[1].toLowerCase().replaceAll(' ', '_'),
 	hermitType: source[2].split(' ')[0].toLowerCase(),
 	type: 'item',

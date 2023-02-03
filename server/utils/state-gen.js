@@ -55,17 +55,12 @@ export function getStarterPack() {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'zombiecleo_rare',
+		cardId: 'ijevin_common',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 
 	pack.unshift({
-		cardId: 'item_pvp_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'item_pvp_rare',
+		cardId: 'item_builder_rare',
 		cardInstance: Math.random() + '_' + Math.random(),
 	})
 

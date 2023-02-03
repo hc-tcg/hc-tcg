@@ -1,7 +1,6 @@
-
 import HermitCard from './_hermit-card'
 
-class iJevinCommonHermitCard extends HermitCard {
+class IJevinCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ijevin_common',
@@ -11,21 +10,20 @@ class iJevinCommonHermitCard extends HermitCard {
 			health: 250,
 			primary: {
 				name: "Got 'Em",
-				cost: ["explorer"],
+				cost: ['explorer'],
 				damage: 60,
-				power: "null",
+				power: null,
 			},
 			secondary: {
-				name: "Jevination",
-				cost: ["explorer","explorer","any"],
+				name: 'Jevination',
+				cost: ['explorer', 'explorer', 'any'],
 				damage: 90,
-				power: "null",
+				power: null,
 			},
 		})
 	}
 
-	register(game) {
-	}
+	register(game) {}
 }
 
-export default iJevinCommonHermitCard
+export default IJevinCommonHermitCard

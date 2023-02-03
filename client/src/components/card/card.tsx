@@ -19,10 +19,7 @@ type CardProps = {
 
 const cardTooltip = (card: any) => {
 	let desc =
-		card.description ||
-		card.primary?.power?.description ||
-		card.secondary?.power?.description ||
-		''
+		card.description || card.primary?.power || card.secondary?.power || ''
 	desc = desc.replaceAll('\n\n', '<br />')
 	return (
 		<div className={css.cardTooltip}>

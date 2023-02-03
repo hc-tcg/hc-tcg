@@ -1,11 +1,19 @@
-import registerSingleUseCards from './single-use'
-import registerEffectCards from './effects'
-import registerHermitCards from './hermits'
+import SINGLE_USE_CARDS from './single-use'
+import EFFECT_CARDS from './effects'
+import HERMIT_CARDS from './hermits'
+import ITEM_CARDS from './items'
+
+export const CARDS = [
+	...SINGLE_USE_CARDS,
+	...EFFECT_CARDS,
+	...HERMIT_CARDS,
+	...ITEM_CARDS,
+]
 
 function registerCards(game) {
-	registerHermitCards(game)
-	registerSingleUseCards(game)
-	registerEffectCards(game)
+	for (let card of CARDS) {
+		card.register(game)
+	}
 }
 
 export default registerCards

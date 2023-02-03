@@ -1,9 +1,8 @@
-import hermitCards from './hermit-cards'
-import itemCards from './item-cards'
-import effectCards from './effect-cards'
+import {CARDS} from './card-plugins'
 
-export default {
-	...hermitCards,
-	...itemCards,
-	...effectCards,
-}
+const cardMap = CARDS.reduce((result, card) => {
+	result[card.id] = card
+	return result
+}, {})
+
+export default cardMap

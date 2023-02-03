@@ -20,6 +20,7 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 	let cardInfo = card?.cardId ? TYPED_CARDS[card.cardId] : null
 	if (type === 'health' && rowState?.health) {
 		cardInfo = {
+			name: rowState.health + ' Health',
 			type: 'health',
 			health: rowState.health,
 			id: 'health_' + rowState.health,

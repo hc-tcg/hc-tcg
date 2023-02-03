@@ -12,20 +12,20 @@ import ThornsEffectCard from './thorns'
 import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 
-function registerCards(game) {
-	new WaterBucketEffectCard().register(game)
-	new MilkBucketEffectCard().register(game)
-	new ShieldEffectCard().register(game)
-	new IronArmorEffectCard().register(game)
-	new GoldArmorEffectCard().register(game)
-	new DiamondArmorEffectCard().register(game)
-	new NetheriteArmorEffectCard().register(game)
-	new WolfEffectCard().register(game)
-	new TotemEffectCard().register(game)
-	new BedEffectCard().register(game)
-	new ThornsEffectCard().register(game)
-	new MendingEffectCard().register(game)
-	new LoyaltyEffectCard().register(game)
-}
+const EFFECT_CARDS = [
+	new BedEffectCard(),
+	new WolfEffectCard(),
+	new MilkBucketEffectCard(),
+	new GoldArmorEffectCard(),
+	new IronArmorEffectCard(),
+	new ShieldEffectCard(),
+	new WaterBucketEffectCard(),
+	new DiamondArmorEffectCard(),
+	new NetheriteArmorEffectCard(),
+	new TotemEffectCard(),
+	new ThornsEffectCard(),
+	new MendingEffectCard(),
+	new LoyaltyEffectCard(),
+]
 
-export default registerCards
+export default EFFECT_CARDS

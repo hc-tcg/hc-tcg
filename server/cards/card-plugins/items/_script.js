@@ -23,28 +23,15 @@ function writeToFile(fileName, content) {
 
 const template = (card) => {
 	return `
-import HermitCard from './_hermit-card'
+import ItemCard from './_item-card'
 
-class ${card.fullName}CommonHermitCard extends HermitCard {
+class ${card.name}${RARS[card.rarity]}ItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: '${card.id}',
 			name: '${card.name}',
 			rarity: '${card.rarity}',
 			hermitType: '${card.hermitType}',
-			health: ${card.health},
-			primary: {
-				name: "${card.primary.name}",
-				cost: ${JSON.stringify(card.primary.cost)},
-				damage: ${card.primary.damage},
-				power: "${card.primary.power?.description || 'null'}",
-			},
-			secondary: {
-				name: "${card.secondary.name}",
-				cost: ${JSON.stringify(card.secondary.cost)},
-				damage: ${card.secondary.damage},
-				power: "${card.secondary.power?.description || 'null'}",
-			},
 		})
 	}
 
@@ -52,7 +39,7 @@ class ${card.fullName}CommonHermitCard extends HermitCard {
 	}
 }
 
-export default ${card.fullName}CommonHermitCard
+export default ${card.name}${RARS[card.rarity]}ItemCard
 `
 }
 
@@ -68,13 +55,16 @@ const checkValues = (id, a, b) => {
 }
 
 Object.values(CARDS).forEach(async (card) => {
-	if (card.type !== 'hermit') return
+	if (card.type !== 'single_use') return
 	// if (card.rarity !== 'common') return
 
-	const filename = __dirname + '/' + card.id.replaceAll('_', '-') + '.js'
+	const filename = __dirname + '/' + card.hermitType + '-' + card.rarity + '.js'
 
-	// console.log(template(card))
-	console.log(`new ${card.fullName}${RARS[card.rarity]}HermitCard(),`)
+	// const result = template(card)
+
+	// writeToFile(filename, result)
+
+	console.log(`new ${card.name.replaceAll(' ', '')}SingleUseCard(),`)
 
 	// const {default: CardClass} = await import('./' + card.id.replaceAll('_', '-'))
 
