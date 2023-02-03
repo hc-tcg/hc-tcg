@@ -1,4 +1,3 @@
-
 import HermitCard from './_hermit-card'
 
 class KeralisCommonHermitCard extends HermitCard {
@@ -10,22 +9,21 @@ class KeralisCommonHermitCard extends HermitCard {
 			hermitType: 'builder',
 			health: 270,
 			primary: {
-				name: "Looky Looky",
-				cost: ["any"],
+				name: 'Looky Looky',
+				cost: ['any'],
 				damage: 40,
-				power: "null",
+				power: null,
 			},
 			secondary: {
-				name: "NoNoNoNo",
-				cost: ["builder","builder","any"],
+				name: 'NoNoNoNo',
+				cost: ['builder', 'builder', 'any'],
 				damage: 90,
-				power: "null",
+				power: null,
 			},
 		})
 	}
 
-	register(game) {
-	}
+	register(game) {}
 }
 
 export default KeralisCommonHermitCard

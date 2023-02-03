@@ -1,4 +1,3 @@
-
 import HermitCard from './_hermit-card'
 
 class VintageBeefCommonHermitCard extends HermitCard {
@@ -10,22 +9,21 @@ class VintageBeefCommonHermitCard extends HermitCard {
 			hermitType: 'balanced',
 			health: 250,
 			primary: {
-				name: "Hey Guys!",
-				cost: ["any"],
+				name: 'Hey Guys!',
+				cost: ['any'],
 				damage: 30,
-				power: "null",
+				power: null,
 			},
 			secondary: {
-				name: "Mindcrack",
-				cost: ["balanced","balanced"],
+				name: 'Mindcrack',
+				cost: ['balanced', 'balanced'],
 				damage: 80,
-				power: "null",
+				power: null,
 			},
 		})
 	}
 
-	register(game) {
-	}
+	register(game) {}
 }
 
 export default VintageBeefCommonHermitCard

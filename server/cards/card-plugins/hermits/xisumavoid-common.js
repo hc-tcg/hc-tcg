@@ -1,4 +1,3 @@
-
 import HermitCard from './_hermit-card'
 
 class XisumavoidCommonHermitCard extends HermitCard {
@@ -10,22 +9,21 @@ class XisumavoidCommonHermitCard extends HermitCard {
 			hermitType: 'farm',
 			health: 300,
 			primary: {
-				name: "Oh My Days",
-				cost: ["farm"],
+				name: 'Oh My Days',
+				cost: ['farm'],
 				damage: 60,
-				power: "null",
+				power: null,
 			},
 			secondary: {
-				name: "Jeez",
-				cost: ["farm","farm","any"],
+				name: 'Jeez',
+				cost: ['farm', 'farm', 'any'],
 				damage: 90,
-				power: "null",
+				power: null,
 			},
 		})
 	}
 
-	register(game) {
-	}
+	register(game) {}
 }
 
 export default XisumavoidCommonHermitCard

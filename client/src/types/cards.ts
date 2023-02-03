@@ -40,10 +40,7 @@ export type HermitAttackT = {
 	name: string
 	cost: Array<string>
 	damage: number
-	power: {
-		type: string
-		description: string
-	} | null
+	power: string | null
 }
 
 export type HermitCardT = {

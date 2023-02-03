@@ -6,34 +6,13 @@ import ItemCard, {ItemCardProps} from './item-card-svg'
 import HealthCard, {HealthCardProps} from './health-card-svg'
 import css from './card.module.css'
 import Tooltip from 'components/tooltip'
-import CARDS from 'server/cards'
-
-window.CARDS = CARDS
+import CardTooltip from './card-tooltip'
 
 type CardProps = {
 	card: CardInfoT
 	selected?: boolean
 	picked?: boolean
 	onClick?: () => void
-}
-
-const cardTooltip = (card: any) => {
-	let desc =
-		card.description || card.primary?.power || card.secondary?.power || ''
-	desc = desc.replaceAll('\n\n', '<br />')
-	return (
-		<div className={css.cardTooltip}>
-			<div className={css.cardName}>
-				{card.name || card.hermitType || card.id}
-			</div>
-			{desc ? (
-				<div
-					className={css.cardDescription}
-					dangerouslySetInnerHTML={{__html: desc}}
-				/>
-			) : null}
-		</div>
-	)
 }
 
 const Card = (props: CardProps) => {
@@ -50,7 +29,7 @@ const Card = (props: CardProps) => {
 		card = <HealthCard {...(otherProps as HealthCardProps)} />
 	else throw new Error('Unsupported card type: ' + type)
 	return (
-		<Tooltip tooltip={cardTooltip(props.card)}>
+		<Tooltip tooltip={<CardTooltip card={props.card} />}>
 			<div
 				className={classnames(css.card, {
 					[css.selected]: selected,
