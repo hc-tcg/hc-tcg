@@ -5,7 +5,7 @@ class Iskall85RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'iskall85_rare',
-			name: 'Iskall85',
+			name: 'Iskall',
 			rarity: 'rare',
 			hermitType: 'farm',
 			health: 290,

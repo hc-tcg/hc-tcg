@@ -7,7 +7,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'geminitay_rare',
-			name: 'GeminiTay',
+			name: 'Gem',
 			rarity: 'rare',
 			hermitType: 'terraform',
 			health: 270,

@@ -747,7 +747,7 @@ const HERMIT_SHORT_NAMES = {
 	EthosLab: 'Etho',
 	FalseSymmetry: 'False',
 	GeminiTay: 'Gem',
-	Grian: 'Grain',
+	Grian: 'Grian',
 	GoodTimesWithScar: 'Scar',
 	Hypnotizd: 'Hypno',
 	iJevin: 'Jevin',
@@ -790,6 +790,7 @@ const makeHermitCard = (source) => ({
 		.replaceAll(' ', '_')}`,
 	rarity: source[1].toLowerCase().replaceAll(' ', '_'),
 	hermitType: HERMIT_TYPES[source[2].toLowerCase()],
+	fullName: source[0],
 	name: HERMIT_SHORT_NAMES[source[0]],
 	health: Number(source[3]),
 	primary: {

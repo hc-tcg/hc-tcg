@@ -26,7 +26,7 @@ class GrianRareHermitCard extends HermitCard {
 			name: 'Grian',
 			rarity: 'rare',
 			hermitType: 'prankster',
-			health: 250,
+			health: 300,
 			primary: {
 				name: 'Borrow',
 				cost: ['prankster', 'prankster'],

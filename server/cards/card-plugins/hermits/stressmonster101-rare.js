@@ -6,7 +6,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'stressmonster101_rare',
-			name: 'StressMonster101',
+			name: 'Stress',
 			rarity: 'rare',
 			hermitType: 'prankster',
 			health: 300,
