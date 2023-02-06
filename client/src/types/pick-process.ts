@@ -16,13 +16,19 @@ export type PickRequirmentT = {
 	active?: boolean
 }
 
-type PickedCardT = {
-	card: CardT
-	slotType: CardTypeT
-	rowIndex?: number
-	slowIndex?: number
-	playerId?: string
-}
+export type PickedCardT =
+	| {
+			slotType: 'single_use'
+			card: CardT | null
+	  }
+	| {
+			slotType: 'item' | 'hermit' | 'effect' | 'health'
+			card: CardT | null
+			playerId: string
+			rowIndex: number
+			slotIndex: number
+			rowHermitCard: CardT | null
+	  }
 
 export type PickProcessT = {
 	id: string

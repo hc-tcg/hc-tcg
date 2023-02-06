@@ -1,48 +1,35 @@
-import React, {useState} from 'react'
-import Game from './game'
-import css from './app.module.css'
 import {useSelector, useDispatch} from 'react-redux'
-import {RootState} from 'store'
+import {getPlayerName} from 'logic/session/session-selectors'
+import {getGameState} from 'logic/game/game-selectors'
+import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
+import LostConnection from 'components/lost-connection'
+import Login from './login'
+import MainMenu from './main-menu'
+import Game from './game'
+import MatchMaking from './match-making'
+import css from './app.module.css'
 
 function App() {
 	const dispatch = useDispatch()
-	const playerName = useSelector((state: RootState) => state.playerName)
-	const gameType = useSelector((state: RootState) => state.gameType)
+	const playerName = useSelector(getPlayerName)
+	const matchmakingStatus = useSelector(getStatus)
+	const gameState = useSelector(getGameState)
 
-	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
-		ev.preventDefault()
-		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0) dispatch({type: 'SET_NAME', playerName: name})
+	const router = () => {
+		if (gameState) {
+			return <Game />
+		} else if (matchmakingStatus) {
+			return <MatchMaking />
+		} else if (playerName) {
+			return <MainMenu />
+		}
+		return <Login />
 	}
-
-	const handleStranger = () =>
-		dispatch({type: 'SET_GAME_TYPE', gameType: 'stranger'})
-	const handleFriend = () =>
-		dispatch({type: 'SET_GAME_TYPE', gameType: 'friend'})
 
 	return (
 		<main>
-			<div className={css.form}>
-				{!playerName ? (
-					<>
-						<header>HermitCraft TCG</header>
-						<form onSubmit={handlePlayerName}>
-							<input name="playerName" placeholder="Player name..." autoFocus />
-							<button>Next</button>
-						</form>
-					</>
-				) : null}
-				{playerName && !gameType ? (
-					<>
-						<header>HermitCraft TCG</header>
-						<button onClick={handleStranger}>Play with a stranger</button>
-						<button onClick={handleFriend}>Play with a friend</button>
-					</>
-				) : null}
-				{playerName && gameType ? (
-					<Game name={playerName} gameType={gameType} />
-				) : null}
-			</div>
+			<div className={css.form}>{router()}</div>
+			{/* <LostConnection /> */}
 		</main>
 	)
 }

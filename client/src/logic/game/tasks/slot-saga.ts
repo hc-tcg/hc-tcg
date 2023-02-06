@@ -8,6 +8,21 @@ import CARDS from 'server/cards'
 import DAMAGE from 'server/const/damage'
 import {runPickProcessSaga, REQS} from './pick-process-saga'
 
+import {getPlayerId} from 'logic/session/session-selectors'
+import {
+	getAvailableActions,
+	getSelectedCard,
+	getPickProcess,
+	getPlayerStateById,
+} from 'logic/game/game-selectors'
+import {setSelectedCard, setOpenedModalId} from 'logic/game/game-actions'
+
+import {
+	changeActiveHermit,
+	applyEffect,
+	playCard,
+} from 'logic/game/game-actions'
+
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 type SlotPickedAction = {type: 'SLOT_PICKED'; payload: any}
 
@@ -40,10 +55,7 @@ function* pickWithSelectedSaga(
 		return
 	}
 
-	yield put({
-		type: 'PLAY_CARD',
-		payload: {...action.payload, card: selectedCard},
-	})
+	yield put(playCard({...action.payload, card: selectedCard}))
 
 	if (slotType === 'single_use') {
 		const damageInfo = DAMAGE[selectedCardInfo.id]
@@ -65,46 +77,41 @@ function* pickWithSelectedSaga(
 				'fortune',
 			].includes(selectedCard.cardId)
 		) {
-			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'confirm'})
+			yield put(setOpenedModalId('confirm'))
 		} else if (selectedCard.cardId === 'chest') {
-			yield put({type: 'SET_OPENED_MODAL_ID', payload: 'chest'})
+			yield put(setOpenedModalId('chest'))
 
 			// TODO - damageInfo - hacky check for now to avoid instant selection for attack effects
 		} else if (REQS[selectedCard.cardId] && !damageInfo) {
 			const result = yield call(runPickProcessSaga, selectedCard.cardId)
 			if (!result || !result.length) return
 			// problem je ze v REQS je i bow/crossbow takze se zavola apply effect
-			yield put({
-				type: 'APPLY_EFFECT',
-				payload: {pickedCards: {[selectedCard.cardId]: result}},
-			})
+			yield put(applyEffect({pickedCards: {[selectedCard.cardId]: result}}))
 		}
 	}
 
-	yield put({type: 'SET_SELECTED_CARD', payload: null})
+	yield put(setSelectedCard(null))
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const {slotType, rowHermitCard, rowIndex} = action.payload
-	const playerId = yield* select((state: RS) => state.playerId)
-	const playerState = yield* select(
-		(state: RS) => state.gameState?.players[playerId]
-	)
+	const playerId = yield* select(getPlayerId)
+	const playerState = yield* select(getPlayerStateById(playerId))
 	const clickedOnHermit = slotType === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
 	if (playerId !== action.payload.playerId) return
 
 	if (playerState.board.activeRow === rowIndex) {
-		yield put({type: 'SET_OPENED_MODAL_ID', payload: 'attack'})
+		yield put(setOpenedModalId('attack'))
 	} else {
-		yield put({type: 'CHANGE_ACTIVE_HERMIT', payload: action.payload})
+		yield put(changeActiveHermit(action.payload))
 	}
 }
 
 function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
-	const availableActions = yield* select((state: RS) => state.availableActions)
-	const selectedCard = yield* select((state: RS) => state.selectedCard)
-	const pickProcess = yield* select((state: RS) => state.pickProcess)
+	const availableActions = yield* select(getAvailableActions)
+	const selectedCard = yield* select(getSelectedCard)
+	const pickProcess = yield* select(getPickProcess)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
 
 	if (pickProcess) {

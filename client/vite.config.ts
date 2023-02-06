@@ -9,7 +9,11 @@ export default defineConfig({
 		alias: {
 			server: path.resolve(__dirname, '../server'),
 			types: path.resolve(__dirname, './src/types'),
+			sagas: path.resolve(__dirname, './src/sagas'),
 			components: path.resolve(__dirname, './src/components'),
+			logic: path.resolve(__dirname, './src/logic'),
+			store: path.resolve(__dirname, './src/store'),
+			socket: path.resolve(__dirname, './src/socket'),
 		},
 	},
 	css: {

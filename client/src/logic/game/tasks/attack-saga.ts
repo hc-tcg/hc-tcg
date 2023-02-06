@@ -6,7 +6,9 @@ import {CardInfoT, EffectCardT} from 'types/cards'
 import CARDS from 'server/cards'
 import DAMAGE from 'server/const/damage'
 import {runPickProcessSaga} from './pick-process-saga'
-import {getPlayerState, getPlayerActiveRow} from '../app/game/game-selectors'
+import {getPlayerState} from 'logic/game/game-selectors'
+// TODO - get rid of app game-selectors
+import {getPlayerActiveRow} from '../../../app/game/game-selectors'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 

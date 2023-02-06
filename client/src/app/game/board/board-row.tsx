@@ -1,7 +1,7 @@
 import {BoardRowT} from 'types/game-state'
+import {CardT} from 'types/game-state'
 import Slot, {SlotType} from './board-slot'
 import css from './board.module.css'
-import {CardT} from 'types/game-state'
 
 const getCardBySlot = (
 	slotType: SlotType,

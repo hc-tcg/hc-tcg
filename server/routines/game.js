@@ -1,4 +1,12 @@
-import {take, spawn, actionChannel, call} from 'redux-saga/effects'
+import {
+	take,
+	takeEvery,
+	fork,
+	spawn,
+	actionChannel,
+	call,
+	delay,
+} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import DAMAGE from '../const/damage'
@@ -215,6 +223,26 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 	return 'DONE'
 }
 
+function* sendGameState(allPlayers, gamePlayerIds, game, derivedState) {
+	if (!game._derivedStateCache) return
+	const {currentPlayer, availableActions, opponentAvailableActions} =
+		derivedState || game._derivedStateCache
+	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
+	gamePlayerIds.forEach((playerId) => {
+		allPlayers[playerId].socket.emit('GAME_STATE', {
+			type: 'GAME_STATE',
+			payload: {
+				gameState: game.state,
+				opponentId: gamePlayerIds.find((id) => id !== playerId),
+				availableActions:
+					playerId === currentPlayer.id
+						? availableActions
+						: opponentAvailableActions,
+			},
+		})
+	})
+}
+
 function* turnSaga(allPlayers, gamePlayerIds, game) {
 	const pastTurnActions = []
 
@@ -263,28 +291,22 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 			? ['FOLLOW_UP']
 			: ['WAIT_FOR_TURN']
 
-		// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
-		gamePlayerIds.forEach((playerId) => {
-			allPlayers[playerId].socket.emit('GAME_STATE', {
-				type: 'GAME_STATE',
-				payload: {
-					gameState: game.state,
-					opponentId: gamePlayerIds.find((id) => id !== playerId),
-					availableActions:
-						playerId === currentPlayer.id
-							? availableActions
-							: opponentAvailableActions,
-				},
-			})
-		})
-
-		console.log('Waiting for turn action')
-		const turnAction = yield take(turnActionChannel)
-		const result = yield call(turnActionSaga, game, turnAction, {
+		const turnDerivedState = {
 			...derivedState,
 			availableActions,
 			opponentAvailableActions,
-		})
+		}
+		game._derivedStateCache = turnDerivedState
+		yield call(sendGameState, allPlayers, gamePlayerIds, game, turnDerivedState)
+
+		console.log('Waiting for turn action')
+		const turnAction = yield take(turnActionChannel)
+		const result = yield call(
+			turnActionSaga,
+			game,
+			turnAction,
+			turnDerivedState
+		)
 		if (result === 'END_TURN') break
 	}
 
@@ -325,8 +347,24 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	return 'DONE'
 }
 
+function* sendGameStateOnReconnect(allPlayers, gamePlayerIds, game) {
+	yield takeEvery(
+		(action) =>
+			action.type === 'PLAYER_RECONNECTED' &&
+			gamePlayerIds.includes(action.payload.playerId),
+		function* (action) {
+			const {playerId} = action.payload
+			const playerSocket = allPlayers[playerId]?.socket
+			if (playerSocket && playerSocket.connected) {
+				yield delay(2000)
+				yield call(sendGameState, allPlayers, [playerId], game)
+			}
+		}
+	)
+}
+
 function* gameSaga(allPlayers, gamePlayerIds) {
-	// TODO - gameState should be changed only in immutable way so that we can check its history
+	// TODO - gameState should be changed only in immutable way so that we can check its history (probs too big to change rn)
 	const game = {
 		state: getGameState(allPlayers, gamePlayerIds),
 		hooks: {
@@ -348,7 +386,10 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			gameEnd: new SyncHook([]),
 		},
 	}
+
 	registerCards(game)
+
+	yield fork(sendGameStateOnReconnect, allPlayers, gamePlayerIds, game)
 
 	game.hooks.gameStart.call()
 

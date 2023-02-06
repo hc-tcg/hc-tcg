@@ -1,0 +1,35 @@
+.matchmaking {
+	padding-top: 15px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+}
+
+.message {
+	color: white;
+	font-family: Minecraft;
+	margin-bottom: 15px;
+}
+
+.code {
+	background: black;
+	color: white;
+	border: 1px solid orange;
+	padding: 5px 15px;
+	font-size: 20px;
+	letter-spacing: 3px;
+	font-family: Minecraft;
+	cursor: pointer;
+}
+
+.options {
+	margin-top: 10px;
+	display: flex;
+	justify-content: center;
+	gap: 5px;
+}
+
+.invalidCode {
+	border-color: red;
+	outline-color: red;
+}

@@ -2,6 +2,8 @@ import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
+import {applyEffect} from 'logic/game/game-actions'
+
 type Props = {
 	closeModal: () => void
 }
@@ -9,7 +11,7 @@ function AttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handleYes = () => {
-		dispatch({type: 'APPLY_EFFECT'})
+		dispatch(applyEffect({}))
 		closeModal()
 	}
 

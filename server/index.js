@@ -33,12 +33,25 @@ app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, '../public', 'index.html'))
 })
 
+const isValidName = (name) => {
+	if (typeof name !== 'string') return false
+	if (name.length < 3) return false
+	if (name.length > 25) return false
+	return true
+}
+
 io.on('connection', (socket) => {
 	// TODO - use playerSecret to verify requests
 	// TODO - Validate json of all requests
+	const playerName = socket.handshake.auth?.playerName || ''
+	if (!isValidName(playerName)) {
+		console.log('Invalid player name: ', playerName)
+		debugger
+		return socket.disconnect(true)
+	}
 	store.dispatch({
-		type: 'PLAYER_CONNECTED',
-		payload: {socket, playerName: socket.handshake.auth.playerName},
+		type: 'CLIENT_CONNECTED',
+		payload: {socket, ...socket.handshake.auth},
 	})
 	socket.onAny((event, message) => {
 		// console.log('[received] ', event, ': ', message)
@@ -47,7 +60,7 @@ io.on('connection', (socket) => {
 	})
 	socket.on('disconnect', () => {
 		store.dispatch({
-			type: 'PLAYER_DISCONNECTED',
+			type: 'CLIENT_DISCONNECTED',
 			payload: {socket},
 		})
 	})

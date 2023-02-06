@@ -1,0 +1,22 @@
+.chooseGame {
+	padding-top: 15px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+}
+
+.chooseGame button {
+	width: 250px;
+	margin-top: 2px;
+}
+
+.message {
+	color: white;
+	font-family: Minecraft;
+	margin-bottom: 5px;
+}
+
+.message .playerName {
+	color: rgb(238, 135, 48);
+	font-family: MinecraftBold;
+}

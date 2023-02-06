@@ -1,6 +1,10 @@
 import EffectCard from './_effect-card'
 import {equalCard} from '../../../utils'
 
+/*
+Latest version: EP50 - 24:26
+I modified this to simplifi the process: Card is now random, but you don't have to flip a coin
+*/
 class LoyaltyEffectCard extends EffectCard {
 	constructor() {
 		super({

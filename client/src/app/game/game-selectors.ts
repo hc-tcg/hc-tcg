@@ -1,19 +1,10 @@
 import {RootState} from 'store'
 import {PlayerState} from 'types/game-state'
-
-export const getPlayerState = (state: RootState) => {
-	const gameState = state.gameState
-	const playerId = state.playerId
-	if (!gameState || !playerId) return null
-	return gameState.players[playerId]
-}
-
-export const getOpponentState = (state: RootState) => {
-	const gameState = state.gameState
-	const opponentId = state.opponentId
-	if (!gameState || !opponentId) return null
-	return gameState.players[opponentId]
-}
+import {
+	getPlayerState,
+	getOpponentState,
+	getCurrentPlayerState,
+} from 'logic/game/game-selectors'
 
 const getActiveRow = (playerState: PlayerState | null) => {
 	if (!playerState) return null
@@ -35,9 +26,8 @@ export const getOpponentActiveRow = (state: RootState) => {
 }
 
 export const getMultiplier = (state: RootState) => {
-	if (!state.gameState) return null
-	const {players, turnPlayerId} = state.gameState
-	const playerState = players[turnPlayerId]
+	const playerState = getCurrentPlayerState(state)
+	if (!playerState) return null
 
 	const flips = playerState.coinFlips
 	let multiplier = 1

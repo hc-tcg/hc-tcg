@@ -4,16 +4,14 @@ import {RootState} from 'store'
 import CardList from 'components/card-list'
 import {CardT} from 'types/game-state'
 import css from './spyglass-modal.module.css'
+import {getPlayerState} from 'logic/game/game-selectors'
 
 type Props = {
 	closeModal: () => void
 }
 function SpyglassModal({closeModal}: Props) {
-	const spyglass: Array<CardT> = useSelector((state: RootState) => {
-		const playerId = state.playerId
-		if (!playerId) return []
-		return state.gameState?.players[playerId]?.custom.spyglass || []
-	})
+	const spyglass: Array<CardT> =
+		useSelector(getPlayerState)?.custom.spyglass || []
 
 	return (
 		<Modal title="Spyglass" closeModal={closeModal}>

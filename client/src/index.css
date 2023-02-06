@@ -20,10 +20,7 @@ body {
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-
-	background: url('https://static.wikia.nocookie.net/minecraft/images/a/ab/Badlands-island-chain-minecraft-seed-2000x1200.jpeg')
-		no-repeat;
-	background-size: cover;
+	background: rgb(72, 72, 72);
 }
 
 code {
@@ -58,4 +55,11 @@ button:not(:disabled):hover {
 	background-color: rgba(100, 100, 255, 0.45);
 	text-shadow: 2px 2px #202013cc;
 	color: #ffffa0;
+}
+
+input {
+	width: 200px;
+	padding: 5px 10px;
+	border: 2px solid #000;
+	font-family: Minecraft;
 }

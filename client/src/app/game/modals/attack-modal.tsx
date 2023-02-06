@@ -14,6 +14,13 @@ import {
 } from '../game-selectors'
 import css from './attack-modal.module.css'
 
+import {getPlayerId} from 'logic/session/session-selectors'
+import {
+	getAvailableActions,
+	getPlayerStateById,
+} from 'logic/game/game-selectors'
+import {attack} from 'logic/game/game-actions'
+
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type Props = {
@@ -24,15 +31,10 @@ function AttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
-	const availableActions = useSelector(
-		(state: RootState) => state.availableActions
-	)
-	const singleUseCard = useSelector((state: RootState) => {
-		if (!state.gameState) return null
-		const {players, turnPlayerId} = state.gameState
-		if (!players || !turnPlayerId) return null
-		return players[turnPlayerId].board.singleUseCard
-	})
+	const availableActions = useSelector(getAvailableActions)
+	const playerId = useSelector(getPlayerId)
+	const playerState = useSelector(getPlayerStateById(playerId))
+	const singleUseCard = playerState?.board.singleUseCard
 	const multiplier = useSelector(getMultiplier)
 
 	if (!activeRow || !activeRow.hermitCard) return null
@@ -75,8 +77,7 @@ function AttackModal({closeModal}: Props) {
 	)
 
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
-		dispatch({type: 'ATTACK', payload: {type}})
-
+		dispatch(attack(type))
 		closeModal()
 	}
 

@@ -9,6 +9,12 @@ import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
 
+import {getPlayerId} from 'logic/session/session-selectors'
+import {
+	getPlayerStateById,
+	getAvailableActions,
+} from 'logic/game/game-selectors'
+import {endTurn} from 'logic/game/game-actions'
 /*
 TODO:
 - Indicate when it is players turn
@@ -27,19 +33,12 @@ type FlipInfo = {
 
 // TODO - Use selecotrs instead of passing gameState
 function Board({onClick, gameState}: Props) {
-	const playerId = useSelector((state: RootState) => state.playerId)
-	const boardState = gameState.players[gameState.turnPlayerId].board
-	const singleUseCard = boardState.singleUseCard || null
-	const singleUseCardUsed = boardState.singleUseCardUsed
-	const currentPlayer = useSelector((state: RootState) => {
-		if (!state.gameState) return null
-		const {players, turnPlayerId} = state.gameState
-		return players[turnPlayerId]
-	})
-
-	const availableActions = useSelector(
-		(state: RootState) => state.availableActions
-	)
+	const playerId = useSelector(getPlayerId)
+	const currentPlayer = useSelector(getPlayerStateById(gameState.turnPlayerId))
+	const boardState = currentPlayer?.board
+	const singleUseCard = boardState?.singleUseCard || null
+	const singleUseCardUsed = boardState?.singleUseCardUsed || false
+	const availableActions = useSelector(getAvailableActions)
 	const dispatch = useDispatch()
 
 	// --- coin flip logic start ---
@@ -92,8 +91,8 @@ function Board({onClick, gameState}: Props) {
 		})
 	}
 
-	const endTurn = () => {
-		dispatch({type: 'END_TURN'})
+	const handleEndTurn = () => {
+		dispatch(endTurn())
 	}
 
 	const makeRows = (playerState: PlayerState, type: 'left' | 'right') => {
@@ -131,7 +130,7 @@ function Board({onClick, gameState}: Props) {
 
 		return (
 			<button
-				onClick={endTurn}
+				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
 			>
 				End Turn

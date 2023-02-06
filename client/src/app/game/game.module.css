@@ -1,3 +1,10 @@
+.game {
+	background: url('https://static.wikia.nocookie.net/minecraft/images/a/ab/Badlands-island-chain-minecraft-seed-2000x1200.jpeg')
+		no-repeat;
+	background-size: cover;
+	min-height: 100vh;
+}
+
 .hand {
 	position: fixed;
 	bottom: 0;
@@ -8,4 +15,15 @@
 	overflow-x: scroll;
 	overflow-y: hidden;
 	text-align: center;
+}
+
+.forfeit {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	cursor: pointer;
+}
+
+.forfeit:hover {
+	filter: brightness(120%);
 }

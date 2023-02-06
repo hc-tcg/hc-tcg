@@ -1,7 +1,6 @@
 import {useSelector, useDispatch} from 'react-redux'
-import {RootState} from 'store'
 import {CardT} from 'types/game-state'
-import {PickProcessT} from 'types/pick-process'
+import {PickProcessT, PickedCardT} from 'types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
@@ -11,6 +10,19 @@ import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
+import {
+	getGameState,
+	getSelectedCard,
+	getPickProcess,
+	getOpenedModalId,
+	getPlayerState,
+} from 'logic/game/game-selectors'
+import {
+	setOpenedModalId,
+	setSelectedCard,
+	slotPicked,
+	forfeit,
+} from 'logic/game/game-actions'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const firstReq = pickProcess.requirments[pickProcess.pickedCards.length]
@@ -25,25 +37,11 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	} from ${target} ${location}.`
 }
 
-type ClickInfoT =
-	| {
-			slotType: 'single_use'
-			card: CardT | null
-	  }
-	| {
-			slotType: 'item' | 'hermit' | 'effect' | 'health'
-			playerId: string
-			rowIndex: number
-			rowHermitCard: CardT | null
-			slotIndex: number
-			card: CardT | null
-	  }
-
 const renderModal = (
 	openedModalId: string | null,
-	setOpenedModalId: (modalId: string | null) => void
+	handleOpenModalId: (modalId: string | null) => void
 ) => {
-	const closeModal = () => setOpenedModalId(null)
+	const closeModal = () => handleOpenModalId(null)
 	if (openedModalId === 'attack') return <AttackModal closeModal={closeModal} />
 	else if (openedModalId === 'confirm')
 		return <ConfirmModal closeModal={closeModal} />
@@ -56,40 +54,40 @@ const renderModal = (
 	return null
 }
 
-type Props = {
-	name: string
-	gameType: 'stranger' | 'friend'
-}
+type Props = {}
 function Game(props: Props) {
-	const gameState = useSelector((state: RootState) => state.gameState)
-	const playerId = useSelector((state: RootState) => state.playerId)
-	const selectedCard = useSelector((state: RootState) => state.selectedCard)
-	const pickedCards = useSelector(
-		(state: RootState) => state.pickProcess?.pickedCards || []
-	)
-	const openedModalId = useSelector((state: RootState) => state.openedModalId)
-	const pickProcess = useSelector((state: RootState) => state.pickProcess)
+	const gameState = useSelector(getGameState)
+	const selectedCard = useSelector(getSelectedCard)
+	// TODO - this used to be array
+	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
+	const openedModalId = useSelector(getOpenedModalId)
+	const pickProcess = useSelector(getPickProcess)
+	const playerState = useSelector(getPlayerState)
 	const dispatch = useDispatch()
 
-	if (!gameState) return <main>Loading</main>
+	if (!gameState || !playerState) return <main>Loading</main>
 
-	const playerState = gameState.players[playerId]
-
-	const setOpenedModalId = (id: string | null) => {
-		dispatch({type: 'SET_OPENED_MODAL_ID', payload: id})
+	const handleOpenModalId = (id: string | null) => {
+		dispatch(setOpenedModalId(id))
 	}
 
-	const handleBoardClick = (meta: ClickInfoT) => {
-		console.log('Slot selected: ', meta)
-		dispatch({type: 'SLOT_PICKED', payload: meta})
+	const handleBoardClick = (pickedCard: PickedCardT) => {
+		console.log('Slot selected: ', pickedCard)
+		dispatch(slotPicked(pickedCard))
 	}
 
 	const selectCard = (card: CardT) => {
 		console.log('Card selected: ', card.cardId)
-		dispatch({type: 'SET_SELECTED_CARD', payload: card})
+		dispatch(setSelectedCard(card))
 	}
 
-	const pickedCardsInstances = pickedCards.map((pickedCard) => pickedCard.card)
+	const handleForfeit = () => {
+		dispatch(forfeit())
+	}
+
+	const pickedCardsInstances = pickedCards
+		.map((pickedCard) => pickedCard.card)
+		.filter(Boolean) as Array<CardT>
 
 	return (
 		<div className={css.game}>
@@ -104,10 +102,18 @@ function Game(props: Props) {
 					picked={pickedCardsInstances}
 				/>
 			</div>
-			{renderModal(openedModalId, setOpenedModalId)}
+			{renderModal(openedModalId, handleOpenModalId)}
 			{pickProcess ? (
 				<MouseIndicator message={getPickProcessMessage(pickProcess)} />
 			) : null}
+
+			<div className={css.forfeit} onClick={handleForfeit}>
+				<img
+					src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/38/White_Banner_Revision_1.png"
+					width="32"
+					title="Forfeit"
+				/>
+			</div>
 		</div>
 	)
 }

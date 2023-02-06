@@ -1,0 +1,11 @@
+.login {
+	padding-top: 15px;
+	display: flex;
+	flex-flow: column nowrap;
+	align-items: center;
+}
+
+.connecting {
+	color: white;
+	font-family: Minecraft;
+}

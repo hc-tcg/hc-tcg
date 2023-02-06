@@ -6,6 +6,10 @@ import {PickProcessT, PickRequirmentT} from 'types/pick-process'
 import {CardT} from 'types/game-state'
 import CARDS from 'server/cards'
 
+import {getPlayerId} from 'logic/session/session-selectors'
+import {getPlayerStateById} from 'logic/game/game-selectors'
+import {setPickProcess, updatePickProcess} from 'logic/game/game-actions'
+
 // TODO - special donitions (only afk hermit, only empty item slot)
 export const REQS: Record<string, Array<PickRequirmentT>> = {
 	instant_health: [{target: 'player', type: 'hermit', amount: 1}],
@@ -33,7 +37,7 @@ export const REQS: Record<string, Array<PickRequirmentT>> = {
 // TODO - clicking on the single use card slot while picking should stop the picking process (as should pressing ESC)
 // and it will remove the singel use effect card from the slot and return it to players hand
 export function* runPickProcessSaga(cardId: string): SagaIterator {
-	const playerId = yield* select((state: RS) => state.playerId)
+	const playerId = yield* select(getPlayerId)
 	if (!cardId || !playerId) return
 	// TODO - Proper validations for individual pick processes
 	// if (pickProcess !== 'afk_opponent_hermit') return
@@ -42,14 +46,13 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 	const reqs = REQS[cardId]
 	if (!reqs) return
 
-	yield put({
-		type: 'SET_PICK_PROCESS',
-		payload: {
+	yield put(
+		setPickProcess({
 			id: cardId,
 			requirments: reqs,
 			pickedCards: [],
-		},
-	})
+		})
+	)
 
 	const pickedCards: Array<CardT> = []
 	for (let req of reqs) {
@@ -65,9 +68,7 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 				if (req.target === 'player' && playerId !== cardPlayerId) continue
 				if (req.target === 'opponent' && playerId === cardPlayerId) continue
 
-				const pState = yield* select(
-					(state: RS) => state.gameState?.players[cardPlayerId]
-				)
+				const pState = yield* select(getPlayerStateById(cardPlayerId))
 
 				const isActive =
 					pState?.board.activeRow !== null &&
@@ -103,10 +104,7 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 						: pickAction.payload
 				)
 			}
-			yield put({
-				type: 'UPDATE_PICK_PROCESS',
-				payload: [...pickedCards, ...pickedReqCards],
-			})
+			yield put(updatePickProcess([...pickedCards, ...pickedReqCards]))
 
 			// failsafe, e.g. if someone ends turn while picking
 			/* TODO
@@ -116,6 +114,6 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 		}
 		pickedCards.push(...pickedReqCards)
 	}
-	yield put({type: 'SET_PICK_PROCESS', payload: null})
+	yield put(setPickProcess(null))
 	return pickedCards
 }

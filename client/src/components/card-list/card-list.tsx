@@ -48,7 +48,7 @@ const CardList = (props: CardListProps) => {
 				className={classnames(css.card, {[css.clickable]: !!onClick})}
 			>
 				<Card
-					onClick={onClick ? () => onClick(card) : null}
+					onClick={onClick ? () => onClick(card) : undefined}
 					card={info}
 					selected={isSelected}
 					picked={isPicked}

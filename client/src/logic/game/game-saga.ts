@@ -1,9 +1,18 @@
-import {take, fork, call, put, race, cancel} from 'redux-saga/effects'
+import {
+	take,
+	takeEvery,
+	fork,
+	call,
+	put,
+	race,
+	cancel,
+} from 'redux-saga/effects'
 import {SagaIterator, Task} from 'redux-saga'
-import slotSaga from './slot-saga'
-import socketSaga, {receiveMsg, sendMsg} from './socket-saga'
-import gameStateSaga from './game-state-saga'
-import attackSaga from './attack-saga'
+import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
+import slotSaga from './tasks/slot-saga'
+import gameStateSaga from './tasks/game-state-saga'
+import attackSaga from './tasks/attack-saga'
+import {gameState, gameStart, gameEnd} from './game-actions'
 
 function* actionSaga(actionTask: Task | null): SagaIterator {
 	const turnAction = yield race({
@@ -38,26 +47,20 @@ function* actionSaga(actionTask: Task | null): SagaIterator {
 	if (actionTask) yield cancel(actionTask)
 }
 
-function* gameSaga(): SagaIterator {
+function* gameActionsSaga(initialGameState?: any): SagaIterator {
 	let slotTask = null
 	let actionTask = null
-	while (true) {
-		const gameAction = yield race({
-			gameState: call(receiveMsg, 'GAME_STATE'),
-			gameEnd: call(receiveMsg, 'GAME_END'),
-		})
+	yield takeEvery('FORFEIT', function* () {
+		yield call(sendMsg, 'FORFEIT')
+	})
+	action_cycle: while (true) {
+		const {payload} = initialGameState || (yield call(receiveMsg, 'GAME_STATE'))
+		initialGameState = null
 
+		if (slotTask) yield cancel(slotTask)
 		if (actionTask) yield cancel(actionTask)
-		if (actionTask) yield cancel(actionTask)
 
-		if (gameAction.gameEnd) {
-			yield put({type: 'GAME_END'})
-			break
-		}
-
-		const {payload} = gameAction.gameState
-
-		yield put({type: 'GAME_STATE', ...payload})
+		yield put(gameState(payload))
 
 		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
 		if (payload.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP'))
@@ -68,23 +71,29 @@ function* gameSaga(): SagaIterator {
 
 		actionTask = yield fork(actionSaga, actionTask)
 	}
-	yield cancel()
 }
 
-function* rootSaga(): SagaIterator {
-	const {playerName} = yield take('SET_NAME')
-	yield call(socketSaga, playerName)
-	const {playerId, playerSecret} = yield call(receiveMsg, 'PLAYER_INFO')
-	yield put({type: 'SET_PLAYER_INFO', playerId, playerSecret})
-	while (true) {
-		const {gameType} = yield take('SET_GAME_TYPE')
-		// TODO
-		if (gameType !== 'stranger')
-			throw new Error('Friend matchmaking not yet supported')
+function* gameSaga(initialGameState?: any): SagaIterator {
+	try {
+		yield put(gameStart())
+		const result = yield race({
+			game: call(gameActionsSaga, initialGameState),
+			gameEnd: call(receiveMsg, 'GAME_END'),
+			gameCrash: call(receiveMsg, 'GAME_CRASH'),
+		})
 
-		yield call(sendMsg, 'JOIN_GAME')
-		yield call(gameSaga)
+		if (result.hasOwnProperty('game')) {
+			throw new Error('Unexpected game ending')
+		}
+
+		if (result.gameCrash) {
+			console.log('Server error')
+		}
+	} catch (err) {
+		console.error('Client error: ', err)
+	} finally {
+		yield put(gameEnd())
 	}
 }
 
-export default rootSaga
+export default gameSaga
