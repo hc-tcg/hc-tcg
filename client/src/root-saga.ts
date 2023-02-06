@@ -1,11 +1,12 @@
 import {take, fork, call, race} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import socketSaga from 'logic/socket/socket-saga'
-import sessionSaga from 'logic/session/session-saga'
+import {loginSaga, logoutSaga} from 'logic/session/session-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 
 function* appSaga(): SagaIterator {
-	yield call(sessionSaga)
+	yield call(loginSaga)
+	yield fork(logoutSaga)
 	yield fork(matchmakingSaga)
 }
 

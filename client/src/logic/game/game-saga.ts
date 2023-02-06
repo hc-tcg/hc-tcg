@@ -5,16 +5,17 @@ import {
 	call,
 	put,
 	race,
-	cancel,
+	takeLatest,
 } from 'redux-saga/effects'
-import {SagaIterator, Task} from 'redux-saga'
+import {AnyAction} from 'redux'
+import {SagaIterator} from 'redux-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import slotSaga from './tasks/slot-saga'
-import gameStateSaga from './tasks/game-state-saga'
+import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
 import {gameState, gameStart, gameEnd} from './game-actions'
 
-function* actionSaga(actionTask: Task | null): SagaIterator {
+function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
 		playCard: take('PLAY_CARD'),
 		applyEffect: take('APPLY_EFFECT'),
@@ -43,33 +44,36 @@ function* actionSaga(actionTask: Task | null): SagaIterator {
 			turnAction.changeActiveHermit.payload
 		)
 	}
+}
 
-	if (actionTask) yield cancel(actionTask)
+function* gameStateSaga(action: AnyAction): SagaIterator {
+	const {availableActions, gameState} = action.payload
+
+	if (availableActions.includes('WAIT_FOR_TURN')) return
+	if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
+
+	// handle user clicking on board
+	yield fork(slotSaga)
+	// some cards have special logic bound to them
+	yield fork(actionLogicSaga, gameState)
+	// handles core funcionality
+	yield fork(actionSaga)
 }
 
 function* gameActionsSaga(initialGameState?: any): SagaIterator {
-	let slotTask = null
-	let actionTask = null
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
-	action_cycle: while (true) {
-		const {payload} = initialGameState || (yield call(receiveMsg, 'GAME_STATE'))
-		initialGameState = null
+	yield takeLatest('GAME_STATE', gameStateSaga)
 
-		if (slotTask) yield cancel(slotTask)
-		if (actionTask) yield cancel(actionTask)
+	console.log('Game started')
+	if (initialGameState) {
+		yield put(gameState(initialGameState))
+	}
 
+	while (true) {
+		const {payload} = yield call(receiveMsg, 'GAME_STATE')
 		yield put(gameState(payload))
-
-		if (payload.availableActions.includes('WAIT_FOR_TURN')) continue
-		if (payload.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP'))
-			continue
-
-		slotTask = yield fork(slotSaga)
-		yield fork(gameStateSaga, payload.gameState)
-
-		actionTask = yield fork(actionSaga, actionTask)
 	}
 }
 
@@ -92,6 +96,7 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 	} catch (err) {
 		console.error('Client error: ', err)
 	} finally {
+		console.log('Game ended')
 		yield put(gameEnd())
 	}
 }

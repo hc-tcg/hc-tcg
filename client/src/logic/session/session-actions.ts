@@ -4,9 +4,9 @@ export const login = (playerName: string) => ({
 })
 
 type PlayerInfo = {
-	playerId: string,
-	playerName: string,
-	playerSecret: string,
+	playerId: string
+	playerName: string
+	playerSecret: string
 }
 
 export const setPlayerInfo = (playerInfo: PlayerInfo) => ({
@@ -16,4 +16,8 @@ export const setPlayerInfo = (playerInfo: PlayerInfo) => ({
 
 export const disconnect = () => ({
 	type: 'DISCONNECT',
+})
+
+export const logout = () => ({
+	type: 'LOGOUT',
 })

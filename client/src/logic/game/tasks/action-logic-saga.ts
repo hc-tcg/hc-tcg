@@ -20,7 +20,7 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 	yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
 }
 
-function* gameStateSaga(gameState: GameState): SagaIterator {
+function* actionLogicSaga(gameState: GameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {
@@ -33,4 +33,4 @@ function* gameStateSaga(gameState: GameState): SagaIterator {
 	}
 }
 
-export default gameStateSaga
+export default actionLogicSaga

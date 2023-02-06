@@ -93,7 +93,7 @@ function* matchmakingSaga(): SagaIterator {
 				yield call(sendMsg, 'LEAVE_MATCHMAKING')
 			}
 		} else {
-			yield call(gameSaga, menuResult.gameReconnect)
+			yield call(gameSaga, menuResult.gameReconnect.payload)
 		}
 	}
 }

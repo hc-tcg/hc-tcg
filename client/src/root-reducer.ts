@@ -7,7 +7,7 @@ import matchmakingReducer from 'logic/matchmaking/matchmaking-reducer'
 const rootReducer = combineReducers({
 	session: sessionReducer,
 	game: gameReducer,
-	socket: socketReducer,
+	socketStatus: socketReducer,
 	matchmaking: matchmakingReducer,
 })
 

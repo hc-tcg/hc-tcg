@@ -3,6 +3,7 @@ import {getPlayerName} from 'logic/session/session-selectors'
 import {getGameState} from 'logic/game/game-selectors'
 import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
 import LostConnection from 'components/lost-connection'
+import {getSocketStatus} from 'logic/socket/socket-selectors'
 import Login from './login'
 import MainMenu from './main-menu'
 import Game from './game'
@@ -14,6 +15,7 @@ function App() {
 	const playerName = useSelector(getPlayerName)
 	const matchmakingStatus = useSelector(getStatus)
 	const gameState = useSelector(getGameState)
+	const socketStatus = useSelector(getSocketStatus)
 
 	const router = () => {
 		if (gameState) {
@@ -29,7 +31,7 @@ function App() {
 	return (
 		<main>
 			<div className={css.form}>{router()}</div>
-			{/* <LostConnection /> */}
+			{playerName && !socketStatus ? <LostConnection /> : null}
 		</main>
 	)
 }

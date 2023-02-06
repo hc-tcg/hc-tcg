@@ -31,7 +31,7 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
-export function* sessionSaga(): SagaIterator {
+export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
@@ -61,17 +61,23 @@ export function* sessionSaga(): SagaIterator {
 		if (!session) return
 		console.log('User reconnected')
 		yield put(setPlayerInfo(session))
-		return
 	}
 
-	const {payload} = result.playerInfo
-	console.log('New player info: ', payload)
-	yield put(setPlayerInfo(payload))
-	saveSession(payload)
+	if (result.playerInfo) {
+		const {payload} = result.playerInfo
+		console.log('New player info: ', payload)
+		yield put(setPlayerInfo(payload))
+		saveSession(payload)
 
-	// set user info for reconnects
-	socket.auth.playerId = payload.playerId
-	socket.auth.playerSecret = payload.playerSecret
+		// set user info for reconnects
+		socket.auth.playerId = payload.playerId
+		socket.auth.playerSecret = payload.playerSecret
+	}
 }
 
-export default sessionSaga
+export function* logoutSaga(): SagaIterator {
+	yield race([take('LOGOUT'), call(receiveMsg, 'INVALID_PLAYER')])
+	clearSession()
+	socket.disconnect()
+	yield put(disconnect())
+}
