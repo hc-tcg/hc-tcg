@@ -19,7 +19,7 @@ function BorrowModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Borrow" closeModal={closeModal}>
+		<Modal title="Borrow">
 			<div className={css.confirmModal}>
 				<div className={css.description}>
 					Do you wish to attach the "borrowed" card or discard it?

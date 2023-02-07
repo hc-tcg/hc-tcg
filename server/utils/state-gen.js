@@ -60,7 +60,7 @@ export function getPlayerState(allPlayers, playerId) {
 	pack.sort(() => 0.5 - Math.random())
 
 	pack.unshift({
-		cardId: 'spyglass',
+		cardId: 'composter',
 		cardInstance: Math.random().toString(),
 	})
 

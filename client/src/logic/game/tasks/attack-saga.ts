@@ -36,6 +36,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const result = {} as Record<string, Array<CardT>>
 	if (singleUseInfo && damageInfo?.afkTarget) {
 		result[singleUseInfo.id] = yield call(runPickProcessSaga, singleUseInfo.id)
+		if (!result[singleUseInfo.id]) return
 	}
 
 	const cardId = hermitCard.cardId
@@ -44,6 +45,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		type === 'secondary'
 	) {
 		result[cardId] = yield call(runPickProcessSaga, cardId)
+		if (!result[cardId]) return
 	}
 
 	yield put(attack(type, result))

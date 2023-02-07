@@ -1,29 +1,29 @@
 export const randomMatchmaking = () => ({
-	type: 'RANDOM_MATCHMAKING',
+	type: 'RANDOM_MATCHMAKING' as const,
 })
 
 export const createPrivateGame = () => ({
-	type: 'CREATE_PRIVATE_GAME',
+	type: 'CREATE_PRIVATE_GAME' as const,
 })
 
 export const joinPrivateGame = () => ({
-	type: 'JOIN_PRIVATE_GAME',
+	type: 'JOIN_PRIVATE_GAME' as const,
 })
 
 export const codeReceived = (code: string) => ({
-	type: 'CODE_RECEIVED',
+	type: 'CODE_RECEIVED' as const,
 	payload: code,
 })
 
 export const leaveMatchmaking = () => ({
-	type: 'LEAVE_MATCHMAKING',
+	type: 'LEAVE_MATCHMAKING' as const,
 })
 
 export const setCode = (gameCode: string | null) => ({
-	type: 'SET_MATCHMAKING_CODE',
+	type: 'SET_MATCHMAKING_CODE' as const,
 	payload: gameCode,
 })
 
 export const invalidCode = () => ({
-	type: 'INVALID_CODE',
+	type: 'INVALID_CODE' as const,
 })

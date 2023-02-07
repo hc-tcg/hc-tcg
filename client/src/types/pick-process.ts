@@ -18,8 +18,9 @@ export type PickRequirmentT = {
 
 export type PickedCardT =
 	| {
-			slotType: 'single_use'
+			slotType: 'single_use' | 'hand'
 			card: CardT | null
+			playerId: string
 	  }
 	| {
 			slotType: 'item' | 'hermit' | 'effect' | 'health'
@@ -34,4 +35,5 @@ export type PickProcessT = {
 	id: string
 	requirments: Array<PickRequirmentT>
 	pickedCards: Array<PickedCardT>
+	currentReq: number
 }

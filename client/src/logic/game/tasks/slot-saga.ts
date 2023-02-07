@@ -1,36 +1,26 @@
 import {select} from 'typed-redux-saga'
 import {put, takeLeading, call} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {RootState as RS} from 'store'
 import {CardT} from 'types/game-state'
 import {CardInfoT} from 'types/cards'
 import CARDS from 'server/cards'
-import DAMAGE from 'server/const/damage'
-import {runPickProcessSaga, REQS} from './pick-process-saga'
-
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
 	getPickProcess,
 	getPlayerStateById,
+	getPlayerState,
 } from 'logic/game/game-selectors'
-import {setSelectedCard, setOpenedModalId} from 'logic/game/game-actions'
-
 import {
-	changeActiveHermit,
-	applyEffect,
-	playCard,
+	setSelectedCard,
+	setOpenedModalId,
+	removeEffect,
 } from 'logic/game/game-actions'
+import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-type SlotPickedAction = {type: 'SLOT_PICKED'; payload: any}
-
-/*
-1. attack with a crossbow
-2. activate picker
-3. send attack msg with pick info
-*/
+type SlotPickedAction = ReturnType<typeof slotPicked>
 
 function* pickWithSelectedSaga(
 	action: SlotPickedAction,
@@ -57,46 +47,14 @@ function* pickWithSelectedSaga(
 
 	yield put(playCard({...action.payload, card: selectedCard}))
 
-	if (slotType === 'single_use') {
-		const damageInfo = DAMAGE[selectedCardInfo.id]
-		if (
-			[
-				'splash_potion_of_healing',
-				'lava_bucket',
-				'splash_potion_of_poison',
-				'clock',
-				'invisibility_potion',
-				'fishing_rod',
-				'emerald',
-				'flint_&_steel',
-				'spyglass',
-				'efficiency',
-				'curse_of_binding',
-				'curse_of_vanishing',
-				'looting',
-				'fortune',
-			].includes(selectedCard.cardId)
-		) {
-			yield put(setOpenedModalId('confirm'))
-		} else if (selectedCard.cardId === 'chest') {
-			yield put(setOpenedModalId('chest'))
-
-			// TODO - damageInfo - hacky check for now to avoid instant selection for attack effects
-		} else if (REQS[selectedCard.cardId] && !damageInfo) {
-			const result = yield call(runPickProcessSaga, selectedCard.cardId)
-			if (!result || !result.length) return
-			// problem je ze v REQS je i bow/crossbow takze se zavola apply effect
-			yield put(applyEffect({pickedCards: {[selectedCard.cardId]: result}}))
-		}
-	}
-
 	yield put(setSelectedCard(null))
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
+	if (action.payload.slotType !== 'hermit') return
 	const {slotType, rowHermitCard, rowIndex} = action.payload
 	const playerId = yield* select(getPlayerId)
-	const playerState = yield* select(getPlayerStateById(playerId))
+	const playerState = yield* select(getPlayerState)
 	const clickedOnHermit = slotType === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
 	if (playerId !== action.payload.playerId) return
@@ -113,6 +71,17 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	const selectedCard = yield* select(getSelectedCard)
 	const pickProcess = yield* select(getPickProcess)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
+
+	if (action.payload.slotType === 'single_use') {
+		const playerState = yield* select(getPlayerState)
+		if (
+			playerState?.board.singleUseCard &&
+			!playerState?.board.singleUseCardUsed
+		) {
+			yield put(removeEffect())
+			return
+		}
+	}
 
 	if (pickProcess) {
 		return

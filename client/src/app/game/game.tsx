@@ -10,6 +10,7 @@ import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
+import CARDS from 'server/cards'
 import {
 	getGameState,
 	getSelectedCard,
@@ -25,16 +26,28 @@ import {
 } from 'logic/game/game-actions'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
-	const firstReq = pickProcess.requirments[pickProcess.pickedCards.length]
-	const target = firstReq.target === 'opponent' ? "opponent's" : 'your'
-	const location = firstReq.target === 'hand' ? 'hand' : 'side of the board'
-	const type = firstReq.type === 'any' ? '' : firstReq.type
-	const empty = firstReq.empty || false
-	return `${pickProcess.id}: Pick ${firstReq.amount} ${
-		empty ? 'empty' : ''
-	} ${type} ${empty ? 'slot' : 'card'}${
-		firstReq.amount > 1 ? 's' : ''
-	} from ${target} ${location}.`
+	const req = pickProcess.requirments[pickProcess.currentReq]
+	const target = req.target === 'opponent' ? "opponent's" : 'your'
+
+	let location = ''
+	if (req.target === 'hand') {
+		location = 'hand'
+	} else if (req.active === true) {
+		location = 'active hermit'
+	} else if (req.active === false) {
+		location = 'afk hermit'
+	} else {
+		location = 'side of the board'
+	}
+
+	const type = req.type === 'any' ? '' : req.type
+	const empty = req.empty || false
+	const name = CARDS[pickProcess.id]
+		? CARDS[pickProcess.id].name
+		: pickProcess.id
+	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
+		empty ? 'slot' : 'card'
+	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
 }
 
 const renderModal = (

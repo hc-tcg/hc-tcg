@@ -79,7 +79,7 @@ const gameReducer = (
 				...state,
 				pickProcess: {
 					...state.pickProcess,
-					pickedCards: action.payload,
+					...action.payload,
 				},
 			}
 		}

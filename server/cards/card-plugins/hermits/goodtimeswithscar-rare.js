@@ -4,7 +4,7 @@ import {flipCoin, discardCard} from '../../../utils'
 // - Game should not consume attached totem if deathloop is active <- NOT WORKING!!!
 // - Golden Axe should not bypass deathloop (unlike a totem)
 // - Needs to work for death by being attack or by death by ailments
-// TODO - technically we should remove flag after recovery toa avoid t being used twice in one turn, but rn it is difficult to tell if it was used and it should be impossible for scar to die twice (possibly we could ad callback to the recovery object)
+// TODO - technically we should remove flag after recovery to avoid it being used twice in one turn, but rn it is difficult to tell if it was used and it should be impossible for scar to die twice (possibly we could ad callback to the recovery object)
 // TODO - Combination of flip&coin abilities & scar's ability will mean double coin flip for the attack.
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {

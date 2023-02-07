@@ -3,6 +3,7 @@ import {equalCard, discardCard} from '../../../utils'
 
 // TODO - don't allow selecting the same card twice
 // TODO - If there is is less cards in hand (1,0) limit the requirment or don't allow to use it
+// TODO - don't allow to compost hermit cards if there is no hermit on board (perhaps don't allow SU cards at all if no hermit are on board)
 class ComposterSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({

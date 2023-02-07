@@ -21,6 +21,7 @@ function* actionSaga(): SagaIterator {
 		const turnAction = yield race({
 			playCard: take('PLAY_CARD'),
 			applyEffect: take('APPLY_EFFECT'),
+			removeEffect: take('REMOVE_EFFECT'),
 			followUp: take('FOLLOW_UP'),
 			attack: take('ATTACK'),
 			endTurn: take('END_TURN'),
@@ -32,6 +33,8 @@ function* actionSaga(): SagaIterator {
 			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
 		} else if (turnAction.applyEffect) {
 			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+		} else if (turnAction.removeEffect) {
+			yield call(sendMsg, 'REMOVE_EFFECT')
 		} else if (turnAction.followUp) {
 			yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
 		} else if (turnAction.attack) {

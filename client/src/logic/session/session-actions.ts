@@ -11,14 +11,14 @@ type PlayerInfo = {
 }
 
 export const setPlayerInfo = (playerInfo: PlayerInfo) => ({
-	type: 'SET_PLAYER_INFO',
+	type: 'SET_PLAYER_INFO' as const,
 	payload: playerInfo,
 })
 
 export const disconnect = () => ({
-	type: 'DISCONNECT',
+	type: 'DISCONNECT' as const,
 })
 
 export const logout = () => ({
-	type: 'LOGOUT',
+	type: 'LOGOUT' as const,
 })

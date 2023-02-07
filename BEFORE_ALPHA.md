@@ -3,5 +3,7 @@
 - ESC to cancel picking process
 - Clicking on unused SUE should return it to hand (+ cancel picking process if any)
 - End game screen
+- Reward cards
 - Go through all cards, make sure at least their main funcionality is working
 	- Spyglass is not working
+- CLear availabhleActions afer an action until new game state arrives (some indicator?)

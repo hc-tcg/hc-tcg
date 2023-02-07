@@ -1,14 +1,13 @@
 import {useSelector, useDispatch} from 'react-redux'
 import {useState} from 'react'
 import Modal from 'components/modal'
-import {RootState} from 'store'
 import CardList from 'components/card-list'
 import {CardT} from 'types/game-state'
 import css from './chest-modal.module.css'
 import {equalCard} from 'server/utils'
 import {getPlayerState} from 'logic/game/game-selectors'
 
-import {applyEffect} from 'logic/game/game-actions'
+import {applyEffect, removeEffect} from 'logic/game/game-actions'
 
 type Props = {
 	closeModal: () => void
@@ -24,14 +23,22 @@ function ChestModal({closeModal}: Props) {
 		)
 	}
 
+	const handleClose = () => {
+		dispatch(removeEffect())
+		closeModal()
+	}
+
 	const handleConfirm = () => {
-		// TODO - if nothing is selected return card to hand
-		dispatch(applyEffect(selected))
+		if (!selected) {
+			dispatch(removeEffect())
+		} else {
+			dispatch(applyEffect(selected))
+		}
 		closeModal()
 	}
 
 	return (
-		<Modal title="Chest" closeModal={closeModal}>
+		<Modal title="Chest" closeModal={handleClose}>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
 					<CardList

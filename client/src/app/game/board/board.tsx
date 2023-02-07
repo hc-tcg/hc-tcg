@@ -1,10 +1,10 @@
 import {useEffect, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
-import {RootState} from 'store'
 import HealthBar from 'components/health-bar'
 import Coin from 'components/coin'
-import {GameState, PlayerState, BoardRowT, CardT} from 'types/game-state'
+import {GameState, PlayerState, BoardRowT} from 'types/game-state'
+import {PickedCardT} from 'types/pick-process'
 import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
@@ -22,7 +22,7 @@ TODO:
 */
 
 type Props = {
-	onClick: (meta: any) => void
+	onClick: (meta: PickedCardT) => void
 	gameState: GameState
 }
 
@@ -169,7 +169,11 @@ function Board({onClick, gameState}: Props) {
 				>
 					<Slot
 						onClick={() =>
-							onClick({slotType: 'single_use', card: singleUseCard})
+							onClick({
+								slotType: 'single_use',
+								card: singleUseCard,
+								playerId: gameState.turnPlayerId,
+							})
 						}
 						card={singleUseCard}
 						type={'single_use'}

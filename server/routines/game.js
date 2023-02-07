@@ -17,6 +17,7 @@ import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
+import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
 import {HookMap, SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
 import registerCards from '../cards/card-plugins'
@@ -55,6 +56,7 @@ function getAvailableActions(game, derivedState) {
 		!currentPlayer.board.singleUseCardUsed
 	) {
 		actions.push('APPLY_EFFECT')
+		actions.push('REMOVE_EFFECT')
 	}
 
 	if (
@@ -195,6 +197,11 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
 		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
 		//
+	} else if (turnAction.type === 'REMOVE_EFFECT') {
+		if (!availableActions.includes('REMOVE_EFFECT')) return
+		const result = yield call(removeEffectSaga, game, turnAction, derivedState)
+		if (result !== 'INVALID') pastTurnActions.push('REMOVE_EFFECT')
+		//
 	} else if (turnAction.type === 'FOLLOW_UP') {
 		if (
 			!availableActions.includes('FOLLOW_UP') &&
@@ -269,6 +276,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 				'PLAY_CARD',
 				'CHANGE_ACTIVE_HERMIT',
 				'APPLY_EFFECT',
+				'REMOVE_EFFECT',
 				'ATTACK',
 				'END_TURN',
 			].map((type) => playerAction(type, currentPlayer.id)),
@@ -374,6 +382,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			availableActions: new SyncWaterfallHook(['availableActions', 'derived']),
 			actionStart: new SyncHook(['turnAction', 'derived']),
 			applyEffect: new SyncBailHook(['turnAction', 'derived']),
+			removeEffect: new SyncHook(['turnAction', 'derived']),
 			followUp: new SyncBailHook(['turnAction', 'derived']),
 			attack: new SyncWaterfallHook(['result', 'turnAction', 'derived']),
 			playCard: new HookMap(
