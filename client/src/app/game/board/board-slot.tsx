@@ -11,7 +11,7 @@ const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 export type SlotType = 'item' | 'hermit' | 'effect' | 'health' | 'single_use'
 export type SlotProps = {
 	type: SlotType
-	onClick: () => void
+	onClick?: () => void
 	card: CardT | null
 	rowState?: BoardRowT
 	active?: boolean
@@ -30,6 +30,7 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 		<div
 			onClick={onClick}
 			className={classnames(css.slot, {
+				[css.available]: !!onClick,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
 				[css.afk]: cardInfo?.type === 'hermit' && !active,

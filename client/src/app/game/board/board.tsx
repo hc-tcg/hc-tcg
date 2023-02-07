@@ -168,12 +168,16 @@ function Board({onClick, gameState}: Props) {
 					})}
 				>
 					<Slot
-						onClick={() =>
-							onClick({
-								slotType: 'single_use',
-								card: singleUseCard,
-								playerId: gameState.turnPlayerId,
-							})
+						onClick={
+							availableActions.includes('PLAY_SINGLE_USE_CARD') ||
+							availableActions.includes('REMOVE_EFFECT')
+								? () =>
+										onClick({
+											slotType: 'single_use',
+											card: singleUseCard,
+											playerId: gameState.turnPlayerId,
+										})
+								: undefined
 						}
 						card={singleUseCard}
 						type={'single_use'}
