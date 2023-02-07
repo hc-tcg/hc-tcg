@@ -50,7 +50,7 @@ export type GameStatePayload = {
 export type GameEndReasonT =
 	| 'client_crash'
 	| 'server_crash'
-	| 'timout'
+	| 'timeout'
 	| 'forfeit'
 	| 'player_left'
 	| 'you_won'

@@ -30,15 +30,12 @@ export const setPickProcess = (pickProcess: PickProcessT | null) => ({
 	payload: pickProcess,
 })
 
-export const updatePickProcess = (
-	currentReq: number,
-	pickedCards: Array<PickedCardT>
-) => ({
+export const updatePickProcess = (payload: {
+	currentReq?: number
+	pickedCards?: Array<PickedCardT>
+}) => ({
 	type: 'UPDATE_PICK_PROCESS' as const,
-	payload: {
-		currentReq,
-		pickedCards,
-	},
+	payload,
 })
 
 export const slotPicked = (pickInfo: PickedCardT) => ({

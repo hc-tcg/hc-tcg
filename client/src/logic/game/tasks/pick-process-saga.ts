@@ -162,6 +162,7 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 				const actionType =
 					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
 
+				yield put(updatePickProcess({currentReq: Number(reqIndex)}))
 				console.log('waiting for card')
 				const result = yield race({
 					esc: take(escapeChannel),
@@ -180,10 +181,7 @@ export function* runPickProcessSaga(cardId: string): SagaIterator {
 				pickedReqCards.push(pickedCard)
 
 				yield put(
-					updatePickProcess(Number(reqIndex), [
-						...pickedCards,
-						...pickedReqCards,
-					])
+					updatePickProcess({pickedCards: [...pickedCards, ...pickedReqCards]})
 				)
 			}
 			pickedCards.push(...pickedReqCards)

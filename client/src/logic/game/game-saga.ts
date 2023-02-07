@@ -18,42 +18,35 @@ import {gameState, gameStart, gameEnd, showEndGameOverlay} from './game-actions'
 import {getEndGameOverlay, getOpponentId} from './game-selectors'
 
 function* actionSaga(): SagaIterator {
-	try {
-		console.log('ACTION SAGA START')
-		const turnAction = yield race({
-			playCard: take('PLAY_CARD'),
-			applyEffect: take('APPLY_EFFECT'),
-			removeEffect: take('REMOVE_EFFECT'),
-			followUp: take('FOLLOW_UP'),
-			attack: take('ATTACK'),
-			endTurn: take('END_TURN'),
-			changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
-		})
+	const turnAction = yield race({
+		playCard: take('PLAY_CARD'),
+		applyEffect: take('APPLY_EFFECT'),
+		removeEffect: take('REMOVE_EFFECT'),
+		followUp: take('FOLLOW_UP'),
+		attack: take('ATTACK'),
+		endTurn: take('END_TURN'),
+		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
+	})
 
-		// TODO - consider what is being send to backend and in which format
-		if (turnAction.playCard) {
-			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
-		} else if (turnAction.applyEffect) {
-			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
-		} else if (turnAction.removeEffect) {
-			yield call(sendMsg, 'REMOVE_EFFECT')
-		} else if (turnAction.followUp) {
-			yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
-		} else if (turnAction.attack) {
-			yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
-		} else if (turnAction.endTurn) {
-			yield call(sendMsg, 'END_TURN')
-		} else if (turnAction.changeActiveHermit) {
-			yield call(
-				sendMsg,
-				'CHANGE_ACTIVE_HERMIT',
-				turnAction.changeActiveHermit.payload
-			)
-		}
-	} catch (err) {
-		console.log(err)
-	} finally {
-		console.log('ACTION SAGA END')
+	// TODO - consider what is being send to backend and in which format
+	if (turnAction.playCard) {
+		yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
+	} else if (turnAction.applyEffect) {
+		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+	} else if (turnAction.removeEffect) {
+		yield call(sendMsg, 'REMOVE_EFFECT')
+	} else if (turnAction.followUp) {
+		yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
+	} else if (turnAction.attack) {
+		yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
+	} else if (turnAction.endTurn) {
+		yield call(sendMsg, 'END_TURN')
+	} else if (turnAction.changeActiveHermit) {
+		yield call(
+			sendMsg,
+			'CHANGE_ACTIVE_HERMIT',
+			turnAction.changeActiveHermit.payload
+		)
 	}
 }
 

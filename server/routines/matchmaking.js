@@ -58,7 +58,7 @@ function* gameManager(allPlayers, gameId) {
 			const result = yield race({
 				// game ended (or crashed -> catch)
 				gameEnd: join(games[gameId].task),
-				// kill a game after an hour
+				// kill a game after two hours
 				timeout: delay(1000 * 60 * 60),
 				// kill game when a player is disconnected for too long
 				playerRemoved: take(
@@ -89,7 +89,7 @@ function* gameManager(allPlayers, gameId) {
 				broadcast(allPlayers, game.playerIds, 'GAME_END', {
 					reason: 'forfeit',
 				})
-				console.log('Game killed dye to player foreit.')
+				console.log('Game killed due to player foreit.')
 				break
 			}
 		}

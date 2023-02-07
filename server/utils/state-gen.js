@@ -16,23 +16,30 @@ export function getStarterPack() {
 		.filter(
 			(card) => card.type === 'hermit' && hermitTypes.includes(card.hermitType)
 		)
-		.slice(0, 9)
+		.slice(0, 8)
 
 	// ITEMS
-	let items = allCards
-		.filter(
-			(card) =>
-				card.type === 'item' &&
-				hermits.find((hermitCard) => hermitCard.hermitType === card.hermitType)
+	let itemCards = allCards.filter((card) => card.type === 'item')
+	let items = []
+	for (let hermit of hermits) {
+		const hermitItemCards = itemCards.filter(
+			(itemCard) => itemCard.hermitType === hermit.hermitType
 		)
-		.slice(0, 8)
-	items = [...items, ...items]
+		const commonItem = hermitItemCards.find((item) => item.rarity === 'common')
+		const rareItem = hermitItemCards.find((item) => item.rarity === 'rare')
+
+		const hasTriple = hermit.secondary.cost.length > 2
+		for (let i = 0, j = hasTriple ? 3 : 2; i < j; i++) {
+			const isRare = Math.random() > 0.85
+			items.push(isRare ? rareItem : commonItem)
+			if (isRare) j--
+		}
+	}
 
 	// EFFECTS
 	const otherCards = allCards
 		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.filter((card) => !['bed'].includes(card.id))
-		.slice(0, 17)
+		.slice(0, 42 - items.length - hermits.length)
 
 	const pack = [...hermits, ...items, ...otherCards].map((card) => card.id)
 
@@ -59,10 +66,10 @@ export function getPlayerState(allPlayers, playerId) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	pack.unshift({
-		cardId: 'composter',
-		cardInstance: Math.random().toString(),
-	})
+	// pack.unshift({
+	// 	cardId: 'hypnotizd_rare',
+	// 	cardInstance: Math.random().toString(),
+	// })
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {

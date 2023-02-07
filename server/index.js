@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename)
 
 app.use(
 	express.static(path.join(__dirname, '../client/dist'), {
-		maxAge: 1000 * 60 * 5,
+		maxAge: 1000 * 60 * 10,
 	})
 )
 

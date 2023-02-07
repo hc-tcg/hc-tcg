@@ -6,6 +6,7 @@ import {
 	actionChannel,
 	call,
 	delay,
+	cancel,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
@@ -231,9 +232,8 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 }
 
 function* sendGameState(allPlayers, gamePlayerIds, game, derivedState) {
-	if (!game._derivedStateCache) return
 	const {currentPlayer, availableActions, opponentAvailableActions} =
-		derivedState || game._derivedStateCache
+		derivedState
 	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 	gamePlayerIds.forEach((playerId) => {
 		allPlayers[playerId].socket.emit('GAME_STATE', {
@@ -368,8 +368,22 @@ function* sendGameStateOnReconnect(allPlayers, gamePlayerIds, game) {
 			const {playerId} = action.payload
 			const playerSocket = allPlayers[playerId]?.socket
 			if (playerSocket && playerSocket.connected) {
-				yield delay(2000)
-				yield call(sendGameState, allPlayers, [playerId], game)
+				yield delay(1000)
+				if (!game._derivedStateCache) return
+				const {currentPlayer, availableActions, opponentAvailableActions} =
+					game._derivedStateCache
+				const payload = {
+					gameState: game.state,
+					opponentId: gamePlayerIds.find((id) => id !== playerId),
+					availableActions:
+						playerId === currentPlayer.id
+							? availableActions
+							: opponentAvailableActions,
+				}
+				playerSocket.emit('GAME_STATE', {
+					type: 'GAME_STATE',
+					payload,
+				})
 			}
 		}
 	)
@@ -423,6 +437,8 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 	})
 
 	game.hooks.gameEnd.call()
+
+	yield cancel()
 }
 
 export default gameSaga
