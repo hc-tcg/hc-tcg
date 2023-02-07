@@ -1,4 +1,5 @@
 import {takeEvery, all, put, take, race, delay} from 'redux-saga/effects'
+import {getStarterPack} from '../utils/state-gen'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -10,11 +11,14 @@ function* playerConnectedSaga(players, action) {
 		const validPlayer =
 			existingPlayer?.playerSecret === action.payload.playerSecret
 
-		console.log('@reconnecting: ', validPlayer)
+		console.log('User reconnected: ', action.payload.playerId)
 		if (validPlayer) {
 			existingPlayer.socket = socket
 			yield put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
-			socket.emit('PLAYER_RECONNECTED', {type: 'PLAYER_RECONNECTED'})
+			socket.emit('PLAYER_RECONNECTED', {
+				type: 'PLAYER_RECONNECTED',
+				payload: existingPlayer.playerDeck,
+			})
 		} else {
 			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
 		}
@@ -23,6 +27,7 @@ function* playerConnectedSaga(players, action) {
 
 	const playerId = Math.random().toString()
 	const playerSecret = Math.random().toString()
+	const playerDeck = getStarterPack()
 
 	console.log('User connected: ', playerId)
 
@@ -30,6 +35,7 @@ function* playerConnectedSaga(players, action) {
 		playerId,
 		playerSecret,
 		playerName,
+		playerDeck,
 		socket,
 	}
 	players[playerId] = playerInfo
@@ -44,6 +50,7 @@ function* playerConnectedSaga(players, action) {
 			playerId,
 			playerSecret,
 			playerName,
+			playerDeck,
 		},
 	})
 }
@@ -76,9 +83,18 @@ function* playerDisconnectedSaga(players, action) {
 	}
 }
 
+function* updateDeckSaga(players, action) {
+	const {playerId, payload: newDeck} = action
+	const player = players[playerId]
+	if (!player) return
+	// TODO - validate deck
+	player.playerDeck = newDeck
+}
+
 function* playerSaga(players) {
 	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga, players)
 	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga, players)
+	yield takeEvery('UPDATE_DECK', updateDeckSaga, players)
 }
 
 export default playerSaga

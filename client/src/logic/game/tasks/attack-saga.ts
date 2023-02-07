@@ -1,5 +1,5 @@
 import {select} from 'typed-redux-saga'
-import {call} from 'redux-saga/effects'
+import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'types/game-state'
 import {CardInfoT, EffectCardT} from 'types/cards'
@@ -9,6 +9,7 @@ import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
 import {getPlayerActiveRow} from '../../../app/game/game-selectors'
+import {attack} from '../game-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -45,10 +46,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		result[cardId] = yield call(runPickProcessSaga, cardId)
 	}
 
-	return {
-		type,
-		pickedCards: result,
-	}
+	yield put(attack(type, result))
 }
 
 export default attackSaga

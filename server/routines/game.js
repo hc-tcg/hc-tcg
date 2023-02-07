@@ -313,6 +313,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	turnActionChannel.close()
 
 	// Apply damage from ailments
+	// TODO - https://www.youtube.com/watch?v=8iO7KGDxCks 1:21:00 - it seems ailment damage should be part of the toal attakc damage (and thus affected by special effects)
 	for (let row of opponentPlayer.board.rows) {
 		if (row.ailments.includes('fire')) row.health -= 20
 		if (row.ailments.includes('poison')) row.health -= 20

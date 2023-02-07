@@ -44,6 +44,11 @@ export const forfeit = () => ({
 	type: 'FORFEIT',
 })
 
+export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
+	type: 'START_ATTACK',
+	payload: {type},
+})
+
 // ---
 
 export const followUp = (payload: any) => ({
@@ -70,7 +75,10 @@ export const endTurn = () => ({
 	type: 'END_TURN',
 })
 
-export const attack = (type: 'zero' | 'primary' | 'secondary') => ({
+export const attack = (
+	type: 'zero' | 'primary' | 'secondary',
+	pickedCards: Record<string, Array<CardT>>
+) => ({
 	type: 'ATTACK',
-	payload: {type},
+	payload: {type, pickedCards},
 })

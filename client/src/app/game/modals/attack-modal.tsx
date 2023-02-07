@@ -19,7 +19,7 @@ import {
 	getAvailableActions,
 	getPlayerStateById,
 } from 'logic/game/game-selectors'
-import {attack} from 'logic/game/game-actions'
+import {startAttack} from 'logic/game/game-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -77,7 +77,7 @@ function AttackModal({closeModal}: Props) {
 	)
 
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
-		dispatch(attack(type))
+		dispatch(startAttack(type))
 		closeModal()
 	}
 

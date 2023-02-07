@@ -7,6 +7,7 @@ type PlayerInfo = {
 	playerId: string
 	playerName: string
 	playerSecret: string
+	playerDeck?: Array<string>
 }
 
 export const setPlayerInfo = (playerInfo: PlayerInfo) => ({

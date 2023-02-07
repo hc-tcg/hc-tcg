@@ -16,6 +16,10 @@ export const getPlayerName = (state: RootState) => {
 	return getSession(state).playerName
 }
 
+export const getPlayerDeck = (state: RootState) => {
+	return getSession(state).playerDeck
+}
+
 export const getConnecting = (state: RootState) => {
 	return getSession(state).connecting
 }

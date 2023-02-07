@@ -16,33 +16,39 @@ import attackSaga from './tasks/attack-saga'
 import {gameState, gameStart, gameEnd} from './game-actions'
 
 function* actionSaga(): SagaIterator {
-	const turnAction = yield race({
-		playCard: take('PLAY_CARD'),
-		applyEffect: take('APPLY_EFFECT'),
-		followUp: take('FOLLOW_UP'),
-		attack: take('ATTACK'),
-		endTurn: take('END_TURN'),
-		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
-	})
+	try {
+		console.log('ACTION SAGA START')
+		const turnAction = yield race({
+			playCard: take('PLAY_CARD'),
+			applyEffect: take('APPLY_EFFECT'),
+			followUp: take('FOLLOW_UP'),
+			attack: take('ATTACK'),
+			endTurn: take('END_TURN'),
+			changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
+		})
 
-	// TODO - consider what is being send to backend and in which format
-	if (turnAction.playCard) {
-		yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
-	} else if (turnAction.applyEffect) {
-		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
-	} else if (turnAction.followUp) {
-		yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
-	} else if (turnAction.attack) {
-		const result = yield call(attackSaga, turnAction.attack)
-		yield call(sendMsg, 'ATTACK', result)
-	} else if (turnAction.endTurn) {
-		yield call(sendMsg, 'END_TURN')
-	} else if (turnAction.changeActiveHermit) {
-		yield call(
-			sendMsg,
-			'CHANGE_ACTIVE_HERMIT',
-			turnAction.changeActiveHermit.payload
-		)
+		// TODO - consider what is being send to backend and in which format
+		if (turnAction.playCard) {
+			yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
+		} else if (turnAction.applyEffect) {
+			yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
+		} else if (turnAction.followUp) {
+			yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
+		} else if (turnAction.attack) {
+			yield call(sendMsg, 'ATTACK', turnAction.attack.payload)
+		} else if (turnAction.endTurn) {
+			yield call(sendMsg, 'END_TURN')
+		} else if (turnAction.changeActiveHermit) {
+			yield call(
+				sendMsg,
+				'CHANGE_ACTIVE_HERMIT',
+				turnAction.changeActiveHermit.payload
+			)
+		}
+	} catch (err) {
+		console.log(err)
+	} finally {
+		console.log('ACTION SAGA END')
 	}
 }
 
@@ -56,6 +62,8 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	yield fork(slotSaga)
 	// some cards have special logic bound to them
 	yield fork(actionLogicSaga, gameState)
+	// attack logic
+	yield takeEvery('START_ATTACK', attackSaga)
 	// handles core funcionality
 	yield fork(actionSaga)
 }

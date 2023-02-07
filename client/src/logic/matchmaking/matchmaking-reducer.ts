@@ -52,6 +52,7 @@ const matchmakingReducer = (
 				code: action.payload,
 				status: 'loading',
 			}
+		case 'DISCONNECT':
 		case 'GAME_STATE':
 		case 'LEAVE_MATCHMAKING':
 			return {

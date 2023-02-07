@@ -1,0 +1,35 @@
+.deck {
+	width: 1050px;
+	background: #ccc;
+	margin: 0 auto;
+}
+
+.header {
+	padding: 15px;
+}
+
+.cards {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+.cardColumn {
+	flex: 1 1 auto;
+	width: 0px;
+	padding: 15px;
+}
+
+.allCards {
+	background: #2a2727;
+}
+
+.selectedCards {
+	background: #393433;
+}
+
+.cardsTitle {
+	text-align: center;
+	font-family: MinecraftBold;
+	padding: 5px 0 10px 0;
+	color: white;
+}

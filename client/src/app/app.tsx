@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {getPlayerName} from 'logic/session/session-selectors'
 import {getGameState} from 'logic/game/game-selectors'
@@ -7,6 +8,7 @@ import {getSocketStatus} from 'logic/socket/socket-selectors'
 import Login from './login'
 import MainMenu from './main-menu'
 import Game from './game'
+import Deck from './deck'
 import MatchMaking from './match-making'
 import css from './app.module.css'
 
@@ -16,6 +18,7 @@ function App() {
 	const matchmakingStatus = useSelector(getStatus)
 	const gameState = useSelector(getGameState)
 	const socketStatus = useSelector(getSocketStatus)
+	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 
 	const router = () => {
 		if (gameState) {
@@ -23,7 +26,11 @@ function App() {
 		} else if (matchmakingStatus) {
 			return <MatchMaking />
 		} else if (playerName) {
-			return <MainMenu />
+			return menuSection === 'deck' ? (
+				<Deck setMenuSection={setMenuSection} />
+			) : (
+				<MainMenu setMenuSection={setMenuSection} />
+			)
 		}
 		return <Login />
 	}

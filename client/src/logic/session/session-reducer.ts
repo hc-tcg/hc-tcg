@@ -4,6 +4,7 @@ type SessionState = {
 	playerName: string
 	playerId: string
 	playerSecret: string
+	playerDeck: Array<string>
 	connecting: boolean
 }
 
@@ -11,6 +12,7 @@ const defaultState: SessionState = {
 	playerName: '',
 	playerId: '',
 	playerSecret: '',
+	playerDeck: [],
 	connecting: false,
 }
 
@@ -28,6 +30,7 @@ const loginReducer = (
 				playerName: '',
 				playerId: '',
 				playerSecret: '',
+				playerDeck: [],
 			}
 		case 'SET_PLAYER_INFO':
 			return {

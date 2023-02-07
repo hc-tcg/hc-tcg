@@ -4,16 +4,6 @@ import PROTECTION from '../const/protection'
 import STRENGTHS from '../const/strengths'
 
 export function getStarterPack() {
-	// ['zombiecleo_common', 'zedaphplays_rare', 'ethoslab_ultra_rare']
-	/*
-	// Give all cards
-	return Object.values(CARDS).map((card) => ({
-		// type of card
-		cardId: card.id,
-		// unique identifier of this specific card instance
-		cardInstance: Math.random() + '_' + Math.random(),
-	}))
-	*/
 	// TODO - Beef had 42 cards in decks for TangoVsXisuma match (also in EP41 he said 42 is max)
 	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
 
@@ -44,38 +34,9 @@ export function getStarterPack() {
 		.filter((card) => !['bed'].includes(card.id))
 		.slice(0, 17)
 
-	const pack = [...hermits, ...items, ...otherCards].map((card) => ({
-		// type of card
-		cardId: card.id,
-		// unique identifier of this specific card instance
-		cardInstance: Math.random() + '_' + Math.random(),
-	}))
-
-	// shuffle cards
-	pack.sort(() => 0.5 - Math.random())
-
-	pack.unshift({
-		cardId: 'ijevin_common',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	pack.unshift({
-		cardId: 'item_builder_rare',
-		cardInstance: Math.random() + '_' + Math.random(),
-	})
-
-	// ensure a hermit in first 5 cards
-	const firstHermitIndex = pack.findIndex((card) => {
-		if (!CARDS[card.cardId]) throw new Error('Unknown card id: ' + card.cardId)
-		return CARDS[card.cardId].type === 'hermit'
-	})
-	if (firstHermitIndex > 5) {
-		;[pack[0], pack[firstHermitIndex]] = [pack[firstHermitIndex], pack[0]]
-	}
+	const pack = [...hermits, ...items, ...otherCards].map((card) => card.id)
 
 	return pack
-
-	// .filter((card) => card.type === 'hermit')
 }
 
 export function getEmptyRow() {
@@ -90,10 +51,21 @@ export function getEmptyRow() {
 }
 
 export function getPlayerState(allPlayers, playerId) {
-	const pack = getStarterPack()
-	// TODO - ensure there is at least one hermit on the hand
-	// OR - If there is no hermit, show the cards to the opposite player, reshuffle and draw again
-	// TODO - strenghs/weaknesses -> 20 extra damage for prmary/secondayr attack
+	const pack = allPlayers[playerId].playerDeck.map((cardId) => ({
+		cardId,
+		cardInstance: Math.random() + '_' + Math.random(),
+	}))
+
+	// shuffle cards
+	pack.sort(() => 0.5 - Math.random())
+
+	// ensure a hermit in first 5 cards
+	const hermitIndex = pack.findIndex((card) => {
+		return CARDS[card.cardId].type === 'hermit'
+	})
+	if (hermitIndex > 5) {
+		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	}
 
 	const TOTAL_ROWS = 5
 	return {

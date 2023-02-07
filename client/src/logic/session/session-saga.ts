@@ -1,7 +1,8 @@
-import {take, put, call, race, delay} from 'redux-saga/effects'
+import {take, takeEvery, put, call, race, delay} from 'redux-saga/effects'
+import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
 import socket from 'socket'
-import {receiveMsg} from 'logic/socket/socket-saga'
+import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
 import {setPlayerInfo, disconnect} from './session-actions'
 
@@ -60,7 +61,9 @@ export function* loginSaga(): SagaIterator {
 	if (result.playerReconnected) {
 		if (!session) return
 		console.log('User reconnected')
-		yield put(setPlayerInfo(session))
+		yield put(
+			setPlayerInfo({...session, playerDeck: result.playerReconnected.payload})
+		)
 	}
 
 	if (result.playerInfo) {
@@ -76,6 +79,9 @@ export function* loginSaga(): SagaIterator {
 }
 
 export function* logoutSaga(): SagaIterator {
+	yield takeEvery('UPDATE_DECK', function* (action: AnyAction) {
+		yield call(sendMsg, 'UPDATE_DECK', action.payload)
+	})
 	yield race([take('LOGOUT'), call(receiveMsg, 'INVALID_PLAYER')])
 	clearSession()
 	socket.disconnect()

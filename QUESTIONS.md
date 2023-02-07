@@ -20,6 +20,7 @@
 # Can Lead be used on your items? 
 	https://www.youtube.com/watch?v=UhrjGkE2leQ&t=1236s - 12:20 - says yes
 	https://www.youtube.com/watch?v=TiOUq2DsWKw&t=21s - 12:10 - says no
+# Do attached affects (armor/shield) protect against backlash attack (e.g. TNT/Wolf/Thorns)
 # Does Bed restore full health instantly or once the two turns pass?
 # Crossbow - Are weaknesses applied to the damage to afk hermits (so 30dmg instead of 10?) If so if both active or afk hermit are weak do both receive extra 20dmg?
 # When I kill myself using TNT attack (or thorns/wolf), should I pick new active hermit this turn or wait for the next one?
