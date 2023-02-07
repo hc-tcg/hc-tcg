@@ -8,21 +8,22 @@ import store from './be-store'
 import playerSockets from './be-socket'
 import './cards'
 
+const port = process.env.PORT || 9000
+
 const app = express()
 app.use(
 	cors({
-		origins: ['http://localhost:3002'],
+		origins: ['http://localhost:3002', 'https://hc-tcg.onrender.com'],
 	})
 )
 
 const server = createServer(app)
 const io = new Server(server, {
 	cors: {
-		origin: 'http://localhost:3002',
+		origin: ['http://localhost:3002', 'https://hc-tcg.onrender.com'],
 		methods: ['GET', 'POST'],
 	},
 })
-const port = process.env.PORT || 9000
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
