@@ -21,13 +21,6 @@ const defaultState: LocalGameState = {
 	pickProcess: null,
 }
 
-const getModalId = (state: any, payload: any) => {
-	const custom = payload.gameState?.players[state.playerId]?.custom
-	if (state.openedModalId || !custom) return state.openedModalId
-	if (custom.spyglass) return 'spyglass'
-	return null
-}
-
 const gameReducer = (
 	state = defaultState,
 	action: AnyAction
@@ -39,7 +32,6 @@ const gameReducer = (
 				opponentId: action.payload.opponentId,
 				gameState: action.payload.gameState,
 				availableActions: action.payload.availableActions,
-				openedModalId: getModalId(state, action.payload),
 			}
 			if (
 				state.gameState?.turnPlayerId === action.payload.gameState?.turnPlayerId

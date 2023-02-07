@@ -30,6 +30,8 @@ function* actionLogicSaga(gameState: GameState): SagaIterator {
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga, pState)
 		}
+	} else if (pState.custom.spyglass) {
+		yield put(setOpenedModalId('spyglass'))
 	}
 }
 

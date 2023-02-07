@@ -3,6 +3,5 @@
 - ESC to cancel picking process
 - Clicking on unused SUE should return it to hand (+ cancel picking process if any)
 - End game screen
-- Disable broken cards (Celo, Ren, Bed, Invis. Potion)
 - Go through all cards, make sure at least their main funcionality is working
 	- Spyglass is not working
