@@ -40,3 +40,19 @@ export type GameState = {
 	order: Array<PlatyerId>
 	players: Record<string, PlayerState>
 }
+
+export type GameStatePayload = {
+	gameState: GameState
+	availableActions: Array<string>
+	opponentId: string
+}
+
+export type GameEndReasonT =
+	| 'client_crash'
+	| 'server_crash'
+	| 'timout'
+	| 'forfeit'
+	| 'player_left'
+	| 'you_won'
+	| 'you_lost'
+	| null

@@ -167,11 +167,11 @@ function* checkHermitHealth(game) {
 				noHermitsLeft,
 				turn: game.state.turn,
 			})
-			return false
+			return playerState.id
 		}
 	}
 
-	return true
+	return false
 }
 
 function* turnActionSaga(game, turnAction, baseDerivedState) {
@@ -225,8 +225,8 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 
 	game.hooks.actionEnd.call(turnAction, derivedState)
 
-	const playersAlive = yield call(checkHermitHealth, game)
-	if (!playersAlive) return 'END_TURN'
+	const deadPlayerId = yield call(checkHermitHealth, game)
+	if (deadPlayerId) return 'END_TURN'
 	return 'DONE'
 }
 
@@ -341,8 +341,11 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	game.hooks.turnEnd.call(derivedState)
 
 	// TODO - Inform player if he won
-	const playersAlive = yield call(checkHermitHealth, game)
-	if (!playersAlive) return 'GAME_END'
+	const deadPlayerId = yield call(checkHermitHealth, game)
+	if (deadPlayerId) {
+		game.deadPlayerId = deadPlayerId
+		return 'GAME_END'
+	}
 
 	// Draw a card from deck when turn ends
 	// TODO - End game once pile runs out
@@ -414,6 +417,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			type: 'GAME_END',
 			payload: {
 				gameState: game.state,
+				reason: game.deadPlayerId === playerId ? 'you_lost' : 'you_won',
 			},
 		})
 	})

@@ -1,5 +1,5 @@
 import {AnyAction} from 'redux'
-import {GameState, CardT} from 'types/game-state'
+import {GameState, CardT, GameEndReasonT} from 'types/game-state'
 import {PickProcessT} from 'types/pick-process'
 import {equalCard} from 'server/utils'
 
@@ -10,6 +10,7 @@ type LocalGameState = {
 	selectedCard: CardT | null
 	openedModalId: string | null
 	pickProcess: PickProcessT | null
+	endGameOverlay: GameEndReasonT
 }
 
 const defaultState: LocalGameState = {
@@ -19,6 +20,7 @@ const defaultState: LocalGameState = {
 	selectedCard: null,
 	openedModalId: null,
 	pickProcess: null,
+	endGameOverlay: null,
 }
 
 const gameReducer = (
@@ -53,6 +55,7 @@ const gameReducer = (
 				selectedCard: null,
 				openedModalId: null,
 				pickProcess: null,
+				endGameOverlay: null,
 			}
 		case 'SET_SELECTED_CARD':
 			if (state.pickProcess) return state
@@ -83,6 +86,11 @@ const gameReducer = (
 				},
 			}
 		}
+		case 'SHOW_END_GAME_OVERLAY':
+			return {
+				...state,
+				endGameOverlay: action.payload,
+			}
 		default:
 			return state
 	}

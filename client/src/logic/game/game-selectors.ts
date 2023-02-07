@@ -49,3 +49,7 @@ export const getOpenedModalId = (state: RootState) => {
 export const getPickProcess = (state: RootState) => {
 	return getGame(state).pickProcess
 }
+
+export const getEndGameOverlay = (state: RootState) => {
+	return getGame(state).endGameOverlay
+}

@@ -1,8 +1,8 @@
-import {GameState} from 'types/game-state'
-import {CardT} from 'types/game-state'
+import {GameStatePayload} from 'types/game-state'
+import {CardT, GameEndReasonT} from 'types/game-state'
 import {PickProcessT, PickedCardT} from 'types/pick-process'
 
-export const gameState = (gameState: GameState) => ({
+export const gameState = (gameState: GameStatePayload) => ({
 	type: 'GAME_STATE' as const,
 	payload: gameState,
 })
@@ -53,6 +53,11 @@ export const forfeit = () => ({
 export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
 	type: 'START_ATTACK' as const,
 	payload: {type},
+})
+
+export const showEndGameOverlay = (reason: GameEndReasonT) => ({
+	type: 'SHOW_END_GAME_OVERLAY' as const,
+	payload: reason,
 })
 
 // ---

@@ -10,6 +10,7 @@ import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
+import EndGameOverlay from './end-game-overlay'
 import CARDS from 'server/cards'
 import {
 	getGameState,
@@ -17,6 +18,7 @@ import {
 	getPickProcess,
 	getOpenedModalId,
 	getPlayerState,
+	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {
 	setOpenedModalId,
@@ -76,6 +78,7 @@ function Game(props: Props) {
 	const openedModalId = useSelector(getOpenedModalId)
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
+	const endGameOverlay = useSelector(getEndGameOverlay)
 	const dispatch = useDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
@@ -127,6 +130,8 @@ function Game(props: Props) {
 					title="Forfeit"
 				/>
 			</div>
+
+			{endGameOverlay && <EndGameOverlay reason={endGameOverlay} />}
 		</div>
 	)
 }

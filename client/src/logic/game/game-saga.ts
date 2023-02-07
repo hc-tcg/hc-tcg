@@ -7,13 +7,15 @@ import {
 	race,
 	takeLatest,
 } from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import slotSaga from './tasks/slot-saga'
 import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
-import {gameState, gameStart, gameEnd} from './game-actions'
+import {gameState, gameStart, gameEnd, showEndGameOverlay} from './game-actions'
+import {getEndGameOverlay, getOpponentId} from './game-selectors'
 
 function* actionSaga(): SagaIterator {
 	try {
@@ -103,10 +105,25 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 
 		if (result.gameCrash) {
 			console.log('Server error')
+			yield put(showEndGameOverlay('server_crash'))
+		} else {
+			if (result.gameEnd.payload.gameState) {
+				yield put(
+					gameState({
+						gameState: result.gameEnd.payload.gameState,
+						availableActions: [],
+						opponentId: yield* select(getOpponentId),
+					})
+				)
+			}
+			yield put(showEndGameOverlay(result.gameEnd.payload.reason))
 		}
 	} catch (err) {
 		console.error('Client error: ', err)
+		yield put(showEndGameOverlay('client_crash'))
 	} finally {
+		const hasOverlay = yield* select(getEndGameOverlay)
+		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
 		console.log('Game ended')
 		yield put(gameEnd())
 	}
