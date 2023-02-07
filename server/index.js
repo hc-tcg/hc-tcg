@@ -28,7 +28,11 @@ const io = new Server(server, {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use(express.static(path.join(__dirname, '../client/dist')))
+app.use(
+	express.static(path.join(__dirname, '../client/dist'), {
+		maxAge: 1000 * 60 * 5,
+	})
+)
 
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, '../client/dist', 'index.html'))
