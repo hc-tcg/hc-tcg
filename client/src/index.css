@@ -1,16 +1,16 @@
 @font-face {
 	font-family: Minecraft;
-	src: url(fonts/MinecraftRegular-Bmg3.otf);
+	src: url(/fonts/MinecraftRegular-Bmg3.otf);
 }
 
 @font-face {
 	font-family: MinecraftBold;
-	src: url(fonts/MinecraftBold-nMK1.otf);
+	src: url(/fonts/MinecraftBold-nMK1.otf);
 }
 
 @font-face {
 	font-family: MinecraftItalic;
-	src: url(fonts/MinecraftItalic-R8Mo.otf);
+	src: url(/fonts/MinecraftItalic-R8Mo.otf);
 }
 
 body {

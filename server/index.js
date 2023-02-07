@@ -22,15 +22,15 @@ const io = new Server(server, {
 		methods: ['GET', 'POST'],
 	},
 })
-const port = 9000
+const port = process.env.PORT || 9000
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
-app.use(express.static(path.join(__dirname, 'build')))
+app.use(express.static(path.join(__dirname, '../client/dist')))
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../public', 'index.html'))
+	res.sendFile(path.join(__dirname, '../client/dist', 'index.html'))
 })
 
 const isValidName = (name) => {
