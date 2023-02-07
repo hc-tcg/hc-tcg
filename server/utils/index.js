@@ -122,11 +122,7 @@ export function flipCoin(currentPlayer, times = 1) {
 	const fortune = currentPlayer.coinFlips['fortune']?.[0] === 'heads'
 	const result = []
 	for (let i = 0; i < times; i++) {
-		const coinFlip = fortune
-			? 'heads'
-			: Math.random() > 0.01
-			? 'heads'
-			: 'tails'
+		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
 		result.push(coinFlip)
 	}
 	return result

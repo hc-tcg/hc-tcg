@@ -1,6 +1,7 @@
 import io from 'socket.io-client'
 
-const socket = io('http://localhost:9000', {
+const url = window.location.protocol + '//' + window.location.host
+const socket = io(url, {
 	autoConnect: false,
 })
 

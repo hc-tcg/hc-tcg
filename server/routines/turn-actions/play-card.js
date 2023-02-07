@@ -27,7 +27,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 		currentPlayer.board.rows[rowIndex] = {
 			...currentPlayer.board.rows[rowIndex],
 			hermitCard: card,
-			health: 30, // cardInfo.health,
+			health: cardInfo.health,
 		}
 		if (currentPlayer.board.activeRow === null) {
 			currentPlayer.board.activeRow = rowIndex
