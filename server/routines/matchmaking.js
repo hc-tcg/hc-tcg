@@ -35,6 +35,8 @@ function* gameManager(allPlayers, gameId) {
 	const game = games[gameId]
 
 	// Inform users when their opponent is offline & online again
+	/*
+	// Still needs frontend logic, also don't forget to cancel saga in finally or this saga won't end
 	yield takeEvery(
 		(action) =>
 			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
@@ -51,47 +53,41 @@ function* gameManager(allPlayers, gameId) {
 			)
 		}
 	)
+	*/
 
 	// Kill game on timeout or when user leaves for long time + cleanup after game
 	try {
-		while (true) {
-			const result = yield race({
-				// game ended (or crashed -> catch)
-				gameEnd: join(games[gameId].task),
-				// kill a game after two hours
-				timeout: delay(1000 * 60 * 60),
-				// kill game when a player is disconnected for too long
-				playerRemoved: take(
-					(action) =>
-						action.type === 'PLAYER_REMOVED' &&
-						game.playerIds.includes(action.payload.playerId)
-				),
-				forfeit: take(
-					(action) =>
-						action.type === 'FORFEIT' &&
-						game.playerIds.includes(action.playerId)
-				),
+		const result = yield race({
+			// game ended (or crashed -> catch)
+			gameEnd: join(games[gameId].task),
+			// kill a game after two hours
+			timeout: delay(1000 * 60 * 60),
+			// kill game when a player is disconnected for too long
+			playerRemoved: take(
+				(action) =>
+					action.type === 'PLAYER_REMOVED' &&
+					game.playerIds.includes(action.payload.playerId)
+			),
+			forfeit: take(
+				(action) =>
+					action.type === 'FORFEIT' && game.playerIds.includes(action.playerId)
+			),
+		})
+		if (result.timeout) {
+			broadcast(allPlayers, game.playerIds, 'GAME_END', {reason: 'timeout'})
+			console.log('Game timed out.')
+		} else if (result.playerRemoved) {
+			broadcast(allPlayers, game.playerIds, 'GAME_END', {
+				reason: 'player_left',
 			})
-			if (result.gameEnd) break
-			if (result.timeout) {
-				broadcast(allPlayers, game.playerIds, 'GAME_END', {reason: 'timeout'})
-				console.log('Game timed out.')
-				break
-			}
-			if (result.playerRemoved) {
-				broadcast(allPlayers, game.playerIds, 'GAME_END', {
-					reason: 'player_left',
-				})
-				console.log('Game killed due to long term player disconnect.')
-				break
-			}
-			if (result.forfeit) {
-				broadcast(allPlayers, game.playerIds, 'GAME_END', {
-					reason: 'forfeit',
-				})
-				console.log('Game killed due to player foreit.')
-				break
-			}
+			console.log('Game killed due to long term player disconnect.')
+		} else if (result.forfeit) {
+			broadcast(allPlayers, game.playerIds, 'GAME_END', {
+				reason: 'forfeit',
+			})
+			console.log('Game killed due to player foreit.')
+		} else if (result.gameEnd) {
+			// For normal win condition the gameSaga itself will send GAME_END with winning info
 		}
 	} catch (err) {
 		console.error('Error: ', err)
@@ -184,7 +180,7 @@ function* leaveMatchmaking(allPlayers, action) {
 		(game) => !game.task && game.playerIds.includes(playerId)
 	)
 	if (!game) return
-	console.log('Private game cancelled: ', action.playerId)
+	console.log('Private game cancelled: ', playerId)
 	delete games[game.id]
 }
 

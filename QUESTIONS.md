@@ -32,14 +32,14 @@
 # Does Mending work only when attached to active hermit, or even when it is attached to an afk hermit?
 # Do special moves - like Ethos blue fire or docs double damage - also affect afk hermit if e.g. used together with bow?
 # Does fortune affect all coin flips for special moves that have multiple coin flips? Like ultra rare Etho's "Slab" attack?
-# Does chorus fruit/cub overwrite curse of binding?
-# Does chorus fruit/cub overwrite knockback?
+# Does chorus fruit/Cub overwrite curse of binding?
+# Does chorus fruit/Cub overwrite knockback?
 # Does Gems rare ability to use additional effect include offensive single use cards? E.g. can I attack again with a sword?
 # Does Grian's borrow steal gold_armor/shield before attack, or is it destroyed before he can steal it?
 # When scar uses shis deathloop ability and also holds a totem, should the totem be removed or stay when knocked out?
 # Using Hypno & Bow/Crossbow, can I decide to attack two different afk hermits?
 # When I use Efficiency with Hypno without any items, can I still attack an AFK hermit?
 # What does it mean that "attack misses" for Pearl's special move. Does it just mean damage is 0, or that also special move actions won't happen? (e.g. etho's blue fire is not applied)
-# Zedaph's ability - does the seocnd coin flip happen on attack on start of a turn (so that oppopnent knows NOT to attack).
-# Zedaph's ability - does the back damage also include damage to afk hermits (e.g. from bow/crossbow)
-# Zedaph's ability - does the back damage include both the 20 & 60 from TNT attack?
+# Zedaph's ability - does the second coin flip happen on attack or on start of a turn (so that oppopnent knows NOT to attack).
+# Zedaph's ability - does the self damage also include damage to afk hermits (e.g. from bow/crossbow)
+# Zedaph's ability - does the self damage include both the 20 & 60 from TNT attack?

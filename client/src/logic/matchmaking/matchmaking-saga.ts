@@ -87,7 +87,7 @@ function* matchmakingSaga(): SagaIterator {
 				matchmaking: call(enterMatchmaking, menuResult.startMatchmaking),
 				leave: take('LEAVE_MATCHMAKING'),
 			})
-			if (result.matchmaking) {
+			if (result.hasOwnProperty('matchmaking')) {
 				yield put(leaveMatchmaking())
 			} else {
 				yield call(sendMsg, 'LEAVE_MATCHMAKING')
