@@ -2,7 +2,8 @@
 - End game screen
 - reset flip coinchance to 50:50
 - Go through all cards, make sure at least their main funcionality is working
-	- Spyglass is not working
+	- Tangos move allows to pick again teh same hermit
+
 
 # Pre-alpha 2
 - Better deck managmenet + localStorage
