@@ -109,7 +109,9 @@ function* randomMatchmaking(allPlayers) {
 		console.log('first player waiting')
 		const result = yield take([
 			'RANDOM_MATCHMAKING',
-			'LEAVE_MATCHMAKING',
+			(action) =>
+				action.type === 'LEAVE_MATCHMAKING' &&
+				firstRequest.playerId === action.playerId,
 			(action) =>
 				action.type === 'PLAYER_DISCONNECTED' &&
 				firstRequest.socket === action.payload.socket,
@@ -125,7 +127,7 @@ function* randomMatchmaking(allPlayers) {
 			games[gameId] = createGameRecord(gameId, gameTask, playerIds)
 			yield fork(gameManager, allPlayers, gameId)
 		} else {
-			console.log('Matchmaking cancelled: ', result.type)
+			console.log('Random matchmaking cancelled: ', result.type)
 		}
 	}
 }
@@ -134,6 +136,8 @@ function* createPrivateGame(allPlayers, action) {
 	const firstRequest = action
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
 	broadcast(allPlayers, [firstRequest.playerId], 'PRIVATE_GAME_CODE', gameCode)
+
+	console.log('Private game created: ', firstRequest.playerId)
 
 	const gameId = Math.random().toString()
 	games[gameId] = {
@@ -149,6 +153,16 @@ function* joinPrivateGame(allPlayers, action) {
 	const invalidCode = !game
 	const gameRunning = !!game?.task
 	const differentPlayers = playerId !== game?.playerIds[0]
+	console.log(
+		'Joining private game: ' +
+			playerId +
+			' ' +
+			invalidCode.toString() +
+			' ' +
+			gameRunning.toString() +
+			' ' +
+			differentPlayers.toString()
+	)
 	if (invalidCode || gameRunning || !differentPlayers) {
 		broadcast(allPlayers, [playerId], 'INVALID_CODE')
 		return
@@ -170,6 +184,7 @@ function* leaveMatchmaking(allPlayers, action) {
 		(game) => !game.task && game.playerIds.includes(playerId)
 	)
 	if (!game) return
+	console.log('Private game cancelled: ', action.playerId)
 	delete games[game.id]
 }
 
