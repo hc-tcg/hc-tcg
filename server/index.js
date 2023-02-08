@@ -40,7 +40,7 @@ app.get('/', (req, res) => {
 
 const isValidName = (name) => {
 	if (typeof name !== 'string') return false
-	if (name.length < 3) return false
+	if (name.length < 1) return false
 	if (name.length > 25) return false
 	return true
 }
@@ -51,7 +51,6 @@ io.on('connection', (socket) => {
 	const playerName = socket.handshake.auth?.playerName || ''
 	if (!isValidName(playerName)) {
 		console.log('Invalid player name: ', playerName)
-		debugger
 		return socket.disconnect(true)
 	}
 	store.dispatch({
