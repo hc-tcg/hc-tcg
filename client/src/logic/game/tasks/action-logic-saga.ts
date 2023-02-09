@@ -2,9 +2,9 @@ import {select, take} from 'typed-redux-saga'
 import {call, put, fork, cancelled} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {GameState} from 'types/game-state'
-import {runPickProcessSaga, REQS} from './pick-process-saga'
-import {PlayerState} from 'types/game-state'
-import {CardT} from 'types/game-state'
+import {runPickProcessSaga} from './pick-process-saga'
+import {PlayerState, CardT} from 'types/game-state'
+import {HermitCardT, CardInfoT} from 'types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -23,15 +23,20 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 	}
 
 	let pickedCards = null
+	const hermitCard = CARDS['grian_rare'] as HermitCardT
+	const borrowAttack = hermitCard.primary
 	while (!pickedCards)
-		pickedCards = yield call(runPickProcessSaga, pState.followUp)
+		pickedCards = yield call(
+			runPickProcessSaga,
+			borrowAttack.name,
+			hermitCard.reqs
+		)
 	yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
 	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
-	const damageInfo = cardInfo.damage
 	if (
 		[
 			'splash_potion_of_healing',
@@ -53,10 +58,8 @@ function* singleUseSaga(card: CardT): SagaIterator {
 		yield put(setOpenedModalId('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModalId('chest'))
-
-		// TODO - damageInfo - hacky check for now to avoid instant selection for attack effects
-	} else if (REQS[card.cardId] && !damageInfo) {
-		const result = yield call(runPickProcessSaga, card.cardId)
+	} else if (cardInfo.reqsOn === 'apply') {
+		const result = yield call(runPickProcessSaga, cardInfo.name, cardInfo.reqs)
 		if (result && result.length) {
 			yield put(applyEffect({pickedCards: {[card.cardId]: result}}))
 		} else {
@@ -65,14 +68,23 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	}
 }
 
+const getFollowUpName = (cardInfo: CardInfoT) => {
+	if (cardInfo.type !== 'hermit') return cardInfo.name
+	if (cardInfo.primary.power) cardInfo.primary.name
+	if (cardInfo.secondary.power) cardInfo.secondary.name
+	return cardInfo.name
+}
+
 function* actionLogicSaga(gameState: GameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {
-		if (['looting', 'tangotek_rare'].includes(pState.followUp)) {
+		const cardInfo = CARDS[pState.followUp] as CardInfoT | null
+		if (cardInfo?.reqsOn === 'followup') {
 			let pickedCards = null
+			const name = getFollowUpName(cardInfo)
 			while (!pickedCards)
-				pickedCards = yield call(runPickProcessSaga, pState.followUp)
+				pickedCards = yield call(runPickProcessSaga, name, cardInfo.reqs)
 			yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga, pState)

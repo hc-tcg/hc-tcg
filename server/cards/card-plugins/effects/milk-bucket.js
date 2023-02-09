@@ -9,6 +9,8 @@ class MilkBucketEffectCard extends EffectCard {
 			description:
 				'Stops POISON.\n\nCan be used on active or AFK Hermits. Discard after Use.\n\nCan also be attached to prevent POISON.\n\nDiscard after user is knocked out.',
 		})
+		this.reqsOn = 'apply'
+		this.reqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

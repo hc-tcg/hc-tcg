@@ -2,6 +2,7 @@ import {select} from 'typed-redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'types/game-state'
+import {HermitCardT} from 'types/cards'
 import {CardInfoT, EffectCardT} from 'types/cards'
 import CARDS from 'server/cards'
 import {runPickProcessSaga} from './pick-process-saga'
@@ -30,20 +31,26 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
-	const damageInfo = singleUseInfo && singleUseInfo.damage
 
 	const result = {} as Record<string, Array<CardT>>
-	if (singleUseInfo && damageInfo?.afkTarget) {
-		result[singleUseInfo.id] = yield call(runPickProcessSaga, singleUseInfo.id)
+	if (singleUseInfo?.reqsOn === 'attack') {
+		result[singleUseInfo.id] = yield call(
+			runPickProcessSaga,
+			singleUseInfo.name,
+			singleUseInfo.reqs
+		)
 		if (!result[singleUseInfo.id]) return
 	}
 
 	const cardId = hermitCard.cardId
-	if (
-		['hypnotizd_rare', 'keralis_rare'].includes(cardId) &&
-		type === 'secondary'
-	) {
-		result[cardId] = yield call(runPickProcessSaga, cardId)
+	const cardInfo = CARDS[hermitCard.cardId]
+	const hermitAttack = cardInfo?.[type] || null
+	if (cardInfo?.reqsOn === 'attack') {
+		result[cardId] = yield call(
+			runPickProcessSaga,
+			hermitAttack?.name || cardInfo.name,
+			cardInfo.reqs
+		)
 		if (!result[cardId]) return
 	}
 

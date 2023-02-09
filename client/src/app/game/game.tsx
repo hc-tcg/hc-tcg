@@ -44,9 +44,7 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 
 	const type = req.type === 'any' ? '' : req.type
 	const empty = req.empty || false
-	const name = CARDS[pickProcess.id]
-		? CARDS[pickProcess.id].name
-		: pickProcess.id
+	const name = pickProcess.name
 	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
 		empty ? 'slot' : 'card'
 	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`

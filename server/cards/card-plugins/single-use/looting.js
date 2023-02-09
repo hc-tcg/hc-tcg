@@ -10,6 +10,8 @@ class LootingSingleUseCard extends SingleUseCard {
 			description:
 				"Flip a coin.\n\nIf heads, user picks 1 item card from opposing active Hermit and adds it to user's hand.\n\nDiscard after use.",
 		})
+		this.reqsOn = 'followup'
+		this.reqs = [{target: 'opponent', type: 'item', amount: 1, active: true}]
 	}
 
 	register(game) {
@@ -20,7 +22,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				// If opponent has no active hermit, can't activate
 				if (!opponentActiveRow) return 'INVALID'
 
-				// If opponent has no items on ctive ehrmit, can't activate
+				// If opponent has no items on active ehrmit, can't activate
 				const anyItemCards = opponentActiveRow.itemCards.some(Boolean)
 				if (!anyItemCards) return 'INVALID'
 

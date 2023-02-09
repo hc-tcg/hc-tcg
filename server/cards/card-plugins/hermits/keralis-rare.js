@@ -22,8 +22,9 @@ class KeralisRareHermitCard extends HermitCard {
 				power: 'Heals any AFK Hermit +100HP.\n\nCannot be used consecutively.',
 			},
 		})
-
 		this.heal = 100
+		this.reqsOn = 'attack'
+		this.reqs = [{target: 'player', type: 'hermit', amount: 1, active: false}]
 	}
 
 	register(game) {

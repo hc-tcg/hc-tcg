@@ -32,7 +32,7 @@ export type PickedCardT =
 	  }
 
 export type PickProcessT = {
-	id: string
+	name: string
 	requirments: Array<PickRequirmentT>
 	pickedCards: Array<PickedCardT>
 	currentReq: number

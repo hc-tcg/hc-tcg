@@ -5,7 +5,6 @@ import {PickedCardT, PickRequirmentT, CardTypeT} from 'types/pick-process'
 import {CardT, PlayerState} from 'types/game-state'
 import CARDS from 'server/cards'
 import {equalCard} from 'server/utils'
-
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import {
@@ -18,30 +17,6 @@ import {
 type AnyPickActionT =
 	| ReturnType<typeof setSelectedCard>
 	| ReturnType<typeof slotPicked>
-
-// TODO - special donitions (only afk hermit, only empty item slot)
-export const REQS: Record<string, Array<PickRequirmentT>> = {
-	instant_health: [{target: 'player', type: 'hermit', amount: 1}],
-	instant_health_ii: [{target: 'player', type: 'hermit', amount: 1}],
-	golden_apple: [{target: 'player', type: 'hermit', amount: 1}],
-	milk_bucket: [{target: 'player', type: 'hermit', amount: 1}],
-	water_bucket: [{target: 'player', type: 'hermit', amount: 1}],
-	composter: [{target: 'hand', type: 'any', amount: 2}],
-	lead: [
-		{target: 'opponent', type: 'item', amount: 1, active: true},
-		{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
-	],
-	bow: [{target: 'opponent', type: 'hermit', amount: 1, active: false}],
-	crossbow: [{target: 'opponent', type: 'hermit', amount: 1, active: false}],
-	looting: [{target: 'opponent', type: 'item', amount: 1, active: true}],
-	grian_rare: [{target: 'player', type: 'effect', amount: 1, empty: true}],
-	hypnotizd_rare: [
-		{target: 'opponent', type: 'hermit', amount: 1},
-		{target: 'player', type: 'item', amount: 1, active: true},
-	],
-	keralis_rare: [{target: 'player', type: 'hermit', amount: 1, active: false}],
-	tangotek_rare: [{target: 'player', type: 'hermit', amount: 1, active: false}],
-}
 
 const validRow = (
 	req: PickRequirmentT,
@@ -129,17 +104,18 @@ function* pickSaga(req: PickRequirmentT, pickAction: AnyPickActionT) {
 	return pickedCard
 }
 
-export function* runPickProcessSaga(cardId: string): SagaIterator {
+// todo - send reqs & name instead of card id
+export function* runPickProcessSaga(
+	name: string,
+	reqs?: Array<PickRequirmentT>
+): SagaIterator {
 	try {
 		const playerId = yield* select(getPlayerId)
-		if (!cardId || !playerId) return
-
-		const reqs = REQS[cardId]
-		if (!reqs) return
+		if (!name || !reqs || !playerId) return
 
 		yield put(
 			setPickProcess({
-				id: cardId,
+				name,
 				requirments: reqs,
 				pickedCards: [],
 				currentReq: 0,

@@ -13,6 +13,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 			description:
 				'Discard 2 cards in you hand. Draw 2 cards.\n\nDiscard after use.',
 		})
+		this.reqsOn = 'apply'
+		this.reqs = [{target: 'hand', type: 'any', amount: 2}]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

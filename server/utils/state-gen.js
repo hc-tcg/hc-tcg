@@ -64,15 +64,10 @@ export function getPlayerState(allPlayers, playerId) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	pack.unshift({
-		cardId: 'wolf',
-		cardInstance: Math.random().toString(),
-	})
-
-	pack.unshift({
-		cardId: 'thorns',
-		cardInstance: Math.random().toString(),
-	})
+	// pack.unshift({
+	// 	cardId: 'wolf',
+	// 	cardInstance: Math.random().toString(),
+	// })
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {

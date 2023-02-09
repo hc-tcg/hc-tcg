@@ -28,6 +28,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 					'Player can choose to have Hypno attack AFK opposing Hermits.\n\nIf AFK Hermit is attacked,\n\nHypno must discard 1 item card.',
 			},
 		})
+
+		this.reqsOn = 'attack'
+		this.reqs = [
+			{target: 'opponent', type: 'hermit', amount: 1},
+			{target: 'player', type: 'item', amount: 1, active: true},
+		]
 	}
 
 	register(game) {

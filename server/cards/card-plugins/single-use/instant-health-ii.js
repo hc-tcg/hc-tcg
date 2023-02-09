@@ -10,6 +10,8 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 				'Heals +60hp.\n\nCan be used on active or AFK Hermits. Discard after use.',
 		})
 		this.heal = 60
+		this.reqsOn = 'apply'
+		this.reqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

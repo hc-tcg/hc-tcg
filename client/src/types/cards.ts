@@ -1,3 +1,5 @@
+import {PickRequirmentT} from './pick-process'
+
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
 export type HermitTypeT =
@@ -24,29 +26,30 @@ export type ProtectionT = {
 	discard?: boolean
 }
 
-export type ItemCardT = {
+export type AnyCardT = {
 	name: string
-	type: 'item'
+	type: string
 	rarity: CardRarityT
-	hermitType: HermitTypeT
 	id: string
+	reqsOn?: 'attack' | 'apply' | 'followup' | 'custom'
+	reqs?: Array<PickRequirmentT>
 }
 
-export type EffectCardT = {
-	name: string
+export type ItemCardT = AnyCardT & {
+	type: 'item'
+	hermitType: HermitTypeT
+}
+
+export type EffectCardT = AnyCardT & {
 	type: 'effect' | 'single_use'
-	rarity: CardRarityT
 	description: string
-	id: string
 	damage?: DamageT
 	protection?: ProtectionT
 }
 
-export type HealthCardT = {
-	name: string
+export type HealthCardT = AnyCardT & {
 	type: 'health'
 	health: number
-	id: string
 }
 
 export type HermitAttackT = {
@@ -56,11 +59,8 @@ export type HermitAttackT = {
 	power: string | null
 }
 
-export type HermitCardT = {
+export type HermitCardT = AnyCardT & {
 	type: 'hermit'
-	id: string
-	name: string
-	rarity: CardRarityT
 	hermitType: HermitTypeT
 	health: number
 	primary: HermitAttackT
