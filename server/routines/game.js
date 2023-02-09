@@ -155,6 +155,12 @@ function* checkHermitHealth(game) {
 					playerState.board.activeRow = null
 				}
 				playerState.lives -= 1
+
+				// reward cards
+				const opponentState = playerStates.find((s) => s.id !== playerState.id)
+				if (!opponentState) continue
+				const rewardCard = playerState.rewards.shift()
+				if (rewardCard) opponentState.hand.push(rewardCard)
 			}
 		}
 
