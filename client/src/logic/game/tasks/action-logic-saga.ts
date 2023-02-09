@@ -5,7 +5,7 @@ import {GameState} from 'types/game-state'
 import {runPickProcessSaga, REQS} from './pick-process-saga'
 import {PlayerState} from 'types/game-state'
 import {CardT} from 'types/game-state'
-import DAMAGE from 'server/const/damage'
+import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModalId,
@@ -29,7 +29,9 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
-	const damageInfo = DAMAGE[card.cardId]
+	const cardInfo = CARDS[card.cardId]
+	if (!cardInfo) return
+	const damageInfo = cardInfo.damage
 	if (
 		[
 			'splash_potion_of_healing',

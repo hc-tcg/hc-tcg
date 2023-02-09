@@ -4,7 +4,6 @@ import {SagaIterator} from 'redux-saga'
 import {CardT} from 'types/game-state'
 import {CardInfoT, EffectCardT} from 'types/cards'
 import CARDS from 'server/cards'
-import DAMAGE from 'server/const/damage'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
@@ -31,7 +30,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
-	const damageInfo = singleUseInfo && DAMAGE[singleUseInfo.id]
+	const damageInfo = singleUseInfo && singleUseInfo.damage
 
 	const result = {} as Record<string, Array<CardT>>
 	if (singleUseInfo && damageInfo?.afkTarget) {

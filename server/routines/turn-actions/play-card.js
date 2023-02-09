@@ -54,9 +54,6 @@ function* playCardSaga(game, turnAction, derivedState) {
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (cardInfo.type === 'single_use' || suBucket) {
-		// TODO - dont apply single_use card on effect slot (or any other row slot)
-		// TODO - INFO - fire/poison damage is applied first when it is used and then at the beginning of a turn of the player that use the effect
-		// TODO - INFO - Golden Axe ignored totem of undying (that is it kills the opponent's hermit regardless)
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		if (currentPlayer.board.singleUseCard) return

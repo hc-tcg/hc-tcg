@@ -1,10 +1,8 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {RootState} from 'store'
 import {CardInfoT, EffectCardT, HermitCardT} from 'types/cards'
 import classnames from 'classnames'
 import CARDS from 'server/cards'
-import DAMAGE from 'server/const/damage'
 import PROTECTION from 'server/const/protection'
 import Strengths from 'server/const/strengths'
 import {
@@ -60,10 +58,11 @@ function AttackModal({closeModal}: Props) {
 		: null
 
 	const suAttackInfo =
-		singleUseInfo && DAMAGE[singleUseInfo.id]
+		singleUseInfo && singleUseInfo.damage
 			? {
 					name: singleUseInfo.name,
-					damage: DAMAGE[singleUseInfo.id].target || 0,
+					damage: singleUseInfo.damage.target || 0,
+					afkDamage: singleUseInfo.damage.afkTarget || 0,
 			  }
 			: null
 
@@ -141,7 +140,12 @@ function AttackModal({closeModal}: Props) {
 									width="16"
 									height="16"
 								/>
-								<div className={css.damageAmount}>{suAttackInfo.damage}</div>
+								<div className={css.damageAmount}>
+									{suAttackInfo.damage}
+									{suAttackInfo?.afkDamage ? (
+										<>({suAttackInfo.afkDamage})</>
+									) : null}
+								</div>
 							</>
 						) : null}
 

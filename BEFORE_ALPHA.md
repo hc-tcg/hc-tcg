@@ -11,11 +11,14 @@
 - on some turns I can't do anything except ending my turn :(
 		- include pastTurnActions in game_state for debugging
 
+- crossbow without active hermits
+- timeout is not 1 hour (needs more testing)
+
 
 - Better deck managmenet + localStorage
 - Move REQS for validation on BE and use them there
 - Implement missing cards
-- Reward cards
 - Clear availableActions after an action until new game state arrives (some indicator?)
 - Limit slot clicks (onClick, cursor pointer, hover state) based on availableActions, selectedCard & pickProcess
 - on log out, remove user, not just disconnect
+- Deal with one player having TWO sockets connected.

@@ -10,7 +10,6 @@ import {
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
-import DAMAGE from '../const/damage'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getGameState, getEmptyRow} from '../utils/state-gen'
 import {getDerivedState} from '../utils/derived-state'
@@ -88,12 +87,10 @@ function getAvailableActions(game, derivedState) {
 
 		if (turn > 1) {
 			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
+			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-			if (
-				!currentPlayer.board.singleUseCardUsed &&
-				DAMAGE[currentPlayer.board.singleUseCard?.cardId]
-			) {
+			if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 				actions.push('ZERO_ATTACK')
 			}
 			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {

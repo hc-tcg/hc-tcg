@@ -13,6 +13,12 @@ export type HermitTypeT =
 	| 'explorer'
 	| 'any'
 
+export type DamageT = {
+	target?: number
+	afkTarget?: number
+	self?: number
+}
+
 export type ItemCardT = {
 	name: string
 	type: 'item'
@@ -27,6 +33,7 @@ export type EffectCardT = {
 	rarity: CardRarityT
 	description: string
 	id: string
+	damage?: DamageT
 }
 
 export type HealthCardT = {

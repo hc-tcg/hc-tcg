@@ -1,5 +1,4 @@
 import CARDS from '../cards'
-import DAMAGE from '../const/damage'
 import PROTECTION from '../const/protection'
 import STRENGTHS from '../const/strengths'
 
