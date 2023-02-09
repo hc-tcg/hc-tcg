@@ -1,5 +1,4 @@
 import CARDS from '../cards'
-import PROTECTION from '../const/protection'
 import STRENGTHS from '../const/strengths'
 
 export function getStarterPack() {
@@ -65,10 +64,15 @@ export function getPlayerState(allPlayers, playerId) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	// pack.unshift({
-	// 	cardId: 'hypnotizd_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
+	pack.unshift({
+		cardId: 'wolf',
+		cardInstance: Math.random().toString(),
+	})
+
+	pack.unshift({
+		cardId: 'thorns',
+		cardInstance: Math.random().toString(),
+	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -86,8 +90,6 @@ export function getPlayerState(allPlayers, playerId) {
 		followUp: null,
 		lives: 3,
 		hand: pack.slice(0, 7), // 0.7
-		// TODO - hand out reward cards on kill
-		// TODO - should be three cards from opponents deck
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),

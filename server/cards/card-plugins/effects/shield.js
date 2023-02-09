@@ -10,7 +10,7 @@ class ShieldEffectCard extends EffectCard {
 			description:
 				'Protects from the first +10hp damage taken.\n\nDiscard following any damage taken.',
 		})
-		this.protection = {target: 10}
+		this.protection = {target: 10, discard: true}
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

@@ -3,7 +3,6 @@ import {useSelector, useDispatch} from 'react-redux'
 import {CardInfoT, EffectCardT, HermitCardT} from 'types/cards'
 import classnames from 'classnames'
 import CARDS from 'server/cards'
-import PROTECTION from 'server/const/protection'
 import Strengths from 'server/const/strengths'
 import {
 	getPlayerActiveRow,
@@ -47,12 +46,11 @@ function AttackModal({closeModal}: Props) {
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
 	const playerEffectInfo = activeRow.effectCard
-		? TYPED_CARDS[activeRow.effectCard.cardId]
+		? (TYPED_CARDS[activeRow.effectCard.cardId] as EffectCardT)
 		: null
-	const opponentEffectInfo =
-		opponentRow.effectCard && PROTECTION[opponentRow.effectCard.cardId]
-			? TYPED_CARDS[opponentRow.effectCard.cardId]
-			: null
+	const opponentEffectInfo = opponentRow.effectCard
+		? (TYPED_CARDS[opponentRow.effectCard.cardId] as EffectCardT)
+		: null
 	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
@@ -69,7 +67,7 @@ function AttackModal({closeModal}: Props) {
 	const protectionAmount =
 		suAttackInfo && singleUseInfo?.id === 'golden_axe'
 			? 0
-			: PROTECTION[opponentRow.effectCard?.cardId as any]?.target || 0
+			: opponentEffectInfo?.protection?.target || 0
 
 	const hasWeakness = Strengths[playerHermitInfo.hermitType].includes(
 		opponentHermitInfo.hermitType

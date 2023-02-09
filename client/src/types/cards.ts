@@ -19,6 +19,11 @@ export type DamageT = {
 	self?: number
 }
 
+export type ProtectionT = {
+	target: number
+	discard?: boolean
+}
+
 export type ItemCardT = {
 	name: string
 	type: 'item'
@@ -34,6 +39,7 @@ export type EffectCardT = {
 	description: string
 	id: string
 	damage?: DamageT
+	protection?: ProtectionT
 }
 
 export type HealthCardT = {
