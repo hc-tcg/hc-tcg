@@ -4,12 +4,10 @@
 
 
 # Pre-alpha 2
-- Tangos move allows to pick again the same hermit
 - Gem should also allow extra normal effect card
-- Mending Borrowed by Grian dissapeared at end of my turn
 - shield of active hermit gets destroyed on hypnos afk attack
-- on some turns I can't do anything except ending my turn :(
-		- include pastTurnActions in game_state for debugging
+- On some turns I can't do anything except ending my turn :(
+	- include pastTurnActions in game_state for debugging
 
 - crossbow without active hermits
 - timeout is not 1 hour (needs more testing)

@@ -77,7 +77,7 @@ class GrianRareHermitCard extends HermitCard {
 				// TODO - this doesn't run the discarded hook
 				currentPlayer.discarded.push(opponentActiveRow.effectCard)
 				opponentActiveRow.effectCard = null
-				return target
+				return
 			}
 
 			// need to store it to prevent the card from being discarded in case of death
