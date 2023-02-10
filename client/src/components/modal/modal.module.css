@@ -41,8 +41,8 @@
 }
 
 .title {
-	font-weight: bold;
-	font-size: 22px;
+	font-family: MinecraftBold;
+	font-size: 18px;
 }
 
 .content {

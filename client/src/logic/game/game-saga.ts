@@ -86,9 +86,9 @@ function* gameActionsSaga(initialGameState?: any): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: any): SagaIterator {
+	const chatTask = yield fork(chatSaga)
 	try {
 		yield put(gameStart())
-		yield fork(chatSaga)
 		const result = yield race({
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg, 'GAME_END'),
@@ -122,8 +122,7 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
 		console.log('Game ended')
 		yield put(gameEnd())
-		// to end chat saga
-		yield cancel()
+		yield cancel(chatTask)
 	}
 }
 

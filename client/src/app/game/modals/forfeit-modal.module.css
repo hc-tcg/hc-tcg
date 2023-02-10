@@ -1,0 +1,12 @@
+.description {
+	padding: 10px;
+}
+
+.options {
+	text-align: center;
+	padding-bottom: 10px;
+}
+
+.options button + button {
+	margin-left: 5px;
+}

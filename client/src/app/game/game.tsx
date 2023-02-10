@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'types/game-state'
 import {PickProcessT, PickedCardT} from 'types/pick-process'
@@ -9,6 +10,7 @@ import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import ForfeitModal from './modals/forfeit-modal'
 import MouseIndicator from './mouse-indicator'
 import EndGameOverlay from './end-game-overlay'
 import Chat from './chat'
@@ -77,6 +79,7 @@ function Game(props: Props) {
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	const [showForfeit, setShowForfeit] = useState<boolean>(false)
 	const dispatch = useDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
@@ -96,7 +99,7 @@ function Game(props: Props) {
 	}
 
 	const handleForfeit = () => {
-		dispatch(forfeit())
+		setShowForfeit(true)
 	}
 
 	const pickedCardsInstances = pickedCards
@@ -130,6 +133,8 @@ function Game(props: Props) {
 			</div>
 
 			<Chat />
+
+			{showForfeit && <ForfeitModal closeModal={() => setShowForfeit(false)} />}
 
 			{endGameOverlay && <EndGameOverlay reason={endGameOverlay} />}
 		</div>
