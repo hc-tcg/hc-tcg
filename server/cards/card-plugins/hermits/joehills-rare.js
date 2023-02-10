@@ -11,7 +11,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			health: 270,
 			primary: {
 				name: 'Grow Hills',
-				cost: ['explorer'],
+				cost: ['farm'],
 				damage: 50,
 				power: null,
 			},
