@@ -6,6 +6,14 @@
 
 .header {
 	padding: 15px;
+	display: flex;
+	gap: 15px;
+	align-items: center;
+}
+
+.limits {
+	font-family: Minecraft;
+	font-size: 12px;
 }
 
 .cards {

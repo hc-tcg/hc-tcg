@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
-import {setPlayerInfo, disconnect} from './session-actions'
+import {setPlayerInfo, disconnect, setNewDeck} from './session-actions'
 
 type PlayerInfoT = {
 	playerName: string
@@ -86,4 +86,11 @@ export function* logoutSaga(): SagaIterator {
 	clearSession()
 	socket.disconnect()
 	yield put(disconnect())
+}
+
+export function* newDeckSaga(): SagaIterator {
+	while (true) {
+		const result = yield call(receiveMsg, 'NEW_DECK')
+		yield put(setNewDeck(result.payload))
+	}
 }

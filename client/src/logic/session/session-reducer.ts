@@ -38,6 +38,11 @@ const loginReducer = (
 				connecting: false,
 				...action.payload,
 			}
+		case 'SET_NEW_DECK':
+			return {
+				...state,
+				playerDeck: action.payload,
+			}
 		default:
 			return state
 	}

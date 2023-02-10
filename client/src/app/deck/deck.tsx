@@ -55,6 +55,9 @@ const Deck = ({setMenuSection}: Props) => {
 		<div className={css.deck}>
 			<div className={css.header}>
 				<button onClick={backToMenu}>Back to menu</button>
+				<div className={css.limits}>
+					Pick 30-50 cards or your deck won't update.
+				</div>
 			</div>
 			<div className={css.cards}>
 				<div className={classnames(css.cardColumn, css.allCards)}>
@@ -67,7 +70,7 @@ const Deck = ({setMenuSection}: Props) => {
 					/>
 				</div>
 				<div className={classnames(css.cardColumn, css.selectedCards)}>
-					<div className={css.cardsTitle}>Your deck</div>
+					<div className={css.cardsTitle}>Your deck ({pickedCards.length})</div>
 					<CardList
 						cards={pickedCards}
 						onClick={removeCard}

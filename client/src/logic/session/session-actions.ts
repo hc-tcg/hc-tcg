@@ -22,3 +22,8 @@ export const disconnect = () => ({
 export const logout = () => ({
 	type: 'LOGOUT' as const,
 })
+
+export const setNewDeck = (newDeck: Array<string>) => ({
+	type: 'SET_NEW_DECK',
+	payload: newDeck,
+})
