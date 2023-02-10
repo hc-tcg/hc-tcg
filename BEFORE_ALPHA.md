@@ -1,6 +1,6 @@
 # Pre-alpha 1
 - Go through all cards, make sure at least their main funcionality is working
-- Indicate when you have a card selected
+- Indicate when you have a card selected - in mroe visible way
 
 
 # Pre-alpha 2
