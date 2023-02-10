@@ -24,3 +24,18 @@
 .deckButton {
 	background: #6666cc;
 }
+
+.info {
+	margin-top: 20px;
+	color: #dedede;
+	font-size: 11px;
+	font-family: Minecraft;
+}
+
+.info a {
+	color: lightblue;
+}
+
+.info a:active {
+	color: #aaaaff;
+}

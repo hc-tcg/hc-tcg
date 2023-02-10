@@ -36,6 +36,17 @@ function MainMenu({setMenuSection}: Props) {
 				Change your deck
 			</button>
 			<button onClick={handleLogOut}>Log Out</button>
+
+			<div className={css.info}>
+				For info or feedback about this project{' '}
+				<a
+					href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
+					target="_blank"
+				>
+					click here
+				</a>
+				.
+			</div>
 		</div>
 	)
 }
