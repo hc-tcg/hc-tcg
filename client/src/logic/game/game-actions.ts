@@ -1,6 +1,7 @@
 import {GameStatePayload} from 'types/game-state'
 import {CardT, GameEndReasonT} from 'types/game-state'
 import {PickProcessT, PickedCardT} from 'types/pick-process'
+import {MessageInfoT} from 'types/chat'
 
 export const gameState = (gameState: GameStatePayload) => ({
 	type: 'GAME_STATE' as const,
@@ -93,4 +94,14 @@ export const attack = (
 ) => ({
 	type: 'ATTACK' as const,
 	payload: {type, pickedCards},
+})
+
+export const chatMessage = (message: string) => ({
+	type: 'CHAT_MESSAGE',
+	payload: message,
+})
+
+export const chatUpdate = (messages: Array<MessageInfoT>) => ({
+	type: 'CHAT_UPDATE',
+	payload: messages,
 })

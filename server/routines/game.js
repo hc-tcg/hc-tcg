@@ -21,6 +21,7 @@ import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
 import {HookMap, SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
 import registerCards from '../cards/card-plugins'
+import chatSaga from './chat'
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
@@ -415,11 +416,13 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			turnEnd: new SyncHook(['derived']),
 			gameEnd: new SyncHook([]),
 		},
+		chat: [],
 	}
 
 	registerCards(game)
 
 	yield fork(sendGameStateOnReconnect, allPlayers, gamePlayerIds, game)
+	yield fork(chatSaga, allPlayers, gamePlayerIds, game)
 
 	game.hooks.gameStart.call()
 

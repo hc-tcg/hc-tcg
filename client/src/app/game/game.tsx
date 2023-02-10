@@ -11,7 +11,7 @@ import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
 import MouseIndicator from './mouse-indicator'
 import EndGameOverlay from './end-game-overlay'
-import CARDS from 'server/cards'
+import Chat from './chat'
 import {
 	getGameState,
 	getSelectedCard,
@@ -128,6 +128,8 @@ function Game(props: Props) {
 					title="Forfeit"
 				/>
 			</div>
+
+			<Chat />
 
 			{endGameOverlay && <EndGameOverlay reason={endGameOverlay} />}
 		</div>

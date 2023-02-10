@@ -14,8 +14,12 @@ export const getGameState = (state: RootState): GameState | null => {
 	return getGame(state).gameState
 }
 
+export const getPlayerStates = (state: RootState) => {
+	return getGameState(state)?.players || null
+}
+
 export const getPlayerStateById = (playerId: string) => (state: RootState) => {
-	return getGameState(state)?.players[playerId] || null
+	return getPlayerStates(state)?.[playerId] || null
 }
 
 export const getPlayerState = (state: RootState) => {
@@ -52,4 +56,8 @@ export const getPickProcess = (state: RootState) => {
 
 export const getEndGameOverlay = (state: RootState) => {
 	return getGame(state).endGameOverlay
+}
+
+export const getChatMessages = (state: RootState) => {
+	return getGame(state).chat
 }

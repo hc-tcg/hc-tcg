@@ -6,6 +6,7 @@ import {
 	put,
 	race,
 	takeLatest,
+	cancel,
 } from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
@@ -14,6 +15,7 @@ import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import slotSaga from './tasks/slot-saga'
 import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
+import chatSaga from './tasks/chat-saga'
 import {gameState, gameStart, gameEnd, showEndGameOverlay} from './game-actions'
 import {getEndGameOverlay, getOpponentId} from './game-selectors'
 
@@ -86,6 +88,7 @@ function* gameActionsSaga(initialGameState?: any): SagaIterator {
 function* gameSaga(initialGameState?: any): SagaIterator {
 	try {
 		yield put(gameStart())
+		yield fork(chatSaga)
 		const result = yield race({
 			game: call(gameActionsSaga, initialGameState),
 			gameEnd: call(receiveMsg, 'GAME_END'),
@@ -119,6 +122,8 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
 		console.log('Game ended')
 		yield put(gameEnd())
+		// to end chat saga
+		yield cancel()
 	}
 }
 
