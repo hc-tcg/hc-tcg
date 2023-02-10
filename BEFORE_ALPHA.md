@@ -13,7 +13,7 @@
 
 - crossbow without active hermits
 - timeout is not 1 hour (needs more testing)
-
+- my deck got somehow reset after finshing a game
 
 - Better deck managmenet + localStorage
 - Move REQS for validation on BE and use them there

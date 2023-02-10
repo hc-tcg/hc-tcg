@@ -9,3 +9,18 @@
 	color: white;
 	font-family: Minecraft;
 }
+
+.info {
+	margin-top: 20px;
+	color: #dedede;
+	font-size: 11px;
+	font-family: Minecraft;
+}
+
+.info a {
+	color: lightblue;
+}
+
+.info a:active {
+	color: #aaaaff;
+}

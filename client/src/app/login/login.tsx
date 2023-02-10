@@ -21,15 +21,27 @@ function Login() {
 			{connecting ? (
 				<div className={css.connecting}>Connecting...</div>
 			) : (
-				<form onSubmit={handlePlayerName}>
-					<input
-						maxLength={25}
-						name="playerName"
-						placeholder="Player name..."
-						autoFocus
-					/>
-					<button>Next</button>
-				</form>
+				<>
+					<form onSubmit={handlePlayerName}>
+						<input
+							maxLength={25}
+							name="playerName"
+							placeholder="Player name..."
+							autoFocus
+						/>
+						<button>Next</button>
+					</form>
+					<div className={css.info}>
+						For info or feedback about this project{' '}
+						<a
+							href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
+							target="_blank"
+						>
+							click here
+						</a>
+						.
+					</div>
+				</>
 			)}
 		</div>
 	)
