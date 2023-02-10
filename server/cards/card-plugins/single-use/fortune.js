@@ -16,9 +16,14 @@ class FortuneSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, currentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
-				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
+				currentPlayer.custom[this.id] = true
 				return 'DONE'
 			}
+		})
+
+		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+			const {currentPlayer} = derivedState
+			delete currentPlayer.custom[this.id]
 		})
 	}
 }

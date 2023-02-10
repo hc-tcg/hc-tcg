@@ -119,7 +119,7 @@ export function discardSingleUse(game, playerState) {
 
 export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
-	const fortune = currentPlayer.coinFlips['fortune']?.[0] === 'heads'
+	const fortune = !!currentPlayer.custom['fortune']
 	const result = []
 	for (let i = 0; i < times; i++) {
 		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
