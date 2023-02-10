@@ -30,8 +30,13 @@ class TangoTekRareHermitCard extends HermitCard {
 
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, typeAction, currentPlayer, opponentPlayer} =
-				derivedState
+			const {
+				attackerHermitCard,
+				typeAction,
+				currentPlayer,
+				opponentPlayer,
+				playerActiveRow,
+			} = derivedState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -47,7 +52,10 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			const playerHasOtherHermits =
 				currentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-			if (playerHasOtherHermits) currentPlayer.board.activeRow = null
+			if (playerHasOtherHermits) {
+				playerActiveRow.ailments.push('knockedout')
+				currentPlayer.board.activeRow = null
+			}
 
 			return target
 		})
