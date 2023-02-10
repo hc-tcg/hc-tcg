@@ -104,9 +104,11 @@ function* attackSaga(game, turnAction, derivedState) {
 		const weaknessDamage = strengths.includes(targetHermitInfo.hermitType)
 			? WEAKNESS_DAMAGE
 			: 0
-		const totalDamage =
-			Math.max(hermitAttack + target.damage + weaknessDamage - protection, 0) *
-			target.multiplier
+		const totalDamage = Math.max(
+			(hermitAttack + target.damage + weaknessDamage) * target.multiplier -
+				protection,
+			0
+		)
 
 		if (!target.reverseDamage) {
 			target.row.health = Math.min(maxHealth, health - totalDamage)
