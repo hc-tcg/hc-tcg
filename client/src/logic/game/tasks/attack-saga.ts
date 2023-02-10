@@ -45,7 +45,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const cardId = hermitCard.cardId
 	const cardInfo = CARDS[hermitCard.cardId]
 	const hermitAttack = cardInfo?.[type] || null
-	if (cardInfo?.reqsOn === 'attack') {
+	if (cardInfo?.reqsOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(
 			runPickProcessSaga,
 			hermitAttack?.name || cardInfo.name,
