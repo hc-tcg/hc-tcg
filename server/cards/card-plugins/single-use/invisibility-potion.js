@@ -1,7 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {flipCoin} from '../../../utils'
 
-// TODO - whoops, this is supposed to affect opponent not current player!
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -15,27 +14,29 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer} = derivedState
+			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
 				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
+				opponentPlayer.custom[this.id] = currentPlayer.coinFlips[this.id][0]
 				return 'DONE'
 			}
 		})
 
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {board, coinFlips} = derivedState.currentPlayer
-			const isInvisCard = board.singleUseCard?.cardId === this.id
-			const isUsed = board.singleUseCardUsed
+			const {custom} = derivedState.currentPlayer
+			if (!custom[this.id]) return target
 
-			if (isInvisCard && isUsed && coinFlips[this.id][0]) {
-				if (coinFlips[this.id][0] === 'heads') {
-					target.multiplier *= this.multiplier
-				} else if (coinFlips[this.id][0] === 'tails') {
-					target.multiplier = 0
-				}
-				delete derivedState.currentPlayer.coinFlips[this.id]
+			if (custom[this.id] === 'heads') {
+				target.multiplier *= 0
+			} else if (custom[this.id] === 'tails') {
+				target.multiplier = this.multiplier
 			}
 			return target
+		})
+
+		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+			const {custom} = derivedState.currentPlayer
+			if (custom[this.id]) delete custom[this.id]
 		})
 	}
 }

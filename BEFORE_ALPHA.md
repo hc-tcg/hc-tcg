@@ -1,6 +1,8 @@
 # Pre-alpha 1
 - Go through all cards, make sure at least their main funcionality is working
-- Indicate when you have a card selected - in mroe visible way
+- Indicate when you have a card selected - in more visible way
+- Milk bucket on hermit doesnt remove effect (also on steal)
+- better icons
 
 
 # Pre-alpha 2

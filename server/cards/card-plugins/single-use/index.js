@@ -43,7 +43,7 @@ const SINGLE_USE_CARDS = [
 	new LavaBucketSingleUseCard(),
 	new SplashPotionOfPoisonSingleUseCard(),
 	new NetheriteSwordSingleUseCard(),
-	// new InvisibilityPotionSingleUseCard(),
+	new InvisibilityPotionSingleUseCard(),
 	new ClockSingleUseCard(),
 	new ComposterSingleUseCard(),
 	new FlintAndSteelSingleUseCard(),

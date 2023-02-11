@@ -184,6 +184,7 @@ function* leaveMatchmaking(allPlayers, action) {
 	delete games[game.id]
 }
 
+// TODO - check cleanups
 function* cleanUpSaga(allPlayers) {
 	while (true) {
 		yield delay(1000 * 60)
