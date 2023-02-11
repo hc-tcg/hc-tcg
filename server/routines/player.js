@@ -1,5 +1,6 @@
 import {takeEvery, all, put, take, race, delay} from 'redux-saga/effects'
 import {getStarterPack} from '../utils/state-gen'
+import {validateDeck} from '../utils'
 import CARDS from '../cards'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
@@ -91,8 +92,9 @@ function* updateDeckSaga(players, action) {
 	if (!player) return
 	if (!newDeck || !Array.isArray(newDeck)) return
 	newDeck = newDeck.filter((cardId) => cardId in CARDS)
-	if (newDeck.length < 30 || newDeck.length > 50) return
-	// TODO - validate deck
+
+	const validationMessage = validateDeck(newDeck)
+	if (validationMessage) return
 	player.playerDeck = newDeck
 
 	player.socket?.emit('NEW_DECK', {

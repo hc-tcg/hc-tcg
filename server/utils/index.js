@@ -127,3 +127,31 @@ export function flipCoin(currentPlayer, times = 1) {
 	}
 	return result
 }
+
+/*
+@param deckCards Array<string>
+*/
+export const validateDeck = (deckCards) => {
+	if (deckCards.length !== 42) return 'Deck must have exactly 42 cards.'
+
+	const common = deckCards.filter((cardId) => CARDS[cardId].rarity === 'common')
+	const rare = deckCards.filter((cardId) => CARDS[cardId].rarity === 'rare')
+	const ur = deckCards.filter((cardId) => CARDS[cardId].rarity === 'ultra_rare')
+
+	const tooManyDuplicates = deckCards.some((cardId) => {
+		if (CARDS[cardId].type === 'item') return false
+		const duplicates = deckCards.filter(
+			(filterCardId) => filterCardId === cardId
+		)
+		return duplicates.length > 3
+	})
+
+	if (tooManyDuplicates)
+		return 'No card other than items cards can be more than 3 times in your deck.'
+
+	if (rare.length > 12) return 'Deck can not have more than 12 rare cards.'
+	if (ur.length > 3) return 'Deck can not have more than 3 ultra rare cards.'
+	const uniqueUr = Array.from(new Set(ur))
+	if (uniqueUr.length < ur.length)
+		return 'You can not have the same ultra rare card multiple times.'
+}

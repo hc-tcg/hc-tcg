@@ -3,6 +3,7 @@
 - Indicate when you have a card selected - in more visible way
 - Milk bucket on hermit doesnt remove effect (also on steal)
 - better icons
+- Bdubs/Bed should restore health immediately
 
 
 # Pre-alpha 2

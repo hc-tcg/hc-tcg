@@ -1,47 +1,101 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
 
-export function getStarterPack() {
-	// TODO - Beef had 42 cards in decks for TangoVsXisuma match (also in EP41 he said 42 is max)
-	const allCards = Object.values(CARDS).sort(() => 0.5 - Math.random())
+function randomBetween(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
-	// HERMITS
+export function getStarterPack() {
+	const hermitTypesCount = randomBetween(2, 3)
 	const hermitTypes = Object.keys(STRENGTHS)
 		.sort(() => 0.5 - Math.random())
-		.slice(0, 3)
+		.slice(0, hermitTypesCount)
 
-	const hermits = allCards
-		.filter(
-			(card) => card.type === 'hermit' && hermitTypes.includes(card.hermitType)
-		)
-		.slice(0, 8)
+	const cards = Object.values(CARDS).filter(
+		(cardInfo) =>
+			!['hermit', 'item'].includes(cardInfo.type) ||
+			hermitTypes.includes(cardInfo.hermitType)
+	)
 
-	// ITEMS
-	let itemCards = allCards.filter((card) => card.type === 'item')
-	let items = []
-	for (let hermit of hermits) {
-		const hermitItemCards = itemCards.filter(
-			(itemCard) => itemCard.hermitType === hermit.hermitType
-		)
-		const commonItem = hermitItemCards.find((item) => item.rarity === 'common')
-		const rareItem = hermitItemCards.find((item) => item.rarity === 'rare')
+	const hermitCards = cards.filter((cardInfo) => cardInfo.type === 'hermit')
+	const effectCards = cards.filter((cardInfo) =>
+		['effect', 'single_use'].includes(cardInfo.type)
+	)
 
-		const hasTriple = hermit.secondary.cost.length > 2
-		for (let i = 0, j = hasTriple ? 3 : 2; i < j; i++) {
-			const isRare = Math.random() > 0.85
-			items.push(isRare ? rareItem : commonItem)
-			if (isRare) j--
-		}
+	const hermitCount = hermitTypesCount === 2 ? 8 : 10
+	const deck = []
+
+	const itemsCosts = {}
+
+	// hermits
+	while (deck.length < hermitCount) {
+		const randomIndex = Math.floor(Math.random() * hermitCards.length)
+		const hermitCard = hermitCards[randomIndex]
+
+		const duplicates = deck.filter((card) => card.id === hermitCard.id)
+		const rarity = hermitCard.rarity
+		if (rarity === 'ultra_rare' && duplicates.length >= 1) continue
+		if (rarity === 'rare' && duplicates.length >= 2) continue
+		if (duplicates.length >= 3) continue
+
+		deck.push(hermitCard)
+
+		const cost = hermitCard.secondary.cost.filter(
+			(hermitType) => hermitType === hermitCard.hermitType
+		).length
+		itemsCosts[hermitCard.hermitType] = itemsCosts[hermitCard.hermitType] || 0
+		itemsCosts[hermitCard.hermitType] += cost
 	}
 
-	// EFFECTS
-	const otherCards = allCards
-		.filter((card) => !['hermit', 'item'].includes(card.type))
-		.slice(0, 42 - items.length - hermits.length)
+	// items
+	for (let hermitType in itemsCosts) {
+		let total = itemsCosts[hermitType]
+		let totalRare = 0
+		if (total < 3) total = 3
+		if (total > 4) {
+			totalRare += 1
+			total -= 1
+		}
+		if (total > 6) {
+			totalRare += 1
+			total -= 1
+		}
+		if (total > 8) total = 8
 
-	const pack = [...hermits, ...items, ...otherCards].map((card) => card.id)
+		const currenTotalRare = deck.filter((card) => card.rarity === 'rare').length
+		if (totalRare + currenTotalRare > 12) {
+			const prevTotalRare = totalRare
+			totalRare = Math.max(currenTotalRare - 12, 0)
+			total += prevTotalRare - totalRare
+		}
 
-	return pack
+		for (let i = 0; i < totalRare; i++)
+			deck.push(CARDS[`item_${hermitType}_rare`])
+		for (let i = 0; i < total; i++)
+			deck.push(CARDS[`item_${hermitType}_common`])
+	}
+
+	// effects
+	while (deck.length < 42) {
+		const effectCard =
+			effectCards[Math.floor(Math.random() * effectCards.length)]
+
+		const totalRare = deck.filter((card) => card.rarity === 'rare').length
+		const totalUr = deck.filter((card) => card.rarity === 'ultra_rare').length
+
+		if (totalRare >= 12 && effectCard.rarity === 'rare') continue
+		if (totalUr >= 3 && effectCard.rarity === 'ultra_rare') continue
+
+		const duplicates = deck.filter((card) => card.id === effectCard.id)
+		const rarity = effectCard.rarity
+		if (rarity === 'ultra_rare' && duplicates.length >= 1) continue
+		if (rarity === 'rare' && duplicates.length >= 2) continue
+		if (duplicates.length >= 3) continue
+		deck.push(effectCard)
+	}
+
+	const deckIds = deck.map((card) => card.id)
+	return deckIds
 }
 
 export function getEmptyRow() {
