@@ -89,6 +89,12 @@ const getDescription = (card: CardInfoT): React.ReactNode => {
 	return result
 }
 
+const joinJsx = (array: Array<React.ReactNode>) => {
+	if (array.length === 0) return <span>None</span>
+	if (array.length < 2) return array
+	return array.reduce((prev: any, curr: any): any => [prev, ', ', curr])
+}
+
 const getStrengthsAndWeaknesses = (card: CardInfoT): React.ReactNode => {
 	if (card.type !== 'hermit') return null
 
@@ -101,23 +107,23 @@ const getStrengthsAndWeaknesses = (card: CardInfoT): React.ReactNode => {
 		<div className={css.strengthsAndWeaknesses}>
 			<div className={css.strengths}>
 				<span className={css.swTitle}>Strengths: </span>
-				{strengths
-					.map((hermitType) => (
+				{joinJsx(
+					strengths.map((hermitType) => (
 						<span key={hermitType} className={css[hermitType]}>
 							{HERMIT_TYPES[hermitType]}
 						</span>
 					))
-					.reduce((prev: any, curr: any): any => [prev, ', ', curr])}
+				)}
 			</div>
 			<div className={css.weaknesses}>
 				<span className={css.swTitle}>Weaknesses: </span>
-				{weaknesses
-					.map((hermitType) => (
+				{joinJsx(
+					weaknesses.map((hermitType) => (
 						<span key={hermitType} className={css[hermitType]}>
 							{HERMIT_TYPES[hermitType]}
 						</span>
 					))
-					.reduce((prev: any, curr: any): any => [prev, ', ', curr])}
+				)}
 			</div>
 		</div>
 	)

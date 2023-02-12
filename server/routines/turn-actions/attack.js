@@ -141,6 +141,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		)
 	}
 
+	// TODO - This will apply chorus fruit for hermits like mumbo!
 	const anyDamage = targets.some((target) => target.damage)
 	if (anyDamage) applySingleUse(currentPlayer)
 

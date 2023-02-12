@@ -34,6 +34,7 @@ class KeralisRareHermitCard extends HermitCard {
 				typeAction,
 				attackerActiveRow,
 				pickedCardsInfo,
+				currentPlayer,
 			} = derivedState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
@@ -49,6 +50,12 @@ class KeralisRareHermitCard extends HermitCard {
 				healTarget.isActive
 			)
 				return target
+
+			// TODO - This prevents consecutive heal from being applied but
+			// user is still forced to pick afk hermit every time
+			const lastTurnUsed = currentPlayer.custom[attackerHermitCard.cardInstance]
+			if (lastTurnUsed && lastTurnUsed + 2 >= game.state.turn) return target
+			currentPlayer.custom[attackerHermitCard.cardInstance] = game.state.turn
 
 			healTarget.row.health = Math.min(
 				healTarget.row.health + this.heal,

@@ -39,7 +39,7 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	} else if (req.active === true) {
 		location = 'active hermit'
 	} else if (req.active === false) {
-		location = 'afk hermit'
+		location = 'afk hermits'
 	} else {
 		location = 'side of the board'
 	}

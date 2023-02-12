@@ -32,7 +32,7 @@ class GrianRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 50,
 				power:
-					"Flip a Coin.\n\nIf heads, Grian takes opponent's active effect card.\n\nPlayer can choose to attach card or discard.",
+					"Flip a Coin.\n\nIf heads, Grian takes opponent's active effect card.\n\nPlayer can choose to attach card or discard.\n\n",
 			},
 			secondary: {
 				name: 'Start a War',
@@ -88,29 +88,22 @@ class GrianRareHermitCard extends HermitCard {
 		})
 
 		game.hooks.followUp.tap(this.id, (turnAction, derivedState) => {
-			const {pickedCardsInfo, currentPlayer, opponentActiveRow, followUp} =
-				derivedState
+			const {currentPlayer, playerActiveRow, followUp} = derivedState
+			if (followUp !== this.id) return
+
+			const attach = !!turnAction.payload?.attach
 
 			const effectCard = currentPlayer.custom[this.id]
 			delete currentPlayer.custom[this.id]
-
-			if (followUp !== this.id) return
 			if (!effectCard) return 'INVALID'
 
-			const grianPickedCards = pickedCardsInfo[this.id] || []
-			if (grianPickedCards.length !== 1) {
+			if (!attach || playerActiveRow.effectCard) {
 				currentPlayer.discarded.push(effectCard)
 				return 'DONE'
 			}
 
-			const targetSlotInfo = grianPickedCards[0]
-			if (targetSlotInfo.card !== null) return 'INVALID'
-			if (targetSlotInfo.slotType !== 'effect') return 'INVALID'
-			if (targetSlotInfo.playerId !== currentPlayer.id) return 'INVALID'
-			if (targetSlotInfo.row.hermitCard === null) return 'INVALID'
-
 			// TODO - deal with bed (same as emerald)
-			targetSlotInfo.row.effectCard = effectCard
+			playerActiveRow.effectCard = effectCard
 
 			return 'DONE'
 		})

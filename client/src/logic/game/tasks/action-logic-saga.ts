@@ -18,20 +18,11 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 	yield put(setOpenedModalId('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
-		yield put(followUp({}))
+		yield put(followUp({attach: false}))
 		return
 	}
 
-	let pickedCards = null
-	const hermitCard = CARDS['grian_rare'] as HermitCardT
-	const borrowAttack = hermitCard.primary
-	while (!pickedCards)
-		pickedCards = yield call(
-			runPickProcessSaga,
-			borrowAttack.name,
-			hermitCard.reqs
-		)
-	yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
+	yield put(followUp({attach: true}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {

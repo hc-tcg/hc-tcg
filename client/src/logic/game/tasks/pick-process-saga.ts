@@ -5,8 +5,13 @@ import {PickedCardT, PickRequirmentT, CardTypeT} from 'types/pick-process'
 import {CardT, PlayerState} from 'types/game-state'
 import CARDS from 'server/cards'
 import {equalCard} from 'server/utils'
+import {anyAvailableReqOptions} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {getPlayerStateById} from 'logic/game/game-selectors'
+import {
+	getPlayerStateById,
+	getPlayerState,
+	getOpponentState,
+} from 'logic/game/game-selectors'
 import {
 	setPickProcess,
 	updatePickProcess,
@@ -79,9 +84,12 @@ const isDuplicate = (
 	return pickedCards.some((pCard) => equalCard(pCard.card, pickedCard.card))
 }
 
-function* pickSaga(req: PickRequirmentT, pickAction: AnyPickActionT) {
+function* pickSaga(
+	req: PickRequirmentT,
+	pickAction: AnyPickActionT
+): SagaIterator<PickedCardT | void> {
 	const playerId = yield* select(getPlayerId)
-	let pickedCard =
+	let pickedCard: PickedCardT =
 		pickAction.type === 'SET_SELECTED_CARD'
 			? {slotType: 'hand', card: pickAction.payload, playerId}
 			: pickAction.payload
@@ -108,10 +116,20 @@ function* pickSaga(req: PickRequirmentT, pickAction: AnyPickActionT) {
 export function* runPickProcessSaga(
 	name: string,
 	reqs?: Array<PickRequirmentT>
-): SagaIterator {
+): SagaIterator<Array<PickedCardT> | null> {
 	try {
 		const playerId = yield* select(getPlayerId)
-		if (!name || !reqs || !playerId) return
+		if (!name || !reqs || !playerId) return null
+
+		const playerState = yield* select(getPlayerState)
+		const opponentState = yield* select(getOpponentState)
+
+		const pickPossible = anyAvailableReqOptions(
+			playerState,
+			opponentState,
+			reqs
+		)
+		if (!pickPossible) return []
 
 		yield put(
 			setPickProcess({

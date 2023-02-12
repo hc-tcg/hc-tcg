@@ -21,3 +21,6 @@
 - Limit slot clicks (onClick, cursor pointer, hover state) based on availableActions, selectedCard & pickProcess
 - on log out, remove user, not just disconnect
 - Deal with one player having TWO sockets connected.
+
+# Other ideas
+- Sound when it is your turn
