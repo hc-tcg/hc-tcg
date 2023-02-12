@@ -85,3 +85,8 @@
 .miner {
 	color: rgb(110, 105, 108);
 }
+
+.strengthsAndWeaknesses {
+	font-family: Minecraft;
+	margin-top: 3px;
+}

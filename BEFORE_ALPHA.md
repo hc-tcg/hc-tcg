@@ -2,8 +2,8 @@
 - Go through all cards, make sure at least their main funcionality is working
 - Indicate when you have a card selected - in more visible way
 - Milk bucket on hermit doesnt remove effect (also on steal)
-- better icons
 - Bdubs/Bed should restore health immediately
+- Somehow my chorus fruit, while attacking with mumbo got used up
 
 
 # Pre-alpha 2
@@ -13,10 +13,8 @@
 	- include pastTurnActions in game_state for debugging
 
 - crossbow without active hermits
-- timeout is not 1 hour (needs more testing)
-- my deck got somehow reset after finshing a game
 
-- Better deck managmenet + localStorage
+- Changed deck localStorage
 - Move REQS for validation on BE and use them there
 - Implement missing cards
 - Clear availableActions after an action until new game state arrives (some indicator?)

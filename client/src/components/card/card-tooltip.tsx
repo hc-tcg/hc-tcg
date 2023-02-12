@@ -1,7 +1,24 @@
 import React from 'react'
 import classnames from 'classnames'
-import {CardInfoT} from 'types/cards'
+import {CardInfoT, HermitTypeT} from 'types/cards'
+import STRENGTHS from 'server/const/strengths'
 import css from './card-tooltip.module.css'
+
+const TYPED_STRENGTHS = STRENGTHS as Record<HermitTypeT, Array<HermitTypeT>>
+
+const HERMIT_TYPES: Record<HermitTypeT, string> = {
+	balanced: 'Balanced',
+	builder: 'Builder',
+	speedrunner: 'Speedrunner',
+	redstone: 'Redstone',
+	farm: 'Farm',
+	pvp: 'PvP',
+	terraform: 'Terraform',
+	prankster: 'Prankster',
+	miner: 'Miner',
+	explorer: 'Explorer',
+	any: 'Unknown',
+}
 
 type Props = {
 	card: CardInfoT
@@ -72,6 +89,41 @@ const getDescription = (card: CardInfoT): React.ReactNode => {
 	return result
 }
 
+const getStrengthsAndWeaknesses = (card: CardInfoT): React.ReactNode => {
+	if (card.type !== 'hermit') return null
+
+	const strengths = TYPED_STRENGTHS[card.hermitType]
+	const weaknesses = Object.entries(TYPED_STRENGTHS)
+		.filter(([_, value]) => value.includes(card.hermitType))
+		.map(([key]) => key) as Array<HermitTypeT>
+
+	const result = (
+		<div className={css.strengthsAndWeaknesses}>
+			<div className={css.strengths}>
+				<span className={css.swTitle}>Strengths: </span>
+				{strengths
+					.map((hermitType) => (
+						<span key={hermitType} className={css[hermitType]}>
+							{HERMIT_TYPES[hermitType]}
+						</span>
+					))
+					.reduce((prev: any, curr: any): any => [prev, ', ', curr])}
+			</div>
+			<div className={css.weaknesses}>
+				<span className={css.swTitle}>Weaknesses: </span>
+				{weaknesses
+					.map((hermitType) => (
+						<span key={hermitType} className={css[hermitType]}>
+							{HERMIT_TYPES[hermitType]}
+						</span>
+					))
+					.reduce((prev: any, curr: any): any => [prev, ', ', curr])}
+			</div>
+		</div>
+	)
+	return result
+}
+
 const getName = (card: CardInfoT): React.ReactNode => {
 	if (card.type === 'item') {
 		return (
@@ -86,19 +138,6 @@ const getName = (card: CardInfoT): React.ReactNode => {
 const getSingleUse = (card: CardInfoT): React.ReactNode => {
 	if (card.type !== 'single_use') return null
 	return <div className={css.singleUse}>Single Use</div>
-}
-
-const HERMIT_TYPES: Record<string, string> = {
-	balanced: 'Balanced',
-	builder: 'Builder',
-	speedrunner: 'Speedrunner',
-	redstone: 'Redstone',
-	farm: 'Farm',
-	pvp: 'PvP',
-	terraform: 'Terraform',
-	prankster: 'Prankster',
-	miner: 'Miner',
-	explorer: 'Explorer',
 }
 
 const getHermitType = (card: CardInfoT): React.ReactNode => {
@@ -121,7 +160,10 @@ const CardTooltip = ({card}: Props) => {
 				{getHermitType(card)}
 				{getSingleUse(card)}
 			</div>
-			<div className={css.description}>{getDescription(card)}</div>
+			<div className={css.description}>
+				{getStrengthsAndWeaknesses(card)}
+				{getDescription(card)}
+			</div>
 		</div>
 	)
 }

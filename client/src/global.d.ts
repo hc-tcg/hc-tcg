@@ -1,5 +1,3 @@
 declare module 'server/cards'
 declare module 'server/const/strengths'
-declare module 'server/const/damage'
-declare module 'server/const/protection'
 declare module 'server/utils'
