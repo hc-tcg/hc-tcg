@@ -28,11 +28,11 @@ function* createPrivateSaga(): SagaIterator {
 		yield call(sendMsg, 'CREATE_PRIVATE_GAME')
 		const {payload: gameCode} = yield call(receiveMsg, 'PRIVATE_GAME_CODE')
 		yield put(codeReceived(gameCode))
-		yield race({
+		const result = yield race({
 			gameStart: call(receiveMsg, 'GAME_START'),
 			timeout: call(receiveMsg, 'MATCHMAKING_TIMEOUT'),
 		})
-		yield call(gameSaga)
+		if (result.gameStart) yield call(gameSaga)
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {

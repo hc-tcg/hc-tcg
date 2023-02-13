@@ -137,6 +137,7 @@ function* createPrivateGame(allPlayers, action) {
 
 	const gameId = Math.random().toString()
 	games[gameId] = {
+		createdTime: Date.now(),
 		id: gameId,
 		code: gameCode,
 		playerIds: [firstRequest.playerId],
