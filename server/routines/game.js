@@ -208,11 +208,18 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 		if (result !== 'INVALID') pastTurnActions.push('REMOVE_EFFECT')
 		//
 	} else if (turnAction.type === 'FOLLOW_UP') {
+		console.log('PLAYER_FOLLOW_UP: ', baseDerivedState.currentPlayer.followUp)
+		console.log(
+			'OPPONENT_FOLLOW_UP: ',
+			baseDerivedState.opponentPlayer.followUp
+		)
 		if (
 			!availableActions.includes('FOLLOW_UP') &&
 			!opponentAvailableActions.includes('FOLLOW_UP')
-		)
+		) {
+			console.log('FOLLOW_UP not allowed')
 			return
+		}
 		const result = yield call(followUpSaga, game, turnAction, derivedState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
