@@ -24,8 +24,6 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				power: null,
 			},
 		})
-
-		this.heal = 40
 	}
 
 	register(game) {

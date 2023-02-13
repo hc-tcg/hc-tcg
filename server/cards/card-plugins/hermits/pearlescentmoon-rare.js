@@ -24,8 +24,6 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 					'Opponent flips a coin on their next turn.\n\nIf heads, their attack misses.',
 			},
 		})
-
-		this.heal = 40
 	}
 
 	register(game) {

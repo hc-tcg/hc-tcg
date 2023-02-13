@@ -26,8 +26,6 @@ class GeminiTayRareHermitCard extends HermitCard {
 					'Flip a Coin.\n\nIf heads, Gem can play an additional effect card the same turn.',
 			},
 		})
-
-		this.heal = 40
 	}
 
 	register(game) {
