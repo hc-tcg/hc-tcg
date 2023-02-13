@@ -31,7 +31,7 @@ type FlipInfo = {
 	value: Array<'heads' | 'tails'>
 }
 
-// TODO - Use selecotrs instead of passing gameState
+// TODO - Use selectors instead of passing gameState
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector(getPlayerId)
 	const currentPlayer = useSelector(getPlayerStateById(gameState.turnPlayerId))

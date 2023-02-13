@@ -112,7 +112,6 @@ function* pickSaga(
 	return pickedCard
 }
 
-// todo - send reqs & name instead of card id
 export function* runPickProcessSaga(
 	name: string,
 	reqs?: Array<PickRequirmentT>

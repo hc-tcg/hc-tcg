@@ -3,9 +3,8 @@ import CARDS from '../../../cards'
 import {discardCard} from '../../../utils'
 
 // TODO - test this doesn't introduce issues when sleeping hermit dies
-// TODO - make this work with curse-of-vanishing
-// TODO - handle diamond steel
-// TODO - it says "NEXT two turns" so probs shouldnt sleep emmediatelly
+// TODO - make this work with effect such as Emerald, Borrow, Curse-of-vanishing, etc.
+// TODO - heal at the start not at the end of sleep
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({

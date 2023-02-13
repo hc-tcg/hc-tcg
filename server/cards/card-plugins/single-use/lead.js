@@ -5,7 +5,6 @@ import {equalCard} from '../../../utils'
 Last lead version:
 EP50 23:05
 */
-// TODO - limit this to only opponent side
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({

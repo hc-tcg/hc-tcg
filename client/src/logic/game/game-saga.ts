@@ -30,7 +30,6 @@ function* actionSaga(): SagaIterator {
 		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
 	})
 
-	// TODO - consider what is being send to backend and in which format
 	if (turnAction.playCard) {
 		yield call(sendMsg, 'PLAY_CARD', turnAction.playCard.payload)
 	} else if (turnAction.applyEffect) {

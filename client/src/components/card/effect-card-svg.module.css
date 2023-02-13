@@ -4,7 +4,6 @@
 }
 
 .card text {
-	/* TODO - Check other browsers */
 	dominant-baseline: hanging;
 	text-anchor: middle;
 	fill: white;

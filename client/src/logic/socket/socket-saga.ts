@@ -10,7 +10,6 @@ import {
 } from './socket-actions'
 import {getSession} from 'logic/session/session-selectors'
 
-// TODO - show connection indicator in top right corner
 export function* sendMsg(type: string, payload?: any): any {
 	while (true) {
 		if (socket.connected) {

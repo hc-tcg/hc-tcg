@@ -73,7 +73,6 @@ type Props = {}
 function Game(props: Props) {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
-	// TODO - this used to be array
 	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
 	const openedModalId = useSelector(getOpenedModalId)
 	const pickProcess = useSelector(getPickProcess)
