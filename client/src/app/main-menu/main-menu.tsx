@@ -38,14 +38,21 @@ function MainMenu({setMenuSection}: Props) {
 			<button onClick={handleLogOut}>Log Out</button>
 
 			<div className={css.info}>
-				For info or feedback about this project{' '}
 				<a
 					href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
 					target="_blank"
 				>
-					click here
+					<img src="/images/icons/reddit.svg" height="26" />
+					Reddit
 				</a>
-				.
+				<a href="https://github.com/martinkadlec0/hc-tcg" target="_blank">
+					<img src="/images/icons/github.svg" height="26" />
+					Github
+				</a>
+				<a href="https://discord.gg/AjGbqNfcQX" target="_blank">
+					<img src="/images/icons/discord.svg" height="26" />
+					Fan Discord
+				</a>
 			</div>
 		</div>
 	)
