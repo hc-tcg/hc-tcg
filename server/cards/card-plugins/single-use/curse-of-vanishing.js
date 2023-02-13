@@ -8,7 +8,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
 			description:
-				'Opponent is forced to discard their active Hermit\'s attached effect card.\n\nDiscard after use."',
+				"Opponent is forced to discard their active Hermit's attached effect card.\n\nDiscard after use.",
 		})
 	}
 	register(game) {
