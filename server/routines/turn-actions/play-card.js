@@ -2,6 +2,8 @@ import CARDS from '../../cards'
 import {equalCard} from '../../utils'
 
 function* playCardSaga(game, turnAction, derivedState) {
+	if (!turnAction.payload) return
+
 	const {currentPlayer, opponentPlayer, pastTurnActions, availableActions} =
 		derivedState
 	const {card, rowHermitCard, rowIndex, slotIndex, slotType} =

@@ -13,6 +13,21 @@ class MilkBucketEffectCard extends EffectCard {
 		this.reqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 	register(game) {
+		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
+			const {currentPlayer, opponentPlayer} = derivedState
+			const allRows = [
+				...currentPlayer.board.rows,
+				...opponentPlayer.board.rows,
+			]
+			allRows.forEach((row) => {
+				const isPoisoned = row.ailments.some((a) => a.id === 'poison')
+				const hasBucket = row.effectCard?.cardId === this.id
+				if (isPoisoned && hasBucket) {
+					row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+				}
+			})
+		})
+
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo.id === this.id) {

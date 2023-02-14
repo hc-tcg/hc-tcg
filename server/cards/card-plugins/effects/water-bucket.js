@@ -12,7 +12,23 @@ class WaterBucketEffectCard extends EffectCard {
 		this.reqsOn = 'apply'
 		this.reqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
+
 	register(game) {
+		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
+			const {currentPlayer, opponentPlayer} = derivedState
+			const allRows = [
+				...currentPlayer.board.rows,
+				...opponentPlayer.board.rows,
+			]
+			allRows.forEach((row) => {
+				const onFire = row.ailments.some((a) => a.id === 'fire')
+				const hasBucket = row.effectCard?.cardId === this.id
+				if (onFire && hasBucket) {
+					row.ailments = row.ailments.filter((a) => a.id !== 'fire')
+				}
+			})
+		})
+
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
 			const {singleUseInfo, pickedCardsInfo} = derivedState
 			if (singleUseInfo.id === this.id) {

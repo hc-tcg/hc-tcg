@@ -17,9 +17,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 				derivedState
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
-				if (opponentEffectCardInfo?.id === 'milk_bucket') {
-					discardCard(game, opponentActiveRow.effectCard)
-				} else {
+				if (opponentEffectCardInfo?.id !== 'milk_bucket') {
 					opponentActiveRow.ailments.push({id: 'poison', duration: -1})
 				}
 				return 'DONE'
