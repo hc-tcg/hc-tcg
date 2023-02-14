@@ -299,11 +299,6 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		buffers.dropping(10)
 	)
 
-	// ----------------
-	// start of a turn
-	// ----------------
-	const turnStart = game.hooks.turnStart.call(derivedState)
-
 	// ailment duration logic
 	for (let row of currentPlayer.board.rows) {
 		for (let ailment of row.ailments) {
@@ -318,8 +313,10 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 	}
 
 	// ----------------
-	// middle of a turn
+	// start of a turn
 	// ----------------
+	const turnStart = game.hooks.turnStart.call(derivedState)
+
 	while (true) {
 		if (turnStart === 'SKIP') break
 
