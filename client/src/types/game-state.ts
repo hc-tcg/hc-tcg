@@ -5,12 +5,17 @@ export type CardT = {
 	cardInstance: string
 }
 
+export type Ailment = {
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout'
+	duration: number
+}
+
 export type BoardRowT = {
 	hermitCard: CardT | null
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
 	health: number | null
-	ailments: Array<'poison' | 'fire' | 'sleeping' | 'knockedout'>
+	ailments: Array<Ailment>
 }
 
 export type CoinFlipT = 'heads' | 'tails'

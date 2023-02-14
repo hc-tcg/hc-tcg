@@ -14,7 +14,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 
 	// TODO - move logic to water/milk bucket plugins
 	const suBucket =
-		slotType == 'single_use' &&
+		slotType === 'single_use' &&
 		['water_bucket', 'milk_bucket'].includes(cardInfo.id)
 	if (cardInfo.type !== slotType && !suBucket) return 'INVALID'
 

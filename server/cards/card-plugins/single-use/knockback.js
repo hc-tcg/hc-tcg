@@ -28,7 +28,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				const hasOtherHermits =
 					opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
 				if (!hasOtherHermits || !opponentActiveRow) return target
-				opponentActiveRow.ailments.push('knockedout')
+				opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
 				opponentPlayer.board.activeRow = null
 				applySingleUse(currentPlayer)
 			}

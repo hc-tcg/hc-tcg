@@ -46,7 +46,7 @@ class EthosLabRareHermitCard extends HermitCard {
 				if (target.row.effectCard?.cardId === 'water_bucket') {
 					discardCard(game, target.row.effectCard)
 				} else {
-					target.row.ailments.push('fire')
+					target.row.ailments.push({id: 'fire', duration: -1})
 				}
 			}
 

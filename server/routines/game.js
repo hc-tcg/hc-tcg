@@ -91,14 +91,17 @@ function getAvailableActions(game, derivedState) {
 			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-			if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
-				actions.push('ZERO_ATTACK')
-			}
-			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
-				actions.push('PRIMARY_ATTACK')
-			}
-			if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
-				actions.push('SECONDARY_ATTACK')
+			// only add attack options if not sleeping
+			if (!activeRow.ailments.find(a => a.id === "sleeping")) {
+				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
+					actions.push('ZERO_ATTACK')
+				}
+				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+					actions.push('PRIMARY_ATTACK')
+				}
+				if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+					actions.push('SECONDARY_ATTACK')
+				}
 			}
 		}
 	}
@@ -296,9 +299,31 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		buffers.dropping(10)
 	)
 
+	// ----------------
+	// start of a turn
+	// ----------------
 	const turnStart = game.hooks.turnStart.call(derivedState)
 
-	turn_actions_cycle: while (true) {
+	// ailment duration logic
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			if (ailment.duration === 0) {
+				// time up, get rid of this ailment
+				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
+
+			} else if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
+	}
+
+
+	
+	// ----------------
+	// middle of a turn
+	// ----------------
+	while (true) {
 		if (turnStart === 'SKIP') break
 
 		let availableActions = getAvailableActions(game, derivedState)
@@ -332,18 +357,14 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 
 	turnActionChannel.close()
 
+	// ----------------
+	// end of a turn
+	// ----------------
+
 	// Apply damage from ailments
 	// TODO - https://www.youtube.com/watch?v=8iO7KGDxCks 1:21:00 - it seems ailment damage should be part of the toal attakc damage (and thus affected by special effects)
 	for (let row of opponentPlayer.board.rows) {
-		if (row.ailments.includes('fire')) row.health -= 20
-		if (row.ailments.includes('poison')) row.health -= 20
-	}
-
-	// TODO - ailments should have optional duration
-	for (let row of currentPlayer.board.rows) {
-		if (row.ailments.includes('knockedout')) {
-			row.ailments = row.ailments.filter((a) => a !== 'knockedout')
-		}
+		if (row.ailments.find(a => a.id === "fire" || a.id === "poison")) row.health -= 20
 	}
 
 	currentPlayer.coinFlips = {}

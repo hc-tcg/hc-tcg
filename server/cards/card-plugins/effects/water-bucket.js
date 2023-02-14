@@ -19,7 +19,7 @@ class WaterBucketEffectCard extends EffectCard {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
 				const {row} = suPickedCards[0]
-				row.ailments = row.ailments.filter((a) => a !== 'fire')
+				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 				return 'DONE'
 			}
 		})
