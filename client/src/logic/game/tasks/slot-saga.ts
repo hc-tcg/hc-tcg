@@ -36,7 +36,7 @@ function* pickWithSelectedSaga(
 	}
 
 	const suBucket =
-		slotType == 'single_use' &&
+		slotType === 'single_use' &&
 		['water_bucket', 'milk_bucket'].includes(selectedCardInfo.id)
 	if (selectedCardInfo.type !== slotType && !suBucket) {
 		console.log(

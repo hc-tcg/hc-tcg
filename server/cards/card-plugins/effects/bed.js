@@ -27,7 +27,7 @@ class BedEffectCard extends EffectCard {
 					const row = currentPlayer.board.rows[rowIndex]
 
 					// e.g. if bdubs used his atttack
-					if (row.ailments.find(a => a.id == "sleeping")) return
+					if (row.ailments.find(a => a.id === "sleeping")) return
 
 					// instantly heal to max hp
 					row.health = CARDS[row.hermitCard.cardId].health

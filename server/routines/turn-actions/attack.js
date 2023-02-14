@@ -37,7 +37,7 @@ function* attackSaga(game, turnAction, derivedState) {
 
 	const afkTargetRow =
 		suPickedCards.length === 1 &&
-		suPickedCards[0].playerId == opponentPlayer.id &&
+		suPickedCards[0].playerId === opponentPlayer.id &&
 		suPickedCards[0].rowIndex !== opponentPlayer.board.activeRow
 			? suPickedCards[0].row
 			: null

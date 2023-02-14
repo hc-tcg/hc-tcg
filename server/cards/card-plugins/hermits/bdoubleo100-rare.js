@@ -35,7 +35,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 
 			// e.g. if bed was used
-			if (attackerActiveRow.ailments.find(a => a.id == "sleeping")) return target
+			if (attackerActiveRow.ailments.find(a => a.id === "sleeping")) return target
 
 			if (attackerHermitCard.cardId === this.id) {
 				// shreep
