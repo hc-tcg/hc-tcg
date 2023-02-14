@@ -282,9 +282,10 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 
 	const turnActionChannel = yield actionChannel(
 		[
-			'FOLLOW_UP',
+			...['FOLLOW_UP'].map((type) => playerAction(type, opponentPlayer.id)),
 			...[
 				'PLAY_CARD',
+				'FOLLOW_UP',
 				'CHANGE_ACTIVE_HERMIT',
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
