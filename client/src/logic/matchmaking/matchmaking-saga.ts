@@ -1,4 +1,4 @@
-import {take, call, put, race} from 'redux-saga/effects'
+import {take, fork, takeEvery, call, put, race} from 'redux-saga/effects'
 import {cancelled} from 'typed-redux-saga'
 import {SagaIterator} from 'redux-saga'
 import {AnyAction} from 'redux'
@@ -72,30 +72,30 @@ function* enterMatchmaking(action: AnyAction): SagaIterator {
 	}
 }
 
-function* matchmakingSaga(): SagaIterator {
-	while (true) {
-		const menuResult = yield race({
-			startMatchmaking: take([
-				'RANDOM_MATCHMAKING',
-				'CREATE_PRIVATE_GAME',
-				'JOIN_PRIVATE_GAME',
-			]),
-			gameReconnect: call(receiveMsg, 'GAME_STATE'),
-		})
-		if (menuResult.startMatchmaking) {
-			const result = yield race({
-				matchmaking: call(enterMatchmaking, menuResult.startMatchmaking),
-				leave: take('LEAVE_MATCHMAKING'),
-			})
-			if (result.hasOwnProperty('matchmaking')) {
-				yield put(leaveMatchmaking())
-			} else {
-				yield call(sendMsg, 'LEAVE_MATCHMAKING')
-			}
-		} else {
-			yield call(gameSaga, menuResult.gameReconnect.payload)
-		}
+function* reconnectSaga(): SagaIterator {
+	const gameReconnect = yield call(receiveMsg, 'GAME_STATE')
+	yield put(leaveMatchmaking())
+	yield call(gameSaga, gameReconnect.payload)
+}
+
+function* newMatchmaking(action: AnyAction): SagaIterator {
+	const result = yield race({
+		matchmaking: call(enterMatchmaking, action),
+		leave: take('LEAVE_MATCHMAKING'),
+	})
+	if (result.hasOwnProperty('matchmaking')) {
+		yield put(leaveMatchmaking())
+	} else {
+		yield call(sendMsg, 'LEAVE_MATCHMAKING')
 	}
+}
+
+function* matchmakingSaga(): SagaIterator {
+	yield takeEvery(
+		['RANDOM_MATCHMAKING', 'CREATE_PRIVATE_GAME', 'JOIN_PRIVATE_GAME'],
+		newMatchmaking
+	)
+	yield fork(reconnectSaga)
 }
 
 export default matchmakingSaga

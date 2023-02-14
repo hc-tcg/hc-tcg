@@ -13,12 +13,12 @@ import gameSaga from './game'
 
 const games = Object.create(null)
 
-const createGameRecord = (id, task, playerIds) => ({
+const createGameRecord = (id, code, playerIds) => ({
 	createdTime: Date.now(),
 	id,
-	task,
+	code,
 	playerIds,
-	code: null,
+	task: null,
 })
 
 const broadcast = (allPlayers, playerIds, type, payload = {}) => {
@@ -99,49 +99,45 @@ function* gameManager(allPlayers, gameId) {
 	}
 }
 
-function* randomMatchmaking(allPlayers) {
-	while (true) {
-		const firstRequest = yield take('RANDOM_MATCHMAKING')
-		console.log('first player waiting')
-		const result = yield take([
-			'RANDOM_MATCHMAKING',
-			(action) =>
-				action.type === 'LEAVE_MATCHMAKING' &&
-				firstRequest.playerId === action.playerId,
-			(action) =>
-				action.type === 'PLAYER_DISCONNECTED' &&
-				firstRequest.socket === action.payload.socket,
-		])
-		// TODO - use ids from session, these could be fake from client
-		if (result.type === 'RANDOM_MATCHMAKING') {
-			console.log('second player connected, starting game')
-			// TODO - use singleton for all players map instead?
-			const gameId = Math.random().toString()
-			const playerIds = [firstRequest.playerId, result.playerId]
-			broadcast(allPlayers, playerIds, 'GAME_START')
-			const gameTask = yield spawn(gameSaga, allPlayers, playerIds)
-			games[gameId] = createGameRecord(gameId, gameTask, playerIds)
-			yield fork(gameManager, allPlayers, gameId)
-		} else {
-			console.log('Random matchmaking cancelled: ', result.type)
-		}
+const inGame = (playerId) => {
+	return Object.values(games).some((game) => game.playerIds.includes(playerId))
+}
+
+// TODO - use ids from session, these could be fake from client
+function* randomMatchmaking(allPlayers, action) {
+	const {playerId} = action
+	if (inGame(playerId)) return
+
+	const randomGame = Object.values(games).find(
+		(game) => game.code === null && !game.task
+	)
+
+	if (randomGame) {
+		console.log('second player connected, starting game')
+		randomGame.playerIds.push(playerId)
+		broadcast(allPlayers, randomGame.playerIds, 'GAME_START')
+
+		const gameTask = yield spawn(gameSaga, allPlayers, randomGame.playerIds)
+		randomGame.task = gameTask
+		yield fork(gameManager, allPlayers, randomGame.id)
+		return
 	}
+
+	console.log('Random game created: ', playerId)
+	const gameId = Math.random().toString()
+	games[gameId] = createGameRecord(gameId, null, [playerId])
 }
 
 function* createPrivateGame(allPlayers, action) {
-	const firstRequest = action
+	const {playerId} = action
+	if (inGame(playerId)) return
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
-	broadcast(allPlayers, [firstRequest.playerId], 'PRIVATE_GAME_CODE', gameCode)
+	broadcast(allPlayers, [playerId], 'PRIVATE_GAME_CODE', gameCode)
 
-	console.log('Private game created: ', firstRequest.playerId)
+	console.log('Private game created: ', playerId)
 
 	const gameId = Math.random().toString()
-	games[gameId] = {
-		createdTime: Date.now(),
-		id: gameId,
-		code: gameCode,
-		playerIds: [firstRequest.playerId],
-	}
+	games[gameId] = createGameRecord(gameId, gameCode, [playerId])
 }
 
 function* joinPrivateGame(allPlayers, action) {
@@ -149,18 +145,8 @@ function* joinPrivateGame(allPlayers, action) {
 	const game = Object.values(games).find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	const differentPlayers = playerId !== game?.playerIds[0]
-	console.log(
-		'Joining private game: ' +
-			playerId +
-			' ' +
-			invalidCode.toString() +
-			' ' +
-			gameRunning.toString() +
-			' ' +
-			differentPlayers.toString()
-	)
-	if (invalidCode || gameRunning || !differentPlayers) {
+	console.log('Joining private game: ' + playerId)
+	if (invalidCode || gameRunning || inGame(playerId)) {
 		broadcast(allPlayers, [playerId], 'INVALID_CODE')
 		return
 	}
@@ -181,11 +167,10 @@ function* leaveMatchmaking(allPlayers, action) {
 		(game) => !game.task && game.playerIds.includes(playerId)
 	)
 	if (!game) return
-	console.log('Private game cancelled: ', playerId)
+	console.log('Matchmaking cancelled: ', playerId)
 	delete games[game.id]
 }
 
-// TODO - check cleanups
 function* cleanUpSaga(allPlayers) {
 	while (true) {
 		yield delay(1000 * 60)
@@ -204,8 +189,8 @@ function* cleanUpSaga(allPlayers) {
 
 function* matchmakingSaga(allPlayers) {
 	yield all([
-		fork(randomMatchmaking, allPlayers),
 		fork(cleanUpSaga, allPlayers),
+		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking, allPlayers),
 		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame, allPlayers),
 		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame, allPlayers),
 		takeEvery(
