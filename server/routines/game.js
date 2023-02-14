@@ -91,14 +91,17 @@ function getAvailableActions(game, derivedState) {
 			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
-			if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
-				actions.push('ZERO_ATTACK')
-			}
-			if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
-				actions.push('PRIMARY_ATTACK')
-			}
-			if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
-				actions.push('SECONDARY_ATTACK')
+			// only add attack options if not sleeping
+			if (!activeRow.ailments.find(a => a.id == "sleeping")) {
+				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
+					actions.push('ZERO_ATTACK')
+				}
+				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+					actions.push('PRIMARY_ATTACK')
+				}
+				if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+					actions.push('SECONDARY_ATTACK')
+				}
 			}
 		}
 	}
