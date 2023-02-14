@@ -53,3 +53,8 @@
 .ultraRareAmount {
 	color: rgb(98, 255, 255);
 }
+
+.dynamicSpace {
+	flex: 1 1 auto;
+	width: 0;
+}

@@ -49,7 +49,7 @@ const Deck = ({setMenuSection}: Props) => {
 		}))
 	)
 
-	const [deckName, setdeckName] = useState<string>("")
+	const [deckName, setDeckName] = useState<string>('')
 
 	const commonCards = pickedCards.filter(
 		(card) => TYPED_CARDS[card.cardId].rarity === 'common'
@@ -90,14 +90,12 @@ const Deck = ({setMenuSection}: Props) => {
 		setPickedCards([])
 	}
 	const saveDeck = () => {
-		localStorage.setItem("Loadout_" + deckName, JSON.stringify(pickedCards));
-		console.log(JSON.stringify(pickedCards));
+		localStorage.setItem('Loadout_' + deckName, JSON.stringify(pickedCards))
+		console.log(JSON.stringify(pickedCards))
 	}
 	const loadDeck = () => {
-		if (localStorage.getItem("Loadout_" + deckName) != null) {
-			setPickedCards(
-				JSON.parse(localStorage.getItem("Loadout_" + deckName)!)
-			)
+		if (localStorage.getItem('Loadout_' + deckName) != null) {
+			setPickedCards(JSON.parse(localStorage.getItem('Loadout_' + deckName)!))
 		}
 	}
 	const allCards = Object.values(TYPED_CARDS).map(
@@ -116,16 +114,16 @@ const Deck = ({setMenuSection}: Props) => {
 				<button disabled={!!validationMessage} onClick={backToMenu}>
 					Back to menu
 				</button>
-				<button onClick={clearDeck}>
-					Clear
-				</button>
+				<div className={css.limits}>{validationMessage}</div>
+				<div className={css.dynamicSpace} />
+				<button onClick={clearDeck}>Clear</button>
 				<form>
 					<input
 						maxLength={25}
 						name="deckName"
 						placeholder="Deck Name..."
 						onBlur={(e) => {
-							setdeckName(e.target.value);
+							setDeckName(e.target.value)
 						}}
 					/>
 					<button type="button" onClick={saveDeck}>
@@ -135,7 +133,6 @@ const Deck = ({setMenuSection}: Props) => {
 						Load
 					</button>
 				</form>
-				<div className={css.limits}>{validationMessage}</div>
 			</div>
 			<div className={css.cards}>
 				<div className={classnames(css.cardColumn, css.allCards)}>
