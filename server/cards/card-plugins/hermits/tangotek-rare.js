@@ -53,7 +53,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			const playerHasOtherHermits =
 				currentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
 			if (playerHasOtherHermits) {
-				playerActiveRow.ailments.push('knockedout')
+				playerActiveRow.ailments.push({id: 'knockedout', duration: 1})
 				currentPlayer.board.activeRow = null
 			}
 

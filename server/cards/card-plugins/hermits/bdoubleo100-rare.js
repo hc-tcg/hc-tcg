@@ -35,10 +35,10 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 
 			// e.g. if bed was used
-			if (attackerActiveRow.ailments.includes('sleeping')) return target
+			if (attackerActiveRow.ailments.find(a => a.id == "sleeping")) return target
 
 			if (attackerHermitCard.cardId === this.id) {
-				attackerActiveRow.ailments.push('sleeping')
+				attackerActiveRow.ailments.push({id: 'sleeping', duration: 2})
 				attackerHermitCard.sleeping = this.turnDuration
 			}
 			return target
@@ -55,7 +55,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 					row.hermitCard.sleeping--
 				} else if (sleeping === 0) {
 					row.health = this.health
-					row.ailments = row.ailments.filter((a) => a != 'sleeping')
+					row.ailments = row.ailments.filter((a) => a.id != 'sleeping')
 					delete row.hermitCard.sleeping
 				}
 			}

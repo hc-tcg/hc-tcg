@@ -28,9 +28,9 @@ class BedEffectCard extends EffectCard {
 					const row = currentPlayer.board.rows[rowIndex]
 
 					// e.g. if bdubs used his atttack
-					if (row.ailments.includes('sleeping')) return
+					if (row.ailments.find(a => a.id == "sleeping")) return
 
-					row.ailments.push('sleeping')
+					row.ailments.push({id: 'sleeping', duration: 2})
 					card.sleeping = this.turnDuration
 				}
 			})
@@ -46,7 +46,7 @@ class BedEffectCard extends EffectCard {
 					row.effectCard.sleeping--
 				} else if (sleeping === 0) {
 					row.health = CARDS[row.hermitCard.cardId].health
-					row.ailments = row.ailments.filter((a) => a != 'sleeping')
+					row.ailments = row.ailments.filter((a) => a.id != 'sleeping')
 					delete row.effectCard.sleeping
 					discardCard(game, row.effectCard)
 				}

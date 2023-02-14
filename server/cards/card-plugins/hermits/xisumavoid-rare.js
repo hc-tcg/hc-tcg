@@ -46,7 +46,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 				if (target.row.effectCard?.cardId === 'milk_bucket') {
 					discardCard(game, target.row.effectCard)
 				} else {
-					target.row.ailments.push('poison')
+					target.row.ailments.push({id: 'poison', duration: -1})
 				}
 			}
 

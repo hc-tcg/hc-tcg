@@ -19,7 +19,7 @@ class MilkBucketEffectCard extends EffectCard {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
 				const {row} = suPickedCards[0]
-				row.ailments = row.ailments.filter((a) => a !== 'poison')
+				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 				return 'DONE'
 			}
 		})

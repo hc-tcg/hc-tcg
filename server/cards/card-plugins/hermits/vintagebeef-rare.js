@@ -41,7 +41,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			currentPlayer.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 				row.ailments = row.ailments.filter(
-					(a) => !['fire', 'poison'].includes(a)
+					(a) => !['fire', 'poison'].includes(a.id)
 				)
 			})
 

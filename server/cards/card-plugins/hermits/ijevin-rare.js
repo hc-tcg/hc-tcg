@@ -41,7 +41,7 @@ class IJevinRareHermitCard extends HermitCard {
 			const hasOtherHermits =
 				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
 			if (!hasOtherHermits || !opponentActiveRow) return target
-			opponentActiveRow.ailments.push('knockedout')
+			opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
 			opponentPlayer.board.activeRow = null
 
 			return target

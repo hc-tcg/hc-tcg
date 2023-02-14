@@ -41,20 +41,17 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 				<>
 					<Card card={cardInfo} />
 					{type === 'health' &&
-					rowState &&
-					rowState.ailments.includes('fire') ? (
+					rowState?.ailments.find(a => a.id == "fire") ? (
 						<div className={css.fireAilment} />
 					) : null}
 
 					{type === 'health' &&
-					rowState &&
-					rowState.ailments.includes('poison') ? (
+					rowState?.ailments.find(a => a.id == "poison") ? (
 						<div className={css.poisonAilment} />
 					) : null}
 
 					{type === 'health' &&
-					rowState &&
-					rowState.ailments.includes('sleeping') ? (
+					rowState?.ailments.find(a => a.id == "sleeping") ? (
 						<div className={css.sleepingAilment} />
 					) : null}
 				</>
