@@ -17,7 +17,7 @@
 
 .name {
 	text-transform: uppercase;
-	font-weight: bold;
+	font-weight: normal;
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
@@ -27,7 +27,7 @@
 .health {
 	fill: rgb(246, 4, 1);
 	font-size: 45px;
-	font-weight: bold;
+	font-weight: normal;
 	text-anchor: end;
 }
 
@@ -37,13 +37,13 @@
 
 .hermitAttacks text {
 	font-size: 45px;
-	font-weight: bold;
+	font-weight: normal;
 }
 
 text.attackName {
 	font-size: 40px;
 	text-transform: uppercase;
-	font-weight: bold;
+	font-weight: normal;
 	fill: black;
 	letter-spacing: 0;
 	text-anchor: middle;
@@ -51,7 +51,7 @@ text.attackName {
 
 .attackDamage {
 	text-transform: uppercase;
-	font-weight: bold;
+	font-weight: normal;
 	fill: rgb(246, 4, 1);
 	letter-spacing: 0;
 	text-anchor: end;
