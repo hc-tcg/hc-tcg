@@ -11,6 +11,7 @@ import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
 import ForfeitModal from './modals/forfeit-modal'
+import UnmetCondition from './modals/unmet-condition-modal'
 import MouseIndicator from './mouse-indicator'
 import EndGameOverlay from './end-game-overlay'
 import Chat from './chat'
@@ -66,6 +67,8 @@ const renderModal = (
 		return <ChestModal closeModal={closeModal} />
 	else if (openedModalId === 'borrow')
 		return <BorrowModal closeModal={closeModal} />
+	else if (openedModalId === 'unmet-condition')
+		return <UnmetCondition closeModal={closeModal} />
 	return null
 }
 

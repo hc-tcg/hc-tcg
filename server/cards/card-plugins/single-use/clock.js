@@ -8,6 +8,8 @@ class ClockSingleUseCard extends SingleUseCard {
 			rarity: 'ultra_rare',
 			description: 'Opponent skips their next turn.\n\nDiscard after use.',
 		})
+
+		this.useReqs = [{target: 'opponent', type: 'hermit', amount: 1}]
 	}
 	register(game) {
 		game.hooks.turnStart.tap(this.id, (derivedState) => {

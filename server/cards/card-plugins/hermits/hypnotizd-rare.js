@@ -29,8 +29,8 @@ class HypnotizdRareHermitCard extends HermitCard {
 			},
 		})
 
-		this.reqsOn = 'attack'
-		this.reqs = [
+		this.pickOn = 'attack'
+		this.pickReqs = [
 			{target: 'opponent', type: 'hermit', amount: 1},
 			{target: 'player', type: 'item', amount: 1, active: true},
 		]

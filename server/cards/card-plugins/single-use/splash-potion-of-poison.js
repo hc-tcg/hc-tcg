@@ -10,6 +10,10 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			description:
 				'POISONS the opposing Hermit.\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON. Discard after use.',
 		})
+
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

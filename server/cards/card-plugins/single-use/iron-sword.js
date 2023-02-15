@@ -10,6 +10,10 @@ class IronSwordSingleUseCard extends SingleUseCard {
 				'Does +20hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {target: 20}
+
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

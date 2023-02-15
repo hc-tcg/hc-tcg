@@ -10,8 +10,9 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 				'Heals +100hp.\n\nCan be used on active or AFK Hermits.\n\nDiscard after use.',
 		})
 		this.heal = 100
-		this.reqsOn = 'apply'
-		this.reqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.pickOn = 'apply'
+		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.pickReqs = this.useReqs
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

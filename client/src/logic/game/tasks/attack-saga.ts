@@ -33,11 +33,11 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		: null
 
 	const result = {} as Record<string, Array<CardT>>
-	if (singleUseInfo?.reqsOn === 'attack') {
+	if (singleUseInfo?.pickOn === 'attack') {
 		result[singleUseInfo.id] = yield call(
 			runPickProcessSaga,
 			singleUseInfo.name,
-			singleUseInfo.reqs
+			singleUseInfo.pickReqs
 		)
 		if (!result[singleUseInfo.id]) return
 	}
@@ -45,11 +45,11 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const cardId = hermitCard.cardId
 	const cardInfo = CARDS[hermitCard.cardId]
 	const hermitAttack = cardInfo?.[type] || null
-	if (cardInfo?.reqsOn === 'attack' && hermitAttack?.power) {
+	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(
 			runPickProcessSaga,
 			hermitAttack?.name || cardInfo.name,
-			cardInfo.reqs
+			cardInfo.pickReqs
 		)
 		if (!result[cardId]) return
 	}

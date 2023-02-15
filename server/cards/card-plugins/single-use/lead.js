@@ -14,11 +14,12 @@ class LeadSingleUseCard extends SingleUseCard {
 			description:
 				"Move 1 of your opponents active Hermit's item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.\n\nDiscard after use.",
 		})
-		this.reqsOn = 'apply'
-		this.reqs = [
+		this.pickOn = 'apply'
+		this.useReqs = [
 			{target: 'opponent', type: 'item', amount: 1, active: true},
 			{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
 		]
+		this.pickReqs = this.useReqs
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

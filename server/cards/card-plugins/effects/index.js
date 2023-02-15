@@ -13,7 +13,7 @@ import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 
 const EFFECT_CARDS = [
-	// new BedEffectCard(),
+	new BedEffectCard(),
 	new WolfEffectCard(),
 	new MilkBucketEffectCard(),
 	new GoldArmorEffectCard(),

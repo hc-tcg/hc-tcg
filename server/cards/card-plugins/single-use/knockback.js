@@ -14,6 +14,10 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			description:
 				"Opposing Hermit goes AFK following user's attack.\n\nOpponent chooses replacement.\n\nCan only be used if opponent has at least 1 AFK Hermit. Discard after use.",
 		})
+
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

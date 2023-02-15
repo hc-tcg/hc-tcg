@@ -41,8 +41,8 @@ class GrianRareHermitCard extends HermitCard {
 				power: null,
 			},
 		})
-		this.reqsOn = 'custom'
-		this.reqs = [{target: 'player', type: 'effect', amount: 1, empty: true}]
+		this.pickOn = 'custom'
+		this.pickReqs = [{target: 'player', type: 'effect', amount: 1, empty: true}]
 	}
 
 	register(game) {

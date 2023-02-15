@@ -33,19 +33,51 @@ class BdoubleO100RareHermitCard extends HermitCard {
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
+			if (attackerHermitCard.cardId !== this.id) return target
+			// shreep - instantly heal to max hp
 
 			// e.g. if bed was used
-			if (attackerActiveRow.ailments.find(a => a.id === "sleeping")) return target
+			if (attackerActiveRow.ailments.find((a) => a.id === 'sleeping'))
+				return target
 
-			if (attackerHermitCard.cardId === this.id) {
-				// shreep
-				// instantly heal to max hp
-				attackerActiveRow.health = this.health
+			// store current turn to disable Shreep for one turn when it is over
+			const conInfo = currentPlayer.custom[this.id] || {}
+			conInfo[attackerHermitCard.cardInstance] = game.state.turn
+			currentPlayer.custom[this.id] = conInfo
 
-				attackerActiveRow.ailments.push({id: 'sleeping', duration: 2})
-			}
-			return target
+			attackerActiveRow.health = this.health
+			attackerActiveRow.ailments = attackerActiveRow.ailments.filter(
+				(a) => a.id !== 'sleeping'
+			)
+			attackerActiveRow.ailments.push({id: 'sleeping', duration: 2})
 		})
+
+		// Disable shreep attack consecutively
+		game.hooks.availableActions.tap(
+			this.id,
+			(availableActions, derivedState) => {
+				const {currentPlayer} = derivedState
+
+				// we must have active hermit
+				const activeHermit =
+					currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
+				if (!activeHermit) return availableActions
+
+				// we want to make changes only if shreep was used by the hermit
+				const conInfo = currentPlayer.custom[this.id]
+				const lastTurnUsed = conInfo?.[activeHermit.cardInstance]
+				if (typeof lastTurnUsed !== 'number') return availableActions
+
+				// Prevent use of shreep consecutively
+				const consecutive = lastTurnUsed + 6 >= game.state.turn
+				if (!consecutive) {
+					delete conInfo[activeHermit.cardInstance]
+					return availableActions
+				}
+
+				return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+			}
+		)
 	}
 }
 
