@@ -37,6 +37,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				typeAction,
 				currentPlayer,
 				opponentPlayer,
+				opponentActiveRow,
 				playerActiveRow,
 			} = derivedState
 
@@ -48,6 +49,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
 			if (opponentHasOtherHermits) {
 				currentPlayer.custom[this.id] = opponentPlayer.board.activeRow
+				opponentActiveRow.ailments.push({id: 'knockedout', duration: 0})
 				opponentPlayer.board.activeRow = null
 				opponentPlayer.followUp = this.id
 			}
@@ -55,7 +57,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			const playerHasOtherHermits =
 				currentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
 			if (playerHasOtherHermits) {
-				playerActiveRow.ailments.push({id: 'knockedout', duration: 1})
+				playerActiveRow.ailments.push({id: 'knockedout', duration: 0})
 				currentPlayer.board.activeRow = null
 			}
 
