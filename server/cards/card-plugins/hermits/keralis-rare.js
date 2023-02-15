@@ -23,8 +23,10 @@ class KeralisRareHermitCard extends HermitCard {
 			},
 		})
 		this.heal = 100
-		this.reqsOn = 'followup'
-		this.reqs = [{target: 'player', type: 'hermit', amount: 1, active: false}]
+		this.pickOn = 'followup'
+		this.pickReqs = [
+			{target: 'player', type: 'hermit', amount: 1, active: false},
+		]
 	}
 
 	register(game) {

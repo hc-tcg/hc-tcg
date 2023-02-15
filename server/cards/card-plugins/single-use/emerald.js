@@ -10,6 +10,11 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			description:
 				'Swap 1 effect card with opposing Hermit. Both active hermits must have an effect.\n\nDiscard after use.',
 		})
+
+		this.useReqs = [
+			{target: 'opponent', type: 'effect', amount: 1, active: true},
+			{target: 'player', type: 'effect', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

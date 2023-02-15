@@ -10,8 +10,9 @@ class LootingSingleUseCard extends SingleUseCard {
 			description:
 				"Flip a coin.\n\nIf heads, user picks 1 item card from opposing active Hermit and adds it to user's hand.\n\nDiscard after use.",
 		})
-		this.reqsOn = 'followup'
-		this.reqs = [{target: 'opponent', type: 'item', amount: 1, active: true}]
+		this.pickOn = 'followup'
+		this.useReqs = [{target: 'opponent', type: 'item', amount: 1, active: true}]
+		this.pickReqs = this.useReqs
 	}
 
 	register(game) {

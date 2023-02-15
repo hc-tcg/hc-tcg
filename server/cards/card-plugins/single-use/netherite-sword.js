@@ -10,6 +10,10 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 				'Does +60hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {target: 60}
+
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

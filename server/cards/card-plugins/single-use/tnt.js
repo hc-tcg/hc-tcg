@@ -10,6 +10,10 @@ class TNTSingleUseCard extends SingleUseCard {
 				'Does +60hp damage to opposing Hermit.\n\nAlso does +20hp damage to user.\n\nDiscard after use.',
 		})
 		this.damage = {target: 60, self: 20}
+
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

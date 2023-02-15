@@ -1,4 +1,5 @@
 import {getPickedCardsInfo} from './derived-state'
+import CARDS from '../cards'
 
 /*
 Checks specific row and its slots if they match given requirments
@@ -23,8 +24,9 @@ const checkRow = (rowInfo, req) => {
 
 	// empty slot or not
 	const anyEmpty = slots.some((card) => !card)
+	const allEmpty = slots.every((card) => !card)
 	if (req.empty === true && !anyEmpty) return false
-	if (req.empty === false && anyEmpty) return false
+	if (!req.empty && allEmpty) return false
 
 	return true
 }
@@ -46,6 +48,16 @@ const getRowsInfo = (playerState, current) => {
 	}))
 }
 
+const checkHand = (playerState, req) => {
+	let cards = playerState.hand
+	if (req.type !== 'any') {
+		cards = playerState.hand.filter(
+			(card) => CARDS[card.cardId].type === req.type
+		)
+	}
+	return req.amount <= cards.length
+}
+
 /*
 Compares game state and "req" object to see if there is any slot on
 the board that would fit given requirments
@@ -60,7 +72,10 @@ export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 	rowsInfo.push(...getRowsInfo(opponentState, false))
 
 	for (let req of reqs) {
-		if (req.target === 'hand') continue
+		if (req.target === 'hand') {
+			if (!checkHand(playerState, req)) return false
+			continue
+		}
 		const result = rowsInfo.filter((info) => checkRow(info, req))
 		if (result.length < req.amount) return false
 	}

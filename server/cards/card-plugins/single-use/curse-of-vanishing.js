@@ -10,6 +10,10 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 			description:
 				"Opponent is forced to discard their active Hermit's attached effect card.\n\nDiscard after use.",
 		})
+
+		this.useReqs = [
+			{target: 'opponent', type: 'effect', amount: 1, active: true},
+		]
 	}
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {

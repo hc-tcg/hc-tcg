@@ -9,6 +9,8 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			description:
 				'User can execute attack without having the necessary item cards attached.\n\nCurent turn only.\n\nDiscard after use.',
 		})
+
+		this.useReqs = [{target: 'player', type: 'hermit', amount: 1, active: true}]
 	}
 	register(game) {
 		game.hooks.availableActions.tap(

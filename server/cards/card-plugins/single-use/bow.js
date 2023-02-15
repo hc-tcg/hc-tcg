@@ -10,8 +10,11 @@ class BowSingleUseCard extends SingleUseCard {
 				'Does +40hp damage to any opposing AFK Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {afkTarget: 40}
-		this.reqsOn = 'attack'
-		this.reqs = [{target: 'opponent', type: 'hermit', amount: 1, active: false}]
+		this.pickOn = 'attack'
+		this.useReqs = [
+			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+		]
+		this.pickReqs = this.useReqs
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {

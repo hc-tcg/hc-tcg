@@ -13,6 +13,8 @@ import {
 	applyEffect,
 	removeEffect,
 } from 'logic/game/game-actions'
+import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
+import {anyAvailableReqOptions} from 'server/utils/reqs'
 
 function* borrowSaga(pState: PlayerState): SagaIterator {
 	yield put(setOpenedModalId('borrow'))
@@ -28,6 +30,21 @@ function* borrowSaga(pState: PlayerState): SagaIterator {
 function* singleUseSaga(card: CardT): SagaIterator {
 	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
+
+	if (cardInfo.useReqs) {
+		const playerState = yield* select(getPlayerState)
+		const opponentState = yield* select(getOpponentState)
+		const canUse = anyAvailableReqOptions(
+			playerState,
+			opponentState,
+			cardInfo.useReqs
+		)
+		if (!canUse) {
+			yield put(setOpenedModalId('unmet-condition'))
+			return
+		}
+	}
+
 	if (
 		[
 			'splash_potion_of_healing',
@@ -49,8 +66,12 @@ function* singleUseSaga(card: CardT): SagaIterator {
 		yield put(setOpenedModalId('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModalId('chest'))
-	} else if (cardInfo.reqsOn === 'apply') {
-		const result = yield call(runPickProcessSaga, cardInfo.name, cardInfo.reqs)
+	} else if (cardInfo.pickOn === 'apply') {
+		const result = yield call(
+			runPickProcessSaga,
+			cardInfo.name,
+			cardInfo.pickReqs
+		)
 		if (result && result.length) {
 			yield put(applyEffect({pickedCards: {[card.cardId]: result}}))
 		} else {
@@ -71,11 +92,11 @@ function* actionLogicSaga(gameState: GameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {
 		const cardInfo = CARDS[pState.followUp] as CardInfoT | null
-		if (cardInfo?.reqsOn === 'followup') {
+		if (cardInfo?.pickOn === 'followup') {
 			let pickedCards = null
 			const name = getFollowUpName(cardInfo)
 			while (!pickedCards)
-				pickedCards = yield call(runPickProcessSaga, name, cardInfo.reqs)
+				pickedCards = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
 			yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga, pState)
