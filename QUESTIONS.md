@@ -30,6 +30,7 @@
 ## Can you use composter if there is not enough cards in your hand?
 	- Based on recent hermitcraft episodes it seems so, but lots of hermits arguing agains it. 
 ## When Mending is used, does the single use card return to end of players deck or at random spot?
+	- The single use card is shuffeled into your deck, not your hand - https://www.twitch.tv/videos/1738465181 - 2:07:30
 ## Does Mending work only when attached to active hermit, or even when it is attached to an afk hermit?
 ## Do special moves - like Ethos blue fire or docs double damage - also affect afk hermit if e.g. used together with bow?
 ## Does fortune affect all coin flips for special moves that have multiple coin flips? Like ultra rare Etho's "Slab" attack?
