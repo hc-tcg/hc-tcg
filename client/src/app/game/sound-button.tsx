@@ -14,7 +14,7 @@ function SoundButton() {
 
 	return (
 		<button 
-			className={css.soundbutton}
+			className={css.soundButton}
 			onClick={handleSoundChange}
 		>
 			<img 
