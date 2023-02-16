@@ -18,6 +18,10 @@ class ShieldEffectCard extends EffectCard {
 				target.protection += this.protection.target
 				discardCard(game, target.row.effectCard)
 			}
+			if (target.attackerEffectCardId === this.id) {
+				target.attackerProtection += this.protection.target
+				discardCard(game, target.attackerRow.effectCard)
+			}
 			return target
 		})
 	}

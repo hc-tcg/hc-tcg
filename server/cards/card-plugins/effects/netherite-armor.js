@@ -16,6 +16,9 @@ class NetheriteArmorEffectCard extends EffectCard {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
 			}
+			if (target.attackerEffectCardId === this.id) {
+				target.attackerProtection += this.protection.target
+			}
 			return target
 		})
 	}

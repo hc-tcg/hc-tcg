@@ -51,11 +51,14 @@ function* attackSaga(game, turnAction, derivedState) {
 
 	const makeTarget = (row) => ({
 		row,
+		attackerRow: playerActiveRow,
 		effectCardId: row.effectCard?.cardId,
+		attackerEffectCardId: playerActiveRow.effectCard?.cardId,
 		isActive: row === opponentActiveRow,
 		extraEffectDamage: 0,
 		extraHermitDamage: 0,
 		protection: 0,
+		attackerProtection: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreEffects: false,
 		reverseDamage: false,
@@ -100,6 +103,8 @@ function* attackSaga(game, turnAction, derivedState) {
 		const hermitAttack = target.isActive
 			? attackerHermitInfo[type]?.damage || 0
 			: 0
+
+		/* --- Damage to target --- */
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
 		const protection = target.ignoreEffects ? 0 : target.protection
@@ -115,6 +120,8 @@ function* attackSaga(game, turnAction, derivedState) {
 				protection,
 			0
 		)
+
+		/* --- Revival (Totem/Scar) --- */
 
 		if (!target.reverseDamage) {
 			target.row.health = Math.min(maxHealth, health - totalDamage)
@@ -133,12 +140,24 @@ function* attackSaga(game, turnAction, derivedState) {
 			if (recovery.discardEffect) discardCard(game, target.row.effectCard)
 		}
 
+		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
+
 		// from su effects & special movs
 		let totalDamageToAttacker = target.backlash
 		// from opponent's effects
 		if (!target.ignoreEffects) totalDamageToAttacker += target.counter
 		// hacky flag for Zedaph
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage
+		// protection
+		if (target.attackerProtection) {
+			totalDamageToAttacker = Math.max(
+				totalDamageToAttacker - target.attackerProtection,
+				0
+			)
+		}
+
+		// We don't need to worry about revival of attacker here
+		// since there is no way to lose the totem effect card while attacking
 
 		const attackMaxHealth = attackerHermitInfo.health
 		attackerActiveRow.health = Math.min(
