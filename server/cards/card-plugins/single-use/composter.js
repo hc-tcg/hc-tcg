@@ -11,7 +11,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			name: 'Composter',
 			rarity: 'common',
 			description:
-				'Discard 2 cards in you hand. Draw 2 cards.\n\nDiscard after use.',
+				'Discard 2 cards in your hand. Draw 2 cards.\n\nDiscard after use.',
 		})
 		this.pickOn = 'apply'
 		this.useReqs = [{target: 'hand', type: 'any', amount: 2}]
