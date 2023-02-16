@@ -41,6 +41,15 @@ function Board({onClick, gameState}: Props) {
 	const availableActions = useSelector(getAvailableActions)
 	const dispatch = useDispatch()
 
+	useEffect(() => {
+		if (gameState.turnPlayerId === playerId) {
+			if (localStorage.getItem('soundOn') !== 'off') {
+				let audio = new Audio('/sfx/Click.ogg')
+				audio.play()
+			}
+		}
+	}, [gameState.turnPlayerId])
+
 	// --- coin flip logic start ---
 	const [coinFlipInfo, setCoinFlipInfo] = useState<Record<string, FlipInfo>>({})
 	useEffect(() => {

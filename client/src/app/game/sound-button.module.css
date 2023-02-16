@@ -1,0 +1,8 @@
+.soundButton {
+	position: fixed;
+	top: 0px;
+	left: 30px;
+	height: 31px;
+	width: 31px;
+	padding: 5px;
+}
