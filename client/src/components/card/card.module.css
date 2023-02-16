@@ -1,5 +1,24 @@
 .selected {
 	outline: 3px solid rgba(50, 50, 255, 0.7);
+
+	animation-name: selectedCardAnim;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes selectedCardAnim {
+	0% {
+		transform: translate(0, 0);
+	}
+
+	50% {
+		transform: translate(0, -5px);
+	}
+
+	100% {
+		transform: translate(0, 0);
+	}
 }
 
 .picked {
