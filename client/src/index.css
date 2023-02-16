@@ -34,7 +34,10 @@ code {
 
 button {
 	font-family: Minecraft;
-	padding: 5px 10px;
+	padding: 0 10px;
+	height: 30px;
+	line-height: 1;
+	vertical-align: bottom;
 	overflow: hidden;
 	white-space: nowrap;
 	background: #999 url('/images/bgbtn.png') center / cover;
@@ -59,7 +62,10 @@ button:not(:disabled):hover {
 
 input {
 	width: 200px;
-	padding: 5px 10px;
+	padding: 0 10px;
+	height: 30px;
+	line-height: 1;
+	vertical-align: bottom;
 	border: 2px solid #000;
 	font-family: Minecraft;
 }

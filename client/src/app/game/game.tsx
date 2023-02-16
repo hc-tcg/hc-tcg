@@ -27,7 +27,6 @@ import {
 	setOpenedModalId,
 	setSelectedCard,
 	slotPicked,
-	forfeit,
 } from 'logic/game/game-actions'
 import SoundButton from './sound-button'
 
