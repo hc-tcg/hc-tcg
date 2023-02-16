@@ -2,7 +2,7 @@ import CARDS from '../../cards'
 import {equalCard} from '../../utils'
 
 function* playCardSaga(game, turnAction, derivedState) {
-	if (!turnAction.payload) return
+	turnAction.payload = turnAction.payload || {}
 
 	const {currentPlayer, opponentPlayer, pastTurnActions, availableActions} =
 		derivedState
@@ -26,6 +26,11 @@ function* playCardSaga(game, turnAction, derivedState) {
 		if (currentPlayer.board.rows[rowIndex].hermitCard) return
 		if (!availableActions.includes('ADD_HERMIT')) return
 
+		const result = game.hooks.playCard
+			.get('hermit')
+			?.call(turnAction, derivedState)
+		if (result === 'INVALID') return
+
 		currentPlayer.board.rows[rowIndex] = {
 			...currentPlayer.board.rows[rowIndex],
 			hermitCard: card,
@@ -43,6 +48,12 @@ function* playCardSaga(game, turnAction, derivedState) {
 		if (!hermitRow) return
 		if (hermitRow.itemCards[slotIndex] !== null) return
 		if (!availableActions.includes('PLAY_ITEM_CARD')) return
+
+		const result = game.hooks.playCard
+			.get('item')
+			?.call(turnAction, derivedState)
+		if (result === 'INVALID') return
+
 		hermitRow.itemCards[slotIndex] = card
 		pastTurnActions.push('PLAY_ITEM_CARD')
 	} else if (cardInfo.type === 'effect' && !suBucket) {
@@ -53,12 +64,24 @@ function* playCardSaga(game, turnAction, derivedState) {
 		if (!hermitRow) return
 		if (hermitRow.effectCard) return
 		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
+
+		const result = game.hooks.playCard
+			.get('effect')
+			?.call(turnAction, derivedState)
+		if (result === 'INVALID') return
+
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (cardInfo.type === 'single_use' || suBucket) {
 		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		if (currentPlayer.board.singleUseCard) return
+
+		const result = game.hooks.playCard
+			.get('single_use')
+			?.call(turnAction, derivedState)
+		if (result === 'INVALID') return
+
 		currentPlayer.board.singleUseCard = card
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
 	}
@@ -66,8 +89,6 @@ function* playCardSaga(game, turnAction, derivedState) {
 	currentPlayer.hand = currentPlayer.hand.filter(
 		(handCard) => !equalCard(handCard, card)
 	)
-
-	game.hooks.playCard.get(cardInfo.type)?.call(turnAction, derivedState)
 
 	return 'DONE'
 }

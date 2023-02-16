@@ -7,7 +7,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			name: 'Efficiency',
 			rarity: 'rare',
 			description:
-				'User can execute attack without having the necessary item cards attached.\n\nCurent turn only.\n\nDiscard after use.',
+				'User can execute attack without having the necessary item cards attached.\n\nCurrent turn only.\n\nDiscard after use.',
 		})
 
 		this.useReqs = [{target: 'player', type: 'hermit', amount: 1, active: true}]

@@ -2,7 +2,14 @@ import EffectCard from './_effect-card'
 import CARDS from '../../../cards'
 import {discardCard} from '../../../utils'
 
-// TODO - make this work with effect such as Emerald, Borrow, Curse-of-vanishing, etc.
+/*
+Info confirmed by beef:
+- If knockback is used, sleeping opponent goes AFK but wakes up.
+- Discarding/Stealing the bed does not effect the sleeping opponent.
+- You can use single use effects while sleeping that don't cause any damage.
+- Bed can be placed only on active hermit.
+- You go to sleep the moment you place the bed down so technically you lose 3 turns of attacking.
+*/
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -10,10 +17,11 @@ class BedEffectCard extends EffectCard {
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:
-				"Player sleeps for the next 2 turns. Can't attack. Restores full health.\n\nCan still draw and attach cards while sleeping.\n\nDiscard after player wakes up.",
+				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
 		})
 	}
 	register(game) {
+		// Discard bed after sleeping & store who had bed at start of turn
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
 			const {currentPlayer} = derivedState
 			// Need to know which row had bed at start of the turn
@@ -31,7 +39,8 @@ class BedEffectCard extends EffectCard {
 			}
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+		// Set sleeping if hermit received bed in given turn
+		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
 			const {currentPlayer} = derivedState
 			const bedInfo = currentPlayer.custom[this.id] || {}
 			currentPlayer.board.rows.forEach((row, index) => {
@@ -46,7 +55,20 @@ class BedEffectCard extends EffectCard {
 					bedInfo[index] = true
 				}
 			})
+		})
+
+		// Cleanup map of who had map
+		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+			const {currentPlayer} = derivedState
 			delete currentPlayer.custom[this.id]
+		})
+
+		// Prevent placing bed on inactive hermits
+		game.hooks.playCard.for('effect').tap(this.id, (action, derivedState) => {
+			const {activeRow} = derivedState.currentPlayer.board
+			const {card, rowIndex} = action.payload
+			if (card?.cardId !== this.id) return
+			if (activeRow === null || activeRow !== rowIndex) return 'INVALID'
 		})
 	}
 }

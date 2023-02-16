@@ -80,9 +80,13 @@ function getAvailableActions(game, derivedState) {
 		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
 	)
 
-	if (hasOtherHermit) actions.push('CHANGE_ACTIVE_HERMIT')
-
 	const {activeRow, rows} = currentPlayer.board
+	const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
+
+	if (hasOtherHermit && !isSleeping) {
+		actions.push('CHANGE_ACTIVE_HERMIT')
+	}
+
 	if (activeRow !== null) {
 		actions.push('PLAY_EFFECT_CARD')
 
@@ -92,7 +96,7 @@ function getAvailableActions(game, derivedState) {
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
 			// only add attack options if not sleeping
-			if (!rows[activeRow].ailments.find((a) => a.id === 'sleeping')) {
+			if (!isSleeping) {
 				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 					actions.push('ZERO_ATTACK')
 				}
@@ -240,6 +244,15 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 		// handle unknown action
 	}
 
+	// remove sleep on knock out
+	baseDerivedState.opponentPlayer.board.rows.forEach((row, index) => {
+		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
+		const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
+		if (isSleeping && isKnockedout) {
+			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
+		}
+	})
+
 	game.hooks.actionEnd.call(turnAction, derivedState)
 
 	const deadPlayerId = yield call(checkHermitHealth, game)
@@ -301,9 +314,10 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		buffers.dropping(10)
 	)
 
-	// ailment duration logic
+	// ailment logic
 	for (let row of currentPlayer.board.rows) {
 		for (let ailment of row.ailments) {
+			// decrease duration
 			if (ailment.duration === 0) {
 				// time up, get rid of this ailment
 				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
@@ -432,7 +446,7 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 			followUp: new SyncBailHook(['turnAction', 'derived']),
 			attack: new SyncWaterfallHook(['result', 'turnAction', 'derived']),
 			playCard: new HookMap(
-				(cardType) => new SyncHook(['turnAction', 'derived'])
+				(cardType) => new SyncBailHook(['turnAction', 'derived'])
 			),
 			discardCard: new HookMap((cardType) => new SyncBailHook(['card'])),
 			changeActiveHermit: new SyncHook(['turnAction', 'derived']),
