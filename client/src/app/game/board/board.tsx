@@ -43,10 +43,15 @@ function Board({onClick, gameState}: Props) {
 
 	useEffect(() => {
 		if(gameState.turnPlayerId === playerId) {
-			//TODO: play sound
-			let audio = new Audio("/sfx/Click.ogg");
-			audio.play();
-
+			let audioStatus = localStorage.getItem("soundOn");
+			if(audioStatus === null) {
+				localStorage.setItem("soundOn", "on");
+				audioStatus = "on";
+			}
+			if(audioStatus === "on") {
+				let audio = new Audio("/sfx/Click.ogg");
+				audio.play();
+			}
 		}
 	}, [gameState.turnPlayerId])
 

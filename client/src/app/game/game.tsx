@@ -29,6 +29,7 @@ import {
 	slotPicked,
 	forfeit,
 } from 'logic/game/game-actions'
+import SoundButton from './soundButton'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
@@ -134,6 +135,7 @@ function Game(props: Props) {
 				/>
 			</div>
 
+			<SoundButton />
 			<Chat />
 
 			{showForfeit && <ForfeitModal closeModal={() => setShowForfeit(false)} />}
