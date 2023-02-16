@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import css from "./soundButton.module.css";
+import { useState } from "react";
+import css from "./sound-button.module.css";
 
 function SoundButton() {
 
-	const [soundOn, setSoundOn] = useState<boolean>(localStorage.getItem("soundOn") === "on");
+	const [soundOn, setSoundOn] = useState<boolean>(localStorage.getItem("soundOn") !== "off");
 
 	const handleSoundChange = () => {
 		setSoundOn((value) => {
@@ -14,7 +14,7 @@ function SoundButton() {
 
 	return (
 		<button 
-			className={css.soundButton}
+			className={css.soundbutton}
 			onClick={handleSoundChange}
 		>
 			<img 

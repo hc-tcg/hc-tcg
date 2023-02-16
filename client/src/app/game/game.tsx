@@ -29,7 +29,7 @@ import {
 	slotPicked,
 	forfeit,
 } from 'logic/game/game-actions'
-import SoundButton from './soundButton'
+import SoundButton from './sound-button'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]

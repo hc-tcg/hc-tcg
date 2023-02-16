@@ -43,12 +43,7 @@ function Board({onClick, gameState}: Props) {
 
 	useEffect(() => {
 		if(gameState.turnPlayerId === playerId) {
-			let audioStatus = localStorage.getItem("soundOn");
-			if(audioStatus === null) {
-				localStorage.setItem("soundOn", "on");
-				audioStatus = "on";
-			}
-			if(audioStatus === "on") {
+			if (localStorage.getItem("soundOn") !== "off") {
 				let audio = new Audio("/sfx/Click.ogg");
 				audio.play();
 			}

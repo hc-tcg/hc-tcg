@@ -1,5 +1,5 @@
-.soundButton {
-	position: absolute;
+.soundbutton {
+	position: fixed;
 	top     : 0px;
 	left    : 30px;
 	height  : 31px;
