@@ -87,10 +87,10 @@ function AttackModal({closeModal}: Props) {
 		onClick: () => void,
 		icon?: string
 	) => {
-		const baseDamage =
-			(icon ? 0 : attackInfo.damage) + (suAttackInfo ? suAttackInfo.damage : 0)
+		const baseDamage = icon ? 0 : attackInfo.damage
 		const totalDamage = Math.max(
 			baseDamage +
+				(suAttackInfo ? suAttackInfo.damage : 0) +
 				(hasWeakness && baseDamage > 0 ? 20 : 0) -
 				(protectionAmount || 0),
 			0

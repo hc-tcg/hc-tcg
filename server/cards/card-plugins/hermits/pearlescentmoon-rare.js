@@ -2,6 +2,7 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+// TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -21,7 +22,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				cost: ['terraform', 'any'],
 				damage: 70,
 				power:
-					'Opponent flips a coin on their next turn.\n\nIf heads, their attack misses.',
+					'Opponent flips a coin on their next turn.\n\nIf heads, their attack misses.\n\nOpponent can not miss on consecutive turns.',
 			},
 		})
 	}
