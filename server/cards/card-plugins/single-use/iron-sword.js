@@ -19,7 +19,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			const {singleUseInfo} = derivedState
 			if (singleUseInfo?.id === this.id && target.isActive) {
-				target.damage += this.damage.target
+				target.extraEffectDamage += this.damage.target
 			}
 			return target
 		})

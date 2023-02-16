@@ -44,7 +44,7 @@ class MumboJumboRareHermitCard extends HermitCard {
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			target.damage += 40 * headsAmount
+			target.extraHermitDamage += 40 * headsAmount
 
 			if (headsAmount === 0) return target
 			const hasAfkPranskter = currentPlayer.board.rows.some((row, index) => {

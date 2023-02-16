@@ -20,7 +20,7 @@ class BowSingleUseCard extends SingleUseCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			const {singleUseInfo} = derivedState
 			if (singleUseInfo?.id === this.id && !target.isActive) {
-				target.damage += this.damage.afkTarget
+				target.extraEffectDamage += this.damage.afkTarget
 			}
 			return target
 		})

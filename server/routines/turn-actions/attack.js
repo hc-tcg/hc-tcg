@@ -53,7 +53,8 @@ function* attackSaga(game, turnAction, derivedState) {
 		row,
 		effectCardId: row.effectCard?.cardId,
 		isActive: row === opponentActiveRow,
-		damage: 0,
+		extraEffectDamage: 0,
+		extraHermitDamage: 0,
 		protection: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreEffects: false,
@@ -87,7 +88,8 @@ function* attackSaga(game, turnAction, derivedState) {
 		// e.g. when hypno attacks the same afk hermit with his ability and a bow
 		const sameTarget = processedTargets.find((pt) => pt.row === target.row)
 		if (sameTarget) {
-			sameTarget.damage += target.damage
+			sameTarget.extraEffectDamage += target.extraEffectDamage
+			sameTarget.extraHermitDamage += target.extraHermitDamage
 		} else {
 			processedTargets.push(target)
 		}
@@ -103,11 +105,13 @@ function* attackSaga(game, turnAction, derivedState) {
 		const protection = target.ignoreEffects ? 0 : target.protection
 		const weaknessDamage =
 			strengths.includes(targetHermitInfo.hermitType) &&
-			hermitAttack + target.damage > 0
+			hermitAttack + target.extraHermitDamage > 0
 				? WEAKNESS_DAMAGE
 				: 0
 		const totalDamage = Math.max(
-			(hermitAttack + target.damage + weaknessDamage) * target.multiplier -
+			(hermitAttack + target.extraHermitDamage + weaknessDamage) *
+				target.multiplier +
+				target.extraEffectDamage -
 				protection,
 			0
 		)
@@ -143,9 +147,8 @@ function* attackSaga(game, turnAction, derivedState) {
 		)
 	}
 
-	// TODO - This will apply chorus fruit for hermits like mumbo!
-	const anyDamage = targets.some((target) => target.damage)
-	if (anyDamage) applySingleUse(currentPlayer)
+	const anyEffectDamage = targets.some((target) => target.extraEffectDamage)
+	if (anyEffectDamage) applySingleUse(currentPlayer)
 
 	return 'DONE'
 }

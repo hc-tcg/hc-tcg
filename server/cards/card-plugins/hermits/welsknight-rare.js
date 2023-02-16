@@ -38,7 +38,7 @@ class WelsknightRareHermitCard extends HermitCard {
 			if (playerActiveRow.health < 200) extraDamage += 20
 			if (playerActiveRow.health < 100) extraDamage += 30
 
-			target.damage += extraDamage
+			target.extraHermitDamage += extraDamage
 
 			return target
 		})

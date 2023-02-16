@@ -45,8 +45,8 @@ class ImpulseSVRareHermitCard extends HermitCard {
 				row.hermitCard?.cardId.startsWith('tangotek')
 			)
 
-			if (hasBdubs) target.damage += 40
-			if (hasTango) target.damage += 40
+			if (hasBdubs) target.extraHermitDamage += 40
+			if (hasTango) target.extraHermitDamage += 40
 
 			return target
 		})
