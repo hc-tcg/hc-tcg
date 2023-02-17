@@ -52,14 +52,20 @@ function Board({onClick, gameState}: Props) {
 
 	// --- coin flip logic start ---
 	const [coinFlipInfo, setCoinFlipInfo] = useState<Record<string, FlipInfo>>({})
+
 	useEffect(() => {
 		const coinFlips = currentPlayer?.coinFlips || {}
 		const newInfo = {} as Record<string, FlipInfo>
+		const cId = currentPlayer?.id as string
 		Object.entries(coinFlips).forEach(([key, flip]) => {
-			if (!coinFlipInfo[key]) {
-				newInfo[key] = {shown: false, value: flip}
+			const ciId = cId + '_' + key
+			if (!coinFlipInfo[ciId]) {
+				newInfo[ciId] = {
+					shown: false,
+					value: flip,
+				}
 			} else {
-				newInfo[key] = coinFlipInfo[key]
+				newInfo[ciId] = coinFlipInfo[ciId]
 			}
 		})
 
