@@ -121,7 +121,11 @@ function* attackSaga(game, turnAction, derivedState) {
 		const finalDamage = Math.max(totalDamage - protection, 0)
 
 		// Discard single use protective cards (Shield/Gold Armor)
-		if (totalDamage > 0 && targetEffectInfo?.protection?.discard) {
+		if (
+			totalDamage > 0 &&
+			targetEffectInfo?.protection?.discard &&
+			!target.reverseDamage
+		) {
 			discardCard(game, target.row.effectCard)
 		}
 
