@@ -29,7 +29,6 @@ class JoeHillsRareHermitCard extends HermitCard {
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
 			const {currentPlayer} = derivedState
 			if (currentPlayer.custom[this.id] === 1) {
-				console.log('Turn skipped')
 				currentPlayer.custom[this.id] = 2
 				return 'SKIP'
 			} else if (currentPlayer.custom[this.id]) {

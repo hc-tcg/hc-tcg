@@ -13,7 +13,7 @@ function* playerConnectedSaga(players, action) {
 		const validPlayer =
 			existingPlayer?.playerSecret === action.payload.playerSecret
 
-		console.log('User reconnected: ', action.payload.playerId)
+		// console.log('User reconnected: ', action.payload.playerId)
 		if (validPlayer) {
 			existingPlayer.socket = socket
 			yield put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
@@ -31,7 +31,7 @@ function* playerConnectedSaga(players, action) {
 	const playerSecret = Math.random().toString()
 	const playerDeck = getStarterPack()
 
-	console.log('User connected: ', playerId)
+	// console.log('User connected: ', playerId)
 
 	const playerInfo = {
 		playerId,
@@ -66,7 +66,7 @@ function* playerDisconnectedSaga(players, action) {
 	if (!player) return
 	const {playerId} = player
 
-	console.log('User disconnected: ', playerId)
+	// console.log('User disconnected: ', playerId)
 	yield put({type: 'PLAYER_DISCONNECTED', payload: player})
 
 	const result = yield race({
@@ -79,7 +79,7 @@ function* playerDisconnectedSaga(players, action) {
 	})
 
 	if (result.timeout) {
-		console.log('User removed: ', playerId)
+		// console.log('User removed: ', playerId)
 		yield put({type: 'PLAYER_REMOVED', payload: player})
 		delete players[playerId]
 	}

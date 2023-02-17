@@ -57,12 +57,16 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (currentPlayer.custom[this.id] === 2) {
 				delete currentPlayer.custom[this.id]
 				return
-			} else {
-				currentPlayer.custom[this.id] = 2
 			}
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
+
+			if (coinFlip[0] === 'heads') {
+				currentPlayer.custom[this.id] = 2
+			} else {
+				delete currentPlayer.custom[this.id]
+			}
 		})
 
 		// if coin flip is heads, damage is zero

@@ -190,7 +190,7 @@ function* checkHermitHealth(game) {
 
 function* turnActionSaga(game, turnAction, baseDerivedState) {
 	// TODO - avoid having socket in actions
-	console.log('TURN ACTION: ', turnAction.type)
+	// console.log('TURN ACTION: ', turnAction.type)
 
 	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
 
@@ -217,18 +217,11 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 		if (result !== 'INVALID') pastTurnActions.push('REMOVE_EFFECT')
 		//
 	} else if (turnAction.type === 'FOLLOW_UP') {
-		console.log('PLAYER_FOLLOW_UP: ', baseDerivedState.currentPlayer.followUp)
-		console.log(
-			'OPPONENT_FOLLOW_UP: ',
-			baseDerivedState.opponentPlayer.followUp
-		)
 		if (
 			!availableActions.includes('FOLLOW_UP') &&
 			!opponentAvailableActions.includes('FOLLOW_UP')
-		) {
-			console.log('FOLLOW_UP not allowed')
+		)
 			return
-		}
 		const result = yield call(followUpSaga, game, turnAction, derivedState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
@@ -289,7 +282,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 
 	game.state.turnPlayerId = currentPlayer.id
 
-	console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
+	// console.log('NEW TURN: ', {currentPlayerId, opponentPlayerId})
 
 	const derivedState = {
 		gameState: game.state,
@@ -354,7 +347,7 @@ function* turnSaga(allPlayers, gamePlayerIds, game) {
 		game._derivedStateCache = turnDerivedState
 		yield call(sendGameState, allPlayers, gamePlayerIds, game, turnDerivedState)
 
-		console.log('Waiting for turn action')
+		// console.log('Waiting for turn action')
 		const turnAction = yield take(turnActionChannel)
 		const result = yield call(
 			turnActionSaga,
