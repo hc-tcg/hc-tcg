@@ -1,5 +1,6 @@
 import {
 	take,
+	put,
 	takeEvery,
 	fork,
 	spawn,
@@ -451,32 +452,36 @@ function* gameSaga(allPlayers, gamePlayerIds) {
 		chat: [],
 	}
 
-	registerCards(game)
+	try {
+		registerCards(game)
 
-	yield fork(sendGameStateOnReconnect, allPlayers, gamePlayerIds, game)
-	yield fork(chatSaga, allPlayers, gamePlayerIds, game)
+		yield fork(sendGameStateOnReconnect, allPlayers, gamePlayerIds, game)
+		yield fork(chatSaga, allPlayers, gamePlayerIds, game)
 
-	game.hooks.gameStart.call()
+		yield put({type: 'NEW_GAME', payload: game})
 
-	turn_cycle: while (true) {
-		game.state.turn++
-		const result = yield call(turnSaga, allPlayers, gamePlayerIds, game)
-		if (result === 'GAME_END') break
-	}
+		game.hooks.gameStart.call()
 
-	gamePlayerIds.forEach((playerId) => {
-		allPlayers[playerId].socket.emit('GAME_END', {
-			type: 'GAME_END',
-			payload: {
-				gameState: game.state,
-				reason: game.deadPlayerId === playerId ? 'you_lost' : 'you_won',
-			},
+		turn_cycle: while (true) {
+			game.state.turn++
+			const result = yield call(turnSaga, allPlayers, gamePlayerIds, game)
+			if (result === 'GAME_END') break
+		}
+
+		gamePlayerIds.forEach((playerId) => {
+			allPlayers[playerId].socket.emit('GAME_END', {
+				type: 'GAME_END',
+				payload: {
+					gameState: game.state,
+					reason: game.deadPlayerId === playerId ? 'you_lost' : 'you_won',
+				},
+			})
 		})
-	})
 
-	game.hooks.gameEnd.call()
-
-	yield cancel()
+		yield cancel()
+	} finally {
+		game.hooks.gameEnd.call()
+	}
 }
 
 export default gameSaga

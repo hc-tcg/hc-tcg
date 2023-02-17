@@ -10,8 +10,9 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import gameSaga from './game'
+import server from '../server'
 
-const games = Object.create(null)
+const games = server.games
 
 const createGameRecord = (id, code, playerIds) => ({
 	createdTime: Date.now(),
