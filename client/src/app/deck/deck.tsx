@@ -147,7 +147,7 @@ const Deck = ({setMenuSection}: Props) => {
 				<div className={css.limits}>{validationMessage}</div>
 				<div className={css.dynamicSpace} />
 				<button onClick={clearDeck}>Clear</button>
-				<form>
+				<div>
 					<input
 						maxLength={25}
 						name="saveDeckName"
@@ -165,7 +165,7 @@ const Deck = ({setMenuSection}: Props) => {
 						defaultValue={"default"}
 						onChange={e => loadDeck(e.target.value)}>
 					</select>
-				</form>
+				</div>
 			</div>
 			<div className={css.cards}>
 				<div className={classnames(css.cardColumn, css.allCards)}>
