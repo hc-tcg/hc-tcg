@@ -16,12 +16,9 @@ class GoldArmorEffectCard extends EffectCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			if (target.effectCardId === this.id) {
 				target.protection += this.protection.target
-				// TODO - what to do in case of invis potion 0x?
-				discardCard(game, target.row.effectCard)
 			}
 			if (target.attackerEffectCardId === this.id) {
 				target.attackerProtection += this.protection.target
-				discardCard(game, target.attackerRow.effectCard)
 			}
 			return target
 		})

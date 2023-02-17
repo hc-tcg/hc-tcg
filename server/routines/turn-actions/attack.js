@@ -113,19 +113,25 @@ function* attackSaga(game, turnAction, derivedState) {
 			hermitAttack + target.extraHermitDamage > 0
 				? WEAKNESS_DAMAGE
 				: 0
-		const totalDamage = Math.max(
-			(hermitAttack + target.extraHermitDamage + weaknessDamage) *
-				target.multiplier +
-				target.extraEffectDamage -
-				protection,
-			0
-		)
+		const totalDamage =
+			target.multiplier *
+				(hermitAttack + target.extraHermitDamage + weaknessDamage) +
+			target.extraEffectDamage
+
+		const finalDamage = Math.max(totalDamage - protection, 0)
+
+		// Discard single use protective cards (Shield/Gold Armor)
+		const targetEffectInfo = CARDS[target.row.effectCard?.cardId]
+		if (totalDamage > 0 && targetEffectInfo?.protection?.discard) {
+			discardCard(game, target.row.effectCard)
+		}
+
+		// Deal damage
+		if (!target.reverseDamage) {
+			target.row.health = Math.min(maxHealth, health - finalDamage)
+		}
 
 		/* --- Revival (Totem/Scar) --- */
-
-		if (!target.reverseDamage) {
-			target.row.health = Math.min(maxHealth, health - totalDamage)
-		}
 
 		target.recovery.sort((a, b) => b.amount - a.amount)
 
@@ -145,12 +151,14 @@ function* attackSaga(game, turnAction, derivedState) {
 		// from su effects & special movs
 		let totalDamageToAttacker = target.backlash
 		// from opponent's effects
-		if (!target.ignoreEffects) totalDamageToAttacker += target.counter
+		if (!target.ignoreEffects && !target.reverseDamage)
+			totalDamageToAttacker += target.counter
 		// hacky flag for Zedaph
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage
 		// protection
+		let finalDamageToAttacker = totalDamageToAttacker
 		if (target.attackerProtection) {
-			totalDamageToAttacker = Math.max(
+			finalDamageToAttacker = Math.max(
 				totalDamageToAttacker - target.attackerProtection,
 				0
 			)
@@ -159,10 +167,16 @@ function* attackSaga(game, turnAction, derivedState) {
 		// We don't need to worry about revival of attacker here
 		// since there is no way to lose the totem effect card while attacking
 
+		// Discard single use protective cards (Shield/Gold Armor)
+		const attackerEffectInfo = CARDS[playerActiveRow.effectCard?.cardId]
+		if (totalDamageToAttacker > 0 && attackerEffectInfo?.protection?.discard) {
+			discardCard(game, playerActiveRow.effectCard)
+		}
+
 		const attackMaxHealth = attackerHermitInfo.health
 		attackerActiveRow.health = Math.min(
 			attackMaxHealth,
-			attackerActiveRow.health - totalDamageToAttacker
+			attackerActiveRow.health - finalDamageToAttacker
 		)
 	}
 
