@@ -117,20 +117,22 @@ const Deck = ({setMenuSection}: Props) => {
 				<div className={css.limits}>{validationMessage}</div>
 				<div className={css.dynamicSpace} />
 				<button onClick={clearDeck}>Clear</button>
-				<input
-					maxLength={25}
-					name="deckName"
-					placeholder="Deck Name..."
-					onBlur={(e) => {
-						setDeckName(e.target.value)
-					}}
-				/>
-				<button type="button" onClick={saveDeck}>
-					Save
-				</button>
-				<button type="button" onClick={loadDeck}>
-					Load
-				</button>
+				<div>
+					<input
+						maxLength={25}
+						name="deckName"
+						placeholder="Deck Name..."
+						onBlur={(e) => {
+							setDeckName(e.target.value)
+						}}
+					/>
+					<button type="button" onClick={saveDeck}>
+						Save
+					</button>
+					<button type="button" onClick={loadDeck}>
+						Load
+					</button>
+				</div>
 			</div>
 			<div className={css.cards}>
 				<div className={classnames(css.cardColumn, css.allCards)}>
