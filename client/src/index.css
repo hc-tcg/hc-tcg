@@ -32,7 +32,7 @@ code {
 	box-sizing: border-box;
 }
 
-button {
+button, select, option {
 	font-family: Minecraft;
 	padding: 0 10px;
 	height: 30px;
@@ -48,12 +48,12 @@ button {
 	box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
 }
 
-button:disabled {
+button:disabled, select:disabled, option:disabled {
 	opacity: 0.7;
 	box-shadow: none;
 }
 
-button:not(:disabled):hover {
+button:not(:disabled):hover, select:not(:disabled):hover, option:not(:disabled):hover {
 	cursor: pointer;
 	background-color: rgba(100, 100, 255, 0.45);
 	text-shadow: 2px 2px #202013cc;

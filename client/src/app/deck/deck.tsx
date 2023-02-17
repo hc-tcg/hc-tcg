@@ -109,9 +109,9 @@ const Deck = ({setMenuSection}: Props) => {
 		defaultOption.innerHTML = "select deck";
 		deckSelection?.appendChild(defaultOption);
 
-		let deckOption = document.createElement("option");
 		storageKeys.forEach(key => {
 			if (0 === key.indexOf("Loadout_")) {
+				let deckOption = document.createElement("option");
 				deckOption.innerHTML = key.replace("Loadout_", "");
 				deckSelection?.appendChild(deckOption);
 			}
