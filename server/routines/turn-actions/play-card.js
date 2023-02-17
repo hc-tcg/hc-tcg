@@ -9,7 +9,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 	const {card, rowHermitCard, rowIndex, slotIndex, slotType} =
 		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
-	console.log('Playing card: ', card.cardId)
+	// console.log('Playing card: ', card.cardId)
 
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'

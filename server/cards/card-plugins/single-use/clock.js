@@ -15,7 +15,6 @@ class ClockSingleUseCard extends SingleUseCard {
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
 			const {currentPlayer} = derivedState
 			if (currentPlayer.custom[this.id]) {
-				console.log('Turn skipped')
 				delete currentPlayer.custom[this.id]
 				return 'SKIP'
 			}
@@ -25,7 +24,6 @@ class ClockSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, opponentPlayer} = derivedState
 			if (singleUseInfo?.id === this.id) {
 				if (game.state.turn < 2) {
-					console.log("Can't play clock on first turn")
 					return 'INVALID'
 				}
 				opponentPlayer.custom[this.id] = true
