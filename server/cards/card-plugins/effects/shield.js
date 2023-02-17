@@ -12,17 +12,7 @@ class ShieldEffectCard extends EffectCard {
 		})
 		this.protection = {target: 10, discard: true}
 	}
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			if (target.effectCardId === this.id) {
-				target.protection += this.protection.target
-			}
-			if (target.attackerEffectCardId === this.id) {
-				target.attackerProtection += this.protection.target
-			}
-			return target
-		})
-	}
+	register(game) {}
 }
 
 export default ShieldEffectCard

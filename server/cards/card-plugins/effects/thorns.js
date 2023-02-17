@@ -11,14 +11,7 @@ class ThornsEffectCard extends EffectCard {
 		})
 		this.protection = {backlash: 10}
 	}
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			if (target.effectCardId === this.id) {
-				target.counter += this.protection.backlash
-			}
-			return target
-		})
-	}
+	register(game) {}
 }
 
 export default ThornsEffectCard

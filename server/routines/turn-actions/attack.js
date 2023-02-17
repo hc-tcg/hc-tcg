@@ -57,13 +57,10 @@ function* attackSaga(game, turnAction, derivedState) {
 		isActive: row === opponentActiveRow,
 		extraEffectDamage: 0,
 		extraHermitDamage: 0,
-		protection: 0,
-		attackerProtection: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreEffects: false,
 		reverseDamage: false,
 		backlash: 0,
-		counter: 0,
 		multiplier: 1,
 		invalid: false,
 	})
@@ -107,7 +104,10 @@ function* attackSaga(game, turnAction, derivedState) {
 		/* --- Damage to target --- */
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
-		const protection = target.ignoreEffects ? 0 : target.protection
+		const targetEffectInfo = CARDS[target.row.effectCard?.cardId]
+		const protection = target.ignoreEffects
+			? 0
+			: targetEffectInfo?.protection?.target || 0
 		const weaknessDamage =
 			strengths.includes(targetHermitInfo.hermitType) &&
 			hermitAttack + target.extraHermitDamage > 0
@@ -121,7 +121,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		const finalDamage = Math.max(totalDamage - protection, 0)
 
 		// Discard single use protective cards (Shield/Gold Armor)
-		const targetEffectInfo = CARDS[target.row.effectCard?.cardId]
 		if (totalDamage > 0 && targetEffectInfo?.protection?.discard) {
 			discardCard(game, target.row.effectCard)
 		}
@@ -148,18 +147,22 @@ function* attackSaga(game, turnAction, derivedState) {
 
 		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
 
+		const attackerEffectInfo = CARDS[playerActiveRow.effectCard?.cardId]
+		const attackerProtection = attackerEffectInfo?.protection?.target || 0
+		const attackerBacklash = targetEffectInfo?.protection?.backlash || 0
+
 		// from su effects & special movs
 		let totalDamageToAttacker = target.backlash
 		// from opponent's effects
 		if (!target.ignoreEffects && !target.reverseDamage)
-			totalDamageToAttacker += target.counter
+			totalDamageToAttacker += attackerBacklash
 		// hacky flag for Zedaph
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage
 		// protection
 		let finalDamageToAttacker = totalDamageToAttacker
 		if (target.attackerProtection) {
 			finalDamageToAttacker = Math.max(
-				totalDamageToAttacker - target.attackerProtection,
+				totalDamageToAttacker - attackerProtection,
 				0
 			)
 		}
@@ -168,7 +171,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		// since there is no way to lose the totem effect card while attacking
 
 		// Discard single use protective cards (Shield/Gold Armor)
-		const attackerEffectInfo = CARDS[playerActiveRow.effectCard?.cardId]
 		if (totalDamageToAttacker > 0 && attackerEffectInfo?.protection?.discard) {
 			discardCard(game, playerActiveRow.effectCard)
 		}
