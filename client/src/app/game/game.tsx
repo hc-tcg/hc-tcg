@@ -29,6 +29,8 @@ import {
 	slotPicked,
 } from 'logic/game/game-actions'
 import SoundButton from './sound-button'
+import HandButton from './hand-button/hand-button'
+import classNames from 'classnames'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
@@ -82,6 +84,7 @@ function Game(props: Props) {
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
 	const [showForfeit, setShowForfeit] = useState<boolean>(false)
+	const [showHand, setShowHand] = useState<boolean>(true)
 	const dispatch = useDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
@@ -103,6 +106,10 @@ function Game(props: Props) {
 	const handleForfeit = () => {
 		setShowForfeit(true)
 	}
+	
+	const updateHandVisibility = (showHand: boolean) => {
+		setShowHand(showHand)
+	}
 
 	const pickedCardsInstances = pickedCards
 		.map((pickedCard) => pickedCard.card)
@@ -111,7 +118,8 @@ function Game(props: Props) {
 	return (
 		<div className={css.game}>
 			<Board onClick={handleBoardClick} gameState={gameState} />
-			<div className={css.hand}>
+			<HandButton isHandShown={showHand} updateHandVisibility={updateHandVisibility} />
+			<div className={classNames(css.hand, !showHand ? css.hidden: undefined)}>
 				<CardList
 					wrap={false}
 					size="medium"

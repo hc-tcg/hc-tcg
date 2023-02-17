@@ -17,6 +17,10 @@
 	text-align: center;
 }
 
+.hand.hidden {
+	visibility: hidden;
+}
+
 .forfeit {
 	position: fixed;
 	top: 2px;

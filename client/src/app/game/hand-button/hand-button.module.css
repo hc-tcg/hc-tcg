@@ -1,0 +1,11 @@
+.handButton {
+	position: fixed;
+	bottom: 240px;
+	left: 50%;
+	-ms-transform: translateX(-50%);
+  	transform: translateX(-50%);
+}
+
+.handButton.handHidden {
+	bottom: 0;
+}
