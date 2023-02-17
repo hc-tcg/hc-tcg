@@ -164,7 +164,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage
 		// protection
 		let finalDamageToAttacker = totalDamageToAttacker
-		if (target.attackerProtection) {
+		if (attackerProtection) {
 			finalDamageToAttacker = Math.max(
 				totalDamageToAttacker - attackerProtection,
 				0
