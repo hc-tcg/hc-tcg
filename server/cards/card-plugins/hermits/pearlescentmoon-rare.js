@@ -42,7 +42,9 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			opponentPlayer.custom[this.id] = true
+			if (!opponentPlayer.custom[this.id]) {
+				opponentPlayer.custom[this.id] = 1
+			}
 
 			return target
 		})
@@ -52,7 +54,12 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			const {currentPlayer} = derivedState
 
 			if (!currentPlayer.custom[this.id]) return
-			delete currentPlayer.custom[this.id]
+			if (currentPlayer.custom[this.id] === 2) {
+				delete currentPlayer.custom[this.id]
+				return
+			} else {
+				currentPlayer.custom[this.id] = 2
+			}
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip

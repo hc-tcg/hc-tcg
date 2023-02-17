@@ -2,6 +2,9 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+/*
+- Beef confirmed that double damage condition includes other rare mumbos.
+*/
 class MumboJumboRareHermitCard extends HermitCard {
 	constructor() {
 		super({
