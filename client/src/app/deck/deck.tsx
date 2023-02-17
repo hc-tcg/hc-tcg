@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardInfoT} from 'types/cards'
 import {CardT} from 'types/game-state'
@@ -8,6 +8,7 @@ import CARDS from 'server/cards'
 import {validateDeck} from 'server/utils'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
+import {unmountComponentAtNode} from 'react-dom'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -49,7 +50,7 @@ const Deck = ({setMenuSection}: Props) => {
 		}))
 	)
 
-	const [deckName, setDeckName] = useState<string>('')
+	const [saveDeckName, setSaveDeckName] = useState<string>('')
 
 	const commonCards = pickedCards.filter(
 		(card) => TYPED_CARDS[card.cardId].rarity === 'common'
@@ -89,15 +90,44 @@ const Deck = ({setMenuSection}: Props) => {
 	const clearDeck = () => {
 		setPickedCards([])
 	}
-	const saveDeck = () => {
-		localStorage.setItem('Loadout_' + deckName, JSON.stringify(pickedCards))
-		console.log(JSON.stringify(pickedCards))
-	}
-	const loadDeck = () => {
-		if (localStorage.getItem('Loadout_' + deckName) != null) {
-			setPickedCards(JSON.parse(localStorage.getItem('Loadout_' + deckName)!))
+	
+	const loadDeck = (loadDeckName: string) => {		
+		if (localStorage.getItem('Loadout_' + loadDeckName) != null) {
+			setPickedCards(JSON.parse(localStorage.getItem('Loadout_' + loadDeckName)!));
 		}
 	}
+
+	const loadAllDecks = () => {
+		const storageKeys = Object.keys(localStorage);
+		let deckSelection = document.getElementById("loadDeckSelection");
+		deckSelection?.childNodes.forEach(child => {
+			child.remove(); //does not work... there is probably a react way that is using what ever...
+		});
+		
+		let defaultOption = document.createElement("option");
+		defaultOption.value = "default";
+		defaultOption.innerHTML = "select deck";
+		deckSelection?.appendChild(defaultOption);
+
+		let deckOption = document.createElement("option");
+		storageKeys.forEach(key => {
+			if (0 === key.indexOf("Loadout_")) {
+				deckOption.innerHTML = key.replace("Loadout_", "");
+				deckSelection?.appendChild(deckOption);
+			}
+		});
+	}
+
+	const saveDeck = () => {
+		localStorage.setItem('Loadout_' + saveDeckName, JSON.stringify(pickedCards));
+		console.log(JSON.stringify(pickedCards));
+		loadAllDecks();
+	}
+	
+	useEffect(() => {
+		loadAllDecks();	
+	}, []);
+
 	const allCards = Object.values(TYPED_CARDS).map(
 		(card: CardInfoT): CardT => ({
 			cardId: card.id,
@@ -120,18 +150,21 @@ const Deck = ({setMenuSection}: Props) => {
 				<form>
 					<input
 						maxLength={25}
-						name="deckName"
+						name="saveDeckName"
 						placeholder="Deck Name..."
 						onBlur={(e) => {
-							setDeckName(e.target.value)
+							setSaveDeckName(e.target.value)
 						}}
 					/>
 					<button type="button" onClick={saveDeck}>
 						Save
 					</button>
-					<button type="button" onClick={loadDeck}>
-						Load
-					</button>
+					<select
+						id="loadDeckSelection"
+						title="select Deck"
+						defaultValue={"default"}
+						onChange={e => loadDeck(e.target.value)}>
+					</select>
 				</form>
 			</div>
 			<div className={css.cards}>
