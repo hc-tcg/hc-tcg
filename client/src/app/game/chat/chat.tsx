@@ -69,7 +69,7 @@ function Chat() {
 							title={time}
 						>
 							<span className={css.playerName}>{name}</span>
-							<span className={css.text}>: {messageInfo.message}</span>
+							<span className={css.text}>:&nbsp;{messageInfo.message}</span>
 						</div>
 					)
 				})}

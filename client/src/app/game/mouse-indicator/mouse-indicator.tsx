@@ -25,8 +25,8 @@ function MouseIndicator({message}: Props) {
 			elRef.current.style.left = ev.clientX + 'px'
 			elRef.current.style.top = ev.clientY + 'px'
 		}
-		const outListener = (ev: MouseEvent) => setMouseOut(true)
-		const overListener = (ev: MouseEvent) => setMouseOut(false)
+		const outListener = () => setMouseOut(true)
+		const overListener = () => setMouseOut(false)
 		document.addEventListener('mousemove', moveListener, {passive: true})
 		window.addEventListener('mouseout', outListener, {passive: true})
 		window.addEventListener('mouseover', overListener, {passive: true})

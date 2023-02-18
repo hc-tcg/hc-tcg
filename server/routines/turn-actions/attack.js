@@ -158,7 +158,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		// from su effects & special movs
 		let totalDamageToAttacker = target.backlash
 		// from opponent's effects
-		if (!target.ignoreEffects && !target.reverseDamage)
+		if (!target.ignoreEffects && !target.reverseDamage && totalDamage > 0)
 			totalDamageToAttacker += attackerBacklash
 		// hacky flag for Zedaph
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage

@@ -74,8 +74,7 @@ const renderModal = (
 	return null
 }
 
-type Props = {}
-function Game(props: Props) {
+function Game() {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
 	const pickedCards = useSelector(getPickProcess)?.pickedCards || []

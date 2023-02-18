@@ -50,7 +50,7 @@ const getRarity = (card: CardInfoT): React.ReactNode | null => {
 const getOneDescription = (desc: string): React.ReactNode => {
 	return desc
 		.split('\n\n')
-		.map((part, index) => <div key={index}>{part || ' '}</div>)
+		.map((part, index) => <div key={index}>{part || '&nbsp;'}</div>)
 }
 
 const getDescription = (card: CardInfoT): React.ReactNode => {
@@ -102,7 +102,7 @@ const getStrengthsAndWeaknesses = (card: CardInfoT): React.ReactNode => {
 
 	const strengths = TYPED_STRENGTHS[card.hermitType]
 	const weaknesses = Object.entries(TYPED_STRENGTHS)
-		.filter(([_, value]) => value.includes(card.hermitType))
+		.filter(([, value]) => value.includes(card.hermitType))
 		.map(([key]) => key) as Array<HermitTypeT>
 
 	const result = (

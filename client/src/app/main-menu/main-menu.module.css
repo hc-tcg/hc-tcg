@@ -1,15 +1,3 @@
-.chooseGame {
-	padding-top: 15px;
-	display: flex;
-	flex-flow: column nowrap;
-	align-items: center;
-}
-
-.chooseGame button {
-	width: 250px;
-	margin-top: 2px;
-}
-
 .message {
 	color: white;
 	font-family: Minecraft;
@@ -19,10 +7,6 @@
 .message .playerName {
 	color: rgb(238, 135, 48);
 	font-family: MinecraftBold;
-}
-
-.deckButton {
-	background: #6666cc;
 }
 
 .info {
@@ -46,4 +30,143 @@
 
 .info a:hover {
 	filter: contrast(1);
+}
+
+.smallMenuButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	width: 100%;
+	font-size: 1em;
+}
+
+.menuButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 40px;
+	margin: 10px;
+	font-size: 1em;
+}
+
+.menuBackground {
+	display: flex;
+	justify-content: center;
+
+	margin: 0px;
+
+	height: 100vh;
+	width: 100vw;
+	background-image: url('/images/menu-background.png');
+	background-size: cover;
+	background-position: center;
+}
+
+.menuContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 100%;
+	width: 100%;
+	justify-content: center;
+}
+
+.buttonContainer {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	width: 80%;
+}
+
+.smallButtonContainer {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	align-items: center;
+	justify-items: center;
+	margin: 10px;
+	gap: 15px;
+}
+
+.logo {
+	display: flex;
+	flex-direction: column;
+	justify-content: end;
+	align-items: end;
+	margin-top: 30px;
+
+	width: 80%;
+}
+
+.notOfficial {
+	transform: translate(0, -35px) rotate(-20deg);
+}
+
+.notOfficial > p {
+	color: #fcfc29;
+	text-shadow: #3f3e00 2px 2px;
+	font-family: Minecraft;
+
+	animation-name: notOfficialAnim;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+
+.bottomPadding {
+	display: flex;
+	height: 20%;
+}
+
+@keyframes notOfficialAnim {
+	0% {
+		transform: scale(100%);
+	}
+	50% {
+		transform: scale(150%);
+	}
+	100% {
+		transform: scale(100%);
+	}
+}
+
+/* Small Screen */
+@media only screen and (min-width: 800px) {
+	.logo {
+		width: 500px;
+		margin-bottom: 60px;
+	}
+
+	.buttonContainer {
+		width: 500px;
+	}
+}
+
+/* Widescreen */
+@media only screen and (min-width: 1300px) {
+	.menuBackground {
+		background-image: url('/images/menu-background-widescreen.png');
+		justify-content: start;
+	}
+
+	.menuContainer {
+		width: 35%;
+	}
+
+	.bottomPadding {
+		height: 0px;
+	}
+
+	.buttonContainer {
+		width: 500px;
+	}
+
+	.logo {
+		width: 500px;
+		margin-bottom: 60px;
+	}
 }

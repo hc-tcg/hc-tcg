@@ -2,7 +2,7 @@
 	background: url('https://static.wikia.nocookie.net/minecraft/images/a/ab/Badlands-island-chain-minecraft-seed-2000x1200.jpeg')
 		no-repeat;
 	background-size: cover;
-	min-height: 100vh;
+	min-height: max(740px, 100vh);
 }
 
 .hand {

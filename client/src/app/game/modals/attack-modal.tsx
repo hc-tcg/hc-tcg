@@ -45,9 +45,9 @@ function AttackModal({closeModal}: Props) {
 	] as HermitCardT
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
-	const playerEffectInfo = activeRow.effectCard
-		? (TYPED_CARDS[activeRow.effectCard.cardId] as EffectCardT)
-		: null
+	// const playerEffectInfo = activeRow.effectCard
+	// 	? (TYPED_CARDS[activeRow.effectCard.cardId] as EffectCardT)
+	// 	: null
 	const opponentEffectInfo = opponentRow.effectCard
 		? (TYPED_CARDS[opponentRow.effectCard.cardId] as EffectCardT)
 		: null

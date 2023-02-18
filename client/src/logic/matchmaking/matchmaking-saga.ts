@@ -68,7 +68,6 @@ function* enterMatchmaking(action: AnyAction): SagaIterator {
 		yield call(createPrivateSaga)
 	} else if (type === 'JOIN_PRIVATE_GAME') {
 		yield call(joinPrivateSaga)
-	} else {
 	}
 }
 
@@ -83,7 +82,7 @@ function* newMatchmaking(action: AnyAction): SagaIterator {
 		matchmaking: call(enterMatchmaking, action),
 		leave: take('LEAVE_MATCHMAKING'),
 	})
-	if (result.hasOwnProperty('matchmaking')) {
+	if (Object.hasOwn(result, 'matchmaking')) {
 		yield put(leaveMatchmaking())
 	} else {
 		yield call(sendMsg, 'LEAVE_MATCHMAKING')

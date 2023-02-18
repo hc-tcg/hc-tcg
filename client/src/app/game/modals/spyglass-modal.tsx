@@ -1,6 +1,5 @@
 import Modal from 'components/modal'
 import {useSelector} from 'react-redux'
-import {RootState} from 'store'
 import CardList from 'components/card-list'
 import {CardT} from 'types/game-state'
 import css from './spyglass-modal.module.css'
