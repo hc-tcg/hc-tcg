@@ -21,7 +21,6 @@
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
-	letter-spacing: 2px;
 }
 
 .health {
@@ -41,19 +40,21 @@
 }
 
 text.attackName {
-	font-size: 40px;
+	font-size: 39px;
 	text-transform: uppercase;
 	font-weight: bold;
 	fill: black;
-	letter-spacing: 0;
 	text-anchor: middle;
+}
+
+text.attackName.long {
+	letter-spacing: 0;
 }
 
 .attackDamage {
 	text-transform: uppercase;
 	font-weight: bold;
 	fill: rgb(246, 4, 1);
-	letter-spacing: 0;
 	text-anchor: end;
 }
 

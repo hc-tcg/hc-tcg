@@ -20,20 +20,6 @@ const ItemCard = ({card}: ItemCardProps) => {
 				rx="15"
 				ry="15"
 			/>
-			<g id="type">
-				<rect
-					className={css.typeBackground}
-					x="20"
-					y="20"
-					width="360"
-					height="75"
-					rx="15"
-					ry="15"
-				/>
-				<text x="200" y="35" className={css.type}>
-					ITEM
-				</text>
-			</g>
 			<g>
 				<image
 					className={css.star}
@@ -50,6 +36,20 @@ const ItemCard = ({card}: ItemCardProps) => {
 					x="90"
 					y="140"
 				/>
+			</g>
+			<g id="type">
+				<rect
+					className={css.typeBackground}
+					x="20"
+					y="20"
+					width="360"
+					height="75"
+					rx="15"
+					ry="15"
+				/>
+				<text x="200" y="33" className={css.type}>
+					ITEM
+				</text>
 			</g>
 			{card.rarity === 'rare' ? (
 				<g>

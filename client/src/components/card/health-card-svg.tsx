@@ -38,7 +38,7 @@ const HealthCard = ({card}: HealthCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="35" className={css.type}>
+				<text x="200" y="33" className={css.type}>
 					HEALTH
 				</text>
 			</g>
