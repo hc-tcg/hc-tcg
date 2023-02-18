@@ -20,7 +20,7 @@ const HandButton: React.FC<IHandButtonProps> = ({isHandShown, updateHandVisibili
 	}, [isHandShown])
 
 	return (
-		<button className={classNames(css.handButton, !isHandShown ? css.handHidden: undefined)} onClick={handleHandVisibility}>
+		<button onClick={handleHandVisibility}>
 			{isHandVisible
 					? 'Hide hand'
 					: 'Show hand'

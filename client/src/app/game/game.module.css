@@ -7,7 +7,7 @@
 
 .hand {
 	position: fixed;
-	bottom: 0;
+	bottom: 3em;
 	width: 100%;
 	height: 240px;
 	background: beige;
@@ -19,6 +19,17 @@
 
 .hand.hidden {
 	visibility: hidden;
+}
+
+.handFooter {
+	height: 3em;
+	position: fixed;
+	bottom: 0;
+	background-color: beige;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .forfeit {

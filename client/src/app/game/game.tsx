@@ -118,7 +118,6 @@ function Game(props: Props) {
 	return (
 		<div className={css.game}>
 			<Board onClick={handleBoardClick} gameState={gameState} />
-			<HandButton isHandShown={showHand} updateHandVisibility={updateHandVisibility} />
 			<div className={classNames(css.hand, !showHand ? css.hidden: undefined)}>
 				<CardList
 					wrap={false}
@@ -128,6 +127,9 @@ function Game(props: Props) {
 					selected={selectedCard}
 					picked={pickedCardsInstances}
 				/>
+			</div>
+			<div className={css.handFooter}>
+				<HandButton isHandShown={showHand} updateHandVisibility={updateHandVisibility} />
 			</div>
 			{renderModal(openedModalId, handleOpenModalId)}
 			{pickProcess ? (
