@@ -3,6 +3,8 @@ import {useSelector, useDispatch} from 'react-redux'
 import {getConnecting} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
 import css from './login.module.css'
+import TcgLogo from 'components/tcg-logo/tcg-logo'
+import LinkContainer from 'components/link-container/link-container'
 
 function Login() {
 	const dispatch = useDispatch()
@@ -15,41 +17,27 @@ function Login() {
 	}
 
 	return (
-		<div className={css.login}>
-			<img width="200" height="184" src="/images/tcg1.png" />
-
-			{connecting ? (
-				<div className={css.connecting}>Connecting...</div>
-			) : (
-				<>
-					<form onSubmit={handlePlayerName}>
-						<input
-							maxLength={25}
-							name="playerName"
-							placeholder="Player name..."
-							autoFocus
-						/>
-						<button>Next</button>
-					</form>
-					<div className={css.info}>
-						<a
-							href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
-							target="_blank"
-						>
-							<img src="/images/icons/reddit.svg" height="26" />
-							Reddit
-						</a>
-						<a href="https://github.com/martinkadlec0/hc-tcg" target="_blank">
-							<img src="/images/icons/github.svg" height="26" />
-							Github
-						</a>
-						<a href="https://discord.gg/AjGbqNfcQX" target="_blank">
-							<img src="/images/icons/discord.svg" height="26" />
-							Fan Discord
-						</a>
-					</div>
-				</>
-			)}
+		/* Background Image */
+		<div className={css.loginBackground}>
+			<div className={css.loginContainer}>
+				<TcgLogo />
+				{connecting ? (
+					<div className={css.connecting}>Connecting...</div>
+				) : (
+					<>
+						<form onSubmit={handlePlayerName}>
+							<input
+								maxLength={25}
+								name="playerName"
+								placeholder="Player name..."
+								autoFocus
+							/>
+							<button>Next</button>
+						</form>
+					</>
+				)}
+				<LinkContainer />
+			</div>
 		</div>
 	)
 }
