@@ -7,6 +7,7 @@ import {
 	getInvalidCode,
 } from 'logic/matchmaking/matchmaking-selectors'
 import css from './match-making.module.css'
+import TcgLogo from 'components/tcg-logo/tcg-logo'
 
 function MatchMaking() {
 	const dispatch = useDispatch()
@@ -82,9 +83,11 @@ function MatchMaking() {
 	}
 
 	return (
-		<div className={css.matchmaking}>
-			<img width="200" height="184" src="/images/tcg1.png" />
-			{content}
+		<div className={css.matchMakingBackground}>
+			<div className={css.matchMakingContainer}>
+				<TcgLogo />
+				{content}
+			</div>
 		</div>
 	)
 }
