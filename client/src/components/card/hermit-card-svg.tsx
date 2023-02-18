@@ -20,7 +20,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<defs>
 				<clipPath id="myClip">
-					<rect x="55" y="65" width="290" height="185" />
+					<rect x="55" y="70" width="290" height="178" />
 				</clipPath>
 			</defs>
 			<rect
@@ -32,25 +32,25 @@ const HermitCard = ({card}: HermitCardProps) => {
 				rx="15"
 				ry="15"
 			/>
-			<text x="45" y="17" className={css.name}>
+			<text x="45" y="18" className={css.name}>
 				{card.name}
 			</text>
-			<text x="300" y="17" className={css.health}>
+			<text x="300" y="18" className={css.health}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
-				<rect x="45" y="55" fill="white" width="310" height="205" />
+				<rect x="45" y="60" fill="white" width="310" height="196" />
 				<image
-					href="/images/bg5.png"
+					href={`/images/backgrounds/${hermitFullName}.png`}
 					x="55"
-					y="65"
+					y="70"
 					width="290"
 					clipPath="url(#myClip)"
 				/>
 				<image
 					href={`/images/hermits-nobg/${hermitFullName}.png`}
 					x="55"
-					y="75"
+					y="80"
 					width="290"
 					clipPath="url(#myClip)"
 				/>
@@ -91,41 +91,53 @@ const HermitCard = ({card}: HermitCardProps) => {
 							key={i}
 							href={`/images/types/type-${type}.png`}
 							x={COST_X[card.primary.cost.length - 1][i]}
-							y="277"
+							y="273"
 							width={COST_SIZE}
 							height={COST_SIZE}
 						/>
 					))}
 				</g>
-				<text x="200" y="278" className={css.attackName}>
+				<text
+					x="200"
+					y="271"
+					className={classnames(css.attackName, {
+						[css.long]: card.primary.name.length > 10,
+					})}
+				>
 					{card.primary.name}
 				</text>
 				<text
 					x="380"
-					y="275"
+					y="270"
 					className={classnames(css.attackDamage, {
 						[css.specialMove]: !!card.primary.power,
 					})}
 				>
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
-				<rect x="20" y="320" width="360" height="10" fill="white" />
+				<rect x="20" y="315" width="360" height="10" fill="white" />
 				{card.secondary.cost.map((type, i) => (
 					<image
 						key={i}
 						href={`/images/types/type-${type}.png`}
 						x={COST_X[card.secondary.cost.length - 1][i]}
-						y="347"
+						y="343"
 						width={COST_SIZE}
 						height={COST_SIZE}
 					/>
 				))}
-				<text x="200" y="348" className={css.attackName}>
+				<text
+					x="200"
+					y="341"
+					className={classnames(css.attackName, {
+						[css.long]: card.secondary.name.length > 10,
+					})}
+				>
 					{card.secondary.name}
 				</text>
 				<text
 					x="380"
-					y="345"
+					y="340"
 					className={classnames(css.attackDamage, {
 						[css.specialMove]: !!card.secondary.power,
 					})}
