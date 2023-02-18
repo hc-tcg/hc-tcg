@@ -3,8 +3,8 @@ import {useSelector, useDispatch} from 'react-redux'
 import {getConnecting} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
 import css from './login.module.css'
-import TcgLogo from 'components/tcg-logo/tcg-logo'
-import LinkContainer from 'components/link-container/link-container'
+import TcgLogo from 'components/tcg-logo'
+import LinkContainer from 'components/link-container'
 
 function Login() {
 	const dispatch = useDispatch()

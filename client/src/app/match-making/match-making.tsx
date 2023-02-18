@@ -7,7 +7,7 @@ import {
 	getInvalidCode,
 } from 'logic/matchmaking/matchmaking-selectors'
 import css from './match-making.module.css'
-import TcgLogo from 'components/tcg-logo/tcg-logo'
+import TcgLogo from 'components/tcg-logo'
 
 function MatchMaking() {
 	const dispatch = useDispatch()
