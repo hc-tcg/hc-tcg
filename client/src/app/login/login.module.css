@@ -1,34 +1,25 @@
-.login {
-	padding-top: 15px;
+.loginBackground {
 	display: flex;
-	flex-flow: column nowrap;
+	justify-content: center;
+
+	margin: 0px;
+
+	height: 100vh;
+	width: 100vw;
+
+	background-image: url('/images/menu-background.png');
+	background-size: cover;
+	background-position: center;
+}
+
+.loginContainer {
+	display: flex;
+	flex-direction: column;
 	align-items: center;
+	margin-top: 30px;
 }
 
 .connecting {
 	color: white;
 	font-family: Minecraft;
-}
-
-.info {
-	margin-top: 30px;
-	color: #dedede;
-	font-size: 11px;
-	font-family: Minecraft;
-	display: flex;
-	gap: 15px;
-	align-items: center;
-}
-
-.info a {
-	color: black;
-	filter: contrast(0.75);
-	display: flex;
-	align-items: center;
-	text-decoration: none;
-	gap: 4px;
-}
-
-.info a:hover {
-	filter: contrast(1);
 }
