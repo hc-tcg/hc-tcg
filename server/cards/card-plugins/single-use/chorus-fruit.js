@@ -38,7 +38,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 					hasOtherHermit &&
 					pastTurnActions.includes('ATTACK') &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}
