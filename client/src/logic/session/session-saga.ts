@@ -50,7 +50,7 @@ export function* loginSaga(): SagaIterator {
 		timeout: delay(5000),
 	})
 
-	if (result.invalidPlayer || result.hasOwnProperty('timeout')) {
+	if (result.invalidPlayer || Object.hasOwn(result, 'timeout')) {
 		console.log('Invalid session.')
 		clearSession()
 		socket.disconnect()

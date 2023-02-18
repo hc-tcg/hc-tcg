@@ -39,7 +39,7 @@ const validTarget = (
 	cardPlayerState: PlayerState | null,
 	playerId: string
 ) => {
-	if (!req.hasOwnProperty('target')) return true
+	if (!Object.hasOwn(req, 'target')) return true
 	// hand (or possibly sue?)
 	if (!cardPlayerState) return req.target === 'hand'
 
@@ -55,7 +55,7 @@ const validActive = (
 	cardPlayerState: PlayerState | null,
 	rowIndex: number | null
 ) => {
-	if (!req.hasOwnProperty('active')) return true
+	if (!Object.hasOwn(req, 'active')) return true
 	if (!cardPlayerState || rowIndex === null) return false
 
 	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
@@ -66,12 +66,12 @@ const validActive = (
 }
 
 const validType = (req: PickRequirmentT, slotType: CardTypeT) => {
-	if (!req.hasOwnProperty('type')) return true
+	if (!Object.hasOwn(req, 'type')) return true
 	return req.type === 'any' ? true : req.type === slotType
 }
 
 const validEmpty = (req: PickRequirmentT, card: CardT | null) => {
-	if (!req.hasOwnProperty('empty')) return !!card
+	if (!Object.hasOwn(req, 'empty')) return !!card
 	return req.empty === !card
 }
 
@@ -89,7 +89,7 @@ function* pickSaga(
 	pickAction: AnyPickActionT
 ): SagaIterator<PickedCardT | void> {
 	const playerId = yield* select(getPlayerId)
-	let pickedCard: PickedCardT =
+	const pickedCard: PickedCardT =
 		pickAction.type === 'SET_SELECTED_CARD'
 			? {slotType: 'hand', card: pickAction.payload, playerId}
 			: pickAction.payload
@@ -148,7 +148,7 @@ export function* runPickProcessSaga(
 		})
 
 		const pickedCards: Array<PickedCardT> = []
-		for (let reqIndex in reqs) {
+		for (const reqIndex in reqs) {
 			const req = reqs[reqIndex]
 			const pickedReqCards = []
 			while (pickedReqCards.length < req.amount) {

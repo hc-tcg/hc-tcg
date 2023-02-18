@@ -9,7 +9,6 @@ import {
 	getAvailableActions,
 	getSelectedCard,
 	getPickProcess,
-	getPlayerStateById,
 	getPlayerState,
 } from 'logic/game/game-selectors'
 import {

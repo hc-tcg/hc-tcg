@@ -1,10 +1,10 @@
 import {select, take} from 'typed-redux-saga'
-import {call, put, fork, cancelled} from 'redux-saga/effects'
+import {call, put, fork} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {GameState} from 'types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
-import {PlayerState, CardT} from 'types/game-state'
-import {HermitCardT, CardInfoT} from 'types/cards'
+import {CardT} from 'types/game-state'
+import {CardInfoT} from 'types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -16,7 +16,7 @@ import {
 import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
 import {anyAvailableReqOptions} from 'server/utils/reqs'
 
-function* borrowSaga(pState: PlayerState): SagaIterator {
+function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModalId('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
@@ -99,7 +99,7 @@ function* actionLogicSaga(gameState: GameState): SagaIterator {
 				pickedCards = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
 			yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
 		} else if (pState.followUp === 'grian_rare') {
-			yield fork(borrowSaga, pState)
+			yield fork(borrowSaga)
 		}
 	} else if (pState.custom.spyglass) {
 		yield put(setOpenedModalId('spyglass'))

@@ -94,9 +94,8 @@ const Deck = ({setMenuSection}: Props) => {
 		console.log(JSON.stringify(pickedCards))
 	}
 	const loadDeck = () => {
-		if (localStorage.getItem('Loadout_' + deckName) != null) {
-			setPickedCards(JSON.parse(localStorage.getItem('Loadout_' + deckName)!))
-		}
+		const deck = localStorage.getItem('Loadout_' + deckName)
+		if (deck) setPickedCards(JSON.parse(deck))
 	}
 	const allCards = Object.values(TYPED_CARDS).map(
 		(card: CardInfoT): CardT => ({

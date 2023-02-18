@@ -94,7 +94,7 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 			gameCrash: call(receiveMsg, 'GAME_CRASH'),
 		})
 
-		if (result.hasOwnProperty('game')) {
+		if (Object.hasOwn(result, 'game')) {
 			throw new Error('Unexpected game ending')
 		}
 

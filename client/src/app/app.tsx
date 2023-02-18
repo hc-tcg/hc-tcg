@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
+import {useSelector} from 'react-redux'
 import {getPlayerName} from 'logic/session/session-selectors'
 import {getGameState} from 'logic/game/game-selectors'
 import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
@@ -13,7 +13,6 @@ import MatchMaking from './match-making'
 import css from './app.module.css'
 
 function App() {
-	const dispatch = useDispatch()
 	const playerName = useSelector(getPlayerName)
 	const matchmakingStatus = useSelector(getStatus)
 	const gameState = useSelector(getGameState)
