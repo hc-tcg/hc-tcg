@@ -71,11 +71,9 @@ function getAvailableActions(game, derivedState) {
 		return actions
 	}
 
-	let hermits = 0
-	for (let i = 0; i < currentPlayer.board.rows.length; i++) {
-		const row = currentPlayer.board.rows[i]
-		if (row.hermitCard !== null) hermits++
-	}
+	const hermits = currentPlayer.board.rows.filter(
+		(row) => row.hermitCard
+	).length
 	if (
 		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
 		hermits < 5
