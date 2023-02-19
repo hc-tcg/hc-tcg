@@ -1,0 +1,27 @@
+import {AnyAction} from 'redux'
+
+type FbState = {
+	uuid: string
+	stats: {w: number, l: number, fw: number, fl: number}
+}
+
+const defaultState: FbState = {
+	uuid: '',
+	stats: {w: 0, l:0, fw:0, fl: 0}
+}
+
+const fbReducer = (
+	state = defaultState,
+	action: AnyAction
+): SessionState => {
+	switch (action.type) {
+		case 'STATS':
+		  return {...state, stats: action.payload}
+		case 'AUTHED':
+			return {...state, uuid: action.payload}
+		default:
+			return state
+	}
+}
+
+export default fbReducer

@@ -4,6 +4,7 @@ import {getPlayerName} from 'logic/session/session-selectors'
 import {getGameState} from 'logic/game/game-selectors'
 import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
 import LostConnection from 'components/lost-connection'
+import {authlogin, statsupdate} from 'logic/session/session-actions'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import Login from './login'
 import MainMenu from './main-menu'
@@ -18,6 +19,32 @@ function App() {
 	const gameState = useSelector(getGameState)
 	const socketStatus = useSelector(getSocketStatus)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
+
+	console.log("constructor?");
+	firebase.auth().onAuthStateChanged(user => {
+		if (!!user){
+			dispatch(authlogin(user.uid));
+			global.dbObj.uuid = user.uid;
+			global.dbObj.dbref = firebase.database().ref("/stats").child(user.uid);
+			global.dbObj.dbref.on("value", ss=>{
+				let tmp = ss.val() || {w:0,l:0,fw:0,fl:0};
+				dispatch(statsupdate(tmp));
+				global.dbObj.stats = JSON.parse(JSON.stringify(tmp));
+			});
+			global.dbObj.gameOver = ()=>{
+				console.log("It worked!");
+			}
+		} else {
+			dispatch(authlogin(''));
+      dispatch(statsupdate({w:0,l:0,fw:0,fl:0}));
+			global.dbObj.stats = {w:0,l:0,fw:0,fl:0};
+			global.dbObj.dbref = false;
+			global.dbObj.uuid = '';
+			global.dbObj.gameOver = ()=>{
+				console.log("Non-Auth Worked!");
+			}
+		}
+	});
 
 	const router = () => {
 		if (gameState) {
