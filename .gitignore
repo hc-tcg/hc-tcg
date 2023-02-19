@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+#firebase
+server/adminKey.json
+
 # testing
 /coverage
 
