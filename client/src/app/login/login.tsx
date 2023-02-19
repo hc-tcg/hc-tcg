@@ -1,6 +1,6 @@
 import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {getConnecting, getUUID, getStats} from 'logic/session/session-selectors'
+import {getConnecting} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
 import css from './login.module.css'
 import TcgLogo from 'components/tcg-logo'
@@ -9,16 +9,6 @@ import LinkContainer from 'components/link-container'
 function Login() {
 	const dispatch = useDispatch()
 	const connecting = useSelector(getConnecting)
-	const uuid = useSelector(getUUID)
-	const stats = useSelector(getStats)
-
-  const oauthGoogle = ()=>{
-		var google_provider = new firebase.auth.GoogleAuthProvider();
-		firebase.auth().signInWithRedirect(google_provider);
-	}
-	const oauthAnon = ()=>{
-		firebase.auth().signInAnonymously();
-	}
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()

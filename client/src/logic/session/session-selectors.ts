@@ -23,11 +23,3 @@ export const getPlayerDeck = (state: RootState) => {
 export const getConnecting = (state: RootState) => {
 	return getSession(state).connecting
 }
-
-export const getUUID = (state: RootState) => {
-	return getSession(state).uuid
-}
-
-export const getStats = (state: RootState) => {
-	return getSession(state).stats
-}

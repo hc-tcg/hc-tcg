@@ -3,12 +3,14 @@ import {SagaIterator} from 'redux-saga'
 import socketSaga from 'logic/socket/socket-saga'
 import {loginSaga, logoutSaga, newDeckSaga} from 'logic/session/session-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
+import fbdbSaga from 'logic/fbdb/fbdb-saga'
 
 function* appSaga(): SagaIterator {
 	yield call(loginSaga)
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(matchmakingSaga)
+	yield fork(fbdbSaga)	
 }
 
 function* rootSaga(): SagaIterator {

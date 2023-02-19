@@ -1,9 +1,13 @@
 import {RootState} from 'store'
 
+export const getFbdb = (state: RootState) => {
+	return state.fbdb
+}
+
 export const getStats = (state: RootState) => {
-	return getSession(state).stats
+	return getFbdb(state).stats
 }
 
 export const getUUID = (state: RootState) => {
-	return getSession(state).uuid
+	return getFbdb(state).uuid
 }

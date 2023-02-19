@@ -6,8 +6,6 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: Array<string>
 	connecting: boolean
-	uuid: string
-	stats: {w: number, l: number, fw: number, fl: number}
 }
 
 const defaultState: SessionState = {
@@ -15,9 +13,7 @@ const defaultState: SessionState = {
 	playerId: '',
 	playerSecret: '',
 	playerDeck: [],
-	connecting: false,
-	uuid: '',
-	stats: {w: 0, l:0, fw:0, fl: 0}
+	connecting: false
 }
 
 const loginReducer = (
