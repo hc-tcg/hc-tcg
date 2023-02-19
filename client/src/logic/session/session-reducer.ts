@@ -23,10 +23,6 @@ const loginReducer = (
 	switch (action.type) {
 		case 'LOGIN':
 			return {...state, connecting: true}
-		case 'STATS':
-			return {...state, stats: action.payload}
-		case 'AUTHED':
-			return {...state, uuid: action.payload}
 		case 'DISCONNECT':
 			return {
 				...state,
