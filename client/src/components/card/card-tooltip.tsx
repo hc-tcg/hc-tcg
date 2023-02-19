@@ -50,7 +50,7 @@ const getRarity = (card: CardInfoT): React.ReactNode | null => {
 const getOneDescription = (desc: string): React.ReactNode => {
 	return desc
 		.split('\n\n')
-		.map((part, index) => <div key={index}>{part || '&nbsp;'}</div>)
+		.map((part, index) => <div key={index}>{part || <>&nbsp;</>}</div>)
 }
 
 const getDescription = (card: CardInfoT): React.ReactNode => {
