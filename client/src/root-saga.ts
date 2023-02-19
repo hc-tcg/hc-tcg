@@ -14,7 +14,7 @@ function* appSaga(): SagaIterator {
 
 function* rootSaga(): SagaIterator {
 	yield fork(socketSaga)
-	yield fork(fbdbSaga)	
+	yield fork(fbdbSaga)
 	while (true) {
 		console.log('Starting game loop')
 		const result = yield race({

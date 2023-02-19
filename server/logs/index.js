@@ -11,14 +11,9 @@ class FirebaseLogs {
 	constructor() {
 		this.id = 'firebase_logs'
 		this.db = admin.database()
-		this.usageref = this.db.ref('/cardusage')
-		this.usageref.once('value', (ss) => {
-			let tmp = ss.val() || {}
-			this.usage = tmp
-		})
-		this.playercountref = this.db.ref('/playersOnline')
-		this.gamecountref = this.db.ref('/gamesOnline')
-		this.gamecountref.set(0)
+		// this.playercountref = this.db.ref('/playersOnline')
+		// this.gamecountref = this.db.ref('/gamesOnline')
+		// this.gamecountref.set(0)
 	}
 	register(server) {
 		server.hooks.newGame.tap(this.id, (game) => {
@@ -28,10 +23,15 @@ class FirebaseLogs {
 				game.startHand1 = getHand(playerStates[0])
 				game.startHand2 = getHand(playerStates[1])
 				game.startTimestamp = new Date().getTime()
+				if (game.state.order[0] == playerStates[0].id) {
+					game.startDeck = 'deck1'
+				} else {
+					game.startDeck = 'deck2'
+				}
 				let numGames = Object.values(server.games).filter(
 					(gameRecord) => !!gameRecord.task
 				).length
-				this.gamecountref.set(numGames)
+				//this.gamecountref.set(numGames)
 			})
 			game.hooks.gameEnd.tap(this.id, () => {
 				const playerStates = Object.values(game.state.players)
@@ -39,6 +39,7 @@ class FirebaseLogs {
 					startHand1: game.startHand1,
 					startHand2: game.startHand2,
 					startTimestamp: game.startTimestamp,
+					startDeck: game.startDeck,
 					endTimestamp: new Date().getTime(),
 					turns: game.state.turn,
 				}
@@ -64,18 +65,18 @@ class FirebaseLogs {
 				let numGames = Object.values(server.games).filter(
 					(gameRecord) => !!gameRecord.task
 				).length
-				this.gamecountref.set(numGames - 1)
+				//this.gamecountref.set(numGames - 1)
 			})
 		})
 
 		server.hooks.playerJoined.tap(this.id, (playerInfo) => {
 			let numPlayers = Object.keys(server.allPlayers).length
-			this.playercountref.set(numPlayers)
+			//this.playercountref.set(numPlayers)
 		})
 
 		server.hooks.playerLeft.tap(this.id, (playerInfo) => {
 			let numPlayers = Object.keys(server.allPlayers).length
-			this.playercountref.set(numPlayers)
+			//this.playercountref.set(numPlayers)
 		})
 	}
 }
