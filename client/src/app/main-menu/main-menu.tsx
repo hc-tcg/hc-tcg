@@ -1,5 +1,5 @@
 import {useSelector, useDispatch} from 'react-redux'
-import {getPlayerName} from 'logic/session/session-selectors'
+import {getPlayerName, getUUID, getStats} from 'logic/session/session-selectors'
 import {
 	randomMatchmaking,
 	createPrivateGame,
@@ -14,6 +14,8 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const playerName = useSelector(getPlayerName)
+  const playerStats = useSelector(getStats)
+  const playerUUID = useSelector(getUUID)
 
 	const handleRandomMatchmaking = () => dispatch(randomMatchmaking())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
@@ -54,6 +56,14 @@ function MainMenu({setMenuSection}: Props) {
 					Fan Discord
 				</a>
 			</div>
+			{!playerUUID ? (<>
+				</>) : (
+				<div className={css.info}>
+					<span>
+						W-L: {playerStats.w}-{playerStats.l}
+					</span>
+				</div>
+			)}
 		</div>
 	)
 }

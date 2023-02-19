@@ -10,14 +10,6 @@ function Login() {
 	const uuid = useSelector(getUUID)
 	const stats = useSelector(getStats)
 
-  const oauthGoogle = ()=>{
-		var google_provider = new firebase.auth.GoogleAuthProvider();
-		firebase.auth().signInWithRedirect(google_provider);
-	}
-	const oauthAnon = ()=>{
-		firebase.auth().signInAnonymously();
-	}
-
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
@@ -59,27 +51,10 @@ function Login() {
 						</a>
 					</div>
 					{!uuid ? (<>
-						<div className={css.info}>
-							<span>
-							  <a onClick={oauthGoogle}>
-									<img src="/images/icons/btn_google_dark_normal_ios.svg" height="26" />
-									Login with Google
-								</a>
-							</span>
-							<span>
-							  <a onClick={oauthAnon}>
-									<img src="/images/icons/anon.png" height="26" />
-									Login Anonymously
-								</a>
-							</span>
-						</div>
-						<div className={css.info}>
-						  Logging in will let you save decks and track your own stats (Google auth works between browsers)
-						</div>
 						</>) : (
 						<div className={css.info}>
 						  <span>
-  						  Logged In, W-L: {stats.w}-{stats.l}
+  						  W-L: {stats.w}-{stats.l}
 							</span>
 						</div>
 					)}

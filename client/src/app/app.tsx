@@ -21,7 +21,6 @@ function App() {
 	const socketStatus = useSelector(getSocketStatus)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 
-	console.log("constructor?");
 	firebase.auth().onAuthStateChanged(user => {
 		if (!!user){
 			dispatch(authlogin(user.uid));
@@ -35,17 +34,9 @@ function App() {
 			global.dbObj.gameOver = ()=>{
 				console.log("It worked!");
 			}
-		} else {
-			dispatch(authlogin(''));
-      dispatch(statsupdate({w:0,l:0,fw:0,fl:0}));
-			global.dbObj.stats = {w:0,l:0,fw:0,fl:0};
-			global.dbObj.dbref = false;
-			global.dbObj.uuid = '';
-			global.dbObj.gameOver = ()=>{
-				console.log("Non-Auth Worked!");
-			}
 		}
 	});
+  firebase.auth().signInAnonymously();
 
 	const router = () => {
 		if (gameState) {

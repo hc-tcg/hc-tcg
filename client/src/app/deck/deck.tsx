@@ -7,7 +7,8 @@ import CardList from 'components/card-list'
 import CARDS from 'server/cards'
 import {validateDeck} from 'server/utils'
 import css from './deck.module.css'
-import {getPlayerDeck} from 'logic/session/session-selectors'
+import {getPlayerDeck, getStats,  getUUID} from 'logic/session/session-selectors'
+import {statsupdate} from 'logic/session/session-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -49,6 +50,9 @@ const Deck = ({setMenuSection}: Props) => {
 		}))
 	)
 
+	const playerStats = useSelector(getStats)
+	const playerUUID = useSelector(getUUID)
+
 	const [deckName, setDeckName] = useState<string>('')
 
 	const commonCards = pickedCards.filter(
@@ -86,6 +90,10 @@ const Deck = ({setMenuSection}: Props) => {
 		setMenuSection('mainmenu')
 	}
 
+	const resetStats = () => {
+		global.dbObj.dbref.set({w:0,l:0,fw:0,fl:0});
+	}
+
 	const clearDeck = () => {
 		setPickedCards([])
 	}
@@ -115,7 +123,14 @@ const Deck = ({setMenuSection}: Props) => {
 					Back to menu
 				</button>
 				<div className={css.limits}>{validationMessage}</div>
+				{playerUUID ? (<>
 				<div className={css.dynamicSpace} />
+				<div className={css.limits}>W-L: {playerStats.w} - {playerStats.l}</div>
+				<button onClick={resetStats}>Reset Stats?</button>
+				<div className={css.dynamicSpace} />
+				</>) : (<>
+  				<div className={css.dynamicSpace} />
+				</>)}
 				<button onClick={clearDeck}>Clear</button>
 				<div>
 					<input
