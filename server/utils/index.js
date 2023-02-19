@@ -158,7 +158,7 @@ export const validateDeck = (deckCards) => {
 	})
 
 	if (tooManyDuplicates)
-		return 'You cannot have more than 3 duplicate cards unless they are effect cards.'
+		return 'You cannot have more than 3 duplicate cards unless they are item cards.'
 
 	if (deckCards.length !== 42) return 'Deck must have exactly 42 cards.'
 }
