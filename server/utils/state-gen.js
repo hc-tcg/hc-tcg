@@ -1,5 +1,6 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
+import {DEBUG_CONFIG} from './debug-config'
 
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -118,17 +119,24 @@ export function getPlayerState(allPlayers, playerId) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	// pack.unshift({
-	// 	cardId: 'grian_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
-
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
 		return CARDS[card.cardId].type === 'hermit'
 	})
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	}
+
+	let hand = pack.slice(0, 7)
+
+	// add extra starting cards from debug config
+	for (let i = 0; i < DEBUG_CONFIG.startingCards.length; i++) {
+		const cardId = DEBUG_CONFIG.startingCards[i]
+
+		hand.unshift({
+			cardId,
+			cardInstance: Math.random() + '_' + Math.random(),
+		})
 	}
 
 	const TOTAL_ROWS = 5
@@ -138,7 +146,7 @@ export function getPlayerState(allPlayers, playerId) {
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
-		hand: pack.slice(0, 7), // 0.7
+		hand,
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),
