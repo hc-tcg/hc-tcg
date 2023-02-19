@@ -6,6 +6,8 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: Array<string>
 	connecting: boolean
+	uuid: string
+	stats: {w: number, l: number, fw: number, fl: number}
 }
 
 const defaultState: SessionState = {
@@ -14,6 +16,8 @@ const defaultState: SessionState = {
 	playerSecret: '',
 	playerDeck: [],
 	connecting: false,
+	uuid: '',
+	stats: {w: 0, l:0, fw:0, fl: 0}
 }
 
 const loginReducer = (
@@ -23,6 +27,10 @@ const loginReducer = (
 	switch (action.type) {
 		case 'LOGIN':
 			return {...state, connecting: true}
+		case 'STATS':
+		  return {...state, stats: action.payload}
+		case 'AUTHED':
+			return {...state, uuid: action.payload}
 		case 'DISCONNECT':
 			return {
 				...state,
