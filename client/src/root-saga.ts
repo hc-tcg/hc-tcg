@@ -10,7 +10,7 @@ function* appSaga(): SagaIterator {
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(matchmakingSaga)
-	yield fork(fbdbSaga)	
+	yield fork(fbdbSaga)
 }
 
 function* rootSaga(): SagaIterator {

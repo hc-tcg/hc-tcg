@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
 	game: gameReducer,
 	socketStatus: socketReducer,
 	matchmaking: matchmakingReducer,
-	fbdb: fbdbReducer
+	fbdb: fbdbReducer,
 })
 
 export default rootReducer

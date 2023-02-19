@@ -13,7 +13,7 @@ const defaultState: SessionState = {
 	playerId: '',
 	playerSecret: '',
 	playerDeck: [],
-	connecting: false
+	connecting: false,
 }
 
 const loginReducer = (
@@ -24,7 +24,7 @@ const loginReducer = (
 		case 'LOGIN':
 			return {...state, connecting: true}
 		case 'STATS':
-		  return {...state, stats: action.payload}
+			return {...state, stats: action.payload}
 		case 'AUTHED':
 			return {...state, uuid: action.payload}
 		case 'DISCONNECT':

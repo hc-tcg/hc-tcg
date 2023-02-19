@@ -4,8 +4,8 @@ import {getStats} from 'logic/fbdb/fbdb-selectors'
 
 function LinkContainer() {
 	const stats = useSelector(getStats)
-	const resetStats = ()=>{
-		global.dbObj.dbref.set({w:0,l:0,fw:0,fl:0});
+	const resetStats = () => {
+		global.dbObj.dbref.set({w: 0, l: 0, fw: 0, fl: 0})
 	}
 	return (
 		<>
@@ -37,12 +37,10 @@ function LinkContainer() {
 				</a>
 			</div>
 			<div className={css.linkContainer}>
-			  <a>
-  			  W-L: {stats.w}-{stats.l}
+				<a>
+					W-L: {stats.w}-{stats.l}
 				</a>
-				<button onClick={resetStats}>
-				  Reset Stats?
-				</button>
+				<button onClick={resetStats}>Reset Stats?</button>
 			</div>
 		</>
 	)

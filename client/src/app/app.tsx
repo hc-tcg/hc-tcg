@@ -21,19 +21,19 @@ function App() {
 	const socketStatus = useSelector(getSocketStatus)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 
-	firebase.auth().onAuthStateChanged(user => {
-		if (!!user){
-			dispatch(authLogin(user.uid));
-			global.dbObj.uuid = user.uid;
-			global.dbObj.dbref = firebase.database().ref("/stats").child(user.uid);
-			global.dbObj.dbref.on("value", ss=>{
-				let tmp = ss.val() || {w:0,l:0,fw:0,fl:0};
-				dispatch(statsUpdate(tmp));
-				global.dbObj.stats = JSON.parse(JSON.stringify(tmp));
-			});
+	firebase.auth().onAuthStateChanged((user) => {
+		if (!!user) {
+			dispatch(authLogin(user.uid))
+			global.dbObj.uuid = user.uid
+			global.dbObj.dbref = firebase.database().ref('/stats').child(user.uid)
+			global.dbObj.dbref.on('value', (ss) => {
+				let tmp = ss.val() || {w: 0, l: 0, fw: 0, fl: 0}
+				dispatch(statsUpdate(tmp))
+				global.dbObj.stats = JSON.parse(JSON.stringify(tmp))
+			})
 		}
-	});
-	firebase.auth().signInAnonymously();
+	})
+	firebase.auth().signInAnonymously()
 
 	const router = () => {
 		if (gameState) {
