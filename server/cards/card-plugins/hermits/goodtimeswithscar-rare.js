@@ -40,13 +40,20 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
-			if (currentPlayer.custom[attackerHermitCard.cardInstance]) return target
+
+			// if this card has used the ability don't coin flip
+			if (
+				currentPlayer.custom[
+					this.getUsedIdForCard(attackerHermitCard.cardInstance)
+				]
+			)
+				return target
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return target
 
-			currentPlayer.custom[attackerHermitCard.cardInstance] = true
+			// ability is not used yet, but enable the possibility of it happening
 			currentPlayer.custom[this.id] = 1
 
 			return target
@@ -54,10 +61,17 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 		// next turn attack on scar
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {opponentPlayer} = derivedState
+			const {opponentPlayer, opponentHermitCard} = derivedState
+
 			if (target.row.hermitCard.cardId !== this.id) return target
-			if (opponentPlayer.custom[this.id] !== 2) return target
+			if (!opponentPlayer.custom[this.id] !== 2) return target
+
+			// opposing card has now used its ability
+			opponentPlayer.custom[
+				this.getUsedIdForCard(opponentHermitCard.cardInstance)
+			] = true
 			target.recovery.push({amount: this.recoverAmount})
+
 			return target
 		})
 
@@ -66,11 +80,17 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			const {playerState, row} = deathInfo
 			if (row.hermitCard.cardId !== this.id) return
 			if (playerState.custom[this.id] !== 2) return
+
+			// card has now used its ability
+			playerState.custom[
+				this.getUsedIdForCard(row.hermitCard.cardInstance)
+			] = true
 			recovery.push({amount: this.recoverAmount})
+
 			return recovery
 		})
 
-		// increment counter to nebale power next turn
+		// increment counter to negate power next turn
 		game.hooks.turnEnd.tap(this.id, (derivedState) => {
 			const {currentPlayer} = derivedState
 			if (currentPlayer.custom[this.id] === 1) {
@@ -80,15 +100,24 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			}
 		})
 
-		// Power can be used only once. Tis resets it when the card is placed on board. (e.g. when picked from discarded)
+		// power can be used only once. This resets it when the same card is placed on the board again. (e.g. when picked from discarded)
 		game.hooks.playCard
 			.for('hermit')
 			.tap(this.id, (turnAction, derivedState) => {
 				const card = turnAction.payload?.card
 				if (!card) return
 				const {currentPlayer} = derivedState
-				delete currentPlayer.custom[card.cardInstance]
+
+				const usedCardId = this.getUsedIdForCard(card.cardInstance)
+				if (currentPlayer.custom[usedCardId]) {
+					delete currentPlayer.custom[usedCardId]
+				}
 			})
+	}
+
+	// returns a unique custom id to register that the ability on this card has been used
+	getUsedIdForCard(cardInstance) {
+		return this.id + '_used_' + cardInstance
 	}
 }
 
