@@ -132,6 +132,8 @@ export function flipCoin(currentPlayer, times = 1) {
 	@param {Array<string>} deckCards
 */
 export const validateDeck = (deckCards) => {
+	deckCards = deckCards.filter((cardId) => CARDS[cardId])
+
 	const common = deckCards.filter((cardId) => CARDS[cardId].rarity === 'common')
 	const rare = deckCards.filter((cardId) => CARDS[cardId].rarity === 'rare')
 	const ur = deckCards.filter((cardId) => CARDS[cardId].rarity === 'ultra_rare')
