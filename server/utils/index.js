@@ -1,4 +1,5 @@
 import CARDS from '../cards'
+import {Player} from '../routines/player'
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
@@ -163,4 +164,19 @@ export const validateDeck = (deckCards) => {
 		return 'You cannot have more than 3 duplicate cards unless they are item cards.'
 
 	if (deckCards.length !== 42) return 'Deck must have exactly 42 cards.'
+}
+
+/**
+ *
+ * @param {Array<Player>} players
+ * @param {string} type
+ * @param {*} payload
+ */
+export function broadcast(players, type, payload = {}) {
+	players.forEach((player) => {
+		const playerSocket = player.socket
+		if (playerSocket && playerSocket.connected) {
+			playerSocket.emit(type, {type: type, payload})
+		}
+	})
 }

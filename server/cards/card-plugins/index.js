@@ -10,6 +10,9 @@ export const CARDS = [
 	...ITEM_CARDS,
 ]
 
+/**
+ * @param {Game} game
+ */
 function registerCards(game) {
 	for (let card of CARDS) {
 		card.register(game)

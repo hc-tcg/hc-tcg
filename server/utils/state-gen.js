@@ -1,5 +1,6 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
+import {Root} from '../routines/root'
 
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -94,23 +95,36 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
+	/**
+	 * @type {Array<string>}
+	 */
 	const deckIds = deck.map((card) => card.id)
 	return deckIds
 }
 
+/**
+ * @returns {RowState}
+ */
 export function getEmptyRow() {
 	const MAX_ITEMS = 3
-	return {
+
+	/** @type {RowState} */
+	const rowState = {
 		hermitCard: null,
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
 		ailments: [],
 	}
+	return rowState
 }
 
-export function getPlayerState(allPlayers, playerId) {
-	const pack = allPlayers[playerId].playerDeck.map((cardId) => ({
+/**
+ * @param {Root} root
+ * @returns {PlayerState}
+ */
+export function getPlayerState(root, playerId) {
+	const pack = root.allPlayers[playerId].playerDeck.map((cardId) => ({
 		cardId,
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
@@ -152,17 +166,25 @@ export function getPlayerState(allPlayers, playerId) {
 	}
 }
 
-export function getGameState(allPlayers, gamePlayerIds) {
-	if (Math.random() > 0.5) gamePlayerIds.reverse()
-	return {
+/**
+ * @param {Root} root
+ * @param {Array<string>} playerIds
+ * @returns {GameState}
+ */
+export function getGameState(root, playerIds) {
+	if (Math.random() > 0.5) playerIds.reverse()
+
+	/** @type {GameState} */
+	const gameState = {
 		turn: 0,
-		order: gamePlayerIds,
-		players: gamePlayerIds.reduce(
+		order: playerIds,
+		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(allPlayers, playerId),
+				[playerId]: getPlayerState(root, playerId),
 			}),
 			{}
 		),
 	}
+	return gameState
 }
