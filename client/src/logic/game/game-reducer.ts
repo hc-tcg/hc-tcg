@@ -1,5 +1,10 @@
 import {AnyAction} from 'redux'
-import {GameState, CardT, GameEndReasonT} from 'types/game-state'
+import {
+	GameState,
+	CardT,
+	GameEndReasonT,
+	CurrentCoinFlipT,
+} from 'types/game-state'
 import {PickProcessT} from 'types/pick-process'
 import {MessageInfoT} from 'types/chat'
 import {equalCard} from 'server/utils'
@@ -13,6 +18,7 @@ type LocalGameState = {
 	pickProcess: PickProcessT | null
 	endGameOverlay: GameEndReasonT
 	chat: Array<MessageInfoT>
+	currentCoinFlip: CurrentCoinFlipT | null
 }
 
 const defaultState: LocalGameState = {
@@ -24,6 +30,7 @@ const defaultState: LocalGameState = {
 	pickProcess: null,
 	endGameOverlay: null,
 	chat: [],
+	currentCoinFlip: null,
 }
 
 const gameReducer = (
@@ -48,7 +55,6 @@ const gameReducer = (
 				openedModalId: null,
 				pickProcess: null,
 			}
-		case 'UPDATE_CHAT':
 		case 'GAME_START':
 		case 'GAME_END':
 			return {
@@ -60,6 +66,7 @@ const gameReducer = (
 				openedModalId: null,
 				pickProcess: null,
 				endGameOverlay: null,
+				currentCoinFlip: null,
 				chat: [],
 			}
 		case 'SET_SELECTED_CARD':
@@ -100,6 +107,11 @@ const gameReducer = (
 			return {
 				...state,
 				chat: action.payload,
+			}
+		case 'SET_COIN_FLIP':
+			return {
+				...state,
+				currentCoinFlip: action.payload,
 			}
 		default:
 			return state

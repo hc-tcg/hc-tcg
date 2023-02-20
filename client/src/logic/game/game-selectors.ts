@@ -61,3 +61,7 @@ export const getEndGameOverlay = (state: RootState) => {
 export const getChatMessages = (state: RootState) => {
 	return getGame(state).chat
 }
+
+export const getCurrentCoinFlip = (state: RootState) => {
+	return getGame(state).currentCoinFlip
+}

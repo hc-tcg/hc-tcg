@@ -20,6 +20,11 @@ export type BoardRowT = {
 
 export type CoinFlipT = 'heads' | 'tails'
 
+export type CurrentCoinFlipT = {
+	name: string
+	tosses: Array<CoinFlipT>
+}
+
 export type PlayerState = {
 	id: PlatyerId
 	followUp?: any

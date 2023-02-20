@@ -44,3 +44,5 @@
 ## Zedaph's ability - does the second coin flip happen on attack or on start of a turn (so that oppopnent knows NOT to attack).
 ## Zedaph's ability - does the self damage also include damage to afk hermits (e.g. from bow/crossbow)
 ## Zedaph's ability - does the self damage include both the 20 & 60 from TNT attack?
+
+## Joe's car dsays Time Skip can't be used consecutievely.Does it mean only the pwoer itself, or the whole attack? (That on consecutive turnI can't even attack for the 90dmg)

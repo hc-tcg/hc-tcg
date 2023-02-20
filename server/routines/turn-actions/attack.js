@@ -33,15 +33,6 @@ function* attackSaga(game, turnAction, derivedState) {
 		? currentPlayer.board.singleUseCard
 		: null
 
-	const suPickedCards = pickedCardsInfo[singleUseCard?.cardId] || []
-
-	const afkTargetRow =
-		suPickedCards.length === 1 &&
-		suPickedCards[0].playerId === opponentPlayer.id &&
-		suPickedCards[0].rowIndex !== opponentPlayer.board.activeRow
-			? suPickedCards[0].row
-			: null
-
 	if (!attackerActiveRow) return 'INVALID'
 
 	const attackerHermitCard = attackerActiveRow.hermitCard
@@ -51,6 +42,7 @@ function* attackSaga(game, turnAction, derivedState) {
 
 	const makeTarget = (row) => ({
 		row,
+		applyHermitDamage: true,
 		attackerRow: playerActiveRow,
 		effectCardId: row.effectCard?.cardId,
 		attackerEffectCardId: playerActiveRow.effectCard?.cardId,
@@ -62,20 +54,31 @@ function* attackSaga(game, turnAction, derivedState) {
 		reverseDamage: false,
 		backlash: 0,
 		multiplier: 1,
-		invalid: false,
 	})
-	const targets = []
+
+	const targets = {}
+
+	// Add active row
 	if (opponentActiveRow?.hermitCard) {
-		targets.push(makeTarget(opponentActiveRow))
-	}
-	if (afkTargetRow?.hermitCard) {
-		targets.push(makeTarget(afkTargetRow))
+		const instance = opponentActiveRow.hermitCard.cardInstance
+		targets[instance] = makeTarget(opponentActiveRow)
 	}
 
-	if (!targets.length) return 'INVALID'
+	// Add picked targets (generally AFK bow/hypno)
+	Object.values(pickedCardsInfo).forEach((pickedCards) => {
+		if (!pickedCards.length) return
+		const firstCard = pickedCards[0]
+		if (firstCard.slotType !== 'hermit') return
+		if (firstCard.playerId !== opponentPlayer.id) return
+		if (!firstCard.row.hermitCard) return
+		const instance = firstCard.card.cardInstance
+		if (Object.hasOwn(targets, instance)) return
+		targets[instance] = makeTarget(firstCard.row)
+	})
+	if (!Object.values(targets).length) return 'INVALID'
 
-	const processedTargets = []
-	for (let target of targets) {
+	for (let id in targets) {
+		const target = targets[id]
 		const result = game.hooks.attack.call(target, turnAction, {
 			...derivedState,
 			typeAction,
@@ -83,21 +86,8 @@ function* attackSaga(game, turnAction, derivedState) {
 			attackerHermitCard,
 			attackerHermitInfo,
 		})
-		if (result.invalid) return 'INVALID'
-
-		// e.g. when hypno attacks the same afk hermit with his ability and a bow
-		const sameTarget = processedTargets.find((pt) => pt.row === target.row)
-		if (sameTarget) {
-			sameTarget.extraEffectDamage += target.extraEffectDamage
-			sameTarget.extraHermitDamage += target.extraHermitDamage
-		} else {
-			processedTargets.push(target)
-		}
-	}
-
-	for (let target of processedTargets) {
 		const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
-		const hermitAttack = target.isActive
+		const hermitAttack = target.applyHermitDamage
 			? attackerHermitInfo[type]?.damage || 0
 			: 0
 
@@ -120,6 +110,14 @@ function* attackSaga(game, turnAction, derivedState) {
 
 		const finalDamage = Math.max(totalDamage - protection, 0)
 
+		const targetResult = {
+			row: target.row,
+			totalDamage,
+			finalDamage,
+			revived: false,
+			died: false,
+		}
+
 		// Discard single use protective cards (Shield/Gold Armor)
 		if (
 			totalDamage > 0 &&
@@ -141,10 +139,13 @@ function* attackSaga(game, turnAction, derivedState) {
 		const isDead = target.row.health < 0
 		const recovery = target.recovery[0]
 		const ignoreRecovery = target.ignoreEffects && recovery?.discardEffect
+		if (isDead) targetResult.died = true
 		if (isDead && recovery) {
 			if (!ignoreRecovery) {
 				target.row.health = recovery.amount
 				target.row.ailments = []
+				targetResult.revived = true
+				targetResult.died = false
 			}
 			if (recovery.discardEffect) discardCard(game, target.row.effectCard)
 		}
@@ -184,10 +185,25 @@ function* attackSaga(game, turnAction, derivedState) {
 			attackMaxHealth,
 			attackerActiveRow.health - finalDamageToAttacker
 		)
+
+		targetResult.totalDamageToAttacker = totalDamageToAttacker
+		targetResult.finalDamageToAttacker = finalDamageToAttacker
+
+		game.hooks.attackResult.call(targetResult, turnAction, {
+			...derivedState,
+			typeAction,
+			attackerActiveRow,
+			attackerHermitCard,
+			attackerHermitInfo,
+		})
 	}
 
-	const anyEffectDamage = targets.some((target) => target.extraEffectDamage)
+	const anyEffectDamage = Object.values(targets).some(
+		(target) => target.extraEffectDamage
+	)
 	if (anyEffectDamage) applySingleUse(currentPlayer)
+
+	// --- Provide result of attack ---
 
 	return 'DONE'
 }

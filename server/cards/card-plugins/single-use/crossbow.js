@@ -21,12 +21,20 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo} = derivedState
-			if (singleUseInfo?.id === this.id) {
-				target.extraEffectDamage += target.isActive
-					? this.damage.target
-					: this.damage.afkTarget
+			const {singleUseInfo, pickedCardsInfo} = derivedState
+			if (singleUseInfo?.id !== this.id) return target
+			if (target.isActive) {
+				target.extraEffectDamage += this.damage.target
+				return target
 			}
+
+			// only attack selected afk target
+			const crossbowPickedCards = pickedCardsInfo[this.id] || []
+			if (crossbowPickedCards.length !== 1) return target
+			const pickedHermit = crossbowPickedCards[0]
+			if (pickedHermit.row !== target.row) return target
+
+			target.extraEffectDamage += this.damage.afkTarget
 			return target
 		})
 	}

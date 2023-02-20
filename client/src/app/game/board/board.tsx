@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import HealthBar from 'components/health-bar'
-import Coin from 'components/coin'
+import CoinFlip from 'components/coin-flip'
 import {GameState, PlayerState, BoardRowT} from 'types/game-state'
 import {PickedCardT} from 'types/pick-process'
 import css from './board.module.css'
@@ -13,6 +13,7 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getPlayerStateById,
 	getAvailableActions,
+	getCurrentCoinFlip,
 } from 'logic/game/game-selectors'
 import {endTurn} from 'logic/game/game-actions'
 /*
@@ -26,11 +27,6 @@ type Props = {
 	gameState: GameState
 }
 
-type FlipInfo = {
-	shown: boolean
-	value: Array<'heads' | 'tails'>
-}
-
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, gameState}: Props) {
 	const playerId = useSelector(getPlayerId)
@@ -39,6 +35,7 @@ function Board({onClick, gameState}: Props) {
 	const singleUseCard = boardState?.singleUseCard || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
+	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const dispatch = useDispatch()
 
 	useEffect(() => {
@@ -49,48 +46,6 @@ function Board({onClick, gameState}: Props) {
 			}
 		}
 	}, [gameState.turnPlayerId])
-
-	// --- coin flip logic start ---
-	const [coinFlipInfo, setCoinFlipInfo] = useState<Record<string, FlipInfo>>({})
-
-	useEffect(() => {
-		const coinFlips = currentPlayer?.coinFlips || {}
-		const newInfo = {} as Record<string, FlipInfo>
-		const cId = currentPlayer?.id as string
-		Object.entries(coinFlips).forEach(([key, flip]) => {
-			const ciId = cId + '_' + key
-			if (!coinFlipInfo[ciId]) {
-				newInfo[ciId] = {
-					shown: false,
-					value: flip,
-				}
-			} else {
-				newInfo[ciId] = coinFlipInfo[ciId]
-			}
-		})
-
-		setCoinFlipInfo(newInfo)
-
-		const timeout = setTimeout(() => {
-			setCoinFlipInfo((oldInfo) =>
-				Object.entries(oldInfo).reduce((result, [key, value]) => {
-					return {
-						...result,
-						[key]: {
-							...value,
-							shown: true,
-						},
-					}
-				}, {})
-			)
-		}, 2500)
-		return () => clearTimeout(timeout)
-	}, [currentPlayer?.coinFlips])
-
-	const coinFlip =
-		Object.values(coinFlipInfo).find((info) => !info.shown)?.value || null
-
-	// --- coin flip logic end ---
 
 	const handeRowClick = (
 		playerId: string,
@@ -127,8 +82,8 @@ function Board({onClick, gameState}: Props) {
 	}
 
 	const renderMiddle = () => {
-		if (coinFlip) {
-			return <Coin value={coinFlip} />
+		if (currentCoinFlip) {
+			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
 		}
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
