@@ -43,9 +43,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				if (target.row.effectCard?.cardId === 'milk_bucket') {
-					discardCard(game, target.row.effectCard)
-				} else {
+				if (target.row.effectCard?.cardId !== 'milk_bucket') {
 					target.row.ailments.push({id: 'poison', duration: -1})
 				}
 			}

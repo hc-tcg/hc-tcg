@@ -43,9 +43,7 @@ class EthosLabRareHermitCard extends HermitCard {
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				if (target.row.effectCard?.cardId === 'water_bucket') {
-					discardCard(game, target.row.effectCard)
-				} else {
+				if (target.row.effectCard?.cardId !== 'water_bucket') {
 					target.row.ailments.push({id: 'fire', duration: -1})
 				}
 			}
