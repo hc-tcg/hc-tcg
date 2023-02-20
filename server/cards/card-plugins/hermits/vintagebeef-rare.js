@@ -36,7 +36,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
-			if (coinFlip === 'tails') return target
+			if (coinFlip[0] === 'tails') return target
 
 			currentPlayer.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
