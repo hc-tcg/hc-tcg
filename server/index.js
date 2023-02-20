@@ -7,20 +7,21 @@ import {Server} from 'socket.io'
 import store from './be-store'
 import playerSockets from './be-socket'
 import './cards'
+import config from '../server-config.json' assert {type: 'json'}
 
-const port = process.env.PORT || 9000
+const port = process.env.PORT || config.port || 9000
 
 const app = express()
 app.use(
 	cors({
-		origins: ['http://localhost:3002', 'https://hc-tcg.onrender.com'],
+		origins: config.cors,
 	})
 )
 
 const server = createServer(app)
 const io = new Server(server, {
 	cors: {
-		origin: ['http://localhost:3002', 'https://hc-tcg.onrender.com'],
+		origin: config.cors,
 		methods: ['GET', 'POST'],
 	},
 })
@@ -29,13 +30,13 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 app.use(
-	express.static(path.join(__dirname, '../client/dist'), {
+	express.static(path.join(__dirname, '..', config.clientPath), {
 		maxAge: 1000 * 60 * 60,
 	})
 )
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../client/dist', 'index.html'))
+	res.sendFile(path.join(__dirname, '..', config.clientPath, 'index.html'))
 })
 
 const isValidName = (name) => {

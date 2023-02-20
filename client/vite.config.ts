@@ -1,11 +1,16 @@
 import path from 'path'
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
+import config from '../server-config.json' assert {type: 'json'}
 // import eslint from 'vite-plugin-eslint'
 
 // https://vitejs.dev/config/
 export default defineConfig({
 	plugins: [react()],
+	define: {
+		__ENV__: JSON.stringify(process.env.NODE_ENV),
+		__PORT__: JSON.stringify(config.port),
+	},
 	resolve: {
 		alias: {
 			server: path.resolve(__dirname, '../server'),
@@ -26,6 +31,6 @@ export default defineConfig({
 		minify: 'terser',
 	},
 	server: {
-		port: 3002,
+		port: config.clientDevPort || 3002,
 	},
 })

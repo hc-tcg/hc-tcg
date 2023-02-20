@@ -1,4 +1,5 @@
 import CARDS from '../cards'
+import config from '../../server-config.json' assert {type: 'json'}
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
@@ -132,6 +133,7 @@ export function flipCoin(currentPlayer, times = 1) {
 	@param {Array<string>} deckCards
 */
 export const validateDeck = (deckCards) => {
+	const limits = config.limits
 	deckCards = deckCards.filter((cardId) => CARDS[cardId])
 
 	const common = deckCards.filter((cardId) => CARDS[cardId].rarity === 'common')
@@ -143,24 +145,34 @@ export const validateDeck = (deckCards) => {
 	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')
 	if (!hasHermit) return 'Deck must have at least one hermit.'
 
-	const uniqueUr = Array.from(new Set(ur))
-	if (uniqueUr.length < ur.length)
-		return 'You can not have the same ultra rare card multiple times.'
+	if (!limits.allowUltraRareDuplicates) {
+		const uniqueUr = Array.from(new Set(ur))
+		if (uniqueUr.length < ur.length)
+			return 'You can not have the same ultra rare card multiple times.'
+	}
 
-	if (ur.length > 3) return 'Deck can not have more than 3 ultra rare cards.'
+	if (limits.maxUltraRare && ur.length > limits.maxUltraRare)
+		return `Deck can not have more than ${limits.maxUltraRare} ultra rare cards.`
 
-	if (rare.length > 12) return 'Deck can not have more than 12 rare cards.'
+	if (limits.maxRare && rare.length > limits.maxRare)
+		return `Deck can not have more than ${limits.maxRare} rare cards.`
 
-	const tooManyDuplicates = deckCards.some((cardId) => {
-		if (CARDS[cardId].type === 'item') return false
-		const duplicates = deckCards.filter(
-			(filterCardId) => filterCardId === cardId
-		)
-		return duplicates.length > 3
-	})
+	const tooManyDuplicates =
+		limits.maxDuplicates &&
+		deckCards.some((cardId) => {
+			if (CARDS[cardId].type === 'item') return false
+			const duplicates = deckCards.filter(
+				(filterCardId) => filterCardId === cardId
+			)
+			return duplicates.length > limits.maxDuplicates
+		})
 
 	if (tooManyDuplicates)
-		return 'You cannot have more than 3 duplicate cards unless they are item cards.'
+		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`
 
-	if (deckCards.length !== 42) return 'Deck must have exactly 42 cards.'
+	console.log()
+	if (deckCards.length < limits.minCards)
+		return `Deck must have at least ${limits.minCards} cards.`
+	if (deckCards.length > limits.maxCards)
+		return `Deck can not have more than ${limits.maxCards} cards.`
 }
