@@ -1,6 +1,5 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
-import {Root} from '../routines/root'
 
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -120,7 +119,7 @@ export function getEmptyRow() {
 }
 
 /**
- * @param {Root} root
+ * @param {import('../classes/root').Root} root
  * @returns {PlayerState}
  */
 export function getPlayerState(root, playerId) {
@@ -148,7 +147,7 @@ export function getPlayerState(root, playerId) {
 	const TOTAL_ROWS = 5
 	return {
 		id: playerId,
-		playerName: allPlayers[playerId].playerName,
+		playerName: root.allPlayers[playerId].playerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -167,7 +166,7 @@ export function getPlayerState(root, playerId) {
 }
 
 /**
- * @param {Root} root
+ * @param {import('../classes/root').Root} root
  * @param {Array<string>} playerIds
  * @returns {GameState}
  */

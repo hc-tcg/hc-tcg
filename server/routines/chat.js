@@ -1,6 +1,6 @@
 import {takeEvery, all} from 'redux-saga/effects'
 import {broadcast} from '../utils'
-import {Game} from './game'
+import {Game} from '../classes/game'
 
 /**
  * @param {string} type

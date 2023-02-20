@@ -10,9 +10,9 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {broadcast} from '../utils'
-import gameSaga from './gameLogic'
-import {Game} from './game'
-import {Root} from './root'
+import gameSaga from './game'
+import {Game} from '../classes/game'
+import {Root} from '../classes/root'
 
 /**
  * @param {Root} root
@@ -103,7 +103,7 @@ function inGame(root, playerId) {
 function* randomMatchmaking(root, action) {
 	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
-	if (inGame(playerId)) return
+	if (inGame(root, playerId)) return
 
 	const player = root.allPlayers[playerId]
 
@@ -114,9 +114,10 @@ function* randomMatchmaking(root, action) {
 	if (randomGame) {
 		console.log('second player connected, starting game')
 		randomGame.players[playerId] = player
-		broadcast(randomGame.players, 'GAME_START')
+		randomGame.onSecondPlayerJoined()
+		broadcast(Object.values(randomGame.players), 'GAME_START')
 
-		const gameTask = yield spawn(gameSaga, root, randomGame) // @TODO game saga switch to root or game
+		const gameTask = yield spawn(gameSaga, randomGame)
 		randomGame.task = gameTask
 		yield fork(gameManager, root, randomGame)
 		return
@@ -134,7 +135,7 @@ function* randomMatchmaking(root, action) {
  */
 function* createPrivateGame(root, action) {
 	const {playerId} = action
-	if (inGame(playerId)) return
+	if (inGame(root, playerId)) return
 
 	// create new game with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
@@ -156,16 +157,17 @@ function* joinPrivateGame(root, action) {
 	const invalidCode = !game
 	const gameRunning = !!game?.task
 	console.log('Joining private game: ' + playerId)
-	if (invalidCode || gameRunning || inGame(playerId)) {
+	if (invalidCode || gameRunning || inGame(root, playerId)) {
 		broadcast(root.allPlayers[playerId], 'INVALID_CODE')
 		return
 	}
 
 	game.players[playerId] = root.allPlayers[playerId]
+	game.onSecondPlayerJoined()
 
 	broadcast(game.players, 'GAME_START')
 
-	const gameTask = yield spawn(gameSaga, root, game)
+	const gameTask = yield spawn(gameSaga, game)
 	game.task = gameTask
 	yield fork(gameManager, root, game)
 }
@@ -199,7 +201,7 @@ function* cleanUpSaga(root) {
 			const overFiveMinutes = Date.now() - game.createdTime > 1000 * 60 * 5
 			if (!isRunning && isPrivate && overFiveMinutes) {
 				delete root.allGames[gameId]
-				broadcast(game.players, 'MATCHMAKING_TIMEOUT')
+				broadcast(Object.values(game.players), 'MATCHMAKING_TIMEOUT')
 			}
 		}
 	}

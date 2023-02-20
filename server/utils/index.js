@@ -1,5 +1,5 @@
 import CARDS from '../cards'
-import {Player} from '../routines/player'
+import {Player} from '../classes/player'
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false

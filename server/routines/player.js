@@ -1,37 +1,10 @@
-import {takeEvery, all, put, take, race, delay} from 'redux-saga/effects'
-import {getStarterPack} from '../utils/state-gen'
+import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
-import {Root} from './root'
-import {Socket} from 'socket.io'
+import {Root} from '../classes/root'
+import {Player} from '../classes/player'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
-
-export class Player {
-	/**
-	 * @param {string} playerName
-	 * @param {Socket} socket
-	 */
-	constructor(playerName, socket) {
-		// create a new player
-		console.log('new player created')
-
-		/** @type {string} */
-		this.playerId = Math.random().toString()
-
-		/** @type {string} */
-		this.playerSecret = Math.random().toString()
-
-		/** @type {Array<string>} */
-		this.playerDeck = getStarterPack()
-
-		/** @type {string} */
-		this.playerName = playerName
-
-		/** @type {Socket} */
-		this.socket = socket
-	}
-}
 
 /**
  * @param {Root} root
@@ -59,7 +32,7 @@ function* playerConnectedSaga(root, action) {
 	}
 
 	const newPlayer = new Player(playerName, socket)
-	root.allPlayers[newPlayer.id] = newPlayer
+	root.allPlayers[newPlayer.playerId] = newPlayer
 
 	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
 
@@ -68,10 +41,10 @@ function* playerConnectedSaga(root, action) {
 	socket.emit('PLAYER_INFO', {
 		type: 'PLAYER_INFO',
 		payload: {
-			playerId,
-			playerSecret,
+			playerId: newPlayer.playerId,
+			playerSecret: newPlayer.playerSecret,
 			playerName,
-			playerDeck,
+			playerDeck: newPlayer.playerDeck,
 		},
 	})
 }
