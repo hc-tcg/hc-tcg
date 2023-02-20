@@ -136,7 +136,7 @@ function* attackSaga(game, turnAction, derivedState) {
 
 		target.recovery.sort((a, b) => b.amount - a.amount)
 
-		const isDead = target.row.health < 0
+		const isDead = target.row.health <= 0
 		const recovery = target.recovery[0]
 		const ignoreRecovery = target.ignoreEffects && recovery?.discardEffect
 		if (isDead) targetResult.died = true
