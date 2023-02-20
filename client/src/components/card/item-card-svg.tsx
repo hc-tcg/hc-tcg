@@ -67,54 +67,46 @@ const ItemCard = ({card}: ItemCardProps) => {
 					</text>
 				</g>
 			) : null}
-			<filter
-				id="drop-shadow"
-				colorInterpolationFilters="sRGB"
-				x="-50%"
-				y="-50%"
-				height="200%"
-				width="200%"
-			>
-				<feOffset
-					id="offset"
-					in="SourceAlpha"
-					dx="0"
-					dy="0"
-					result="SA-offset"
-				/>
-				<feGaussianBlur
-					id="blur"
-					in="SA-offset"
-					stdDeviation="5"
-					result="SA-o-blur"
-				/>
-				<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
-					<feFuncA id="contour" type="table" tableValues="0 1" />
-				</feComponentTransfer>
-
-				<feComposite
-					operator="in"
-					in="SA-o-blur"
-					in2="SA-o-b-contIN"
-					result="SA-o-b-cont"
-				/>
-
-				<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
-					<feFuncA id="spread-ctrl" type="linear" slope="200" />
-				</feComponentTransfer>
-
-				<feColorMatrix
-					id="recolor"
-					in="SA-o-b-c-sprd"
-					type="matrix"
-					values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
-					result="SA-o-b-c-s-recolor"
-				/>
-				<feMerge>
-					<feMergeNode in="SA-o-b-c-s-r-mix" />
-					<feMergeNode in="SourceGraphic" />
-				</feMerge>
-			</filter>
+			<defs>
+				<filter
+					id="drop-shadow"
+					colorInterpolationFilters="sRGB"
+					x="-50%"
+					y="-50%"
+					height="200%"
+					width="200%"
+				>
+					<feGaussianBlur
+						id="blur"
+						in="SourceAlpha"
+						stdDeviation="5"
+						result="SA-o-blur"
+					/>
+					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
+						<feFuncA id="contour" type="table" tableValues="0 1" />
+					</feComponentTransfer>
+					<feComposite
+						operator="in"
+						in="SA-o-blur"
+						in2="SA-o-b-contIN"
+						result="SA-o-b-cont"
+					/>
+					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
+						<feFuncA id="spread-ctrl" type="linear" slope="200" />
+					</feComponentTransfer>
+					<feColorMatrix
+						id="recolor"
+						in="SA-o-b-c-sprd"
+						type="matrix"
+						values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
+						result="SA-o-b-c-s-recolor"
+					/>
+					<feMerge>
+						<feMergeNode in="SA-o-b-c-s-r-mix" />
+						<feMergeNode in="SourceGraphic" />
+					</feMerge>
+				</filter>
+			</defs>
 		</svg>
 	)
 }
