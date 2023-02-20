@@ -3,7 +3,7 @@
 
 .card {
 	background: white;
-	letter-spacing: 1px;
+	letter-spacing: 0.065em;
 	position: relative;
 }
 
@@ -17,6 +17,7 @@
 
 .name {
 	text-transform: uppercase;
+	letter-spacing: 0.07em;
 	font-weight: bold;
 	fill: black;
 	font-size: 45px;
@@ -28,6 +29,7 @@
 	font-size: 45px;
 	font-weight: bold;
 	text-anchor: end;
+	letter-spacing: 0.0888888em;
 }
 
 .hermitTypeBackground {
@@ -48,7 +50,7 @@ text.attackName {
 }
 
 text.attackName.long {
-	letter-spacing: 0;
+	letter-spacing: 0.033em;
 }
 
 .attackDamage {
@@ -56,6 +58,7 @@ text.attackName.long {
 	font-weight: bold;
 	fill: rgb(246, 4, 1);
 	text-anchor: end;
+	letter-spacing: 0.0888888em;
 }
 
 .attackDamage.specialMove {

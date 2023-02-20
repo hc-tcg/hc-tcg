@@ -1,6 +1,6 @@
+import classnames from 'classnames'
 import {HermitCardT} from 'types/cards'
 import css from './hermit-card-svg.module.css'
-import classnames from 'classnames'
 
 export type HermitCardProps = {
 	card: HermitCardT
@@ -35,7 +35,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 			<text x="45" y="20" className={css.name}>
 				{card.name}
 			</text>
-			<text x="300" y="20" className={css.health}>
+			<text x="305" y="20" className={css.health}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
@@ -101,7 +101,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 					x="200"
 					y="272"
 					className={classnames(css.attackName, {
-						[css.long]: card.primary.name.length > 10,
+						[css.long]: card.primary.name.length > 9,
 					})}
 				>
 					{card.primary.name}
@@ -130,7 +130,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 					x="200"
 					y="342"
 					className={classnames(css.attackName, {
-						[css.long]: card.secondary.name.length > 10,
+						[css.long]: card.secondary.name.length > 9,
 					})}
 				>
 					{card.secondary.name}
