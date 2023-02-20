@@ -46,7 +46,8 @@
 		"lint": "eslint client/src/",
 		"build": "npm run lint && npm run tsc && vite build client/",
 		"clean": "rm -rf client/dist",
-		"preview": "vite preview client/"
+		"preview": "vite preview client/",
+		"prepare": "husky install"
 	},
 	"browserslist": {
 		"production": [
