@@ -25,7 +25,9 @@
 ## Crossbow - Are weaknesses applied to the damage to afk hermits (so 30dmg instead of 10?) If so if both active or afk hermit are weak do both receive extra 20dmg?
 ## When I kill myself using TNT attack (or thorns/wolf), should I pick new active hermit this turn or wait for the next one?
 ## Does Bed sleeping activate after turn ends or immediately (so player can't attack in the turn he used the bed?)
+	- Immediately
 ## What happens when a sleeping hermit (bed effect) gets his bad stolen using an emerald or Grian?
+	- Nothing to the sleeping Hermit
 ## Does game end (from not having any cards in your pile) even when you use effect cards to draw more cards or only at end of a turn?
 ## Can you use composter if there is not enough cards in your hand?
 	- Based on recent hermitcraft episodes it seems so, but lots of hermits arguing agains it. 
@@ -42,6 +44,7 @@
 ## When I use Efficiency with Hypno without any items, can I still attack an AFK hermit?
 ## What does it mean that "attack misses" for Pearl's special move. Does it just mean damage is 0, or that also special move actions won't happen? (e.g. etho's blue fire is not applied)
 ## Zedaph's ability - does the second coin flip happen on attack or on start of a turn (so that oppopnent knows NOT to attack).
+	- On attack
 ## Zedaph's ability - does the self damage also include damage to afk hermits (e.g. from bow/crossbow)
 ## Zedaph's ability - does the self damage include both the 20 & 60 from TNT attack?
 

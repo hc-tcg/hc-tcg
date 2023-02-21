@@ -115,7 +115,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			.for('hermit')
 			.tap(this.id, (turnAction, derivedState) => {
 				const card = turnAction.payload?.card
-				if (!card) return
+				if (!card || card.cardId !== this.id) return
 				const {currentPlayer} = derivedState
 				delete currentPlayer.custom[card.cardInstance]
 			})
