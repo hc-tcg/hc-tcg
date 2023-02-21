@@ -61,7 +61,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				// we must have active hermit
 				const activeHermit =
 					currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
-				if (!activeHermit) return availableActions
+				if (activeHermit?.cardId !== this.id) return availableActions
 
 				// we want to make changes only if shreep was used by the hermit
 				const conInfo = currentPlayer.custom[this.id]
