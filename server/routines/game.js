@@ -71,11 +71,17 @@ function getAvailableActions(game, derivedState) {
 		return actions
 	}
 
-	// TODO - add more conditions (e.g. you can't change active hermit if there is only one.
-	// or you can't add more hermits if all rows are filled)
-	actions.push('ADD_HERMIT')
+	const hermits = currentPlayer.board.rows.filter(
+		(row) => row.hermitCard
+	).length
+	if (
+		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
+		hermits < 5
+	) {
+		actions.push('ADD_HERMIT')
+	}
 
-	// Player can't change active hermit if I he has no other hermits
+	// Player can't change active hermit if he has no other hermits
 	const hasOtherHermit = currentPlayer.board.rows.some(
 		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
 	)
