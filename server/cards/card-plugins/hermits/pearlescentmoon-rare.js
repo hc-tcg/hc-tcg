@@ -70,9 +70,9 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		game.hooks.turnEnd.tap(this.id, (derivedState) => {
 			const {opponentPlayer} = derivedState
 
-			const coinFlip = opponentPlayer.custom[this.id]
-			if (!coinFlip) return
-			if (coinFlip[0] !== 'prevent-consecutive') {
+			const state = opponentPlayer.custom[this.id]
+			if (!state) return
+			if (state !== 'prevent-consecutive') {
 				delete opponentPlayer.custom[this.id]
 			}
 		})
