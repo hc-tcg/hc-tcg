@@ -42,7 +42,7 @@ function* attackSaga(game, turnAction, derivedState) {
 
 	const makeTarget = (row) => ({
 		row,
-		applyHermitDamage: true,
+		applyHermitDamage: row === opponentActiveRow,
 		attackerRow: playerActiveRow,
 		effectCardId: row.effectCard?.cardId,
 		attackerEffectCardId: playerActiveRow.effectCard?.cardId,
