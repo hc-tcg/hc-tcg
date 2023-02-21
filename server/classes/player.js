@@ -1,6 +1,10 @@
-//import { Socket } from "socket.io-client"
-
 import {getStarterPack} from '../utils/state-gen'
+
+/**
+ * @typedef {import('socket.io-client').Socket} Socket
+ */
+
+// @TODO store playerState on player.state, instead of game.state.players, to avoid confusion?
 
 export class Player {
 	/**
@@ -11,6 +15,8 @@ export class Player {
 		// create a new player
 		console.log('new player created')
 
+		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
+		// need to make sure it's done everywhere tho
 		/** @type {string} */
 		this.playerId = Math.random().toString()
 
@@ -23,7 +29,7 @@ export class Player {
 		/** @type {string} */
 		this.playerName = playerName
 
-		/** @type {import('socket.io-client').Socket} */
+		/** @type {Socket} */
 		this.socket = socket
 	}
 }

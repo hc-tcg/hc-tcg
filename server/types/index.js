@@ -28,8 +28,6 @@
  * @property {Array<Ailment>} ailments
  */
 
-// @TODO finish PlayerBoard typedef
-
 /**
  * @typedef {Object} BoardState
  * @property {number | null} activeRow
@@ -38,7 +36,8 @@
  * @property {Array<RowState>} rows
  */
 
-// @TODO once all cards have been refactored to have access to the game object a lot of this doesn't need to be stored here
+// @TODO if cards could access game.players, then we wouldn't need to duplicate info like playerName here
+// --> or maybe playerState could just contain a reference to the Player instance? <--
 /**
  * @typedef {Object} PlayerState
  * @property {string} id

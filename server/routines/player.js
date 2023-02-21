@@ -1,8 +1,11 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
-import {Root} from '../classes/root'
 import {Player} from '../classes/player'
+
+/**
+ * @typedef {import("../classes/root").Root} Root
+ */
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 

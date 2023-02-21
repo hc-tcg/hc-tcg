@@ -2,7 +2,6 @@ import {
 	take,
 	takeEvery,
 	fork,
-	spawn,
 	actionChannel,
 	call,
 	delay,
@@ -11,7 +10,7 @@ import {
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
-import {getGameState, getEmptyRow} from '../utils/state-gen'
+import {getEmptyRow} from '../utils/state-gen'
 import {getDerivedState} from '../utils/derived-state'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
@@ -19,11 +18,12 @@ import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
-import {HookMap, SyncHook, SyncBailHook, SyncWaterfallHook} from 'tapable'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './chat'
-import {Game} from '../classes/game'
-import {Root} from '../classes/root'
+
+/**
+ * @typedef {import("../classes/game").Game} Game
+ */
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
@@ -302,7 +302,9 @@ function* turnSaga(game) {
 
 	game.state.turnPlayerId = currentPlayerId
 
-	// @TODO we can use game.state for everything instead now, but we will need to rewrite all cards for that first
+	// @TODO we need to go over what is being stored in derivedState, and what can be accessed from elsewhere
+	// e.g. of the 4 things added to derivedState here, only pastTurnActions is not already stored on gameState
+	// so we could just add pastTurnActions to gameState and pass in gameState
 	const derivedState = {
 		gameState: game.state,
 		currentPlayer: currentPlayerState,
@@ -358,6 +360,7 @@ function* turnSaga(game) {
 			? ['FOLLOW_UP']
 			: ['WAIT_FOR_TURN']
 
+		// @TODO could this be in gameState.turnState?
 		const turnDerivedState = {
 			...derivedState,
 			availableActions,
@@ -427,7 +430,7 @@ function* sendGameStateOnReconnect(game) {
 			const playerSocket = game.players[playerId]?.socket
 			if (playerSocket && playerSocket.connected) {
 				yield delay(1000)
-				if (!game._derivedStateCache) return // @TODO we don't need derived state anymore, store it all in game.state
+				if (!game._derivedStateCache) return // @TODO we may not need this anymore
 				const {currentPlayer, availableActions, opponentAvailableActions} =
 					game._derivedStateCache
 
@@ -449,7 +452,6 @@ function* sendGameStateOnReconnect(game) {
 }
 
 /**
- * @param {Root} root
  * @param {Game} game
  */
 function* gameSaga(game) {

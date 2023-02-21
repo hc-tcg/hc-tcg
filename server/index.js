@@ -5,7 +5,6 @@ import {createServer} from 'http'
 import cors from 'cors'
 import {Server} from 'socket.io'
 import store from './be-store'
-import playerSockets from './be-socket'
 import './cards'
 
 const port = process.env.PORT || 9000

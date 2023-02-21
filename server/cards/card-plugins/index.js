@@ -3,6 +3,10 @@ import EFFECT_CARDS from './effects'
 import HERMIT_CARDS from './hermits'
 import ITEM_CARDS from './items'
 
+/**
+ * @typedef {import("../classes/game").Game} Game
+ */
+
 export const CARDS = [
 	...SINGLE_USE_CARDS,
 	...EFFECT_CARDS,

@@ -1,16 +1,21 @@
 import {getGameState} from '../utils/state-gen'
 import {HookMap, SyncBailHook, SyncHook, SyncWaterfallHook} from 'tapable'
 
+/**
+ * @typedef {import("./root").Root} Root
+ * @typedef {import("./player").Player} Player
+ */
+
 export class Game {
 	/**
-	 * @param {import('./root').Root} root
+	 * @param {Root} root
 	 * @param {string | null} code
-	 * @param {Array<import('./player').Player>} players
+	 * @param {Array<Player>} players
 	 */
 	constructor(root, code, players) {
 		// create new game
 
-		/** @type {import('./root').Root} */
+		/** @type {Root} */
 		this.root = root // @TODO do we need this? or should it specifically not be a thing
 
 		/** @type {number} */
@@ -24,7 +29,7 @@ export class Game {
 
 		// store players in key/value pairs
 		// this means we don't need access to root for game logic
-		/** @type {Object.<string, import('./player').Player>} */
+		/** @type {Object.<string, Player>} */
 		this.players = {}
 		players.forEach((player) => {
 			this.players[player.playerId] = player
@@ -33,7 +38,7 @@ export class Game {
 		/** @type {*} */ // @TODO what type is the game task?
 		this.task = null
 
-		/** @type {GameState | null} */
+		/** @type {GameState} */
 		this.state = null
 
 		// TODO - gameState should be changed only in immutable way so that we can check its history (probs too big to change rn)
@@ -79,7 +84,23 @@ export class Game {
 		this.chat = []
 	}
 
-	onSecondPlayerJoined() {
-		this.state = getGameState(this.root, Object.keys(this.players))
+	// methods for clarity in game code
+	/** @returns {Array<string>} */
+	getPlayerIds() {
+		return Object.keys(this.players)
+	}
+	/** @returns {Array<Player>} */
+	getPlayerValues() {
+		return Object.values(this.players)
+	}
+
+	/**
+	 * @param {Player} player
+	 */
+	addSecondPlayer(player) {
+		this.players[player.playerId] = player
+
+		// generate game state
+		this.state = getGameState(this)
 	}
 }

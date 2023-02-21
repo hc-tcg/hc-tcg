@@ -1,6 +1,11 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
 
+/**
+ * @typedef {import("../classes/game").Game} Game
+ * @typedef {import("../classes/player").Player} Player
+ */
+
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -119,11 +124,11 @@ export function getEmptyRow() {
 }
 
 /**
- * @param {import('../classes/root').Root} root
+ * @param {Player} player
  * @returns {PlayerState}
  */
-export function getPlayerState(root, playerId) {
-	const pack = root.allPlayers[playerId].playerDeck.map((cardId) => ({
+export function getPlayerState(player) {
+	const pack = player.playerDeck.map((cardId) => ({
 		cardId,
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
@@ -146,8 +151,8 @@ export function getPlayerState(root, playerId) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: playerId,
-		playerName: root.allPlayers[playerId].playerName,
+		id: player.playerId,
+		playerName: player.playerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -166,11 +171,11 @@ export function getPlayerState(root, playerId) {
 }
 
 /**
- * @param {import('../classes/root').Root} root
- * @param {Array<string>} playerIds
+ * @param {Game} game
  * @returns {GameState}
  */
-export function getGameState(root, playerIds) {
+export function getGameState(game) {
+	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
 
 	/** @type {GameState} */
@@ -180,7 +185,7 @@ export function getGameState(root, playerIds) {
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(root, playerId),
+				[playerId]: getPlayerState(game.players[playerId]),
 			}),
 			{}
 		),

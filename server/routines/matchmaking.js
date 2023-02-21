@@ -9,10 +9,14 @@ import {
 	race,
 	delay,
 } from 'redux-saga/effects'
-import {broadcast} from '../utils'
+import {broadcast} from '../utils/socket'
 import gameSaga from './game'
 import {Game} from '../classes/game'
-import {Root} from '../classes/root'
+
+/**
+ * @typedef {import("../classes/root").Root} Root
+ * @typedef {import("../classes/game").Game} Game
+ */
 
 /**
  * @param {Root} root
@@ -113,8 +117,8 @@ function* randomMatchmaking(root, action) {
 
 	if (randomGame) {
 		console.log('second player connected, starting game')
-		randomGame.players[playerId] = player
-		randomGame.onSecondPlayerJoined()
+
+		randomGame.addSecondPlayer(player)
 		broadcast(Object.values(randomGame.players), 'GAME_START')
 
 		const gameTask = yield spawn(gameSaga, randomGame)
@@ -135,13 +139,13 @@ function* randomMatchmaking(root, action) {
  */
 function* createPrivateGame(root, action) {
 	const {playerId} = action
+	const player = root.allPlayers[playerId]
 	if (inGame(root, playerId)) return
 
 	// create new game with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
-	broadcast([root.allPlayers[playerId]], 'PRIVATE_GAME_CODE', gameCode)
+	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
-	const player = root.allPlayers[playerId]
 	const newGame = new Game(root, gameCode, [player])
 	root.allGames[newGame.id] = newGame
 
@@ -153,17 +157,17 @@ function* createPrivateGame(root, action) {
  */
 function* joinPrivateGame(root, action) {
 	const {playerId, payload: code} = action
+	const player = root.allPlayers[playerId]
 	const game = Object.values(root.allGames).find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
 	console.log('Joining private game: ' + playerId)
 	if (invalidCode || gameRunning || inGame(root, playerId)) {
-		broadcast(root.allPlayers[playerId], 'INVALID_CODE')
+		broadcast([player], 'INVALID_CODE')
 		return
 	}
 
-	game.players[playerId] = root.allPlayers[playerId]
-	game.onSecondPlayerJoined()
+	game.addSecondPlayer(player)
 
 	broadcast(game.players, 'GAME_START')
 

@@ -1,6 +1,9 @@
-import {takeEvery, all} from 'redux-saga/effects'
-import {broadcast} from '../utils'
-import {Game} from '../classes/game'
+import {takeEvery} from 'redux-saga/effects'
+import {broadcast} from '../utils/socket'
+
+/**
+ * @typedef {import("../classes/game").Game} Game
+ */
 
 /**
  * @param {string} type
