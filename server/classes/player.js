@@ -13,7 +13,6 @@ export class Player {
 	 */
 	constructor(playerName, socket) {
 		// create a new player
-		console.log('new player created')
 
 		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
 		// need to make sure it's done everywhere tho
