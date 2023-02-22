@@ -7,7 +7,7 @@ import {applyEffect, removeEffect} from 'logic/game/game-actions'
 type Props = {
 	closeModal: () => void
 }
-function AttackModal({closeModal}: Props) {
+function ConfirmModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handleYes = () => {
@@ -35,4 +35,4 @@ function AttackModal({closeModal}: Props) {
 	)
 }
 
-export default AttackModal
+export default ConfirmModal

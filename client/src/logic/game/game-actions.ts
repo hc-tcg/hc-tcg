@@ -21,9 +21,9 @@ export const setSelectedCard = (card: CardT | null) => ({
 	payload: card,
 })
 
-export const setOpenedModalId = (modalId: string | null) => ({
-	type: 'SET_OPENED_MODAL_ID' as const,
-	payload: modalId,
+export const setOpenedModal = (id: string | null, info: any = null) => ({
+	type: 'SET_OPENED_MODAL' as const,
+	payload: id === null ? null : {id, info},
 })
 
 export const setPickProcess = (pickProcess: PickProcessT | null) => ({

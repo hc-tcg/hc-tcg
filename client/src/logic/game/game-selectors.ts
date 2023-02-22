@@ -46,8 +46,8 @@ export const getSelectedCard = (state: RootState) => {
 	return getGame(state).selectedCard
 }
 
-export const getOpenedModalId = (state: RootState) => {
-	return getGame(state).openedModalId
+export const getOpenedModal = (state: RootState) => {
+	return getGame(state).openedModal
 }
 
 export const getPickProcess = (state: RootState) => {

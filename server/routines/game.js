@@ -260,8 +260,12 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 }
 
 function* sendGameState(allPlayers, gamePlayerIds, game, derivedState) {
-	const {currentPlayer, availableActions, opponentAvailableActions} =
-		derivedState
+	const {
+		currentPlayer,
+		availableActions,
+		opponentAvailableActions,
+		pastTurnActions,
+	} = derivedState
 	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 	gamePlayerIds.forEach((playerId) => {
 		allPlayers[playerId].socket.emit('GAME_STATE', {
@@ -269,6 +273,7 @@ function* sendGameState(allPlayers, gamePlayerIds, game, derivedState) {
 			payload: {
 				gameState: game.state,
 				opponentId: gamePlayerIds.find((id) => id !== playerId),
+				pastTurnActions: playerId === currentPlayer.id ? pastTurnActions : null,
 				availableActions:
 					playerId === currentPlayer.id
 						? availableActions

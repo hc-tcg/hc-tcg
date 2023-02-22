@@ -1,0 +1,18 @@
+.description {
+	padding: 10px;
+}
+
+.options {
+	text-align: center;
+	padding-bottom: 10px;
+}
+
+.options button + button {
+	margin-left: 5px;
+}
+
+.turnEndNotification {
+	font-size: 12px;
+	margin: 0 auto;
+	padding: 5px 10px 15px 10px;
+}

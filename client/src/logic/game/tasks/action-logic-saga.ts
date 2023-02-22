@@ -8,7 +8,7 @@ import {CardInfoT} from 'types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
-	setOpenedModalId,
+	setOpenedModal,
 	followUp,
 	applyEffect,
 	removeEffect,
@@ -17,7 +17,7 @@ import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
 import {anyAvailableReqOptions} from 'server/utils/reqs'
 
 function* borrowSaga(): SagaIterator {
-	yield put(setOpenedModalId('borrow'))
+	yield put(setOpenedModal('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
 		yield put(followUp({attach: false}))
@@ -40,7 +40,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			cardInfo.useReqs
 		)
 		if (!canUse) {
-			yield put(setOpenedModalId('unmet-condition'))
+			yield put(setOpenedModal('unmet-condition'))
 			return
 		}
 	}
@@ -63,9 +63,9 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			'fortune',
 		].includes(card.cardId)
 	) {
-		yield put(setOpenedModalId('confirm'))
+		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
-		yield put(setOpenedModalId('chest'))
+		yield put(setOpenedModal('chest'))
 	} else if (cardInfo.pickOn === 'apply') {
 		const result = yield call(
 			runPickProcessSaga,
@@ -102,7 +102,7 @@ function* actionLogicSaga(gameState: GameState): SagaIterator {
 			yield fork(borrowSaga)
 		}
 	} else if (pState.custom.spyglass) {
-		yield put(setOpenedModalId('spyglass'))
+		yield put(setOpenedModal('spyglass'))
 	} else if (pState.board.singleUseCard && !pState.board.singleUseCardUsed) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
 	}

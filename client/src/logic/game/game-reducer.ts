@@ -14,7 +14,10 @@ type LocalGameState = {
 	gameState: GameState | null
 	availableActions: Array<string>
 	selectedCard: CardT | null
-	openedModalId: string | null
+	openedModal: {
+		id: string
+		info: null
+	} | null
 	pickProcess: PickProcessT | null
 	endGameOverlay: GameEndReasonT
 	chat: Array<MessageInfoT>
@@ -26,7 +29,7 @@ const defaultState: LocalGameState = {
 	gameState: null,
 	availableActions: [],
 	selectedCard: null,
-	openedModalId: null,
+	openedModal: null,
 	pickProcess: null,
 	endGameOverlay: null,
 	chat: [],
@@ -52,7 +55,7 @@ const gameReducer = (
 			return {
 				...newState,
 				selectedCard: null,
-				openedModalId: null,
+				openedModal: null,
 				pickProcess: null,
 			}
 		case 'GAME_START':
@@ -63,7 +66,7 @@ const gameReducer = (
 				gameState: null,
 				availableActions: [],
 				selectedCard: null,
-				openedModalId: null,
+				openedModal: null,
 				pickProcess: null,
 				endGameOverlay: null,
 				currentCoinFlip: null,
@@ -77,10 +80,10 @@ const gameReducer = (
 					? null
 					: action.payload,
 			}
-		case 'SET_OPENED_MODAL_ID':
+		case 'SET_OPENED_MODAL':
 			return {
 				...state,
-				openedModalId: action.payload,
+				openedModal: action.payload,
 			}
 		case 'SET_PICK_PROCESS':
 			return {
