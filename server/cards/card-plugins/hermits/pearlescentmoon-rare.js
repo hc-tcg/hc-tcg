@@ -41,9 +41,9 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			if (!currentPlayer.custom[this.id]) {
+			if (!currentPlayer.custom[this.getKey('consecutive')]) {
 				const coinFlip = flipCoin(currentPlayer)
-				currentPlayer.custom[this.id] = coinFlip
+				currentPlayer.custom[this.getKey('coinFlip')] = coinFlip
 			}
 
 			return target
@@ -53,39 +53,29 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			const {opponentPlayer, currentPlayer} = derivedState
 
-			const coinFlip = opponentPlayer.custom[this.id]
+			const coinFlip = opponentPlayer.custom[this.getKey('coinFlip')]
 			if (!coinFlip) return
 
 			currentPlayer.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] !== 'heads') {
-				delete opponentPlayer.custom[this.id]
+				delete opponentPlayer.custom[this.getKey('coinFlip')]
 				return target
 			}
-			opponentPlayer.custom[this.id] = 'prevent-consecutive'
+			opponentPlayer.custom[this.getKey('consecutive')] = true
 			target.multiplier = 0
 			return target
 		})
 
-		// if flag is set, flip a coin on next turn
+		// clear coinFlip flag at end of opponents turn
 		game.hooks.turnEnd.tap(this.id, (derivedState) => {
 			const {opponentPlayer} = derivedState
-
-			const state = opponentPlayer.custom[this.id]
-			if (!state) return
-			if (state !== 'prevent-consecutive') {
-				delete opponentPlayer.custom[this.id]
-			}
+			delete opponentPlayer.custom[this.getKey('coinFlip')]
 		})
 
-		// if flag is set, flip a coin on next turn
+		// clear consecutive flag at start of opponents turn
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
 			const {opponentPlayer} = derivedState
-
-			const state = opponentPlayer.custom[this.id]
-			if (!state) return
-			if (state === 'prevent-consecutive') {
-				delete opponentPlayer.custom[this.id]
-			}
+			delete opponentPlayer.custom[this.getKey('consecutive')]
 		})
 	}
 }
