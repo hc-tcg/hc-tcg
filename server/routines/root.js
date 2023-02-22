@@ -1,10 +1,11 @@
 import {all, fork} from 'redux-saga/effects'
 import matchmakingSaga from './matchmaking'
-import {playerSaga} from './player'
+import playerSaga from './player'
 
 function* rootSaga() {
 	console.log('sagas running')
-	yield all([fork(matchmakingSaga), fork(playerSaga)])
+	const players = {}
+	yield all([fork(matchmakingSaga, players), fork(playerSaga, players)])
 }
 
 export default rootSaga

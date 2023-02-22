@@ -2,11 +2,6 @@ import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
 import config from '../../server-config.json' assert {type: 'json'}
 
-/**
- * @typedef {import("../classes/game").Game} Game
- * @typedef {import("../classes/player").Player} Player
- */
-
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -102,36 +97,23 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	/**
-	 * @type {Array<string>}
-	 */
 	const deckIds = deck.map((card) => card.id)
 	return deckIds
 }
 
-/**
- * @returns {RowState}
- */
 export function getEmptyRow() {
 	const MAX_ITEMS = 3
-
-	/** @type {RowState} */
-	const rowState = {
+	return {
 		hermitCard: null,
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
 		ailments: [],
 	}
-	return rowState
 }
 
-/**
- * @param {Player} player
- * @returns {PlayerState}
- */
-export function getPlayerState(player) {
-	const pack = player.playerDeck.map((cardId) => ({
+export function getPlayerState(allPlayers, playerId) {
+	const pack = allPlayers[playerId].playerDeck.map((cardId) => ({
 		cardId,
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
@@ -154,8 +136,8 @@ export function getPlayerState(player) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: player.playerId,
-		playerName: player.playerName,
+		id: playerId,
+		playerName: allPlayers[playerId].playerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -173,25 +155,17 @@ export function getPlayerState(player) {
 	}
 }
 
-/**
- * @param {Game} game
- * @returns {GameState}
- */
-export function getGameState(game) {
-	const playerIds = game.getPlayerIds()
-	if (Math.random() > 0.5) playerIds.reverse()
-
-	/** @type {GameState} */
-	const gameState = {
+export function getGameState(allPlayers, gamePlayerIds) {
+	if (Math.random() > 0.5) gamePlayerIds.reverse()
+	return {
 		turn: 0,
-		order: playerIds,
-		players: playerIds.reduce(
+		order: gamePlayerIds,
+		players: gamePlayerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(game.players[playerId]),
+				[playerId]: getPlayerState(allPlayers, playerId),
 			}),
 			{}
 		),
 	}
-	return gameState
 }

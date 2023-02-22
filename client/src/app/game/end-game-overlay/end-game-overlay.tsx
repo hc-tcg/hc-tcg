@@ -19,6 +19,7 @@ const MESSAGE = {
 const EndGameOverrlay = ({reason}: Props) => {
 	const dispatch = useDispatch()
 	if (!reason) return null
+
 	const handleClick = () => {
 		dispatch(showEndGameOverlay(null))
 	}
