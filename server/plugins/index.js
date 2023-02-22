@@ -53,6 +53,11 @@ class FirebaseLogs {
 			game.hooks.gameEnd.tap(this.id, () => {
 				const playerStates = Object.values(game.state.players)
 				const gameLog = this.gameLogs[game.id]
+				if (!game.endInfo.deadPlayerId) {
+					delete this.gameLogs[game.id]
+					return
+				}
+
 				let summaryObj = {
 					startHand1: gameLog.startHand1,
 					startHand2: gameLog.startHand2,
