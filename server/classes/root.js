@@ -4,6 +4,7 @@
  */
 
 import {SyncHook} from 'tapable'
+import plugins from '../configs'
 
 export class Root {
 	constructor() {
@@ -13,12 +14,23 @@ export class Root {
 		this.allGames = {}
 
 		this.hooks = {
+			/** @type {SyncHook<Game>} */
 			newGame: new SyncHook(['game']),
+			/** @type {SyncHook<Player>} */
 			playerJoined: new SyncHook(['player']),
+			/** @type {SyncHook<Player>} */
 			playerLeft: new SyncHook(['player']),
 		}
 	}
 }
 
-/** @type {Root} The root of the server. All data stored on the server is accessible from this object */
-export default new Root()
+/** The root of the server. All data stored on the server is accessible from this object */
+const root = new Root()
+
+// initialize plugins
+plugins.forEach((plugin) => {
+	plugin.register(root)
+	console.log('plugin registered: ' + plugin.id)
+})
+
+export default root

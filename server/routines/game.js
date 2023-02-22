@@ -6,6 +6,7 @@ import {
 	call,
 	delay,
 	cancel,
+	put,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
@@ -20,6 +21,7 @@ import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './chat'
+import root from '../classes/root'
 
 /**
  * @typedef {import("../classes/game").Game} Game
@@ -272,7 +274,7 @@ function* sendGameState(game, derivedState) {
 	const {currentPlayer, availableActions, opponentAvailableActions} =
 		derivedState
 	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
-	Object.values(game.players).forEach((player) => {
+	game.getPlayerValues().forEach((player) => {
 		player.socket.emit('GAME_STATE', {
 			type: 'GAME_STATE',
 			payload: {
@@ -455,32 +457,37 @@ function* sendGameStateOnReconnect(game) {
  * @param {Game} game
  */
 function* gameSaga(game) {
-	registerCards(game)
+	try {
+		registerCards(game)
 
-	yield fork(sendGameStateOnReconnect, game)
-	yield fork(chatSaga, game)
+		yield fork(sendGameStateOnReconnect, game)
+		yield fork(chatSaga, game)
 
-	game.hooks.gameStart.call()
+		game.hooks.gameStart.call()
+		root.hooks.newGame.call(game)
+		yield put({type: 'NEW_GAME', payload: game})
 
-	turn_cycle: while (true) {
-		game.state.turn++
-		const result = yield call(turnSaga, game)
-		if (result === 'GAME_END') break
-	}
+		while (true) {
+			game.state.turn++
+			const result = yield call(turnSaga, game)
+			if (result === 'GAME_END') break
+		}
 
-	Object.values(game.players).forEach((player) => {
-		player.socket.emit('GAME_END', {
-			type: 'GAME_END',
-			payload: {
-				gameState: game.state,
-				reason: game.deadPlayerId === player.playerId ? 'you_lost' : 'you_won',
-			},
+		game.getPlayerValues().forEach((player) => {
+			player.socket.emit('GAME_END', {
+				type: 'GAME_END',
+				payload: {
+					gameState: game.state,
+					reason:
+						game.deadPlayerId === player.playerId ? 'you_lost' : 'you_won',
+				},
+			})
 		})
-	})
 
-	game.hooks.gameEnd.call()
-
-	yield cancel()
+		yield cancel()
+	} finally {
+		game.hooks.gameEnd.call()
+	}
 }
 
 export default gameSaga

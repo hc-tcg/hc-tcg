@@ -4,6 +4,7 @@ import {HookMap, SyncBailHook, SyncHook, SyncWaterfallHook} from 'tapable'
 /**
  * @typedef {import("./root").Root} Root
  * @typedef {import("./player").Player} Player
+ * @typedef {import("../types/index")}
  */
 
 export class Game {

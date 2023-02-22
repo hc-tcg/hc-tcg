@@ -1,5 +1,4 @@
 import {all, fork} from 'redux-saga/effects'
-import root from '../classes/root'
 import matchmakingSaga from './matchmaking'
 import {playerSaga} from './player'
 

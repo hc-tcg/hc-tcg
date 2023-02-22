@@ -41,8 +41,8 @@ function* gameManager(game) {
 	)
 	*/
 
-	const playerIds = Object.keys(game.players)
-	const players = Object.values(game.players)
+	const playerIds = game.getPlayerIds()
+	const players = game.getPlayerValues()
 
 	// Kill game on timeout or when user leaves for long time + cleanup after game
 	try {
@@ -184,7 +184,7 @@ function* cleanUpSaga() {
 			const overFiveMinutes = Date.now() - game.createdTime > 1000 * 60 * 5
 			if (!isRunning && isPrivate && overFiveMinutes) {
 				delete root.allGames[gameId]
-				broadcast(Object.values(game.players), 'MATCHMAKING_TIMEOUT')
+				broadcast(game.getPlayerValues(), 'MATCHMAKING_TIMEOUT')
 			}
 		}
 	}

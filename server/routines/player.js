@@ -31,6 +31,7 @@ function* playerConnectedSaga(action) {
 	const newPlayer = new Player(playerName, socket)
 	root.allPlayers[newPlayer.playerId] = newPlayer
 
+	root.hooks.playerJoined.call(newPlayer)
 	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
 
 	yield delay(500)
@@ -68,7 +69,7 @@ function* playerDisconnectedSaga(action) {
 	})
 
 	if (result.timeout) {
-		// console.log('User removed: ', playerId)
+		root.hooks.playerLeft.call(player)
 		yield put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.allPlayers[playerId]
 	}

@@ -27,7 +27,7 @@ function* chatSaga(game) {
 			message,
 			playerId,
 		})
-		broadcast(Object.values(game.players), 'CHAT_UPDATE', game.chat)
+		broadcast(game.getPlayerValues(), 'CHAT_UPDATE', game.chat)
 	})
 }
 
