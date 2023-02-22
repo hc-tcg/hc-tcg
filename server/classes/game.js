@@ -79,6 +79,11 @@ export class Game {
 
 		/** @type {Array<ChatMessage>} */
 		this.chat = []
+
+		this.endInfo = {
+			/** @type {string | null} */
+			deadPlayerId: null,
+		}
 	}
 
 	// methods for clarity in game code

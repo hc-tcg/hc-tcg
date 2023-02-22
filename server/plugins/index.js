@@ -64,17 +64,17 @@ class FirebaseLogs {
 				let pid0 = playerStates[0].id
 				root.allPlayers[pid0].socket.emit(
 					'gameoverstat',
-					gameLog.deadPlayerId === pid0 ? 'you_lost' : 'you_won'
+					game.endInfo.deadPlayerId === pid0 ? 'you_lost' : 'you_won'
 				)
 				summaryObj.deck1 = root.allPlayers[pid0].playerDeck
 
 				let pid1 = playerStates[1].id
 				root.allPlayers[pid1].socket.emit(
 					'gameoverstat',
-					gameLog.deadPlayerId === pid1 ? 'you_lost' : 'you_won'
+					game.endInfo.deadPlayerId === pid1 ? 'you_lost' : 'you_won'
 				)
 				summaryObj.deck2 = root.allPlayers[pid1].playerDeck
-				if (gameLog.deadPlayerId === pid1) {
+				if (game.endInfo.deadPlayerId === pid1) {
 					summaryObj.outcome = 'deck1win'
 				} else {
 					summaryObj.outcome = 'deck2win'

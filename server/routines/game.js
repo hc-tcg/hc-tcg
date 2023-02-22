@@ -403,7 +403,7 @@ function* turnSaga(game) {
 
 	const deadPlayerId = yield call(checkHermitHealth, game)
 	if (deadPlayerId) {
-		game.deadPlayerId = deadPlayerId
+		game.endInfo.deadPlayerId = deadPlayerId
 		return 'GAME_END'
 	}
 
@@ -479,7 +479,9 @@ function* gameSaga(game) {
 				payload: {
 					gameState: game.state,
 					reason:
-						game.deadPlayerId === player.playerId ? 'you_lost' : 'you_won',
+						game.endInfo.deadPlayerId === player.playerId
+							? 'you_lost'
+							: 'you_won',
 				},
 			})
 		})
