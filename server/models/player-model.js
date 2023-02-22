@@ -1,7 +1,7 @@
 import {getStarterPack} from '../utils/state-gen'
 
 /**
- * @typedef {import('socket.io-client').Socket} Socket
+ * @typedef {import('socket.io').Socket} Socket
  */
 
 // @TODO store playerState on player.state, instead of game.state.players, to avoid confusion?
@@ -30,5 +30,14 @@ export class Player {
 
 		/** @type {Socket} */
 		this.socket = socket
+	}
+
+	getPlayerInfo() {
+		return {
+			playerId: this.playerId,
+			playerSecret: this.playerSecret,
+			playerDeck: this.playerDeck,
+			playerName: this.playerName,
+		}
 	}
 }

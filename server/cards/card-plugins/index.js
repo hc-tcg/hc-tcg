@@ -4,7 +4,7 @@ import HERMIT_CARDS from './hermits'
 import ITEM_CARDS from './items'
 
 /**
- * @typedef {import("../classes/game").Game} Game
+ * @typedef {import("models/game-model").Game} Game
  */
 
 export const CARDS = [

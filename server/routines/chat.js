@@ -1,8 +1,8 @@
 import {takeEvery} from 'redux-saga/effects'
-import {broadcast} from '../utils/socket'
+import {broadcast} from '../utils/comm'
 
 /**
- * @typedef {import("../classes/game").Game} Game
+ * @typedef {import("models/game-model").Game} Game
  */
 
 /**
@@ -27,7 +27,7 @@ function* chatSaga(game) {
 			message,
 			playerId,
 		})
-		broadcast(game.getPlayerValues(), 'CHAT_UPDATE', game.chat)
+		broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 	})
 }
 

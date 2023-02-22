@@ -122,6 +122,29 @@
 	height: 20%;
 }
 
+.stats {
+	background: rgb(30, 30, 30);
+	min-height: 200px;
+	width: 100%;
+	padding: 0;
+	color: white;
+	border: 2px solid #333;
+	overflow-y: auto;
+}
+
+.stat {
+	padding: 3px 10px;
+	display: flex;
+}
+
+.stat:hover {
+	background: #333;
+}
+
+.statName {
+	min-width: 150px;
+}
+
 @keyframes notOfficialAnim {
 	0% {
 		transform: scale(100%);

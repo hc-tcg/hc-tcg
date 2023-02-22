@@ -1,8 +1,8 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
-import {Player} from '../classes/player'
-import root from '../classes/root'
+import {Player} from '../models/player-model'
+import root from '../models/root-model'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -10,7 +10,7 @@ function* playerConnectedSaga(action) {
 	const {playerName, socket} = action.payload
 
 	if (action.payload.playerId) {
-		const existingPlayer = root.allPlayers[action.payload.playerId]
+		const existingPlayer = root.players[action.payload.playerId]
 		const validPlayer =
 			existingPlayer?.playerSecret === action.payload.playerSecret
 
@@ -29,7 +29,7 @@ function* playerConnectedSaga(action) {
 	}
 
 	const newPlayer = new Player(playerName, socket)
-	root.allPlayers[newPlayer.playerId] = newPlayer
+	root.players[newPlayer.playerId] = newPlayer
 
 	root.hooks.playerJoined.call(newPlayer)
 	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
@@ -38,21 +38,14 @@ function* playerConnectedSaga(action) {
 
 	socket.emit('PLAYER_INFO', {
 		type: 'PLAYER_INFO',
-		payload: {
-			playerId: newPlayer.playerId,
-			playerSecret: newPlayer.playerSecret,
-			playerName,
-			playerDeck: newPlayer.playerDeck,
-		},
+		payload: newPlayer.getPlayerInfo(),
 	})
 }
 
 function* playerDisconnectedSaga(action) {
 	const {socket} = action.payload
 
-	const player = Object.values(root.allPlayers).find(
-		(player) => player.socket === socket
-	)
+	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
 	const {playerId} = player
 
@@ -71,14 +64,14 @@ function* playerDisconnectedSaga(action) {
 	if (result.timeout) {
 		root.hooks.playerLeft.call(player)
 		yield put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
-		delete root.allPlayers[playerId]
+		delete root.players[playerId]
 	}
 }
 
 function* updateDeckSaga(action) {
 	const {playerId} = action
 	let newDeck = action.payload
-	const player = root.allPlayers[playerId]
+	const player = root.players[playerId]
 	if (!player) return
 	if (!newDeck || !Array.isArray(newDeck)) return
 	newDeck = newDeck.filter((cardId) => cardId in CARDS)

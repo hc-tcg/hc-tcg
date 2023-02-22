@@ -3,6 +3,10 @@ export const authLogin = (uuid: string) => ({
 	payload: uuid,
 })
 
+export const resetStats = () => ({
+	type: 'RESET_STATS',
+})
+
 export const statsUpdate = (stats: {
 	w: number
 	l: number

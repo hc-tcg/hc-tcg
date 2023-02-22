@@ -10,7 +10,7 @@ const defaultState: FbdbState = {
 	stats: {w: 0, l: 0, fw: 0, fl: 0},
 }
 
-const fbdbReducer = (state = defaultState, action: AnyAction): SessionState => {
+const fbdbReducer = (state = defaultState, action: AnyAction): FbdbState => {
 	switch (action.type) {
 		case 'STATS':
 			return {...state, stats: action.payload}

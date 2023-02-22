@@ -60,3 +60,19 @@
  * @property {string | null} turnPlayerId
  * @property {Object.<string, PlayerState>} players
  */
+
+/**
+ * @typedef {'END_TURN' | 'APPLY_EFFECT' | 'REMOVE_EFFECT' | 'ZERO_ATTACK' |
+ *  'PRIMARY_ATTACK' | 'SECONDARY_ATTACK' | 'FOLLOW_UP' | 'WAIT_FOR_OPPONENT_FOLLOWUP' |
+ *  'CHANGE_ACTIVE_HERMIT' | 'ADD_HERMIT' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' | 'PLAY_EFFECT_CARD'} AvailableAction
+ */
+
+/**
+ * @typedef {Array<AvailableAction>} AvailableActions
+ */
+
+/**
+ * @typedef {Object} TurnAction
+ * @property {Object} payload
+ * @property {string} playerId
+ */

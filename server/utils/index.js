@@ -2,7 +2,7 @@ import CARDS from '../cards'
 import config from '../../server-config.json' assert {type: 'json'}
 
 /**
- * @typedef {import("../classes/player").Player} Player
+ * @typedef {import("models/player-model").Player} Player
  */
 
 export function equalCard(card1, card2) {

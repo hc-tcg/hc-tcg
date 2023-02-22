@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').Game} Game
+ */
+
 /*
 - It was confirmed by Beef that by "consecutively" it is meant not only the power but the attack for 90 itself.
 */
@@ -28,6 +32,9 @@ class JoeHillsRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {Game} game
+	 */
 	register(game) {
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
 			const {opponentPlayer} = derivedState

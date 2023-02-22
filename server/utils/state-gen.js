@@ -3,8 +3,8 @@ import STRENGTHS from '../const/strengths'
 import config from '../../server-config.json' assert {type: 'json'}
 
 /**
- * @typedef {import("../classes/game").Game} Game
- * @typedef {import("../classes/player").Player} Player
+ * @typedef {import("models/game-model").Game} Game
+ * @typedef {import("models/player-model").Player} Player
  */
 
 function randomBetween(min, max) {
