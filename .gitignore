@@ -31,8 +31,5 @@ yarn-error.log*
 # Fly
 fly.toml
 
-# node package-lock
-package-lock.json
-
 # admin key for firebase
 *adminKey*

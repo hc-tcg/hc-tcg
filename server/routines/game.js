@@ -463,8 +463,8 @@ function* gameSaga(game) {
 		yield fork(sendGameStateOnReconnect, game)
 		yield fork(chatSaga, game)
 
-		game.hooks.gameStart.call()
 		root.hooks.newGame.call(game)
+		game.hooks.gameStart.call()
 		yield put({type: 'NEW_GAME', payload: game})
 
 		while (true) {

@@ -98,7 +98,7 @@ function inGame(playerId) {
 function* randomMatchmaking(action) {
 	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
-	if (inGame(root, playerId)) return
+	if (inGame(playerId)) return
 
 	const player = root.allPlayers[playerId]
 
@@ -114,7 +114,7 @@ function* randomMatchmaking(action) {
 
 		const gameTask = yield spawn(gameSaga, randomGame)
 		randomGame.task = gameTask
-		yield fork(gameManager, root, randomGame)
+		yield fork(gameManager, randomGame)
 		return
 	}
 
@@ -128,7 +128,7 @@ function* randomMatchmaking(action) {
 function* createPrivateGame(action) {
 	const {playerId} = action
 	const player = root.allPlayers[playerId]
-	if (inGame(root, playerId)) return
+	if (inGame(playerId)) return
 
 	// create new game with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
@@ -147,7 +147,7 @@ function* joinPrivateGame(action) {
 	const invalidCode = !game
 	const gameRunning = !!game?.task
 	console.log('Joining private game: ' + playerId)
-	if (invalidCode || gameRunning || inGame(root, playerId)) {
+	if (invalidCode || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
 	}
