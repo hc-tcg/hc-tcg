@@ -51,7 +51,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			return target
 		})
 
-		// When opponent' sttack check flag and add second con flip if set
+		// When opponent attacks check flag and add second coin flip if set
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			const {opponentPlayer, currentPlayer} = derivedState
 
