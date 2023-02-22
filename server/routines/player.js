@@ -2,17 +2,11 @@ import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
 import {Player} from '../classes/player'
-
-/**
- * @typedef {import("../classes/root").Root} Root
- */
+import root from '../classes/root'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
-/**
- * @param {Root} root
- */
-function* playerConnectedSaga(root, action) {
+function* playerConnectedSaga(action) {
 	const {playerName, socket} = action.payload
 
 	if (action.payload.playerId) {
@@ -52,10 +46,7 @@ function* playerConnectedSaga(root, action) {
 	})
 }
 
-/**
- * @param {Root} root
- */
-function* playerDisconnectedSaga(root, action) {
+function* playerDisconnectedSaga(action) {
 	const {socket} = action.payload
 
 	const player = Object.values(root.allPlayers).find(
@@ -83,10 +74,7 @@ function* playerDisconnectedSaga(root, action) {
 	}
 }
 
-/**
- * @param {Root} root
- */
-function* updateDeckSaga(root, action) {
+function* updateDeckSaga(action) {
 	const {playerId} = action
 	let newDeck = action.payload
 	const player = root.allPlayers[playerId]
@@ -104,12 +92,8 @@ function* updateDeckSaga(root, action) {
 	})
 }
 
-/**
- * Handles player connects, disconnects, and decks
- * @param {Root} root
- */
-export function* playerSaga(root) {
-	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga, root)
-	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga, root)
-	yield takeEvery('UPDATE_DECK', updateDeckSaga, root)
+export function* playerSaga() {
+	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
+	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
+	yield takeEvery('UPDATE_DECK', updateDeckSaga)
 }

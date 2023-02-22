@@ -8,15 +8,11 @@ import {HookMap, SyncBailHook, SyncHook, SyncWaterfallHook} from 'tapable'
 
 export class Game {
 	/**
-	 * @param {Root} root
 	 * @param {string | null} code
 	 * @param {Array<Player>} players
 	 */
-	constructor(root, code, players) {
+	constructor(code, players) {
 		// create new game
-
-		/** @type {Root} */
-		this.root = root // @TODO do we need this? or should it specifically not be a thing
 
 		/** @type {number} */
 		this.createdTime = Date.now()

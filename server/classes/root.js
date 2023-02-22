@@ -3,8 +3,7 @@
  * @typedef {import('./game').Game} Game
  */
 
-//@TODO root singleton?
-/** The root of the server. All data stored on the server should be (@TODO) accessible from this object */
+import {SyncHook} from 'tapable'
 
 export class Root {
 	constructor() {
@@ -12,5 +11,14 @@ export class Root {
 		this.allPlayers = {}
 		/** @type {Object.<string, Game>} */
 		this.allGames = {}
+
+		this.hooks = {
+			newGame: new SyncHook(['game']),
+			playerJoined: new SyncHook(['player']),
+			playerLeft: new SyncHook(['player']),
+		}
 	}
 }
+
+/** @type {Root} The root of the server. All data stored on the server is accessible from this object */
+export default new Root()

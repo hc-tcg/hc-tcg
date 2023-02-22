@@ -11,18 +11,13 @@ import {
 } from 'redux-saga/effects'
 import {broadcast} from '../utils/socket'
 import gameSaga from './game'
+import root from '../classes/root'
 import {Game} from '../classes/game'
 
 /**
- * @typedef {import("../classes/root").Root} Root
- * @typedef {import("../classes/game").Game} Game
- */
-
-/**
- * @param {Root} root
  * @param {Game} game
  */
-function* gameManager(root, game) {
+function* gameManager(game) {
 	console.log('Game started. Total games: ', Object.keys(root.allGames).length)
 
 	// Inform users when their opponent is offline & online again
@@ -94,17 +89,13 @@ function* gameManager(root, game) {
 }
 
 /**
- * @param {Root} root
  * @param {string} playerId
  */
-function inGame(root, playerId) {
+function inGame(playerId) {
 	return Object.values(root.allGames).some((game) => !!game.players[playerId])
 }
 
-/**
- * @param {Root} root
- */
-function* randomMatchmaking(root, action) {
+function* randomMatchmaking(action) {
 	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
 	if (inGame(root, playerId)) return
@@ -128,16 +119,13 @@ function* randomMatchmaking(root, action) {
 	}
 
 	// random game not available, create new one
-	const newGame = new Game(root, null, [player])
+	const newGame = new Game(null, [player])
 	root.allGames[newGame.id] = newGame
 
 	console.log('Random game created: ', playerId)
 }
 
-/**
- * @param {Root} root
- */
-function* createPrivateGame(root, action) {
+function* createPrivateGame(action) {
 	const {playerId} = action
 	const player = root.allPlayers[playerId]
 	if (inGame(root, playerId)) return
@@ -146,16 +134,13 @@ function* createPrivateGame(root, action) {
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
 	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
-	const newGame = new Game(root, gameCode, [player])
+	const newGame = new Game(gameCode, [player])
 	root.allGames[newGame.id] = newGame
 
 	console.log('Private game created: ', playerId)
 }
 
-/**
- * @param {Root} root
- */
-function* joinPrivateGame(root, action) {
+function* joinPrivateGame(action) {
 	const {playerId, payload: code} = action
 	const player = root.allPlayers[playerId]
 	const game = Object.values(root.allGames).find((game) => game.code === code)
@@ -176,10 +161,7 @@ function* joinPrivateGame(root, action) {
 	yield fork(gameManager, root, game)
 }
 
-/**
- * @param {Root} root
- */
-function* leaveMatchmaking(root, action) {
+function* leaveMatchmaking(action) {
 	const playerId =
 		action.type === 'LEAVE_MATCHMAKING'
 			? action.playerId
@@ -192,10 +174,7 @@ function* leaveMatchmaking(root, action) {
 	delete root.allGames[game.id]
 }
 
-/**
- * @param {Root} root
- */
-function* cleanUpSaga(root) {
+function* cleanUpSaga() {
 	while (true) {
 		yield delay(1000 * 60)
 		for (let gameId in root.allGames) {
@@ -211,20 +190,13 @@ function* cleanUpSaga(root) {
 	}
 }
 
-/**
- * @param {Root} root
- */
-function* matchmakingSaga(root) {
+function* matchmakingSaga() {
 	yield all([
-		fork(cleanUpSaga, root),
-		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking, root),
-		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame, root),
-		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame, root),
-		takeEvery(
-			['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'],
-			leaveMatchmaking,
-			root
-		),
+		fork(cleanUpSaga),
+		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking),
+		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
+		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
+		takeEvery(['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'], leaveMatchmaking),
 	])
 }
 
