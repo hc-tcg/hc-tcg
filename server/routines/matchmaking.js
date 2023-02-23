@@ -74,7 +74,7 @@ function* gameManager(game) {
 			broadcast(players, 'GAME_END', {
 				reason: 'forfeit',
 			})
-			console.log('Game killed due to player foreit.')
+			console.log('Game killed due to player forfeit.')
 		} else if (result.gameEnd) {
 			// For normal win condition the gameSaga itself will send GAME_END with winning info
 		}
