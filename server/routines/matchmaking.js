@@ -98,9 +98,12 @@ function inGame(playerId) {
 function* randomMatchmaking(action) {
 	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
-	if (inGame(playerId)) return
-
 	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Random matchmaking] Player not found: ', playerId)
+		return
+	}
+	if (inGame(playerId)) return
 
 	const randomGame = root
 		.getGames()
@@ -124,12 +127,16 @@ function* randomMatchmaking(action) {
 	newGame.addPlayer(player)
 	root.addGame(newGame)
 
-	console.log('Random game created: ', playerId)
+	console.log('Random game created: ', playerId, player.playerName)
 }
 
 function* createPrivateGame(action) {
 	const {playerId} = action
 	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Create Game] Player not found: ', playerId)
+		return
+	}
 	if (inGame(playerId)) return
 
 	// create new game with code
@@ -140,16 +147,20 @@ function* createPrivateGame(action) {
 	newGame.addPlayer(player)
 	root.games[newGame.id] = newGame
 
-	console.log('Private game created: ', playerId)
+	console.log('Private game created: ', playerId, player.playerName)
 }
 
 function* joinPrivateGame(action) {
 	const {playerId, payload: code} = action
 	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Join Game] Player not found: ', playerId)
+		return
+	}
 	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	console.log('Joining private game: ' + playerId)
+	console.log('Joining private game: ', playerId, player.playerName)
 	if (invalidCode || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
