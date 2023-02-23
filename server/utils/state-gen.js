@@ -2,6 +2,11 @@ import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
 import config from '../../server-config.json' assert {type: 'json'}
 
+/**
+ * @typedef {import("../classes/game").Game} Game
+ * @typedef {import("../classes/player").Player} Player
+ */
+
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
@@ -97,23 +102,36 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
+	/**
+	 * @type {Array<string>}
+	 */
 	const deckIds = deck.map((card) => card.id)
 	return deckIds
 }
 
+/**
+ * @returns {RowState}
+ */
 export function getEmptyRow() {
 	const MAX_ITEMS = 3
-	return {
+
+	/** @type {RowState} */
+	const rowState = {
 		hermitCard: null,
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
 		ailments: [],
 	}
+	return rowState
 }
 
-export function getPlayerState(allPlayers, playerId) {
-	const pack = allPlayers[playerId].playerDeck.map((cardId) => ({
+/**
+ * @param {Player} player
+ * @returns {PlayerState}
+ */
+export function getPlayerState(player) {
+	const pack = player.playerDeck.map((cardId) => ({
 		cardId,
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
@@ -136,8 +154,8 @@ export function getPlayerState(allPlayers, playerId) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: playerId,
-		playerName: allPlayers[playerId].playerName,
+		id: player.playerId,
+		playerName: player.playerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -155,17 +173,25 @@ export function getPlayerState(allPlayers, playerId) {
 	}
 }
 
-export function getGameState(allPlayers, gamePlayerIds) {
-	if (Math.random() > 0.5) gamePlayerIds.reverse()
-	return {
+/**
+ * @param {Game} game
+ * @returns {GameState}
+ */
+export function getGameState(game) {
+	const playerIds = game.getPlayerIds()
+	if (Math.random() > 0.5) playerIds.reverse()
+
+	/** @type {GameState} */
+	const gameState = {
 		turn: 0,
-		order: gamePlayerIds,
-		players: gamePlayerIds.reduce(
+		order: playerIds,
+		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(allPlayers, playerId),
+				[playerId]: getPlayerState(game.players[playerId]),
 			}),
 			{}
 		),
 	}
+	return gameState
 }

@@ -1,15 +1,16 @@
-import {takeEvery, all, put, take, race, delay} from 'redux-saga/effects'
-import {getStarterPack} from '../utils/state-gen'
+import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
+import {Player} from '../classes/player'
+import root from '../classes/root'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
-function* playerConnectedSaga(players, action) {
+function* playerConnectedSaga(action) {
 	const {playerName, socket} = action.payload
 
 	if (action.payload.playerId) {
-		const existingPlayer = players[action.payload.playerId]
+		const existingPlayer = root.allPlayers[action.payload.playerId]
 		const validPlayer =
 			existingPlayer?.playerSecret === action.payload.playerSecret
 
@@ -27,40 +28,29 @@ function* playerConnectedSaga(players, action) {
 		return
 	}
 
-	const playerId = Math.random().toString()
-	const playerSecret = Math.random().toString()
-	const playerDeck = getStarterPack()
+	const newPlayer = new Player(playerName, socket)
+	root.allPlayers[newPlayer.playerId] = newPlayer
 
-	// console.log('User connected: ', playerId)
-
-	const playerInfo = {
-		playerId,
-		playerSecret,
-		playerName,
-		playerDeck,
-		socket,
-	}
-	players[playerId] = playerInfo
-
-	yield put({type: 'PLAYER_CONNECTED', payload: playerInfo})
+	root.hooks.playerJoined.call(newPlayer)
+	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
 
 	yield delay(500)
 
 	socket.emit('PLAYER_INFO', {
 		type: 'PLAYER_INFO',
 		payload: {
-			playerId,
-			playerSecret,
+			playerId: newPlayer.playerId,
+			playerSecret: newPlayer.playerSecret,
 			playerName,
-			playerDeck,
+			playerDeck: newPlayer.playerDeck,
 		},
 	})
 }
 
-function* playerDisconnectedSaga(players, action) {
+function* playerDisconnectedSaga(action) {
 	const {socket} = action.payload
 
-	const player = Object.values(players).find(
+	const player = Object.values(root.allPlayers).find(
 		(player) => player.socket === socket
 	)
 	if (!player) return
@@ -79,16 +69,16 @@ function* playerDisconnectedSaga(players, action) {
 	})
 
 	if (result.timeout) {
-		// console.log('User removed: ', playerId)
-		yield put({type: 'PLAYER_REMOVED', payload: player})
-		delete players[playerId]
+		root.hooks.playerLeft.call(player)
+		yield put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
+		delete root.allPlayers[playerId]
 	}
 }
 
-function* updateDeckSaga(players, action) {
+function* updateDeckSaga(action) {
 	const {playerId} = action
 	let newDeck = action.payload
-	const player = players[playerId]
+	const player = root.allPlayers[playerId]
 	if (!player) return
 	if (!newDeck || !Array.isArray(newDeck)) return
 	newDeck = newDeck.filter((cardId) => cardId in CARDS)
@@ -103,10 +93,8 @@ function* updateDeckSaga(players, action) {
 	})
 }
 
-function* playerSaga(players) {
-	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga, players)
-	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga, players)
-	yield takeEvery('UPDATE_DECK', updateDeckSaga, players)
+export function* playerSaga() {
+	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
+	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
+	yield takeEvery('UPDATE_DECK', updateDeckSaga)
 }
-
-export default playerSaga
