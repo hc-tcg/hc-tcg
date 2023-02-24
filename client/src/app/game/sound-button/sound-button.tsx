@@ -1,23 +1,21 @@
-import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './sound-button.module.css'
 
 function SoundButton() {
-	const [soundOn, setSoundOn] = useState<boolean>(
-		localStorage.getItem('soundOn') !== 'off'
-	)
+	const dispatch = useDispatch()
+	const settings = useSelector(getSettings)
 
 	const handleSoundChange = () => {
-		setSoundOn((value) => {
-			localStorage.setItem('soundOn', value === true ? 'off' : 'on')
-			return !value
-		})
+		dispatch(setSetting('soundOn', settings.soundOn !== 'on' ? 'off' : 'on'))
 	}
 
 	return (
 		<button className={css.soundButton} onClick={handleSoundChange}>
 			<img
 				src={
-					soundOn
+					settings.soundOn !== 'off'
 						? '/images/icons/volume-high-solid.svg'
 						: '/images/icons/volume-xmark-solid.svg'
 				}

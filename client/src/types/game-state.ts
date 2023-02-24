@@ -29,6 +29,7 @@ export type PlayerState = {
 	id: PlatyerId
 	followUp?: any
 	playerName: string
+	censoredPlayerName: string
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	hand: Array<CardT>

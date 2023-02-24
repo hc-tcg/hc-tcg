@@ -8,6 +8,7 @@ import {PickedCardT} from 'types/pick-process'
 import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -36,11 +37,12 @@ function Board({onClick, gameState}: Props) {
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
 	useEffect(() => {
 		if (gameState.turnPlayerId === playerId) {
-			if (localStorage.getItem('soundOn') !== 'off') {
+			if (settings.soundOn !== 'off') {
 				const audio = new Audio('/sfx/Click.ogg')
 				audio.play()
 			}
@@ -111,11 +113,16 @@ function Board({onClick, gameState}: Props) {
 	const [player1, player2] = gameState.order.map(
 		(playerId) => gameState.players[playerId]
 	)
+
+	const getName = (player: PlayerState) => {
+		if (settings.profanityFilter === 'off') return player.playerName
+		return player.censoredPlayerName
+	}
 	return (
 		<div className={css.board}>
 			<div className={css.leftPlayer}>
 				<div className={css.playerInfo}>
-					<div className={css.playerName}>{player1.playerName}</div>
+					<div className={css.playerName}>{getName(player1)}</div>
 					{gameState.turnPlayerId === player1.id ? (
 						<div className={css.currentTurn}>
 							{gameState.turnPlayerId === playerId
@@ -165,7 +172,7 @@ function Board({onClick, gameState}: Props) {
 								: "Opponent's turn"}
 						</div>
 					) : null}
-					<div className={css.playerName}>{player2.playerName}</div>
+					<div className={css.playerName}>{getName(player2)}</div>
 				</div>
 				{makeRows(player2, 'right')}
 			</div>

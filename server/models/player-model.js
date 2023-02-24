@@ -1,4 +1,5 @@
 import {getStarterPack} from '../utils/state-gen'
+import profanityFilter from '../utils/profanity'
 
 /**
  * @typedef {import('socket.io').Socket} Socket
@@ -28,6 +29,9 @@ export class Player {
 		/** @type {string} */
 		this.playerName = playerName
 
+		/** @type {string} */
+		this.censoredPlayerName = profanityFilter(playerName)
+
 		/** @type {Socket} */
 		this.socket = socket
 	}
@@ -38,6 +42,7 @@ export class Player {
 			playerSecret: this.playerSecret,
 			playerDeck: this.playerDeck,
 			playerName: this.playerName,
+			censoredPlayerName: this.censoredPlayerName,
 		}
 	}
 }

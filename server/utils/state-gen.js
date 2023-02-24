@@ -156,6 +156,7 @@ export function getPlayerState(player) {
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,

@@ -1,5 +1,6 @@
 import {takeEvery} from 'redux-saga/effects'
 import {broadcast} from '../utils/comm'
+import profanityFilter from '../utils/profanity'
 
 /**
  * @typedef {import("models/game-model").Game} Game
@@ -25,6 +26,7 @@ function* chatSaga(game) {
 		game.chat.push({
 			createdAt: Date.now(),
 			message,
+			censoredMessage: profanityFilter(message),
 			playerId,
 		})
 		broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
