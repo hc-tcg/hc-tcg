@@ -340,95 +340,96 @@ function* turnSaga(game) {
 		buffers.dropping(10)
 	)
 
-	// ailment logic
-	for (let row of currentPlayerState.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration === 0) {
-				// time up, get rid of this ailment
-				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-			} else if (ailment.duration > -1) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
+	try {
+		// ailment logic
+		for (let row of currentPlayerState.board.rows) {
+			for (let ailment of row.ailments) {
+				// decrease duration
+				if (ailment.duration === 0) {
+					// time up, get rid of this ailment
+					row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
+				} else if (ailment.duration > -1) {
+					// ailment is not infinite, reduce duration by 1
+					ailment.duration--
+				}
 			}
 		}
-	}
 
-	// ----------------
-	// start of a turn
-	// ----------------
-	/** @type {{skipTurn?: boolean}} */
-	const turnConfig = {}
-	game.hooks.turnStart.call(derivedState, turnConfig)
+		// ----------------
+		// start of a turn
+		// ----------------
+		/** @type {{skipTurn?: boolean}} */
+		const turnConfig = {}
+		game.hooks.turnStart.call(derivedState, turnConfig)
 
-	while (true) {
-		if (turnConfig.skipTurn) break
+		while (true) {
+			if (turnConfig.skipTurn) break
 
-		let availableActions = getAvailableActions(game, derivedState)
-		availableActions = game.hooks.availableActions.call(
-			availableActions,
-			derivedState
-		)
+			let availableActions = getAvailableActions(game, derivedState)
+			availableActions = game.hooks.availableActions.call(
+				availableActions,
+				derivedState
+			)
 
-		const opponentAvailableActions = opponentPlayerState.followUp
-			? ['FOLLOW_UP']
-			: ['WAIT_FOR_TURN']
+			const opponentAvailableActions = opponentPlayerState.followUp
+				? ['FOLLOW_UP']
+				: ['WAIT_FOR_TURN']
 
-		// @TODO could this be in gameState.turnState?
-		const turnDerivedState = {
-			...derivedState,
-			availableActions,
-			opponentAvailableActions,
+			// @TODO could this be in gameState.turnState?
+			const turnDerivedState = {
+				...derivedState,
+				availableActions,
+				opponentAvailableActions,
+			}
+			game._derivedStateCache = turnDerivedState
+			yield call(sendGameState, game, turnDerivedState)
+
+			// console.log('Waiting for turn action')
+			const turnAction = yield take(turnActionChannel)
+			const result = yield call(
+				turnActionSaga,
+				game,
+				turnAction,
+				turnDerivedState
+			)
+			if (result === 'END_TURN') break
 		}
-		game._derivedStateCache = turnDerivedState
-		yield call(sendGameState, game, turnDerivedState)
 
-		// console.log('Waiting for turn action')
-		const turnAction = yield take(turnActionChannel)
-		const result = yield call(
-			turnActionSaga,
-			game,
-			turnAction,
-			turnDerivedState
-		)
-		if (result === 'END_TURN') break
+		// ----------------
+		// end of a turn
+		// ----------------
+
+		// Apply damage from ailments
+		// TODO - https://www.youtube.com/watch?v=8iO7KGDxCks 1:21:00 - it seems ailment damage should be part of the toal attakc damage (and thus affected by special effects)
+		for (let row of opponentPlayerState.board.rows) {
+			if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
+				row.health -= 20
+		}
+
+		currentPlayerState.coinFlips = {}
+		// failsafe, should be always null at this point unless it is game over
+		currentPlayerState.followUp = null
+
+		game.hooks.turnEnd.call(derivedState)
+
+		const deadPlayerId = yield call(checkHermitHealth, game)
+		if (deadPlayerId) {
+			game.endInfo.deadPlayerId = deadPlayerId
+			return 'GAME_END'
+		}
+
+		// Draw a card from deck when turn ends
+		// TODO - End game once pile runs out
+		const drawCard = currentPlayerState.pile.shift()
+		if (drawCard) currentPlayerState.hand.push(drawCard)
+
+		// If player has not used his single use card return it to hand
+		// otherwise move it to discarded pile
+		discardSingleUse(game, currentPlayerState)
+		return 'DONE'
+	} finally {
+		turnActionChannel.close()
 	}
-
-	turnActionChannel.close()
-
-	// ----------------
-	// end of a turn
-	// ----------------
-
-	// Apply damage from ailments
-	// TODO - https://www.youtube.com/watch?v=8iO7KGDxCks 1:21:00 - it seems ailment damage should be part of the toal attakc damage (and thus affected by special effects)
-	for (let row of opponentPlayerState.board.rows) {
-		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
-			row.health -= 20
-	}
-
-	currentPlayerState.coinFlips = {}
-	// failsafe, should be always null at this point unless it is game over
-	currentPlayerState.followUp = null
-
-	game.hooks.turnEnd.call(derivedState)
-
-	const deadPlayerId = yield call(checkHermitHealth, game)
-	if (deadPlayerId) {
-		game.endInfo.deadPlayerId = deadPlayerId
-		return 'GAME_END'
-	}
-
-	// Draw a card from deck when turn ends
-	// TODO - End game once pile runs out
-	const drawCard = currentPlayerState.pile.shift()
-	if (drawCard) currentPlayerState.hand.push(drawCard)
-
-	// If player has not used his single use card return it to hand
-	// otherwise move it to discarded pile
-	discardSingleUse(game, currentPlayerState)
-
-	return 'DONE'
 }
 
 /**
