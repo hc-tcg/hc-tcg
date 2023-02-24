@@ -64,6 +64,17 @@ class TangoTekRareHermitCard extends HermitCard {
 			return target
 		})
 
+		// Remove followup in case all AFK hermits during attack
+		game.hooks.actionEnd.tap(this.id, (turnAction, derivedState) => {
+			const {opponentPlayer} = derivedState
+			if (opponentPlayer.followUp !== this.id) return
+			const opponentHasOtherHermits =
+				opponentPlayer.board.rows.filter(
+					(row) => !!row.hermitCard && row.health > 0
+				).length > 1
+			if (!opponentHasOtherHermits) delete opponentPlayer.followUp
+		})
+
 		game.hooks.followUp.tap(this.id, (turnAction, derivedState) => {
 			const {currentPlayer, opponentPlayer, pickedCardsInfo} = derivedState
 
