@@ -94,9 +94,11 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			if (coinFlip[0] === 'heads') {
 				recovery.push({amount: this.recoverAmount})
-				delete playerState.custom[this.id]
+			} else {
+				delete playerState.custom[instance]
 			}
-			delete playerState.custom[instance]
+			delete playerState.custom[this.id]
+
 			return recovery
 		})
 
