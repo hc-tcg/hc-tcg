@@ -36,11 +36,11 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 * @param {Game} game
 	 */
 	register(game) {
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
+		game.hooks.turnStart.tap(this.id, (derivedState, turnConfig) => {
 			const {opponentPlayer} = derivedState
 			if (opponentPlayer.custom[this.id] === 'time-skip') {
 				opponentPlayer.custom[this.id] = 'prevent-consecutive'
-				return 'SKIP'
+				turnConfig.skipTurn = true
 			} else if (opponentPlayer.custom[this.id]) {
 				delete opponentPlayer.custom[this.id]
 			}

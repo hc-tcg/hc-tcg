@@ -46,9 +46,9 @@ export class Game {
 			gameStart: new SyncHook([]),
 			/**
 			 * Start of a turn
-			 * @type {SyncBailHook<[DerivedState]>}
+			 * @type {SyncHook<[DerivedState, {skipTurn?: boolean}]>}
 			 */
-			turnStart: new SyncBailHook(['derived']),
+			turnStart: new SyncHook(['derived', 'turnConfig']),
 			/**
 			 * Used to modify availableActions before each action of a turn
 			 * @type {SyncWaterfallHook<[AvailableActions, DerivedState], AvailableActions>}

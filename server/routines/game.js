@@ -357,10 +357,12 @@ function* turnSaga(game) {
 	// ----------------
 	// start of a turn
 	// ----------------
-	const turnStart = game.hooks.turnStart.call(derivedState)
+	/** @type {{skipTurn?: boolean}} */
+	const turnConfig = {}
+	game.hooks.turnStart.call(derivedState, turnConfig)
 
 	while (true) {
-		if (turnStart === 'SKIP') break
+		if (turnConfig.skipTurn) break
 
 		let availableActions = getAvailableActions(game, derivedState)
 		availableActions = game.hooks.availableActions.call(
