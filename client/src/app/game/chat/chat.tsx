@@ -73,7 +73,7 @@ function Chat() {
 							<span className={css.playerName}>{name}</span>
 							<span className={css.text}>
 								:&nbsp;
-								{settings.profainityFilter !== 'off'
+								{settings.profanityFilter !== 'off'
 									? messageInfo.censoredMessage
 									: messageInfo.message}
 							</span>
