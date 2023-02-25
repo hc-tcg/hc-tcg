@@ -49,22 +49,22 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (attackerHermitCard.cardId !== this.id) return target
-			if (!target.isActive) return target
 
 			const hypnoPickedCards = pickedCardsInfo[this.id] || []
 			if (hypnoPickedCards.length !== 2) return target
 
-			// TODO - validations for correct player & rollback attack on invalid?
 			const pickedHermit = hypnoPickedCards[0]
-			if (pickedHermit.slotType !== 'hermit') return target
+			if (pickedHermit.row !== target.row) {
+				target.applyHermitDamage = false
+				return target
+			}
+			target.applyHermitDamage = true
+
+			// TODO - use req for validation
 			const pickedItem = hypnoPickedCards[1]
 			if (pickedItem.slotType !== 'item') return target
 
-			const isActive = target.row === pickedHermit.row
-			if (!isActive) {
-				target.row = pickedHermit.row
-				discardCard(game, pickedItem.card)
-			}
+			if (!target.isActive) discardCard(game, pickedItem.card)
 			return target
 		})
 	}

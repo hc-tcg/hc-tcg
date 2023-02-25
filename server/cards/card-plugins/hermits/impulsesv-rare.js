@@ -19,7 +19,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 				cost: ['redstone', 'any'],
 				damage: 70,
 				power:
-					'Does an additional +40HP damage for every AFK Boomer (Bdubs, Tango) up to a maximum of +80HP damage.',
+					'Does an additional +40HP damage for every other AFK Boomer (Bdubs, Tango) up to a maximum of +80HP damage.',
 			},
 		})
 	}
@@ -38,15 +38,13 @@ class ImpulseSVRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			const hasBdubs = currentPlayer.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('bdoubleo100')
-			)
-			const hasTango = currentPlayer.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('tangotek')
-			)
-
-			if (hasBdubs) target.extraHermitDamage += 40
-			if (hasTango) target.extraHermitDamage += 40
+			const boomerRows = currentPlayer.board.rows.filter((row) => {
+				const isBdubs = row.hermitCard?.cardId.startsWith('bdoubleo100')
+				const isTango = row.hermitCard?.cardId.startsWith('tangotek')
+				return isBdubs || isTango
+			})
+			const total = Math.min(boomerRows.length, 2)
+			target.extraHermitDamage += total * 40
 
 			return target
 		})

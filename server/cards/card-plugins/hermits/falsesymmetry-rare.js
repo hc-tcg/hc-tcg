@@ -12,7 +12,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			primary: {
 				name: 'High Noon',
 				cost: ['builder'],
-				damage: 30,
+				damage: 60,
 				power: null,
 			},
 			secondary: {

@@ -1,5 +1,5 @@
 import {GameStatePayload} from 'types/game-state'
-import {CardT, GameEndReasonT} from 'types/game-state'
+import {CardT, GameEndReasonT, CurrentCoinFlipT} from 'types/game-state'
 import {PickProcessT, PickedCardT} from 'types/pick-process'
 import {MessageInfoT} from 'types/chat'
 
@@ -21,9 +21,9 @@ export const setSelectedCard = (card: CardT | null) => ({
 	payload: card,
 })
 
-export const setOpenedModalId = (modalId: string | null) => ({
-	type: 'SET_OPENED_MODAL_ID' as const,
-	payload: modalId,
+export const setOpenedModal = (id: string | null, info: any = null) => ({
+	type: 'SET_OPENED_MODAL' as const,
+	payload: id === null ? null : {id, info},
 })
 
 export const setPickProcess = (pickProcess: PickProcessT | null) => ({
@@ -56,6 +56,11 @@ export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
 export const showEndGameOverlay = (reason: GameEndReasonT) => ({
 	type: 'SHOW_END_GAME_OVERLAY' as const,
 	payload: reason,
+})
+
+export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
+	type: 'SET_COIN_FLIP',
+	payload,
 })
 
 // ---

@@ -15,7 +15,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				cost: ['explorer'],
 				damage: 50,
 				power:
-					'Opponent flips a coin two times their next turn.\n\nIf 2x heads, opponent damages themselves.',
+					'Flip a Coin.\n\nIf heads, opponent flips a coin their next turn.\n\nIf heads, opponent damages themselves.',
 			},
 			secondary: {
 				name: 'Get Dangled',
@@ -27,6 +27,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	}
 
 	register(game) {
+		// On Zed's attack flipCoin and set flag
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
 			const {
 				attackerHermitCard,
@@ -40,29 +41,36 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			opponentPlayer.custom[this.id] = true
+			const coinFlip = flipCoin(currentPlayer)
+			currentPlayer.coinFlips[this.id] = coinFlip
+
+			if (coinFlip[0] === 'heads') {
+				currentPlayer.custom[this.id] = flipCoin(currentPlayer)
+			}
+
 			return target
 		})
 
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
-
-			if (!currentPlayer.custom[this.id]) return
-			delete currentPlayer.custom[this.id]
-
-			const coinFlip = flipCoin(currentPlayer, 2)
-			currentPlayer.coinFlips[this.id] = coinFlip
-		})
-
+		// When opponent attacks check flag and add second coin flip if set
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {currentPlayer, opponentPlayer} = derivedState
+			const {opponentPlayer, currentPlayer} = derivedState
 
-			const coinFlip = currentPlayer.coinFlips[this.id]
+			const coinFlip = opponentPlayer.custom[this.id]
 			if (!coinFlip) return target
-			if (coinFlip[0] !== 'heads' || coinFlip[1] !== 'heads') return target
+			delete opponentPlayer.custom[this.id]
+
+			currentPlayer.coinFlips[this.id] = coinFlip
+			if (coinFlip[0] !== 'heads') return target
 
 			target.reverseDamage = true
 			return target
+		})
+
+		// When Zed has turn again, and opponent didn't attack remove flag
+		game.hooks.turnStart.tap(this.id, (derivedState) => {
+			const {currentPlayer} = derivedState
+			if (!currentPlayer.custom[this.id]) return
+			delete currentPlayer.custom[this.id]
 		})
 	}
 }

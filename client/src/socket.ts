@@ -1,8 +1,8 @@
 import io from 'socket.io-client'
 
 const url =
-	window.location.hostname === 'localhost'
-		? 'http://localhost:9000'
+	__ENV__ === 'development'
+		? `${window.location.protocol}//${window.location.hostname}:${__PORT__}`
 		: window.location.protocol + '//' + window.location.host
 
 const socket = io(url, {autoConnect: false})

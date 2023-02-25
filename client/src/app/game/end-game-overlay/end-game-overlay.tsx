@@ -11,15 +11,18 @@ const MESSAGE = {
 	client_crash: 'Game client crashed',
 	server_crash: 'Server crashed',
 	timeout: 'Game timeouted out (60+ minutes)',
-	forfeit: 'Player forfeit',
-	player_left: 'Player left',
+	forfeit_loss: 'You lost the game due to forfeit',
+	forfeit_win: 'You won the game due to forfeit',
+	leave_win: 'Opponent left the game. You won.',
+	leave_loss: 'You left the game. Opponent won.',
+	tie: "It's a tie",
+	unknown: 'Game ended unexpectedly, please report this on discord',
 	you_won: 'You Won',
 	you_lost: 'You Lost',
 }
 const EndGameOverrlay = ({reason}: Props) => {
 	const dispatch = useDispatch()
 	if (!reason) return null
-
 	const handleClick = () => {
 		dispatch(showEndGameOverlay(null))
 	}

@@ -4,6 +4,7 @@ import classnames from 'classnames'
 import {getChatMessages, getPlayerStates} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.css'
 
 function Chat() {
@@ -13,6 +14,7 @@ function Chat() {
 	const chatMessages = useSelector(getChatMessages)
 	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
+	const settings = useSelector(getSettings)
 	const latestMessageTime = chatMessages[0]?.createdAt || 0
 
 	if (!showChat) {
@@ -69,7 +71,12 @@ function Chat() {
 							title={time}
 						>
 							<span className={css.playerName}>{name}</span>
-							<span className={css.text}>:&nbsp;{messageInfo.message}</span>
+							<span className={css.text}>
+								:&nbsp;
+								{settings.profanityFilter !== 'off'
+									? messageInfo.censoredMessage
+									: messageInfo.message}
+							</span>
 						</div>
 					)
 				})}

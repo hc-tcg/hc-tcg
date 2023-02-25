@@ -21,9 +21,9 @@ const HermitCard = ({card}: EffectCardProps) => {
 				<image
 					className={css.star}
 					href={`/images/star_color.svg`}
-					x="10"
-					y="60"
-					width="380"
+					x="-15"
+					y="65"
+					width="390"
 				/>
 				<image
 					className={css.icon}
@@ -31,7 +31,7 @@ const HermitCard = ({card}: EffectCardProps) => {
 					width="220"
 					height="220"
 					x="90"
-					y="140"
+					y="132"
 				/>
 			</g>
 			<g id="type">
@@ -48,6 +48,46 @@ const HermitCard = ({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
+			<defs>
+				<filter
+					id="drop-shadow"
+					colorInterpolationFilters="sRGB"
+					x="-50%"
+					y="-50%"
+					height="200%"
+					width="200%"
+				>
+					<feGaussianBlur
+						id="blur"
+						in="SourceAlpha"
+						stdDeviation="5"
+						result="SA-o-blur"
+					/>
+					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
+						<feFuncA id="contour" type="table" tableValues="0 1" />
+					</feComponentTransfer>
+					<feComposite
+						operator="in"
+						in="SA-o-blur"
+						in2="SA-o-b-contIN"
+						result="SA-o-b-cont"
+					/>
+					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
+						<feFuncA id="spread-ctrl" type="linear" slope="200" />
+					</feComponentTransfer>
+					<feColorMatrix
+						id="recolor"
+						in="SA-o-b-c-sprd"
+						type="matrix"
+						values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
+						result="SA-o-b-c-s-recolor"
+					/>
+					<feMerge>
+						<feMergeNode in="SA-o-b-c-s-r-mix" />
+						<feMergeNode in="SourceGraphic" />
+					</feMerge>
+				</filter>
+			</defs>
 		</svg>
 	)
 }

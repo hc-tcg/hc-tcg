@@ -20,10 +20,16 @@ export type BoardRowT = {
 
 export type CoinFlipT = 'heads' | 'tails'
 
+export type CurrentCoinFlipT = {
+	name: string
+	tosses: Array<CoinFlipT>
+}
+
 export type PlayerState = {
 	id: PlatyerId
 	followUp?: any
 	playerName: string
+	censoredPlayerName: string
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	hand: Array<CardT>
@@ -56,8 +62,12 @@ export type GameEndReasonT =
 	| 'client_crash'
 	| 'server_crash'
 	| 'timeout'
-	| 'forfeit'
-	| 'player_left'
+	| 'forfeit_win'
+	| 'forfeit_loss'
+	| 'leave_win'
+	| 'leave_loss'
+	| 'tie'
+	| 'unknown'
 	| 'you_won'
 	| 'you_lost'
 	| null

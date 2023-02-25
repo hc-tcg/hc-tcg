@@ -1,5 +1,5 @@
 import {select} from 'typed-redux-saga'
-import {put, takeLeading, call} from 'redux-saga/effects'
+import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'types/game-state'
 import {CardInfoT} from 'types/cards'
@@ -13,7 +13,7 @@ import {
 } from 'logic/game/game-selectors'
 import {
 	setSelectedCard,
-	setOpenedModalId,
+	setOpenedModal,
 	removeEffect,
 } from 'logic/game/game-actions'
 import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
@@ -59,9 +59,13 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	if (playerId !== action.payload.playerId) return
 
 	if (playerState.board.activeRow === rowIndex) {
-		yield put(setOpenedModalId('attack'))
+		yield put(setOpenedModal('attack'))
 	} else {
-		yield put(changeActiveHermit(action.payload))
+		yield put(setOpenedModal('change-hermit-modal', action.payload))
+		const result = yield take('CONFIRM_HERMIT_CHANGE')
+		if (result.payload) {
+			yield put(changeActiveHermit(action.payload))
+		}
 	}
 }
 

@@ -18,10 +18,18 @@ class BowSingleUseCard extends SingleUseCard {
 	}
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo} = derivedState
-			if (singleUseInfo?.id === this.id && !target.isActive) {
-				target.extraEffectDamage += this.damage.afkTarget
-			}
+			const {singleUseInfo, pickedCardsInfo} = derivedState
+			if (singleUseInfo?.id !== this.id) return
+			if (target.isActive) return
+
+			// only attack selected afk target
+			const bowPickedCards = pickedCardsInfo[this.id] || []
+			if (bowPickedCards.length !== 1) return target
+			const pickedHermit = bowPickedCards[0]
+			if (pickedHermit.row !== target.row) return target
+
+			target.extraEffectDamage += this.damage.afkTarget
+
 			return target
 		})
 	}

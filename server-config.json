@@ -1,0 +1,14 @@
+{
+	"port": 9000,
+	"clientDevPort": 3002,
+	"clientPath": "client/dist",
+	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev"],
+	"limits": {
+		"minCards": 42,
+		"maxCards": 42,
+		"maxDuplicates": 3,
+		"allowUltraRareDuplicates": false,
+		"maxRare": 12,
+		"maxUltraRare": 3
+	}
+}

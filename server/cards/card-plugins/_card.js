@@ -9,6 +9,13 @@ class Card {
 		this.rarity = defs.rarity
 		this.type = defs.type
 	}
+
+	/**
+	 * @param {string} name
+	 */
+	getKey(name) {
+		return this.id + ':' + name
+	}
 }
 
 export default Card

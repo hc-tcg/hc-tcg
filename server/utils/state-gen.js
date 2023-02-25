@@ -1,11 +1,18 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
+import config from '../../server-config.json' assert {type: 'json'}
+
+/**
+ * @typedef {import("models/game-model").Game} Game
+ * @typedef {import("models/player-model").Player} Player
+ */
 
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 export function getStarterPack() {
+	const limits = config.limits
 	const hermitTypesCount = randomBetween(2, 3)
 	const hermitTypes = Object.keys(STRENGTHS)
 		.sort(() => 0.5 - Math.random())
@@ -34,9 +41,9 @@ export function getStarterPack() {
 
 		const duplicates = deck.filter((card) => card.id === hermitCard.id)
 		const rarity = hermitCard.rarity
+		if (duplicates.length >= limits.maxDuplicates) continue
 		if (rarity === 'ultra_rare' && duplicates.length >= 1) continue
 		if (rarity === 'rare' && duplicates.length >= 2) continue
-		if (duplicates.length >= 3) continue
 
 		deck.push(hermitCard)
 
@@ -63,9 +70,9 @@ export function getStarterPack() {
 		if (total > 8) total = 8
 
 		const currenTotalRare = deck.filter((card) => card.rarity === 'rare').length
-		if (totalRare + currenTotalRare > 12) {
+		if (totalRare + currenTotalRare > limits.maxRare) {
 			const prevTotalRare = totalRare
-			totalRare = Math.max(currenTotalRare - 12, 0)
+			totalRare = Math.max(currenTotalRare - limits.maxRare, 0)
 			total += prevTotalRare - totalRare
 		}
 
@@ -76,41 +83,55 @@ export function getStarterPack() {
 	}
 
 	// effects
-	while (deck.length < 42) {
+	while (deck.length < limits.maxCards) {
 		const effectCard =
 			effectCards[Math.floor(Math.random() * effectCards.length)]
 
 		const totalRare = deck.filter((card) => card.rarity === 'rare').length
 		const totalUr = deck.filter((card) => card.rarity === 'ultra_rare').length
 
-		if (totalRare >= 12 && effectCard.rarity === 'rare') continue
-		if (totalUr >= 3 && effectCard.rarity === 'ultra_rare') continue
+		if (totalRare >= limits.maxRare && effectCard.rarity === 'rare') continue
+		if (totalUr >= limits.maxUltraRare && effectCard.rarity === 'ultra_rare')
+			continue
 
 		const duplicates = deck.filter((card) => card.id === effectCard.id)
 		const rarity = effectCard.rarity
 		if (rarity === 'ultra_rare' && duplicates.length >= 1) continue
 		if (rarity === 'rare' && duplicates.length >= 2) continue
-		if (duplicates.length >= 3) continue
+		if (duplicates.length >= limits.maxDuplicates) continue
 		deck.push(effectCard)
 	}
 
+	/**
+	 * @type {Array<string>}
+	 */
 	const deckIds = deck.map((card) => card.id)
 	return deckIds
 }
 
+/**
+ * @returns {RowState}
+ */
 export function getEmptyRow() {
 	const MAX_ITEMS = 3
-	return {
+
+	/** @type {RowState} */
+	const rowState = {
 		hermitCard: null,
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
 		ailments: [],
 	}
+	return rowState
 }
 
-export function getPlayerState(allPlayers, playerId) {
-	const pack = allPlayers[playerId].playerDeck.map((cardId) => ({
+/**
+ * @param {Player} player
+ * @returns {PlayerState}
+ */
+export function getPlayerState(player) {
+	const pack = player.playerDeck.map((cardId) => ({
 		cardId,
 		cardInstance: Math.random() + '_' + Math.random(),
 	}))
@@ -133,8 +154,9 @@ export function getPlayerState(allPlayers, playerId) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: playerId,
-		playerName: allPlayers[playerId].playerName,
+		id: player.playerId,
+		playerName: player.playerName,
+		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -152,17 +174,25 @@ export function getPlayerState(allPlayers, playerId) {
 	}
 }
 
-export function getGameState(allPlayers, gamePlayerIds) {
-	if (Math.random() > 0.5) gamePlayerIds.reverse()
-	return {
+/**
+ * @param {Game} game
+ * @returns {GameState}
+ */
+export function getGameState(game) {
+	const playerIds = game.getPlayerIds()
+	if (Math.random() > 0.5) playerIds.reverse()
+
+	/** @type {GameState} */
+	const gameState = {
 		turn: 0,
-		order: gamePlayerIds,
-		players: gamePlayerIds.reduce(
+		order: playerIds,
+		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(allPlayers, playerId),
+				[playerId]: getPlayerState(game.players[playerId]),
 			}),
 			{}
 		),
 	}
+	return gameState
 }

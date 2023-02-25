@@ -30,3 +30,6 @@ yarn-error.log*
 
 # Fly
 fly.toml
+
+# admin key for firebase
+*adminKey*

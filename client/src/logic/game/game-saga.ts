@@ -16,6 +16,7 @@ import slotSaga from './tasks/slot-saga'
 import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
+import coinFlipSaga from './tasks/coin-flips-saga'
 import {gameState, gameStart, gameEnd, showEndGameOverlay} from './game-actions'
 import {getEndGameOverlay, getOpponentId} from './game-selectors'
 
@@ -72,6 +73,7 @@ function* gameActionsSaga(initialGameState?: any): SagaIterator {
 		yield call(sendMsg, 'FORFEIT')
 	})
 	yield takeLatest('GAME_STATE', gameStateSaga)
+	yield fork(coinFlipSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
@@ -96,12 +98,11 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 
 		if (Object.hasOwn(result, 'game')) {
 			throw new Error('Unexpected game ending')
-		}
-
-		if (result.gameCrash) {
+		} else if (Object.hasOwn(result, 'gameCrash')) {
 			console.log('Server error')
 			yield put(showEndGameOverlay('server_crash'))
-		} else {
+		} else if (Object.hasOwn(result, 'gameEnd')) {
+			console.log('GAME END: ', result.gameEnd)
 			if (result.gameEnd.payload.gameState) {
 				yield put(
 					gameState({

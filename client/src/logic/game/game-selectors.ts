@@ -46,8 +46,8 @@ export const getSelectedCard = (state: RootState) => {
 	return getGame(state).selectedCard
 }
 
-export const getOpenedModalId = (state: RootState) => {
-	return getGame(state).openedModalId
+export const getOpenedModal = (state: RootState) => {
+	return getGame(state).openedModal
 }
 
 export const getPickProcess = (state: RootState) => {
@@ -60,4 +60,8 @@ export const getEndGameOverlay = (state: RootState) => {
 
 export const getChatMessages = (state: RootState) => {
 	return getGame(state).chat
+}
+
+export const getCurrentCoinFlip = (state: RootState) => {
+	return getGame(state).currentCoinFlip
 }

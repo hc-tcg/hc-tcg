@@ -10,6 +10,7 @@ import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
 import MouseIndicator from './mouse-indicator'
@@ -19,12 +20,12 @@ import {
 	getGameState,
 	getSelectedCard,
 	getPickProcess,
-	getOpenedModalId,
+	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {
-	setOpenedModalId,
+	setOpenedModal,
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
@@ -55,30 +56,33 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
 }
 
+const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
+	attack: AttackModal,
+	confirm: ConfirmModal,
+	spyglass: SpyglassModal,
+	chest: ChestModal,
+	borrow: BorrowModal,
+	'unmet-condition': UnmetCondition,
+	'change-hermit-modal': ChangeHermitModal,
+}
+
 const renderModal = (
-	openedModalId: string | null,
+	openedModal: {id: string; info: any} | null,
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (openedModalId === 'attack') return <AttackModal closeModal={closeModal} />
-	else if (openedModalId === 'confirm')
-		return <ConfirmModal closeModal={closeModal} />
-	else if (openedModalId === 'spyglass')
-		return <SpyglassModal closeModal={closeModal} />
-	else if (openedModalId === 'chest')
-		return <ChestModal closeModal={closeModal} />
-	else if (openedModalId === 'borrow')
-		return <BorrowModal closeModal={closeModal} />
-	else if (openedModalId === 'unmet-condition')
-		return <UnmetCondition closeModal={closeModal} />
-	return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
+		return null
+
+	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
+	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
 }
 
 function Game() {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
 	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
-	const openedModalId = useSelector(getOpenedModalId)
+	const openedModal = useSelector(getOpenedModal)
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
@@ -88,8 +92,8 @@ function Game() {
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
-	const handleOpenModalId = (id: string | null) => {
-		dispatch(setOpenedModalId(id))
+	const handleOpenModal = (id: string | null) => {
+		dispatch(setOpenedModal(id))
 	}
 
 	const handleBoardClick = (pickedCard: PickedCardT) => {
@@ -130,7 +134,7 @@ function Game() {
 			<div className={css.handFooter}>
 				<HandButton isHandShown={showHand} updateHandVisibility={updateHandVisibility} />
 			</div>
-			{renderModal(openedModalId, handleOpenModalId)}
+			{renderModal(openedModal, handleOpenModal)}
 			{pickProcess ? (
 				<MouseIndicator message={getPickProcessMessage(pickProcess)} />
 			) : null}

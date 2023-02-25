@@ -9,195 +9,179 @@ import {
 	race,
 	delay,
 } from 'redux-saga/effects'
+import {broadcast} from '../utils/comm'
 import gameSaga from './game'
+import root from '../models/root-model'
+import {Game} from '../models/game-model'
+import {
+	getGameEndReason,
+	getWinner,
+	getGameOutcome,
+} from '../utils/win-conditions'
 
-const games = Object.create(null)
-
-const createGameRecord = (id, code, playerIds) => ({
-	createdTime: Date.now(),
-	id,
-	code,
-	playerIds,
-	task: null,
-})
-
-const broadcast = (allPlayers, playerIds, type, payload = {}) => {
-	playerIds.forEach((playerId) => {
-		const playerSocket = allPlayers[playerId]?.socket
-		if (playerSocket && playerSocket.connected) {
-			playerSocket.emit(type, {type: type, payload})
-		}
-	})
-}
-
-function* gameManager(allPlayers, gameId) {
-	console.log('Game started. Total games: ', Object.keys(games).length)
-	const game = games[gameId]
-
-	// Inform users when their opponent is offline & online again
-	/*
-	// Still needs frontend logic, also don't forget to cancel saga in finally or this saga won't end
-	yield takeEvery(
-		(action) =>
-			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
-			game.playerIds.includes(action.payload.playerId),
-		function* () {
-			const connectionStatus = game.playerIds.map(
-				(playerId) => !!allPlayers[playerId]?.socket.connected
-			)
-			broadcast(
-				allPlayers,
-				game.playerIds,
-				'CONNECTION_STATUS',
-				connectionStatus
-			)
-		}
-	)
-	*/
-
-	// Kill game on timeout or when user leaves for long time + cleanup after game
+/**
+ * @param {Game} game
+ */
+function* gameManager(game) {
 	try {
+		console.log('Game started. Total games: ', root.getGameIds().length)
+
+		broadcast(game.getPlayers(), 'GAME_START')
+		game.initialize()
+		root.hooks.newGame.call(game)
+		game.task = yield spawn(gameSaga, game)
+
+		const playerIds = game.getPlayerIds()
+		const players = game.getPlayers()
+
+		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield race({
 			// game ended (or crashed -> catch)
-			gameEnd: join(games[gameId].task),
+			gameEnd: join(game.task),
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
 				(action) =>
 					action.type === 'PLAYER_REMOVED' &&
-					game.playerIds.includes(action.payload.playerId)
+					playerIds.includes(action.payload.playerId)
 			),
 			forfeit: take(
 				(action) =>
-					action.type === 'FORFEIT' && game.playerIds.includes(action.playerId)
+					action.type === 'FORFEIT' && playerIds.includes(action.playerId)
 			),
 		})
-		if (result.timeout) {
-			broadcast(allPlayers, game.playerIds, 'GAME_END', {reason: 'timeout'})
-			console.log('Game timed out.')
-		} else if (result.playerRemoved) {
-			broadcast(allPlayers, game.playerIds, 'GAME_END', {
-				reason: 'player_left',
-			})
-			console.log('Game killed due to long term player disconnect.')
-		} else if (result.forfeit) {
-			broadcast(allPlayers, game.playerIds, 'GAME_END', {
-				reason: 'forfeit',
-			})
-			console.log('Game killed due to player foreit.')
-		} else if (result.gameEnd) {
-			// For normal win condition the gameSaga itself will send GAME_END with winning info
+
+		for (const player of players) {
+			const reason = getGameEndReason(game, result, player.playerId)
+			broadcast([player], 'GAME_END', {gameState: game.state, reason})
 		}
+		game.endInfo.outcome = getGameOutcome(game, result)
+		game.endInfo.winner = getWinner(game, result)
 	} catch (err) {
 		console.error('Error: ', err)
-		broadcast(allPlayers, game.playerIds, 'GAME_CRASH')
+		game.endInfo.outcome = 'error'
+		broadcast(players, 'GAME_CRASH')
 	} finally {
-		yield cancel(games[gameId].task)
-		delete games[gameId]
-		console.log('Game ended. Total games: ', Object.keys(games).length)
+		yield cancel(game.task)
+		delete root.games[game.id]
+		root.hooks.gameRemoved.call(game)
+		console.log('Game ended. Total games: ', root.getGameIds().length)
 	}
 }
 
-const inGame = (playerId) => {
-	return Object.values(games).some((game) => game.playerIds.includes(playerId))
+/**
+ * @param {string} playerId
+ */
+function inGame(playerId) {
+	return root.getGames().some((game) => !!game.players[playerId])
 }
 
-// TODO - use ids from session, these could be fake from client
-function* randomMatchmaking(allPlayers, action) {
+function* randomMatchmaking(action) {
+	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
+	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Random matchmaking] Player not found: ', playerId)
+		return
+	}
 	if (inGame(playerId)) return
 
-	const randomGame = Object.values(games).find(
-		(game) => game.code === null && !game.task
-	)
+	const randomGame = root
+		.getGames()
+		.find((game) => game.code === null && !game.task)
 
 	if (randomGame) {
 		console.log('second player connected, starting game')
-		randomGame.playerIds.push(playerId)
-		broadcast(allPlayers, randomGame.playerIds, 'GAME_START')
-
-		const gameTask = yield spawn(gameSaga, allPlayers, randomGame.playerIds)
-		randomGame.task = gameTask
-		yield fork(gameManager, allPlayers, randomGame.id)
+		randomGame.addPlayer(player)
+		yield fork(gameManager, randomGame)
 		return
 	}
 
-	console.log('Random game created: ', playerId)
-	const gameId = Math.random().toString()
-	games[gameId] = createGameRecord(gameId, null, [playerId])
+	// random game not available, create new one
+	const newGame = new Game()
+	newGame.addPlayer(player)
+	root.addGame(newGame)
+
+	console.log('Random game created: ', playerId, player.playerName)
 }
 
-function* createPrivateGame(allPlayers, action) {
+function* createPrivateGame(action) {
 	const {playerId} = action
+	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Create Game] Player not found: ', playerId)
+		return
+	}
 	if (inGame(playerId)) return
+
+	// create new game with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
-	broadcast(allPlayers, [playerId], 'PRIVATE_GAME_CODE', gameCode)
+	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
-	console.log('Private game created: ', playerId)
+	const newGame = new Game(gameCode)
+	newGame.addPlayer(player)
+	root.games[newGame.id] = newGame
 
-	const gameId = Math.random().toString()
-	games[gameId] = createGameRecord(gameId, gameCode, [playerId])
+	console.log('Private game created: ', playerId, player.playerName)
 }
 
-function* joinPrivateGame(allPlayers, action) {
+function* joinPrivateGame(action) {
 	const {playerId, payload: code} = action
-	const game = Object.values(games).find((game) => game.code === code)
+	const player = root.players[playerId]
+	if (!player) {
+		console.log('[Join Game] Player not found: ', playerId)
+		return
+	}
+	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	console.log('Joining private game: ' + playerId)
+	console.log('Joining private game: ', playerId, player.playerName)
 	if (invalidCode || gameRunning || inGame(playerId)) {
-		broadcast(allPlayers, [playerId], 'INVALID_CODE')
+		broadcast([player], 'INVALID_CODE')
 		return
 	}
-	game.playerIds.push(playerId)
-	broadcast(allPlayers, game.playerIds, 'GAME_START')
 
-	const gameTask = yield spawn(gameSaga, allPlayers, game.playerIds)
-	game.task = gameTask
-	yield fork(gameManager, allPlayers, game.id)
+	game.addPlayer(player)
+	yield fork(gameManager, game)
 }
 
-function* leaveMatchmaking(allPlayers, action) {
+function* leaveMatchmaking(action) {
 	const playerId =
 		action.type === 'LEAVE_MATCHMAKING'
 			? action.playerId
 			: action.payload.playerId
-	const game = Object.values(games).find(
-		(game) => !game.task && game.playerIds.includes(playerId)
-	)
+	const game = root
+		.getGames()
+		.find((game) => !game.task && !!game.players[playerId])
 	if (!game) return
 	console.log('Matchmaking cancelled: ', playerId)
-	delete games[game.id]
+	delete root.games[game.id]
 }
 
-function* cleanUpSaga(allPlayers) {
+function* cleanUpSaga() {
 	while (true) {
 		yield delay(1000 * 60)
-		for (let gameId in games) {
-			const game = games[gameId]
+		for (let gameId in root.games) {
+			const game = root.games[gameId]
 			const isRunning = !!game.task
 			const isPrivate = !!game.code
 			const overFiveMinutes = Date.now() - game.createdTime > 1000 * 60 * 5
 			if (!isRunning && isPrivate && overFiveMinutes) {
-				delete games[gameId]
-				broadcast(allPlayers, game.playerIds, 'MATCHMAKING_TIMEOUT')
+				delete root.games[gameId]
+				broadcast(game.getPlayers(), 'MATCHMAKING_TIMEOUT')
 			}
 		}
 	}
 }
 
-function* matchmakingSaga(allPlayers) {
+function* matchmakingSaga() {
 	yield all([
-		fork(cleanUpSaga, allPlayers),
-		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking, allPlayers),
-		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame, allPlayers),
-		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame, allPlayers),
-		takeEvery(
-			['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'],
-			leaveMatchmaking,
-			allPlayers
-		),
+		fork(cleanUpSaga),
+		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking),
+		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
+		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
+		takeEvery(['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'], leaveMatchmaking),
 	])
 }
 

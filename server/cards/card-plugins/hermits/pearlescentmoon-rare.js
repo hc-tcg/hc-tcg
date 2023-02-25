@@ -33,7 +33,6 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			const {
 				attackerHermitCard,
 				attackerHermitInfo,
-				opponentPlayer,
 				typeAction,
 				currentPlayer,
 			} = derivedState
@@ -42,40 +41,41 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
 
-			if (!opponentPlayer.custom[this.id]) {
-				opponentPlayer.custom[this.id] = 1
+			if (!currentPlayer.custom[this.getKey('consecutive')]) {
+				const coinFlip = flipCoin(currentPlayer)
+				currentPlayer.custom[this.getKey('coinFlip')] = coinFlip
 			}
 
 			return target
-		})
-
-		// if flag is set, flip a coin on next turn
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
-
-			if (!currentPlayer.custom[this.id]) return
-			if (currentPlayer.custom[this.id] === 2) {
-				delete currentPlayer.custom[this.id]
-				return
-			}
-
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
-
-			if (coinFlip[0] === 'heads') {
-				currentPlayer.custom[this.id] = 2
-			} else {
-				delete currentPlayer.custom[this.id]
-			}
 		})
 
 		// if coin flip is heads, damage is zero
 		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {currentPlayer} = derivedState
+			const {opponentPlayer, currentPlayer} = derivedState
 
-			if (currentPlayer.coinFlips[this.id]?.[0] !== 'heads') return target
+			const coinFlip = opponentPlayer.custom[this.getKey('coinFlip')]
+			if (!coinFlip) return
+
+			currentPlayer.coinFlips[this.id] = coinFlip
+			if (coinFlip[0] !== 'heads') {
+				delete opponentPlayer.custom[this.getKey('coinFlip')]
+				return target
+			}
+			opponentPlayer.custom[this.getKey('consecutive')] = true
 			target.multiplier = 0
 			return target
+		})
+
+		// clear coinFlip flag at end of opponents turn
+		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+			const {opponentPlayer} = derivedState
+			delete opponentPlayer.custom[this.getKey('coinFlip')]
+		})
+
+		// clear consecutive flag at start of opponents turn
+		game.hooks.turnStart.tap(this.id, (derivedState) => {
+			const {opponentPlayer} = derivedState
+			delete opponentPlayer.custom[this.getKey('consecutive')]
 		})
 	}
 }

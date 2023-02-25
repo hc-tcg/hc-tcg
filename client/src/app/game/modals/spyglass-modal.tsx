@@ -19,7 +19,7 @@ function SpyglassModal({closeModal}: Props) {
 					<CardList size="small" cards={spyglass} />
 				</div>
 				<div className={css.options}>
-					<button onClick={closeModal}>Hmmmmm</button>
+					<button onClick={closeModal}>Ahaaa</button>
 				</div>
 			</div>
 		</Modal>
