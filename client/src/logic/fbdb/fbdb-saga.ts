@@ -61,7 +61,8 @@ function* fbdbSaga(): SagaIterator {
 				stats.fl += 1
 			}
 			if (outcome == 'tie') {
-				stats.t += 1
+				// || 0 for records created before ties were a thing
+				stats.t = (stats.t || 0) + 1
 			}
 			global.dbObj.dbref.set(stats)
 		}
