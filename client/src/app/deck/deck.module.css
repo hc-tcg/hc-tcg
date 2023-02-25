@@ -9,6 +9,11 @@
 	display: flex;
 	gap: 15px;
 	align-items: center;
+	position: sticky;
+	top: 0;
+	z-index: 15;
+	background: #ccc;
+	box-shadow: 0 5px 3px #000000aa;
 }
 
 .limits {
@@ -57,4 +62,31 @@
 .dynamicSpace {
 	flex: 1 1 auto;
 	width: 0;
+}
+
+.cardList {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 300px;
+	height: 100vh;
+	background: #a0a0a0;
+}
+
+.cardListTitle {
+	text-align: center;
+}
+
+.loadDeckList {
+	list-style: none;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	padding: 0;
+	gap: .5em;
+}
+
+.deckSelection {
+	margin: 0 4px 0 20px;
+	min-width: 160px;
 }

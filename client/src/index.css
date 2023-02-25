@@ -32,7 +32,7 @@ code {
 	box-sizing: border-box;
 }
 
-button {
+button, select {
 	font-family: Minecraft;
 	padding: 0 10px;
 	height: 30px;
@@ -46,6 +46,11 @@ button {
 	color: #ddd;
 	text-shadow: 2px 2px #000a;
 	box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
+}
+
+select {
+	padding-bottom: 1px;
+	background-color: #2a2727;
 }
 
 button:disabled {
