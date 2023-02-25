@@ -179,7 +179,6 @@ export const validateDeck = (deckCards) => {
 	if (tooManyDuplicates)
 		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`
 
-	console.log()
 	if (deckCards.length < limits.minCards)
 		return `Deck must have at least ${limits.minCards} cards.`
 	if (deckCards.length > limits.maxCards)

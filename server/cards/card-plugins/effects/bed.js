@@ -23,44 +23,54 @@ class BedEffectCard extends EffectCard {
 	register(game) {
 		// Discard bed after sleeping & store who had bed at start of turn
 		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+			const {currentPlayer, opponentPlayer} = derivedState
+
 			// Need to know which row had bed at start of the turn
-			const bedInfo = currentPlayer.custom[this.id] || {}
-			currentPlayer.board.rows.forEach((row, rowIndex) => {
-				const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
-				const hasBed = row.effectCard?.cardId === this.id
-				if (!isSleeping && hasBed) {
-					discardCard(game, row.effectCard)
+			const players = [currentPlayer, opponentPlayer]
+			players.forEach((playerState) => {
+				const bedInfo = playerState.custom[this.id] || {}
+				playerState.board.rows.forEach((row, rowIndex) => {
+					const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
+					const hasBed = row.effectCard?.cardId === this.id
+					if (!isSleeping && hasBed) {
+						discardCard(game, row.effectCard)
+					}
+					if (hasBed) bedInfo[rowIndex] = true
+				})
+				if (Object.keys(bedInfo).length > 0) {
+					playerState.custom[this.id] = bedInfo
 				}
-				if (hasBed) bedInfo[rowIndex] = true
 			})
-			if (Object.keys(bedInfo).length > 0) {
-				currentPlayer.custom[this.id] = bedInfo
-			}
 		})
 
 		// Set sleeping if hermit received bed in given turn
 		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
-			const {currentPlayer} = derivedState
-			const bedInfo = currentPlayer.custom[this.id] || {}
-			currentPlayer.board.rows.forEach((row, index) => {
-				const hadBed = bedInfo[index]
-				const hasBed = row.effectCard?.cardId === this.id
-				if (!hadBed && hasBed) {
-					row.health = CARDS[row.hermitCard.cardId].health
-					// clear any previous sleeping
-					row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-					// set new sleeping for full two turns
-					row.ailments.push({id: 'sleeping', duration: 2})
-					bedInfo[index] = true
-				}
+			const {currentPlayer, opponentPlayer} = derivedState
+
+			// We need to check both players, because of emerald
+			const players = [currentPlayer, opponentPlayer]
+			players.forEach((playerState) => {
+				const bedInfo = playerState.custom[this.id] || {}
+				playerState.board.rows.forEach((row, index) => {
+					const hadBed = bedInfo[index]
+					const hasBed = row.effectCard?.cardId === this.id
+					if (!hadBed && hasBed) {
+						row.health = CARDS[row.hermitCard.cardId].health
+						// clear any previous sleeping
+						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
+						// set new sleeping for full two turns
+						row.ailments.push({id: 'sleeping', duration: 2})
+						bedInfo[index] = true
+					}
+				})
 			})
 		})
 
-		// Cleanup map of who had map
+		// Cleanup map of who had the bed
 		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+			const {currentPlayer, opponentPlayer} = derivedState
 			delete currentPlayer.custom[this.id]
+			delete opponentPlayer.custom[this.id]
 		})
 
 		// Prevent placing bed on inactive hermits

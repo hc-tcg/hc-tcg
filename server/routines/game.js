@@ -409,7 +409,6 @@ function* turnSaga(game) {
 		game.hooks.turnEnd.call(derivedState)
 
 		const deadPlayerIds = yield call(checkHermitHealth, game)
-		console.log({deadPlayerIds})
 		if (deadPlayerIds.length) {
 			game.endInfo.deadPlayerIds = deadPlayerIds
 			return 'GAME_END'
