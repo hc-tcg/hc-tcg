@@ -1,4 +1,5 @@
 import {
+	all,
 	take,
 	takeEvery,
 	fork,
@@ -142,9 +143,11 @@ function playerAction(actionType, playerId) {
 /**
  *
  * @param {Game} game
+ * @returns {Array<string>}
  */
 function* checkHermitHealth(game) {
 	const playerStates = Object.values(game.state.players)
+	const deadPlayerIds = []
 	for (let playerState of playerStates) {
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
@@ -188,8 +191,10 @@ function* checkHermitHealth(game) {
 
 		const isDead = playerState.lives <= 0
 		const firstPlayerTurn =
+			playerState.lives >= 3 &&
 			game.state.turn <=
-			game.state.order.findIndex((id) => id === playerState.id) + 1
+				game.state.order.findIndex((id) => id === playerState.id) + 1
+
 		const noHermitsLeft =
 			!firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
 		if (isDead || noHermitsLeft) {
@@ -198,11 +203,11 @@ function* checkHermitHealth(game) {
 				noHermitsLeft,
 				turn: game.state.turn,
 			})
-			return playerState.id
+			deadPlayerIds.push(playerState.id)
 		}
 	}
 
-	return false
+	return deadPlayerIds
 }
 
 /**
@@ -268,8 +273,8 @@ function* turnActionSaga(game, turnAction, baseDerivedState) {
 
 	game.hooks.actionEnd.call(turnAction, derivedState)
 
-	const deadPlayerId = yield call(checkHermitHealth, game)
-	if (deadPlayerId) return 'END_TURN'
+	const deadPlayerIds = yield call(checkHermitHealth, game)
+	if (deadPlayerIds.length) return 'END_TURN'
 	return 'DONE'
 }
 
@@ -412,9 +417,10 @@ function* turnSaga(game) {
 
 		game.hooks.turnEnd.call(derivedState)
 
-		const deadPlayerId = yield call(checkHermitHealth, game)
-		if (deadPlayerId) {
-			game.endInfo.deadPlayerId = deadPlayerId
+		const deadPlayerIds = yield call(checkHermitHealth, game)
+		console.log({deadPlayerIds})
+		if (deadPlayerIds.length) {
+			game.endInfo.deadPlayerIds = deadPlayerIds
 			return 'GAME_END'
 		}
 
@@ -471,13 +477,14 @@ function* sendGameStateOnReconnect(game) {
  */
 function* gameSaga(game) {
 	try {
-		if (!game.state) throw new Error('Trying to starting uninitialized game')
+		if (!game.state) throw new Error('Trying to start uninitialized game')
 		registerCards(game)
 
-		yield fork(sendGameStateOnReconnect, game)
-		yield fork(chatSaga, game)
+		const backgroundTasks = yield all([
+			fork(sendGameStateOnReconnect, game),
+			fork(chatSaga, game),
+		])
 
-		root.hooks.newGame.call(game)
 		game.hooks.gameStart.call()
 		yield put({type: 'NEW_GAME', payload: game})
 
@@ -487,20 +494,7 @@ function* gameSaga(game) {
 			if (result === 'GAME_END') break
 		}
 
-		game.getPlayers().forEach((player) => {
-			player.socket.emit('GAME_END', {
-				type: 'GAME_END',
-				payload: {
-					gameState: game.state,
-					reason:
-						game.endInfo.deadPlayerId === player.playerId
-							? 'you_lost'
-							: 'you_won',
-				},
-			})
-		})
-
-		yield cancel()
+		yield cancel(backgroundTasks)
 	} finally {
 		game.hooks.gameEnd.call()
 	}

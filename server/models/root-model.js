@@ -16,6 +16,8 @@ export class Root {
 		this.hooks = {
 			/** @type {SyncHook<[Game]>} */
 			newGame: new SyncHook(['game']),
+			/** @type {SyncHook<[Game]>} */
+			gameRemoved: new SyncHook(['game']),
 			/** @type {SyncHook<[Player]>} */
 			playerJoined: new SyncHook(['player']),
 			/** @type {SyncHook<[Player]>} */

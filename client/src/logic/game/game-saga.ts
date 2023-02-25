@@ -98,12 +98,11 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 
 		if (Object.hasOwn(result, 'game')) {
 			throw new Error('Unexpected game ending')
-		}
-
-		if (result.gameCrash) {
+		} else if (Object.hasOwn(result, 'gameCrash')) {
 			console.log('Server error')
 			yield put(showEndGameOverlay('server_crash'))
-		} else {
+		} else if (Object.hasOwn(result, 'gameEnd')) {
+			console.log('GAME END: ', result.gameEnd)
 			if (result.gameEnd.payload.gameState) {
 				yield put(
 					gameState({

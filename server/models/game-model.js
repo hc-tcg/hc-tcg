@@ -127,8 +127,12 @@ export class Game {
 		this.chat = []
 
 		this.endInfo = {
-			/** @type {string | null} */
-			deadPlayerId: null,
+			/** @type {Array<string>} */
+			deadPlayerIds: [],
+			/** @type {string|null} */
+			winner: null,
+			/** @type {'timeout'|'forfeit'|'tie'|'player_won'|'error'|null} */
+			outcome: null,
 		}
 	}
 
@@ -150,7 +154,7 @@ export class Game {
 		this.players[player.playerId] = player
 	}
 
-	startGame() {
+	initialize() {
 		if (this.getPlayers().length !== 2)
 			throw new Error('Game must 2 have 2 players to start')
 		this.state = getGameState(this)

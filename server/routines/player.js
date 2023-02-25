@@ -86,6 +86,27 @@ function* updateDeckSaga(action) {
 	})
 }
 
+/*
+// Inform users when their opponent is offline & online again
+// Still needs frontend logic, also don't forget to cancel saga in finally or this saga won't end
+yield takeEvery(
+	(action) =>
+		['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
+		game.playerIds.includes(action.payload.playerId),
+	function* () {
+		const connectionStatus = game.playerIds.map(
+			(playerId) => !!allPlayers[playerId]?.socket.connected
+		)
+		broadcast(
+			allPlayers,
+			game.playerIds,
+			'CONNECTION_STATUS',
+			connectionStatus
+		)
+	}
+)
+*/
+
 export function* playerSaga() {
 	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
 	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
