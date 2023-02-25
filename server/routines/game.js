@@ -417,7 +417,16 @@ function* turnSaga(game) {
 		// Draw a card from deck when turn ends
 		// TODO - End game once pile runs out
 		const drawCard = currentPlayerState.pile.shift()
-		if (drawCard) currentPlayerState.hand.push(drawCard)
+		if (drawCard) {
+			currentPlayerState.hand.push(drawCard)
+		} else {
+			console.log('Player dead: ', {
+				noCards: true,
+				turn: game.state.turn,
+			})
+			game.endInfo.deadPlayerIds = [currentPlayerId]
+			return 'GAME_END'
+		}
 
 		// If player has not used his single use card return it to hand
 		// otherwise move it to discarded pile
