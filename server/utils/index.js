@@ -115,7 +115,7 @@ export function discardSingleUse(game, playerState) {
 	playerState.board.singleUseCard = null
 
 	if (suUsed) {
-		const result = game.hooks.discardCard.get('single_use')?.call(suCard)
+		const result = game.hooks.discardCard.get('single_use')?.call(suCard, true)
 		if (!result) playerState.discarded.push(suCard)
 	} else {
 		playerState.hand.push(suCard)

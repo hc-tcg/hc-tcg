@@ -139,11 +139,6 @@ export function getPlayerState(player) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	// pack.unshift({
-	// 	cardId: 'grian_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
-
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
 		return CARDS[card.cardId].type === 'hermit'
@@ -151,6 +146,13 @@ export function getPlayerState(player) {
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
+
+	const hand = pack.slice(0, 7)
+
+	// hand.unshift({
+	// 	cardId: 'mending',
+	// 	cardInstance: Math.random().toString(),
+	// })
 
 	const TOTAL_ROWS = 5
 	return {
@@ -160,7 +162,7 @@ export function getPlayerState(player) {
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
-		hand: pack.slice(0, 7), // 0.7
+		hand,
 		rewards: pack.slice(7, 10),
 		discarded: [],
 		pile: pack.slice(10),

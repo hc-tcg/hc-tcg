@@ -93,9 +93,11 @@ export class Game {
 			),
 			/**
 			 * When a card is discarded (hand or board)
-			 * @type {HookMap<SyncBailHook<[Object]>>}
+			 * @type {HookMap<SyncBailHook<[Object, boolean]>>}
 			 */
-			discardCard: new HookMap((cardType) => new SyncBailHook(['card'])),
+			discardCard: new HookMap(
+				(cardType) => new SyncBailHook(['card', 'singleUseSlot'])
+			),
 			/**
 			 * When player swaps hermits
 			 * @type {SyncHook<[TurnAction, DerivedState]>}
