@@ -1,7 +1,4 @@
-const getOpponentId = (game, playerId) => {
-	const players = game.getPlayers()
-	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
-}
+import {getOpponentId} from './index'
 
 export const getGameOutcome = (game, endResult) => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'

@@ -3,14 +3,14 @@ export const login = (playerName: string) => ({
 	payload: playerName,
 })
 
-type PlayerInfo = {
+type PlayerInfoT = {
 	playerId: string
 	playerName: string
 	playerSecret: string
 	playerDeck?: Array<string>
 }
 
-export const setPlayerInfo = (playerInfo: PlayerInfo) => ({
+export const setPlayerInfo = (playerInfo: PlayerInfoT) => ({
 	type: 'SET_PLAYER_INFO' as const,
 	payload: playerInfo,
 })

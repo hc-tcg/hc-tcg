@@ -1,14 +1,4 @@
-import {
-	all,
-	take,
-	takeEvery,
-	fork,
-	actionChannel,
-	call,
-	delay,
-	cancel,
-	put,
-} from 'redux-saga/effects'
+import {all, take, fork, actionChannel, call, cancel} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
@@ -21,7 +11,8 @@ import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
-import chatSaga from './chat'
+import chatSaga from './background/chat'
+import connectionStatusSaga from './background/connection-status'
 import root from '../models/root-model'
 
 /**
@@ -441,52 +432,18 @@ function* turnSaga(game) {
 /**
  * @param {Game} game
  */
-function* sendGameStateOnReconnect(game) {
-	yield takeEvery(
-		(action) =>
-			action.type === 'PLAYER_RECONNECTED' &&
-			!!game.players[action.payload.playerId],
-		function* (action) {
-			const {playerId} = action.payload
-			const playerSocket = game.players[playerId]?.socket
-			if (playerSocket && playerSocket.connected) {
-				yield delay(1000)
-				if (!game._derivedStateCache) return // @TODO we may not need this anymore
-				const {currentPlayer, availableActions, opponentAvailableActions} =
-					game._derivedStateCache
-
-				const payload = {
-					gameState: game.state,
-					opponentId: Object.keys(game.players).find((id) => id !== playerId),
-					availableActions:
-						playerId === currentPlayer.id
-							? availableActions
-							: opponentAvailableActions,
-				}
-				playerSocket.emit('GAME_STATE', {
-					type: 'GAME_STATE',
-					payload,
-				})
-			}
-		}
-	)
-}
-
-/**
- * @param {Game} game
- */
 function* gameSaga(game) {
 	try {
 		if (!game.state) throw new Error('Trying to start uninitialized game')
 		registerCards(game)
 
 		const backgroundTasks = yield all([
-			fork(sendGameStateOnReconnect, game),
+			// fork(sendGameStateOnReconnect, game),
 			fork(chatSaga, game),
+			fork(connectionStatusSaga, game),
 		])
 
 		game.hooks.gameStart.call()
-		yield put({type: 'NEW_GAME', payload: game})
 
 		while (true) {
 			game.state.turn++

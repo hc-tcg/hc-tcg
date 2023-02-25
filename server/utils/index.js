@@ -133,6 +133,11 @@ export function flipCoin(currentPlayer, times = 1) {
 	return result
 }
 
+export const getOpponentId = (game, playerId) => {
+	const players = game.getPlayers()
+	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
+}
+
 /**
 	@param {Array<string>} deckCards
 */

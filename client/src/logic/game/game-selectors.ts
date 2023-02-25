@@ -65,3 +65,7 @@ export const getChatMessages = (state: RootState) => {
 export const getCurrentCoinFlip = (state: RootState) => {
 	return getGame(state).currentCoinFlip
 }
+
+export const getOppopnentConnection = (state: RootState) => {
+	return getGame(state).opponentConnected
+}

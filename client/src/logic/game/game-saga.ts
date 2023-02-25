@@ -1,4 +1,5 @@
 import {
+	all,
 	take,
 	takeEvery,
 	fork,
@@ -17,7 +18,13 @@ import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
-import {gameState, gameStart, gameEnd, showEndGameOverlay} from './game-actions'
+import {
+	gameState,
+	gameStart,
+	gameEnd,
+	showEndGameOverlay,
+	setOpponentConnection,
+} from './game-actions'
 import {getEndGameOverlay, getOpponentId} from './game-selectors'
 
 function* actionSaga(): SagaIterator {
@@ -86,8 +93,18 @@ function* gameActionsSaga(initialGameState?: any): SagaIterator {
 	}
 }
 
+function* opponentConnectionSaga(): SagaIterator {
+	while (true) {
+		const message = yield call(receiveMsg, 'OPPONENT_CONNECTION')
+		yield put(setOpponentConnection(message.payload))
+	}
+}
+
 function* gameSaga(initialGameState?: any): SagaIterator {
-	const chatTask = yield fork(chatSaga)
+	const backgroundTasks = yield all([
+		fork(opponentConnectionSaga),
+		fork(chatSaga),
+	])
 	try {
 		yield put(gameStart())
 		const result = yield race({
@@ -102,7 +119,6 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 			console.log('Server error')
 			yield put(showEndGameOverlay('server_crash'))
 		} else if (Object.hasOwn(result, 'gameEnd')) {
-			console.log('GAME END: ', result.gameEnd)
 			if (result.gameEnd.payload.gameState) {
 				yield put(
 					gameState({
@@ -122,7 +138,7 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 		if (hasOverlay) yield take('SHOW_END_GAME_OVERLAY')
 		console.log('Game ended')
 		yield put(gameEnd())
-		yield cancel(chatTask)
+		yield cancel(backgroundTasks)
 	}
 }
 
