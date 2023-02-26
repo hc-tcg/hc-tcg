@@ -10,7 +10,7 @@ type Props = {
 const MESSAGE = {
 	client_crash: 'Game client crashed',
 	server_crash: 'Server crashed',
-	timeout: 'Game timeouted out (60+ minutes)',
+	timeout: 'Game timed out (120+ minutes)',
 	forfeit_loss: 'You lost the game due to forfeit',
 	forfeit_win: 'You won the game due to forfeit',
 	leave_win: 'Opponent left the game. You won.',
