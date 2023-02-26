@@ -16,9 +16,8 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, opponentActiveRow, opponentEffectCardInfo} =
-				derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, opponentActiveRow, opponentEffectCardInfo} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
 				if (opponentEffectCardInfo?.id !== 'milk_bucket') {

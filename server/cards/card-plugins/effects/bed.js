@@ -22,8 +22,8 @@ class BedEffectCard extends EffectCard {
 	}
 	register(game) {
 		// Discard bed after sleeping & store who had bed at start of turn
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {currentPlayer, opponentPlayer} = derivedState
+		game.hooks.turnStart.tap(this.id, () => {
+			const {currentPlayer, opponentPlayer} = game.ds
 
 			// Need to know which row had bed at start of the turn
 			const players = [currentPlayer, opponentPlayer]
@@ -44,8 +44,8 @@ class BedEffectCard extends EffectCard {
 		})
 
 		// Set sleeping if hermit received bed in given turn
-		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
-			const {currentPlayer, opponentPlayer} = derivedState
+		game.hooks.actionEnd.tap(this.id, () => {
+			const {currentPlayer, opponentPlayer} = game.ds
 
 			// We need to check both players, because of emerald
 			const players = [currentPlayer, opponentPlayer]
@@ -67,15 +67,15 @@ class BedEffectCard extends EffectCard {
 		})
 
 		// Cleanup map of who had the bed
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer, opponentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer, opponentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 			delete opponentPlayer.custom[this.id]
 		})
 
 		// Prevent placing bed on inactive hermits
-		game.hooks.playCard.for('effect').tap(this.id, (action, derivedState) => {
-			const {activeRow} = derivedState.currentPlayer.board
+		game.hooks.playCard.for('effect').tap(this.id, (action) => {
+			const {activeRow} = game.ds.currentPlayer.board
 			const {card, rowIndex} = action.payload
 			if (card?.cardId !== this.id) return
 			if (activeRow === null || activeRow !== rowIndex) return 'INVALID'

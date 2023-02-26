@@ -1,5 +1,9 @@
 import HermitCard from './_hermit-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // TODO - can't be used consecutively
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
@@ -26,10 +30,14 @@ class BdoubleO100RareHermitCard extends HermitCard {
 
 		this.turnDuration = 2
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, attackerActiveRow, currentPlayer, typeAction} =
-				derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, attackerActiveRow, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -53,31 +61,28 @@ class BdoubleO100RareHermitCard extends HermitCard {
 		})
 
 		// Disable shreep attack consecutively
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, derivedState) => {
-				const {currentPlayer} = derivedState
+		game.hooks.availableActions.tap(this.id, (availableActions) => {
+			const {currentPlayer} = game.ds
 
-				// we must have active hermit
-				const activeHermit =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
-				if (activeHermit?.cardId !== this.id) return availableActions
+			// we must have active hermit
+			const activeHermit =
+				currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
+			if (activeHermit?.cardId !== this.id) return availableActions
 
-				// we want to make changes only if shreep was used by the hermit
-				const conInfo = currentPlayer.custom[this.id]
-				const lastTurnUsed = conInfo?.[activeHermit.cardInstance]
-				if (typeof lastTurnUsed !== 'number') return availableActions
+			// we want to make changes only if shreep was used by the hermit
+			const conInfo = currentPlayer.custom[this.id]
+			const lastTurnUsed = conInfo?.[activeHermit.cardInstance]
+			if (typeof lastTurnUsed !== 'number') return availableActions
 
-				// Prevent use of shreep consecutively
-				const consecutive = lastTurnUsed + 6 >= game.state.turn
-				if (!consecutive) {
-					delete conInfo[activeHermit.cardInstance]
-					return availableActions
-				}
-
-				return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+			// Prevent use of shreep consecutively
+			const consecutive = lastTurnUsed + 6 >= game.state.turn
+			if (!consecutive) {
+				delete conInfo[activeHermit.cardInstance]
+				return availableActions
 			}
-		)
+
+			return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+		})
 	}
 }
 

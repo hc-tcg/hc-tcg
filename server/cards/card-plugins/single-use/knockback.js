@@ -20,14 +20,14 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target) => {
 			const {
 				singleUseInfo,
 				currentPlayer,
 				opponentPlayer,
 				opponentHermitCard,
 				opponentActiveRow,
-			} = derivedState
+			} = game.ds
 			if (singleUseInfo?.id === this.id && target.isActive) {
 				const hasOtherHermits =
 					opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1

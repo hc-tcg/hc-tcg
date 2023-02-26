@@ -12,7 +12,7 @@ import {
 import {broadcast} from '../utils/comm'
 import gameSaga from './game'
 import root from '../models/root-model'
-import {Game} from '../models/game-model'
+import {GameModel} from '../models/game-model'
 import {
 	getGameEndReason,
 	getWinner,
@@ -20,7 +20,7 @@ import {
 } from '../utils/win-conditions'
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
  */
 function* gameManager(game) {
 	try {
@@ -61,7 +61,7 @@ function* gameManager(game) {
 	} catch (err) {
 		console.error('Error: ', err)
 		game.endInfo.outcome = 'error'
-		broadcast(players, 'GAME_CRASH')
+		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {
 		yield cancel(game.task)
 		delete root.games[game.id]
@@ -99,7 +99,7 @@ function* randomMatchmaking(action) {
 	}
 
 	// random game not available, create new one
-	const newGame = new Game()
+	const newGame = new GameModel()
 	newGame.addPlayer(player)
 	root.addGame(newGame)
 
@@ -119,7 +119,7 @@ function* createPrivateGame(action) {
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
 	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
-	const newGame = new Game(gameCode)
+	const newGame = new GameModel(gameCode)
 	newGame.addPlayer(player)
 	root.games[newGame.id] = newGame
 

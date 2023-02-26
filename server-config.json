@@ -4,6 +4,7 @@
 	"clientPath": "client/dist",
 	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev"],
 	"limits": {
+		"maxTurnTime": 90,
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,

@@ -1,5 +1,9 @@
 import HermitCard from './_hermit-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class ImpulseSVRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -24,15 +28,18 @@ class ImpulseSVRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
 			const {
 				attackerHermitCard,
 				attackerHermitInfo,
-				currentPlayer,
 				typeAction,
 				attackerActiveRow,
-			} = derivedState
+			} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target

@@ -2,6 +2,10 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -30,16 +34,18 @@ class TangoTekRareHermitCard extends HermitCard {
 		]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {
-				attackerHermitCard,
-				typeAction,
 				currentPlayer,
 				opponentPlayer,
 				opponentActiveRow,
 				playerActiveRow,
-			} = derivedState
+			} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -65,8 +71,8 @@ class TangoTekRareHermitCard extends HermitCard {
 		})
 
 		// Remove followup in case all AFK hermits during attack
-		game.hooks.actionEnd.tap(this.id, (turnAction, derivedState) => {
-			const {opponentPlayer} = derivedState
+		game.hooks.actionEnd.tap(this.id, () => {
+			const {opponentPlayer} = game.ds
 			if (opponentPlayer.followUp !== this.id) return
 			const opponentHasOtherHermits =
 				opponentPlayer.board.rows.filter(
@@ -75,10 +81,11 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (!opponentHasOtherHermits) delete opponentPlayer.followUp
 		})
 
-		game.hooks.followUp.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer, opponentPlayer, pickedCardsInfo} = derivedState
+		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
+			const {currentPlayer, opponentPlayer} = game.ds
+			const {followUp, pickedCardsInfo} = followUpState
 
-			if (opponentPlayer.followUp !== this.id) return
+			if (followUp !== this.id) return
 
 			const pickedCards = pickedCardsInfo[this.id] || []
 			if (pickedCards.length !== 1) return 'INVALID'
@@ -91,6 +98,30 @@ class TangoTekRareHermitCard extends HermitCard {
 			delete currentPlayer.custom[this.id]
 
 			return 'DONE'
+		})
+
+		// follow up clenaup in case of a timeout (autopick first AFK)
+		game.hooks.followUpTimeout.tap(this.id, () => {
+			const {currentPlayer, opponentPlayer, playerActiveRow} = game.ds
+			if (opponentPlayer.followUp !== this.id) return
+
+			opponentPlayer.followUp = null
+			delete currentPlayer.custom[this.id]
+
+			const oBoard = opponentPlayer.board
+			if (oBoard.activeRow !== null) return
+
+			const hermitIndex = oBoard.rows.findIndex((row) => {
+				const hasHermit = !!row.hermitCard
+				const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
+				return hasHermit && canBeActive
+			})
+			if (hermitIndex >= 0) {
+				oBoard.activeRow = hermitIndex
+				return
+			}
+			const anyHermitIndex = oBoard.rows.findIndex((row) => !!row.hermitCard)
+			if (anyHermitIndex >= 0) oBoard.activeRow = anyHermitIndex
 		})
 	}
 }

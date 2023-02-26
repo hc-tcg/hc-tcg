@@ -10,6 +10,7 @@
  * @typedef {Object} ChatMessage
  * @property {number} createdAt
  * @property {string} message
+ * @property {string} censoredMessage
  * @property {string} playerId
  */
 
@@ -36,12 +37,11 @@
  * @property {Array<RowState>} rows
  */
 
-// @TODO if cards could access game.players, then we wouldn't need to duplicate info like playerName here
-// --> or maybe playerState could just contain a reference to the Player instance? <--
 /**
  * @typedef {Object} PlayerState
  * @property {string} id
  * @property {string} playerName
+ * @property {string} censoredPlayerName
  * @property {*} coinFlips
  * @property {*} followUp
  * @property {number} lives
@@ -58,13 +58,15 @@
  * @property {number} turn
  * @property {Array<string>} order
  * @property {string | null} turnPlayerId
+ * @property {number | null} turnTime
  * @property {Object.<string, PlayerState>} players
  */
 
 /**
  * @typedef {'END_TURN' | 'APPLY_EFFECT' | 'REMOVE_EFFECT' | 'ZERO_ATTACK' |
  *  'PRIMARY_ATTACK' | 'SECONDARY_ATTACK' | 'FOLLOW_UP' | 'WAIT_FOR_OPPONENT_FOLLOWUP' |
- *  'CHANGE_ACTIVE_HERMIT' | 'ADD_HERMIT' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' | 'PLAY_EFFECT_CARD'} AvailableAction
+ *  'CHANGE_ACTIVE_HERMIT' | 'ADD_HERMIT' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' |
+ *  'PLAY_EFFECT_CARD' | 'WAIT_FOR_TURN'} AvailableAction
  */
 
 /**
@@ -75,4 +77,32 @@
  * @typedef {Object} TurnAction
  * @property {Object} payload
  * @property {string} playerId
+ */
+
+/**
+ * @typedef {Object} TurnState
+ * @property {Array<AvailableAction>} availableActions
+ * @property {Array<AvailableAction>} opponentAvailableActions
+ * @property {Array<string>} pastTurnActions
+ */
+
+/**
+ * @typedef {Object} ActionStateProperties
+ * @property {Object} pickedCardsInfo
+ * @typedef {TurnState & ActionStateProperties} ActionState
+ */
+
+/**
+ * @typedef {Object} AttackStateProperties
+ * @property {string} typeAction
+ * @property {RowState | null} attackerActiveRow
+ * @property {Card | null} attackerHermitCard
+ * @property {Object | null} attackerHermitInfo
+ * @typedef {ActionState & AttackStateProperties} AttackState
+ */
+
+/**
+ * @typedef {Object} FollowUpStateProperties
+ * @property {string} followUp
+ * @typedef {ActionState & FollowUpStateProperties} FollowUpState
  */

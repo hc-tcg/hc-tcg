@@ -4,7 +4,7 @@ import HERMIT_CARDS from './hermits'
 import ITEM_CARDS from './items'
 
 /**
- * @typedef {import("models/game-model").Game} Game
+ * @typedef {import("models/game-model").GameModel} GameModel
  */
 
 export const CARDS = [
@@ -15,7 +15,7 @@ export const CARDS = [
 ]
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
  */
 function registerCards(game) {
 	for (let card of CARDS) {

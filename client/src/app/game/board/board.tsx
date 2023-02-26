@@ -16,6 +16,7 @@ import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
 import PlayerInfo from './player-info'
+import Timer from './timer'
 
 // TODO - Don't allow clicking on slots on the other side
 
@@ -117,7 +118,7 @@ function Board({onClick, gameState}: Props) {
 			</div>
 
 			<div className={css.middle}>
-				<img src="images/tcg1.png" draggable="false" width="100" />
+				<Timer />
 				{renderMiddle()}
 				<div
 					className={classnames(css.singleUseSlot, {

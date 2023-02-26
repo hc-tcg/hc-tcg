@@ -2,7 +2,7 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 
 /**
- * @typedef {import('models/game-model').Game} Game
+ * @typedef {import('models/game-model').GameModel} GameModel
  */
 
 /*
@@ -33,11 +33,11 @@ class JoeHillsRareHermitCard extends HermitCard {
 	}
 
 	/**
-	 * @param {Game} game
+	 * @param {GameModel} game
 	 */
 	register(game) {
-		game.hooks.turnStart.tap(this.id, (derivedState, turnConfig) => {
-			const {opponentPlayer} = derivedState
+		game.hooks.turnStart.tap(this.id, (turnConfig) => {
+			const {opponentPlayer} = game.ds
 			if (opponentPlayer.custom[this.id] === 'time-skip') {
 				opponentPlayer.custom[this.id] = 'prevent-consecutive'
 				turnConfig.skipTurn = true
@@ -46,8 +46,9 @@ class JoeHillsRareHermitCard extends HermitCard {
 			}
 		})
 
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, currentPlayer, typeAction} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -67,22 +68,19 @@ class JoeHillsRareHermitCard extends HermitCard {
 		})
 
 		// Disable Time Skip attack consecutively
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, derivedState) => {
-				const {currentPlayer} = derivedState
+		game.hooks.availableActions.tap(this.id, (availableActions) => {
+			const {currentPlayer} = game.ds
 
-				// we must have active hermit
-				const activeHermit =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
-				if (activeHermit?.cardId !== this.id) return availableActions
+			// we must have active hermit
+			const activeHermit =
+				currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
+			if (activeHermit?.cardId !== this.id) return availableActions
 
-				// we want to make changes only if time skip was used by the hermit
-				return currentPlayer.custom[this.id]
-					? availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-					: availableActions
-			}
-		)
+			// we want to make changes only if time skip was used by the hermit
+			return currentPlayer.custom[this.id]
+				? availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+				: availableActions
+		})
 	}
 }
 

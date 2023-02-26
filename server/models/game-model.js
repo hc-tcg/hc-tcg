@@ -1,16 +1,15 @@
 import {getGameState} from '../utils/state-gen'
 import {HookMap, SyncBailHook, SyncHook, SyncWaterfallHook} from 'tapable'
+import {DerivedStateModel} from './derived-state-model'
 
 /**
- * @typedef {import("./root-model").Root} Root
- * @typedef {import("./player-model").Player} Player
+ * @typedef {import("./root-model").RootModel} RootModel
+ * @typedef {import("./player-model").PlayerModel} PlayerModel
  * @typedef {import("types/index")}
- * @typedef {*} DerivedState
  */
 
-export class Game {
+export class GameModel {
 	/**
-	 * @param {Array<Player>} players
 	 * @param {string | null} code
 	 */
 	constructor(code = null) {
@@ -27,7 +26,7 @@ export class Game {
 
 		// store players in key/value pairs
 		// this means we don't need access to root for game logic
-		/** @type {Object.<string, Player>} */
+		/** @type {Object.<string, PlayerModel>} */
 		this.players = {}
 
 		/** @type {*} */ // @TODO what type is the game task?
@@ -35,6 +34,9 @@ export class Game {
 
 		/** @type {GameState} */
 		this.state = null
+
+		/** @type {DerivedStateModel} */
+		this.ds = new DerivedStateModel(this)
 
 		// TODO - gameState should be changed only in immutable way so that we can check its history (probs too big to change rn)
 		// TODO - once all cards get access to game object, all of these can likely be change to syncbailhooks, for consistency
@@ -46,50 +48,53 @@ export class Game {
 			gameStart: new SyncHook([]),
 			/**
 			 * Start of a turn
-			 * @type {SyncHook<[DerivedState, {skipTurn?: boolean}]>}
+			 * @type {SyncHook<[{skipTurn?: boolean}]>}
 			 */
-			turnStart: new SyncHook(['derived', 'turnConfig']),
+			turnStart: new SyncHook(['turnConfig']),
 			/**
 			 * Used to modify availableActions before each action of a turn
-			 * @type {SyncWaterfallHook<[AvailableActions, DerivedState], AvailableActions>}
+			 * @type {SyncWaterfallHook<[AvailableActions, Array<string>], AvailableActions>}
 			 */
-			availableActions: new SyncWaterfallHook(['availableActions', 'derived']),
+			availableActions: new SyncWaterfallHook([
+				'availableActions',
+				'pastTurnActions',
+			]),
 			/**
 			 * Start of any action (action = player move, there can be multiple each turn)
-			 * @type {SyncHook<[TurnAction, DerivedState]>}
+			 * @type {SyncHook<[TurnAction, ActionState]>}
 			 */
-			actionStart: new SyncHook(['turnAction', 'derived']),
+			actionStart: new SyncHook(['turnAction', 'actionState']),
 			/**
 			 * When a single use effect is applied
-			 * @type {SyncBailHook<[TurnAction, DerivedState]>}
+			 * @type {SyncBailHook<[TurnAction, ActionState]>}
 			 */
-			applyEffect: new SyncBailHook(['turnAction', 'derived']),
+			applyEffect: new SyncBailHook(['turnAction', 'actionState']),
 			/**
 			 * When a single use effect is removed before applying
-			 * @type {SyncHook<[TurnAction, DerivedState]>}
+			 * @type {SyncHook<[TurnAction, ActionState]>}
 			 */
-			removeEffect: new SyncHook(['turnAction', 'derived']),
+			removeEffect: new SyncHook(['turnAction', 'actionState']),
 			/**
 			 * For special cases where an actions needs a second interaction from one of the players
-			 * @type {SyncBailHook<[TurnAction, DerivedState]>}
+			 * @type {SyncBailHook<[TurnAction, FollowUpState]>}
 			 */
-			followUp: new SyncBailHook(['turnAction', 'derived']),
+			followUp: new SyncBailHook(['turnAction', 'followUpState']),
 			/**
 			 * Called once for each target of an attack (active, afk hermits)
-			 * @type {SyncWaterfallHook<[Object, TurnAction, DerivedState], Object>}
+			 * @type {SyncWaterfallHook<[Object, TurnAction, AttackState], Object>}
 			 */
-			attack: new SyncWaterfallHook(['target', 'turnAction', 'derived']),
+			attack: new SyncWaterfallHook(['target', 'turnAction', 'attackState']),
 			/**
 			 * Called once for each target after damage is applied with info about total damge, revival etc.
-			 * @type {SyncHook<[Object, TurnAction, DerivedState]>}
+			 * @type {SyncHook<[Object, TurnAction, AttackState]>}
 			 */
-			attackResult: new SyncHook(['result', 'turnAction', 'derived']),
+			attackResult: new SyncHook(['result', 'turnAction', 'attackState']),
 			/**
 			 * When card is put down on a board
-			 * @type {HookMap<SyncBailHook<[TurnAction, DerivedState]>>}
+			 * @type {HookMap<SyncBailHook<[TurnAction, ActionState]>>}
 			 */
 			playCard: new HookMap(
-				(cardType) => new SyncBailHook(['turnAction', 'derived'])
+				(cardType) => new SyncBailHook(['turnAction', 'actionState'])
 			),
 			/**
 			 * When a card is discarded (hand or board)
@@ -100,14 +105,19 @@ export class Game {
 			),
 			/**
 			 * When player swaps hermits
-			 * @type {SyncHook<[TurnAction, DerivedState]>}
+			 * @type {SyncHook<[TurnAction, ActionState]>}
 			 */
-			changeActiveHermit: new SyncHook(['turnAction', 'derived']),
+			changeActiveHermit: new SyncHook(['turnAction', 'actionState']),
+			/**
+			 * When opponent's followup times out
+			 * @type {SyncHook<[]>}
+			 */
+			followUpTimeout: new SyncHook([]),
 			/**
 			 * At end of any action
-			 * @type {SyncHook<[TurnAction, DerivedState]>}
+			 * @type {SyncHook<[TurnAction, ActionState]>}
 			 */
-			actionEnd: new SyncHook(['turnAction', 'derived']),
+			actionEnd: new SyncHook(['turnAction', 'actionState']),
 			/**
 			 * When hermit is about to die
 			 * @type {SyncWaterfallHook<[Array, Object], Array>}
@@ -115,9 +125,9 @@ export class Game {
 			hermitDeath: new SyncWaterfallHook(['recovery', 'deathInfo']),
 			/**
 			 * At end of every turn
-			 * @type {SyncHook<[DerivedState]>}
+			 * @type {SyncHook<[]>}
 			 */
-			turnEnd: new SyncHook(['derived']),
+			turnEnd: new SyncHook([]),
 			/**
 			 * When game ends
 			 * @type {SyncHook<[]>}
@@ -136,6 +146,9 @@ export class Game {
 			/** @type {'timeout'|'forfeit'|'tie'|'player_won'|'error'|null} */
 			outcome: null,
 		}
+
+		/** @type {*} */
+		this._turnStateCache = null
 	}
 
 	// methods for clarity in game code
@@ -144,12 +157,12 @@ export class Game {
 		return Object.keys(this.players)
 	}
 
-	/** @returns {Array<Player>} */
+	/** @returns {Array<PlayerModel>} */
 	getPlayers() {
 		return Object.values(this.players)
 	}
 
-	/** @param {Player} player */
+	/** @param {PlayerModel} player */
 	addPlayer(player) {
 		if (this.getPlayers().length > 2)
 			throw new Error('Game can have only 2 players')

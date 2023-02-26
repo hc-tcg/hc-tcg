@@ -16,8 +16,8 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	}
 	register(game) {
 		// set flag on opponent player
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, opponentPlayer} = game.ds
 
 			if (singleUseInfo?.id === this.id) {
 				opponentPlayer.custom[this.id] = true
@@ -26,22 +26,19 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 		})
 
 		// if flag is true, remove change of active hermit from available actions
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, derivedState) => {
-				const {singleUseInfo, currentPlayer} = derivedState
-				if (!currentPlayer.custom[this.id]) return availableActions
-				if (currentPlayer.board.activeRow === null) return availableActions
+		game.hooks.availableActions.tap(this.id, (availableActions) => {
+			const {singleUseInfo, currentPlayer} = game.ds
+			if (!currentPlayer.custom[this.id]) return availableActions
+			if (currentPlayer.board.activeRow === null) return availableActions
 
-				return availableActions.filter(
-					(action) => action !== 'CHANGE_ACTIVE_HERMIT'
-				)
-			}
-		)
+			return availableActions.filter(
+				(action) => action !== 'CHANGE_ACTIVE_HERMIT'
+			)
+		})
 
 		// at end of turn remove flag
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 		})
 	}

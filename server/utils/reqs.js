@@ -1,4 +1,4 @@
-import {getPickedCardsInfo} from './derived-state'
+import {getPickedCardsInfo} from './picked-cards'
 import CARDS from '../cards'
 
 /*

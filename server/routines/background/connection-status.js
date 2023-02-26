@@ -4,55 +4,69 @@ import profanityFilter from '../../utils/profanity'
 import {getOpponentId} from '../../utils'
 
 /**
- * @param {Game} game
+ * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("redux").AnyAction} AnyAction
+ * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
-function* sendGameStateOnReconnect(game) {
+
+/**
+ * @param {GameModel} game
+ * @param {AnyAction} action
+ * @return {SagaIterator}
+ */
+function* sendGameStateOnReconnect(game, action) {
+	const {playerId} = action.payload
+	const player = game.players[playerId]
+	const opponentId = getOpponentId(game, playerId)
+	const opponent = game.players[opponentId]
+
+	yield delay(1000)
+	if (!game._turnStateCache) return // @TODO we may not need this anymore
+	const {availableActions, opponentAvailableActions} = game._turnStateCache
+
+	const payload = {
+		gameState: game.state,
+		opponentId: Object.keys(game.players).find((id) => id !== playerId),
+		availableActions:
+			playerId === game.ds.currentPlayer.id
+				? availableActions
+				: opponentAvailableActions,
+	}
+	broadcast([player], 'GAME_STATE', payload)
+	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)
+}
+
+/**
+ * @param {GameModel} game
+ * @param {AnyAction} action
+ * @return {SagaIterator}
+ */
+function* statusChangedSaga(game, action) {
+	const playerId = action.payload.playerId
+	const opponentId = getOpponentId(game, action.payload.playerId)
+	const connectionStatus = game.players[playerId]?.socket.connected
+	broadcast([game.players[opponentId]], 'OPPONENT_CONNECTION', connectionStatus)
+}
+
+/**
+ * @param {GameModel} game
+ * @return {SagaIterator}
+ */
+function* connectionStatusSaga(game) {
 	yield takeEvery(
 		(action) =>
 			action.type === 'PLAYER_RECONNECTED' &&
 			!!game.players[action.payload.playerId],
-		function* (action) {
-			const {playerId} = action.payload
-			const player = game.players[playerId]
-			const opponentId = getOpponentId(game, playerId)
-			const opponent = game.players[opponentId]
-
-			yield delay(1000)
-			if (!game._derivedStateCache) return // @TODO we may not need this anymore
-			const {currentPlayer, availableActions, opponentAvailableActions} =
-				game._derivedStateCache
-
-			const payload = {
-				gameState: game.state,
-				opponentId: Object.keys(game.players).find((id) => id !== playerId),
-				availableActions:
-					playerId === currentPlayer.id
-						? availableActions
-						: opponentAvailableActions,
-			}
-			broadcast([player], 'GAME_STATE', payload)
-			broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)
-		}
+		sendGameStateOnReconnect,
+		game
 	)
-}
-
-function* connectionStatusSaga(game) {
-	yield fork(sendGameStateOnReconnect, game)
 
 	yield takeEvery(
 		(action) =>
 			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
-			game.getPlayerIds().includes(action.payload.playerId),
-		function* (action) {
-			const playerId = action.payload.playerId
-			const opponentId = getOpponentId(game, action.payload.playerId)
-			const connectionStatus = game.players[playerId]?.socket.connected
-			broadcast(
-				[game.players[opponentId]],
-				'OPPONENT_CONNECTION',
-				connectionStatus
-			)
-		}
+			!!game.players[action.payload.playerId],
+		statusChangedSaga,
+		game
 	)
 }
 

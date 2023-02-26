@@ -13,8 +13,8 @@ class MilkBucketEffectCard extends EffectCard {
 		this.pickReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 	register(game) {
-		game.hooks.actionEnd.tap(this.id, (action, derivedState) => {
-			const {currentPlayer, opponentPlayer} = derivedState
+		game.hooks.actionEnd.tap(this.id, () => {
+			const {currentPlayer, opponentPlayer} = game.ds
 			const allRows = [
 				...currentPlayer.board.rows,
 				...opponentPlayer.board.rows,
@@ -28,8 +28,9 @@ class MilkBucketEffectCard extends EffectCard {
 			})
 		})
 
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, pickedCardsInfo} = derivedState
+		game.hooks.applyEffect.tap(this.id, (actionState) => {
+			const {singleUseInfo} = game.ds
+			const {pickedCardsInfo} = actionState
 			if (singleUseInfo.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'

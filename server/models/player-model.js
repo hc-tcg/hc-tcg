@@ -7,7 +7,7 @@ import profanityFilter from '../utils/profanity'
 
 // @TODO store playerState on player.state, instead of game.state.players, to avoid confusion?
 
-export class Player {
+export class PlayerModel {
 	/**
 	 * @param {string} playerName
 	 * @param {Socket} socket

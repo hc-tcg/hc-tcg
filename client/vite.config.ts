@@ -10,6 +10,7 @@ export default defineConfig({
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__PORT__: JSON.stringify(config.port),
+		__LIMITS__: JSON.stringify(config.limits),
 	},
 	resolve: {
 		alias: {

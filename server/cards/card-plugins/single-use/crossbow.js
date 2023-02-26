@@ -20,8 +20,9 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo, pickedCardsInfo} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {singleUseInfo} = game.ds
+			const {pickedCardsInfo} = attackState
 			if (singleUseInfo?.id !== this.id) return target
 			if (target.isActive) {
 				target.extraEffectDamage += this.damage.target

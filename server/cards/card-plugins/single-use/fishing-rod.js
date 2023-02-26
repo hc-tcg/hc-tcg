@@ -10,8 +10,8 @@ class FishingRodSingleUseCard extends SingleUseCard {
 		})
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, currentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				for (let i = 0; i < 2; i++) {
 					const drawCard = currentPlayer.pile.shift()

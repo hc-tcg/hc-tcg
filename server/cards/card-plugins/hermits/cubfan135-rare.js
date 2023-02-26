@@ -1,5 +1,9 @@
 import HermitCard from './_hermit-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class Cubfan135RareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -24,9 +28,13 @@ class Cubfan135RareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, currentPlayer, typeAction} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -36,23 +44,23 @@ class Cubfan135RareHermitCard extends HermitCard {
 			return target
 		})
 
-		game.hooks.changeActiveHermit.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.changeActiveHermit.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			const usedPower = currentPlayer.custom[this.id]
 			if (usedPower) {
 				delete currentPlayer.custom[this.id]
 			}
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 		})
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, derivedState) => {
-				const {pastTurnActions, currentPlayer} = derivedState
+			(availableActions, pastTurnActions) => {
+				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id]
 				const hasOtherHermit = currentPlayer.board.rows.some(
 					(row, index) =>

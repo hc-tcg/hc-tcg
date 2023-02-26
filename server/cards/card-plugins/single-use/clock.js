@@ -12,16 +12,16 @@ class ClockSingleUseCard extends SingleUseCard {
 		this.useReqs = [{target: 'opponent', type: 'hermit', amount: 1}]
 	}
 	register(game) {
-		game.hooks.turnStart.tap(this.id, (derivedState, turnConfig) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnStart.tap(this.id, (turnConfig) => {
+			const {currentPlayer} = game.ds
 			if (currentPlayer.custom[this.id]) {
 				delete currentPlayer.custom[this.id]
 				turnConfig.skipTurn = true
 			}
 		})
 
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, opponentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (game.state.turn < 2) {
 					return 'INVALID'

@@ -38,6 +38,15 @@ export const getCurrentPlayerState = (state: RootState) => {
 	return getPlayerStateById(gameState.turnPlayerId)(state)
 }
 
+export const getInactivePlayerState = (state: RootState) => {
+	const gameState = getGameState(state)
+	if (!gameState) return null
+	const turnPlayerId = gameState.turnPlayerId
+	const inactiveId = gameState.order.filter((id) => id !== turnPlayerId)[0]
+	if (!inactiveId) return null
+	return getPlayerStateById(inactiveId)(state)
+}
+
 export const getAvailableActions = (state: RootState) => {
 	return getGame(state).availableActions
 }

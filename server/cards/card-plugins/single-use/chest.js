@@ -14,11 +14,11 @@ class ChestSingleUseCard extends SingleUseCard {
 	}
 
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, (turnAction) => {
+			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
 
 			if (singleUseInfo?.id === this.id) {
-				const selectedCard = action.payload
+				const selectedCard = turnAction.payload
 				if (!selectedCard) return 'INVALID'
 				const discardedCard = currentPlayer.discarded.find((card) =>
 					equalCard(card, selectedCard)

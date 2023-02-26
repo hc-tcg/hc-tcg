@@ -2,6 +2,10 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
 */
@@ -29,15 +33,18 @@ class MumboJumboRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
 			const {
 				attackerHermitCard,
 				attackerHermitInfo,
 				typeAction,
-				currentPlayer,
 				attackerActiveRow,
-			} = derivedState
+			} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target

@@ -1,10 +1,11 @@
-function* removeEffectSaga(game, turnAction, derivedState) {
-	const {singleUseInfo, currentPlayer, pastTurnActions} = derivedState
+function* removeEffectSaga(game, turnAction, actionState) {
+	const {singleUseInfo, currentPlayer} = game.ds
+	const {pastTurnActions} = actionState
 
 	if (!singleUseInfo) return 'INVALID'
 	if (currentPlayer.board.singleUseCardUsed) return 'INVALID'
 
-	game.hooks.removeEffect.call(turnAction, derivedState)
+	game.hooks.removeEffect.call(turnAction, actionState)
 
 	// ideally we should not modify history, but this in this case it should be okay
 	const sueIndex = pastTurnActions.findIndex(

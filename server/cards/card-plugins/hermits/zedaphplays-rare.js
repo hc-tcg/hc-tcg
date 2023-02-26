@@ -2,6 +2,10 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -26,16 +30,14 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		// On Zed's attack flipCoin and set flag
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				opponentPlayer,
-				typeAction,
-				currentPlayer,
-			} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer, opponentPlayer} = game.ds
+			const {attackerHermitCard, attackerHermitInfo, typeAction} = attackState
 
 			if (typeAction !== 'PRIMARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -52,8 +54,8 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		})
 
 		// When opponent attacks check flag and add second coin flip if set
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {opponentPlayer, currentPlayer} = derivedState
+		game.hooks.attack.tap(this.id, (target) => {
+			const {opponentPlayer, currentPlayer} = game.ds
 
 			const coinFlip = opponentPlayer.custom[this.id]
 			if (!coinFlip) return target
@@ -67,8 +69,8 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		})
 
 		// When Zed has turn again, and opponent didn't attack remove flag
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnStart.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			if (!currentPlayer.custom[this.id]) return
 			delete currentPlayer.custom[this.id]
 		})

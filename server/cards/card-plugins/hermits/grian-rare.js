@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // The tricky part about this one are destroyable items (shield, gold_armor, totem) since they are available at the moment of attack, but not after
 /*
 // some assumptions that make sense to me:
@@ -45,9 +49,13 @@ class GrianRareHermitCard extends HermitCard {
 		this.pickReqs = [{target: 'player', type: 'effect', amount: 1, empty: true}]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, typeAction, currentPlayer} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'PRIMARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -58,8 +66,8 @@ class GrianRareHermitCard extends HermitCard {
 			return target
 		})
 
-		game.hooks.actionEnd.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer, opponentActiveRow} = derivedState
+		game.hooks.actionEnd.tap(this.id, () => {
+			const {currentPlayer, opponentActiveRow} = game.ds
 			if (!currentPlayer.custom[this.id]) return
 			delete currentPlayer.custom[this.id]
 
@@ -87,8 +95,9 @@ class GrianRareHermitCard extends HermitCard {
 			currentPlayer.followUp = this.id
 		})
 
-		game.hooks.followUp.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer, playerActiveRow, followUp} = derivedState
+		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
+			const {currentPlayer, playerActiveRow} = game.ds
+			const {followUp} = followUpState
 			if (followUp !== this.id) return
 
 			const attach = !!turnAction.payload?.attach
@@ -109,6 +118,17 @@ class GrianRareHermitCard extends HermitCard {
 			playerActiveRow.effectCard = effectCard
 
 			return 'DONE'
+		})
+
+		// follow up clenaup in case of timeout
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer, playerActiveRow} = game.ds
+			if (currentPlayer.followUp !== this.id) return
+			currentPlayer.followUp = null
+			const effectCard = currentPlayer.custom[this.id]
+			if (!effectCard) return
+			delete currentPlayer.custom[this.id]
+			currentPlayer.discarded.push(effectCard)
 		})
 	}
 }

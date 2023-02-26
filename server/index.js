@@ -10,7 +10,7 @@ import startSocketIO from './sockets'
 const port = process.env.PORT || config.port || 9000
 
 const app = express()
-app.use(cors({origins: config.cors}))
+app.use(cors({origin: config.cors}))
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

@@ -3,8 +3,8 @@ import STRENGTHS from '../const/strengths'
 import config from '../../server-config.json' assert {type: 'json'}
 
 /**
- * @typedef {import("models/game-model").Game} Game
- * @typedef {import("models/player-model").Player} Player
+ * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("models/player-model").PlayerModel} PlayerModel
  */
 
 function randomBetween(min, max) {
@@ -127,7 +127,7 @@ export function getEmptyRow() {
 }
 
 /**
- * @param {Player} player
+ * @param {PlayerModel} player
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
@@ -150,7 +150,17 @@ export function getPlayerState(player) {
 	const hand = pack.slice(0, 7)
 
 	// hand.unshift({
-	// 	cardId: 'mending',
+	// 	cardId: 'tangotek_rare',
+	// 	cardInstance: Math.random().toString(),
+	// })
+
+	// hand.unshift({
+	// 	cardId: 'item_farm_rare',
+	// 	cardInstance: Math.random().toString(),
+	// })
+
+	// hand.unshift({
+	// 	cardId: 'item_farm_rare',
 	// 	cardInstance: Math.random().toString(),
 	// })
 
@@ -177,7 +187,7 @@ export function getPlayerState(player) {
 }
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
  * @returns {GameState}
  */
 export function getGameState(game) {
@@ -188,6 +198,8 @@ export function getGameState(game) {
 	const gameState = {
 		turn: 0,
 		order: playerIds,
+		turnPlayerId: null,
+		turnTime: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,

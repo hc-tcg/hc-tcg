@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -29,9 +33,13 @@ class KeralisRareHermitCard extends HermitCard {
 		]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, typeAction, currentPlayer} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -50,10 +58,11 @@ class KeralisRareHermitCard extends HermitCard {
 			return target
 		})
 
-		game.hooks.followUp.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer, pickedCardsInfo} = derivedState
+		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
+			const {currentPlayer} = game.ds
+			const {pickedCardsInfo} = followUpState
 
-			if (currentPlayer.followUp !== this.id) return
+			if (followUpState.followUp !== this.id) return
 
 			const keralisPickedCards = pickedCardsInfo[this.id] || []
 			if (keralisPickedCards.length !== 1) return 'DONE'

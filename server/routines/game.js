@@ -1,9 +1,18 @@
-import {all, take, fork, actionChannel, call, cancel} from 'redux-saga/effects'
+import {
+	all,
+	take,
+	fork,
+	actionChannel,
+	call,
+	cancel,
+	race,
+	delay,
+} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow} from '../utils/state-gen'
-import {getDerivedState} from '../utils/derived-state'
+import {getPickedCardsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -14,9 +23,12 @@ import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import root from '../models/root-model'
+import config from '../../server-config.json' assert {type: 'json'}
 
 /**
- * @typedef {import("models/game-model").Game} Game
+ * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import("types/index")}
  */
 
 // TURN ACTIONS:
@@ -31,11 +43,22 @@ import root from '../models/root-model'
 // 'END_TURN'
 
 /**
- * @param {Game} game
+ * @param {number} seconds
+ * @returns {number}
  */
-function getAvailableActions(game, derivedState) {
+const getTimerForSeconds = (seconds) => {
+	const maxTime = config.limits.maxTurnTime * 1000
+	return Date.now() - maxTime + seconds * 1000
+}
+
+/**
+ * @param {GameModel} game
+ * @return {Array<AvailableAction>}
+ */
+function getAvailableActions(game, pastTurnActions) {
 	const {turn} = game.state
-	const {pastTurnActions, currentPlayer, opponentPlayer} = derivedState
+	const {currentPlayer, opponentPlayer} = game.ds
+	/** @type {Array<AvailableAction>} */
 	const actions = []
 
 	if (opponentPlayer.followUp) {
@@ -133,11 +156,13 @@ function playerAction(actionType, playerId) {
 // return false in case one player is dead
 /**
  *
- * @param {Game} game
- * @returns {Array<string>}
+ * @param {GameModel} game
+ * @returns {SagaIterator}
  */
 function* checkHermitHealth(game) {
+	/** @type {Array<PlayerState>} */
 	const playerStates = Object.values(game.state.players)
+	/** @type {Array<string>} */
 	const deadPlayerIds = []
 	for (let playerState of playerStates) {
 		const playerRows = playerState.board.rows
@@ -202,83 +227,12 @@ function* checkHermitHealth(game) {
 }
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
+ * @returns {SagaIterator}
  */
-function* turnActionSaga(game, turnAction, baseDerivedState) {
-	// TODO - avoid having socket in actions
-	// console.log('TURN ACTION: ', turnAction.type)
-
-	const derivedState = getDerivedState(game, turnAction, baseDerivedState)
-
+function* sendGameState(game, turnState) {
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
-		derivedState
-
-	game.hooks.actionStart.call(turnAction, derivedState)
-
-	if (turnAction.type === 'PLAY_CARD') {
-		// TODO - continue on invalid?
-		yield call(playCardSaga, game, turnAction, derivedState)
-		//
-	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield call(changeActiveHermitSaga, game, turnAction, derivedState)
-		//
-	} else if (turnAction.type === 'APPLY_EFFECT') {
-		if (!availableActions.includes('APPLY_EFFECT')) return
-		const result = yield call(applyEffectSaga, game, turnAction, derivedState)
-		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
-		//
-	} else if (turnAction.type === 'REMOVE_EFFECT') {
-		if (!availableActions.includes('REMOVE_EFFECT')) return
-		const result = yield call(removeEffectSaga, game, turnAction, derivedState)
-		if (result !== 'INVALID') pastTurnActions.push('REMOVE_EFFECT')
-		//
-	} else if (turnAction.type === 'FOLLOW_UP') {
-		if (
-			!availableActions.includes('FOLLOW_UP') &&
-			!opponentAvailableActions.includes('FOLLOW_UP')
-		)
-			return
-		const result = yield call(followUpSaga, game, turnAction, derivedState)
-		//
-	} else if (turnAction.type === 'ATTACK') {
-		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
-		if (!typeAction || !availableActions.includes(typeAction)) return
-		const result = yield call(attackSaga, game, turnAction, derivedState)
-		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
-		//
-	} else if (turnAction.type === 'END_TURN') {
-		if (!availableActions.includes('END_TURN')) return
-		return 'END_TURN'
-	} else {
-		// handle unknown action
-	}
-
-	// remove sleep on knock out
-	baseDerivedState.opponentPlayer.board.rows.forEach((row, index) => {
-		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
-		const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
-		if (isSleeping && isKnockedout) {
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-		}
-	})
-
-	game.hooks.actionEnd.call(turnAction, derivedState)
-
-	const deadPlayerIds = yield call(checkHermitHealth, game)
-	if (deadPlayerIds.length) return 'END_TURN'
-	return 'DONE'
-}
-
-/**
- * @param {Game} game
- */
-function* sendGameState(game, derivedState) {
-	const {
-		currentPlayer,
-		availableActions,
-		opponentAvailableActions,
-		pastTurnActions,
-	} = derivedState
+		turnState
 	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 	game.getPlayers().forEach((player) => {
 		player.socket.emit('GAME_STATE', {
@@ -287,9 +241,9 @@ function* sendGameState(game, derivedState) {
 				gameState: game.state,
 				opponentId: game.getPlayerIds().find((id) => id !== player.playerId),
 				pastTurnActions:
-					player.playerId === currentPlayer.id ? pastTurnActions : null,
+					player.playerId === game.ds.currentPlayer.id ? pastTurnActions : null,
 				availableActions:
-					player.playerId === currentPlayer.id
+					player.playerId === game.ds.currentPlayer.id
 						? availableActions
 						: opponentAvailableActions,
 			},
@@ -298,27 +252,88 @@ function* sendGameState(game, derivedState) {
 }
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
+ * @param {*} turnAction
+ * @param {TurnState} turnState
+ * @returns {SagaIterator}
  */
-function* turnSaga(game) {
-	const pastTurnActions = []
-
-	const currentPlayerId = game.state.order[(game.state.turn + 1) % 2]
-	const opponentPlayerId = game.state.order[game.state.turn % 2]
-	const currentPlayerState = game.state.players[currentPlayerId]
-	const opponentPlayerState = game.state.players[opponentPlayerId]
-
-	game.state.turnPlayerId = currentPlayerId
-
-	// @TODO we need to go over what is being stored in derivedState, and what can be accessed from elsewhere
-	// e.g. of the 4 things added to derivedState here, only pastTurnActions is not already stored on gameState
-	// so we could just add pastTurnActions to gameState and pass in gameState
-	const derivedState = {
-		gameState: game.state,
-		currentPlayer: currentPlayerState,
-		opponentPlayer: opponentPlayerState,
-		pastTurnActions,
+function* turnActionSaga(game, turnAction, turnState) {
+	// TODO - avoid having socket in actions
+	const {availableActions, opponentAvailableActions, pastTurnActions} =
+		turnState
+	const pickedCardsInfo = getPickedCardsInfo(game, turnAction)
+	/** @type {ActionState} */
+	const actionState = {
+		...turnState,
+		pickedCardsInfo,
 	}
+	let endTurn = false
+
+	game.hooks.actionStart.call(turnAction, actionState)
+
+	if (turnAction.type === 'PLAY_CARD') {
+		// TODO - continue on invalid?
+		yield call(playCardSaga, game, turnAction, actionState)
+		//
+	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
+		yield call(changeActiveHermitSaga, game, turnAction, actionState)
+		//
+	} else if (turnAction.type === 'APPLY_EFFECT') {
+		if (!availableActions.includes('APPLY_EFFECT')) return
+		const result = yield call(applyEffectSaga, game, turnAction, actionState)
+		if (result !== 'INVALID') pastTurnActions.push('APPLY_EFFECT')
+		//
+	} else if (turnAction.type === 'REMOVE_EFFECT') {
+		if (!availableActions.includes('REMOVE_EFFECT')) return
+		const result = yield call(removeEffectSaga, game, turnAction, actionState)
+		if (result !== 'INVALID') pastTurnActions.push('REMOVE_EFFECT')
+		//
+	} else if (turnAction.type === 'FOLLOW_UP') {
+		if (
+			!availableActions.includes('FOLLOW_UP') &&
+			!opponentAvailableActions.includes('FOLLOW_UP')
+		)
+			return
+		const result = yield call(followUpSaga, game, turnAction, actionState)
+		//
+	} else if (turnAction.type === 'ATTACK') {
+		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
+		if (!typeAction || !availableActions.includes(typeAction)) return
+		const result = yield call(attackSaga, game, turnAction, actionState)
+		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
+		//
+	} else if (turnAction.type === 'END_TURN') {
+		if (!availableActions.includes('END_TURN')) return
+		endTurn = true
+	} else {
+		// handle unknown action
+	}
+
+	// remove sleep on knock out
+	game.ds.opponentPlayer.board.rows.forEach((row, index) => {
+		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
+		const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
+		if (isSleeping && isKnockedout) {
+			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
+		}
+	})
+
+	game.hooks.actionEnd.call(turnAction, actionState)
+
+	const deadPlayerIds = yield call(checkHermitHealth, game)
+	if (deadPlayerIds.length) endTurn = true
+
+	return endTurn ? 'END_TURN' : 'DONE'
+}
+
+/**
+ * @param {GameModel} game
+ * @param {Array<string>} pastTurnActions
+ * @returns {SagaIterator}
+ */
+function* turnActionsSaga(game, pastTurnActions) {
+	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} =
+		game.ds
 
 	const turnActionChannel = yield actionChannel(
 		[
@@ -337,108 +352,149 @@ function* turnSaga(game) {
 	)
 
 	try {
-		// ailment logic
-		for (let row of currentPlayerState.board.rows) {
-			for (let ailment of row.ailments) {
-				// decrease duration
-				if (ailment.duration === 0) {
-					// time up, get rid of this ailment
-					row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-				} else if (ailment.duration > -1) {
-					// ailment is not infinite, reduce duration by 1
-					ailment.duration--
-				}
-			}
-		}
-
-		// ----------------
-		// start of a turn
-		// ----------------
-		/** @type {{skipTurn?: boolean}} */
-		const turnConfig = {}
-		game.hooks.turnStart.call(derivedState, turnConfig)
-
 		while (true) {
-			if (turnConfig.skipTurn) break
-
-			let availableActions = getAvailableActions(game, derivedState)
+			let availableActions = getAvailableActions(game, pastTurnActions)
 			availableActions = game.hooks.availableActions.call(
 				availableActions,
-				derivedState
+				pastTurnActions
 			)
 
-			const opponentAvailableActions = opponentPlayerState.followUp
+			/** @type {Array<AvailableAction>} */
+			const opponentAvailableActions = opponentPlayer.followUp
 				? ['FOLLOW_UP']
 				: ['WAIT_FOR_TURN']
 
 			// @TODO could this be in gameState.turnState?
-			const turnDerivedState = {
-				...derivedState,
+			/** @type {TurnState} */
+			const turnState = {
 				availableActions,
 				opponentAvailableActions,
+				pastTurnActions,
 			}
-			game._derivedStateCache = turnDerivedState
-			yield call(sendGameState, game, turnDerivedState)
+			game._turnStateCache = turnState
+			yield call(sendGameState, game, turnState)
 
-			// console.log('Waiting for turn action')
-			const turnAction = yield take(turnActionChannel)
+			const maxTime = config.limits.maxTurnTime * 1000
+			const remainingTime = game.state.turnTime + maxTime - Date.now()
+			const graceTime = 1000
+
+			const raceResult = yield race({
+				turnAction: take(turnActionChannel),
+				timeout: delay(remainingTime + graceTime),
+			})
+
+			// Handle timeout
+			const hasActiveHermit = currentPlayer.board.activeRow !== null
+			const opponentFollowUp = !!opponentPlayer.followUp
+			if (raceResult.timeout) {
+				if (opponentFollowUp) {
+					game.state.turnTime = getTimerForSeconds(20)
+					game.hooks.followUpTimeout.call()
+					continue
+				} else if (!hasActiveHermit) {
+					game.endInfo.deadPlayerIds = [currentPlayer.id]
+					return 'GAME_END'
+				}
+				break
+			}
+
+			// Run action logic
 			const result = yield call(
 				turnActionSaga,
 				game,
-				turnAction,
-				turnDerivedState
+				raceResult.turnAction,
+				turnState
 			)
+
+			// set timer to 20s on new followup (for opponent)
+			// or succesful followup (for current player)
+			if (opponentFollowUp !== !!opponentPlayer.followUp) {
+				game.state.turnTime = getTimerForSeconds(20)
+			}
+
 			if (result === 'END_TURN') break
 		}
-
-		// ----------------
-		// end of a turn
-		// ----------------
-
-		// Apply damage from ailments
-		// TODO - https://www.youtube.com/watch?v=8iO7KGDxCks 1:21:00 - it seems ailment damage should be part of the toal attakc damage (and thus affected by special effects)
-		for (let row of opponentPlayerState.board.rows) {
-			if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
-				row.health -= 20
-		}
-
-		currentPlayerState.coinFlips = {}
-		// failsafe, should be always null at this point unless it is game over
-		currentPlayerState.followUp = null
-
-		game.hooks.turnEnd.call(derivedState)
-
-		const deadPlayerIds = yield call(checkHermitHealth, game)
-		if (deadPlayerIds.length) {
-			game.endInfo.deadPlayerIds = deadPlayerIds
-			return 'GAME_END'
-		}
-
-		// Draw a card from deck when turn ends
-		// TODO - End game once pile runs out
-		const drawCard = currentPlayerState.pile.shift()
-		if (drawCard) {
-			currentPlayerState.hand.push(drawCard)
-		} else {
-			console.log('Player dead: ', {
-				noCards: true,
-				turn: game.state.turn,
-			})
-			game.endInfo.deadPlayerIds = [currentPlayerId]
-			return 'GAME_END'
-		}
-
-		// If player has not used his single use card return it to hand
-		// otherwise move it to discarded pile
-		discardSingleUse(game, currentPlayerState)
-		return 'DONE'
 	} finally {
 		turnActionChannel.close()
 	}
 }
 
 /**
- * @param {Game} game
+ * @param {GameModel} game
+ * @returns {SagaIterator}
+ */
+function* turnSaga(game) {
+	const pastTurnActions = []
+
+	const {currentPlayerId, currentPlayer, opponentPlayer} = game.ds
+
+	game.state.turnPlayerId = currentPlayerId
+	game.state.turnTime = Date.now()
+
+	// ailment logic
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			// decrease duration
+			if (ailment.duration === 0) {
+				// time up, get rid of this ailment
+				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
+			} else if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
+	}
+
+	/** @type {{skipTurn?: boolean}} */
+	const turnConfig = {}
+	game.hooks.turnStart.call(turnConfig)
+
+	if (!turnConfig.skipTurn) {
+		const result = yield call(turnActionsSaga, game, pastTurnActions)
+		if (result === 'GAME_END') return 'GAME_END'
+	}
+
+	// Apply damage from ailments
+	// TODO - Armor should prevent ailment damage
+	for (let row of opponentPlayer.board.rows) {
+		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
+			row.health -= 20
+	}
+
+	game.hooks.turnEnd.call()
+
+	currentPlayer.coinFlips = {}
+	currentPlayer.followUp = null
+	opponentPlayer.followUp = null
+
+	const deadPlayerIds = yield call(checkHermitHealth, game)
+	if (deadPlayerIds.length) {
+		game.endInfo.deadPlayerIds = deadPlayerIds
+		return 'GAME_END'
+	}
+
+	// Draw a card from deck when turn ends
+	const drawCard = currentPlayer.pile.shift()
+	if (drawCard) {
+		currentPlayer.hand.push(drawCard)
+	} else {
+		console.log('Player dead: ', {
+			noCards: true,
+			turn: game.state.turn,
+		})
+		game.endInfo.deadPlayerIds = [currentPlayerId]
+		return 'GAME_END'
+	}
+
+	// If player has not used his single use card return it to hand
+	// otherwise move it to discarded pile
+	discardSingleUse(game, currentPlayer)
+	return 'DONE'
+}
+
+/**
+ * @param {GameModel} game
+ * @returns {SagaIterator}
  */
 function* gameSaga(game) {
 	try {
@@ -446,7 +502,6 @@ function* gameSaga(game) {
 		registerCards(game)
 
 		const backgroundTasks = yield all([
-			// fork(sendGameStateOnReconnect, game),
 			fork(chatSaga, game),
 			fork(connectionStatusSaga, game),
 		])

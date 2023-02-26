@@ -14,8 +14,8 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, currentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				for (let row of currentPlayer.board.rows) {
 					if (!row.hermitCard) continue

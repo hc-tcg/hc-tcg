@@ -2,6 +2,12 @@ import CARDS from '../../cards'
 import STRENGTHS from '../../const/strengths'
 import {applySingleUse, discardCard} from '../../utils'
 
+/**
+ * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import("types/index")}
+ */
+
 export const ATTACK_TO_ACTION = {
 	primary: 'PRIMARY_ATTACK',
 	secondary: 'SECONDARY_ATTACK',
@@ -10,15 +16,21 @@ export const ATTACK_TO_ACTION = {
 
 export const WEAKNESS_DAMAGE = 20
 
-function* attackSaga(game, turnAction, derivedState) {
+/**
+ * @param {GameModel} game
+ * @param {*} turnAction
+ * @param {ActionState} actionState
+ * @return {SagaIterator}
+ */
+function* attackSaga(game, turnAction, actionState) {
 	const {
 		currentPlayer,
 		opponentPlayer,
-		pickedCardsInfo,
 		playerActiveRow,
 		opponentActiveRow,
 		playerHermitInfo,
-	} = derivedState
+	} = game.ds
+	const {pickedCardsInfo} = actionState
 	const {type} = turnAction.payload
 	const typeAction = ATTACK_TO_ACTION[type]
 	if (!typeAction) {
@@ -80,7 +92,7 @@ function* attackSaga(game, turnAction, derivedState) {
 	for (let id in targets) {
 		const target = targets[id]
 		const result = game.hooks.attack.call(target, turnAction, {
-			...derivedState,
+			...actionState,
 			typeAction,
 			attackerActiveRow,
 			attackerHermitCard,
@@ -190,7 +202,7 @@ function* attackSaga(game, turnAction, derivedState) {
 		targetResult.finalDamageToAttacker = finalDamageToAttacker
 
 		game.hooks.attackResult.call(targetResult, turnAction, {
-			...derivedState,
+			...actionState,
 			typeAction,
 			attackerActiveRow,
 			attackerHermitCard,

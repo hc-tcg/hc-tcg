@@ -1,0 +1,24 @@
+.timer {
+	padding-top: 2px;
+	font-family: MinecraftBold;
+	font-size: 36px;
+	text-align: center;
+	overflow: hidden;
+	width: 100%;
+}
+
+.white {
+	color: white;
+}
+
+.orange {
+	color: rgb(255, 179, 0);
+}
+
+.red {
+	color: rgb(255, 4, 0);
+}
+
+.blue {
+	color: rgb(42, 84, 251);
+}

@@ -1,26 +1,26 @@
 /**
- * @typedef {import('./player-model').Player} Player
- * @typedef {import('./game-model').Game} Game
+ * @typedef {import('./player-model').PlayerModel} PlayerModel
+ * @typedef {import('./game-model').GameModel} GameModel
  */
 
 import {SyncHook} from 'tapable'
 import plugins from '../plugins'
 
-export class Root {
+export class RootModel {
 	constructor() {
-		/** @type {Object.<string, Player>} */
+		/** @type {Object.<string, PlayerModel>} */
 		this.players = {}
-		/** @type {Object.<string, Game>} */
+		/** @type {Object.<string, GameModel>} */
 		this.games = {}
 
 		this.hooks = {
-			/** @type {SyncHook<[Game]>} */
+			/** @type {SyncHook<[GameModel]>} */
 			newGame: new SyncHook(['game']),
-			/** @type {SyncHook<[Game]>} */
+			/** @type {SyncHook<[GameModel]>} */
 			gameRemoved: new SyncHook(['game']),
-			/** @type {SyncHook<[Player]>} */
+			/** @type {SyncHook<[PlayerModel]>} */
 			playerJoined: new SyncHook(['player']),
-			/** @type {SyncHook<[Player]>} */
+			/** @type {SyncHook<[PlayerModel]>} */
 			playerLeft: new SyncHook(['player']),
 		}
 	}
@@ -29,7 +29,7 @@ export class Root {
 	getGameIds() {
 		return Object.keys(this.games)
 	}
-	/** @returns {Array<Game>} */
+	/** @returns {Array<GameModel>} */
 	getGames() {
 		return Object.values(this.games)
 	}
@@ -37,24 +37,24 @@ export class Root {
 	getPlayerIds() {
 		return Object.keys(this.players)
 	}
-	/** @returns {Array<Player>} */
+	/** @returns {Array<PlayerModel>} */
 	getPlayers() {
 		return Object.values(this.players)
 	}
 
-	/** @param {Player} player */
+	/** @param {PlayerModel} player */
 	addPlayer(player) {
 		this.players[player.playerId] = player
 	}
 
-	/** @param {Game} game */
+	/** @param {GameModel} game */
 	addGame(game) {
 		this.games[game.id] = game
 	}
 }
 
 /** The root of the server. */
-const root = new Root()
+const root = new RootModel()
 
 // initialize plugins
 plugins.forEach((plugin) => {

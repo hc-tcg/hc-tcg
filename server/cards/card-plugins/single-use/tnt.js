@@ -16,8 +16,8 @@ class TNTSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo} = derivedState
+		game.hooks.attack.tap(this.id, (target) => {
+			const {singleUseInfo} = game.ds
 			if (singleUseInfo?.id === this.id && target.isActive) {
 				target.extraEffectDamage += this.damage.target
 				target.backlash += this.damage.self

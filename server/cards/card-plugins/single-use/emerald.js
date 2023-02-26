@@ -17,8 +17,8 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, playerActiveRow, opponentActiveRow} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, playerActiveRow, opponentActiveRow} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				// TODO - Handle bed
 				const pEffect = playerActiveRow?.effectCard

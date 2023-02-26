@@ -1,10 +1,10 @@
 import CARDS from '../../cards'
 
-function* followUpSaga(game, turnAction, derivedState) {
+function* followUpSaga(game, turnAction, actionState) {
 	turnAction.payload = turnAction.payload || {}
 	if (!turnAction.playerId) return
 
-	const {currentPlayer} = derivedState
+	const {currentPlayer} = game.ds
 	const followUpPlayer = game.state.players[turnAction.playerId]
 	if (!followUpPlayer) return 'INVALID'
 
@@ -12,7 +12,7 @@ function* followUpSaga(game, turnAction, derivedState) {
 	if (!followUp) return 'INVALID'
 
 	const followUpResult = game.hooks.followUp.call(turnAction, {
-		...derivedState,
+		...actionState,
 		followUp,
 	})
 

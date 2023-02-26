@@ -1,6 +1,10 @@
 /**
+ * @typedef {import('models/player-model').PlayerModel} PlayerModel
+ */
+
+/**
  *
- * @param {Array<Player>} players
+ * @param {Array<PlayerModel>} players
  * @param {string} type
  * @param {*} payload
  */

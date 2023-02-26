@@ -16,8 +16,9 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.changeActiveHermit.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer, pastTurnActions} = derivedState
+		game.hooks.changeActiveHermit.tap(this.id, (turnAction, actionState) => {
+			const {currentPlayer} = game.ds
+			const {pastTurnActions} = actionState
 			const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
 			if (pastTurnActions.includes('ATTACK') && chorusFruit) {
 				applySingleUse(currentPlayer)
@@ -26,8 +27,8 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, derivedState) => {
-				const {pastTurnActions, currentPlayer} = derivedState
+			(availableActions, pastTurnActions) => {
+				const {currentPlayer} = game.ds
 				const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
 
 				const activeRow =

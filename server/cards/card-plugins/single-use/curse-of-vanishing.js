@@ -16,8 +16,8 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 		]
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, opponentPlayer} = game.ds
 
 			if (singleUseInfo?.id === this.id) {
 				const activeRow = opponentPlayer.board.activeRow

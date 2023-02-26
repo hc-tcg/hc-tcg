@@ -45,6 +45,7 @@
 		"server:inspect": "node --experimental-specifier-resolution=node --inspect server",
 		"dev": "vite client/",
 		"tsc": "tsc --p client/",
+		"server:tsc": "tsc --p server/jsconfig.json",
 		"lint": "eslint client/src/",
 		"build": "npm run lint && npm run tsc && vite build client/",
 		"clean": "rm -rf client/dist",

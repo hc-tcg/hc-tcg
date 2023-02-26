@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardSingleUse} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 // TODO - this should probably alllow to use two attack single use cards...
 // TODO - test with multi step use (looting)
@@ -28,15 +32,18 @@ class GeminiTayRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
 			const {
 				attackerHermitCard,
 				attackerHermitInfo,
 				typeAction,
-				currentPlayer,
 				attackerActiveRow,
-			} = derivedState
+			} = attackState
 
 			if (attackerHermitCard.cardId !== this.id) return target
 			if (typeAction !== 'SECONDARY_ATTACK') return target
@@ -55,8 +62,8 @@ class GeminiTayRareHermitCard extends HermitCard {
 		/*
 		Discarding single use cards needs to be delay, bceause some cards are not sued until later, e.g. chorus fruit
 		*/
-		game.hooks.actionEnd.tap(this.id, (turnAction, derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.actionEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			const usedPower = currentPlayer.custom[this.id]
 			const suUsed = currentPlayer.board.singleUseCardUsed
 			if (usedPower === 1 && suUsed && !currentPlayer.followUp) {
@@ -65,15 +72,15 @@ class GeminiTayRareHermitCard extends HermitCard {
 			}
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 		})
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, derivedState) => {
-				const {pastTurnActions, currentPlayer} = derivedState
+			(availableActions, pastTurnActions) => {
+				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id]
 
 				if (

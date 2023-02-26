@@ -19,16 +19,16 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	}
 
 	register(game) {
-		game.hooks.turnStart.tap(this.id, (action, derivedState) => {
+		game.hooks.turnStart.tap(this.id, (action) => {
 			this.removeSpyglass(game)
 		})
 
-		game.hooks.actionStart.tap(this.id, (action, derivedState) => {
+		game.hooks.actionStart.tap(this.id, (action) => {
 			this.removeSpyglass(game)
 		})
 
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, (action) => {
+			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
 
 			if (singleUseInfo?.id === this.id) {
 				const randomCards = opponentPlayer.hand

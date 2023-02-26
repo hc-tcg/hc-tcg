@@ -13,16 +13,16 @@ class FortuneSingleUseCard extends SingleUseCard {
 	}
 
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, currentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				currentPlayer.custom[this.id] = true
 				return 'DONE'
 			}
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {currentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 		})
 	}

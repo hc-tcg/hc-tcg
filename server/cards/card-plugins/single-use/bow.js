@@ -17,8 +17,9 @@ class BowSingleUseCard extends SingleUseCard {
 		this.pickReqs = this.useReqs
 	}
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {singleUseInfo, pickedCardsInfo} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {singleUseInfo} = game.ds
+			const {pickedCardsInfo} = attackState
 			if (singleUseInfo?.id !== this.id) return
 			if (target.isActive) return
 

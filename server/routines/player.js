@@ -1,7 +1,7 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {validateDeck} from '../utils'
 import CARDS from '../cards'
-import {Player} from '../models/player-model'
+import {PlayerModel} from '../models/player-model'
 import root from '../models/root-model'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
@@ -28,7 +28,7 @@ function* playerConnectedSaga(action) {
 		return
 	}
 
-	const newPlayer = new Player(playerName, socket)
+	const newPlayer = new PlayerModel(playerName, socket)
 	root.players[newPlayer.playerId] = newPlayer
 
 	root.hooks.playerJoined.call(newPlayer)

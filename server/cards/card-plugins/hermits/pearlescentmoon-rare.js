@@ -2,6 +2,10 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
 import CARDS from '../../../cards'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
@@ -27,15 +31,14 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		// set flag on Pearl's attack
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				typeAction,
-				currentPlayer,
-			} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {attackerHermitCard, attackerHermitInfo, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -50,8 +53,8 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		})
 
 		// if coin flip is heads, damage is zero
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {opponentPlayer, currentPlayer} = derivedState
+		game.hooks.attack.tap(this.id, (target) => {
+			const {opponentPlayer, currentPlayer} = game.ds
 
 			const coinFlip = opponentPlayer.custom[this.getKey('coinFlip')]
 			if (!coinFlip) return
@@ -67,14 +70,14 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		})
 
 		// clear coinFlip flag at end of opponents turn
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {opponentPlayer} = derivedState
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {opponentPlayer} = game.ds
 			delete opponentPlayer.custom[this.getKey('coinFlip')]
 		})
 
 		// clear consecutive flag at start of opponents turn
-		game.hooks.turnStart.tap(this.id, (derivedState) => {
-			const {opponentPlayer} = derivedState
+		game.hooks.turnStart.tap(this.id, () => {
+			const {opponentPlayer} = game.ds
 			delete opponentPlayer.custom[this.getKey('consecutive')]
 		})
 	}

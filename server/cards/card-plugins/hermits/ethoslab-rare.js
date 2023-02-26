@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class EthosLabRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -25,15 +29,13 @@ class EthosLabRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {
-				attackerHermitCard,
-				typeAction,
-				currentPlayer,
-				opponentActiveRow,
-				opponentEffectCardInfo,
-			} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target

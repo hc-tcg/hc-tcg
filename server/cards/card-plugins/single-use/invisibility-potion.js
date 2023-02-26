@@ -13,8 +13,8 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 		this.multiplier = 2
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = derivedState
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
 				opponentPlayer.custom[this.id] = currentPlayer.coinFlips[this.id][0]
@@ -22,8 +22,8 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			}
 		})
 
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {custom} = derivedState.currentPlayer
+		game.hooks.attack.tap(this.id, (target) => {
+			const {custom} = game.ds.currentPlayer
 			if (!custom[this.id]) return target
 
 			if (custom[this.id] === 'heads') {
@@ -34,8 +34,8 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			return target
 		})
 
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
-			const {custom} = derivedState.currentPlayer
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {custom} = game.ds.currentPlayer
 			if (custom[this.id]) delete custom[this.id]
 		})
 	}

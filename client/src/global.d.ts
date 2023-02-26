@@ -6,6 +6,7 @@ declare module 'server/utils/reqs'
 
 declare const __ENV__: string
 declare const __PORT__: number
+declare const __LIMITS__: any
 declare const firebase: any
 
 namespace global {

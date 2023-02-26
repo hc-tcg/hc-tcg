@@ -18,8 +18,9 @@ class ComposterSingleUseCard extends SingleUseCard {
 		this.pickReqs = this.useReqs
 	}
 	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, derivedState) => {
-			const {singleUseInfo, currentPlayer, pickedCardsInfo} = derivedState
+		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
+			const {singleUseInfo, currentPlayer} = game.ds
+			const {pickedCardsInfo} = actionState
 
 			if (singleUseInfo?.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []

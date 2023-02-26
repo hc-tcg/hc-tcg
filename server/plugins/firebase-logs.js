@@ -2,9 +2,7 @@ import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
 
 /**
- * @typedef {import('models/player-model').Player} Player
- * @typedef {import('models/game-model').Game} Game
- * @typedef {import('models/root-model').Root} Root
+ * @typedef {import('models/root-model').RootModel} RootModel
  */
 
 class FirebaseLogs {
@@ -21,6 +19,7 @@ class FirebaseLogs {
 		this.enabled = true
 
 		try {
+			// @ts-ignore
 			const serviceAccount = require('../adminKey.json')
 			const admin = require('firebase-admin')
 			admin.initializeApp({
@@ -35,7 +34,7 @@ class FirebaseLogs {
 	}
 
 	/**
-	 * @param {Root} root
+	 * @param {RootModel} root
 	 */
 	register(root) {
 		if (!this.enabled) return

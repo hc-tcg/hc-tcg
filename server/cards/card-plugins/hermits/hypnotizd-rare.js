@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
@@ -36,16 +40,19 @@ class HypnotizdRareHermitCard extends HermitCard {
 		]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
 			const {
 				attackerHermitCard,
 				attackerHermitInfo,
 				typeAction,
-				currentPlayer,
 				attackerActiveRow,
 				pickedCardsInfo,
-			} = derivedState
+			} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (attackerHermitCard.cardId !== this.id) return target

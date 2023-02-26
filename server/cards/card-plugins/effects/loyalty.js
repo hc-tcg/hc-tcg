@@ -43,12 +43,12 @@ class LoyaltyEffectCard extends EffectCard {
 
 	register(game) {
 		// death after attack
-		game.hooks.actionEnd.tap(this.id, (derivedState) => {
+		game.hooks.actionEnd.tap(this.id, () => {
 			this.returnItem(game)
 		})
 
 		// death due to ailments
-		game.hooks.turnEnd.tap(this.id, (derivedState) => {
+		game.hooks.turnEnd.tap(this.id, () => {
 			this.returnItem(game)
 		})
 	}

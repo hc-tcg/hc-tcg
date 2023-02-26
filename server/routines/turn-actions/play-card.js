@@ -1,11 +1,11 @@
 import CARDS from '../../cards'
 import {equalCard} from '../../utils'
 
-function* playCardSaga(game, turnAction, derivedState) {
+function* playCardSaga(game, turnAction, actionState) {
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer, opponentPlayer, pastTurnActions, availableActions} =
-		derivedState
+	const {currentPlayer, opponentPlayer} = game.ds
+	const {pastTurnActions, availableActions} = actionState
 	const {card, rowHermitCard, rowIndex, slotIndex, slotType} =
 		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
@@ -28,7 +28,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 
 		const result = game.hooks.playCard
 			.get('hermit')
-			?.call(turnAction, derivedState)
+			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
 
 		currentPlayer.board.rows[rowIndex] = {
@@ -51,7 +51,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 
 		const result = game.hooks.playCard
 			.get('item')
-			?.call(turnAction, derivedState)
+			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
 
 		hermitRow.itemCards[slotIndex] = card
@@ -67,7 +67,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 
 		const result = game.hooks.playCard
 			.get('effect')
-			?.call(turnAction, derivedState)
+			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
 
 		hermitRow.effectCard = card
@@ -79,7 +79,7 @@ function* playCardSaga(game, turnAction, derivedState) {
 
 		const result = game.hooks.playCard
 			.get('single_use')
-			?.call(turnAction, derivedState)
+			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
 
 		currentPlayer.board.singleUseCard = card

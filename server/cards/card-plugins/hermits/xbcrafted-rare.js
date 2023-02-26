@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
 import CARDS from '../../../cards'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 /*
 Combination of Totem + Scars ability can be tricky here to get right
 */
@@ -27,9 +31,12 @@ class XBCraftedRareHermitCard extends HermitCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, derivedState) => {
-			const {attackerHermitCard, typeAction} = derivedState
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
