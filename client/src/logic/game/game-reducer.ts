@@ -22,6 +22,7 @@ type LocalGameState = {
 	endGameOverlay: GameEndReasonT
 	chat: Array<MessageInfoT>
 	currentCoinFlip: CurrentCoinFlipT | null
+	opponentConnected: boolean
 }
 
 const defaultState: LocalGameState = {
@@ -34,6 +35,7 @@ const defaultState: LocalGameState = {
 	endGameOverlay: null,
 	chat: [],
 	currentCoinFlip: null,
+	opponentConnected: true,
 }
 
 const gameReducer = (
@@ -71,6 +73,7 @@ const gameReducer = (
 				endGameOverlay: null,
 				currentCoinFlip: null,
 				chat: [],
+				opponentConnected: true,
 			}
 		case 'SET_SELECTED_CARD':
 			if (state.pickProcess) return state
@@ -110,6 +113,11 @@ const gameReducer = (
 			return {
 				...state,
 				chat: action.payload,
+			}
+		case 'SET_OPPONENT_CONNECTION':
+			return {
+				...state,
+				opponentConnected: action.payload,
 			}
 		case 'SET_COIN_FLIP':
 			return {

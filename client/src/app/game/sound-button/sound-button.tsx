@@ -8,7 +8,7 @@ function SoundButton() {
 	const settings = useSelector(getSettings)
 
 	const handleSoundChange = () => {
-		dispatch(setSetting('soundOn', settings.soundOn !== 'on' ? 'off' : 'on'))
+		dispatch(setSetting('soundOn', settings.soundOn !== 'off' ? 'off' : 'on'))
 	}
 
 	return (

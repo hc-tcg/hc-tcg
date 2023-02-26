@@ -26,14 +26,15 @@ function* authSaga(user: any): SagaIterator {
 }
 
 function* valueSaga(ss: any) {
-	const tmp = ss.val() || {w: 0, l: 0, fw: 0, fl: 0}
+	const tmp = ss.val() || {w: 0, l: 0, fw: 0, fl: 0, t: 0}
+	if (!tmp.t) tmp.t = 0 // for old stats
 	yield put(statsUpdate(tmp))
 	global.dbObj.stats = JSON.parse(JSON.stringify(tmp))
 }
 
 function* resetStatsSaga() {
 	console.log('stats have been reset')
-	global.dbObj.dbref.set({w: 0, l: 0, fw: 0, fl: 0})
+	global.dbObj.dbref.set({w: 0, l: 0, fw: 0, fl: 0, t: 0})
 }
 
 function* fbdbSaga(): SagaIterator {
@@ -44,20 +45,24 @@ function* fbdbSaga(): SagaIterator {
 	firebase.auth().signInAnonymously()
 
 	while (true) {
-		const result = yield call(receiveMsg, 'gameoverstat')
+		const {outcome, won} = yield call(receiveMsg, 'gameoverstat')
 		if (global.dbObj.dbref) {
 			const stats = global.dbObj.stats
-			if (result == 'you_won') {
+			if (outcome == 'player_won' && won) {
 				stats.w += 1
 			}
-			if (result == 'you_lost') {
+			if (outcome == 'player_won' && !won) {
 				stats.l += 1
 			}
-			if (result == 'they_forfeit') {
+			if (outcome == 'forfeit' && won) {
 				stats.fw += 1
 			}
-			if (result == 'you_forfeit') {
+			if (outcome == 'forfeit' && !won) {
 				stats.fl += 1
+			}
+			if (outcome == 'tie') {
+				// || 0 for records created before ties were a thing
+				stats.t = (stats.t || 0) + 1
 			}
 			global.dbObj.dbref.set(stats)
 		}

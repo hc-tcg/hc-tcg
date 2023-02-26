@@ -1,6 +1,6 @@
 import {takeEvery} from 'redux-saga/effects'
-import {broadcast} from '../utils/comm'
-import profanityFilter from '../utils/profanity'
+import {broadcast} from '../../utils/comm'
+import profanityFilter from '../../utils/profanity'
 
 /**
  * @typedef {import("models/game-model").Game} Game

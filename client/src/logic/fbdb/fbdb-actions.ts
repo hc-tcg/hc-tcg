@@ -12,6 +12,7 @@ export const statsUpdate = (stats: {
 	l: number
 	fw: number
 	fl: number
+	t: number
 }) => ({
 	type: 'STATS',
 	payload: stats,

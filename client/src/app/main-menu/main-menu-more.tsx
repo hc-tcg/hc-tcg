@@ -59,6 +59,18 @@ function More({setMenuSection}: Props) {
 					<div className={css.statName}>Losses</div>
 					<div className={css.statValue}>{stats.l}</div>
 				</div>
+				<div className={css.stat}>
+					<div className={css.statName}>Ties</div>
+					<div className={css.statValue}>{stats.t}</div>
+				</div>
+				<div className={css.stat}>
+					<div className={css.statName}>Forfeit Wins</div>
+					<div className={css.statValue}>{stats.fw}</div>
+				</div>
+				<div className={css.stat}>
+					<div className={css.statName}>Forfeit Losses</div>
+					<div className={css.statValue}>{stats.fl}</div>
+				</div>
 			</div>
 		</div>
 	)

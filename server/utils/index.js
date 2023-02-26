@@ -115,7 +115,7 @@ export function discardSingleUse(game, playerState) {
 	playerState.board.singleUseCard = null
 
 	if (suUsed) {
-		const result = game.hooks.discardCard.get('single_use')?.call(suCard)
+		const result = game.hooks.discardCard.get('single_use')?.call(suCard, true)
 		if (!result) playerState.discarded.push(suCard)
 	} else {
 		playerState.hand.push(suCard)
@@ -131,6 +131,11 @@ export function flipCoin(currentPlayer, times = 1) {
 		result.push(coinFlip)
 	}
 	return result
+}
+
+export const getOpponentId = (game, playerId) => {
+	const players = game.getPlayers()
+	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
 }
 
 /**
@@ -174,7 +179,6 @@ export const validateDeck = (deckCards) => {
 	if (tooManyDuplicates)
 		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`
 
-	console.log()
 	if (deckCards.length < limits.minCards)
 		return `Deck must have at least ${limits.minCards} cards.`
 	if (deckCards.length > limits.maxCards)

@@ -13,39 +13,28 @@ import {broadcast} from '../utils/comm'
 import gameSaga from './game'
 import root from '../models/root-model'
 import {Game} from '../models/game-model'
+import {
+	getGameEndReason,
+	getWinner,
+	getGameOutcome,
+} from '../utils/win-conditions'
 
 /**
  * @param {Game} game
  */
 function* gameManager(game) {
-	console.log('Game started. Total games: ', root.getGameIds().length)
-
-	// Inform users when their opponent is offline & online again
-	/*
-	// Still needs frontend logic, also don't forget to cancel saga in finally or this saga won't end
-	yield takeEvery(
-		(action) =>
-			['PLAYER_DISCONNECTED', 'PLAYER_RECONNECTED'].includes(action.type) &&
-			game.playerIds.includes(action.payload.playerId),
-		function* () {
-			const connectionStatus = game.playerIds.map(
-				(playerId) => !!allPlayers[playerId]?.socket.connected
-			)
-			broadcast(
-				allPlayers,
-				game.playerIds,
-				'CONNECTION_STATUS',
-				connectionStatus
-			)
-		}
-	)
-	*/
-
-	const playerIds = game.getPlayerIds()
-	const players = game.getPlayers()
-
-	// Kill game on timeout or when user leaves for long time + cleanup after game
 	try {
+		console.log('Game started. Total games: ', root.getGameIds().length)
+
+		broadcast(game.getPlayers(), 'GAME_START')
+		game.initialize()
+		root.hooks.newGame.call(game)
+		game.task = yield spawn(gameSaga, game)
+
+		const playerIds = game.getPlayerIds()
+		const players = game.getPlayers()
+
+		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(game.task),
@@ -62,28 +51,21 @@ function* gameManager(game) {
 					action.type === 'FORFEIT' && playerIds.includes(action.playerId)
 			),
 		})
-		if (result.timeout) {
-			broadcast(players, 'GAME_END', {reason: 'timeout'})
-			console.log('Game timed out.')
-		} else if (result.playerRemoved) {
-			broadcast(players, 'GAME_END', {
-				reason: 'player_left',
-			})
-			console.log('Game killed due to long term player disconnect.')
-		} else if (result.forfeit) {
-			broadcast(players, 'GAME_END', {
-				reason: 'forfeit',
-			})
-			console.log('Game killed due to player forfeit.')
-		} else if (result.gameEnd) {
-			// For normal win condition the gameSaga itself will send GAME_END with winning info
+
+		for (const player of players) {
+			const reason = getGameEndReason(game, result, player.playerId)
+			broadcast([player], 'GAME_END', {gameState: game.state, reason})
 		}
+		game.endInfo.outcome = getGameOutcome(game, result)
+		game.endInfo.winner = getWinner(game, result)
 	} catch (err) {
 		console.error('Error: ', err)
+		game.endInfo.outcome = 'error'
 		broadcast(players, 'GAME_CRASH')
 	} finally {
 		yield cancel(game.task)
 		delete root.games[game.id]
+		root.hooks.gameRemoved.call(game)
 		console.log('Game ended. Total games: ', root.getGameIds().length)
 	}
 }
@@ -111,13 +93,7 @@ function* randomMatchmaking(action) {
 
 	if (randomGame) {
 		console.log('second player connected, starting game')
-
 		randomGame.addPlayer(player)
-		randomGame.startGame()
-		broadcast(randomGame.getPlayers(), 'GAME_START')
-
-		const gameTask = yield spawn(gameSaga, randomGame)
-		randomGame.task = gameTask
 		yield fork(gameManager, randomGame)
 		return
 	}
@@ -167,12 +143,6 @@ function* joinPrivateGame(action) {
 	}
 
 	game.addPlayer(player)
-	game.startGame()
-
-	broadcast(game.getPlayers(), 'GAME_START')
-
-	const gameTask = yield spawn(gameSaga, game)
-	game.task = gameTask
 	yield fork(gameManager, game)
 }
 

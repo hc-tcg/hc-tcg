@@ -93,9 +93,11 @@ export class Game {
 			),
 			/**
 			 * When a card is discarded (hand or board)
-			 * @type {HookMap<SyncBailHook<[Object]>>}
+			 * @type {HookMap<SyncBailHook<[Object, boolean]>>}
 			 */
-			discardCard: new HookMap((cardType) => new SyncBailHook(['card'])),
+			discardCard: new HookMap(
+				(cardType) => new SyncBailHook(['card', 'singleUseSlot'])
+			),
 			/**
 			 * When player swaps hermits
 			 * @type {SyncHook<[TurnAction, DerivedState]>}
@@ -127,8 +129,12 @@ export class Game {
 		this.chat = []
 
 		this.endInfo = {
-			/** @type {string | null} */
-			deadPlayerId: null,
+			/** @type {Array<string>} */
+			deadPlayerIds: [],
+			/** @type {string|null} */
+			winner: null,
+			/** @type {'timeout'|'forfeit'|'tie'|'player_won'|'error'|null} */
+			outcome: null,
 		}
 	}
 
@@ -150,7 +156,7 @@ export class Game {
 		this.players[player.playerId] = player
 	}
 
-	startGame() {
+	initialize() {
 		if (this.getPlayers().length !== 2)
 			throw new Error('Game must 2 have 2 players to start')
 		this.state = getGameState(this)

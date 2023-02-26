@@ -103,8 +103,17 @@
 	font-weight: bold;
 }
 
+.playerInfo.right {
+	flex-direction: row-reverse;
+}
+
 .playerName {
 	line-height: 1;
+	margin: 0 3px;
+}
+
+.playerName.disconnected {
+	color: rgb(170, 170, 170);
 }
 
 .currentTurn {
@@ -115,7 +124,7 @@
 	font-size: 12px;
 	line-height: 1;
 	text-align: center;
-	margin: 0 10px;
+	margin: 0 7px;
 }
 
 .dynamicSpace {
