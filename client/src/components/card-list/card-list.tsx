@@ -127,33 +127,18 @@ const CardList = (props: CardListProps) => {
 			}
 		}
 	)
-
-	if (stack === true)
-		return (
-			<div
-				ref={listRef}
-				className={classnames(
-					css.cardList,
-					css[size],
-					wrap === false ? css.noWrap : null
-				)}
-			>
-				{cardsStackedOutput}
-			</div>
-		)
-	else
-		return (
-			<div
-				ref={listRef}
-				className={classnames(
-					css.cardList,
-					css[size],
-					wrap === false ? css.noWrap : null
-				)}
-			>
-				{cardsOutput}
-			</div>
-		)
+	return (
+		<div
+			ref={listRef}
+			className={classnames(
+				css.cardList,
+				css[size],
+				wrap === false ? css.noWrap : null
+			)}
+		>
+			{stack ? cardsStackedOutput : cardsOutput}
+		</div>
+	)
 }
 
 export default CardList
