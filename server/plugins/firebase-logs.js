@@ -18,6 +18,11 @@ class FirebaseLogs {
 		/** @type {Boolean} */
 		this.enabled = true
 
+
+
+
+
+		
 		try {
 			/**
 			 * @type {import('firebase-admin').ServiceAccount}
