@@ -33,6 +33,7 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
+          eslint: true
           prettier: true
   build:
     name: Build client
@@ -45,7 +46,7 @@ jobs:
       - name: Setup node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 18
+          node-version: 16
 
       - name: Install dependencies
         run: npm install
