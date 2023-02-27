@@ -26,8 +26,8 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install node.js dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm install
 
       - name: Run prettier
         uses: creyD/prettier_action@v4.2
