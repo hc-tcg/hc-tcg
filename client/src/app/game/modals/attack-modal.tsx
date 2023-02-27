@@ -96,7 +96,7 @@ function AttackModal({closeModal}: Props) {
 			0
 		)
 		return (
-			<div className={css.attack} onClick={onClick}>
+			<div key={attackInfo.name} className={css.attack} onClick={onClick}>
 				<div
 					className={classnames(css.icon, {
 						[css.effectIcon]: !!icon,
@@ -172,26 +172,43 @@ function AttackModal({closeModal}: Props) {
 		)
 	}
 
+	const attacks = []
+	if (suAttackInfo && availableActions.includes('ZERO_ATTACK')) {
+		attacks.push(
+			renderAttack(
+				suAttackInfo,
+				effectAttack,
+				`/images/effects/${singleUseInfo?.id}.png`
+			)
+		)
+	}
+
+	if (availableActions.includes('PRIMARY_ATTACK')) {
+		attacks.push(renderAttack(playerHermitInfo.primary, primaryAttack))
+	}
+
+	if (availableActions.includes('SECONDARY_ATTACK')) {
+		attacks.push(renderAttack(playerHermitInfo.secondary, secondaryAttack))
+	}
+
 	return (
 		<Modal title="Attack" closeModal={closeModal}>
 			<div className={css.attackModal}>
-				<div className={css.turnEndNotification}>
-					Note that after attacking you won't be able to do any other actions
-					this turn.
-				</div>
-				{suAttackInfo && availableActions.includes('ZERO_ATTACK')
-					? renderAttack(
-							suAttackInfo,
-							effectAttack,
-							`/images/effects/${singleUseInfo?.id}.png`
-					  )
-					: null}
-				{availableActions.includes('PRIMARY_ATTACK')
-					? renderAttack(playerHermitInfo.primary, primaryAttack)
-					: null}
-				{availableActions.includes('SECONDARY_ATTACK')
-					? renderAttack(playerHermitInfo.secondary, secondaryAttack)
-					: null}
+				{attacks.length ? (
+					<>
+						<div className={css.turnEndNotification}>
+							<span className={css.infoIcon}>!</span>
+							Attack is the last action of your turn.
+						</div>
+						<div className={css.turnEndNotification}>
+							<span className={css.infoIcon}>i</span>
+							Damage bonuses from special moves are NOT included in the preview.
+						</div>
+						{attacks}
+					</>
+				) : (
+					<span className={css.noAttacks}>No attacks available.</span>
+				)}
 			</div>
 		</Modal>
 	)
