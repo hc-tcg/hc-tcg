@@ -66,22 +66,13 @@ const CardList = (props: CardListProps) => {
 	}
 
 	const cardsOutput = transitions((style: any, card: CardT) => {
-		const info = CARDS[card.cardId]
-		if (!info) return null
-		const isSelected = equalCard(card, selected)
-		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		return (
 			<animated.div
 				style={style}
 				key={card.cardInstance}
 				className={classnames(css.card, {[css.clickable]: !!onClick})}
 			>
-				<Card
-					onClick={onClick ? () => onClick(card) : undefined}
-					card={info}
-					selected={isSelected}
-					picked={isPicked}
-				/>
+				{getCard(card)}
 			</animated.div>
 		)
 	})
