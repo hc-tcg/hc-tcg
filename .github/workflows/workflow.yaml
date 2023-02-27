@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
+          # Make sure the actual branch is checked out when running on pull requests
+          ref: ${{ github.head_ref }}
+          # This is important to fetch the changes to the previous commit
+          fetch-depth: 0
 
       - name: Setup node.js
         uses: actions/setup-node@v1
@@ -30,11 +34,15 @@ jobs:
       - name: Install node.js dependencies
         run: npm ci
 
-      - name: Run linters
+      - name: Run prettier
+        uses: creyD/prettier_action@v4.2
+        with:
+          same_commit: True
+
+      - name: Run eslint
         uses: wearerequired/lint-action@v2
         with:
           eslint: true
-          prettier: true
   build:
     name: Build client
     runs-on: ubuntu-latest
