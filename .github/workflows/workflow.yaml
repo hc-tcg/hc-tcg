@@ -17,25 +17,20 @@ jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
-
     steps:
-      - name: Check out repo
-        uses: actions/checkout@v2
-          # This is important to fetch the changes to the previous commit
-          fetch-depth: 0
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Setup node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 18
+          node-version: 16
 
       - name: Install node.js dependencies
         run: npm ci
 
       - name: Run prettier
         uses: creyD/prettier_action@v4.2
-        with:
-          same_commit: true
 
       - name: Run eslint
         uses: wearerequired/lint-action@v2
