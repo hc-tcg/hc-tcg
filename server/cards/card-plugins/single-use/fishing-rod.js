@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class FishingRodSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -9,6 +13,10 @@ class FishingRodSingleUseCard extends SingleUseCard {
 			description: 'Player draws 2 cards from deck.\n\nDiscard after use.',
 		})
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
 			const {singleUseInfo, currentPlayer} = game.ds

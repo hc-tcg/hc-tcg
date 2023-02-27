@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class SpyglassSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -12,12 +16,18 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	removeSpyglass(game) {
 		Object.values(game.state.players).forEach((pState) => {
 			delete pState.custom[this.id]
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.turnStart.tap(this.id, (action) => {
 			this.removeSpyglass(game)

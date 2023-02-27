@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // TODO - Can't use with no active hermit
 class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -11,6 +15,10 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			description: 'Discard your hand. Draw 3 cards.\n\nDiscard after use.',
 		})
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
 			const {singleUseInfo, currentPlayer} = game.ds

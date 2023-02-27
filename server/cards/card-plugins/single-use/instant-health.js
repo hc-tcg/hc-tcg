@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -14,6 +18,10 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
 		this.pickReqs = this.useReqs
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds

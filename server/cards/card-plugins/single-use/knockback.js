@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 /*
 - Don't allow to change to knocked out hermit during next turn
 - Chorus fruit/Cubfun probably shouldn't allow that either
@@ -19,6 +23,10 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			{target: 'opponent', type: 'hermit', amount: 1, active: true},
 		]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target) => {
 			const {

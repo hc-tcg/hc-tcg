@@ -1,5 +1,9 @@
 import EffectCard from './_effect-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -13,6 +17,9 @@ class WaterBucketEffectCard extends EffectCard {
 		this.pickReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.actionEnd.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds

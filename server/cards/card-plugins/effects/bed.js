@@ -2,6 +2,9 @@ import EffectCard from './_effect-card'
 import CARDS from '../../../cards'
 import {discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
 /*
 Info confirmed by beef:
 - If knockback is used, sleeping opponent goes AFK but wakes up.
@@ -20,6 +23,10 @@ class BedEffectCard extends EffectCard {
 				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
 		})
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		// Discard bed after sleeping & store who had bed at start of turn
 		game.hooks.turnStart.tap(this.id, () => {

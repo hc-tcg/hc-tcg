@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse, hasSingleUse} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -15,6 +19,10 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			{target: 'player', type: 'hermit', amount: 1, active: false},
 		]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.changeActiveHermit.tap(this.id, (turnAction, actionState) => {
 			const {currentPlayer} = game.ds

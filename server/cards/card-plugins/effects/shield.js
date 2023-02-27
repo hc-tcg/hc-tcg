@@ -1,6 +1,10 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class ShieldEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -12,6 +16,10 @@ class ShieldEffectCard extends EffectCard {
 		})
 		this.protection = {target: 10, discard: true}
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {}
 }
 

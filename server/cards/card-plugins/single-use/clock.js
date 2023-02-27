@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class ClockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -11,6 +15,10 @@ class ClockSingleUseCard extends SingleUseCard {
 
 		this.useReqs = [{target: 'opponent', type: 'hermit', amount: 1}]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.turnStart.tap(this.id, (turnConfig) => {
 			const {currentPlayer} = game.ds

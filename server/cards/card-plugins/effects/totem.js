@@ -1,6 +1,10 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class TotemEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -13,6 +17,9 @@ class TotemEffectCard extends EffectCard {
 		this.recoverAmount = 10
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		// attacks
 		game.hooks.attack.tap(this.id, (target) => {

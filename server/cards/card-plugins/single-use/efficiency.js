@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -12,6 +16,10 @@ class EfficiencySingleUseCard extends SingleUseCard {
 
 		this.useReqs = [{target: 'player', type: 'hermit', amount: 1, active: true}]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.availableActions.tap(
 			this.id,

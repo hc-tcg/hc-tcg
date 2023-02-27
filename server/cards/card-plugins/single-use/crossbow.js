@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class CrossbowSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -19,6 +23,10 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			{target: 'opponent', type: 'hermit', amount: 1, active: false},
 		]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo} = game.ds

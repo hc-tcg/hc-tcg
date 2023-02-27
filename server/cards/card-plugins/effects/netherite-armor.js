@@ -1,5 +1,9 @@
 import EffectCard from './_effect-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class NetheriteArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -11,6 +15,10 @@ class NetheriteArmorEffectCard extends EffectCard {
 		})
 		this.protection = {target: 40}
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {}
 }
 

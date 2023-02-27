@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {flipCoin} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -12,6 +16,10 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 		})
 		this.multiplier = 2
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
 			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds

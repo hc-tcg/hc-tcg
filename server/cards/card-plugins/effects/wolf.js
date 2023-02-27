@@ -1,5 +1,9 @@
 import EffectCard from './_effect-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 class WolfEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -11,6 +15,10 @@ class WolfEffectCard extends EffectCard {
 		})
 		this.protection = {backlash: 20}
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {}
 }
 

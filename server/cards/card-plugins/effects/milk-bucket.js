@@ -1,5 +1,8 @@
 import EffectCard from './_effect-card'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -12,6 +15,10 @@ class MilkBucketEffectCard extends EffectCard {
 		this.pickOn = 'apply'
 		this.pickReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.actionEnd.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds

@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // TODO wrap card-list if there is too many cards in discard (+ scroll)
 class ChestSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -13,6 +17,9 @@ class ChestSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (turnAction) => {
 			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds

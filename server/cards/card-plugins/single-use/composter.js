@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard, discardCard} from '../../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
 // TODO - don't allow selecting the same card twice
 // TODO - If there is is less cards in hand (1,0) limit the requirment or don't allow to use it
 // TODO - don't allow to compost hermit cards if there is no hermit on board (perhaps don't allow SU cards at all if no hermits are on board)
@@ -17,6 +21,10 @@ class ComposterSingleUseCard extends SingleUseCard {
 		this.useReqs = [{target: 'hand', type: 'any', amount: 2}]
 		this.pickReqs = this.useReqs
 	}
+
+	/**
+	 * @param {GameModel} game
+	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
