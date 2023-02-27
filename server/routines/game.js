@@ -431,7 +431,7 @@ function* turnSaga(game) {
 
 	game.state.turnPlayerId = currentPlayerId
 	game.state.turnTime = Date.now()
-	game.state.turnRemaining = config.limits.maxTurnTime
+	game.state.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {
