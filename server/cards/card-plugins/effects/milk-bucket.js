@@ -28,7 +28,7 @@ class MilkBucketEffectCard extends EffectCard {
 			})
 		})
 
-		game.hooks.applyEffect.tap(this.id, (actionState) => {
+		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
 			const {pickedCardsInfo} = actionState
 			if (singleUseInfo.id === this.id) {
