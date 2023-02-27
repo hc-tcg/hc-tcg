@@ -119,16 +119,17 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 			console.log('Server error')
 			yield put(showEndGameOverlay('server_crash'))
 		} else if (Object.hasOwn(result, 'gameEnd')) {
-			if (result.gameEnd.payload.gameState) {
+			const {gameState: newGameState, outcome, reason} = result.gameEnd.payload
+			if (newGameState) {
 				yield put(
 					gameState({
-						gameState: result.gameEnd.payload.gameState,
+						gameState: newGameState,
 						availableActions: [],
 						opponentId: yield* select(getOpponentId),
 					})
 				)
 			}
-			yield put(showEndGameOverlay(result.gameEnd.payload.reason))
+			yield put(showEndGameOverlay(outcome, reason))
 		}
 	} catch (err) {
 		console.error('Client error: ', err)

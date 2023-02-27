@@ -59,7 +59,7 @@ export type GameStatePayload = {
 	opponentId: string
 }
 
-export type GameEndReasonT =
+export type GameEndOutcomeT =
 	| 'client_crash'
 	| 'server_crash'
 	| 'timeout'
@@ -72,3 +72,5 @@ export type GameEndReasonT =
 	| 'you_won'
 	| 'you_lost'
 	| null
+
+export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null

@@ -142,7 +142,7 @@ function Game() {
 
 			{showForfeit && <ForfeitModal closeModal={() => setShowForfeit(false)} />}
 
-			{endGameOverlay && <EndGameOverlay reason={endGameOverlay} />}
+			{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 		</div>
 	)
 }

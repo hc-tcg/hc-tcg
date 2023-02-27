@@ -392,6 +392,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 					game.hooks.followUpTimeout.call()
 					continue
 				} else if (!hasActiveHermit) {
+					game.endInfo.reason = 'time'
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
 					return 'GAME_END'
 				}
@@ -469,6 +470,8 @@ function* turnSaga(game) {
 
 	const deadPlayerIds = yield call(checkHermitHealth, game)
 	if (deadPlayerIds.length) {
+		game.endInfo.reason =
+			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
 		game.endInfo.deadPlayerIds = deadPlayerIds
 		return 'GAME_END'
 	}
@@ -482,6 +485,7 @@ function* turnSaga(game) {
 			noCards: true,
 			turn: game.state.turn,
 		})
+		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'
 	}

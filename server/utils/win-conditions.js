@@ -8,7 +8,7 @@ export const getGameOutcome = (game, endResult) => {
 	return 'player_won'
 }
 
-export const getGameEndReason = (game, endResult, playerId) => {
+export const getGamePlayerOutcome = (game, endResult, playerId) => {
 	if (Object.hasOwn(endResult, 'timeout')) return 'timeout'
 	if (Object.hasOwn(endResult, 'forfeit')) {
 		const triggerPlayerId = endResult.forfeit.playerId

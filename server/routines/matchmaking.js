@@ -14,7 +14,7 @@ import gameSaga from './game'
 import root from '../models/root-model'
 import {GameModel} from '../models/game-model'
 import {
-	getGameEndReason,
+	getGamePlayerOutcome,
 	getWinner,
 	getGameOutcome,
 } from '../utils/win-conditions'
@@ -53,8 +53,12 @@ function* gameManager(game) {
 		})
 
 		for (const player of players) {
-			const reason = getGameEndReason(game, result, player.playerId)
-			broadcast([player], 'GAME_END', {gameState: game.state, reason})
+			const outcome = getGamePlayerOutcome(game, result, player.playerId)
+			broadcast([player], 'GAME_END', {
+				gameState: game.state,
+				outcome,
+				reason: game.endInfo.reason,
+			})
 		}
 		game.endInfo.outcome = getGameOutcome(game, result)
 		game.endInfo.winner = getWinner(game, result)

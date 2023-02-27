@@ -3,6 +3,7 @@ import {
 	GameState,
 	CardT,
 	GameEndReasonT,
+	GameEndOutcomeT,
 	CurrentCoinFlipT,
 } from 'types/game-state'
 import {PickProcessT} from 'types/pick-process'
@@ -19,7 +20,10 @@ type LocalGameState = {
 		info: null
 	} | null
 	pickProcess: PickProcessT | null
-	endGameOverlay: GameEndReasonT
+	endGameOverlay: {
+		reason: GameEndReasonT
+		outcome: GameEndOutcomeT
+	} | null
 	chat: Array<MessageInfoT>
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean

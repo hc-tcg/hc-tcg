@@ -1,5 +1,10 @@
 import {GameStatePayload} from 'types/game-state'
-import {CardT, GameEndReasonT, CurrentCoinFlipT} from 'types/game-state'
+import {
+	CardT,
+	GameEndOutcomeT,
+	GameEndReasonT,
+	CurrentCoinFlipT,
+} from 'types/game-state'
 import {PickProcessT, PickedCardT} from 'types/pick-process'
 import {MessageInfoT} from 'types/chat'
 
@@ -53,9 +58,15 @@ export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
 	payload: {type},
 })
 
-export const showEndGameOverlay = (reason: GameEndReasonT) => ({
+export const showEndGameOverlay = (
+	outcome: GameEndOutcomeT,
+	reason: GameEndReasonT = null
+) => ({
 	type: 'SHOW_END_GAME_OVERLAY' as const,
-	payload: reason,
+	payload: {
+		outcome,
+		reason,
+	},
 })
 
 export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({

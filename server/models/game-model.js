@@ -145,6 +145,8 @@ export class GameModel {
 			winner: null,
 			/** @type {'timeout'|'forfeit'|'tie'|'player_won'|'error'|null} */
 			outcome: null,
+			/** @type {'hermits'|'lives'|'cards'|'time'|null} */
+			reason: null,
 		}
 
 		/** @type {*} */
