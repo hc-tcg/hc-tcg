@@ -22,6 +22,11 @@ type CardListProps = {
 	wrap?: boolean
 }
 
+type CardStack = {
+	cardId: string
+	cardInstances: Array<string>
+}
+
 const CardList = (props: CardListProps) => {
 	const {
 		stack = false,
@@ -45,6 +50,21 @@ const CardList = (props: CardListProps) => {
 		leave: {width: 0, height: 0},
 	})
 
+	const getCard = (card: CardT) => {
+		const info = CARDS[card.cardId]
+		if (!info) return null
+		const isSelected = equalCard(card, selected)
+		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
+		return (
+			<Card
+				onClick={onClick ? () => onClick(card) : undefined}
+				card={info}
+				selected={isSelected}
+				picked={isPicked}
+			/>
+		)
+	}
+
 	const cardsOutput = transitions((style: any, card: CardT) => {
 		const info = CARDS[card.cardId]
 		if (!info) return null
@@ -67,66 +87,47 @@ const CardList = (props: CardListProps) => {
 	})
 
 	const stackCards = (cards: Array<CardT>) => {
-		const stack: Map<string, CardT[]> = new Map()
+		const stack: CardStack[] = []
 
 		cards.forEach((card) => {
 			const cardId = card.cardId
-			if (!stack.has(cardId)) {
-				stack.set(cardId, [card])
+			const cardStack = stack.find((cardStack) => cardStack.cardId === cardId)
+			if (!cardStack) {
+				stack.push({cardId, cardInstances: [card.cardInstance]})
 			} else {
-				const it = stack.get(cardId)
-				if (!it) return
-				else stack.set(cardId, [...it, card])
+				cardStack.cardInstances.push(card.cardInstance)
 			}
 		})
 		return stack
 	}
 
-	const cardsStackedOutput = Array.from(stackCards(cards)).map(
-		([cardId, cardInstances]) => {
-			if (cardInstances.length === 1) {
-				const info = CARDS[cardId]
-				if (!info) return null
-				const isSelected = equalCard(cardInstances[0], selected)
-				const isPicked = !!picked?.find((pickedCard) =>
-					equalCard(cardInstances[0], pickedCard)
-				)
-				return (
-					<div key={cardId} className={css.card}>
-						<Card
-							onClick={onClick ? () => onClick(cardInstances[0]) : undefined}
-							card={info}
-							selected={isSelected}
-							picked={isPicked}
-						/>
-					</div>
-				)
-			} else {
-				const cardList = []
-				for (let i = 0; i < cardInstances.length; i++) {
-					const info = CARDS[cardId]
-					if (!info) return null
-					const isSelected = equalCard(cardInstances[i], selected)
-					const isPicked = !!picked?.find((pickedCard) =>
-						equalCard(cardInstances[i], pickedCard)
-					)
-					cardList.push(
-						<Card
-							onClick={onClick ? () => onClick(cardInstances[i]) : undefined}
-							card={info}
-							selected={isSelected}
-							picked={isPicked}
-						/>
-					)
-				}
-				return (
-					<div key={cardId} className={css.stackCard}>
-						{cardList}
-					</div>
-				)
+	const cardsStackedOutput = stackCards(cards).map((card) => {
+		if (card.cardInstances.length === 1) {
+			const cardObject: CardT = {
+				cardId: card.cardId,
+				cardInstance: card.cardInstances[0],
 			}
+			return (
+				<div key={card.cardId} className={css.card}>
+					{getCard(cardObject)}
+				</div>
+			)
+		} else {
+			const cardList: any = []
+			card.cardInstances.map((cardInstance) => {
+				const cardObject: CardT = {
+					cardId: card.cardId,
+					cardInstance: cardInstance,
+				}
+				cardList.push(getCard(cardObject))
+			})
+			return (
+				<div key={card.cardId} className={css.stackCard}>
+					{cardList}
+				</div>
+			)
 		}
-	)
+	})
 	return (
 		<div
 			ref={listRef}
