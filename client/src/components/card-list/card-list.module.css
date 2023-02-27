@@ -35,10 +35,8 @@
 	z-index: 10;
 }
 
-.stackcard div:nth-child(4) {
-	position: relative;
-	bottom: 270%;
-	z-index: 10;
+.stackcard div:nth-child(1n+4) {
+	display: none;
 }
 .small {
 	grid-template-columns: repeat(auto-fill, 120px);

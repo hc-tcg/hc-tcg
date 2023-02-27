@@ -84,14 +84,13 @@ const CardList = (props: CardListProps) => {
 
 	const cardsStackedOutput = Array.from(stackCards(cards)).map(
 		([cardId, cardInstances]) => {
-			const info = CARDS[cardId]
-			if (!info) return null
-			const isSelected = equalCard(cardInstances[0], selected)
-			const isPicked = !!picked?.find((pickedCard) =>
-				equalCard(cardInstances[0], pickedCard)
-			)
-
 			if (cardInstances.length === 1) {
+				const info = CARDS[cardId]
+				if (!info) return null
+				const isSelected = equalCard(cardInstances[0], selected)
+				const isPicked = !!picked?.find((pickedCard) =>
+					equalCard(cardInstances[0], pickedCard)
+				)
 				return (
 					<div key={cardId} className={css.card}>
 						<Card
@@ -105,6 +104,12 @@ const CardList = (props: CardListProps) => {
 			} else {
 				const cardlist = []
 				for (let i = 0; i < cardInstances.length; i++) {
+					const info = CARDS[cardId]
+					if (!info) return null
+					const isSelected = equalCard(cardInstances[i], selected)
+					const isPicked = !!picked?.find((pickedCard) =>
+						equalCard(cardInstances[i], pickedCard)
+					)
 					cardlist.push(
 						<Card
 							onClick={onClick ? () => onClick(cardInstances[i]) : undefined}
@@ -123,7 +128,7 @@ const CardList = (props: CardListProps) => {
 		}
 	)
 
-	if (stack)
+	if (stack === true)
 		return (
 			<div
 				ref={listRef}
