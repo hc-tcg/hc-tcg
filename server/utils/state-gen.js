@@ -200,6 +200,7 @@ export function getGameState(game) {
 		order: playerIds,
 		turnPlayerId: null,
 		turnTime: null,
+		turnRemaining: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,

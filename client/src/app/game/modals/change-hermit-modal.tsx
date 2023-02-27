@@ -55,10 +55,8 @@ function ChangeHermitModal({closeModal, info}: Props) {
 				<div className={css.description}>{message}</div>
 				{lastAction && (
 					<div className={css.turnEndNotification}>
-						Note that after changing active hermit you won't be able to do any
-						other
-						<br />
-						actions this turn.
+						<span className={css.infoIcon}>!</span>
+						Hermit change is the last action of your turn.
 					</div>
 				)}
 				<div className={css.options}>

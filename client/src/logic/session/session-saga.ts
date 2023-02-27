@@ -32,14 +32,23 @@ const clearSession = () => {
 	sessionStorage.removeItem('playerSecret')
 }
 
+const getClientVersion = () => {
+	const scriptTag = document.querySelector(
+		'script[src^="/assets/index"][src$=".js"]'
+	) as HTMLScriptElement | null
+	if (!scriptTag) return null
+
+	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
+}
+
 export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
 		const {payload: playerName} = yield take('LOGIN')
-		socket.auth = {playerName}
+		socket.auth = {playerName, version: getClientVersion()}
 	} else {
-		socket.auth = session
+		socket.auth = {...session, version: getClientVersion()}
 	}
 	yield put(socketConnecting())
 	socket.connect()

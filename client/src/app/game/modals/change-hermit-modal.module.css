@@ -16,3 +16,18 @@
 	margin: 0 auto;
 	padding: 5px 10px 15px 10px;
 }
+
+.infoIcon {
+	border: 2px solid black;
+	width: 20px;
+	height: 20px;
+	border-radius: 10px;
+	font-size: 16px;
+	line-height: 16px;
+	text-align: center;
+	display: inline-block;
+	vertical-align: baseline;
+	margin-right: 5px;
+	font-family: serif;
+	font-weight: bold;
+}

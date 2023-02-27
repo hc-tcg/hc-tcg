@@ -59,6 +59,7 @@
  * @property {Array<string>} order
  * @property {string | null} turnPlayerId
  * @property {number | null} turnTime
+ * @property {number | null} turnRemaining
  * @property {Object.<string, PlayerState>} players
  */
 
