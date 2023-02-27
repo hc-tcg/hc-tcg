@@ -10,7 +10,7 @@
 }
 
 .notOfficial {
-	transform: translate(0, -35px) rotate(-20deg);
+	transform: translate(0, -85px) rotate(-20deg);
 }
 
 .notOfficial > p {
