@@ -1,14 +1,14 @@
 import fs from 'fs'
 import path from 'path'
 import {fileURLToPath} from 'url'
-import config from '../server-config.json' assert {type: 'json'}
+import {CONFIG} from './config'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 let hash = null
 
-const assetsPath = path.join(__dirname, '..', config.clientPath, './assets')
+const assetsPath = path.join(__dirname, '..', CONFIG.clientPath, './assets')
 if (fs.existsSync(assetsPath)) {
 	const assetFiles = fs.readdirSync(assetsPath)
 

@@ -1,6 +1,6 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
-import config from '../../server-config.json' assert {type: 'json'}
+import {CONFIG, DEBUG_CONFIG} from '../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -12,7 +12,7 @@ function randomBetween(min, max) {
 }
 
 export function getStarterPack() {
-	const limits = config.limits
+	const limits = CONFIG.limits
 	const hermitTypesCount = randomBetween(2, 3)
 	const hermitTypes = Object.keys(STRENGTHS)
 		.sort(() => 0.5 - Math.random())
@@ -149,20 +149,15 @@ export function getPlayerState(player) {
 
 	const hand = pack.slice(0, 7)
 
-	// hand.unshift({
-	// 	cardId: 'tangotek_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
-
-	// hand.unshift({
-	// 	cardId: 'item_farm_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
-
-	// hand.unshift({
-	// 	cardId: 'item_farm_rare',
-	// 	cardInstance: Math.random().toString(),
-	// })
+	DEBUG_CONFIG.extraStartingCards.forEach((id) => {
+		const card = CARDS[id]
+		if (!!card) {
+			hand.unshift({
+				cardId: id,
+				cardInstance: Math.random().toString(),
+			})
+		}
+	})
 
 	const TOTAL_ROWS = 5
 	return {

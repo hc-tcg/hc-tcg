@@ -19,7 +19,9 @@ class FirebaseLogs {
 		this.enabled = true
 
 		try {
-			// @ts-ignore
+			/**
+			 * @type {import('firebase-admin').ServiceAccount}
+			 */
 			const serviceAccount = require('../adminKey.json')
 			const admin = require('firebase-admin')
 			admin.initializeApp({

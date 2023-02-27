@@ -1,6 +1,7 @@
 import path from 'path'
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
+//@ts-ignore
 import config from '../server-config.json' assert {type: 'json'}
 // import eslint from 'vite-plugin-eslint'
 

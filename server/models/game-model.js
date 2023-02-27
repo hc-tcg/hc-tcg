@@ -5,7 +5,6 @@ import {DerivedStateModel} from './derived-state-model'
 /**
  * @typedef {import("./root-model").RootModel} RootModel
  * @typedef {import("./player-model").PlayerModel} PlayerModel
- * @typedef {import("types/index")}
  */
 
 export class GameModel {

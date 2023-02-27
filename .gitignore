@@ -33,3 +33,6 @@ fly.toml
 
 # admin key for firebase
 *adminKey*
+
+# debug config
+debug-config.json
