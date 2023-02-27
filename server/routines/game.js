@@ -372,11 +372,13 @@ function* turnActionsSaga(game, pastTurnActions) {
 				pastTurnActions,
 			}
 			game._turnStateCache = turnState
-			yield call(sendGameState, game, turnState)
 
 			const maxTime = config.limits.maxTurnTime * 1000
 			const remainingTime = game.state.turnTime + maxTime - Date.now()
 			const graceTime = 1000
+			game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
+
+			yield call(sendGameState, game, turnState)
 
 			const raceResult = yield race({
 				turnAction: take(turnActionChannel),
@@ -431,6 +433,7 @@ function* turnSaga(game) {
 
 	game.state.turnPlayerId = currentPlayerId
 	game.state.turnTime = Date.now()
+	game.state.turnRemaining = config.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {

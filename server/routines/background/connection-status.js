@@ -2,6 +2,7 @@ import {takeEvery, fork, delay} from 'redux-saga/effects'
 import {broadcast} from '../../utils/comm'
 import profanityFilter from '../../utils/profanity'
 import {getOpponentId} from '../../utils'
+import config from '../../../server-config.json' assert {type: 'json'}
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -23,6 +24,11 @@ function* sendGameStateOnReconnect(game, action) {
 	yield delay(1000)
 	if (!game._turnStateCache) return // @TODO we may not need this anymore
 	const {availableActions, opponentAvailableActions} = game._turnStateCache
+
+	const maxTime = config.limits.maxTurnTime * 1000
+	const remainingTime = game.state.turnTime + maxTime - Date.now()
+	const graceTime = 1000
+	game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
 
 	const payload = {
 		gameState: game.state,
