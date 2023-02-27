@@ -1,5 +1,5 @@
 import CARDS from '../cards'
-import config from '../../server-config.json' assert {type: 'json'}
+import {CONFIG, DEBUG_CONFIG} from '../config'
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
@@ -138,7 +138,9 @@ export const getOpponentId = (game, playerId) => {
 	@param {Array<string>} deckCards
 */
 export const validateDeck = (deckCards) => {
-	const limits = config.limits
+	if (DEBUG_CONFIG.disableDeckValidation) return
+
+	const limits = CONFIG.limits
 	deckCards = deckCards.filter((cardId) => CARDS[cardId])
 
 	const common = deckCards.filter((cardId) => CARDS[cardId].rarity === 'common')

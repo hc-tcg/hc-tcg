@@ -5,7 +5,6 @@ import {applySingleUse, discardCard} from '../../utils'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import("types/index")}
  */
 
 export const ATTACK_TO_ACTION = {

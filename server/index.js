@@ -4,25 +4,25 @@ import {fileURLToPath} from 'url'
 import {createServer} from 'http'
 import cors from 'cors'
 import './cards'
-import config from '../server-config.json' assert {type: 'json'}
+import {CONFIG} from './config'
 import startSocketIO from './sockets'
 
-const port = process.env.PORT || config.port || 9000
+const port = process.env.PORT || CONFIG.port || 9000
 
 const app = express()
-app.use(cors({origin: config.cors}))
+app.use(cors({origin: CONFIG.cors}))
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 app.use(
-	express.static(path.join(__dirname, '..', config.clientPath), {
+	express.static(path.join(__dirname, '..', CONFIG.clientPath), {
 		maxAge: 1000 * 60 * 60,
 	})
 )
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '..', config.clientPath, 'index.html'))
+	res.sendFile(path.join(__dirname, '..', CONFIG.clientPath, 'index.html'))
 })
 
 const server = createServer(app)
