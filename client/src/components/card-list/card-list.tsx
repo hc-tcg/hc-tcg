@@ -102,7 +102,7 @@ const CardList = (props: CardListProps) => {
 					</div>
 				)
 			} else {
-				const cardlist = []
+				const cardList = []
 				for (let i = 0; i < cardInstances.length; i++) {
 					const info = CARDS[cardId]
 					if (!info) return null
@@ -110,7 +110,7 @@ const CardList = (props: CardListProps) => {
 					const isPicked = !!picked?.find((pickedCard) =>
 						equalCard(cardInstances[i], pickedCard)
 					)
-					cardlist.push(
+					cardList.push(
 						<Card
 							onClick={onClick ? () => onClick(cardInstances[i]) : undefined}
 							card={info}
@@ -120,8 +120,8 @@ const CardList = (props: CardListProps) => {
 					)
 				}
 				return (
-					<div key={cardId} className={css.stackcard}>
-						{cardlist}
+					<div key={cardId} className={css.stackCard}>
+						{cardList}
 					</div>
 				)
 			}

@@ -18,31 +18,31 @@
 	height: 200px;
 }
 
-.stackcard {
+.stackCard {
 	display: inline-block;
 	width: 200px;
 	height: 200px;
 }
 
-.stackcard div:nth-child(2) {
+.stackCard div:nth-child(2) {
 	position: relative;
 	bottom: 90%;
 	z-index: 10;
 }
-.stackcard div:nth-child(3) {
+.stackCard div:nth-child(3) {
 	position: relative;
 	bottom: 180%;
 	z-index: 10;
 }
 
-.stackcard div:nth-child(1n+4) {
+.stackCard div:nth-child(1n+4) {
 	display: none;
 }
 .small {
 	grid-template-columns: repeat(auto-fill, 120px);
 }
 
-.small .card .stackcard{
+.small .card .stackCard{
 	width: 120px;
 	height: 120px;
 }
