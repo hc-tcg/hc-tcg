@@ -71,7 +71,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (!currentPlayer.custom[this.id]) return
 			delete currentPlayer.custom[this.id]
 
-			if (!opponentActiveRow.effectCard) return
+			if (!opponentActiveRow?.effectCard) return
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
