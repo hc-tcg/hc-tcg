@@ -58,9 +58,10 @@ class MumboJumboRareHermitCard extends HermitCard {
 
 			if (headsAmount === 0) return target
 			const hasAfkPranskter = currentPlayer.board.rows.some((row, index) => {
+				if (!row.hermitCard) return false
 				const isAfk = index !== currentPlayer.board.activeRow
 				const isPranskter =
-					CARDS[row.hermitCard?.cardId]?.hermitType === 'prankster'
+					CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 				return isAfk && isPranskter
 			})
 			if (!hasAfkPranskter) return target

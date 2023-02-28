@@ -40,7 +40,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
-			if (!opponentActiveRow.effectCard) return target
+			if (!opponentActiveRow || !opponentActiveRow.effectCard) return target
 
 			// can't discard two items on the same hermit
 			const limit = currentPlayer.custom[this.id] || {}

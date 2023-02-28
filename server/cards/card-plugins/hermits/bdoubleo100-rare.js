@@ -62,12 +62,12 @@ class BdoubleO100RareHermitCard extends HermitCard {
 
 		// Disable shreep attack consecutively
 		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {currentPlayer} = game.ds
+			const {currentPlayer, playerActiveRow} = game.ds
 
 			// we must have active hermit
-			const activeHermit =
-				currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
-			if (activeHermit?.cardId !== this.id) return availableActions
+			const activeHermit = playerActiveRow?.hermitCard
+			if (!activeHermit || activeHermit?.cardId !== this.id)
+				return availableActions
 
 			// we want to make changes only if shreep was used by the hermit
 			const conInfo = currentPlayer.custom[this.id]

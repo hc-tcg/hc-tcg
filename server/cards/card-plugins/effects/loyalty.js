@@ -33,6 +33,7 @@ class LoyaltyEffectCard extends EffectCard {
 			// We have to iterate over all rows because afk hermits can be attack (e.g. bow)
 			for (let rowIndex in playerRows) {
 				const row = playerRows[rowIndex]
+				if (!row.hermitCard) continue
 				const hasLoyalty = row.effectCard?.cardId === this.id
 				const itemCards = row.itemCards.filter(Boolean)
 				if (row.health <= 0 && hasLoyalty && itemCards.length) {

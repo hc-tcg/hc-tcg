@@ -32,7 +32,7 @@ export class GameModel {
 		this.task = null
 
 		/** @type {GameState} */
-		this.state = null
+		this.state = /** @type {any} */ (null)
 
 		/** @type {DerivedStateModel} */
 		this.ds = new DerivedStateModel(this)

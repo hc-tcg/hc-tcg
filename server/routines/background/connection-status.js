@@ -24,10 +24,12 @@ function* sendGameStateOnReconnect(game, action) {
 	if (!game._turnStateCache) return // @TODO we may not need this anymore
 	const {availableActions, opponentAvailableActions} = game._turnStateCache
 
-	const maxTime = CONFIG.limits.maxTurnTime * 1000
-	const remainingTime = game.state.turnTime + maxTime - Date.now()
-	const graceTime = 1000
-	game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
+	if (game.state.turnTime) {
+		const maxTime = CONFIG.limits.maxTurnTime * 1000
+		const remainingTime = game.state.turnTime + maxTime - Date.now()
+		const graceTime = 1000
+		game.state.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+	}
 
 	const payload = {
 		gameState: game.state,

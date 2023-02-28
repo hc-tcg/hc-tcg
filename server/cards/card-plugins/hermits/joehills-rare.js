@@ -69,11 +69,10 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 		// Disable Time Skip attack consecutively
 		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {currentPlayer} = game.ds
+			const {currentPlayer, playerActiveRow} = game.ds
 
 			// we must have active hermit
-			const activeHermit =
-				currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
+			const activeHermit = playerActiveRow?.hermitCard
 			if (activeHermit?.cardId !== this.id) return availableActions
 
 			// we want to make changes only if time skip was used by the hermit

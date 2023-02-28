@@ -61,7 +61,7 @@ class BedEffectCard extends EffectCard {
 				playerState.board.rows.forEach((row, index) => {
 					const hadBed = bedInfo[index]
 					const hasBed = row.effectCard?.cardId === this.id
-					if (!hadBed && hasBed) {
+					if (!hadBed && hasBed && row.hermitCard) {
 						row.health = CARDS[row.hermitCard.cardId].health
 						// clear any previous sleeping
 						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')

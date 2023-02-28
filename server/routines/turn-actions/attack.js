@@ -44,7 +44,7 @@ function* attackSaga(game, turnAction, actionState) {
 		? currentPlayer.board.singleUseCard
 		: null
 
-	if (!attackerActiveRow) return 'INVALID'
+	if (!attackerActiveRow || !attackerActiveRow.hermitCard) return 'INVALID'
 
 	const attackerHermitCard = attackerActiveRow.hermitCard
 	const attackerHermitInfo = CARDS[attackerHermitCard.cardId]
@@ -163,7 +163,9 @@ function* attackSaga(game, turnAction, actionState) {
 
 		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
 
-		const attackerEffectInfo = CARDS[playerActiveRow.effectCard?.cardId]
+		const attackerEffectInfo = playerActiveRow.effectCard?.cardId
+			? CARDS[playerActiveRow.effectCard?.cardId]
+			: null
 		const attackerProtection = attackerEffectInfo?.protection?.target || 0
 		const attackerBacklash = targetEffectInfo?.protection?.backlash || 0
 

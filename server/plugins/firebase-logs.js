@@ -3,6 +3,7 @@ const require = createRequire(import.meta.url)
 
 /**
  * @typedef {import('models/root-model').RootModel} RootModel
+ * @typedef {import('firebase-admin').database.Database} Database
  */
 
 class FirebaseLogs {
@@ -27,6 +28,7 @@ class FirebaseLogs {
 				credential: admin.credential.cert(serviceAccount),
 				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
 			})
+			/** @type {Database} */
 			this.db = admin.database()
 		} catch (err) {
 			console.log('No valid firebase key. Statistics will not be stored.')

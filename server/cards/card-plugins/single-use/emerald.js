@@ -28,6 +28,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, () => {
 			const {singleUseInfo, playerActiveRow, opponentActiveRow} = game.ds
 			if (singleUseInfo?.id === this.id) {
+				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
 				// TODO - Handle bed
 				const pEffect = playerActiveRow?.effectCard
 				const oEffect = opponentActiveRow?.effectCard

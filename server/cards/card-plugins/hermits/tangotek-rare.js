@@ -50,6 +50,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
+			if (!playerActiveRow || !opponentActiveRow) return target
 
 			const opponentHasOtherHermits =
 				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1

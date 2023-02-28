@@ -93,11 +93,11 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		// ailment death
 		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
 			const {playerState, row} = deathInfo
-			if (row.hermitCard.cardId !== this.id) return
+			if (row.hermitCard.cardId !== this.id) return recovery
 			const instance = playerState.custom[this.id]
-			if (!instance) return
+			if (!instance) return recovery
 			const coinFlip = playerState.custom[instance]
-			if (!coinFlip) return
+			if (!coinFlip) return recovery
 
 			playerState.coinFlips[this.id] = coinFlip
 

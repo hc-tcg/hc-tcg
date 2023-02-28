@@ -41,6 +41,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 			if (attackerHermitCard.cardId !== this.id) return target
+			if (!playerActiveRow || !opponentActiveRow) return target
 
 			playerActiveRow.health = 0
 			opponentActiveRow.health = 0
