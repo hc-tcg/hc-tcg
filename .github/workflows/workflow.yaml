@@ -1,0 +1,48 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - dev
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run server tsc
+        run: npm run server:tsc
+
+      - name: Run prettier
+        uses: actionsx/prettier@v2
+        with:
+          # prettier CLI arguments.
+          args: --check "**/*.{js,ts,tsx}"
+
+  build:
+    name: Test build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
