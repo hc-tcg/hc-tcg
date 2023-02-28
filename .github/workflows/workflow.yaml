@@ -15,11 +15,17 @@ permissions:
 
 jobs:
   run-linters:
-    name: Run prettier
+    name: Run linters
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run server tsc
+        run: npm run server:tsc
 
       - name: Run prettier
         uses: actionsx/prettier@v2
@@ -28,17 +34,12 @@ jobs:
           args: --check "**/*.{js,ts,tsx}"
 
   build:
-    name: Build client
+    name: Test build
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repo
         uses: actions/checkout@v2
-
-      - name: Setup node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
 
       - name: Install dependencies
         run: npm install
