@@ -21,18 +21,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - name: Install dependencies
-        run: npm install
-
       - name: Run prettier
-        uses: wearerequired/lint-action@v2
+        uses: actionsx/prettier@v2
         with:
-          prettier: true
+          # prettier CLI arguments.
+          args: --check **/*.{js,ts,tsx}
 
   build:
     name: Build client
