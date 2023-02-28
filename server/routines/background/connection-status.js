@@ -1,7 +1,7 @@
 import {takeEvery, fork, delay} from 'redux-saga/effects'
 import {broadcast} from '../../utils/comm'
 import {getOpponentId} from '../../utils'
-import {CONFIG} from '../../config'
+import {CONFIG} from '../../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel

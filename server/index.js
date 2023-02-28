@@ -4,7 +4,7 @@ import {fileURLToPath} from 'url'
 import {createServer} from 'http'
 import cors from 'cors'
 import './cards'
-import {CONFIG} from './config'
+import {CONFIG} from '../config'
 import startSocketIO from './sockets'
 
 const port = process.env.PORT || CONFIG.port || 9000
