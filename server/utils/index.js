@@ -1,5 +1,5 @@
 import CARDS from '../cards'
-import {CONFIG, DEBUG_CONFIG} from '../config'
+import {CONFIG, DEBUG_CONFIG} from '../../config'
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false

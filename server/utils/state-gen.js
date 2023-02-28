@@ -1,6 +1,6 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
-import {CONFIG, DEBUG_CONFIG} from '../config'
+import {CONFIG, DEBUG_CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel

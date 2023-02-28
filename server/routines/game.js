@@ -22,7 +22,7 @@ import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
-import {CONFIG} from '../config'
+import {CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
