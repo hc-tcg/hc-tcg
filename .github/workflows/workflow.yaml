@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   run-linters:
-    name: Run linters
+    name: Run prettier
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -30,12 +30,9 @@ jobs:
         run: npm install
 
       - name: Run prettier
-        uses: creyD/prettier_action@v4.2
-
-      - name: Run eslint
         uses: wearerequired/lint-action@v2
         with:
-          eslint: true
+          prettier: true
 
   build:
     name: Build client
