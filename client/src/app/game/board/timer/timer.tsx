@@ -23,7 +23,7 @@ function PlayerInfo() {
 	useEffect(() => {
 		setRemainingTime(Math.min(__LIMITS__.maxTurnTime, gameState.turnRemaining))
 		const interval = setInterval(() => {
-			setRemainingTime((value) => value - 1)
+			setRemainingTime((value) => Math.max(0, value - 1))
 		}, 1000)
 		return () => clearInterval(interval)
 	}, [gameState.turnRemaining])

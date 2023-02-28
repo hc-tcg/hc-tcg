@@ -1,5 +1,5 @@
 import {Server} from 'socket.io'
-import config from '../server-config.json' assert {type: 'json'}
+import {CONFIG} from '../config'
 import store from './be-store'
 import version from './version'
 
@@ -21,7 +21,7 @@ const isValidVersion = (clientVersion) => {
 function startSocketIO(server) {
 	const io = new Server(server, {
 		cors: {
-			origin: config.cors,
+			origin: CONFIG.cors,
 			methods: ['GET', 'POST'],
 		},
 	})

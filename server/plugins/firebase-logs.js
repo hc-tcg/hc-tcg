@@ -11,7 +11,6 @@ class FirebaseLogs {
 
 		this.id = 'firebase_logs'
 
-		// temporary solution, store game logs in map of gameId > logs
 		/** @type {Object.<string, *>} */
 		this.gameLogs = {}
 
@@ -19,7 +18,9 @@ class FirebaseLogs {
 		this.enabled = true
 
 		try {
-			// @ts-ignore
+			/**
+			 * @type {import('firebase-admin').ServiceAccount}
+			 */
 			const serviceAccount = require('../adminKey.json')
 			const admin = require('firebase-admin')
 			admin.initializeApp({

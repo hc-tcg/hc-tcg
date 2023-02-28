@@ -22,13 +22,11 @@ import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
-import root from '../models/root-model'
-import config from '../../server-config.json' assert {type: 'json'}
+import {CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import("types/index")}
  */
 
 // TURN ACTIONS:
@@ -47,7 +45,7 @@ import config from '../../server-config.json' assert {type: 'json'}
  * @returns {number}
  */
 const getTimerForSeconds = (seconds) => {
-	const maxTime = config.limits.maxTurnTime * 1000
+	const maxTime = CONFIG.limits.maxTurnTime * 1000
 	return Date.now() - maxTime + seconds * 1000
 }
 
@@ -373,7 +371,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 			}
 			game._turnStateCache = turnState
 
-			const maxTime = config.limits.maxTurnTime * 1000
+			const maxTime = CONFIG.limits.maxTurnTime * 1000
 			const remainingTime = game.state.turnTime + maxTime - Date.now()
 			const graceTime = 1000
 			game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
@@ -433,7 +431,7 @@ function* turnSaga(game) {
 
 	game.state.turnPlayerId = currentPlayerId
 	game.state.turnTime = Date.now()
-	game.state.turnRemaining = config.limits.maxTurnTime
+	game.state.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {
