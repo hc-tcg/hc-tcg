@@ -103,6 +103,20 @@ const CardList = (props: CardListProps) => {
 					{getCard(cardObject)}
 				</div>
 			)
+		} else if (card.cardInstances.length < 4) {
+			const cardList: any = []
+			card.cardInstances.map((cardInstance) => {
+				const cardObject: CardT = {
+					cardId: card.cardId,
+					cardInstance: cardInstance,
+				}
+				cardList.push(getCard(cardObject))
+			})
+			return (
+				<div key={card.cardId} className={css.stackCard}>
+					{cardList}
+				</div>
+			)
 		} else {
 			const cardList: any = []
 			card.cardInstances.map((cardInstance) => {
@@ -115,6 +129,7 @@ const CardList = (props: CardListProps) => {
 			return (
 				<div key={card.cardId} className={css.stackCard}>
 					{cardList}
+					<p className={css.stackCardCount}>+{card.cardInstances.length - 3}</p>
 				</div>
 			)
 		}

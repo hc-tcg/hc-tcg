@@ -22,6 +22,7 @@
 	display: inline-block;
 	width: 200px;
 	height: 200px;
+	text-align: center;
 }
 
 .stackCard div:nth-child(2) {
@@ -37,6 +38,8 @@
 
 .stackCard div:nth-child(1n+4) {
 	display: none;
+	padding: 0 0 0 0;
+	margin: 0 0 0 0
 }
 .small {
 	grid-template-columns: repeat(auto-fill, 120px);
@@ -55,5 +58,18 @@
 .clickable:hover {
 	box-shadow: 0 0 4px #777;
 	transform: scale(105%);
+	z-index: 10;
+}
+
+.stackCardCount {
+	height: 30px;
+	width: 30px;
+	background-color: white;
+	border-radius: 100%;
+	border: 2px solid red;
+	color: red;
+	display: block;
+	position: relative;
+	bottom:285%;
 	z-index: 10;
 }
