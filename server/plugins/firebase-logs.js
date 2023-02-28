@@ -11,7 +11,6 @@ class FirebaseLogs {
 
 		this.id = 'firebase_logs'
 
-		// temporary solution, store game logs in map of gameId > logs
 		/** @type {Object.<string, *>} */
 		this.gameLogs = {}
 
