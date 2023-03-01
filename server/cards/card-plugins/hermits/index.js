@@ -91,7 +91,7 @@ const HERMIT_CARDS = [
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
 	new RendogCommonHermitCard(),
-	// new RendogRareHermitCard(),
+	new RendogRareHermitCard(),
 	new StressMonster101CommonHermitCard(),
 	new StressMonster101RareHermitCard(),
 	new TangoTekCommonHermitCard(),

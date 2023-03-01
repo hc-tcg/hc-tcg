@@ -7,7 +7,10 @@ import CARDS from 'server/cards'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
-import {getPlayerActiveRow} from '../../../app/game/game-selectors'
+import {
+	getPlayerActiveRow,
+	getOpponentActiveRow,
+} from '../../../app/game/game-selectors'
 import {attack} from '../game-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
@@ -23,10 +26,13 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const {type} = action.payload
 	const playerState = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)
+	const opponentActiveRow = yield* select(getOpponentActiveRow)
 	if (!playerState || !activeRow || !activeRow.hermitCard) return
+	if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
 
 	const singleUseCard = playerState.board.singleUseCard
 	const hermitCard = activeRow.hermitCard
+	const opponentHermitCard = opponentActiveRow.hermitCard
 	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
@@ -41,8 +47,13 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[singleUseInfo.id]) return
 	}
 
-	const cardId = hermitCard.cardId
-	const cardInfo = CARDS[hermitCard.cardId]
+	let cardId = hermitCard.cardId
+	let cardInfo = CARDS[cardId]
+	if (cardInfo?.pickON === 'use-opponent') {
+		cardId = opponentHermitCard.cardId
+		cardInfo = CARDS[cardId]
+	}
+
 	const hermitAttack = cardInfo?.[type] || null
 	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(

@@ -61,10 +61,12 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		// next turn attack on scar
 		game.hooks.attack.tap(this.id, (target) => {
 			const {opponentPlayer} = game.ds
-			if (target.row.hermitCard.cardId !== this.id) return target
-
 			const instance = opponentPlayer.custom[this.id]
 			if (!instance) return target
+
+			// Check that we are attacking card that used the Deathloop ability
+			if (target.row.hermitCard.cardInstance !== instance) return target
+
 			const coinFlip = opponentPlayer.custom[instance]
 
 			if (!coinFlip || coinFlip[0] === 'tails') return target
