@@ -140,28 +140,3 @@
 		height: 11vh;
 	}
 }
-
-/* Widescreen 
-@media only screen and (min-width: 1300px) {
-	.menuBackground {
-		background-image: url('/images/menu-background-widescreen.png');
-		justify-content: start;
-	}
-
-	.menuContainer {
-		width: 35%;
-	}
-
-	.bottomPadding {
-		height: 0px;
-	}
-
-	.buttonContainer {
-		width: 500px;
-	}
-
-	.logo {
-		width: 500px;
-		margin-bottom: 60px;
-	}
-}*/

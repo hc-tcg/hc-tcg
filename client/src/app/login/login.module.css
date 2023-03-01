@@ -20,7 +20,6 @@
 	padding-top: 15vh;
 }
 
-
 .connecting {
 	margin-top: min(11.5vh, 13vw);
 	height: 4.5vh;
@@ -44,21 +43,16 @@
 }
 
 .nameForm > input {
-	padding-left: min(1.5vh, 1.5vw);
+	padding-left: 1vh;
 	width: 35vh;
-	border: 0.3vh solid #000
-}
-.nameForm > input:focus-visible {
-	outline-offset: 0;
-	outline: 0.4vh solid rgba(255, 255, 255, 0.2);
-	border-radius: 0.4vh;
 }
 .nameForm > button {
 	width: 8vh;
 }
 
 @media screen and (max-width: 80vh) {
-	.nameForm, .connecting {
+	.nameForm,
+	.connecting {
 		margin-top: 15vw;
 	}
 	.nameForm > * {
