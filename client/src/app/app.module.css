@@ -17,3 +17,27 @@ input:focus-visible {
 	outline: 0.5vh solid #333;
 	border-radius: 0.5vh;
 }
+
+::-webkit-scrollbar {
+	width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #e6e8eb;
+	border: 1.5px solid black;
+	box-shadow: inset 0px -3px #58585a;
+}
+
+::-webkit-scrollbar-track {
+	margin-block: 8px;
+	background: #58585a;
+	background: linear-gradient(
+		90deg,
+		rgba(49, 50, 51, 0) 0%,
+		rgba(49, 50, 51, 0) 25%,
+		#58585a 25%,
+		#58585a 75%,
+		rgba(49, 50, 51, 0) 75%,
+		rgba(49, 50, 51, 0) 100%
+	);
+}

@@ -82,7 +82,8 @@
 }
 
 .invalidText {
-	color: #d64033;
+	color: #900000;
+	text-shadow: 0.2vh 0.2vh #333;
 	font-size: 2vh;
 	margin: 1vh 0 0;
 }
@@ -92,5 +93,5 @@
 }
 
 .invalidCode {
-	border: 0.5vh solid #d64033 !important;
+	border: 0.5vh solid #900000 !important;
 }
