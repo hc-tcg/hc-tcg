@@ -2,7 +2,7 @@
 
 /**
  * @typedef {Object} Ailment
- * @property {'poison' | 'fire' | 'sleeping' | 'knockedout'} id
+ * @property {'rabies' | 'fire' | 'sleeping' | 'knockedout'} id
  * @property {number} duration
  */
 
