@@ -15,11 +15,61 @@
 .loginContainer {
 	display: flex;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
-	margin-top: 30px;
 }
 
 .connecting {
+	height: 4.5vh;
+	font-size: 2.5vh;
+	line-height: 100%;
+	text-align: center;
 	color: white;
 	font-family: Minecraft;
+}
+
+.nameForm {
+	display: flex;
+	margin-top: 5vh;
+}
+
+.nameForm > * {
+	font-size: 2vh;
+	height: 4.5vh;
+	line-height: 100%;
+	padding: 0;
+}
+
+.nameForm > input {
+	padding-left: min(1.5vh, 1.5vw);
+	width: 35vh;
+	border: 0.3vh solid #000
+}
+.nameForm > input:focus-visible {
+	outline-offset: 0;
+	outline: 0.4vh solid rgba(255, 255, 255, 0.2);
+	border-radius: 0.4vh;
+}
+.nameForm > button {
+	width: 8vh;
+	text-align: center;
+	border: 0.3vh solid #000;
+	text-shadow: 0.2vh 0.2vh #000;
+	box-shadow: inset -0.3vh -0.3vh #0006, inset 0.3vh 0.3vh #fff7
+}
+.nameForm > button:hover {
+	text-shadow: 0.3vh 0.3vh #202013cc
+}
+
+@media screen and (max-width: 80vh) {
+	.nameForm {
+		margin-top: 10vw;
+	}
+	.nameForm > * {
+		font-size: 1.5vh;
+		height: 4vh;
+	}
+	.nameForm > input {
+		width: 50vw;
+	}
 }

@@ -1,22 +1,37 @@
 /* Default */
+
 .logo {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-	margin-top: 30px;
 
-	width: 80%;
+	width: min(65vh, 80vw);
+	padding-bottom: min(6.5vh, 8vw);
+	overflow: visible;
 }
 
 .logoSubText {
-	transform: translate(0, -85px) rotate(-20deg);
+	position: absolute;
+	right: 10vh;
+	bottom: 3vh;
+	transform: rotate(-3deg);
+}
+
+@media screen and (max-width: 80vh) {
+	.logoSubText {
+		right: 10vw;
+		bottom: 3vw;
+	}
 }
 
 .logoSubText > p {
+	font-size: min(2vh, 3vw);
 	color: #fcfc29;
-	text-shadow: #3f3e00 2px 2px;
+	text-shadow: #3f3e00 0.2vh 0.2vh;
 	font-family: Minecraft;
+	margin: 0;
 
 	animation-name: logoSubTextAnim;
 	animation-duration: 1.5s;
@@ -29,25 +44,9 @@
 		transform: scale(100%);
 	}
 	50% {
-		transform: scale(150%);
+		transform: scale(150%) rotate(-3deg);
 	}
 	100% {
 		transform: scale(100%);
-	}
-}
-
-/* Small Screen */
-@media only screen and (min-width: 800px) {
-	.logo {
-		width: 500px;
-		margin-bottom: 60px;
-	}
-}
-
-/* Widescreen */
-@media only screen and (min-width: 1300px) {
-	.logo {
-		width: 500px;
-		margin-bottom: 60px;
 	}
 }
