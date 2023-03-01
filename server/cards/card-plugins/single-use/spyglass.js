@@ -10,7 +10,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		super({
 			id: 'spyglass',
 			name: 'Spyglass',
-			rarity: 'rare',
+			// It is rare on HC, however with limits in online version that doesn't make too much sense
+			rarity: 'common',
 			description:
 				"Reveal 3 random opponent's cards in their hand.\n\nDiscard after use.",
 		})
