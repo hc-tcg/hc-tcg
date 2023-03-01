@@ -1,5 +1,6 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
+import {CONFIG} from '../../config'
 
 /**
  * @typedef {import('models/root-model').RootModel} RootModel
@@ -80,6 +81,7 @@ class FirebaseLogs {
 				startDeck: gameLog.startDeck,
 				endTimestamp: new Date().getTime(),
 				turns: game.state.turn,
+				world: CONFIG.world,
 			}
 			let pid0 = playerStates[0].id
 			root.players[pid0].socket.emit('gameoverstat', {
