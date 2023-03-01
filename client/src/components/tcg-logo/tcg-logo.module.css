@@ -15,9 +15,8 @@
 	position: absolute;
 	right: 0;
 	bottom: 8vh;
-	transform:  rotate(-20deg);
+	transform: rotate(-20deg);
 }
-
 
 .notOfficial > p {
 	font-size: 2.2vh;
@@ -48,7 +47,7 @@
 
 @keyframes notOfficialAnim {
 	from {
-		transform: scale(100%) ;
+		transform: scale(100%);
 	}
 	to {
 		transform: scale(140%);

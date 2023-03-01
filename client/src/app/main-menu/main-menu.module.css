@@ -40,8 +40,6 @@
 	font-size: 2vh;
 }
 
-
-
 .smallButtonContainer {
 	display: flex;
 	width: 100%;
@@ -51,7 +49,6 @@
 .smallButtonContainer .menuButton {
 	width: 48.5%;
 }
-
 
 /* More container */
 
@@ -76,7 +73,7 @@
 
 	margin-top: 11vh;
 
-	height: 50vh;
+	height: 45vh;
 	width: min(80vh, 85vw);
 }
 
@@ -121,24 +118,26 @@
 	.menuButton {
 		height: 4.8vh;
 	}
-	.buttonContainer {
-
+	.mainButtonContainer {
 		margin-top: 6vh;
+
+		height: 37vh;
 	}
 	.smallButtonContainer {
 		flex-direction: column-reverse;
 		align-items: stretch;
 		justify-content: space-between;
 		height: 11vh;
+		margin-top: 1vh;
 	}
 	.smallButtonContainer .menuButton {
 		width: 100%;
 	}
 	.moreButtonContainer {
-		height: 55vh;
+		height: 48vh;
 	}
 	.moreButtonContainer .smallButtonContainer {
-		height: 13vh;
+		height: 11vh;
 	}
 }
 
