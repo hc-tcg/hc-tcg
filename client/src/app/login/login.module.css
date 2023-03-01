@@ -20,6 +20,7 @@
 }
 
 .connecting {
+	margin-top: 5vh;
 	height: 4.5vh;
 	font-size: 2.5vh;
 	line-height: 100%;
@@ -62,7 +63,7 @@
 }
 
 @media screen and (max-width: 80vh) {
-	.nameForm {
+	.nameForm, .connecting {
 		margin-top: 10vw;
 	}
 	.nameForm > * {
