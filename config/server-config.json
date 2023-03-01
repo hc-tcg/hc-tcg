@@ -11,5 +11,6 @@
 		"allowUltraRareDuplicates": false,
 		"maxRare": 12,
 		"maxUltraRare": 3
-	}
+	},
+	"logoSubText": "Not Official!"
 }
