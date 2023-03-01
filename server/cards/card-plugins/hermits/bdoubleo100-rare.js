@@ -10,7 +10,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 		super({
 			id: 'bdoubleo100_rare',
 			name: 'Sleepy',
-			rarity: 'ultra rare',
+			rarity: 'ultra_rare',
 			hermitType: 'icecream',
 			health: 250,
 			primary: {
