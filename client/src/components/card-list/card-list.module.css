@@ -23,24 +23,9 @@
 	width: 200px;
 	height: 200px;
 	text-align: center;
+	transition: .5s;
 }
 
-.stackCard div:nth-child(2) {
-	position: relative;
-	bottom: 90%;
-	z-index: 10;
-}
-.stackCard div:nth-child(3) {
-	position: relative;
-	bottom: 180%;
-	z-index: 10;
-}
-
-.stackCard div:nth-child(1n+4) {
-	display: none;
-	padding: 0 0 0 0;
-	margin: 0 0 0 0
-}
 .small {
 	grid-template-columns: repeat(auto-fill, 120px);
 }
@@ -62,14 +47,19 @@
 }
 
 .stackCardCount {
-	height: 30px;
-	width: 30px;
+	height: 50px;
+	width: 50px;
 	background-color: white;
 	border-radius: 100%;
-	border: 2px solid red;
-	color: red;
-	display: block;
+	border: 2px solid #e2ca8b;
+	color: black;
+	display: flex;
 	position: relative;
-	bottom:570px;
+	bottom:20px;
+	left: 75px;
+	font-size: 30px;
 	z-index: 10;
+	font-family: 'Bangers', Helvetica, serif;
+	align-items: center;
+	justify-content: center;
 }

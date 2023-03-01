@@ -92,7 +92,20 @@ const CardList = (props: CardListProps) => {
 		return stack
 	}
 
+	const getHeight = (
+		value: number,
+		istart: number,
+		istop: number,
+		ostart: number,
+		ostop: number
+	) => {
+		if (value > istop) return ostop //security to avoid overflow
+		return ostart + (ostop - ostart) * ((value - istart) / (istop - istart))
+		//super calcul provided by https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
+	}
+
 	const cardsStackedOutput = stackCards(cards).map((card) => {
+		if (card.cardInstances.length === 0) return null
 		if (card.cardInstances.length === 1) {
 			const cardObject: CardT = {
 				cardId: card.cardId,
@@ -103,14 +116,19 @@ const CardList = (props: CardListProps) => {
 					{getCard(cardObject)}
 				</div>
 			)
-		} else if (card.cardInstances.length < 4) {
+		} else if (card.cardInstances.length < 7) {
 			const cardList: any = []
-			card.cardInstances.map((cardInstance) => {
+			card.cardInstances.map((cardInstance, index) => {
 				const cardObject: CardT = {
 					cardId: card.cardId,
 					cardInstance: cardInstance,
 				}
-				cardList.push(getCard(cardObject))
+				const y = getHeight(card.cardInstances.length, 1, 7, 80, 95) //y is the percentage of the card height : 80% for 1 card, 95% for 7+ cards
+				const divStyle: React.CSSProperties = {
+					position: 'relative',
+					bottom: y * index + '%',
+				}
+				cardList.push(<div style={divStyle}>{getCard(cardObject)}</div>)
 			})
 			return (
 				<div key={card.cardId} className={css.stackCard}>
@@ -118,22 +136,19 @@ const CardList = (props: CardListProps) => {
 				</div>
 			)
 		} else {
-			const cardList: any = []
-			card.cardInstances.map((cardInstance) => {
-				const cardObject: CardT = {
-					cardId: card.cardId,
-					cardInstance: cardInstance,
-				}
-				cardList.push(getCard(cardObject))
-			})
+			const cardObject: CardT = {
+				cardId: card.cardId,
+				cardInstance: card.cardInstances[0],
+			}
 			return (
-				<div key={card.cardId} className={css.stackCard}>
-					{cardList}
-					<p className={css.stackCardCount}>+{card.cardInstances.length - 3}</p>
+				<div key={card.cardId}>
+					<div className={css.card}>{getCard(cardObject)}</div>
+					<div className={css.stackCardCount}>{card.cardInstances.length}</div>
 				</div>
 			)
 		}
 	})
+
 	return (
 		<div
 			ref={listRef}
