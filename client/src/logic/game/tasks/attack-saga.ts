@@ -49,7 +49,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 
 	let cardId = hermitCard.cardId
 	let cardInfo = CARDS[cardId]
-	if (cardInfo?.pickON === 'use-opponent') {
+	if (cardInfo?.pickOn === 'use-opponent') {
 		cardId = opponentHermitCard.cardId
 		cardInfo = CARDS[cardId]
 	}

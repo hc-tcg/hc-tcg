@@ -79,10 +79,10 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		game.hooks.attackResult.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
 			const {attackerHermitCard} = attackState
-			if (target.row.hermitCard.cardId !== this.id) return target
 
 			const instance = opponentPlayer.custom[this.id]
 			if (!instance) return target
+			if (target.row.hermitCard.cardInstance !== instance) return target
 			const coinFlip = opponentPlayer.custom[instance]
 			if (!coinFlip) return target
 			if (!target.died && !target.revived) return target

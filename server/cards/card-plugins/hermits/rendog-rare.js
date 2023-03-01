@@ -51,7 +51,12 @@ class RendogRareHermitCard extends HermitCard {
 	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {playerActiveRow, opponentActiveRow, opponentHermitInfo} = game.ds
+			const {
+				currentPlayer,
+				playerActiveRow,
+				opponentActiveRow,
+				opponentHermitInfo,
+			} = game.ds
 			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
@@ -67,12 +72,15 @@ class RendogRareHermitCard extends HermitCard {
 			target.extraHermitDamage += power.attack.damage
 
 			// apply opponents power
+			const singleUse = currentPlayer.board.singleUseCard
+			currentPlayer.board.singleUseCard = null
 			playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
 			const result = game.hooks.attack.call(target, turnAction, {
 				...attackState,
 				typeAction: power.typeAction,
 			})
 			playerActiveRow.hermitCard.cardId = this.id
+			currentPlayer.board.singleUseCard = singleUse
 
 			return result
 		})
