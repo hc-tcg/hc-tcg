@@ -9,22 +9,22 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'bdoubleo100_rare',
-			name: 'Bdubs',
-			rarity: 'rare',
-			hermitType: 'balanced',
-			health: 260,
+			name: 'Sleepy',
+			rarity: 'ultra rare',
+			hermitType: 'icecream',
+			health: 250,
 			primary: {
-				name: 'Retexture',
-				cost: ['any'],
-				damage: 60,
+				name: 'Eat Ice Cream',
+				cost: ['icecream', 'icecream'],
+				damage: 50,
 				power: null,
 			},
 			secondary: {
-				name: 'Shreep',
-				cost: ['balanced', 'balanced', 'any'],
+				name: 'Sleep',
+				cost: ['icecream', 'icecream', 'icecream'],
 				damage: 0,
 				power:
-					"Bdubs sleeps for the next 2 turns. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
+					"Sleepy sleeps for the next 2 turns. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
 			},
 		})
 
