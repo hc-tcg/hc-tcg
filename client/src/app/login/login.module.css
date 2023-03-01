@@ -17,6 +17,7 @@
 	flex-direction: column;
 	justify-content: start;
 	align-items: center;
+	padding-top: 15vh;
 }
 
 .connecting {
