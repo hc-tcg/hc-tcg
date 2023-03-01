@@ -32,44 +32,49 @@ function More({setMenuSection}: Props) {
 		return 'Disabled'
 	}
 	return (
-		<div className={css.buttonContainer}>
-			<button className={css.menuButton} onClick={handleSoundChange}>
-				Sounds: {getDescriptor(settings.soundOn)}
-			</button>
-			<button className={css.menuButton} onClick={handleProfanityChange}>
-				Profanity filter: {getDescriptor(settings.profanityFilter)}
-			</button>
-			<div className={css.smallButtonContainer}>
-				<button
-					className={css.smallMenuButton}
-					onClick={() => setMenuSection('mainmenu')}
-				>
-					Back to menu
-				</button>
-				<button className={css.smallMenuButton} onClick={handleResetStats}>
-					Reset Stats?
-				</button>
-			</div>
-			<div className={css.stats}>
-				<div className={css.stat}>
-					<div className={css.statName}>Wins</div>
-					<div className={css.statValue}>{stats.w}</div>
-				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Losses</div>
-					<div className={css.statValue}>{stats.l}</div>
-				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Ties</div>
-					<div className={css.statValue}>{stats.t}</div>
-				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Forfeit Wins</div>
-					<div className={css.statValue}>{stats.fw}</div>
-				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Forfeit Losses</div>
-					<div className={css.statValue}>{stats.fl}</div>
+		<div className={`${css.menuBackground} ${css.moreBackground}`}>
+			<div className={css.moreContainer}>
+				<div className={css.moreButtonContainer}>
+					<button className={css.menuButton} onClick={handleSoundChange}>
+						Sounds: {getDescriptor(settings.soundOn)}
+					</button>
+					<button className={css.menuButton} onClick={handleProfanityChange}>
+						Profanity filter: {getDescriptor(settings.profanityFilter)}
+					</button>
+					<div className={css.smallButtonContainer}>
+						<button
+							className={css.menuButton}
+							onClick={() => setMenuSection('mainmenu')}
+						>
+							Back to menu
+						</button>
+						<button className={css.menuButton} onClick={handleResetStats}>
+							Reset Stats
+						</button>
+					</div>
+					{/* stats */}
+					<div className={css.stats}>
+						<div className={css.stat}>
+							<div className={css.statName}>Wins</div>
+							<div className={css.statValue}>{stats.w}</div>
+						</div>
+						<div className={css.stat}>
+							<div className={css.statName}>Losses</div>
+							<div className={css.statValue}>{stats.l}</div>
+						</div>
+						<div className={css.stat}>
+							<div className={css.statName}>Ties</div>
+							<div className={css.statValue}>{stats.t}</div>
+						</div>
+						<div className={css.stat}>
+							<div className={css.statName}>Forfeit Wins</div>
+							<div className={css.statValue}>{stats.fw}</div>
+						</div>
+						<div className={css.stat}>
+							<div className={css.statName}>Forfeit Losses</div>
+							<div className={css.statValue}>{stats.fl}</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -8,14 +8,13 @@
 	align-items: end;
 
 	width: 65vh;
-	padding-bottom: min(6.5vh, 8vw);
 	overflow: visible;
 }
 
 .notOfficial {
 	position: absolute;
 	right: 0;
-	bottom: 13.5vh;
+	bottom: 8vh;
 	transform:  rotate(-20deg);
 }
 
@@ -40,7 +39,7 @@
 	}
 	.notOfficial {
 		right: 1vw;
-		bottom: 16vw;
+		bottom: 9vw;
 	}
 	.notOfficial > p {
 		font-size: 2.5vw;

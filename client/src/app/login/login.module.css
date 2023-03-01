@@ -20,8 +20,9 @@
 	padding-top: 15vh;
 }
 
+
 .connecting {
-	margin-top: 5vh;
+	margin-top: min(11.5vh, 13vw);
 	height: 4.5vh;
 	font-size: 2.5vh;
 	line-height: 100%;
@@ -32,7 +33,7 @@
 
 .nameForm {
 	display: flex;
-	margin-top: 5vh;
+	margin-top: min(11.5vh, 13vw);
 }
 
 .nameForm > * {
@@ -54,13 +55,6 @@
 }
 .nameForm > button {
 	width: 8vh;
-	text-align: center;
-	border: 0.3vh solid #000;
-	text-shadow: 0.2vh 0.2vh #000;
-	box-shadow: inset -0.3vh -0.3vh #0006, inset 0.3vh 0.3vh #fff7
-}
-.nameForm > button:hover {
-	text-shadow: 0.3vh 0.3vh #202013cc
 }
 
 @media screen and (max-width: 80vh) {
