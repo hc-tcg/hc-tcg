@@ -2,9 +2,9 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 25vh;
+	width: 20vh;
 	height: 4vh;
-	margin-top: 4vh;
+	margin-top: 2vh;
 	font-size: 1vh;
 	font-family: MinecraftBold;
 }
