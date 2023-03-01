@@ -116,19 +116,23 @@ const CardList = (props: CardListProps) => {
 					{getCard(cardObject)}
 				</div>
 			)
-		} else if (card.cardInstances.length < 7) {
+		} else if (card.cardInstances.length < 6) {
 			const cardList: any = []
 			card.cardInstances.map((cardInstance, index) => {
 				const cardObject: CardT = {
 					cardId: card.cardId,
 					cardInstance: cardInstance,
 				}
-				const y = getHeight(card.cardInstances.length, 1, 7, 80, 95) //y is the percentage of the card height : 80% for 1 card, 95% for 7+ cards
+				const y = getHeight(card.cardInstances.length, 2, 5, 80, 95) //y is the percentage of the card height : 80% for 2 card, 95% for 7+ cards
 				const divStyle: React.CSSProperties = {
 					position: 'relative',
 					bottom: y * index + '%',
 				}
-				cardList.push(<div style={divStyle}>{getCard(cardObject)}</div>)
+				cardList.push(
+					<div style={divStyle} className={css.card}>
+						{getCard(cardObject)}
+					</div>
+				)
 			})
 			return (
 				<div key={card.cardId} className={css.stackCard}>
