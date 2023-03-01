@@ -24,15 +24,15 @@ function Login() {
 				{connecting ? (
 					<div className={css.connecting}>Connecting...</div>
 				) : (
-						<form className={css.nameForm} onSubmit={handlePlayerName}>
-							<input
-								maxLength={25}
-								name="playerName"
-								placeholder="Player name..."
-								autoFocus
-							/>
-							<button type='submit' >Next</button>
-						</form>
+					<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<input
+							maxLength={25}
+							name="playerName"
+							placeholder="Player name..."
+							autoFocus
+						/>
+						<button type="submit">Next</button>
+					</form>
 				)}
 				<LinkContainer />
 			</div>
