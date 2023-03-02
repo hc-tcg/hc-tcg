@@ -24,17 +24,18 @@ function Login() {
 				{connecting ? (
 					<div className={css.connecting}>Connecting...</div>
 				) : (
-					<>
-						<form onSubmit={handlePlayerName}>
+					<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<div className={css.customInput}>
 							<input
 								maxLength={25}
 								name="playerName"
-								placeholder="Player name..."
 								autoFocus
-							/>
-							<button>Next</button>
-						</form>
-					</>
+								required
+							></input>
+							<span className={css.placeholder}>Player Name</span>
+						</div>
+						<button type="submit">Next</button>
+					</form>
 				)}
 				<LinkContainer />
 			</div>

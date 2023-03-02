@@ -9,7 +9,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Reddit"
 			>
-				<img src="/images/icons/reddit.svg" height="26" />
+				<img draggable={false} src="/images/icons/reddit.svg" />
 			</a>
 			<a
 				href="https://github.com/martinkadlec0/hc-tcg"
@@ -17,7 +17,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Github"
 			>
-				<img src="/images/icons/github.svg" height="26" />
+				<img draggable={false} src="/images/icons/github.svg" />
 			</a>
 
 			<a
@@ -26,7 +26,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Discord"
 			>
-				<img src="/images/icons/discord.svg" height="26" />
+				<img draggable={false} src="/images/icons/discord.svg" />
 			</a>
 		</div>
 	)
