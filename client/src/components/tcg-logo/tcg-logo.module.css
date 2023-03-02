@@ -11,14 +11,14 @@
 	overflow: visible;
 }
 
-.notOfficial {
+.logoSubText {
 	position: absolute;
 	right: 0;
 	bottom: 8vh;
 	transform: rotate(-20deg);
 }
 
-.notOfficial > p {
+.logoSubText > p {
 	font-size: 2.2vh;
 	color: #fcfc29;
 	text-shadow: #3f3e00 0.2vh 0.2vh;
@@ -36,11 +36,11 @@
 	.logo {
 		width: 75vw;
 	}
-	.notOfficial {
+	.logoSubText {
 		right: 1vw;
 		bottom: 9vw;
 	}
-	.notOfficial > p {
+	.logoSubText > p {
 		font-size: 2.5vw;
 	}
 }
