@@ -22,7 +22,7 @@
 
 .connecting {
 	margin-top: min(11.5vh, 13vw);
-	height: 4.5vh;
+	height: 5vh;
 	font-size: 2.5vh;
 	line-height: 100%;
 	text-align: center;
@@ -37,7 +37,6 @@
 
 .nameForm > * {
 	font-size: 2vh;
-	height: 4.5vh;
 	line-height: 100%;
 	padding: 0;
 }

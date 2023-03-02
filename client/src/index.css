@@ -88,6 +88,8 @@ button:not(:disabled):hover {
 
 input {
 	border: 0.3vh solid #000;
+	height: 5vh;
+	font-size: 2vh;
 }
 input:focus-visible {
 	outline-offset: 0;

@@ -1,12 +1,11 @@
 .soundButton {
 	position: fixed;
 	top: 0px;
-	left: 30px;
-	width: 30px;
-	padding: 0;
+	left: 5.4vh;
+	padding: 0 1.5vh;
 	text-align: center;
 }
 
 .soundButton img {
-	width: 15px;
+	width: 2vh;
 }
