@@ -10,6 +10,8 @@
 	background-image: url('/images/menu-background.png');
 	background-size: cover;
 	background-position: center;
+
+	font-family: Minecraft;
 }
 
 /* Prevent selection */
@@ -32,7 +34,6 @@
 	line-height: 100%;
 	text-align: center;
 	color: white;
-	font-family: Minecraft;
 }
 
 .nameForm {
@@ -43,15 +44,48 @@
 .nameForm > * {
 	font-size: 2vh;
 	line-height: 100%;
-	padding: 0;
 }
 
-.nameForm > input {
-	padding-left: 1vh;
-	width: 35vh;
-}
-.nameForm > button {
+.nameForm .nameForm > button {
 	width: 8vh;
+}
+
+.customInput {
+	position: relative;
+
+	width: 35vh;
+	height: 5vh;
+}
+
+.customInput input {
+	padding-left: 1vh;
+	width: 100%;
+}
+
+.customInput .placeholder {
+	line-height: normal;
+	position: absolute;
+	font-size: 2vh;
+
+	color: #808080;
+
+	transition: all 0.5s;
+
+	top: 1.5vh;
+	left: 1.4vh;
+
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	pointer-events: none;
+}
+
+.customInput input:focus-visible + .placeholder,
+.customInput input:valid + .placeholder {
+	top: -2.5vh;
+	left: 0.7vh;
+	font-size: 2.25vh;
+	color: #000;
 }
 
 @media screen and (max-width: 80vh) {
@@ -59,11 +93,23 @@
 	.connecting {
 		margin-top: 15vw;
 	}
-	.nameForm > * {
-		font-size: 1.5vh;
-		height: 4vh;
+	.nameForm * {
+		font-size: 1.5vh !important;
 	}
-	.nameForm > input {
+	.nameForm .customInput {
 		width: 50vw;
+	}
+
+	.customInput .placeholder {
+		top: 1.75vh;
+		left: 1.4vh;
+	}
+	.customInput input:focus-visible + .placeholder,
+	.customInput input:valid + .placeholder {
+		transition: all 0.5s;
+		top: -2.3vh;
+		left: 0.5vh;
+		font-size: 2vh !important;
+		color: #000;
 	}
 }

@@ -25,12 +25,15 @@ function Login() {
 					<div className={css.connecting}>Connecting...</div>
 				) : (
 					<form className={css.nameForm} onSubmit={handlePlayerName}>
-						<input
-							maxLength={25}
-							name="playerName"
-							placeholder="Player name..."
-							autoFocus
-						/>
+						<div className={css.customInput}>
+							<input
+								maxLength={25}
+								name="playerName"
+								autoFocus
+								required
+							></input>
+							<span className={css.placeholder}>Player Name</span>
+						</div>
 						<button type="submit">Next</button>
 					</form>
 				)}

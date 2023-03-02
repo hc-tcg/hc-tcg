@@ -93,8 +93,8 @@ input {
 }
 input:focus-visible {
 	outline-offset: 0;
-	outline: 0.5vh solid #333;
-	border-radius: 0.5vh;
+	outline: none;
+	border-radius: 0;
 }
 
 ::-webkit-scrollbar {
