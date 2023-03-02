@@ -15,6 +15,11 @@
 	background-position: center;
 }
 
+/* Prevent selection */
+.menuBackground * {
+	user-select: none;
+}
+
 /* Universal */
 
 .menuButton {

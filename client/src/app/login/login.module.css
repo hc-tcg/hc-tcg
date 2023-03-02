@@ -12,6 +12,11 @@
 	background-position: center;
 }
 
+/* Prevent selection */
+.loginBackground * {
+	user-select: none;
+}
+
 .loginContainer {
 	display: flex;
 	flex-direction: column;
