@@ -18,7 +18,7 @@ function Login() {
 
 	return (
 		/* Background Image */
-		<div className={css.loginBackground}>
+		<div className={`${css.loginBackground} temp`}>
 			<div className={css.loginContainer}>
 				<TcgLogo />
 				{connecting ? (

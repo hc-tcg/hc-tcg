@@ -32,7 +32,7 @@ function More({setMenuSection}: Props) {
 		return 'Disabled'
 	}
 	return (
-		<div className={`${css.menuBackground} ${css.moreBackground}`}>
+		<div className={`${css.menuBackground} ${css.moreBackground} temp`}>
 			<div className={css.moreContainer}>
 				<div className={css.moreButtonContainer}>
 					<button className={css.menuButton} onClick={handleSoundChange}>

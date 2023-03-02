@@ -2,7 +2,7 @@ import css from './link-container.module.css'
 
 function LinkContainer() {
 	return (
-		<div className={css.linkContainer}>
+		<div className={`${css.linkContainer} temp`}>
 			<a
 				href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
 				target="_blank"

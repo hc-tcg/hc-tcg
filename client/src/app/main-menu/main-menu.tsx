@@ -30,7 +30,7 @@ function MainMenu({setMenuSection}: Props) {
 		content = <More setMenuSection={() => setSubsection(null)} />
 	} else {
 		content = (
-			<div className={css.menuBackground}>
+			<div className={`${css.menuBackground} temp`}>
 				<div className={css.mainContainer}>
 					{/* Button Container */}
 					<TcgLogo />
