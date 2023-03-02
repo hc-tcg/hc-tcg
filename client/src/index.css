@@ -72,7 +72,7 @@ input {
 
 /* changes for new look, note that all the above will get redone eventually */
 
-button {
+.temp button {
 	line-height: 100%;
 	text-align: center;
 	height: 5vh;
@@ -82,16 +82,16 @@ button {
 	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
 	padding: 0 2vh;
 }
-button:not(:disabled):hover {
+.temp button:not(:disabled):hover {
 	text-shadow: 0.3vh 0.3vh #202013cc;
 }
 
-input {
+.temp input {
 	border: 0.3vh solid #000;
 	height: 5vh;
 	font-size: 2vh;
 }
-input:focus-visible {
+.temp input:focus-visible {
 	outline-offset: 0;
 	outline: none;
 	border-radius: 0;

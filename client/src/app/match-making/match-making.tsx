@@ -92,7 +92,7 @@ function MatchMaking() {
 	}
 
 	return (
-		<div className={css.matchMakingBackground}>
+		<div className={`${css.matchMakingBackground} temp`}>
 			<div className={css.matchMakingContainer}>
 				<TcgLogo />
 				{content}
