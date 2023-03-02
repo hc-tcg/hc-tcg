@@ -13,7 +13,6 @@ type CardProps = {
 	selected?: boolean
 	picked?: boolean
 	onClick?: () => void
-	stack?: number
 }
 
 const Card = (props: CardProps) => {
