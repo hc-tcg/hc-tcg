@@ -1,53 +1,55 @@
 /* Default */
+
 .logo {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-	margin-top: 30px;
 
-	width: 80%;
+	width: 65vh;
+	overflow: visible;
 }
 
 .logoSubText {
-	transform: translate(0, -85px) rotate(-20deg);
+	position: absolute;
+	right: 0;
+	bottom: 8vh;
+	transform: rotate(-20deg);
 }
 
 .logoSubText > p {
+	font-size: 2.2vh;
 	color: #fcfc29;
-	text-shadow: #3f3e00 2px 2px;
+	text-shadow: #3f3e00 0.2vh 0.2vh;
 	font-family: Minecraft;
+	margin: 0;
 
-	animation-name: logoSubTextAnim;
-	animation-duration: 1.5s;
+	animation-name: notOfficialAnim;
+	animation-duration: 1s;
+	animation-direction: alternate-reverse;
 	animation-iteration-count: infinite;
 	animation-timing-function: ease-in-out;
 }
 
-@keyframes logoSubTextAnim {
-	0% {
-		transform: scale(100%);
+@media screen and (max-width: 80vh) {
+	.logo {
+		width: 75vw;
 	}
-	50% {
-		transform: scale(150%);
+	.logoSubText {
+		right: 1vw;
+		bottom: 9vw;
 	}
-	100% {
-		transform: scale(100%);
+	.logoSubText > p {
+		font-size: 2.5vw;
 	}
 }
 
-/* Small Screen */
-@media only screen and (min-width: 800px) {
-	.logo {
-		width: 500px;
-		margin-bottom: 60px;
+@keyframes notOfficialAnim {
+	from {
+		transform: scale(100%);
 	}
-}
-
-/* Widescreen */
-@media only screen and (min-width: 1300px) {
-	.logo {
-		width: 500px;
-		margin-bottom: 60px;
+	to {
+		transform: scale(140%);
 	}
 }
