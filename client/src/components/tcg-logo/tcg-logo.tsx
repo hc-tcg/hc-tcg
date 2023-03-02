@@ -5,8 +5,8 @@ function TcgLogo() {
 		/* Logo Container */
 		<div className={css.logo}>
 			<img draggable={false} width={'100%'} src="/images/tcg-logo.png"></img>
-			<div className={css.notOfficial}>
-				<p>Not Official!</p>
+			<div className={css.logoSubText}>
+				<p>{__LOGO_SUBTEXT__}</p>
 			</div>
 		</div>
 	)
