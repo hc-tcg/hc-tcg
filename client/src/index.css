@@ -75,11 +75,14 @@ input {
 button {
 	line-height: 100%;
 	text-align: center;
+	height: 5vh;
+	font-size: 2vh;
 	border: 0.3vh solid #000;
 	text-shadow: 0.2vh 0.2vh #000;
 	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
+	padding: 0 2vh;
 }
-button:hover {
+button:not(:disabled):hover {
 	text-shadow: 0.3vh 0.3vh #202013cc;
 }
 

@@ -1,3 +1,5 @@
+/* Backgrounds */
+
 .menuBackground {
 	display: flex;
 	flex-direction: column;
@@ -5,7 +7,35 @@
 	width: 100vw;
 	background-image: url('/images/menu-background-widescreen.png');
 	background-size: cover;
+	background-position: left;
+}
+
+.moreBackground {
+	background-image: url('/images/menu-background.png');
 	background-position: center;
+}
+
+/* Universal */
+
+.menuButton {
+	margin-bottom: 2.5vh;
+}
+
+.smallButtonContainer {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+.smallButtonContainer .menuButton {
+	margin: 0 1.25vh;
+	flex-grow: 1;
+}
+.smallButtonContainer .menuButton:first-of-type {
+	margin-left: 0;
+}
+.smallButtonContainer .menuButton:last-of-type {
+	margin-right: 0;
 }
 
 /* Main container */
@@ -24,37 +54,13 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	justify-content: space-between;
 
 	margin-top: 11vh;
 
-	height: 36vh;
 	width: 95%;
 }
 
-.menuButton {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	height: 5vh;
-	font-size: 2vh;
-}
-
-.smallButtonContainer {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	justify-content: space-between;
-}
-.smallButtonContainer .menuButton {
-	width: 48.5%;
-}
-
 /* More container */
-
-.moreBackground {
-	background-image: url('/images/menu-background.png');
-}
 
 .moreContainer {
 	display: flex;
@@ -65,26 +71,28 @@
 	justify-content: center;
 }
 
+.moreContainer > * {
+	width: min(80vh, 85vw);
+}
+
 .moreButtonContainer {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	justify-content: space-between;
 
 	margin-top: 11vh;
-
-	height: 45vh;
-	width: min(80vh, 85vw);
 }
 
 .stats {
 	background: rgb(30, 30, 30);
-	max-height: 30vh;
-	padding: 0;
 	color: white;
 	border: 0.5vh solid #333;
 	border-radius: 0.5vh;
+
 	overflow-y: auto;
+
+	max-height: 30vh;
+	margin-top: 2.5vh;
 	padding: 2vh;
 }
 
@@ -107,6 +115,7 @@
 @media screen and (max-width: 150vh) {
 	.menuBackground {
 		background-image: url('/images/menu-background.png');
+		background-position: center;
 		align-items: center;
 	}
 
@@ -115,28 +124,19 @@
 	}
 }
 @media screen and (max-width: 80vh) {
-	.menuButton {
-		height: 4.8vh;
-	}
 	.mainButtonContainer {
 		margin-top: 6vh;
-
-		height: 37vh;
 	}
 	.smallButtonContainer {
 		flex-direction: column-reverse;
 		align-items: stretch;
-		justify-content: space-between;
-		height: 11vh;
-		margin-top: 1vh;
+		margin-top: 2.5vh;
 	}
 	.smallButtonContainer .menuButton {
 		width: 100%;
+		margin: 0 0 2.5vh;
 	}
-	.moreButtonContainer {
-		height: 48vh;
-	}
-	.moreButtonContainer .smallButtonContainer {
-		height: 11vh;
+	.smallButtonContainer .menuButton:first-of-type {
+		margin: 0;
 	}
 }

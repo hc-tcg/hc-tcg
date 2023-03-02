@@ -52,28 +52,28 @@ function More({setMenuSection}: Props) {
 							Reset Stats
 						</button>
 					</div>
-					{/* stats */}
-					<div className={css.stats}>
-						<div className={css.stat}>
-							<div className={css.statName}>Wins</div>
-							<div className={css.statValue}>{stats.w}</div>
-						</div>
-						<div className={css.stat}>
-							<div className={css.statName}>Losses</div>
-							<div className={css.statValue}>{stats.l}</div>
-						</div>
-						<div className={css.stat}>
-							<div className={css.statName}>Ties</div>
-							<div className={css.statValue}>{stats.t}</div>
-						</div>
-						<div className={css.stat}>
-							<div className={css.statName}>Forfeit Wins</div>
-							<div className={css.statValue}>{stats.fw}</div>
-						</div>
-						<div className={css.stat}>
-							<div className={css.statName}>Forfeit Losses</div>
-							<div className={css.statValue}>{stats.fl}</div>
-						</div>
+				</div>
+				{/* stats */}
+				<div className={css.stats}>
+					<div className={css.stat}>
+						<div className={css.statName}>Wins</div>
+						<div className={css.statValue}>{stats.w}</div>
+					</div>
+					<div className={css.stat}>
+						<div className={css.statName}>Losses</div>
+						<div className={css.statValue}>{stats.l}</div>
+					</div>
+					<div className={css.stat}>
+						<div className={css.statName}>Ties</div>
+						<div className={css.statValue}>{stats.t}</div>
+					</div>
+					<div className={css.stat}>
+						<div className={css.statName}>Forfeit Wins</div>
+						<div className={css.statValue}>{stats.fw}</div>
+					</div>
+					<div className={css.stat}>
+						<div className={css.statName}>Forfeit Losses</div>
+						<div className={css.statValue}>{stats.fl}</div>
 					</div>
 				</div>
 			</div>
