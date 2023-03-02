@@ -1,6 +1,4 @@
 import css from './tcg-logo.module.css'
-// @ts-ignore
-import {CONFIG} from '../../../../config'
 
 function TcgLogo() {
 	return (
@@ -8,7 +6,7 @@ function TcgLogo() {
 		<div className={css.logo}>
 			<img draggable={false} width={'100%'} src="/images/tcg-logo.png"></img>
 			<div className={css.logoSubText}>
-				<p>{CONFIG.logoSubText}</p>
+				<p>{__LOGO_SUBTEXT__}</p>
 			</div>
 		</div>
 	)
