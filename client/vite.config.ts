@@ -11,7 +11,7 @@ export default defineConfig({
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
 		__PORT__: JSON.stringify(CONFIG.port),
 		__LIMITS__: JSON.stringify(CONFIG.limits),
-		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText)
+		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
 	},
 	resolve: {
 		alias: {
