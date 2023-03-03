@@ -84,9 +84,9 @@
 
 .customInput input:focus-visible + .placeholder,
 .customInput input:not(:placeholder-shown) + .placeholder {
-	top: -2.5vh;
-	left: 0.7vh;
-	font-size: 2.25vh;
+	top: -2.9vh;
+	left: 0.8vh;
+	font-size: 2.5vh;
 	color: #000;
 }
 
