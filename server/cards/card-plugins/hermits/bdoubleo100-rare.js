@@ -37,7 +37,12 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, attackerActiveRow, typeAction} = attackState
+			const {
+				attackerHermitCard,
+				attackerActiveRow,
+				attackerHermitInfo,
+				typeAction,
+			} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
@@ -53,7 +58,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			conInfo[attackerHermitCard.cardInstance] = game.state.turn
 			currentPlayer.custom[this.id] = conInfo
 
-			attackerActiveRow.health = this.health
+			attackerActiveRow.health = attackerHermitInfo.health
 			attackerActiveRow.ailments = attackerActiveRow.ailments.filter(
 				(a) => a.id !== 'sleeping'
 			)

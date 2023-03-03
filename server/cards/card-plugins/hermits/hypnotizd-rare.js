@@ -48,7 +48,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 			const {currentPlayer} = game.ds
 			const {
 				attackerHermitCard,
-				attackerHermitInfo,
 				typeAction,
 				attackerActiveRow,
 				pickedCardsInfo,

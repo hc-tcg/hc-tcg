@@ -85,6 +85,10 @@
 	transform: translateY(-1px);
 }
 
+.attackPart {
+	display: flex;
+}
+
 .attackOperator {
 	margin-left: 3px;
 	margin-right: 3px;

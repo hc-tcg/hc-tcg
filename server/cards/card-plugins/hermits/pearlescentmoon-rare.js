@@ -38,7 +38,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		// set flag on Pearl's attack
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, attackerHermitInfo, typeAction} = attackState
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
