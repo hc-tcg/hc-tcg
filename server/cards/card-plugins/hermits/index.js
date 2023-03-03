@@ -111,7 +111,7 @@ const HERMIT_CARDS = [
 	new ZedaphPlaysCommonHermitCard(),
 	new ZedaphPlaysRareHermitCard(),
 	new ZombieCleoCommonHermitCard(),
-	// new ZombieCleoRareHermitCard(),
+	new ZombieCleoRareHermitCard(),
 ]
 
 export default HERMIT_CARDS

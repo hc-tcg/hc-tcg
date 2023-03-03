@@ -37,7 +37,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		// On Zed's attack flipCoin and set flag
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {attackerHermitCard, attackerHermitInfo, typeAction} = attackState
+			const {attackerHermitCard, typeAction} = attackState
 
 			if (typeAction !== 'PRIMARY_ATTACK') return target
 			if (!target.isActive) return target
