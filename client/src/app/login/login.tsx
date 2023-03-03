@@ -29,8 +29,8 @@ function Login() {
 							<input
 								maxLength={25}
 								name="playerName"
+								placeholder=" "
 								autoFocus
-								required
 							></input>
 							<span className={css.placeholder}>Player Name</span>
 						</div>

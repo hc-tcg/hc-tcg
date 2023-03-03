@@ -59,6 +59,8 @@
 
 .customInput input {
 	padding-left: 1vh;
+	padding-right: 0;
+	border-radius: 0;
 	width: 100%;
 }
 
@@ -69,10 +71,10 @@
 
 	color: #808080;
 
-	transition: all 0.5s;
+	transition: all 0.4s;
 
 	top: 1.5vh;
-	left: 1.4vh;
+	left: 1.5vh;
 
 	overflow: hidden;
 	white-space: nowrap;
@@ -81,10 +83,10 @@
 }
 
 .customInput input:focus-visible + .placeholder,
-.customInput input:valid + .placeholder {
-	top: -2.5vh;
-	left: 0.7vh;
-	font-size: 2.25vh;
+.customInput input:not(:placeholder-shown) + .placeholder {
+	top: -2.9vh;
+	left: 0.8vh;
+	font-size: 2.5vh;
 	color: #000;
 }
 

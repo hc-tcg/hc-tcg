@@ -94,7 +94,6 @@ input {
 .temp input:focus-visible {
 	outline-offset: 0;
 	outline: none;
-	border-radius: 0;
 }
 
 ::-webkit-scrollbar {
