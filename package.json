@@ -1,4 +1,4 @@
-{
+     {
 	"name": "hc-tcg",
 	"version": "0.1.0",
 	"private": true,
@@ -39,6 +39,7 @@
 		"terser": "^5.16.1",
 		"typed-redux-saga": "^1.5.0",
 		"typescript": "^4.9.5",
+		"vite":"^4.0.4",
 		"vite-plugin-eslint": "^1.8.1"
 	},
 	"scripts": {
@@ -67,7 +68,4 @@
 			"last 1 safari version"
 		]
 	},
-	"devDependencies": {
-		"vite": "^4.1.4"
-	}
 }
