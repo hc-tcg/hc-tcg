@@ -23,10 +23,6 @@
 	fill: rgb(226, 202, 139);
 }
 
-.rarity {
-	filter: drop-shadow(0 0 0.02em black) brightness(100%);
-}
-
 /* .icon {
 	filter: url('#drop-shadow');
 } */

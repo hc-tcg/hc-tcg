@@ -70,11 +70,6 @@
 .x2 {
 	font-size: 55px;
 }
-
-.rarity {
-	filter: drop-shadow(0 0 0.02em black) brightness(100%);
-}
-
 /* 
 .icon {
 	filter: url("#drop-shadow");

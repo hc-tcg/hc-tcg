@@ -49,16 +49,6 @@ const HermitCard = ({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{['rare', 'ultra_rare'].includes(card.rarity) ? (
-				<image
-					x="315"
-					y="95"
-					width="60"
-					height="60"
-					href={`/images/rarities/${card.rarity}.png`}
-					className={css.rarity}
-				/>
-			) : null}
 			<defs>
 				<filter
 					id="drop-shadow"

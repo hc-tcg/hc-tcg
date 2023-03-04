@@ -52,16 +52,6 @@ const ItemCard = ({card}: ItemCardProps) => {
 				</text>
 			</g>
 			{card.rarity === 'rare' ? (
-				<image
-					x="315"
-					y="95"
-					width="60"
-					height="60"
-					href={`/images/rarities/${card.rarity}.png`}
-					className={css.rarity}
-				/>
-			) : null}
-			{card.rarity === 'rare' ? (
 				<g>
 					<rect
 						className={css.rarity}
