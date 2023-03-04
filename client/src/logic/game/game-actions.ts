@@ -10,7 +10,10 @@ import {MessageInfoT} from 'types/chat'
 
 export const gameState = (gameState: GameStatePayload) => ({
 	type: 'GAME_STATE' as const,
-	payload: gameState,
+	payload: {
+		...gameState,
+		time: Date.now(),
+	},
 })
 
 export const gameStart = () => ({
