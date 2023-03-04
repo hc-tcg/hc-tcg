@@ -55,10 +55,10 @@ export const forfeit = () => ({
 
 export const startAttack = (
 	type: 'zero' | 'primary' | 'secondary',
-	pickedHermit?: PickedCardT
+	extra?: Record<string, any>
 ) => ({
 	type: 'START_ATTACK' as const,
-	payload: {type, pickedHermit},
+	payload: {type, extra},
 })
 
 export const showEndGameOverlay = (
@@ -114,10 +114,11 @@ export const endTurn = () => ({
 
 export const attack = (
 	type: 'zero' | 'primary' | 'secondary',
-	pickedCards: Record<string, Array<PickedCardT>>
+	pickedCards: Record<string, Array<PickedCardT>>,
+	extra?: Record<string, any>
 ) => ({
 	type: 'ATTACK' as const,
-	payload: {type, pickedCards},
+	payload: {type, pickedCards, extra},
 })
 
 export const chatMessage = (message: string) => ({

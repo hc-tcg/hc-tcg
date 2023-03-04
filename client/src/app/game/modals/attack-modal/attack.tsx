@@ -20,9 +20,10 @@ type Props = {
 	onClick: () => void
 	icon: string
 	name: string
+	extra?: boolean
 }
 
-const Attack = ({attackInfo, onClick, name, icon}: Props) => {
+const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
 	const playerId = useSelector(getPlayerId)
@@ -148,7 +149,11 @@ const Attack = ({attackInfo, onClick, name, icon}: Props) => {
 	}
 
 	return (
-		<div key={name} className={css.attack} onClick={onClick}>
+		<div
+			key={name}
+			className={classnames(css.attack, {[css.extra]: extra})}
+			onClick={onClick}
+		>
 			<div
 				className={classnames(css.icon, {
 					[css.effectIcon]: !attackInfo,

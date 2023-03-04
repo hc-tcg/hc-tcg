@@ -1,7 +1,6 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardInfoT, HermitCardT} from 'types/cards'
-import {PickedCardT} from 'types/pick-process'
 import CARDS from 'server/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
@@ -12,6 +11,7 @@ import {
 } from 'logic/game/game-selectors'
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
+import HermitSelector from './hermit-selector'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -43,21 +43,11 @@ function AttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
-	const handleExtraAttack = (hermitId: string) => {
-		const rows = playerState.board.rows
-		const hermitIndex = rows.findIndex(
-			(row) => row.hermitCard?.cardId === hermitId
-		)
-		if (!rows[hermitIndex]) return
-		const pickedHermit: PickedCardT = {
-			slotType: 'hermit',
-			card: rows[hermitIndex].hermitCard,
-			playerId: playerState.id,
-			rowIndex: hermitIndex,
-			slotIndex: 1,
-			rowHermitCard: rows[hermitIndex].hermitCard,
+	const handleExtraAttack = (hermitExtra: any) => {
+		const extra = {
+			[playerHermitInfo.id]: hermitExtra,
 		}
-		dispatch(startAttack('secondary', pickedHermit))
+		dispatch(startAttack('secondary', extra))
 		closeModal()
 	}
 
@@ -105,23 +95,13 @@ function AttackModal({closeModal}: Props) {
 	}
 
 	if (extraAttacks.length) {
-		const eaResult = extraAttacks.map((extra) => {
-			const [hermitId, action] = extra.split(':')
-			const hermitInfo = TYPED_CARDS[hermitId] as HermitCardT
-			if (!hermitInfo) throw new Error('Invalid extra attack')
-			const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
-			const hermitFullName = hermitInfo.id.split('_')[0]
-			return (
-				<Attack
-					key={hermitId}
-					name={hermitInfo[type].name}
-					icon={`/images/hermits-nobg/${hermitFullName}.png`}
-					attackInfo={hermitInfo[type]}
-					onClick={() => handleExtraAttack(hermitId)}
-				/>
-			)
-		})
-		attacks.push(...eaResult)
+		attacks.push(
+			<HermitSelector
+				key="hermit-selector"
+				extraAttacks={extraAttacks}
+				handleExtraAttack={handleExtraAttack}
+			/>
+		)
 	}
 
 	return (

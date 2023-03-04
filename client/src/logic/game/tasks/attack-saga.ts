@@ -18,7 +18,7 @@ const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 type AttackAction = ReturnType<typeof startAttack>
 
 export function* attackSaga(action: AttackAction): SagaIterator {
-	const {type, pickedHermit} = action.payload
+	const {type, extra} = action.payload
 	const playerState = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)
 	const opponentActiveRow = yield* select(getOpponentActiveRow)
@@ -49,11 +49,11 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		cardId = opponentHermitCard.cardId
 		cardInfo = CARDS[cardId]
 		hermitAttack = cardInfo?.[type] || null
-	} else if (cardInfo?.pickOn === 'use-ally' && pickedHermit?.card) {
-		result[cardId] = [pickedHermit]
-		cardId = pickedHermit.card.cardId
+	} else if (cardInfo?.pickOn === 'use-ally' && extra) {
+		const hermitExtra = extra[cardId]
+		cardId = hermitExtra.hermitId
 		cardInfo = CARDS[cardId]
-		hermitAttack = cardInfo?.[type] || null
+		hermitAttack = cardInfo?.[hermitExtra.type] || null
 	}
 
 	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
@@ -65,7 +65,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[cardId]) return
 	}
 
-	yield put(attack(type, result))
+	yield put(attack(type, result, extra))
 }
 
 export default attackSaga

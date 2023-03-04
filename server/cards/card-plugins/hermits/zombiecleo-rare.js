@@ -35,14 +35,13 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {*} allyHermitInfo
+	 * @param {'primary'|'secondary'} type
 	 */
-	getAllyPower(allyHermitInfo) {
-		const attacks = [allyHermitInfo.primary, allyHermitInfo.secondary]
-		const powerIndex = attacks.findIndex((a) => a.power)
-		if (powerIndex === -1) return null
+	getAllyPower(allyHermitInfo, type) {
 		return {
-			attack: attacks[powerIndex],
-			typeAction: powerIndex === 0 ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK',
+			attack:
+				type === 'primary' ? allyHermitInfo.primary : allyHermitInfo.secondary,
+			typeAction: type === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK',
 		}
 	}
 
@@ -52,22 +51,25 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, playerActiveRow} = game.ds
-			const {attackerHermitCard, typeAction, pickedCardsInfo} = attackState
+			const {attackerHermitCard, typeAction, availableActions} = attackState
+			const extra = turnAction.payload.extra?.[this.id]
 
+			if (!extra) return target
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (attackerHermitCard.cardId !== this.id) return target
 			if (!playerActiveRow || !playerActiveRow.hermitCard) return target
 
-			const cleoPickedCards = pickedCardsInfo[this.id]
-			if (!cleoPickedCards || !cleoPickedCards.length) return null
-			const pickedCard = cleoPickedCards[0]
-			if (!pickedCard || !pickedCard.row.hermitCard) return null
-			const allyHermitInfo = CARDS[pickedCard.row.hermitCard.cardId]
+			const allyHermitInfo = CARDS[extra.hermitId]
 			if (!allyHermitInfo) return null
 
 			// Find out if opponent has a special move and if it sprimary or secondary
-			const power = this.getAllyPower(allyHermitInfo)
+			const power = this.getAllyPower(allyHermitInfo, extra.type)
 			if (!power) return target
+
+			// Attack must be available
+			/** @type {*} */
+			const attackKey = allyHermitInfo.id + ':' + power.typeAction
+			if (!availableActions.includes(attackKey)) return target
 
 			// apply afk hermits damage
 			target.extraHermitDamage += power.attack.damage
@@ -109,12 +111,10 @@ class ZombieCleoRareHermitCard extends HermitCard {
 					return true
 				})
 
-				let afkAttacks = afkRows
-					.map((row) => {
-						if (!row.hermitCard) return null
+				let afkAttacks = afkRows.reduce(
+					(/** @type {Array<string>} */ extraActions, row) => {
+						if (!row.hermitCard) return
 						const allyHermitInfo = CARDS[row.hermitCard.cardId]
-						const power = this.getAllyPower(allyHermitInfo)
-						if (!power) return null
 
 						// Get available actions for opponents power
 						playerActiveRow.hermitCard.cardId = allyHermitInfo.id
@@ -128,17 +128,16 @@ class ZombieCleoRareHermitCard extends HermitCard {
 						const hasSecondary =
 							newAvailableActions.includes('SECONDARY_ATTACK')
 
-						if (power.typeAction === 'PRIMARY_ATTACK' && hasPrimary) {
-							return allyHermitInfo.id + ':PRIMARY_ATTACK'
-						} else if (
-							power.typeAction === 'SECONDARY_ATTACK' &&
-							hasSecondary
-						) {
-							return allyHermitInfo.id + ':SECONDARY_ATTACK'
+						if (newAvailableActions.includes('PRIMARY_ATTACK')) {
+							extraActions.push(allyHermitInfo.id + ':PRIMARY_ATTACK')
 						}
-						return null
-					})
-					.filter(Boolean)
+						if (newAvailableActions.includes('SECONDARY_ATTACK')) {
+							extraActions.push(allyHermitInfo.id + ':SECONDARY_ATTACK')
+						}
+						return extraActions
+					},
+					[]
+				)
 
 				// remove duplicates
 				afkAttacks = Array.from(new Set(afkAttacks))
