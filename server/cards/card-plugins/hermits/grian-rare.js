@@ -55,12 +55,12 @@ class GrianRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'PRIMARY_ATTACK') return target
 			if (!target.isActive) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			if (attackerHermitCard.cardId !== this.id) return target
 			currentPlayer.custom[this.id] = true
 
 			return target
@@ -71,7 +71,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (!currentPlayer.custom[this.id]) return
 			delete currentPlayer.custom[this.id]
 
-			if (!opponentActiveRow.effectCard) return
+			if (!opponentActiveRow?.effectCard) return
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
@@ -104,7 +104,7 @@ class GrianRareHermitCard extends HermitCard {
 
 			const effectCard = currentPlayer.custom[this.id]
 			delete currentPlayer.custom[this.id]
-			if (!effectCard) {
+			if (!effectCard || !playerActiveRow) {
 				console.log('Missing effect card')
 				return 'DONE'
 			}

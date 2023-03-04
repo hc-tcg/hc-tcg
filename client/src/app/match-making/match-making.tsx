@@ -36,7 +36,9 @@ function MatchMaking() {
 		content = (
 			<>
 				<div className={css.message}>Waiting for opponent</div>
-				<button onClick={handleCancel}>Cancel</button>
+				<button className={css.matchmakingButton} onClick={handleCancel}>
+					Cancel
+				</button>
 			</>
 		)
 	} else if (status === 'loading') {
@@ -59,7 +61,9 @@ function MatchMaking() {
 					{code}
 				</div>
 				<div className={css.options}>
-					<button onClick={handleCancel}>Cancel</button>
+					<button className={css.matchmakingButton} onClick={handleCancel}>
+						Cancel
+					</button>
 				</div>
 			</>
 		)
@@ -73,9 +77,14 @@ function MatchMaking() {
 						name="gameCode"
 						autoFocus
 					/>
+					<p className={invalidCode ? css.invalidText : css.hiddenInvalidText}>
+						Invalid code
+					</p>
 					<div className={css.options}>
-						<button onClick={handleCancel}>Cancel</button>
-						<button>Join</button>
+						<button className={css.matchmakingButton} onClick={handleCancel}>
+							Cancel
+						</button>
+						<button className={css.matchmakingButton}>Join</button>
 					</div>
 				</form>
 			</>
@@ -83,7 +92,7 @@ function MatchMaking() {
 	}
 
 	return (
-		<div className={css.matchMakingBackground}>
+		<div className={`${css.matchMakingBackground} temp`}>
 			<div className={css.matchMakingContainer}>
 				<TcgLogo />
 				{content}

@@ -39,16 +39,11 @@ class MumboJumboRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				typeAction,
-				attackerActiveRow,
-			} = attackState
+			const {condRef, moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			const coinFlip = flipCoin(currentPlayer, 2)
 			currentPlayer.coinFlips[this.id] = coinFlip
@@ -57,10 +52,11 @@ class MumboJumboRareHermitCard extends HermitCard {
 			target.extraHermitDamage += 40 * headsAmount
 
 			if (headsAmount === 0) return target
-			const hasAfkPranskter = currentPlayer.board.rows.some((row, index) => {
-				const isAfk = index !== currentPlayer.board.activeRow
+			const hasAfkPranskter = condRef.player.board.rows.some((row, index) => {
+				if (!row.hermitCard) return false
+				const isAfk = index !== condRef.player.board.activeRow
 				const isPranskter =
-					CARDS[row.hermitCard?.cardId]?.hermitType === 'prankster'
+					CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 				return isAfk && isPranskter
 			})
 			if (!hasAfkPranskter) return target

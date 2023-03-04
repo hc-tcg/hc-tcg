@@ -14,6 +14,10 @@ export const getGameState = (state: RootState): GameState | null => {
 	return getGame(state).gameState
 }
 
+export const getTime = (state: RootState) => {
+	return getGame(state).time
+}
+
 export const getPlayerStates = (state: RootState) => {
 	return getGameState(state)?.players || null
 }

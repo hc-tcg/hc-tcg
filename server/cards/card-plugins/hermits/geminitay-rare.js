@@ -38,14 +38,9 @@ class GeminiTayRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				typeAction,
-				attackerActiveRow,
-			} = attackState
+			const {moveRef, typeAction} = attackState
 
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 

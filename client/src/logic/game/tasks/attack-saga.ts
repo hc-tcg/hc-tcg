@@ -1,37 +1,38 @@
 import {select} from 'typed-redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {CardT} from 'types/game-state'
+import {PickedCardT} from 'types/pick-process'
 import {CardInfoT, EffectCardT} from 'types/cards'
 import CARDS from 'server/cards'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
-import {getPlayerActiveRow} from '../../../app/game/game-selectors'
-import {attack} from '../game-actions'
+import {
+	getPlayerActiveRow,
+	getOpponentActiveRow,
+} from '../../../app/game/game-selectors'
+import {attack, startAttack} from '../game-actions'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
-type AttackAction = {
-	type: 'ATTACK'
-	payload: {
-		type: 'zero' | 'primary' | 'secondary'
-	}
-}
+type AttackAction = ReturnType<typeof startAttack>
 
 export function* attackSaga(action: AttackAction): SagaIterator {
-	const {type} = action.payload
+	const {type, extra} = action.payload
 	const playerState = yield* select(getPlayerState)
 	const activeRow = yield* select(getPlayerActiveRow)
+	const opponentActiveRow = yield* select(getOpponentActiveRow)
 	if (!playerState || !activeRow || !activeRow.hermitCard) return
+	if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
 
 	const singleUseCard = playerState.board.singleUseCard
 	const hermitCard = activeRow.hermitCard
+	const opponentHermitCard = opponentActiveRow.hermitCard
 	const singleUseInfo = singleUseCard
 		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
 
-	const result = {} as Record<string, Array<CardT>>
+	const result = {} as Record<string, Array<PickedCardT>>
 	if (singleUseInfo?.pickOn === 'attack') {
 		result[singleUseInfo.id] = yield call(
 			runPickProcessSaga,
@@ -41,9 +42,20 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[singleUseInfo.id]) return
 	}
 
-	const cardId = hermitCard.cardId
-	const cardInfo = CARDS[hermitCard.cardId]
-	const hermitAttack = cardInfo?.[type] || null
+	let cardId = hermitCard.cardId
+	let cardInfo = CARDS[cardId]
+	let hermitAttack = cardInfo?.[type] || null
+	if (cardInfo?.pickOn === 'use-opponent' && hermitAttack?.power) {
+		cardId = opponentHermitCard.cardId
+		cardInfo = CARDS[cardId]
+		hermitAttack = cardInfo?.[type] || null
+	} else if (cardInfo?.pickOn === 'use-ally' && extra) {
+		const hermitExtra = extra[cardId]
+		cardId = hermitExtra.hermitId
+		cardInfo = CARDS[cardId]
+		hermitAttack = cardInfo?.[hermitExtra.type] || null
+	}
+
 	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(
 			runPickProcessSaga,
@@ -53,7 +65,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[cardId]) return
 	}
 
-	yield put(attack(type, result))
+	yield put(attack(type, result, extra))
 }
 
 export default attackSaga

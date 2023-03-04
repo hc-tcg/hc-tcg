@@ -8,6 +8,7 @@ import CARDS from 'server/cards'
 import {validateDeck} from 'server/utils'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
+import ImportExport from './import-export'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
@@ -50,6 +51,7 @@ const Deck = ({setMenuSection}: Props) => {
 	)
 
 	const [deckName, setDeckName] = useState<string>('')
+	const [showImportExport, setShowImportExport] = useState<boolean>(false)
 
 	const commonCards = pickedCards.filter(
 		(card) => TYPED_CARDS[card.cardId].rarity === 'common'
@@ -136,6 +138,9 @@ const Deck = ({setMenuSection}: Props) => {
 						Load
 					</button>
 				</div>
+				<button type="button" onClick={() => setShowImportExport(true)}>
+					Import/Export
+				</button>
 			</div>
 			<div className={css.cards}>
 				<div className={classnames(css.cardColumn, css.allCards)}>
@@ -171,6 +176,13 @@ const Deck = ({setMenuSection}: Props) => {
 					/>
 				</div>
 			</div>
+			{showImportExport ? (
+				<ImportExport
+					pickedCards={pickedCards}
+					setPickedCards={setPickedCards}
+					close={() => setShowImportExport(false)}
+				/>
+			) : null}
 		</div>
 	)
 }

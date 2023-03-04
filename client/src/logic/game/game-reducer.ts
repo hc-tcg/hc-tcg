@@ -14,6 +14,7 @@ type LocalGameState = {
 	opponentId: string
 	gameState: GameState | null
 	availableActions: Array<string>
+	time: number
 	selectedCard: CardT | null
 	openedModal: {
 		id: string
@@ -33,6 +34,7 @@ const defaultState: LocalGameState = {
 	opponentId: '',
 	gameState: null,
 	availableActions: [],
+	time: 0,
 	selectedCard: null,
 	openedModal: null,
 	pickProcess: null,
@@ -53,6 +55,7 @@ const gameReducer = (
 				opponentId: action.payload.opponentId,
 				gameState: action.payload.gameState,
 				availableActions: action.payload.availableActions,
+				time: action.payload.time,
 			}
 			if (
 				state.gameState?.turnPlayerId === action.payload.gameState?.turnPlayerId
@@ -71,6 +74,7 @@ const gameReducer = (
 				opponentId: '',
 				gameState: null,
 				availableActions: [],
+				time: 0,
 				selectedCard: null,
 				openedModal: null,
 				pickProcess: null,

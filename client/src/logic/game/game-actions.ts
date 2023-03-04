@@ -10,7 +10,10 @@ import {MessageInfoT} from 'types/chat'
 
 export const gameState = (gameState: GameStatePayload) => ({
 	type: 'GAME_STATE' as const,
-	payload: gameState,
+	payload: {
+		...gameState,
+		time: Date.now(),
+	},
 })
 
 export const gameStart = () => ({
@@ -53,9 +56,12 @@ export const forfeit = () => ({
 	type: 'FORFEIT' as const,
 })
 
-export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
+export const startAttack = (
+	type: 'zero' | 'primary' | 'secondary',
+	extra?: Record<string, any>
+) => ({
 	type: 'START_ATTACK' as const,
-	payload: {type},
+	payload: {type, extra},
 })
 
 export const showEndGameOverlay = (
@@ -111,10 +117,11 @@ export const endTurn = () => ({
 
 export const attack = (
 	type: 'zero' | 'primary' | 'secondary',
-	pickedCards: Record<string, Array<CardT>>
+	pickedCards: Record<string, Array<PickedCardT>>,
+	extra?: Record<string, any>
 ) => ({
 	type: 'ATTACK' as const,
-	payload: {type, pickedCards},
+	payload: {type, pickedCards, extra},
 })
 
 export const chatMessage = (message: string) => ({

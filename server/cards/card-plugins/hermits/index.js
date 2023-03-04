@@ -91,7 +91,7 @@ const HERMIT_CARDS = [
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
 	new RendogCommonHermitCard(),
-	// new RendogRareHermitCard(),
+	new RendogRareHermitCard(),
 	new StressMonster101CommonHermitCard(),
 	new StressMonster101RareHermitCard(),
 	new TangoTekCommonHermitCard(),
@@ -111,7 +111,7 @@ const HERMIT_CARDS = [
 	new ZedaphPlaysCommonHermitCard(),
 	new ZedaphPlaysRareHermitCard(),
 	new ZombieCleoCommonHermitCard(),
-	// new ZombieCleoRareHermitCard(),
+	new ZombieCleoRareHermitCard(),
 ]
 
 export default HERMIT_CARDS

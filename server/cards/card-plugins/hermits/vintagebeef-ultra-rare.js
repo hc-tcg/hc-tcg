@@ -34,20 +34,19 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {condRef, moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const hasBdubs = currentPlayer.board.rows.some((row) =>
+			const hasBdubs = condRef.player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('bdoubleo100')
 			)
-			const hasDoc = currentPlayer.board.rows.some((row) =>
+			const hasDoc = condRef.player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('docm77')
 			)
-			const hasEtho = currentPlayer.board.rows.some((row) =>
+			const hasEtho = condRef.player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('ethoslab')
 			)
 

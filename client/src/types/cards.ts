@@ -31,7 +31,7 @@ export type AnyCardT = {
 	type: string
 	rarity: CardRarityT
 	id: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'custom'
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent'
 	useReqs?: Array<PickRequirmentT>
 	pickReqs?: Array<PickRequirmentT>
 }

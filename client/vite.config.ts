@@ -1,7 +1,7 @@
 import path from 'path'
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
-import config from '../server-config.json' assert {type: 'json'}
+import {CONFIG} from '../config'
 // import eslint from 'vite-plugin-eslint'
 
 // https://vitejs.dev/config/
@@ -9,8 +9,9 @@ export default defineConfig({
 	plugins: [react()],
 	define: {
 		__ENV__: JSON.stringify(process.env.NODE_ENV),
-		__PORT__: JSON.stringify(config.port),
-		__LIMITS__: JSON.stringify(config.limits),
+		__PORT__: JSON.stringify(CONFIG.port),
+		__LIMITS__: JSON.stringify(CONFIG.limits),
+		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
 	},
 	resolve: {
 		alias: {
@@ -32,6 +33,6 @@ export default defineConfig({
 		minify: 'terser',
 	},
 	server: {
-		port: config.clientDevPort || 3002,
+		port: CONFIG.clientDevPort || 3002,
 	},
 })

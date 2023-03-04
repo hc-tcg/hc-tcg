@@ -35,11 +35,11 @@ class IJevinRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {opponentPlayer, opponentActiveRow} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			const hasOtherHermits =
 				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1

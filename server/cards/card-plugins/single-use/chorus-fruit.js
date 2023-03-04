@@ -36,12 +36,10 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		game.hooks.availableActions.tap(
 			this.id,
 			(availableActions, pastTurnActions) => {
-				const {currentPlayer} = game.ds
+				const {playerActiveRow, currentPlayer} = game.ds
 				const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
 
-				const activeRow =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]
-				const activeIsSleeping = activeRow?.ailments.some(
+				const activeIsSleeping = playerActiveRow?.ailments.some(
 					(a) => a.id === 'sleeping'
 				)
 

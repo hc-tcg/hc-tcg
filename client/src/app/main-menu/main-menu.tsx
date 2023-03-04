@@ -30,53 +30,50 @@ function MainMenu({setMenuSection}: Props) {
 		content = <More setMenuSection={() => setSubsection(null)} />
 	} else {
 		content = (
-			<>
-				{/* Button Container */}
-				<div className={css.buttonContainer}>
-					<button className={css.menuButton} onClick={handleRandomMatchmaking}>
-						Public Game
-					</button>
-					<button className={css.menuButton} onClick={handleCreatePrivateGame}>
-						Create Private Game
-					</button>
-					<button className={css.menuButton} onClick={handleJoinPrivateGame}>
-						Join Private Game
-					</button>
-					<button className={css.menuButton} onClick={handleDeck}>
-						Customize Deck
-					</button>
-
-					{/* Smaller Button Container */}
-					<div className={css.smallButtonContainer}>
-						<button className={css.smallMenuButton} onClick={handleLogOut}>
-							Log Out
+			<div className={`${css.menuBackground} temp`}>
+				<div className={css.mainContainer}>
+					{/* Button Container */}
+					<TcgLogo />
+					<div className={css.mainButtonContainer}>
+						<button
+							className={css.menuButton}
+							onClick={handleRandomMatchmaking}
+						>
+							Public Game
 						</button>
 						<button
-							className={css.smallMenuButton}
-							onClick={() => setSubsection('more')}
+							className={css.menuButton}
+							onClick={handleCreatePrivateGame}
 						>
-							More
+							Create Private Game
 						</button>
+						<button className={css.menuButton} onClick={handleJoinPrivateGame}>
+							Join Private Game
+						</button>
+						<button className={css.menuButton} onClick={handleDeck}>
+							Customize Deck
+						</button>
+
+						{/* Smaller Button Container */}
+						<div className={css.smallButtonContainer}>
+							<button className={css.menuButton} onClick={handleLogOut}>
+								Log Out
+							</button>
+							<button
+								className={css.menuButton}
+								onClick={() => setSubsection('more')}
+							>
+								More
+							</button>
+						</div>
 					</div>
 					<LinkContainer />
 				</div>
-			</>
+			</div>
 		)
 	}
 
-	return (
-		/* Background Image */
-		<div className={css.menuBackground}>
-			{/* Main Container */}
-			<div className={css.menuContainer}>
-				{/* Logo Container */}
-				<TcgLogo />
-				{content}
-				{/* Padding */}
-				<div className={css.bottomPadding}></div>
-			</div>
-		</div>
-	)
+	return content
 }
 
 export default MainMenu

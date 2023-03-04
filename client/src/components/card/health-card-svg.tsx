@@ -1,4 +1,5 @@
 import {HealthCardT} from 'types/cards'
+import {useState, useRef, useMemo, useEffect} from 'react'
 import css from './health-card-svg.module.css'
 import classnames from 'classnames'
 
@@ -6,14 +7,51 @@ export type HealthCardProps = {
 	card: HealthCardT
 }
 
+function useCountdownAnimation(value: number, duration = 500) {
+	const [displayValue, setDisplayValue] = useState(value)
+	const oldValueRef = useRef(value)
+
+	const animationFrame = useMemo(() => {
+		return () => {
+			const start = Date.now()
+			const oldValue = oldValueRef.current
+
+			const animate = () => {
+				const elapsed = Date.now() - start
+				const progress = Math.min(elapsed / duration, 1)
+				const newValue = value
+				const diff = (oldValue - newValue) * progress
+				const currentValue = oldValue - diff
+				setDisplayValue(currentValue)
+				if (progress < 1) {
+					requestAnimationFrame(animate)
+				}
+			}
+
+			requestAnimationFrame(animate)
+			oldValueRef.current = value
+		}
+	}, [value])
+
+	useEffect(() => {
+		animationFrame()
+		return () => {
+			setDisplayValue(value)
+		}
+	}, [animationFrame, value])
+
+	return Math.round(displayValue)
+}
+
 const HealthCard = ({card}: HealthCardProps) => {
-	const {health} = card
+	const displayHealth = useCountdownAnimation(card.health)
+
 	return (
 		<svg
 			className={classnames(css.card, {
-				[css.healthy]: health >= 200,
-				[css.damaged]: health < 200 && health >= 100,
-				[css.dying]: health < 100,
+				[css.healthy]: displayHealth >= 200,
+				[css.damaged]: displayHealth < 200 && displayHealth >= 100,
+				[css.dying]: displayHealth < 100,
 			})}
 			width="100%"
 			height="100%"
@@ -51,7 +89,7 @@ const HealthCard = ({card}: HealthCardProps) => {
 					ry="130"
 				/>
 				<text x="200" y="200" className={css.health}>
-					{card.health}
+					{displayHealth}
 				</text>
 			</g>
 		</svg>

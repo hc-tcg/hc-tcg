@@ -22,13 +22,11 @@ import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
-import root from '../models/root-model'
-import config from '../../server-config.json' assert {type: 'json'}
+import {CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import("types/index")}
  */
 
 // TURN ACTIONS:
@@ -47,7 +45,7 @@ import config from '../../server-config.json' assert {type: 'json'}
  * @returns {number}
  */
 const getTimerForSeconds = (seconds) => {
-	const maxTime = config.limits.maxTurnTime * 1000
+	const maxTime = CONFIG.limits.maxTurnTime * 1000
 	return Date.now() - maxTime + seconds * 1000
 }
 
@@ -109,7 +107,9 @@ function getAvailableActions(game, pastTurnActions) {
 	)
 
 	const {activeRow, rows} = currentPlayer.board
-	const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
+	const isSleeping =
+		activeRow !== null &&
+		rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
 
 	if (hasOtherHermit && !isSleeping) {
 		actions.push('CHANGE_ACTIVE_HERMIT')
@@ -119,12 +119,14 @@ function getAvailableActions(game, pastTurnActions) {
 		actions.push('PLAY_EFFECT_CARD')
 
 		if (turn > 1) {
-			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
-			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
+			const hermitId = rows[activeRow].hermitCard?.cardId
+			const hermitInfo = hermitId ? CARDS[hermitId] || null : null
+			const suId = currentPlayer.board.singleUseCard?.cardId || null
+			const suInfo = suId ? CARDS[suId] || null : null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
 			// only add attack options if not sleeping
-			if (!isSleeping) {
+			if (hermitInfo && !isSleeping) {
 				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 					actions.push('ZERO_ATTACK')
 				}
@@ -373,10 +375,11 @@ function* turnActionsSaga(game, pastTurnActions) {
 			}
 			game._turnStateCache = turnState
 
-			const maxTime = config.limits.maxTurnTime * 1000
+			game.state.turnTime = game.state.turnTime || Date.now()
+			const maxTime = CONFIG.limits.maxTurnTime * 1000
 			const remainingTime = game.state.turnTime + maxTime - Date.now()
 			const graceTime = 1000
-			game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
+			game.state.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield call(sendGameState, game, turnState)
 
@@ -433,7 +436,7 @@ function* turnSaga(game) {
 
 	game.state.turnPlayerId = currentPlayerId
 	game.state.turnTime = Date.now()
-	game.state.turnRemaining = config.limits.maxTurnTime
+	game.state.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {
@@ -461,7 +464,10 @@ function* turnSaga(game) {
 	// Apply damage from ailments
 	// TODO - Armor should prevent ailment damage
 	for (let row of opponentPlayer.board.rows) {
-		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
+		if (
+			row.health &&
+			row.ailments.find((a) => a.id === 'fire' || a.id === 'poison')
+		)
 			row.health -= 20
 	}
 

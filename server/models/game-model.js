@@ -5,7 +5,6 @@ import {DerivedStateModel} from './derived-state-model'
 /**
  * @typedef {import("./root-model").RootModel} RootModel
  * @typedef {import("./player-model").PlayerModel} PlayerModel
- * @typedef {import("types/index")}
  */
 
 export class GameModel {
@@ -33,7 +32,7 @@ export class GameModel {
 		this.task = null
 
 		/** @type {GameState} */
-		this.state = null
+		this.state = /** @type {any} */ (null)
 
 		/** @type {DerivedStateModel} */
 		this.ds = new DerivedStateModel(this)
@@ -79,6 +78,11 @@ export class GameModel {
 			 * @type {SyncBailHook<[TurnAction, FollowUpState]>}
 			 */
 			followUp: new SyncBailHook(['turnAction', 'followUpState']),
+			/**
+			 * Called before attack to enable modifiyng attack state
+			 * @type {SyncHook<[TurnAction, AttackState]>}
+			 */
+			attackState: new SyncHook(['turnAction', 'attackState']),
 			/**
 			 * Called once for each target of an attack (active, afk hermits)
 			 * @type {SyncWaterfallHook<[Object, TurnAction, AttackState], Object>}

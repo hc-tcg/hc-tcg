@@ -5,7 +5,6 @@ import {applySingleUse, discardCard} from '../../utils'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import("types/index")}
  */
 
 export const ATTACK_TO_ACTION = {
@@ -45,12 +44,31 @@ function* attackSaga(game, turnAction, actionState) {
 		? currentPlayer.board.singleUseCard
 		: null
 
-	if (!attackerActiveRow) return 'INVALID'
+	if (!attackerActiveRow || !attackerActiveRow.hermitCard) return 'INVALID'
 
 	const attackerHermitCard = attackerActiveRow.hermitCard
 	const attackerHermitInfo = CARDS[attackerHermitCard.cardId]
 	if (!attackerHermitInfo) return 'INVALID'
 	const strengths = STRENGTHS[attackerHermitInfo.hermitType]
+
+	const attackerRef = {
+		player: currentPlayer,
+		row: attackerActiveRow,
+		hermitCard: attackerHermitCard,
+		hermitInfo: attackerHermitInfo,
+	}
+	const attackState = {
+		...actionState,
+		typeAction,
+		// Represents actual attacker (e.g. Ren/Cleo)
+		attacker: {...attackerRef},
+		// Represents hermit whose attacks are being used
+		moveRef: {...attackerRef},
+		// Represents hermit we use for conditions (e.g. Wels health)
+		condRef: {...attackerRef},
+	}
+
+	game.hooks.attackState.call(turnAction, attackState)
 
 	const makeTarget = (row) => ({
 		row,
@@ -91,16 +109,13 @@ function* attackSaga(game, turnAction, actionState) {
 
 	for (let id in targets) {
 		const target = targets[id]
-		const result = game.hooks.attack.call(target, turnAction, {
-			...actionState,
-			typeAction,
-			attackerActiveRow,
-			attackerHermitCard,
-			attackerHermitInfo,
-		})
+		const result = game.hooks.attack.call(target, turnAction, attackState)
 		const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
 		const hermitAttack = target.applyHermitDamage
 			? attackerHermitInfo[type]?.damage || 0
+			: 0
+		const extraHermitAttack = target.applyHermitDamage
+			? target.extraHermitDamage || 0
 			: 0
 
 		/* --- Damage to target --- */
@@ -112,12 +127,11 @@ function* attackSaga(game, turnAction, actionState) {
 			: targetEffectInfo?.protection?.target || 0
 		const weaknessDamage =
 			strengths.includes(targetHermitInfo.hermitType) &&
-			hermitAttack + target.extraHermitDamage > 0
+			hermitAttack + extraHermitAttack > 0
 				? WEAKNESS_DAMAGE
 				: 0
 		const totalDamage =
-			target.multiplier *
-				(hermitAttack + target.extraHermitDamage + weaknessDamage) +
+			target.multiplier * (hermitAttack + extraHermitAttack + weaknessDamage) +
 			target.extraEffectDamage
 
 		const finalDamage = Math.max(totalDamage - protection, 0)
@@ -164,7 +178,9 @@ function* attackSaga(game, turnAction, actionState) {
 
 		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
 
-		const attackerEffectInfo = CARDS[playerActiveRow.effectCard?.cardId]
+		const attackerEffectInfo = playerActiveRow.effectCard?.cardId
+			? CARDS[playerActiveRow.effectCard?.cardId]
+			: null
 		const attackerProtection = attackerEffectInfo?.protection?.target || 0
 		const attackerBacklash = targetEffectInfo?.protection?.backlash || 0
 
@@ -201,13 +217,7 @@ function* attackSaga(game, turnAction, actionState) {
 		targetResult.totalDamageToAttacker = totalDamageToAttacker
 		targetResult.finalDamageToAttacker = finalDamageToAttacker
 
-		game.hooks.attackResult.call(targetResult, turnAction, {
-			...actionState,
-			typeAction,
-			attackerActiveRow,
-			attackerHermitCard,
-			attackerHermitInfo,
-		})
+		game.hooks.attackResult.call(targetResult, turnAction, attackState)
 	}
 
 	const anyEffectDamage = Object.values(targets).some(

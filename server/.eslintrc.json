@@ -1,0 +1,27 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"prettier"
+	],
+	"overrides": [
+		{
+			"files": ["**/*.js"]
+		}
+	],
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"rules": {
+		"no-case-declarations": "off",
+		"require-yield": "off"
+	},
+	"globals": {
+		"global": true
+	}
+}

@@ -18,23 +18,24 @@ function Login() {
 
 	return (
 		/* Background Image */
-		<div className={css.loginBackground}>
+		<div className={`${css.loginBackground} temp`}>
 			<div className={css.loginContainer}>
 				<TcgLogo />
 				{connecting ? (
 					<div className={css.connecting}>Connecting...</div>
 				) : (
-					<>
-						<form onSubmit={handlePlayerName}>
+					<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<div className={css.customInput}>
 							<input
 								maxLength={25}
 								name="playerName"
-								placeholder="Player name..."
+								placeholder=" "
 								autoFocus
-							/>
-							<button>Next</button>
-						</form>
-					</>
+							></input>
+							<span className={css.placeholder}>Player Name</span>
+						</div>
+						<button type="submit">Next</button>
+					</form>
 				)}
 				<LinkContainer />
 			</div>

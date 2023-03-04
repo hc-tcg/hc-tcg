@@ -21,12 +21,25 @@
  */
 
 /**
- * @typedef {Object} RowState
- * @property {Card | null} hermitCard
+ * @typedef {Object} RowStateWithHermit
+ * @property {Card} hermitCard
  * @property {Card | null} effectCard
- * @property {Array<Card>} itemCards
- * @property {number | null} health
+ * @property {Array<Card|null>} itemCards
+ * @property {number} health
  * @property {Array<Ailment>} ailments
+ */
+
+/**
+ * @typedef {Object} RowStateWithoutHermit
+ * @property {null} hermitCard
+ * @property {null} effectCard
+ * @property {Array<null>} itemCards
+ * @property {null} health
+ * @property {Array<Ailment>} ailments
+ */
+
+/**
+ * @typedef {RowStateWithHermit | RowStateWithoutHermit} RowState
  */
 
 /**
@@ -94,11 +107,19 @@
  */
 
 /**
+ * @typedef {Object} HermitDescriptor
+ * @property {PlayerState} player
+ * @property {RowStateWithHermit} row
+ * @property {Card} hermitCard
+ * @property {Object} hermitInfo
+ */
+
+/**
  * @typedef {Object} AttackStateProperties
  * @property {string} typeAction
- * @property {RowState | null} attackerActiveRow
- * @property {Card | null} attackerHermitCard
- * @property {Object | null} attackerHermitInfo
+ * @property {HermitDescriptor} attacker
+ * @property {HermitDescriptor} moveRef
+ * @property {HermitDescriptor} condRef
  * @typedef {ActionState & AttackStateProperties} AttackState
  */
 

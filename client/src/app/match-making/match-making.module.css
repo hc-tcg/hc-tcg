@@ -1,38 +1,9 @@
-.message {
-	color: white;
-	font-family: Minecraft;
-	margin-bottom: 15px;
-}
-
-.code {
-	background: black;
-	color: white;
-	border: 1px solid orange;
-	padding: 5px 15px;
-	font-size: 20px;
-	letter-spacing: 3px;
-	font-family: Minecraft;
-	cursor: pointer;
-}
-
-.options {
-	margin-top: 10px;
-	display: flex;
-	justify-content: center;
-	gap: 5px;
-}
-
-.invalidCode {
-	border-color: red;
-	outline-color: red;
-}
-
 .matchMakingBackground {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
-	margin: 0px;
+	margin: 0;
 
 	height: 100vh;
 	width: 100vw;
@@ -40,11 +11,87 @@
 	background-image: url('/images/menu-background.png');
 	background-size: cover;
 	background-position: center;
+
+	font-family: Minecraft;
 }
 
 .matchMakingContainer {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 30px;
+	justify-content: center;
+
+	height: 100%;
+}
+
+.message {
+	color: white;
+	font-size: 2.5vh;
+	margin: 7vh 0 3vh;
+}
+
+.matchmakingButton {
+	font-size: 2vh;
+	width: 11vh;
+	height: 4.5vh;
+	line-height: 100%;
+	padding: 0 2vh;
+}
+
+@media screen and (max-width: 80vh) {
+	.message {
+		font-size: 2vh;
+	}
+}
+
+.code {
+	background: rgb(30, 30, 30);
+	color: white;
+	border: 0.5vh solid #333;
+	border-radius: 0.5vh;
+
+	padding: 1vh 1.5vh;
+	margin-bottom: 0.5vh;
+
+	font-size: 3vh;
+	text-align: center;
+	letter-spacing: 0.2vh;
+	cursor: pointer;
+}
+
+.options {
+	width: 100%;
+	margin-top: 3vh;
+	display: flex;
+	justify-content: space-around;
+}
+
+.matchMakingContainer form {
+	width: 25vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.matchMakingContainer input {
+	width: 25vh;
+	text-align: center;
+	border-radius: 0.5vh;
+	border: 0.5vh solid rgb(30, 30, 30);
+	height: 4vh;
+}
+
+.invalidText {
+	color: #900000;
+	text-shadow: 0.2vh 0.2vh #333;
+	font-size: 2vh;
+	margin: 1vh 0 0;
+}
+
+.hiddenInvalidText {
+	display: none;
+}
+
+.invalidCode {
+	border: 0.5vh solid #900000 !important;
 }
