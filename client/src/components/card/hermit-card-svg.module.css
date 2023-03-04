@@ -18,7 +18,6 @@
 .name {
 	text-transform: uppercase;
 	letter-spacing: 0.07em;
-	font-weight: bold;
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
@@ -27,7 +26,6 @@
 .health {
 	fill: rgb(246, 4, 1);
 	font-size: 45px;
-	font-weight: bold;
 	text-anchor: end;
 	letter-spacing: 0.0888888em;
 }
@@ -38,24 +36,22 @@
 
 .hermitAttacks text {
 	font-size: 45px;
-	font-weight: bold;
 }
 
 text.attackName {
 	font-size: 39px;
 	text-transform: uppercase;
-	font-weight: bold;
 	fill: black;
 	text-anchor: middle;
 }
 
 text.attackName.long {
-	letter-spacing: 0.033em;
+	letter-spacing: 0.013em;
+	font-family: BangersRegular !important;
 }
 
 .attackDamage {
 	text-transform: uppercase;
-	font-weight: bold;
 	fill: rgb(246, 4, 1);
 	text-anchor: end;
 	letter-spacing: 0.0888888em;

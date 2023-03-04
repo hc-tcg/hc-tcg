@@ -14,8 +14,13 @@
 }
 
 @font-face {
-	font-family: Bangers-Regular;
-	src: url(/fonts/Bangers-Regular.otf);
+	font-family: BangersRegular;
+	src: url(/fonts/BangersRegular.otf);
+}
+
+@font-face {
+	font-family: BangersBold;
+	src: url(/fonts/BangersBold.otf);
 }
 
 body {
