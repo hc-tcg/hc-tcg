@@ -13,6 +13,11 @@
 	src: url(/fonts/MinecraftItalic-R8Mo.otf);
 }
 
+@font-face {
+	font-family: Bangers-Regular;
+	src: url(/fonts/Bangers-Regular.otf);
+}
+
 body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
