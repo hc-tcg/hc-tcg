@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardInfoT} from 'types/cards'
 import {CardT} from 'types/game-state'
@@ -52,6 +52,18 @@ const Deck = ({setMenuSection}: Props) => {
 
 	const [deckName, setDeckName] = useState<string>('')
 	const [showImportExport, setShowImportExport] = useState<boolean>(false)
+	const [loadedDecks, setLoadedDecks] = useState<Array<string>>([])
+
+	const loadSavedDecks = () => {
+		const deckList: Array<string> = (Object.keys(localStorage) as any)
+			.map((key: string) => {
+				if (!key.startsWith('Loadout_')) return null
+				const deckName = key?.replace(/Loadout_/g, '')
+				return deckName
+			})
+			.filter(Boolean)
+		setLoadedDecks(deckList.sort())
+	}
 
 	const commonCards = pickedCards.filter(
 		(card) => TYPED_CARDS[card.cardId].rarity === 'common'
@@ -93,7 +105,7 @@ const Deck = ({setMenuSection}: Props) => {
 	}
 	const saveDeck = () => {
 		localStorage.setItem('Loadout_' + deckName, JSON.stringify(pickedCards))
-		console.log(JSON.stringify(pickedCards))
+		loadSavedDecks()
 	}
 	const loadDeck = () => {
 		const deck = localStorage.getItem('Loadout_' + deckName)
@@ -109,6 +121,8 @@ const Deck = ({setMenuSection}: Props) => {
 			cardInstance: card.id,
 		})
 	)
+
+	useEffect(() => loadSavedDecks(), [])
 
 	const sortedAllCards = sortCards(allCards)
 	const sortedDeckCards = sortCards(pickedCards)
@@ -130,7 +144,13 @@ const Deck = ({setMenuSection}: Props) => {
 						onBlur={(e) => {
 							setDeckName(e.target.value)
 						}}
+						list="deck-list"
 					/>
+					<datalist id="deck-list">
+						{loadedDecks.map((deckName: string) => (
+							<option key={deckName} value={deckName} />
+						))}
+					</datalist>
 					<button type="button" onClick={saveDeck}>
 						Save
 					</button>

@@ -9,6 +9,12 @@
 	display: flex;
 	gap: 15px;
 	align-items: center;
+
+	position: sticky;
+	top: 0;
+	z-index: 15;
+	background: #ccc;
+	box-shadow: 0 3px 3px #333;
 }
 
 .limits {
