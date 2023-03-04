@@ -39,15 +39,16 @@ class KeralisRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, attacker, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const lastTurnUsed = currentPlayer.custom[attackerHermitCard.cardInstance]
+			const lastTurnUsed =
+				currentPlayer.custom[attacker.hermitCard.cardInstance]
 			if (lastTurnUsed && lastTurnUsed + 2 >= game.state.turn) return target
-			currentPlayer.custom[attackerHermitCard.cardInstance] = game.state.turn
+			currentPlayer.custom[attacker.hermitCard.cardInstance] = game.state.turn
 
 			const activeRow = currentPlayer.board.activeRow
 			const anyAfkHermits = currentPlayer.board.rows.some(

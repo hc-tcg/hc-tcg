@@ -107,11 +107,19 @@
  */
 
 /**
+ * @typedef {Object} HermitDescriptor
+ * @property {PlayerState} player
+ * @property {RowStateWithHermit} row
+ * @property {Card} hermitCard
+ * @property {Object} hermitInfo
+ */
+
+/**
  * @typedef {Object} AttackStateProperties
  * @property {string} typeAction
- * @property {RowStateWithHermit} attackerActiveRow
- * @property {Card} attackerHermitCard
- * @property {Object} attackerHermitInfo
+ * @property {HermitDescriptor} attacker
+ * @property {HermitDescriptor} moveRef
+ * @property {HermitDescriptor} condRef
  * @typedef {ActionState & AttackStateProperties} AttackState
  */
 

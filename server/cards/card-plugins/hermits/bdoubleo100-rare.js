@@ -36,33 +36,27 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {
-				attackerHermitCard,
-				attackerActiveRow,
-				attackerHermitInfo,
-				typeAction,
-			} = attackState
+			const {currentPlayer, playerHermitInfo} = game.ds
+			const {attacker, moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 			// shreep - instantly heal to max hp
 
 			// e.g. if bed was used
-			if (attackerActiveRow.ailments.find((a) => a.id === 'sleeping'))
-				return target
+			if (attacker.row.ailments.find((a) => a.id === 'sleeping')) return target
 
 			// store current turn to disable Shreep for one turn when it is over
 			const conInfo = currentPlayer.custom[this.id] || {}
-			conInfo[attackerHermitCard.cardInstance] = game.state.turn
+			conInfo[attacker.hermitCard.cardInstance] = game.state.turn
 			currentPlayer.custom[this.id] = conInfo
 
-			attackerActiveRow.health = attackerHermitInfo.health
-			attackerActiveRow.ailments = attackerActiveRow.ailments.filter(
+			attacker.row.health = attacker.hermitInfo.health
+			attacker.row.ailments = attacker.row.ailments.filter(
 				(a) => a.id !== 'sleeping'
 			)
-			attackerActiveRow.ailments.push({id: 'sleeping', duration: 2})
+			attacker.row.ailments.push({id: 'sleeping', duration: 2})
 		})
 
 		// Disable shreep attack consecutively

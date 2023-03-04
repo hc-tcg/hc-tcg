@@ -53,15 +53,18 @@ class RendogRareHermitCard extends HermitCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {
 				currentPlayer,
+				opponentPlayer,
 				playerActiveRow,
 				opponentActiveRow,
+				opponentHermitCard,
 				opponentHermitInfo,
 			} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return target
+			if (!opponentHermitCard) return target
 			if (!playerActiveRow || !playerActiveRow.hermitCard) return target
 
 			// Find out if opponent has a special move and if it sprimary or secondary
@@ -74,12 +77,20 @@ class RendogRareHermitCard extends HermitCard {
 			// apply opponents power
 			const singleUse = currentPlayer.board.singleUseCard
 			currentPlayer.board.singleUseCard = null
-			playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
+			// playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
+			const opponentRef = {
+				player: opponentPlayer,
+				row: opponentActiveRow,
+				hermitCard: opponentHermitCard,
+				hermitInfo: opponentHermitInfo,
+			}
 			const result = game.hooks.attack.call(target, turnAction, {
 				...attackState,
 				typeAction: power.typeAction,
+				moveRef: opponentRef,
+				condRef: opponentRef,
 			})
-			playerActiveRow.hermitCard.cardId = this.id
+			// playerActiveRow.hermitCard.cardId = this.id
 			currentPlayer.board.singleUseCard = singleUse
 
 			return result

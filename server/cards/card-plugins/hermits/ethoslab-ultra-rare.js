@@ -35,12 +35,12 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer, 3)
 			currentPlayer.coinFlips[this.id] = coinFlip
 

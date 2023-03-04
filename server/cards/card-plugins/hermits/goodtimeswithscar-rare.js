@@ -43,17 +43,17 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		// scar attacks
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, attacker, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
-			if (currentPlayer.custom[attackerHermitCard.cardInstance]) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
+			if (currentPlayer.custom[attacker.hermitCard.cardInstance]) return target
 
 			// Create coin flip beforehand to apply fortune if any
 			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.custom[attackerHermitCard.cardInstance] = coinFlip
-			currentPlayer.custom[this.id] = attackerHermitCard.cardInstance
+			currentPlayer.custom[attacker.hermitCard.cardInstance] = coinFlip
+			currentPlayer.custom[this.id] = attacker.hermitCard.cardInstance
 
 			return target
 		})
@@ -78,7 +78,6 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		// After attack check if scar's ability was used
 		game.hooks.attackResult.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {attackerHermitCard} = attackState
 
 			const instance = opponentPlayer.custom[this.id]
 			if (!instance) return target
