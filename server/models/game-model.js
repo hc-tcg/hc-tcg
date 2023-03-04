@@ -79,6 +79,11 @@ export class GameModel {
 			 */
 			followUp: new SyncBailHook(['turnAction', 'followUpState']),
 			/**
+			 * Called before attack to enable modifiyng attack state
+			 * @type {SyncHook<[TurnAction, AttackState]>}
+			 */
+			attackState: new SyncHook(['turnAction', 'attackState']),
+			/**
 			 * Called once for each target of an attack (active, afk hermits)
 			 * @type {SyncWaterfallHook<[Object, TurnAction, AttackState], Object>}
 			 */

@@ -61,12 +61,14 @@ function* attackSaga(game, turnAction, actionState) {
 		...actionState,
 		typeAction,
 		// Represents actual attacker (e.g. Ren/Cleo)
-		attacker: attackerRef,
+		attacker: {...attackerRef},
 		// Represents hermit whose attacks are being used
-		moveRef: attackerRef,
+		moveRef: {...attackerRef},
 		// Represents hermit we use for conditions (e.g. Wels health)
-		condRef: attackerRef,
+		condRef: {...attackerRef},
 	}
+
+	game.hooks.attackState.call(turnAction, attackState)
 
 	const makeTarget = (row) => ({
 		row,

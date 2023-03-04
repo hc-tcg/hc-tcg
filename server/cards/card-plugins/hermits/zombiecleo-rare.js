@@ -47,54 +47,71 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {TurnAction} turnAction
+	 * @param {AttackState} attackState
+	 */
+	validate(game, turnAction, attackState) {
+		const {currentPlayer} = game.ds
+		const {moveRef, typeAction, availableActions} = attackState
+		const extra = turnAction.payload.extra?.[this.id]
+
+		if (!extra) return
+
+		const allyHermitInfo = CARDS[extra.hermitId]
+		const allyRow = currentPlayer.board.rows.find(
+			(row) => row.hermitCard?.cardId === extra.hermitId
+		)
+		if (!allyHermitInfo || !allyRow || !allyRow.hermitCard) return null
+
+		// Find out if opponent has a special move and if it sprimary or secondary
+		const power = this.getAllyPower(allyHermitInfo, extra.type)
+		if (!power) return
+
+		// Attack must be available
+		/** @type {*} */
+		const attackKey = allyHermitInfo.id + ':' + power.typeAction
+		if (!availableActions.includes(attackKey)) return null
+
+		return {power, allyRow, allyHermitInfo}
+	}
+
+	/**
+	 * @param {GameModel} game
 	 */
 	register(game) {
+		game.hooks.attackState.tap(this.id, (turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {moveRef, typeAction} = attackState
+			if (moveRef.hermitCard.cardId !== this.id) return null
+			if (typeAction !== 'SECONDARY_ATTACK') return null
+
+			const result = this.validate(game, turnAction, attackState)
+			if (!result) return
+			const {power, allyRow, allyHermitInfo} = result
+
+			// apply afk hermits power
+			attackState.typeAction = power.typeAction
+			attackState.moveRef = {
+				player: currentPlayer,
+				row: allyRow,
+				hermitCard: allyRow.hermitCard,
+				hermitInfo: allyHermitInfo,
+			}
+		})
+
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, playerActiveRow} = game.ds
-			const {moveRef, typeAction, availableActions} = attackState
-			const extra = turnAction.payload.extra?.[this.id]
+			const {attacker, moveRef} = attackState
+			if (attacker.hermitCard.cardId !== this.id) return null
+			if (moveRef.hermitCard.cardId === this.id) return null
 
-			if (!extra) return target
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			if (!playerActiveRow || !playerActiveRow.hermitCard) return target
-
-			const allyHermitInfo = CARDS[extra.hermitId]
-			const allyRow = currentPlayer.board.rows.find(
-				(row) => row.hermitCard?.cardId === extra.hermitId
-			)
-			if (!allyHermitInfo || !allyRow || !allyRow.hermitCard) return null
-
-			// Find out if opponent has a special move and if it sprimary or secondary
-			const power = this.getAllyPower(allyHermitInfo, extra.type)
-			if (!power) return target
-
-			// Attack must be available
-			/** @type {*} */
-			const attackKey = allyHermitInfo.id + ':' + power.typeAction
-			if (!availableActions.includes(attackKey)) return target
+			const result = this.validate(game, turnAction, attackState)
+			if (!result) return
+			const {power} = result
 
 			// apply afk hermits damage
 			target.extraHermitDamage += power.attack.damage
 
-			// apply afk hermits power
-			const singleUse = currentPlayer.board.singleUseCard
-			currentPlayer.board.singleUseCard = null
-			// playerActiveRow.hermitCard.cardId = allyHermitInfo.id
-			const result = game.hooks.attack.call(target, turnAction, {
-				...attackState,
-				typeAction: power.typeAction,
-				moveRef: {
-					player: currentPlayer,
-					row: allyRow,
-					hermitCard: allyRow.hermitCard,
-					hermitInfo: allyHermitInfo,
-				},
-			})
-			// playerActiveRow.hermitCard.cardId = this.id
-			currentPlayer.board.singleUseCard = singleUse
-
-			return result
+			return target
 		})
 
 		game.hooks.availableActions.tap(

@@ -50,22 +50,35 @@ class RendogRareHermitCard extends HermitCard {
 	 * @param {GameModel} game
 	 */
 	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {
-				currentPlayer,
-				opponentPlayer,
-				playerActiveRow,
-				opponentActiveRow,
-				opponentHermitCard,
-				opponentHermitInfo,
-			} = game.ds
+		game.hooks.attackState.tap(this.id, (turnAction, attackState) => {
 			const {moveRef, typeAction} = attackState
+			if (moveRef.hermitCard.cardId !== this.id) return null
+			if (typeAction !== 'SECONDARY_ATTACK') return null
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return target
-			if (!opponentHermitCard) return target
-			if (!playerActiveRow || !playerActiveRow.hermitCard) return target
+			const {opponentActiveRow, opponentHermitCard, opponentHermitInfo} =
+				game.ds
+			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
+			if (!opponentHermitCard || !opponentHermitInfo) return
+
+			// Find out if opponent has a special move and if it sprimary or secondary
+			const power = this.getOpponentsPower(game)
+			if (!power) return
+
+			const opponentRef = {
+				player: game.ds.opponentPlayer,
+				row: opponentActiveRow,
+				hermitCard: opponentHermitCard,
+				hermitInfo: opponentHermitInfo,
+			}
+			attackState.typeAction = power.typeAction
+			attackState.moveRef = opponentRef
+			attackState.condRef = opponentRef
+		})
+
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {attacker, moveRef, typeAction} = attackState
+			if (attacker.hermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId === this.id) return target
 
 			// Find out if opponent has a special move and if it sprimary or secondary
 			const power = this.getOpponentsPower(game)
@@ -74,26 +87,7 @@ class RendogRareHermitCard extends HermitCard {
 			// apply opponents damage
 			target.extraHermitDamage += power.attack.damage
 
-			// apply opponents power
-			const singleUse = currentPlayer.board.singleUseCard
-			currentPlayer.board.singleUseCard = null
-			// playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
-			const opponentRef = {
-				player: opponentPlayer,
-				row: opponentActiveRow,
-				hermitCard: opponentHermitCard,
-				hermitInfo: opponentHermitInfo,
-			}
-			const result = game.hooks.attack.call(target, turnAction, {
-				...attackState,
-				typeAction: power.typeAction,
-				moveRef: opponentRef,
-				condRef: opponentRef,
-			})
-			// playerActiveRow.hermitCard.cardId = this.id
-			currentPlayer.board.singleUseCard = singleUse
-
-			return result
+			return target
 		})
 
 		game.hooks.availableActions.tap(
