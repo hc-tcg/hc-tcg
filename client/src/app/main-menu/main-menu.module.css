@@ -33,6 +33,7 @@
 	justify-content: space-between;
 }
 .smallButtonContainer .menuButton {
+	width: calc(50% - 1.25vh);
 	margin: 0 1.25vh;
 	flex-grow: 1;
 }
