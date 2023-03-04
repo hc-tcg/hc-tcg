@@ -5,7 +5,7 @@
 	"type": "module",
 	"main": "server/index.js",
 	"engines": {
-		"node": ">=16"
+		"node": ">=16 <19"
 	},
 	"dependencies": {
 		"@floating-ui/react": "^0.19.1",
