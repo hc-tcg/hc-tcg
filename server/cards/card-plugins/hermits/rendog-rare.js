@@ -32,12 +32,11 @@ class RendogRareHermitCard extends HermitCard {
 	}
 
 	/**
-	 * @param {GameModel} game
+	 * @param {*} targetInfo
 	 */
-	getOpponentsPower(game) {
-		const {opponentHermitInfo} = game.ds
-		if (!opponentHermitInfo) return null
-		const attacks = [opponentHermitInfo.primary, opponentHermitInfo.secondary]
+	getOpponentsPower(targetInfo) {
+		if (!targetInfo) return null
+		const attacks = [targetInfo.primary, targetInfo.secondary]
 		const powerIndex = attacks.findIndex((a) => a.power)
 		if (powerIndex === -1) return null
 		return {
@@ -61,7 +60,8 @@ class RendogRareHermitCard extends HermitCard {
 			if (!opponentHermitCard || !opponentHermitInfo) return
 
 			// Find out if opponent has a special move and if it sprimary or secondary
-			const power = this.getOpponentsPower(game)
+			const targetInfo = game.ds.opponentHermitInfo
+			const power = this.getOpponentsPower(targetInfo)
 			if (!power) return
 
 			const opponentRef = {
@@ -81,10 +81,11 @@ class RendogRareHermitCard extends HermitCard {
 			if (moveRef.hermitCard.cardId === this.id) return target
 
 			// Find out if opponent has a special move and if it sprimary or secondary
-			const power = this.getOpponentsPower(game)
+			const power = this.getOpponentsPower(moveRef.hermitInfo)
 			if (!power) return target
 
 			// apply opponents damage
+			// Note that this is currently added to EVERY target, but ends up being aplied only to one thanks to `applyHermitDamage` property
 			target.extraHermitDamage += power.attack.damage
 
 			return target
@@ -119,7 +120,8 @@ class RendogRareHermitCard extends HermitCard {
 					return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
 				}
 
-				const power = this.getOpponentsPower(game)
+				const targetInfo = game.ds.opponentHermitInfo
+				const power = this.getOpponentsPower(targetInfo)
 
 				// Can't use Ren's ability for opponent's common Hermits
 				if (!power) {
