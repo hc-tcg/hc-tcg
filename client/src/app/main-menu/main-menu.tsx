@@ -10,6 +10,7 @@ import {logout} from 'logic/session/session-actions'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'
 import More from './main-menu-more'
+import Beef from 'components/beef'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -68,6 +69,7 @@ function MainMenu({setMenuSection}: Props) {
 						</div>
 					</div>
 					<LinkContainer />
+					<Beef />
 				</div>
 			</div>
 		)

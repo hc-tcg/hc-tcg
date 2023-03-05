@@ -125,13 +125,21 @@
 		align-items: center;
 	}
 
+	.mainButtonContainer {
+		margin-top: 7.5vh;
+	}
+
 	.mainContainer {
 		margin: 0;
 	}
 }
 @media screen and (max-width: 80vh) {
+	.menuButton {
+		margin-bottom: 2vh;
+	}
+
 	.mainButtonContainer {
-		margin-top: 6vh;
+		margin-top: 5vh;
 	}
 	.smallButtonContainer {
 		flex-direction: column-reverse;

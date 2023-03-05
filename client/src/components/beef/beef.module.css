@@ -1,0 +1,47 @@
+.beef {
+	display: flex;
+	position: fixed;
+	bottom: 1.5vh;
+	right: 1.5vh;
+	font-size: 1.8vh;
+	align-items: center;
+	gap: 1vh;
+	font-family: Minecraft;
+	color: white;
+	text-shadow: 1px 1px 2px black, -1px -1px 2px black;
+	text-decoration: none;
+}
+
+.avatar {
+	box-shadow: 0 0 2px black;
+	width: 7vh;
+	height: 7vh;
+	border-radius: 3.5vh;
+}
+
+.beef:hover {
+	text-decoration: underline;
+}
+
+.beef:hover .avatar {
+	box-shadow: 0 0 3px 1px black;
+}
+
+@media screen and (max-width: 150vh) {
+	.beef {
+		position: static;
+		margin: 0 auto;
+		margin-top: 2vh;
+	}
+}
+
+@media screen and (max-width: 80vh) {
+	.beef {
+		font-size: 1.5vh;
+	}
+	.avatar {
+		width: 5vh;
+		height: 5vh;
+		border-radius: 2.5vh;
+	}
+}
