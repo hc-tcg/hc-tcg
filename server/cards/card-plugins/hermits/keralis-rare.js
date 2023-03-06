@@ -82,6 +82,22 @@ class KeralisRareHermitCard extends HermitCard {
 
 			return 'DONE'
 		})
+
+		// Disable Time Skip attack consecutively
+		game.hooks.availableActions.tap(this.id, (availableActions) => {
+			const {currentPlayer, playerHermitCard} = game.ds
+
+			if (!playerHermitCard || playerHermitCard.cardId !== this.id)
+				return availableActions
+
+			const lastTurnUsed = currentPlayer.custom[playerHermitCard.cardInstance]
+			const notReady = lastTurnUsed && game.state.turn <= lastTurnUsed + 2
+
+			// we want to make changes only if time skip was used by the hermit
+			return notReady
+				? availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+				: availableActions
+		})
 	}
 }
 
