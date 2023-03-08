@@ -1,23 +1,20 @@
 import classnames from 'classnames'
 import CARDS from 'server/cards'
 import Card from 'components/card'
-import {CardInfoT} from 'common/types/cards'
+import {SlotTypeT} from 'common/types/pick-process'
 import {CardT} from 'common/types/game-state'
 import {RowState} from 'common/types/game-state'
 import css from './board.module.css'
 
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-
-export type SlotType = 'item' | 'hermit' | 'effect' | 'health' | 'single_use'
 export type SlotProps = {
-	type: SlotType
+	type: SlotTypeT
 	onClick?: () => void
 	card: CardT | null
 	rowState?: RowState
 	active?: boolean
 }
 const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
-	let cardInfo = card?.cardId ? TYPED_CARDS[card.cardId] : null
+	let cardInfo = card?.cardId ? CARDS[card.cardId] : null
 	if (type === 'health' && rowState?.health) {
 		cardInfo = {
 			name: rowState.health + ' Health',

@@ -1,15 +1,13 @@
 import {useSelector} from 'react-redux'
 import {useState} from 'react'
-import {CardInfoT, HermitCardT} from 'common/types/cards'
+import {HermitCardT} from 'common/types/cards'
 import classnames from 'classnames'
-import CARDS from 'server/cards'
+import {HERMIT_CARDS} from 'server/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import Attack from './attack'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type HermitExtra = {
 	hermitId: string
@@ -33,7 +31,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = TYPED_CARDS[
+	const playerHermitInfo = HERMIT_CARDS[
 		activeRow.hermitCard.cardId
 	] as HermitCardT
 
@@ -41,7 +39,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const eaResult = extraAttacks.reduce((agg, extra) => {
 		const [hermitId, action] = extra.split(':')
-		const hermitInfo = TYPED_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
 		if (!hermitInfo) throw new Error('Invalid extra attack')
 		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
 		const hermitFullName = hermitInfo.id.split('_')[0]
@@ -60,7 +58,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	}, {} as Record<string, any>)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
-		const hermitInfo = TYPED_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
 		const hermitFullName = hermitInfo.id.split('_')[0]
 		return (
 			<img

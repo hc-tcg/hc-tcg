@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {useSelector} from 'react-redux'
-import {CardInfoT, EffectCardT, HermitCardT} from 'common/types/cards'
-import CARDS from 'server/cards'
+import {EffectCardT, HermitCardT} from 'common/types/cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
 import Strengths from 'server/const/strengths'
 import {
 	getPlayerActiveRow,
@@ -12,8 +12,6 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import {HermitAttackT} from 'common/types/cards'
 import css from './attack-modal.module.css'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type Props = {
 	attackInfo: HermitAttackT | null
@@ -34,19 +32,19 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	if (!activeRow || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = TYPED_CARDS[
+	const playerHermitInfo = HERMIT_CARDS[
 		activeRow.hermitCard.cardId
 	] as HermitCardT
-	const opponentHermitInfo = TYPED_CARDS[
+	const opponentHermitInfo = HERMIT_CARDS[
 		opponentRow.hermitCard.cardId
 	] as HermitCardT
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
 	const opponentEffectInfo = opponentRow.effectCard
-		? (TYPED_CARDS[opponentRow.effectCard.cardId] as EffectCardT)
+		? (EFFECT_CARDS[opponentRow.effectCard.cardId] as EffectCardT)
 		: null
 	const singleUseInfo = singleUseCard
-		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
+		? (SINGLE_USE_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
 
 	const suAttackInfo =
@@ -63,7 +61,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 			? 0
 			: opponentEffectInfo?.protection?.target || 0
 
-	const hasWeakness = Strengths[playerHermitInfo.hermitType].includes(
+	const hasWeakness = Strengths[playerHermitInfo.hermitType]?.includes(
 		opponentHermitInfo.hermitType
 	)
 

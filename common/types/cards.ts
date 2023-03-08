@@ -13,7 +13,6 @@ export type HermitTypeT =
 	| 'prankster'
 	| 'miner'
 	| 'explorer'
-	| 'any'
 
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
 
@@ -34,7 +33,7 @@ export type AnyCardT = {
 	type: string
 	rarity: CardRarityT
 	id: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent'
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
 	useReqs?: Array<PickRequirmentT>
 	pickReqs?: Array<PickRequirmentT>
 }

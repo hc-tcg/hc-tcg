@@ -167,7 +167,7 @@ const validEmpty = (req, card) => {
  * @template Y
  * @template {boolean} [E=false]
  * @param {GameState} gameState
- * @param {Partial<PickRequirmentT> & { target: T, type: Y, empty?: E }} req
+ * @param {Partial<PickRequirmentT> & { target?: T, type?: Y, empty?: E }} req
  * @param {PickedCardT} pickedCard
  * @returns {pickedCard is (T extends 'hand'
  *   ? HandPickedCardT

@@ -1,7 +1,7 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInfoT, HermitCardT} from 'common/types/cards'
-import CARDS from 'server/cards'
+import {HermitCardT} from 'common/types/cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -12,8 +12,6 @@ import {
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
 import HermitSelector from './hermit-selector'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type Props = {
 	closeModal: () => void
@@ -31,12 +29,14 @@ function AttackModal({closeModal}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = TYPED_CARDS[
+	const playerHermitInfo = HERMIT_CARDS[
 		activeRow.hermitCard.cardId
 	] as HermitCardT
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
-	const singleUseInfo = singleUseCard ? TYPED_CARDS[singleUseCard.cardId] : null
+	const singleUseInfo = singleUseCard
+		? SINGLE_USE_CARDS[singleUseCard.cardId]
+		: null
 
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))
