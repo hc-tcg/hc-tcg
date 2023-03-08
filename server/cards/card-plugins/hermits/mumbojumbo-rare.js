@@ -1,6 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
-import CARDS from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -56,7 +56,7 @@ class MumboJumboRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return false
 				const isAfk = index !== condRef.player.board.activeRow
 				const isPranskter =
-					CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
+					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 				return isAfk && isPranskter
 			})
 			if (!hasAfkPranskter) return target

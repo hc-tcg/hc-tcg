@@ -1,6 +1,6 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInfoT, HermitCardT} from 'types/cards'
+import {CardInfoT, HermitCardT} from 'common/types/cards'
 import CARDS from 'server/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'

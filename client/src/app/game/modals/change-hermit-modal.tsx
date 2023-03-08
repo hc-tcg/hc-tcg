@@ -2,8 +2,8 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
-import {PickedCardT} from 'types/pick-process'
-import {CardInfoT} from 'types/cards'
+import {PickedCardT} from 'common/types/pick-process'
+import {CardInfoT} from 'common/types/cards'
 import CARDS from 'server/cards'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>

@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames'
-import {CardInfoT, HermitTypeT} from 'types/cards'
+import {CardInfoT, HermitTypeT} from 'common/types/cards'
 import STRENGTHS from 'server/const/strengths'
 import css from './card-tooltip.module.css'
 

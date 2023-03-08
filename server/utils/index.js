@@ -1,6 +1,13 @@
 import CARDS from '../cards'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/game-state').PlayerState} PlayerState
+ * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
+ * @typedef {import('common/types/cards').ItemCardT} ItemCardT
+ */
+
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
 	return (
@@ -13,7 +20,7 @@ export function hasEnoughItems(itemCards, cost) {
 	// transform item cards into cost
 	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
 	const energy = itemCardIds.reduce((result, cardId) => {
-		const itemCard = CARDS[cardId]
+		const itemCard = /** @type {ItemCardT} */ (CARDS[cardId])
 		result.push(itemCard.hermitType)
 		// all rare item cards are x2
 		if (itemCard.rarity === 'rare') {
@@ -118,11 +125,18 @@ export function discardSingleUse(game, playerState) {
 	}
 }
 
+/**
+ * @param {PlayerState} currentPlayer
+ * @param {number} times
+ * @returns {Array<CoinFlipT>}
+ */
 export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
 	const fortune = !!currentPlayer.custom['fortune']
+	/** @type {Array<CoinFlipT>} */
 	const result = []
 	for (let i = 0; i < times; i++) {
+		/** @type {CoinFlipT} */
 		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
 		result.push(coinFlip)
 	}

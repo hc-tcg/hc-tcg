@@ -1,12 +1,12 @@
-import {GameStatePayload} from 'types/game-state'
+import {GameStatePayload} from 'common/types/game-state'
 import {
 	CardT,
 	GameEndOutcomeT,
 	GameEndReasonT,
 	CurrentCoinFlipT,
-} from 'types/game-state'
-import {PickProcessT, PickedCardT} from 'types/pick-process'
-import {MessageInfoT} from 'types/chat'
+} from 'common/types/game-state'
+import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {MessageInfoT} from 'common/types/chat'
 
 export const gameState = (gameState: GameStatePayload) => ({
 	type: 'GAME_STATE' as const,

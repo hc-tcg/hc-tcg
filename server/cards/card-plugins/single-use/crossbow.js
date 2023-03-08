@@ -1,7 +1,9 @@
 import SingleUseCard from './_single-use-card'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 class CrossbowSingleUseCard extends SingleUseCard {
@@ -16,12 +18,12 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		this.damage = {target: 40, afkTarget: 10}
 
 		this.pickOn = 'attack'
-		this.useReqs = [
+		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
-		this.pickReqs = [
+		])
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1, active: false},
-		]
+		])
 	}
 
 	/**
@@ -41,6 +43,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			const crossbowPickedCards = pickedCardsInfo[this.id] || []
 			if (crossbowPickedCards.length !== 1) return target
 			const pickedHermit = crossbowPickedCards[0]
+			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
 			if (pickedHermit.row !== target.row) return target
 
 			target.extraEffectDamage += this.damage.afkTarget

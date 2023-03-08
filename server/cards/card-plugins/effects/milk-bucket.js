@@ -1,7 +1,9 @@
 import EffectCard from './_effect-card'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -13,7 +15,9 @@ class MilkBucketEffectCard extends EffectCard {
 				'Stops POISON.\n\nCan be used on active or AFK Hermits. Discard after Use.\n\nCan also be attached to prevent POISON.\n\nDiscard after user is knocked out.',
 		})
 		this.pickOn = 'apply'
-		this.pickReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'player', type: 'hermit', amount: 1},
+		])
 	}
 
 	/**
@@ -38,9 +42,13 @@ class MilkBucketEffectCard extends EffectCard {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
 			const {pickedCardsInfo} = actionState
-			if (singleUseInfo.id === this.id) {
+			if (singleUseInfo?.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
+
+				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
+					return 'INVALID'
+
 				const {row} = suPickedCards[0]
 				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 				return 'DONE'

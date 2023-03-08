@@ -1,7 +1,7 @@
 import Modal from 'components/modal'
 import {useSelector} from 'react-redux'
 import CardList from 'components/card-list'
-import {CardT} from 'types/game-state'
+import {CardT} from 'common/types/game-state'
 import css from './spyglass-modal.module.css'
 import {getPlayerState} from 'logic/game/game-selectors'
 

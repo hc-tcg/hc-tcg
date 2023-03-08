@@ -1,7 +1,7 @@
 import {useSelector} from 'react-redux'
 import {useEffect, useState} from 'react'
 import classnames from 'classnames'
-import {GameState, PlayerState} from 'types/game-state'
+import {GameState, PlayerState} from 'common/types/game-state'
 import css from './timer.module.css'
 import {
 	getGameState,

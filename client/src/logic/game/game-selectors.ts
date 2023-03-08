@@ -1,5 +1,5 @@
 import {RootState} from 'store'
-import {GameState} from 'types/game-state'
+import {GameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 
 export const getGame = (state: RootState) => {

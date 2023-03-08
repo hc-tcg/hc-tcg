@@ -20,6 +20,10 @@ import {
 } from '../utils/win-conditions'
 
 /**
+ * @typedef {import("redux-saga").Task} Task
+ */
+
+/**
  * @param {GameModel} game
  */
 function* gameManager(game) {
@@ -37,7 +41,7 @@ function* gameManager(game) {
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield race({
 			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
+			gameEnd: join(/** @type {Task} */ (game.task)),
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
@@ -67,7 +71,7 @@ function* gameManager(game) {
 		game.endInfo.outcome = 'error'
 		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {
-		yield cancel(game.task)
+		if (game.task) yield cancel(game.task)
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
 		console.log('Game ended. Total games: ', root.getGameIds().length)

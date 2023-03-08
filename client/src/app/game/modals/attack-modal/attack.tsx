@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import {useSelector} from 'react-redux'
-import {CardInfoT, EffectCardT, HermitCardT} from 'types/cards'
+import {CardInfoT, EffectCardT, HermitCardT} from 'common/types/cards'
 import CARDS from 'server/cards'
 import Strengths from 'server/const/strengths'
 import {
@@ -10,7 +10,7 @@ import {
 } from '../../game-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
-import {HermitAttackT} from 'types/cards'
+import {HermitAttackT} from 'common/types/cards'
 import css from './attack-modal.module.css'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>

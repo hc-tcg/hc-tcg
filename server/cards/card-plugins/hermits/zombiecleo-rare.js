@@ -1,8 +1,9 @@
 import HermitCard from './_hermit-card'
-import CARDS from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/game-state').AvailableActionT} AvailableActionT
  */
 
 class ZombieCleoRareHermitCard extends HermitCard {
@@ -57,7 +58,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		if (!extra) return
 
-		const allyHermitInfo = CARDS[extra.hermitId]
+		const allyHermitInfo = HERMIT_CARDS[extra.hermitId]
 		const allyRow = currentPlayer.board.rows.find(
 			(row) => row.hermitCard?.cardId === extra.hermitId
 		)
@@ -140,7 +141,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				let afkAttacks = afkRows.reduce(
 					(/** @type {Array<string>} */ extraActions, row) => {
 						if (!row.hermitCard) return
-						const allyHermitInfo = CARDS[row.hermitCard.cardId]
+						const allyHermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 
 						// Get available actions for opponents power
 						playerActiveRow.hermitCard.cardId = allyHermitInfo.id
@@ -173,7 +174,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				}
 
 				return availableActions.concat(
-					/** @type {AvailableAction[]} */ (afkAttacks)
+					/** @type {Array<AvailableActionT>} */ (afkAttacks)
 				)
 			}
 		)

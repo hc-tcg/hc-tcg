@@ -1,12 +1,12 @@
-import {BoardRowT} from 'types/game-state'
-import {CardT} from 'types/game-state'
+import {RowState} from 'common/types/game-state'
+import {CardT} from 'common/types/game-state'
 import Slot, {SlotType} from './board-slot'
 import css from './board.module.css'
 
 const getCardBySlot = (
 	slotType: SlotType,
 	index: number,
-	rowState: BoardRowT | null
+	rowState: RowState | null
 ): CardT | null => {
 	if (!rowState) return null
 	if (slotType === 'hermit') return rowState.hermitCard || null
@@ -18,7 +18,7 @@ const getCardBySlot = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	onClick: (meta: any) => void
-	rowState: BoardRowT
+	rowState: RowState
 	active: boolean
 }
 const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {

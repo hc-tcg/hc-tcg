@@ -16,6 +16,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			server: path.resolve(__dirname, '../server'),
+			common: path.resolve(__dirname, '../common'),
 			types: path.resolve(__dirname, './src/types'),
 			sagas: path.resolve(__dirname, './src/sagas'),
 			components: path.resolve(__dirname, './src/components'),

@@ -1,8 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardCard} from '../../../utils'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 /*
@@ -34,10 +36,10 @@ class HypnotizdRareHermitCard extends HermitCard {
 		})
 
 		this.pickOn = 'attack'
-		this.pickReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1},
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'opponent', type: 'hermit', amount: 1, breakIf: {active: true}},
 			{target: 'player', type: 'item', amount: 1, active: true},
-		]
+		])
 	}
 
 	/**
@@ -55,15 +57,16 @@ class HypnotizdRareHermitCard extends HermitCard {
 			if (hypnoPickedCards.length !== 2) return target
 
 			const pickedHermit = hypnoPickedCards[0]
+			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
+
 			if (pickedHermit.row !== target.row) {
 				target.applyHermitDamage = false
 				return target
 			}
 			target.applyHermitDamage = true
 
-			// TODO - use req for validation
 			const pickedItem = hypnoPickedCards[1]
-			if (pickedItem.slotType !== 'item') return target
+			if (!validPick(game.state, this.pickReqs[1], pickedItem)) return target
 
 			if (!target.isActive) discardCard(game, pickedItem.card)
 			return target

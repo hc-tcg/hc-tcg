@@ -15,6 +15,8 @@ export type HermitTypeT =
 	| 'explorer'
 	| 'any'
 
+export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
+
 export type DamageT = {
 	target?: number
 	afkTarget?: number
@@ -22,7 +24,8 @@ export type DamageT = {
 }
 
 export type ProtectionT = {
-	target: number
+	target?: number
+	backlash?: number
 	discard?: boolean
 }
 
@@ -69,3 +72,11 @@ export type HermitCardT = AnyCardT & {
 }
 
 export type CardInfoT = ItemCardT | EffectCardT | HermitCardT | HealthCardT
+
+export type CardTypesMapT = {
+	hermit: HermitCardT
+	item: ItemCardT
+	effect: EffectCardT
+	single_use: EffectCardT
+	health: HealthCardT
+}

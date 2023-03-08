@@ -1,14 +1,12 @@
 import {select} from 'typed-redux-saga'
 import {put, call, take, race, cancelled} from 'redux-saga/effects'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {PickedCardT, PickRequirmentT, CardTypeT} from 'types/pick-process'
-import {CardT, PlayerState} from 'types/game-state'
-import CARDS from 'server/cards'
+import {PickedCardT, PickRequirmentT} from 'common/types/pick-process'
 import {equalCard} from 'server/utils'
-import {anyAvailableReqOptions} from 'server/utils/reqs'
+import {anyAvailableReqOptions, validPick} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
-	getPlayerStateById,
+	getGameState,
 	getPlayerState,
 	getOpponentState,
 } from 'logic/game/game-selectors'
@@ -23,58 +21,6 @@ type AnyPickActionT =
 	| ReturnType<typeof setSelectedCard>
 	| ReturnType<typeof slotPicked>
 
-const validRow = (
-	req: PickRequirmentT,
-	cardPlayerState: PlayerState | null,
-	rowIndex: number | null
-) => {
-	if (typeof rowIndex !== 'number') return true
-	if (!cardPlayerState) return false
-	const row = cardPlayerState?.board.rows[rowIndex]
-	return row && row.hermitCard
-}
-
-const validTarget = (
-	req: PickRequirmentT,
-	cardPlayerState: PlayerState | null,
-	playerId: string
-) => {
-	if (!Object.hasOwn(req, 'target')) return true
-	// hand (or possibly sue?)
-	if (!cardPlayerState) return req.target === 'hand'
-
-	// board
-	if (req.target === 'player' && playerId !== cardPlayerState.id) return false
-	if (req.target === 'opponent' && playerId === cardPlayerState.id) return false
-
-	return true
-}
-
-const validActive = (
-	req: PickRequirmentT,
-	cardPlayerState: PlayerState | null,
-	rowIndex: number | null
-) => {
-	if (!Object.hasOwn(req, 'active')) return true
-	if (!cardPlayerState || rowIndex === null) return false
-
-	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
-	const isActive =
-		hasActiveHermit && rowIndex === cardPlayerState?.board.activeRow
-
-	return req.active === isActive
-}
-
-const validType = (req: PickRequirmentT, slotType: CardTypeT) => {
-	if (!Object.hasOwn(req, 'type')) return true
-	return req.type === 'any' ? true : req.type === slotType
-}
-
-const validEmpty = (req: PickRequirmentT, card: CardT | null) => {
-	if (!Object.hasOwn(req, 'empty')) return !!card
-	return req.empty === !card
-}
-
 const isDuplicate = (
 	pickedCards: Array<PickedCardT>,
 	pickedCard?: PickedCardT
@@ -84,8 +30,8 @@ const isDuplicate = (
 	return pickedCards.some((pCard) => equalCard(pCard.card, pickedCard.card))
 }
 
-function* pickSaga(
-	req: PickRequirmentT,
+function* validatePickSaga(
+	req: Partial<PickRequirmentT>,
 	pickAction: AnyPickActionT
 ): SagaIterator<PickedCardT | void> {
 	const playerId = yield* select(getPlayerId)
@@ -94,21 +40,9 @@ function* pickSaga(
 			? {slotType: 'hand', card: pickAction.payload, playerId}
 			: pickAction.payload
 
-	const cardPlayerId = pickedCard.playerId
-	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
-	const cardPlayerState = yield* select(getPlayerStateById(cardPlayerId))
-	const card = pickedCard.card
-	const slotType = card ? CARDS[card.cardId].type : pickedCard.slotType
-
-	if (!validRow(req, cardPlayerState, rowIndex))
-		return console.log('Invalid row')
-	if (!validTarget(req, cardPlayerState, playerId))
-		return console.log('Invalid target')
-	if (!validActive(req, cardPlayerState, rowIndex))
-		return console.log('Invalid active')
-	if (!validType(req, slotType)) return console.log('Invalid card type')
-	if (!validEmpty(req, card)) return console.log('Invalid empty check')
-
+	const gameState = yield* select(getGameState)
+	if (!gameState) return
+	if (!validPick(gameState, req, pickedCard)) return
 	return pickedCard
 }
 
@@ -148,9 +82,10 @@ export function* runPickProcessSaga(
 		})
 
 		const pickedCards: Array<PickedCardT> = []
-		for (const reqIndex in reqs) {
+		req_cycle: for (const reqIndex in reqs) {
 			const req = reqs[reqIndex]
 			const pickedReqCards = []
+
 			while (pickedReqCards.length < req.amount) {
 				const actionType =
 					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
@@ -168,7 +103,7 @@ export function* runPickProcessSaga(
 					return null
 				}
 				const {pickAction} = result
-				const pickedCard = yield call(pickSaga, req, pickAction)
+				const pickedCard = yield call(validatePickSaga, req, pickAction)
 				if (isDuplicate(pickedReqCards, pickedCard)) continue
 				if (!pickedCard) continue
 				pickedReqCards.push(pickedCard)
@@ -176,6 +111,11 @@ export function* runPickProcessSaga(
 				yield put(
 					updatePickProcess({pickedCards: [...pickedCards, ...pickedReqCards]})
 				)
+
+				if (req.breakIf) {
+					const matches = yield call(validatePickSaga, req.breakIf, pickAction)
+					if (matches) break req_cycle
+				}
 			}
 			pickedCards.push(...pickedReqCards)
 		}

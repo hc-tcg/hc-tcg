@@ -2,7 +2,8 @@
 	"compilerOptions": {
 		"baseUrl": "src",
 		"paths": {
-			"server/*": ["../server/*"]
+			"server/*": ["../../server/*"],
+			"common/*": ["../../common/*"]
 		},
 		"target": "ESNext",
 		"useDefineForClassFields": true,

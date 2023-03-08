@@ -1,10 +1,14 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
+		"paths": {
+			"common/*": ["../common/*"]
+		},
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "Node",
 		"resolveJsonModule": true,
+		"isolatedModules": true,
 		"allowJs": true,
 		"checkJs": true,
 		"noEmit": true,

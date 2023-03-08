@@ -1,9 +1,9 @@
 import classnames from 'classnames'
 import CARDS from 'server/cards'
 import Card from 'components/card'
-import {CardInfoT} from 'types/cards'
-import {CardT} from 'types/game-state'
-import {BoardRowT} from 'types/game-state'
+import {CardInfoT} from 'common/types/cards'
+import {CardT} from 'common/types/game-state'
+import {RowState} from 'common/types/game-state'
 import css from './board.module.css'
 
 const TYPED_CARDS = CARDS as Record<string, CardInfoT>
@@ -13,7 +13,7 @@ export type SlotProps = {
 	type: SlotType
 	onClick?: () => void
 	card: CardT | null
-	rowState?: BoardRowT
+	rowState?: RowState
 	active?: boolean
 }
 const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {

@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {CardInfoT} from 'types/cards'
+import {CardInfoT} from 'common/types/cards'
 import HermitCard, {HermitCardProps} from './hermit-card-svg'
 import EffectCard, {EffectCardProps} from './effect-card-svg'
 import ItemCard, {ItemCardProps} from './item-card-svg'

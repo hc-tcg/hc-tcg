@@ -5,9 +5,9 @@ import {
 	GameEndReasonT,
 	GameEndOutcomeT,
 	CurrentCoinFlipT,
-} from 'types/game-state'
-import {PickProcessT} from 'types/pick-process'
-import {MessageInfoT} from 'types/chat'
+} from 'common/types/game-state'
+import {PickProcessT} from 'common/types/pick-process'
+import {MessageInfoT} from 'common/types/chat'
 import {equalCard} from 'server/utils'
 
 type LocalGameState = {

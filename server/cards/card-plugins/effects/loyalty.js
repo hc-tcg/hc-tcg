@@ -3,6 +3,7 @@ import {equalCard} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/game-state').CardT} CardT
  */
 
 /*
@@ -35,7 +36,9 @@ class LoyaltyEffectCard extends EffectCard {
 				const row = playerRows[rowIndex]
 				if (!row.hermitCard) continue
 				const hasLoyalty = row.effectCard?.cardId === this.id
-				const itemCards = row.itemCards.filter(Boolean)
+				const itemCards = /** @type {Array<CardT>} */ (
+					row.itemCards.filter(Boolean)
+				)
 				if (row.health <= 0 && hasLoyalty && itemCards.length) {
 					const itemCard =
 						itemCards[Math.floor(Math.random() * itemCards.length)]

@@ -1,6 +1,6 @@
 import {useDispatch} from 'react-redux'
 import {showEndGameOverlay} from 'logic/game/game-actions'
-import {GameEndOutcomeT, GameEndReasonT} from 'types/game-state'
+import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
 import css from './end-game-overlay.module.css'
 
 type Props = {

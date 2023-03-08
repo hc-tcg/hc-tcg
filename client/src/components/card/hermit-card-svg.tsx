@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {HermitCardT} from 'types/cards'
+import {HermitCardT} from 'common/types/cards'
 import css from './hermit-card-svg.module.css'
 
 export type HermitCardProps = {

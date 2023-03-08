@@ -2,8 +2,8 @@ import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import CoinFlip from 'components/coin-flip'
-import {GameState, PlayerState, BoardRowT} from 'types/game-state'
-import {PickedCardT} from 'types/pick-process'
+import {GameState, PlayerState, RowState} from 'common/types/game-state'
+import {PickedCardT} from 'common/types/pick-process'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -49,7 +49,7 @@ function Board({onClick, gameState}: Props) {
 	const handeRowClick = (
 		playerId: string,
 		rowIndex: number,
-		rowState: BoardRowT | null,
+		rowState: RowState | null,
 		meta: any
 	) => {
 		onClick({

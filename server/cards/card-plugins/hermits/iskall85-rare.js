@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import CARDS from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -39,7 +39,7 @@ class Iskall85RareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
+			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 			if (targetHermitInfo.hermitType === 'builder') {
 				target.multiplier *= 2
 			}

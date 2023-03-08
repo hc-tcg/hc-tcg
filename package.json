@@ -26,7 +26,7 @@
 		"firebase-admin": "^11.5.0",
 		"husky": "^8.0.3",
 		"lint-staged": "^13.1.2",
-		"prettier": "^2.8.2",
+		"prettier": "^2.8.4",
 		"profanity-filter": "^0.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
@@ -38,7 +38,7 @@
 		"tapable": "^2.2.1",
 		"terser": "^5.16.1",
 		"typed-redux-saga": "^1.5.0",
-		"typescript": "^4.9.5",
+		"typescript": "^5.0.0-beta",
 		"vite": "^4.0.4",
 		"vite-plugin-eslint": "^1.8.1"
 	},

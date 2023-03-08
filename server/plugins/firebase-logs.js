@@ -4,6 +4,7 @@ import {CONFIG} from '../../config'
 
 /**
  * @typedef {import('models/root-model').RootModel} RootModel
+ * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('firebase-admin').database.Database} Database
  */
 

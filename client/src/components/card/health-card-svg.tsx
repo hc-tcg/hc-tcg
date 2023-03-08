@@ -1,4 +1,4 @@
-import {HealthCardT} from 'types/cards'
+import {HealthCardT} from 'common/types/cards'
 import {useState, useRef, useMemo, useEffect} from 'react'
 import css from './health-card-svg.module.css'
 import classnames from 'classnames'

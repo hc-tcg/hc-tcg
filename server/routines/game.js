@@ -9,7 +9,7 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import CARDS from '../cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
@@ -26,6 +26,9 @@ import {CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
+ * @typedef {import("common/types/cards").HermitCardT} HermitCardT
+ * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
 
@@ -51,12 +54,12 @@ const getTimerForSeconds = (seconds) => {
 
 /**
  * @param {GameModel} game
- * @return {Array<AvailableAction>}
+ * @return {AvailableActionsT}
  */
 function getAvailableActions(game, pastTurnActions) {
 	const {turn} = game.state
 	const {currentPlayer, opponentPlayer} = game.ds
-	/** @type {Array<AvailableAction>} */
+	/** @type {AvailableActionsT} */
 	const actions = []
 
 	if (opponentPlayer.followUp) {
@@ -120,9 +123,9 @@ function getAvailableActions(game, pastTurnActions) {
 
 		if (turn > 1) {
 			const hermitId = rows[activeRow].hermitCard?.cardId
-			const hermitInfo = hermitId ? CARDS[hermitId] || null : null
+			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
 			const suId = currentPlayer.board.singleUseCard?.cardId || null
-			const suInfo = suId ? CARDS[suId] || null : null
+			const suInfo = suId ? SINGLE_USE_CARDS[suId] || null : null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
 			// only add attack options if not sleeping
@@ -361,7 +364,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 				pastTurnActions
 			)
 
-			/** @type {Array<AvailableAction>} */
+			/** @type {AvailableActionsT} */
 			const opponentAvailableActions = opponentPlayer.followUp
 				? ['FOLLOW_UP']
 				: ['WAIT_FOR_TURN']

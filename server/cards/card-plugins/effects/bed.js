@@ -1,5 +1,5 @@
 import EffectCard from './_effect-card'
-import CARDS from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 import {discardCard} from '../../../utils'
 
 /**
@@ -62,7 +62,7 @@ class BedEffectCard extends EffectCard {
 					const hadBed = bedInfo[index]
 					const hasBed = row.effectCard?.cardId === this.id
 					if (!hadBed && hasBed && row.hermitCard) {
-						row.health = CARDS[row.hermitCard.cardId].health
+						row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 						// clear any previous sleeping
 						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 						// set new sleeping for full two turns

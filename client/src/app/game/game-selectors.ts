@@ -1,5 +1,5 @@
 import {RootState} from 'store'
-import {PlayerState} from 'types/game-state'
+import {PlayerState} from 'common/types/game-state'
 import {
 	getPlayerState,
 	getOpponentState,

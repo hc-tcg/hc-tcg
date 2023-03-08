@@ -10,13 +10,23 @@ export type Ailment = {
 	duration: number
 }
 
-export type BoardRowT = {
-	hermitCard: CardT | null
+export type RowStateWithHermit = {
+	hermitCard: CardT
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
-	health: number | null
+	health: number
 	ailments: Array<Ailment>
 }
+
+export type RowStateWithoutHermit = {
+	hermitCard: null
+	effectCard: null
+	itemCards: Array<null>
+	health: null
+	ailments: Array<Ailment>
+}
+
+export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type CoinFlipT = 'heads' | 'tails'
 
@@ -41,7 +51,7 @@ export type PlayerState = {
 		activeRow: number | null
 		singleUseCard: CardT | null
 		singleUseCardUsed: boolean
-		rows: Array<BoardRowT>
+		rows: Array<RowState>
 	}
 }
 
@@ -54,9 +64,27 @@ export type GameState = {
 	players: Record<string, PlayerState>
 }
 
+export type AvailableActionT =
+	| 'END_TURN'
+	| 'APPLY_EFFECT'
+	| 'REMOVE_EFFECT'
+	| 'ZERO_ATTACK'
+	| 'PRIMARY_ATTACK'
+	| 'SECONDARY_ATTACK'
+	| 'FOLLOW_UP'
+	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
+	| 'CHANGE_ACTIVE_HERMIT'
+	| 'ADD_HERMIT'
+	| 'PLAY_ITEM_CARD'
+	| 'PLAY_SINGLE_USE_CARD'
+	| 'PLAY_EFFECT_CARD'
+	| 'WAIT_FOR_TURN'
+
+export type AvailableActionsT = Array<AvailableActionT>
+
 export type GameStatePayload = {
 	gameState: GameState
-	availableActions: Array<string>
+	availableActions: Array<AvailableActionT>
 	opponentId: string
 }
 

@@ -1,10 +1,10 @@
 import {select, take} from 'typed-redux-saga'
 import {call, put, fork} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {GameState} from 'types/game-state'
+import {GameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
-import {CardT} from 'types/game-state'
-import {CardInfoT} from 'types/cards'
+import {CardT} from 'common/types/game-state'
+import {CardInfoT} from 'common/types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {

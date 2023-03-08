@@ -5,11 +5,26 @@ import {CONFIG, DEBUG_CONFIG} from '../../config'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("models/player-model").PlayerModel} PlayerModel
+ * @typedef {import("common/types/game-state").GameState} GameState
+ * @typedef {import("common/types/game-state").PlayerState} PlayerState
+ * @typedef {import("common/types/game-state").RowState} RowState
+ * @typedef {import("common/types/cards").HermitCardT} HermitCardT
+ * @typedef {import("common/types/cards").EffectCardT} EffectCardT
+ * @typedef {import("common/types/cards").ItemCardT} ItemCardT
  */
 
 function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
+
+/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT | ItemCardT} */
+const isHermitOrItem = (cardInfo) => ['hermit', 'item'].includes(cardInfo.type)
+
+/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT} */
+const isHermit = (cardInfo) => cardInfo.type === 'hermit'
+
+/** @type {(cardInfo: CardInfoT) => cardInfo is EffectCardT} */
+const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
 	const limits = CONFIG.limits
@@ -20,15 +35,11 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!['hermit', 'item'].includes(cardInfo.type) ||
-			hermitTypes.includes(cardInfo.hermitType)
+			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
-	const hermitCards = cards.filter((cardInfo) => cardInfo.type === 'hermit')
-	const effectCards = cards.filter((cardInfo) =>
-		['effect', 'single_use'].includes(cardInfo.type)
-	)
-
+	const hermitCards = cards.filter(isHermit)
+	const effectCards = cards.filter(isEffect)
 	const hermitCount = hermitTypesCount === 2 ? 8 : 10
 	const deck = []
 
@@ -193,9 +204,9 @@ export function getGameState(game) {
 	const gameState = {
 		turn: 0,
 		order: playerIds,
-		turnPlayerId: null,
-		turnTime: null,
-		turnRemaining: null,
+		turnPlayerId: /** @type {any} */ (null),
+		turnTime: /** @type {any} */ (null),
+		turnRemaining: /** @type {any} */ (null),
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,

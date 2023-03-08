@@ -1,9 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
-import CARDS from '../../../cards'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 class TangoTekRareHermitCard extends HermitCard {
@@ -29,9 +30,9 @@ class TangoTekRareHermitCard extends HermitCard {
 			},
 		})
 		this.pickOn = 'followup'
-		this.pickReqs = [
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1, active: false},
-		]
+		])
 	}
 
 	/**
@@ -90,9 +91,8 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			const pickedCards = pickedCardsInfo[this.id] || []
 			if (pickedCards.length !== 1) return 'INVALID'
-			if (pickedCards[0].slotType !== 'hermit') return 'INVALID'
-			if (pickedCards[0].playerId !== opponentPlayer.id) return 'INVALID'
-			if (!pickedCards[0].card) return 'INVALID'
+			if (!validPick(game.state, this.pickReqs[0], pickedCards[0]))
+				return 'INVALID'
 			if (pickedCards[0].rowIndex === currentPlayer.custom[this.id])
 				return 'INVALID'
 			opponentPlayer.board.activeRow = pickedCards[0].rowIndex

@@ -5,6 +5,11 @@ import {DerivedStateModel} from './derived-state-model'
 /**
  * @typedef {import("./root-model").RootModel} RootModel
  * @typedef {import("./player-model").PlayerModel} PlayerModel
+ * @typedef {import("common/types/game-state").GameState} GameState
+ * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
+ * @typedef {import("common/types/game-state").PlayerState} PlayerState
+ * @typedef {import("common/types/chat").MessageInfoT} MessageInfoT
+ * @typedef {import("redux-saga").Task} Task
  */
 
 export class GameModel {
@@ -28,7 +33,7 @@ export class GameModel {
 		/** @type {Object.<string, PlayerModel>} */
 		this.players = {}
 
-		/** @type {*} */ // @TODO what type is the game task?
+		/** @type {Task | null} */
 		this.task = null
 
 		/** @type {GameState} */
@@ -52,7 +57,7 @@ export class GameModel {
 			turnStart: new SyncHook(['turnConfig']),
 			/**
 			 * Used to modify availableActions before each action of a turn
-			 * @type {SyncWaterfallHook<[AvailableActions, Array<string>], AvailableActions>}
+			 * @type {SyncWaterfallHook<[AvailableActionsT, Array<string>], AvailableActionsT>}
 			 */
 			availableActions: new SyncWaterfallHook([
 				'availableActions',
@@ -139,7 +144,7 @@ export class GameModel {
 			gameEnd: new SyncHook([]),
 		}
 
-		/** @type {Array<ChatMessage>} */
+		/** @type {Array<MessageInfoT>} */
 		this.chat = []
 
 		this.endInfo = {

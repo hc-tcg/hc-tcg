@@ -1,7 +1,9 @@
 import SingleUseCard from './_single-use-card'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
@@ -15,7 +17,9 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		})
 		this.heal = 100
 		this.pickOn = 'apply'
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'player', type: 'hermit', amount: 1},
+		])
 		this.pickReqs = this.useReqs
 	}
 
@@ -29,6 +33,8 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
+				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
+					return 'INVALID'
 				const {row, cardInfo} = suPickedCards[0]
 				row.health = Math.min(
 					row.health + this.heal,

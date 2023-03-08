@@ -1,12 +1,23 @@
-import {getPickedCardsInfo} from './picked-cards'
 import CARDS from '../cards'
 
-/*
-Checks specific row and its slots if they match given requirments
-@param rowInfo RowInfoT
-@param req PickRequirmentT
-@returns boolean
-*/
+/**
+ * @typedef {import("common/types/game-state").GameState} GameState
+ * @typedef {import("common/types/game-state").PlayerState} PlayerState
+ * @typedef {import("common/types/game-state").CardT} CardT
+ * @typedef {import("common/types/pick-process").PickRequirmentT} PickRequirmentT
+ * @typedef {import("common/types/pick-process").PickedCardT} PickedCardT
+ * @typedef {import("common/types/pick-process").BoardPickedCardT} BoardPickedCardT
+ * @typedef {import("common/types/pick-process").HandPickedCardT} HandPickedCardT
+ * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
+ * @typedef {import("common/types/cards").CardTypesMapT} CardTypesMapT
+ */
+
+/**
+ * Checks specific row and its slots if they match given requirments
+ * @param rowInfo RowInfoT
+ * @param req PickRequirmentT
+ * @returns boolean
+ */
 const checkRow = (rowInfo, req) => {
 	if (rowInfo.emptyRow) return false
 
@@ -31,12 +42,12 @@ const checkRow = (rowInfo, req) => {
 	return true
 }
 
-/*
-Create an info object describing various properties of a game row
-@param playerState PlayerStateT
-@param current boolean
-@return Array<RowInfoT>
-*/
+/**
+ * Create an info object describing various properties of a game row
+ * @param playerState PlayerStateT
+ * @param current boolean
+ * @return Array<RowInfoT>
+ */
 const getRowsInfo = (playerState, current) => {
 	return playerState.board.rows.map((row, index) => ({
 		target: current ? 'player' : 'opponent',
@@ -58,14 +69,14 @@ const checkHand = (playerState, req) => {
 	return req.amount <= cards.length
 }
 
-/*
-Compares game state and "req" object to see if there is any slot on
-the board that would fit given requirments
-@param playerState PlayerState
-@param opponentState PlayerState
-@param req Array<PickRequirmentT>
-@returns boolean
-*/
+/**
+ * Compares game state and "req" object to see if there is any slot on
+ * the board that would fit given requirments
+ * @param playerState PlayerState
+ * @param opponentState PlayerState
+ * @param req Array<PickRequirmentT>
+ * @returns boolean
+ */
 export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 	const rowsInfo = []
 	rowsInfo.push(...getRowsInfo(playerState, true))
@@ -80,5 +91,123 @@ export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 		if (result.length < req.amount) return false
 	}
 
+	return true
+}
+
+/**
+ * @param {Partial<PickRequirmentT>} req
+ * @param {PlayerState | null} cardPlayerState
+ * @param {number | null} rowIndex
+ * @returns {boolean}
+ */
+export const validRow = (req, cardPlayerState, rowIndex) => {
+	if (typeof rowIndex !== 'number') return true
+	if (!cardPlayerState) return false
+	const row = cardPlayerState?.board.rows[rowIndex]
+	return !!(row && row.hermitCard)
+}
+
+/**
+ * @param {Partial<PickRequirmentT>} req
+ * @param {PlayerState | null} cardPlayerState
+ * @param {string} playerId
+ * @returns {boolean}
+ */
+export const validTarget = (req, cardPlayerState, playerId) => {
+	if (!Object.hasOwn(req, 'target')) return true
+	// hand (or possibly sue?)
+	if (!cardPlayerState) return req.target === 'hand'
+
+	// board
+	if (req.target === 'player' && playerId !== cardPlayerState.id) return false
+	if (req.target === 'opponent' && playerId === cardPlayerState.id) return false
+
+	return true
+}
+
+/**
+ * @param {Partial<PickRequirmentT>} req
+ * @param {PlayerState | null} cardPlayerState
+ * @param {number | null} rowIndex
+ * @returns {boolean}
+ */
+export const validActive = (req, cardPlayerState, rowIndex) => {
+	if (!Object.hasOwn(req, 'active')) return true
+	if (!cardPlayerState || rowIndex === null) return false
+
+	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
+	const isActive =
+		hasActiveHermit && rowIndex === cardPlayerState?.board.activeRow
+
+	return req.active === isActive
+}
+
+/**
+ * @param {Partial<PickRequirmentT>} req
+ * @param {SlotTypeT} slotType
+ * @returns {boolean}
+ */
+export const validType = (req, slotType) => {
+	if (!Object.hasOwn(req, 'type')) return true
+	return req.type === 'any' ? true : req.type === slotType
+}
+
+/**
+ * @param {Partial<PickRequirmentT>} req
+ * @param {CardT | null} card
+ * @returns {boolean}
+ */
+const validEmpty = (req, card) => {
+	if (!Object.hasOwn(req, 'empty')) return !!card
+	return req.empty === !card
+}
+
+/**
+ * @template T
+ * @template Y
+ * @template {boolean} [E=false]
+ * @param {GameState} gameState
+ * @param {Partial<PickRequirmentT> & { target: T, type: Y, empty?: E }} req
+ * @param {PickedCardT} pickedCard
+ * @returns {pickedCard is (T extends 'hand'
+ *   ? HandPickedCardT
+ *   : BoardPickedCardT
+ *   ) & {
+ *     card: E extends true ? null : CardT,
+ *     cardInfo: E extends true ? null : CardTypesMapT[Y],
+ *   }
+ * }
+ */
+export function validPick(gameState, req, pickedCard) {
+	const cardPlayerId = pickedCard.playerId
+	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
+	const cardPlayerState = gameState.players[cardPlayerId]
+	const card = pickedCard.card
+	const slotType = card ? CARDS[card.cardId].type : pickedCard.slotType
+
+	if (!validRow(req, cardPlayerState, rowIndex)) return false
+	if (!validTarget(req, cardPlayerState, gameState.turnPlayerId)) return false
+	if (!validActive(req, cardPlayerState, rowIndex)) return false
+	if (!validType(req, slotType)) return false
+	if (!validEmpty(req, card)) return false
+
+	return true
+}
+
+/**
+ * @param {GameState} gameState
+ * @param {Array<PickRequirmentT>} reqs
+ * @param {Array<PickedCardT>} pickedCards
+ * @returns {boolean}
+ */
+export function validPicks(gameState, reqs, pickedCards) {
+	let index = 0
+	for (let req of reqs) {
+		for (let i = 0; i < req.amount; i++) {
+			const isValid = validPick(gameState, req, pickedCards[index])
+			if (!isValid) return false
+			index++
+		}
+	}
 	return true
 }

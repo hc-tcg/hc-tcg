@@ -1,10 +1,12 @@
-import CARDS from '../../cards'
+import {HERMIT_CARDS, EFFECT_CARDS} from '../../cards'
 import STRENGTHS from '../../const/strengths'
 import {applySingleUse, discardCard} from '../../utils'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import("common/types/cards").HermitCardT} HermitCardT
+ * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  */
 
 export const ATTACK_TO_ACTION = {
@@ -47,7 +49,7 @@ function* attackSaga(game, turnAction, actionState) {
 	if (!attackerActiveRow || !attackerActiveRow.hermitCard) return 'INVALID'
 
 	const attackerHermitCard = attackerActiveRow.hermitCard
-	const attackerHermitInfo = CARDS[attackerHermitCard.cardId]
+	const attackerHermitInfo = HERMIT_CARDS[attackerHermitCard.cardId]
 	if (!attackerHermitInfo) return 'INVALID'
 	const strengths = STRENGTHS[attackerHermitInfo.hermitType]
 
@@ -99,6 +101,7 @@ function* attackSaga(game, turnAction, actionState) {
 		if (firstCard.slotType !== 'hermit') return
 		if (firstCard.playerId !== opponentPlayer.id) return
 		if (!firstCard.row.hermitCard) return
+		if (!firstCard.card) return
 		const instance = firstCard.card.cardInstance
 		if (Object.hasOwn(targets, instance)) return
 		targets[instance] = makeTarget(firstCard.row)
@@ -108,7 +111,7 @@ function* attackSaga(game, turnAction, actionState) {
 	for (let id in targets) {
 		const target = targets[id]
 		const result = game.hooks.attack.call(target, turnAction, attackState)
-		const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
+		const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 		const hermitAttack = target.applyHermitDamage
 			? attackerHermitInfo[type]?.damage || 0
 			: 0
@@ -119,7 +122,7 @@ function* attackSaga(game, turnAction, actionState) {
 		/* --- Damage to target --- */
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
-		const targetEffectInfo = CARDS[target.row.effectCard?.cardId]
+		const targetEffectInfo = EFFECT_CARDS[target.row.effectCard?.cardId]
 		const protection = target.ignoreEffects
 			? 0
 			: targetEffectInfo?.protection?.target || 0
@@ -177,7 +180,7 @@ function* attackSaga(game, turnAction, actionState) {
 		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
 
 		const attackerEffectInfo = playerActiveRow.effectCard?.cardId
-			? CARDS[playerActiveRow.effectCard?.cardId]
+			? EFFECT_CARDS[playerActiveRow.effectCard?.cardId]
 			: null
 		const attackerProtection = attackerEffectInfo?.protection?.target || 0
 		const attackerBacklash = targetEffectInfo?.protection?.backlash || 0

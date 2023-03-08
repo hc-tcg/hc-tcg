@@ -1,6 +1,6 @@
 import {useSelector} from 'react-redux'
 import {useState} from 'react'
-import {CardInfoT, HermitCardT} from 'types/cards'
+import {CardInfoT, HermitCardT} from 'common/types/cards'
 import classnames from 'classnames'
 import CARDS from 'server/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
