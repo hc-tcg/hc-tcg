@@ -27,7 +27,7 @@ jobs:
         run: npm run server:tsc
 
       - name: Run prettier
-        run: npx prettier --check "**/*.{js,ts,tsx,css,scss}"
+        run: npx prettier --check "{client/src,server}/**/*.{js,ts,tsx,css,scss}"
 
   build:
     name: Test build
