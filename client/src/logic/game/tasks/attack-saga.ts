@@ -2,8 +2,8 @@ import {select} from 'typed-redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {PickedCardT} from 'common/types/pick-process'
-import {CardInfoT, EffectCardT} from 'common/types/cards'
-import CARDS from 'server/cards'
+import {EffectCardT} from 'common/types/cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
@@ -12,8 +12,6 @@ import {
 	getOpponentActiveRow,
 } from '../../../app/game/game-selectors'
 import {attack, startAttack} from '../game-actions'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type AttackAction = ReturnType<typeof startAttack>
 
@@ -29,7 +27,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const hermitCard = activeRow.hermitCard
 	const opponentHermitCard = opponentActiveRow.hermitCard
 	const singleUseInfo = singleUseCard
-		? (TYPED_CARDS[singleUseCard.cardId] as EffectCardT)
+		? (SINGLE_USE_CARDS[singleUseCard.cardId] as EffectCardT)
 		: null
 
 	const result = {} as Record<string, Array<PickedCardT>>
@@ -42,17 +40,22 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[singleUseInfo.id]) return
 	}
 
+	if (type === 'zero') {
+		yield put(attack(type, result))
+		return
+	}
+
 	let cardId = hermitCard.cardId
-	let cardInfo = CARDS[cardId]
+	let cardInfo = HERMIT_CARDS[cardId]
 	let hermitAttack = cardInfo?.[type] || null
 	if (cardInfo?.pickOn === 'use-opponent' && hermitAttack?.power) {
 		cardId = opponentHermitCard.cardId
-		cardInfo = CARDS[cardId]
+		cardInfo = HERMIT_CARDS[cardId]
 		hermitAttack = cardInfo?.[type] || null
 	} else if (cardInfo?.pickOn === 'use-ally' && extra) {
 		const hermitExtra = extra[cardId]
 		cardId = hermitExtra.hermitId
-		cardInfo = CARDS[cardId]
+		cardInfo = HERMIT_CARDS[cardId]
 		hermitAttack = cardInfo?.[hermitExtra.type] || null
 	}
 

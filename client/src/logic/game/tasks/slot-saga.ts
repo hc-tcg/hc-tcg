@@ -2,7 +2,6 @@ import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
-import {CardInfoT} from 'common/types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -18,7 +17,6 @@ import {
 } from 'logic/game/game-actions'
 import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
 
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
 function* pickWithSelectedSaga(
@@ -26,7 +24,7 @@ function* pickWithSelectedSaga(
 	selectedCard: CardT
 ): SagaIterator {
 	const {slotType} = action.payload
-	const selectedCardInfo = TYPED_CARDS[selectedCard.cardId]
+	const selectedCardInfo = CARDS[selectedCard.cardId]
 
 	// Validations
 	if (!selectedCardInfo) {

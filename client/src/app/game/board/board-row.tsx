@@ -1,10 +1,11 @@
 import {RowState} from 'common/types/game-state'
 import {CardT} from 'common/types/game-state'
-import Slot, {SlotType} from './board-slot'
+import Slot from './board-slot'
+import {SlotTypeT} from 'common/types/pick-process'
 import css from './board.module.css'
 
 const getCardBySlot = (
-	slotType: SlotType,
+	slotType: SlotTypeT,
 	index: number,
 	rowState: RowState | null
 ): CardT | null => {
@@ -23,13 +24,13 @@ type BoardRowProps = {
 }
 const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 	const handleSlotClick = (
-		slotType: SlotType,
+		slotType: SlotTypeT,
 		slotIndex: number,
 		card: CardT | null
 	) => {
 		onClick({slotType, slotIndex, card})
 	}
-	const slotTypes: Array<SlotType> = [
+	const slotTypes: Array<SlotTypeT> = [
 		'item',
 		'item',
 		'item',

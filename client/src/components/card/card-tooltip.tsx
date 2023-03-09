@@ -17,7 +17,6 @@ const HERMIT_TYPES: Record<HermitTypeT, string> = {
 	prankster: 'Prankster',
 	miner: 'Miner',
 	explorer: 'Explorer',
-	any: 'Unknown',
 }
 
 type Props = {

@@ -2,12 +2,9 @@ import {SagaIterator} from 'redux-saga'
 import {select} from 'typed-redux-saga'
 import {delay, put, takeLatest} from 'redux-saga/effects'
 import {GameState} from 'common/types/game-state'
-import {CardInfoT} from 'common/types/cards'
 import {getCurrentPlayerState} from '../game-selectors'
 import {setCoinFlip} from '../game-actions'
 import CARDS from 'server/cards'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 function* coinFlipSaga(): SagaIterator {
 	let turn = 0
@@ -36,7 +33,7 @@ function* coinFlipSaga(): SagaIterator {
 		for (const id of newIds) {
 			const coinFlip = coinFlips[id]
 			shownCoinFlips.push(id)
-			const name = Object.hasOwn(TYPED_CARDS, id) ? TYPED_CARDS[id].name : id
+			const name = Object.hasOwn(CARDS, id) ? CARDS[id].name : id
 			yield put(setCoinFlip({name, tosses: coinFlip}))
 			yield delay(2500)
 		}

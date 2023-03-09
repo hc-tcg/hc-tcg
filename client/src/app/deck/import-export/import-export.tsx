@@ -1,12 +1,9 @@
 import {useRef} from 'react'
-import {CardInfoT} from 'common/types/cards'
 import {CardT} from 'common/types/game-state'
 import CARDS from 'server/cards'
 import css from './import-export.module.css'
 import {universe} from './import-export-const'
 import Modal from 'components/modal'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
 
 type Props = {
 	pickedCards: Array<CardT>
@@ -30,7 +27,7 @@ const ImportExport = ({pickedCards, setPickedCards, close}: Props) => {
 			})
 		}
 		if (!deck) return
-		const deckCards = deck.filter((card: CardT) => TYPED_CARDS[card.cardId])
+		const deckCards = deck.filter((card: CardT) => CARDS[card.cardId])
 		setPickedCards(deckCards)
 	}
 

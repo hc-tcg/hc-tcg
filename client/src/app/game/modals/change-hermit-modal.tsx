@@ -3,10 +3,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
 import {PickedCardT} from 'common/types/pick-process'
-import {CardInfoT} from 'common/types/cards'
-import CARDS from 'server/cards'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
+import {HERMIT_CARDS} from 'server/cards'
 
 type Props = {
 	closeModal: () => void
@@ -21,7 +18,9 @@ function ChangeHermitModal({closeModal, info}: Props) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.cardId ? TYPED_CARDS[info.card.cardId].name : ''
+	const hermitName = info.card?.cardId
+		? HERMIT_CARDS[info.card.cardId].name
+		: ''
 	const row = playerState.board.rows[info.rowIndex]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
