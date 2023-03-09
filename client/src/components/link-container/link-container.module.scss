@@ -25,11 +25,12 @@
 		}
 	}
 
-	> a:hover{
+	> a:hover {
 		cursor: pointer;
 
 		> img {
-			filter: invert(60%) sepia(100%) saturate(200%) brightness(160%) contrast(150%) drop-shadow(3px 3px 5px rgba(0, 0, 0, 75%));
+			filter: invert(60%) sepia(100%) saturate(200%) brightness(160%)
+				contrast(150%) drop-shadow(3px 3px 5px rgba(0, 0, 0, 75%));
 		}
 	}
 }
