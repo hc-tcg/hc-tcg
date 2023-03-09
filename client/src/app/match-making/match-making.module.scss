@@ -2,16 +2,12 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
 	margin: 0;
-
 	height: 100%;
 	width: 100%;
-
 	background-image: url('/images/menu-background.png');
 	background-size: cover;
 	background-position: center;
-
 	font-family: Minecraft;
 }
 
@@ -20,7 +16,6 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-
 	height: 100%;
 
 	form {
@@ -64,10 +59,8 @@
 	color: white;
 	border: 0.5vh solid #333;
 	border-radius: 0.5vh;
-
 	padding: 1vh 1.5vh;
 	margin-bottom: 0.5vh;
-
 	font-size: 3vh;
 	text-align: center;
 	letter-spacing: 0.2vh;

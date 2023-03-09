@@ -5,7 +5,7 @@
 	width: 100%;
 	height: 100%;
 	position: fixed;
-	background: rgba(0, 0, 0, 0.3);
+	background: rgba(0, 0, 0, 30%);
 	top: 0;
 	left: 0;
 }
@@ -28,7 +28,7 @@
 .topLine {
 	display: flex;
 	justify-content: space-between;
-	padding: 5px 10px 0px 10px;
+	padding: 5px 10px 0;
 }
 
 .closeButton {
@@ -46,7 +46,7 @@
 }
 
 .content {
-	padding: 0px;
+	padding: 0;
 }
 
 .topBevel,

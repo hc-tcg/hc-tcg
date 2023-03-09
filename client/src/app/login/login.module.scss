@@ -1,11 +1,9 @@
 .loginBackground {
 	display: flex;
 	justify-content: center;
-
 	margin: 0;
 	height: 100%;
 	width: 100%;
-
 	background-image: url('/images/menu-background.png');
 	background-size: cover;
 	background-position: center;
@@ -42,9 +40,22 @@
 	}
 }
 
+.placeholder {
+	line-height: normal;
+	position: absolute;
+	font-size: 2vh;
+	color: #808080;
+	transition: all 0.4s;
+	top: 1.5vh;
+	left: 1.5vh;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	pointer-events: none;
+}
+
 .customInput {
 	position: relative;
-
 	width: 35vh;
 	height: 5vh;
 
@@ -64,24 +75,6 @@
 	}
 }
 
-.placeholder {
-	line-height: normal;
-	position: absolute;
-	font-size: 2vh;
-
-	color: #808080;
-
-	transition: all 0.4s;
-
-	top: 1.5vh;
-	left: 1.5vh;
-
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	pointer-events: none;
-}
-
 @media screen and (max-width: 80vh) {
 	.nameForm,
 	.connecting {
@@ -92,6 +85,11 @@
 		* {
 			font-size: 1.5vh !important;
 		}
+	}
+
+	.placeholder {
+		top: 1.75vh;
+		left: 1.4vh;
 	}
 
 	.customInput {
@@ -106,10 +104,5 @@
 				color: #000;
 			}
 		}
-	}
-
-	.placeholder {
-		top: 1.75vh;
-		left: 1.4vh;
 	}
 }

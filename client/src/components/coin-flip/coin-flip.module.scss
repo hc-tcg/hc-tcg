@@ -2,13 +2,16 @@
 	0% {
 		transform: rotate3d(0, 1, 0, 0deg);
 	}
+
 	50% {
 		transform: rotate3d(0, 1, 0, 180deg);
 	}
+
 	100% {
 		transform: rotate3d(0, 1, 0, 360deg);
 	}
 }
+
 .name {
 	font-family: Minecraft;
 	color: white;
@@ -19,9 +22,11 @@
 	text-overflow: ellipsis;
 	margin-bottom: 10px;
 }
+
 .coinFlip {
 	max-width: 130px;
 }
+
 .tosses {
 	display: flex;
 	flex-flow: row wrap;
@@ -29,6 +34,7 @@
 	gap: 10px;
 	justify-content: center;
 }
+
 .coin {
 	position: relative;
 	width: 60px;
@@ -42,6 +48,7 @@
 	transform: rotateY(0deg);
 	transform-style: preserve-3d;
 }
+
 .face {
 	position: absolute;
 	top: 0;
@@ -59,11 +66,13 @@
 		height: 100%;
 	}
 }
+
 .front {
 	background-color: gray;
 	z-index: 2;
 	transform: rotateY(0deg);
 }
+
 .back {
 	background-color: gray;
 	z-index: 1;

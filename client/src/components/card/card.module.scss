@@ -1,6 +1,5 @@
 .selected {
-	outline: 3px solid rgba(50, 50, 255, 0.7);
-
+	outline: 3px solid rgba(50, 50, 255, 70%);
 	animation-name: selectedCardAnim;
 	animation-duration: 1.5s;
 	animation-iteration-count: infinite;
@@ -22,7 +21,7 @@
 }
 
 .picked {
-	outline: 3px dashed rgba(50, 50, 255, 0.7);
+	outline: 3px dashed rgba(50, 50, 255, 70%);
 }
 
 .card {
@@ -30,7 +29,7 @@
 	width: 9em; */
 	height: 100%;
 	overflow: hidden;
-	font-family: 'BangersBold', Helvetica, serif;
+	font-family: BangersBold, Helvetica, serif;
 	user-select: none;
 }
 

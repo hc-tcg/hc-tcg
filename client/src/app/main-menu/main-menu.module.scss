@@ -62,9 +62,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-
 	margin-top: 11vh;
-
 	width: 95%;
 }
 
@@ -87,7 +85,6 @@
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-
 	margin-top: 11vh;
 }
 
@@ -96,9 +93,7 @@
 	color: white;
 	border: 0.5vh solid #333;
 	border-radius: 0.5vh;
-
 	overflow-y: auto;
-
 	max-height: 30vh;
 	margin-top: 2.5vh;
 	padding: 2vh;
@@ -107,11 +102,9 @@
 .stat {
 	display: flex;
 	justify-content: space-between;
-
 	padding: 0.3vh 1vh;
 	font-size: 2.5vh;
 	font-family: Minecraft;
-
 	cursor: default;
 
 	&:hover {
@@ -135,6 +128,7 @@
 		margin: 0;
 	}
 }
+
 @media screen and (max-width: 80vh) {
 	.menuButton {
 		margin-bottom: 2vh;
@@ -143,6 +137,7 @@
 	.mainButtonContainer {
 		margin-top: 5vh;
 	}
+
 	.smallButtonContainer {
 		flex-direction: column-reverse;
 		align-items: stretch;

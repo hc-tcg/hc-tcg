@@ -6,7 +6,6 @@
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-
 	width: 65vh;
 	overflow: visible;
 }
@@ -23,7 +22,6 @@
 		text-shadow: #3f3e00 0.2vh 0.2vh;
 		font-family: Minecraft;
 		margin: 0;
-
 		animation-name: notOfficialAnim;
 		animation-duration: 1s;
 		animation-direction: alternate-reverse;
@@ -36,6 +34,7 @@
 	.logo {
 		width: 75vw;
 	}
+
 	.logoSubText {
 		right: 1vw;
 		bottom: 9vw;
@@ -50,6 +49,7 @@
 	from {
 		transform: scale(100%);
 	}
+
 	to {
 		transform: scale(140%);
 	}
