@@ -59,14 +59,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 			const pickedHermit = hypnoPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
 
+			const pickedItem = hypnoPickedCards[1]
+			if (!validPick(game.state, this.pickReqs[1], pickedItem)) return target
+
 			if (pickedHermit.row !== target.row) {
 				target.applyHermitDamage = false
 				return target
 			}
 			target.applyHermitDamage = true
-
-			const pickedItem = hypnoPickedCards[1]
-			if (!validPick(game.state, this.pickReqs[1], pickedItem)) return target
 
 			if (!target.isActive) discardCard(game, pickedItem.card)
 			return target

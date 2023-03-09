@@ -37,6 +37,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards.length !== 2) return 'INVALID'
+
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
 					return 'INVALID'
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[1]))

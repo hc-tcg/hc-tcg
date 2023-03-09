@@ -41,4 +41,7 @@ export const ITEM_CARDS = CARDS.reduce((result, card) => {
 	return result
 }, {})
 
+SINGLE_USE_CARDS['water_bucket'] = EFFECT_CARDS['water_bucket']
+SINGLE_USE_CARDS['milk_bucket'] = EFFECT_CARDS['milk_bucket']
+
 export default cardMap

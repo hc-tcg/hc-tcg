@@ -96,29 +96,27 @@ export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 
 /**
  * @param {Partial<PickRequirmentT>} req
- * @param {PlayerState | null} cardPlayerState
+ * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
  */
 export const validRow = (req, cardPlayerState, rowIndex) => {
 	if (typeof rowIndex !== 'number') return true
-	if (!cardPlayerState) return false
 	const row = cardPlayerState?.board.rows[rowIndex]
 	return !!(row && row.hermitCard)
 }
 
 /**
  * @param {Partial<PickRequirmentT>} req
- * @param {PlayerState | null} cardPlayerState
+ * @param {PlayerState} cardPlayerState
  * @param {string} playerId
+ * @param {SlotTypeT} slotType
  * @returns {boolean}
  */
-export const validTarget = (req, cardPlayerState, playerId) => {
+export const validTarget = (req, cardPlayerState, playerId, slotType) => {
 	if (!Object.hasOwn(req, 'target')) return true
-	// hand (or possibly sue?)
-	if (!cardPlayerState) return req.target === 'hand'
 
-	// board
+	if (req.target === 'hand') return slotType === 'hand'
 	if (req.target === 'player' && playerId !== cardPlayerState.id) return false
 	if (req.target === 'opponent' && playerId === cardPlayerState.id) return false
 
@@ -127,13 +125,13 @@ export const validTarget = (req, cardPlayerState, playerId) => {
 
 /**
  * @param {Partial<PickRequirmentT>} req
- * @param {PlayerState | null} cardPlayerState
+ * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
  */
 export const validActive = (req, cardPlayerState, rowIndex) => {
 	if (!Object.hasOwn(req, 'active')) return true
-	if (!cardPlayerState || rowIndex === null) return false
+	if (rowIndex === null) return false
 
 	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
 	const isActive =
@@ -144,12 +142,12 @@ export const validActive = (req, cardPlayerState, rowIndex) => {
 
 /**
  * @param {Partial<PickRequirmentT>} req
- * @param {SlotTypeT} slotType
+ * @param {SlotTypeT} cardType
  * @returns {boolean}
  */
-export const validType = (req, slotType) => {
+export const validType = (req, cardType) => {
 	if (!Object.hasOwn(req, 'type')) return true
-	return req.type === 'any' ? true : req.type === slotType
+	return req.type === 'any' ? true : req.type === cardType
 }
 
 /**
@@ -183,12 +181,15 @@ export function validPick(gameState, req, pickedCard) {
 	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
 	const cardPlayerState = gameState.players[cardPlayerId]
 	const card = pickedCard.card
-	const slotType = card ? CARDS[card.cardId].type : pickedCard.slotType
+	const slotType = pickedCard.slotType
+	const cardType = card ? CARDS[card.cardId].type : slotType
 
+	if (!cardPlayerState) return false
 	if (!validRow(req, cardPlayerState, rowIndex)) return false
-	if (!validTarget(req, cardPlayerState, gameState.turnPlayerId)) return false
+	if (!validTarget(req, cardPlayerState, gameState.turnPlayerId, slotType))
+		return false
 	if (!validActive(req, cardPlayerState, rowIndex)) return false
-	if (!validType(req, slotType)) return false
+	if (!validType(req, cardType)) return false
 	if (!validEmpty(req, card)) return false
 
 	return true

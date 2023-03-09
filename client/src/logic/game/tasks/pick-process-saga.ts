@@ -7,8 +7,8 @@ import {anyAvailableReqOptions, validPick} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getGameState,
-	getPlayerState,
-	getOpponentState,
+	getCurrentPlayerState,
+	getInactivePlayerState,
 } from 'logic/game/game-selectors'
 import {
 	setPickProcess,
@@ -54,8 +54,8 @@ export function* runPickProcessSaga(
 		const playerId = yield* select(getPlayerId)
 		if (!name || !reqs || !playerId) return null
 
-		const playerState = yield* select(getPlayerState)
-		const opponentState = yield* select(getOpponentState)
+		const playerState = yield* select(getCurrentPlayerState)
+		const opponentState = yield* select(getInactivePlayerState)
 
 		const pickPossible = anyAvailableReqOptions(
 			playerState,
