@@ -34,7 +34,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`
 	else if (!canChange)
-		message = `You can not not change your active hermit at this moment.`
+		message = `You can not change your active hermit at this moment.`
 
 	const lastAction = hasActiveHermit && canChange
 
