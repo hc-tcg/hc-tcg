@@ -1,4 +1,4 @@
-import css from './health-bar.module.css'
+import css from './health-bar.module.scss'
 
 export type Props = {
 	lives: number

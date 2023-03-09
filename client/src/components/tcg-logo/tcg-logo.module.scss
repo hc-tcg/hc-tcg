@@ -16,20 +16,20 @@
 	right: 0;
 	bottom: 8vh;
 	transform: rotate(-20deg);
-}
 
-.logoSubText > p {
-	font-size: 2.2vh;
-	color: #fcfc29;
-	text-shadow: #3f3e00 0.2vh 0.2vh;
-	font-family: Minecraft;
-	margin: 0;
+	p {
+		font-size: 2.2vh;
+		color: #fcfc29;
+		text-shadow: #3f3e00 0.2vh 0.2vh;
+		font-family: Minecraft;
+		margin: 0;
 
-	animation-name: notOfficialAnim;
-	animation-duration: 1s;
-	animation-direction: alternate-reverse;
-	animation-iteration-count: infinite;
-	animation-timing-function: ease-in-out;
+		animation-name: notOfficialAnim;
+		animation-duration: 1s;
+		animation-direction: alternate-reverse;
+		animation-iteration-count: infinite;
+		animation-timing-function: ease-in-out;
+	}
 }
 
 @media screen and (max-width: 80vh) {
@@ -39,9 +39,10 @@
 	.logoSubText {
 		right: 1vw;
 		bottom: 9vw;
-	}
-	.logoSubText > p {
-		font-size: 2.5vw;
+
+		p {
+			font-size: 2.5vw;
+		}
 	}
 }
 

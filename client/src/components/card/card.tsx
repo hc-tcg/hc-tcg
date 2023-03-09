@@ -4,7 +4,7 @@ import HermitCard, {HermitCardProps} from './hermit-card-svg'
 import EffectCard, {EffectCardProps} from './effect-card-svg'
 import ItemCard, {ItemCardProps} from './item-card-svg'
 import HealthCard, {HealthCardProps} from './health-card-svg'
-import css from './card.module.css'
+import css from './card.module.scss'
 import Tooltip from 'components/tooltip'
 import CardTooltip from './card-tooltip'
 

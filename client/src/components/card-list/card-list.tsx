@@ -4,7 +4,7 @@ import {useRef} from 'react'
 import CARDS from 'server/cards'
 import {CardT} from 'common/types/game-state'
 import Card from 'components/card'
-import css from './card-list.module.css'
+import css from './card-list.module.scss'
 import {equalCard} from 'server/utils'
 
 const SIZE = {

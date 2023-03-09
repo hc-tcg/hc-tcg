@@ -1,4 +1,4 @@
-import css from './tcg-logo.module.css'
+import css from './tcg-logo.module.scss'
 
 function TcgLogo() {
 	return (

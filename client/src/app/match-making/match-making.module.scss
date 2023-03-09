@@ -5,8 +5,8 @@
 
 	margin: 0;
 
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 
 	background-image: url('/images/menu-background.png');
 	background-size: cover;
@@ -22,6 +22,21 @@
 	justify-content: center;
 
 	height: 100%;
+
+	form {
+		width: 25vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	input {
+		width: 25vh;
+		text-align: center;
+		border-radius: 0.5vh;
+		border: 0.5vh solid rgb(30, 30, 30);
+		height: 4vh;
+	}
 }
 
 .message {
@@ -64,21 +79,6 @@
 	margin-top: 3vh;
 	display: flex;
 	justify-content: space-around;
-}
-
-.matchMakingContainer form {
-	width: 25vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.matchMakingContainer input {
-	width: 25vh;
-	text-align: center;
-	border-radius: 0.5vh;
-	border: 0.5vh solid rgb(30, 30, 30);
-	height: 4vh;
 }
 
 .invalidText {

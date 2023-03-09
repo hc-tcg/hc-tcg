@@ -10,6 +10,14 @@
 	color: white;
 	text-shadow: 1px 1px 2px black, -1px -1px 2px black;
 	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+
+		.avatar {
+			box-shadow: 0 0 3px 1px black;
+		}
+	}
 }
 
 .avatar {
@@ -17,14 +25,6 @@
 	width: 7vh;
 	height: 7vh;
 	border-radius: 3.5vh;
-}
-
-.beef:hover {
-	text-decoration: underline;
-}
-
-.beef:hover .avatar {
-	box-shadow: 0 0 3px 1px black;
 }
 
 @media screen and (max-width: 150vh) {

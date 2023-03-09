@@ -5,7 +5,7 @@ import {
 	createPrivateGame,
 	joinPrivateGame,
 } from 'logic/matchmaking/matchmaking-actions'
-import css from './main-menu.module.css'
+import css from './main-menu.module.scss'
 import {logout} from 'logic/session/session-actions'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'

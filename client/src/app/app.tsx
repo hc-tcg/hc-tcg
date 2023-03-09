@@ -10,7 +10,7 @@ import MainMenu from './main-menu'
 import Game from './game'
 import Deck from './deck'
 import MatchMaking from './match-making'
-import css from './app.module.css'
+import css from './app.module.scss'
 
 function App() {
 	const playerName = useSelector(getPlayerName)
@@ -36,7 +36,7 @@ function App() {
 
 	return (
 		<main>
-			<div className={css.form}>{router()}</div>
+			{router()}
 			{playerName && !socketStatus ? <LostConnection /> : null}
 		</main>
 	)

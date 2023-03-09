@@ -1,6 +1,6 @@
 import {HealthCardT} from 'common/types/cards'
 import {useState, useRef, useMemo, useEffect} from 'react'
-import css from './health-card-svg.module.css'
+import css from './health-card-svg.module.scss'
 import classnames from 'classnames'
 
 export type HealthCardProps = {
