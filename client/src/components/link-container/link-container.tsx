@@ -1,4 +1,4 @@
-import css from './link-container.module.css'
+import css from './link-container.module.scss'
 
 function LinkContainer() {
 	return (

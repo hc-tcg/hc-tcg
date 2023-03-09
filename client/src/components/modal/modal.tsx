@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import css from './modal.module.css'
+import css from './modal.module.scss'
 
 type Props = {
 	children: React.ReactNode

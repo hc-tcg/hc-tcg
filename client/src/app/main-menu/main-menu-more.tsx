@@ -1,4 +1,4 @@
-import css from './main-menu.module.css'
+import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -32,7 +32,7 @@ function More({setMenuSection}: Props) {
 		return 'Disabled'
 	}
 	return (
-		<div className={`${css.menuBackground} ${css.moreBackground} temp`}>
+		<div className={`${css.menuBackground} ${css.backgroundOverride} temp`}>
 			<div className={css.moreContainer}>
 				<div className={css.moreButtonContainer}>
 					<button className={css.menuButton} onClick={handleSoundChange}>

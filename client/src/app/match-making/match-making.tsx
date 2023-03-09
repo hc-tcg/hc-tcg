@@ -6,7 +6,7 @@ import {
 	getCode,
 	getInvalidCode,
 } from 'logic/matchmaking/matchmaking-selectors'
-import css from './match-making.module.css'
+import css from './match-making.module.scss'
 import TcgLogo from 'components/tcg-logo'
 
 function MatchMaking() {

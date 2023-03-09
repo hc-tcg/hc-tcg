@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import {CardInfoT, HermitTypeT} from 'common/types/cards'
 import STRENGTHS from 'server/const/strengths'
-import css from './card-tooltip.module.css'
+import css from './card-tooltip.module.scss'
 
 const TYPED_STRENGTHS = STRENGTHS as Record<HermitTypeT, Array<HermitTypeT>>
 

@@ -1,6 +1,6 @@
 import classnames from 'classnames'
 import {ItemCardT} from 'common/types/cards'
-import css from './item-card-svg.module.css'
+import css from './item-card-svg.module.scss'
 
 export type ItemCardProps = {
 	card: ItemCardT

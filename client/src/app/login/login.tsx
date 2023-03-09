@@ -2,7 +2,7 @@ import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {getConnecting} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
-import css from './login.module.css'
+import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'
 

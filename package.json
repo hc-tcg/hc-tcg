@@ -33,6 +33,7 @@
 		"react-redux": "^8.0.5",
 		"redux": "^4.2.0",
 		"redux-saga": "^1.2.2",
+		"sass": "^1.58.3",
 		"socket.io": "^4.5.4",
 		"socket.io-client": "^4.5.4",
 		"tapable": "^2.2.1",

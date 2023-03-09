@@ -1,4 +1,4 @@
-import css from './tooltip.module.css'
+import css from './tooltip.module.scss'
 import React, {useState} from 'react'
 import {
 	useFloating,

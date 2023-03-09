@@ -1,4 +1,4 @@
-import css from './lost-connection.module.css'
+import css from './lost-connection.module.scss'
 
 const LostConnection = () => {
 	return (

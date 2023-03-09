@@ -23,6 +23,13 @@
 	src: url(/fonts/BangersBold.otf);
 }
 
+html,
+body,
+#root,
+main {
+	height: 100%;
+}
+
 body {
 	margin: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -56,56 +63,61 @@ button {
 	color: #ddd;
 	text-shadow: 2px 2px #000a;
 	box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
-}
 
-button:disabled {
-	opacity: 0.7;
-	box-shadow: none;
-}
+	&:disabled {
+		opacity: 0.7;
+		box-shadow: none;
+	}
 
-button:not(:disabled):hover {
-	cursor: pointer;
-	background-color: rgba(100, 100, 255, 0.45);
-	text-shadow: 2px 2px #202013cc;
-	color: #ffffa0;
-}
+	&:not(:disabled):hover {
+		cursor: pointer;
+		background-color: rgba(100, 100, 255, 0.45);
+		text-shadow: 2px 2px #202013cc;
+		color: #ffffa0;
+	}
 
-input {
-	width: 200px;
-	padding: 0 10px;
-	height: 30px;
-	line-height: 1;
-	vertical-align: bottom;
-	border: 2px solid #000;
-	font-family: Minecraft;
+	input {
+		width: 200px;
+		padding: 0 10px;
+		height: 30px;
+		line-height: 1;
+		vertical-align: bottom;
+		border: 2px solid #000;
+		font-family: Minecraft;
+	}
 }
 
 /* changes for new look, note that all the above will get redone eventually */
 
-.temp button {
-	line-height: 100%;
-	text-align: center;
-	height: 5vh;
-	font-size: 2vh;
-	border: 0.3vh solid #000;
-	text-shadow: 0.2vh 0.2vh #000;
-	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
-	padding: 0 2vh;
-}
-.temp button:not(:disabled):hover {
-	text-shadow: 0.3vh 0.3vh #202013cc;
+.temp {
+	button {
+		line-height: 100%;
+		text-align: center;
+		height: 5vh;
+		font-size: 2vh;
+		border: 0.3vh solid #000;
+		text-shadow: 0.2vh 0.2vh #000;
+		box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
+		padding: 0 2vh;
+
+		&:not(:disabled):hover {
+			text-shadow: 0.3vh 0.3vh #202013cc;
+		}
+	}
+
+	input {
+		border: 0.3vh solid #000;
+		height: 5vh;
+		font-size: 2vh;
+
+		&:focus-visible {
+			outline-offset: 0;
+			outline: none;
+		}
+	}
 }
 
-.temp input {
-	border: 0.3vh solid #000;
-	height: 5vh;
-	font-size: 2vh;
-}
-.temp input:focus-visible {
-	outline-offset: 0;
-	outline: none;
-}
-
+/* scrollbar */
 ::-webkit-scrollbar {
 	width: 1.5vh;
 	height: 1.5vh;

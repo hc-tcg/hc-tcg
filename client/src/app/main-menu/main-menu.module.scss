@@ -3,21 +3,20 @@
 .menuBackground {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
-	width: 100vw;
+	height: 100%;
+	width: 100%;
 	background-image: url('/images/menu-background-widescreen.png');
 	background-size: cover;
 	background-position: left;
-}
 
-.moreBackground {
-	background-image: url('/images/menu-background.png');
-	background-position: center;
-}
+	&.backgroundOverride {
+		background-image: url('/images/menu-background.png');
+		background-position: center;
+	}
 
-/* Prevent selection */
-.menuBackground * {
-	user-select: none;
+	* {
+		user-select: none;
+	}
 }
 
 /* Universal */
@@ -31,17 +30,20 @@
 	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-}
-.smallButtonContainer .menuButton {
-	width: calc(50% - 1.25vh);
-	margin: 0 1.25vh;
-	flex-grow: 1;
-}
-.smallButtonContainer .menuButton:first-of-type {
-	margin-left: 0;
-}
-.smallButtonContainer .menuButton:last-of-type {
-	margin-right: 0;
+
+	.menuButton {
+		width: calc(50% - 1.25vh);
+		margin: 0 1.25vh;
+		flex-grow: 1;
+
+		&:first-of-type {
+			margin-left: 0;
+		}
+
+		&:last-of-type {
+			margin-right: 0;
+		}
+	}
 }
 
 /* Main container */
@@ -75,10 +77,10 @@
 	height: 100%;
 	width: 100%;
 	justify-content: center;
-}
 
-.moreContainer > * {
-	width: min(80vh, 85vw);
+	> * {
+		width: min(80vh, 85vw);
+	}
 }
 
 .moreButtonContainer {
@@ -111,10 +113,10 @@
 	font-family: Minecraft;
 
 	cursor: default;
-}
 
-.stat:hover {
-	background: #333;
+	&:hover {
+		background: #333;
+	}
 }
 
 /* Small Screen */
@@ -145,12 +147,14 @@
 		flex-direction: column-reverse;
 		align-items: stretch;
 		margin-top: 2.5vh;
-	}
-	.smallButtonContainer .menuButton {
-		width: 100%;
-		margin: 0 0 2.5vh;
-	}
-	.smallButtonContainer .menuButton:first-of-type {
-		margin: 0;
+
+		.menuButton {
+			width: 100%;
+			margin: 0 0 2.5vh;
+
+			&:first-of-type {
+				margin: 0;
+			}
+		}
 	}
 }
