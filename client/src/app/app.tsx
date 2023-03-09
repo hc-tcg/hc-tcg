@@ -10,7 +10,6 @@ import MainMenu from './main-menu'
 import Game from './game'
 import Deck from './deck'
 import MatchMaking from './match-making'
-import css from './app.module.scss'
 
 function App() {
 	const playerName = useSelector(getPlayerName)
