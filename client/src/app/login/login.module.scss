@@ -62,24 +62,24 @@
 			color: #000;
 		}
 	}
+}
 
-	.placeholder {
-		line-height: normal;
-		position: absolute;
-		font-size: 2vh;
+.placeholder {
+	line-height: normal;
+	position: absolute;
+	font-size: 2vh;
 
-		color: #808080;
+	color: #808080;
 
-		transition: all 0.4s;
+	transition: all 0.4s;
 
-		top: 1.5vh;
-		left: 1.5vh;
+	top: 1.5vh;
+	left: 1.5vh;
 
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		pointer-events: none;
-	}
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	pointer-events: none;
 }
 
 @media screen and (max-width: 80vh) {
@@ -92,24 +92,24 @@
 		* {
 			font-size: 1.5vh !important;
 		}
+	}
 
-		.customInput {
-			width: 50vw;
+	.customInput {
+		width: 50vw;
 
-			.placeholder {
-				top: 1.75vh;
-				left: 1.4vh;
-			}
-
-			input {
-				&:focus-visible + .placeholder,
-				&:not(:placeholder-shown) + .placeholder {
-					top: -2.3vh;
-					left: 0.5vh;
-					font-size: 2vh !important;
-					color: #000;
-				}
+		input {
+			&:focus-visible + .placeholder,
+			&:not(:placeholder-shown) + .placeholder {
+				top: -2.3vh;
+				left: 0.5vh;
+				font-size: 2vh !important;
+				color: #000;
 			}
 		}
+	}
+
+	.placeholder {
+		top: 1.75vh;
+		left: 1.4vh;
 	}
 }
