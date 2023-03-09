@@ -10,10 +10,26 @@
 
 	> a {
 		display: flex;
+		align-items: center;
+		height: 5vh;
+		overflow: hidden;
+		background: #999 url('/images/bgbtn.png') center / cover;
+		border: 2px solid #000;
+		color: #ddd;
+		box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
 
 		> img {
-			height: 4vh;
-			width: 4vh;
+			height: 3.5vh;
+			width: 3.5vh;
+			margin: 8px;
+		}
+	}
+
+	> a:hover{
+		cursor: pointer;
+
+		> img {
+			filter: invert(60%) sepia(100%) saturate(200%) brightness(160%) contrast(150%) drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.75));
 		}
 	}
 }
