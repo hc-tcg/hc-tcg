@@ -20,7 +20,7 @@ class BedEffectCard extends EffectCard {
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:
-				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
+				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health when bed is attached.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
 		})
 	}
 
