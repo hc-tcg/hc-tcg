@@ -6,8 +6,6 @@ import {flipCoin, discardSingleUse} from '../../../utils'
  */
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
-// TODO - this should probably alllow to use two attack single use cards...
-// TODO - test with multi step use (looting)
 class GeminiTayRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -54,19 +52,47 @@ class GeminiTayRareHermitCard extends HermitCard {
 			return target
 		})
 
-		/*
-		Discarding single use cards needs to be delay, bceause some cards are not sued until later, e.g. chorus fruit
-		*/
+		// 1 - Discard single use card after attack so we can use another
+		// 2 - Discard single use card after it was applied
 		game.hooks.actionEnd.tap(this.id, () => {
 			const {currentPlayer} = game.ds
 			const usedPower = currentPlayer.custom[this.id]
+			const suCard = currentPlayer.board.singleUseCard
 			const suUsed = currentPlayer.board.singleUseCardUsed
-			if (usedPower === 1 && suUsed && !currentPlayer.followUp) {
-				discardSingleUse(game, currentPlayer)
+			if (usedPower === 1 && !currentPlayer.followUp) {
+				if (suUsed) {
+					discardSingleUse(game, currentPlayer)
+				} else if (suCard) {
+					currentPlayer.hand.push(suCard)
+					currentPlayer.board.singleUseCard = null
+				}
 				currentPlayer.custom[this.id] = 2
+			} else if (usedPower === 2 && suUsed) {
+				delete currentPlayer.custom[this.id]
 			}
 		})
 
+		// Remove flag on single use attack
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {typeAction} = attackState
+
+			if (currentPlayer.custom[this.id] !== 2) return target
+			if (typeAction !== 'ZERO_ATTACK') return target
+
+			// ignore armor/thorns/wolf since they have been already used during main attack
+			target.additionalAttack = true
+			delete currentPlayer.custom[this.id]
+			return target
+		})
+
+		// Remove flag when effect card is attached
+		game.hooks.playCard.for('effect').tap(this.id, (turnAction) => {
+			const {currentPlayer} = game.ds
+			delete currentPlayer.custom[this.id]
+		})
+
+		// Remove flag at end of turn if it wasn't used
 		game.hooks.turnEnd.tap(this.id, () => {
 			const {currentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
@@ -76,16 +102,24 @@ class GeminiTayRareHermitCard extends HermitCard {
 			this.id,
 			(availableActions, pastTurnActions) => {
 				const {currentPlayer} = game.ds
-				const usedPower = currentPlayer.custom[this.id]
+				const usedPower = currentPlayer.custom[this.id] === 2
 
+				// Check for END_TURN prevents adding extra actions during followsup
+				if (!usedPower || !availableActions.includes('END_TURN'))
+					return availableActions
 				if (
-					usedPower &&
-					availableActions.includes('END_TURN') &&
 					!availableActions.includes('PLAY_SINGLE_USE_CARD') &&
 					!currentPlayer.board.singleUseCard
 				) {
 					availableActions.push('PLAY_SINGLE_USE_CARD')
 				}
+
+				if (!availableActions.includes('ZERO_ATTACK'))
+					availableActions.push('ZERO_ATTACK')
+
+				if (!availableActions.includes('PLAY_EFFECT_CARD'))
+					availableActions.push('PLAY_EFFECT_CARD')
+
 				return availableActions
 			}
 		)

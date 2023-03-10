@@ -81,6 +81,8 @@ function* attackSaga(game, turnAction, actionState) {
 		extraHermitDamage: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreEffects: false,
+		additionalAttack: false,
+		ignoreRecovery: false,
 		reverseDamage: false,
 		backlash: 0,
 		multiplier: 1,
@@ -123,9 +125,10 @@ function* attackSaga(game, turnAction, actionState) {
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
 		const targetEffectInfo = EFFECT_CARDS[target.row.effectCard?.cardId]
-		const protection = target.ignoreEffects
-			? 0
-			: targetEffectInfo?.protection?.target || 0
+		const protection =
+			target.ignoreEffects || target.additionalAttack
+				? 0
+				: targetEffectInfo?.protection?.target || 0
 		const weaknessDamage =
 			strengths.includes(targetHermitInfo.hermitType) &&
 			hermitAttack + extraHermitAttack > 0
@@ -188,7 +191,12 @@ function* attackSaga(game, turnAction, actionState) {
 		// from su effects & special movs
 		let totalDamageToAttacker = target.backlash
 		// from opponent's effects
-		if (!target.ignoreEffects && !target.reverseDamage && totalDamage > 0)
+		if (
+			!target.ignoreEffects &&
+			!target.additionalAttack &&
+			!target.reverseDamage &&
+			totalDamage > 0
+		)
 			totalDamageToAttacker += attackerBacklash
 		// hacky flag for Zedaph
 		if (target.reverseDamage) totalDamageToAttacker += totalDamage

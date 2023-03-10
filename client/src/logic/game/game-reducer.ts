@@ -5,6 +5,7 @@ import {
 	GameEndReasonT,
 	GameEndOutcomeT,
 	CurrentCoinFlipT,
+	AvailableActionsT,
 } from 'common/types/game-state'
 import {PickProcessT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
@@ -13,7 +14,7 @@ import {equalCard} from 'server/utils'
 type LocalGameState = {
 	opponentId: string
 	gameState: GameState | null
-	availableActions: Array<string>
+	availableActions: AvailableActionsT
 	time: number
 	selectedCard: CardT | null
 	openedModal: {

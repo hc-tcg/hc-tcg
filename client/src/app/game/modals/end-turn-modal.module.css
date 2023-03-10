@@ -1,0 +1,16 @@
+.description {
+	padding: 10px;
+}
+
+.options {
+	text-align: center;
+	padding: 10px 0;
+}
+
+.options button + button {
+	margin-left: 5px;
+}
+
+.availableActions {
+	margin: 0 0 10px 0;
+}

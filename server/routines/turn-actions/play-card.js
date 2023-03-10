@@ -26,7 +26,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		if (currentPlayer.board.rows[rowIndex].hermitCard) return
 		if (!availableActions.includes('ADD_HERMIT')) return
 
-		const result = game.hooks.playCard
+		const result = game.hooks.validateCard
 			.get('hermit')
 			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
@@ -49,7 +49,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		if (hermitRow.itemCards[slotIndex] !== null) return
 		if (!availableActions.includes('PLAY_ITEM_CARD')) return
 
-		const result = game.hooks.playCard
+		const result = game.hooks.validateCard
 			.get('item')
 			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
@@ -65,7 +65,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		if (hermitRow.effectCard) return
 		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
 
-		const result = game.hooks.playCard
+		const result = game.hooks.validateCard
 			.get('effect')
 			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
@@ -77,7 +77,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
 		if (currentPlayer.board.singleUseCard) return
 
-		const result = game.hooks.playCard
+		const result = game.hooks.validateCard
 			.get('single_use')
 			?.call(turnAction, actionState)
 		if (result === 'INVALID') return
@@ -89,6 +89,8 @@ function* playCardSaga(game, turnAction, actionState) {
 	currentPlayer.hand = currentPlayer.hand.filter(
 		(handCard) => !equalCard(handCard, card)
 	)
+
+	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
 
 	return 'DONE'
 }

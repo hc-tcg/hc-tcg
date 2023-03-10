@@ -13,6 +13,7 @@ import BorrowModal from './modals/borrow-modal'
 import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
+import EndTurnModal from './modals/end-turn-modal'
 import MouseIndicator from './mouse-indicator'
 import EndGameOverlay from './end-game-overlay'
 import Chat from './chat'
@@ -62,6 +63,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	borrow: BorrowModal,
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
+	'end-turn': EndTurnModal,
 }
 
 const renderModal = (

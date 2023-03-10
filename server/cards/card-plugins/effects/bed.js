@@ -81,7 +81,7 @@ class BedEffectCard extends EffectCard {
 		})
 
 		// Prevent placing bed on inactive hermits
-		game.hooks.playCard.for('effect').tap(this.id, (action) => {
+		game.hooks.validateCard.for('effect').tap(this.id, (action) => {
 			const {activeRow} = game.ds.currentPlayer.board
 			const {card, rowIndex} = action.payload
 			if (card?.cardId !== this.id) return

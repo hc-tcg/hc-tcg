@@ -11,7 +11,7 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 } from 'logic/game/game-selectors'
-import {endTurn} from 'logic/game/game-actions'
+import {setOpenedModal, endTurn} from 'logic/game/game-actions'
 import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
@@ -61,7 +61,11 @@ function Board({onClick, gameState}: Props) {
 	}
 
 	const handleEndTurn = () => {
-		dispatch(endTurn())
+		if (availableActions.length === 1) {
+			dispatch(endTurn())
+		} else {
+			dispatch(setOpenedModal('end-turn'))
+		}
 	}
 
 	const makeRows = (playerState: PlayerState, type: 'left' | 'right') => {

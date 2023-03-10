@@ -99,11 +99,18 @@ export class GameModel {
 			 */
 			attackResult: new SyncHook(['result', 'turnAction', 'attackState']),
 			/**
-			 * When card is put down on a board
+			 * For extra validation when players attempts to place down a card
 			 * @type {HookMap<SyncBailHook<[TurnAction, ActionState]>>}
 			 */
-			playCard: new HookMap(
+			validateCard: new HookMap(
 				(cardType) => new SyncBailHook(['turnAction', 'actionState'])
+			),
+			/**
+			 * When a card is succesfully placed on board
+			 * @type {HookMap<SyncHook<[TurnAction, ActionState]>>}
+			 */
+			playCard: new HookMap(
+				(cardType) => new SyncHook(['turnAction', 'actionState'])
 			),
 			/**
 			 * When a card is discarded (hand or board)
