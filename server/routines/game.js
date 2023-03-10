@@ -9,7 +9,12 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
+import {
+	HERMIT_CARDS,
+	SINGLE_USE_CARDS,
+	ITEM_CARDS,
+	EFFECT_CARDS,
+} from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
@@ -32,17 +37,6 @@ import {CONFIG} from '../../config'
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
 
-// TURN ACTIONS:
-// 'WAIT_FOR_TURN',
-// 'ADD_HERMIT',
-// 'PRIMARY_ATTACK',
-// 'SECONDARY_ATTACK',
-// 'CHANGE_ACTIVE_HERMIT',
-// 'PLAY_ITEM_CARD',
-// 'PLAY_EFFECT_CARD',
-// 'PLAY_SINGLE_USE_CARD',
-// 'END_TURN'
-
 /**
  * @param {number} seconds
  * @returns {number}
@@ -61,6 +55,17 @@ function getAvailableActions(game, pastTurnActions) {
 	const {currentPlayer, opponentPlayer} = game.ds
 	/** @type {AvailableActionsT} */
 	const actions = []
+
+	/**
+	 * @param {Record<string, unknown>} CardMap
+	 * @returns {boolean}
+	 */
+	const hasTypeInHand = (CardMap) =>
+		currentPlayer.hand.some((card) => CardMap[card.cardId])
+	const hasHermitInHand = hasTypeInHand(HERMIT_CARDS)
+	const hasItemInHand = hasTypeInHand(ITEM_CARDS)
+	const hasEffectInHand = hasTypeInHand(EFFECT_CARDS)
+	const hasSingleUseInHand = hasTypeInHand(SINGLE_USE_CARDS)
 
 	if (opponentPlayer.followUp) {
 		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
@@ -97,10 +102,9 @@ function getAvailableActions(game, pastTurnActions) {
 	const hermits = currentPlayer.board.rows.filter(
 		(row) => row.hermitCard
 	).length
-	if (
-		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
-		hermits < 5
-	) {
+	const hasNoHermit = hermits === 0
+	const hasActiveHermit = currentPlayer.board.activeRow !== null
+	if ((hasNoHermit || hasActiveHermit) && hermits < 5 && hasHermitInHand) {
 		actions.push('ADD_HERMIT')
 	}
 
@@ -119,7 +123,7 @@ function getAvailableActions(game, pastTurnActions) {
 	}
 
 	if (activeRow !== null) {
-		actions.push('PLAY_EFFECT_CARD')
+		if (hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
 
 		if (turn > 1) {
 			const hermitId = rows[activeRow].hermitCard?.cardId
@@ -143,11 +147,13 @@ function getAvailableActions(game, pastTurnActions) {
 		}
 	}
 
-	if (!pastTurnActions.includes('PLAY_ITEM_CARD'))
+	if (!pastTurnActions.includes('PLAY_ITEM_CARD') && hasItemInHand)
 		actions.push('PLAY_ITEM_CARD')
+
 	if (
 		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
-		!currentPlayer.board.singleUseCard
+		!currentPlayer.board.singleUseCard &&
+		hasSingleUseInHand
 	)
 		actions.push('PLAY_SINGLE_USE_CARD')
 
