@@ -14,7 +14,7 @@ export type PickRequirmentT = {
 	amount: number
 	empty?: boolean
 	active?: boolean
-	breakIf?: Partial<PickRequirmentT>
+	breakIf?: Array<'active' | 'efficiency'>
 }
 
 export type BoardPickedCardT = {

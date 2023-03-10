@@ -74,7 +74,7 @@ const checkHand = (playerState, req) => {
  * the board that would fit given requirments
  * @param playerState PlayerState
  * @param opponentState PlayerState
- * @param req Array<PickRequirmentT>
+ * @param reqs Array<PickRequirmentT>
  * @returns boolean
  */
 export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
@@ -89,13 +89,14 @@ export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 		}
 		const result = rowsInfo.filter((info) => checkRow(info, req))
 		if (result.length < req.amount) return false
+		if (req.breakIf) break
 	}
 
 	return true
 }
 
 /**
- * @param {Partial<PickRequirmentT>} req
+ * @param {PickRequirmentT} req
  * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
@@ -107,7 +108,7 @@ export const validRow = (req, cardPlayerState, rowIndex) => {
 }
 
 /**
- * @param {Partial<PickRequirmentT>} req
+ * @param {PickRequirmentT} req
  * @param {PlayerState} cardPlayerState
  * @param {string} playerId
  * @param {SlotTypeT} slotType
@@ -124,7 +125,7 @@ export const validTarget = (req, cardPlayerState, playerId, slotType) => {
 }
 
 /**
- * @param {Partial<PickRequirmentT>} req
+ * @param {PickRequirmentT} req
  * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
@@ -141,7 +142,7 @@ export const validActive = (req, cardPlayerState, rowIndex) => {
 }
 
 /**
- * @param {Partial<PickRequirmentT>} req
+ * @param {PickRequirmentT} req
  * @param {SlotTypeT} cardType
  * @returns {boolean}
  */
@@ -151,7 +152,7 @@ export const validType = (req, cardType) => {
 }
 
 /**
- * @param {Partial<PickRequirmentT>} req
+ * @param {PickRequirmentT} req
  * @param {CardT | null} card
  * @returns {boolean}
  */
@@ -165,8 +166,8 @@ const validEmpty = (req, card) => {
  * @template Y
  * @template {boolean} [E=false]
  * @param {GameState} gameState
- * @param {Partial<PickRequirmentT> & { target?: T, type?: Y, empty?: E }} req
- * @param {PickedCardT} pickedCard
+ * @param {PickRequirmentT & { target?: T, type?: Y, empty?: E }} req
+ * @param {PickedCardT | undefined} pickedCard
  * @returns {pickedCard is (T extends 'hand'
  *   ? HandPickedCardT
  *   : BoardPickedCardT
@@ -177,6 +178,8 @@ const validEmpty = (req, card) => {
  * }
  */
 export function validPick(gameState, req, pickedCard) {
+	if (!pickedCard) return false
+
 	const cardPlayerId = pickedCard.playerId
 	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
 	const cardPlayerState = gameState.players[cardPlayerId]

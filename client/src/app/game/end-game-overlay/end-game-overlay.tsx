@@ -24,15 +24,15 @@ const MESSAGE = {
 const WIN_MESSAGE = {
 	hermits: 'Opponent lost all hermits.',
 	lives: 'Opponent lost all lives.',
-	cards: 'Opponent run out of cards.',
-	time: 'Opponent run out of time without an active hermit.',
+	cards: 'Opponent ran out of cards.',
+	time: 'Opponent ran out of time without an active hermit.',
 }
 
 const LOSS_MESSAGE = {
 	hermits: 'You lost all hermits.',
 	lives: 'You lost all lives.',
-	cards: 'You run out of cards.',
-	time: 'You run out of time without an active hermit.',
+	cards: 'You ran out of cards.',
+	time: 'You ran out of time without an active hermit.',
 }
 
 const EndGameOverrlay = ({outcome, reason}: Props) => {

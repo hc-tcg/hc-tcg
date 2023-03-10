@@ -25,9 +25,8 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			this.id,
 			(availableActions, pastTurnActions) => {
 				const {currentPlayer} = game.ds
-				const suId = currentPlayer.board.singleUseCard?.cardId
-				const suUsed = currentPlayer.board.singleUseCardUsed
-				if (suId === this.id && suUsed) {
+				const efficiency = currentPlayer.custom[this.id]
+				if (efficiency) {
 					if (
 						pastTurnActions.includes('ATTACK') ||
 						pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') ||
@@ -47,10 +46,16 @@ class EfficiencySingleUseCard extends SingleUseCard {
 		)
 
 		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo} = game.ds
+			const {singleUseInfo, currentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
+				currentPlayer.custom[this.id] = true
 				return 'DONE'
 			}
+		})
+
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
+			delete currentPlayer.custom[this.id]
 		})
 	}
 }

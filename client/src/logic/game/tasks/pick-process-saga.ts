@@ -9,6 +9,7 @@ import {
 	getGameState,
 	getCurrentPlayerState,
 	getInactivePlayerState,
+	getPlayerStateById,
 } from 'logic/game/game-selectors'
 import {
 	setPickProcess,
@@ -31,7 +32,7 @@ const isDuplicate = (
 }
 
 function* validatePickSaga(
-	req: Partial<PickRequirmentT>,
+	req: PickRequirmentT,
 	pickAction: AnyPickActionT
 ): SagaIterator<PickedCardT | void> {
 	const playerId = yield* select(getPlayerId)
@@ -44,6 +45,23 @@ function* validatePickSaga(
 	if (!gameState) return
 	if (!validPick(gameState, req, pickedCard)) return
 	return pickedCard
+}
+
+function* breakIfSaga(
+	breakIf: PickRequirmentT['breakIf'],
+	pickedCard: PickedCardT
+): SagaIterator<boolean> {
+	if (!breakIf) return false
+	const cardPlayerState = yield* select(getPlayerStateById(pickedCard.playerId))
+	const currentPlayerState = yield* select(getCurrentPlayerState)
+	if (!cardPlayerState || !currentPlayerState) return false
+	return breakIf.some((rule) => {
+		if (rule === 'active' && 'rowIndex' in pickedCard) {
+			return pickedCard.rowIndex === cardPlayerState.board.activeRow
+		} else if (rule === 'efficiency') {
+			return !!currentPlayerState.custom['efficiency']
+		}
+	})
 }
 
 export function* runPickProcessSaga(
@@ -112,9 +130,10 @@ export function* runPickProcessSaga(
 					updatePickProcess({pickedCards: [...pickedCards, ...pickedReqCards]})
 				)
 
-				if (req.breakIf) {
-					const matches = yield call(validatePickSaga, req.breakIf, pickAction)
-					if (matches) break req_cycle
+				const matches = yield call(breakIfSaga, req.breakIf, pickedCard)
+				if (matches) {
+					pickedCards.push(...pickedReqCards)
+					break req_cycle
 				}
 			}
 			pickedCards.push(...pickedReqCards)

@@ -35,9 +35,13 @@ class HypnotizdRareHermitCard extends HermitCard {
 			},
 		})
 
+		const breakIf = /** @satisfies {PickRequirmentT['breakIf']} */ ([
+			'active',
+			'efficiency',
+		])
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, breakIf: {active: true}},
+			{target: 'opponent', type: 'hermit', amount: 1, breakIf},
 			{target: 'player', type: 'item', amount: 1, active: true},
 		])
 	}
@@ -54,13 +58,15 @@ class HypnotizdRareHermitCard extends HermitCard {
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			const hypnoPickedCards = pickedCardsInfo[this.id] || []
-			if (hypnoPickedCards.length !== 2) return target
 
 			const pickedHermit = hypnoPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
 
+			const efficiency = !!currentPlayer.custom['efficiency']
+
 			const pickedItem = hypnoPickedCards[1]
-			if (!validPick(game.state, this.pickReqs[1], pickedItem)) return target
+			if (!efficiency && !validPick(game.state, this.pickReqs[1], pickedItem))
+				return target
 
 			if (pickedHermit.row !== target.row) {
 				target.applyHermitDamage = false
@@ -68,7 +74,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 			}
 			target.applyHermitDamage = true
 
-			if (!target.isActive) discardCard(game, pickedItem.card)
+			if (!efficiency && !target.isActive) discardCard(game, pickedItem.card)
 			return target
 		})
 	}
