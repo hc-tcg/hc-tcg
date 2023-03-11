@@ -37,3 +37,7 @@
 		z-index: 10;
 	}
 }
+
+.disabled {
+	filter: brightness(50%);
+}

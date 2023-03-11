@@ -6,8 +6,9 @@ import {CardT} from 'common/types/game-state'
 import css from './chest-modal.module.css'
 import {equalCard} from 'server/utils'
 import {getPlayerState} from 'logic/game/game-selectors'
-
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
+
+const DISABLED = ['clock']
 
 type Props = {
 	closeModal: () => void
@@ -42,6 +43,7 @@ function ChestModal({closeModal}: Props) {
 			<div className={css.wrapper}>
 				<div className={css.cards}>
 					<CardList
+						disabled={DISABLED}
 						onClick={handleSelection}
 						size="small"
 						cards={discarded}
