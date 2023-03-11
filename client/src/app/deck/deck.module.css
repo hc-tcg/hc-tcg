@@ -5,19 +5,21 @@
 }
 
 .header {
+	position: sticky;
+	top: 0;
+	z-index: 15;
+	box-shadow: 0 3px 3px #111;
+}
+
+.topLine {
 	padding: 15px;
 	display: flex;
 	gap: 15px;
 	align-items: center;
-
-	position: sticky;
-	top: 0;
-	z-index: 15;
 	background: #ccc;
-	box-shadow: 0 3px 3px #333;
 }
 
-.header > * {
+.topLine > * {
 	flex: 0 0 auto;
 }
 
@@ -26,6 +28,22 @@
 	min-width: 0;
 	font-family: Minecraft;
 	font-size: 12px;
+}
+
+.cardsHeader {
+	display: flex;
+	flex-flow: row nowrap;
+}
+
+.cardsTitle {
+	flex: 1 1 auto;
+	width: 0;
+	text-align: center;
+	font-family: MinecraftBold;
+	padding: 10px 0 10px 0;
+	color: white;
+	font-size: 16px;
+	height: 36px;
 }
 
 .cards {
@@ -45,13 +63,6 @@
 
 .selectedCards {
 	background: #393433;
-}
-
-.cardsTitle {
-	text-align: center;
-	font-family: MinecraftBold;
-	padding: 5px 0 10px 0;
-	color: white;
 }
 
 .commonAmount {

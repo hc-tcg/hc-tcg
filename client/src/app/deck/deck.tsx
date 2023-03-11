@@ -126,50 +126,44 @@ const Deck = ({setMenuSection}: Props) => {
 	return (
 		<div className={css.deck}>
 			<div className={css.header}>
-				<button disabled={!!validationMessage} onClick={backToMenu}>
-					Back to menu
-				</button>
-				<div className={css.limits}>{validationMessage}</div>
-				<div className={css.dynamicSpace} />
-				<button onClick={clearDeck}>Clear</button>
-				<div className={css.saveLoadDecks}>
-					<input
-						maxLength={25}
-						name="deckName"
-						placeholder="Deck Name..."
-						onBlur={(e) => {
-							setDeckName(e.target.value)
-						}}
-						list="deck-list"
-					/>
-					<datalist id="deck-list">
-						{loadedDecks.map((deckName: string) => (
-							<option key={deckName} value={deckName} />
-						))}
-					</datalist>
-					<button type="button" onClick={saveDeck}>
-						Save
+				<div className={css.topLine}>
+					<button disabled={!!validationMessage} onClick={backToMenu}>
+						Back to menu
 					</button>
-					<button type="button" onClick={loadDeck}>
-						Load
+					<div className={css.limits}>{validationMessage}</div>
+					<div className={css.dynamicSpace} />
+					<button onClick={clearDeck}>Clear</button>
+					<div className={css.saveLoadDecks}>
+						<input
+							maxLength={25}
+							name="deckName"
+							placeholder="Deck Name..."
+							onBlur={(e) => {
+								setDeckName(e.target.value)
+							}}
+							list="deck-list"
+						/>
+						<datalist id="deck-list">
+							{loadedDecks.map((deckName: string) => (
+								<option key={deckName} value={deckName} />
+							))}
+						</datalist>
+						<button type="button" onClick={saveDeck}>
+							Save
+						</button>
+						<button type="button" onClick={loadDeck}>
+							Load
+						</button>
+					</div>
+					<button type="button" onClick={() => setShowImportExport(true)}>
+						Import/Export
 					</button>
 				</div>
-				<button type="button" onClick={() => setShowImportExport(true)}>
-					Import/Export
-				</button>
-			</div>
-			<div className={css.cards}>
-				<div className={classnames(css.cardColumn, css.allCards)}>
-					<div className={css.cardsTitle}>All cards</div>
-					<CardList
-						cards={sortedAllCards}
-						onClick={addCard}
-						size="small"
-						wrap={true}
-					/>
-				</div>
-				<div className={classnames(css.cardColumn, css.selectedCards)}>
-					<div className={css.cardsTitle}>
+				<div className={css.cardsHeader}>
+					<div className={classnames(css.cardsTitle, css.allCards)}>
+						All cards
+					</div>
+					<div className={classnames(css.cardsTitle, css.selectedCards)}>
 						<span>Your deck ({pickedCards.length})</span>
 						<span> - </span>
 						<span className={css.commonAmount} title="Common">
@@ -184,6 +178,18 @@ const Deck = ({setMenuSection}: Props) => {
 							{ultraRareCards.length}
 						</span>
 					</div>
+				</div>
+			</div>
+			<div className={css.cards}>
+				<div className={classnames(css.cardColumn, css.allCards)}>
+					<CardList
+						cards={sortedAllCards}
+						onClick={addCard}
+						size="small"
+						wrap={true}
+					/>
+				</div>
+				<div className={classnames(css.cardColumn, css.selectedCards)}>
 					<CardList
 						cards={sortedDeckCards}
 						onClick={removeCard}
