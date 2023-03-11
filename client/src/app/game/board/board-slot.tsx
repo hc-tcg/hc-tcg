@@ -24,6 +24,10 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 			id: 'health_' + rowState.health,
 		}
 	}
+
+	const ailments = Array.from(
+		new Set(rowState?.ailments.map((a) => a.id) || [])
+	)
 	return (
 		<div
 			onClick={onClick}
@@ -38,19 +42,12 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 				<>
 					<Card card={cardInfo} />
 					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'fire') ? (
-						<div className={css.fireAilment} />
-					) : null}
-
-					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'poison') ? (
-						<div className={css.poisonAilment} />
-					) : null}
-
-					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'sleeping') ? (
-						<div className={css.sleepingAilment} />
-					) : null}
+						ailments.map((id) => {
+							const cssClass = css[id + 'Ailment']
+							console.log({cssClass})
+							if (!cssClass) return null
+							return <div key={id} className={cssClass} />
+						})}
 				</>
 			) : (
 				<img draggable="false" className={css.frame} src="/images/frame.png" />

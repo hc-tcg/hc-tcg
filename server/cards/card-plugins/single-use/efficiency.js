@@ -35,10 +35,15 @@ class EfficiencySingleUseCard extends SingleUseCard {
 						return availableActions
 					}
 
-					const {activeRow} = currentPlayer.board
-					if (activeRow !== null) {
+					const {activeRow, rows} = currentPlayer.board
+					if (activeRow === null || !rows[activeRow]) return null
+					const ailments = rows[activeRow].ailments
+					const isSleeping = ailments.find((a) => a.id === 'sleeping')
+					const isSlow = ailments.find((a) => a.id === 'slowness')
+
+					if (!isSleeping) {
 						availableActions.push('PRIMARY_ATTACK')
-						availableActions.push('SECONDARY_ATTACK')
+						if (!isSlow) availableActions.push('SECONDARY_ATTACK')
 					}
 				}
 				return availableActions

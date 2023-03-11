@@ -25,10 +25,15 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentActiveRow, opponentEffectCardInfo} = game.ds
+			const {singleUseInfo, opponentActiveRow} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
-				if (opponentEffectCardInfo?.id !== 'water_bucket') {
+				const hasWaterBucket =
+					opponentActiveRow.effectCard?.cardId === 'water_bucket'
+				const hasDamageEffect = opponentActiveRow.ailments.some((a) =>
+					['fire', 'poison'].includes(a.id)
+				)
+				if (!hasWaterBucket && !hasDamageEffect) {
 					opponentActiveRow.ailments.push({id: 'fire', duration: -1})
 				}
 				return 'DONE'

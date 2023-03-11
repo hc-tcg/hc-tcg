@@ -29,6 +29,7 @@ import LootingSingleUseCard from './looting'
 import FortuneSingleUseCard from './fortune'
 import SweepingEdgeSingleUseCard from './sweeping-edge'
 import AnvilSingleUseCard from './anvil'
+import PotionOfSlownessSingleUseCard from './potion-of-slowness'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -62,6 +63,7 @@ const SINGLE_USE_CARDS = [
 	new CurseOfVanishingSingleUseCard(),
 	new SweepingEdgeSingleUseCard(),
 	new AnvilSingleUseCard(),
+	new PotionOfSlownessSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS

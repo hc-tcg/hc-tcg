@@ -122,6 +122,10 @@ function getAvailableActions(game, pastTurnActions) {
 		actions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
+	const isSlow =
+		activeRow !== null &&
+		rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
+
 	if (activeRow !== null) {
 		if (hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
 
@@ -140,7 +144,7 @@ function getAvailableActions(game, pastTurnActions) {
 				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+				if (!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
 					actions.push('SECONDARY_ATTACK')
 				}
 			}

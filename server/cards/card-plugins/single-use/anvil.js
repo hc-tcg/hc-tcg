@@ -12,7 +12,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 		super({
 			id: 'anvil',
 			name: 'Anvil',
-			rarity: 'common',
+			rarity: 'rare',
 			description:
 				'Does +30hp damage to any opposing AFK Hermit or flip a coin and If heads, does 80hp damage to to opposing active hermit If tails, does no damage.\n\nDiscard after use.',
 		})

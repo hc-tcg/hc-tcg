@@ -25,10 +25,15 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentActiveRow, opponentEffectCardInfo} = game.ds
+			const {singleUseInfo, opponentActiveRow} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
-				if (opponentEffectCardInfo?.id !== 'milk_bucket') {
+				const hasMilkBucket =
+					opponentActiveRow.effectCard?.cardId === 'milk_bucket'
+				const hasDamageEffect = opponentActiveRow.ailments.some((a) =>
+					['fire', 'poison'].includes(a.id)
+				)
+				if (!hasMilkBucket && !hasDamageEffect) {
 					opponentActiveRow.ailments.push({id: 'poison', duration: -1})
 				}
 				return 'DONE'
