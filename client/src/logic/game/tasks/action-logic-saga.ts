@@ -62,6 +62,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			'looting',
 			'fortune',
 			'chorus_fruit',
+			'sweeping_edge',
 		].includes(card.cardId)
 	) {
 		yield put(setOpenedModal('confirm'))
