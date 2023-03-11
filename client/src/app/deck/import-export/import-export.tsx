@@ -43,12 +43,16 @@ const ImportExport = ({pickedCards, setPickedCards, close}: Props) => {
 
 	const urlParams = new URLSearchParams(document.location.search || '')
 	if (urlParams.has('deck')) {
-		const b64cards = urlParams.get('deck') || ''
-		window.history.replaceState({}, '', window.location.pathname)
-		if (inputRef.current) {
-			inputRef.current.value = b64cards
-			importDeck()
-		}
+		setTimeout(() => {
+			const b64cards = urlParams.get('deck') || ''
+			window.history.replaceState({}, '', window.location.pathname)
+			if (!inputRef.current) {
+				console.log('should be set...')
+			} else {
+				inputRef.current.value = b64cards
+				importDeck()
+			}
+		}, 500)
 	}
 
 	return (

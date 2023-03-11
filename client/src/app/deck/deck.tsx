@@ -124,7 +124,9 @@ const Deck = ({setMenuSection}: Props) => {
 	const sortedDeckCards = sortCards(pickedCards)
 	const urlParams = new URLSearchParams(document.location.search || '')
 	if (urlParams.has('deck')) {
-		setShowImportExport(true)
+		setTimeout(() => {
+			setShowImportExport(true)
+		}, 750)
 	}
 
 	return (
