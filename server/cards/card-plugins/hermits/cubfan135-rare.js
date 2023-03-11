@@ -15,7 +15,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 			primary: {
 				name: 'Dash',
 				cost: ['any'],
-				damage: 60,
+				damage: 40,
 				power: null,
 			},
 			secondary: {
