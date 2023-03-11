@@ -1,5 +1,7 @@
 import {getStarterPack} from '../utils/state-gen'
 import profanityFilter from '../utils/profanity'
+import {validateDeck} from '../utils'
+import CARDS from '../cards'
 
 /**
  * @typedef {import('socket.io').Socket} Socket
@@ -44,5 +46,13 @@ export class PlayerModel {
 			playerName: this.playerName,
 			censoredPlayerName: this.censoredPlayerName,
 		}
+	}
+
+	setPlayerDeck(newDeck) {
+		if (!newDeck || !Array.isArray(newDeck)) return
+		newDeck = newDeck.filter((cardId) => cardId in CARDS)
+		const validationMessage = validateDeck(newDeck)
+		if (validationMessage) return
+		this.playerDeck = newDeck
 	}
 }

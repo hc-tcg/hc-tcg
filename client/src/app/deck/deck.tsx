@@ -8,7 +8,7 @@ import CARDS from 'server/cards'
 import {validateDeck} from 'server/utils'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import ImportExport from './import-export'
+import ImportExport from 'components/import-export'
 
 const TYPE_ORDER = {
 	hermit: 0,

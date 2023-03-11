@@ -5,6 +5,7 @@ import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
 import {setPlayerInfo, disconnect, setNewDeck} from './session-actions'
+import {getDeckFromHash} from 'components/import-export/import-export-utils'
 
 type PlayerInfoT = {
 	playerName: string
@@ -41,6 +42,15 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
+const getDeck = () => {
+	const urlParams = new URLSearchParams(document.location.search || '')
+	const hash = urlParams.get('deck')
+	if (!hash) return null
+	const deckCards = getDeckFromHash(hash)
+	const deck = deckCards.map((card) => card.cardId)
+	return deck
+}
+
 export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
@@ -50,6 +60,10 @@ export function* loginSaga(): SagaIterator {
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
+
+	const deck = getDeck()
+	if (deck) socket.auth.deck = deck
+
 	yield put(socketConnecting())
 	socket.connect()
 	const result = yield race({
@@ -66,6 +80,8 @@ export function* loginSaga(): SagaIterator {
 		yield put(disconnect())
 		return
 	}
+
+	window.history.replaceState({}, '', window.location.pathname)
 
 	if (result.playerReconnected) {
 		if (!session) return

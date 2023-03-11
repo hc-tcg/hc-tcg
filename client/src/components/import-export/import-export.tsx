@@ -1,8 +1,7 @@
 import {useRef} from 'react'
 import {CardT} from 'common/types/game-state'
-import CARDS from 'server/cards'
 import css from './import-export.module.css'
-import {universe} from './import-export-const'
+import {getDeckFromHash, getHashFromDeck} from './import-export-utils'
 import Modal from 'components/modal'
 
 type Props = {
@@ -16,29 +15,12 @@ const ImportExport = ({pickedCards, setPickedCards, close}: Props) => {
 
 	const importDeck = () => {
 		if (!inputRef.current) return
-		const b64 = atob(inputRef.current.value)
-			.split('')
-			.map((char) => char.charCodeAt(0))
-		const deck = []
-		for (let i = 0; i < b64.length; i++) {
-			deck.push({
-				cardId: universe[b64[i]],
-				cardInstance: Math.random().toString(),
-			})
-		}
-		if (!deck) return
-		const deckCards = deck.filter((card: CardT) => CARDS[card.cardId])
-		setPickedCards(deckCards)
+		setPickedCards(getDeckFromHash(inputRef.current.value))
 	}
 
 	const exportDeck = () => {
 		if (!inputRef.current) return
-		const indicies = []
-		for (let i = 0; i < pickedCards.length; i++) {
-			indicies.push(universe.indexOf(String(pickedCards[i].cardId)))
-		}
-		const b64cards = btoa(String.fromCharCode.apply(null, indicies))
-		inputRef.current.value = b64cards
+		inputRef.current.value = getHashFromDeck(pickedCards)
 	}
 
 	return (
