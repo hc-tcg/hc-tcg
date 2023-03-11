@@ -24,8 +24,12 @@ function MainMenu({setMenuSection}: Props) {
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
+	const urlParams = new URLSearchParams(document.location.search || '')
 
 	let content = null
+	if (urlParams.has('deck')) {
+		setMenuSection('deck')
+	}
 
 	if (subsection === 'more') {
 		content = <More setMenuSection={() => setSubsection(null)} />
