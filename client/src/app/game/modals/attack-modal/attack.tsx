@@ -74,6 +74,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 		0
 	)
 
+	const totalMinDamage =
+		singleUseInfo?.id === 'anvil' ? totalDamage - 80 : totalDamage
+
 	const attackParts = []
 
 	if (attackInfo) {
@@ -103,6 +106,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 					height="16"
 				/>
 				<div className={css.damageAmount}>
+					{singleUseInfo?.id === 'anvil' ? <>0/</> : null}
 					{suAttackInfo.damage}
 					{suAttackInfo.afkDamage ? <>({suAttackInfo.afkDamage})</> : null}
 				</div>
@@ -168,6 +172,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 							[css.specialMove]: !!attackInfo?.power,
 						})}
 					>
+						{totalMinDamage !== totalDamage ? <>{totalMinDamage}-</> : null}
 						{totalDamage}
 					</span>
 					{multiplier ? (
