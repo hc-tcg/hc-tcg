@@ -122,10 +122,10 @@ const Deck = ({setMenuSection}: Props) => {
 
 	const sortedAllCards = sortCards(allCards)
 	const sortedDeckCards = sortCards(pickedCards)
-	/*const urlParams = new URLSearchParams(document.location.search || "")
-        if (urlParams.has("deck")){
-            setShowImportExport(true);
-        }*/
+	const urlParams = new URLSearchParams(document.location.search || '')
+	if (urlParams.has('deck')) {
+		setShowImportExport(true)
+	}
 
 	return (
 		<div className={css.deck}>
