@@ -61,9 +61,14 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 			? 0
 			: opponentEffectInfo?.protection?.target || 0
 
-	const hasWeakness = Strengths[playerHermitInfo.hermitType]?.includes(
-		opponentHermitInfo.hermitType
-	)
+	const extraKey =
+		playerHermitInfo.hermitType + '_' + opponentHermitInfo.hermitType
+	const hasExtraWeakness =
+		!!playerState?.custom['potion_of_weakness']?.[extraKey]
+	const hasWeakness =
+		Strengths[playerHermitInfo.hermitType]?.includes(
+			opponentHermitInfo.hermitType
+		) || hasExtraWeakness
 
 	const baseDamage = attackInfo?.damage || 0
 	const totalDamage = Math.max(

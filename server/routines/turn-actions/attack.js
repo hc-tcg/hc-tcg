@@ -78,6 +78,9 @@ function* attackSaga(game, turnAction, actionState) {
 		effectCardId: row.effectCard?.cardId,
 		isActive: row === opponentActiveRow,
 		extraEffectDamage: 0,
+		hasWeakness: strengths.includes(
+			HERMIT_CARDS[row.hermitCard.cardId]?.hermitType
+		),
 		extraHermitDamage: 0,
 		recovery: [], // Array<{amount: number, discardEffect: boolean}>
 		ignoreEffects: false,
@@ -130,8 +133,7 @@ function* attackSaga(game, turnAction, actionState) {
 				? 0
 				: targetEffectInfo?.protection?.target || 0
 		const weaknessDamage =
-			strengths.includes(targetHermitInfo.hermitType) &&
-			hermitAttack + extraHermitAttack > 0
+			target.hasWeakness && hermitAttack + extraHermitAttack > 0
 				? WEAKNESS_DAMAGE
 				: 0
 		const totalDamage =

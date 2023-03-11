@@ -36,7 +36,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 					}
 
 					const {activeRow, rows} = currentPlayer.board
-					if (activeRow === null || !rows[activeRow]) return null
+					if (activeRow === null || !rows[activeRow]) return availableActions
 					const ailments = rows[activeRow].ailments
 					const isSleeping = ailments.find((a) => a.id === 'sleeping')
 					const isSlow = ailments.find((a) => a.id === 'slowness')
