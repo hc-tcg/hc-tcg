@@ -2,6 +2,8 @@ import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
+export type RankT = 'iron' | 'gold' | 'diamond'
+
 export type HermitTypeT =
 	| 'balanced'
 	| 'builder'
@@ -38,6 +40,7 @@ export type AnyCardT = {
 	name: string
 	type: string
 	rarity: CardRarityT
+	rank?: RankT
 	id: string
 	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
 	useReqs?: Array<PickRequirmentT>

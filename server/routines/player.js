@@ -1,5 +1,4 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
-import {validateDeck} from '../utils'
 import {PlayerModel} from '../models/player-model'
 import root from '../models/root-model'
 

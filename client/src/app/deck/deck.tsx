@@ -5,7 +5,7 @@ import {CardInfoT} from 'common/types/cards'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import CARDS from 'server/cards'
-import {validateDeck} from 'server/utils'
+import {getTotalCost, validateDeck} from 'server/utils/validation'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import ImportExport from 'components/import-export'
@@ -63,15 +63,7 @@ const Deck = ({setMenuSection}: Props) => {
 		setLoadedDecks(deckList.sort())
 	}
 
-	const commonCards = pickedCards.filter(
-		(card) => CARDS[card.cardId].rarity === 'common'
-	)
-	const rareCards = pickedCards.filter(
-		(card) => CARDS[card.cardId].rarity === 'rare'
-	)
-	const ultraRareCards = pickedCards.filter(
-		(card) => CARDS[card.cardId].rarity === 'ultra_rare'
-	)
+	const tokens = getTotalCost(pickedCards.map((card) => card.cardId))
 
 	const validationMessage = validateDeck(pickedCards.map((card) => card.cardId))
 
@@ -166,16 +158,9 @@ const Deck = ({setMenuSection}: Props) => {
 					<div className={classnames(css.cardsTitle, css.selectedCards)}>
 						<span>Your deck ({pickedCards.length})</span>
 						<span> - </span>
-						<span className={css.commonAmount} title="Common">
-							{commonCards.length}
-						</span>
 						<span> </span>
-						<span className={css.rareAmount} title="Rare">
-							{rareCards.length}
-						</span>
-						<span> </span>
-						<span className={css.ultraRareAmount} title="Ultra rare">
-							{ultraRareCards.length}
+						<span className={css.ultraRareAmount} title="Tokens">
+							{tokens} tokens
 						</span>
 					</div>
 				</div>

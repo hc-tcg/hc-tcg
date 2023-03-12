@@ -11,7 +11,12 @@
 		"maxDuplicates": 3,
 		"allowUltraRareDuplicates": false,
 		"maxRare": 12,
-		"maxUltraRare": 3
+		"maxUltraRare": 3,
+
+		"maxDeckCost": 25,
+		"ironCost": 1,
+		"goldCost": 3,
+		"diamondCost": 5
 	},
 	"logoSubText": "Not Official!"
 }

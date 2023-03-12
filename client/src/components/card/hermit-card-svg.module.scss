@@ -62,6 +62,17 @@ text.attackName.long {
 	fill: rgb(23, 66, 234);
 }
 
-.rarity {
-	filter: drop-shadow(0 0 0.02em black) brightness(150%);
+.power {
+	filter: drop-shadow(0 0 6px rgb(50, 50, 50));
+}
+.powerText {
+	&.iron {
+		fill: #726f6d;
+	}
+	&.gold {
+		fill: #958e31;
+	}
+	&.diamond {
+		fill: #2a7c8a;
+	}
 }

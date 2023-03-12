@@ -70,7 +70,17 @@
 	font-size: 55px;
 }
 
-/* 
-.icon {
-	filter: url("#drop-shadow");
-} */
+.power {
+	filter: drop-shadow(0 0 5px rgb(92, 92, 92));
+}
+.powerText {
+	&.iron {
+		fill: #726f6d;
+	}
+	&.gold {
+		fill: #958e31;
+	}
+	&.diamond {
+		fill: #2a7c8a;
+	}
+}

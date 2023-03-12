@@ -1,6 +1,6 @@
 import {getStarterPack} from '../utils/state-gen'
 import profanityFilter from '../utils/profanity'
-import {validateDeck} from '../utils'
+import {validateDeck} from '../utils/validation'
 import CARDS from '../cards'
 
 /**

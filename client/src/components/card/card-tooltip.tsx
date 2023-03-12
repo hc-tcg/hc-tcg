@@ -3,6 +3,7 @@ import classnames from 'classnames'
 import {CardInfoT, HermitTypeT} from 'common/types/cards'
 import STRENGTHS from 'server/const/strengths'
 import css from './card-tooltip.module.scss'
+import {getCardCost, getCardRank} from 'server/utils/validation'
 
 const TYPED_STRENGTHS = STRENGTHS as Record<HermitTypeT, Array<HermitTypeT>>
 
@@ -142,6 +143,20 @@ const getName = (card: CardInfoT): React.ReactNode => {
 	return <div className={css.name}>{card.name}</div>
 }
 
+const getRank = (card: CardInfoT): React.ReactNode => {
+	let rank = getCardRank(card)
+	if (!rank) rank = 'wooden'
+	const cost = getCardCost(card)
+	const highlight = rank === 'wooden' || rank === 'iron' ? '■' : '★'
+	return (
+		<div className={classnames(css.rank, css[rank])}>
+			{highlight} {rank.charAt(0).toUpperCase() + rank.slice(1)} Rank ({cost}{' '}
+			{cost !== 1 ? 'tokens' : 'token'}) {highlight}
+		</div>
+	)
+	return null
+}
+
 const getSingleUse = (card: CardInfoT): React.ReactNode => {
 	if (card.type !== 'single_use') return null
 	return <div className={css.singleUse}>Single Use</div>
@@ -168,6 +183,7 @@ const CardTooltip = ({card}: Props) => {
 				{getSingleUse(card)}
 			</div>
 			<div className={css.description}>
+				{getRank(card)}
 				{getStrengthsAndWeaknesses(card)}
 				{getDescription(card)}
 			</div>

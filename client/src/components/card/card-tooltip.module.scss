@@ -38,6 +38,10 @@
 	color: rgb(238, 135, 48);
 }
 
+.rarity {
+	font-style: normal;
+}
+
 .common {
 	color: rgb(0, 197, 0);
 }
@@ -93,4 +97,20 @@
 .strengthsAndWeaknesses {
 	font-family: Minecraft;
 	margin-top: 3px;
+}
+
+.rank {
+	margin-bottom: 3px;
+	&.wooden {
+		color: #5e5e5e;
+	}
+	&.iron {
+		color: #dad5d0;
+	}
+	&.gold {
+		color: #faee54;
+	}
+	&.diamond {
+		color: #4ad7f0;
+	}
 }
