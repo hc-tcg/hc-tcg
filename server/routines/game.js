@@ -340,9 +340,10 @@ function* turnActionSaga(game, turnAction, turnState) {
 /**
  * @param {GameModel} game
  * @param {Array<string>} pastTurnActions
+ * @param {{skipTurn?: boolean}} turnConfig
  * @returns {SagaIterator}
  */
-function* turnActionsSaga(game, pastTurnActions) {
+function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} =
 		game.ds
 
@@ -369,6 +370,12 @@ function* turnActionsSaga(game, pastTurnActions) {
 				availableActions,
 				pastTurnActions
 			)
+
+			if (turnConfig.skipTurn) {
+				if (currentPlayer.board.activeRow === null)
+					availableActions = ['CHANGE_ACTIVE_HERMIT']
+				else return
+			}
 
 			/** @type {AvailableActionsT} */
 			const opponentAvailableActions = opponentPlayer.followUp
@@ -465,10 +472,8 @@ function* turnSaga(game) {
 	const turnConfig = {}
 	game.hooks.turnStart.call(turnConfig)
 
-	if (!turnConfig.skipTurn) {
-		const result = yield call(turnActionsSaga, game, pastTurnActions)
-		if (result === 'GAME_END') return 'GAME_END'
-	}
+	const result = yield call(turnActionsSaga, game, pastTurnActions, turnConfig)
+	if (result === 'GAME_END') return 'GAME_END'
 
 	// Apply damage from ailments
 	// TODO - Armor should prevent ailment damage
