@@ -61,7 +61,11 @@ function MatchMaking() {
 					{code}
 				</div>
 				<div className={css.options}>
-					<button className={css.matchmakingButton} onClick={handleCancel}>
+					<button
+						type="button"
+						className={css.matchmakingButton}
+						onClick={handleCancel}
+					>
 						Cancel
 					</button>
 				</div>
@@ -81,7 +85,11 @@ function MatchMaking() {
 						Invalid code
 					</p>
 					<div className={css.options}>
-						<button className={css.matchmakingButton} onClick={handleCancel}>
+						<button
+							type="button"
+							className={css.matchmakingButton}
+							onClick={handleCancel}
+						>
 							Cancel
 						</button>
 						<button className={css.matchmakingButton}>Join</button>
