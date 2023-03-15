@@ -25,7 +25,10 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const hasOtherHermits = playerState.board.rows.some(
-		(row, index) => row.hermitCard && index !== info.rowIndex
+		(row, index) =>
+			row.hermitCard &&
+			index !== info.rowIndex &&
+			!row.ailments.find((a) => a.id === 'knockedout')
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
