@@ -62,10 +62,10 @@ const SINGLE_USE_CARDS = [
 	new LootingSingleUseCard(),
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
-	new SweepingEdgeSingleUseCard(),
-	new AnvilSingleUseCard(),
-	new PotionOfSlownessSingleUseCard(),
-	new PotionOfWeaknessSingleUseCard(),
+	// new SweepingEdgeSingleUseCard(),
+	// new AnvilSingleUseCard(),
+	// new PotionOfSlownessSingleUseCard(),
+	// new PotionOfWeaknessSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS
