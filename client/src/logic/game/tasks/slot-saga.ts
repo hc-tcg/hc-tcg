@@ -15,6 +15,7 @@ import {
 	setOpenedModal,
 	removeEffect,
 } from 'logic/game/game-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
@@ -52,6 +53,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const {slotType, rowHermitCard, rowIndex} = action.payload
 	const playerId = yield* select(getPlayerId)
 	const playerState = yield* select(getPlayerState)
+	const settings = yield* select(getSettings)
 	const clickedOnHermit = slotType === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
 	if (playerId !== action.payload.playerId) return
@@ -59,9 +61,13 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	if (playerState.board.activeRow === rowIndex) {
 		yield put(setOpenedModal('attack'))
 	} else {
-		yield put(setOpenedModal('change-hermit-modal', action.payload))
-		const result = yield take('CONFIRM_HERMIT_CHANGE')
-		if (result.payload) {
+		if (settings.confirmationDialogs !== 'off') {
+			yield put(setOpenedModal('change-hermit-modal', action.payload))
+			const result = yield take('CONFIRM_HERMIT_CHANGE')
+			if (result.payload) {
+				yield put(changeActiveHermit(action.payload))
+			}
+		} else {
 			yield put(changeActiveHermit(action.payload))
 		}
 	}

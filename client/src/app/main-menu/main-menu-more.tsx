@@ -24,6 +24,14 @@ function More({setMenuSection}: Props) {
 			)
 		)
 	}
+	const handleDialogsChange = () => {
+		dispatch(
+			setSetting(
+				'confirmationDialogs',
+				settings.confirmationDialogs !== 'off' ? 'off' : 'on'
+			)
+		)
+	}
 	const handleResetStats = () => {
 		dispatch(resetStats())
 	}
@@ -40,6 +48,9 @@ function More({setMenuSection}: Props) {
 					</button>
 					<button className={css.menuButton} onClick={handleProfanityChange}>
 						Profanity filter: {getDescriptor(settings.profanityFilter)}
+					</button>
+					<button className={css.menuButton} onClick={handleDialogsChange}>
+						Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
 					</button>
 					<div className={css.smallButtonContainer}>
 						<button

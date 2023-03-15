@@ -61,7 +61,10 @@ function Board({onClick, gameState}: Props) {
 	}
 
 	const handleEndTurn = () => {
-		if (availableActions.length === 1) {
+		if (
+			availableActions.length === 1 ||
+			settings.confirmationDialogs === 'off'
+		) {
 			dispatch(endTurn())
 		} else {
 			dispatch(setOpenedModal('end-turn'))
