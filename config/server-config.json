@@ -2,8 +2,12 @@
 	"port": 9000,
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
-	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev"],
-	"world": "fly",
+	"cors": [
+		"http://localhost:3002",
+		"https://hc-tcg.fly.dev",
+		"https://tcg.prof.ninja"
+	],
+	"world": "sensemeta",
 	"limits": {
 		"maxTurnTime": 90,
 		"minCards": 42,
@@ -15,8 +19,8 @@
 
 		"maxDeckCost": 25,
 		"ironCost": 1,
-		"goldCost": 3,
-		"diamondCost": 5
+		"goldCost": 2,
+		"diamondCost": 4
 	},
-	"logoSubText": "Not Official!"
+	"logoSubText": "New meta! v0.1.2"
 }
