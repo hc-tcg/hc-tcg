@@ -1,6 +1,5 @@
 import classnames from 'classnames'
 import {useSelector} from 'react-redux'
-import {EffectCardT, HermitCardT} from 'common/types/cards'
 import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
 import Strengths from 'server/const/strengths'
 import {
@@ -32,19 +31,15 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	if (!activeRow || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = HERMIT_CARDS[
-		activeRow.hermitCard.cardId
-	] as HermitCardT
-	const opponentHermitInfo = HERMIT_CARDS[
-		opponentRow.hermitCard.cardId
-	] as HermitCardT
+	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
+	const opponentHermitInfo = HERMIT_CARDS[opponentRow.hermitCard.cardId]
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
 	const opponentEffectInfo = opponentRow.effectCard
-		? (EFFECT_CARDS[opponentRow.effectCard.cardId] as EffectCardT)
+		? EFFECT_CARDS[opponentRow.effectCard.cardId]
 		: null
 	const singleUseInfo = singleUseCard
-		? (SINGLE_USE_CARDS[singleUseCard.cardId] as EffectCardT)
+		? SINGLE_USE_CARDS[singleUseCard.cardId]
 		: null
 
 	const suAttackInfo =
@@ -180,7 +175,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 						{totalMinDamage !== totalDamage ? <>{totalMinDamage}-</> : null}
 						{totalDamage}
 					</span>
-					{multiplier ? (
+					{multiplier !== null ? (
 						<span className={css.multiplier}> x{multiplier}</span>
 					) : null}
 				</div>

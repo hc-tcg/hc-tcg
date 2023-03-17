@@ -29,10 +29,11 @@ export const getMultiplier = (state: RootState) => {
 	const playerState = getCurrentPlayerState(state)
 	if (!playerState) return null
 
-	const flips = playerState.coinFlips
+	const custom = playerState.custom
+
 	let multiplier = 1
-	if (flips['invisibility_potion']) {
-		multiplier *= flips['invisibility_potion']?.[0] === 'heads' ? 2 : 0
+	if (custom['invisibility_potion']) {
+		multiplier *= custom['invisibility_potion'] === 'heads' ? 0 : 2
 	}
 
 	return multiplier === 1 ? null : multiplier
