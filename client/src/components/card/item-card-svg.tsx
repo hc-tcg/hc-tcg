@@ -74,7 +74,7 @@ const ItemCard = ({card}: ItemCardProps) => {
 				</g>
 			) : null}
 
-			{showCost && rank !== 'wooden' ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}

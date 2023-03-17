@@ -55,7 +55,7 @@ const HermitCard = ({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank !== 'wooden' ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}

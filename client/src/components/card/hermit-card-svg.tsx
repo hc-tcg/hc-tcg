@@ -81,7 +81,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 					className={css.hermitType}
 				/>
 			</g>
-			{showCost && rank !== 'wooden' ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<image
 						x="68"

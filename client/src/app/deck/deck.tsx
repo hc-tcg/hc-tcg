@@ -5,7 +5,7 @@ import {CardInfoT} from 'common/types/cards'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import CARDS from 'server/cards'
-import {getTotalCost, validateDeck} from 'server/utils/validation'
+import {getCardCost, getTotalCost, validateDeck} from 'server/utils/validation'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import ImportExport from 'components/import-export'
@@ -22,15 +22,31 @@ const sortCards = (cards: Array<CardT>): Array<CardT> => {
 	return cards.slice().sort((a: CardT, b: CardT) => {
 		const cardInfoA = CARDS[a.cardId]
 		const cardInfoB = CARDS[b.cardId]
+		const cardCostA = getCardCost(cardInfoA)
+		const cardCostB = getCardCost(cardInfoB)
+
 		if (cardInfoA.type !== cardInfoB.type) {
+			// types
 			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
 		} else if (
+			// hermit types
 			cardInfoA.type === 'hermit' &&
 			cardInfoB.type === 'hermit' &&
 			cardInfoA.hermitType !== cardInfoB.hermitType
 		) {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+		} else if (cardCostA !== cardCostB) {
+			if (cardInfoA.type === 'item' && cardInfoB.type === 'item') {
+				// order items in reverse if they are the same
+				if (cardInfoA.name.localeCompare(cardInfoB.name) === 0) {
+					return cardCostB - cardCostA
+				}
+			} else {
+				// order by ranks
+				return cardCostA - cardCostB
+			}
 		}
+
 		return cardInfoA.name.localeCompare(cardInfoB.name)
 	})
 }
