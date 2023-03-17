@@ -38,11 +38,16 @@ function Board({onClick, gameState}: Props) {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		if (gameState.turnPlayerId === playerId) {
-			if (settings.soundOn !== 'off') {
-				const audio = new Audio('/sfx/Click.ogg')
-				audio.play()
+		try {
+			if (gameState.turnPlayerId === playerId) {
+				if (settings.soundVolume !== '0') {
+					const audio = new Audio('/sfx/Click.ogg')
+					audio.volume = Number(settings.musicVolume) / 100
+					audio.play()
+				}
 			}
+		} catch (err) {
+			console.log(err)
 		}
 	}, [gameState.turnPlayerId])
 

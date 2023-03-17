@@ -33,11 +33,15 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 }
 
 function* settingSaga(): SagaIterator {
-	const settings = yield* select(getSettings)
-	if (settings.soundOn === 'off') {
-		bgMusic.volume = 0
-	} else {
-		bgMusic.volume = 0.75
+	try {
+		const settings = yield* select(getSettings)
+		if (settings.musicVolume === '0') {
+			bgMusic.volume = 0
+		} else {
+			bgMusic.volume = Number(settings.musicVolume) / 100
+		}
+	} catch (err) {
+		console.error(err)
 	}
 }
 

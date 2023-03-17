@@ -8,14 +8,16 @@ function SoundButton() {
 	const settings = useSelector(getSettings)
 
 	const handleSoundChange = () => {
-		dispatch(setSetting('soundOn', settings.soundOn !== 'off' ? 'off' : 'on'))
+		dispatch(
+			setSetting('soundVolume', settings.soundVolume !== '0' ? '0' : '100')
+		)
 	}
 
 	return (
 		<button className={css.soundButton} onClick={handleSoundChange}>
 			<img
 				src={
-					settings.soundOn !== 'off'
+					settings.soundVolume !== '0'
 						? '/images/icons/volume-high-solid.svg'
 						: '/images/icons/volume-xmark-solid.svg'
 				}

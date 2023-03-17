@@ -1,5 +1,7 @@
+import React from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
+import Slider from 'components/slider'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
@@ -13,8 +15,11 @@ function More({setMenuSection}: Props) {
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 
-	const handleSoundChange = () => {
-		dispatch(setSetting('soundOn', settings.soundOn !== 'off' ? 'off' : 'on'))
+	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch(setSetting('soundVolume', ev.currentTarget.value))
+	}
+	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
 	const handleProfanityChange = () => {
 		dispatch(
@@ -39,13 +44,28 @@ function More({setMenuSection}: Props) {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
 	}
+	const getPercDescriptor = (value?: string) => {
+		if (value !== '0') return `${value}%`
+		return 'Disabled'
+	}
 	return (
 		<div className={`${css.menuBackground} ${css.backgroundOverride} temp`}>
 			<div className={css.moreContainer}>
 				<div className={css.moreButtonContainer}>
-					<button className={css.menuButton} onClick={handleSoundChange}>
-						Sounds: {getDescriptor(settings.soundOn)}
-					</button>
+					<Slider
+						className={css.menuButton}
+						value={settings.musicVolume}
+						onInput={handleMusicChange}
+					>
+						Music: {getPercDescriptor(settings.musicVolume)}
+					</Slider>
+					<Slider
+						className={css.menuButton}
+						value={settings.soundVolume}
+						onInput={handleSoundChange}
+					>
+						Sounds: {getPercDescriptor(settings.soundVolume)}
+					</Slider>
 					<button className={css.menuButton} onClick={handleProfanityChange}>
 						Profanity filter: {getDescriptor(settings.profanityFilter)}
 					</button>

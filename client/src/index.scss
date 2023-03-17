@@ -69,7 +69,8 @@ button {
 	}
 }
 
-input {
+input:not([type]),
+input[type='text'] {
 	width: 200px;
 	padding: 0 10px;
 	height: 30px;
@@ -93,7 +94,8 @@ input {
 		padding: 0 2vh;
 	}
 
-	input {
+	input:not([type]),
+	input[type='text'] {
 		border: 0.3vh solid #000;
 		height: 5vh;
 		font-size: 2vh;

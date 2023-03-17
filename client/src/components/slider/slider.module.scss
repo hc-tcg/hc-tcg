@@ -1,0 +1,93 @@
+.slider {
+	overflow: hidden;
+	height: 5vh;
+	position: relative;
+}
+
+.slider > * {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.background {
+	filter: brightness(60%);
+	background: #999 url('/images/bgbtn.png') center / cover;
+	image-rendering: pixelated;
+	border: 0.3vh solid #000;
+}
+
+.label {
+	font-size: 2vh;
+	text-shadow: 0.2vh 0.2vh #000;
+	font-family: Minecraft;
+	white-space: nowrap;
+	color: #ddd;
+	line-height: 5vh;
+	text-align: center;
+	pointer-events: none;
+}
+
+.slider input {
+	vertical-align: bottom;
+	box-shadow: unset;
+	padding: 0;
+	border: none;
+	margin: 0;
+	background: transparent;
+	appearance: none;
+}
+
+.slider input::-webkit-slider-runnable-track {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	box-shadow: none;
+	background: transparent;
+	border: none;
+}
+
+.slider input::-webkit-slider-thumb {
+	box-sizing: border-box;
+	background: #999 url('/images/bgbtn.png') center / cover;
+	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
+	border: 0.3vh solid #000;
+	height: 100%;
+	width: 2.3vh;
+	border-radius: 0;
+	cursor: pointer;
+	appearance: none;
+}
+
+.slider input:focus::-webkit-slider-thumb {
+	border-color: white;
+}
+
+.slider input::-moz-range-track {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	cursor: pointer;
+	box-shadow: none;
+	background: transparent;
+	border: none;
+}
+
+.slider input::-moz-range-thumb {
+	box-sizing: border-box;
+	background: #999 url('/images/bgbtn.png') center / cover;
+	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
+	border: 0.3vh solid #000;
+	height: 100%;
+	width: 2.3vh;
+	border-radius: 0;
+	cursor: pointer;
+	appearance: none;
+}
+
+.slider input:focus::-moz-range-thumb {
+	border-color: white;
+}
