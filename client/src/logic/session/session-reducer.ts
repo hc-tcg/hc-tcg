@@ -6,6 +6,12 @@ type SessionState = {
 	playerSecret: string
 	playerDeck: Array<string>
 	connecting: boolean
+	errorType?:
+		| 'invalid_name'
+		| 'invalid_version'
+		| 'session_expired'
+		| 'timeout'
+		| string
 }
 
 const defaultState: SessionState = {
@@ -22,7 +28,7 @@ const loginReducer = (
 ): SessionState => {
 	switch (action.type) {
 		case 'LOGIN':
-			return {...state, connecting: true}
+			return {...state, connecting: true, errorType: undefined}
 		case 'DISCONNECT':
 			return {
 				...state,
@@ -31,11 +37,13 @@ const loginReducer = (
 				playerId: '',
 				playerSecret: '',
 				playerDeck: [],
+				errorType: action.payload,
 			}
 		case 'SET_PLAYER_INFO':
 			return {
 				...state,
 				connecting: false,
+				errorType: undefined,
 				...action.payload,
 			}
 		case 'SET_NEW_DECK':

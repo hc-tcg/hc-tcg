@@ -15,8 +15,9 @@ export const setPlayerInfo = (playerInfo: PlayerInfoT) => ({
 	payload: playerInfo,
 })
 
-export const disconnect = () => ({
+export const disconnect = (errorType?: string) => ({
 	type: 'DISCONNECT' as const,
+	payload: errorType,
 })
 
 export const logout = () => ({

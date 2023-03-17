@@ -75,6 +75,13 @@
 	}
 }
 
+.error {
+	font-size: 2.2vh;
+	margin-top: 1.5vh;
+	color: orange;
+	text-shadow: 0.15vh 0.15vh black;
+}
+
 @media screen and (max-width: 80vh) {
 	.nameForm,
 	.connecting {

@@ -1,14 +1,26 @@
 import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {getConnecting} from 'logic/session/session-selectors'
+import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
 import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'
 
+const getLoginError = (errorType: string) => {
+	if (!errorType) return null
+	if (errorType === 'session_expired') return 'Your session has expired.'
+	if (errorType === 'timeout') return 'Connection attempt took too long.'
+	if (errorType === 'invalid_name') return 'Your name is not valid.'
+	if (errorType === 'invalid_version')
+		return 'There has been a game update. Please refresh the website.'
+	if (errorType === 'xhr poll error') return "Can't reach the server."
+	return errorType.substring(0, 150)
+}
+
 function Login() {
 	const dispatch = useDispatch()
 	const connecting = useSelector(getConnecting)
+	const errorType = useSelector(getErrorType)
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -37,6 +49,9 @@ function Login() {
 						<button type="submit">Next</button>
 					</form>
 				)}
+				{errorType ? (
+					<div className={css.error}>{getLoginError(errorType)}</div>
+				) : null}
 				<LinkContainer />
 			</div>
 		</div>

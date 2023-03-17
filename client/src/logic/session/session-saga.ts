@@ -1,6 +1,6 @@
 import {take, takeEvery, put, call, race, delay} from 'redux-saga/effects'
 import {AnyAction} from 'redux'
-import {SagaIterator} from 'redux-saga'
+import {SagaIterator, eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
@@ -51,6 +51,17 @@ const getDeck = () => {
 	return deck
 }
 
+const createConnectErrorChannel = () =>
+	eventChannel((emit) => {
+		const connectErrorListener = (err: Error | null) => {
+			if (err instanceof Error) return emit(err.message)
+			if (typeof err === 'string') return emit(err)
+			console.error(err)
+		}
+		socket.on('connect_error', connectErrorListener)
+		return () => socket.off('connect_error', connectErrorListener)
+	})
+
 export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
@@ -66,18 +77,27 @@ export function* loginSaga(): SagaIterator {
 
 	yield put(socketConnecting())
 	socket.connect()
+	const connectErrorChan = createConnectErrorChannel()
 	const result = yield race({
 		playerInfo: call(receiveMsg, 'PLAYER_INFO'),
 		invalidPlayer: call(receiveMsg, 'INVALID_PLAYER'),
 		playerReconnected: call(receiveMsg, 'PLAYER_RECONNECTED'),
-		timeout: delay(5000),
+		connectError: take(connectErrorChan),
+		timeout: delay(8000),
 	})
 
-	if (result.invalidPlayer || Object.hasOwn(result, 'timeout')) {
-		console.log('Invalid session.')
+	if (
+		result.invalidPlayer ||
+		result.connectError ||
+		Object.hasOwn(result, 'timeout')
+	) {
 		clearSession()
-		socket.disconnect()
-		yield put(disconnect())
+		let errorType
+		if (result.invalidPlayer) errorType = 'session_expired'
+		else if (Object.hasOwn(result, 'timeout')) errorType = 'timeout'
+		else if (result.connectError) errorType = result.connectError
+		if (socket.connected) socket.disconnect()
+		yield put(disconnect(errorType))
 		return
 	}
 
