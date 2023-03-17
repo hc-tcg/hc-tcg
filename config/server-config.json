@@ -2,12 +2,8 @@
 	"port": 9000,
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
-	"cors": [
-		"http://localhost:3002",
-		"https://hc-tcg.fly.dev",
-		"https://tcg.prof.ninja"
-	],
-	"world": "sensemeta",
+	"cors": ["http://localhost:3002", "https://hc-tcg-beta.fly.dev"],
+	"world": "beta",
 	"limits": {
 		"maxTurnTime": 90,
 		"minCards": 42,
