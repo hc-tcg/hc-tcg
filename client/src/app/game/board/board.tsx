@@ -42,7 +42,7 @@ function Board({onClick, gameState}: Props) {
 			if (gameState.turnPlayerId === playerId) {
 				if (settings.soundVolume !== '0') {
 					const audio = new Audio('/sfx/Click.ogg')
-					audio.volume = Number(settings.musicVolume) / 100
+					audio.volume = Number(settings.soundVolume) / 100
 					audio.play()
 				}
 			}
