@@ -28,6 +28,12 @@ export type ProtectionT = {
 	discard?: boolean
 }
 
+export type AttachRequirmentT = {
+	target: 'player' | 'opponent'
+	type: Array<CardTypeT | 'any'>
+	active?: boolean
+}
+
 export type AnyCardT = {
 	name: string
 	type: string
@@ -36,6 +42,7 @@ export type AnyCardT = {
 	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
 	useReqs?: Array<PickRequirmentT>
 	pickReqs?: Array<PickRequirmentT>
+	attachReq: AttachRequirmentT
 }
 
 export type ItemCardT = AnyCardT & {

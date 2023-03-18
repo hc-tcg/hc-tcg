@@ -22,6 +22,7 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 			type: 'health',
 			health: rowState.health,
 			id: 'health_' + rowState.health,
+			attachReq: {target: 'player', type: ['health']},
 		}
 	}
 

@@ -22,6 +22,8 @@ class BedEffectCard extends EffectCard {
 			description:
 				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health when bed is attached.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
 		})
+
+		this.attachReq = {target: 'player', type: ['effect'], active: true}
 	}
 
 	/**
@@ -78,14 +80,6 @@ class BedEffectCard extends EffectCard {
 			const {currentPlayer, opponentPlayer} = game.ds
 			delete currentPlayer.custom[this.id]
 			delete opponentPlayer.custom[this.id]
-		})
-
-		// Prevent placing bed on inactive hermits
-		game.hooks.validateCard.for('effect').tap(this.id, (action) => {
-			const {activeRow} = game.ds.currentPlayer.board
-			const {card, rowIndex} = action.payload
-			if (card?.cardId !== this.id) return
-			if (activeRow === null || activeRow !== rowIndex) return 'INVALID'
 		})
 	}
 }

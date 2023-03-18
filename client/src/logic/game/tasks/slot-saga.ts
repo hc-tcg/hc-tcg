@@ -3,12 +3,14 @@ import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
 import CARDS from 'server/cards'
+import {checkAttachReq} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
 	getPickProcess,
 	getPlayerState,
+	getGameState,
 } from 'logic/game/game-selectors'
 import {
 	setSelectedCard,
@@ -33,17 +35,19 @@ function* pickWithSelectedSaga(
 		return
 	}
 
-	const suBucket =
-		slotType === 'single_use' &&
-		['water_bucket', 'milk_bucket'].includes(selectedCardInfo.id)
-	if (selectedCardInfo.type !== slotType && !suBucket) {
+	const payload = {...action.payload, card: selectedCard}
+	const gameState = yield* select(getGameState)
+	if (
+		!gameState ||
+		!checkAttachReq(gameState, payload, selectedCardInfo.attachReq)
+	) {
 		console.log(
-			`Invalid slot. Trying to place card of type [${selectedCardInfo.type}] to a slot of type [${slotType}]`
+			`Invalid slot. Trying to place card [${selectedCardInfo.id}] to a slot of type [${slotType}]`
 		)
 		return
 	}
 
-	yield put(playCard({...action.payload, card: selectedCard}))
+	yield put(playCard(payload))
 
 	yield put(setSelectedCard(null))
 }

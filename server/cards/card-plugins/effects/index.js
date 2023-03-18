@@ -11,6 +11,7 @@ import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
 import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
+import StringEffectCard from './string'
 
 const EFFECT_CARDS = [
 	new BedEffectCard(),
@@ -26,6 +27,7 @@ const EFFECT_CARDS = [
 	new ThornsEffectCard(),
 	new MendingEffectCard(),
 	new LoyaltyEffectCard(),
+	// new StringEffectCard(),
 ]
 
 export default EFFECT_CARDS

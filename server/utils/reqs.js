@@ -10,6 +10,7 @@ import CARDS from '../cards'
  * @typedef {import("common/types/pick-process").HandPickedCardT} HandPickedCardT
  * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
  * @typedef {import("common/types/cards").CardTypesMapT} CardTypesMapT
+ * @typedef {import("common/types/cards").AttachRequirmentT} AttachRequirmentT
  */
 
 /**
@@ -96,69 +97,70 @@ export const anyAvailableReqOptions = (playerState, opponentState, reqs) => {
 }
 
 /**
- * @param {PickRequirmentT} req
  * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
+ * @param {boolean} emptyRow
  * @returns {boolean}
  */
-export const validRow = (req, cardPlayerState, rowIndex) => {
+export const validRow = (cardPlayerState, rowIndex, emptyRow) => {
 	if (typeof rowIndex !== 'number') return true
 	const row = cardPlayerState?.board.rows[rowIndex]
-	return !!(row && row.hermitCard)
+	if (!row) return false
+	return !!row.hermitCard !== emptyRow
 }
 
 /**
- * @param {PickRequirmentT} req
+ * @param {PickRequirmentT['target']} target
  * @param {PlayerState} cardPlayerState
  * @param {string} playerId
  * @param {SlotTypeT} slotType
  * @returns {boolean}
  */
-export const validTarget = (req, cardPlayerState, playerId, slotType) => {
-	if (!Object.hasOwn(req, 'target')) return true
+export const validTarget = (target, cardPlayerState, playerId, slotType) => {
+	if (typeof target !== 'string') return true
 
-	if (req.target === 'hand') return slotType === 'hand'
-	if (req.target === 'player' && playerId !== cardPlayerState.id) return false
-	if (req.target === 'opponent' && playerId === cardPlayerState.id) return false
+	if (target === 'hand') return slotType === 'hand'
+	if (target === 'player' && playerId !== cardPlayerState.id) return false
+	if (target === 'opponent' && playerId === cardPlayerState.id) return false
 
 	return true
 }
 
 /**
- * @param {PickRequirmentT} req
+ * @param {PickRequirmentT['active']} active
  * @param {PlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
  */
-export const validActive = (req, cardPlayerState, rowIndex) => {
-	if (!Object.hasOwn(req, 'active')) return true
+export const validActive = (active, cardPlayerState, rowIndex) => {
+	if (typeof active !== 'boolean') return true
 	if (rowIndex === null) return false
 
 	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
 	const isActive =
 		hasActiveHermit && rowIndex === cardPlayerState?.board.activeRow
 
-	return req.active === isActive
+	return active === isActive
 }
 
 /**
- * @param {PickRequirmentT} req
+ * @param {PickRequirmentT['type']} type
  * @param {SlotTypeT} cardType
  * @returns {boolean}
  */
-export const validType = (req, cardType) => {
-	if (!Object.hasOwn(req, 'type')) return true
-	return req.type === 'any' ? true : req.type === cardType
+export const validType = (type, cardType) => {
+	if (typeof type !== 'string') return true
+	return type === 'any' ? true : type === cardType
 }
 
 /**
- * @param {PickRequirmentT} req
+ * @param {PickRequirmentT['empty']} empty
  * @param {CardT | null} card
  * @returns {boolean}
  */
-const validEmpty = (req, card) => {
-	if (!Object.hasOwn(req, 'empty')) return !!card
-	return req.empty === !card
+const validEmpty = (empty, card) => {
+	if (typeof empty !== 'boolean') return true
+	return empty === !card
 }
 
 /**
@@ -180,38 +182,55 @@ const validEmpty = (req, card) => {
 export function validPick(gameState, req, pickedCard) {
 	if (!pickedCard) return false
 
+	const {players, turnPlayerId} = gameState
 	const cardPlayerId = pickedCard.playerId
 	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
-	const cardPlayerState = gameState.players[cardPlayerId]
+	const cardPlayerState = players[cardPlayerId]
 	const card = pickedCard.card
 	const slotType = pickedCard.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
+	const emptyRow = !!req.empty && slotType === 'hermit'
 
 	if (!cardPlayerState) return false
-	if (!validRow(req, cardPlayerState, rowIndex)) return false
-	if (!validTarget(req, cardPlayerState, gameState.turnPlayerId, slotType))
+	if (!validRow(cardPlayerState, rowIndex, emptyRow)) return false
+	if (!validTarget(req.target, cardPlayerState, turnPlayerId, slotType))
 		return false
-	if (!validActive(req, cardPlayerState, rowIndex)) return false
-	if (!validType(req, cardType)) return false
-	if (!validEmpty(req, card)) return false
+	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
+	if (!validType(req.type, cardType)) return false
+	if (!validEmpty(req.empty || false, card)) return false
 
 	return true
 }
 
 /**
+ * Check attach req for effect cards
  * @param {GameState} gameState
- * @param {Array<PickRequirmentT>} reqs
- * @param {Array<PickedCardT>} pickedCards
- * @returns {boolean}
+ * @param {TurnAction['payload']} slotPayload
+ * @param {AttachRequirmentT} req
+ * @return {boolean}
  */
-export function validPicks(gameState, reqs, pickedCards) {
-	let index = 0
-	for (let req of reqs) {
-		for (let i = 0; i < req.amount; i++) {
-			const isValid = validPick(gameState, req, pickedCards[index])
-			if (!isValid) return false
-			index++
-		}
-	}
+export function checkAttachReq(gameState, slotPayload, req) {
+	if (!slotPayload) return false
+
+	const {players, turnPlayerId} = gameState
+	const {playerId, slotIndex} = slotPayload
+	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
+	const player = players[playerId]
+	const slotType = slotPayload.slotType
+	const emptyRow = slotType === 'hermit'
+
+	if (!validRow(player, rowIndex, emptyRow)) return false
+	if (!validTarget(req.target, player, turnPlayerId, slotType)) return false
+	if (!validActive(req.active, player, rowIndex)) return false
+	if (!req.type.some((type) => validType(type, slotType))) return false
+
+	// Empty checks
+	const board = player.board
+	const row = typeof rowIndex === 'number' ? board.rows[rowIndex] : null
+	if (slotType === 'single_use' && board.singleUseCard) return false
+	if (slotType === 'hermit' && row?.hermitCard) return false
+	if (slotType === 'effect' && row?.effectCard) return false
+	if (slotType === 'item' && row?.itemCards[slotIndex]) return false
+
 	return true
 }

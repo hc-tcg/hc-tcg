@@ -9,6 +9,8 @@ class ItemCard extends Card {
 			throw new Error('Invalid card definition')
 		}
 		this.hermitType = defs.hermitType
+
+		this.attachReq = {target: 'player', type: ['item']}
 	}
 }
 
