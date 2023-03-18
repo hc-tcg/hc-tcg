@@ -1,4 +1,3 @@
-import {useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
 import {PickProcessT, PickedCardT} from 'common/types/pick-process'
@@ -14,8 +13,10 @@ import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
 import EndTurnModal from './modals/end-turn-modal'
+import DiscardedModal from './modals/discarded-modal'
 import MouseIndicator from './mouse-indicator'
 import EndGameOverlay from './end-game-overlay'
+import Toolbar from './toolbar'
 import Chat from './chat'
 import {
 	getGameState,
@@ -30,7 +31,6 @@ import {
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
-import SoundButton from './sound-button'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
@@ -64,6 +64,8 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
+	discarded: DiscardedModal,
+	forfeit: ForfeitModal,
 }
 
 const renderModal = (
@@ -86,7 +88,6 @@ function Game() {
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
-	const [showForfeit, setShowForfeit] = useState<boolean>(false)
 	const dispatch = useDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
@@ -105,10 +106,6 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	const handleForfeit = () => {
-		setShowForfeit(true)
-	}
-
 	const pickedCardsInstances = pickedCards
 		.map((pickedCard) => pickedCard.card)
 		.filter(Boolean) as Array<CardT>
@@ -116,33 +113,27 @@ function Game() {
 	return (
 		<div className={css.game}>
 			<Board onClick={handleBoardClick} gameState={gameState} />
-			<div className={css.hand}>
-				<CardList
-					wrap={false}
-					size="medium"
-					cards={playerState.hand}
-					onClick={(card: CardT) => selectCard(card)}
-					selected={selectedCard}
-					picked={pickedCardsInstances}
-				/>
+			<div className={css.bottom}>
+				<div className={css.toolbar}>
+					<Toolbar />
+				</div>
+				<div className={css.hand}>
+					<CardList
+						wrap={false}
+						size="medium"
+						cards={playerState.hand}
+						onClick={(card: CardT) => selectCard(card)}
+						selected={selectedCard}
+						picked={pickedCardsInstances}
+					/>
+				</div>
 			</div>
 			{renderModal(openedModal, handleOpenModal)}
 			{pickProcess ? (
 				<MouseIndicator message={getPickProcessMessage(pickProcess)} />
 			) : null}
 
-			<div className={css.forfeit} onClick={handleForfeit}>
-				<img
-					src="https://static.wikia.nocookie.net/minecraft_gamepedia/images/3/38/White_Banner_Revision_1.png"
-					width="32"
-					title="Forfeit"
-				/>
-			</div>
-
-			<SoundButton />
 			<Chat />
-
-			{showForfeit && <ForfeitModal closeModal={() => setShowForfeit(false)} />}
 
 			{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 		</div>

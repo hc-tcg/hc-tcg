@@ -1,4 +1,4 @@
-import {useState, SyntheticEvent} from 'react'
+import {SyntheticEvent} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import classnames from 'classnames'
 import {getChatMessages, getPlayerStates} from 'logic/game/game-selectors'
@@ -9,26 +9,12 @@ import css from './chat.module.css'
 
 function Chat() {
 	const dispatch = useDispatch()
-	const [showChat, setShowChat] = useState<boolean>(false)
-	const [lastSeen, setLastSeen] = useState<number>(0)
 	const chatMessages = useSelector(getChatMessages)
 	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
 	const settings = useSelector(getSettings)
-	const latestMessageTime = chatMessages[0]?.createdAt || 0
 
-	if (!showChat) {
-		return (
-			<div
-				className={classnames(css.showChat, {
-					[css.newMessage]: lastSeen !== latestMessageTime,
-				})}
-			>
-				<button onClick={() => setShowChat(true)}>{'>'}</button>
-				<div className={css.indicator} />
-			</div>
-		)
-	}
+	if (settings.showChat !== 'on') return null
 
 	const handleNewMessage = (ev: SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -41,19 +27,11 @@ function Chat() {
 		dispatch(chatMessage(message))
 	}
 
-	const hideChat = () => {
-		setShowChat(false)
-		setLastSeen(chatMessages[0]?.createdAt || 0)
-	}
-
 	return (
 		<div className={css.chat}>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input autoComplete="off" autoFocus name="message" maxLength={140} />
 				<button>Send</button>
-				<button type="button" onClick={hideChat}>
-					{'<'}
-				</button>
 			</form>
 			<div className={css.messageList}>
 				{chatMessages.map((messageInfo) => {

@@ -20,6 +20,7 @@ const defaultState: LocalSettings = {
 	musicVolume: '75',
 	profanityFilter: 'on',
 	confirmationDialogs: 'on',
+	showChat: 'off',
 	...getSettings(),
 }
 

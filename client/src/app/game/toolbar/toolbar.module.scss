@@ -1,0 +1,69 @@
+.toolbar {
+	width: 45px;
+	height: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	overflow: hidden;
+	border-right: 1px solid #aaa;
+}
+
+.item {
+	width: 100%;
+	height: 45px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 22px;
+	color: darkred;
+	font-family: Minecraft;
+	user-select: none;
+}
+
+.clickable {
+	cursor: pointer;
+}
+
+.item:hover {
+	background: beige;
+
+	// box-shadow: 0 0 2px 2px #aaa;
+
+	border-bottom: 1px solid #aaa;
+
+	&:not(:first-child) {
+		border-top: 1px solid #aaa;
+	}
+}
+
+@keyframes newMessageAnim {
+	0% {
+		background: transparent;
+	}
+
+	40% {
+		background: transparent;
+	}
+
+	60% {
+		background: orange;
+	}
+
+	90% {
+		background: orange;
+	}
+}
+
+.newMessage {
+	animation-name: newMessageAnim;
+	animation-iteration-count: infinite;
+	animation-duration: 2s;
+}
+
+.soundItem img {
+	filter: invert(0.85);
+}
+
+.dynamicSpace {
+	min-height: 0;
+	flex: 1 1 auto;
+}
