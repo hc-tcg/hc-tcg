@@ -50,7 +50,7 @@ function startSocketIO(server) {
 		})
 		socket.onAny((event, message) => {
 			// console.log('[received] ', event, ': ', message)
-			if (!message.type) return
+			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})
 		socket.on('disconnect', () => {
