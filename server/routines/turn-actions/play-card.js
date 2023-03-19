@@ -47,7 +47,9 @@ function* playCardSaga(game, turnAction, actionState) {
 			pastTurnActions.push('ADD_HERMIT')
 		}
 	} else if (slotType === 'item') {
-		if (!availableActions.includes('PLAY_ITEM_CARD')) return
+		const isItem = cardInfo.type === 'item'
+		if (isItem && !availableActions.includes('PLAY_ITEM_CARD')) return
+		if (!isItem && !availableActions.includes('PLAY_EFFECT_CARD')) return
 		const hermitRow = player.board.rows.find((row) =>
 			equalCard(row.hermitCard, rowHermitCard)
 		)
@@ -55,7 +57,8 @@ function* playCardSaga(game, turnAction, actionState) {
 		if (validate('item') === 'INVALID') return
 
 		hermitRow.itemCards[slotIndex] = card
-		if (cardInfo.type === 'item') pastTurnActions.push('PLAY_ITEM_CARD')
+
+		pastTurnActions.push(isItem ? 'PLAY_ITEM_CARD' : 'PLAY_EFFECT_CARD')
 	} else if (slotType === 'effect') {
 		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
 		const hermitRow = player.board.rows.find((row) =>

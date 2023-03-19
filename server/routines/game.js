@@ -9,12 +9,7 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import {
-	HERMIT_CARDS,
-	SINGLE_USE_CARDS,
-	ITEM_CARDS,
-	EFFECT_CARDS,
-} from '../cards'
+import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
@@ -34,6 +29,7 @@ import {CONFIG} from '../../config'
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
  * @typedef {import("common/types/cards").HermitCardT} HermitCardT
  * @typedef {import("common/types/cards").EffectCardT} EffectCardT
+ * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
 
@@ -57,15 +53,18 @@ function getAvailableActions(game, pastTurnActions) {
 	const actions = []
 
 	/**
-	 * @param {Record<string, unknown>} CardMap
+	 * @param {CardTypeT} type
 	 * @returns {boolean}
 	 */
-	const hasTypeInHand = (CardMap) =>
-		currentPlayer.hand.some((card) => CardMap[card.cardId])
-	const hasHermitInHand = hasTypeInHand(HERMIT_CARDS)
-	const hasItemInHand = hasTypeInHand(ITEM_CARDS)
-	const hasEffectInHand = hasTypeInHand(EFFECT_CARDS)
-	const hasSingleUseInHand = hasTypeInHand(SINGLE_USE_CARDS)
+	const hasTypeInHand = (type) => {
+		return currentPlayer.hand.some((card) =>
+			CARDS[card.cardId].attachReq.type.includes(type)
+		)
+	}
+	const hasHermitInHand = hasTypeInHand('hermit')
+	const hasItemInHand = hasTypeInHand('item')
+	const hasEffectInHand = hasTypeInHand('effect')
+	const hasSingleUseInHand = hasTypeInHand('single_use')
 
 	if (opponentPlayer.followUp) {
 		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
