@@ -1,5 +1,8 @@
 import HermitCard from './_hermit-card'
 
+// Source: https://www.youtube.com/watch?v=dq4dWiBjR74&t=146s 2:20
+// Bow card works in conjunction with HotGuy
+
 class GoodTimesWithScarAltEgoHermitCard extends HermitCard {
 	constructor() {
 		super({
