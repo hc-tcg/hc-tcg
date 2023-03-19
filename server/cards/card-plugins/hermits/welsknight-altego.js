@@ -6,7 +6,7 @@ class WelsknightAltEgoHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'welsknight_altego',
-			name: 'Wels',
+			name: 'Helsknight',
 			rarity: 'altego',
 			hermitType: 'pvp',
 			health: 270,
