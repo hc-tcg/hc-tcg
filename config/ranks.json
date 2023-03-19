@@ -4,6 +4,7 @@
 		"stressmonster101_rare",
 		"ethoslab_ultra_rare",
 		"grian_rare",
+		"joehills_rare",
 
 		"netherite_armor",
 		"totem",
@@ -12,8 +13,6 @@
 		"golden_apple"
 	],
 	"gold": [
-		"joehills_rare",
-		"rendog_rare",
 		"vintagebeef_ultra_rare",
 		"docm77_rare",
 		"hypnotizd_rare",
@@ -24,8 +23,8 @@
 		"ethoslab_rare",
 		"impulsesv_rare",
 		"xisumavoid_rare",
+		"pearlescentmoon_rare",
 
-		"bed",
 		"diamond_armor",
 		"chest",
 		"netherite_sword"
@@ -37,13 +36,12 @@
 		"goodtimeswithscar_rare",
 		"xbcrafted_rare",
 		"zedaphplays_rare",
-		"iskall85_rare",
 		"tangotek_rare",
 		"cubfan135_rare",
 		"ijevin_rare",
 		"geminitay_rare",
 		"keralis_rare",
-		"pearlescentmoon_rare",
+		"rendog_rare",
 		"iskall85_common",
 		"geminitay_common",
 		"xisumavoid_common",
@@ -51,10 +49,10 @@
 		"ethoslab_common",
 		"hypnotizd_common",
 		"rendog_common",
+		"goodtimeswithscar_common",
 
 		"gold_armor",
 		"iron_armor",
-		"mending",
 		"wolf",
 		"chorus_fruit",
 		"composter",
@@ -71,6 +69,8 @@
 		"lead",
 		"diamond_sword",
 		"bow",
+		"bed",
+		"fortune",
 
 		"item_balanced_rare",
 		"item_builder_rare",

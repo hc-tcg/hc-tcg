@@ -102,7 +102,6 @@ export function getStarterPack() {
 		if (duplicates.length >= limits.maxDuplicates) continue
 
 		const tokenCost = getCardCost(effectCard)
-		if (tokenCost === limits.diamondCost) continue
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue
@@ -119,12 +118,24 @@ export function getStarterPack() {
 	}
 
 	const remainingTokens = limits.maxDeckCost - tokens
+	let mostItems = 0
+	let mostItemsIndex = 0
+	let usedTokens = 0
 	for (let i = 0; i < hermitTypesCount; i++) {
 		const values = Object.values(itemCounts)[i]
 		if (values.items > 0) {
+			if (values.items > mostItems) {
+				mostItems = values.items
+				mostItemsIndex = i
+			}
+
 			values.tokens = Math.floor(remainingTokens / hermitTypesCount)
+			usedTokens += values.tokens
 		}
 	}
+
+	// add unused tokens to the biggest item pool
+	itemCounts[hermitTypes[mostItemsIndex]].tokens += remainingTokens - usedTokens
 
 	// items
 	for (let hermitType in itemCounts) {
