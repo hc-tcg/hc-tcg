@@ -29,8 +29,28 @@ class XisumavoidAltEgoHermitCard extends HermitCard {
 			},
 		})
 	}
+	/**
+	 * @param {GameModel} game
+	 */
+	register(game) {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
+			const {moveRef, typeAction} = attackState
 
-	register(game) {}
+			if (typeAction !== 'SECONDARY_ATTACK') return target
+			if (!target.isActive) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
+
+			const coinFlip = flipCoin(currentPlayer)
+			currentPlayer.coinFlips[this.id] = coinFlip
+
+			if (coinFlip[0] === 'heads') {
+				//TODO: Implement disable target Hermit's move
+			}
+
+			return target
+		})
+	}
 }
 
 export default XisumavoidAltEgoHermitCard
