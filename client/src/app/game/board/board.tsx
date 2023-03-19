@@ -12,6 +12,7 @@ import {
 	getCurrentCoinFlip,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, endTurn} from 'logic/game/game-actions'
+import {playSound} from 'logic/sound/sound-actions'
 import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
@@ -38,16 +39,8 @@ function Board({onClick, gameState}: Props) {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		try {
-			if (gameState.turnPlayerId === playerId) {
-				if (settings.soundVolume !== '0') {
-					const audio = new Audio('/sfx/Click.ogg')
-					audio.volume = Number(settings.soundVolume) / 100
-					audio.play()
-				}
-			}
-		} catch (err) {
-			console.log(err)
+		if (gameState.turnPlayerId === playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.turnPlayerId])
 
