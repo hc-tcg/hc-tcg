@@ -17,7 +17,7 @@ class WelsknightAltEgoHermitCard extends HermitCard {
 				power: null,
 			},
 			secondary: {
-				name: 'Trap Hol;e',
+				name: 'Trap Hole',
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
 				power: null,
