@@ -25,7 +25,7 @@ class XisumavoidAltEgoHermitCard extends HermitCard {
 				name: 'Derpcoin',
 				cost: ['balanced', 'balanced'],
 				damage: 80,
-				power: "Flip a coin.\n\n If heads, disable one of the opposing hermit's moves",
+				power: "Flip a coin.\n\nIf heads, disable one of the opposing hermit's moves",
 			},
 		})
 	}
