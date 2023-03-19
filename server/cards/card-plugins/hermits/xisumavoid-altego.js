@@ -11,7 +11,7 @@ class XisumavoidAltEgoHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xisumavoid_altego',
-			name: 'Xisuma',
+			name: 'Evil X',
 			rarity: 'altego',
 			hermitType: 'balanced',
 			health: 280,
