@@ -1,11 +1,11 @@
 import HermitCard from './_hermit-card'
 
-class GoodTimesWithScarBlackHermitCard extends HermitCard {
+class GoodTimesWithScarAltEgoHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'goodtimeswithscar_black',
+			id: 'goodtimeswithscar_altego',
 			name: 'Hotguy',
-			rarity: 'black',
+			rarity: 'altego',
 			hermitType: 'explorer',
 			health: 280,
 			primary: {
@@ -26,4 +26,4 @@ class GoodTimesWithScarBlackHermitCard extends HermitCard {
 	register(game) {}
 }
 
-export default GoodTimesWithScarBlackHermitCard
+export default GoodTimesWithScarAltEgoHermitCard
