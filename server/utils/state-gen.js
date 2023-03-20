@@ -43,8 +43,6 @@ export function getStarterPack() {
 			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
-	const hermitCards = cards.filter(isHermit)
-
 	const effectCards = cards.filter(isEffect)
 	const hermitCount = hermitTypesCount === 2 ? 8 : 10
 
@@ -69,32 +67,44 @@ export function getStarterPack() {
 	}
 	let tokens = 0
 
-	// no diamond cards
-	// no prankster / speedrunner cards
+	// hermits, but not diamond ones
+	let hermitCards = cards
+		.filter(isHermit)
+		.filter((card) => getCardCost(card) !== limits.diamondCost)
 
-	// hermits
-	while (deck.length < hermitCount) {
+	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
 		const hermitCard = hermitCards[randomIndex]
 
-		const duplicates = deck.filter((card) => card.id === hermitCard.id)
-		if (duplicates.length >= limits.maxDuplicates) continue
+		// remove this option
+		hermitCards = hermitCards.filter((card, index) => index !== randomIndex)
 
-		const tokenCost = getCardCost(hermitCard)
-		if (tokenCost === limits.diamondCost) continue
+		// add 1 - 3 of this hermit
+		const hermitAmount = Math.min(
+			randomBetween(1, 3),
+			hermitCount - deck.length
+		)
 
-		tokens += tokenCost
-		deck.push(hermitCard)
-		itemCounts[hermitCard.hermitType].items += 2
-		itemCount += 2
+		tokens += getCardCost(hermitCard) * hermitAmount
+		for (let i = 0; i < hermitAmount; i++) {
+			deck.push(hermitCard)
+			itemCounts[hermitCard.hermitType].items += 2
+			itemCount += 2
+		}
 	}
 
-	const effectCount = limits.maxCards - hermitCount - itemCount
-	let effects = 0
+	// items
+	for (let hermitType in itemCounts) {
+		let counts = itemCounts[hermitType]
+
+		for (let i = 0; i < counts.items; i++) {
+			deck.push(CARDS[`item_${hermitType}_common`])
+		}
+	}
 
 	let loopBreaker = 0
 	// effects
-	while (effects < effectCount) {
+	while (deck.length < limits.maxCards) {
 		const effectCard =
 			effectCards[Math.floor(Math.random() * effectCards.length)]
 
@@ -105,50 +115,17 @@ export function getStarterPack() {
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue
-		}
-		if (loopBreaker >= 100) {
-			break
 		} else {
 			loopBreaker = 0
+		}
+		if (loopBreaker >= 10000) {
+			const err = new Error()
+			console.log('Broke out of loop while generating starter deck!', err.stack)
+			break
 		}
 
 		tokens += tokenCost
 		deck.push(effectCard)
-		effects++
-	}
-
-	const remainingTokens = limits.maxDeckCost - tokens
-	let mostItems = 0
-	let mostItemsIndex = 0
-	let usedTokens = 0
-	for (let i = 0; i < hermitTypesCount; i++) {
-		const values = Object.values(itemCounts)[i]
-		if (values.items > 0) {
-			if (values.items > mostItems) {
-				mostItems = values.items
-				mostItemsIndex = i
-			}
-
-			values.tokens = Math.floor(remainingTokens / hermitTypesCount)
-			usedTokens += values.tokens
-		}
-	}
-
-	// add unused tokens to the biggest item pool
-	itemCounts[hermitTypes[mostItemsIndex]].tokens += remainingTokens - usedTokens
-
-	// items
-	for (let hermitType in itemCounts) {
-		let counts = itemCounts[hermitType]
-
-		let rares = 0
-
-		for (rares; rares < counts.tokens && rares < counts.items; rares++) {
-			deck.push(CARDS[`item_${hermitType}_rare`])
-		}
-		for (let i = 0; i < counts.items - rares; i++) {
-			deck.push(CARDS[`item_${hermitType}_common`])
-		}
 	}
 
 	/**
