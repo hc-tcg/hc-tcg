@@ -34,7 +34,7 @@ export function getStarterPack() {
 	const startingTypes = ['balanced', 'builder', 'farm', 'miner', 'redstone']
 	const hermitTypesCount = randomBetween(2, 3)
 	const hermitTypes = Object.keys(STRENGTHS)
-		.filter((type) => !startingTypes.includes(type))
+		.filter((type) => startingTypes.includes(type))
 		.sort(() => 0.5 - Math.random())
 		.slice(0, hermitTypesCount)
 
