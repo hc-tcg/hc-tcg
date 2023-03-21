@@ -50,7 +50,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 				row.hermitCard?.cardId.startsWith('ethoslab')
 			)
 
-			if (hasBdubs && hasDoc && hasEtho) target.multiplier *= 2
+			if (hasBdubs && hasDoc && hasEtho) target.hermitMultiplier *= 2
 
 			return target
 		})

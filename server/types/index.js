@@ -81,3 +81,40 @@
  * @property {string} followUp
  * @typedef {ActionState & FollowUpStateProperties} FollowUpState
  */
+
+/**
+ * @typedef {Object} AttackRecovery
+ * @property {number} amount
+ * @property {boolean} [discardEffect]
+ */
+
+/**
+ * @typedef {Object} AttackTarget
+ * @property {RowStateWithHermit} row
+ * @property {boolean} applyHermitDamage
+ * @property {string|null} effectCardId
+ * @property {boolean} isActive
+ * @property {number} extraEffectDamage
+ * @property {boolean} hasWeakness
+ * @property {number} extraHermitDamage
+ * @property {boolean} invulnarable
+ * @property {Array<AttackRecovery>} recovery
+ * @property {boolean} ignoreEffects
+ * @property {boolean} additionalAttack
+ * @property {boolean} ignoreRecovery
+ * @property {boolean} reverseDamage
+ * @property {number} backlash
+ * @property {number} hermitMultiplier
+ * @property {number} effectMultiplier
+ */
+
+/**
+ * @typedef {Object} AttackTargetResult
+ * @property {RowStateWithHermit} row
+ * @property {number} totalDamage
+ * @property {number} finalDamage
+ * @property {number} totalDamageToAttacker
+ * @property {number} finalDamageToAttacker
+ * @property {boolean} revived
+ * @property {boolean} died
+ */

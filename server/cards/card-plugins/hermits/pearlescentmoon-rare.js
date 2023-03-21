@@ -57,7 +57,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			const {opponentPlayer, currentPlayer} = game.ds
 
 			const coinFlip = opponentPlayer.custom[this.getKey('coinFlip')]
-			if (!coinFlip) return
+			if (!coinFlip) return target
 
 			currentPlayer.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] !== 'heads') {
@@ -65,7 +65,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				return target
 			}
 			opponentPlayer.custom[this.getKey('consecutive')] = true
-			target.multiplier = 0
+			target.hermitMultiplier = 0
 			return target
 		})
 

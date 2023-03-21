@@ -60,7 +60,7 @@ class MumboJumboRareHermitCard extends HermitCard {
 				return isAfk && isPranskter
 			})
 			if (!hasAfkPranskter) return target
-			target.multiplier *= 2
+			target.hermitMultiplier *= 2
 
 			return target
 		})

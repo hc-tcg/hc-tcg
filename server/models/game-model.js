@@ -90,12 +90,12 @@ export class GameModel {
 			attackState: new SyncHook(['turnAction', 'attackState']),
 			/**
 			 * Called once for each target of an attack (active, afk hermits)
-			 * @type {SyncWaterfallHook<[Object, TurnAction, AttackState], Object>}
+			 * @type {SyncWaterfallHook<[AttackTarget, TurnAction, AttackState], AttackTarget>}
 			 */
 			attack: new SyncWaterfallHook(['target', 'turnAction', 'attackState']),
 			/**
 			 * Called once for each target after damage is applied with info about total damge, revival etc.
-			 * @type {SyncHook<[Object, TurnAction, AttackState]>}
+			 * @type {SyncHook<[AttackTargetResult, TurnAction, AttackState]>}
 			 */
 			attackResult: new SyncHook(['result', 'turnAction', 'attackState']),
 			/**

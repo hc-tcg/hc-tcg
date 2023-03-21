@@ -129,10 +129,6 @@
 	vertical-align: bottom;
 }
 
-.multiplier {
-	color: rgb(1, 4, 246);
-}
-
 .infoIcon {
 	border: 2px solid black;
 	width: 20px;
@@ -154,10 +150,6 @@
 
 .hermitSelector > .attack {
 	cursor: default;
-}
-
-.extraAttacks {
-	/* padding-left: 10px; */
 }
 
 .hermitOptions {

@@ -57,6 +57,8 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				(a) => a.id !== 'sleeping'
 			)
 			attacker.row.ailments.push({id: 'sleeping', duration: 2})
+
+			return target
 		})
 
 		// Disable shreep attack consecutively

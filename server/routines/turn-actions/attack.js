@@ -5,6 +5,7 @@ import {applySingleUse, discardCard} from '../../utils'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  * @typedef {import("common/types/cards").HermitCardT} HermitCardT
  * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  */
@@ -19,7 +20,7 @@ export const WEAKNESS_DAMAGE = 20
 
 /**
  * @param {GameModel} game
- * @param {*} turnAction
+ * @param {TurnAction} turnAction
  * @param {ActionState} actionState
  * @return {SagaIterator}
  */
@@ -72,23 +73,29 @@ function* attackSaga(game, turnAction, actionState) {
 
 	game.hooks.attackState.call(turnAction, attackState)
 
+	/**
+	 * @param {RowStateWithHermit} row
+	 * @returns {AttackTarget}
+	 */
 	const makeTarget = (row) => ({
 		row,
 		applyHermitDamage: row === opponentActiveRow,
-		effectCardId: row.effectCard?.cardId,
+		effectCardId: row.effectCard?.cardId || null,
 		isActive: row === opponentActiveRow,
 		extraEffectDamage: 0,
 		hasWeakness: strengths.includes(
 			HERMIT_CARDS[row.hermitCard.cardId]?.hermitType
 		),
 		extraHermitDamage: 0,
-		recovery: [], // Array<{amount: number, discardEffect: boolean}>
+		invulnarable: false,
+		recovery: [],
 		ignoreEffects: false,
 		additionalAttack: false,
 		ignoreRecovery: false,
 		reverseDamage: false,
 		backlash: 0,
-		multiplier: 1,
+		hermitMultiplier: 1,
+		effectMultiplier: 1,
 	})
 
 	const targets = {}
@@ -128,24 +135,29 @@ function* attackSaga(game, turnAction, actionState) {
 		const health = target.row.health
 		const maxHealth = targetHermitInfo.health
 		const targetEffectInfo = EFFECT_CARDS[target.row.effectCard?.cardId]
-		const protection =
+		let protection =
 			target.ignoreEffects || target.additionalAttack
 				? 0
 				: targetEffectInfo?.protection?.target || 0
+
 		const weaknessDamage =
 			target.hasWeakness && hermitAttack + extraHermitAttack > 0
 				? WEAKNESS_DAMAGE
 				: 0
+		const hermitDamage = hermitAttack + extraHermitAttack + weaknessDamage
 		const totalDamage =
-			target.multiplier * (hermitAttack + extraHermitAttack + weaknessDamage) +
-			target.extraEffectDamage
+			target.hermitMultiplier * hermitDamage +
+			target.effectMultiplier * target.extraEffectDamage
 
 		const finalDamage = Math.max(totalDamage - protection, 0)
 
+		/** @type {AttackTargetResult} */
 		const targetResult = {
 			row: target.row,
 			totalDamage,
 			finalDamage,
+			totalDamageToAttacker: 0,
+			finalDamageToAttacker: 0,
 			revived: false,
 			died: false,
 		}
@@ -159,8 +171,10 @@ function* attackSaga(game, turnAction, actionState) {
 			discardCard(game, target.row.effectCard)
 		}
 
+		const invulnarable = target.invulnarable && !target.ignoreEffects
+
 		// Deal damage
-		if (!target.reverseDamage) {
+		if (!target.reverseDamage && !invulnarable) {
 			target.row.health = Math.min(maxHealth, health - finalDamage)
 		}
 

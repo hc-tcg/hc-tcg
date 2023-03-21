@@ -102,11 +102,11 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {attacker, moveRef} = attackState
-			if (attacker.hermitCard.cardId !== this.id) return null
-			if (moveRef.hermitCard.cardId === this.id) return null
+			if (attacker.hermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId === this.id) return target
 
 			const result = this.validate(game, turnAction, attackState)
-			if (!result) return
+			if (!result) return target
 			const {power} = result
 
 			// apply afk hermits damage

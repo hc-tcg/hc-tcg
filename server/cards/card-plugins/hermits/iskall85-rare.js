@@ -41,7 +41,7 @@ class Iskall85RareHermitCard extends HermitCard {
 
 			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 			if (targetHermitInfo.hermitType === 'builder') {
-				target.multiplier *= 2
+				target.hermitMultiplier *= 2
 			}
 
 			return target

@@ -14,7 +14,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			description:
 				"Flip a Coin.\n\nIf heads, no damage is done on opponent's next turn. If tails, double damage is done.\n\nDiscard after use.",
 		})
-		this.multiplier = 2
+		this.hermitMultiplier = 2
 	}
 
 	/**
@@ -25,25 +25,25 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
-				opponentPlayer.custom[this.id] = currentPlayer.coinFlips[this.id][0]
+				currentPlayer.custom[this.id] = currentPlayer.coinFlips[this.id][0]
 				return 'DONE'
 			}
 		})
 
 		game.hooks.attack.tap(this.id, (target) => {
-			const {custom} = game.ds.currentPlayer
+			const {custom} = game.ds.opponentPlayer
 			if (!custom[this.id]) return target
 
 			if (custom[this.id] === 'heads') {
-				target.multiplier *= 0
+				target.hermitMultiplier *= 0
 			} else if (custom[this.id] === 'tails') {
-				target.multiplier = this.multiplier
+				target.hermitMultiplier = this.hermitMultiplier
 			}
 			return target
 		})
 
 		game.hooks.turnEnd.tap(this.id, () => {
-			const {custom} = game.ds.currentPlayer
+			const {custom} = game.ds.opponentPlayer
 			if (custom[this.id]) delete custom[this.id]
 		})
 	}

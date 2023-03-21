@@ -30,8 +30,8 @@ class BowSingleUseCard extends SingleUseCard {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo} = game.ds
 			const {pickedCardsInfo} = attackState
-			if (singleUseInfo?.id !== this.id) return
-			if (target.isActive) return
+			if (singleUseInfo?.id !== this.id) return target
+			if (target.isActive) return target
 
 			// only attack selected afk target
 			const bowPickedCards = pickedCardsInfo[this.id] || []

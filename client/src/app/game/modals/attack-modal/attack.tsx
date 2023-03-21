@@ -2,14 +2,10 @@ import classnames from 'classnames'
 import {useSelector} from 'react-redux'
 import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
 import Strengths from 'server/const/strengths'
-import {
-	getPlayerActiveRow,
-	getOpponentActiveRow,
-	getMultiplier,
-} from '../../game-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
-import {getPlayerStateById} from 'logic/game/game-selectors'
+import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
+import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
 import {HermitAttackT} from 'common/types/cards'
+import valueModifiers from './value-modifiers'
 import css from './attack-modal.module.css'
 
 type Props = {
@@ -23,10 +19,9 @@ type Props = {
 const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	const activeRow = useSelector(getPlayerActiveRow)
 	const opponentRow = useSelector(getOpponentActiveRow)
-	const playerId = useSelector(getPlayerId)
-	const playerState = useSelector(getPlayerStateById(playerId))
-	const singleUseCard = playerState?.board.singleUseCard
-	const multiplier = useSelector(getMultiplier)
+	const currentPlayer = useSelector(getPlayerState)
+	const opponentPlayer = useSelector(getOpponentState)
+	const singleUseCard = currentPlayer?.board.singleUseCard
 
 	if (!activeRow || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
@@ -51,31 +46,67 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 			  }
 			: null
 
-	const protectionAmount =
-		suAttackInfo && singleUseInfo?.id === 'golden_axe'
-			? 0
-			: opponentEffectInfo?.protection?.target || 0
+	const protectionAmount = suAttackInfo
+		? 0
+		: opponentEffectInfo?.protection?.target || 0
 
 	const extraKey =
 		playerHermitInfo.hermitType + '_' + opponentHermitInfo.hermitType
 	const hasExtraWeakness =
-		!!playerState?.custom['potion_of_weakness']?.[extraKey]
+		!!currentPlayer?.custom['potion_of_weakness']?.[extraKey]
 	const hasWeakness =
 		Strengths[playerHermitInfo.hermitType]?.includes(
 			opponentHermitInfo.hermitType
 		) || hasExtraWeakness
 
 	const baseDamage = attackInfo?.damage || 0
-	const totalDamage = Math.max(
-		baseDamage +
-			(suAttackInfo?.damage || 0) +
-			(hasWeakness && baseDamage > 0 ? 20 : 0) -
-			protectionAmount,
-		0
+	const weaknessDamage = hasWeakness && baseDamage > 0 ? 20 : 0
+
+	const makeAttackMod = () => ({
+		multiplier: 1,
+		min: 0,
+		max: 0,
+	})
+
+	const modifiedAttackInfo = valueModifiers.reduce(
+		(result, vm) => {
+			vm({currentPlayer, opponentPlayer, singleUseInfo}, result)
+			return result
+		},
+		{
+			hermit: makeAttackMod(),
+			weakness: makeAttackMod(),
+			effect: makeAttackMod(),
+			afkEffect: makeAttackMod(),
+			protection: makeAttackMod(),
+		}
 	)
 
-	const totalMinDamage =
-		singleUseInfo?.id === 'anvil' ? totalDamage - 80 : totalDamage
+	const getDamagaValue = (
+		info: ReturnType<typeof makeAttackMod>,
+		value: number
+	) => {
+		const min = info.min !== -1 ? (value + info.min) * info.multiplier : '∞'
+		const max = info.max !== -1 ? (value + info.max) * info.multiplier : '∞'
+		if (min !== max) return `${min}-${max}`
+		return `${max}`
+	}
+
+	const totalMinMax = (['min', 'max'] as const).map((key) => {
+		let modProtection = modifiedAttackInfo['protection'][key]
+		if (modProtection === -1) modProtection = 10000
+		return Math.max(
+			(baseDamage + modifiedAttackInfo['hermit'][key]) *
+				modifiedAttackInfo['hermit'].multiplier +
+				(weaknessDamage + modifiedAttackInfo['weakness'][key]) *
+					modifiedAttackInfo['weakness'].multiplier +
+				((suAttackInfo?.damage || 0) + modifiedAttackInfo['effect'][key]) *
+					modifiedAttackInfo['effect'].multiplier -
+				(protectionAmount + modProtection) *
+					modifiedAttackInfo['protection'].multiplier,
+			0
+		)
+	})
 
 	const attackParts = []
 
@@ -85,7 +116,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 				<div className={css.hermitDamage}>
 					<img src={`/images/hermits-nobg/${hermitFullName}.png`} width="32" />
 				</div>
-				<div className={css.damageAmount}>{attackInfo.damage}</div>
+				<div className={css.damageAmount}>
+					{getDamagaValue(modifiedAttackInfo.hermit, attackInfo.damage)}
+				</div>
 			</div>
 		)
 	}
@@ -106,9 +139,17 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 					height="16"
 				/>
 				<div className={css.damageAmount}>
-					{singleUseInfo?.id === 'anvil' ? <>0/</> : null}
-					{suAttackInfo.damage}
-					{suAttackInfo.afkDamage ? <>({suAttackInfo.afkDamage})</> : null}
+					{getDamagaValue(modifiedAttackInfo.effect, suAttackInfo.damage)}
+					{suAttackInfo.afkDamage ? (
+						<>
+							(
+							{getDamagaValue(
+								modifiedAttackInfo.afkEffect,
+								suAttackInfo.afkDamage
+							)}
+							)
+						</>
+					) : null}
 				</div>
 			</div>
 		)
@@ -125,12 +166,17 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 		attackParts.push(
 			<div key="weakness" className={css.attackPart}>
 				<img src={`/images/weakness.png`} width="16" height="16" />
-				<div className={css.damageAmount}>20</div>
+				<div className={css.damageAmount}>
+					{getDamagaValue(modifiedAttackInfo.weakness, weaknessDamage)}
+				</div>
 			</div>
 		)
 	}
 
-	if (opponentEffectInfo && protectionAmount) {
+	if (
+		opponentEffectInfo &&
+		(protectionAmount || modifiedAttackInfo.protection.max)
+	) {
 		if (attackParts.length) {
 			attackParts.push(
 				<div key="protection-op" className={css.attackOperator}>
@@ -145,7 +191,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 					width="16"
 					height="16"
 				/>
-				<div className={css.damageAmount}>{protectionAmount}</div>
+				<div className={css.damageAmount}>
+					{getDamagaValue(modifiedAttackInfo.protection, protectionAmount)}
+				</div>
 			</div>
 		)
 	}
@@ -172,12 +220,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 							[css.specialMove]: !!attackInfo?.power,
 						})}
 					>
-						{totalMinDamage !== totalDamage ? <>{totalMinDamage}-</> : null}
-						{totalDamage}
+						{totalMinMax[0] !== totalMinMax[1] ? <>{totalMinMax[0]}-</> : null}
+						{totalMinMax[1]}
 					</span>
-					{multiplier !== null ? (
-						<span className={css.multiplier}> x{multiplier}</span>
-					) : null}
 				</div>
 				<div className={css.description}>{attackParts}</div>
 			</div>
