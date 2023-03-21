@@ -4,17 +4,14 @@
 		"stressmonster101_rare",
 		"ethoslab_ultra_rare",
 		"grian_rare",
-		"joehills_rare",
 
 		"netherite_armor",
 		"totem",
 		"clock",
-		"fishing_rod",
 		"golden_apple"
 	],
 	"gold": [
 		"vintagebeef_ultra_rare",
-		"docm77_rare",
 		"hypnotizd_rare",
 		"tinfoilchef_rare",
 		"tinfoilchef_ultra_rare",
@@ -24,6 +21,8 @@
 		"impulsesv_rare",
 		"xisumavoid_rare",
 		"pearlescentmoon_rare",
+		"joehills_rare",
+		"fishing_rod",
 
 		"diamond_armor",
 		"chest",
@@ -42,6 +41,8 @@
 		"geminitay_rare",
 		"keralis_rare",
 		"rendog_rare",
+		"docm77_rare",
+
 		"iskall85_common",
 		"geminitay_common",
 		"xisumavoid_common",
@@ -52,7 +53,6 @@
 		"goodtimeswithscar_common",
 		"tangotek_common",
 
-		"gold_armor",
 		"iron_armor",
 		"wolf",
 		"chorus_fruit",
@@ -68,7 +68,6 @@
 		"splash_potion_of_poison",
 		"tnt",
 		"lead",
-		"diamond_sword",
 		"bow",
 		"bed",
 		"fortune",

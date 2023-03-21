@@ -9,6 +9,7 @@ import {getCardCost, getTotalCost, validateDeck} from 'server/utils/validation'
 import css from './deck.module.css'
 import {getPlayerDeck} from 'logic/session/session-selectors'
 import ImportExport from 'components/import-export'
+import {CONFIG} from '../../../../config'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -175,8 +176,8 @@ const Deck = ({setMenuSection}: Props) => {
 						<span>Your deck ({pickedCards.length})</span>
 						<span> - </span>
 						<span> </span>
-						<span className={css.ultraRareAmount} title="Tokens">
-							{tokens} tokens
+						<span className={css.tokens} title="Tokens">
+							{tokens} / {CONFIG.limits.maxDeckCost} tokens
 						</span>
 					</div>
 				</div>

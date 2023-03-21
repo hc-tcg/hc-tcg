@@ -13,14 +13,11 @@
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
-		"allowUltraRareDuplicates": false,
-		"maxRare": 12,
-		"maxUltraRare": 3,
 
 		"maxDeckCost": 30,
 		"ironCost": 1,
 		"goldCost": 2,
 		"diamondCost": 4
 	},
-	"logoSubText": "New meta! v0.2.2"
+	"logoSubText": "New meta! v0.2.3"
 }

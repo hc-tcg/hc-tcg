@@ -65,15 +65,7 @@
 	background: #393433;
 }
 
-.commonAmount {
-	color: rgb(0, 197, 0);
-}
-
-.rareAmount {
-	color: rgb(249, 168, 3);
-}
-
-.ultraRareAmount {
+.tokens {
 	color: rgb(98, 255, 255);
 }
 
