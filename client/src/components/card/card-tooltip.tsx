@@ -154,7 +154,6 @@ const getRank = (card: CardInfoT): React.ReactNode => {
 			{cost !== 1 ? 'tokens' : 'token'}) {highlight}
 		</div>
 	)
-	return null
 }
 
 const getSingleUse = (card: CardInfoT): React.ReactNode => {
@@ -183,7 +182,7 @@ const CardTooltip = ({card}: Props) => {
 				{getSingleUse(card)}
 			</div>
 			<div className={css.description}>
-				{getRank(card)}
+				{card.type !== 'health' ? getRank(card) : null}
 				{getStrengthsAndWeaknesses(card)}
 				{getDescription(card)}
 			</div>
