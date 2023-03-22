@@ -26,7 +26,8 @@
 
 		"diamond_armor",
 		"chest",
-		"netherite_sword"
+		"netherite_sword",
+		"emerald"
 	],
 	"iron": [
 		"bdoubleo100_rare",
@@ -59,7 +60,6 @@
 		"composter",
 		"crossbow",
 		"curse_of_vanishing",
-		"emerald",
 		"flint_&_steel",
 		"golden_axe",
 		"instant_health_ii",
