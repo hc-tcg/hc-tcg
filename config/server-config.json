@@ -17,7 +17,8 @@
 		"maxDeckCost": 30,
 		"ironCost": 1,
 		"goldCost": 2,
+		"emeraldCost": 3,
 		"diamondCost": 4
 	},
-	"logoSubText": "New meta! v0.2.4"
+	"logoSubText": "New meta! v0.3.0"
 }

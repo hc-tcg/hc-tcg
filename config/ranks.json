@@ -2,14 +2,11 @@
 	"diamond": [
 		"mumbojumbo_rare",
 		"stressmonster101_rare",
-		"ethoslab_ultra_rare",
-		"grian_rare",
 
-		"netherite_armor",
-		"totem",
 		"clock",
 		"golden_apple"
 	],
+	"emerald": ["grian_rare", "netherite_armor", "totem", "ethoslab_ultra_rare"],
 	"gold": [
 		"vintagebeef_ultra_rare",
 		"hypnotizd_rare",

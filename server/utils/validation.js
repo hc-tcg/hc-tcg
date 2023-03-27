@@ -2,13 +2,19 @@ import CARDS from '../cards'
 import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
 
 /**
+ * @typedef {import('common/types/cards').RankT} RankT
+ */
+/**
  *
  * @param {CardInfoT} card
+ * @returns {RankT}
  */
 export function getCardRank(card) {
+	/** @type {RankT} */
 	let rank = 'stone'
 	if (RANKS.iron.includes(card.id)) rank = 'iron'
 	else if (RANKS.gold.includes(card.id)) rank = 'gold'
+	else if (RANKS.emerald.includes(card.id)) rank = 'emerald'
 	else if (RANKS.diamond.includes(card.id)) rank = 'diamond'
 	return rank
 }
@@ -26,6 +32,8 @@ export function getCardCost(card) {
 			return CONFIG.limits.ironCost
 		case 'gold':
 			return CONFIG.limits.goldCost
+		case 'emerald':
+			return CONFIG.limits.emeraldCost
 		case 'diamond':
 			return CONFIG.limits.diamondCost
 

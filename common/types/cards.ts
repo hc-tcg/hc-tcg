@@ -2,7 +2,7 @@ import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
-export type RankT = 'iron' | 'gold' | 'diamond'
+export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
 
 export type HermitTypeT =
 	| 'balanced'
