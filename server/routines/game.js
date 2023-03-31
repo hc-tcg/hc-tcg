@@ -125,9 +125,9 @@ function getAvailableActions(game, pastTurnActions) {
 		activeRow !== null &&
 		rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
 
-	if (activeRow !== null) {
-		if (hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
+	if (hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
 
+	if (activeRow !== null) {
 		if (turn > 1) {
 			const hermitId = rows[activeRow].hermitCard?.cardId
 			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
