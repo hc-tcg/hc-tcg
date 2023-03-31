@@ -57,11 +57,12 @@ export class GameModel {
 			turnStart: new SyncHook(['turnConfig']),
 			/**
 			 * Used to modify availableActions before each action of a turn
-			 * @type {SyncWaterfallHook<[AvailableActionsT, Array<string>], AvailableActionsT>}
+			 * @type {SyncWaterfallHook<[AvailableActionsT, Array<string>, AvailableActionsT], AvailableActionsT>}
 			 */
 			availableActions: new SyncWaterfallHook([
 				'availableActions',
 				'pastTurnActions',
+				'lockedActions',
 			]),
 			/**
 			 * Start of any action (action = player move, there can be multiple each turn)

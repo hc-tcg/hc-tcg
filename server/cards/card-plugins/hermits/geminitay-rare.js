@@ -100,7 +100,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id] === 2
 
@@ -109,15 +109,22 @@ class GeminiTayRareHermitCard extends HermitCard {
 					return availableActions
 				if (
 					!availableActions.includes('PLAY_SINGLE_USE_CARD') &&
+					!lockedActions.includes('PLAY_SINGLE_USE_CARD') &&
 					!currentPlayer.board.singleUseCard
 				) {
 					availableActions.push('PLAY_SINGLE_USE_CARD')
 				}
 
-				if (!availableActions.includes('ZERO_ATTACK'))
+				if (
+					!availableActions.includes('ZERO_ATTACK') &&
+					!lockedActions.includes('ZERO_ATTACK')
+				)
 					availableActions.push('ZERO_ATTACK')
 
-				if (!availableActions.includes('PLAY_EFFECT_CARD'))
+				if (
+					!availableActions.includes('PLAY_EFFECT_CARD') &&
+					!lockedActions.includes('PLAY_EFFECT_CARD')
+				)
 					availableActions.push('PLAY_EFFECT_CARD')
 
 				return availableActions

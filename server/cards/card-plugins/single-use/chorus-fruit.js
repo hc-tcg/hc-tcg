@@ -47,7 +47,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {playerActiveRow, currentPlayer} = game.ds
 				const chorusFruit = currentPlayer.custom[this.id]
 
@@ -65,7 +65,8 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 					!activeIsSleeping &&
 					hasOtherHermit &&
 					pastTurnActions.includes('ATTACK') &&
-					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+					!availableActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!lockedActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}

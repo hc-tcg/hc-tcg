@@ -59,7 +59,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id]
 				const hasOtherHermit = currentPlayer.board.rows.some(
@@ -70,6 +70,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 					usedPower &&
 					hasOtherHermit &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!lockedActions.includes('CHANGE_ACTIVE_HERMIT') &&
 					availableActions.includes('END_TURN') &&
 					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {

@@ -1,4 +1,5 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": []
+	"extraStartingCards": ["curse_of_binding", "cubfan135_rare"],
+	"noItemRequirements": true
 }

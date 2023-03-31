@@ -22,7 +22,7 @@ import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
-import {CONFIG} from '../../config'
+import {CONFIG, DEBUG_CONFIG} from '../../config'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -140,10 +140,16 @@ function getAvailableActions(game, pastTurnActions) {
 				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 					actions.push('ZERO_ATTACK')
 				}
-				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+				if (
+					DEBUG_CONFIG.noItemRequirements ||
+					hasEnoughItems(itemCards, hermitInfo.primary.cost)
+				) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+				if (
+					DEBUG_CONFIG.noItemRequirements ||
+					(!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost))
+				) {
 					actions.push('SECONDARY_ATTACK')
 				}
 			}
@@ -369,9 +375,11 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	try {
 		while (true) {
 			let availableActions = getAvailableActions(game, pastTurnActions)
+			let lockedActions = []
 			availableActions = game.hooks.availableActions.call(
 				availableActions,
-				pastTurnActions
+				pastTurnActions,
+				lockedActions
 			)
 
 			if (turnConfig.skipTurn) {

@@ -93,7 +93,7 @@ class RendogRareHermitCard extends HermitCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {
 					playerActiveRow,
 					opponentActiveRow,
@@ -132,7 +132,8 @@ class RendogRareHermitCard extends HermitCard {
 				playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
 				const newAvailableActions = game.hooks.availableActions.call(
 					availableActions.slice(),
-					pastTurnActions
+					pastTurnActions,
+					lockedActions
 				)
 				playerActiveRow.hermitCard.cardId = this.id
 

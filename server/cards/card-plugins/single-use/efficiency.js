@@ -23,7 +23,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {currentPlayer} = game.ds
 				const efficiency = currentPlayer.custom[this.id]
 				if (efficiency) {
@@ -42,8 +42,13 @@ class EfficiencySingleUseCard extends SingleUseCard {
 					const isSlow = ailments.find((a) => a.id === 'slowness')
 
 					if (!isSleeping) {
-						availableActions.push('PRIMARY_ATTACK')
-						if (!isSlow) availableActions.push('SECONDARY_ATTACK')
+						if (!lockedActions.includes('PRIMARY_ATTACK')) {
+							availableActions.push('PRIMARY_ATTACK')
+						}
+
+						if (!isSlow && !lockedActions.includes('SECONDARY_ATTACK')) {
+							availableActions.push('SECONDARY_ATTACK')
+						}
 					}
 				}
 				return availableActions

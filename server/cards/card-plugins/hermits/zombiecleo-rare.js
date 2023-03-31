@@ -117,7 +117,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {currentPlayer, playerActiveRow, playerHermitCard} = game.ds
 
 				// Run only when Cleo's card is active
@@ -147,13 +147,10 @@ class ZombieCleoRareHermitCard extends HermitCard {
 						playerActiveRow.hermitCard.cardId = allyHermitInfo.id
 						const newAvailableActions = game.hooks.availableActions.call(
 							availableActions.slice(),
-							pastTurnActions
+							pastTurnActions,
+							lockedActions
 						)
 						playerActiveRow.hermitCard.cardId = this.id
-
-						const hasPrimary = newAvailableActions.includes('PRIMARY_ATTACK')
-						const hasSecondary =
-							newAvailableActions.includes('SECONDARY_ATTACK')
 
 						if (newAvailableActions.includes('PRIMARY_ATTACK')) {
 							extraActions.push(allyHermitInfo.id + ':PRIMARY_ATTACK')
