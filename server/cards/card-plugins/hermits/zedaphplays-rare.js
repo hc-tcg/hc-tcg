@@ -47,7 +47,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				currentPlayer.custom[currentPlayer.id] = flipCoin(currentPlayer)
+				currentPlayer.custom[this.id] = flipCoin(currentPlayer)
 			}
 
 			return target
@@ -57,9 +57,9 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		game.hooks.attack.tap(this.id, (target) => {
 			const {opponentPlayer, currentPlayer} = game.ds
 
-			const coinFlip = opponentPlayer.custom[opponentPlayer.id]
+			const coinFlip = opponentPlayer.custom[this.id]
 			if (!coinFlip) return target
-			delete opponentPlayer.custom[opponentPlayer.id]
+			delete opponentPlayer.custom[this.id]
 
 			currentPlayer.coinFlips['Opponent ' + this.name] = coinFlip
 			if (coinFlip[0] !== 'heads') return target
@@ -71,8 +71,8 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		// When Zed has turn again, and opponent didn't attack remove flag
 		game.hooks.turnStart.tap(this.id, () => {
 			const {currentPlayer} = game.ds
-			if (!currentPlayer.custom[currentPlayer.id]) return
-			delete currentPlayer.custom[currentPlayer.id]
+			if (!currentPlayer.custom[this.id]) return
+			delete currentPlayer.custom[this.id]
 		})
 	}
 }
