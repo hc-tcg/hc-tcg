@@ -44,7 +44,6 @@ export type PlayerState = {
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
-	rewards: Array<CardT>
 	pile: Array<CardT>
 	discarded: Array<CardT>
 	board: {

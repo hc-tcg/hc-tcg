@@ -194,9 +194,8 @@ export function getPlayerState(player) {
 		followUp: null,
 		lives: 3,
 		hand,
-		rewards: pack.slice(7, 10),
 		discarded: [],
-		pile: pack.slice(10),
+		pile: pack.slice(7),
 		custom: {},
 		board: {
 			activeRow: null,

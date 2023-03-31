@@ -214,7 +214,7 @@ function* checkHermitHealth(game) {
 				// reward cards
 				const opponentState = playerStates.find((s) => s.id !== playerState.id)
 				if (!opponentState) continue
-				const rewardCard = playerState.rewards.shift()
+				const rewardCard = playerState.hand.shift()
 				if (rewardCard) opponentState.hand.push(rewardCard)
 			}
 		}
