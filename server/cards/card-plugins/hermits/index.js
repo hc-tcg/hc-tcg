@@ -64,7 +64,7 @@ const HERMIT_CARDS = [
 	new Cubfan135RareHermitCard(),
 	new Docm77CommonHermitCard(),
 	new Docm77RareHermitCard(),
-	new DreamRareHermitCard(),
+	// new DreamRareHermitCard(),
 	new EthosLabCommonHermitCard(),
 	new EthosLabRareHermitCard(),
 	new EthosLabUltraRareHermitCard(),
