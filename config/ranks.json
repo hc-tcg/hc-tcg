@@ -6,7 +6,13 @@
 		"clock",
 		"golden_apple"
 	],
-	"emerald": ["grian_rare", "netherite_armor", "totem", "ethoslab_ultra_rare"],
+	"emerald": [
+		"grian_rare",
+		"netherite_armor",
+		"totem",
+		"ethoslab_ultra_rare",
+		"impulsesv_rare"
+	],
 	"gold": [
 		"vintagebeef_ultra_rare",
 		"hypnotizd_rare",
@@ -15,7 +21,6 @@
 		"zombiecleo_rare",
 		"welsknight_rare",
 		"ethoslab_rare",
-		"impulsesv_rare",
 		"xisumavoid_rare",
 		"pearlescentmoon_rare",
 		"joehills_rare",
@@ -43,13 +48,10 @@
 
 		"iskall85_common",
 		"geminitay_common",
-		"xisumavoid_common",
-		"tinfoilchef_common",
 		"ethoslab_common",
 		"hypnotizd_common",
 		"rendog_common",
 		"goodtimeswithscar_common",
-		"tangotek_common",
 
 		"iron_armor",
 		"wolf",
