@@ -125,7 +125,7 @@ function getAvailableActions(game, pastTurnActions) {
 		activeRow !== null &&
 		rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
 
-	if (hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
+	if (!hasNoHermit && hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
 
 	if (activeRow !== null) {
 		if (turn > 1) {
@@ -156,11 +156,16 @@ function getAvailableActions(game, pastTurnActions) {
 		}
 	}
 
-	if (!pastTurnActions.includes('PLAY_ITEM_CARD') && hasItemInHand)
+	if (
+		!pastTurnActions.includes('PLAY_ITEM_CARD') &&
+		!hasNoHermit &&
+		hasItemInHand
+	)
 		actions.push('PLAY_ITEM_CARD')
 
 	if (
 		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
+		!hasNoHermit &&
 		!currentPlayer.board.singleUseCard &&
 		hasSingleUseInHand
 	)
