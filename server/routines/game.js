@@ -137,9 +137,6 @@ function getAvailableActions(game, pastTurnActions) {
 
 			// only add attack options if not sleeping
 			if (hermitInfo && !isSleeping) {
-				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
-					actions.push('ZERO_ATTACK')
-				}
 				let showZeroAttack = true
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
