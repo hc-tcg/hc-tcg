@@ -1,4 +1,7 @@
-export type PlatyerId = string
+import {MessageInfoT} from './chat'
+import {PickProcessT} from './pick-process'
+
+export type PlayerId = string
 
 export type CardT = {
 	cardId: string
@@ -36,7 +39,7 @@ export type CurrentCoinFlipT = {
 }
 
 export type PlayerState = {
-	id: PlatyerId
+	id: PlayerId
 	followUp?: any
 	playerName: string
 	censoredPlayerName: string
@@ -57,10 +60,13 @@ export type PlayerState = {
 export type GameState = {
 	turn: number
 	turnPlayerId: string
-	turnTime: number
-	turnRemaining: number
-	order: Array<PlatyerId>
+	order: Array<PlayerId>
 	players: Record<string, PlayerState>
+
+	timer: {
+		turnTime: number
+		turnRemaining: number
+	}
 }
 
 export type AvailableActionT =
@@ -81,12 +87,6 @@ export type AvailableActionT =
 
 export type AvailableActionsT = Array<AvailableActionT>
 
-export type GameStatePayload = {
-	gameState: GameState
-	availableActions: Array<AvailableActionT>
-	opponentId: string
-}
-
 export type GameEndOutcomeT =
 	| 'client_crash'
 	| 'server_crash'
@@ -102,3 +102,64 @@ export type GameEndOutcomeT =
 	| null
 
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
+
+export type LocalPlayerState = {
+	id: PlayerId
+	followUp?: any
+	playerName: string
+	censoredPlayerName: string
+	coinFlips: Record<string, Array<CoinFlipT>>
+	custom: Record<string, any>
+	lives: number
+	board: {
+		activeRow: number | null
+		singleUseCard: CardT | null
+		singleUseCardUsed: boolean
+		rows: Array<RowState>
+	}
+}
+
+export type LocalGameState = {
+	turn: number
+	order: Array<PlayerId>
+
+	// personal data
+	hand: Array<CardT>
+	pileCount: number
+	discarded: Array<CardT>
+
+	// ids
+	playerId: PlayerId
+	opponentPlayerId: PlayerId
+	currentPlayerId: PlayerId
+
+	players: Record<string, LocalPlayerState>
+
+	pastTurnActions: Array<string>
+	availableActions: AvailableActionsT
+
+	timer: {
+		turnTime: number
+		turnRemaining: number
+	}
+}
+
+// state sent to client
+export type LocalGameRoot = {
+	localGameState: LocalGameState | null
+	time: number
+
+	selectedCard: CardT | null
+	openedModal: {
+		id: string
+		info: null
+	} | null
+	pickProcess: PickProcessT | null
+	endGameOverlay: {
+		reason: GameEndReasonT
+		outcome: GameEndOutcomeT
+	} | null
+	chat: Array<MessageInfoT>
+	currentCoinFlip: CurrentCoinFlipT | null
+	opponentConnected: boolean
+}

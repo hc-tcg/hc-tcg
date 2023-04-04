@@ -112,7 +112,7 @@ function Game() {
 
 	return (
 		<div className={css.game}>
-			<Board onClick={handleBoardClick} gameState={gameState} />
+			<Board onClick={handleBoardClick} localGameState={gameState} />
 			<div className={css.bottom}>
 				<div className={css.toolbar}>
 					<Toolbar />
@@ -121,7 +121,7 @@ function Game() {
 					<CardList
 						wrap={false}
 						size="medium"
-						cards={playerState.hand}
+						cards={gameState.hand}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={selectedCard}
 						picked={pickedCardsInstances}

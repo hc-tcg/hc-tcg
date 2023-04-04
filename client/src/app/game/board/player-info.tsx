@@ -1,28 +1,28 @@
 import {useSelector} from 'react-redux'
 import classnames from 'classnames'
 import HealthBar from 'components/health-bar'
-import {PlayerState} from 'common/types/game-state'
+import {LocalPlayerState} from 'common/types/game-state'
 import css from './board.module.css'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {getGameState, getOppopnentConnection} from 'logic/game/game-selectors'
+import {getGameState, getOpponentConnection} from 'logic/game/game-selectors'
 
 type Props = {
-	player: PlayerState
+	player: LocalPlayerState
 	dir: 'left' | 'right'
 }
 
 function PlayerInfo({player, dir}: Props) {
 	const gameState = useSelector(getGameState)
 	const playerId = useSelector(getPlayerId)
-	const opponentConnected = useSelector(getOppopnentConnection)
+	const opponentConnected = useSelector(getOpponentConnection)
 	const playerConnected = useSelector(getSocketStatus) === 'connected'
 	const settings = useSelector(getSettings)
 
-	if (!gameState) throw new Error('This sould not happen')
+	if (!gameState) throw new Error('This should not happen')
 
-	const getName = (player: PlayerState) => {
+	const getName = (player: LocalPlayerState) => {
 		if (settings.profanityFilter === 'off') return player.playerName
 		return player.censoredPlayerName
 	}
@@ -35,9 +35,9 @@ function PlayerInfo({player, dir}: Props) {
 			<div className={classnames(css.playerName, css[connClass])}>
 				{getName(player)}
 			</div>
-			{gameState.turnPlayerId === player.id ? (
+			{gameState.currentPlayerId === player.id ? (
 				<div className={css.currentTurn}>
-					{gameState.turnPlayerId === playerId
+					{gameState.currentPlayerId === playerId
 						? 'Your turn'
 						: "Opponent's turn"}
 				</div>

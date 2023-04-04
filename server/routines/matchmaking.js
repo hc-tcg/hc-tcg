@@ -18,6 +18,7 @@ import {
 	getWinner,
 	getGameOutcome,
 } from '../utils/win-conditions'
+import {getLocalGameState} from '../utils/state-gen'
 
 /**
  * @typedef {import("redux-saga").Task} Task
@@ -57,9 +58,10 @@ function* gameManager(game) {
 		})
 
 		for (const player of players) {
+			const gameState = getLocalGameState(game, player)
 			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
-				gameState: game.state,
+				gameState,
 				outcome,
 				reason: game.endInfo.reason,
 			})

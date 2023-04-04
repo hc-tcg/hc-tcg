@@ -3,14 +3,14 @@ import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './discarded-modal.module.scss'
-import {getPlayerState} from 'logic/game/game-selectors'
+import {getGameState} from 'logic/game/game-selectors'
 
 type Props = {
 	closeModal: () => void
 }
 
 function DiscardedModal({closeModal}: Props) {
-	const discarded: Array<CardT> = useSelector(getPlayerState)?.discarded || []
+	const discarded: Array<CardT> = useSelector(getGameState)?.discarded || []
 
 	const handleClose = () => {
 		closeModal()

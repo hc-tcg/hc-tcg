@@ -1,17 +1,17 @@
 import {RootState} from 'store'
-import {GameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 
 export const getGame = (state: RootState) => {
 	return state.game
 }
 
-export const getOpponentId = (state: RootState) => {
-	return getGame(state).opponentId
+export const getGameState = (state: RootState): LocalGameState | null => {
+	return getGame(state).localGameState
 }
 
-export const getGameState = (state: RootState): GameState | null => {
-	return getGame(state).gameState
+export const getOpponentId = (state: RootState) => {
+	return getGameState(state)?.opponentPlayerId || null
 }
 
 export const getTime = (state: RootState) => {
@@ -33,29 +33,30 @@ export const getPlayerState = (state: RootState) => {
 
 export const getOpponentState = (state: RootState) => {
 	const playerId = getOpponentId(state)
-	return getPlayerStateById(playerId)(state)
+	return playerId ? getPlayerStateById(playerId)(state) : null
 }
 
 export const getCurrentPlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	return getPlayerStateById(gameState.turnPlayerId)(state)
+	return getPlayerStateById(gameState.currentPlayerId)(state)
 }
 
 export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	const turnPlayerId = gameState.turnPlayerId
-	const inactiveId = gameState.order.filter((id) => id !== turnPlayerId)[0]
+	const currentPlayerId = gameState.currentPlayerId
+	const inactiveId = gameState.order.filter((id) => id !== currentPlayerId)[0]
 	if (!inactiveId) return null
 	return getPlayerStateById(inactiveId)(state)
 }
 
 export const getAvailableActions = (state: RootState) => {
-	return getGame(state).availableActions
+	return getGameState(state)?.availableActions || []
 }
 
 export const getSelectedCard = (state: RootState) => {
+	console.log(getGame(state).selectedCard)
 	return getGame(state).selectedCard
 }
 
@@ -79,6 +80,6 @@ export const getCurrentCoinFlip = (state: RootState) => {
 	return getGame(state).currentCoinFlip
 }
 
-export const getOppopnentConnection = (state: RootState) => {
+export const getOpponentConnection = (state: RootState) => {
 	return getGame(state).opponentConnected
 }

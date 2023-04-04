@@ -1,11 +1,3 @@
-// @TODO need more info about types
-
-/*
- * @typedef {Object} Ailment
- * @property {'poison' | 'fire' | 'sleeping' | 'knockedout'} id
- * @property {number} duration
- */
-
 /**
  * @typedef {import('common/types/game-state').CardT} CardT
  * @typedef {import('common/types/game-state').AvailableActionsT} AvailableActionsT

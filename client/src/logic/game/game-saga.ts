@@ -25,7 +25,8 @@ import {
 	showEndGameOverlay,
 	setOpponentConnection,
 } from './game-actions'
-import {getEndGameOverlay, getOpponentId} from './game-selectors'
+import {getEndGameOverlay} from './game-selectors'
+import {LocalGameState} from 'common/types/game-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -60,10 +61,10 @@ function* actionSaga(): SagaIterator {
 }
 
 function* gameStateSaga(action: AnyAction): SagaIterator {
-	const {availableActions, gameState} = action.payload
+	const gameState: LocalGameState = action.payload.localGameState
 
-	if (availableActions.includes('WAIT_FOR_TURN')) return
-	if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
+	if (gameState.availableActions.includes('WAIT_FOR_TURN')) return
+	if (gameState.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
 
 	// handle user clicking on board
 	yield fork(slotSaga)
@@ -75,7 +76,7 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	yield fork(actionSaga)
 }
 
-function* gameActionsSaga(initialGameState?: any): SagaIterator {
+function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
@@ -89,7 +90,7 @@ function* gameActionsSaga(initialGameState?: any): SagaIterator {
 
 	while (true) {
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		yield put(gameState(payload))
+		yield put(gameState(payload.localGameState))
 	}
 }
 
@@ -100,7 +101,7 @@ function* opponentConnectionSaga(): SagaIterator {
 	}
 }
 
-function* gameSaga(initialGameState?: any): SagaIterator {
+function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 	const backgroundTasks = yield all([
 		fork(opponentConnectionSaga),
 		fork(chatSaga),
@@ -123,9 +124,8 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 			if (newGameState) {
 				yield put(
 					gameState({
-						gameState: newGameState,
+						...newGameState,
 						availableActions: [],
-						opponentId: yield* select(getOpponentId),
 					})
 				)
 			}

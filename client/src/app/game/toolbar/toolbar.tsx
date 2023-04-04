@@ -1,17 +1,17 @@
 import css from './toolbar.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
-import {getPlayerState} from 'logic/game/game-selectors'
+import {getGameState} from 'logic/game/game-selectors'
 import {setOpenedModal} from 'logic/game/game-actions'
 import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
 
 function Toolbar() {
-	const playerState = useSelector(getPlayerState)
+	const gameState = useSelector(getGameState)
 
 	const dispatch = useDispatch()
-	if (!playerState) return null
+	if (!gameState) return null
 
 	const handleDiscarded = () => {
 		dispatch(setOpenedModal('discarded'))
@@ -20,7 +20,7 @@ function Toolbar() {
 	return (
 		<div className={css.toolbar}>
 			<div className={css.item} title="Draw deck">
-				{playerState.pile.length}
+				{gameState.pileCount}
 			</div>
 			<div
 				className={classnames(css.item, css.clickable)}

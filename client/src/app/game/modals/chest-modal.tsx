@@ -5,7 +5,7 @@ import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './chest-modal.module.css'
 import {equalCard} from 'server/utils'
-import {getPlayerState} from 'logic/game/game-selectors'
+import {getGameState} from 'logic/game/game-selectors'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
 
 const DISABLED = ['clock']
@@ -16,7 +16,7 @@ type Props = {
 function ChestModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const [selected, setSelected] = useState<CardT | null>(null)
-	const discarded: Array<CardT> = useSelector(getPlayerState)?.discarded || []
+	const discarded: Array<CardT> = useSelector(getGameState)?.discarded || []
 
 	const handleSelection = (newSelected: CardT) => {
 		setSelected((current) =>

@@ -2,6 +2,7 @@ import {takeEvery, fork, delay} from 'redux-saga/effects'
 import {broadcast} from '../../utils/comm'
 import {getOpponentId} from '../../utils'
 import {CONFIG} from '../../../config'
+import {getLocalGameState} from '../../utils/state-gen'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -24,20 +25,23 @@ function* sendGameStateOnReconnect(game, action) {
 	if (!game._turnStateCache) return // @TODO we may not need this anymore
 	const {availableActions, opponentAvailableActions} = game._turnStateCache
 
-	if (game.state.turnTime) {
+	if (game.state.timer.turnTime) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000
-		const remainingTime = game.state.turnTime + maxTime - Date.now()
+		const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
 		const graceTime = 1000
-		game.state.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+		game.state.timer.turnRemaining = Math.floor(
+			(remainingTime + graceTime) / 1000
+		)
 	}
 
 	const payload = {
-		gameState: game.state,
-		opponentId: Object.keys(game.players).find((id) => id !== playerId),
-		availableActions:
+		localGameState: getLocalGameState(
+			game,
+			player,
 			playerId === game.ds.currentPlayer.id
 				? availableActions
-				: opponentAvailableActions,
+				: opponentAvailableActions
+		),
 	}
 	broadcast([player], 'GAME_STATE', payload)
 	broadcast([player], 'OPPONENT_CONNECTION', !!opponent.socket?.connected)

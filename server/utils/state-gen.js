@@ -12,6 +12,8 @@ import {getCardCost} from './validation'
  * @typedef {import("common/types/cards").HermitCardT} HermitCardT
  * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import("common/types/cards").ItemCardT} ItemCardT
+ * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
+ * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
 
 function randomBetween(min, max) {
@@ -219,8 +221,6 @@ export function getGameState(game) {
 		turn: 0,
 		order: playerIds,
 		turnPlayerId: /** @type {any} */ (null),
-		turnTime: /** @type {any} */ (null),
-		turnRemaining: /** @type {any} */ (null),
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
@@ -228,6 +228,93 @@ export function getGameState(game) {
 			}),
 			{}
 		),
+
+		timer: {
+			turnTime: /** @type {any} */ (null),
+			turnRemaining: /** @type {any} */ (null),
+		},
 	}
 	return gameState
+}
+
+/**
+ *
+ * @param {PlayerState} playerState
+ * @returns {LocalPlayerState}
+ */
+export function getLocalPlayerState(playerState) {
+	/** @type {LocalPlayerState} */
+	const localPlayerState = {
+		id: playerState.id,
+		followUp: playerState.followUp,
+		playerName: playerState.playerName,
+		censoredPlayerName: playerState.censoredPlayerName,
+		coinFlips: playerState.coinFlips,
+		custom: playerState.custom,
+		lives: playerState.lives,
+		board: playerState.board,
+	}
+	return localPlayerState
+}
+
+/**
+ *
+ * @param {GameModel} game
+ * @param {PlayerModel} player
+ * @param {AvailableActionsT} availableActions
+ * @param {Array<string>} pastTurnActions
+ * @param {AvailableActionsT} opponentAvailableActions
+ * @returns {LocalGameState | null}
+ */
+export function getLocalGameState(
+	game,
+	player,
+	availableActions = [],
+	pastTurnActions = [],
+	opponentAvailableActions = []
+) {
+	const opponentPlayerId = game
+		.getPlayerIds()
+		.find((id) => id !== player.playerId)
+	if (!opponentPlayerId) {
+		return null
+	}
+
+	const playerState = game.state.players[player.playerId]
+	const opponentState = game.state.players[opponentPlayerId]
+
+	// convert player states
+	/** @type {Record<string, LocalPlayerState>} */
+	const players = {}
+	players[player.playerId] = getLocalPlayerState(playerState)
+	players[opponentPlayerId] = getLocalPlayerState(opponentState)
+
+	/** @type {LocalGameState} */
+	const localGameState = {
+		turn: game.state?.turn || 0,
+		order: game.state?.order || [],
+
+		// personal info
+		hand: playerState.hand,
+		pileCount: playerState.pile.length,
+		discarded: playerState.discarded,
+
+		// ids
+		playerId: player.playerId,
+		opponentPlayerId: opponentPlayerId,
+		currentPlayerId: game.ds.currentPlayer.id,
+
+		players,
+
+		pastTurnActions:
+			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
+		availableActions:
+			player.playerId === game.ds.currentPlayer.id
+				? availableActions
+				: opponentAvailableActions,
+
+		timer: game.state.timer,
+	}
+
+	return localGameState
 }

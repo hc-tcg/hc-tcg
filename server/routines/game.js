@@ -11,7 +11,7 @@ import {
 import {buffers} from 'redux-saga'
 import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
-import {getEmptyRow} from '../utils/state-gen'
+import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
@@ -31,6 +31,7 @@ import {CONFIG, DEBUG_CONFIG} from '../../config'
  * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  */
 
 /**
@@ -265,19 +266,19 @@ function* checkHermitHealth(game) {
 function* sendGameState(game, turnState) {
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
 		turnState
-	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 	game.getPlayers().forEach((player) => {
+		const localGameState = getLocalGameState(
+			game,
+			player,
+			availableActions || [],
+			pastTurnActions || [],
+			opponentAvailableActions || []
+		)
+
 		player.socket.emit('GAME_STATE', {
 			type: 'GAME_STATE',
 			payload: {
-				gameState: game.state,
-				opponentId: game.getPlayerIds().find((id) => id !== player.playerId),
-				pastTurnActions:
-					player.playerId === game.ds.currentPlayer.id ? pastTurnActions : null,
-				availableActions:
-					player.playerId === game.ds.currentPlayer.id
-						? availableActions
-						: opponentAvailableActions,
+				localGameState,
 			},
 		})
 	})
@@ -405,7 +406,6 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				? ['FOLLOW_UP']
 				: ['WAIT_FOR_TURN']
 
-			// @TODO could this be in gameState.turnState?
 			/** @type {TurnState} */
 			const turnState = {
 				availableActions,
@@ -414,11 +414,13 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			}
 			game._turnStateCache = turnState
 
-			game.state.turnTime = game.state.turnTime || Date.now()
+			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000
-			const remainingTime = game.state.turnTime + maxTime - Date.now()
+			const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
 			const graceTime = 1000
-			game.state.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+			game.state.timer.turnRemaining = Math.floor(
+				(remainingTime + graceTime) / 1000
+			)
 
 			yield call(sendGameState, game, turnState)
 
@@ -432,7 +434,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			const opponentFollowUp = !!opponentPlayer.followUp
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
-					game.state.turnTime = getTimerForSeconds(20)
+					game.state.timer.turnTime = getTimerForSeconds(20)
 					game.hooks.followUpTimeout.call()
 					continue
 				} else if (!hasActiveHermit) {
@@ -454,7 +456,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			// set timer to 20s on new followup (for opponent)
 			// or succesful followup (for current player)
 			if (opponentFollowUp !== !!opponentPlayer.followUp) {
-				game.state.turnTime = getTimerForSeconds(20)
+				game.state.timer.turnTime = getTimerForSeconds(20)
 			}
 
 			if (result === 'END_TURN') break
@@ -474,8 +476,8 @@ function* turnSaga(game) {
 	const {currentPlayerId, currentPlayer, opponentPlayer} = game.ds
 
 	game.state.turnPlayerId = currentPlayerId
-	game.state.turnTime = Date.now()
-	game.state.turnRemaining = CONFIG.limits.maxTurnTime
+	game.state.timer.turnTime = Date.now()
+	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {

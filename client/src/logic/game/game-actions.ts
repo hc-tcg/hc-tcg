@@ -1,4 +1,4 @@
-import {GameStatePayload} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {
 	CardT,
 	GameEndOutcomeT,
@@ -8,10 +8,10 @@ import {
 import {PickProcessT, PickedCardT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
-export const gameState = (gameState: GameStatePayload) => ({
+export const gameState = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE' as const,
 	payload: {
-		...gameState,
+		localGameState,
 		time: Date.now(),
 	},
 })

@@ -1,7 +1,7 @@
 import {SagaIterator} from 'redux-saga'
 import {select} from 'typed-redux-saga'
 import {delay, put, takeLatest} from 'redux-saga/effects'
-import {GameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {getCurrentPlayerState} from '../game-selectors'
 import {setCoinFlip} from '../game-actions'
 import CARDS from 'server/cards'
@@ -10,7 +10,7 @@ function* coinFlipSaga(): SagaIterator {
 	let turn = 0
 	let shownCoinFlips: Array<string> = []
 	yield takeLatest('GAME_STATE', function* (action: any): SagaIterator {
-		const gameState: GameState = action.payload.gameState
+		const gameState: LocalGameState = action.payload.localGameState
 
 		yield put(setCoinFlip(null))
 

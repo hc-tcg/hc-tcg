@@ -1,8 +1,8 @@
 import {RootState} from 'store'
-import {PlayerState} from 'common/types/game-state'
+import {LocalPlayerState, PlayerState} from 'common/types/game-state'
 import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
 
-const getActiveRow = (playerState: PlayerState | null) => {
+const getActiveRow = (playerState: PlayerState | LocalPlayerState | null) => {
 	if (!playerState) return null
 	const {rows, activeRow} = playerState.board
 	if (activeRow === null) return null

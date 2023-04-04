@@ -72,10 +72,12 @@ export function* runPickProcessSaga(
 		const playerId = yield* select(getPlayerId)
 		if (!name || !reqs || !playerId) return null
 
+		const gameState = yield* select(getGameState)
 		const playerState = yield* select(getCurrentPlayerState)
 		const opponentState = yield* select(getInactivePlayerState)
 
 		const pickPossible = anyAvailableReqOptions(
+			gameState,
 			playerState,
 			opponentState,
 			reqs

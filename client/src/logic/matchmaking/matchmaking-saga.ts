@@ -74,7 +74,7 @@ function* enterMatchmaking(action: AnyAction): SagaIterator {
 function* reconnectSaga(): SagaIterator {
 	const gameReconnect = yield call(receiveMsg, 'GAME_STATE')
 	yield put(leaveMatchmaking())
-	yield call(gameSaga, gameReconnect.payload)
+	yield call(gameSaga, gameReconnect.payload.localGameState)
 }
 
 function* newMatchmaking(action: AnyAction): SagaIterator {
