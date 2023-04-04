@@ -64,7 +64,6 @@ const gameReducer = (
 				return newState
 			return {
 				...newState,
-				selectedCard: null,
 				openedModal: null,
 				pickProcess: null,
 			}
