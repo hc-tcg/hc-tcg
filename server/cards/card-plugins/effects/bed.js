@@ -43,8 +43,7 @@ class BedEffectCard extends EffectCard {
 					const hasBed = row.effectCard?.cardId === this.id
 					if (!isSleeping && hasBed) {
 						discardCard(game, row.effectCard)
-					}
-					if (hasBed) bedInfo[rowIndex] = true
+					} else if (hasBed) bedInfo[rowIndex] = true
 				})
 				if (Object.keys(bedInfo).length > 0) {
 					playerState.custom[this.id] = bedInfo
