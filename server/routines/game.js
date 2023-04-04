@@ -140,17 +140,27 @@ function getAvailableActions(game, pastTurnActions) {
 				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 					actions.push('ZERO_ATTACK')
 				}
+				let showZeroAttack = true
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
 					hasEnoughItems(itemCards, hermitInfo.primary.cost)
 				) {
 					actions.push('PRIMARY_ATTACK')
+					showZeroAttack = false
 				}
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
 					(!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
+					showZeroAttack = false
+				}
+				if (
+					showZeroAttack &&
+					!currentPlayer.board.singleUseCardUsed &&
+					suInfo?.damage
+				) {
+					actions.push('ZERO_ATTACK')
 				}
 			}
 		}
