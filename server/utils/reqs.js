@@ -200,8 +200,6 @@ export function validPick(gameState, req, pickedCard) {
 
 	const players = gameState.players
 	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
-	// @NOWTODO
-	console.log('id: ' + turnPlayerId)
 	const cardPlayerId = pickedCard.playerId
 	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
 	const cardPlayerState = players[cardPlayerId]
@@ -233,8 +231,6 @@ export function checkAttachReq(gameState, slotPayload, req) {
 
 	const players = gameState.players
 	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
-	// @NOWTODO
-	console.log('id 2: ' + turnPlayerId)
 	const {playerId, slotIndex} = slotPayload
 	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
 	const player = players[playerId]
