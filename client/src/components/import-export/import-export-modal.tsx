@@ -22,8 +22,6 @@ const ImportExportModal = ({
 	importDeck,
 	loadedDeck,
 }: Props) => {
-	console.log(loadedDeck.name)
-	console.log(loadedDeck.cards)
 	const nameRef = useRef<HTMLInputElement | null>(null)
 	const hashRef = useRef<HTMLInputElement | null>(null)
 	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
@@ -35,8 +33,6 @@ const ImportExportModal = ({
 		for (let i = 0; i < loadedDeck.cards.length; i++) {
 			indicies.push(universe.indexOf(String(loadedDeck.cards[i].cardId)))
 		}
-		console.log('hey')
-		console.log(indicies)
 		const b64cards = btoa(String.fromCharCode.apply(null, indicies))
 		return b64cards
 	}

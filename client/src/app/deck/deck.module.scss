@@ -7,8 +7,16 @@
 	margin-bottom: 1rem;
 }
 
+.validationGap {
+	position: sticky;
+	height: 35px;
+
+	margin-bottom: 0.5rem;
+}
+
 .validationMessage {
 	position: sticky;
+	height: 35px;
 	top: 0px;
 	display: flex;
 	justify-content: center;

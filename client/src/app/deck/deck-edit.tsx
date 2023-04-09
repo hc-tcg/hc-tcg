@@ -383,11 +383,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					}
 				>
 					<div style={{margin: '0.5rem'}}>
-						{validationMessage && (
+						{validationMessage ? (
 							<div className={css.validationMessage}>
 								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span>{' '}
 								{validationMessage}
 							</div>
+						) : (
+							<div className={css.validationGap}></div>
 						)}
 
 						<div className={css.editDeckInfo}>
@@ -428,14 +430,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								/>
 							</Accordion>
 						</div>
-						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								size="small"
-								wrap={true}
-								onClick={removeCard}
-							/>
-						</Accordion>
 						<Accordion
 							header={cardGroupHeader('Effects', selectedCards.effects)}
 						>
@@ -446,10 +440,16 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								onClick={removeCard}
 							/>
 						</Accordion>
+						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								size="small"
+								wrap={true}
+								onClick={removeCard}
+							/>
+						</Accordion>
 						<Button
 							variant="stone"
-							size="small"
-							style={{margin: '0.5rem'}}
 							onClick={clearDeck}
 							disabled={loadedDeck.cards.length == 0}
 						>
