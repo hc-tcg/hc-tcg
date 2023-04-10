@@ -49,7 +49,6 @@ function More({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
-	//@NOWTODO replace buttons
 	return (
 		<div className={`${css.menuBackground} ${css.backgroundOverride} temp`}>
 			<div className={css.moreContainer}>

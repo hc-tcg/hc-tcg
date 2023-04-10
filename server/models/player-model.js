@@ -26,9 +26,6 @@ export class PlayerModel {
 		/** @type {string} */
 		this.playerSecret = Math.random().toString()
 
-		//@NOWTODO only generate if we don't have one saved
-		//@NOWTODO update player deck everywhere
-
 		// always generate a starter deck as the default
 		/**@type {PlayerDeckT}*/
 		this.playerDeck = {

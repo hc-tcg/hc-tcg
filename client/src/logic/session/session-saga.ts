@@ -141,7 +141,6 @@ export function* loginSaga(): SagaIterator {
 			setActiveDeck(payload.playerDeck.name)
 			console.log('Generated new starter deck')
 		}
-		//@NOWTODO
 
 		yield put(setPlayerInfo(payload))
 		saveSession(payload)

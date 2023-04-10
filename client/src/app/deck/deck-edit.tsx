@@ -194,9 +194,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		if (newDeck.name === '') return
 
 		// Check to see if deck name already exists in Local Storage.
-		//TODO: Can't use includes as it will match partial values in names. Need match to be exact.
 		if (
-			getSavedDeckNames().includes(newDeck.name) &&
+			getSavedDeckNames().find((name) => name === newDeck.name) &&
 			initialDeckState.name !== newDeck.name
 		) {
 			return setShowOverwriteModal(true)

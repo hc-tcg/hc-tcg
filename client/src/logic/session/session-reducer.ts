@@ -45,7 +45,6 @@ const loginReducer = (
 				playerName: '',
 				playerId: '',
 				playerSecret: '',
-				//@NOWTODO player deck issues
 				playerDeck: state.playerDeck,
 				errorType: action.payload,
 			}

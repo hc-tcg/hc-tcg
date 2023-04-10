@@ -57,7 +57,7 @@ export const getSavedDecks = () => {
 }
 
 export const getSavedDeckNames = () => {
-	return getSavedDecks().map((name) => JSON.parse(name || '')?.name)
+	return getSavedDecks().map((name) => JSON.parse(name || '')?.name || '')
 }
 
 export const getLegacyDecks = () => {

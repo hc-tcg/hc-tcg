@@ -134,7 +134,6 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		//@NOWTODO proper validation and replacement - don't allow going back to main menu with an invalid deck
 		if (!!validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
 			return setShowValidateDeckModal(true)
 		}
