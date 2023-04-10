@@ -28,9 +28,11 @@ export class PlayerModel {
 
 		//@NOWTODO only generate if we don't have one saved
 		//@NOWTODO update player deck everywhere
+
+		// always generate a starter deck as the default
 		/**@type {PlayerDeckT}*/
 		this.playerDeck = {
-			name: 'Default',
+			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack().map((id) => {
 				return {cardId: id, cardInstance: Math.random().toString()}
@@ -57,10 +59,12 @@ export class PlayerModel {
 		}
 	}
 
+	/** @param {PlayerDeckT} newDeck */
 	setPlayerDeck(newDeck) {
-		if (!newDeck || !Array.isArray(newDeck)) return
-		newDeck = newDeck.filter((cardId) => cardId in CARDS)
-		const validationMessage = validateDeck(newDeck)
+		if (!newDeck) return
+		const validationMessage = validateDeck(
+			newDeck.cards.map((card) => card.cardId)
+		)
 		if (validationMessage) return
 		this.playerDeck = newDeck
 	}

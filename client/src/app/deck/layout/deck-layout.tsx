@@ -17,7 +17,7 @@ function DeckLayout({children, title, returnText, back}: Props) {
 				<div className={css.headerElements}>
 					<div className={css.headerReturn} onClick={back}>
 						<img src="../images/back_arrow.svg" alt="back-arrow" />
-						{returnText && <h2>{returnText}</h2>}
+						{returnText && <h2 className={css.hideOnMobile}>{returnText}</h2>}
 					</div>
 					<h1>{title}</h1>
 				</div>

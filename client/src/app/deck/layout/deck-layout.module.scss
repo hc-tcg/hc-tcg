@@ -109,3 +109,10 @@ header {
 		flex-direction: row;
 	}
 }
+
+/* MOBILE */
+@media screen and (max-width: 800px) {
+	.hideOnMobile {
+		display: none;
+	}
+}

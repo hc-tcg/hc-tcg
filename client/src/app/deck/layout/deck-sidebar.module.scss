@@ -41,18 +41,9 @@
 	font-size: 2rem;
 	cursor: pointer;
 
-	&:hover,
-	&:focus {
+	&:hover {
 		background: var(--gray-600);
 		filter: brightness(1.1);
-	}
-
-	&:focus {
-		outline: 3px solid white;
-	}
-
-	&:focus:not(:focus-visible) {
-		outline: 0;
 	}
 }
 

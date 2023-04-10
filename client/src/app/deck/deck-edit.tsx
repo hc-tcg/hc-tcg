@@ -1,7 +1,7 @@
 import {useDeferredValue, useRef, useState} from 'react'
 import {useDispatch} from 'react-redux'
 import classNames from 'classnames'
-import {sortCards, cardGroupHeader, savedDeckNames} from './deck'
+import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import CARDS from 'server/cards'
@@ -16,6 +16,7 @@ import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
 import {CONFIG} from '../../../../config'
+import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 
 const RANKS = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -49,9 +50,7 @@ type DeckNameT = {
 }
 
 const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
-	const [deckNameInput, setDeckNameInput] = useState<string>(
-		loadedDeck.name === 'Default' ? '' : loadedDeck.name
-	)
+	const [deckNameInput, setDeckNameInput] = useState<string>(loadedDeck.name)
 	const [inputIsFocused, setInputIsFocused] = useState<boolean>(false)
 	const inputRef = useRef<HTMLInputElement>(null)
 
@@ -103,9 +102,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
-	const [showDefaultDeckModal, setShowDefaultDeckModal] =
-		useState<boolean>(false)
-
 	const deferredTextQuery = useDeferredValue(textQuery)
 
 	//MISC
@@ -188,20 +184,19 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	}
 	const handleSave = () => {
 		const newDeck = {...loadedDeck}
-		console.log(`HERE:`)
+
+		// if the nae has been changed, delete the old one
+		if (initialDeckState.name !== newDeck.name) {
+			deleteDeck(initialDeckState.name)
+		}
 
 		//If deck name is empty, do nothing
 		if (newDeck.name === '') return
 
-		//If editing 'Default' deck, prevent overwriting and create new deck
-		if (newDeck.name === 'Default') {
-			return setShowDefaultDeckModal(true)
-		}
-
 		// Check to see if deck name already exists in Local Storage.
 		//TODO: Can't use includes as it will match partial values in names. Need match to be exact.
 		if (
-			savedDeckNames.includes(newDeck.name) &&
+			getSavedDeckNames().includes(newDeck.name) &&
 			initialDeckState.name !== newDeck.name
 		) {
 			return setShowOverwriteModal(true)
@@ -248,14 +243,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				title="Leave Editor"
 				description="Changes you have made will not be saved. Are you sure you want to leave?"
 				actionText="Discard"
-			/>
-			<AlertModal
-				setOpen={showDefaultDeckModal}
-				onClose={() => setShowDefaultDeckModal(!showDefaultDeckModal)}
-				action={() => null}
-				title="Default Deck"
-				description="You cannot make changes to the default deck. Give the deck a new name in order to save it."
-				actionText="Edit"
 			/>
 			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
@@ -385,30 +372,42 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							</div>
 						)}
 
-						<div className={css.editDeckInfo}>
-							<label htmlFor="deckname">Deck Name and Icon</label>
-							<div className={css.editDeckInfoSettings}>
-								<Dropdown
-									button={
-										<button className={css.dropdownButton}>
-											<img src={`/images/types/type-${loadedDeck.icon}.png`} />
-										</button>
-									}
-									label="Deck Icon"
-									options={iconDropdownOptions}
-									action={(option) => handleDeckIcon(option)}
-								/>
-								<DeckName
-									loadedDeck={loadedDeck}
-									isValid={(valid) => setValidDeckName(valid)}
-									setDeckName={(deckName) =>
-										setLoadedDeck({
-											...loadedDeck,
-											name: deckName,
-										})
-									}
-								/>
+						<div className={css.upperEditDeck}>
+							<div className={css.editDeckInfo}>
+								<label htmlFor="deckname">Deck Name and Icon</label>
+								<div className={css.editDeckInfoSettings}>
+									<Dropdown
+										button={
+											<button className={css.dropdownButton}>
+												<img
+													src={`/images/types/type-${loadedDeck.icon}.png`}
+												/>
+											</button>
+										}
+										label="Deck Icon"
+										options={iconDropdownOptions}
+										action={(option) => handleDeckIcon(option)}
+									/>
+									<DeckName
+										loadedDeck={loadedDeck}
+										isValid={(valid) => setValidDeckName(valid)}
+										setDeckName={(deckName) =>
+											setLoadedDeck({
+												...loadedDeck,
+												name: deckName,
+											})
+										}
+									/>
+								</div>
 							</div>
+							<Button
+								variant="default"
+								size="small"
+								onClick={clearDeck}
+								disabled={loadedDeck.cards.length == 0}
+							>
+								Remove All
+							</Button>
 						</div>
 
 						<div style={{zIndex: '-1'}}>
@@ -441,13 +440,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								onClick={removeCard}
 							/>
 						</Accordion>
-						<Button
-							variant="stone"
-							onClick={clearDeck}
-							disabled={loadedDeck.cards.length == 0}
-						>
-							Remove All
-						</Button>
 					</div>
 				</DeckLayout.Sidebar>
 			</DeckLayout>

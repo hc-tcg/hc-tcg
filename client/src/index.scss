@@ -111,28 +111,6 @@ button {
 	all: unset;
 }
 
-.stoneButton,
-.select {
-	font-family: Minecraft;
-	padding: 0 10px;
-	height: 30px;
-	line-height: 1;
-	vertical-align: bottom;
-	overflow: hidden;
-	white-space: nowrap;
-	background: #999 url('/images/bgbtn.png') center / cover;
-	image-rendering: pixelated;
-	border: 2px solid #000;
-	color: #ddd;
-	text-shadow: 2px 2px #000a;
-	box-shadow: inset -2px -4px #0006, inset 2px 2px #fff7;
-
-	&:disabled {
-		opacity: 0.7;
-		box-shadow: none;
-	}
-}
-
 input:not([type]),
 input[type='text'] {
 	width: 200px;
@@ -260,21 +238,4 @@ li {
 .select {
 	padding-bottom: 1px;
 	background-color: #2a2727;
-}
-
-.stoneButton:disabled {
-	opacity: 0.7;
-	box-shadow: none;
-}
-
-.stoneButton:not(:disabled):hover {
-	cursor: pointer;
-	background-color: rgba(100, 100, 255, 0.45);
-	text-shadow: 2px 2px #202013cc;
-	color: #ffffa0;
-}
-
-.stoneButton:focus {
-	border: 2px solid var(--gray-50);
-	filter: brightness(1.1);
 }

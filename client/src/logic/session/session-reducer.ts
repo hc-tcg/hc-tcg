@@ -1,6 +1,11 @@
 import {AnyAction} from 'redux'
 import {PlayerDeckT} from 'common/types/deck'
 import {ToastT} from 'common/types/app'
+import {
+	getActiveDeckName,
+	saveDeck,
+	setActiveDeck,
+} from 'logic/saved-decks/saved-decks'
 
 type SessionState = {
 	playerName: string
@@ -21,7 +26,7 @@ const defaultState: SessionState = {
 	playerName: '',
 	playerId: '',
 	playerSecret: '',
-	playerDeck: {name: 'Default', icon: 'any', cards: []},
+	playerDeck: {name: '', icon: 'any', cards: []},
 	connecting: false,
 	toast: {open: false, title: '', description: '', image: ''},
 }

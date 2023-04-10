@@ -14,11 +14,20 @@ import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
-import {DeleteIcon, EditIcon, ErrorIcon, ImportIcon} from 'components/svgs'
+import {DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
 import {getCardCost} from 'server/utils/validation'
-import {ImportExportModal} from 'components/import-export'
+import {ImportModal, ExportModal} from 'components/import-export'
 import {CONFIG} from '../../../../config'
+import {
+	convertLegacyDecks,
+	deleteDeck,
+	getLegacyDecks,
+	getSavedDeck,
+	getSavedDecks,
+	saveDeck,
+	setActiveDeck,
+} from 'logic/saved-decks/saved-decks'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -71,27 +80,6 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 	</p>
 )
 
-export const getSavedDecks = () => {
-	let lsKey
-	const decks = []
-
-	for (let i = 0; i < localStorage.length; i++) {
-		lsKey = localStorage.key(i)
-
-		if (lsKey?.includes('Deck_')) {
-			const key = localStorage.getItem(lsKey)
-			decks.push(key)
-		}
-	}
-
-	console.log(`Loaded ${decks.length} decks from Local Storage`)
-	return decks.sort()
-}
-
-export const savedDeckNames = getSavedDecks().map(
-	(name) => JSON.parse(name || '')?.name
-)
-
 type Props = {
 	setMenuSection: (section: string) => void
 }
@@ -104,15 +92,19 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
-	const [savedDecks, setSavedDecks] = useState<any>(getSavedDecks)
+	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
+
+	const savedDeckNames = savedDecks.map((deck) =>
+		deck ? getSavedDeck(deck)?.name : null
+	)
 	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
-	const [showImportExportModal, setShowImportExportModal] =
-		useState<boolean>(false)
+	const [showImportModal, setShowImportModal] = useState<boolean>(false)
+	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] =
 		useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
@@ -142,38 +134,38 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (loadedDeck.cards.length != 42) {
+		//@NOWTODO proper validation and replacement - don't allow going back to main menu with an invalid deck
+		if (!!validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
 			return setShowValidateDeckModal(true)
 		}
 
+		setActiveDeck(loadedDeck.name)
 		dispatchToast(selectedDeckToast)
 
 		dispatch({
 			type: 'UPDATE_DECK',
-			payload: {
-				name: loadedDeck.name,
-				icon: loadedDeck.icon,
-				cards: loadedDeck.cards.map((card) => card.cardId),
-			},
+			payload: loadedDeck,
 		})
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
+		saveDeck(playerDeck)
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
 	const handleImportDeck = (deck: PlayerDeckT) => {
 		setImportedDeck(deck)
 		importDeck(deck)
+		setShowImportModal(false)
 	}
 
 	//DECK LOGIC
 	const loadDeck = (deckName: string) => {
 		if (!deckName)
 			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-		const deck: PlayerDeckT = JSON.parse(
-			localStorage.getItem('Deck_' + deckName) || '{}'
-		)
+		const deck = getSavedDeck(deckName)
+		if (!deck)
+			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
 		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
 
@@ -191,34 +183,22 @@ const Deck = ({setMenuSection}: Props) => {
 			}
 		})
 		deckExists && setShowOverwriteModal(true)
-		!deckExists && saveDeck(deck)
+		!deckExists && saveDeckInternal(deck)
 	}
-	const saveDeck = (deck: PlayerDeckT, prevDeck?: PlayerDeckT) => {
-		console.log(`prevDeck:`, prevDeck)
-		//Remove previous deck from Local Storage
-		prevDeck &&
-			prevDeck.name !== 'Default' &&
-			localStorage.removeItem(`Deck_${prevDeck.name}`)
-
+	const saveDeckInternal = (deck: PlayerDeckT) => {
 		//Save new deck to Local Storage
-		localStorage.setItem(
-			'Deck_' + deck.name,
-			JSON.stringify({
-				name: deck.name,
-				icon: deck.icon,
-				cards: deck.cards,
-			})
-		)
+		saveDeck(deck)
 
 		//Refresh saved deck list and load new deck
 		setSavedDecks(getSavedDecks())
 		loadDeck(deck.name)
 	}
-	const deleteDeck = () => {
+	const deleteDeckInternal = () => {
 		dispatchToast(deleteToast)
-		localStorage.removeItem('Deck_' + loadedDeck.name)
-		setSavedDecks(getSavedDecks())
-		loadDeck(JSON.parse(savedDecks[0]).name)
+		deleteDeck(loadedDeck.name)
+		const decks = getSavedDecks()
+		setSavedDecks(decks)
+		loadDeck(JSON.parse(decks[0]).name)
 	}
 	const deckList: ReactNode = savedDecks.map((d: any, i: number) => {
 		const deck: PlayerDeckT = JSON.parse(d)
@@ -275,63 +255,19 @@ const Deck = ({setMenuSection}: Props) => {
 			audio.play()
 		}
 	}
-	const getLegacyDecks = () => {
-		for (let i = 0; i < localStorage.length; i++) {
-			const lsKey = localStorage.key(i)
-
-			if (lsKey?.includes('Loadout_')) return true
-		}
-		return false
-	}
-	const convertLegacyDecks = () => {
-		let conversionCount = 0
-		for (let i = 0; i < localStorage.length; i++) {
-			const lsKey = localStorage.key(i)
-
-			if (lsKey?.includes('Loadout_')) {
-				conversionCount = conversionCount + 1
-				const legacyName = lsKey.replace('Loadout_', '[Legacy] ')
-				const legacyDeck = localStorage.getItem(lsKey)
-
-				const convertedDeck = {
-					name: legacyName,
-					icon: 'any',
-					cards: JSON.parse(legacyDeck || ''),
-				}
-
-				localStorage.setItem(
-					`Deck_${legacyName}`,
-					JSON.stringify(convertedDeck)
-				)
-
-				localStorage.removeItem(lsKey)
-				console.log(`Converted deck!:`, lsKey, legacyName)
-			}
-		}
-
-		setSavedDecks(getSavedDecks())
-
-		dispatch({
-			type: 'SET_TOAST',
-			payload: {
-				show: true,
-				title: 'Convert Legacy Decks',
-				description: conversionCount
-					? `Converted ${conversionCount} decks!`
-					: `No decks to convert!`,
-				image: `/images/card-icon.png`,
-			},
-		})
-	}
 
 	// TODO: Convert to component
 	const SelectDeck = () => {
 		return (
 			<>
-				<ImportExportModal
-					setOpen={showImportExportModal}
-					onClose={() => setShowImportExportModal(!showImportExportModal)}
+				<ImportModal
+					setOpen={showImportModal}
+					onClose={() => setShowImportModal(!showImportModal)}
 					importDeck={(deck) => handleImportDeck(deck)}
+				/>
+				<ExportModal
+					setOpen={showExportModal}
+					onClose={() => setShowExportModal(!showExportModal)}
 					loadedDeck={loadedDeck}
 				/>
 				<AlertModal
@@ -346,7 +282,7 @@ const Deck = ({setMenuSection}: Props) => {
 				<AlertModal
 					setOpen={showDeleteDeckModal}
 					onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
-					action={() => deleteDeck()}
+					action={() => deleteDeckInternal()}
 					title="Delete Deck"
 					description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
 					actionText="Delete"
@@ -354,7 +290,7 @@ const Deck = ({setMenuSection}: Props) => {
 				<AlertModal
 					setOpen={showOverwriteModal}
 					onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-					action={() => saveDeck(importedDeck)}
+					action={() => saveDeckInternal(importedDeck)}
 					title="Overwrite Deck"
 					description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
 					actionText="Overwrite"
@@ -408,16 +344,30 @@ const Deck = ({setMenuSection}: Props) => {
 								onClick={() => setMode('edit')}
 								leftSlot={<EditIcon />}
 							>
-								Edit Deck
+								<span>
+									Edit<span className={css.hideOnMobile}> Deck</span>
+								</span>
 							</Button>
-							{loadedDeck.name !== 'Default' && (
+							<Button
+								variant="primary"
+								size="small"
+								onClick={() => setShowExportModal(!showExportModal)}
+								leftSlot={<ExportIcon />}
+							>
+								<span>
+									Export<span className={css.hideOnMobile}> Deck</span>
+								</span>
+							</Button>
+							{savedDecks.length > 1 && (
 								<Button
 									variant="error"
 									size="small"
 									leftSlot={<DeleteIcon />}
 									onClick={() => setShowDeleteDeckModal(true)}
 								>
-									Delete Deck
+									<span>
+										Delete<span className={css.hideOnMobile}> Deck</span>
+									</span>
 								</Button>
 							)}
 						</div>
@@ -470,36 +420,42 @@ const Deck = ({setMenuSection}: Props) => {
 						footer={
 							<>
 								<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
+									{getLegacyDecks() && (
+										<Button
+											onClick={() => {
+												const conversionCount = convertLegacyDecks()
+												setSavedDecks(getSavedDecks())
+
+												dispatch({
+													type: 'SET_TOAST',
+													payload: {
+														show: true,
+														title: 'Convert Legacy Decks',
+														description: conversionCount
+															? `Converted ${conversionCount} decks!`
+															: `No decks to convert!`,
+														image: `/images/card-icon.png`,
+													},
+												})
+											}}
+										>
+											Import Legacy Decks
+										</Button>
+									)}
 									<Button variant="primary" onClick={() => setMode('create')}>
 										Create New Deck
 									</Button>
 									<Button
 										variant="primary"
-										onClick={() =>
-											setShowImportExportModal(!showImportExportModal)
-										}
+										onClick={() => setShowImportModal(!showImportModal)}
 									>
+										<ExportIcon reversed />
 										<span>Import Deck</span>
-										<ImportIcon />
 									</Button>
 								</div>
 							</>
 						}
 					>
-						{savedDecks.length == 1 && (
-							<p style={{fontSize: '0.9rem', padding: '0.5rem'}}>
-								Looks like you don't have any decks! Create your own or import
-								one from a friend!
-							</p>
-						)}
-						{getLegacyDecks() === true && (
-							<Button
-								style={{margin: '0.5rem auto'}}
-								onClick={convertLegacyDecks}
-							>
-								Import Legacy Decks
-							</Button>
-						)}
 						{deckList}
 					</DeckLayout.Sidebar>
 				</DeckLayout>
@@ -518,7 +474,7 @@ const Deck = ({setMenuSection}: Props) => {
 					<EditDeck
 						back={() => setMode('select')}
 						title={'Deck Editor'}
-						saveDeck={(returnedDeck) => saveDeck(returnedDeck)}
+						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						deck={loadedDeck}
 					/>
 				)
@@ -528,7 +484,7 @@ const Deck = ({setMenuSection}: Props) => {
 					<EditDeck
 						back={() => setMode('select')}
 						title={'Deck Creation'}
-						saveDeck={(returnedDeck) => saveDeck(returnedDeck)}
+						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
 						deck={{
 							name: '',
 							icon: 'any',
