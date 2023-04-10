@@ -1,5 +1,6 @@
 .viewport {
 	--viewport-padding: 5px;
+
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -16,6 +17,7 @@
 
 .toast {
 	--speed: 200ms;
+
 	width: 100%;
 	min-height: 2rem;
 	background: var(--gray-700);
@@ -31,12 +33,15 @@
 	&[data-state='open'] {
 		animation: slideIn var(--speed) cubic-bezier(0.16, 1, 0.3, 1);
 	}
+
 	&[data-state='closed'] {
 		animation: slideOut var(--speed) ease-in;
 	}
+
 	&[data-swipe='move'] {
 		transform: translateX(var(--radix-toast-swipe-move-x));
 	}
+
 	&[data-swipe='end'] {
 		animation: slideOut calc(var(--speed) * 1.3) ease-out;
 	}
@@ -60,6 +65,7 @@
 	from {
 		transform: translateX(calc(100% + var(--viewport-padding)));
 	}
+
 	to {
 		transform: translateX(0);
 	}
@@ -69,6 +75,7 @@
 	from {
 		transform: translateX(var(--radix-toast-swipe-end-x));
 	}
+
 	to {
 		transform: translateX(calc(100% + var(--viewport-padding)));
 	}

@@ -11,7 +11,6 @@
 	height: 100%;
 	overflow: hidden;
 	position: absolute;
-
 	background: url('/images/menu-background-widescreen-2.png') center center
 		no-repeat;
 	background-size: cover;
@@ -21,12 +20,12 @@
 header {
 	height: 3rem;
 	background: var(--gray-50);
-	filter: drop-shadow(0px 1px 0px rgba(0, 0, 0, 0.25));
+	filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 25%));
 	position: sticky;
 	top: 0;
 	z-index: 20;
 	padding-bottom: 0.25rem;
-	box-shadow: inset 0px -2px #b1b2b5, inset 0px -3px #ebedef;
+	box-shadow: inset 0 -2px #b1b2b5, inset 0 -3px #ebedef;
 
 	.headerElements {
 		position: relative;
@@ -40,12 +39,10 @@ header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-
 		position: absolute;
 		left: 0;
 		margin-left: 0.8rem;
-
-		filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.25));
+		filter: drop-shadow(0 0 1px rgba(0, 0, 0, 25%));
 
 		&:hover {
 			background-color: #f8faff;

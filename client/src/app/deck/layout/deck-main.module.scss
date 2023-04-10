@@ -7,7 +7,6 @@
 	border: 2px solid black;
 	flex-grow: 1;
 	overflow: hidden;
-
 	user-select: none;
 }
 
@@ -21,7 +20,7 @@
 	background-color: var(--gray-700);
 	gap: 0.5rem;
 	padding: 0.5rem 1rem;
-	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 35%));
 	z-index: 2;
 }
 

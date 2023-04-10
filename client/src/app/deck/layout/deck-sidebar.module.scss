@@ -2,7 +2,6 @@
 	position: relative;
 	border: 2px solid black;
 	user-select: none;
-
 	background: var(--gray-700);
 }
 
@@ -22,7 +21,7 @@
 	height: 3rem;
 	font-family: Minecrafter;
 	background-color: var(--gray-600);
-	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 35%));
 	z-index: 1;
 }
 

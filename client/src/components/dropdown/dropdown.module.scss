@@ -13,12 +13,15 @@
 	&[data-side='top'] {
 		animation-name: slideDownAndFade;
 	}
+
 	&[data-side='right'] {
 		animation-name: slideLeftAndFade;
 	}
+
 	&[data-side='bottom'] {
 		animation-name: slideUpAndFade;
 	}
+
 	&[data-side='left'] {
 		animation-name: slideRightAndFade;
 	}
@@ -79,9 +82,11 @@
 	padding-left: 20px;
 	color: var(--mauve11);
 }
+
 [data-highlighted] > .RightSlot {
 	color: white;
 }
+
 [data-disabled] .RightSlot {
 	color: var(--mauve8);
 }
@@ -91,6 +96,7 @@
 		opacity: 0;
 		transform: translateY(2px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -102,6 +108,7 @@
 		opacity: 0;
 		transform: translateX(-2px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateX(0);
@@ -113,6 +120,7 @@
 		opacity: 0;
 		transform: translateY(-2px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateY(0);
@@ -124,6 +132,7 @@
 		opacity: 0;
 		transform: translateX(2px);
 	}
+
 	to {
 		opacity: 1;
 		transform: translateX(0);
