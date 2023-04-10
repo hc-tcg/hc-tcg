@@ -23,26 +23,6 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 		return b64cards
 	}
 
-	const DECK_ICONS = [
-		'any',
-		'balanced',
-		'builder',
-		'explorer',
-		'farm',
-		'miner',
-		'prankster',
-		'pvp',
-		'redstone',
-		'speedrunner',
-		'terraform',
-	]
-
-	const iconDropdownOptions = DECK_ICONS.map((option) => ({
-		name: option,
-		key: option,
-		icon: `/images/types/type-${option}.png`,
-	}))
-
 	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>

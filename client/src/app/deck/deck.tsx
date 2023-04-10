@@ -134,7 +134,7 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (!!validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
+		if (validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
 			return setShowValidateDeckModal(true)
 		}
 

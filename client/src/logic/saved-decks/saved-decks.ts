@@ -1,8 +1,6 @@
 import {PlayerDeckT} from 'common/types/deck'
 import {validateDeck} from 'server/utils/validation'
 
-const savedDecks: Array<PlayerDeckT> | null = null
-
 export const getActiveDeckName = () => {
 	return localStorage.getItem('activeDeck')
 }

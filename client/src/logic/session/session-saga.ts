@@ -9,7 +9,6 @@ import {getDeckFromHash} from 'components/import-export/import-export-utils'
 import {
 	getActiveDeckName,
 	getSavedDeck,
-	isActiveDeckValid,
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
