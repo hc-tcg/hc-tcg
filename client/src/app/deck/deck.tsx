@@ -348,7 +348,7 @@ const Deck = ({setMenuSection}: Props) => {
 								</span>
 							</Button>
 							<Button
-								variant="primary"
+								variant="default"
 								size="small"
 								onClick={() => setShowExportModal(!showExportModal)}
 								leftSlot={<ExportIcon />}

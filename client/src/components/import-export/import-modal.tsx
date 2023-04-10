@@ -44,8 +44,6 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 		}
 		if (!deck) return null
 
-		console.log('import')
-
 		importDeck({
 			name: nameRef?.current?.value || 'Imported Deck',
 			icon: deckIcon,

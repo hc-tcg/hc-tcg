@@ -45,7 +45,6 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 					{type === 'health' &&
 						ailments.map((id) => {
 							const cssClass = css[id + 'Ailment']
-							console.log({cssClass})
 							if (!cssClass) return null
 							return <div key={id} className={cssClass} />
 						})}

@@ -56,7 +56,6 @@ export const getAvailableActions = (state: RootState) => {
 }
 
 export const getSelectedCard = (state: RootState) => {
-	console.log(getGame(state).selectedCard)
 	return getGame(state).selectedCard
 }
 

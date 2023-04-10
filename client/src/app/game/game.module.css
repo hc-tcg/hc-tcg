@@ -27,8 +27,9 @@
 .hand {
 	flex: 1 1 auto;
 	padding: 10px;
+	margin-bottom: 2px;
 	min-width: 0;
-	overflow-x: scroll;
+	overflow-x: auto;
 	overflow-y: hidden;
 	text-align: center;
 	z-index: 1;

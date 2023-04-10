@@ -17,7 +17,10 @@ function DeckSidebar({children, header, footer, width}: Props) {
 		<section className={classNames(css.sidebar, width && css[width])}>
 			<div className={css.header}>
 				{header}
-				<button className={css.toggle} onClick={() => setActive(!active)}>
+				<button
+					className={classNames(css.toggle, !active && css.open)}
+					onClick={() => setActive(!active)}
+				>
 					<KebabMenuIcon />
 				</button>
 			</div>

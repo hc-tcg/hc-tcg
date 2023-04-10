@@ -27,22 +27,19 @@
 }
 
 .toggle {
-	// position: absolute;
-	// // top: 0;
-	// right: 0;
-	// margin: auto 0.5rem;
 	display: grid;
 	place-content: center;
-	background: var(--gray-800);
+	background: var(--gray-700);
 	padding: 0.5rem;
-	height: 1.5rem;
-	min-width: 1.5rem;
-	border-radius: 0.5rem;
+	height: 1rem;
+	min-width: 1rem;
+	border-radius: 6px;
 	font-size: 2rem;
 	cursor: pointer;
 
-	&:hover {
-		background: var(--gray-600);
+	&:hover,
+	&.open {
+		background: var(--gray-900);
 		filter: brightness(1.1);
 	}
 }
@@ -63,10 +60,11 @@
 
 @media screen and (max-width: 720px) {
 	.bodyWrapper {
+		position: absolute;
 		background: #313233fd;
 		width: calc(100% + 4px);
 		transform: translateX(-2px);
-		height: calc(50vh - 5rem);
+		max-height: calc(80vh - 10rem);
 		z-index: 12;
 		border: 2px solid black;
 	}
