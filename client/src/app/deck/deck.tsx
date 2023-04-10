@@ -62,13 +62,11 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 }
 
 export const cardGroupHeader = (title: string, cards: CardT[]) => (
-	<p>
+	<p className={css.cardGroupHeader}>
 		{`${title} `}
-		<span style={{fontSize: '0.9rem'}}>
-			{`(${cards.length}) `}
-			<span className={css.ultraRare}>
-				{getTotalCost(cards.map((card) => card.cardId))} tokens
-			</span>
+		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
+		<span className={css.tokens}>
+			{getTotalCost(cards.map((card) => card.cardId))} tokens
 		</span>
 	</p>
 )
@@ -362,7 +360,11 @@ const Deck = ({setMenuSection}: Props) => {
 					actionText="Overwrite"
 				/>
 
-				<DeckLayout title="Deck Selection" back={backToMenu}>
+				<DeckLayout
+					title="Deck Selection"
+					back={backToMenu}
+					returnText="Back To Menu"
+				>
 					<DeckLayout.Main
 						header={
 							<>
@@ -470,7 +472,7 @@ const Deck = ({setMenuSection}: Props) => {
 						}
 						footer={
 							<>
-								<Button.SplitGroup style={{padding: '0.5rem'}}>
+								<Button.SplitGroup className={css.sidebarFooter}>
 									<Button variant="primary" onClick={() => setMode('create')}>
 										Create New Deck
 									</Button>

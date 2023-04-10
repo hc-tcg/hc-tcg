@@ -2,11 +2,13 @@
 	position: relative;
 	border: 2px solid black;
 	user-select: none;
+
+	font-family: Minecraft;
 }
 
 .body {
 	flex-grow: 1;
-	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 .header {

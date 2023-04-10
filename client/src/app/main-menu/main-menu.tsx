@@ -45,20 +45,24 @@ function MainMenu({setMenuSection}: Props) {
 						>
 							Public Game
 						</Button>
-						<Button
-							variant="stone"
-							className={css.menuButton}
-							onClick={handleCreatePrivateGame}
+						<div
+							className={classNames(css.smallButtonContainer, css.switchGaps)}
 						>
-							Create Private Game
-						</Button>
-						<Button
-							variant="stone"
-							className={css.menuButton}
-							onClick={handleJoinPrivateGame}
-						>
-							Join Private Game
-						</Button>
+							<Button
+								variant="stone"
+								className={css.menuButton}
+								onClick={handleCreatePrivateGame}
+							>
+								Create Private Game
+							</Button>
+							<Button
+								variant="stone"
+								className={css.menuButton}
+								onClick={handleJoinPrivateGame}
+							>
+								Join Private Game
+							</Button>
+						</div>
 						<Button
 							variant="stone"
 							className={classNames(css.menuButton)}
@@ -79,7 +83,7 @@ function MainMenu({setMenuSection}: Props) {
 								className={css.menuButton}
 								onClick={() => setSubsection('more')}
 							>
-								Settings
+								More
 							</Button>
 						</div>
 						<div style={{display: 'flex', justifyContent: 'center'}}>

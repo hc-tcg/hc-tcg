@@ -215,16 +215,17 @@
 	border-radius: 6px;
 }
 
-.common {
-	color: var(--common);
+.cardGroupHeader {
+	position: relative;
+	width: 100%;
 }
 
-.rare {
-	color: var(--rare);
-}
-
-.ultraRare {
+.tokens {
 	color: var(--ultra-rare);
+	position: absolute;
+	right: 10px;
+	font-size: 0.9rem;
+	transform: translateY(2.5px);
 }
 
 .dynamicSpace {
@@ -338,6 +339,10 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 0.5rem;
+}
+
+.sidebarFooter {
+	flex-shrink: 0;
 }
 
 .sidebarIcon {

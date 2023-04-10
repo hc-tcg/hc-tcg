@@ -76,7 +76,7 @@
 .stone {
 	line-height: 100%;
 	text-align: center;
-	height: 5vh;
+	height: 5.5vh;
 	font-size: 2vh;
 	border: 0.3vh solid #000;
 	text-shadow: 0.2vh 0.2vh #000;
@@ -104,6 +104,10 @@
 
 	&:active:not(:disabled) {
 		transform: none;
+	}
+
+	@media screen and (max-width: 80vh) {
+		height: 5vh;
 	}
 }
 

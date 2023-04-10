@@ -257,7 +257,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				description="You cannot make changes to the default deck. Give the deck a new name in order to save it."
 				actionText="Edit"
 			/>
-			<DeckLayout title={title} back={handleBack}>
+			<DeckLayout title={title} back={handleBack} returnText="Deck Selection">
 				<DeckLayout.Main
 					header={
 						<>
@@ -373,6 +373,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					}
 					footer={
 						<Button
+							className={css.sidebarFooter}
 							variant="primary"
 							onClick={handleSave}
 							style={{margin: '0.5rem'}}

@@ -30,7 +30,10 @@
 	width: 100%;
 	align-items: center;
 	justify-content: space-between;
-	margin-bottom: 2.5vh;
+
+	&.switchGaps {
+		margin-bottom: 2.5vh;
+	}
 
 	.menuButton {
 		width: calc(50% - 1.25vh);
@@ -142,7 +145,10 @@
 	.smallButtonContainer {
 		flex-direction: column-reverse;
 		align-items: stretch;
-		margin-top: 2.5vh;
+
+		&:not(.switchGaps) {
+			margin-top: 2.5vh;
+		}
 
 		.menuButton {
 			width: 100%;

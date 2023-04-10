@@ -6,6 +6,7 @@ import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {resetStats} from 'logic/fbdb/fbdb-actions'
+import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -67,22 +68,35 @@ function More({setMenuSection}: Props) {
 					>
 						Sounds: {getPercDescriptor(settings.soundVolume)}
 					</Slider>
-					<button className={css.menuButton} onClick={handleProfanityChange}>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						onClick={handleProfanityChange}
+					>
 						Profanity filter: {getDescriptor(settings.profanityFilter)}
-					</button>
-					<button className={css.menuButton} onClick={handleDialogsChange}>
+					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						onClick={handleDialogsChange}
+					>
 						Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
-					</button>
+					</Button>
 					<div className={css.smallButtonContainer}>
-						<button
+						<Button
+							variant="stone"
 							className={css.menuButton}
 							onClick={() => setMenuSection('mainmenu')}
 						>
 							Back to menu
-						</button>
-						<button className={css.menuButton} onClick={handleResetStats}>
+						</Button>
+						<Button
+							variant="stone"
+							className={css.menuButton}
+							onClick={handleResetStats}
+						>
 							Reset Stats
-						</button>
+						</Button>
 					</div>
 				</div>
 				{/* stats */}

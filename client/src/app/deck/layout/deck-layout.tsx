@@ -6,22 +6,20 @@ import DeckMain from './deck-main'
 type Props = {
 	back: () => void
 	title: string
+	returnText?: string
 	children?: ReactNode
 }
 
-function DeckLayout({children, title, back}: Props) {
+function DeckLayout({children, title, returnText, back}: Props) {
 	return (
 		<div className={css.page}>
 			<div className={css.background} />
 			<header>
 				<div className={css.headerElements}>
-					<img
-						src="../images/back_arrow.svg"
-						alt="back-arrow"
-						className={css.headerReturn}
-						// onClick={() => back}
-						onClick={back}
-					/>
+					<div className={css.headerReturn} onClick={back}>
+						<img src="../images/back_arrow.svg" alt="back-arrow" />
+						{returnText && <h2>{returnText}</h2>}
+					</div>
 					<h1>{title}</h1>
 				</div>
 			</header>
