@@ -3,12 +3,12 @@
 	border: 2px solid black;
 	user-select: none;
 
-	font-family: Minecraft;
+	background: var(--gray-700);
 }
 
 .body {
 	flex-grow: 1;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .header {
@@ -57,19 +57,28 @@
 }
 
 .bodyWrapper {
-	position: absolute;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	background: #313233fd;
-	width: 100%;
-	height: calc(100vh - 15rem);
-	z-index: 12;
-	border: 2px solid black;
+	border: none;
+	flex-grow: 1;
+	z-index: 0;
+	overflow-y: auto;
 }
 
 .hide {
 	display: none;
+}
+
+@media screen and (max-width: 720px) {
+	.bodyWrapper {
+		background: #313233fd;
+		width: calc(100% + 4px);
+		transform: translateX(-2px);
+		height: calc(50vh - 5rem);
+		z-index: 12;
+		border: 2px solid black;
+	}
 }
 
 // DESKTOP
@@ -84,14 +93,6 @@
 
 	.header {
 		cursor: default;
-	}
-
-	.bodyWrapper {
-		border: none;
-		position: relative;
-		flex-grow: 1;
-		align-items: stretch;
-		z-index: 0;
 	}
 
 	.toggle {

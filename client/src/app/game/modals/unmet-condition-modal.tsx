@@ -23,7 +23,7 @@ function UnmetCondition({closeModal}: Props) {
 					You can't use this effect at the moment.
 				</div>
 				<div className={css.options}>
-					<Button variant="stone" onClick={handleOk}>
+					<Button variant="primary" size="small" onClick={handleOk}>
 						Ok
 					</Button>
 				</div>

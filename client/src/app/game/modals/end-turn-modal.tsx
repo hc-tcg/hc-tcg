@@ -4,6 +4,7 @@ import {getAvailableActions} from 'logic/game/game-selectors'
 import {endTurn} from 'logic/game/game-actions'
 import {AvailableActionT} from 'common/types/game-state'
 import css from './end-turn-modal.module.css'
+import Button from 'components/button'
 
 const ActionMap: Record<AvailableActionT, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',
@@ -57,8 +58,12 @@ function EndTurnModal({closeModal}: Props) {
 					})}
 				</ul>
 				<div className={css.options}>
-					<button onClick={handleEndTurn}>End Turn</button>
-					<button onClick={handleCancel}>Cancel</button>
+					<Button variant="primary" size="small" onClick={handleEndTurn}>
+						End Turn
+					</Button>
+					<Button variant="primary" size="small" onClick={handleCancel}>
+						Cancel
+					</Button>
 				</div>
 			</div>
 		</Modal>

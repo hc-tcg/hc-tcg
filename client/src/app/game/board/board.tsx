@@ -111,7 +111,8 @@ function Board({onClick, localGameState}: Props) {
 
 		return (
 			<Button
-				variant="stone"
+				variant="default"
+				size="small"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
 			>

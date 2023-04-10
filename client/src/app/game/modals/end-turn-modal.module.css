@@ -5,6 +5,9 @@
 .options {
 	text-align: center;
 	padding: 10px 0;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
 }
 
 .options button + button {
@@ -12,5 +15,5 @@
 }
 
 .availableActions {
-	margin: 0 0 10px 0;
+	margin: 0 10px;
 }

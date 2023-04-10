@@ -28,10 +28,10 @@ function ConfirmModal({closeModal}: Props) {
 					Do you want to apply selected single use effect?
 				</div>
 				<div className={css.options}>
-					<Button variant="stone" onClick={handleYes}>
+					<Button variant="primary" size="small" onClick={handleYes}>
 						Yes
 					</Button>
-					<Button variant="stone" onClick={handleNo}>
+					<Button variant="primary" size="small" onClick={handleNo}>
 						No
 					</Button>
 				</div>

@@ -31,8 +31,16 @@ function Chat() {
 	return (
 		<div className={css.chat}>
 			<form className={css.publisher} onSubmit={handleNewMessage}>
-				<input autoComplete="off" autoFocus name="message" maxLength={140} />
-				<Button variant="stone">Send</Button>
+				<input
+					style={{height: '2rem'}}
+					autoComplete="off"
+					autoFocus
+					name="message"
+					maxLength={140}
+				/>
+				<Button variant="default" size="small">
+					Send
+				</Button>
 			</form>
 			<div className={css.messageList}>
 				{chatMessages.map((messageInfo) => {

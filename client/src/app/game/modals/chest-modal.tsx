@@ -52,7 +52,7 @@ function ChestModal({closeModal}: Props) {
 					/>
 				</div>
 				<div className={css.options}>
-					<Button variant="stone" onClick={handleConfirm}>
+					<Button variant="primary" size="small" onClick={handleConfirm}>
 						Confirm Selection
 					</Button>
 				</div>

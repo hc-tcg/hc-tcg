@@ -14,7 +14,7 @@ import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
-import {DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
+import {DeleteIcon, EditIcon, ErrorIcon, ImportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
 import {getCardCost} from 'server/utils/validation'
 import {ImportExportModal} from 'components/import-export'
@@ -65,7 +65,7 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
-		<span className={css.tokens}>
+		<span className={classNames(css.tokens, css.tokenHeader)}>
 			{getTotalCost(cards.map((card) => card.cardId))} tokens
 		</span>
 	</p>
@@ -379,25 +379,22 @@ const Deck = ({setMenuSection}: Props) => {
 											alt="deck-icon"
 										/>
 									</div>
-									<p className={css.deckName}>{loadedDeck.name}</p>
+									<div className={css.deckName}>
+										<span>{loadedDeck.name}</span>
+									</div>
 									<div className={css.dynamicSpace}></div>
 
-									<p
-										className={classNames(
-											css.cardCount,
-											loadedDeck.cards.length != CONFIG.limits.maxCards
-												? css.error
-												: null
-										)}
-									>
-										{loadedDeck.cards.length}/{CONFIG.limits.maxCards} cards
+									<p className={classNames(css.cardCount)}>
+										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}{' '}
+										<span className={css.hideOnMobile}>cards</span>
 									</p>
 									<div className={css.cardCount}>
-										<p className={css.ultraRare}>
+										<p className={css.tokens}>
 											{getTotalCost(
 												loadedDeck.cards.map((card) => card.cardId)
 											)}
-											/{CONFIG.limits.maxDeckCost} tokens
+											/{CONFIG.limits.maxDeckCost}{' '}
+											<span className={css.hideOnMobile}>tokens</span>
 										</p>
 									</div>
 								</div>
@@ -467,12 +464,12 @@ const Deck = ({setMenuSection}: Props) => {
 									alt="card-icon"
 									className={css.sidebarIcon}
 								/>
-								<p style={{marginInline: 'auto'}}>My Decks</p>
+								<p style={{textAlign: 'center'}}>My Decks</p>
 							</>
 						}
 						footer={
 							<>
-								<Button.SplitGroup className={css.sidebarFooter}>
+								<div className={css.sidebarFooter} style={{padding: '0.5rem'}}>
 									<Button variant="primary" onClick={() => setMode('create')}>
 										Create New Deck
 									</Button>
@@ -482,9 +479,10 @@ const Deck = ({setMenuSection}: Props) => {
 											setShowImportExportModal(!showImportExportModal)
 										}
 									>
-										<ExportIcon />
+										<span>Import Deck</span>
+										<ImportIcon />
 									</Button>
-								</Button.SplitGroup>
+								</div>
 							</>
 						}
 					>

@@ -26,10 +26,10 @@ function BorrowModal({closeModal}: Props) {
 					Do you wish to attach the "borrowed" card or discard it?
 				</div>
 				<div className={css.options}>
-					<Button variant="stone" onClick={handleAttach}>
+					<Button variant="primary" size="small" onClick={handleAttach}>
 						Attach
 					</Button>
-					<Button variant="stone" onClick={handleDiscard}>
+					<Button variant="primary" size="small" onClick={handleDiscard}>
 						Discard
 					</Button>
 				</div>

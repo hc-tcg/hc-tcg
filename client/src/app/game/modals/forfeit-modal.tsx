@@ -26,10 +26,10 @@ function AttackModal({closeModal}: Props) {
 					Do you really wish to forfeit this game?
 				</div>
 				<div className={css.options}>
-					<Button variant="stone" onClick={handleYes}>
+					<Button variant="primary" size="small" onClick={handleYes}>
 						Yes
 					</Button>
-					<Button variant="stone" onClick={handleNo}>
+					<Button variant="primary" size="small" onClick={handleNo}>
 						No
 					</Button>
 				</div>

@@ -348,25 +348,19 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					width="half"
 					header={
 						<>
-							<p>My Cards</p>
+							<p style={{textAlign: 'center'}}>My Cards</p>
 							<div className={css.dynamicSpace} />
 							<div className={css.deckDetails}>
-								<p
-									className={classNames(
-										css.cardCount,
-										css.dark,
-										loadedDeck.cards.length != CONFIG.limits.maxCards
-											? css.error
-											: null
-									)}
-								>
-									{loadedDeck.cards.length}/{CONFIG.limits.maxCards} cards
+								<p className={classNames(css.cardCount, css.dark)}>
+									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
+									<span className={css.hideOnMobile}>cards</span>
 								</p>
-								<div className={classNames(css.cardCount, css.dark)}>
-									<p className={css.ultraRare}>
-										{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
-										{CONFIG.limits.maxDeckCost} tokens
-									</p>
+								<div
+									className={classNames(css.cardCount, css.dark, css.tokens)}
+								>
+									{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
+									{CONFIG.limits.maxDeckCost}{' '}
+									<span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>
 						</>
@@ -384,13 +378,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					}
 				>
 					<div style={{margin: '0.5rem'}}>
-						{validationMessage ? (
+						{validationMessage && (
 							<div className={css.validationMessage}>
 								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span>{' '}
 								{validationMessage}
 							</div>
-						) : (
-							<div className={css.validationGap}></div>
 						)}
 
 						<div className={css.editDeckInfo}>
