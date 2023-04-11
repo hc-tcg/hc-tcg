@@ -24,16 +24,18 @@ function App() {
 		dispatch(sectionChange(section))
 	}, [section])
 
+	let showToast = false
+
 	const router = () => {
 		if (section === 'game') {
 			return <Game />
 		} else if (section === 'matchmaking') {
 			return <MatchMaking />
 		} else if (playerName) {
+			showToast = true
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
-					break
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}
@@ -45,12 +47,15 @@ function App() {
 		<main>
 			{router()}
 			{playerName && !socketStatus ? <LostConnection /> : null}
-			<Toast
-				title={toastMessage.title}
-				description={toastMessage.description}
-				image={toastMessage.image}
-				setOpen={toastMessage.open}
-			/>
+
+			{showToast ? (
+				<Toast
+					title={toastMessage.title}
+					description={toastMessage.description}
+					image={toastMessage.image}
+					setOpen={toastMessage.open}
+				/>
+			) : null}
 		</main>
 	)
 }

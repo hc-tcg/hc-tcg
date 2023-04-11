@@ -18,7 +18,6 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
@@ -327,7 +326,6 @@ function* turnActionSaga(game, turnAction, turnState) {
 			!opponentAvailableActions.includes('FOLLOW_UP')
 		)
 			return
-		const result = yield call(followUpSaga, game, turnAction, actionState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
