@@ -502,6 +502,10 @@ function* turnSaga(game) {
 		return 'GAME_END'
 	}
 
+	// If player has not used his single use card return it to hand
+	// otherwise move it to discarded pile
+	discardSingleUse(game, currentPlayer)
+
 	// Draw a card from deck when turn ends
 	const drawCard = currentPlayer.pile.shift()
 	if (drawCard) {
@@ -516,9 +520,6 @@ function* turnSaga(game) {
 		return 'GAME_END'
 	}
 
-	// If player has not used his single use card return it to hand
-	// otherwise move it to discarded pile
-	discardSingleUse(game, currentPlayer)
 	return 'DONE'
 }
 
