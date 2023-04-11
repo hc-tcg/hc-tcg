@@ -117,6 +117,11 @@
 	}
 }
 
+.caret {
+	height: 1rem;
+	width: 1rem;
+}
+
 .splitButton {
 	display: flex;
 	margin: 0.5rem;
@@ -233,6 +238,12 @@
 	color: var(--color-error);
 }
 
+.errorMessage {
+	padding-top: 0.25rem;
+	display: none;
+	font-size: 0.8rem;
+}
+
 .input {
 	min-width: 100px;
 	background: var(--gray-400);
@@ -252,12 +263,6 @@
 		width: 100%;
 		color: red;
 	}
-}
-
-.errorMessage {
-	padding-top: 0.25rem;
-	display: none;
-	font-size: 0.8rem;
 }
 
 .deckDetails {
@@ -370,11 +375,6 @@
 	z-index: 1;
 }
 
-.caret {
-	height: 1rem;
-	width: 1rem;
-}
-
 /* DESKTOP */
 @media (min-width: 720px) {
 	.mobileDeckSelect {
@@ -401,7 +401,7 @@
 	}
 }
 
-.IconButton {
+.iconButton {
 	border-radius: 0.5rem;
 	height: 1.5rem;
 	padding: 0.4rem;

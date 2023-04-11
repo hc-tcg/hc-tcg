@@ -26,7 +26,7 @@ export const logout = () => ({
 	type: 'LOGOUT' as const,
 })
 
-export const setNewDeck = (newDeck: Array<string>) => ({
+export const setNewDeck = (newDeck: PlayerDeckT) => ({
 	type: 'SET_NEW_DECK',
 	payload: newDeck,
 })

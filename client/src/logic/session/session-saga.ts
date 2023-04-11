@@ -120,9 +120,8 @@ export function* loginSaga(): SagaIterator {
 
 	if (result.playerInfo) {
 		const {payload} = result.playerInfo
-		console.log('New player info: ', payload)
-
-		// the deck sent with the payload will always be a starter deck
+		yield put(setPlayerInfo({...payload}))
+		saveSession(payload)
 
 		const activeDeckName = getActiveDeckName()
 		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
@@ -131,18 +130,15 @@ export function* loginSaga(): SagaIterator {
 
 		// if active deck is not valid, generate and save a starter deck
 		if (activeDeckValid) {
-			// set player deck to active deck
-			payload.playerDeck = activeDeck
+			// set player deck to active deck, and send to server
 			console.log('Selected previous active deck: ' + activeDeck.name)
+			yield call(sendMsg, 'UPDATE_DECK', activeDeck)
 		} else {
 			// use and save the generated starter deck
 			saveDeck(payload.playerDeck)
 			setActiveDeck(payload.playerDeck.name)
 			console.log('Generated new starter deck')
 		}
-
-		yield put(setPlayerInfo(payload))
-		saveSession(payload)
 
 		// set user info for reconnects
 		socket.auth.playerId = payload.playerId

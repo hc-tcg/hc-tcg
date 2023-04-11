@@ -99,7 +99,7 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 									<div className={css.name}>
 										<Dropdown
 											button={
-												<button className={DropdownCSS.IconButton}>
+												<button className={DropdownCSS.iconButton}>
 													<img src={`/images/types/type-${deckIcon}.png`} />
 												</button>
 											}
