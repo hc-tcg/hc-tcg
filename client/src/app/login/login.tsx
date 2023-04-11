@@ -5,6 +5,7 @@ import {login} from 'logic/session/session-actions'
 import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'
+import Button from 'components/button'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
@@ -46,7 +47,9 @@ function Login() {
 							></input>
 							<span className={css.placeholder}>Player Name</span>
 						</div>
-						<button type="submit">Next</button>
+						<Button variant="stone" type="submit">
+							Next
+						</Button>
 					</form>
 				)}
 				{errorType ? (

@@ -22,6 +22,7 @@ import Slot from './board-slot'
 import BoardRow from './board-row'
 import PlayerInfo from './player-info'
 import Timer from './timer'
+import Button from 'components/button'
 
 // TODO - Don't allow clicking on slots on the other side
 
@@ -109,12 +110,13 @@ function Board({onClick, localGameState}: Props) {
 		}
 
 		return (
-			<button
+			<Button
+				variant="stone"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
 			>
 				End Turn
-			</button>
+			</Button>
 		)
 	}
 

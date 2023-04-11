@@ -1,0 +1,108 @@
+.AlertDialogOverlay {
+	background-color: rgba(0, 0, 0, 0.8);
+	position: fixed;
+	inset: 0;
+	backdrop-filter: blur(2px);
+	// animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	animation: overlayShow 500ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 99;
+}
+
+.AlertDialogContent {
+	background-color: var(--gray-500);
+	border: 2px solid var(--gray-900);
+	box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px,
+		hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90vw;
+	max-width: 500px;
+	max-height: 85vh;
+	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 100;
+
+	&:focus {
+		outline: none;
+	}
+}
+
+.AlertDialogTitle {
+	margin: 0;
+	color: var(--text-light);
+	font-size: 17px;
+	font-weight: 500;
+	border: 2px solid var(--gray-400);
+	padding: 0.5rem;
+	text-align: center;
+	position: relative;
+}
+
+.xClose {
+	font-size: 1rem;
+	height: 2rem;
+	width: 2rem;
+	position: absolute;
+	top: 50%;
+	transform: translate(-2px, -50%);
+	right: 0;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&:hover,
+	&:focus {
+		background: var(--gray-400);
+	}
+
+	&:focus {
+		outline: 3px solid white;
+	}
+}
+
+.AlertDialogDescription {
+	color: var(--text-light);
+	font-size: 15px;
+	background-color: var(--gray-700);
+	padding: 1rem;
+}
+
+.buttonContainer {
+	display: flex;
+	padding: 1rem;
+	flex-direction: row;
+	gap: 0.25rem;
+	justify-content: center;
+	width: 100%;
+	box-shadow: inset 0 2px 0 0 var(--gray-400), inset 0 -2px 0 0 var(--gray-700);
+
+	button {
+		flex-grow: 1;
+	}
+}
+
+.column {
+	flex-direction: column;
+}
+
+@keyframes overlayShow {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}

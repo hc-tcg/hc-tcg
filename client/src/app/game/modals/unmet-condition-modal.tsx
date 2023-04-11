@@ -3,6 +3,7 @@ import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
 import {removeEffect} from 'logic/game/game-actions'
+import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
@@ -22,7 +23,9 @@ function UnmetCondition({closeModal}: Props) {
 					You can't use this effect at the moment.
 				</div>
 				<div className={css.options}>
-					<button onClick={handleOk}>Ok</button>
+					<Button variant="stone" onClick={handleOk}>
+						Ok
+					</Button>
 				</div>
 			</div>
 		</Modal>

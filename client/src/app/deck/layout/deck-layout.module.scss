@@ -1,0 +1,113 @@
+.page {
+	height: 100%;
+	background: linear-gradient(180deg, var(--gray-600) 0%, var(--gray-800) 100%);
+	display: flex;
+	flex-direction: column;
+	color: var(--text-light);
+	transition: height 0.25s ease-in-out;
+}
+
+.background {
+	position: absolute;
+	height: 100%;
+	overflow: hidden;
+
+	&:before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		width: 100%;
+		height: 100%;
+		background: linear-gradient(
+				to bottom,
+				rgba(0, 0, 22, 0.45) 0%,
+				rgba(0, 0, 22, 0.55) 100%
+			),
+			url('/images/deck-background.png') center center fixed no-repeat;
+		background-size: cover;
+		filter: blur(2px);
+		transform: scale(1.1);
+	}
+}
+
+header {
+	height: 3rem;
+	background: var(--gray-50);
+	filter: drop-shadow(0px 1px 0px rgba(0, 0, 0, 0.25));
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	padding-bottom: 0.25rem;
+	box-shadow: inset 0px -2px #b1b2b5, inset 0px -3px #ebedef;
+
+	img {
+		position: absolute;
+		left: 0;
+		border-radius: 4px;
+		padding: 0.5rem;
+		margin: 0 0 0 1rem;
+		font-size: 1.75rem;
+		height: 30px;
+		width: 30px;
+		filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.25));
+
+		&:hover {
+			background-color: #f8faff;
+			cursor: pointer;
+		}
+	}
+
+	.headerElements {
+		position: relative;
+		height: 3rem;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	h1 {
+		font-family: Minecraft;
+		font-size: 1.2rem;
+		color: var(--text-dark);
+	}
+}
+
+.body {
+	z-index: 1;
+	margin-inline: auto;
+	padding: 0 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+	height: 100%;
+	width: 100%;
+	max-width: 80rem;
+	align-items: stretch;
+	overflow: auto;
+}
+
+.wrapper {
+	margin: 1rem auto;
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 1rem;
+	height: 100%;
+	width: 100%;
+	max-width: 80rem;
+	align-items: stretch;
+	overflow: hidden;
+}
+
+@media (min-width: 720px) {
+	.page {
+		transition: none;
+	}
+
+	.wrapper {
+		flex-direction: row;
+	}
+}

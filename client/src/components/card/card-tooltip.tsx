@@ -144,7 +144,7 @@ const getName = (card: CardInfoT): React.ReactNode => {
 }
 
 const getRank = (card: CardInfoT): React.ReactNode => {
-	let rank = getCardRank(card)
+	let rank = getCardRank(card.id)
 	if (!rank) rank = 'stone'
 	const cost = getCardCost(card)
 	const highlight = rank === 'stone' || rank === 'iron' ? '■' : '★'

@@ -1,10 +1,12 @@
 import {AnyAction} from 'redux'
+import {PlayerDeckT} from 'common/types/deck'
+import {ToastT} from 'common/types/app'
 
 type SessionState = {
 	playerName: string
 	playerId: string
 	playerSecret: string
-	playerDeck: Array<string>
+	playerDeck: PlayerDeckT
 	connecting: boolean
 	errorType?:
 		| 'invalid_name'
@@ -12,14 +14,16 @@ type SessionState = {
 		| 'session_expired'
 		| 'timeout'
 		| string
+	toast: ToastT
 }
 
 const defaultState: SessionState = {
 	playerName: '',
 	playerId: '',
 	playerSecret: '',
-	playerDeck: [],
+	playerDeck: {name: 'Default', icon: 'any', cards: []},
 	connecting: false,
+	toast: {open: false, title: '', description: '', image: ''},
 }
 
 const loginReducer = (
@@ -36,7 +40,8 @@ const loginReducer = (
 				playerName: '',
 				playerId: '',
 				playerSecret: '',
-				playerDeck: [],
+				//@NOWTODO player deck issues
+				playerDeck: state.playerDeck,
 				errorType: action.payload,
 			}
 		case 'SET_PLAYER_INFO':
@@ -50,6 +55,19 @@ const loginReducer = (
 			return {
 				...state,
 				playerDeck: action.payload,
+			}
+		case 'SET_TOAST':
+			return {
+				...state,
+				toast: action.payload,
+			}
+		case 'CLOSE_TOAST':
+			return {
+				...state,
+				toast: {
+					...state.toast,
+					open: false,
+				},
 			}
 		default:
 			return state

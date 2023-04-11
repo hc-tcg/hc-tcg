@@ -1,0 +1,33 @@
+.deck {
+	display: flex;
+	justify-items: stretch;
+	flex-direction: column;
+	background: var(--gray-600);
+	width: 100%;
+	border: 2px solid black;
+	flex-grow: 1;
+	overflow: hidden;
+}
+
+.header {
+	display: flex;
+	position: relative;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: flex-start;
+	height: 3rem;
+	background-color: var(--gray-700);
+	gap: 0.5rem;
+	padding: 0.5rem 1rem;
+	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+	z-index: 2;
+}
+
+.body {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	flex: 0 1 auto;
+	overflow-y: auto;
+	padding: 1rem;
+}

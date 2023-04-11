@@ -56,14 +56,13 @@
 
 .customInput {
 	position: relative;
-	width: 35vh;
 	height: 5vh;
 
 	input {
 		padding-left: 1vh;
 		padding-right: 0;
 		border-radius: 0;
-		width: 100%;
+		width: 35vh;
 
 		&:focus-visible + .placeholder,
 		&:not(:placeholder-shown) + .placeholder {

@@ -27,3 +27,7 @@ export const getConnecting = (state: RootState) => {
 export const getErrorType = (state: RootState) => {
 	return getSession(state).errorType
 }
+
+export const getToast = (state: RootState) => {
+	return getSession(state).toast
+}

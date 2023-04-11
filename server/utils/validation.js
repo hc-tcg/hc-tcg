@@ -6,16 +6,16 @@ import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
  */
 /**
  *
- * @param {CardInfoT} card
+ * @param {string} cardId
  * @returns {RankT}
  */
-export function getCardRank(card) {
+export function getCardRank(cardId) {
 	/** @type {RankT} */
 	let rank = 'stone'
-	if (RANKS.iron.includes(card.id)) rank = 'iron'
-	else if (RANKS.gold.includes(card.id)) rank = 'gold'
-	else if (RANKS.emerald.includes(card.id)) rank = 'emerald'
-	else if (RANKS.diamond.includes(card.id)) rank = 'diamond'
+	if (RANKS.iron.includes(cardId)) rank = 'iron'
+	else if (RANKS.gold.includes(cardId)) rank = 'gold'
+	else if (RANKS.emerald.includes(cardId)) rank = 'emerald'
+	else if (RANKS.diamond.includes(cardId)) rank = 'diamond'
 	return rank
 }
 
@@ -23,7 +23,7 @@ export function getCardRank(card) {
  * @param {CardInfoT} card
  */
 export function getCardCost(card) {
-	const rank = getCardRank(card)
+	const rank = getCardRank(card.id)
 
 	switch (rank) {
 		case 'stone':

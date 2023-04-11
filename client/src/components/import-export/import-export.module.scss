@@ -1,0 +1,43 @@
+.divider {
+	border-bottom: 1px solid white;
+	margin: 1rem 0;
+}
+
+.instructions {
+	padding: 0.5rem 0;
+}
+
+.copy {
+	display: grid;
+	place-content: center;
+	background: var(--gray-900);
+	padding: 0.4rem;
+	height: 1.5rem;
+	min-width: 1.5rem;
+	border-radius: 6px;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: var(--color-secondary);
+	}
+
+	&:focus {
+		outline: 3px solid white;
+	}
+
+	&:focus-visible:not(:focus) {
+		outline: 3px solid transparent;
+	}
+}
+
+.controls {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+
+	input {
+		flex-grow: 1;
+	}
+}

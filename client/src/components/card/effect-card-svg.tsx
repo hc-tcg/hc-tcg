@@ -11,7 +11,7 @@ export type EffectCardProps = {
 
 const HermitCard = ({card}: EffectCardProps) => {
 	const cost = getCardCost(card)
-	const rank = getCardRank(card)
+	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">

@@ -7,6 +7,7 @@ import css from './chest-modal.module.css'
 import {equalCard} from 'server/utils'
 import {getGameState} from 'logic/game/game-selectors'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
+import Button from 'components/button'
 
 const DISABLED = ['clock']
 
@@ -51,7 +52,9 @@ function ChestModal({closeModal}: Props) {
 					/>
 				</div>
 				<div className={css.options}>
-					<button onClick={handleConfirm}>Confirm Selection</button>
+					<Button variant="stone" onClick={handleConfirm}>
+						Confirm Selection
+					</Button>
 				</div>
 			</div>
 		</Modal>

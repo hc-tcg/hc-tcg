@@ -1,3 +1,41 @@
+:root {
+	/* COLORS */
+	--color-primary: #3c8527;
+	--color-primary-shadow: #1d4d13;
+	--color-primary-highlight: #639d52;
+
+	--color-secondary: #fb95e2;
+	--color-secondary-shadow: #e159c2;
+	--color-secondary-highlight: #fcaae8;
+
+	--color-error: #ca3636;
+	--color-error-shadow: #ad1d1d;
+	--color-error-highlight: #cf4a4a;
+
+	--gray-900: rgb(30, 30, 31);
+	--gray-800: rgb(37, 38, 39);
+	--gray-700: rgb(49, 50, 51);
+	--gray-600: rgb(72, 73, 74);
+	--gray-500: rgb(88, 88, 90);
+	--gray-400: rgb(117, 117, 119);
+	--gray-300: rgb(162, 162, 164);
+	--gray-200: rgb(209, 210, 212);
+	--gray-100: rgb(231, 233, 237);
+	--gray-50: rgb(248, 250, 255);
+
+	/* FONTS */
+	--text-light: var(--gray-50);
+	--text-dark: var(--gray-800);
+	--text-shadow: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.5));
+
+	/* EXTRA */
+	--shadow: rgba(0, 0, 0, 0.4);
+	--highlight: rgba(255, 255, 255, 0.1);
+	--common: rgb(0, 197, 0);
+	--rare: rgb(249, 168, 3);
+	--ultra-rare: rgb(98, 255, 255);
+}
+
 @font-face {
 	font-family: Minecraft;
 	src: url('/fonts/MinecraftRegular-Bmg3.otf');
@@ -11,6 +49,11 @@
 @font-face {
 	font-family: MinecraftItalic;
 	src: url('/fonts/MinecraftItalic-R8Mo.otf');
+}
+
+@font-face {
+	font-family: Minecrafter;
+	src: url(/fonts/Minecrafter.Reg.ttf);
 }
 
 @font-face {
@@ -32,10 +75,12 @@ main {
 
 body {
 	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-		Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-size: 1rem;
 	background: rgb(72, 72, 72);
 }
 
@@ -44,11 +89,29 @@ code {
 		monospace;
 }
 
+/* @TODO this should only be cleaned up after game screen is reworked */
+
 * {
 	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: 1rem;
 }
 
 button {
+	all: unset;
+}
+
+.stoneButton,
+.select {
 	font-family: Minecraft;
 	padding: 0 10px;
 	height: 30px;
@@ -80,6 +143,61 @@ input[type='text'] {
 	font-family: Minecraft;
 }
 
+ul,
+li {
+	list-style: none;
+	margin: 0;
+	padding-inline: 0;
+}
+
+::-webkit-scrollbar,
+::-webkit-scrollbar:horizontal {
+	width: 8px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #e6e8eb;
+	border: 1.5px solid black;
+	box-shadow: inset 0px -3px #58585a;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+	box-shadow: inset -3px 0 #58585a, inset 3px 0 #f5f9ff;
+}
+
+::-webkit-scrollbar-track {
+	margin-block: 8px;
+	background: #58585a;
+	background: linear-gradient(
+		90deg,
+		rgba(49, 50, 51, 0) 0%,
+		rgba(49, 50, 51, 0) 25%,
+		#58585a 25%,
+		#58585a 75%,
+		rgba(49, 50, 51, 0) 75%,
+		rgba(49, 50, 51, 0) 100%
+	);
+}
+
+::-webkit-scrollbar-track:horizontal {
+	margin-block: 8px;
+	background: #58585a;
+	background: linear-gradient(
+		0deg,
+		rgba(49, 50, 51, 0) 0%,
+		rgba(49, 50, 51, 0) 25%,
+		#58585a 25%,
+		#58585a 75%,
+		rgba(49, 50, 51, 0) 75%,
+		rgba(49, 50, 51, 0) 100%
+	);
+}
+
+::-webkit-scrollbar-corner {
+	background: transparent;
+}
+
 /* changes for new look, note that all the above will get redone eventually */
 
 .temp {
@@ -105,17 +223,6 @@ input[type='text'] {
 			outline: none;
 		}
 	}
-}
-
-button:not(:disabled):hover {
-	cursor: pointer;
-	background-color: rgba(100, 100, 255, 45%);
-	text-shadow: 2px 2px #202013cc;
-	color: #ffffa0;
-}
-
-.temp button:not(:disabled):hover {
-	text-shadow: 0.3vh 0.3vh #202013cc;
 }
 
 /* scrollbar */
@@ -145,4 +252,28 @@ button:not(:disabled):hover {
 ::-webkit-scrollbar-corner,
 ::-webkit-resizer {
 	display: none;
+}
+
+// new stuff
+
+.select {
+	padding-bottom: 1px;
+	background-color: #2a2727;
+}
+
+.stoneButton:disabled {
+	opacity: 0.7;
+	box-shadow: none;
+}
+
+.stoneButton:not(:disabled):hover {
+	cursor: pointer;
+	background-color: rgba(100, 100, 255, 0.45);
+	text-shadow: 2px 2px #202013cc;
+	color: #ffffa0;
+}
+
+.stoneButton:focus {
+	border: 2px solid var(--gray-50);
+	filter: brightness(1.1);
 }

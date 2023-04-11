@@ -8,6 +8,7 @@ import {
 } from 'logic/matchmaking/matchmaking-selectors'
 import css from './match-making.module.scss'
 import TcgLogo from 'components/tcg-logo'
+import Button from 'components/button'
 
 function MatchMaking() {
 	const dispatch = useDispatch()
@@ -15,8 +16,7 @@ function MatchMaking() {
 	const code = useSelector(getCode)
 	const invalidCode = useSelector(getInvalidCode)
 
-	const handleCancel = (ev: React.SyntheticEvent<HTMLButtonElement>) => {
-		ev.preventDefault()
+	const handleCancel = () => {
 		dispatch(leaveMatchmaking())
 	}
 
@@ -36,9 +36,13 @@ function MatchMaking() {
 		content = (
 			<>
 				<div className={css.message}>Waiting for opponent</div>
-				<button className={css.matchmakingButton} onClick={handleCancel}>
+				<Button
+					variant="stone"
+					className={css.matchmakingButton}
+					onClick={handleCancel}
+				>
 					Cancel
-				</button>
+				</Button>
 			</>
 		)
 	} else if (status === 'loading') {
@@ -61,13 +65,13 @@ function MatchMaking() {
 					{code}
 				</div>
 				<div className={css.options}>
-					<button
-						type="button"
+					<Button
+						variant="stone"
 						className={css.matchmakingButton}
 						onClick={handleCancel}
 					>
 						Cancel
-					</button>
+					</Button>
 				</div>
 			</>
 		)
@@ -85,14 +89,16 @@ function MatchMaking() {
 						Invalid code
 					</p>
 					<div className={css.options}>
-						<button
-							type="button"
+						<Button
+							variant="stone"
 							className={css.matchmakingButton}
 							onClick={handleCancel}
 						>
 							Cancel
-						</button>
-						<button className={css.matchmakingButton}>Join</button>
+						</Button>
+						<Button variant="stone" className={css.matchmakingButton}>
+							Join
+						</Button>
 					</div>
 				</form>
 			</>

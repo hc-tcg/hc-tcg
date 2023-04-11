@@ -3,6 +3,7 @@ import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
+import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
@@ -27,8 +28,12 @@ function ConfirmModal({closeModal}: Props) {
 					Do you want to apply selected single use effect?
 				</div>
 				<div className={css.options}>
-					<button onClick={handleYes}>Yes</button>
-					<button onClick={handleNo}>No</button>
+					<Button variant="stone" onClick={handleYes}>
+						Yes
+					</Button>
+					<Button variant="stone" onClick={handleNo}>
+						No
+					</Button>
 				</div>
 			</div>
 		</Modal>

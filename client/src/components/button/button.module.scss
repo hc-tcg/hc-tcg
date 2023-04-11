@@ -1,0 +1,248 @@
+.button {
+	font-family: Minecraft;
+
+	font-size: 1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--gray-200);
+	height: 2.75rem;
+	padding: 0 0.5rem;
+	padding-bottom: 0.25rem;
+	box-shadow: inset 0 -4px 0 0 var(--gray-500),
+		inset 1px 1px 0 0 var(--gray-100), inset -1px -5px 0 0 var(--gray-100);
+	color: var(--text-dark);
+	border: 2px solid black;
+	cursor: pointer;
+	user-select: none;
+
+	&:focus:not(:disabled) {
+		outline: 3px solid white;
+	}
+
+	&:focus:not(:focus-visible) {
+		outline: 0;
+	}
+
+	&:active:not(:disabled) {
+		transform: translateY(1px);
+	}
+
+	&:disabled {
+		filter: brightness(0.6);
+		cursor: not-allowed;
+	}
+}
+
+.primary {
+	background: var(--color-primary);
+	box-shadow: inset 0 -4px 1px var(--color-primary-shadow),
+		inset 1px 1px 0px 1px var(--color-primary-highlight),
+		inset -1px -5px 0px 1px var(--color-primary-highlight);
+	color: var(--text-light);
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: var(--color-primary);
+	}
+}
+
+.secondary {
+	background: var(--color-secondary);
+	box-shadow: inset 0 -4px 1px var(--color-secondary-shadow),
+		inset 1px 1px 0px 1px var(--color-secondary-highlight),
+		inset -1px -5px 0px 1px var(--color-secondary-highlight);
+	color: var(--text-dark);
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: var(--color-secondary);
+	}
+}
+
+.error {
+	background: var(--color-error);
+	box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+		inset 1px 1px 0 0 var(--color-error-highlight),
+		inset -1px -5px 0 0 var(--color-error-highlight);
+	color: var(--text-light);
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: var(--color-error);
+	}
+}
+
+.stone {
+	line-height: 100%;
+	text-align: center;
+	height: 5vh;
+	font-size: 2vh;
+	border: 0.3vh solid #000;
+	text-shadow: 0.2vh 0.2vh #000;
+	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
+	padding: 0 2vh;
+	outline: none;
+
+	box-sizing: border-box;
+
+	overflow: hidden;
+	white-space: nowrap;
+	background: #999 url('/images/bgbtn.png') center / cover;
+	color: #ddd;
+
+	&:focus:not(:disabled) {
+		background: #999 url('/images/bgbtn.png') center / cover;
+		color: var(--text-light);
+	}
+
+	&:hover:not(:disabled) {
+		background: #999 url('/images/bgbtn.png') center / cover;
+		text-shadow: 0.3vh 0.3vh rgba(32, 32, 19, 0.8);
+		color: #ffffa0;
+	}
+
+	&:active:not(:disabled) {
+		transform: none;
+	}
+}
+
+// MODIFIERS
+.emphasis {
+	font-family: Minecrafter;
+}
+
+.small {
+	height: 1.6rem;
+}
+
+.medium {
+	height: 2.75rem;
+}
+
+.large {
+	height: 3.5rem;
+	font-size: 1.2rem;
+}
+
+.leftSlot {
+	margin-right: auto;
+	padding-right: 0.5rem;
+	padding-top: 3px;
+}
+
+.rightSlot {
+	margin-left: auto;
+	padding-left: 0.5rem;
+	padding-top: 3px;
+}
+
+// STYLES FOR SPLIT BUTTON
+.splitButton {
+	display: inline-flex;
+
+	// Default SplitButton Styles
+	.button {
+		box-shadow: none;
+
+		&:first-child {
+			border-right: 0;
+			flex-grow: 1;
+			box-shadow: inset 0 -4px 0 0 var(--gray-500),
+				inset 0px -6px 0 0 var(--gray-100), inset 2px 2px 0 0 var(--gray-100);
+		}
+
+		&:not(:first-child):not(:last-child) {
+			border-left: 0;
+			border-right: 0;
+			flex-grow: 1;
+			box-shadow: inset 0 -4px 0 0 var(--gray-500),
+				inset 0 -6px 0 0 var(--gray-100), inset 0 2px 0 0 var(--gray-100);
+		}
+
+		&:last-child {
+			border-left: 0;
+			min-width: 1.5rem;
+			box-shadow: inset 0 -4px 0 0 var(--gray-500),
+				inset -2px -6px 0 0 var(--gray-100), inset 0 2px 0 0 var(--gray-100);
+		}
+	}
+
+	// Primary SplitButton Styles
+	.primary {
+		&:first-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
+				inset 0px -6px 0 0 var(--color-primary-highlight),
+				inset 2px 2px 0 0 var(--color-primary-highlight);
+		}
+
+		&:not(:first-child):not(:last-child) {
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
+				inset 0 -6px 0 0 var(--color-primary-highlight),
+				inset 0 2px 0 0 var(--color-primary-highlight);
+		}
+
+		&:last-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
+				inset -2px -6px 0 0 var(--color-primary-highlight),
+				inset 0 2px 0 0 var(--color-primary-highlight);
+		}
+	}
+
+	// Secondary SplitButton Styles
+	.secondary {
+		&:first-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
+				inset 0px -6px 0 0 var(--color-secondary-highlight),
+				inset 2px 2px 0 0 var(--color-secondary-highlight);
+		}
+
+		&:not(:first-child):not(:last-child) {
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
+				inset 0 -6px 0 0 var(--color-secondary-highlight),
+				inset 0 2px 0 0 var(--color-secondary-highlight);
+		}
+
+		&:last-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
+				inset -2px -6px 0 0 var(--color-secondary-highlight),
+				inset 0 2px 0 0 var(--color-secondary-highlight);
+		}
+	}
+
+	// Error SplitButton Styles
+	.error {
+		&:first-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+				inset 0px -6px 0 0 var(--color-error-highlight),
+				inset 2px 2px 0 0 var(--color-error-highlight);
+		}
+
+		&:not(:first-child):not(:last-child) {
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+				inset 0 -6px 0 0 var(--color-error-highlight),
+				inset 0 2px 0 0 var(--color-error-highlight);
+		}
+
+		&:last-child {
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+				inset -2px -6px 0 0 var(--color-error-highlight),
+				inset 0 2px 0 0 var(--color-error-highlight);
+		}
+	}
+
+	// Stone SplitButton Styles
+	.stone {
+		&:first-child {
+			box-shadow: inset 0 -4px 0 0 #0006, inset 2px 2px 0 0 #fff7;
+		}
+
+		&:not(:first-child):not(:last-child) {
+			box-shadow: inset 0 -4px 0 0 #0006, inset 0 2px 0 0 #fff7;
+		}
+
+		&:last-child {
+			box-shadow: inset -2px -4px 0 0 #0006, inset 0 2px 0 0 #fff7;
+		}
+	}
+}

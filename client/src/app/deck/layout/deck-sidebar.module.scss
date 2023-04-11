@@ -1,0 +1,106 @@
+.sidebar {
+	position: relative;
+	border: 2px solid black;
+	user-select: none;
+}
+
+.body {
+	flex-grow: 1;
+	overflow-y: auto;
+}
+
+.header {
+	position: relative;
+	display: flex;
+	gap: 0.5rem;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.5rem 1rem;
+	height: 3rem;
+	font-family: Minecrafter;
+	background-color: var(--gray-600);
+	filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.35));
+	z-index: 1;
+}
+
+.toggle {
+	// position: absolute;
+	// // top: 0;
+	// right: 0;
+	// margin: auto 0.5rem;
+	display: grid;
+	place-content: center;
+	background: var(--gray-800);
+	padding: 0.5rem;
+	height: 1.5rem;
+	min-width: 1.5rem;
+	border-radius: 0.5rem;
+	font-size: 2rem;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: var(--gray-600);
+		filter: brightness(1.1);
+	}
+
+	&:focus {
+		outline: 3px solid white;
+	}
+
+	&:focus:not(:focus-visible) {
+		outline: 0;
+	}
+}
+
+.bodyWrapper {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	background: #313233fd;
+	width: 100%;
+	height: calc(100vh - 15rem);
+	z-index: 12;
+	border: 2px solid black;
+}
+
+.hide {
+	display: none;
+}
+
+// DESKTOP
+@media (min-width: 720px) {
+	.sidebar {
+		width: clamp(200px, 24rem, 500px);
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.header {
+		cursor: default;
+	}
+
+	.bodyWrapper {
+		border: none;
+		position: relative;
+		flex-grow: 1;
+		align-items: stretch;
+		z-index: 0;
+	}
+
+	.toggle {
+		display: none;
+	}
+
+	.hide {
+		display: flex; //Disable hiding the sidebar on desktop
+	}
+
+	.half {
+		width: 80%;
+	}
+}

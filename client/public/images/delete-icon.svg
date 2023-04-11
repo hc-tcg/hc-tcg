@@ -1,0 +1,22 @@
+<svg width="10" height="13" viewBox="0 0 10 13" fill="currentColor"
+  xmlns="http://www.w3.org/2000/svg">
+  <g>
+    <path fill-rule="evenodd" clip-rule="evenodd" fill="currentColor"
+      d="M0 0.8H2.45455V0H6.54545V0.8H9V2.4H8.18182V11.2H7.36364V12H1.63636V11.2H0.818182V2.4H0V0.8ZM3.27273 3.2H2.45455V10.4H3.27273V3.2ZM4.90909 3.2H4.09091V10.4H4.90909V3.2ZM6.54545 3.2H5.72727V10.4H6.54545V3.2Z" />
+  </g>
+  <!-- <defs>
+    <filter id="filter0_d_7_255" x="0" y="0" width="10" height="13" filterUnits="userSpaceOnUse"
+      color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix"
+        values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+      <feOffset dx="1" dy="1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_7_255" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_7_255" result="shape" />
+            MOVE TO PATH TAG: fill="#DDDDDD" 
+            MOVE TO G TAG: filter="url(#filter0_d_7_255)"
+    </filter>
+  </defs> -->
+</svg>

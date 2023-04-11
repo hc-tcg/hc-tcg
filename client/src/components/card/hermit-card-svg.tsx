@@ -20,7 +20,7 @@ const COST_X = [
 const HermitCard = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
-	const rank = getCardRank(card)
+	const rank = getCardRank(card.id)
 	const cost = getCardCost(card)
 	const showCost = !useSelector(getGameState)
 	return (

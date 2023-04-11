@@ -1,6 +1,7 @@
 import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
+import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
@@ -25,8 +26,12 @@ function BorrowModal({closeModal}: Props) {
 					Do you wish to attach the "borrowed" card or discard it?
 				</div>
 				<div className={css.options}>
-					<button onClick={handleAttach}>Attach</button>
-					<button onClick={handleDiscard}>Discard</button>
+					<Button variant="stone" onClick={handleAttach}>
+						Attach
+					</Button>
+					<Button variant="stone" onClick={handleDiscard}>
+						Discard
+					</Button>
 				</div>
 			</div>
 		</Modal>

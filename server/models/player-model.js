@@ -5,6 +5,7 @@ import CARDS from '../cards'
 
 /**
  * @typedef {import('socket.io').Socket} Socket
+ * @typedef {import('common/types/deck').PlayerDeckT} PlayerDeckT
  */
 
 // @TODO store playerState on player.state, instead of game.state.players, to avoid confusion?
@@ -25,8 +26,16 @@ export class PlayerModel {
 		/** @type {string} */
 		this.playerSecret = Math.random().toString()
 
-		/** @type {Array<string>} */
-		this.playerDeck = getStarterPack()
+		//@NOWTODO only generate if we don't have one saved
+		//@NOWTODO update player deck everywhere
+		/**@type {PlayerDeckT}*/
+		this.playerDeck = {
+			name: 'Default',
+			icon: 'any',
+			cards: getStarterPack().map((id) => {
+				return {cardId: id, cardInstance: Math.random().toString()}
+			}),
+		}
 
 		/** @type {string} */
 		this.playerName = playerName

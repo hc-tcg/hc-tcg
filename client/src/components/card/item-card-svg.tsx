@@ -10,7 +10,7 @@ export type ItemCardProps = {
 }
 
 const ItemCard = ({card}: ItemCardProps) => {
-	const rank = getCardRank(card)
+	const rank = getCardRank(card.id)
 	const cost = getCardCost(card)
 	const showCost = !useSelector(getGameState)
 	return (

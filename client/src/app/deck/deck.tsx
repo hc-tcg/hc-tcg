@@ -1,14 +1,23 @@
-import classnames from 'classnames'
-import {useState, useEffect} from 'react'
+import classNames from 'classnames'
+import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInfoT} from 'common/types/cards'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import CARDS from 'server/cards'
-import {getCardCost, getTotalCost, validateDeck} from 'server/utils/validation'
-import css from './deck.module.css'
+import {getTotalCost, validateDeck} from 'server/utils/validation'
+import css from './deck.module.scss'
+import Accordion from 'components/accordion'
+import DeckLayout from './layout'
 import {getPlayerDeck} from 'logic/session/session-selectors'
-import ImportExport from 'components/import-export'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {PlayerDeckT} from 'common/types/deck'
+import EditDeck from './deck-edit'
+import Button from 'components/button'
+import AlertModal from 'components/alert-modal'
+import {DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
+import {ToastT} from 'common/types/app'
+import {getCardCost} from 'server/utils/validation'
+import {ImportExportModal} from 'components/import-export'
 import {CONFIG} from '../../../../config'
 
 const TYPE_ORDER = {
@@ -19,7 +28,7 @@ const TYPE_ORDER = {
 	health: 4,
 }
 
-const sortCards = (cards: Array<CardT>): Array<CardT> => {
+export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 	return cards.slice().sort((a: CardT, b: CardT) => {
 		const cardInfoA = CARDS[a.cardId]
 		const cardInfoB = CARDS[b.cardId]
@@ -52,163 +61,488 @@ const sortCards = (cards: Array<CardT>): Array<CardT> => {
 	})
 }
 
+export const cardGroupHeader = (title: string, cards: CardT[]) => (
+	<p>
+		{`${title} `}
+		<span style={{fontSize: '0.9rem'}}>
+			{`(${cards.length}) `}
+			<span className={css.ultraRare}>
+				{getTotalCost(cards.map((card) => card.cardId))} tokens
+			</span>
+		</span>
+	</p>
+)
+
+export const getSavedDecks = () => {
+	let lsKey
+	const decks = []
+
+	for (let i = 0; i < localStorage.length; i++) {
+		lsKey = localStorage.key(i)
+
+		if (lsKey?.includes('Deck_')) {
+			const key = localStorage.getItem(lsKey)
+			decks.push(key)
+		}
+	}
+
+	console.log(`Loaded ${decks.length} decks from Local Storage`)
+	return decks.sort()
+}
+
+export const savedDeckNames = getSavedDecks().map(
+	(name) => JSON.parse(name || '')?.name
+)
+
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
 const Deck = ({setMenuSection}: Props) => {
+	// REDUX
 	const dispatch = useDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
-	const [pickedCards, setPickedCards] = useState<CardT[]>(
-		playerDeck.map((cardId) => ({
-			cardId: cardId,
-			cardInstance: Math.random().toString(),
-		}))
-	)
+	const settings = useSelector(getSettings)
 
-	const [deckName, setDeckName] = useState<string>('')
-	const [showImportExport, setShowImportExport] = useState<boolean>(false)
-	const [loadedDecks, setLoadedDecks] = useState<Array<string>>([])
+	// STATE
+	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
+	const [savedDecks, setSavedDecks] = useState<any>(getSavedDecks)
+	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
+		name: 'undefined',
+		icon: 'any',
+		cards: [],
+	})
+	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
+	const [showImportExportModal, setShowImportExportModal] =
+		useState<boolean>(false)
+	const [showValidateDeckModal, setShowValidateDeckModal] =
+		useState<boolean>(false)
+	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
+	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
 
-	const loadSavedDecks = () => {
-		const deckList: Array<string> = (Object.keys(localStorage) as any)
-			.map((key: string) => {
-				if (!key.startsWith('Loadout_')) return null
-				const deckName = key?.replace(/Loadout_/g, '')
-				return deckName
-			})
-			.filter(Boolean)
-		setLoadedDecks(deckList.sort())
+	// TOASTS
+	const dispatchToast = (toast: ToastT) =>
+		dispatch({type: 'SET_TOAST', payload: toast})
+	const deleteToast: ToastT = {
+		open: true,
+		title: 'Deck Deleted!',
+		description: `Removed ${loadedDeck.name}`,
+		image: `/images/types/type-${loadedDeck.icon}.png`,
+	}
+	const selectedDeckToast: ToastT = {
+		open: true,
+		title: 'Deck Selected!',
+		description: `${loadedDeck.name} is now your active deck`,
+		image: `images/types/type-${loadedDeck.icon}.png`,
+	}
+	const lastValidDeckToast: ToastT = {
+		open: true,
+		title: 'Deck Selected!',
+		description: `${playerDeck.name} is now your active deck`,
+		image: `images/types/type-${playerDeck.icon}.png`,
 	}
 
-	const tokens = getTotalCost(pickedCards.map((card) => card.cardId))
-
-	const validationMessage = validateDeck(pickedCards.map((card) => card.cardId))
-
-	const addCard = (card: CardT) => {
-		setPickedCards((pickedCards) => {
-			return [
-				...pickedCards,
-				{cardId: card.cardId, cardInstance: Math.random().toString()},
-			]
-		})
-	}
-	const removeCard = (card: CardT) => {
-		setPickedCards((pickedCards) =>
-			pickedCards.filter(
-				(pickedCard) => pickedCard.cardInstance !== card.cardInstance
-			)
-		)
-	}
+	// MENU LOGIC
 	const backToMenu = () => {
+		if (loadedDeck.cards.length != 42) {
+			return setShowValidateDeckModal(true)
+		}
+
+		dispatchToast(selectedDeckToast)
+
 		dispatch({
 			type: 'UPDATE_DECK',
-			payload: pickedCards.map((card) => card.cardId),
+			payload: {
+				name: loadedDeck.name,
+				icon: loadedDeck.icon,
+				cards: loadedDeck.cards.map((card) => card.cardId),
+			},
 		})
 		setMenuSection('mainmenu')
 	}
+	const handleInvalidDeck = () => {
+		setMenuSection('mainmenu')
+		dispatchToast(lastValidDeckToast)
+	}
+	const handleImportDeck = (deck: PlayerDeckT) => {
+		setImportedDeck(deck)
+		importDeck(deck)
+	}
 
-	const clearDeck = () => {
-		setPickedCards([])
-	}
-	const saveDeck = () => {
-		localStorage.setItem('Loadout_' + deckName, JSON.stringify(pickedCards))
-		loadSavedDecks()
-	}
-	const loadDeck = () => {
-		const deck = localStorage.getItem('Loadout_' + deckName)
-		if (!deck) return
-		const deckIds = JSON.parse(deck).filter((card: CardT) => CARDS[card.cardId])
-		setPickedCards(deckIds)
-	}
-	const allCards = Object.values(CARDS).map(
-		(card: CardInfoT): CardT => ({
-			cardId: card.id,
-			cardInstance: card.id,
+	//DECK LOGIC
+	const loadDeck = (deckName: string) => {
+		if (!deckName)
+			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+		const deck: PlayerDeckT = JSON.parse(
+			localStorage.getItem('Deck_' + deckName) || '{}'
+		)
+
+		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
+
+		setLoadedDeck({
+			...deck,
+			cards: deckIds,
 		})
+	}
+	const importDeck = (deck: PlayerDeckT) => {
+		let deckExists = false
+		savedDeckNames.map((name) => {
+			if (name === deck.name) {
+				console.log(`Name: ${name} | Import: ${deck.name}`)
+				deckExists = true
+			}
+		})
+		deckExists && setShowOverwriteModal(true)
+		!deckExists && saveDeck(deck)
+	}
+	const saveDeck = (deck: PlayerDeckT, prevDeck?: PlayerDeckT) => {
+		console.log(`prevDeck:`, prevDeck)
+		//Remove previous deck from Local Storage
+		prevDeck &&
+			prevDeck.name !== 'Default' &&
+			localStorage.removeItem(`Deck_${prevDeck.name}`)
+
+		//Save new deck to Local Storage
+		localStorage.setItem(
+			'Deck_' + deck.name,
+			JSON.stringify({
+				name: deck.name,
+				icon: deck.icon,
+				cards: deck.cards,
+			})
+		)
+
+		//Refresh saved deck list and load new deck
+		setSavedDecks(getSavedDecks())
+		loadDeck(deck.name)
+	}
+	const deleteDeck = () => {
+		dispatchToast(deleteToast)
+		localStorage.removeItem('Deck_' + loadedDeck.name)
+		setSavedDecks(getSavedDecks())
+		loadDeck(JSON.parse(savedDecks[0]).name)
+	}
+	const deckList: ReactNode = savedDecks.map((d: any, i: number) => {
+		const deck: PlayerDeckT = JSON.parse(d)
+		return (
+			<li
+				className={classNames(
+					css.myDecksItem,
+					loadedDeck.name === deck.name && css.selectedDeck
+				)}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck.name)
+				}}
+			>
+				<div className={css.deckImage}>
+					<img
+						src={'../images/types/type-' + deck.icon + '.png'}
+						alt={'deck-icon'}
+					/>
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
+	const validationMessage = validateDeck(
+		loadedDeck.cards.map((card) => card.cardId)
 	)
+	const selectedCards = {
+		hermits: loadedDeck.cards.filter(
+			(card) => CARDS[card.cardId]?.type === 'hermit'
+		),
+		items: loadedDeck.cards.filter(
+			(card) => CARDS[card.cardId]?.type === 'item'
+		),
+		effects: loadedDeck.cards.filter(
+			(card) =>
+				CARDS[card.cardId]?.type === 'effect' ||
+				CARDS[card.cardId]?.type === 'single_use'
+		),
+	}
 
-	useEffect(() => loadSavedDecks(), [])
+	//MISC
+	const playSwitchDeckSFX = () => {
+		if (settings.soundOn !== 'off') {
+			const pageTurn = [
+				'/sfx/Page_turn1.ogg',
+				'/sfx/Page_turn2.ogg',
+				'/sfx/Page_turn3.ogg',
+			]
+			const audio = new Audio(
+				pageTurn[Math.floor(Math.random() * pageTurn.length)]
+			)
+			audio.play()
+		}
+	}
+	const getLegacyDecks = () => {
+		for (let i = 0; i < localStorage.length; i++) {
+			const lsKey = localStorage.key(i)
 
-	const sortedAllCards = sortCards(allCards)
-	const sortedDeckCards = sortCards(pickedCards)
+			if (lsKey?.includes('Loadout_')) return true
+		}
+		return false
+	}
+	const convertLegacyDecks = () => {
+		let conversionCount = 0
+		for (let i = 0; i < localStorage.length; i++) {
+			const lsKey = localStorage.key(i)
 
-	return (
-		<div className={css.deck}>
-			<div className={css.header}>
-				<div className={css.topLine}>
-					<button disabled={!!validationMessage} onClick={backToMenu}>
-						Back to menu
-					</button>
-					<div className={css.limits}>{validationMessage}</div>
-					<div className={css.dynamicSpace} />
-					<button onClick={clearDeck}>Clear</button>
-					<div className={css.saveLoadDecks}>
-						<input
-							maxLength={25}
-							name="deckName"
-							placeholder="Deck Name..."
-							onBlur={(e) => {
-								setDeckName(e.target.value)
-							}}
-							list="deck-list"
-						/>
-						<datalist id="deck-list">
-							{loadedDecks.map((deckName: string) => (
-								<option key={deckName} value={deckName} />
-							))}
-						</datalist>
-						<button type="button" onClick={saveDeck}>
-							Save
-						</button>
-						<button type="button" onClick={loadDeck}>
-							Load
-						</button>
-					</div>
-					<button type="button" onClick={() => setShowImportExport(true)}>
-						Import/Export
-					</button>
-				</div>
-				<div className={css.cardsHeader}>
-					<div className={classnames(css.cardsTitle, css.allCards)}>
-						All cards
-					</div>
-					<div className={classnames(css.cardsTitle, css.selectedCards)}>
-						<span>Your deck ({pickedCards.length})</span>
-						<span> - </span>
-						<span> </span>
-						<span className={css.tokens} title="Tokens">
-							{tokens} / {CONFIG.limits.maxDeckCost} tokens
-						</span>
-					</div>
-				</div>
-			</div>
-			<div className={css.cards}>
-				<div className={classnames(css.cardColumn, css.allCards)}>
-					<CardList
-						cards={sortedAllCards}
-						onClick={addCard}
-						size="small"
-						wrap={true}
-					/>
-				</div>
-				<div className={classnames(css.cardColumn, css.selectedCards)}>
-					<CardList
-						cards={sortedDeckCards}
-						onClick={removeCard}
-						size="small"
-						wrap={true}
-					/>
-				</div>
-			</div>
-			{showImportExport ? (
-				<ImportExport
-					pickedCards={pickedCards}
-					setPickedCards={setPickedCards}
-					close={() => setShowImportExport(false)}
+			if (lsKey?.includes('Loadout_')) {
+				conversionCount = conversionCount + 1
+				const legacyName = lsKey.replace('Loadout_', '[Legacy] ')
+				const legacyDeck = localStorage.getItem(lsKey)
+
+				const convertedDeck = {
+					name: legacyName,
+					icon: 'any',
+					cards: JSON.parse(legacyDeck || ''),
+				}
+
+				localStorage.setItem(
+					`Deck_${legacyName}`,
+					JSON.stringify(convertedDeck)
+				)
+
+				localStorage.removeItem(lsKey)
+				console.log(`Converted deck!:`, lsKey, legacyName)
+			}
+		}
+
+		setSavedDecks(getSavedDecks())
+
+		dispatch({
+			type: 'SET_TOAST',
+			payload: {
+				show: true,
+				title: 'Convert Legacy Decks',
+				description: conversionCount
+					? `Converted ${conversionCount} decks!`
+					: `No decks to convert!`,
+				image: `/images/card-icon.png`,
+			},
+		})
+	}
+
+	// TODO: Convert to component
+	const SelectDeck = () => {
+		return (
+			<>
+				<ImportExportModal
+					setOpen={showImportExportModal}
+					onClose={() => setShowImportExportModal(!showImportExportModal)}
+					importDeck={(deck) => handleImportDeck(deck)}
+					loadedDeck={loadedDeck}
 				/>
-			) : null}
-		</div>
-	)
+				<AlertModal
+					setOpen={showValidateDeckModal}
+					onClose={() => setShowValidateDeckModal(!showValidateDeckModal)}
+					action={handleInvalidDeck}
+					title="Invalid Deck"
+					description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
+					matches. If you continue, your last valid deck will be used instead.`}
+					actionText="Main Menu"
+				/>
+				<AlertModal
+					setOpen={showDeleteDeckModal}
+					onClose={() => setShowDeleteDeckModal(!showDeleteDeckModal)}
+					action={() => deleteDeck()}
+					title="Delete Deck"
+					description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
+					actionText="Delete"
+				/>
+				<AlertModal
+					setOpen={showOverwriteModal}
+					onClose={() => setShowOverwriteModal(!showOverwriteModal)}
+					action={() => saveDeck(importedDeck)}
+					title="Overwrite Deck"
+					description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
+					actionText="Overwrite"
+				/>
+
+				<DeckLayout title="Deck Selection" back={backToMenu}>
+					<DeckLayout.Main
+						header={
+							<>
+								<div className={css.headerGroup}>
+									<div className={css.deckImage}>
+										<img
+											src={
+												'../images/types/type-' +
+												(!loadedDeck.icon ? 'any' : loadedDeck.icon) +
+												'.png'
+											}
+											alt="deck-icon"
+										/>
+									</div>
+									<p className={css.deckName}>{loadedDeck.name}</p>
+									<div className={css.dynamicSpace}></div>
+
+									<p
+										className={classNames(
+											css.cardCount,
+											loadedDeck.cards.length != CONFIG.limits.maxCards
+												? css.error
+												: null
+										)}
+									>
+										{loadedDeck.cards.length}/{CONFIG.limits.maxCards} cards
+									</p>
+									<div className={css.cardCount}>
+										<p className={css.ultraRare}>
+											{getTotalCost(
+												loadedDeck.cards.map((card) => card.cardId)
+											)}
+											/{CONFIG.limits.maxDeckCost} tokens
+										</p>
+									</div>
+								</div>
+							</>
+						}
+					>
+						<div className={css.filterGroup}>
+							<Button
+								variant="default"
+								size="small"
+								onClick={() => setMode('edit')}
+								leftSlot={<EditIcon />}
+							>
+								Edit Deck
+							</Button>
+							{loadedDeck.name !== 'Default' && (
+								<Button
+									variant="error"
+									size="small"
+									leftSlot={<DeleteIcon />}
+									onClick={() => setShowDeleteDeckModal(true)}
+								>
+									Delete Deck
+								</Button>
+							)}
+						</div>
+						{validationMessage && (
+							<div className={css.validationMessage}>
+								<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span>{' '}
+								{validationMessage}
+							</div>
+						)}
+
+						<Accordion
+							header={cardGroupHeader('Hermits', selectedCards.hermits)}
+						>
+							<CardList
+								cards={sortCards(selectedCards.hermits)}
+								size="small"
+								wrap={true}
+							/>
+						</Accordion>
+
+						<Accordion
+							header={cardGroupHeader('Effects', selectedCards.effects)}
+						>
+							<CardList
+								cards={sortCards(selectedCards.effects)}
+								size="small"
+								wrap={true}
+							/>
+						</Accordion>
+
+						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								size="small"
+								wrap={true}
+							/>
+						</Accordion>
+					</DeckLayout.Main>
+					<DeckLayout.Sidebar
+						header={
+							<>
+								<img
+									src="../images/card-icon.png"
+									alt="card-icon"
+									className={css.sidebarIcon}
+								/>
+								<p style={{marginInline: 'auto'}}>My Decks</p>
+							</>
+						}
+						footer={
+							<>
+								<Button.SplitGroup style={{padding: '0.5rem'}}>
+									<Button variant="primary" onClick={() => setMode('create')}>
+										Create New Deck
+									</Button>
+									<Button
+										variant="primary"
+										onClick={() =>
+											setShowImportExportModal(!showImportExportModal)
+										}
+									>
+										<ExportIcon />
+									</Button>
+								</Button.SplitGroup>
+							</>
+						}
+					>
+						{savedDecks.length == 1 && (
+							<p style={{fontSize: '0.9rem', padding: '0.5rem'}}>
+								Looks like you don't have any decks! Create your own or import
+								one from a friend!
+							</p>
+						)}
+						{getLegacyDecks() === true && (
+							<Button
+								style={{margin: '0.5rem auto'}}
+								onClick={convertLegacyDecks}
+							>
+								Import Legacy Decks
+							</Button>
+						)}
+						{deckList}
+					</DeckLayout.Sidebar>
+				</DeckLayout>
+			</>
+		)
+	}
+
+	// MODE ROUTER
+	const router = () => {
+		switch (mode) {
+			case 'select':
+				return <SelectDeck />
+				break
+			case 'edit':
+				return (
+					<EditDeck
+						back={() => setMode('select')}
+						title={'Deck Editor'}
+						saveDeck={(returnedDeck) => saveDeck(returnedDeck)}
+						deck={loadedDeck}
+					/>
+				)
+				break
+			case 'create':
+				return (
+					<EditDeck
+						back={() => setMode('select')}
+						title={'Deck Creation'}
+						saveDeck={(returnedDeck) => saveDeck(returnedDeck)}
+						deck={{
+							name: '',
+							icon: 'any',
+							cards: [],
+						}}
+					/>
+				)
+				break
+			default:
+				return <SelectDeck />
+		}
+	}
+
+	return router()
 }
 
 export default Deck
