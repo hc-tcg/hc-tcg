@@ -22,6 +22,7 @@ import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
+import followUpSaga from './turn-actions/follow-up'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -326,6 +327,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 			!opponentAvailableActions.includes('FOLLOW_UP')
 		)
 			return
+		const result = yield call(followUpSaga, game, turnAction, actionState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
