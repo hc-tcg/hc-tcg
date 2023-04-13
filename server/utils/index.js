@@ -133,11 +133,17 @@ export function discardSingleUse(game, playerState) {
 export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
 	const fortune = !!currentPlayer.custom['fortune']
+	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
+
 	/** @type {Array<CoinFlipT>} */
 	const result = []
 	for (let i = 0; i < times; i++) {
 		/** @type {CoinFlipT} */
-		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
+		const coinFlip = forceHeads
+			? 'heads'
+			: Math.random() > 0.5
+			? 'heads'
+			: 'tails'
 		result.push(coinFlip)
 	}
 	return result
