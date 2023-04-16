@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import {CardInfoT, HermitTypeT} from 'common/types/cards'
 import STRENGTHS from 'server/const/strengths'
 import css from './card-tooltip.module.scss'
-import {getCardCost, getCardRank} from 'server/utils/validation'
+import {getCardRank} from 'server/utils/validation'
 
 const TYPED_STRENGTHS = STRENGTHS as Record<HermitTypeT, Array<HermitTypeT>>
 
@@ -144,7 +144,7 @@ const getName = (card: CardInfoT): React.ReactNode => {
 }
 
 const getRank = (card: CardInfoT): React.ReactNode => {
-	let {name, cost} = getCardRank(card.id)
+	const {name, cost} = getCardRank(card.id)
 	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
 	return (
 		<div className={classnames(css.rank, css[name])}>
