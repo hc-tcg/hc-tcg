@@ -1,29 +1,29 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class Cubfan135RareHermitCard extends HermitCard {
+class MrCatCharacterCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'cubfan135_rare',
-			name: 'Cub',
+			id: 'mrCat',
+			name: 'Mr. Cat',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
-			health: 260,
+			hermitType: 'cat',
+			health: 290,
 			primary: {
-				name: 'Dash',
-				cost: ['any'],
+				name: 'Attack Heli',
+				cost: ['cat'],
 				damage: 60,
 				power: null,
 			},
 			secondary: {
-				name: "Let's Go",
-				cost: ['speedrunner', 'speedrunner', 'speedrunner'],
+				name: "Teleportation",
+				cost: ['cat', 'cat'],
 				damage: 100,
 				power:
-					'After attack, Player can choose to swap Cubfan with AFK Hermit.',
+					'After attack, Player can choose to swap Mr. Cat with AFK Character.',
 			},
 		})
 	}
@@ -69,11 +69,11 @@ class Cubfan135RareHermitCard extends HermitCard {
 				if (
 					usedPower &&
 					hasOtherHermit &&
-					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!pastTurnActions.includes('CHANGE_ACTIVE_CHARACTER') &&
 					availableActions.includes('END_TURN') &&
-					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
+					!availableActions.includes('CHANGE_ACTIVE_CHARACTER')
 				) {
-					availableActions.push('CHANGE_ACTIVE_HERMIT')
+					availableActions.push('CHANGE_ACTIVE_CHARACTER')
 				}
 				return availableActions
 			}
@@ -81,4 +81,4 @@ class Cubfan135RareHermitCard extends HermitCard {
 	}
 }
 
-export default Cubfan135RareHermitCard
+export default MrCatCharacterCard
