@@ -17,8 +17,40 @@ class SleepyCharacterCard extends CharacterCard {
 				name: 'Eat Ice Cream',
 				cost: ['icecream', 'icecream'],
 				damage: 50,
-				power: null,
+				power: 
+					'Does an additional +20HP damage for every benched Ice Cream Dealer up to a maximum of +40HP damage.',
 			},
+		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 */
+	register(game) {
+		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
+			const {currentPlayer} = game.ds
+			const {
+				attackerCharacterCard,
+				attackerCharacterInfo,
+				typeAction,
+				attackerActiveRow,
+			} = attackState
+
+			if (typeAction !== 'SECONDARY_ATTACK') return target
+			if (!target.isActive) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
+
+			const iceCreamDealerRows = currentPlayer.board.rows.filter((row) => {
+				const isIceCreamDealer = row.characterCard?.cardId.startsWith('iceCreamDealer')
+				return isIceCreamDealer
+			})
+			const total = Math.min(iceCreamDealerRows.length, 2)
+			target.extraHermitDamage += total * 20
+
+			return target
+			},
+				      
+				      
 			secondary: {
 				name: 'Sleep',
 				cost: ['icecream', 'icecream', 'icecream'],
