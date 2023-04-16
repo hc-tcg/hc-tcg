@@ -1,18 +1,18 @@
 import Card from '../_card'
 
-class HermitCard extends Card {
+class CharacterCard extends Card {
 	constructor(defs) {
-		defs.type = 'hermit'
+		defs.type = 'character'
 		super(defs)
 
-		if (!defs.health || !defs.primary || !defs.secondary || !defs.hermitType) {
+		if (!defs.health || !defs.primary || !defs.secondary || !defs.characterType) {
 			throw new Error('Invalid card definition')
 		}
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
-		this.hermitType = defs.hermitType
+		this.characterType = defs.characterType
 	}
 }
 
-export default HermitCard
+export default CharacterCard
