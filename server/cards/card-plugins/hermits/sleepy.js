@@ -36,7 +36,7 @@ class SleepyCharacterCard extends CharacterCard {
 				attackerActiveRow,
 			} = attackState
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
+			if (typeAction !== 'PRIMARY_ATTACK') return target
 			if (!target.isActive) return target
 			if (attackerCharacterCard.cardId !== this.id) return target
 
