@@ -1,27 +1,27 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 import {flipCoin} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class TinFoilChefRareHermitCard extends HermitCard {
+class DonutCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'tinfoilchef_rare',
-			name: 'TFC',
+			id: 'donut',
+			name: 'Donut',
 			rarity: 'rare',
-			hermitType: 'miner',
+			characterType: 'bot',
 			health: 300,
 			primary: {
-				name: 'True Hermit',
-				cost: ['any'],
-				damage: 40,
+				name: 'Soon',
+				cost: ['bot'],
+				damage: 30,
 				power: null,
 			},
 			secondary: {
-				name: 'Branch Mine',
-				cost: ['miner', 'miner'],
+				name: 'Grind',
+				cost: ['bot', 'bot'],
 				damage: 80,
 				power:
 					'Flip a Coin.\n\nIf heads, player draws another card at the end of their turn.',
@@ -35,11 +35,11 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {attackerCharacterCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
@@ -53,4 +53,4 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	}
 }
 
-export default TinFoilChefRareHermitCard
+export default DonutCharacterCard
