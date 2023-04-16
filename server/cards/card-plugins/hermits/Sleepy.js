@@ -11,7 +11,7 @@ class SleepyCharacterCard extends CharacterCard {
 			id: 'sleepy',
 			name: 'Sleepy',
 			rarity: 'ultra_rare',
-			hermitType: 'iceCream',
+			characterType: 'iceCream',
 			health: 250,
 			primary: {
 				name: 'Eat Ice Cream',
