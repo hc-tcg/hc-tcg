@@ -1,17 +1,17 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
 // TODO - can't be used consecutively
-class BdoubleO100RareHermitCard extends HermitCard {
+class SleepyCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'bdoubleo100_rare',
+			id: 'sleepy',
 			name: 'Sleepy',
 			rarity: 'ultra_rare',
-			hermitType: 'icecream',
+			hermitType: 'iceCream',
 			health: 250,
 			primary: {
 				name: 'Eat Ice Cream',
@@ -24,11 +24,11 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				cost: ['icecream', 'icecream', 'icecream'],
 				damage: 0,
 				power:
-					"Sleepy sleeps for the next 2 turns. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
+					"Sleepy sleeps for the next turn. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
 			},
 		})
 
-		this.turnDuration = 2
+		this.turnDuration = 1
 	}
 
 	/**
@@ -37,11 +37,11 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, attackerActiveRow, typeAction} = attackState
+			const {attackerCharacterCard, attackerActiveRow, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
 			// shreep - instantly heal to max hp
 
 			// e.g. if bed was used
@@ -50,14 +50,14 @@ class BdoubleO100RareHermitCard extends HermitCard {
 
 			// store current turn to disable Shreep for one turn when it is over
 			const conInfo = currentPlayer.custom[this.id] || {}
-			conInfo[attackerHermitCard.cardInstance] = game.state.turn
+			conInfo[attackerCharacterCard.cardInstance] = game.state.turn
 			currentPlayer.custom[this.id] = conInfo
 
 			attackerActiveRow.health = this.health
 			attackerActiveRow.ailments = attackerActiveRow.ailments.filter(
 				(a) => a.id !== 'sleeping'
 			)
-			attackerActiveRow.ailments.push({id: 'sleeping', duration: 2})
+			attackerActiveRow.ailments.push({id: 'sleeping', duration: 1})
 		})
 
 		// Disable shreep attack consecutively
@@ -65,19 +65,19 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			const {currentPlayer} = game.ds
 
 			// we must have active hermit
-			const activeHermit =
-				currentPlayer.board.rows[currentPlayer.board.activeRow]?.hermitCard
-			if (activeHermit?.cardId !== this.id) return availableActions
+			const activeCharacter =
+				currentPlayer.board.rows[currentPlayer.board.activeRow]?.characterCard
+			if (activeCharacter?.cardId !== this.id) return availableActions
 
 			// we want to make changes only if shreep was used by the hermit
 			const conInfo = currentPlayer.custom[this.id]
-			const lastTurnUsed = conInfo?.[activeHermit.cardInstance]
+			const lastTurnUsed = conInfo?.[activeCharacter.cardInstance]
 			if (typeof lastTurnUsed !== 'number') return availableActions
 
 			// Prevent use of shreep consecutively
 			const consecutive = lastTurnUsed + 6 >= game.state.turn
 			if (!consecutive) {
-				delete conInfo[activeHermit.cardInstance]
+				delete conInfo[activeCharacter.cardInstance]
 				return availableActions
 			}
 
@@ -86,4 +86,4 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	}
 }
 
-export default BdoubleO100RareHermitCard
+export default SleepyCharacterCard
