@@ -1,4 +1,4 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 import {flipCoin} from '../../../utils'
 
 /**
@@ -26,22 +26,22 @@ import {flipCoin} from '../../../utils'
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'grian_rare',
-			name: 'Grian',
+			id: 'harison25',
+			name: 'Harison25',
 			rarity: 'rare',
-			hermitType: 'prankster',
-			health: 300,
-			primary: {
-				name: 'Borrow',
-				cost: ['prankster', 'prankster'],
-				damage: 50,
-				power:
-					"Flip a Coin.\n\nIf heads, Grian takes opponent's active effect card.\n\nPlayer can choose to attach card or discard.\n\n",
-			},
+			characterType: 'minecraft',
+			health: 280,
 			secondary: {
-				name: 'Start a War',
-				cost: ['prankster', 'prankster', 'prankster'],
-				damage: 100,
+				name: 'Robbery',
+				cost: ['minecraft', 'minecraft','any'],
+				damage: 90,
+				power:
+					"Flip a Coin.\n\nIf heads, Harison25 takes opponent's active effect card.\n\nPlayer can choose to attach card or discard.\n\n",
+			},
+			primary: {
+				name: 'Flush',
+				cost: ['minecraft'],
+				damage: 40,
 				power: null,
 			},
 		})
@@ -55,12 +55,12 @@ class GrianRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {attackerCharacterCard, typeAction} = attackState
 
-			if (typeAction !== 'PRIMARY_ATTACK') return target
+			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
 			currentPlayer.custom[this.id] = true
 
 			return target
@@ -78,7 +78,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const anyEmptyEffectSlots = currentPlayer.board.rows.some(
-				(row) => !!row.hermitCard && !row.effectCard
+				(row) => !!row.characterCard && !row.effectCard
 			)
 
 			if (!anyEmptyEffectSlots) {
@@ -133,4 +133,4 @@ class GrianRareHermitCard extends HermitCard {
 	}
 }
 
-export default GrianRareHermitCard
+export default Harison25CharacterCard
