@@ -1,12 +1,12 @@
 import CharacterCard from './_character-card'
 
-class BynnyBoyOkuCharacterCard extends CharacterCard {
+class BunnyBoyOkuCharacterCard extends CharacterCard {
 	constructor() {
 		super({
 			id: 'bunnyBoyOku',
 			name: 'Bunny Boy Oku',
 			rarity: 'common',
-			hermitType: 'australian',
+			characterType: 'australian',
 			health: 290,
 			primary: {
 				name: 'The Avatar',
