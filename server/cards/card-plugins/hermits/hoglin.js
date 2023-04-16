@@ -11,7 +11,7 @@ class HoglinCharacterCard extends CharacterCard {
 			id: 'hoglin',
 			name: 'Hoglin',
 			rarity: 'rare',
-			hermitType: 'bacon',
+			characterType: 'bacon',
 			health: 290,
 			primary: {
 				name: 'Charge',
