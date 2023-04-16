@@ -4,7 +4,7 @@ import CharacterCard from './_character-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class MrCatCharacterCard extends HermitCard {
+class MrCatCharacterCard extends CharacterCard {
 	constructor() {
 		super({
 			id: 'mrCat',
@@ -34,17 +34,17 @@ class MrCatCharacterCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {attackerCharacterCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
 
 			currentPlayer.custom[this.id] = true
 			return target
 		})
 
-		game.hooks.changeActiveHermit.tap(this.id, () => {
+		game.hooks.changeActiveCharacter.tap(this.id, () => {
 			const {currentPlayer} = game.ds
 			const usedPower = currentPlayer.custom[this.id]
 			if (usedPower) {
@@ -62,13 +62,13 @@ class MrCatCharacterCard extends HermitCard {
 			(availableActions, pastTurnActions) => {
 				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id]
-				const hasOtherHermit = currentPlayer.board.rows.some(
+				const hasOtherCharacter = currentPlayer.board.rows.some(
 					(row, index) =>
-						row.hermitCard && index !== currentPlayer.board.activeRow
+						row.characterCard && index !== currentPlayer.board.activeRow
 				)
 				if (
 					usedPower &&
-					hasOtherHermit &&
+					hasOtherCharacter &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_CHARACTER') &&
 					availableActions.includes('END_TURN') &&
 					!availableActions.includes('CHANGE_ACTIVE_CHARACTER')
