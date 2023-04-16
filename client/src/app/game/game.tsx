@@ -112,30 +112,32 @@ function Game() {
 
 	return (
 		<div className={css.game}>
-			<Board onClick={handleBoardClick} localGameState={gameState} />
-			<div className={css.bottom}>
-				<div className={css.toolbar}>
-					<Toolbar />
+			<div className={css.innerGame}>
+				<Board onClick={handleBoardClick} localGameState={gameState} />
+				<div className={css.bottom}>
+					<div className={css.toolbar}>
+						<Toolbar />
+					</div>
+					<div className={css.hand}>
+						<CardList
+							wrap={false}
+							size="medium"
+							cards={gameState.hand}
+							onClick={(card: CardT) => selectCard(card)}
+							selected={selectedCard}
+							picked={pickedCardsInstances}
+						/>
+					</div>
 				</div>
-				<div className={css.hand}>
-					<CardList
-						wrap={false}
-						size="medium"
-						cards={gameState.hand}
-						onClick={(card: CardT) => selectCard(card)}
-						selected={selectedCard}
-						picked={pickedCardsInstances}
-					/>
-				</div>
+				{renderModal(openedModal, handleOpenModal)}
+				{pickProcess ? (
+					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
+				) : null}
+
+				<Chat />
+
+				{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 			</div>
-			{renderModal(openedModal, handleOpenModal)}
-			{pickProcess ? (
-				<MouseIndicator message={getPickProcessMessage(pickProcess)} />
-			) : null}
-
-			<Chat />
-
-			{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 		</div>
 	)
 }

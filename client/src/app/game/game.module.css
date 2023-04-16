@@ -1,17 +1,32 @@
 .game {
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	box-sizing: border-box;
+}
+
+.innerGame {
 	background: url('https://static.wikia.nocookie.net/minecraft/images/a/ab/Badlands-island-chain-minecraft-seed-2000x1200.jpeg')
 		no-repeat;
 	background-size: cover;
-	min-height: max(740px, 100vh);
+	min-height: max(740px, 100%);
+	width: 100%;
 
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
 		'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
 		sans-serif;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+@media screen and (max-width: 1230px) {
+	.innerGame {
+		width: max-content;
+	}
 }
 
 .bottom {
-	position: fixed;
-	bottom: 0;
 	width: 100%;
 	height: 240px;
 	background: beige;
