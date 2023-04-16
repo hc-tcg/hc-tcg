@@ -11,7 +11,7 @@ class CrackKittyCharacterCard extends CharacterCard {
 			id: 'crackKitty',
 			name: 'Crack Kitty',
 			rarity: 'rare',
-			hermitType: 'cat',
+			characterType: 'cat',
 			health: 280,
 			primary: {
 				name: 'Cocaine',
