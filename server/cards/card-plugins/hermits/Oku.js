@@ -1,35 +1,35 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 import {flipCoin} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class Docm77RareHermitCard extends HermitCard {
+class OkuCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'docm77_rare',
-			name: 'Docm77',
+			id: 'oku',
+			name: 'Oku',
 			rarity: 'rare',
-			hermitType: 'farm',
-			health: 280,
+			characterType: 'australian',
+			health: 260,
 			primary: {
-				name: 'Shadow Tech',
-				cost: ['any'],
-				damage: 40,
+				name: 'Sonic Lore',
+				cost: ['australian', 'australian'],
+				damage: 70,
 				power: null,
 			},
 			secondary: {
-				name: 'World Eater',
-				cost: ['farm', 'farm'],
-				damage: 80,
+				name: 'Straight Lunge',
+				cost: ['australian'],
+				damage: 50,
 				power:
-					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, attack damage is halved.',
+					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, its a regular attack.',
 			},
 		})
 
 		this.headsMultiplier = 2
-		this.tailsMultiplier = 0.5
+		this.tailsMultiplier = 1
 	}
 
 	/**
@@ -38,12 +38,12 @@ class Docm77RareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {attackerCharacterCard, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
 
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (attackerCharacterCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
@@ -58,4 +58,4 @@ class Docm77RareHermitCard extends HermitCard {
 	}
 }
 
-export default Docm77RareHermitCard
+export default OkuCharacterCard
