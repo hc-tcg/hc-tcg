@@ -14,11 +14,7 @@
 		"maxCards": 42,
 		"maxDuplicates": 3,
 
-		"maxDeckCost": 30,
-		"ironCost": 1,
-		"goldCost": 2,
-		"emeraldCost": 3,
-		"diamondCost": 4
+		"maxDeckCost": 50
 	},
-	"logoSubText": "New meta! v0.4.2"
+	"logoSubText": "new-new-meta!"
 }

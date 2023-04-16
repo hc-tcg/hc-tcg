@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {HermitCardT} from 'common/types/cards'
 import css from './hermit-card-svg.module.scss'
-import {getCardCost, getCardRank} from 'server/utils/validation'
+import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
@@ -21,7 +21,6 @@ const HermitCard = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
-	const cost = getCardCost(card)
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
@@ -81,24 +80,24 @@ const HermitCard = ({card}: HermitCardProps) => {
 					className={css.hermitType}
 				/>
 			</g>
-			{showCost && rank !== 'stone' ? (
+			{showCost && rank.name !== 'stone' ? (
 				<g>
 					<image
 						x="68"
 						y="80"
 						width="70"
 						height="70"
-						href={`/images/power/${rank}.png`}
+						href={`/images/power/${rank.name}.png`}
 						className={css.power}
 					/>
 					<text
 						x="91"
-						y="107"
+						y="109.5"
 						fontSize="40"
 						fill="white"
-						className={classnames(css.powerText, css[rank])}
+						className={classnames(css.powerText, css[rank.name])}
 					>
-						{cost}
+						{rank.cost}
 					</text>
 				</g>
 			) : null}

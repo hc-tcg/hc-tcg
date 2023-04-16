@@ -144,13 +144,11 @@ const getName = (card: CardInfoT): React.ReactNode => {
 }
 
 const getRank = (card: CardInfoT): React.ReactNode => {
-	let rank = getCardRank(card.id)
-	if (!rank) rank = 'stone'
-	const cost = getCardCost(card)
-	const highlight = rank === 'stone' || rank === 'iron' ? '■' : '★'
+	let {name, cost} = getCardRank(card.id)
+	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
 	return (
-		<div className={classnames(css.rank, css[rank])}>
-			{highlight} {rank.charAt(0).toUpperCase() + rank.slice(1)} Rank ({cost}{' '}
+		<div className={classnames(css.rank, css[name])}>
+			{highlight} {name.charAt(0).toUpperCase() + name.slice(1)} Rank ({cost}{' '}
 			{cost !== 1 ? 'tokens' : 'token'}) {highlight}
 		</div>
 	)

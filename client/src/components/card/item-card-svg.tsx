@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {ItemCardT} from 'common/types/cards'
 import css from './item-card-svg.module.scss'
-import {getCardCost, getCardRank} from 'server/utils/validation'
+import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
@@ -11,7 +11,6 @@ export type ItemCardProps = {
 
 const ItemCard = ({card}: ItemCardProps) => {
 	const rank = getCardRank(card.id)
-	const cost = getCardCost(card)
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
@@ -74,7 +73,7 @@ const ItemCard = ({card}: ItemCardProps) => {
 				</g>
 			) : null}
 
-			{showCost && rank !== 'stone' ? (
+			{showCost && rank.name !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}
@@ -90,16 +89,16 @@ const ItemCard = ({card}: ItemCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/power/${rank}.png`}
+						href={`/images/power/${rank.name}.png`}
 						className={css.power}
 					/>
 					<text
 						x="52"
-						y="342"
+						y="344"
 						fontSize="40"
-						className={classnames(css.powerText, css[rank])}
+						className={classnames(css.powerText, css[rank.name])}
 					>
-						{cost}
+						{rank.cost}
 					</text>
 				</g>
 			) : null}

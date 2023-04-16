@@ -1,6 +1,6 @@
 import {EffectCardT} from 'common/types/cards'
 import css from './effect-card-svg.module.scss'
-import {getCardCost, getCardRank} from 'server/utils/validation'
+import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import classNames from 'classnames'
@@ -10,7 +10,6 @@ export type EffectCardProps = {
 }
 
 const HermitCard = ({card}: EffectCardProps) => {
-	const cost = getCardCost(card)
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	return (
@@ -55,7 +54,7 @@ const HermitCard = ({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank !== 'stone' ? (
+			{showCost && rank.name !== 'stone' ? (
 				<g>
 					<rect
 						className={css.rarity}
@@ -71,16 +70,16 @@ const HermitCard = ({card}: EffectCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/power/${rank}.png`}
+						href={`/images/power/${rank.name}.png`}
 						className={css.power}
 					/>
 					<text
 						x="52"
-						y="342"
+						y="344"
 						fontSize="40"
-						className={classNames(css.powerText, css[rank])}
+						className={classNames(css.powerText, css[rank.name])}
 					>
-						{cost}
+						{rank.cost}
 					</text>
 				</g>
 			) : null}

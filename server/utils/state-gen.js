@@ -1,7 +1,7 @@
 import CARDS from '../cards'
 import STRENGTHS from '../const/strengths'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
-import {getCardCost} from './validation'
+import {getCardCost, getCardRank} from './validation'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
@@ -72,7 +72,7 @@ export function getStarterPack() {
 	// hermits, but not diamond ones
 	let hermitCards = cards
 		.filter(isHermit)
-		.filter((card) => getCardCost(card) !== limits.diamondCost)
+		.filter((card) => getCardRank(card.id).name !== 'diamond')
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)

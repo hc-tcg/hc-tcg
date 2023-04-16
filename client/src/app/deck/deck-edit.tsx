@@ -15,10 +15,10 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG} from '../../../../config'
+import {CONFIG, RANKS} from '../../../../config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 
-const RANKS = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
+const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
 const DECK_ICONS = [
 	'any',
 	'balanced',
@@ -37,7 +37,7 @@ const iconDropdownOptions = DECK_ICONS.map((option) => ({
 	key: option,
 	icon: `/images/types/type-${option}.png`,
 }))
-const rarityDropdownOptions = RANKS.map((option) => ({
+const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/power/${option}.png`,
@@ -125,7 +125,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				? TYPED_CARDS[card.cardId]
 				: HTYPE_CARDS[card.cardId].hermitType.includes(typeQuery)) &&
 			// Card Rarity Filter
-			(rankQuery === '' || getCardRank(card.cardId) === rankQuery)
+			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery)
 	)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter(
@@ -254,10 +254,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 											src={`/images/power/${
 												rankQuery === '' ? 'any' : rankQuery
 											}.png`}
+											draggable={false}
 										/>
 									</button>
 								}
-								label="Rarity Filter"
+								label="Rank Filter"
 								options={rarityDropdownOptions}
 								action={(option) =>
 									setRankQuery(option === 'any' ? '' : option)
@@ -307,22 +308,30 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							onClick={addCard}
 						/>
 					</Accordion>
-					<Accordion header={'Items'}>
+					<Accordion header={'Attachable Effects'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'item'
+								(card) => TYPED_CARDS[card.cardId].type === 'effect'
 							)}
 							size="small"
 							wrap={true}
 							onClick={addCard}
 						/>
 					</Accordion>
-					<Accordion header={'Effects'}>
+					<Accordion header={'Single Use Effects'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) =>
-									TYPED_CARDS[card.cardId].type === 'effect' ||
-									TYPED_CARDS[card.cardId].type === 'single_use'
+								(card) => TYPED_CARDS[card.cardId].type === 'single_use'
+							)}
+							size="small"
+							wrap={true}
+							onClick={addCard}
+						/>
+					</Accordion>
+					<Accordion header={'Items'}>
+						<CardList
+							cards={sortCards(filteredCards).filter(
+								(card) => TYPED_CARDS[card.cardId].type === 'item'
 							)}
 							size="small"
 							wrap={true}

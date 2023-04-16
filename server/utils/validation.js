@@ -11,11 +11,18 @@ import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
  */
 export function getCardRank(cardId) {
 	/** @type {RankT} */
-	let rank = 'stone'
-	if (RANKS.iron.includes(cardId)) rank = 'iron'
-	else if (RANKS.gold.includes(cardId)) rank = 'gold'
-	else if (RANKS.emerald.includes(cardId)) rank = 'emerald'
-	else if (RANKS.diamond.includes(cardId)) rank = 'diamond'
+	let rank = {name: 'stone', cost: 0}
+	if (RANKS[cardId]) {
+		rank.cost = RANKS[cardId]
+
+		const rankKeys = Object.keys(RANKS.ranks)
+		const rankValues = Object.values(RANKS.ranks)
+		for (let i = 0; i < rankKeys.length; i++) {
+			const key = rankKeys[i]
+			const values = rankValues[i]
+			if (values.includes(rank.cost)) rank.name = key
+		}
+	}
 	return rank
 }
 
@@ -24,22 +31,7 @@ export function getCardRank(cardId) {
  */
 export function getCardCost(card) {
 	const rank = getCardRank(card.id)
-
-	switch (rank) {
-		case 'stone':
-			return 0
-		case 'iron':
-			return CONFIG.limits.ironCost
-		case 'gold':
-			return CONFIG.limits.goldCost
-		case 'emerald':
-			return CONFIG.limits.emeraldCost
-		case 'diamond':
-			return CONFIG.limits.diamondCost
-
-		default:
-			throw new Error(`Invalid rank "${rank}" on card "${card.id}"`)
-	}
+	return rank.cost
 }
 
 /**
