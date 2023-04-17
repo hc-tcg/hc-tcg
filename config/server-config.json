@@ -14,7 +14,7 @@
 		"maxCards": 42,
 		"maxDuplicates": 3,
 
-		"maxDeckCost": 50
+		"maxDeckCost": 42
 	},
 	"logoSubText": "new-new-meta!"
 }
