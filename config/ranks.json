@@ -121,14 +121,14 @@
 	"instant_health_ii": 2,
 	"diamond_armor": 2,
 	"fishing_rod": 2,
+	"tnt": 2,
 
 	"lava_bucket": 3,
 	"splash_potion_of_poison": 3,
-	"tnt": 3,
 	"chest": 3,
 	"emerald": 3,
+	"netherite_sword": 3,
 
-	"netherite_sword": 4,
 	"totem": 4,
 	"netherite_armor": 4,
 
