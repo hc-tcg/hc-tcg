@@ -92,9 +92,6 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 						<div>
 							{/* IMPORT SECTION */}
 							<div>
-								<p
-									className={css.instructions}
-								>{`To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.`}</p>
 								<div className={css.importControls}>
 									<div className={css.name}>
 										<Dropdown
@@ -121,6 +118,9 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 										ref={hashRef}
 										style={{flexGrow: 1}}
 									/>
+									<p
+										className={css.instructions}
+									>{`To import a deck, select a deck icon, give your deck a name, enter the Deck Hash, then click Import.`}</p>
 								</div>
 							</div>
 						</div>
