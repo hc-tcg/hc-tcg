@@ -4,7 +4,8 @@
 		"iron": [1],
 		"gold": [2],
 		"emerald": [3],
-		"diamond": [4, 5]
+		"diamond": [4],
+		"netherite": [5]
 	},
 
 	" - HERMITS - ": "Ordered by type and cost",
