@@ -29,6 +29,8 @@
 
 .padding {
 	padding: 1rem 0.5rem;
+	height: min-content;
+	box-sizing: border-box;
 }
 
 .hide {

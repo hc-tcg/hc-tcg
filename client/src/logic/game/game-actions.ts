@@ -16,6 +16,14 @@ export const gameState = (localGameState: LocalGameState) => ({
 	},
 })
 
+export const localGameState = (localGameState: LocalGameState) => ({
+	type: 'LOCAL_GAME_STATE' as const,
+	payload: {
+		localGameState,
+		time: Date.now(),
+	},
+})
+
 export const gameStart = () => ({
 	type: 'GAME_START' as const,
 })

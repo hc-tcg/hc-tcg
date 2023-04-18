@@ -19,14 +19,15 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import {
-	gameState,
+	localGameState,
 	gameStart,
 	gameEnd,
 	showEndGameOverlay,
 	setOpponentConnection,
+	gameState,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
-import {LocalGameState} from 'common/types/game-state'
+import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -80,17 +81,26 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
-	yield takeLatest('GAME_STATE', gameStateSaga)
-	yield fork(coinFlipSaga)
+	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
-		yield put(gameState(initialGameState))
+		yield put(localGameState(initialGameState))
 	}
 
+	// for coin flips
+	let coinFlipInfo: CoinFlipInfo = {
+		shownCoinFlips: [],
+		turn: 0,
+	}
 	while (true) {
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		yield put(gameState(payload.localGameState))
+		coinFlipInfo = yield call(
+			coinFlipSaga,
+			payload.localGameState,
+			coinFlipInfo
+		)
+		yield put(localGameState(payload.localGameState))
 	}
 }
 
@@ -122,6 +132,7 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 		} else if (Object.hasOwn(result, 'gameEnd')) {
 			const {gameState: newGameState, outcome, reason} = result.gameEnd.payload
 			if (newGameState) {
+				console.log('HERE')
 				yield put(
 					gameState({
 						...newGameState,

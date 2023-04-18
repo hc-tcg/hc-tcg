@@ -144,6 +144,11 @@ export type LocalGameState = {
 	}
 }
 
+export type CoinFlipInfo = {
+	shownCoinFlips: Array<string>
+	turn: number
+}
+
 // state sent to client
 export type LocalGameRoot = {
 	localGameState: LocalGameState | null

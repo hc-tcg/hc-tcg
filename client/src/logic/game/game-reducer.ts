@@ -20,7 +20,7 @@ const gameReducer = (
 	action: AnyAction
 ): LocalGameRoot => {
 	switch (action.type) {
-		case 'GAME_STATE':
+		case 'LOCAL_GAME_STATE':
 			const newGame: LocalGameRoot = {
 				...state,
 				localGameState: action.payload.localGameState,
