@@ -66,7 +66,7 @@
 /**
  * @typedef {'END_TURN' | 'APPLY_EFFECT' | 'REMOVE_EFFECT' | 'ZERO_ATTACK' |
  *  'PRIMARY_ATTACK' | 'SECONDARY_ATTACK' | 'FOLLOW_UP' | 'WAIT_FOR_OPPONENT_FOLLOWUP' |
- *  'CHANGE_ACTIVE_HERMIT' | 'ADD_HERMIT' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' |
+ *  'CHANGE_ACTIVE_CHARACTER' | 'ADD_CHARACTER' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' |
  *  'PLAY_EFFECT_CARD' | 'WAIT_FOR_TURN'} AvailableAction
  */
 
@@ -97,8 +97,8 @@
  * @typedef {Object} AttackStateProperties
  * @property {string} typeAction
  * @property {RowState | null} attackerActiveRow
- * @property {Card | null} attackerHermitCard
- * @property {Object | null} attackerHermitInfo
+ * @property {Card | null} attackerCharacterCard
+ * @property {Object | null} attackerCharacterInfo
  * @typedef {ActionState & AttackStateProperties} AttackState
  */
 
