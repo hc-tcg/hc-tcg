@@ -6,8 +6,12 @@
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-	max-width: 30vw;
+	max-width: 50vh;
 	overflow: visible;
+
+	& * {
+		user-select: none;
+	}
 }
 
 .splashText {

@@ -8,6 +8,7 @@ import socket from './socket'
 import store from './store'
 import * as Toast from '@radix-ui/react-toast'
 import toastCSS from 'components/toast/toast.module.scss'
+import Panorama from './app/main-menu/panorama'
 
 // @ts-ignore
 global.store = store
@@ -23,5 +24,6 @@ root.render(
 				<App />
 			</Toast.Provider>
 		</Provider>
+		<Panorama />
 	</React.StrictMode>
 )
