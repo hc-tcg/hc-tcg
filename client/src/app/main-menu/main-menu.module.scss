@@ -27,9 +27,7 @@
 	inset: 0;
 	display: grid;
 	place-content: flex-start center;
-	margin-top: 10vh;
-	height: 100%;
-	width: 100%; // Need full width to prevent user from moving the panorama.
+	padding-top: 10vh;
 	margin-inline: auto;
 }
 
@@ -68,24 +66,6 @@ nav {
 
 #logout {
 	grid-area: logout;
-}
-
-.version {
-	position: absolute;
-	bottom: 1vh;
-	left: 1vh;
-	color: var(--text-light);
-	filter: drop-shadow(1px 1px 0 var(--text-dark));
-	font-size: 1.3vh;
-	user-select: none;
-
-	& a {
-		color: var(--text-light);
-	}
-
-	& a:visited {
-		color: var(--text-light);
-	}
 }
 
 /* Settings Page */

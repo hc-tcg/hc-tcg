@@ -1,5 +1,39 @@
 import css from './link-container.module.scss'
 
+export function VersionLinks() {
+	return (
+		<p className={css.version}>
+			<span>Beta v0.5.1 - </span>
+			<a
+				href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
+				target="_blank"
+				rel="noreferrer"
+				title="Reddit"
+			>
+				Reddit
+			</a>
+			<span> - </span>
+			<a
+				href="https://github.com/martinkadlec0/hc-tcg"
+				target="_blank"
+				rel="noreferrer"
+				title="Github"
+			>
+				GitHub
+			</a>
+			<span> - </span>
+			<a
+				href="https://discord.gg/AjGbqNfcQX"
+				target="_blank"
+				rel="noreferrer"
+				title="Discord"
+			>
+				Discord
+			</a>
+		</p>
+	)
+}
+
 function LinkContainer() {
 	return (
 		<div className={css.linkContainer}>
