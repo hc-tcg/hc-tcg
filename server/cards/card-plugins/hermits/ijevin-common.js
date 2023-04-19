@@ -1,23 +1,23 @@
-import HermitCard from './_hermit-card'
+import CharacterCard from './_character-card'
 
-class IJevinCommonHermitCard extends HermitCard {
+class Harison24CharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'ijevin_common',
-			name: 'Jevin',
+			id: 'harison24',
+			name: 'Harison24',
 			rarity: 'common',
-			hermitType: 'explorer',
-			health: 250,
+			hermitType: 'minecraft',
+			health: 300,
 			primary: {
-				name: "Got 'Em",
-				cost: ['explorer'],
-				damage: 60,
+				name: "Pickaxe Smack",
+				cost: ['minecraft'],
+				damage: 50,
 				power: null,
 			},
 			secondary: {
-				name: 'Jevination',
-				cost: ['explorer', 'explorer', 'any'],
-				damage: 90,
+				name: 'Kill Bob',
+				cost: ['minecraft','minecraft'],
+				damage: 80,
 				power: null,
 			},
 		})
@@ -26,4 +26,4 @@ class IJevinCommonHermitCard extends HermitCard {
 	register(game) {}
 }
 
-export default IJevinCommonHermitCard
+export default Harison24CharacterCard
