@@ -10,6 +10,7 @@ import css from './main-menu.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
+import {VersionLinks} from 'components/link-container'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -84,35 +85,7 @@ function MainMenu({setMenuSection}: Props) {
 				</nav>
 				<Beef />
 			</div>
-			<p className={css.version}>
-				<span>Beta v0.5.1 - </span>
-				<a
-					href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
-					target="_blank"
-					rel="noreferrer"
-					title="Reddit"
-				>
-					Reddit
-				</a>
-				<span> - </span>
-				<a
-					href="https://github.com/martinkadlec0/hc-tcg"
-					target="_blank"
-					rel="noreferrer"
-					title="Github"
-				>
-					GitHub
-				</a>
-				<span> - </span>
-				<a
-					href="https://discord.gg/AjGbqNfcQX"
-					target="_blank"
-					rel="noreferrer"
-					title="Discord"
-				>
-					Discord
-				</a>
-			</p>
+			<VersionLinks />
 		</div>
 	)
 }

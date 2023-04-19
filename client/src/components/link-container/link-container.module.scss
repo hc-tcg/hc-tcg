@@ -17,3 +17,21 @@
 		}
 	}
 }
+
+.version {
+	position: absolute;
+	bottom: 1vh;
+	left: 1vh;
+	color: var(--text-light);
+	filter: drop-shadow(1px 1px 0 var(--text-dark));
+	font-size: 1.3vh;
+	user-select: none;
+
+	& a {
+		color: var(--text-light);
+	}
+
+	& a:visited {
+		color: var(--text-light);
+	}
+}
