@@ -1,8 +1,8 @@
 // common cards
-import BdoubleO100CommonHermitCard from './bdoubleo100-common'
-import Cubfan135CommonHermitCard from './cubfan135-common'
-import Docm77CommonHermitCard from './docm77-common'
-import EthosLabCommonHermitCard from './ethoslab-common'
+import BananaGunCharacterCard from './bananaGun'
+import BunnyBoyOkuCharacterCard from './bunnyBoyOku'
+import BurgerCharacterCard from './burger'
+import ChickenPizzaPanCharacterCard from './chickenPizzaPan'
 import FalseSymmetryCommonHermitCard from './falsesymmetry-common'
 import GeminiTayCommonHermitCard from './geminitay-common'
 import GrianCommonHermitCard from './grian-common'
