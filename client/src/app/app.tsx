@@ -11,6 +11,7 @@ import MainMenu from './main-menu'
 import Deck from './deck'
 import MatchMaking from './match-making'
 import Toast from 'components/toast'
+import More from './main-menu/main-menu-more'
 
 function App() {
 	const section = useRouter()
@@ -36,6 +37,8 @@ function App() {
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
+				case 'settings':
+					return <More setMenuSection={setMenuSection} />
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}

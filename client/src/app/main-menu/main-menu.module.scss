@@ -1,73 +1,71 @@
-/* Backgrounds */
-
-.menuBackground {
+.mainmenu {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
-	background-image: url('/images/menu-background-widescreen.png');
-	background-size: cover;
-	background-position: left;
-
-	&.backgroundOverride {
-		background-image: url('/images/menu-background.png');
-		background-position: center;
-	}
-
-	* {
-		user-select: none;
-	}
+	background: var(--gray-700);
+	color: var(--text-light);
 }
 
-/* Universal */
-
-.menuButton {
-	margin-bottom: 2.5vh;
+.welcome {
+	position: absolute;
+	top: 2vh;
+	right: 2vh;
+	background-color: #333a;
+	padding: 0.5rem 1rem;
+	border-radius: 0.25rem;
+	user-select: none;
 }
 
-.smallButtonContainer {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	justify-content: space-between;
-
-	&.switchGaps {
-		margin-bottom: 2.5vh;
-	}
-
-	.menuButton {
-		width: calc(50% - 1.25vh);
-		margin: 0 1.25vh;
-		flex-grow: 1;
-
-		&:first-of-type {
-			margin-left: 0;
-		}
-
-		&:last-of-type {
-			margin-right: 0;
-		}
-	}
+.logo {
+	margin-inline: auto;
 }
 
-/* Main container */
-
-.mainContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+.content {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-content: center;
 	height: 100%;
-	width: min(65vh, 80vw);
-	justify-content: center;
-	margin-left: 7vh;
+	max-width: 30rem;
+	margin-inline: auto;
 }
 
-.mainButtonContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	margin-top: 11vh;
-	width: 95%;
+nav {
+	margin-top: 5vh;
+	display: grid;
+	gap: 1vh;
+	grid-template-areas:
+		'public'
+		'private-create'
+		'private-join'
+		'deck'
+		'settings'
+		'logout';
+}
+
+#public {
+	grid-area: public;
+}
+
+#pcreate {
+	grid-area: private-create;
+}
+
+#pjoin {
+	grid-area: private-join;
+}
+
+#deck {
+	grid-area: deck;
+}
+
+#settings {
+	grid-area: settings;
+}
+
+#logout {
+	grid-area: logout;
 }
 
 /* More container */
@@ -117,46 +115,46 @@
 }
 
 /* Small Screen */
-@media screen and (max-width: 150vh) {
-	.menuBackground {
-		background-image: url('/images/menu-background.png');
-		background-position: center;
-		align-items: center;
-	}
+// @media screen and (max-width: 150vh) {
+// 	.menuBackground {
+// 		background-image: url('/images/menu-background.png');
+// 		background-position: center;
+// 		align-items: center;
+// 	}
 
-	.mainButtonContainer {
-		margin-top: 6vh;
-	}
+// 	.mainButtonContainer {
+// 		margin-top: 6vh;
+// 	}
 
-	.mainContainer {
-		margin: 0;
-	}
-}
+// 	.mainContainer {
+// 		margin: 0;
+// 	}
+// }
 
-@media screen and (max-width: 80vh) {
-	.menuButton {
-		margin-bottom: 2vh;
-	}
+// @media screen and (max-width: 80vh) {
+// 	.menuButton {
+// 		margin-bottom: 2vh;
+// 	}
 
-	.mainButtonContainer {
-		margin-top: 5vh;
-	}
+// 	.mainButtonContainer {
+// 		margin-top: 5vh;
+// 	}
 
-	.smallButtonContainer {
-		flex-direction: column-reverse;
-		align-items: stretch;
+// 	.smallButtonContainer {
+// 		flex-direction: column-reverse;
+// 		align-items: stretch;
 
-		&:not(.switchGaps) {
-			margin-top: 2.5vh;
-		}
+// 		&:not(.switchGaps) {
+// 			margin-top: 2.5vh;
+// 		}
 
-		.menuButton {
-			width: 100%;
-			margin: 0 0 2.5vh;
+// 		.menuButton {
+// 			width: 100%;
+// 			margin: 0 0 2.5vh;
 
-			&:first-of-type {
-				margin: 0;
-			}
-		}
-	}
-}
+// 			&:first-of-type {
+// 				margin: 0;
+// 			}
+// 		}
+// 	}
+// }
