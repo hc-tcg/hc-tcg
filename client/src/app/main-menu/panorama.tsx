@@ -1,4 +1,6 @@
+import React from 'react'
 import * as THREE from 'three'
+import css from './panorama.module.scss'
 import {OrbitControls} from '@react-three/drei'
 import {Canvas, useThree} from '@react-three/fiber'
 
@@ -21,13 +23,14 @@ const SkyBox = () => {
 	return null
 }
 
-const Panorama = () => {
+const Panorama = ({...props}) => {
+	console.log('Rendering panorama...')
 	return (
-		<Canvas linear flat>
+		<Canvas linear flat {...props} className={css.canvas}>
 			<OrbitControls autoRotate autoRotateSpeed={-0.05} />
 			<SkyBox />
 		</Canvas>
 	)
 }
 
-export default Panorama
+export default React.memo(Panorama)

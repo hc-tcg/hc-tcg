@@ -4,15 +4,12 @@ import {
 	createPrivateGame,
 	joinPrivateGame,
 } from 'logic/matchmaking/matchmaking-actions'
-import css from './main-menu.module.scss'
 import {logout} from 'logic/session/session-actions'
-import TcgLogo from 'components/tcg-logo'
-import LinkContainer from 'components/link-container'
-import Beef from 'components/beef'
-import classNames from 'classnames'
-import Button from 'components/button'
-import Panorama from './panorama'
 import {getSession} from 'logic/session/session-selectors'
+import css from './main-menu.module.scss'
+import TcgLogo from 'components/tcg-logo'
+import Beef from 'components/beef'
+import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -29,7 +26,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<div className={css.mainmenu}>
-			<Panorama />
+			{/* <Panorama /> */}
 			<h2 className={css.welcome}>Welcome back, {playerName}!</h2>
 			<div className={css.content}>
 				<div className={css.logo}>
@@ -62,19 +59,11 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="stone"
-						className={classNames(css.menuButton)}
+						className={css.menuButton}
 						id={css.deck}
 						onClick={handleDeck}
 					>
 						Customize Deck
-					</Button>
-					<Button
-						variant="stone"
-						className={css.menuButton}
-						id={css.logout}
-						onClick={handleLogOut}
-					>
-						Log Out
 					</Button>
 					<Button
 						variant="stone"
@@ -84,12 +73,46 @@ function MainMenu({setMenuSection}: Props) {
 					>
 						Settings
 					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						id={css.logout}
+						onClick={handleLogOut}
+					>
+						Log Out
+					</Button>
 				</nav>
-				<div style={{display: 'flex', justifyContent: 'center'}}>
-					<LinkContainer />
-				</div>
 				<Beef />
 			</div>
+			<p className={css.version}>
+				<span>Beta v0.5.1 - </span>
+				<a
+					href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
+					target="_blank"
+					rel="noreferrer"
+					title="Reddit"
+				>
+					Reddit
+				</a>
+				<span> - </span>
+				<a
+					href="https://github.com/martinkadlec0/hc-tcg"
+					target="_blank"
+					rel="noreferrer"
+					title="Github"
+				>
+					GitHub
+				</a>
+				<span> - </span>
+				<a
+					href="https://discord.gg/AjGbqNfcQX"
+					target="_blank"
+					rel="noreferrer"
+					title="Discord"
+				>
+					Discord
+				</a>
+			</p>
 		</div>
 	)
 }

@@ -11,7 +11,7 @@ import MainMenu from './main-menu'
 import Deck from './deck'
 import MatchMaking from './match-making'
 import Toast from 'components/toast'
-import More from './main-menu/main-menu-more'
+import Settings from './main-menu/settings'
 
 function App() {
 	const section = useRouter()
@@ -25,20 +25,18 @@ function App() {
 		dispatch(sectionChange(section))
 	}, [section])
 
-	let showToast = false
-
 	const router = () => {
 		if (section === 'game') {
 			return <Game />
 		} else if (section === 'matchmaking') {
 			return <MatchMaking />
 		} else if (playerName) {
-			showToast = true
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
 				case 'settings':
-					return <More setMenuSection={setMenuSection} />
+					return <Settings setMenuSection={setMenuSection} />
+				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
 			}
@@ -49,16 +47,13 @@ function App() {
 	return (
 		<main>
 			{router()}
-			{playerName && !socketStatus ? <LostConnection /> : null}
-
-			{showToast ? (
-				<Toast
-					title={toastMessage.title}
-					description={toastMessage.description}
-					image={toastMessage.image}
-					setOpen={toastMessage.open}
-				/>
-			) : null}
+			{playerName && !socketStatus && <LostConnection />}
+			<Toast
+				title={toastMessage.title}
+				description={toastMessage.description}
+				image={toastMessage.image}
+				setOpen={toastMessage.open}
+			/>
 		</main>
 	)
 }

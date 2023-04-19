@@ -3,7 +3,6 @@
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
-	background: var(--gray-700);
 	color: var(--text-light);
 }
 
@@ -11,10 +10,12 @@
 	position: absolute;
 	top: 2vh;
 	right: 2vh;
+	font-size: 1.5vh;
 	background-color: #333a;
-	padding: 0.5rem 1rem;
-	border-radius: 0.25rem;
+	padding: 0.75vh 1vh;
+	border-radius: 0.5vh;
 	user-select: none;
+	font-weight: normal;
 }
 
 .logo {
@@ -25,9 +26,10 @@
 	position: absolute;
 	inset: 0;
 	display: grid;
-	place-content: center;
+	place-content: flex-start center;
+	margin-top: 10vh;
 	height: 100%;
-	max-width: 30rem;
+	width: 100%; // Need full width to prevent user from moving the panorama.
 	margin-inline: auto;
 }
 
@@ -68,7 +70,25 @@ nav {
 	grid-area: logout;
 }
 
-/* More container */
+.version {
+	position: absolute;
+	bottom: 1vh;
+	left: 1vh;
+	color: var(--text-light);
+	filter: drop-shadow(1px 1px 0 var(--text-dark));
+	font-size: 1.3vh;
+	user-select: none;
+
+	& a {
+		color: var(--text-light);
+	}
+
+	& a:visited {
+		color: var(--text-light);
+	}
+}
+
+/* Settings Page */
 
 .moreContainer {
 	display: flex;
@@ -114,47 +134,17 @@ nav {
 	}
 }
 
-/* Small Screen */
-// @media screen and (max-width: 150vh) {
-// 	.menuBackground {
-// 		background-image: url('/images/menu-background.png');
-// 		background-position: center;
-// 		align-items: center;
-// 	}
-
-// 	.mainButtonContainer {
-// 		margin-top: 6vh;
-// 	}
-
-// 	.mainContainer {
-// 		margin: 0;
-// 	}
-// }
-
-// @media screen and (max-width: 80vh) {
-// 	.menuButton {
-// 		margin-bottom: 2vh;
-// 	}
-
-// 	.mainButtonContainer {
-// 		margin-top: 5vh;
-// 	}
-
-// 	.smallButtonContainer {
-// 		flex-direction: column-reverse;
-// 		align-items: stretch;
-
-// 		&:not(.switchGaps) {
-// 			margin-top: 2.5vh;
-// 		}
-
-// 		.menuButton {
-// 			width: 100%;
-// 			margin: 0 0 2.5vh;
-
-// 			&:first-of-type {
-// 				margin: 0;
-// 			}
-// 		}
-// 	}
-// }
+/* DESKTOP */
+@media (min-width: 720px) {
+	nav {
+		margin-top: 5vh;
+		display: grid;
+		gap: 1vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			'public public'
+			'private-create private-join'
+			'deck deck'
+			'settings logout';
+	}
+}
