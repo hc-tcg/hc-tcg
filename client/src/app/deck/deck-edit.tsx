@@ -40,7 +40,7 @@ const iconDropdownOptions = DECK_ICONS.map((option) => ({
 const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	name: option,
 	key: option,
-	icon: `/images/power/${option}.png`,
+	icon: `/images/ranks/${option}.png`,
 }))
 
 type DeckNameT = {
@@ -251,7 +251,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								button={
 									<button className={css.dropdownButton}>
 										<img
-											src={`/images/power/${
+											src={`/images/ranks/${
 												rankQuery === '' ? 'any' : rankQuery
 											}.png`}
 											draggable={false}

@@ -13,6 +13,7 @@ import More from './main-menu-more'
 import Beef from 'components/beef'
 import classNames from 'classnames'
 import Button from 'components/button'
+import Version from 'components/version'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -90,6 +91,7 @@ function MainMenu({setMenuSection}: Props) {
 							<LinkContainer />
 						</div>
 						<Beef />
+						<Version />
 					</div>
 				</div>
 			</div>

@@ -70,14 +70,14 @@ const HermitCard = ({card}: EffectCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/power/${rank.name}.png`}
-						className={css.power}
+						href={`/images/ranks/${rank.name}.png`}
+						className={css.rank}
 					/>
 					<text
 						x="52"
 						y="344"
 						fontSize="40"
-						className={classNames(css.powerText, css[rank.name])}
+						className={classNames(css.rankText, css[rank.name])}
 					>
 						{rank.cost}
 					</text>

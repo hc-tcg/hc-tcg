@@ -16,5 +16,6 @@
 
 		"maxDeckCost": 42
 	},
-	"logoSubText": "New meta! v0.5.1"
+	"logoSubText": "New meta!",
+	"version": "0.5.1"
 }

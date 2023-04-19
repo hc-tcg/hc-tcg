@@ -87,15 +87,15 @@ const HermitCard = ({card}: HermitCardProps) => {
 						y="80"
 						width="70"
 						height="70"
-						href={`/images/power/${rank.name}.png`}
-						className={css.power}
+						href={`/images/ranks/${rank.name}.png`}
+						className={css.rank}
 					/>
 					<text
 						x="91"
 						y="109.5"
 						fontSize="40"
 						fill="white"
-						className={classnames(css.powerText, css[rank.name])}
+						className={classnames(css.rankText, css[rank.name])}
 					>
 						{rank.cost}
 					</text>

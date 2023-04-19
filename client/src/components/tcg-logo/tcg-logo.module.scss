@@ -12,7 +12,7 @@
 
 .logoSubText {
 	position: absolute;
-	right: 0;
+	right: 2vh;
 	bottom: 8vh;
 	transform: rotate(-20deg);
 
@@ -22,7 +22,7 @@
 		text-shadow: #3f3e00 0.2vh 0.2vh;
 		font-family: Minecraft;
 		margin: 0;
-		animation-name: notOfficialAnim;
+		animation-name: subTextAnim;
 		animation-duration: 1s;
 		animation-direction: alternate-reverse;
 		animation-iteration-count: infinite;
@@ -36,7 +36,7 @@
 	}
 
 	.logoSubText {
-		right: 1vw;
+		right: 2vw;
 		bottom: 9vw;
 
 		p {
@@ -45,7 +45,7 @@
 	}
 }
 
-@keyframes notOfficialAnim {
+@keyframes subTextAnim {
 	from {
 		transform: scale(100%);
 	}

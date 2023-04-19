@@ -1,0 +1,15 @@
+.version {
+	position: fixed;
+	top: 1.5vh;
+	right: 1.5vh;
+	font-size: 2.3vh;
+	text-align: center;
+	font-family: Minecraft;
+	color: white;
+	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
+	text-decoration: none;
+
+	@media screen and (max-width: 80vh) {
+		font-size: 1.8vh;
+	}
+}
