@@ -6,7 +6,7 @@ class FrogCharacterCard extends CharacterCard {
 			id: 'frog',
 			name: 'Frog',
 			rarity: 'common',
-			hermitType: 'minecraft',
+			characterType: 'minecraft',
 			health: 280,
 			primary: {
 				name: 'Lick',
