@@ -7,7 +7,7 @@
 		"https://hc-tcg.fly.dev",
 		"https://hc-tcg-beta.fly.dev"
 	],
-	"world": "sensemeta",
+	"world": "LTF42",
 	"limits": {
 		"maxTurnTime": 90,
 		"minCards": 42,
