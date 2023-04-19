@@ -1,5 +1,4 @@
-import {useDispatch} from 'react-redux'
-import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {
 	randomMatchmaking,
 	createPrivateGame,
@@ -9,96 +8,90 @@ import css from './main-menu.module.scss'
 import {logout} from 'logic/session/session-actions'
 import TcgLogo from 'components/tcg-logo'
 import LinkContainer from 'components/link-container'
-import More from './main-menu-more'
 import Beef from 'components/beef'
 import classNames from 'classnames'
 import Button from 'components/button'
-import Version from 'components/version'
+import Panorama from './panorama'
+import {getSession} from 'logic/session/session-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
-	const [subsection, setSubsection] = useState<string | null>(null)
-
+	const {playerName} = useSelector(getSession)
 	const handleRandomMatchmaking = () => dispatch(randomMatchmaking())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
+	const handleSettings = () => setMenuSection('settings')
 
-	let content = null
-
-	if (subsection === 'more') {
-		content = <More setMenuSection={() => setSubsection(null)} />
-	} else {
-		content = (
-			<div className={css.menuBackground}>
-				<div className={css.mainContainer}>
-					{/* Button Container */}
+	return (
+		<div className={css.mainmenu}>
+			<Panorama />
+			<h2 className={css.welcome}>Welcome back, {playerName}!</h2>
+			<div className={css.content}>
+				<div className={css.logo}>
 					<TcgLogo />
-					<div className={css.mainButtonContainer}>
-						<Button
-							variant="stone"
-							className={css.menuButton}
-							onClick={handleRandomMatchmaking}
-						>
-							Public Game
-						</Button>
-						<div
-							className={classNames(css.smallButtonContainer, css.switchGaps)}
-						>
-							<Button
-								variant="stone"
-								className={css.menuButton}
-								onClick={handleCreatePrivateGame}
-							>
-								Create Private Game
-							</Button>
-							<Button
-								variant="stone"
-								className={css.menuButton}
-								onClick={handleJoinPrivateGame}
-							>
-								Join Private Game
-							</Button>
-						</div>
-						<Button
-							variant="stone"
-							className={classNames(css.menuButton)}
-							onClick={handleDeck}
-						>
-							Customize Deck
-						</Button>
-						<div className={css.smallButtonContainer}>
-							<Button
-								variant="stone"
-								className={css.menuButton}
-								onClick={handleLogOut}
-							>
-								Log Out
-							</Button>
-							<Button
-								variant="stone"
-								className={css.menuButton}
-								onClick={() => setSubsection('more')}
-							>
-								More
-							</Button>
-						</div>
-						<div style={{display: 'flex', justifyContent: 'center'}}>
-							<LinkContainer />
-						</div>
-						<Beef />
-						<Version />
-					</div>
 				</div>
+				<nav>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						id={css.public}
+						onClick={handleRandomMatchmaking}
+					>
+						Public Game
+					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						onClick={handleCreatePrivateGame}
+						id={css.pcreate}
+					>
+						Create Private Game
+					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						onClick={handleJoinPrivateGame}
+						id={css.pjoin}
+					>
+						Join Private Game
+					</Button>
+					<Button
+						variant="stone"
+						className={classNames(css.menuButton)}
+						id={css.deck}
+						onClick={handleDeck}
+					>
+						Customize Deck
+					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						id={css.logout}
+						onClick={handleLogOut}
+					>
+						Log Out
+					</Button>
+					<Button
+						variant="stone"
+						className={css.menuButton}
+						id={css.settings}
+						onClick={handleSettings}
+					>
+						Settings
+					</Button>
+				</nav>
+				<div style={{display: 'flex', justifyContent: 'center'}}>
+					<LinkContainer />
+				</div>
+				<Beef />
 			</div>
-		)
-	}
-
-	return content
+		</div>
+	)
 }
 
 export default MainMenu
