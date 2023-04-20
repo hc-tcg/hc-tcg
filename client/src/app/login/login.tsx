@@ -6,6 +6,7 @@ import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import {VersionLinks} from 'components/link-container'
 import Button from 'components/button'
+import Spinner from 'components/spinner'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
@@ -33,7 +34,10 @@ const Login = () => {
 		<div className={css.loginContainer}>
 			<TcgLogo />
 			{connecting ? (
-				<div className={css.connecting}>Connecting...</div>
+				<div className={css.connecting}>
+					<Spinner />
+					<p>Connecting</p>
+				</div>
 			) : (
 				<form className={css.nameForm} onSubmit={handlePlayerName}>
 					<div className={css.customInput}>
