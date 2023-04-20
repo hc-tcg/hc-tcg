@@ -10,7 +10,7 @@ class MrCatCharacterCard extends CharacterCard {
 			id: 'mrCat',
 			name: 'Mr. Cat',
 			rarity: 'rare',
-			hermitType: 'cat',
+			characterType: 'cat',
 			health: 290,
 			primary: {
 				name: 'Attack Heli',
