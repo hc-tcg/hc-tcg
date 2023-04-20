@@ -22,7 +22,7 @@ class MEE6CharacterCard extends CharacterCard {
 			},
 		})
 	}
-
+// done
 	register(game) {}
 }
 
