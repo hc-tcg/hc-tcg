@@ -25,5 +25,5 @@ class BurgerCharacterCard extends CharacterCard {
 
 	register(game) {}
 }
-
+// done
 export default BurgerCharacterCard
