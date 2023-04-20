@@ -6,7 +6,7 @@ class Harison24CharacterCard extends CharacterCard {
 			id: 'harison24',
 			name: 'Harison24',
 			rarity: 'common',
-			hermitType: 'minecraft',
+			characterType: 'minecraft',
 			health: 300,
 			primary: {
 				name: "Pickaxe Smack",
