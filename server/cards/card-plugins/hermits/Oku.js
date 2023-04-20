@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils'
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
-
+// done
 class OkuCharacterCard extends CharacterCard {
 	constructor() {
 		super({
