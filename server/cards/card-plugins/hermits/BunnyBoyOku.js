@@ -22,7 +22,7 @@ class BunnyBoyOkuCharacterCard extends CharacterCard {
 			},
 		})
 	}
-
+// done
 	register(game) {}
 }
 
