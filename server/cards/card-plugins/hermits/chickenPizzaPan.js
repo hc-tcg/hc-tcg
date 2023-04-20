@@ -6,7 +6,7 @@ class ChickenPizzaPanCharacterCard extends CharacterCard {
 			id: 'chickenPizzaPan',
 			name: 'Chicken Pizza Pan',
 			rarity: 'common',
-			hermitType: 'bacon',
+			characterType: 'bacon',
 			health: 300,
 			primary: {
 				name: 'Concrete Throw',
