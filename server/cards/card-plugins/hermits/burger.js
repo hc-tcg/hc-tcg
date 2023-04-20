@@ -6,7 +6,7 @@ class BurgerCharacterCard extends CharacterCard {
 			id: 'burger',
 			name: 'Burger',
 			rarity: 'common',
-			hermitType: 'bacon',
+			characterType: 'bacon',
 			health: 270,
 			primary: {
 				name: 'Patty',
