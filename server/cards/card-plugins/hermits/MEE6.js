@@ -6,7 +6,7 @@ class MEE6CharacterCard extends CharacterCard {
 			id: 'MEE6',
 			name: 'MEESEXY',
 			rarity: 'common',
-			hermitType: 'bot',
+			characterType: 'bot',
 			health: 280,
 			primary: {
 				name: 'Play Jams',
@@ -26,4 +26,4 @@ class MEE6CharacterCard extends CharacterCard {
 	register(game) {}
 }
 
-export default MEE6CharacterCardCard
+export default MEE6CharacterCard
