@@ -134,10 +134,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		items: loadedDeck.cards.filter(
 			(card) => TYPED_CARDS[card.cardId].type === 'item'
 		),
-		effects: loadedDeck.cards.filter(
-			(card) =>
-				TYPED_CARDS[card.cardId].type === 'effect' ||
-				TYPED_CARDS[card.cardId].type === 'single_use'
+		attachableEffects: loadedDeck.cards.filter(
+			(card) => TYPED_CARDS[card.cardId].type === 'effect'
+		),
+		singleUseEffects: loadedDeck.cards.filter(
+			(card) => TYPED_CARDS[card.cardId].type === 'single_use'
 		),
 	}
 
@@ -431,10 +432,26 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							</Accordion>
 						</div>
 						<Accordion
-							header={cardGroupHeader('Effects', selectedCards.effects)}
+							header={cardGroupHeader(
+								'Attachable Effects',
+								selectedCards.attachableEffects
+							)}
 						>
 							<CardList
-								cards={sortCards(selectedCards.effects)}
+								cards={sortCards(selectedCards.attachableEffects)}
+								size="small"
+								wrap={true}
+								onClick={removeCard}
+							/>
+						</Accordion>
+						<Accordion
+							header={cardGroupHeader(
+								'Single Use Effects',
+								selectedCards.singleUseEffects
+							)}
+						>
+							<CardList
+								cards={sortCards(selectedCards.singleUseEffects)}
 								size="small"
 								wrap={true}
 								onClick={removeCard}
