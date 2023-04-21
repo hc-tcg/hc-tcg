@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class CatSleeoCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'catSleeo',
+			id: 'sleepy-catSleeo',
 			name: 'Cat Sleeo',
 			rarity: 'common',
 			characterType: 'cat',
