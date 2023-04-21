@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class BananaGunCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'bananaGun',
+			id: 'andrew-BananaGun',
 			name: 'Banana Gun',
 			rarity: 'common',
 			characterType: 'cat',
