@@ -26,7 +26,7 @@ $size: 4vh;
 @for $i from 1 through 16 {
 	.pixel#{$i} {
 		grid-area: p#{$i};
-		animation-delay: $speed / 16 * -$i;
+		animation-delay: calc($speed / 16) * -$i;
 	}
 }
 
