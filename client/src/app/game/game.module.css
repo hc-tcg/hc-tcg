@@ -9,7 +9,8 @@
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	background: url('/images/menu-background-widescreen-2.png') no-repeat;
+	background: url('/images/menu-background-widescreen-2.png') center center
+		no-repeat;
 	background-size: cover;
 	min-height: max(740px, 100%);
 	width: 100%;
