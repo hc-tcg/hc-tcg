@@ -25,5 +25,5 @@ class IceCreamDealerCharacterCard extends CharacterCard {
 
 	register(game) {}
 }
-
+// cool stuff
 export default IceCreamDealerCharacterCard
