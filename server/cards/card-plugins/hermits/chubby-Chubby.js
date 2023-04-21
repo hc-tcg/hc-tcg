@@ -42,7 +42,7 @@ class ChubbyCharacterCard extends CharacterCard {
 			if (attackerHermitCard.cardId !== this.id) return target
 
 			const hasSleepy = currentPlayer.board.rows.some((row) =>
-				row.characterCard?.cardId.startsWith('sleep')
+				row.characterCard?.cardId.startsWith('sleepy')
 			)
 			const hasAndrew = currentPlayer.board.rows.some((row) =>
 				row.characterCard?.cardId.startsWith('andrew')
