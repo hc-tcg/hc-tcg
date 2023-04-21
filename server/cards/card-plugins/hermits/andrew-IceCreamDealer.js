@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class IceCreamDealerCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'iceCreamDealer',
+			id: 'andrew-IceCreamDealer',
 			name: 'Ice Cream Dealer',
 			rarity: 'common',
 			characterType: 'iceCream',
