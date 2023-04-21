@@ -79,27 +79,27 @@ function Settings({setMenuSection}: Props) {
 			<h2>Statistics</h2>
 			<div className={css.newStats}>
 				<div className={css.newStat}>
-					<img src="/images/types/type-balanced.png" alt="wins" />
+					<img src="/images/effects/diamond_sword.png" alt="wins" />
 					<p>Wins</p>
 					<span>{stats.w}</span>
 				</div>
 				<div className={css.newStat}>
-					<img src="/images/types/type-balanced.png" alt="wins" />
+					<img src="/images/effects/tnt.png" alt="wins" />
 					<p>Losses</p>
 					<span>{stats.l}</span>
 				</div>
 				<div className={css.newStat}>
-					<img src="/images/types/type-balanced.png" alt="wins" />
+					<img src="/images/effects/totem.png" alt="wins" />
 					<p>Ties</p>
 					<span>{stats.t}</span>
 				</div>
 				<div className={css.newStat}>
-					<img src="/images/types/type-balanced.png" alt="wins" />
+					<img src="/images/effects/splash_potion_of_healing.png" alt="wins" />
 					<p>Forfeit Wins</p>
 					<span>{stats.fw}</span>
 				</div>
 				<div className={css.newStat}>
-					<img src="/images/types/type-balanced.png" alt="wins" />
+					<img src="/images/effects/potion_of_weakness.png" alt="wins" />
 					<p>Forfeit Losses</p>
 					<span>{stats.fl}</span>
 				</div>
