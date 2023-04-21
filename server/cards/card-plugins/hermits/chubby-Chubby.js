@@ -8,7 +8,7 @@ import {flipCoin} from '../../../utils'
 class ChubbyCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'chubby',
+			id: 'chubby-Chubby',
 			name: 'Chubby',
 			rarity: 'ultra_rare',
 			characterType: 'australian',
