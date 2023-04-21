@@ -1,22 +1,9 @@
-.matchMakingBackground {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	margin: 0;
-	height: 100%;
-	width: 100%;
-	background-image: url('/images/menu-background.png');
-	background-size: cover;
-	background-position: center;
-	font-family: Minecraft;
-}
-
-.matchMakingContainer {
+.body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	height: 100%;
+	margin-top: 10vh;
 
 	form {
 		width: 25vh;
@@ -34,23 +21,36 @@
 	}
 }
 
-.message {
-	color: white;
-	font-size: 2.5vh;
-	margin: 7vh 0 3vh;
+.codeInput {
+	display: flex;
+	justify-content: center;
+	gap: 1vh;
 }
 
-.matchmakingButton {
-	font-size: 2vh;
-	width: 11vh;
-	height: 4.5vh;
-	line-height: 100%;
-	padding: 0 2vh;
-}
+.content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2vh;
+	margin-top: 4vh;
+	opacity: 0;
+	animation: fadeIn 250ms ease-in-out forwards;
 
-@media screen and (max-width: 80vh) {
-	.message {
+	p,
+	label {
+		color: white;
+		font-size: 2.5vh;
+		filter: drop-shadow(2px 2px 0 var(--text-dark));
+		user-select: none;
+	}
+
+	button {
 		font-size: 2vh;
+		width: 11vh;
+		height: 4.5vh;
+		line-height: 100%;
+		padding: 0 2vh;
 	}
 }
 
@@ -69,22 +69,26 @@
 
 .options {
 	width: 100%;
-	margin-top: 3vh;
 	display: flex;
 	justify-content: space-around;
 }
 
-.invalidText {
-	color: #d05050;
-	text-shadow: 0.2vh 0.2vh #333;
-	font-size: 2vh;
-	margin: 1vh 0 0;
-}
-
-.hiddenInvalidText {
-	display: none;
-}
-
 .invalidCode {
 	border: 0.5vh solid #d05050 !important;
+}
+
+@media (max-width: 80vh) {
+	.message {
+		font-size: 2vh;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
 }

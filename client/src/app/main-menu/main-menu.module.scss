@@ -42,6 +42,7 @@ nav {
 		'deck'
 		'settings'
 		'logout';
+	animation: fadeIn 500ms ease-in-out forwards;
 }
 
 #public {
@@ -70,24 +71,58 @@ nav {
 
 /* Settings Page */
 
-.moreContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	height: 100%;
-	width: 100%;
-	justify-content: center;
+.settingsMenu {
+	max-width: 70vh;
+	margin-inline: auto;
+	padding: 1vh;
 
-	> * {
-		width: min(80vh, 85vw);
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
 	}
 }
 
-.moreButtonContainer {
+.settings {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1vh;
+	height: 100%;
+	width: 100%;
+	margin-bottom: 4vh;
+}
+
+.newStats {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 1vh;
+}
+
+.newStat {
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
-	margin-top: 11vh;
+	gap: 1vh;
+	padding: 1vh;
+	background: var(--gray-900);
+	border-radius: 0.5vh;
+	color: var(--text-light);
+	text-align: center;
+
+	> img {
+		width: 100%;
+	}
+
+	> p {
+		font-size: 1.8vh;
+	}
+
+	> span {
+		font-family: Minecrafter, Minecraft, sans-serif;
+		margin-top: auto;
+		padding-top: 1vh;
+		font-size: 3vh;
+	}
 }
 
 .stats {
@@ -126,5 +161,15 @@ nav {
 			'private-create private-join'
 			'deck deck'
 			'settings logout';
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
 	}
 }

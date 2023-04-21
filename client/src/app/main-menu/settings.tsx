@@ -55,72 +55,53 @@ function Settings({setMenuSection}: Props) {
 			back={() => setMenuSection('mainmenu')}
 			title="Settings"
 			returnText="Main Menu"
+			className={css.settingsMenu}
 		>
-			<Slider
-				className={css.menuButton}
-				value={settings.musicVolume}
-				onInput={handleMusicChange}
-			>
-				Music: {getPercDescriptor(settings.musicVolume)}
-			</Slider>
-			<Slider
-				className={css.menuButton}
-				value={settings.soundVolume}
-				onInput={handleSoundChange}
-			>
-				Sounds: {getPercDescriptor(settings.soundVolume)}
-			</Slider>
-			<Button
-				variant="stone"
-				className={css.menuButton}
-				onClick={handleProfanityChange}
-			>
-				Profanity filter: {getDescriptor(settings.profanityFilter)}
-			</Button>
-			<Button
-				variant="stone"
-				className={css.menuButton}
-				onClick={handleDialogsChange}
-			>
-				Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
-			</Button>
+			<h2>Settings</h2>
+			<div className={css.settings}>
+				<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+					Music: {getPercDescriptor(settings.musicVolume)}
+				</Slider>
+				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+					Sounds: {getPercDescriptor(settings.soundVolume)}
+				</Slider>
+				<Button variant="stone" onClick={handleProfanityChange}>
+					Profanity Filter: {getDescriptor(settings.profanityFilter)}
+				</Button>
+				<Button variant="stone" onClick={handleDialogsChange}>
+					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+				</Button>
+				<Button variant="stone" onClick={handleResetStats}>
+					Reset Stats
+				</Button>
+			</div>
 
-			<Button
-				variant="stone"
-				className={css.menuButton}
-				onClick={() => setMenuSection('mainmenu')}
-			>
-				Back to menu
-			</Button>
-			<Button
-				variant="stone"
-				className={css.menuButton}
-				onClick={handleResetStats}
-			>
-				Reset Stats
-			</Button>
-
-			{/* stats */}
-			<div className={css.stats}>
-				<div className={css.stat}>
-					<div className={css.statName}>Wins</div>
-					<div className={css.statValue}>{stats.w}</div>
+			<h2>Statistics</h2>
+			<div className={css.newStats}>
+				<div className={css.newStat}>
+					<img src="/images/types/type-balanced.png" alt="wins" />
+					<p>Wins</p>
+					<span>{stats.w}</span>
 				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Losses</div>
-					<div className={css.statValue}>{stats.l}</div>
+				<div className={css.newStat}>
+					<img src="/images/types/type-balanced.png" alt="wins" />
+					<p>Losses</p>
+					<span>{stats.l}</span>
 				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Ties</div>
-					<div className={css.statValue}>{stats.t}</div>
+				<div className={css.newStat}>
+					<img src="/images/types/type-balanced.png" alt="wins" />
+					<p>Ties</p>
+					<span>{stats.t}</span>
 				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Forfeit Wins</div>
-					<div className={css.statValue}>{stats.fw}</div>
+				<div className={css.newStat}>
+					<img src="/images/types/type-balanced.png" alt="wins" />
+					<p>Forfeit Wins</p>
+					<span>{stats.fw}</span>
 				</div>
-				<div className={css.stat}>
-					<div className={css.statName}>Forfeit Losses</div>
-					<div className={css.statValue}>{stats.fl}</div>
+				<div className={css.newStat}>
+					<img src="/images/types/type-balanced.png" alt="wins" />
+					<p>Forfeit Losses</p>
+					<span>{stats.fl}</span>
 				</div>
 			</div>
 		</MenuLayout>

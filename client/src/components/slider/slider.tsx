@@ -21,7 +21,7 @@ const Slider = forwardRef(
 					ref={ref}
 					type="range"
 				/>
-				<div className={css.label}>{children}</div>
+				<label className={css.label}>{children}</label>
 			</div>
 		)
 	}

@@ -49,7 +49,7 @@
 }
 
 .content {
-	animation: transition 500ms 100ms ease-in-out forwards;
+	animation: fadeOut 500ms 100ms ease-in-out forwards;
 	opacity: 0;
 }
 
@@ -71,7 +71,7 @@
 	}
 }
 
-@keyframes transition {
+@keyframes fadeOut {
 	from {
 		// transform: translateX(110%);
 		opacity: 0;
