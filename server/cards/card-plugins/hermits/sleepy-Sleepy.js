@@ -41,7 +41,7 @@ class SleepyCharacterCard extends CharacterCard {
 			if (attackerCharacterCard.cardId !== this.id) return target
 
 			const iceCreamDealerRows = currentPlayer.board.rows.filter((row) => {
-				const isIceCreamDealer = row.characterCard?.cardId.startsWith('iceCreamDealer')
+				const isIceCreamDealer = row.characterCard?.cardId.startsWith('Andrew-IceCreamDealer')
 				return isIceCreamDealer
 			})
 			const total = Math.min(iceCreamDealerRows.length, 2)
