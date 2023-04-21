@@ -25,5 +25,5 @@ class Harison24CharacterCard extends CharacterCard {
 
 	register(game) {}
 }
-
+//have a great day
 export default Harison24CharacterCard
