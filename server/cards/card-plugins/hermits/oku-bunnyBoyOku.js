@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class BunnyBoyOkuCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'bunnyBoyOku',
+			id: 'oku-BunnyBoyOku',
 			name: 'Bunny Boy Oku',
 			rarity: 'common',
 			characterType: 'australian',
