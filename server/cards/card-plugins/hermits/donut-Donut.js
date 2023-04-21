@@ -8,7 +8,7 @@ import {flipCoin} from '../../../utils'
 class DonutCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'donut',
+			id: 'donut-Donut',
 			name: 'Donut',
 			rarity: 'rare',
 			characterType: 'bot',
