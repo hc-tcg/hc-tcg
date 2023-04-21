@@ -22,7 +22,7 @@
 
 /**
  * @typedef {Object} RowState
- * @property {Card | null} hermitCard
+ * @property {Card | null} characterCard
  * @property {Card | null} effectCard
  * @property {Array<Card>} itemCards
  * @property {number | null} health
