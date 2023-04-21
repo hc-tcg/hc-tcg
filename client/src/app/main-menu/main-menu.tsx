@@ -27,7 +27,6 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<div className={css.mainmenu}>
-			{/* <Panorama /> */}
 			<h2 className={css.welcome}>Welcome back, {playerName}!</h2>
 			<div className={css.content}>
 				<div className={css.logo}>
@@ -36,7 +35,6 @@ function MainMenu({setMenuSection}: Props) {
 				<nav>
 					<Button
 						variant="stone"
-						className={css.menuButton}
 						id={css.public}
 						onClick={handleRandomMatchmaking}
 					>
@@ -44,42 +42,25 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="stone"
-						className={css.menuButton}
-						onClick={handleCreatePrivateGame}
 						id={css.pcreate}
+						onClick={handleCreatePrivateGame}
 					>
 						Create Private Game
 					</Button>
 					<Button
 						variant="stone"
-						className={css.menuButton}
-						onClick={handleJoinPrivateGame}
 						id={css.pjoin}
+						onClick={handleJoinPrivateGame}
 					>
 						Join Private Game
 					</Button>
-					<Button
-						variant="stone"
-						className={css.menuButton}
-						id={css.deck}
-						onClick={handleDeck}
-					>
+					<Button variant="stone" id={css.deck} onClick={handleDeck}>
 						Customize Deck
 					</Button>
-					<Button
-						variant="stone"
-						className={css.menuButton}
-						id={css.settings}
-						onClick={handleSettings}
-					>
+					<Button variant="stone" id={css.settings} onClick={handleSettings}>
 						Settings
 					</Button>
-					<Button
-						variant="stone"
-						className={css.menuButton}
-						id={css.logout}
-						onClick={handleLogOut}
-					>
+					<Button variant="stone" id={css.logout} onClick={handleLogOut}>
 						Log Out
 					</Button>
 				</nav>

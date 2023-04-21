@@ -1,14 +1,15 @@
 import css from './menu-layout.module.scss'
 import {ReactNode} from 'react'
 
-type Props = {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
 	back: () => void
 	title: string
 	returnText?: string
 	children?: ReactNode
+	attributes?: HTMLDivElement
 }
 
-function MenuLayout({children, title, returnText, back}: Props) {
+function MenuLayout({children, title, returnText, back, ...attributes}: Props) {
 	return (
 		<>
 			<header className={css.header}>
@@ -18,7 +19,9 @@ function MenuLayout({children, title, returnText, back}: Props) {
 				</div>
 				<h1>{title}</h1>
 			</header>
-			<div className={css.content}>{children}</div>
+			<div {...attributes} className={`${css.content} ${attributes.className}`}>
+				{children}
+			</div>
 		</>
 	)
 }

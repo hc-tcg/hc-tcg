@@ -20,6 +20,7 @@ function App() {
 	const socketStatus = useSelector(getSocketStatus)
 	const toastMessage = useSelector(getToast)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
+	let enableToast = false
 
 	useEffect(() => {
 		dispatch(sectionChange(section))
@@ -31,6 +32,7 @@ function App() {
 		} else if (section === 'matchmaking') {
 			return <MatchMaking />
 		} else if (playerName) {
+			enableToast = true
 			switch (menuSection) {
 				case 'deck':
 					return <Deck setMenuSection={setMenuSection} />
@@ -48,12 +50,14 @@ function App() {
 		<main>
 			{router()}
 			{playerName && !socketStatus && <LostConnection />}
-			<Toast
-				title={toastMessage.title}
-				description={toastMessage.description}
-				image={toastMessage.image}
-				setOpen={toastMessage.open}
-			/>
+			{enableToast && (
+				<Toast
+					title={toastMessage.title}
+					description={toastMessage.description}
+					image={toastMessage.image}
+					setOpen={toastMessage.open}
+				/>
+			)}
 		</main>
 	)
 }

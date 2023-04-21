@@ -1,0 +1,47 @@
+.error {
+	min-height: 4vh;
+	display: flex;
+	align-items: center;
+	gap: 1vh;
+	padding: 1vh 2vh;
+	text-align: center;
+	border: 2px solid var(--color-error-highlight);
+	background: var(--color-error);
+	color: var(--text-light);
+	font-size: 1.8vh;
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
+		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	animation: shake 150ms 100ms forwards;
+
+	span {
+		display: grid;
+		place-content: center;
+
+		svg {
+			height: 2vh;
+			width: 2vh;
+		}
+	}
+}
+
+@keyframes shake {
+	0% {
+		transform: translateX(-5px);
+	}
+
+	25% {
+		transform: translateX(5px);
+	}
+
+	50% {
+		transform: translateX(-5px);
+	}
+
+	75% {
+		transform: translateX(5px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
