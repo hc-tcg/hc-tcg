@@ -8,7 +8,7 @@ import {flipCoin, discardCard} from '../../../utils'
 class CrackKittyCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'crackKitty',
+			id: 'andrew-CrackKitty',
 			name: 'Crack Kitty',
 			rarity: 'rare',
 			characterType: 'cat',
