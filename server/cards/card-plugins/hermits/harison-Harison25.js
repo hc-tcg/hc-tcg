@@ -26,7 +26,7 @@ import {flipCoin} from '../../../utils'
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'harison25',
+			id: 'harison-Harison25',
 			name: 'Harison25',
 			rarity: 'rare',
 			characterType: 'minecraft',
