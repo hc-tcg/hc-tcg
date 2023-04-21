@@ -16,8 +16,9 @@
 		width: 25vh;
 		text-align: center;
 		border-radius: 0.5vh;
-		border: 0.5vh solid rgb(30, 30, 30);
-		height: 4vh;
+		border: 0.3vh solid var(--gray-900);
+		height: 5vh;
+		font-size: 2vh;
 	}
 }
 
@@ -55,12 +56,11 @@
 }
 
 .code {
-	background: rgb(30, 30, 30);
+	background: var(--gray-700);
 	color: white;
-	border: 0.5vh solid #333;
+	border: 0.5vh solid var(--gray-900);
 	border-radius: 0.5vh;
-	padding: 1vh 1.5vh;
-	margin-bottom: 0.5vh;
+	padding: 0.8vh 2vh;
 	font-size: 3vh;
 	text-align: center;
 	letter-spacing: 0.2vh;
@@ -74,13 +74,7 @@
 }
 
 .invalidCode {
-	border: 0.5vh solid #d05050 !important;
-}
-
-@media (max-width: 80vh) {
-	.message {
-		font-size: 2vh;
-	}
+	border: 0.5vh solid var(--color-error) !important;
 }
 
 @keyframes fadeIn {
