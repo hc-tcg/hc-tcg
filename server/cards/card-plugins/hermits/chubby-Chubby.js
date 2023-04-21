@@ -1,6 +1,6 @@
 import CharacterCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
-
+import CARDS from '../../../cards'
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
