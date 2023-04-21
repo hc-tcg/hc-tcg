@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class Harison24CharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'harison24',
+			id: 'harison-Harison24',
 			name: 'Harison24',
 			rarity: 'common',
 			characterType: 'minecraft',
