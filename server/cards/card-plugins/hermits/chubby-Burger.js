@@ -3,7 +3,7 @@ import CharacterCard from './_character-card'
 class BurgerCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'burger',
+			id: 'chubby-Burger',
 			name: 'Burger',
 			rarity: 'common',
 			characterType: 'bacon',
