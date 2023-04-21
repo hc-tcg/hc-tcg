@@ -93,13 +93,13 @@ nav {
 	margin-bottom: 4vh;
 }
 
-.newStats {
+.stats {
 	display: grid;
 	grid-template-columns: repeat(5, 1fr);
 	gap: 1vh;
 }
 
-.newStat {
+.stat {
 	display: flex;
 	flex-direction: column;
 	gap: 1vh;
@@ -122,30 +122,6 @@ nav {
 		margin-top: auto;
 		padding-top: 1vh;
 		font-size: 3vh;
-	}
-}
-
-.stats {
-	background: rgb(30, 30, 30);
-	color: white;
-	border: 0.5vh solid #333;
-	border-radius: 0.5vh;
-	overflow-y: auto;
-	max-height: 30vh;
-	margin-top: 2.5vh;
-	padding: 2vh;
-}
-
-.stat {
-	display: flex;
-	justify-content: space-between;
-	padding: 0.3vh 1vh;
-	font-size: 2.5vh;
-	font-family: Minecraft;
-	cursor: default;
-
-	&:hover {
-		background: #333;
 	}
 }
 
