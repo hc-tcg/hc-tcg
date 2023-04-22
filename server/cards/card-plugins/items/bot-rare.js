@@ -6,7 +6,7 @@ class BotRareItemCard extends ItemCard {
 			id: 'item_bot_rare',
 			name: 'Bot',
 			rarity: 'rare',
-			hermitType: 'bot',
+			characterType: 'bot',
 		})
 	}
 
