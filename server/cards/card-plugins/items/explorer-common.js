@@ -1,16 +1,16 @@
 import ItemCard from './_item-card'
 
-class ExplorerCommonItemCard extends ItemCard {
+class CatCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_explorer_common',
-			name: 'Explorer',
+			id: 'item_cat_common',
+			name: 'Cat',
 			rarity: 'common',
-			hermitType: 'explorer',
+			hermitType: 'cat',
 		})
 	}
 
 	register(game) {}
 }
 
-export default ExplorerCommonItemCard
+export default CatCommonItemCard
