@@ -5,11 +5,11 @@ import {discardCard} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class CurseOfVanishingSingleUseCard extends SingleUseCard {
+class HappySingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'curse_of_vanishing',
-			name: 'Curse Of Vanishing',
+			id: 'happy_doggo',
+			name: 'Happy Doggo',
 			rarity: 'common',
 			description:
 				"Opponent is forced to discard their active Hermit's attached effect card.\n\nDiscard after use.",
@@ -41,4 +41,4 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default CurseOfVanishingSingleUseCard
+export default HappyDoggogSingleUseCard
