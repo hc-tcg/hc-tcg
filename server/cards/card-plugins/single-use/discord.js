@@ -4,7 +4,7 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class FishingRodSingleUseCard extends SingleUseCard {
+class DiscordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'discord',
@@ -31,4 +31,4 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default FishingRodSingleUseCard
+export default DiscordSingleUseCard
