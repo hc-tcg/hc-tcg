@@ -4,18 +4,18 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class GoldenAppleSingleUseCard extends SingleUseCard {
+class SandwichSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'golden_apple',
-			name: 'Golden Apple',
+			id: 'sandwich',
+			name: 'Sandwich',
 			rarity: 'ultra_rare',
 			description:
-				'Heals +100hp.\n\nCan be used on active or AFK Hermits.\n\nDiscard after use.',
+				'Heals +100hp.\n\nCan be used on active or benched Characters.\n\nDiscard after use.',
 		})
 		this.heal = 100
 		this.pickOn = 'apply'
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.useReqs = [{target: 'player', type: 'character', amount: 1}]
 		this.pickReqs = this.useReqs
 	}
 
@@ -40,4 +40,4 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default GoldenAppleSingleUseCard
+export default SandwichSingleUseCard
