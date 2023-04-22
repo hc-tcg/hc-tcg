@@ -6,7 +6,7 @@ class CatCommonItemCard extends ItemCard {
 			id: 'item_cat_common',
 			name: 'Cat',
 			rarity: 'common',
-			hermitType: 'cat',
+			characterType: 'cat',
 		})
 	}
 
