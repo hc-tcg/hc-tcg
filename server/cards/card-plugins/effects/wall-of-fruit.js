@@ -4,11 +4,11 @@ import {discardCard} from '../../../utils'
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
-class GoldArmorEffectCard extends EffectCard {
+class WallOfFruitEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'gold_armor',
-			name: 'Gold Armor',
+			id: 'wall_of_fruit',
+			name: 'Wall of Fruit',
 			rarity: 'common',
 			description:
 				'Protects from the first +30hp damage taken.\n\nDiscard following any damage taken.',
@@ -22,4 +22,4 @@ class GoldArmorEffectCard extends EffectCard {
 	register(game) {}
 }
 
-export default GoldArmorEffectCard
+export default WallOfFruitEffectCard
