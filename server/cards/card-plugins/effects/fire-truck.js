@@ -4,17 +4,17 @@ import EffectCard from './_effect-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class WaterBucketEffectCard extends EffectCard {
+class FireTruckEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'water_bucket',
-			name: 'Water Bucket',
+			id: 'fire_truck',
+			name: 'Fire Truck',
 			rarity: 'common',
 			description:
-				'Stops BURN.\n\nCan be used on active or AFK Hermits. Discard after Use.\n\nCan also be attached to prevent BURN.\n\nDiscard after user is knocked out.',
+				'Stops BURN.\n\nCan be used on active or AFK Characters. Discard after Use.\n\nCan also be attached to prevent BURN.\n\nDiscard after user is knocked out.',
 		})
 		this.pickOn = 'apply'
-		this.pickReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.pickReqs = [{target: 'player', type: 'character', amount: 1}]
 	}
 
 	/**
@@ -50,4 +50,4 @@ class WaterBucketEffectCard extends EffectCard {
 	}
 }
 
-export default WaterBucketEffectCard
+export default FireTruckEffectCard
