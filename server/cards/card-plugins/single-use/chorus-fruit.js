@@ -12,11 +12,11 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description:
-				"Swap active Hermit with AFK Hermit at the end of the player's turn.\n\nDiscard after use.",
+				"Swap active Character with Benched Character at the end of the player's turn.\n\nDiscard after use.",
 		})
 
 		this.useReqs = [
-			{target: 'player', type: 'hermit', amount: 1, active: false},
+			{target: 'player', type: 'character', amount: 1, active: false},
 		]
 	}
 
@@ -45,20 +45,20 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 					(a) => a.id === 'sleeping'
 				)
 
-				const hasOtherHermit = currentPlayer.board.rows.some(
+				const hasOtherCharacter = currentPlayer.board.rows.some(
 					(row, index) =>
-						row.hermitCard && index !== currentPlayer.board.activeRow
+						row.characterCard && index !== currentPlayer.board.activeRow
 				)
 
 				if (
 					chorusFruit &&
 					!activeIsSleeping &&
-					hasOtherHermit &&
+					hasOtherCharacter &&
 					pastTurnActions.includes('ATTACK') &&
-					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+					!pastTurnActions.includes('CHANGE_ACTIVE_CHARACTER') &&
+					!availableActions.push('CHANGE_ACTIVE_CHARACTER')
 				) {
-					availableActions.push('CHANGE_ACTIVE_HERMIT')
+					availableActions.push('CHANGE_ACTIVE_CHARACTER')
 				}
 				return availableActions
 			}
