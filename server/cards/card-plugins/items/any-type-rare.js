@@ -6,7 +6,7 @@ class AnyTypeRareItemCard extends ItemCard {
 			id: 'item_any_type_rare',
 			name: 'Any Type',
 			rarity: 'ultra-rare',
-			hermitType: 'any',
+			characterType: 'any',
 		})
 	}
 
