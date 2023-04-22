@@ -6,7 +6,7 @@ class ToddlerRareItemCard extends ItemCard {
 			id: 'item_toddler_rare',
 			name: 'Toddler',
 			rarity: 'rare',
-			hermitType: 'toddler',
+			characterType: 'toddler',
 		})
 	}
 
