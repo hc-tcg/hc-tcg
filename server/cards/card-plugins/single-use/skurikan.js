@@ -11,7 +11,7 @@ class ShurikanSingleUseCard extends SingleUseCard {
 			name: 'Shurikan',
 			rarity: 'common',
 			description:
-				'Does +40hp damage to any opposing AFK Hermit.\n\nDiscard after use.',
+				'Does +40hp damage to any opposing AFK Character.\n\nDiscard after use.',
 		})
 		this.damage = {afkTarget: 40}
 		this.pickOn = 'attack'
@@ -34,8 +34,8 @@ class ShurikanSingleUseCard extends SingleUseCard {
 			// only attack selected afk target
 			const bowPickedCards = pickedCardsInfo[this.id] || []
 			if (bowPickedCards.length !== 1) return target
-			const pickedHermit = bowPickedCards[0]
-			if (pickedHermit.row !== target.row) return target
+			const pickedCharacter = bowPickedCards[0]
+			if (pickedCharacter.row !== target.row) return target
 
 			target.extraEffectDamage += this.damage.afkTarget
 
