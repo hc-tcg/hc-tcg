@@ -8,11 +8,11 @@ import {equalCard, discardCard} from '../../../utils'
 // TODO - don't allow selecting the same card twice
 // TODO - If there is is less cards in hand (1,0) limit the requirment or don't allow to use it
 // TODO - don't allow to compost hermit cards if there is no hermit on board (perhaps don't allow SU cards at all if no hermits are on board)
-class ComposterSingleUseCard extends SingleUseCard {
+class RecyclingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'composter',
-			name: 'Composter',
+			id: 'recylcing',
+			name: 'Recycling',
 			rarity: 'common',
 			description:
 				'Discard 2 cards in your hand. Draw 2 cards.\n\nDiscard after use.',
@@ -48,4 +48,4 @@ class ComposterSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default ComposterSingleUseCard
+export default RecylclingSingleUseCard
