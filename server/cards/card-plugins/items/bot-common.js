@@ -6,7 +6,7 @@ class BotCommonItemCard extends ItemCard {
 			id: 'item_bot_common',
 			name: 'Bot',
 			rarity: 'common',
-			hermitType: 'bot',
+			characterType: 'bot',
 		})
 	}
 
