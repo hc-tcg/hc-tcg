@@ -6,13 +6,13 @@ import {discardCard} from '../../../utils'
  */
 
 // TODO - Can't use with no active hermit
-class FlintAndSteelSingleUseCard extends SingleUseCard {
+class LighterSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'flint_&_steel',
-			name: 'Flint & Steel',
+			id: 'lighter',
+			name: 'Lighter',
 			rarity: 'common',
-			description: 'Discard your hand. Draw 3 cards.\n\nDiscard after use.',
+			description: 'Discard your hand. Draw 5 cards.\n\nDiscard after use.',
 		})
 	}
 
@@ -35,4 +35,4 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default FlintAndSteelSingleUseCard
+export default LighterSingleUseCard
