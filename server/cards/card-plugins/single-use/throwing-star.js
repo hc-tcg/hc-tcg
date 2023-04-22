@@ -4,11 +4,11 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class BowSingleUseCard extends SingleUseCard {
+class ShurikanSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'bow',
-			name: 'Bow',
+			id: 'shurikan',
+			name: 'Shurikan',
 			rarity: 'common',
 			description:
 				'Does +40hp damage to any opposing AFK Hermit.\n\nDiscard after use.',
@@ -16,7 +16,7 @@ class BowSingleUseCard extends SingleUseCard {
 		this.damage = {afkTarget: 40}
 		this.pickOn = 'attack'
 		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+			{target: 'opponent', type: 'character', amount: 1, active: false},
 		]
 		this.pickReqs = this.useReqs
 	}
@@ -44,4 +44,4 @@ class BowSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default BowSingleUseCard
+export default ShurikanSingleUseCard
