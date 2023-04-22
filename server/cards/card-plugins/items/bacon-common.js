@@ -6,7 +6,7 @@ class BaconCommonItemCard extends ItemCard {
 			id: 'item_bacon_common',
 			name: 'Bacon',
 			rarity: 'common',
-			hermitType: 'bacon',
+			characterType: 'bacon',
 		})
 	}
 
