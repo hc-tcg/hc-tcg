@@ -4,12 +4,12 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class FishingRodSingleUseCard extends SingleUseCard {
+class SadDoggoSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'fishing_rod',
-			name: 'Fishing Rod',
-			rarity: 'ultra_rare',
+			id: 'sad_doggo',
+			name: 'Sad Doggo',
+			rarity: 'rare',
 			description: 'Player draws 2 cards from deck.\n\nDiscard after use.',
 		})
 	}
@@ -31,4 +31,4 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default FishingRodSingleUseCard
+export default SadDoggoSingleUseCard
