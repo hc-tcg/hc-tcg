@@ -3,11 +3,11 @@ import EffectCard from './_effect-card'
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
  */
-class IronArmorEffectCard extends EffectCard {
+class RubberChickenEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'iron_armor',
-			name: 'Iron Armor',
+			id: 'rubber_chicken',
+			name: 'Rubber Chicken',
 			rarity: 'common',
 			description:
 				'Protects from the first +20hp damage taken.\n\nDiscard after user is knocked out.',
@@ -21,4 +21,4 @@ class IronArmorEffectCard extends EffectCard {
 	register(game) {}
 }
 
-export default IronArmorEffectCard
+export default RubberChickenEffectCard
