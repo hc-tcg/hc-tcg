@@ -29,7 +29,7 @@ class TotemEffectCard extends EffectCard {
 			return target
 		})
 
-		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
+		game.hooks.characterDeath.tap(this.id, (recovery, deathInfo) => {
 			const {playerState, row} = deathInfo
 			const hasTotem = row.effectCard?.cardId === this.id
 			if (!hasTotem) return
