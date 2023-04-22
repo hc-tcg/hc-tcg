@@ -4,17 +4,17 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class EfficiencySingleUseCard extends SingleUseCard {
+class GamerChairSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'efficiency',
-			name: 'Efficiency',
+			id: 'gamer-chair',
+			name: 'Gamer Chair',
 			rarity: 'rare',
 			description:
-				'User can execute attack without having the necessary item cards attached.\n\nCurrent turn only.\n\nDiscard after use.',
+				'User can execute attack without having the necessary energy cards attached.\n\nCurrent turn only.\n\nDiscard after use.',
 		})
 
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1, active: true}]
+		this.useReqs = [{target: 'player', type: 'character', amount: 1, active: true}]
 	}
 
 	/**
@@ -30,7 +30,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 				if (suId === this.id && suUsed) {
 					if (
 						pastTurnActions.includes('ATTACK') ||
-						pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') ||
+						pastTurnActions.includes('CHANGE_ACTIVE_CHARACTER') ||
 						game.state.turn <= 1
 					) {
 						return availableActions
@@ -55,4 +55,4 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	}
 }
 
-export default EfficiencySingleUseCard
+export default GamerChairSingleUseCard
