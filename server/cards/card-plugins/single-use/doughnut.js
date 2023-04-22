@@ -4,18 +4,18 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class InstantHealthIISingleUseCard extends SingleUseCard {
+class DoughnutSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'instant_health_ii',
-			name: 'Instant Health II',
+			id: 'doughnut',
+			name: 'Doughnut',
 			rarity: 'rare',
 			description:
-				'Heals +60hp.\n\nCan be used on active or AFK Hermits. Discard after use.',
+				'Heals +60hp.\n\nCan be used on active or benched characters. Discard after use.',
 		})
 		this.heal = 60
 		this.pickOn = 'apply'
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
+		this.useReqs = [{target: 'player', type: 'character', amount: 1}]
 		this.pickReqs = this.useReqs
 	}
 
@@ -40,4 +40,4 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 	}
 }
 
-export default InstantHealthIISingleUseCard
+export default DoughnutSingleUseCard
