@@ -1,6 +1,6 @@
 import SINGLE_USE_CARDS from './single-use'
 import EFFECT_CARDS from './effects'
-import HERMIT_CARDS from './hermits'
+import CHARACTER_CARDS from './hermits'
 import ITEM_CARDS from './items'
 
 /**
@@ -10,7 +10,7 @@ import ITEM_CARDS from './items'
 export const CARDS = [
 	...SINGLE_USE_CARDS,
 	...EFFECT_CARDS,
-	...HERMIT_CARDS,
+	...CHARACTER_CARDS,
 	...ITEM_CARDS,
 ]
 
