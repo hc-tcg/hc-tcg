@@ -4,16 +4,16 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class ClockSingleUseCard extends SingleUseCard {
+class BananaSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'clock',
-			name: 'Clock',
+			id: 'banana',
+			name: 'Banana',
 			rarity: 'ultra_rare',
 			description: 'Opponent skips their next turn.\n\nDiscard after use.',
 		})
 
-		this.useReqs = [{target: 'opponent', type: 'hermit', amount: 1}]
+		this.useReqs = [{target: 'opponent', type: 'character', amount: 1}]
 	}
 
 	/**
@@ -41,4 +41,4 @@ class ClockSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default ClockSingleUseCard
+export default BananaSingleUseCard
