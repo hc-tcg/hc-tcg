@@ -4,18 +4,18 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class CurseOfBindingSingleUseCard extends SingleUseCard {
+class BaricadeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'curse_of_binding',
-			name: 'Curse Of Binding',
+			id: 'baricade',
+			name: 'Baricade',
 			rarity: 'common',
 			description:
-				'Opposing active Hermit can not go AFK on the following turn.\n\nDiscard after use.',
+				'Opposing active Character can not go to the bench on the following turn.\n\nDiscard after use.',
 		})
 
 		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: 'character', amount: 1, active: true},
 		]
 	}
 
@@ -40,7 +40,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			if (currentPlayer.board.activeRow === null) return availableActions
 
 			return availableActions.filter(
-				(action) => action !== 'CHANGE_ACTIVE_HERMIT'
+				(action) => action !== 'CHANGE_ACTIVE_CHARACTER'
 			)
 		})
 
@@ -52,4 +52,4 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default CurseOfBindingSingleUseCard
+export default BaricadeSingleUseCard
