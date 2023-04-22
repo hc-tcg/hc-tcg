@@ -6,11 +6,10 @@ import {discardCard} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 /*
-Info confirmed by beef:
 - If knockback is used, sleeping opponent goes AFK but wakes up.
 - Discarding/Stealing the bed does not effect the sleeping opponent.
 - You can use single use effects while sleeping that don't cause any damage.
-- Bed can be placed only on active hermit.
+- Bed can be placed only on active character.
 - You go to sleep the moment you place the bed down so technically you lose 3 turns of attacking.
 */
 class BedEffectCard extends EffectCard {
@@ -62,7 +61,7 @@ class BedEffectCard extends EffectCard {
 					const hadBed = bedInfo[index]
 					const hasBed = row.effectCard?.cardId === this.id
 					if (!hadBed && hasBed) {
-						row.health = CARDS[row.hermitCard.cardId].health
+						row.health = CARDS[row.characterCard.cardId].health
 						// clear any previous sleeping
 						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 						// set new sleeping for full two turns
