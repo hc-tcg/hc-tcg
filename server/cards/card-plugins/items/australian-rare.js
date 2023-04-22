@@ -6,7 +6,7 @@ class AustralianRareItemCard extends ItemCard {
 			id: 'item_australian_rare',
 			name: 'Australian',
 			rarity: 'rare',
-			hermitType: 'australian',
+			characterType: 'australian',
 		})
 	}
 
