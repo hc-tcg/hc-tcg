@@ -25,6 +25,8 @@
 .nameForm {
 	display: flex;
 	margin-top: 15vw;
+	margin-bottom: 2vh;
+	animation: fadeIn 250ms ease-in-out forwards;
 
 	> * {
 		font-size: 1.5vh;
@@ -104,6 +106,16 @@
 
 	100% {
 		transform: translateX(0);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
 	}
 }
 

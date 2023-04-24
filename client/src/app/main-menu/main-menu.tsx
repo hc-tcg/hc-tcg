@@ -17,7 +17,7 @@ type Props = {
 }
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
-	const {playerName} = useSelector(getSession)
+	const {playerName, playerDeck} = useSelector(getSession)
 	const handleRandomMatchmaking = () => dispatch(randomMatchmaking())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
@@ -27,7 +27,15 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<div className={css.mainmenu}>
-			<h2 className={css.welcome}>Welcome back, {playerName}!</h2>
+			<div className={css.playerInfo}>
+				<p id={css.infoName}>{playerName}</p>
+				<p id={css.infoDeck}>{playerDeck.name}</p>
+				<img
+					id={css.infoIcon}
+					src={`/images/types/type-${playerDeck.icon}.png`}
+					alt="deck-icon"
+				/>
+			</div>
 			<div className={css.content}>
 				<div className={css.logo}>
 					<TcgLogo />
@@ -42,14 +50,14 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 					<Button
 						variant="stone"
-						id={css.pcreate}
+						id={css.privateCreate}
 						onClick={handleCreatePrivateGame}
 					>
 						Create Private Game
 					</Button>
 					<Button
 						variant="stone"
-						id={css.pjoin}
+						id={css.privateJoin}
 						onClick={handleJoinPrivateGame}
 					>
 						Join Private Game

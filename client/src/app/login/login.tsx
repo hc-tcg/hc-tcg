@@ -7,6 +7,7 @@ import TcgLogo from 'components/tcg-logo'
 import {VersionLinks} from 'components/link-container'
 import Button from 'components/button'
 import Spinner from 'components/spinner'
+import ErrorBanner from 'components/error-banner'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
@@ -55,7 +56,7 @@ const Login = () => {
 					</Button>
 				</form>
 			)}
-			{errorType && <div className={css.error}>{getLoginError(errorType)}</div>}
+			{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 			<VersionLinks />
 		</div>
 	)
