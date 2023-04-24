@@ -39,7 +39,7 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 				duration={5000}
 				className={css.toast}
 			>
-				{image && <img src={image} alt="icon" />}
+				{image && <img src={image} draggable={false} alt="icon" />}
 				<div className={css.content}>
 					<Toast.Title className={css.title}>{title}</Toast.Title>
 					<Toast.Description className={css.description}>
