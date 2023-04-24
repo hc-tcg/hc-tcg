@@ -65,7 +65,9 @@
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: space-between;
-	width: 1226px;
+	overflow: auto;
+	width: 100%;
+	max-width: 1226px;
 	margin: 0 auto;
 }
 
