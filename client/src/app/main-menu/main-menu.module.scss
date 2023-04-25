@@ -1,162 +1,171 @@
-/* Backgrounds */
-
-.menuBackground {
+.mainmenu {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
-	background-image: url('/images/menu-background-widescreen.png');
-	background-size: cover;
-	background-position: left;
+	color: var(--text-light);
+}
 
-	&.backgroundOverride {
-		background-image: url('/images/menu-background.png');
-		background-position: center;
+.playerInfo {
+	position: absolute;
+	top: 1vh;
+	right: 1vh;
+	display: grid;
+	grid-template-areas:
+		'name icon'
+		'deck icon';
+	font-size: 1.5vh;
+	background-color: hsla(0deg, 0%, 0%, 35%);
+	padding: 0.75vh 1vh 0.75vh 1.5vh;
+	border-radius: 0.5vh;
+	user-select: none;
+	font-weight: normal;
+	text-align: right;
+	animation: fadeIn 250ms ease-in-out forwards;
+
+	> img {
+		height: 4vh;
 	}
 
-	* {
-		user-select: none;
+	#infoName {
+		grid-area: name;
+		font-weight: bold;
+		font-size: 1.8vh;
+	}
+
+	#infoDeck {
+		grid-area: deck;
+	}
+
+	#infoIcon {
+		grid-area: icon;
+		margin-left: 1vh;
 	}
 }
 
-/* Universal */
-
-.menuButton {
-	margin-bottom: 2.5vh;
+.logo {
+	margin-inline: auto;
 }
 
-.smallButtonContainer {
-	display: flex;
+.content {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-content: flex-start center;
+	padding-top: 10vh;
+	margin-inline: auto;
+}
+
+nav {
+	margin-top: 5vh;
+	display: grid;
+	gap: 1vh;
+	grid-template-areas:
+		'public'
+		'private-create'
+		'private-join'
+		'deck'
+		'settings'
+		'logout';
+	animation: fadeIn 250ms ease-in-out forwards;
+}
+
+#public {
+	grid-area: public;
+}
+
+#privateCreate {
+	grid-area: private-create;
+}
+
+#privateJoin {
+	grid-area: private-join;
+}
+
+#deck {
+	grid-area: deck;
+}
+
+#settings {
+	grid-area: settings;
+}
+
+#logout {
+	grid-area: logout;
+}
+
+/* Settings Page */
+
+.settingsMenu {
+	max-width: 70vh;
+	margin-inline: auto;
+	padding: 1vh;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.settings {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1vh;
 	width: 100%;
-	align-items: center;
-	justify-content: space-between;
-
-	&.switchGaps {
-		margin-bottom: 2.5vh;
-	}
-
-	.menuButton {
-		width: calc(50% - 1.25vh);
-		margin: 0 1.25vh;
-		flex-grow: 1;
-
-		&:first-of-type {
-			margin-left: 0;
-		}
-
-		&:last-of-type {
-			margin-right: 0;
-		}
-	}
-}
-
-/* Main container */
-
-.mainContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	height: 100%;
-	width: min(65vh, 80vw);
-	justify-content: center;
-	margin-left: 7vh;
-}
-
-.mainButtonContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	margin-top: 11vh;
-	width: 95%;
-}
-
-/* More container */
-
-.moreContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	height: 100%;
-	width: 100%;
-	justify-content: center;
-
-	> * {
-		width: min(80vh, 85vw);
-	}
-}
-
-.moreButtonContainer {
-	display: flex;
-	flex-direction: column;
-	align-items: stretch;
-	margin-top: 11vh;
+	margin-bottom: 4vh;
 }
 
 .stats {
-	background: rgb(30, 30, 30);
-	color: white;
-	border: 0.5vh solid #333;
-	border-radius: 0.5vh;
-	overflow-y: auto;
-	max-height: 30vh;
-	margin-top: 2.5vh;
-	padding: 2vh;
+	display: grid;
+	grid-template-rows: repeat(5, 1fr);
+	gap: 1vh;
 }
 
 .stat {
 	display: flex;
-	justify-content: space-between;
-	padding: 0.3vh 1vh;
-	font-size: 2.5vh;
-	font-family: Minecraft;
-	cursor: default;
+	flex-direction: row;
+	align-items: center;
+	gap: 1vh;
+	padding: 1vh 2vh;
+	background: var(--gray-800);
+	border-radius: 0.5vh;
+	color: var(--text-light);
+	height: 6vh;
 
-	&:hover {
-		background: #333;
+	> p {
+		font-size: 2vh;
+	}
+
+	> span {
+		font-family: Minecrafter, Minecraft, sans-serif;
+		margin-left: auto;
+		font-size: 3vh;
 	}
 }
 
-/* Small Screen */
-@media screen and (max-width: 150vh) {
-	.menuBackground {
-		background-image: url('/images/menu-background.png');
-		background-position: center;
-		align-items: center;
-	}
-
-	.mainButtonContainer {
-		margin-top: 6vh;
-	}
-
-	.mainContainer {
-		margin: 0;
-	}
-}
-
-@media screen and (max-width: 80vh) {
-	.menuButton {
-		margin-bottom: 2vh;
-	}
-
-	.mainButtonContainer {
+/* DESKTOP */
+@media (min-width: 720px) {
+	nav {
 		margin-top: 5vh;
+		display: grid;
+		gap: 1vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			'public public'
+			'private-create private-join'
+			'deck deck'
+			'settings logout';
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
 	}
 
-	.smallButtonContainer {
-		flex-direction: column-reverse;
-		align-items: stretch;
-
-		&:not(.switchGaps) {
-			margin-top: 2.5vh;
-		}
-
-		.menuButton {
-			width: 100%;
-			margin: 0 0 2.5vh;
-
-			&:first-of-type {
-				margin: 0;
-			}
-		}
+	to {
+		opacity: 1;
 	}
 }

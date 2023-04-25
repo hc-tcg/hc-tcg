@@ -1,53 +1,37 @@
-.loginBackground {
-	display: flex;
-	justify-content: center;
-	margin: 0;
-	height: 100%;
-	width: 100%;
-	background-image: url('/images/menu-background.png');
-	background-size: cover;
-	background-position: center;
-}
-
 .loginContainer {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
 	align-items: center;
-	padding-top: 15vh;
+	padding-top: 10vh;
+	width: 95vw;
+	margin-inline: auto;
 }
 
 .connecting {
-	margin-top: min(11.5vh, 13vw);
-	height: 5vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2vh;
+	margin-top: 10vw;
 	font-size: 2.5vh;
 	line-height: 100%;
 	text-align: center;
-	color: white;
+	color: var(--text-light);
+	filter: drop-shadow(1px 1px 0 var(--text-dark));
 }
 
 .nameForm {
 	display: flex;
-	margin-top: min(11.5vh, 13vw);
+	margin-top: 15vw;
+	margin-bottom: 2vh;
+	animation: fadeIn 250ms ease-in-out forwards;
 
 	> * {
-		font-size: 2vh;
+		font-size: 1.5vh;
 		line-height: 100%;
 	}
-}
-
-.placeholder {
-	line-height: normal;
-	position: absolute;
-	font-size: 2vh;
-	color: #808080;
-	transition: all 0.4s;
-	top: 1.5vh;
-	left: 1.5vh;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	pointer-events: none;
 }
 
 .customInput {
@@ -55,57 +39,90 @@
 	height: 5vh;
 	width: 35vh;
 
+	label {
+		line-height: normal;
+		position: absolute;
+		font-size: 2vh;
+		color: var(--gray-700);
+		transition: top 150ms, left 150ms;
+		top: 1.4vh;
+		left: 1.5vh;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		pointer-events: none;
+	}
+
 	input {
 		padding-left: 1vh;
 		padding-right: 0;
 		border-radius: 0;
 		width: 100%;
+		height: 5vh;
+		font-size: 2vh;
 
-		&:focus-visible + .placeholder,
-		&:not(:placeholder-shown) + .placeholder {
-			top: -2.9vh;
+		&:focus-visible + label,
+		&:not(:placeholder-shown) + label {
+			top: -3vh;
 			left: 0.8vh;
-			font-size: 2.5vh;
-			color: #000;
+			color: var(--text-light);
+			filter: drop-shadow(1px 1px 1px black);
 		}
 	}
 }
 
 .error {
-	font-size: 2.2vh;
-	margin-top: 1.5vh;
-	color: orange;
-	text-shadow: 0.15vh 0.15vh black;
+	margin: 2vh 0;
+	min-height: 4vh;
+	display: grid;
+	place-content: center;
+	padding: 1vh 2vh;
+	text-align: center;
+	border: 2px solid var(--color-error-highlight);
+	background: var(--color-error);
+	color: var(--text-light);
+	font-size: 1.7vh;
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
+		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	animation: shake 150ms forwards;
 }
 
-@media screen and (max-width: 80vh) {
+@keyframes shake {
+	0% {
+		transform: translateX(-5px);
+	}
+
+	25% {
+		transform: translateX(5px);
+	}
+
+	50% {
+		transform: translateX(-5px);
+	}
+
+	75% {
+		transform: translateX(5px);
+	}
+
+	100% {
+		transform: translateX(0);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+// DESKTOP
+@media (min-width: 80vh) {
 	.nameForm,
 	.connecting {
-		margin-top: 15vw;
-	}
-
-	.nameForm {
-		* {
-			font-size: 1.5vh !important;
-		}
-	}
-
-	.placeholder {
-		top: 1.75vh;
-		left: 1.4vh;
-	}
-
-	.customInput {
-		width: 50vw;
-
-		input {
-			&:focus-visible + .placeholder,
-			&:not(:placeholder-shown) + .placeholder {
-				top: -2.3vh;
-				left: 0.5vh;
-				font-size: 2vh !important;
-				color: #000;
-			}
-		}
+		margin-top: min(11.5vh, 13vw);
 	}
 }

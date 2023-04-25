@@ -31,6 +31,7 @@
 	--common: rgb(0, 197, 0);
 	--rare: rgb(249, 168, 3);
 	--ultra-rare: rgb(98, 255, 255);
+	--breakpoint: 80rem;
 }
 
 @font-face {
@@ -128,33 +129,6 @@ li {
 
 ::-webkit-scrollbar-corner {
 	background: transparent;
-}
-
-/* changes for new look, note that all the above will get redone eventually */
-
-.temp {
-	button {
-		line-height: 100%;
-		text-align: center;
-		height: 5vh;
-		font-size: 2vh;
-		border: 0.3vh solid #000;
-		text-shadow: 0.2vh 0.2vh #000;
-		box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
-		padding: 0 2vh;
-	}
-
-	input:not([type]),
-	input[type='text'] {
-		border: 0.3vh solid #000;
-		height: 5vh;
-		font-size: 2vh;
-
-		&:focus-visible {
-			outline-offset: 0;
-			outline: none;
-		}
-	}
 }
 
 /* scrollbar */

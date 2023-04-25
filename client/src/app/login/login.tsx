@@ -4,8 +4,11 @@ import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
 import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
-import LinkContainer from 'components/link-container'
+import {VersionLinks} from 'components/link-container'
 import Button from 'components/button'
+import Spinner from 'components/spinner'
+import ErrorBanner from 'components/error-banner'
+import Beef from 'components/beef'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
@@ -18,7 +21,7 @@ const getLoginError = (errorType: string) => {
 	return errorType.substring(0, 150)
 }
 
-function Login() {
+const Login = () => {
 	const dispatch = useDispatch()
 	const connecting = useSelector(getConnecting)
 	const errorType = useSelector(getErrorType)
@@ -30,33 +33,33 @@ function Login() {
 	}
 
 	return (
-		/* Background Image */
-		<div className={`${css.loginBackground} temp`}>
-			<div className={css.loginContainer}>
-				<TcgLogo />
-				{connecting ? (
-					<div className={css.connecting}>Connecting...</div>
-				) : (
-					<form className={css.nameForm} onSubmit={handlePlayerName}>
-						<div className={css.customInput}>
-							<input
-								maxLength={25}
-								name="playerName"
-								placeholder=" "
-								autoFocus
-							></input>
-							<span className={css.placeholder}>Player Name</span>
-						</div>
-						<Button variant="stone" type="submit">
-							Next
-						</Button>
-					</form>
-				)}
-				{errorType ? (
-					<div className={css.error}>{getLoginError(errorType)}</div>
-				) : null}
-				<LinkContainer />
-			</div>
+		<div className={css.loginContainer}>
+			<TcgLogo />
+			{connecting ? (
+				<div className={css.connecting}>
+					<Spinner />
+					<p>Connecting</p>
+				</div>
+			) : (
+				<form className={css.nameForm} onSubmit={handlePlayerName}>
+					<div className={css.customInput}>
+						<input
+							maxLength={25}
+							name="playerName"
+							placeholder=" "
+							autoFocus
+							id="username"
+						></input>
+						<label htmlFor="username">Player Name</label>
+					</div>
+					<Button variant="stone" type="submit">
+						Next
+					</Button>
+				</form>
+			)}
+			{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+			<VersionLinks />
+			<Beef />
 		</div>
 	)
 }

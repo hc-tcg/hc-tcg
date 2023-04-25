@@ -6,33 +6,29 @@
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-	width: 65vh;
+	max-width: 50vh;
 	overflow: visible;
-}
 
-.logoSubText {
-	position: absolute;
-	right: 2vh;
-	bottom: 8vh;
-	transform: rotate(-20deg);
-
-	p {
-		font-size: 2.2vh;
-		color: #fcfc29;
-		text-shadow: #3f3e00 0.2vh 0.2vh;
-		font-family: Minecraft;
-		margin: 0;
-		animation-name: subTextAnim;
-		animation-duration: 1s;
-		animation-direction: alternate-reverse;
-		animation-iteration-count: infinite;
-		animation-timing-function: ease-in-out;
+	& * {
+		user-select: none;
 	}
 }
 
-@media screen and (max-width: 80vh) {
+.splashText {
+	position: absolute;
+	right: 0;
+	bottom: 2vh;
+	font-size: 2vh;
+	color: #fcfc29;
+	text-shadow: #3f3e00 0.2vh 0.2vh;
+	font-family: Minecraft;
+	margin: 0;
+	animation: splashText 200ms ease-out infinite alternate-reverse;
+}
+
+@media (max-width: 80vh) {
 	.logo {
-		width: 75vw;
+		max-width: 75vw;
 	}
 
 	.logoSubText {
@@ -45,12 +41,12 @@
 	}
 }
 
-@keyframes subTextAnim {
+@keyframes splashText {
 	from {
-		transform: scale(100%);
+		transform: scale(100%) rotate(-20deg);
 	}
 
 	to {
-		transform: scale(140%);
+		transform: scale(105%) rotate(-20deg);
 	}
 }
