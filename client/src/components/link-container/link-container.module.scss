@@ -1,19 +1,28 @@
+/* stylelint-disable no-descending-specificity */
+
 .linkContainer {
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
-	width: 20vh;
-	height: 4vh;
+	gap: 4vh;
 	margin-top: 2vh;
+	margin-inline: auto;
 	font-size: 1vh;
 	font-family: MinecraftBold;
 
 	> a {
-		display: flex;
+		text-decoration: none;
 
-		> img {
+		img {
 			height: 4vh;
 			width: 4vh;
+			filter: invert(1);
+		}
+
+		&:hover {
+			img {
+				filter: invert(1) brightness(100%) sepia(100) saturate(7)
+					hue-rotate(341deg);
+			}
 		}
 	}
 }
@@ -22,16 +31,38 @@
 	position: absolute;
 	bottom: 1vh;
 	left: 1vh;
+	display: flex;
+	flex-direction: row;
+	gap: 1vh;
 	color: var(--text-light);
 	filter: drop-shadow(1px 1px 0 var(--text-dark));
 	font-size: 1.3vh;
 	user-select: none;
 
-	& a {
-		color: var(--text-light);
+	span {
+		display: flex;
+		align-items: center;
 	}
 
-	& a:visited {
+	& a {
+		display: flex;
+		align-items: center;
+		gap: 0.5vh;
 		color: var(--text-light);
+		text-decoration: none;
+
+		img {
+			height: 2vh;
+			filter: invert(1);
+		}
+
+		&:hover {
+			color: hsl(60deg, 90%, 80%);
+
+			img {
+				filter: invert(1) brightness(100%) sepia(100) saturate(7)
+					hue-rotate(341deg);
+			}
+		}
 	}
 }

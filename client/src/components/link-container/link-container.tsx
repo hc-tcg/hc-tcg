@@ -11,24 +11,25 @@ export function VersionLinks() {
 				rel="noreferrer"
 				title="Reddit"
 			>
+				<img draggable={false} src="/images/icons/reddit.svg" />
 				Reddit
 			</a>
-			<span> - </span>
 			<a
 				href="https://github.com/martinkadlec0/hc-tcg"
 				target="_blank"
 				rel="noreferrer"
 				title="Github"
 			>
+				<img draggable={false} src="/images/icons/github.svg" />
 				GitHub
 			</a>
-			<span> - </span>
 			<a
 				href="https://discord.gg/AjGbqNfcQX"
 				target="_blank"
 				rel="noreferrer"
 				title="Discord"
 			>
+				<img draggable={false} src="/images/icons/discord.svg" />
 				Discord
 			</a>
 		</p>
