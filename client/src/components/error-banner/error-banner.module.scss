@@ -24,6 +24,14 @@
 	}
 }
 
+.text {
+	background: transparent;
+	border: none;
+	color: var(--color-error);
+	padding: 0;
+	min-height: 0;
+}
+
 @keyframes shake {
 	0% {
 		transform: translateX(-5px);

@@ -4,12 +4,18 @@ import {ErrorIcon} from 'components/svgs'
 
 interface Props extends HTMLAttributes<HTMLDivElement> {
 	children: ReactNode
+	textOnly?: boolean
 	attributes?: HTMLDivElement
 }
 
-const ErrorBanner = ({children, ...attributes}: Props) => {
+const ErrorBanner = ({children, textOnly, ...attributes}: Props) => {
 	return (
-		<div {...attributes} className={`${css.error} ${attributes?.className}`}>
+		<div
+			{...attributes}
+			className={`${css.error} ${textOnly && css.text} ${
+				attributes?.className
+			}`}
+		>
 			<span>{<ErrorIcon />}</span> {children}
 		</div>
 	)
