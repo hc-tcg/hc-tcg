@@ -16,6 +16,7 @@ function Settings({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
+	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('soundVolume', ev.currentTarget.value))
@@ -53,7 +54,7 @@ function Settings({setMenuSection}: Props) {
 	return (
 		<MenuLayout
 			back={() => setMenuSection('mainmenu')}
-			title="Settings"
+			title="More"
 			returnText="Main Menu"
 			className={css.settingsMenu}
 		>
@@ -79,27 +80,26 @@ function Settings({setMenuSection}: Props) {
 			<h2>Statistics</h2>
 			<div className={css.stats}>
 				<div className={css.stat}>
-					<img src="/images/effects/diamond_sword.png" alt="wins" />
+					<p>Games Played</p>
+					<span>{totalGames}</span>
+				</div>
+				<div className={css.stat}>
 					<p>Wins</p>
 					<span>{stats.w}</span>
 				</div>
 				<div className={css.stat}>
-					<img src="/images/effects/tnt.png" alt="wins" />
 					<p>Losses</p>
 					<span>{stats.l}</span>
 				</div>
 				<div className={css.stat}>
-					<img src="/images/effects/totem.png" alt="wins" />
 					<p>Ties</p>
 					<span>{stats.t}</span>
 				</div>
 				<div className={css.stat}>
-					<img src="/images/effects/splash_potion_of_healing.png" alt="wins" />
 					<p>Forfeit Wins</p>
 					<span>{stats.fw}</span>
 				</div>
 				<div className={css.stat}>
-					<img src="/images/effects/potion_of_weakness.png" alt="wins" />
 					<p>Forfeit Losses</p>
 					<span>{stats.fl}</span>
 				</div>

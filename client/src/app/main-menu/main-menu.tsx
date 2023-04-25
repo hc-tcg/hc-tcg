@@ -66,7 +66,7 @@ function MainMenu({setMenuSection}: Props) {
 						Customize Deck
 					</Button>
 					<Button variant="stone" id={css.settings} onClick={handleSettings}>
-						Settings
+						More
 					</Button>
 					<Button variant="stone" id={css.logout} onClick={handleLogOut}>
 						Log Out
