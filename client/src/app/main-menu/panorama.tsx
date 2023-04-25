@@ -6,29 +6,35 @@ import {Canvas, useThree} from '@react-three/fiber'
 
 // extend({OrbitControls})
 
-const SkyBox = () => {
+type Props = {
+	panorama: 'hermit-hill' | 'town-hall'
+}
+
+const SkyBox = ({panorama}: Props) => {
 	const {scene} = useThree()
 	const loader = new THREE.CubeTextureLoader()
 	const texture = loader.load([
-		'/images/panorama/pan_fr.png',
-		'/images/panorama/pan_bk.png',
-		'/images/panorama/pan_tp.png',
-		'/images/panorama/pan_bt.png',
-		'/images/panorama/pan_lf.png',
-		'/images/panorama/pan_rt.png',
+		`/images/panorama/${panorama}/panorama_0.png`, //Front
+		`/images/panorama/${panorama}/panorama_2.png`, //Back
+		`/images/panorama/${panorama}/panorama_4.png`, //Top
+		`/images/panorama/${panorama}/panorama_5.png`, //Bottom
+		`/images/panorama/${panorama}/panorama_3.png`, //Left
+		`/images/panorama/${panorama}/panorama_1.png`, //Right
 	])
+
+	console.log('Texture: ', texture)
 
 	scene.background = texture
 	scene.backgroundIntensity = 0.9
 	return null
 }
 
-const Panorama = ({...props}) => {
+const Panorama = ({panorama}: Props) => {
 	console.log('Rendering panorama...')
 	return (
-		<Canvas linear flat {...props} className={css.canvas}>
+		<Canvas linear flat className={css.canvas}>
 			<OrbitControls autoRotate autoRotateSpeed={-0.05} />
-			<SkyBox />
+			<SkyBox panorama={panorama} />
 		</Canvas>
 	)
 }

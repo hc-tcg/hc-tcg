@@ -24,6 +24,6 @@ root.render(
 				<App />
 			</Toast.Provider>
 		</Provider>
-		<Panorama />
+		<Panorama panorama="hermit-hill" />
 	</React.StrictMode>
 )
