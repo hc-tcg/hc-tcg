@@ -27,11 +27,13 @@
 	}
 }
 
-@media screen and (max-width: 150vh) {
+@media screen and (max-width: 100vh) {
 	.beef {
-		position: static;
-		margin: 0 auto;
-		margin-top: 2vh;
+		bottom: 5vh;
+		right: 0;
+		left: 0;
+		width: 100%;
+		justify-content: center;
 	}
 }
 

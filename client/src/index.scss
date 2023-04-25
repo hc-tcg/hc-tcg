@@ -81,6 +81,10 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	font-size: 1rem;
 	background: rgb(72, 72, 72);
+
+	* {
+		user-select: none;
+	}
 }
 
 code {
@@ -118,6 +122,10 @@ input[type='text'] {
 	vertical-align: bottom;
 	border: 2px solid #000;
 	font-family: Minecraft;
+}
+
+input:focus-visible {
+	outline: none;
 }
 
 ul,

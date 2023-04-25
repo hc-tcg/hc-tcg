@@ -25,11 +25,16 @@ function MainMenu({setMenuSection}: Props) {
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 
+	const welcomeMessage =
+		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
+
 	return (
 		<div className={css.mainmenu}>
 			<div className={css.playerInfo}>
-				<p id={css.infoName}>{playerName}</p>
-				<p id={css.infoDeck}>{playerDeck.name}</p>
+				<p id={css.infoName}>
+					{welcomeMessage}, {playerName}
+				</p>
+				<p id={css.infoDeck}>{'Active Deck: ' + playerDeck.name}</p>
 				<img
 					id={css.infoIcon}
 					src={`/images/types/type-${playerDeck.icon}.png`}
@@ -73,8 +78,8 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 				</nav>
 				<Beef />
+				<VersionLinks />
 			</div>
-			<VersionLinks />
 		</div>
 	)
 }

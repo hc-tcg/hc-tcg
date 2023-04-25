@@ -1,4 +1,5 @@
 .mainmenu {
+	position: relative;
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -132,21 +133,21 @@ nav {
 	background: var(--gray-800);
 	border-radius: 0.5vh;
 	color: var(--text-light);
-	height: 6vh;
+	height: 5.5vh;
 
 	> p {
 		font-size: 2vh;
 	}
 
 	> span {
-		font-family: Minecrafter, Minecraft, sans-serif;
+		font-family: Minecraft, sans-serif;
 		margin-left: auto;
-		font-size: 3vh;
+		font-size: 2vh;
 	}
 }
 
 /* DESKTOP */
-@media (min-width: 720px) {
+@media (min-width: 80vh) {
 	nav {
 		margin-top: 5vh;
 		display: grid;

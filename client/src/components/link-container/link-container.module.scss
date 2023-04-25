@@ -36,7 +36,7 @@
 	gap: 1vh;
 	color: var(--text-light);
 	filter: drop-shadow(1px 1px 0 var(--text-dark));
-	font-size: 1.3vh;
+	font-size: 1.8vh;
 	user-select: none;
 
 	span {
@@ -47,12 +47,13 @@
 	& a {
 		display: flex;
 		align-items: center;
-		gap: 0.5vh;
+		gap: 0.6vh;
 		color: var(--text-light);
 		text-decoration: none;
 
 		img {
-			height: 2vh;
+			height: 2.2vh;
+			transform: translateY(-0.2vh);
 			filter: invert(1);
 		}
 
@@ -64,5 +65,14 @@
 					hue-rotate(341deg);
 			}
 		}
+	}
+}
+
+@media screen and (max-width: 100vh) {
+	.version {
+		right: 0;
+		left: 0;
+		width: 100%;
+		justify-content: center;
 	}
 }

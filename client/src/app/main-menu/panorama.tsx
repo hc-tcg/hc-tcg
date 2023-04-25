@@ -14,12 +14,12 @@ const SkyBox = ({panorama}: Props) => {
 	const {scene} = useThree()
 	const loader = new THREE.CubeTextureLoader()
 	const texture = loader.load([
-		`/images/panorama/${panorama}/panorama_0.png`, //Front
-		`/images/panorama/${panorama}/panorama_2.png`, //Back
+		`/images/panorama/${panorama}/panorama_1.png`, //Left
+		`/images/panorama/${panorama}/panorama_3.png`, //Right
 		`/images/panorama/${panorama}/panorama_4.png`, //Top
 		`/images/panorama/${panorama}/panorama_5.png`, //Bottom
-		`/images/panorama/${panorama}/panorama_3.png`, //Left
-		`/images/panorama/${panorama}/panorama_1.png`, //Right
+		`/images/panorama/${panorama}/panorama_2.png`, //Back
+		`/images/panorama/${panorama}/panorama_0.png`, //Front
 	])
 
 	console.log('Texture: ', texture)
@@ -33,7 +33,7 @@ const Panorama = ({panorama}: Props) => {
 	console.log('Rendering panorama...')
 	return (
 		<Canvas linear flat className={css.canvas}>
-			<OrbitControls autoRotate autoRotateSpeed={-0.05} />
+			<OrbitControls autoRotate autoRotateSpeed={-0.06} />
 			<SkyBox panorama={panorama} />
 		</Canvas>
 	)

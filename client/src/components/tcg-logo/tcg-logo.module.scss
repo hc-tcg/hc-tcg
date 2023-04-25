@@ -6,32 +6,29 @@
 	flex-direction: column;
 	justify-content: end;
 	align-items: end;
-	max-width: 50vh;
+	width: 65vh;
 	overflow: visible;
-
-	& * {
-		user-select: none;
-	}
 }
 
 .splashText {
 	position: absolute;
-	right: 0;
-	bottom: 2vh;
-	font-size: 2vh;
+	right: 2vh;
+	bottom: 8vh;
+
+	font-size: 2.2vh;
 	color: #fcfc29;
 	text-shadow: #3f3e00 0.2vh 0.2vh;
 	font-family: Minecraft;
 	margin: 0;
-	animation: splashText 200ms ease-out infinite alternate-reverse;
+	animation: splashTextAnim 1s alternate-reverse infinite ease-in-out;
 }
 
-@media (max-width: 80vh) {
+@media screen and (max-width: 85vh) {
 	.logo {
-		max-width: 75vw;
+		width: 75vw;
 	}
 
-	.logoSubText {
+	.splashText {
 		right: 2vw;
 		bottom: 9vw;
 
@@ -41,12 +38,12 @@
 	}
 }
 
-@keyframes splashText {
+@keyframes splashTextAnim {
 	from {
 		transform: scale(100%) rotate(-20deg);
 	}
 
 	to {
-		transform: scale(105%) rotate(-20deg);
+		transform: scale(140%) rotate(-20deg);
 	}
 }
