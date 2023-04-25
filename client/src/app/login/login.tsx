@@ -8,6 +8,7 @@ import {VersionLinks} from 'components/link-container'
 import Button from 'components/button'
 import Spinner from 'components/spinner'
 import ErrorBanner from 'components/error-banner'
+import Beef from 'components/beef'
 
 const getLoginError = (errorType: string) => {
 	if (!errorType) return null
@@ -58,6 +59,7 @@ const Login = () => {
 			)}
 			{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
 			<VersionLinks />
+			<Beef />
 		</div>
 	)
 }

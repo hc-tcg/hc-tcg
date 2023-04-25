@@ -8,19 +8,20 @@
 
 .playerInfo {
 	position: absolute;
-	top: 2vh;
-	right: 2vh;
+	top: 1vh;
+	right: 1vh;
 	display: grid;
 	grid-template-areas:
 		'name icon'
 		'deck icon';
 	font-size: 1.5vh;
-	background-color: #333a;
-	padding: 0.75vh 1vh;
+	background-color: hsla(0deg, 0, 0, 35%);
+	padding: 0.75vh 1vh 0.75vh 1.5vh;
 	border-radius: 0.5vh;
 	user-select: none;
 	font-weight: normal;
 	text-align: right;
+	animation: fadeIn 250ms ease-in-out forwards;
 
 	> img {
 		height: 4vh;
