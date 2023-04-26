@@ -34,7 +34,7 @@ function MainMenu({setMenuSection}: Props) {
 				<p id={css.infoName}>
 					{welcomeMessage}, {playerName}
 				</p>
-				<p id={css.infoDeck}>{'Active Deck: ' + playerDeck.name}</p>
+				<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
 				<img
 					id={css.infoIcon}
 					src={`/images/types/type-${playerDeck.icon}.png`}
