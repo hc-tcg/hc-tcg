@@ -12,15 +12,15 @@
 
 .splashText {
 	position: absolute;
-	right: 2vh;
-	bottom: 8vh;
+	right: 1.5vh;
+	bottom: 7.6vh;
 
-	font-size: 2.2vh;
+	font-size: 2.8vh;
 	color: #fcfc29;
 	text-shadow: #3f3e00 0.2vh 0.2vh;
 	font-family: Minecraft;
 	margin: 0;
-	animation: splashTextAnim 1s alternate-reverse infinite ease-in-out;
+	animation: splashTextAnim 0.4s alternate-reverse infinite ease-in-out;
 }
 
 @media screen and (max-width: 85vh) {
@@ -30,7 +30,7 @@
 
 	.splashText {
 		right: 2vw;
-		bottom: 9vw;
+		bottom: 7.5vw;
 
 		p {
 			font-size: 2.5vw;
@@ -44,6 +44,6 @@
 	}
 
 	to {
-		transform: scale(140%) rotate(-20deg);
+		transform: scale(107%) rotate(-20deg);
 	}
 }
