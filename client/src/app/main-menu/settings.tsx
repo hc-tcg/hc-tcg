@@ -80,27 +80,27 @@ function Settings({setMenuSection}: Props) {
 			<h2>Statistics</h2>
 			<div className={css.stats}>
 				<div className={css.stat}>
-					<p>Games Played</p>
+					<span>Games Played</span>
 					<span>{totalGames}</span>
 				</div>
 				<div className={css.stat}>
-					<p>Wins</p>
+					<span>Wins</span>
 					<span>{stats.w}</span>
 				</div>
 				<div className={css.stat}>
-					<p>Losses</p>
+					<span>Losses</span>
 					<span>{stats.l}</span>
 				</div>
 				<div className={css.stat}>
-					<p>Ties</p>
+					<span>Ties</span>
 					<span>{stats.t}</span>
 				</div>
 				<div className={css.stat}>
-					<p>Forfeit Wins</p>
+					<span>Forfeit Wins</span>
 					<span>{stats.fw}</span>
 				</div>
 				<div className={css.stat}>
-					<p>Forfeit Losses</p>
+					<span>Forfeit Losses</span>
 					<span>{stats.fl}</span>
 				</div>
 			</div>

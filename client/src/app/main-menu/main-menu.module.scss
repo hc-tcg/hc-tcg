@@ -102,6 +102,11 @@ nav {
 	margin-inline: auto;
 	padding: 1vh;
 
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+
 	h2 {
 		font-size: 3vh;
 		color: var(--text-light);
@@ -119,30 +124,21 @@ nav {
 }
 
 .stats {
-	display: grid;
-	grid-template-rows: repeat(5, 1fr);
-	gap: 1vh;
+	background: var(--gray-800);
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
 }
 
 .stat {
 	display: flex;
-	flex-direction: row;
 	align-items: center;
-	gap: 1vh;
-	padding: 1vh 2vh;
-	background: var(--gray-800);
-	border-radius: 0.5vh;
+	justify-content: space-between;
+	padding: 1vh 0;
 	color: var(--text-light);
-	height: 5.5vh;
-
-	> p {
-		font-size: 2vh;
-	}
 
 	> span {
-		font-family: Minecraft, sans-serif;
-		margin-left: auto;
 		font-size: 2vh;
+		user-select: text;
 	}
 }
 
