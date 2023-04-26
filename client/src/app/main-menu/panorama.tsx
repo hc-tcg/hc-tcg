@@ -33,7 +33,7 @@ const Panorama = ({panorama}: Props) => {
 	console.log('Rendering panorama...')
 	return (
 		<Canvas linear flat className={css.canvas}>
-			<OrbitControls autoRotate autoRotateSpeed={-0.06} />
+			<OrbitControls autoRotate autoRotateSpeed={0.07} />
 			<SkyBox panorama={panorama} />
 		</Canvas>
 	)
