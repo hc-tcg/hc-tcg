@@ -13,15 +13,15 @@ function randomBetween(min, max) {
 
 export function getStarterPack() {
 	const limits = CONFIG.limits
-	const hermitTypesCount = randomBetween(2, 3)
-	const hermitTypes = Object.keys(STRENGTHS)
+	const characterTypesCount = randomBetween(2, 3)
+	const characterTypes = Object.keys(STRENGTHS)
 		.sort(() => 0.5 - Math.random())
-		.slice(0, hermitTypesCount)
+		.slice(0, characterTypesCount)
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!['hermit', 'item'].includes(cardInfo.type) ||
-			hermitTypes.includes(cardInfo.hermitType)
+			!['character', 'item'].includes(cardInfo.type) ||
+			characterTypes.includes(cardInfo.characterType)
 	)
 
 	const hermitCards = cards.filter((cardInfo) => cardInfo.type === 'hermit')
@@ -29,34 +29,34 @@ export function getStarterPack() {
 		['effect', 'single_use'].includes(cardInfo.type)
 	)
 
-	const hermitCount = hermitTypesCount === 2 ? 8 : 10
+	const characterCount = characterTypesCount === 2 ? 8 : 10
 	const deck = []
 
 	const itemsCosts = {}
 
 	// hermits
-	while (deck.length < hermitCount) {
+	while (deck.length < characterCount) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
-		const hermitCard = hermitCards[randomIndex]
+		const characterCard = characterCards[randomIndex]
 
-		const duplicates = deck.filter((card) => card.id === hermitCard.id)
-		const rarity = hermitCard.rarity
+		const duplicates = deck.filter((card) => card.id === characterCard.id)
+		const rarity = characterCard.rarity
 		if (duplicates.length >= limits.maxDuplicates) continue
 		if (rarity === 'ultra_rare' && duplicates.length >= 1) continue
 		if (rarity === 'rare' && duplicates.length >= 2) continue
 
-		deck.push(hermitCard)
+		deck.push(characterCard)
 
-		const cost = hermitCard.secondary.cost.filter(
-			(hermitType) => hermitType === hermitCard.hermitType
+		const cost = characterCard.secondary.cost.filter(
+			(characterType) => characterType === characterCard.hermitType
 		).length
-		itemsCosts[hermitCard.hermitType] = itemsCosts[hermitCard.hermitType] || 0
-		itemsCosts[hermitCard.hermitType] += cost
+		itemsCosts[characterCard.characterType] = itemsCosts[characterCard.hermitType] || 0
+		itemsCosts[characterCard.characterType] += cost
 	}
 
 	// items
-	for (let hermitType in itemsCosts) {
-		let total = itemsCosts[hermitType]
+	for (let characterType in itemsCosts) {
+		let total = itemsCosts[characterType]
 		let totalRare = 0
 		if (total < 3) total = 3
 		if (total > 4) {
@@ -77,9 +77,9 @@ export function getStarterPack() {
 		}
 
 		for (let i = 0; i < totalRare; i++)
-			deck.push(CARDS[`item_${hermitType}_rare`])
+			deck.push(CARDS[`item_${characterType}_rare`])
 		for (let i = 0; i < total; i++)
-			deck.push(CARDS[`item_${hermitType}_common`])
+			deck.push(CARDS[`item_${characterType}_common`])
 	}
 
 	// effects
