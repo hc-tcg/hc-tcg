@@ -6,8 +6,8 @@ import SandwichSingleUseCard from './sandwich'
 import DoughnutSingleUseCard from './instant-health'
 import IceCreamSundaeSingleUseCard from './instant-health-ii'
 import ShurikenSingleUseCard from './shuriken'
-import NukeSingleUseCard from './nuke'
-import MadDoggoSingleUseCard from './mad-doggo'
+//import NukeSingleUseCard from './nuke'
+//import MadDoggoSingleUseCard from './mad-doggo'
 import DiamondSwordSingleUseCard from './diamond-sword'
 //import NetheriteSwordSingleUseCard from './netherite-sword'
 //import GoldenAxeSingleUseCard from './golden-axe'
@@ -40,9 +40,9 @@ const SINGLE_USE_CARDS = [
 	// new SplashPotionOfHealingSingleUseCard(),
 	new SandwichSingleUseCard(),
 	new ChorusFruitSingleUseCard(),
-	new MadDoggoSingleUseCard(),
+	//new MadDoggoSingleUseCard(),
 	new BombSingleUseCard(),
-	new NukeSingleUseCard(),
+	//new NukeSingleUseCard(),
 	new DiamondSwordSingleUseCard(),
 	new DoughnutSingleUseCard(),
 	new IceCreamSundaeSingleUseCard(),
