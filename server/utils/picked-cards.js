@@ -41,7 +41,7 @@ export function getPickedCardsInfoById(gameState, pickedCards) {
 
 			// Validate that received card & position match with server state
 			let cardOnPosition = null
-			if (slotType === 'hermit') cardOnPosition = row.hermitCard
+			if (slotType === 'character') cardOnPosition = row.characterCard
 			else if (slotType === 'effect') cardOnPosition = row.effectCard
 			else if (slotType === 'item') cardOnPosition = row.itemCards[slotIndex]
 			if (card) {
