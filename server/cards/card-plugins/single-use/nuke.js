@@ -15,12 +15,6 @@ class NukeSingleUseCard extends SingleUseCard {
 		})
 		this.damage = {target: 30, afkTarget: 30}
 
-		this.pickOn = 'attack'
-		this.useReqs = [
-			{target: 'opponent', type: 'character', amount: 1, active: true},
-		]
-		this.pickReqs = [
-			{target: 'opponent', type: 'character', amount: 2, active: false},
 		]
 	}
 
