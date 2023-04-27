@@ -4,19 +4,19 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class IronSwordSingleUseCard extends SingleUseCard {
+class MadDoggoSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'iron_sword',
-			name: 'Iron Sword',
+			id: 'mad-doggo',
+			name: 'Mad Doggo',
 			rarity: 'common',
 			description:
-				'Does +20hp damage to opposing Hermit.\n\nDiscard after use.',
+				'Does +40hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
-		this.damage = {target: 20}
+		this.damage = {target: 40}
 
 		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: 'character', amount: 1, active: true},
 		]
 	}
 
@@ -34,4 +34,4 @@ class IronSwordSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default IronSwordSingleUseCard
+export MadDoggoSingleUseCard
