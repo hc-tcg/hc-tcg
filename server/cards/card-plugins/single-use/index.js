@@ -1,63 +1,68 @@
-import ClockSingleUseCard from './clock'
-import LavaBucketSingleUseCard from './lava-bucket'
-import SplashPotionOfPoisonSingleUseCard from './splash-potion-of-poison'
-import SplashPotionOfHealingSingleUseCard from './splash-potion-of-healing'
-import GoldenAppleSingleUseCard from './golden-apple'
-import InstantHealthSingleUseCard from './instant-health'
-import InstantHealthIISingleUseCard from './instant-health-ii'
-import BowSingleUseCard from './bow'
-import CrossbowSingleUseCard from './crossbow'
-import IronSwordSingleUseCard from './iron-sword'
+import BananaSingleUseCard from './banana'
+//import FireSingleUseCard from './fire'
+//import RabidDoggoSingleUseCard from './rabid-doggo'
+//import SplashPotionOfHealingSingleUseCard from './splash-potion-of-healing'
+import SandwichSingleUseCard from './sandwich'
+import DoughnutSingleUseCard from './instant-health'
+import IceCreamSundaeSingleUseCard from './instant-health-ii'
+import ShurikenSingleUseCard from './shuriken'
+import NukeSingleUseCard from './nuke'
+import MadDoggoSingleUseCard from './mad-doggo'
 import DiamondSwordSingleUseCard from './diamond-sword'
-import NetheriteSwordSingleUseCard from './netherite-sword'
-import GoldenAxeSingleUseCard from './golden-axe'
-import TNTSingleUseCard from './tnt'
+//import NetheriteSwordSingleUseCard from './netherite-sword'
+//import GoldenAxeSingleUseCard from './golden-axe'
+import BombSingleUseCard from './bomb'
 import ChorusFruitSingleUseCard from './chorus-fruit'
-import InvisibilityPotionSingleUseCard from './invisibility-potion'
-import FishingRodSingleUseCard from './fishing-rod'
-import EmeraldSingleUseCard from './emerald'
-import FlintAndSteelSingleUseCard from './flint-and-steel'
-import ComposterSingleUseCard from './composter'
-import LeadSingleUseCard from './lead'
-import SpyglassSingleUseCard from './spyglass'
-import ChestSingleUseCard from './chest'
-import KnockbackSingleUseCard from './knockback'
-import EfficiencySingleUseCard from './efficiency'
-import CurseOfBindingSingleUseCard from './curse-of-binding'
-import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
-import LootingSingleUseCard from './looting'
-import FortuneSingleUseCard from './fortune'
+//import InvisibilityPotionSingleUseCard from './invisibility-potion'
+import SadDoggoSingleUseCard from './sad-doggo'
+import DiscordSingleUseCard from './discord'
+//import EmeraldSingleUseCard from './emerald'
+import LighterSingleUseCard from './lighter'
+import RecyclingSingleUseCard from './recycling'
+//import LeadSingleUseCard from './lead'
+//import SpyglassSingleUseCard from './spyglass'
+//import ChestSingleUseCard from './chest'
+import TornadoSingleUseCard from './tornado'
+import GamerChairSingleUseCard from './gamer-chair'
+import BlockadeSingleUseCard from './blockade'
+import HappyDoggoSingleUseCard from './happy-doggo'
+//import LootingSingleUseCard from './looting'
+//import FortuneSingleUseCard from './fortune'
+//import PokeballSingleUseCard from './pokeball'
+//import MasterballSingleUseCard from './masterball'
+//import PremierballSingleUseCard from './premierball'
+//import EnderpearlSingleUseCard from './enderpearl'
 
 const SINGLE_USE_CARDS = [
-	new InstantHealthSingleUseCard(),
-	new SplashPotionOfHealingSingleUseCard(),
-	new InstantHealthIISingleUseCard(),
-	new GoldenAppleSingleUseCard(),
-	new BowSingleUseCard(),
+	new BananaSingleUseCard(),
+	// new FireSingleUseCard(),
+	// new RabidDoggoSingleUseCard(),
+	// new SplashPotionOfHealingSingleUseCard(),
+	new SandwichSingleUseCard(),
 	new ChorusFruitSingleUseCard(),
-	new IronSwordSingleUseCard(),
-	new TNTSingleUseCard(),
-	new CrossbowSingleUseCard(),
+	new MadDoggoSingleUseCard(),
+	new BombSingleUseCard(),
+	new NukeSingleUseCard(),
 	new DiamondSwordSingleUseCard(),
-	new GoldenAxeSingleUseCard(),
-	new LavaBucketSingleUseCard(),
-	new SplashPotionOfPoisonSingleUseCard(),
-	new NetheriteSwordSingleUseCard(),
-	new InvisibilityPotionSingleUseCard(),
-	new ClockSingleUseCard(),
-	new ComposterSingleUseCard(),
-	new FlintAndSteelSingleUseCard(),
-	new LeadSingleUseCard(),
-	new ChestSingleUseCard(),
-	new EmeraldSingleUseCard(),
-	new SpyglassSingleUseCard(),
-	new FishingRodSingleUseCard(),
-	new FortuneSingleUseCard(),
-	new KnockbackSingleUseCard(),
-	new EfficiencySingleUseCard(),
-	new LootingSingleUseCard(),
-	new CurseOfBindingSingleUseCard(),
-	new CurseOfVanishingSingleUseCard(),
+	new DoughnutSingleUseCard(),
+	new IceCreamSundaeSingleUseCard(),
+	new SadDoggoSingleUseCard(),
+	new HappyDoggoSingleUseCard(),
+	// new InvisibilityPotionSingleUseCard(),
+	new DiscordSingleUseCard(),
+	new RecyclingSingleUseCard(),
+	new LighterSingleUseCard(),
+	// new LeadSingleUseCard(),
+	// new ChestSingleUseCard(),
+	// new EmeraldSingleUseCard(),
+	// new SpyglassSingleUseCard(),
+	new TornadoSingleUseCard(),
+	new GamerChairSingleUseCard(),
+	new BlockadeSingleUseCard(),
+	new EnderpearlSingleUseCard(),
+	new PokeballSingleUseCard(),
+	new PremierballSingleUseCard(),
+	new MasterballSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS
