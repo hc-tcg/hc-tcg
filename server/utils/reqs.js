@@ -18,7 +18,7 @@ const checkRow = (rowInfo, req) => {
 	if (req.active === false && rowInfo.active) return false
 
 	const slots = []
-	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.hermitCard)
+	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.characterCard)
 	if (['effect', 'any'].includes(req.type)) slots.push(rowInfo.row.effectCard)
 	if (['item', 'any'].includes(req.type)) slots.push(...rowInfo.row.itemCards)
 
@@ -42,7 +42,7 @@ const getRowsInfo = (playerState, current) => {
 		target: current ? 'player' : 'opponent',
 		playerId: playerState.id,
 		active: index === playerState.board.activeRow,
-		emptyRow: !row.hermitCard,
+		emptyRow: !row.characterCard,
 		index,
 		row,
 	}))
