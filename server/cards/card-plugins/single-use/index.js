@@ -59,10 +59,10 @@ const SINGLE_USE_CARDS = [
 	new TornadoSingleUseCard(),
 	new GamerChairSingleUseCard(),
 	new BlockadeSingleUseCard(),
-	new EnderpearlSingleUseCard(),
-	new PokeballSingleUseCard(),
-	new PremierballSingleUseCard(),
-	new MasterballSingleUseCard(),
+	//new EnderpearlSingleUseCard(),
+	//new PokeballSingleUseCard(),
+//	new PremierballSingleUseCard(),
+	//new MasterballSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS
