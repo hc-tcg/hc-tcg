@@ -14,10 +14,10 @@ export function hasEnoughItems(itemCards, cost) {
 	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
 	const energy = itemCardIds.reduce((result, cardId) => {
 		const itemCard = CARDS[cardId]
-		result.push(itemCard.hermitType)
+		result.push(itemCard.characterType)
 		// all rare item cards are x2
 		if (itemCard.rarity === 'rare') {
-			result.push(itemCard.hermitType)
+			result.push(itemCard.characterType)
 		}
 		return result
 	}, [])
@@ -66,7 +66,7 @@ export function findCard(gameState, card) {
 		for (let row of rows) {
 			let key = null
 			if (equalCard(row.hermitCard, card))
-				return {playerId, target: row, key: 'hermitCard'}
+				return {playerId, target: row, key: 'characterCard'}
 			if (equalCard(row.effectCard, card))
 				return {playerId, target: row, key: 'effectCard'}
 			const itemIndex = row.itemCards.findIndex((itemCard) =>
@@ -149,8 +149,8 @@ export const validateDeck = (deckCards) => {
 
 	// order validation by simplest problem first, so that a player can easily identify why their deck isn't valid
 
-	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')
-	if (!hasHermit) return 'Deck must have at least one hermit.'
+	const hasCharacter = deckCards.some((cardId) => CARDS[cardId].type === 'character')
+	if (!hasCharacter) return 'Deck must have at least one character.'
 
 	if (!limits.allowUltraRareDuplicates) {
 		const uniqueUr = Array.from(new Set(ur))
