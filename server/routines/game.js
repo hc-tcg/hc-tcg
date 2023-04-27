@@ -82,11 +82,11 @@ function getAvailableActions(game, pastTurnActions) {
 
 	if (
 		pastTurnActions.includes('ATTACK') ||
-		pastTurnActions.includes('CHANGE_ACTIVE_HERMIT')
+		pastTurnActions.includes('CHANGE_ACTIVE_CHARACTER')
 	) {
 		// In case you kill yourself with TNT
 		if (currentPlayer.board.activeRow === null) {
-			actions.push('CHANGE_ACTIVE_HERMIT')
+			actions.push('CHANGE_ACTIVE_CHARACTER')
 		}
 		return actions
 	}
@@ -98,7 +98,7 @@ function getAvailableActions(game, pastTurnActions) {
 		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
 		hermits < 5
 	) {
-		actions.push('ADD_HERMIT')
+		actions.push('ADD_CHARACTER')
 	}
 
 	// Player can't change active hermit if he has no other hermits
@@ -110,7 +110,7 @@ function getAvailableActions(game, pastTurnActions) {
 	const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
 
 	if (hasOtherHermit && !isSleeping) {
-		actions.push('CHANGE_ACTIVE_HERMIT')
+		actions.push('CHANGE_ACTIVE_CHARACTER')
 	}
 
 	if (activeRow !== null) {
@@ -167,7 +167,7 @@ function* checkHermitHealth(game) {
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
-			if (row.hermitCard && row.health <= 0) {
+			if (row.characterCard && row.health <= 0) {
 				// recovery array {amount: number, effectCard?: CardT}
 				let result = game.hooks.hermitDeath.call([], {
 					playerState,
@@ -184,7 +184,7 @@ function* checkHermitHealth(game) {
 					continue
 				}
 
-				if (row.hermitCard) discardCard(game, row.hermitCard)
+				if (row.characterCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach(
 					(itemCard) => itemCard && discardCard(game, itemCard)
@@ -209,12 +209,12 @@ function* checkHermitHealth(game) {
 			game.state.turn <=
 				game.state.order.findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft =
+		const noCharactersLeft =
 			!firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
-		if (isDead || noHermitsLeft) {
+		if (isDead || noCharactersLeft) {
 			console.log('Player dead: ', {
 				isDead,
-				noHermitsLeft,
+				noCharactersLeft,
 				turn: game.state.turn,
 			})
 			deadPlayerIds.push(playerState.id)
@@ -273,8 +273,8 @@ function* turnActionSaga(game, turnAction, turnState) {
 		// TODO - continue on invalid?
 		yield call(playCardSaga, game, turnAction, actionState)
 		//
-	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
-		yield call(changeActiveHermitSaga, game, turnAction, actionState)
+	} else if (turnAction.type === 'CHANGE_ACTIVE_CHARACTER') {
+		yield call(changeActiveCharacterSaga, game, turnAction, actionState)
 		//
 	} else if (turnAction.type === 'APPLY_EFFECT') {
 		if (!availableActions.includes('APPLY_EFFECT')) return
@@ -318,7 +318,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 
 	game.hooks.actionEnd.call(turnAction, actionState)
 
-	const deadPlayerIds = yield call(checkHermitHealth, game)
+	const deadPlayerIds = yield call(checkCharacterHealth, game)
 	if (deadPlayerIds.length) endTurn = true
 
 	return endTurn ? 'END_TURN' : 'DONE'
@@ -384,14 +384,14 @@ function* turnActionsSaga(game, pastTurnActions) {
 			})
 
 			// Handle timeout
-			const hasActiveHermit = currentPlayer.board.activeRow !== null
+			const hasActiveCharacter = currentPlayer.board.activeRow !== null
 			const opponentFollowUp = !!opponentPlayer.followUp
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
 					game.state.turnTime = getTimerForSeconds(20)
 					game.hooks.followUpTimeout.call()
 					continue
-				} else if (!hasActiveHermit) {
+				} else if (!hasActiveCharacter) {
 					game.endInfo.reason = 'time'
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
 					return 'GAME_END'
@@ -469,7 +469,7 @@ function* turnSaga(game) {
 	currentPlayer.followUp = null
 	opponentPlayer.followUp = null
 
-	const deadPlayerIds = yield call(checkHermitHealth, game)
+	const deadPlayerIds = yield call(checkCharacterHealth, game)
 	if (deadPlayerIds.length) {
 		game.endInfo.reason =
 			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
