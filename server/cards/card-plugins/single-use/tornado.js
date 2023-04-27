@@ -12,15 +12,15 @@ import {applySingleUse} from '../../../utils'
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'knockback',
-			name: 'Knockback',
+			id: 'tornado',
+			name: 'Tornado',
 			rarity: 'rare',
 			description:
-				"Opposing Hermit goes AFK following user's attack.\n\nOpponent chooses replacement.\n\nCan only be used if opponent has at least 1 AFK Hermit. Discard after use.",
+				"Opposing Character goes into the bench following user's attack.\n\nOpponent chooses replacement.\n\nCan only be used if opponent has at least 1 AFK Hermit. Discard after use.",
 		})
 
 		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: 'character', amount: 1, active: true},
 		]
 	}
 
@@ -33,13 +33,13 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				singleUseInfo,
 				currentPlayer,
 				opponentPlayer,
-				opponentHermitCard,
+				opponentCharacterCard,
 				opponentActiveRow,
 			} = game.ds
 			if (singleUseInfo?.id === this.id && target.isActive) {
-				const hasOtherHermits =
-					opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-				if (!hasOtherHermits || !opponentActiveRow) return target
+				const hasOtherCharacters =
+					opponentPlayer.board.rows.filter((row) => !!row.characterCard).length > 1
+				if (!hasOtherCharacters || !opponentActiveRow) return target
 				opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
 				opponentPlayer.board.activeRow = null
 				applySingleUse(currentPlayer)
@@ -49,4 +49,4 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default KnockbackSingleUseCard
+export default TornadoSingleUseCard
