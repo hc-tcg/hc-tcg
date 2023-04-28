@@ -30,7 +30,7 @@ class MadDoggoSingleUseCard extends SingleUseCard {
 				target.extraEffectDamage += this.damage.target
 			}
 			return target
-		})
+		}
 	}
 }
 
