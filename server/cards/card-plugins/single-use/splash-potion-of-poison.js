@@ -12,11 +12,11 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			name: 'Splash Potion of Poison',
 			rarity: 'rare',
 			description:
-				'POISONS the opposing Hermit.\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON. Discard after use.',
+				'gives RABIES the opposing Character.\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON. Discard after use.',
 		})
 
 		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: 'character', amount: 1, active: true},
 		]
 	}
 
@@ -28,8 +28,8 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			const {singleUseInfo, opponentActiveRow, opponentEffectCardInfo} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (opponentActiveRow === null) return 'INVALID'
-				if (opponentEffectCardInfo?.id !== 'milk_bucket') {
-					opponentActiveRow.ailments.push({id: 'poison', duration: -1})
+				if (opponentEffectCardInfo?.id !== 'dr_mario') {
+					opponentActiveRow.ailments.push({id: 'rabies', duration: -1})
 				}
 				return 'DONE'
 			}
