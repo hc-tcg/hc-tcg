@@ -5,7 +5,7 @@ import {discardCard} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class HappySingleUseCard extends SingleUseCard {
+class HappyDoggoSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'happy_doggo',
@@ -41,4 +41,4 @@ class HappySingleUseCard extends SingleUseCard {
 	}
 }
 
-export default HappyDoggogSingleUseCard
+export default HappyDoggoSingleUseCard
