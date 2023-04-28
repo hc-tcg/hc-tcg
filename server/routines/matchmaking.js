@@ -69,7 +69,7 @@ function* gameManager(game) {
 		game.endInfo.outcome = getGameOutcome(game, result)
 		game.endInfo.winner = getWinner(game, result)
 	} catch (err) {
-		console.error('Error: ', err)
+		console.log('Error: ', err)
 		game.endInfo.outcome = 'error'
 		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {

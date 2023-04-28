@@ -74,6 +74,10 @@ class FirebaseLogs {
 		root.hooks.gameRemoved.tap(this.id, (game) => {
 			const playerStates = Object.values(game.state.players)
 			const gameLog = this.gameLogs[game.id]
+			if (!gameLog) {
+				return
+			}
+
 			if (
 				!game.endInfo.outcome ||
 				['error', 'timeout'].includes(game.endInfo.outcome)
