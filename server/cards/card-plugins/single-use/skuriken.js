@@ -7,8 +7,8 @@ import SingleUseCard from './_single-use-card'
 class ShurikanSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'shurikan',
-			name: 'Shurikan',
+			id: 'shuriken',
+			name: 'Shuriken',
 			rarity: 'common',
 			description:
 				'Does +40hp damage to any opposing AFK Character.\n\nDiscard after use.',
