@@ -19,6 +19,12 @@ class SleepyCharacterCard extends CharacterCard {
 				damage: 50,
 				power: 
 					'Does an additional +20HP damage for every benched Ice Cream Dealer up to a maximum of +40HP damage.',
+			secondary: {
+				name: 'Sleep',
+				cost: ['icecream', 'icecream', 'icecream'],
+				damage: 0,
+				power:
+					"SORRY THIS CODE HAS BEEN SENT FAR FAR AWAY",
 			},
 		})
 	}
@@ -51,12 +57,7 @@ class SleepyCharacterCard extends CharacterCard {
 			},
 				      
 				      
-			secondary:,, {
-				name: 'Sleep',
-				cost: ['icecream', 'icecream', 'icecream'],
-				damage: 0,
-				power:
-					"Sleepy sleeps for the next turn. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
+
 			},
 		})
 
