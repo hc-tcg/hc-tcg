@@ -19,6 +19,7 @@ class SleepyCharacterCard extends CharacterCard {
 				damage: 50,
 				power: 
 					'Does an additional +20HP damage for every benched Ice Cream Dealer up to a maximum of +40HP damage.',
+				},
 			secondary: {
 				name: 'Sleep',
 				cost: ['icecream', 'icecream', 'icecream'],
