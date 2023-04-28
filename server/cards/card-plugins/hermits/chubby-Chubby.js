@@ -57,7 +57,7 @@ class ChubbyCharacterCard extends CharacterCard {
 /*
 	 * @param {GameModel} game
 	 */
-	register(game) {;
+	register(game) {;;
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {attackerCharacterCard, typeAction} = attackState
 
