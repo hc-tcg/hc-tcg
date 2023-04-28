@@ -7,9 +7,9 @@ import SingleUseCard from './_single-use-card'
 class NukeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: '',
-			name: 'Crossbow',
-			rarity: 'rare',
+			id: 'nuke',
+			name: 'Nuke',
+			rarity: 'ultra-rare',
 			description:
 				"Does +40hp damage to all of opposing characters active and benched; take 40 damage recoil\n\nDiscard after use.",
 		})
