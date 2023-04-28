@@ -66,7 +66,7 @@ class ChubbyCharacterCard extends CharacterCard {
 			if (attackerCharacterCard.cardId !== this.id) return target
 
 			const targetCharacterInfo = CARDS[target.row.characterCard.cardId]
-			if (targetCharacterInfo.cardId.startsWith('andrew') {)
+			if (targetCharacterInfo.cardId.startsWith('andrew')) {
 				target.multiplier *= 2
 			}
 
