@@ -23,7 +23,7 @@ import {flipCoin} from '../../../utils'
 - Solution: Going back to using recovery effects during attack, which will enable using the actionEnd hook.
 */
 
-class GrianRareHermitCard extends HermitCard {
+class Harison25CharacterCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'harison-Harison25',
