@@ -24,7 +24,7 @@ class ChubbyCharacterCard extends CharacterCard {
 				cost: ['australian','australian'],
 				damage: 70,
 				power:
-					'If user has Andrew and Sleepy as AFK, attack damage doubles.',
+					'THIS CODE WENT ON VACATION, SORRY FOR THE INCONVINENCE.',
 			},
 		})
 	}
