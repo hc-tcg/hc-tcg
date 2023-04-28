@@ -51,7 +51,7 @@ class SleepyCharacterCard extends CharacterCard {
 			},
 				      
 				      
-			secondary: {
+			secondary:, {
 				name: 'Sleep',
 				cost: ['icecream', 'icecream', 'icecream'],
 				damage: 0,
@@ -60,13 +60,14 @@ class SleepyCharacterCard extends CharacterCard {
 			},
 		})
 
-		this.turnDuration = 1
+	
 	}
-
+this.turnDuration = 1
 	/**
 	 * @param {GameModel} game
 	 */
 	register(game) {
+			
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
 			const {attackerCharacterCard, attackerActiveRow, typeAction} = attackState
@@ -90,6 +91,7 @@ class SleepyCharacterCard extends CharacterCard {
 				(a) => a.id !== 'sleeping'
 			)
 			attackerActiveRow.ailments.push({id: 'sleeping', duration: 1})
+			
 		})
 
 		// Disable shreep attack consecutively
