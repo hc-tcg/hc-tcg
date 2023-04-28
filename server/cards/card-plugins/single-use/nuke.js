@@ -15,7 +15,7 @@ class NukeSingleUseCard extends SingleUseCard {
 		})
 		this.damage = {target: 30, afkTarget: 30}
 
-		]
+		
 	}
 
 	/**
