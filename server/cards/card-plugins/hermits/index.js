@@ -20,7 +20,6 @@ import SleepyURCharacterCard from './sleepy-UR'
 import ChubbyCharacterCard from './chubby-Chubby'
 import HoglinCharacterCard from './hoglin'
 import DonutCharacterCard from './donut-Donut'
-import KarutaCharacterCard from './karuta'
 import CrackKittyCharacterCard from './andrew-CrackKitty'
 import MrCatCharacterCard from './mrCat'
 
@@ -44,7 +43,6 @@ const CHARACTER_CARDS = [
 	new Harison25CharacterCard (),
 	new HoglinCharacterCard(),
 	new DonutCharacterCard(),
-	new KarutaCharacterCard(),
 	new CrackKittyCharacterCard(),
 	new MrCatCharacterCard(),
 // ultra rare cards
