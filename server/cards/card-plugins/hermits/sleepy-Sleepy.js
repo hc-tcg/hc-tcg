@@ -51,7 +51,7 @@ class SleepyCharacterCard extends CharacterCard {
 			},
 				      
 				      
-			secondary:, {
+			secondary:,, {
 				name: 'Sleep',
 				cost: ['icecream', 'icecream', 'icecream'],
 				damage: 0,
@@ -118,6 +118,6 @@ this.turnDuration = 1
 			return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
 		})
 	}
-}
+
 
 export default SleepyCharacterCard
