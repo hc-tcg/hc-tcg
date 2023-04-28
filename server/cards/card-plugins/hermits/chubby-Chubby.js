@@ -57,7 +57,7 @@ class ChubbyCharacterCard extends CharacterCard {
 /*
 	 * @param {GameModel} game
 	 */
-	register(game) {
+	register(game) {;
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {attackerCharacterCard, typeAction} = attackState
 
@@ -66,7 +66,7 @@ class ChubbyCharacterCard extends CharacterCard {
 			if (attackerCharacterCard.cardId !== this.id) return target
 
 			const targetCharacterInfo = CARDS[target.row.characterCard.cardId]
-			if (targetCharacterInfo.cardId.startsWith('andrew') {
+			if (targetCharacterInfo.cardId.startsWith('andrew') {)
 				target.multiplier *= 2
 			}
 
