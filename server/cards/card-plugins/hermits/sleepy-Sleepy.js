@@ -28,8 +28,8 @@ class SleepyCharacterCard extends CharacterCard {
 			},
 		})
 	}
-
 }
+
 
 	/**
 	 * @param {GameModel} game
