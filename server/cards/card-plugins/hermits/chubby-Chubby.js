@@ -54,6 +54,7 @@ class ChubbyCharacterCard extends CharacterCard {
 		})
 	}
 }
+/*
 	 * @param {GameModel} game
 	 */
 	register(game) {
