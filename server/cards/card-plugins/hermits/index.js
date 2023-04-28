@@ -16,15 +16,13 @@ import ChildCharacterCard from './child'
 import ConfusedMemeCharacterCard from './confusedMeme'
 // rare & ultra rare cards
 import Harison25CharacterCard from './harison-Harison25'
-//import SleepyCharacterCard from './sleep-Sleepy'
-//import ChubbyCharacterCard from './chubby-Chubby'
+import SleepyURCharacterCard from './sleepy-UR'
+import ChubbyCharacterCard from './chubby-Chubby'
 import HoglinCharacterCard from './hoglin'
 import DonutCharacterCard from './donut-Donut'
 import KarutaCharacterCard from './karuta'
 import CrackKittyCharacterCard from './andrew-CrackKitty'
 import MrCatCharacterCard from './mrCat'
-import ZekeCharacterCard from './zeke'
-//import CheeseCharacterCard from './chubby-59'
 
 const CHARACTER_CARDS = [
 	new BananaGunCharacterCard(),
@@ -49,11 +47,9 @@ const CHARACTER_CARDS = [
 	new KarutaCharacterCard(),
 	new CrackKittyCharacterCard(),
 	new MrCatCharacterCard(),
-	//new ZekeCharacterCard(),
-	//new CheeseCharacterCard(),
 // ultra rare cards
-	//new SleepyCharacterCard(),
-	//new ChubbyCharacterCard(),
+	new SleepyURCharacterCard(),
+	new ChubbyCharacterCard(),
 ]
 
 export default CHARACTER_CARDS
