@@ -31,7 +31,6 @@ class MadDoggoSingleUseCard extends SingleUseCard {
 			}
 			return target
 		}
-	,
 }
 
 export MadDoggoSingleUseCard
