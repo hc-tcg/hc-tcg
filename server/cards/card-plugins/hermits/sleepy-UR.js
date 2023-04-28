@@ -7,8 +7,8 @@ import CharacterCard from './_hermit-card'
 class SleepyURCharacterCard extends CharacterCard {
 	constructor() {
 		super({
-			id: 'sleepy-UR',
-			name: 'sleepy-UR',
+			id: 'sleepy_UR',
+			name: 'Sleepy',
 			rarity: 'ultra-rare',
 			hermitType: 'iceCream',
 			health: 250,
