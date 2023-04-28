@@ -9,7 +9,7 @@ import {applySingleUse} from '../../../utils'
 - Don't allow to change to knocked out hermit during next turn
 - Chorus fruit/Cubfun probably shouldn't allow that either
 */
-class KnockbackSingleUseCard extends SingleUseCard {
+class TornadoSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'tornado',
