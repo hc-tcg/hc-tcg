@@ -62,62 +62,6 @@ class SleepyCharacterCard extends CharacterCard {
 
 	
 	}
-this.turnDuration = 1
-	/**
-	 * @param {GameModel} game
-	 */
-	register(game) {
-			
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {attackerCharacterCard, attackerActiveRow, typeAction} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (attackerCharacterCard.cardId !== this.id) return target
-			// shreep - instantly heal to max hp
-
-			// e.g. if bed was used
-			if (attackerActiveRow.ailments.find((a) => a.id === 'sleeping'))
-				return target
-
-			// store current turn to disable Shreep for one turn when it is over
-			const conInfo = currentPlayer.custom[this.id] || {}
-			conInfo[attackerCharacterCard.cardInstance] = game.state.turn
-			currentPlayer.custom[this.id] = conInfo
-
-			attackerActiveRow.health = this.health
-			attackerActiveRow.ailments = attackerActiveRow.ailments.filter(
-				(a) => a.id !== 'sleeping'
-			)
-			attackerActiveRow.ailments.push({id: 'sleeping', duration: 1})
-			
-		})
-
-		// Disable shreep attack consecutively
-		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {currentPlayer} = game.ds
-
-			// we must have active hermit
-			const activeCharacter =
-				currentPlayer.board.rows[currentPlayer.board.activeRow]?.characterCard
-			if (activeCharacter?.cardId !== this.id) return availableActions
-
-			// we want to make changes only if shreep was used by the hermit
-			const conInfo = currentPlayer.custom[this.id]
-			const lastTurnUsed = conInfo?.[activeCharacter.cardInstance]
-			if (typeof lastTurnUsed !== 'number') return availableActions
-
-			// Prevent use of shreep consecutively
-			const consecutive = lastTurnUsed + 6 >= game.state.turn
-			if (!consecutive) {
-				delete conInfo[activeCharacter.cardInstance]
-				return availableActions
-			}
-
-			return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-		})
-	}
 
 
 export default SleepyCharacterCard
