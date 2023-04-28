@@ -24,40 +24,14 @@ class ChubbyCharacterCard extends CharacterCard {
 				cost: ['australian','australian'],
 				damage: 70,
 				power:
-					'If user has Andrew and SLeepy as AFK, attack damage doubles.',
+					'If user has Andrew and Sleepy as AFK, attack damage doubles.',
 			},
 		})
 	}
-
-	/**
-	 * @param {GameModel} game
-	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
-
-			const hasSleepy = currentPlayer.board.rows.some((row) =>
-				row.characterCard?.cardId.startsWith('sleepy')
-			)
-			const hasAndrew = currentPlayer.board.rows.some((row) =>
-				row.characterCard?.cardId.startsWith('andrew')
-			)
-
-			if (hasSleepy && hasAndrew) target.multiplier *= 2
-
-			return target
-		})
-	}
-}
 /*
 	 * @param {GameModel} game
 	 */
-	register(game) {;;
+	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {attackerCharacterCard, typeAction} = attackState
 
