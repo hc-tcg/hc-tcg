@@ -5,11 +5,11 @@ import {discardCard} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
+class RabidDoggoSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'splash_potion_of_poison',
-			name: 'Splash Potion of Poison',
+			id: 'rabid_doggo',
+			name: 'Rabid Doggo',
 			rarity: 'rare',
 			description:
 				'gives RABIES the opposing Character.\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON. Discard after use.',
@@ -37,4 +37,4 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default SplashPotionOfPoisonSingleUseCard
+export default RabidDoggoSingleUseCard
