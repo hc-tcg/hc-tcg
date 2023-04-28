@@ -1,7 +1,7 @@
 // common cards
 import BananaGunCharacterCard from './andrew-BananaGun'
 import BunnyBoyOkuCharacterCard from './oku-BunnyBoyOku'
-import BurgerCharacterCard from './burger'
+import BurgerCharacterCard from './chubby-Burger'
 import ChickenPizzaPanCharacterCard from './will-ChickenPizzaPan'
 import MEE6CharacterCard from './MEE6'
 import DankMemerCharacterCard from './dankMemer'
