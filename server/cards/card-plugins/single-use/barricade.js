@@ -4,11 +4,11 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-class BaricadeSingleUseCard extends SingleUseCard {
+class BarricadeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'baricade',
-			name: 'Baricade',
+			id: 'barricade',
+			name: 'Barricade',
 			rarity: 'common',
 			description:
 				'Opposing active Character can not go to the bench on the following turn.\n\nDiscard after use.',
@@ -52,4 +52,4 @@ class BaricadeSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default BaricadeSingleUseCard
+export default BarricadeSingleUseCard
