@@ -43,24 +43,24 @@ export class DerivedStateModel {
 			: null
 	}
 
-	get playerHermitCard() {
+	get playerCharacterCard() {
 		const activeRow = this.playerActiveRow
-		return activeRow ? activeRow.hermitCard : null
+		return activeRow ? activeRow.characterCard : null
 	}
 
-	get opponentHermitCard() {
+	get opponentCharacterCard() {
 		const activeRow = this.opponentActiveRow
-		return activeRow ? activeRow.hermitCard : null
+		return activeRow ? activeRow.characterCard : null
 	}
 
-	get playerHermitInfo() {
-		const hermitCard = this.playerHermitCard
-		return hermitCard ? CARDS[hermitCard.cardId] : null
+	get playerCharacterInfo() {
+		const characterCard = this.playerCharacterCard
+		return characterCard ? CARDS[characterCard.cardId] : null
 	}
 
-	get opponentHermitInfo() {
-		const hermitCard = this.opponentHermitCard
-		return hermitCard ? CARDS[hermitCard.cardId] : null
+	get opponentCharacterInfo() {
+		const characterCard = this.opponentHermitCard
+		return characterCard ? CARDS[characterCard.cardId] : null
 	}
 
 	get playerEffectCard() {
