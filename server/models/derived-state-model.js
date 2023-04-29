@@ -59,7 +59,7 @@ export class DerivedStateModel {
 	}
 
 	get opponentCharacterInfo() {
-		const characterCard = this.opponentHermitCard
+		const characterCard = this.opponentCharacterCard
 		return characterCard ? CARDS[characterCard.cardId] : null
 	}
 
