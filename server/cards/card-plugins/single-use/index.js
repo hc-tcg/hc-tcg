@@ -45,7 +45,7 @@ const SINGLE_USE_CARDS = [
 	// new SpyglassSingleUseCard(),
 	new TornadoSingleUseCard(),
 	new GamerChairSingleUseCard(),
-	new BlockadeSingleUseCard(),
+	new BarricadeSingleUseCard(),
 	//new EnderpearlSingleUseCard(),
 	//new PokeballSingleUseCard(),
 //	new PremierballSingleUseCard(),
