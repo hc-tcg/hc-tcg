@@ -1,4 +1,4 @@
-import CharacterCard from './_hermit-card'
+import CharacterCard from './_character-card'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
