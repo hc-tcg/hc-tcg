@@ -40,4 +40,4 @@ class IceCreamSundaeSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default IceCreamSundaeSingleSingleUseCard
+export default IceCreamSundaeSingleUseCard
