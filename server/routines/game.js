@@ -472,7 +472,7 @@ function* turnSaga(game) {
 	const deadPlayerIds = yield call(checkCharacterHealth, game)
 	if (deadPlayerIds.length) {
 		game.endInfo.reason =
-			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'characters'
+			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
 		game.endInfo.deadPlayerIds = deadPlayerIds
 		return 'GAME_END'
 	}
