@@ -31,10 +31,10 @@ import {CONFIG} from '../../config'
 
 // TURN ACTIONS:
 // 'WAIT_FOR_TURN',
-// 'ADD_HERMIT',
+// 'ADD_CHARACTER',
 // 'PRIMARY_ATTACK',
 // 'SECONDARY_ATTACK',
-// 'CHANGE_ACTIVE_HERMIT',
+// 'CHANGE_ACTIVE_CHARACTER',
 // 'PLAY_ITEM_CARD',
 // 'PLAY_EFFECT_CARD',
 // 'PLAY_SINGLE_USE_CARD',
@@ -91,25 +91,25 @@ function getAvailableActions(game, pastTurnActions) {
 		return actions
 	}
 
-	const hermits = currentPlayer.board.rows.filter(
-		(row) => row.hermitCard
+	const characters = currentPlayer.board.rows.filter(
+		(row) => row.characterCard
 	).length
 	if (
-		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
-		hermits < 5
+		(characters === 0 || currentPlayer.board.activeRow !== null) &&
+		characters < 5
 	) {
 		actions.push('ADD_CHARACTER')
 	}
 
-	// Player can't change active hermit if he has no other hermits
-	const hasOtherHermit = currentPlayer.board.rows.some(
-		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
+	// Player can't change active character if he has no other characters
+	const hasOtherCharacter = currentPlayer.board.rows.some(
+		(row, index) => row.characterCard && index !== currentPlayer.board.activeRow
 	)
 
 	const {activeRow, rows} = currentPlayer.board
 	const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
 
-	if (hasOtherHermit && !isSleeping) {
+	if (hasOtherCharacter && !isSleeping) {
 		actions.push('CHANGE_ACTIVE_CHARACTER')
 	}
 
@@ -117,7 +117,7 @@ function getAvailableActions(game, pastTurnActions) {
 		actions.push('PLAY_EFFECT_CARD')
 
 		if (turn > 1) {
-			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
+			const characterInfo = CARDS[rows[activeRow].characterCard.cardId]
 			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
@@ -126,10 +126,10 @@ function getAvailableActions(game, pastTurnActions) {
 				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
 					actions.push('ZERO_ATTACK')
 				}
-				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+				if (hasEnoughItems(itemCards, characterInfo.primary.cost)) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+				if (hasEnoughItems(itemCards, characterInfo.secondary.cost)) {
 					actions.push('SECONDARY_ATTACK')
 				}
 			}
@@ -169,7 +169,7 @@ function* checkHermitHealth(game) {
 			const row = playerRows[rowIndex]
 			if (row.characterCard && row.health <= 0) {
 				// recovery array {amount: number, effectCard?: CardT}
-				let result = game.hooks.hermitDeath.call([], {
+				let result = game.hooks.characterDeath.call([], {
 					playerState,
 					row,
 				})
@@ -184,7 +184,7 @@ function* checkHermitHealth(game) {
 					continue
 				}
 
-				if (row.characterCard) discardCard(game, row.hermitCard)
+				if (row.characterCard) discardCard(game, row.characterCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach(
 					(itemCard) => itemCard && discardCard(game, itemCard)
@@ -210,7 +210,7 @@ function* checkHermitHealth(game) {
 				game.state.order.findIndex((id) => id === playerState.id) + 1
 
 		const noCharactersLeft =
-			!firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
+			!firstPlayerTurn && playerState.board.rows.every((row) => !row.characterCard)
 		if (isDead || noCharactersLeft) {
 			console.log('Player dead: ', {
 				isDead,
@@ -339,7 +339,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 			...[
 				'PLAY_CARD',
 				'FOLLOW_UP',
-				'CHANGE_ACTIVE_HERMIT',
+				'CHANGE_ACTIVE_CHARACTER',
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
 				'ATTACK',
