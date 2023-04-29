@@ -24,7 +24,7 @@ export function getStarterPack() {
 			characterTypes.includes(cardInfo.characterType)
 	)
 
-	const characterCards = cards.filter((cardInfo) => cardInfo.type === 'character')
+	const characterCard = cards.filter((cardInfo) => cardInfo.type === 'character')
 	const effectCards = cards.filter((cardInfo) =>
 		['effect', 'single_use'].includes(cardInfo.type)
 	)
@@ -36,7 +36,7 @@ export function getStarterPack() {
 
 	// characters
 	while (deck.length < characterCount) {
-		const randomIndex = Math.floor(Math.random() * characterCards.length)
+		const randomIndex = Math.floor(Math.random() * characterCard.length)
 		const characterCard = characterCard[randomIndex]
 
 		const duplicates = deck.filter((card) => card.id === characterCard.id)
