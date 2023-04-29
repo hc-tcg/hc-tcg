@@ -15,7 +15,7 @@ import {getEmptyRow} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
-import changeActiveHermitSaga from './turn-actions/change-active-hermit'
+import changeActiveCharacterSaga from './turn-actions/change-active-character'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
 import followUpSaga from './turn-actions/follow-up'
@@ -157,7 +157,7 @@ function playerAction(actionType, playerId) {
  * @param {GameModel} game
  * @returns {SagaIterator}
  */
-function* checkHermitHealth(game) {
+function* checkCharacterHealth(game) {
 	/** @type {Array<PlayerState>} */
 	const playerStates = Object.values(game.state.players)
 	/** @type {Array<string>} */
