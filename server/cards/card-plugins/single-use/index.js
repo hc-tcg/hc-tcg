@@ -17,7 +17,7 @@ import LighterSingleUseCard from './lighter'
 import RecyclingSingleUseCard from './recycling'
 import TornadoSingleUseCard from './tornado'
 import GamerChairSingleUseCard from './gamer-chair'
-import BarricadeSingleUseCard from './blockade'
+import BarricadeSingleUseCard from './barricade'
 import HappyDoggoSingleUseCard from './happy-doggo'
 
 const SINGLE_USE_CARDS = [
