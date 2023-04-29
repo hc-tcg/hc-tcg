@@ -9,7 +9,7 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
+	id: 'rabies' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
 	duration: number
 }
 
@@ -21,7 +21,7 @@ export type RowStateWithHermit = {
 	ailments: Array<Ailment>
 }
 
-export type RowStateWithoutHermit = {
+export type RowStateWithoutCharacter = {
 	hermitCard: null
 	effectCard: null
 	itemCards: Array<null>
@@ -29,7 +29,7 @@ export type RowStateWithoutHermit = {
 	ailments: Array<Ailment>
 }
 
-export type RowState = RowStateWithHermit | RowStateWithoutHermit
+export type RowState = RowStateWithCharacter | RowStateWithoutCharacter
 
 export type CoinFlipT = 'heads' | 'tails'
 
@@ -78,8 +78,8 @@ export type AvailableActionT =
 	| 'SECONDARY_ATTACK'
 	| 'FOLLOW_UP'
 	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
-	| 'CHANGE_ACTIVE_HERMIT'
-	| 'ADD_HERMIT'
+	| 'CHANGE_ACTIVE_CHARACTER'
+	| 'ADD_CHARACTER'
 	| 'PLAY_ITEM_CARD'
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
@@ -101,7 +101,7 @@ export type GameEndOutcomeT =
 	| 'you_lost'
 	| null
 
-export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
+export type GameEndReasonT = 'characters' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
