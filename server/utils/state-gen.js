@@ -37,7 +37,7 @@ export function getStarterPack() {
 	// hermits
 	while (deck.length < characterCount) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
-		const characterCard = characterCards[randomIndex]
+		const characterCard = characterCard[randomIndex]
 
 		const duplicates = deck.filter((card) => card.id === characterCard.id)
 		const rarity = characterCard.rarity
@@ -48,7 +48,7 @@ export function getStarterPack() {
 		deck.push(characterCard)
 
 		const cost = characterCard.secondary.cost.filter(
-			(characterType) => characterType === characterCard.hermitType
+			(characterType) => characterType === characterCard.characterType
 		).length
 		itemsCosts[characterCard.characterType] = itemsCosts[characterCard.hermitType] || 0
 		itemsCosts[characterCard.characterType] += cost
@@ -117,7 +117,7 @@ export function getEmptyRow() {
 
 	/** @type {RowState} */
 	const rowState = {
-		hermitCard: null,
+		characterCard: null,
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
@@ -140,11 +140,11 @@ export function getPlayerState(player) {
 	pack.sort(() => 0.5 - Math.random())
 
 	// ensure a hermit in first 5 cards
-	const hermitIndex = pack.findIndex((card) => {
+	const characterIndex = pack.findIndex((card) => {
 		return CARDS[card.cardId].type === 'hermit'
 	})
-	if (hermitIndex > 5) {
-		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	if (characterIndex > 5) {
+		;[pack[0], pack[characterIndex]] = [pack[characterIndex], pack[0]]
 	}
 
 	const hand = pack.slice(0, 7)
