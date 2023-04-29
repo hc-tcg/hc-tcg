@@ -24,7 +24,7 @@ export function getStarterPack() {
 			characterTypes.includes(cardInfo.characterType)
 	)
 
-	const hermitCards = cards.filter((cardInfo) => cardInfo.type === 'hermit')
+	const characterCards = cards.filter((cardInfo) => cardInfo.type === 'character')
 	const effectCards = cards.filter((cardInfo) =>
 		['effect', 'single_use'].includes(cardInfo.type)
 	)
@@ -34,9 +34,9 @@ export function getStarterPack() {
 
 	const itemsCosts = {}
 
-	// hermits
+	// characters
 	while (deck.length < characterCount) {
-		const randomIndex = Math.floor(Math.random() * hermitCards.length)
+		const randomIndex = Math.floor(Math.random() * characterCards.length)
 		const characterCard = characterCard[randomIndex]
 
 		const duplicates = deck.filter((card) => card.id === characterCard.id)
@@ -50,7 +50,7 @@ export function getStarterPack() {
 		const cost = characterCard.secondary.cost.filter(
 			(characterType) => characterType === characterCard.characterType
 		).length
-		itemsCosts[characterCard.characterType] = itemsCosts[characterCard.hermitType] || 0
+		itemsCosts[characterCard.characterType] = itemsCosts[characterCard.characterType] || 0
 		itemsCosts[characterCard.characterType] += cost
 	}
 
@@ -139,9 +139,9 @@ export function getPlayerState(player) {
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
 
-	// ensure a hermit in first 5 cards
+	// ensure a character in first 5 cards
 	const characterIndex = pack.findIndex((card) => {
-		return CARDS[card.cardId].type === 'hermit'
+		return CARDS[card.cardId].type === 'character'
 	})
 	if (characterIndex > 5) {
 		;[pack[0], pack[characterIndex]] = [pack[characterIndex], pack[0]]
