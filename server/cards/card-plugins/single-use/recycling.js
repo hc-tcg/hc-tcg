@@ -48,4 +48,4 @@ class RecyclingSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default RecylclingSingleUseCard
+export default RecyclingSingleUseCard
