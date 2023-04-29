@@ -459,7 +459,7 @@ function* turnSaga(game) {
 	// Apply damage from ailments
 	// TODO - Armor should prevent ailment damage
 	for (let row of opponentPlayer.board.rows) {
-		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
+		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'rabies'))
 			row.health -= 20
 	}
 
@@ -472,7 +472,7 @@ function* turnSaga(game) {
 	const deadPlayerIds = yield call(checkCharacterHealth, game)
 	if (deadPlayerIds.length) {
 		game.endInfo.reason =
-			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
+			game.state.players[deadPlayerIds[0]].lives <= 0 ? 'lives' : 'characters'
 		game.endInfo.deadPlayerIds = deadPlayerIds
 		return 'GAME_END'
 	}
