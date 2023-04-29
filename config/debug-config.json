@@ -1,4 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": []
+	"extraStartingCards": [],
+	"noItemRequirements": false,
+	"forceCoinFlip": false
 }
