@@ -30,7 +30,7 @@ const Panorama = ({panorama, camera}: Props) => {
 			if (!cameraRef.current) return
 			if (rotationEnabled === undefined) rotationEnabled = true
 			rotationEnabled &&
-				(cameraRef.current.rotation.y -= (rotationSpeed || 0.5) / 10000)
+				(cameraRef.current.rotation.y -= (rotationSpeed || 0.5) / -10000)
 		})
 
 		return (
@@ -39,7 +39,7 @@ const Panorama = ({panorama, camera}: Props) => {
 				ref={cameraRef}
 				fov={fov || 75}
 				position={[0, 0, 0]}
-				rotation={[Math.PI, (startingRotation || 0) * (6.3 / 360), 0]}
+				rotation={[Math.PI, (startingRotation || 0) * (6.3 / 360), Math.PI]}
 			/>
 		)
 	}
@@ -55,6 +55,8 @@ const Panorama = ({panorama, camera}: Props) => {
 			`panorama_0.png`, //Front
 			`panorama_2.png`, //Back
 		])
+
+		texture.flipY = true
 
 		return (
 			<mesh>
