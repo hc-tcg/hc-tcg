@@ -81,12 +81,13 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
-	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
 		yield put(localGameState(initialGameState))
 	}
+
+	let gameSaga = null
 
 	// for coin flips
 	let coinFlipInfo: CoinFlipInfo = {
@@ -95,11 +96,14 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	}
 	while (true) {
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
+		if (gameSaga) yield cancel(gameSaga)
 		coinFlipInfo = yield call(
 			coinFlipSaga,
 			payload.localGameState,
 			coinFlipInfo
 		)
+		const action: any = {payload}
+		gameSaga = yield fork(gameStateSaga, action)
 		yield put(localGameState(payload.localGameState))
 	}
 }
