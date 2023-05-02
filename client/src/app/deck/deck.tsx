@@ -14,7 +14,13 @@ import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
-import {DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
+import {
+	CopyIcon,
+	DeleteIcon,
+	EditIcon,
+	ErrorIcon,
+	ExportIcon,
+} from 'components/svgs'
 import {ToastT} from 'common/types/app'
 import {getCardCost} from 'server/utils/validation'
 import {ImportModal, ExportModal} from 'components/import-export'
@@ -199,6 +205,21 @@ const Deck = ({setMenuSection}: Props) => {
 		setSavedDecks(decks)
 		loadDeck(JSON.parse(decks[0]).name)
 	}
+	const duplicateDeck = (deck: PlayerDeckT) => {
+		//Save duplicated deck to Local Storage
+		let newName = `[Copy] ${deck.name}`
+		let number = 2
+
+		console.log(getSavedDecks())
+		while (getSavedDeck(newName)) {
+			newName = `[Copy ${number}] ${deck.name}`
+			number++
+		}
+		saveDeck({...deck, name: newName})
+
+		//Refresh saved deck list and load new deck
+		setSavedDecks(getSavedDecks())
+	}
 	const deckList: ReactNode = savedDecks.map((d: any, i: number) => {
 		const deck: PlayerDeckT = JSON.parse(d)
 		return (
@@ -356,6 +377,16 @@ const Deck = ({setMenuSection}: Props) => {
 							>
 								<span>
 									Export<span className={css.hideOnMobile}> Deck</span>
+								</span>
+							</Button>
+							<Button
+								variant="primary"
+								size="small"
+								onClick={() => duplicateDeck(loadedDeck)}
+								leftSlot={CopyIcon()}
+							>
+								<span>
+									Duplicate<span className={css.hideOnMobile}> Deck</span>
 								</span>
 							</Button>
 							{savedDecks.length > 1 && (
