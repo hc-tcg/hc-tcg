@@ -4,7 +4,6 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-// TODO - Make this work with bed (sleeping needs to reset counter)
 class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -26,14 +25,22 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, playerActiveRow, opponentActiveRow} = game.ds
+			const {singleUseInfo, playerActiveRow, opponentActiveRow, currentPlayer, opponentPlayer} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
-				// TODO - Handle bed
 				const pEffect = playerActiveRow?.effectCard
 				const oEffect = opponentActiveRow?.effectCard
 				playerActiveRow.effectCard = oEffect
 				opponentActiveRow.effectCard = pEffect
+				// Handle Bed
+				if (oEffect?.cardId === 'bed' || pEffect?.cardId === 'bed') {
+					const players = [currentPlayer, opponentPlayer]
+					players.forEach((playerState) => {
+						// Remove bed from custom data, the players will be put back to sleep at the end of the action by the bed,
+						// by doing this we reset the sleep counter if the players swap beds and a bed can be used after using a emerald
+						delete playerState.custom['bed']
+					})
+				}
 				return 'DONE'
 			}
 		})

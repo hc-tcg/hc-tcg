@@ -34,7 +34,7 @@ class BedEffectCard extends EffectCard {
 		game.hooks.turnStart.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds
 
-			// Need to know which row had bed at start of the turn
+			// Need to know which row had the bed at start of the turn
 			const players = [currentPlayer, opponentPlayer]
 			players.forEach((playerState) => {
 				const bedInfo = playerState.custom[this.id] || {}
@@ -55,7 +55,7 @@ class BedEffectCard extends EffectCard {
 		game.hooks.actionEnd.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds
 
-			// We need to check both players, because of emerald
+			// We need to check both players, because of Emerald or Grian
 			const players = [currentPlayer, opponentPlayer]
 			players.forEach((playerState) => {
 				const bedInfo = playerState.custom[this.id] || {}
@@ -68,7 +68,6 @@ class BedEffectCard extends EffectCard {
 						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 						// set new sleeping for full two turns
 						row.ailments.push({id: 'sleeping', duration: 2})
-						bedInfo[index] = true
 					}
 				})
 			})
