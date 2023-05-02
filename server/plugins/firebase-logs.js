@@ -45,11 +45,6 @@ class FirebaseLogs {
 		if (!this.enabled) return
 
 		root.hooks.newGame.tap(this.id, (game) => {
-			if (game.code) {
-				// don't log private games with a code
-				return
-			}
-
 			const playerStates = Object.values(game.state.players)
 
 			/**
@@ -74,9 +69,7 @@ class FirebaseLogs {
 		root.hooks.gameRemoved.tap(this.id, (game) => {
 			const playerStates = Object.values(game.state.players)
 			const gameLog = this.gameLogs[game.id]
-			if (!gameLog) {
-				return
-			}
+			if (!gameLog) return
 
 			if (
 				!game.endInfo.outcome ||
@@ -96,18 +89,18 @@ class FirebaseLogs {
 				world: CONFIG.world,
 			}
 			let pid0 = playerStates[0].id
-			root.players[pid0].socket.emit('gameoverstat', {
+			root.players[pid0]?.socket.emit('gameoverstat', {
 				outcome: game.endInfo.outcome,
 				won: game.endInfo.winner === pid0,
 			})
-			summaryObj.deck1 = root.players[pid0].playerDeck
+			summaryObj.deck1 = root.players[pid0]?.playerDeck
 
 			let pid1 = playerStates[1].id
-			root.players[pid1].socket.emit('gameoverstat', {
+			root.players[pid1]?.socket.emit('gameoverstat', {
 				outcome: game.endInfo.outcome,
 				won: game.endInfo.winner === pid1,
 			})
-			summaryObj.deck2 = root.players[pid1].playerDeck
+			summaryObj.deck2 = root.players[pid1]?.playerDeck
 			if (game.endInfo.winner === pid0) {
 				summaryObj.outcome = 'deck1win'
 			} else if (game.endInfo.winner === pid1) {
