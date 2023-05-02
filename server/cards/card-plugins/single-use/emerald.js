@@ -25,7 +25,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 */
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, playerActiveRow, opponentActiveRow, currentPlayer, opponentPlayer} = game.ds
+			const {
+				singleUseInfo,
+				playerActiveRow,
+				opponentActiveRow,
+				currentPlayer,
+				opponentPlayer,
+			} = game.ds
 			if (singleUseInfo?.id === this.id) {
 				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
 				const pEffect = playerActiveRow?.effectCard
@@ -35,9 +41,8 @@ class EmeraldSingleUseCard extends SingleUseCard {
 				// Handle Bed
 				if (oEffect?.cardId === 'bed' || pEffect?.cardId === 'bed') {
 					const players = [currentPlayer, opponentPlayer]
+					// By deleting the bed custom data a player can use a bed again and the sleep counter resets if two players swap beds
 					players.forEach((playerState) => {
-						// Remove bed from custom data, the players will be put back to sleep at the end of the action by the bed,
-						// by doing this we reset the sleep counter if the players swap beds and a bed can be used after using a emerald
 						delete playerState.custom['bed']
 					})
 				}
