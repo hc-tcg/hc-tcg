@@ -36,6 +36,7 @@ export type CoinFlipT = 'heads' | 'tails'
 export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
+	iterations: Array<string>
 }
 
 export type PlayerState = {

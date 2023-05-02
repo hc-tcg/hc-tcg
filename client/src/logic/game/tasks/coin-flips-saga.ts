@@ -21,14 +21,20 @@ function* coinFlipSaga(
 	const newIds = Object.keys(coinFlips).filter(
 		(flipId) => !coinFlipInfo.shownCoinFlips.includes(flipId)
 	)
+
+	const getIterations = () => Math.ceil(Math.random() * 3).toString()
 	if (newIds.length) {
 		// Display new coin flips one by one
 		for (const id of newIds) {
 			const coinFlip = coinFlips[id]
+			const iterations = []
+			for (let i = 0; i < coinFlip.length; i++) {
+				iterations.push(getIterations())
+			}
 			coinFlipInfo.shownCoinFlips.push(id)
 			const name = Object.hasOwn(CARDS, id) ? CARDS[id].name : id
-			yield put(setCoinFlip({name, tosses: coinFlip}))
-			yield delay(2500)
+			yield put(setCoinFlip({name, tosses: coinFlip, iterations}))
+			yield delay(1000 + iterations.length * 700)
 		}
 		yield put(setCoinFlip(null))
 	}
