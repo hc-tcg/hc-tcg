@@ -24,6 +24,13 @@ root.render(
 				<App />
 			</Toast.Provider>
 		</Provider>
-		<Panorama panorama="hermit-hill" />
+		<Panorama
+			panorama="hermit-hill"
+			camera={{
+				startingRotation: 0,
+				rotationSpeed: 1,
+				fov: 75,
+			}}
+		/>
 	</React.StrictMode>
 )
