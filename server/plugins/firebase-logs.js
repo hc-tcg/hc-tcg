@@ -45,6 +45,11 @@ class FirebaseLogs {
 		if (!this.enabled) return
 
 		root.hooks.newGame.tap(this.id, (game) => {
+			if (game.code) {
+				// don't log private games with a code
+				return
+			}
+
 			const playerStates = Object.values(game.state.players)
 
 			/**
