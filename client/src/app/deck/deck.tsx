@@ -109,6 +109,8 @@ const Deck = ({setMenuSection}: Props) => {
 		cards: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
+	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
+		useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] =
@@ -205,14 +207,17 @@ const Deck = ({setMenuSection}: Props) => {
 		setSavedDecks(decks)
 		loadDeck(JSON.parse(decks[0]).name)
 	}
+	const canDuplicateDeck = () => {
+		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
+	}
 	const duplicateDeck = (deck: PlayerDeckT) => {
 		//Save duplicated deck to Local Storage
-		let newName = `[Copy] ${deck.name}`
+		let newName = `${deck.name} Copy`
 		let number = 2
 
-		console.log(getSavedDecks())
 		while (getSavedDeck(newName)) {
-			newName = `[Copy ${number}] ${deck.name}`
+			if (number > 9) return
+			newName = `${deck.name} Copy ${number}`
 			number++
 		}
 		saveDeck({...deck, name: newName})
@@ -220,30 +225,37 @@ const Deck = ({setMenuSection}: Props) => {
 		//Refresh saved deck list and load new deck
 		setSavedDecks(getSavedDecks())
 	}
-	const deckList: ReactNode = savedDecks.map((d: any, i: number) => {
-		const deck: PlayerDeckT = JSON.parse(d)
-		return (
-			<li
-				className={classNames(
-					css.myDecksItem,
-					loadedDeck.name === deck.name && css.selectedDeck
-				)}
-				key={i}
-				onClick={() => {
-					playSwitchDeckSFX()
-					loadDeck(deck.name)
-				}}
-			>
-				<div className={css.deckImage}>
-					<img
-						src={'../images/types/type-' + deck.icon + '.png'}
-						alt={'deck-icon'}
-					/>
-				</div>
-				{deck.name}
-			</li>
-		)
-	})
+	const sortedDecks = savedDecks
+		.map((d: any, i: number) => {
+			const deck: PlayerDeckT = JSON.parse(d)
+			return deck
+		})
+		.sort((a, b) => a.name.localeCompare(b.name))
+	const deckList: ReactNode = sortedDecks.map(
+		(deck: PlayerDeckT, i: number) => {
+			return (
+				<li
+					className={classNames(
+						css.myDecksItem,
+						loadedDeck.name === deck.name && css.selectedDeck
+					)}
+					key={i}
+					onClick={() => {
+						playSwitchDeckSFX()
+						loadDeck(deck.name)
+					}}
+				>
+					<div className={css.deckImage}>
+						<img
+							src={'../images/types/type-' + deck.icon + '.png'}
+							alt={'deck-icon'}
+						/>
+					</div>
+					{deck.name}
+				</li>
+			)
+		}
+	)
 	const validationMessage = validateDeck(
 		loadedDeck.cards.map((card) => card.cardId)
 	)
@@ -307,6 +319,19 @@ const Deck = ({setMenuSection}: Props) => {
 					title="Delete Deck"
 					description={`Are you sure you wish to delete the "${loadedDeck.name}" deck?`}
 					actionText="Delete"
+				/>
+				<AlertModal
+					setOpen={showDuplicateDeckModal}
+					onClose={() => setShowDuplicateDeckModal(!showDuplicateDeckModal)}
+					action={() => duplicateDeck(loadedDeck)}
+					title="Duplicate Deck"
+					description={
+						canDuplicateDeck()
+							? `Are you sure you want to duplicate the "${loadedDeck.name}" deck?`
+							: `You have too many duplicates of the "${loadedDeck.name}" deck.`
+					}
+					actionText={canDuplicateDeck() ? 'Duplicate' : undefined}
+					actionType="primary"
 				/>
 				<AlertModal
 					setOpen={showOverwriteModal}
@@ -382,7 +407,7 @@ const Deck = ({setMenuSection}: Props) => {
 							<Button
 								variant="primary"
 								size="small"
-								onClick={() => duplicateDeck(loadedDeck)}
+								onClick={() => setShowDuplicateDeckModal(true)}
 								leftSlot={CopyIcon()}
 							>
 								<span>
