@@ -2,6 +2,7 @@ import {useDispatch} from 'react-redux'
 import {showEndGameOverlay} from 'logic/game/game-actions'
 import {GameEndOutcomeT, GameEndReasonT} from 'common/types/game-state'
 import css from './end-game-overlay.module.css'
+import Button from 'components/button'
 
 type Props = {
 	outcome: GameEndOutcomeT
@@ -42,7 +43,7 @@ const EndGameOverrlay = ({outcome, reason}: Props) => {
 		dispatch(showEndGameOverlay(null))
 	}
 	return (
-		<div className={css.wrapper} onClick={handleClick}>
+		<div className={css.wrapper}>
 			<div className={css.message}>
 				{reason && outcome === 'you_won' ? 'You won.' : 'Game Over'}
 				<br />
@@ -55,6 +56,11 @@ const EndGameOverrlay = ({outcome, reason}: Props) => {
 				{!reason || !['you_won', 'you_lost'].includes(outcome)
 					? MESSAGE[outcome]
 					: null}
+			</div>
+			<div className={css.buttonWrapper}>
+				<Button size="small" onClick={handleClick}>
+					Back to menu
+				</Button>
 			</div>
 		</div>
 	)
