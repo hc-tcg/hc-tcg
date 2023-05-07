@@ -226,7 +226,7 @@ const Deck = ({setMenuSection}: Props) => {
 		setSavedDecks(getSavedDecks())
 	}
 	const sortedDecks = savedDecks
-		.map((d: any, i: number) => {
+		.map((d: any) => {
 			const deck: PlayerDeckT = JSON.parse(d)
 			return deck
 		})

@@ -1,7 +1,6 @@
 import css from './coin-flip.module.scss'
 import classnames from 'classnames'
 import {CoinFlipT} from 'common/types/game-state'
-import {createRef, useRef} from 'react'
 
 export type Props = {
 	name: string
@@ -15,8 +14,6 @@ const CoinFlip = ({name, tosses, iterations}: Props) => {
 		'images/tcg1.png',
 	]
 
-	const ref = useRef<HTMLInputElement>(null)
-
 	const coins = tosses.map((face, index) => {
 		const coinPics = pics.slice()
 		if (face === 'tails') coinPics.reverse()
@@ -24,7 +21,6 @@ const CoinFlip = ({name, tosses, iterations}: Props) => {
 			<div
 				className={css.coin}
 				key={index}
-				ref={ref}
 				style={{animationIterationCount: iterations[index]}}
 			>
 				<div className={classnames(css.face, css.front)}>
