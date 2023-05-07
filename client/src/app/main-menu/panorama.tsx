@@ -50,8 +50,8 @@ const Panorama = ({panorama, camera}: Props) => {
 		const texture = loader.load([
 			`panorama_1.png`, //Right
 			`panorama_3.png`, //Left
-			`panorama_4.png`, //Top
-			`panorama_5.png`, //Bottom
+			`panorama_5.png`, //Top
+			`panorama_4.png`, //Bottom
 			`panorama_0.png`, //Front
 			`panorama_2.png`, //Back
 		])
