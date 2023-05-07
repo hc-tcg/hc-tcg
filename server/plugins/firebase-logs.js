@@ -5,6 +5,7 @@ import {CONFIG} from '../../config'
 /**
  * @typedef {import('models/root-model').RootModel} RootModel
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
+ * @typedef {import('common/types/game-state').GameLog} GameLog
  * @typedef {import('firebase-admin').database.Database} Database
  */
 
@@ -14,7 +15,7 @@ class FirebaseLogs {
 
 		this.id = 'firebase_logs'
 
-		/** @type {Object.<string, *>} */
+		/** @type {Object.<string, GameLog>} */
 		this.gameLogs = {}
 
 		/** @type {Boolean} */
@@ -46,9 +47,10 @@ class FirebaseLogs {
 
 		root.hooks.newGame.tap(this.id, (game) => {
 			if (game.code) {
-				// don't log private games with a code
+				// @TODO for now still don't log private games
 				return
 			}
+			const type = game.code ? 'private' : 'public'
 
 			const playerStates = Object.values(game.state.players)
 
@@ -60,14 +62,12 @@ class FirebaseLogs {
 			}
 
 			this.gameLogs[game.id] = {
+				type,
 				startHand1: getHand(playerStates[0]),
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
-			}
-			if (game.state.order[0] == playerStates[0].id) {
-				this.gameLogs[game.id].startDeck = 'deck1'
-			} else {
-				this.gameLogs[game.id].startDeck = 'deck2'
+				startDeck:
+					game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -84,6 +84,7 @@ class FirebaseLogs {
 				return
 			}
 
+			let ref = '/logs'
 			let summaryObj = {
 				startHand1: gameLog.startHand1,
 				startHand2: gameLog.startHand2,
@@ -93,6 +94,10 @@ class FirebaseLogs {
 				turns: game.state.turn,
 				world: CONFIG.world,
 			}
+			if (gameLog.type === 'private') {
+				ref = `/private-logs/${game.code}`
+			}
+
 			let pid0 = playerStates[0].id
 			root.players[pid0]?.socket.emit('gameoverstat', {
 				outcome: game.endInfo.outcome,
@@ -113,7 +118,7 @@ class FirebaseLogs {
 			} else {
 				summaryObj.outcome = 'tie'
 			}
-			this.db.ref('/logs').push(summaryObj)
+			this.db.ref(ref).push(summaryObj)
 
 			// game is over, delete log
 			delete this.gameLogs[game.id]

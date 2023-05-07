@@ -36,7 +36,7 @@ const LOSS_MESSAGE = {
 	time: 'You ran out of time without an active hermit.',
 }
 
-const EndGameOverrlay = ({outcome, reason}: Props) => {
+const EndGameOverlay = ({outcome, reason}: Props) => {
 	const dispatch = useDispatch()
 	if (!outcome) return null
 	const handleClick = () => {
@@ -66,4 +66,4 @@ const EndGameOverrlay = ({outcome, reason}: Props) => {
 	)
 }
 
-export default EndGameOverrlay
+export default EndGameOverlay

@@ -169,3 +169,11 @@ export type LocalGameRoot = {
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }
+
+export type GameLog = {
+	type: 'public' | 'private'
+	startHand1: string[]
+	startHand2: string[]
+	startTimestamp: number
+	startDeck: string
+}
