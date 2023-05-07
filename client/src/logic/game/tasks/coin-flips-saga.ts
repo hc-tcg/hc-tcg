@@ -34,7 +34,7 @@ function* coinFlipSaga(
 			coinFlipInfo.shownCoinFlips.push(id)
 			const name = Object.hasOwn(CARDS, id) ? CARDS[id].name : id
 			yield put(setCoinFlip({name, tosses: coinFlip, iterations}))
-			yield delay(3000)
+			yield delay(2600)
 		}
 		yield put(setCoinFlip(null))
 	}
