@@ -22,7 +22,7 @@ function* coinFlipSaga(
 		(flipId) => !coinFlipInfo.shownCoinFlips.includes(flipId)
 	)
 
-	const getIterations = () => Math.ceil(Math.random() * 3).toString()
+	const getIterations = () => '2'
 	if (newIds.length) {
 		// Display new coin flips one by one
 		for (const id of newIds) {
@@ -34,7 +34,7 @@ function* coinFlipSaga(
 			coinFlipInfo.shownCoinFlips.push(id)
 			const name = Object.hasOwn(CARDS, id) ? CARDS[id].name : id
 			yield put(setCoinFlip({name, tosses: coinFlip, iterations}))
-			yield delay(1000 + iterations.length * 700)
+			yield delay(1000 + iterations.length * 500)
 		}
 		yield put(setCoinFlip(null))
 	}
