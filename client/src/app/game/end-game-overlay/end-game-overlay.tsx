@@ -56,9 +56,6 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 				{!reason || !['you_won', 'you_lost'].includes(outcome)
 					? MESSAGE[outcome]
 					: null}
-				<br />
-				<br />
-				Tournament player? Screenshot this page!
 			</div>
 			<div className={css.buttonWrapper}>
 				<Button size="small" onClick={handleClick}>
