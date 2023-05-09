@@ -1,10 +1,21 @@
+.loginBackground {
+	display: flex;
+	justify-content: center;
+	margin: 0;
+	height: 100%;
+	width: 100%;
+	background-image: url('/images/menu-background.png');
+	background-size: cover;
+	background-position: center;
+}
+
 .loginContainer {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
 	align-items: center;
 	padding-top: 10vh;
-	width: 95vw;
+	max-width: 95vw;
 	margin-inline: auto;
 }
 
@@ -75,6 +86,7 @@
 @media screen and (max-width: 80vh) {
 	.customInput {
 		height: 5vh;
+		width: 60vw;
 		label {
 			top: 1.4vh;
 		}

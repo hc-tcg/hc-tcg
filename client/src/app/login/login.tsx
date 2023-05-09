@@ -33,33 +33,35 @@ const Login = () => {
 	}
 
 	return (
-		<div className={css.loginContainer}>
-			<TcgLogo />
-			{connecting ? (
-				<div className={css.connecting}>
-					<Spinner />
-					<p>Connecting</p>
-				</div>
-			) : (
-				<form className={css.nameForm} onSubmit={handlePlayerName}>
-					<div className={css.customInput}>
-						<input
-							maxLength={25}
-							name="playerName"
-							placeholder=" "
-							autoFocus
-							id="username"
-						></input>
-						<label htmlFor="username">Player Name</label>
+		<div className={css.loginBackground}>
+			<div className={css.loginContainer}>
+				<TcgLogo />
+				{connecting ? (
+					<div className={css.connecting}>
+						<Spinner />
+						<p>Connecting</p>
 					</div>
-					<Button variant="stone" type="submit">
-						Next
-					</Button>
-				</form>
-			)}
-			{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
-			<VersionLinks />
-			<Beef />
+				) : (
+					<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<div className={css.customInput}>
+							<input
+								maxLength={25}
+								name="playerName"
+								placeholder=" "
+								autoFocus
+								id="username"
+							></input>
+							<label htmlFor="username">Player Name</label>
+						</div>
+						<Button variant="stone" type="submit">
+							Next
+						</Button>
+					</form>
+				)}
+				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+				<VersionLinks />
+				<Beef />
+			</div>
 		</div>
 	)
 }
