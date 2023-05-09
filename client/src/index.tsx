@@ -8,7 +8,6 @@ import socket from './socket'
 import store from './store'
 import * as Toast from '@radix-ui/react-toast'
 import toastCSS from 'components/toast/toast.module.scss'
-import Panorama from './app/main-menu/panorama'
 
 // @ts-ignore
 global.store = store
@@ -24,13 +23,5 @@ root.render(
 				<App />
 			</Toast.Provider>
 		</Provider>
-		<Panorama
-			panorama="hermit-hill"
-			camera={{
-				startingRotation: 0,
-				rotationSpeed: 1,
-				fov: 75,
-			}}
-		/>
 	</React.StrictMode>
 )
