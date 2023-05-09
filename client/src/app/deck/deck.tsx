@@ -70,9 +70,15 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 				// order by ranks
 				return cardCostA - cardCostB
 			}
+		} else if (cardInfoA.name !== cardInfoB.name) {
+			return cardInfoA.name.localeCompare(cardInfoB.name)
 		}
 
-		return cardInfoA.name.localeCompare(cardInfoB.name)
+		// rarity is our last hope
+		const rarities = ['common', 'rare', 'ultra_rare']
+		const rarityValueA = rarities.findIndex((s) => s === cardInfoA.rarity) + 1
+		const rarityValueB = rarities.findIndex((s) => s === cardInfoB.rarity) + 1
+		return rarityValueA - rarityValueB
 	})
 }
 
