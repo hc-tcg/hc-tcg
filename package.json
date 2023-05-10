@@ -38,6 +38,7 @@
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-redux": "^8.0.5",
+		"react-transition-group": "^4.4.5",
 		"redux": "^4.2.0",
 		"redux-saga": "^1.2.2",
 		"sass": "^1.58.3",

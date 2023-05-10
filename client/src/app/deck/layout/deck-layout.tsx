@@ -22,7 +22,6 @@ function DeckLayout({children, title, returnText, back}: Props) {
 					<h1>{title}</h1>
 				</div>
 			</header>
-			<div className={css.background}></div>
 			<div className={css.body}>
 				<div className={css.wrapper}>{children}</div>
 			</div>
