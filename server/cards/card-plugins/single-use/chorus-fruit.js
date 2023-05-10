@@ -16,6 +16,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		})
 
 		this.useReqs = [
+			{target: 'player', type: 'hermit', amount: 1},
 			{target: 'player', type: 'hermit', amount: 1, active: false},
 		]
 	}
