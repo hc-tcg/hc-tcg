@@ -12,7 +12,6 @@ import Deck from './deck'
 import MatchMaking from './match-making'
 import Toast from 'components/toast'
 import Settings from './main-menu/settings'
-import {TransitionGroup} from 'react-transition-group'
 import Background from 'components/background'
 
 function App() {
@@ -50,10 +49,8 @@ function App() {
 
 	return (
 		<main>
-			<TransitionGroup component={null}>
-				<Background noImage={!playerName || menuSection === 'settings'} />
-				{router()}
-			</TransitionGroup>
+			<Background noImage={!playerName || menuSection === 'settings'} />
+			{router()}
 			{playerName && !socketStatus && <LostConnection />}
 			{enableToast && (
 				<Toast
