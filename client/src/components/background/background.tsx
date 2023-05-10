@@ -2,6 +2,7 @@
 import css from './background.module.scss'
 import {CSSTransition} from 'react-transition-group'
 import classNames from 'classnames'
+import {useRef} from 'react'
 
 //type CameraProps = {
 //	rotationEnabled?: boolean
@@ -72,9 +73,12 @@ type Props = {
 }
 
 const Background = ({noImage}: Props) => {
+	const nodeRef1 = useRef(null)
+	const nodeRef2 = useRef(null)
 	return (
 		<div className={css.background}>
 			<CSSTransition
+				nodeRef={nodeRef1}
 				in={!noImage}
 				timeout={500}
 				unmountOnExit={true}
@@ -85,9 +89,13 @@ const Background = ({noImage}: Props) => {
 					exitActive: css.exitActive,
 				}}
 			>
-				<div className={classNames(css.innerBackground, css.image)}></div>
+				<div
+					className={classNames(css.innerBackground, css.image)}
+					ref={nodeRef1}
+				></div>
 			</CSSTransition>
 			<CSSTransition
+				nodeRef={nodeRef2}
 				in={noImage}
 				timeout={500}
 				unmountOnExit={true}
@@ -98,7 +106,10 @@ const Background = ({noImage}: Props) => {
 					exitActive: css.exitActive,
 				}}
 			>
-				<div className={classNames(css.innerBackground, css.noImage)}></div>
+				<div
+					className={classNames(css.innerBackground, css.noImage)}
+					ref={nodeRef2}
+				></div>
 			</CSSTransition>
 		</div>
 	)
