@@ -12,6 +12,8 @@ export class RootModel {
 		this.players = {}
 		/** @type {Object.<string, GameModel>} */
 		this.games = {}
+		/** @type {Array<string>} */
+		this.queue = []
 
 		this.hooks = {
 			/** @type {SyncHook<[GameModel]>} */

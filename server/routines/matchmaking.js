@@ -29,15 +29,21 @@ import {getLocalGameState} from '../utils/state-gen'
  */
 function* gameManager(game) {
 	try {
-		console.log('Game started. Total games: ', root.getGameIds().length)
+		const playerIds = game.getPlayerIds()
+		const players = game.getPlayers()
 
-		broadcast(game.getPlayers(), 'GAME_START')
+		const gameType = game.code ? 'Private' : 'Public'
+		console.log(
+			`${gameType} game started.`,
+			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
+			'Total games:',
+			root.getGameIds().length
+		)
+
+		broadcast(players, 'GAME_START')
 		game.initialize()
 		root.hooks.newGame.call(game)
 		game.task = yield spawn(gameSaga, game)
-
-		const playerIds = game.getPlayerIds()
-		const players = game.getPlayers()
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield race({
@@ -74,9 +80,14 @@ function* gameManager(game) {
 		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {
 		if (game.task) yield cancel(game.task)
+
+		const gameType = game.code ? 'Private' : 'Public'
+		console.log(
+			`${gameType} game ended. Total games:`,
+			root.getGameIds().length - 1
+		)
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
-		console.log('Game ended. Total games: ', root.getGameIds().length)
 	}
 }
 
@@ -87,7 +98,14 @@ function inGame(playerId) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 
-function* randomMatchmaking(action) {
+/**
+ * @param {string} playerId
+ */
+function inQueue(playerId) {
+	return root.queue.some((id) => id === playerId)
+}
+
+function* joinQueue(action) {
 	// TODO - use ids from session, these could be fake from client
 	const {playerId} = action
 	const player = root.players[playerId]
@@ -95,25 +113,31 @@ function* randomMatchmaking(action) {
 		console.log('[Random matchmaking] Player not found: ', playerId)
 		return
 	}
-	if (inGame(playerId)) return
+	if (inGame(playerId) || inQueue(playerId)) return
+	root.queue.push(playerId)
+	console.log(`Joining queue: ${player.playerName}`)
+}
 
-	const randomGame = root
-		.getGames()
-		.find((game) => game.code === null && !game.task)
+function* leaveMatchmaking(action) {
+	const playerId =
+		action.type === 'LEAVE_MATCHMAKING'
+			? action.playerId
+			: action.payload.playerId
 
-	if (randomGame) {
-		console.log('second player connected, starting game')
-		randomGame.addPlayer(player)
-		yield fork(gameManager, randomGame)
-		return
+	const queueIndex = root.queue.indexOf(playerId)
+	if (queueIndex >= 0) {
+		root.queue.splice(queueIndex, 1)
+	} else {
+		const game = root
+			.getGames()
+			.find((game) => !game.task && !!game.players[playerId])
+		if (!game) return
+		delete root.games[game.id]
 	}
-
-	// random game not available, create new one
-	const newGame = new GameModel()
-	newGame.addPlayer(player)
-	root.addGame(newGame)
-
-	console.log('Random game created: ', playerId, player.playerName)
+	console.log(
+		'Matchmaking cancelled: ',
+		root.players[playerId]?.playerName || 'Unknown'
+	)
 }
 
 function* createPrivateGame(action) {
@@ -123,9 +147,9 @@ function* createPrivateGame(action) {
 		console.log('[Create Game] Player not found: ', playerId)
 		return
 	}
-	if (inGame(playerId)) return
+	if (inGame(playerId) || inQueue(playerId)) return
 
-	// create new game with code
+	// Create new game with code
 	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
 	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
@@ -133,7 +157,10 @@ function* createPrivateGame(action) {
 	newGame.addPlayer(player)
 	root.games[newGame.id] = newGame
 
-	console.log('Private game created: ', playerId, player.playerName)
+	console.log(
+		`Private game created by ${player.playerName}.`,
+		`Code: ${gameCode}`
+	)
 }
 
 function* joinPrivateGame(action) {
@@ -146,27 +173,14 @@ function* joinPrivateGame(action) {
 	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	console.log('Joining private game: ', playerId, player.playerName)
 	if (invalidCode || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
 	}
 
+	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
 	yield fork(gameManager, game)
-}
-
-function* leaveMatchmaking(action) {
-	const playerId =
-		action.type === 'LEAVE_MATCHMAKING'
-			? action.playerId
-			: action.payload.playerId
-	const game = root
-		.getGames()
-		.find((game) => !game.task && !!game.players[playerId])
-	if (!game) return
-	console.log('Matchmaking cancelled: ', playerId)
-	delete root.games[game.id]
 }
 
 function* cleanUpSaga() {
@@ -185,10 +199,51 @@ function* cleanUpSaga() {
 	}
 }
 
+function* randomMatchmakingSaga() {
+	while (true) {
+		// Wait 3 seconds
+		yield delay(1000 * 10)
+		if (!(root.queue.length > 1)) continue
+
+		const extraPlayer =
+			root.queue.length % 2 === 1 ? root.queue.pop() || null : null
+
+		// Shuffle
+		for (var i = root.queue.length - 1; i > 0; i--) {
+			var randomPos = Math.floor(Math.random() * (i + 1))
+			var oldValue = root.queue[i]
+			root.queue[i] = root.queue[randomPos]
+			root.queue[randomPos] = oldValue
+		}
+
+		let index
+		for (index = 0; index < root.queue.length; index += 2) {
+			const player1 = root.players[root.queue[index]]
+			const player2 = root.players[root.queue[index + 1]]
+
+			// Create a new game for these players
+			const newGame = new GameModel()
+			newGame.addPlayer(player1)
+			newGame.addPlayer(player2)
+			root.addGame(newGame)
+			yield fork(gameManager, newGame)
+		}
+
+		// Add back extra player
+		if (extraPlayer) {
+			root.queue.push(extraPlayer)
+		}
+
+		// Remove players who got games from queue
+		root.queue.splice(0, index)
+	}
+}
+
 function* matchmakingSaga() {
 	yield all([
 		fork(cleanUpSaga),
-		takeEvery('RANDOM_MATCHMAKING', randomMatchmaking),
+		fork(randomMatchmakingSaga),
+		takeEvery('RANDOM_MATCHMAKING', joinQueue),
 		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
 		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
 		takeEvery(['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'], leaveMatchmaking),
