@@ -14,7 +14,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			description:
 				"Flip a Coin.\n\nIf heads, no damage is done on opponent's next turn. If tails, double damage is done.\n\nDiscard after use.",
 		})
-		this.hermitMultiplier = 2
+		this.damageMultiplier = 2
 	}
 
 	/**
@@ -36,8 +36,10 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 
 			if (custom[this.id] === 'heads') {
 				target.hermitMultiplier *= 0
+				target.effectMultiplier *= 0
 			} else if (custom[this.id] === 'tails') {
-				target.hermitMultiplier = this.hermitMultiplier
+				target.hermitMultiplier = this.damageMultiplier
+				target.effectMultiplier = this.damageMultiplier
 			}
 			return target
 		})
