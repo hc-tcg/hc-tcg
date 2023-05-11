@@ -14,7 +14,19 @@ export function registerApis(app) {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys?.keys.includes(apiKey)) {
-					res.status(201).send(root.getGames())
+					res.status(201).send(
+						JSON.stringify(
+							root.getGames().map((g) => {
+								return {
+									createdTime: g.createdTime,
+									id: g.id,
+									code: g.code,
+									playersIds: g.getPlayerIds(),
+									state: g.state,
+								}
+							})
+						)
+					)
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
 				}
