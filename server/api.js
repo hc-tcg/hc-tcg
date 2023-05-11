@@ -10,7 +10,8 @@ export function registerApis(app) {
 	try {
 		apiKeys = require('./apiKeys.json')
 	} finally {
-		app.get('/games', (req, res) => {
+		// get info about games
+		app.get('/api/games', (req, res) => {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys?.keys.includes(apiKey)) {
@@ -21,7 +22,8 @@ export function registerApis(app) {
 									createdTime: g.createdTime,
 									id: g.id,
 									code: g.code,
-									playersIds: g.getPlayerIds(),
+									playerIds: g.getPlayerIds(),
+									playerNames: g.getPlayers().map((p) => p.playerName),
 									state: g.state,
 								}
 							})
@@ -31,7 +33,7 @@ export function registerApis(app) {
 					res.status(403).send('Access denied - Invalid API key')
 				}
 			} else {
-				res.status(403).send('Access denied - Please provide an api key')
+				res.status(403).send('Access denied.')
 			}
 		})
 	}
