@@ -6,6 +6,7 @@ import cors from 'cors'
 import './cards'
 import {CONFIG} from '../config'
 import startSocketIO from './sockets'
+import {registerApis} from './api'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
@@ -22,8 +23,11 @@ app.use(
 )
 
 app.get('/', (req, res) => {
+	console.log('1')
 	res.sendFile(path.join(__dirname, '..', CONFIG.clientPath, 'index.html'))
 })
+
+registerApis(app)
 
 const server = createServer(app)
 
