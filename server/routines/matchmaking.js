@@ -202,7 +202,7 @@ function* cleanUpSaga() {
 function* randomMatchmakingSaga() {
 	while (true) {
 		// Wait 3 seconds
-		yield delay(1000 * 10)
+		yield delay(1000 * 3)
 		if (!(root.queue.length > 1)) continue
 
 		const extraPlayer =
