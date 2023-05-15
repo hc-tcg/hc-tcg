@@ -1,23 +1,20 @@
 import classnames from 'classnames'
 import CARDS from 'server/cards'
 import Card from 'components/card'
-import {CardInfoT} from 'types/cards'
-import {CardT} from 'types/game-state'
-import {BoardRowT} from 'types/game-state'
+import {SlotTypeT} from 'common/types/pick-process'
+import {CardT} from 'common/types/game-state'
+import {RowState} from 'common/types/game-state'
 import css from './board.module.css'
 
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-
-export type SlotType = 'item' | 'hermit' | 'effect' | 'health' | 'single_use'
 export type SlotProps = {
-	type: SlotType
+	type: SlotTypeT
 	onClick?: () => void
 	card: CardT | null
-	rowState?: BoardRowT
+	rowState?: RowState
 	active?: boolean
 }
 const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
-	let cardInfo = card?.cardId ? TYPED_CARDS[card.cardId] : null
+	let cardInfo = card?.cardId ? CARDS[card.cardId] : null
 	if (type === 'health' && rowState?.health) {
 		cardInfo = {
 			name: rowState.health + ' Health',
@@ -25,8 +22,13 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 			type: 'health',
 			health: rowState.health,
 			id: 'health_' + rowState.health,
+			attachReq: {target: 'player', type: ['health']},
 		}
 	}
+
+	const ailments = Array.from(
+		new Set(rowState?.ailments.map((a) => a.id) || [])
+	)
 	return (
 		<div
 			onClick={onClick}
@@ -41,19 +43,11 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 				<>
 					<Card card={cardInfo} />
 					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'fire') ? (
-						<div className={css.fireAilment} />
-					) : null}
-
-					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'poison') ? (
-						<div className={css.poisonAilment} />
-					) : null}
-
-					{type === 'health' &&
-					rowState?.ailments.find((a) => a.id === 'sleeping') ? (
-						<div className={css.sleepingAilment} />
-					) : null}
+						ailments.map((id) => {
+							const cssClass = css[id + 'Ailment']
+							if (!cssClass) return null
+							return <div key={id} className={cssClass} />
+						})}
 				</>
 			) : (
 				<img draggable="false" className={css.frame} src="/images/frame.png" />

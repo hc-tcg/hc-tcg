@@ -26,26 +26,31 @@ function startSocketIO(server) {
 		},
 	})
 
-	io.on('connection', (socket) => {
-		// TODO - use playerSecret to verify requests
-		// TODO - Validate json of all requests
+	io.use((socket, next) => {
 		const playerName = socket.handshake.auth?.playerName || ''
 		const clientVersion = socket.handshake.auth?.version || ''
 		if (!isValidName(playerName)) {
 			console.log('Invalid player name: ', playerName)
-			return socket.disconnect(true)
+			return next(new Error('invalid_name'))
 		}
 		if (!isValidVersion(clientVersion)) {
 			console.log('Invalid version: ', clientVersion)
-			return socket.disconnect(true)
+			return next(new Error('invalid_version'))
 		}
+		next()
+	})
+
+	io.on('connection', (socket) => {
+		// TODO - use playerSecret to verify requests
+		// TODO - Validate json of all requests
+
 		store.dispatch({
 			type: 'CLIENT_CONNECTED',
 			payload: {socket, ...socket.handshake.auth},
 		})
 		socket.onAny((event, message) => {
 			// console.log('[received] ', event, ': ', message)
-			if (!message.type) return
+			if (!message?.type) return
 			store.dispatch({...message, socket})
 		})
 		socket.on('disconnect', () => {

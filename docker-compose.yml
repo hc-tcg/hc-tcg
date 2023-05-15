@@ -1,0 +1,12 @@
+version: "2.1"
+services:
+  hctcg:
+    build: .
+    container_name: hc-tcg
+    ports:
+      - 9000:9000
+    volumes:
+      - hc-tcg:/app
+    restart: unless-stopped
+volumes:
+  hc-tcg:

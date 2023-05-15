@@ -1,9 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
-import CARDS from '../../../cards'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 class TangoTekRareHermitCard extends HermitCard {
@@ -29,9 +30,9 @@ class TangoTekRareHermitCard extends HermitCard {
 			},
 		})
 		this.pickOn = 'followup'
-		this.pickReqs = [
-			{target: 'player', type: 'hermit', amount: 1, active: false},
-		]
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+		])
 	}
 
 	/**
@@ -45,11 +46,12 @@ class TangoTekRareHermitCard extends HermitCard {
 				opponentActiveRow,
 				playerActiveRow,
 			} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
+			if (!playerActiveRow || !opponentActiveRow) return target
 
 			const opponentHasOtherHermits =
 				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
@@ -88,10 +90,12 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (followUp !== this.id) return
 
 			const pickedCards = pickedCardsInfo[this.id] || []
-			if (pickedCards.length !== 1) return 'INVALID'
-			if (pickedCards[0].slotType !== 'hermit') return 'INVALID'
-			if (pickedCards[0].playerId !== opponentPlayer.id) return 'INVALID'
-			if (!pickedCards[0].card) return 'INVALID'
+			if (pickedCards.length !== 1) {
+				this.cleanUp(game)
+				return 'DONE'
+			}
+			if (!validPick(game.state, this.pickReqs[0], pickedCards[0]))
+				return 'INVALID'
 			if (pickedCards[0].rowIndex === currentPlayer.custom[this.id])
 				return 'INVALID'
 			opponentPlayer.board.activeRow = pickedCards[0].rowIndex
@@ -102,27 +106,35 @@ class TangoTekRareHermitCard extends HermitCard {
 
 		// follow up clenaup in case of a timeout (autopick first AFK)
 		game.hooks.followUpTimeout.tap(this.id, () => {
-			const {currentPlayer, opponentPlayer, playerActiveRow} = game.ds
+			const {opponentPlayer} = game.ds
 			if (opponentPlayer.followUp !== this.id) return
 
 			opponentPlayer.followUp = null
-			delete currentPlayer.custom[this.id]
-
-			const oBoard = opponentPlayer.board
-			if (oBoard.activeRow !== null) return
-
-			const hermitIndex = oBoard.rows.findIndex((row) => {
-				const hasHermit = !!row.hermitCard
-				const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
-				return hasHermit && canBeActive
-			})
-			if (hermitIndex >= 0) {
-				oBoard.activeRow = hermitIndex
-				return
-			}
-			const anyHermitIndex = oBoard.rows.findIndex((row) => !!row.hermitCard)
-			if (anyHermitIndex >= 0) oBoard.activeRow = anyHermitIndex
+			this.cleanUp(game)
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 */
+	cleanUp(game) {
+		const {currentPlayer, opponentPlayer} = game.ds
+		delete currentPlayer.custom[this.id]
+
+		const oBoard = opponentPlayer.board
+		if (oBoard.activeRow !== null) return
+
+		const hermitIndex = oBoard.rows.findIndex((row) => {
+			const hasHermit = !!row.hermitCard
+			const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
+			return hasHermit && canBeActive
+		})
+		if (hermitIndex >= 0) {
+			oBoard.activeRow = hermitIndex
+			return
+		}
+		const anyHermitIndex = oBoard.rows.findIndex((row) => !!row.hermitCard)
+		if (anyHermitIndex >= 0) oBoard.activeRow = anyHermitIndex
 	}
 }
 

@@ -24,6 +24,7 @@ class MendingEffectCard extends EffectCard {
 		game.hooks.discardCard
 			.for('single_use')
 			.tap(this.id, (card, singleUseSlot) => {
+				if (!game.state.turnPlayerId) return
 				const currentPlayer = game.state.players[game.state.turnPlayerId]
 				if (!singleUseSlot) return
 

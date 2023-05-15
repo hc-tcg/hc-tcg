@@ -1,8 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard, discardCard} from '../../../utils'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 // TODO - don't allow selecting the same card twice
@@ -18,7 +20,9 @@ class ComposterSingleUseCard extends SingleUseCard {
 				'Discard 2 cards in your hand. Draw 2 cards.\n\nDiscard after use.',
 		})
 		this.pickOn = 'apply'
-		this.useReqs = [{target: 'hand', type: 'any', amount: 2}]
+		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'hand', type: 'any', amount: 2},
+		])
 		this.pickReqs = this.useReqs
 	}
 
@@ -33,6 +37,11 @@ class ComposterSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				const suPickedCards = pickedCardsInfo[this.id] || []
 				if (suPickedCards.length !== 2) return 'INVALID'
+
+				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
+					return 'INVALID'
+				if (!validPick(game.state, this.pickReqs[0], suPickedCards[1]))
+					return 'INVALID'
 
 				// discard two cards
 				suPickedCards.forEach((info) => discardCard(game, info.card))

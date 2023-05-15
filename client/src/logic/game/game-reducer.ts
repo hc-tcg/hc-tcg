@@ -1,38 +1,11 @@
 import {AnyAction} from 'redux'
-import {
-	GameState,
-	CardT,
-	GameEndReasonT,
-	GameEndOutcomeT,
-	CurrentCoinFlipT,
-} from 'types/game-state'
-import {PickProcessT} from 'types/pick-process'
-import {MessageInfoT} from 'types/chat'
+import {LocalGameRoot} from 'common/types/game-state'
 import {equalCard} from 'server/utils'
 
-type LocalGameState = {
-	opponentId: string
-	gameState: GameState | null
-	availableActions: Array<string>
-	selectedCard: CardT | null
-	openedModal: {
-		id: string
-		info: null
-	} | null
-	pickProcess: PickProcessT | null
-	endGameOverlay: {
-		reason: GameEndReasonT
-		outcome: GameEndOutcomeT
-	} | null
-	chat: Array<MessageInfoT>
-	currentCoinFlip: CurrentCoinFlipT | null
-	opponentConnected: boolean
-}
+const defaultState: LocalGameRoot = {
+	localGameState: null,
+	time: 0,
 
-const defaultState: LocalGameState = {
-	opponentId: '',
-	gameState: null,
-	availableActions: [],
 	selectedCard: null,
 	openedModal: null,
 	pickProcess: null,
@@ -45,32 +18,28 @@ const defaultState: LocalGameState = {
 const gameReducer = (
 	state = defaultState,
 	action: AnyAction
-): LocalGameState => {
+): LocalGameRoot => {
 	switch (action.type) {
-		case 'GAME_STATE':
-			const newState = {
+		case 'LOCAL_GAME_STATE':
+			const newGame: LocalGameRoot = {
 				...state,
-				opponentId: action.payload.opponentId,
-				gameState: action.payload.gameState,
-				availableActions: action.payload.availableActions,
-			}
-			if (
-				state.gameState?.turnPlayerId === action.payload.gameState?.turnPlayerId
-			)
-				return newState
-			return {
-				...newState,
-				selectedCard: null,
+				localGameState: action.payload.localGameState,
+				time: action.payload.time,
 				openedModal: null,
 				pickProcess: null,
 			}
+			if (
+				state.localGameState?.currentPlayerId ===
+				action.payload.localGameState?.currentPlayerId
+			)
+				return newGame
+			return {...newGame}
 		case 'GAME_START':
 		case 'GAME_END':
 			return {
 				...state,
-				opponentId: '',
-				gameState: null,
-				availableActions: [],
+				localGameState: null,
+				time: 0,
 				selectedCard: null,
 				openedModal: null,
 				pickProcess: null,
@@ -79,6 +48,7 @@ const gameReducer = (
 				chat: [],
 				opponentConnected: true,
 			}
+
 		case 'SET_SELECTED_CARD':
 			if (state.pickProcess) return state
 			return {

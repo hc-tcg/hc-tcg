@@ -2,11 +2,9 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
-import {PickedCardT} from 'types/pick-process'
-import {CardInfoT} from 'types/cards'
-import CARDS from 'server/cards'
-
-const TYPED_CARDS = CARDS as Record<string, CardInfoT>
+import {PickedCardT} from 'common/types/pick-process'
+import {HERMIT_CARDS} from 'server/cards'
+import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
@@ -21,12 +19,17 @@ function ChangeHermitModal({closeModal, info}: Props) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.cardId ? TYPED_CARDS[info.card.cardId].name : ''
+	const hermitName = info.card?.cardId
+		? HERMIT_CARDS[info.card.cardId].name
+		: ''
 	const row = playerState.board.rows[info.rowIndex]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const hasOtherHermits = playerState.board.rows.some(
-		(row, index) => row.hermitCard && index !== info.rowIndex
+		(row, index) =>
+			row.hermitCard &&
+			index !== info.rowIndex &&
+			!row.ailments.find((a) => a.id === 'knockedout')
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
@@ -35,7 +38,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`
 	else if (!canChange)
-		message = `You can not not change your active hermit at this moment.`
+		message = `You can not change your active hermit at this moment.`
 
 	const lastAction = hasActiveHermit && canChange
 
@@ -62,12 +65,18 @@ function ChangeHermitModal({closeModal, info}: Props) {
 				<div className={css.options}>
 					{canChange ? (
 						<>
-							<button onClick={handleYes}>Yes</button>
-							<button onClick={handleNo}>No</button>
+							<Button variant="primary" size="small" onClick={handleYes}>
+								Yes
+							</Button>
+							<Button variant="primary" size="small" onClick={handleNo}>
+								No
+							</Button>
 						</>
 					) : (
 						<>
-							<button onClick={handleNo}>Ok</button>
+							<Button variant="primary" size="small" onClick={handleNo}>
+								Ok
+							</Button>
 						</>
 					)}
 				</div>

@@ -15,7 +15,14 @@ const getSettings = (): LocalSettings => {
 	}, {} as LocalSettings)
 }
 
-const defaultState: LocalSettings = getSettings()
+const defaultState: LocalSettings = {
+	soundVolume: '100',
+	musicVolume: '75',
+	profanityFilter: 'on',
+	confirmationDialogs: 'on',
+	showChat: 'off',
+	...getSettings(),
+}
 
 const localSettingsReducer = (
 	state = defaultState,

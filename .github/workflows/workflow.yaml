@@ -27,10 +27,7 @@ jobs:
         run: npm run server:tsc
 
       - name: Run prettier
-        uses: actionsx/prettier@v2
-        with:
-          # prettier CLI arguments.
-          args: --check "**/*.{js,ts,tsx}"
+        run: npx prettier --check "{client/src,server}/**/*.{js,ts,tsx,css,scss}"
 
   build:
     name: Test build
@@ -38,7 +35,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm install

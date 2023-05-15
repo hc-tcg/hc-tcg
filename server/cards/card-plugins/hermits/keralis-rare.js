@@ -1,8 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../utils'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 class KeralisRareHermitCard extends HermitCard {
@@ -28,9 +30,9 @@ class KeralisRareHermitCard extends HermitCard {
 		})
 		this.heal = 100
 		this.pickOn = 'followup'
-		this.pickReqs = [
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1, active: false},
-		]
+		])
 	}
 
 	/**
@@ -39,15 +41,16 @@ class KeralisRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, attacker, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const lastTurnUsed = currentPlayer.custom[attackerHermitCard.cardInstance]
+			const lastTurnUsed =
+				currentPlayer.custom[attacker.hermitCard.cardInstance]
 			if (lastTurnUsed && lastTurnUsed + 2 >= game.state.turn) return target
-			currentPlayer.custom[attackerHermitCard.cardInstance] = game.state.turn
+			currentPlayer.custom[attacker.hermitCard.cardInstance] = game.state.turn
 
 			const activeRow = currentPlayer.board.activeRow
 			const anyAfkHermits = currentPlayer.board.rows.some(
@@ -67,12 +70,8 @@ class KeralisRareHermitCard extends HermitCard {
 			const keralisPickedCards = pickedCardsInfo[this.id] || []
 			if (keralisPickedCards.length !== 1) return 'DONE'
 			const healTarget = keralisPickedCards[0]
-			if (
-				!healTarget.cardInfo ||
-				healTarget.slotType !== 'hermit' ||
-				healTarget.isActive
-			)
-				return 'INVALID'
+
+			if (!validPick(game.state, this.pickReqs[0], healTarget)) return 'INVALID'
 
 			healTarget.row.health = Math.min(
 				healTarget.row.health + this.heal,
@@ -80,6 +79,22 @@ class KeralisRareHermitCard extends HermitCard {
 			)
 
 			return 'DONE'
+		})
+
+		// Disable Time Skip attack consecutively
+		game.hooks.availableActions.tap(this.id, (availableActions) => {
+			const {currentPlayer, playerHermitCard} = game.ds
+
+			if (!playerHermitCard || playerHermitCard.cardId !== this.id)
+				return availableActions
+
+			const lastTurnUsed = currentPlayer.custom[playerHermitCard.cardInstance]
+			const notReady = lastTurnUsed && game.state.turn <= lastTurnUsed + 2
+
+			// we want to make changes only if time skip was used by the hermit
+			return notReady
+				? availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+				: availableActions
 		})
 	}
 }

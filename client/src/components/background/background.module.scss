@@ -1,0 +1,86 @@
+.background {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	filter: blur(1px);
+	z-index: -1;
+
+	.innerBackground {
+		height: 100%;
+		width: 100%;
+		position: absolute;
+
+		&.image {
+			background: url('/images/menu-background-image.png') center center
+				no-repeat;
+			background-size: cover;
+
+			@media screen and (max-width: 100vh) {
+				background: url('/images/menu-background.png') center center no-repeat;
+				background-size: cover;
+			}
+		}
+
+		&.noImage {
+			background: url('/images/menu-background.png') center center no-repeat;
+			background-size: cover;
+		}
+	}
+}
+
+@media screen and (min-width: 100vh) {
+	.enter {
+		opacity: 0;
+	}
+
+	.enterActive {
+		opacity: 1;
+		transition: opacity 0.5s;
+	}
+
+	.exit {
+		opacity: 1;
+	}
+
+	.exitActive {
+		opacity: 0;
+		transition: opacity 0.5s;
+	}
+}
+
+.canvas {
+	transition: all 2s ease;
+	animation: fadeIn 2s ease forwards;
+	position: absolute !important;
+	inset: 0;
+	height: 100%;
+	width: 100%;
+	z-index: -1;
+
+	&::after {
+		content: '';
+		display: block;
+		width: 100%;
+		height: 100%;
+		background: radial-gradient(
+			ellipse at center,
+			rgba(0, 0, 0, 0%) 0%,
+			rgba(0, 0, 0, 0%) 70%,
+			rgba(0, 0, 0, 35%) 100%
+		);
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}

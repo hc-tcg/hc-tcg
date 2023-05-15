@@ -34,18 +34,13 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				typeAction,
-				attackerActiveRow,
-			} = attackState
+			const {condRef, moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const boomerRows = currentPlayer.board.rows.filter((row) => {
+			const boomerRows = condRef.player.board.rows.filter((row) => {
 				const isBdubs = row.hermitCard?.cardId.startsWith('bdoubleo100')
 				const isTango = row.hermitCard?.cardId.startsWith('tangotek')
 				return isBdubs || isTango

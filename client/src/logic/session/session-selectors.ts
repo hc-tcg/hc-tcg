@@ -23,3 +23,11 @@ export const getPlayerDeck = (state: RootState) => {
 export const getConnecting = (state: RootState) => {
 	return getSession(state).connecting
 }
+
+export const getErrorType = (state: RootState) => {
+	return getSession(state).errorType
+}
+
+export const getToast = (state: RootState) => {
+	return getSession(state).toast
+}

@@ -1,13 +1,11 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
-import {validateDeck} from '../utils'
-import CARDS from '../cards'
 import {PlayerModel} from '../models/player-model'
 import root from '../models/root-model'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
 function* playerConnectedSaga(action) {
-	const {playerName, socket} = action.payload
+	const {playerName, deck, socket} = action.payload
 
 	if (action.payload.playerId) {
 		const existingPlayer = root.players[action.payload.playerId]
@@ -17,6 +15,7 @@ function* playerConnectedSaga(action) {
 		// console.log('User reconnected: ', action.payload.playerId)
 		if (validPlayer) {
 			existingPlayer.socket = socket
+			if (deck) existingPlayer.setPlayerDeck(deck)
 			yield put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
@@ -29,7 +28,8 @@ function* playerConnectedSaga(action) {
 	}
 
 	const newPlayer = new PlayerModel(playerName, socket)
-	root.players[newPlayer.playerId] = newPlayer
+	if (deck) newPlayer.setPlayerDeck(deck)
+	root.addPlayer(newPlayer)
 
 	root.hooks.playerJoined.call(newPlayer)
 	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
@@ -73,16 +73,11 @@ function* updateDeckSaga(action) {
 	let newDeck = action.payload
 	const player = root.players[playerId]
 	if (!player) return
-	if (!newDeck || !Array.isArray(newDeck)) return
-	newDeck = newDeck.filter((cardId) => cardId in CARDS)
-
-	const validationMessage = validateDeck(newDeck)
-	if (validationMessage) return
-	player.playerDeck = newDeck
+	player.setPlayerDeck(newDeck)
 
 	player.socket?.emit('NEW_DECK', {
 		type: 'NEW_DECK',
-		payload: newDeck,
+		payload: player.playerDeck,
 	})
 }
 

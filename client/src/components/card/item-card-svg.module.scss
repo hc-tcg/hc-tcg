@@ -1,0 +1,97 @@
+.card {
+	position: relative;
+	background: white;
+}
+
+.card text {
+	dominant-baseline: hanging;
+	text-anchor: middle;
+	fill: black;
+	letter-spacing: 8px;
+}
+
+.cardBackground {
+	fill: white;
+}
+
+.cardBackground.farm {
+	fill: rgb(124, 204, 12);
+}
+
+.cardBackground.redstone {
+	fill: rgb(185, 33, 42);
+}
+
+.cardBackground.prankster {
+	fill: rgb(116, 55, 168);
+}
+
+.cardBackground.explorer {
+	fill: rgb(103, 138, 190);
+}
+
+.cardBackground.balanced {
+	fill: rgb(101, 124, 50);
+}
+
+.cardBackground.builder {
+	fill: rgb(184, 162, 154);
+}
+
+.cardBackground.pvp {
+	fill: rgb(85, 202, 194);
+}
+
+.cardBackground.speedrunner {
+	fill: rgb(223, 226, 36);
+}
+
+.cardBackground.terraform {
+	fill: rgb(217, 119, 147);
+}
+
+.cardBackground.miner {
+	fill: rgb(110, 105, 108);
+}
+
+.type {
+	font-size: 72px;
+}
+
+.typeBackground {
+	fill: white;
+}
+
+.rarity {
+	fill: white;
+}
+
+.x2 {
+	font-size: 55px;
+}
+
+.rank {
+	filter: drop-shadow(0 0 5px rgb(92, 92, 92));
+}
+
+.rankText {
+	&.iron {
+		fill: #726f6d;
+	}
+
+	&.gold {
+		fill: #958e31;
+	}
+
+	&.emerald {
+		fill: #348647;
+	}
+
+	&.diamond {
+		fill: #2a7c8a;
+	}
+
+	&.netherite {
+		fill: #b1ada9;
+	}
+}

@@ -1,5 +1,11 @@
-import CARDS from '../cards'
+import CARDS, {ITEM_CARDS} from '../cards'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
+
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/game-state').PlayerState} PlayerState
+ * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
+ */
 
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
@@ -13,7 +19,8 @@ export function hasEnoughItems(itemCards, cost) {
 	// transform item cards into cost
 	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
 	const energy = itemCardIds.reduce((result, cardId) => {
-		const itemCard = CARDS[cardId]
+		const itemCard = ITEM_CARDS[cardId]
+		if (!itemCard) return result
 		result.push(itemCard.hermitType)
 		// all rare item cards are x2
 		if (itemCard.rarity === 'rare') {
@@ -118,12 +125,25 @@ export function discardSingleUse(game, playerState) {
 	}
 }
 
+/**
+ * @param {PlayerState} currentPlayer
+ * @param {number} times
+ * @returns {Array<CoinFlipT>}
+ */
 export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
 	const fortune = !!currentPlayer.custom['fortune']
+	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
+
+	/** @type {Array<CoinFlipT>} */
 	const result = []
 	for (let i = 0; i < times; i++) {
-		const coinFlip = fortune ? 'heads' : Math.random() > 0.5 ? 'heads' : 'tails'
+		/** @type {CoinFlipT} */
+		const coinFlip = forceHeads
+			? 'heads'
+			: Math.random() > 0.5
+			? 'heads'
+			: 'tails'
 		result.push(coinFlip)
 	}
 	return result
@@ -132,53 +152,4 @@ export function flipCoin(currentPlayer, times = 1) {
 export const getOpponentId = (game, playerId) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
-}
-
-/**
-	@param {Array<string>} deckCards
-*/
-export const validateDeck = (deckCards) => {
-	if (DEBUG_CONFIG.disableDeckValidation) return
-
-	const limits = CONFIG.limits
-	deckCards = deckCards.filter((cardId) => CARDS[cardId])
-
-	const common = deckCards.filter((cardId) => CARDS[cardId].rarity === 'common')
-	const rare = deckCards.filter((cardId) => CARDS[cardId].rarity === 'rare')
-	const ur = deckCards.filter((cardId) => CARDS[cardId].rarity === 'ultra_rare')
-
-	// order validation by simplest problem first, so that a player can easily identify why their deck isn't valid
-
-	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')
-	if (!hasHermit) return 'Deck must have at least one hermit.'
-
-	if (!limits.allowUltraRareDuplicates) {
-		const uniqueUr = Array.from(new Set(ur))
-		if (uniqueUr.length < ur.length)
-			return 'You can not have the same ultra rare card multiple times.'
-	}
-
-	if (limits.maxUltraRare && ur.length > limits.maxUltraRare)
-		return `Deck can not have more than ${limits.maxUltraRare} ultra rare cards.`
-
-	if (limits.maxRare && rare.length > limits.maxRare)
-		return `Deck can not have more than ${limits.maxRare} rare cards.`
-
-	const tooManyDuplicates =
-		limits.maxDuplicates &&
-		deckCards.some((cardId) => {
-			if (CARDS[cardId].type === 'item') return false
-			const duplicates = deckCards.filter(
-				(filterCardId) => filterCardId === cardId
-			)
-			return duplicates.length > limits.maxDuplicates
-		})
-
-	if (tooManyDuplicates)
-		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are item cards.`
-
-	if (deckCards.length < limits.minCards)
-		return `Deck must have at least ${limits.minCards} cards.`
-	if (deckCards.length > limits.maxCards)
-		return `Deck can not have more than ${limits.maxCards} cards.`
 }

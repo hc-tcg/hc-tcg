@@ -1,0 +1,53 @@
+.card {
+	position: relative;
+	background: rgb(226, 202, 139);
+}
+
+.card text {
+	dominant-baseline: hanging;
+	text-anchor: middle;
+	fill: white;
+	letter-spacing: 8px;
+}
+
+.cardBackground {
+	fill: white;
+}
+
+.type {
+	font-size: 72px;
+}
+
+.typeBackground {
+	fill: rgb(226, 202, 139);
+}
+
+.rarity {
+	fill: rgb(226, 202, 139);
+}
+
+.rank {
+	filter: drop-shadow(0 0 5px rgb(92, 92, 92));
+}
+
+.rankText {
+	&.iron {
+		fill: #726f6d;
+	}
+
+	&.gold {
+		fill: #958e31;
+	}
+
+	&.emerald {
+		fill: #348647;
+	}
+
+	&.diamond {
+		fill: #2a7c8a;
+	}
+
+	&.netherite {
+		fill: #b1ada9;
+	}
+}

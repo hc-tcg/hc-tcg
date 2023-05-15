@@ -16,6 +16,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		})
 
 		this.useReqs = [
+			{target: 'player', type: 'hermit', amount: 1},
 			{target: 'player', type: 'hermit', amount: 1, active: false},
 		]
 	}
@@ -24,24 +25,34 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 */
 	register(game) {
-		game.hooks.changeActiveHermit.tap(this.id, (turnAction, actionState) => {
-			const {currentPlayer} = game.ds
-			const {pastTurnActions} = actionState
-			const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
-			if (pastTurnActions.includes('ATTACK') && chorusFruit) {
-				applySingleUse(currentPlayer)
+		// Set flag when chorus fruit is applied
+		game.hooks.applyEffect.tap(this.id, () => {
+			const {singleUseInfo, currentPlayer} = game.ds
+			if (singleUseInfo?.id === this.id) {
+				currentPlayer.custom[this.id] = true
+				return 'DONE'
 			}
+		})
+
+		// Remove flag when active hermit is changed
+		game.hooks.changeActiveHermit.tap(this.id, () => {
+			const {currentPlayer} = game.ds
+			delete currentPlayer.custom[this.id]
+		})
+
+		// Remove flag at end of a turn
+		game.hooks.turnEnd.tap(this.id, () => {
+			const {currentPlayer} = game.ds
+			delete currentPlayer.custom[this.id]
 		})
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
-				const {currentPlayer} = game.ds
-				const chorusFruit = hasSingleUse(currentPlayer, 'chorus_fruit')
+			(availableActions, pastTurnActions, lockedActions) => {
+				const {playerActiveRow, currentPlayer} = game.ds
+				const chorusFruit = currentPlayer.custom[this.id]
 
-				const activeRow =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]
-				const activeIsSleeping = activeRow?.ailments.some(
+				const activeIsSleeping = playerActiveRow?.ailments.some(
 					(a) => a.id === 'sleeping'
 				)
 
@@ -55,8 +66,8 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 					!activeIsSleeping &&
 					hasOtherHermit &&
 					pastTurnActions.includes('ATTACK') &&
-					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!availableActions.push('CHANGE_ACTIVE_HERMIT')
+					!availableActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!lockedActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}

@@ -1,8 +1,10 @@
 import {getStarterPack} from '../utils/state-gen'
 import profanityFilter from '../utils/profanity'
+import {validateDeck} from '../utils/validation'
 
 /**
  * @typedef {import('socket.io').Socket} Socket
+ * @typedef {import('common/types/deck').PlayerDeckT} PlayerDeckT
  */
 
 // @TODO store playerState on player.state, instead of game.state.players, to avoid confusion?
@@ -23,8 +25,15 @@ export class PlayerModel {
 		/** @type {string} */
 		this.playerSecret = Math.random().toString()
 
-		/** @type {Array<string>} */
-		this.playerDeck = getStarterPack()
+		// always generate a starter deck as the default
+		/**@type {PlayerDeckT}*/
+		this.playerDeck = {
+			name: 'Starter Deck',
+			icon: 'any',
+			cards: getStarterPack().map((id) => {
+				return {cardId: id, cardInstance: Math.random().toString()}
+			}),
+		}
 
 		/** @type {string} */
 		this.playerName = playerName
@@ -44,5 +53,15 @@ export class PlayerModel {
 			playerName: this.playerName,
 			censoredPlayerName: this.censoredPlayerName,
 		}
+	}
+
+	/** @param {PlayerDeckT} newDeck */
+	setPlayerDeck(newDeck) {
+		if (!newDeck) return
+		const validationMessage = validateDeck(
+			newDeck.cards.map((card) => card.cardId)
+		)
+		if (validationMessage) return
+		this.playerDeck = newDeck
 	}
 }

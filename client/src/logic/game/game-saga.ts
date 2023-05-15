@@ -19,13 +19,15 @@ import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
 import {
-	gameState,
+	localGameState,
 	gameStart,
 	gameEnd,
 	showEndGameOverlay,
 	setOpponentConnection,
+	gameState,
 } from './game-actions'
-import {getEndGameOverlay, getOpponentId} from './game-selectors'
+import {getEndGameOverlay} from './game-selectors'
+import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -60,10 +62,10 @@ function* actionSaga(): SagaIterator {
 }
 
 function* gameStateSaga(action: AnyAction): SagaIterator {
-	const {availableActions, gameState} = action.payload
+	const gameState: LocalGameState = action.payload.localGameState
 
-	if (availableActions.includes('WAIT_FOR_TURN')) return
-	if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
+	if (gameState.availableActions.includes('WAIT_FOR_TURN')) return
+	if (gameState.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
 
 	// handle user clicking on board
 	yield fork(slotSaga)
@@ -75,21 +77,32 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	yield fork(actionSaga)
 }
 
-function* gameActionsSaga(initialGameState?: any): SagaIterator {
+function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	yield takeEvery('FORFEIT', function* () {
 		yield call(sendMsg, 'FORFEIT')
 	})
-	yield takeLatest('GAME_STATE', gameStateSaga)
-	yield fork(coinFlipSaga)
+
+	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
-		yield put(gameState(initialGameState))
+		yield put(localGameState(initialGameState))
 	}
 
+	// for coin flips
+	let coinFlipInfo: CoinFlipInfo = {
+		shownCoinFlips: [],
+		turn: 0,
+	}
 	while (true) {
+		console.log('waiting')
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		yield put(gameState(payload))
+		coinFlipInfo = yield call(
+			coinFlipSaga,
+			payload.localGameState,
+			coinFlipInfo
+		)
+		yield put(localGameState(payload.localGameState))
 	}
 }
 
@@ -100,7 +113,7 @@ function* opponentConnectionSaga(): SagaIterator {
 	}
 }
 
-function* gameSaga(initialGameState?: any): SagaIterator {
+function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 	const backgroundTasks = yield all([
 		fork(opponentConnectionSaga),
 		fork(chatSaga),
@@ -123,9 +136,8 @@ function* gameSaga(initialGameState?: any): SagaIterator {
 			if (newGameState) {
 				yield put(
 					gameState({
-						gameState: newGameState,
+						...newGameState,
 						availableActions: [],
-						opponentId: yield* select(getOpponentId),
 					})
 				)
 			}

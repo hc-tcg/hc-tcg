@@ -1,10 +1,18 @@
 import {take, takeEvery, put, call, race, delay} from 'redux-saga/effects'
 import {AnyAction} from 'redux'
-import {SagaIterator} from 'redux-saga'
+import {SagaIterator, eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
 import {setPlayerInfo, disconnect, setNewDeck} from './session-actions'
+import {getDeckFromHash} from 'components/import-export/import-export-utils'
+import {
+	getActiveDeckName,
+	getSavedDeck,
+	saveDeck,
+	setActiveDeck,
+} from 'logic/saved-decks/saved-decks'
+import {validateDeck} from 'server/utils/validation'
 
 type PlayerInfoT = {
 	playerName: string
@@ -41,6 +49,26 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
+const getDeck = () => {
+	const urlParams = new URLSearchParams(document.location.search || '')
+	const hash = urlParams.get('deck')
+	if (!hash) return null
+	const deckCards = getDeckFromHash(hash)
+	const deck = deckCards.map((card) => card.cardId)
+	return deck
+}
+
+const createConnectErrorChannel = () =>
+	eventChannel((emit) => {
+		const connectErrorListener = (err: Error | null) => {
+			if (err instanceof Error) return emit(err.message)
+			if (typeof err === 'string') return emit(err)
+			console.error(err)
+		}
+		socket.on('connect_error', connectErrorListener)
+		return () => socket.off('connect_error', connectErrorListener)
+	})
+
 export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
@@ -50,22 +78,37 @@ export function* loginSaga(): SagaIterator {
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
+
+	const deck = getDeck()
+	if (deck) socket.auth.deck = deck
+
 	yield put(socketConnecting())
 	socket.connect()
+	const connectErrorChan = createConnectErrorChannel()
 	const result = yield race({
 		playerInfo: call(receiveMsg, 'PLAYER_INFO'),
 		invalidPlayer: call(receiveMsg, 'INVALID_PLAYER'),
 		playerReconnected: call(receiveMsg, 'PLAYER_RECONNECTED'),
-		timeout: delay(5000),
+		connectError: take(connectErrorChan),
+		timeout: delay(8000),
 	})
 
-	if (result.invalidPlayer || Object.hasOwn(result, 'timeout')) {
-		console.log('Invalid session.')
+	if (
+		result.invalidPlayer ||
+		result.connectError ||
+		Object.hasOwn(result, 'timeout')
+	) {
 		clearSession()
-		socket.disconnect()
-		yield put(disconnect())
+		let errorType
+		if (result.invalidPlayer) errorType = 'session_expired'
+		else if (Object.hasOwn(result, 'timeout')) errorType = 'timeout'
+		else if (result.connectError) errorType = result.connectError
+		if (socket.connected) socket.disconnect()
+		yield put(disconnect(errorType))
 		return
 	}
+
+	window.history.replaceState({}, '', window.location.pathname)
 
 	if (result.playerReconnected) {
 		if (!session) return
@@ -77,9 +120,25 @@ export function* loginSaga(): SagaIterator {
 
 	if (result.playerInfo) {
 		const {payload} = result.playerInfo
-		console.log('New player info: ', payload)
-		yield put(setPlayerInfo(payload))
+		yield put(setPlayerInfo({...payload}))
 		saveSession(payload)
+
+		const activeDeckName = getActiveDeckName()
+		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
+		const activeDeckValid =
+			!!activeDeck && !validateDeck(activeDeck.cards.map((card) => card.cardId))
+
+		// if active deck is not valid, generate and save a starter deck
+		if (activeDeckValid) {
+			// set player deck to active deck, and send to server
+			console.log('Selected previous active deck: ' + activeDeck.name)
+			yield call(sendMsg, 'UPDATE_DECK', activeDeck)
+		} else {
+			// use and save the generated starter deck
+			saveDeck(payload.playerDeck)
+			setActiveDeck(payload.playerDeck.name)
+			console.log('Generated new starter deck')
+		}
 
 		// set user info for reconnects
 		socket.auth.playerId = payload.playerId

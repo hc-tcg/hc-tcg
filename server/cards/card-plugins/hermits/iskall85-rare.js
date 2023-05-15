@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import CARDS from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -33,15 +33,15 @@ class Iskall85RareHermitCard extends HermitCard {
 	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
+			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 			if (targetHermitInfo.hermitType === 'builder') {
-				target.multiplier *= 2
+				target.hermitMultiplier *= 2
 			}
 
 			return target

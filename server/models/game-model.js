@@ -5,6 +5,11 @@ import {DerivedStateModel} from './derived-state-model'
 /**
  * @typedef {import("./root-model").RootModel} RootModel
  * @typedef {import("./player-model").PlayerModel} PlayerModel
+ * @typedef {import("common/types/game-state").GameState} GameState
+ * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
+ * @typedef {import("common/types/game-state").PlayerState} PlayerState
+ * @typedef {import("common/types/chat").MessageInfoT} MessageInfoT
+ * @typedef {import("redux-saga").Task} Task
  */
 
 export class GameModel {
@@ -28,11 +33,11 @@ export class GameModel {
 		/** @type {Object.<string, PlayerModel>} */
 		this.players = {}
 
-		/** @type {*} */ // @TODO what type is the game task?
+		/** @type {Task | null} */
 		this.task = null
 
 		/** @type {GameState} */
-		this.state = null
+		this.state = /** @type {any} */ (null)
 
 		/** @type {DerivedStateModel} */
 		this.ds = new DerivedStateModel(this)
@@ -52,11 +57,12 @@ export class GameModel {
 			turnStart: new SyncHook(['turnConfig']),
 			/**
 			 * Used to modify availableActions before each action of a turn
-			 * @type {SyncWaterfallHook<[AvailableActions, Array<string>], AvailableActions>}
+			 * @type {SyncWaterfallHook<[AvailableActionsT, Array<string>, AvailableActionsT], AvailableActionsT>}
 			 */
 			availableActions: new SyncWaterfallHook([
 				'availableActions',
 				'pastTurnActions',
+				'lockedActions',
 			]),
 			/**
 			 * Start of any action (action = player move, there can be multiple each turn)
@@ -79,21 +85,33 @@ export class GameModel {
 			 */
 			followUp: new SyncBailHook(['turnAction', 'followUpState']),
 			/**
+			 * Called before attack to enable modifiyng attack state
+			 * @type {SyncHook<[TurnAction, AttackState]>}
+			 */
+			attackState: new SyncHook(['turnAction', 'attackState']),
+			/**
 			 * Called once for each target of an attack (active, afk hermits)
-			 * @type {SyncWaterfallHook<[Object, TurnAction, AttackState], Object>}
+			 * @type {SyncWaterfallHook<[AttackTarget, TurnAction, AttackState], AttackTarget>}
 			 */
 			attack: new SyncWaterfallHook(['target', 'turnAction', 'attackState']),
 			/**
 			 * Called once for each target after damage is applied with info about total damge, revival etc.
-			 * @type {SyncHook<[Object, TurnAction, AttackState]>}
+			 * @type {SyncHook<[AttackTargetResult, TurnAction, AttackState]>}
 			 */
 			attackResult: new SyncHook(['result', 'turnAction', 'attackState']),
 			/**
-			 * When card is put down on a board
+			 * For extra validation when players attempts to place down a card
 			 * @type {HookMap<SyncBailHook<[TurnAction, ActionState]>>}
 			 */
-			playCard: new HookMap(
+			validateCard: new HookMap(
 				(cardType) => new SyncBailHook(['turnAction', 'actionState'])
+			),
+			/**
+			 * When a card is succesfully placed on board
+			 * @type {HookMap<SyncHook<[TurnAction, ActionState]>>}
+			 */
+			playCard: new HookMap(
+				(cardType) => new SyncHook(['turnAction', 'actionState'])
 			),
 			/**
 			 * When a card is discarded (hand or board)
@@ -134,7 +152,7 @@ export class GameModel {
 			gameEnd: new SyncHook([]),
 		}
 
-		/** @type {Array<ChatMessage>} */
+		/** @type {Array<MessageInfoT>} */
 		this.chat = []
 
 		this.endInfo = {

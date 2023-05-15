@@ -1,0 +1,89 @@
+/* X: 10 - 60 - 10 - 240 - 10 - 60 - 10 */
+
+/* Y: 10 - 44 - M - N - 10 - N - 10 */
+
+.card {
+	background: white;
+	letter-spacing: 0.065em;
+	position: relative;
+}
+
+.card text {
+	dominant-baseline: hanging;
+}
+
+.cardBackground {
+	fill: rgb(226, 202, 139);
+}
+
+.name {
+	text-transform: uppercase;
+	letter-spacing: 0.07em;
+	fill: black;
+	font-size: 45px;
+	display: inline-block;
+}
+
+.health {
+	fill: rgb(246, 4, 1);
+	font-size: 45px;
+	text-anchor: end;
+	letter-spacing: 0.0889em;
+}
+
+.hermitTypeBackground {
+	fill: white;
+}
+
+.hermitAttacks text {
+	font-size: 45px;
+}
+
+text.attackName {
+	font-size: 39px;
+	text-transform: uppercase;
+	fill: black;
+	text-anchor: middle;
+}
+
+text.attackName.long {
+	letter-spacing: 0.013em;
+	font-family: BangersRegular !important;
+}
+
+.attackDamage {
+	text-transform: uppercase;
+	fill: rgb(246, 4, 1);
+	text-anchor: end;
+	letter-spacing: 0.0889em;
+}
+
+.attackDamage.specialMove {
+	fill: rgb(23, 66, 234);
+}
+
+.rank {
+	filter: drop-shadow(0 0 6px rgb(50, 50, 50));
+}
+
+.rankText {
+	&.iron {
+		fill: #726f6d;
+	}
+
+	&.gold {
+		fill: #958e31;
+	}
+
+	&.emerald {
+		fill: #348647;
+	}
+
+	&.diamond {
+		fill: #2a7c8a;
+	}
+
+	&.netherite {
+		fill: #b1ada9;
+	}
+}

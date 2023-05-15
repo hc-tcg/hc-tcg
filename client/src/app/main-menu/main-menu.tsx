@@ -1,79 +1,84 @@
-import {useDispatch} from 'react-redux'
-import {useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import {
 	randomMatchmaking,
 	createPrivateGame,
 	joinPrivateGame,
 } from 'logic/matchmaking/matchmaking-actions'
-import css from './main-menu.module.css'
 import {logout} from 'logic/session/session-actions'
+import {getSession} from 'logic/session/session-selectors'
+import css from './main-menu.module.scss'
 import TcgLogo from 'components/tcg-logo'
-import LinkContainer from 'components/link-container'
-import More from './main-menu-more'
+import Beef from 'components/beef'
+import Button from 'components/button'
+import {VersionLinks} from 'components/link-container'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
-	const [subsection, setSubsection] = useState<string | null>(null)
-
+	const {playerName, playerDeck} = useSelector(getSession)
 	const handleRandomMatchmaking = () => dispatch(randomMatchmaking())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
+	const handleSettings = () => setMenuSection('settings')
 
-	let content = null
-
-	if (subsection === 'more') {
-		content = <More setMenuSection={() => setSubsection(null)} />
-	} else {
-		content = (
-			<>
-				{/* Button Container */}
-				<div className={css.buttonContainer}>
-					<button className={css.menuButton} onClick={handleRandomMatchmaking}>
-						Public Game
-					</button>
-					<button className={css.menuButton} onClick={handleCreatePrivateGame}>
-						Create Private Game
-					</button>
-					<button className={css.menuButton} onClick={handleJoinPrivateGame}>
-						Join Private Game
-					</button>
-					<button className={css.menuButton} onClick={handleDeck}>
-						Customize Deck
-					</button>
-
-					{/* Smaller Button Container */}
-					<div className={css.smallButtonContainer}>
-						<button className={css.smallMenuButton} onClick={handleLogOut}>
-							Log Out
-						</button>
-						<button
-							className={css.smallMenuButton}
-							onClick={() => setSubsection('more')}
-						>
-							More
-						</button>
-					</div>
-					<LinkContainer />
-				</div>
-			</>
-		)
-	}
+	const welcomeMessage =
+		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
 
 	return (
-		/* Background Image */
-		<div className={css.menuBackground}>
-			{/* Main Container */}
-			<div className={css.menuContainer}>
-				{/* Logo Container */}
-				<TcgLogo />
-				{content}
-				{/* Padding */}
-				<div className={css.bottomPadding}></div>
+		<div className={css.mainmenu}>
+			<div className={css.playerInfo}>
+				<p id={css.infoName}>
+					{welcomeMessage}, {playerName}
+				</p>
+				<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
+				<img
+					id={css.infoIcon}
+					src={`/images/types/type-${playerDeck.icon}.png`}
+					alt="deck-icon"
+				/>
+			</div>
+			<div className={css.content}>
+				<div className={css.logo}>
+					<TcgLogo />
+				</div>
+				<nav>
+					<Button
+						variant="stone"
+						id={css.public}
+						onClick={handleRandomMatchmaking}
+					>
+						Public Game
+					</Button>
+					<Button
+						variant="stone"
+						id={css.privateCreate}
+						onClick={handleCreatePrivateGame}
+					>
+						Create Private Game
+					</Button>
+					<Button
+						variant="stone"
+						id={css.privateJoin}
+						onClick={handleJoinPrivateGame}
+					>
+						Join Private Game
+					</Button>
+					<Button variant="stone" id={css.deck} onClick={handleDeck}>
+						Customize Deck
+					</Button>
+					<Button variant="stone" id={css.settings} onClick={handleSettings}>
+						More
+					</Button>
+					<Button variant="stone" id={css.logout} onClick={handleLogOut}>
+						Log Out
+					</Button>
+				</nav>
+				<Beef />
+				<VersionLinks />
 			</div>
 		</div>
 	)

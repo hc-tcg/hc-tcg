@@ -1,0 +1,38 @@
+.selected {
+	outline: 3px solid rgba(50, 50, 255, 70%);
+	animation-name: selectedCardAnim;
+	animation-duration: 1.5s;
+	animation-iteration-count: infinite;
+	animation-timing-function: ease-in-out;
+}
+
+@keyframes selectedCardAnim {
+	0% {
+		transform: translate(0, 0);
+	}
+
+	50% {
+		transform: translate(0, -5px);
+	}
+
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+.picked {
+	outline: 3px dashed rgba(50, 50, 255, 70%);
+}
+
+.card {
+	/* height: 9em;
+	width: 9em; */
+	height: 100%;
+	overflow: hidden;
+	font-family: BangersBold, Helvetica, serif;
+	user-select: none;
+}
+
+.selectable {
+	cursor: pointer;
+}

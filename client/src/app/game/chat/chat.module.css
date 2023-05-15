@@ -1,29 +1,3 @@
-@keyframes newMessageAnim {
-	0% {
-		color: white;
-	}
-	50% {
-		color: red;
-	}
-}
-
-.showChat {
-	position: fixed;
-	top: 0;
-	left: 0;
-}
-
-.indicator {
-	display: none;
-}
-
-.newMessage button {
-	font-weight: bold;
-	animation-name: newMessageAnim;
-	animation-iteration-count: infinite;
-	animation-duration: 2s;
-}
-
 .chat {
 	width: 300px;
 	position: fixed;

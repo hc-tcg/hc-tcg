@@ -2,8 +2,12 @@ import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import CoinFlip from 'components/coin-flip'
-import {GameState, PlayerState, BoardRowT} from 'types/game-state'
-import {PickedCardT} from 'types/pick-process'
+import {
+	LocalGameState,
+	LocalPlayerState,
+	RowState,
+} from 'common/types/game-state'
+import {PickedCardT} from 'common/types/pick-process'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -11,24 +15,28 @@ import {
 	getAvailableActions,
 	getCurrentCoinFlip,
 } from 'logic/game/game-selectors'
-import {endTurn} from 'logic/game/game-actions'
+import {setOpenedModal, endTurn} from 'logic/game/game-actions'
+import {playSound} from 'logic/sound/sound-actions'
 import css from './board.module.css'
 import Slot from './board-slot'
 import BoardRow from './board-row'
 import PlayerInfo from './player-info'
 import Timer from './timer'
+import Button from 'components/button'
 
 // TODO - Don't allow clicking on slots on the other side
 
 type Props = {
 	onClick: (meta: PickedCardT) => void
-	gameState: GameState
+	localGameState: LocalGameState
 }
 
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, gameState}: Props) {
+function Board({onClick, localGameState}: Props) {
 	const playerId = useSelector(getPlayerId)
-	const currentPlayer = useSelector(getPlayerStateById(gameState.turnPlayerId))
+	const currentPlayer = useSelector(
+		getPlayerStateById(localGameState.currentPlayerId)
+	)
 	const boardState = currentPlayer?.board
 	const singleUseCard = boardState?.singleUseCard || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
@@ -38,18 +46,15 @@ function Board({onClick, gameState}: Props) {
 	const dispatch = useDispatch()
 
 	useEffect(() => {
-		if (gameState.turnPlayerId === playerId) {
-			if (settings.soundOn !== 'off') {
-				const audio = new Audio('/sfx/Click.ogg')
-				audio.play()
-			}
+		if (localGameState.currentPlayerId === playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.turnPlayerId])
+	}, [localGameState.currentPlayerId])
 
 	const handeRowClick = (
 		playerId: string,
 		rowIndex: number,
-		rowState: BoardRowT | null,
+		rowState: RowState | null,
 		meta: any
 	) => {
 		onClick({
@@ -61,10 +66,17 @@ function Board({onClick, gameState}: Props) {
 	}
 
 	const handleEndTurn = () => {
-		dispatch(endTurn())
+		if (
+			availableActions.length === 1 ||
+			settings.confirmationDialogs === 'off'
+		) {
+			dispatch(endTurn())
+		} else {
+			dispatch(setOpenedModal('end-turn'))
+		}
 	}
 
-	const makeRows = (playerState: PlayerState, type: 'left' | 'right') => {
+	const makeRows = (playerState: LocalPlayerState, type: 'left' | 'right') => {
 		const rows = playerState.board.rows
 		return new Array(5).fill(null).map((_, index) => {
 			if (!rows[index]) throw new Error('Rendering board row failed')
@@ -98,17 +110,19 @@ function Board({onClick, gameState}: Props) {
 		}
 
 		return (
-			<button
+			<Button
+				variant="default"
+				size="small"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
 			>
 				End Turn
-			</button>
+			</Button>
 		)
 	}
 
-	const [player1, player2] = gameState.order.map(
-		(playerId) => gameState.players[playerId]
+	const [player1, player2] = localGameState.order.map(
+		(playerId) => localGameState.players[playerId]
 	)
 	return (
 		<div className={css.board}>
@@ -133,7 +147,7 @@ function Board({onClick, gameState}: Props) {
 										onClick({
 											slotType: 'single_use',
 											card: singleUseCard,
-											playerId: gameState.turnPlayerId,
+											playerId: localGameState.currentPlayerId,
 										})
 								: undefined
 						}

@@ -4,7 +4,6 @@ import SingleUseCard from './_single-use-card'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-// TODO - Make this work with bed (sleeping needs to reset counter)
 class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -28,7 +27,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		game.hooks.applyEffect.tap(this.id, () => {
 			const {singleUseInfo, playerActiveRow, opponentActiveRow} = game.ds
 			if (singleUseInfo?.id === this.id) {
-				// TODO - Handle bed
+				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
 				const pEffect = playerActiveRow?.effectCard
 				const oEffect = opponentActiveRow?.effectCard
 				playerActiveRow.effectCard = oEffect

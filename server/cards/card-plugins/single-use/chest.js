@@ -31,6 +31,7 @@ class ChestSingleUseCard extends SingleUseCard {
 					equalCard(card, selectedCard)
 				)
 				if (!discardedCard) return 'INVALID'
+				if (selectedCard.cardId === 'clock') return 'INVALID'
 				currentPlayer.discarded = currentPlayer.discarded.filter(
 					(card) => !equalCard(card, selectedCard)
 				)

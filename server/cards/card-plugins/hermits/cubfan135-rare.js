@@ -15,7 +15,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 			primary: {
 				name: 'Dash',
 				cost: ['any'],
-				damage: 60,
+				damage: 40,
 				power: null,
 			},
 			secondary: {
@@ -34,11 +34,11 @@ class Cubfan135RareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			currentPlayer.custom[this.id] = true
 			return target
@@ -59,7 +59,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 
 		game.hooks.availableActions.tap(
 			this.id,
-			(availableActions, pastTurnActions) => {
+			(availableActions, pastTurnActions, lockedActions) => {
 				const {currentPlayer} = game.ds
 				const usedPower = currentPlayer.custom[this.id]
 				const hasOtherHermit = currentPlayer.board.rows.some(
@@ -70,6 +70,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 					usedPower &&
 					hasOtherHermit &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!lockedActions.includes('CHANGE_ACTIVE_HERMIT') &&
 					availableActions.includes('END_TURN') &&
 					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {

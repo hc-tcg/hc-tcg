@@ -9,36 +9,30 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import CARDS from '../cards'
+import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
-import {getEmptyRow} from '../utils/state-gen'
+import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import followUpSaga from './turn-actions/follow-up'
 import registerCards from '../cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
-import {CONFIG} from '../../config'
+import {CONFIG, DEBUG_CONFIG} from '../../config'
+import followUpSaga from './turn-actions/follow-up'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
+ * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
+ * @typedef {import("common/types/cards").HermitCardT} HermitCardT
+ * @typedef {import("common/types/cards").EffectCardT} EffectCardT
+ * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  */
-
-// TURN ACTIONS:
-// 'WAIT_FOR_TURN',
-// 'ADD_HERMIT',
-// 'PRIMARY_ATTACK',
-// 'SECONDARY_ATTACK',
-// 'CHANGE_ACTIVE_HERMIT',
-// 'PLAY_ITEM_CARD',
-// 'PLAY_EFFECT_CARD',
-// 'PLAY_SINGLE_USE_CARD',
-// 'END_TURN'
 
 /**
  * @param {number} seconds
@@ -51,13 +45,27 @@ const getTimerForSeconds = (seconds) => {
 
 /**
  * @param {GameModel} game
- * @return {Array<AvailableAction>}
+ * @return {AvailableActionsT}
  */
 function getAvailableActions(game, pastTurnActions) {
 	const {turn} = game.state
 	const {currentPlayer, opponentPlayer} = game.ds
-	/** @type {Array<AvailableAction>} */
+	/** @type {AvailableActionsT} */
 	const actions = []
+
+	/**
+	 * @param {CardTypeT} type
+	 * @returns {boolean}
+	 */
+	const hasTypeInHand = (type) => {
+		return currentPlayer.hand.some((card) =>
+			CARDS[card.cardId].attachReq.type.includes(type)
+		)
+	}
+	const hasHermitInHand = hasTypeInHand('hermit')
+	const hasItemInHand = hasTypeInHand('item')
+	const hasEffectInHand = hasTypeInHand('effect')
+	const hasSingleUseInHand = hasTypeInHand('single_use')
 
 	if (opponentPlayer.followUp) {
 		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
@@ -94,10 +102,9 @@ function getAvailableActions(game, pastTurnActions) {
 	const hermits = currentPlayer.board.rows.filter(
 		(row) => row.hermitCard
 	).length
-	if (
-		(hermits === 0 || currentPlayer.board.activeRow !== null) &&
-		hermits < 5
-	) {
+	const hasNoHermit = hermits === 0
+	const hasActiveHermit = currentPlayer.board.activeRow !== null
+	if ((hasNoHermit || hasActiveHermit) && hermits < 5 && hasHermitInHand) {
 		actions.push('ADD_HERMIT')
 	}
 
@@ -107,40 +114,68 @@ function getAvailableActions(game, pastTurnActions) {
 	)
 
 	const {activeRow, rows} = currentPlayer.board
-	const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
+	const isSleeping =
+		activeRow !== null &&
+		rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
 
 	if (hasOtherHermit && !isSleeping) {
 		actions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
-	if (activeRow !== null) {
-		actions.push('PLAY_EFFECT_CARD')
+	const isSlow =
+		activeRow !== null &&
+		rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
 
+	if (!hasNoHermit && hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
+
+	if (activeRow !== null) {
 		if (turn > 1) {
-			const hermitInfo = CARDS[rows[activeRow].hermitCard.cardId]
-			const suInfo = CARDS[currentPlayer.board.singleUseCard?.cardId] || null
+			const hermitId = rows[activeRow].hermitCard?.cardId
+			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
+			const suId = currentPlayer.board.singleUseCard?.cardId || null
+			const suInfo = suId ? SINGLE_USE_CARDS[suId] || null : null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
 			// only add attack options if not sleeping
-			if (!isSleeping) {
-				if (!currentPlayer.board.singleUseCardUsed && suInfo?.damage) {
-					actions.push('ZERO_ATTACK')
-				}
-				if (hasEnoughItems(itemCards, hermitInfo.primary.cost)) {
+			if (hermitInfo && !isSleeping) {
+				let showZeroAttack = true
+				if (
+					DEBUG_CONFIG.noItemRequirements ||
+					hasEnoughItems(itemCards, hermitInfo.primary.cost)
+				) {
 					actions.push('PRIMARY_ATTACK')
+					showZeroAttack = false
 				}
-				if (hasEnoughItems(itemCards, hermitInfo.secondary.cost)) {
+				if (
+					DEBUG_CONFIG.noItemRequirements ||
+					(!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost))
+				) {
 					actions.push('SECONDARY_ATTACK')
+					showZeroAttack = false
+				}
+				if (
+					showZeroAttack &&
+					!currentPlayer.board.singleUseCardUsed &&
+					suInfo?.damage
+				) {
+					actions.push('ZERO_ATTACK')
 				}
 			}
 		}
 	}
 
-	if (!pastTurnActions.includes('PLAY_ITEM_CARD'))
+	if (
+		!pastTurnActions.includes('PLAY_ITEM_CARD') &&
+		!hasNoHermit &&
+		hasItemInHand
+	)
 		actions.push('PLAY_ITEM_CARD')
+
 	if (
 		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
-		!currentPlayer.board.singleUseCard
+		!hasNoHermit &&
+		!currentPlayer.board.singleUseCard &&
+		hasSingleUseInHand
 	)
 		actions.push('PLAY_SINGLE_USE_CARD')
 
@@ -198,7 +233,7 @@ function* checkHermitHealth(game) {
 				// reward cards
 				const opponentState = playerStates.find((s) => s.id !== playerState.id)
 				if (!opponentState) continue
-				const rewardCard = playerState.rewards.shift()
+				const rewardCard = playerState.pile.shift()
 				if (rewardCard) opponentState.hand.push(rewardCard)
 			}
 		}
@@ -231,19 +266,19 @@ function* checkHermitHealth(game) {
 function* sendGameState(game, turnState) {
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
 		turnState
-	// TODO - omit state clients shouldn't see (e.g. other players hand, either players pile etc.)
 	game.getPlayers().forEach((player) => {
+		const localGameState = getLocalGameState(
+			game,
+			player,
+			availableActions || [],
+			pastTurnActions || [],
+			opponentAvailableActions || []
+		)
+
 		player.socket.emit('GAME_STATE', {
 			type: 'GAME_STATE',
 			payload: {
-				gameState: game.state,
-				opponentId: game.getPlayerIds().find((id) => id !== player.playerId),
-				pastTurnActions:
-					player.playerId === game.ds.currentPlayer.id ? pastTurnActions : null,
-				availableActions:
-					player.playerId === game.ds.currentPlayer.id
-						? availableActions
-						: opponentAvailableActions,
+				localGameState,
 			},
 		})
 	})
@@ -327,9 +362,10 @@ function* turnActionSaga(game, turnAction, turnState) {
 /**
  * @param {GameModel} game
  * @param {Array<string>} pastTurnActions
+ * @param {{skipTurn?: boolean}} turnConfig
  * @returns {SagaIterator}
  */
-function* turnActionsSaga(game, pastTurnActions) {
+function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} =
 		game.ds
 
@@ -352,17 +388,24 @@ function* turnActionsSaga(game, pastTurnActions) {
 	try {
 		while (true) {
 			let availableActions = getAvailableActions(game, pastTurnActions)
+			let lockedActions = []
 			availableActions = game.hooks.availableActions.call(
 				availableActions,
-				pastTurnActions
+				pastTurnActions,
+				lockedActions
 			)
 
-			/** @type {Array<AvailableAction>} */
+			if (turnConfig.skipTurn) {
+				if (currentPlayer.board.activeRow === null)
+					availableActions = ['CHANGE_ACTIVE_HERMIT']
+				else return
+			}
+
+			/** @type {AvailableActionsT} */
 			const opponentAvailableActions = opponentPlayer.followUp
 				? ['FOLLOW_UP']
 				: ['WAIT_FOR_TURN']
 
-			// @TODO could this be in gameState.turnState?
 			/** @type {TurnState} */
 			const turnState = {
 				availableActions,
@@ -371,10 +414,13 @@ function* turnActionsSaga(game, pastTurnActions) {
 			}
 			game._turnStateCache = turnState
 
+			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000
-			const remainingTime = game.state.turnTime + maxTime - Date.now()
+			const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
 			const graceTime = 1000
-			game.state.turnRemaining = Math.floor((remainingTime + 1000) / 1000)
+			game.state.timer.turnRemaining = Math.floor(
+				(remainingTime + graceTime) / 1000
+			)
 
 			yield call(sendGameState, game, turnState)
 
@@ -388,7 +434,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 			const opponentFollowUp = !!opponentPlayer.followUp
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
-					game.state.turnTime = getTimerForSeconds(20)
+					game.state.timer.turnTime = getTimerForSeconds(20)
 					game.hooks.followUpTimeout.call()
 					continue
 				} else if (!hasActiveHermit) {
@@ -410,7 +456,7 @@ function* turnActionsSaga(game, pastTurnActions) {
 			// set timer to 20s on new followup (for opponent)
 			// or succesful followup (for current player)
 			if (opponentFollowUp !== !!opponentPlayer.followUp) {
-				game.state.turnTime = getTimerForSeconds(20)
+				game.state.timer.turnTime = getTimerForSeconds(20)
 			}
 
 			if (result === 'END_TURN') break
@@ -430,8 +476,8 @@ function* turnSaga(game) {
 	const {currentPlayerId, currentPlayer, opponentPlayer} = game.ds
 
 	game.state.turnPlayerId = currentPlayerId
-	game.state.turnTime = Date.now()
-	game.state.turnRemaining = CONFIG.limits.maxTurnTime
+	game.state.timer.turnTime = Date.now()
+	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
 	for (let row of currentPlayer.board.rows) {
@@ -451,15 +497,16 @@ function* turnSaga(game) {
 	const turnConfig = {}
 	game.hooks.turnStart.call(turnConfig)
 
-	if (!turnConfig.skipTurn) {
-		const result = yield call(turnActionsSaga, game, pastTurnActions)
-		if (result === 'GAME_END') return 'GAME_END'
-	}
+	const result = yield call(turnActionsSaga, game, pastTurnActions, turnConfig)
+	if (result === 'GAME_END') return 'GAME_END'
 
 	// Apply damage from ailments
 	// TODO - Armor should prevent ailment damage
 	for (let row of opponentPlayer.board.rows) {
-		if (row.ailments.find((a) => a.id === 'fire' || a.id === 'poison'))
+		if (
+			row.health &&
+			row.ailments.find((a) => a.id === 'fire' || a.id === 'poison')
+		)
 			row.health -= 20
 	}
 
@@ -477,6 +524,10 @@ function* turnSaga(game) {
 		return 'GAME_END'
 	}
 
+	// If player has not used his single use card return it to hand
+	// otherwise move it to discarded pile
+	discardSingleUse(game, currentPlayer)
+
 	// Draw a card from deck when turn ends
 	const drawCard = currentPlayer.pile.shift()
 	if (drawCard) {
@@ -491,9 +542,6 @@ function* turnSaga(game) {
 		return 'GAME_END'
 	}
 
-	// If player has not used his single use card return it to hand
-	// otherwise move it to discarded pile
-	discardSingleUse(game, currentPlayer)
 	return 'DONE'
 }
 

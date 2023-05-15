@@ -1,4 +1,40 @@
-import css from './link-container.module.css'
+import css from './link-container.module.scss'
+import {CONFIG} from '../../../../config'
+
+export function VersionLinks() {
+	return (
+		<p className={css.version}>
+			<span>v{CONFIG.version} - </span>
+			<a
+				href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
+				target="_blank"
+				rel="noreferrer"
+				title="Reddit"
+			>
+				<img draggable={false} src="/images/icons/reddit.svg" />
+				Reddit
+			</a>
+			<a
+				href="https://github.com/martinkadlec0/hc-tcg"
+				target="_blank"
+				rel="noreferrer"
+				title="Github"
+			>
+				<img draggable={false} src="/images/icons/github.svg" />
+				GitHub
+			</a>
+			<a
+				href="https://discord.gg/AjGbqNfcQX"
+				target="_blank"
+				rel="noreferrer"
+				title="Discord"
+			>
+				<img draggable={false} src="/images/icons/discord.svg" />
+				Discord
+			</a>
+		</p>
+	)
+}
 
 function LinkContainer() {
 	return (
@@ -9,7 +45,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Reddit"
 			>
-				<img src="/images/icons/reddit.svg" height="26" />
+				<img draggable={false} src="/images/icons/reddit.svg" />
 			</a>
 			<a
 				href="https://github.com/martinkadlec0/hc-tcg"
@@ -17,7 +53,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Github"
 			>
-				<img src="/images/icons/github.svg" height="26" />
+				<img draggable={false} src="/images/icons/github.svg" />
 			</a>
 
 			<a
@@ -26,7 +62,7 @@ function LinkContainer() {
 				rel="noreferrer"
 				title="Discord"
 			>
-				<img src="/images/icons/discord.svg" height="26" />
+				<img draggable={false} src="/images/icons/discord.svg" />
 			</a>
 		</div>
 	)

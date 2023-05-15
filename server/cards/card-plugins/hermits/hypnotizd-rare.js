@@ -1,8 +1,10 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardCard} from '../../../utils'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 /*
@@ -33,11 +35,15 @@ class HypnotizdRareHermitCard extends HermitCard {
 			},
 		})
 
+		const breakIf = /** @satisfies {PickRequirmentT['breakIf']} */ ([
+			'active',
+			'efficiency',
+		])
 		this.pickOn = 'attack'
-		this.pickReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1},
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+			{target: 'opponent', type: 'hermit', amount: 1, breakIf},
 			{target: 'player', type: 'item', amount: 1, active: true},
-		]
+		])
 	}
 
 	/**
@@ -46,32 +52,29 @@ class HypnotizdRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {
-				attackerHermitCard,
-				attackerHermitInfo,
-				typeAction,
-				attackerActiveRow,
-				pickedCardsInfo,
-			} = attackState
+			const {moveRef, typeAction, pickedCardsInfo} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (attackerHermitCard.cardId !== this.id) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			const hypnoPickedCards = pickedCardsInfo[this.id] || []
-			if (hypnoPickedCards.length !== 2) return target
 
 			const pickedHermit = hypnoPickedCards[0]
+			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
+
+			const efficiency = !!currentPlayer.custom['efficiency']
+
+			const pickedItem = hypnoPickedCards[1]
+			if (!efficiency && !validPick(game.state, this.pickReqs[1], pickedItem))
+				return target
+
 			if (pickedHermit.row !== target.row) {
 				target.applyHermitDamage = false
 				return target
 			}
 			target.applyHermitDamage = true
 
-			// TODO - use req for validation
-			const pickedItem = hypnoPickedCards[1]
-			if (pickedItem.slotType !== 'item') return target
-
-			if (!target.isActive) discardCard(game, pickedItem.card)
+			if (!efficiency && !target.isActive) discardCard(game, pickedItem.card)
 			return target
 		})
 	}

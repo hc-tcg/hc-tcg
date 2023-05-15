@@ -1,4 +1,9 @@
-export default {
+/**
+ * @typedef {import('common/types/cards').HermitTypeT} HermitTypeT
+ */
+
+/** @type {Record<HermitTypeT, Array<HermitTypeT>>} */
+const Strengths = {
 	balanced: [],
 	builder: ['terraform'],
 	explorer: ['builder'],
@@ -10,3 +15,5 @@ export default {
 	speedrunner: ['miner', 'prankster'],
 	terraform: ['redstone'],
 }
+
+export default Strengths

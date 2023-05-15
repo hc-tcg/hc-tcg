@@ -34,15 +34,20 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 		})
 
 		// if flag is true, remove change of active hermit from available actions
-		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			if (!currentPlayer.custom[this.id]) return availableActions
-			if (currentPlayer.board.activeRow === null) return availableActions
+		game.hooks.availableActions.tap(
+			this.id,
+			(availableActions, pastTurnActions, lockedActions) => {
+				const {singleUseInfo, currentPlayer} = game.ds
+				if (!currentPlayer.custom[this.id]) return availableActions
+				if (currentPlayer.board.activeRow === null) return availableActions
 
-			return availableActions.filter(
-				(action) => action !== 'CHANGE_ACTIVE_HERMIT'
-			)
-		})
+				// lock switching hermit so it can't be done by anything
+				lockedActions.push('CHANGE_ACTIVE_HERMIT')
+				return availableActions.filter(
+					(action) => action !== 'CHANGE_ACTIVE_HERMIT'
+				)
+			}
+		)
 
 		// at end of turn remove flag
 		game.hooks.turnEnd.tap(this.id, () => {

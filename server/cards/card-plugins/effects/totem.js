@@ -30,9 +30,9 @@ class TotemEffectCard extends EffectCard {
 		})
 
 		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
-			const {playerState, row} = deathInfo
+			const {row} = deathInfo
 			const hasTotem = row.effectCard?.cardId === this.id
-			if (!hasTotem) return
+			if (!hasTotem) return recovery
 			recovery.push({amount: this.recoverAmount, discardEffect: true})
 			return recovery
 		})

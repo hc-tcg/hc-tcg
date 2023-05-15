@@ -1,12 +1,13 @@
-import {BoardRowT} from 'types/game-state'
-import {CardT} from 'types/game-state'
-import Slot, {SlotType} from './board-slot'
+import {RowState} from 'common/types/game-state'
+import {CardT} from 'common/types/game-state'
+import Slot from './board-slot'
+import {SlotTypeT} from 'common/types/pick-process'
 import css from './board.module.css'
 
 const getCardBySlot = (
-	slotType: SlotType,
+	slotType: SlotTypeT,
 	index: number,
-	rowState: BoardRowT | null
+	rowState: RowState | null
 ): CardT | null => {
 	if (!rowState) return null
 	if (slotType === 'hermit') return rowState.hermitCard || null
@@ -18,18 +19,18 @@ const getCardBySlot = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	onClick: (meta: any) => void
-	rowState: BoardRowT
+	rowState: RowState
 	active: boolean
 }
 const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 	const handleSlotClick = (
-		slotType: SlotType,
+		slotType: SlotTypeT,
 		slotIndex: number,
 		card: CardT | null
 	) => {
 		onClick({slotType, slotIndex, card})
 	}
-	const slotTypes: Array<SlotType> = [
+	const slotTypes: Array<SlotTypeT> = [
 		'item',
 		'item',
 		'item',

@@ -1,5 +1,15 @@
 import {equalCard} from '../../utils'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ */
+
+/**
+ *
+ * @param {GameModel} game
+ * @param {TurnAction} turnAction
+ * @param {ActionState} actionState
+ */
 function* changeActiveHermit(game, turnAction, actionState) {
 	const {currentPlayer} = game.ds
 	const {availableActions, pastTurnActions} = actionState
@@ -15,8 +25,10 @@ function* changeActiveHermit(game, turnAction, actionState) {
 		(a) => a.id === 'knockedout'
 	)
 	const hasOtherHermits = currentPlayer.board.rows.some(
-		(row) =>
-			!!row.hermitCard && !row.ailments.find((a) => a.id === 'knockedout')
+		(row, index) =>
+			!!row.hermitCard &&
+			index !== result &&
+			!row.ailments.find((a) => a.id === 'knockedout')
 	)
 	if (isKnockedout && hasOtherHermits) return 'INVALID'
 
@@ -28,7 +40,12 @@ function* changeActiveHermit(game, turnAction, actionState) {
 	// without losing the ability to attack again
 	if (hadActiveHermit) {
 		pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
+	} else {
+		currentPlayer.board.rows.forEach((row) => {
+			row.ailments = row.ailments.filter((a) => a.id !== 'knockedout')
+		})
 	}
+
 	return 'DONE'
 }
 

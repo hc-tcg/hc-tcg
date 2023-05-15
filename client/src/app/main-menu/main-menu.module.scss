@@ -1,0 +1,173 @@
+.mainmenu {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	color: var(--text-light);
+}
+
+.playerInfo {
+	position: absolute;
+	top: 1vh;
+	right: 1vh;
+	display: grid;
+	grid-template-areas:
+		'name icon'
+		'deck icon';
+	font-size: 1.5vh;
+	background-color: hsla(0deg, 0%, 0%, 35%);
+	padding: 0.75vh 1vh 0.75vh 1.5vh;
+	border-radius: 0.5vh;
+	user-select: none;
+	font-weight: normal;
+	text-align: right;
+	animation: fadeIn 250ms ease-in-out forwards;
+
+	> img {
+		height: 4vh;
+	}
+
+	#infoName {
+		grid-area: name;
+		font-weight: bold;
+		font-size: 1.8vh;
+	}
+
+	#infoDeck {
+		grid-area: deck;
+	}
+
+	#infoIcon {
+		grid-area: icon;
+		margin-left: 1vh;
+	}
+}
+
+.logo {
+	margin-inline: auto;
+}
+
+.content {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-content: flex-start center;
+	padding-top: 10vh;
+	margin-inline: auto;
+}
+
+nav {
+	margin-top: 5vh;
+	display: grid;
+	gap: 1vh;
+	grid-template-areas:
+		'public'
+		'private-create'
+		'private-join'
+		'deck'
+		'settings'
+		'logout';
+	animation: fadeIn 250ms ease-in-out forwards;
+}
+
+#public {
+	grid-area: public;
+}
+
+#privateCreate {
+	grid-area: private-create;
+}
+
+#privateJoin {
+	grid-area: private-join;
+}
+
+#deck {
+	grid-area: deck;
+}
+
+#settings {
+	grid-area: settings;
+}
+
+#logout {
+	grid-area: logout;
+}
+
+/* Settings Page */
+
+.settingsPage {
+	width: 100%;
+	height: 100%;
+}
+
+.settingsMenu {
+	max-width: 70vh;
+	margin-inline: auto;
+	padding: 1vh;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.settings {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1vh;
+	width: 100%;
+	margin-bottom: 4vh;
+}
+
+.stats {
+	background: var(--gray-800);
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
+}
+
+.stat {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1vh 0;
+	color: var(--text-light);
+
+	> span {
+		font-size: 2vh;
+		user-select: text;
+	}
+}
+
+/* DESKTOP */
+@media (min-width: 80vh) {
+	nav {
+		margin-top: 5vh;
+		display: grid;
+		gap: 2vh;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			'public public'
+			'private-create private-join'
+			'deck deck'
+			'logout settings';
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}

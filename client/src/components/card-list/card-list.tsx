@@ -2,9 +2,9 @@ import classnames from 'classnames'
 import {useTransition, animated} from '@react-spring/web'
 import {useRef} from 'react'
 import CARDS from 'server/cards'
-import {CardT} from 'types/game-state'
+import {CardT} from 'common/types/game-state'
 import Card from 'components/card'
-import css from './card-list.module.css'
+import css from './card-list.module.scss'
 import {equalCard} from 'server/utils'
 
 const SIZE = {
@@ -14,6 +14,7 @@ const SIZE = {
 
 type CardListProps = {
 	cards: Array<CardT>
+	disabled?: Array<string>
 	selected?: CardT | null
 	picked?: Array<CardT>
 	stack?: boolean
@@ -28,15 +29,10 @@ type CardStack = {
 }
 
 const CardList = (props: CardListProps) => {
-	const {
-		stack = false,
-		cards,
-		wrap,
-		onClick,
-		selected,
-		picked,
-		size = 'medium',
-	} = props
+
+	const {wrap, onClick, size = 'medium'} = props
+	const {cards, disabled, selected, picked, stack = false} = props
+
 	const listRef = useRef<HTMLDivElement>(null)
 
 	const transitions = useTransition(cards, {
@@ -55,9 +51,10 @@ const CardList = (props: CardListProps) => {
 		if (!info) return null
 		const isSelected = equalCard(card, selected)
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
+		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 		return (
 			<Card
-				onClick={onClick ? () => onClick(card) : undefined}
+				onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
 				card={info}
 				selected={isSelected}
 				picked={isPicked}
@@ -70,7 +67,10 @@ const CardList = (props: CardListProps) => {
 			<animated.div
 				style={style}
 				key={card.cardInstance}
-				className={classnames(css.card, {[css.clickable]: !!onClick})}
+				className={classnames(css.card, {
+					[css.clickable]: !!onClick && !disabled,
+					[css.disabled]: disabled,
+				})}
 			>
 				{getCard(card)}
 			</animated.div>
@@ -129,7 +129,7 @@ const CardList = (props: CardListProps) => {
 					bottom: y * index + '%',
 				}
 				cardList.push(
-					<div style={divStyle} className={css.card}>
+					<div key={card.cardId} className={css.card} style={divStyle}>
 						{getCard(cardObject)}
 					</div>
 				)

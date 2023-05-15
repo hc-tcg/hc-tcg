@@ -29,6 +29,7 @@ import ZombieCleoCommonHermitCard from './zombiecleo-common'
 import BdoubleO100RareHermitCard from './bdoubleo100-rare'
 import Cubfan135RareHermitCard from './cubfan135-rare'
 import Docm77RareHermitCard from './docm77-rare'
+import DreamRareHermitCard from './dream-rare'
 import EthosLabRareHermitCard from './ethoslab-rare'
 import EthosLabUltraRareHermitCard from './ethoslab-ultra-rare'
 import FalseSymmetryRareHermitCard from './falsesymmetry-rare'
@@ -63,6 +64,7 @@ const HERMIT_CARDS = [
 	new Cubfan135RareHermitCard(),
 	new Docm77CommonHermitCard(),
 	new Docm77RareHermitCard(),
+	// new DreamRareHermitCard(),
 	new EthosLabCommonHermitCard(),
 	new EthosLabRareHermitCard(),
 	new EthosLabUltraRareHermitCard(),
@@ -91,7 +93,7 @@ const HERMIT_CARDS = [
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
 	new RendogCommonHermitCard(),
-	// new RendogRareHermitCard(),
+	new RendogRareHermitCard(),
 	new StressMonster101CommonHermitCard(),
 	new StressMonster101RareHermitCard(),
 	new TangoTekCommonHermitCard(),
@@ -111,7 +113,7 @@ const HERMIT_CARDS = [
 	new ZedaphPlaysCommonHermitCard(),
 	new ZedaphPlaysRareHermitCard(),
 	new ZombieCleoCommonHermitCard(),
-	// new ZombieCleoRareHermitCard(),
+	new ZombieCleoRareHermitCard(),
 ]
 
 export default HERMIT_CARDS

@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import CARDS from '../../index'
+import {HERMIT_CARDS} from '../../index'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -27,7 +27,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				for (let row of currentPlayer.board.rows) {
 					if (!row.hermitCard) continue
-					const currentRowInfo = CARDS[row.hermitCard.cardId]
+					const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
 					if (!currentRowInfo) continue
 					row.health = Math.min(row.health + 20, currentRowInfo.health)
 				}

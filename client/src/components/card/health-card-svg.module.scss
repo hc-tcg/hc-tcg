@@ -1,0 +1,38 @@
+.card {
+	position: relative;
+	background: white;
+}
+
+.card text {
+	dominant-baseline: hanging;
+	text-anchor: middle;
+	fill: black;
+	letter-spacing: 8px;
+}
+
+.cardBackground {
+	fill: white;
+}
+
+.healthy .typeBackground,
+.healthy .healthBackground {
+	fill: rgb(124, 205, 17);
+}
+
+.damaged .typeBackground,
+.damaged .healthBackground {
+	fill: rgb(213, 118, 39);
+}
+
+.dying .typeBackground,
+.dying .healthBackground {
+	fill: rgb(150, 41, 40);
+}
+
+.type {
+	font-size: 72px;
+}
+
+.health {
+	font-size: 148px;
+}

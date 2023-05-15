@@ -1,77 +1,35 @@
-// @TODO need more info about types
-
 /**
- * @typedef {Object} Ailment
- * @property {'poison' | 'fire' | 'sleeping' | 'knockedout'} id
- * @property {number} duration
+ * @typedef {import('common/types/game-state').CardT} CardT
+ * @typedef {import('common/types/game-state').AvailableActionsT} AvailableActionsT
+ * @typedef {import('common/types/game-state').PlayerState} PlayerState
+ * @typedef {import('common/types/game-state').RowState} RowState
+ * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
+ * @typedef {import('common/types/cards').CardInfoT} CardInfoT
+ * @typedef {import('common/types/cards').HermitCardT} HermitCardT
+ * @typedef {import('common/types/pick-process').BoardPickedCardT} BoardPickedCardT
+ * @typedef {import('common/types/pick-process').HandPickedCardT} HandPickedCardT
  */
 
 /**
- * @typedef {Object} ChatMessage
- * @property {number} createdAt
- * @property {string} message
- * @property {string} censoredMessage
- * @property {string} playerId
+ * @typedef {Object} BoardPickedCardInfoProperties
+ * @property {CardInfoT | null} cardInfo
+ * @property {boolean} isActive
+ * @property {RowStateWithHermit} row
+ * @typedef {BoardPickedCardT & BoardPickedCardInfoProperties} BoardPickedCardInfo
  */
 
 /**
- * @typedef {Object} Card
- * @property {string} cardId
- * @property {string} cardInstance
+ * @typedef {Object} HandPickedCardInfoProperties
+ * @property {CardInfoT | null} cardInfo
+ * @typedef {HandPickedCardT & HandPickedCardInfoProperties} HandPickedCardInfo
  */
 
 /**
- * @typedef {Object} RowState
- * @property {Card | null} hermitCard
- * @property {Card | null} effectCard
- * @property {Array<Card>} itemCards
- * @property {number | null} health
- * @property {Array<Ailment>} ailments
+ * @typedef {BoardPickedCardInfo | HandPickedCardInfo} PickedCardInfo
  */
 
 /**
- * @typedef {Object} BoardState
- * @property {number | null} activeRow
- * @property {Card | null} singleUseCard
- * @property {boolean} singleUseCardUsed
- * @property {Array<RowState>} rows
- */
-
-/**
- * @typedef {Object} PlayerState
- * @property {string} id
- * @property {string} playerName
- * @property {string} censoredPlayerName
- * @property {*} coinFlips
- * @property {*} followUp
- * @property {number} lives
- * @property {Array<*>} hand
- * @property {Array<*>} rewards
- * @property {Array<*>} discarded
- * @property {Array<*>} pile
- * @property {*} custom
- * @property {BoardState} board
- */
-
-/**
- * @typedef {Object} GameState
- * @property {number} turn
- * @property {Array<string>} order
- * @property {string | null} turnPlayerId
- * @property {number | null} turnTime
- * @property {number | null} turnRemaining
- * @property {Object.<string, PlayerState>} players
- */
-
-/**
- * @typedef {'END_TURN' | 'APPLY_EFFECT' | 'REMOVE_EFFECT' | 'ZERO_ATTACK' |
- *  'PRIMARY_ATTACK' | 'SECONDARY_ATTACK' | 'FOLLOW_UP' | 'WAIT_FOR_OPPONENT_FOLLOWUP' |
- *  'CHANGE_ACTIVE_HERMIT' | 'ADD_HERMIT' | 'PLAY_ITEM_CARD' | 'PLAY_SINGLE_USE_CARD' |
- *  'PLAY_EFFECT_CARD' | 'WAIT_FOR_TURN'} AvailableAction
- */
-
-/**
- * @typedef {Array<AvailableAction>} AvailableActions
+ * @typedef {Record<string, Array<PickedCardInfo>>} PickedCardsInfo
  */
 
 /**
@@ -82,23 +40,31 @@
 
 /**
  * @typedef {Object} TurnState
- * @property {Array<AvailableAction>} availableActions
- * @property {Array<AvailableAction>} opponentAvailableActions
+ * @property {AvailableActionsT} availableActions
+ * @property {AvailableActionsT} opponentAvailableActions
  * @property {Array<string>} pastTurnActions
  */
 
 /**
  * @typedef {Object} ActionStateProperties
- * @property {Object} pickedCardsInfo
+ * @property {PickedCardsInfo} pickedCardsInfo
  * @typedef {TurnState & ActionStateProperties} ActionState
+ */
+
+/**
+ * @typedef {Object} HermitDescriptor
+ * @property {PlayerState} player
+ * @property {RowStateWithHermit} row
+ * @property {CardT} hermitCard
+ * @property {HermitCardT} hermitInfo
  */
 
 /**
  * @typedef {Object} AttackStateProperties
  * @property {string} typeAction
- * @property {RowState | null} attackerActiveRow
- * @property {Card | null} attackerHermitCard
- * @property {Object | null} attackerHermitInfo
+ * @property {HermitDescriptor} attacker
+ * @property {HermitDescriptor} moveRef
+ * @property {HermitDescriptor} condRef
  * @typedef {ActionState & AttackStateProperties} AttackState
  */
 
@@ -106,4 +72,41 @@
  * @typedef {Object} FollowUpStateProperties
  * @property {string} followUp
  * @typedef {ActionState & FollowUpStateProperties} FollowUpState
+ */
+
+/**
+ * @typedef {Object} AttackRecovery
+ * @property {number} amount
+ * @property {boolean} [discardEffect]
+ */
+
+/**
+ * @typedef {Object} AttackTarget
+ * @property {RowStateWithHermit} row
+ * @property {boolean} applyHermitDamage
+ * @property {string|null} effectCardId
+ * @property {boolean} isActive
+ * @property {number} extraEffectDamage
+ * @property {boolean} hasWeakness
+ * @property {number} extraHermitDamage
+ * @property {boolean} invulnarable
+ * @property {Array<AttackRecovery>} recovery
+ * @property {boolean} ignoreEffects
+ * @property {boolean} additionalAttack
+ * @property {boolean} ignoreRecovery
+ * @property {boolean} reverseDamage
+ * @property {number} backlash
+ * @property {number} hermitMultiplier
+ * @property {number} effectMultiplier
+ */
+
+/**
+ * @typedef {Object} AttackTargetResult
+ * @property {RowStateWithHermit} row
+ * @property {number} totalDamage
+ * @property {number} finalDamage
+ * @property {number} totalDamageToAttacker
+ * @property {number} finalDamageToAttacker
+ * @property {boolean} revived
+ * @property {boolean} died
  */

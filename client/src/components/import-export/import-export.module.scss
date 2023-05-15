@@ -1,0 +1,50 @@
+.instructions {
+	padding: 0.5rem 0;
+}
+
+.copy {
+	display: grid;
+	place-content: center;
+	background: var(--gray-900);
+	padding: 0.4rem;
+	height: 1.5rem;
+	min-width: 1.5rem;
+	border-radius: 6px;
+	cursor: pointer;
+
+	&:hover,
+	&:focus {
+		background: var(--gray-600);
+	}
+
+	&:focus {
+		outline: 3px solid white;
+	}
+}
+
+.importControls {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 0.5rem;
+
+	.name {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	> input {
+		width: 100%;
+	}
+}
+
+.exportControls {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+
+	> input {
+		width: 100%;
+	}
+}

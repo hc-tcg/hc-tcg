@@ -1,94 +1,88 @@
 import CARDS from '../../cards'
 import {equalCard} from '../../utils'
+import {checkAttachReq} from '../../utils/reqs'
 
+/**
+ * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ */
+
+/**
+ * @param {GameModel} game
+ * @param {TurnAction} turnAction
+ * @param {ActionState} actionState
+ * @return {SagaIterator}
+ */
 function* playCardSaga(game, turnAction, actionState) {
 	turnAction.payload = turnAction.payload || {}
 
-	const {currentPlayer, opponentPlayer} = game.ds
+	const {currentPlayer} = game.ds
 	const {pastTurnActions, availableActions} = actionState
-	const {card, rowHermitCard, rowIndex, slotIndex, slotType} =
+	const {card, rowHermitCard, rowIndex, slotIndex, slotType, playerId} =
 		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
-	// console.log('Playing card: ', card.cardId)
 
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'
 
-	// TODO - move logic to water/milk bucket plugins
-	const suBucket =
-		slotType === 'single_use' &&
-		['water_bucket', 'milk_bucket'].includes(cardInfo.id)
-	if (cardInfo.type !== slotType && !suBucket) return 'INVALID'
+	if (!checkAttachReq(game.state, turnAction.payload, cardInfo.attachReq))
+		return 'INVALID'
 
-	if (cardInfo.type === 'hermit') {
-		if (rowHermitCard) return
-		if (!currentPlayer.board.rows[rowIndex]) return
-		if (currentPlayer.board.rows[rowIndex].hermitCard) return
+	const player = game.state.players[playerId]
+	if (!player) return 'INVALID'
+
+	const validate = (type) =>
+		game.hooks.validateCard.get(type)?.call(turnAction, actionState)
+
+	if (slotType === 'hermit') {
 		if (!availableActions.includes('ADD_HERMIT')) return
-
-		const result = game.hooks.playCard
-			.get('hermit')
-			?.call(turnAction, actionState)
-		if (result === 'INVALID') return
-
-		currentPlayer.board.rows[rowIndex] = {
-			...currentPlayer.board.rows[rowIndex],
-			hermitCard: card,
-			health: cardInfo.health,
+		if (validate('hermit') === 'INVALID') return
+		const row = player.board.rows[rowIndex]
+		row.hermitCard = card
+		if (cardInfo.type === 'hermit') {
+			row.health = cardInfo.health
+			if (player.board.activeRow === null) {
+				player.board.activeRow = rowIndex
+			}
+			pastTurnActions.push('ADD_HERMIT')
 		}
-		if (currentPlayer.board.activeRow === null) {
-			currentPlayer.board.activeRow = rowIndex
-		}
-		pastTurnActions.push('ADD_HERMIT')
-	} else if (cardInfo.type === 'item') {
-		if (!rowHermitCard) return
-		const hermitRow = currentPlayer.board.rows.find((row) =>
+	} else if (slotType === 'item') {
+		const isItem = cardInfo.type === 'item'
+		if (isItem && !availableActions.includes('PLAY_ITEM_CARD')) return
+		if (!isItem && !availableActions.includes('PLAY_EFFECT_CARD')) return
+		const hermitRow = player.board.rows.find((row) =>
 			equalCard(row.hermitCard, rowHermitCard)
 		)
 		if (!hermitRow) return
-		if (hermitRow.itemCards[slotIndex] !== null) return
-		if (!availableActions.includes('PLAY_ITEM_CARD')) return
-
-		const result = game.hooks.playCard
-			.get('item')
-			?.call(turnAction, actionState)
-		if (result === 'INVALID') return
+		if (validate('item') === 'INVALID') return
 
 		hermitRow.itemCards[slotIndex] = card
-		pastTurnActions.push('PLAY_ITEM_CARD')
-	} else if (cardInfo.type === 'effect' && !suBucket) {
-		if (!rowHermitCard) return
-		const hermitRow = currentPlayer.board.rows.find((row) =>
+
+		pastTurnActions.push(isItem ? 'PLAY_ITEM_CARD' : 'PLAY_EFFECT_CARD')
+	} else if (slotType === 'effect') {
+		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
+		const hermitRow = player.board.rows.find((row) =>
 			equalCard(row.hermitCard, rowHermitCard)
 		)
 		if (!hermitRow) return
-		if (hermitRow.effectCard) return
-		if (!availableActions.includes('PLAY_EFFECT_CARD')) return
-
-		const result = game.hooks.playCard
-			.get('effect')
-			?.call(turnAction, actionState)
-		if (result === 'INVALID') return
+		if (validate('effect') === 'INVALID') return
 
 		hermitRow.effectCard = card
 		pastTurnActions.push('PLAY_EFFECT_CARD')
-	} else if (cardInfo.type === 'single_use' || suBucket) {
-		const targetRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+	} else if (slotType === 'single_use') {
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
-		if (currentPlayer.board.singleUseCard) return
+		if (player.board.singleUseCard) return
+		if (validate('single_use') === 'INVALID') return
 
-		const result = game.hooks.playCard
-			.get('single_use')
-			?.call(turnAction, actionState)
-		if (result === 'INVALID') return
-
-		currentPlayer.board.singleUseCard = card
+		player.board.singleUseCard = card
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
 	}
 
 	currentPlayer.hand = currentPlayer.hand.filter(
 		(handCard) => !equalCard(handCard, card)
 	)
+
+	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
 
 	return 'DONE'
 }

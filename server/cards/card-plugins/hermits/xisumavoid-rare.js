@@ -35,17 +35,21 @@ class XisumavoidRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
-			const {attackerHermitCard, typeAction} = attackState
+			const {moveRef, typeAction} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (!target.isActive) return target
+			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			if (attackerHermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				if (target.row.effectCard?.cardId !== 'milk_bucket') {
+				const hasMilkBucket = target.row.effectCard?.cardId === 'milk_bucket'
+				const hasDamageEffect = target.row.ailments.some((a) =>
+					['fire', 'poison'].includes(a.id)
+				)
+				if (!hasMilkBucket && !hasDamageEffect) {
 					target.row.ailments.push({id: 'poison', duration: -1})
 				}
 			}

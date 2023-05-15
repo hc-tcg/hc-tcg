@@ -1,8 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard} from '../../../utils'
+import {validPick} from '../../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
 /*
@@ -19,10 +21,10 @@ class LeadSingleUseCard extends SingleUseCard {
 				"Move 1 of your opponents active Hermit's item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.\n\nDiscard after use.",
 		})
 		this.pickOn = 'apply'
-		this.useReqs = [
+		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'item', amount: 1, active: true},
 			{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
-		]
+		])
 		this.pickReqs = this.useReqs
 	}
 
@@ -40,9 +42,11 @@ class LeadSingleUseCard extends SingleUseCard {
 
 				const itemCardInfo = suPickedCards[0]
 				const targetSlotInfo = suPickedCards[1]
-				if (itemCardInfo.cardInfo.type !== 'item') return 'INVALID'
+				if (!validPick(game.state, this.pickReqs[0], itemCardInfo))
+					return 'INVALID'
 				if (targetSlotInfo.card !== null) return 'INVALID'
-				if (targetSlotInfo.row.hermitCard === null) return 'INVALID'
+				if (!validPick(game.state, this.pickReqs[1], targetSlotInfo))
+					return 'INVALID'
 
 				// remove item from source
 				itemCardInfo.row.itemCards[itemCardInfo.slotIndex] = null

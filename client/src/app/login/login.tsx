@@ -1,14 +1,30 @@
 import React from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {getConnecting} from 'logic/session/session-selectors'
+import {getConnecting, getErrorType} from 'logic/session/session-selectors'
 import {login} from 'logic/session/session-actions'
-import css from './login.module.css'
+import css from './login.module.scss'
 import TcgLogo from 'components/tcg-logo'
-import LinkContainer from 'components/link-container'
+import {VersionLinks} from 'components/link-container'
+import Button from 'components/button'
+import Spinner from 'components/spinner'
+import ErrorBanner from 'components/error-banner'
+import Beef from 'components/beef'
 
-function Login() {
+const getLoginError = (errorType: string) => {
+	if (!errorType) return null
+	if (errorType === 'session_expired') return 'Your session has expired.'
+	if (errorType === 'timeout') return 'Connection attempt took too long.'
+	if (errorType === 'invalid_name') return 'Your name is not valid.'
+	if (errorType === 'invalid_version')
+		return 'There has been a game update. Please refresh the website.'
+	if (errorType === 'xhr poll error') return "Can't reach the server."
+	return errorType.substring(0, 150)
+}
+
+const Login = () => {
 	const dispatch = useDispatch()
 	const connecting = useSelector(getConnecting)
+	const errorType = useSelector(getErrorType)
 
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -17,26 +33,34 @@ function Login() {
 	}
 
 	return (
-		/* Background Image */
 		<div className={css.loginBackground}>
 			<div className={css.loginContainer}>
 				<TcgLogo />
 				{connecting ? (
-					<div className={css.connecting}>Connecting...</div>
+					<div className={css.connecting}>
+						<Spinner />
+						<p>Connecting</p>
+					</div>
 				) : (
-					<>
-						<form onSubmit={handlePlayerName}>
+					<form className={css.nameForm} onSubmit={handlePlayerName}>
+						<div className={css.customInput}>
 							<input
 								maxLength={25}
 								name="playerName"
-								placeholder="Player name..."
+								placeholder=" "
 								autoFocus
-							/>
-							<button>Next</button>
-						</form>
-					</>
+								id="username"
+							></input>
+							<label htmlFor="username">Player Name</label>
+						</div>
+						<Button variant="stone" type="submit">
+							Next
+						</Button>
+					</form>
 				)}
-				<LinkContainer />
+				{errorType && <ErrorBanner>{getLoginError(errorType)}</ErrorBanner>}
+				<VersionLinks />
+				<Beef />
 			</div>
 		</div>
 	)

@@ -1,10 +1,10 @@
 import {select, take} from 'typed-redux-saga'
 import {call, put, fork} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {GameState} from 'types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
-import {CardT} from 'types/game-state'
-import {CardInfoT} from 'types/cards'
+import {CardT} from 'common/types/game-state'
+import {CardInfoT} from 'common/types/cards'
 import CARDS from 'server/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -13,7 +13,11 @@ import {
 	applyEffect,
 	removeEffect,
 } from 'logic/game/game-actions'
-import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
+import {
+	getPlayerState,
+	getOpponentState,
+	getGameState,
+} from 'logic/game/game-selectors'
 import {anyAvailableReqOptions} from 'server/utils/reqs'
 
 function* borrowSaga(): SagaIterator {
@@ -32,9 +36,11 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	if (!cardInfo) return
 
 	if (cardInfo.useReqs) {
+		const gameState = yield* select(getGameState)
 		const playerState = yield* select(getPlayerState)
 		const opponentState = yield* select(getOpponentState)
 		const canUse = anyAvailableReqOptions(
+			gameState,
 			playerState,
 			opponentState,
 			cardInfo.useReqs
@@ -61,6 +67,10 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			'curse_of_vanishing',
 			'looting',
 			'fortune',
+			'chorus_fruit',
+			'sweeping_edge',
+			'potion_of_slowness',
+			'potion_of_weakness',
 		].includes(card.cardId)
 	) {
 		yield put(setOpenedModal('confirm'))
@@ -87,7 +97,7 @@ const getFollowUpName = (cardInfo: CardInfoT) => {
 	return cardInfo.name
 }
 
-function* actionLogicSaga(gameState: GameState): SagaIterator {
+function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
 	if (pState.followUp) {

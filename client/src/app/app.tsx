@@ -1,43 +1,65 @@
-import {useState} from 'react'
-import {useSelector} from 'react-redux'
-import {getPlayerName} from 'logic/session/session-selectors'
-import {getGameState} from 'logic/game/game-selectors'
-import {getStatus} from 'logic/matchmaking/matchmaking-selectors'
+import {useState, useEffect} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
+import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import LostConnection from 'components/lost-connection'
 import {getSocketStatus} from 'logic/socket/socket-selectors'
+import {sectionChange} from 'logic/sound/sound-actions'
+import {useRouter} from './app-hooks'
 import Login from './login'
-import MainMenu from './main-menu'
 import Game from './game'
+import MainMenu from './main-menu'
 import Deck from './deck'
 import MatchMaking from './match-making'
-import css from './app.module.css'
+import Toast from 'components/toast'
+import Settings from './main-menu/settings'
+import Background from 'components/background'
 
 function App() {
+	const section = useRouter()
+	const dispatch = useDispatch()
 	const playerName = useSelector(getPlayerName)
-	const matchmakingStatus = useSelector(getStatus)
-	const gameState = useSelector(getGameState)
 	const socketStatus = useSelector(getSocketStatus)
+	const toastMessage = useSelector(getToast)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
+	let enableToast = false
+
+	useEffect(() => {
+		dispatch(sectionChange(section))
+	}, [section])
 
 	const router = () => {
-		if (gameState) {
+		if (section === 'game') {
 			return <Game />
-		} else if (matchmakingStatus) {
+		} else if (section === 'matchmaking') {
 			return <MatchMaking />
 		} else if (playerName) {
-			return menuSection === 'deck' ? (
-				<Deck setMenuSection={setMenuSection} />
-			) : (
-				<MainMenu setMenuSection={setMenuSection} />
-			)
+			enableToast = true
+			switch (menuSection) {
+				case 'deck':
+					return <Deck setMenuSection={setMenuSection} />
+				case 'settings':
+					return <Settings setMenuSection={setMenuSection} />
+				case 'mainmenu':
+				default:
+					return <MainMenu setMenuSection={setMenuSection} />
+			}
 		}
 		return <Login />
 	}
 
 	return (
 		<main>
-			<div className={css.form}>{router()}</div>
-			{playerName && !socketStatus ? <LostConnection /> : null}
+			<Background noImage={!playerName || menuSection === 'settings'} />
+			{router()}
+			{playerName && !socketStatus && <LostConnection />}
+			{enableToast && (
+				<Toast
+					title={toastMessage.title}
+					description={toastMessage.description}
+					image={toastMessage.image}
+					setOpen={toastMessage.open}
+				/>
+			)}
 		</main>
 	)
 }

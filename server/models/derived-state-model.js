@@ -1,7 +1,9 @@
-import CARDS from '../cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../cards'
 
 /**
  * @typedef {import("./root-model").GameModel} GameModel
+ * @typedef {import("common/types/cards").HermitCardT} HermitCardT
+ * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  */
 
 export class DerivedStateModel {
@@ -55,12 +57,12 @@ export class DerivedStateModel {
 
 	get playerHermitInfo() {
 		const hermitCard = this.playerHermitCard
-		return hermitCard ? CARDS[hermitCard.cardId] : null
+		return hermitCard ? HERMIT_CARDS[hermitCard.cardId] : null
 	}
 
 	get opponentHermitInfo() {
 		const hermitCard = this.opponentHermitCard
-		return hermitCard ? CARDS[hermitCard.cardId] : null
+		return hermitCard ? HERMIT_CARDS[hermitCard.cardId] : null
 	}
 
 	get playerEffectCard() {
@@ -75,12 +77,12 @@ export class DerivedStateModel {
 
 	get playerEffectCardInfo() {
 		const effectCard = this.playerEffectCard
-		return effectCard ? CARDS[effectCard.cardId] : null
+		return effectCard ? EFFECT_CARDS[effectCard.cardId] : null
 	}
 
 	get opponentEffectCardInfo() {
 		const effectCard = this.opponentEffectCard
-		return effectCard ? CARDS[effectCard.cardId] : null
+		return effectCard ? EFFECT_CARDS[effectCard.cardId] : null
 	}
 
 	get singleUseCard() {
@@ -89,6 +91,6 @@ export class DerivedStateModel {
 
 	get singleUseInfo() {
 		const singleUseCard = this.singleUseCard
-		return singleUseCard ? CARDS[singleUseCard.cardId] : null
+		return singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
 	}
 }

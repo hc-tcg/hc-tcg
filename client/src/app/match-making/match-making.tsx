@@ -6,8 +6,11 @@ import {
 	getCode,
 	getInvalidCode,
 } from 'logic/matchmaking/matchmaking-selectors'
-import css from './match-making.module.css'
+import css from './match-making.module.scss'
 import TcgLogo from 'components/tcg-logo'
+import Button from 'components/button'
+import Spinner from 'components/spinner'
+import ErrorBanner from 'components/error-banner'
 
 function MatchMaking() {
 	const dispatch = useDispatch()
@@ -15,8 +18,7 @@ function MatchMaking() {
 	const code = useSelector(getCode)
 	const invalidCode = useSelector(getInvalidCode)
 
-	const handleCancel = (ev: React.SyntheticEvent<HTMLButtonElement>) => {
-		ev.preventDefault()
+	const handleCancel = () => {
 		dispatch(leaveMatchmaking())
 	}
 
@@ -31,62 +33,76 @@ function MatchMaking() {
 		navigator.clipboard.writeText(code)
 	}
 
-	let content = null
-	if (status === 'random_waiting') {
-		content = (
-			<>
-				<div className={css.message}>Waiting for opponent</div>
-				<button onClick={handleCancel}>Cancel</button>
-			</>
-		)
-	} else if (status === 'loading') {
-		content = (
-			<>
-				<div className={css.message}>Loading...</div>
-			</>
-		)
-	} else if (status === 'starting') {
-		content = (
-			<>
-				<div className={css.message}>Starting game...</div>
-			</>
-		)
-	} else if (status === 'private_waiting') {
-		content = (
-			<>
-				<div className={css.message}>Waiting for opponent</div>
-				<div className={css.code} onClick={handleCodeClick}>
-					{code}
-				</div>
-				<div className={css.options}>
-					<button onClick={handleCancel}>Cancel</button>
-				</div>
-			</>
-		)
-	} else if (status === 'private_code_needed') {
-		content = (
-			<>
-				<div className={css.message}>Please enter game code</div>
-				<form className={css.codeInput} onSubmit={handleCodeSubmit}>
-					<input
-						className={invalidCode ? css.invalidCode : undefined}
-						name="gameCode"
-						autoFocus
-					/>
-					<div className={css.options}>
-						<button onClick={handleCancel}>Cancel</button>
-						<button>Join</button>
-					</div>
-				</form>
-			</>
-		)
+	const Status = () => {
+		switch (status) {
+			default:
+			case 'random_waiting':
+				return (
+					<>
+						<Spinner />
+						<p>Waiting for opponent</p>
+						<Button variant="stone" onClick={handleCancel}>
+							Cancel
+						</Button>
+					</>
+				)
+			case 'loading':
+				return (
+					<>
+						<Spinner />
+						<p>Loading</p>
+					</>
+				)
+			case 'starting':
+				return (
+					<>
+						<Spinner />
+						<p>Starting Game</p>
+					</>
+				)
+			case 'private_waiting':
+				return (
+					<>
+						<p>Waiting for opponent</p>
+						<div className={css.code} onClick={handleCodeClick}>
+							{code}
+						</div>
+						<div className={css.options}>
+							<Button variant="stone" onClick={handleCancel}>
+								Cancel
+							</Button>
+						</div>
+					</>
+				)
+			case 'private_code_needed':
+				return (
+					<>
+						<form className={css.codeInput} onSubmit={handleCodeSubmit}>
+							<label htmlFor="gameCode">Enter game code:</label>
+							<input
+								className={invalidCode ? css.invalidCode : ''}
+								name="gameCode"
+								id="gameCode"
+								autoFocus
+							/>
+							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
+							<div className={css.options}>
+								<Button variant="stone" onClick={handleCancel}>
+									Cancel
+								</Button>
+								<Button variant="stone">Join</Button>
+							</div>
+						</form>
+					</>
+				)
+		}
 	}
 
 	return (
-		<div className={css.matchMakingBackground}>
-			<div className={css.matchMakingContainer}>
-				<TcgLogo />
-				{content}
+		<div className={css.body}>
+			<TcgLogo />
+			<div className={css.content}>
+				<Status />
 			</div>
 		</div>
 	)

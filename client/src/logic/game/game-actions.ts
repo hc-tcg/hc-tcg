@@ -1,16 +1,27 @@
-import {GameStatePayload} from 'types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {
 	CardT,
 	GameEndOutcomeT,
 	GameEndReasonT,
 	CurrentCoinFlipT,
-} from 'types/game-state'
-import {PickProcessT, PickedCardT} from 'types/pick-process'
-import {MessageInfoT} from 'types/chat'
+} from 'common/types/game-state'
+import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {MessageInfoT} from 'common/types/chat'
 
-export const gameState = (gameState: GameStatePayload) => ({
+export const gameState = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE' as const,
-	payload: gameState,
+	payload: {
+		localGameState,
+		time: Date.now(),
+	},
+})
+
+export const localGameState = (localGameState: LocalGameState) => ({
+	type: 'LOCAL_GAME_STATE' as const,
+	payload: {
+		localGameState,
+		time: Date.now(),
+	},
 })
 
 export const gameStart = () => ({
@@ -53,9 +64,14 @@ export const forfeit = () => ({
 	type: 'FORFEIT' as const,
 })
 
-export const startAttack = (type: 'zero' | 'primary' | 'secondary') => ({
+type ExtraItemT = {hermitId: string; type: 'primary' | 'secondary'}
+
+export const startAttack = (
+	type: 'zero' | 'primary' | 'secondary',
+	extra?: Record<string, ExtraItemT>
+) => ({
 	type: 'START_ATTACK' as const,
-	payload: {type},
+	payload: {type, extra},
 })
 
 export const showEndGameOverlay = (
@@ -111,10 +127,11 @@ export const endTurn = () => ({
 
 export const attack = (
 	type: 'zero' | 'primary' | 'secondary',
-	pickedCards: Record<string, Array<CardT>>
+	pickedCards: Record<string, Array<PickedCardT>>,
+	extra?: Record<string, any>
 ) => ({
 	type: 'ATTACK' as const,
-	payload: {type, pickedCards},
+	payload: {type, pickedCards, extra},
 })
 
 export const chatMessage = (message: string) => ({

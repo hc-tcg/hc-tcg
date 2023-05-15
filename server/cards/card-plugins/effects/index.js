@@ -11,6 +11,8 @@ import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
 import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
+import StringEffectCard from './string'
+import TurtleShellEffectCard from './turtle-shell'
 
 const EFFECT_CARDS = [
 	new BedEffectCard(),
@@ -26,6 +28,8 @@ const EFFECT_CARDS = [
 	new ThornsEffectCard(),
 	new MendingEffectCard(),
 	new LoyaltyEffectCard(),
+	// new StringEffectCard(),
+	// new TurtleShellEffectCard(),
 ]
 
 export default EFFECT_CARDS
