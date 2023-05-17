@@ -9,6 +9,8 @@ import WolfEffectCard from './wolf'
 import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
+import ThornsIIEffectCard from './thorns-ii'
+import ThornsIIIEffectCard from './thorns-iii'
 import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 import StringEffectCard from './string'
@@ -26,6 +28,8 @@ const EFFECT_CARDS = [
 	new NetheriteArmorEffectCard(),
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
+	new ThornsIIEffectCard(),
+	new ThornsIIIEffectCard(),
 	new MendingEffectCard(),
 	new LoyaltyEffectCard(),
 	// new StringEffectCard(),

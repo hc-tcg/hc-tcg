@@ -96,6 +96,8 @@ export const universe = [
 	'tangotek_common',
 	'tangotek_rare',
 	'thorns',
+	'thorns_ii',
+	'thorns_iii',
 	'tinfoilchef_common',
 	'tinfoilchef_rare',
 	'tinfoilchef_ultra_rare',
