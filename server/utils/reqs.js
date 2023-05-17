@@ -113,7 +113,6 @@ export const anyAvailableReqOptions = (
 /**
  * @param {PlayerState | LocalPlayerState} cardPlayerState
  * @param {number | null} rowIndex
- * @param {boolean} emptyRow
  * @returns {boolean}
  */
 export const validRow = (cardPlayerState, rowIndex) => {
@@ -232,9 +231,8 @@ export function checkAttachReq(gameState, slotPayload, req) {
 	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
 	const player = players[playerId]
 	const slotType = slotPayload.slotType
-	const emptyRow = slotType === 'hermit'
 
-	if (!validRow(player, rowIndex, emptyRow)) return false
+	if (!validRow(player, rowIndex)) return false
 	if (!validTarget(req.target, player, turnPlayerId, slotType)) return false
 	if (!validActive(req.active, player, rowIndex)) return false
 	if (!req.type.some((type) => validType(type, slotType))) return false
