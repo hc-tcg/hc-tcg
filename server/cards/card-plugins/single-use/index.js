@@ -27,6 +27,7 @@ import CurseOfBindingSingleUseCard from './curse-of-binding'
 import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
 import LootingSingleUseCard from './looting'
 import FortuneSingleUseCard from './fortune'
+import TridentSingleUseCard from './trident'
 import SweepingEdgeSingleUseCard from './sweeping-edge'
 import AnvilSingleUseCard from './anvil'
 import PotionOfSlownessSingleUseCard from './potion-of-slowness'
@@ -62,6 +63,7 @@ const SINGLE_USE_CARDS = [
 	new LootingSingleUseCard(),
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
+	new TridentSingleUseCard(),
 	// new SweepingEdgeSingleUseCard(),
 	// new AnvilSingleUseCard(),
 	// new PotionOfSlownessSingleUseCard(),

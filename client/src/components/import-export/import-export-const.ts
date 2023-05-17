@@ -101,6 +101,7 @@ export const universe = [
 	'tinfoilchef_ultra_rare',
 	'tnt',
 	'totem',
+	'trident',
 	'vintagebeef_common',
 	'vintagebeef_rare',
 	'vintagebeef_ultra_rare',
