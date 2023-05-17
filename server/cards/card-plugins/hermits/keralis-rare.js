@@ -79,6 +79,7 @@ class KeralisRareHermitCard extends HermitCard {
 
 			if (!validPick(game.state, this.pickReqs[0], healTarget)) return 'INVALID'
 
+			if (healTarget.row.health === null) return 'INVALID'
 			healTarget.row.health = Math.min(
 				healTarget.row.health + this.heal,
 				healTarget.cardInfo.health // max health
