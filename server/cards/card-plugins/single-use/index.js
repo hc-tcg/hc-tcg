@@ -31,6 +31,7 @@ import SweepingEdgeSingleUseCard from './sweeping-edge'
 import AnvilSingleUseCard from './anvil'
 import PotionOfSlownessSingleUseCard from './potion-of-slowness'
 import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
+import EnderPearlSingleUseCard from './ender-pearl'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -66,6 +67,7 @@ const SINGLE_USE_CARDS = [
 	// new AnvilSingleUseCard(),
 	// new PotionOfSlownessSingleUseCard(),
 	// new PotionOfWeaknessSingleUseCard(),
+	new EnderPearlSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS

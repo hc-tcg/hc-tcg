@@ -16,7 +16,7 @@ class MilkBucketEffectCard extends EffectCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1},
+			{target: 'player', type: 'hermit', amount: 1, empty: false},
 		])
 
 		this.attachReq = {target: 'player', type: ['effect', 'single_use']}

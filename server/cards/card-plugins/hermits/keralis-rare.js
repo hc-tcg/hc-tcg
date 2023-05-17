@@ -31,7 +31,13 @@ class KeralisRareHermitCard extends HermitCard {
 		this.heal = 100
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1, active: false},
+			{
+				target: 'player',
+				type: 'hermit',
+				amount: 1,
+				active: false,
+				empty: false,
+			},
 		])
 	}
 
