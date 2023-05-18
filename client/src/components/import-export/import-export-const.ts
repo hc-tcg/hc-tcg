@@ -26,6 +26,7 @@ export const universe = [
 	'fishing_rod',
 	'flint_&_steel',
 	'fortune',
+	'bad_omen',
 	'geminitay_common',
 	'geminitay_rare',
 	'gold_armor',
