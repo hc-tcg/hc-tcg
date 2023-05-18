@@ -94,6 +94,7 @@ export const universe = [
 	'spyglass',
 	'stressmonster101_common',
 	'stressmonster101_rare',
+	'sweeping_edge',
 	'tangotek_common',
 	'tangotek_rare',
 	'thorns',
