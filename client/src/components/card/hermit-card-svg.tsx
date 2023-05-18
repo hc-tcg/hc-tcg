@@ -87,18 +87,9 @@ const HermitCard = ({card}: HermitCardProps) => {
 						y="80"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank.name}.png`}
+						href={`/images/ranks/${rank.name}.svg`}
 						className={css.rank}
 					/>
-					<text
-						x="91"
-						y="109.5"
-						fontSize="40"
-						fill="white"
-						className={classnames(css.rankText, css[rank.name])}
-					>
-						{rank.cost}
-					</text>
 				</g>
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
