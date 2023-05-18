@@ -15,10 +15,10 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				'After your attack, choose one of yout opponent AFK Hermits to make active\n\nFlip a coin. If heads also do 10hp damage to that Hermit.\n\nDiscard after use.',
+				'After your attack, choose one of your opponent AFK Hermits to make active\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {afkTarget: 10}
-		this.pickOn = 'attack'
+		this.pickOn = 'followup'
 		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1, active: false},
 		])
@@ -30,30 +30,45 @@ class EggSingleUseCard extends SingleUseCard {
 	 */
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
-			const {pickedCardsInfo} = attackState
+			const {singleUseInfo, currentPlayer} = game.ds
 			if (singleUseInfo?.id !== this.id) return target
-			if (target.isActive) return target
+			if (!target.isActive) return target
+
+			applySingleUse(currentPlayer)
+			currentPlayer.followUp = this.id
+
+			return target
+		})
+
+		game.hooks.followUp.tap(this.id, (action, followUpState) => {
+			const {currentPlayer, opponentPlayer} = game.ds
+			const {followUp, pickedCardsInfo} = followUpState
+
+			if (followUp !== this.id) return
 
 			const eggPickedCards = pickedCardsInfo[this.id] || []
-			if (eggPickedCards.length !== 1) return target
+			if (eggPickedCards.length !== 1) return 'INVALID'
+
 			const pickedHermit = eggPickedCards[0]
-			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
-			if (pickedHermit.row !== target.row) return target
+			if (!validPick(game.state, this.pickReqs[0], pickedHermit))
+				return 'INVALID'
+			if (!pickedHermit.row.health) return 'INVALID'
 
 			currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
 			if (currentPlayer.coinFlips[this.id][0] === 'heads') {
-				target.extraEffectDamage += this.damage.afkTarget
-			} else {
-				// Prevent player from removing the card after attacking,
-				// not needed if extra damage is applied
-				applySingleUse(currentPlayer)
+				pickedHermit.row.health -= this.damage.afkTarget
 			}
 
-			// Make the picked hermit active
 			opponentPlayer.board.activeRow = pickedHermit.rowIndex
+			return 'DONE'
+		})
 
-			return target
+		game.hooks.turnEnd.tap(this.id, () => {
+			// clean up
+			const {currentPlayer} = game.ds
+			if (currentPlayer.followUp === this.id) {
+				currentPlayer.followUp = null
+			}
 		})
 	}
 }
