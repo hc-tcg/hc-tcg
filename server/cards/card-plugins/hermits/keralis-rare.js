@@ -31,7 +31,13 @@ class KeralisRareHermitCard extends HermitCard {
 		this.heal = 100
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1, active: false},
+			{
+				target: 'player',
+				type: 'hermit',
+				amount: 1,
+				active: false,
+				empty: false,
+			},
 		])
 	}
 
@@ -73,6 +79,7 @@ class KeralisRareHermitCard extends HermitCard {
 
 			if (!validPick(game.state, this.pickReqs[0], healTarget)) return 'INVALID'
 
+			if (healTarget.row.health === null) return 'INVALID'
 			healTarget.row.health = Math.min(
 				healTarget.row.health + this.heal,
 				healTarget.cardInfo.health // max health

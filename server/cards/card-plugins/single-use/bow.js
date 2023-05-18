@@ -18,7 +18,13 @@ class BowSingleUseCard extends SingleUseCard {
 		this.damage = {afkTarget: 40}
 		this.pickOn = 'attack'
 		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+			{
+				target: 'opponent',
+				type: 'hermit',
+				amount: 1,
+				active: false,
+				empty: false,
+			},
 		])
 		this.pickReqs = this.useReqs
 	}

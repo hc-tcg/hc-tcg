@@ -18,7 +18,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		this.heal = 30
 		this.pickOn = 'apply'
 		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1},
+			{target: 'player', type: 'hermit', amount: 1, empty: false},
 		])
 		this.pickReqs = this.useReqs
 	}
@@ -36,6 +36,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
 					return 'INVALID'
 				const {row, cardInfo} = suPickedCards[0]
+				if (row.health === null) return 'INVALID'
 				row.health = Math.min(
 					row.health + this.heal,
 					cardInfo.health // max health

@@ -18,6 +18,7 @@ export const universe = [
 	'docm77_rare',
 	'efficiency',
 	'emerald',
+	'ender_pearl',
 	'ethoslab_common',
 	'ethoslab_rare',
 	'ethoslab_ultra_rare',
