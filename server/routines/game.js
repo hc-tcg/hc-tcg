@@ -501,7 +501,6 @@ function* turnSaga(game) {
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Apply damage from ailments
-	// TODO - Armor should prevent ailment damage
 	for (let row of opponentPlayer.board.rows) {
 		if (
 			row.health &&
