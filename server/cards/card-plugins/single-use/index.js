@@ -32,6 +32,9 @@ import SweepingEdgeSingleUseCard from './sweeping-edge'
 import AnvilSingleUseCard from './anvil'
 import PotionOfSlownessSingleUseCard from './potion-of-slowness'
 import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
+import EggSingleUseCard from './egg'
+import EnderPearlSingleUseCard from './ender-pearl'
+import BadOmenSingleUseCard from './bad-omen'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -64,10 +67,13 @@ const SINGLE_USE_CARDS = [
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
 	new TridentSingleUseCard(),
-	// new SweepingEdgeSingleUseCard(),
+	new SweepingEdgeSingleUseCard(),
 	// new AnvilSingleUseCard(),
 	// new PotionOfSlownessSingleUseCard(),
 	// new PotionOfWeaknessSingleUseCard(),
+	new EggSingleUseCard(),
+	new EnderPearlSingleUseCard(),
+	new BadOmenSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS
