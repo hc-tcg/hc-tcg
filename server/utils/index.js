@@ -134,17 +134,26 @@ export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
 	const fortune = !!currentPlayer.custom['fortune']
 	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
+	let forceTails = false
+	if (currentPlayer.board.activeRow) {
+		const currentRow = currentPlayer.board.rows[currentPlayer.board.activeRow]
+		if (currentRow.ailments.find((a) => a.id === 'badomen')) {
+			forceTails = true
+		}
+	}
 
 	/** @type {Array<CoinFlipT>} */
 	const result = []
 	for (let i = 0; i < times; i++) {
-		/** @type {CoinFlipT} */
-		const coinFlip = forceHeads
-			? 'heads'
-			: Math.random() > 0.5
-			? 'heads'
-			: 'tails'
-		result.push(coinFlip)
+		if (forceHeads) {
+			result.push('heads')
+		} else if (forceTails) {
+			result.push('tails')
+		} else {
+			/** @type {CoinFlipT} */
+			const coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
+			result.push(coinFlip)
+		}
 	}
 	return result
 }
