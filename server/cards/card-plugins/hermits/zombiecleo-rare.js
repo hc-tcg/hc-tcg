@@ -30,7 +30,13 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		this.pickOn = 'use-ally'
 		this.pickReqs = [
-			{target: 'player', type: 'hermit', amount: 1, active: false},
+			{
+				target: 'player',
+				type: 'hermit',
+				amount: 1,
+				active: false,
+				empty: false,
+			},
 		]
 	}
 
