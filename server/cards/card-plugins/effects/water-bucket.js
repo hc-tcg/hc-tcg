@@ -17,7 +17,7 @@ class WaterBucketEffectCard extends EffectCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1, empty: false},
+			{target: 'player', type: 'hermit', amount: 1},
 		])
 
 		this.attachReq = {target: 'player', type: ['effect', 'single_use']}

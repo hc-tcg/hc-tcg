@@ -31,13 +31,7 @@ class TangoTekRareHermitCard extends HermitCard {
 		})
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{
-				target: 'opponent',
-				type: 'hermit',
-				amount: 1,
-				active: false,
-				empty: false,
-			},
+			{target: 'opponent', type: 'hermit', amount: 1, active: false},
 		])
 	}
 
