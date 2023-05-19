@@ -1,3 +1,4 @@
+import {isRemovable} from '../../../utils'
 import SingleUseCard from './_single-use-card'
 
 /**
@@ -30,6 +31,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
 				const pEffect = playerActiveRow?.effectCard
 				const oEffect = opponentActiveRow?.effectCard
+				if (!isRemovable(pEffect) || !isRemovable(oEffect)) return 'DONE'
 				playerActiveRow.effectCard = oEffect
 				opponentActiveRow.effectCard = pEffect
 				return 'DONE'

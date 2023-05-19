@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../utils'
+import {discardCard, isRemovable} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -39,7 +39,8 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 				].filter(Boolean)
 
 				targetRows.forEach((row) => {
-					if (row.effectCard) discardCard(game, row.effectCard)
+					if (row.effectCard && isRemovable(row.effectCard))
+						discardCard(game, row.effectCard)
 				})
 
 				return 'DONE'

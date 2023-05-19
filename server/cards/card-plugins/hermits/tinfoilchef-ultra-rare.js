@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardCard} from '../../../utils'
+import {flipCoin, discardCard, isRemovable} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -41,6 +41,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 			if (!opponentActiveRow || !opponentActiveRow.effectCard) return target
+			if (!isRemovable(opponentActiveRow.effectCard)) return target
 
 			// can't discard two items on the same hermit
 			const limit = currentPlayer.custom[this.id] || {}

@@ -13,6 +13,7 @@ import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
+import CommandBlockEffectCard from './command-block'
 
 const EFFECT_CARDS = [
 	new BedEffectCard(),
@@ -30,6 +31,7 @@ const EFFECT_CARDS = [
 	new LoyaltyEffectCard(),
 	// new StringEffectCard(),
 	// new TurtleShellEffectCard(),
+	new CommandBlockEffectCard(),
 ]
 
 export default EFFECT_CARDS

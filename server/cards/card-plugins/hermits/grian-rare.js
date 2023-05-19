@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../utils'
+import {flipCoin, isRemovable} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -72,6 +72,7 @@ class GrianRareHermitCard extends HermitCard {
 			delete currentPlayer.custom[this.id]
 
 			if (!opponentActiveRow?.effectCard) return
+			if (!isRemovable(opponentActiveRow.effectCard)) return
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
@@ -114,7 +115,6 @@ class GrianRareHermitCard extends HermitCard {
 				return 'DONE'
 			}
 
-			// TODO - deal with bed (same as emerald)
 			playerActiveRow.effectCard = effectCard
 
 			return 'DONE'

@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../utils'
+import {discardCard, isRemovable} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -33,6 +33,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 				const activeRowState = opponentPlayer.board.rows[activeRow]
 				if (!activeRowState) return 'INVALID'
 				if (activeRowState.effectCard) {
+					if (!isRemovable(activeRowState.effectCard)) return 'DONE'
 					discardCard(game, activeRowState.effectCard)
 				}
 				return 'DONE'

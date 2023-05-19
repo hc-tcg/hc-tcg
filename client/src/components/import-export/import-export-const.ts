@@ -6,6 +6,7 @@ export const universe = [
 	'chest',
 	'chorus_fruit',
 	'clock',
+	'command_block',
 	'composter',
 	'crossbow',
 	'cubfan135_common',

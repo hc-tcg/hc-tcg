@@ -1,4 +1,4 @@
-import CARDS, {ITEM_CARDS} from '../cards'
+import CARDS, {EFFECT_CARDS, ITEM_CARDS} from '../cards'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 
 /**
@@ -161,4 +161,8 @@ export function flipCoin(currentPlayer, times = 1) {
 export const getOpponentId = (game, playerId) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
+}
+
+export const isRemovable = (card) => {
+	return EFFECT_CARDS[card.cardId].removable
 }
