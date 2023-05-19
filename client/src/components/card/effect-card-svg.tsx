@@ -3,7 +3,6 @@ import css from './effect-card-svg.module.scss'
 import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
-import classNames from 'classnames'
 
 export type EffectCardProps = {
 	card: EffectCardT
@@ -73,14 +72,6 @@ const HermitCard = ({card}: EffectCardProps) => {
 						href={`/images/ranks/${rank.name}.png`}
 						className={css.rank}
 					/>
-					<text
-						x="52"
-						y="344"
-						fontSize="40"
-						className={classNames(css.rankText, css[rank.name])}
-					>
-						{rank.cost}
-					</text>
 				</g>
 			) : null}
 			<defs>

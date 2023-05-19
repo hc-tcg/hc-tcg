@@ -36,6 +36,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
 					return 'INVALID'
 				const {row, cardInfo} = suPickedCards[0]
+				if (row.health === null) return 'INVALID'
 				row.health = Math.min(
 					row.health + this.heal,
 					cardInfo.health // max health
