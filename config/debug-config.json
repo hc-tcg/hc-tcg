@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
-	"noItemRequirements": false,
+	"extraStartingCards": ["keralis_rare"],
+	"noItemRequirements": true,
 	"forceCoinFlip": false
 }

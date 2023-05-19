@@ -34,7 +34,12 @@ import {
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
-	const target = req.target === 'opponent' ? "opponent's" : 'your'
+	const target =
+		req.target === 'board'
+			? "anyone's"
+			: req.target === 'opponent'
+			? "opponent's"
+			: 'your'
 
 	let location = ''
 	if (req.target === 'hand') {
