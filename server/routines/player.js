@@ -9,8 +9,7 @@ function* playerConnectedSaga(action) {
 
 	if (action.payload.playerId) {
 		const existingPlayer = root.players[action.payload.playerId]
-		const validPlayer =
-			existingPlayer?.playerSecret === action.payload.playerSecret
+		const validPlayer = existingPlayer?.secret === action.payload.playerSecret
 
 		// console.log('User reconnected: ', action.payload.playerId)
 		if (validPlayer) {
@@ -19,7 +18,7 @@ function* playerConnectedSaga(action) {
 			yield put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.playerDeck,
+				payload: existingPlayer.deck,
 			})
 		} else {
 			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
@@ -47,7 +46,7 @@ function* playerDisconnectedSaga(action) {
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
-	const {playerId} = player
+	const {id: playerId} = player
 
 	// console.log('User disconnected: ', playerId)
 	yield put({type: 'PLAYER_DISCONNECTED', payload: player})
@@ -77,7 +76,7 @@ function* updateDeckSaga(action) {
 
 	player.socket?.emit('NEW_DECK', {
 		type: 'NEW_DECK',
-		payload: player.playerDeck,
+		payload: player.deck,
 	})
 }
 

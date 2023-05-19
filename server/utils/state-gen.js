@@ -159,7 +159,7 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.playerDeck.cards
+	const pack = player.deck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
@@ -186,9 +186,9 @@ export function getPlayerState(player) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: player.playerId,
-		playerName: player.playerName,
-		censoredPlayerName: player.censoredPlayerName,
+		id: player.id,
+		playerName: player.name,
+		censoredPlayerName: player.censoredName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -196,6 +196,7 @@ export function getPlayerState(player) {
 		discarded: [],
 		pile: pack.slice(7),
 		custom: {},
+		ailments: [],
 		board: {
 			activeRow: null,
 			singleUseCard: null,
@@ -249,6 +250,7 @@ export function getLocalPlayerState(playerState) {
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,
 		lives: playerState.lives,
+		ailments: playerState.ailments,
 		board: playerState.board,
 	}
 	return localPlayerState
@@ -270,20 +272,18 @@ export function getLocalGameState(
 	pastTurnActions = [],
 	opponentAvailableActions = []
 ) {
-	const opponentPlayerId = game
-		.getPlayerIds()
-		.find((id) => id !== player.playerId)
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
 	if (!opponentPlayerId) {
 		return null
 	}
 
-	const playerState = game.state.players[player.playerId]
+	const playerState = game.state.players[player.id]
 	const opponentState = game.state.players[opponentPlayerId]
 
 	// convert player states
 	/** @type {Record<string, LocalPlayerState>} */
 	const players = {}
-	players[player.playerId] = getLocalPlayerState(playerState)
+	players[player.id] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	/** @type {LocalGameState} */
@@ -297,16 +297,16 @@ export function getLocalGameState(
 		discarded: playerState.discarded,
 
 		// ids
-		playerId: player.playerId,
+		playerId: player.id,
 		opponentPlayerId: opponentPlayerId,
 		currentPlayerId: game.ds.currentPlayer.id,
 
 		players,
 
 		pastTurnActions:
-			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
+			player.id === game.ds.currentPlayer.id ? pastTurnActions : [],
 		availableActions:
-			player.playerId === game.ds.currentPlayer.id
+			player.id === game.ds.currentPlayer.id
 				? availableActions
 				: opponentAvailableActions,
 
