@@ -131,6 +131,11 @@ const getRank = (card: CardInfoT): React.ReactNode => {
 	)
 }
 
+const getAttach = (card: CardInfoT): React.ReactNode => {
+	if (card.type !== 'effect') return null
+	return <div className={css.attach}>Attach</div>
+}
+
 const getSingleUse = (card: CardInfoT): React.ReactNode => {
 	if (card.type !== 'single_use') return null
 	return <div className={css.singleUse}>Single Use</div>
@@ -153,6 +158,7 @@ const CardTooltip = ({card}: Props) => {
 			<div className={css.topLine}>
 				{getName(card)}
 				{getHermitType(card)}
+				{getAttach(card)}
 				{getSingleUse(card)}
 			</div>
 			<div className={css.description}>
