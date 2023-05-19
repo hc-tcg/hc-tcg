@@ -61,7 +61,6 @@ import XBCraftedRareHermitCard from './xbcrafted-rare'
 import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 import ZombieCleoRareHermitCard from './zombiecleo-rare'
-import BeettlejhostCommonHermitCard from './beetlejhost-common'
 
 const HERMIT_CARDS = [
 	new BdoubleO100CommonHermitCard(),
