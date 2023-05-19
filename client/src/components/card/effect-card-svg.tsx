@@ -69,7 +69,7 @@ const HermitCard = ({card}: EffectCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank.name}.svg`}
+						href={`/images/ranks/${rank.name}.png`}
 						className={css.rank}
 					/>
 				</g>

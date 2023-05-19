@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="gold.svg">
+   sodipodi:docname="gold.svg"
+   inkscape:export-filename="C:\Users\Ben\Documents\GitHub\hc-tcg\hc-tcg\client\public\images\ranks\gold.png"
+   inkscape:export-xdpi="259.17099"
+   inkscape:export-ydpi="259.17099">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -26,7 +29,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="-140.2276"
+     inkscape:cx="-222.30249"
      inkscape:cy="45.564562"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1-5"
@@ -36,8 +39,8 @@
      inkscape:bbox-paths="true"
      inkscape:bbox-nodes="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1027"
-     inkscape:window-x="-8"
+     inkscape:window-height="1057"
+     inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -48,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

@@ -15,7 +15,10 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="obsidian.svg">
+   sodipodi:docname="obsidian.svg"
+   inkscape:export-filename="C:\Users\Ben\Documents\GitHub\hc-tcg\hc-tcg\client\public\images\ranks\obsidian.png"
+   inkscape:export-xdpi="259.17099"
+   inkscape:export-ydpi="259.17099">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -25,9 +28,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.98994949"
-     inkscape:cx="-235.45492"
-     inkscape:cy="-65.921534"
+     inkscape:zoom="1.4"
+     inkscape:cx="-92.267567"
+     inkscape:cy="-17.086097"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1-5"
      showgrid="false"
@@ -77,16 +80,16 @@
          sodipodi:cx="80.247673"
          sodipodi:sides="5"
          id="path826-1-6-2-0-8"
-         style="opacity:1;vector-effect:none;fill:#b380b3;fill-opacity:1;stroke:#3d253d;stroke-width:0.39063662;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+         style="opacity:1;vector-effect:none;fill:#9d80b3;fill-opacity:1;stroke:#33253d;stroke-width:0.39063662;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
          sodipodi:type="star" />
       <text
          transform="scale(0.99979654,1.0002035)"
          id="text830-3-2-6-5-9"
          y="4.0784359"
          x="2.5376482"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.71089232px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#3d253d;fill-opacity:1;stroke:none;stroke-width:0.09260416;"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.71089232px;line-height:1.25;font-family:Arial;-inkscape-font-specification:Arial;letter-spacing:0px;word-spacing:0px;fill:#33253d;fill-opacity:1;stroke:none;stroke-width:0.09260416;"
          xml:space="preserve"><tspan
-           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bangers;-inkscape-font-specification:Bangers;fill:#3d253d;fill-opacity:1;stroke-width:0.09260416;"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Bangers;-inkscape-font-specification:Bangers;fill:#33253d;fill-opacity:1;stroke-width:0.09260416;"
            y="4.0784359"
            x="2.5376482"
            id="tspan828-0-68-5-2-9"
