@@ -1,8 +1,10 @@
 // common cards
 import BdoubleO100CommonHermitCard from './bdoubleo100-common'
+import BeetlejhostCommonHermitCard from './beetlejhost-common'
 import Cubfan135CommonHermitCard from './cubfan135-common'
 import Docm77CommonHermitCard from './docm77-common'
 import EthosLabCommonHermitCard from './ethoslab-common'
+import EvilJevinCommonHermitCard from './eviljevin-common'
 import FalseSymmetryCommonHermitCard from './falsesymmetry-common'
 import GeminiTayCommonHermitCard from './geminitay-common'
 import GrianCommonHermitCard from './grian-common'
@@ -15,6 +17,7 @@ import JoeHillsCommonHermitCard from './joehills-common'
 import KeralisCommonHermitCard from './keralis-common'
 import MumboJumboCommonHermitCard from './mumbojumbo-common'
 import PearlescentMoonCommonHermitCard from './pearlescentmoon-common'
+import PoultrymanCommonHermitCard from './poultryman-common'
 import RendogCommonHermitCard from './rendog-common'
 import StressMonster101CommonHermitCard from './stressmonster101-common'
 import TangoTekCommonHermitCard from './tangotek-common'
@@ -58,10 +61,12 @@ import XBCraftedRareHermitCard from './xbcrafted-rare'
 import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 import ZombieCleoRareHermitCard from './zombiecleo-rare'
+import BeettlejhostCommonHermitCard from './beetlejhost-common'
 
 const HERMIT_CARDS = [
 	new BdoubleO100CommonHermitCard(),
 	new BdoubleO100RareHermitCard(),
+	new BeetlejhostCommonHermitCard(),
 	new Cubfan135CommonHermitCard(),
 	new Cubfan135RareHermitCard(),
 	new Docm77CommonHermitCard(),
@@ -70,6 +75,7 @@ const HERMIT_CARDS = [
 	new EthosLabCommonHermitCard(),
 	new EthosLabRareHermitCard(),
 	new EthosLabUltraRareHermitCard(),
+	new EvilJevinCommonHermitCard(),
 	new FalseSymmetryCommonHermitCard(),
 	new FalseSymmetryRareHermitCard(),
 	new GeminiTayCommonHermitCard(),
@@ -95,6 +101,7 @@ const HERMIT_CARDS = [
 	new LlamadadRareHermitCard(),
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
+	new PoultrymanCommonHermitCard(),
 	new PotatoBoyRareHermitCard(),
 	new RendogCommonHermitCard(),
 	new RendogRareHermitCard(),
