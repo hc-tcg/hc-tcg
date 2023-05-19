@@ -86,6 +86,7 @@ export const universe = [
 	'mumbojumbo_rare',
 	'netherite_armor',
 	'netherite_sword',
+	'llamadad_rare',
 	'pearlescentmoon_common',
 	'pearlescentmoon_rare',
 	'rendog_common',

@@ -43,6 +43,7 @@ import Iskall85RareHermitCard from './iskall85-rare'
 import JoeHillsRareHermitCard from './joehills-rare'
 import KeralisRareHermitCard from './keralis-rare'
 import MumboJumboRareHermitCard from './mumbojumbo-rare'
+import LlamadadRareHermitCard from './llamadad-rare'
 import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
 import RendogRareHermitCard from './rendog-rare'
 import StressMonster101RareHermitCard from './stressmonster101-rare'
@@ -90,6 +91,7 @@ const HERMIT_CARDS = [
 	new KeralisRareHermitCard(),
 	new MumboJumboCommonHermitCard(),
 	new MumboJumboRareHermitCard(),
+	new LlamadadRareHermitCard(),
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
 	new RendogCommonHermitCard(),
