@@ -10,9 +10,9 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		super({
 			id: 'sweeping_edge',
 			name: 'Sweeping Edge',
-			rarity: 'rare',
+			rarity: 'ultra_rare',
 			description:
-				'Opponent is forced to discard any attached effect cards on their active Hermit and any adjacent Hermits.\n\nDiscard after use.',
+				'Opponent must discard any effect cards attached to their active Hermit and adjacent Hermits.\n\nDiscard after use.',
 		})
 
 		this.useReqs = [
@@ -30,7 +30,6 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id === this.id) {
 				const activeRow = opponentPlayer.board.activeRow
 				if (activeRow === null) return 'INVALID'
-				const activeRowState = opponentPlayer.board.rows[activeRow]
 
 				const rows = opponentPlayer.board.rows
 				const targetRows = [

@@ -1,8 +1,10 @@
 // common cards
 import BdoubleO100CommonHermitCard from './bdoubleo100-common'
+import BeetlejhostCommonHermitCard from './beetlejhost-common'
 import Cubfan135CommonHermitCard from './cubfan135-common'
 import Docm77CommonHermitCard from './docm77-common'
 import EthosLabCommonHermitCard from './ethoslab-common'
+import EvilJevinCommonHermitCard from './eviljevin-common'
 import FalseSymmetryCommonHermitCard from './falsesymmetry-common'
 import GeminiTayCommonHermitCard from './geminitay-common'
 import GrianCommonHermitCard from './grian-common'
@@ -15,6 +17,7 @@ import JoeHillsCommonHermitCard from './joehills-common'
 import KeralisCommonHermitCard from './keralis-common'
 import MumboJumboCommonHermitCard from './mumbojumbo-common'
 import PearlescentMoonCommonHermitCard from './pearlescentmoon-common'
+import PoultrymanCommonHermitCard from './poultryman-common'
 import RendogCommonHermitCard from './rendog-common'
 import StressMonster101CommonHermitCard from './stressmonster101-common'
 import TangoTekCommonHermitCard from './tangotek-common'
@@ -43,7 +46,9 @@ import Iskall85RareHermitCard from './iskall85-rare'
 import JoeHillsRareHermitCard from './joehills-rare'
 import KeralisRareHermitCard from './keralis-rare'
 import MumboJumboRareHermitCard from './mumbojumbo-rare'
+import LlamadadRareHermitCard from './llamadad-rare'
 import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
+import PotatoBoyRareHermitCard from './potatoboy-rare'
 import PharaohRareHermitCard from './pharaoh-rare'
 import RendogRareHermitCard from './rendog-rare'
 import StressMonster101RareHermitCard from './stressmonster101-rare'
@@ -61,6 +66,7 @@ import ZombieCleoRareHermitCard from './zombiecleo-rare'
 const HERMIT_CARDS = [
 	new BdoubleO100CommonHermitCard(),
 	new BdoubleO100RareHermitCard(),
+	new BeetlejhostCommonHermitCard(),
 	new Cubfan135CommonHermitCard(),
 	new Cubfan135RareHermitCard(),
 	new Docm77CommonHermitCard(),
@@ -69,6 +75,7 @@ const HERMIT_CARDS = [
 	new EthosLabCommonHermitCard(),
 	new EthosLabRareHermitCard(),
 	new EthosLabUltraRareHermitCard(),
+	new EvilJevinCommonHermitCard(),
 	new FalseSymmetryCommonHermitCard(),
 	new FalseSymmetryRareHermitCard(),
 	new GeminiTayCommonHermitCard(),
@@ -91,8 +98,11 @@ const HERMIT_CARDS = [
 	new KeralisRareHermitCard(),
 	new MumboJumboCommonHermitCard(),
 	new MumboJumboRareHermitCard(),
+	new LlamadadRareHermitCard(),
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
+	new PoultrymanCommonHermitCard(),
+	new PotatoBoyRareHermitCard(),
 	new PharaohRareHermitCard(),
 	new RendogCommonHermitCard(),
 	new RendogRareHermitCard(),

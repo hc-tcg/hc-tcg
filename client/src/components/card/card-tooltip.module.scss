@@ -34,8 +34,14 @@
 	line-height: 1.2;
 }
 
+.attach {
+	color: rgb(255, 142, 193);
+	font-style: italic;
+}
+
 .singleUse {
 	color: rgb(238, 135, 48);
+	font-style: italic;
 }
 
 .rarity {
@@ -107,22 +113,22 @@
 	}
 
 	&.iron {
-		color: #dad5d0;
+		color: #ece9e9;
 	}
 
 	&.gold {
-		color: #faee54;
+		color: #fefa4c;
 	}
 
 	&.emerald {
-		color: #59e479;
+		color: #59e477;
 	}
 
 	&.diamond {
-		color: #4ad7f0;
+		color: #7ff6fa;
 	}
 
-	&.netherite {
-		color: #6d6370;
+	&.obsidian {
+		color: #c188d1;
 	}
 }

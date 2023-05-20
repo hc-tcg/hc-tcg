@@ -92,14 +92,6 @@ const ItemCard = ({card}: ItemCardProps) => {
 						href={`/images/ranks/${rank.name}.png`}
 						className={css.rank}
 					/>
-					<text
-						x="52"
-						y="344"
-						fontSize="40"
-						className={classnames(css.rankText, css[rank.name])}
-					>
-						{rank.cost}
-					</text>
 				</g>
 			) : null}
 

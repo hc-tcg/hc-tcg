@@ -33,17 +33,18 @@ class BedEffectCard extends EffectCard {
 		// Discard bed after sleeping & store who had bed at start of turn
 		game.hooks.turnStart.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds
-
-			// Need to know which row had bed at start of the turn
 			const players = [currentPlayer, opponentPlayer]
 			players.forEach((playerState) => {
-				const bedInfo = playerState.custom[this.id] || {}
+				const bedInfo = {}
 				playerState.board.rows.forEach((row, rowIndex) => {
 					const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
 					const hasBed = row.effectCard?.cardId === this.id
 					if (!isSleeping && hasBed) {
 						discardCard(game, row.effectCard)
-					} else if (hasBed) bedInfo[rowIndex] = true
+					} else if (hasBed) {
+						// Need to store the bed instance to check if it is the same bed later
+						bedInfo[rowIndex] = row.effectCard?.cardInstance
+					}
 				})
 				if (Object.keys(bedInfo).length > 0) {
 					playerState.custom[this.id] = bedInfo
@@ -55,20 +56,20 @@ class BedEffectCard extends EffectCard {
 		game.hooks.actionEnd.tap(this.id, () => {
 			const {currentPlayer, opponentPlayer} = game.ds
 
-			// We need to check both players, because of emerald
+			// We need to check both players, because of Emerald or Grian
 			const players = [currentPlayer, opponentPlayer]
 			players.forEach((playerState) => {
 				const bedInfo = playerState.custom[this.id] || {}
 				playerState.board.rows.forEach((row, index) => {
-					const hadBed = bedInfo[index]
 					const hasBed = row.effectCard?.cardId === this.id
-					if (!hadBed && hasBed && row.hermitCard) {
+					const previousBed = bedInfo[index]
+					const currentBed = row.effectCard?.cardInstance
+					if (hasBed && currentBed != previousBed && row.hermitCard) {
 						row.health = HERMIT_CARDS[row.hermitCard.cardId].health
-						// clear any previous sleeping
+						// Clear any previous sleeping
 						row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-						// set new sleeping for full two turns
+						// Set new sleeping for full two turns
 						row.ailments.push({id: 'sleeping', duration: 2})
-						bedInfo[index] = true
 					}
 				})
 			})

@@ -13,6 +13,11 @@ export type Ailment = {
 	duration: number
 }
 
+export type PlayerAilment = {
+	id: 'badomen'
+	duration: number
+}
+
 export type RowStateWithHermit = {
 	hermitCard: CardT
 	effectCard: CardT | null
@@ -50,6 +55,7 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
+	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -112,6 +118,7 @@ export type LocalPlayerState = {
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	lives: number
+	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null

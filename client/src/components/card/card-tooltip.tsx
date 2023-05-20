@@ -24,29 +24,6 @@ type Props = {
 	card: CardInfoT
 }
 
-const getRarity = (card: CardInfoT): React.ReactNode | null => {
-	if (card.type === 'health') return null
-
-	if (card.rarity === 'ultra_rare') {
-		return (
-			<div className={classnames(css.rarity, css.ultraRare)}>
-				★ ultra rare ★
-			</div>
-		)
-	}
-
-	if (card.rarity === 'rare') {
-		const value = card.type === 'item' ? 'double' : 'rare'
-		return <div className={classnames(css.rarity, css.rare)}>★ {value} ★</div>
-	}
-
-	if (card.rarity === 'common') {
-		return <div className={classnames(css.rarity, css.common)}>■ common ■</div>
-	}
-
-	return null
-}
-
 const getOneDescription = (desc: string): React.ReactNode => {
 	return desc
 		.split('\n\n')
@@ -154,6 +131,11 @@ const getRank = (card: CardInfoT): React.ReactNode => {
 	)
 }
 
+const getAttach = (card: CardInfoT): React.ReactNode => {
+	if (card.type !== 'effect') return null
+	return <div className={css.attach}>Attach</div>
+}
+
 const getSingleUse = (card: CardInfoT): React.ReactNode => {
 	if (card.type !== 'single_use') return null
 	return <div className={css.singleUse}>Single Use</div>
@@ -175,8 +157,8 @@ const CardTooltip = ({card}: Props) => {
 		<div className={css.cardTooltip}>
 			<div className={css.topLine}>
 				{getName(card)}
-				{getRarity(card)}
 				{getHermitType(card)}
+				{getAttach(card)}
 				{getSingleUse(card)}
 			</div>
 			<div className={css.description}>

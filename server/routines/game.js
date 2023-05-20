@@ -480,6 +480,22 @@ function* turnSaga(game) {
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
+
+	// universal ailments
+	for (let ailment of currentPlayer.ailments) {
+		// decrease duration
+		if (ailment.duration === 0) {
+			// time up, get rid of this ailment
+			currentPlayer.ailments = currentPlayer.ailments.filter(
+				(a) => a.id !== ailment.id
+			)
+		} else if (ailment.duration > -1) {
+			// ailment is not infinite, reduce duration by 1
+			ailment.duration--
+		}
+	}
+
+	// row ailments
 	for (let row of currentPlayer.board.rows) {
 		for (let ailment of row.ailments) {
 			// decrease duration
@@ -501,7 +517,6 @@ function* turnSaga(game) {
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Apply damage from ailments
-	// TODO - Armor should prevent ailment damage
 	for (let row of opponentPlayer.board.rows) {
 		if (
 			row.health &&

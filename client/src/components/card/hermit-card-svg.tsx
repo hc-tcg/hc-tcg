@@ -99,15 +99,6 @@ const HermitCard = ({card}: HermitCardProps) => {
 						href={`/images/ranks/${rank.name}.png`}
 						className={css.rank}
 					/>
-					<text
-						x="91"
-						y="109.5"
-						fontSize="40"
-						fill="white"
-						className={classnames(css.rankText, css[rank.name])}
-					>
-						{rank.cost}
-					</text>
 				</g>
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
