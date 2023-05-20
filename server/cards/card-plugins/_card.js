@@ -8,6 +8,7 @@ class Card {
 		this.name = defs.name
 		this.rarity = defs.rarity
 		this.type = defs.type
+		this.palette = defs.palette
 	}
 
 	/**

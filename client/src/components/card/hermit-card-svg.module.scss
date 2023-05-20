@@ -14,6 +14,10 @@
 
 .cardBackground {
 	fill: rgb(226, 202, 139);
+
+	&.pharaoh {
+		fill: rgb(210, 203, 63);
+	}
 }
 
 .name {
@@ -22,13 +26,31 @@
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
+
+	&.pharaoh {
+		fill: rgb(246, 4, 1);
+	}
+
+	&.long {
+		font-family: BangersRegular !important;
+	}
+
+	&.extraLong {
+		letter-spacing: 0.013em;
+	}
+
+	&.ultraLong {
+		letter-spacing: -0.013em;
+		font-size: 40px;
+		transform: translateY(0.05em);
+	}
 }
 
 .health {
 	fill: rgb(246, 4, 1);
 	font-size: 45px;
 	text-anchor: end;
-	letter-spacing: 0.0889em;
+	letter-spacing: 0.0389em;
 }
 
 .hermitTypeBackground {
@@ -44,6 +66,14 @@ text.attackName {
 	text-transform: uppercase;
 	fill: black;
 	text-anchor: middle;
+
+	&.pharaoh {
+		fill: rgb(246, 4, 1);
+	}
+
+	&.pharaoh.specialMove {
+		fill: rgb(23, 66, 234);
+	}
 }
 
 text.attackName.long {

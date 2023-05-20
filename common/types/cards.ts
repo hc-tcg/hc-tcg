@@ -48,6 +48,7 @@ export type AnyCardT = {
 	useReqs?: Array<PickRequirmentT>
 	pickReqs?: Array<PickRequirmentT>
 	attachReq: AttachRequirmentT
+	palette: string
 }
 
 export type ItemCardT = AnyCardT & {

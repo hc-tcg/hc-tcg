@@ -21,6 +21,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
+	const palette = card.palette
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
@@ -30,7 +31,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				</clipPath>
 			</defs>
 			<rect
-				className={css.cardBackground}
+				className={classnames(css.cardBackground, css[palette])}
 				x="10"
 				y="10"
 				width="380"
@@ -38,7 +39,15 @@ const HermitCard = ({card}: HermitCardProps) => {
 				rx="15"
 				ry="15"
 			/>
-			<text x="45" y="20" className={css.name}>
+			<text
+				x="45"
+				y="20"
+				className={classnames(css.name, css[palette], {
+					[css.long]: card.name.length > 6,
+					[css.extraLong]: card.name.length > 8,
+					[css.ultraLong]: card.name.length > 9,
+				})}
+			>
 				{card.name}
 			</text>
 			<text x="305" y="20" className={css.health}>
@@ -117,7 +126,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text
 					x="200"
 					y="272"
-					className={classnames(css.attackName, {
+					className={classnames(css.attackName, css[palette], {
 						[css.long]: card.primary.name.length > 9,
 					})}
 				>
@@ -126,7 +135,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text
 					x="380"
 					y="270"
-					className={classnames(css.attackDamage, {
+					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.primary.power,
 					})}
 				>
@@ -146,8 +155,9 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text
 					x="200"
 					y="342"
-					className={classnames(css.attackName, {
+					className={classnames(css.attackName, css[palette], {
 						[css.long]: card.secondary.name.length > 9,
+						[css.specialMove]: !!card.secondary.power,
 					})}
 				>
 					{card.secondary.name}
@@ -155,7 +165,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text
 					x="380"
 					y="340"
-					className={classnames(css.attackDamage, {
+					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.secondary.power,
 					})}
 				>
