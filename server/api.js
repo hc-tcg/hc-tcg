@@ -9,7 +9,7 @@ export function registerApis(app) {
 	let apiKeys = null
 	try {
 		apiKeys = require('./apiKeys.json')
-	} finally {
+
 		// get info about games
 		app.get('/api/games', (req, res) => {
 			const apiKey = req.header('api-key')
@@ -23,7 +23,7 @@ export function registerApis(app) {
 									id: g.id,
 									code: g.code,
 									playerIds: g.getPlayerIds(),
-									playerNames: g.getPlayers().map((p) => p.name),
+									playerNames: g.getPlayers().map((p) => p.playerName),
 									state: g.state,
 								}
 							})
@@ -36,5 +36,9 @@ export function registerApis(app) {
 				res.status(403).send('Access denied.')
 			}
 		})
+
+		console.log('apis registered')
+	} catch (err) {
+		console.log('no api keys found')
 	}
 }

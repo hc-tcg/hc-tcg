@@ -4,9 +4,11 @@ import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import {getCardRank, getTotalCost, validateDeck} from 'server/utils/validation'
-import {CardInfoT, HermitCardT, ItemCardT} from 'common/types/cards'
+import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import Card from 'common/cards/card-plugins/_card'
 import {CardT} from 'common/types/game-state'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -106,10 +108,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	//MISC
 	const initialDeckState = deck
-	const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-	const HTYPE_CARDS = CARDS as Record<string, HermitCardT | ItemCardT>
+	const TYPED_CARDS = CARDS as Record<string, Card>
+	const HTYPE_CARDS = CARDS as Record<string, HermitCard | ItemCard>
 	const allCards = Object.values(TYPED_CARDS).map(
-		(card: CardInfoT): CardT => ({
+		(card: Card): CardT => ({
 			cardId: card.id,
 			cardInstance: card.id,
 		})

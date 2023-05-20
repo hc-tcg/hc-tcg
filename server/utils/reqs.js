@@ -1,4 +1,4 @@
-import CARDS from '../cards'
+import CARDS, {EFFECT_CARDS} from '../../common/cards'
 
 /**
  * @typedef {import("common/types/game-state").GameState} GameState
@@ -9,8 +9,6 @@ import CARDS from '../cards'
  * @typedef {import("common/types/pick-process").BoardPickedCardT} BoardPickedCardT
  * @typedef {import("common/types/pick-process").HandPickedCardT} HandPickedCardT
  * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
- * @typedef {import("common/types/cards").CardTypesMapT} CardTypesMapT
- * @typedef {import("common/types/cards").AttachRequirmentT} AttachRequirmentT
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
@@ -22,6 +20,8 @@ import CARDS from '../cards'
  * @returns {boolean}
  */
 const checkRow = (rowInfo, req) => {
+	if (rowInfo.emptyRow && req.type !== 'hermit') return false
+
 	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return false
 
@@ -39,6 +39,12 @@ const checkRow = (rowInfo, req) => {
 	const allEmpty = slots.every((card) => !card)
 	if (req.empty === true && !anyEmpty) return false
 	if (!req.empty && allEmpty) return false
+
+	// removable or not
+	const effectCard = rowInfo.row.effectCard
+	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
+	if (req.removable && effectCardInfo?.getIsRemovable()) return true
+	if (req.removable && !effectCardInfo?.getIsRemovable()) return false
 
 	return true
 }
@@ -170,11 +176,26 @@ export const validType = (type, cardType) => {
 /**
  * @param {PickRequirmentT['empty']} empty
  * @param {CardT | null} card
+ * @param {SlotTypeT} slotType
+ * @param {boolean} isEmptyRow
  * @returns {boolean}
  */
-const validEmpty = (empty, card) => {
+const validEmpty = (empty, card, slotType, isEmptyRow) => {
 	if (typeof empty !== 'boolean') return true
+	// Only hermit cards slots can have empty rows, needed for the ender pearl card
+	if (isEmptyRow && slotType !== 'hermit') return false
 	return empty === !card
+}
+
+/**
+ * @param {PickRequirmentT['removable']} removable
+ * @param {CardT | null} card
+ * @returns {boolean}
+ */
+const validRemovable = (removable, card) => {
+	if (typeof removable !== 'boolean') return true
+	if (!card) return true
+	return removable === EFFECT_CARDS[card.cardId]?.getIsRemovable()
 }
 
 /**
@@ -204,6 +225,7 @@ export function validPick(gameState, req, pickedCard) {
 	const card = pickedCard.card
 	const slotType = pickedCard.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
+	const isEmptyRow = rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
 
 	if (!cardPlayerState) return false
 	if (!validRow(cardPlayerState, rowIndex)) return false
@@ -211,40 +233,8 @@ export function validPick(gameState, req, pickedCard) {
 		return false
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
-	if (!validEmpty(req.empty || false, card)) return false
-
-	return true
-}
-
-/**
- * Check attach req for effect cards
- * @param {GameState | LocalGameState} gameState
- * @param {TurnAction['payload']} slotPayload
- * @param {AttachRequirmentT} req
- * @return {boolean}
- */
-export function checkAttachReq(gameState, slotPayload, req) {
-	if (!slotPayload) return false
-
-	const players = gameState.players
-	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
-	const {playerId, slotIndex} = slotPayload
-	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
-	const player = players[playerId]
-	const slotType = slotPayload.slotType
-
-	if (!validRow(player, rowIndex)) return false
-	if (!validTarget(req.target, player, turnPlayerId, slotType)) return false
-	if (!validActive(req.active, player, rowIndex)) return false
-	if (!req.type.some((type) => validType(type, slotType))) return false
-
-	// Empty checks
-	const board = player.board
-	const row = typeof rowIndex === 'number' ? board.rows[rowIndex] : null
-	if (slotType === 'single_use' && board.singleUseCard) return false
-	if (slotType === 'hermit' && row?.hermitCard) return false
-	if (slotType === 'effect' && row?.effectCard) return false
-	if (slotType === 'item' && row?.itemCards[slotIndex]) return false
+	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
+	if (!validRemovable(req.removable, card)) return false
 
 	return true
 }

@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import {useSelector} from 'react-redux'
-import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
+import {HermitTypeT} from 'common/types/cards'
 import Strengths from 'server/const/strengths'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
@@ -37,25 +38,12 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 		? SINGLE_USE_CARDS[singleUseCard.cardId]
 		: null
 
-	const suAttackInfo =
-		singleUseInfo && singleUseInfo.damage
-			? {
-					name: singleUseInfo.name,
-					damage: singleUseInfo.damage.target || 0,
-					afkDamage: singleUseInfo.damage.afkTarget || 0,
-			  }
-			: null
-
-	const protectionAmount = suAttackInfo
-		? 0
-		: opponentEffectInfo?.protection?.target || 0
-
 	const extraKey =
 		playerHermitInfo.hermitType + '_' + opponentHermitInfo.hermitType
 	const hasExtraWeakness =
 		!!currentPlayer?.custom['potion_of_weakness']?.[extraKey]
 	const hasWeakness =
-		Strengths[playerHermitInfo.hermitType]?.includes(
+		Strengths[playerHermitInfo.hermitType as HermitTypeT]?.includes(
 			opponentHermitInfo.hermitType
 		) || hasExtraWeakness
 
@@ -84,10 +72,12 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 
 	const getDamagaValue = (
 		info: ReturnType<typeof makeAttackMod>,
-		value: number
+		value?: number
 	) => {
-		const min = info.min !== -1 ? (value + info.min) * info.multiplier : '∞'
-		const max = info.max !== -1 ? (value + info.max) * info.multiplier : '∞'
+		const min =
+			info.min !== -1 ? ((value || 0) + info.min) * info.multiplier : '∞'
+		const max =
+			info.max !== -1 ? ((value || 0) + info.max) * info.multiplier : '∞'
 		if (min !== max) return `${min}-${max}`
 		return `${max}`
 	}
@@ -100,10 +90,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 				modifiedAttackInfo['hermit'].multiplier +
 				(weaknessDamage + modifiedAttackInfo['weakness'][key]) *
 					modifiedAttackInfo['weakness'].multiplier +
-				((suAttackInfo?.damage || 0) + modifiedAttackInfo['effect'][key]) *
+				modifiedAttackInfo['effect'][key] *
 					modifiedAttackInfo['effect'].multiplier -
-				(protectionAmount + modProtection) *
-					modifiedAttackInfo['protection'].multiplier,
+				modProtection * modifiedAttackInfo['protection'].multiplier,
 			0
 		)
 	})
@@ -118,38 +107,6 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 				</div>
 				<div className={css.damageAmount}>
 					{getDamagaValue(modifiedAttackInfo.hermit, attackInfo.damage)}
-				</div>
-			</div>
-		)
-	}
-
-	if (suAttackInfo) {
-		if (attackParts.length) {
-			attackParts.push(
-				<div key="single-use-op" className={css.attackOperator}>
-					+
-				</div>
-			)
-		}
-		attackParts.push(
-			<div key="single-use" className={css.attackPart}>
-				<img
-					src={`/images/effects/${singleUseInfo?.id}.png`}
-					width="16"
-					height="16"
-				/>
-				<div className={css.damageAmount}>
-					{getDamagaValue(modifiedAttackInfo.effect, suAttackInfo.damage)}
-					{suAttackInfo.afkDamage ? (
-						<>
-							(
-							{getDamagaValue(
-								modifiedAttackInfo.afkEffect,
-								suAttackInfo.afkDamage
-							)}
-							)
-						</>
-					) : null}
 				</div>
 			</div>
 		)
@@ -173,10 +130,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 		)
 	}
 
-	if (
-		opponentEffectInfo &&
-		(protectionAmount || modifiedAttackInfo.protection.max)
-	) {
+	if (opponentEffectInfo && modifiedAttackInfo.protection.max) {
 		if (attackParts.length) {
 			attackParts.push(
 				<div key="protection-op" className={css.attackOperator}>
@@ -192,7 +146,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 					height="16"
 				/>
 				<div className={css.damageAmount}>
-					{getDamagaValue(modifiedAttackInfo.protection, protectionAmount)}
+					{getDamagaValue(modifiedAttackInfo.protection)}
 				</div>
 			</div>
 		)

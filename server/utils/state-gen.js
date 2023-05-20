@@ -1,4 +1,4 @@
-import CARDS from '../cards'
+import CARDS from '../../common/cards'
 import STRENGTHS from '../const/strengths'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import {getCardCost, getCardRank} from './validation'
@@ -9,9 +9,10 @@ import {getCardCost, getCardRank} from './validation'
  * @typedef {import("common/types/game-state").GameState} GameState
  * @typedef {import("common/types/game-state").PlayerState} PlayerState
  * @typedef {import("common/types/game-state").RowState} RowState
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
- * @typedef {import("common/types/cards").ItemCardT} ItemCardT
+ * @typedef {import("common/cards/card-plugins/hermits/_hermit-card")} HermitCard
+ * @typedef {import("common/cards/card-plugins/effects/_effect-card")} EffectCard
+ * @typedef {import("common/cards/card-plugins/single-use/_single-use-card")} SingleUseCard
+ * @typedef {import("common/cards/card-plugins/items/_item-card")} ItemCard
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
@@ -20,13 +21,13 @@ function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT | ItemCardT} */
+/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCard | ItemCard} */
 const isHermitOrItem = (cardInfo) => ['hermit', 'item'].includes(cardInfo.type)
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT} */
+/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCard} */
 const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is EffectCardT} */
+/** @type {(cardInfo: CardInfoT) => cardInfo is EffectCard} */
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
@@ -42,7 +43,7 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
+			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.type)
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -90,7 +91,7 @@ export function getStarterPack() {
 		tokens += getCardCost(hermitCard) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.hermitType].items += 2
+			itemCounts[hermitCard.type].items += 2
 			itemCount += 2
 		}
 	}
@@ -159,7 +160,7 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.deck.cards
+	const pack = player.playerDeck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
@@ -186,9 +187,9 @@ export function getPlayerState(player) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: player.id,
-		playerName: player.name,
-		censoredPlayerName: player.censoredName,
+		id: player.playerId,
+		playerName: player.playerName,
+		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -272,18 +273,20 @@ export function getLocalGameState(
 	pastTurnActions = [],
 	opponentAvailableActions = []
 ) {
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
+	const opponentPlayerId = game
+		.getPlayerIds()
+		.find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null
 	}
 
-	const playerState = game.state.players[player.id]
+	const playerState = game.state.players[player.playerId]
 	const opponentState = game.state.players[opponentPlayerId]
 
 	// convert player states
 	/** @type {Record<string, LocalPlayerState>} */
 	const players = {}
-	players[player.id] = getLocalPlayerState(playerState)
+	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	/** @type {LocalGameState} */
@@ -297,16 +300,16 @@ export function getLocalGameState(
 		discarded: playerState.discarded,
 
 		// ids
-		playerId: player.id,
+		playerId: player.playerId,
 		opponentPlayerId: opponentPlayerId,
 		currentPlayerId: game.ds.currentPlayer.id,
 
 		players,
 
 		pastTurnActions:
-			player.id === game.ds.currentPlayer.id ? pastTurnActions : [],
+			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
 		availableActions:
-			player.id === game.ds.currentPlayer.id
+			player.playerId === game.ds.currentPlayer.id
 				? availableActions
 				: opponentAvailableActions,
 

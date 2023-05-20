@@ -1,16 +1,12 @@
-import CARDS from '../../cards'
-import {applySingleUse} from '../../utils'
-
 // TODO - You can "apply effect" by putting it on in the slot, then selecting another clicking the slotteded one and confirmiing modal
 function* applyEffectSaga(game, turnAction, actionState) {
-	// TODO - This shouldn't be needed
-	turnAction.payload = turnAction.payload || {}
-
 	const {singleUseInfo, currentPlayer} = game.ds
+	const {pickedCardsInfo} = actionState
 
 	if (!singleUseInfo) return 'INVALID'
+	const cardInstance = currentPlayer.board.singleUseCard.cardInstance
 
-	const applyEffectResult = game.hooks.applyEffect.call(turnAction, actionState)
+	const applyEffectResult = singleUseInfo.onApply(game, cardInstance, pickedCardsInfo)
 
 	if (applyEffectResult === 'INVALID') {
 		console.log('Validation failed for: ', singleUseInfo?.id)

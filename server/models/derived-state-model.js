@@ -1,9 +1,7 @@
-import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 
 /**
  * @typedef {import("./root-model").GameModel} GameModel
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  */
 
 export class DerivedStateModel {

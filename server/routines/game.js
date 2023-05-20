@@ -9,7 +9,7 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
+import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
@@ -18,7 +18,7 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import registerCards from '../cards/card-plugins'
+import registerCards from '../../common/cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
@@ -27,8 +27,6 @@ import followUpSaga from './turn-actions/follow-up'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
@@ -59,7 +57,7 @@ function getAvailableActions(game, pastTurnActions) {
 	 */
 	const hasTypeInHand = (type) => {
 		return currentPlayer.hand.some((card) =>
-			CARDS[card.cardId].attachReq.type.includes(type)
+			CARDS[card.cardId].type.includes(type)
 		)
 	}
 	const hasHermitInHand = hasTypeInHand('hermit')
@@ -305,8 +303,8 @@ function* turnActionSaga(game, turnAction, turnState) {
 	game.hooks.actionStart.call(turnAction, actionState)
 
 	if (turnAction.type === 'PLAY_CARD') {
-		// TODO - continue on invalid?
-		yield call(playCardSaga, game, turnAction, actionState)
+		const result = yield call(playCardSaga, game, turnAction, actionState)
+		if (result === 'INVALID') pastTurnActions.push('PLAYED_INVALID_CARD')
 		//
 	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 		yield call(changeActiveHermitSaga, game, turnAction, actionState)

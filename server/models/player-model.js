@@ -20,14 +20,14 @@ export class PlayerModel {
 		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
 		// need to make sure it's done everywhere tho
 		/** @type {string} */
-		this.id = Math.random().toString()
+		this.playerId = Math.random().toString()
 
 		/** @type {string} */
-		this.secret = Math.random().toString()
+		this.playerSecret = Math.random().toString()
 
 		// always generate a starter deck as the default
 		/**@type {PlayerDeckT}*/
-		this.deck = {
+		this.playerDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack().map((id) => {
@@ -36,10 +36,10 @@ export class PlayerModel {
 		}
 
 		/** @type {string} */
-		this.name = playerName
+		this.playerName = playerName
 
 		/** @type {string} */
-		this.censoredName = profanityFilter(playerName)
+		this.censoredPlayerName = profanityFilter(playerName)
 
 		/** @type {Socket} */
 		this.socket = socket
@@ -47,11 +47,11 @@ export class PlayerModel {
 
 	getPlayerInfo() {
 		return {
-			playerId: this.id,
-			playerSecret: this.secret,
-			playerDeck: this.deck,
-			playerName: this.name,
-			censoredPlayerName: this.censoredName,
+			playerId: this.playerId,
+			playerSecret: this.playerSecret,
+			playerDeck: this.playerDeck,
+			playerName: this.playerName,
+			censoredPlayerName: this.censoredPlayerName,
 		}
 	}
 
@@ -62,6 +62,6 @@ export class PlayerModel {
 			newDeck.cards.map((card) => card.cardId)
 		)
 		if (validationMessage) return
-		this.deck = newDeck
+		this.playerDeck = newDeck
 	}
 }

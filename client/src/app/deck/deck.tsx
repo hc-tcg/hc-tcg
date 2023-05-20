@@ -3,7 +3,7 @@ import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import {getTotalCost, validateDeck} from 'server/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
@@ -34,6 +34,7 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -55,8 +56,8 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
 		} else if (
 			// hermit types
-			cardInfoA.type === 'hermit' &&
-			cardInfoB.type === 'hermit' &&
+			cardInfoA instanceof HermitCard &&
+			cardInfoB instanceof HermitCard &&
 			cardInfoA.hermitType !== cardInfoB.hermitType
 		) {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
