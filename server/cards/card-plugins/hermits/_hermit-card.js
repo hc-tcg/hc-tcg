@@ -14,6 +14,8 @@ class HermitCard extends Card {
 		this.hermitType = defs.hermitType
 
 		this.attachReq = {target: 'player', type: ['hermit']}
+
+		this.background = defs.background
 	}
 }
 

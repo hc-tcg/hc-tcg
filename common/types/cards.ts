@@ -48,7 +48,7 @@ export type AnyCardT = {
 	useReqs?: Array<PickRequirmentT>
 	pickReqs?: Array<PickRequirmentT>
 	attachReq: AttachRequirmentT
-	palette: string
+	palette?: string
 }
 
 export type ItemCardT = AnyCardT & {
@@ -81,6 +81,7 @@ export type HermitCardT = AnyCardT & {
 	health: number
 	primary: HermitAttackT
 	secondary: HermitAttackT
+	background: string
 }
 
 export type CardInfoT = ItemCardT | EffectCardT | HermitCardT | HealthCardT

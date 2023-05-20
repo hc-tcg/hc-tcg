@@ -93,7 +93,6 @@ export const universe = [
 	'pearlescentmoon_rare',
 	'poultryman_common',
 	'potatoboy_rare',
-	'pharaoh_rare',
 	'rendog_common',
 	'rendog_rare',
 	'shield',

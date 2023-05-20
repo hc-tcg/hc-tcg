@@ -49,7 +49,6 @@ import MumboJumboRareHermitCard from './mumbojumbo-rare'
 import LlamadadRareHermitCard from './llamadad-rare'
 import PearlescentMoonRareHermitCard from './pearlescentmoon-rare'
 import PotatoBoyRareHermitCard from './potatoboy-rare'
-import PharaohRareHermitCard from './pharaoh-rare'
 import RendogRareHermitCard from './rendog-rare'
 import StressMonster101RareHermitCard from './stressmonster101-rare'
 import TangoTekRareHermitCard from './tangotek-rare'
@@ -103,7 +102,6 @@ const HERMIT_CARDS = [
 	new PearlescentMoonRareHermitCard(),
 	new PoultrymanCommonHermitCard(),
 	new PotatoBoyRareHermitCard(),
-	new PharaohRareHermitCard(),
 	new RendogCommonHermitCard(),
 	new RendogRareHermitCard(),
 	new StressMonster101CommonHermitCard(),
