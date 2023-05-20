@@ -26,6 +26,8 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				damage: 90,
 				power: null,
 			},
+			palette: 'alter_egos',
+			background: 'alter_egos_background',
 		})
 		this.heal = 40
 	}
@@ -58,6 +60,14 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			return target
 		})
+	}
+
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
 	}
 }
 

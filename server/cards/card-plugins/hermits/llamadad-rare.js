@@ -26,6 +26,8 @@ class LlamadadRareHermitCard extends HermitCard {
 				power:
 					'Flip a coin.\n\nIf heads, Matilda does an additional 40hp damage.',
 			},
+			palette: 'alter_egos',
+			background: 'alter_egos_background',
 		})
 	}
 
@@ -48,6 +50,14 @@ class LlamadadRareHermitCard extends HermitCard {
 
 			return target
 		})
+	}
+
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
 	}
 }
 

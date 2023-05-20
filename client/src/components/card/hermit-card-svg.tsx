@@ -21,8 +21,11 @@ const HermitCard = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
-	const palette = card.palette
+	const palette = card.getPalette()
+	const backgroundName = card.getBackground()
 	const showCost = !useSelector(getGameState)
+	const nameLength = card.name.length
+
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<defs>
@@ -42,21 +45,19 @@ const HermitCard = ({card}: HermitCardProps) => {
 			<text
 				x="45"
 				y="20"
-				className={classnames(css.name, css[palette], {
-					[css.long]: card.name.length > 6,
-					[css.extraLong]: card.name.length > 8,
-					[css.ultraLong]: card.name.length > 9,
-				})}
+				textLength={nameLength > 7 ? '180px' : ''}
+				lengthAdjust="spacingAndGlyphs"
+				className={classnames(css.name, css[palette])}
 			>
 				{card.name}
 			</text>
-			<text x="305" y="20" className={css.health}>
+			<text x="310" y="20" className={css.health}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
 				<rect x="45" y="60" fill="white" width="310" height="196" />
 				<image
-					href={`/images/backgrounds/${hermitFullName}.png`}
+					href={`/images/backgrounds/${backgroundName}.png`}
 					x="55"
 					y="70"
 					width="290"
@@ -65,7 +66,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<image
 					href={`/images/hermits-nobg/${hermitFullName}.png`}
 					x="55"
-					y="80"
+					y="70"
 					width="290"
 					clipPath="url(#myClip)"
 				/>
@@ -93,7 +94,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<g>
 					<image
 						x="68"
-						y="80"
+						y="70"
 						width="70"
 						height="70"
 						href={`/images/ranks/${rank.name}.png`}
@@ -111,15 +112,14 @@ const HermitCard = ({card}: HermitCardProps) => {
 							y="273"
 							width={COST_SIZE}
 							height={COST_SIZE}
+							className={classnames(css.attackItems, css[palette], css[type])}
 						/>
 					))}
 				</g>
 				<text
 					x="200"
 					y="272"
-					className={classnames(css.attackName, css[palette], {
-						[css.long]: card.primary.name.length > 9,
-					})}
+					className={classnames(css.attackName, css[palette])}
 				>
 					{card.primary.name}
 				</text>
@@ -141,13 +141,13 @@ const HermitCard = ({card}: HermitCardProps) => {
 						y="343"
 						width={COST_SIZE}
 						height={COST_SIZE}
+						className={classnames(css.attackItems, css[palette], css[type])}
 					/>
 				))}
 				<text
 					x="200"
 					y="342"
 					className={classnames(css.attackName, css[palette], {
-						[css.long]: card.secondary.name.length > 9,
 						[css.specialMove]: !!card.secondary.power,
 					})}
 				>

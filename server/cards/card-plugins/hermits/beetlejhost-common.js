@@ -20,10 +20,20 @@ class BeetlejhostCommonHermitCard extends HermitCard {
 				damage: 100,
 				power: null,
 			},
+			palette: 'alter_egos',
+			background: 'alter_egos_background',
 		})
 	}
 
 	register(game) {}
+
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
+	}
 }
 
 export default BeetlejhostCommonHermitCard

@@ -15,6 +15,10 @@ class HermitCard extends Card {
 
 		this.attachReq = {target: 'player', type: ['hermit']}
 	}
+
+	getBackground() {
+		return this.id.split('_')[0]
+	}
 }
 
 export default HermitCard

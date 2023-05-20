@@ -20,10 +20,12 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 			name: rowState.health + ' Health',
 			rarity: 'common',
 			type: 'health',
-			palette: 'palette',
 			health: rowState.health,
 			id: 'health_' + rowState.health,
 			attachReq: {target: 'player', type: ['health']},
+			getPalette() {
+				return 'default'
+			},
 		}
 	}
 
