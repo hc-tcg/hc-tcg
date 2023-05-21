@@ -72,6 +72,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			'potion_of_slowness',
 			'potion_of_weakness',
 			'bad_omen',
+			'splash_potion_of_healing_ii',
 		].includes(card.cardId)
 	) {
 		yield put(setOpenedModal('confirm'))
