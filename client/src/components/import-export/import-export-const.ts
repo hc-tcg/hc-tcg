@@ -126,4 +126,6 @@ export const universe = [
 	'zedaphplays_rare',
 	'zombiecleo_common',
 	'zombiecleo_rare',
+	'dream_rare',
+	'jingler_rare',
 ]
