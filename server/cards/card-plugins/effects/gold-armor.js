@@ -1,6 +1,6 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
-import {AttackModel} from 'models/attack-model'
+import {AttackModel} from '../../../models/attack-model'
 
 class GoldArmorEffectCard extends EffectCard {
 	constructor() {
