@@ -56,7 +56,7 @@ class TurtleShellEffectCard extends EffectCard {
 		if (pos.slotType !== 'effect') return false
 		if (pos.playerId !== currentPlayer.id) return false
 
-		if (!pos.rowState.hermitCard) return false
+		if (!pos.rowState?.hermitCard) return false
 
 		// turtle shell addition - hermit must be inactive to attach
 		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return false
@@ -83,9 +83,9 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onSetActive(game, instance) {
-		const info = getCardPos(game, instance)
-		if (!info) return true
-		const {playerState} = info
+		const pos = getCardPos(game, instance)
+		if (!pos) return true
+		const {playerState} = pos
 
 		// This card will now block all damage till the end of the turn
 		const instanceKey = this.getKey(instance)
@@ -101,9 +101,9 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {AttackModel} attack
 	 */
 	onDefence(game, instance, attack) {
-		const info = getCardPos(game, instance)
-		if (!info || attack.type === 'ailment') return attack
-		const {playerState} = info
+		const pos = getCardPos(game, instance)
+		if (!pos || attack.type === 'ailment') return attack
+		const {playerState} = pos
 
 		// If ability active, block all damage
 		const instanceKey = this.getKey(instance)
@@ -125,9 +125,9 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onTurnEnd(game, instance) {
-		const info = getCardPos(game, instance)
-		if (!info) return
-		const {playerState} = info
+		const pos = getCardPos(game, instance)
+		if (!pos) return
+		const {playerState} = pos
 
 		// End of turn, if active, remove flag and discard
 		const instanceKey = this.getKey(instance)

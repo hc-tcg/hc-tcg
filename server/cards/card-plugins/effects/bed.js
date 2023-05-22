@@ -31,7 +31,7 @@ class BedEffectCard extends EffectCard {
 
 		if (pos.slotType !== 'effect') return false
 		if (pos.playerId !== currentPlayer.id) return false
-		if (!pos.rowState.hermitCard) return false
+		if (!pos.rowState?.hermitCard) return false
 
 		// bed addition - hermit must also be active to attach
 		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return false
@@ -45,11 +45,11 @@ class BedEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance) {
 		// Give the current row sleeping for 3 turns
-		const info = getCardPos(game, instance)
-		if (!info) return
-		const {rowState: row} = info
+		const pos = getCardPos(game, instance)
+		if (!pos) return
+		const {rowState: row} = pos
 
-		if (row.hermitCard) {
+		if (row && row.hermitCard) {
 			row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
 			// Clear any previous sleeping
@@ -65,15 +65,15 @@ class BedEffectCard extends EffectCard {
 	 * @param {string} instance The card instance on the board
 	 */
 	onTurnStart(game, instance) {
-		const info = getCardPos(game, instance)
-		if (!info) return
-		const {rowState} = info
+		const pos = getCardPos(game, instance)
+		if (!pos) return
+		const {rowState} = pos
 
-		const isSleeping = rowState.ailments.some((a) => a.id === 'sleeping')
+		const isSleeping = rowState?.ailments.some((a) => a.id === 'sleeping')
 
 		// if sleeping has worn off, discard the bed
 		if (!isSleeping) {
-			discardCard(game, rowState.effectCard)
+			discardCard(game, rowState?.effectCard)
 		}
 	}
 

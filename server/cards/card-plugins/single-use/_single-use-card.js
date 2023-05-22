@@ -12,6 +12,16 @@ class SingleUseCard extends Card {
 
 		this.attachReq = {target: 'player', type: ['single_use']}
 	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (pos.slotType !== 'single_use') return false
+
+		return true
+	}
 }
 
 export default SingleUseCard

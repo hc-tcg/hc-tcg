@@ -1,5 +1,5 @@
 /**
- * Get the card instance info for a card instance
+ * Get the card position for a card instance
  * @param {GameModel} game
  * @param {string} instance
  * @returns {CardPos | null}
@@ -9,10 +9,22 @@ export function getCardPos(game, instance) {
 	for (let i = 0; i < ids.length; i++) {
 		const playerId = ids[i]
 		const playerState = game.state.players[playerId]
-		const rows = game.state.players[playerId].board.rows
+		const board = game.state.players[playerId].board
 
-		for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-			const rowState = rows[rowIndex]
+		// single use slot
+		if (board.singleUseCard?.cardInstance === instance) {
+			return {
+				playerId,
+				playerState,
+				rowIndex: null,
+				rowState: null,
+				slotType: 'single_use',
+			}
+		}
+
+		// go through rows to find instance
+		for (let rowIndex = 0; rowIndex < board.rows.length; rowIndex++) {
+			const rowState = board.rows[rowIndex]
 
 			if (rowState.hermitCard?.cardInstance === instance) {
 				return {

@@ -21,7 +21,7 @@ class ItemCard extends Card {
 		if (pos.slotType !== 'item') return false
 		if (pos.playerId !== currentPlayer.id) return false
 
-		if (!pos.rowState.hermitCard) return false
+		if (!pos.rowState?.hermitCard) return false
 
 		return true
 	}

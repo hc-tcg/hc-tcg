@@ -17,9 +17,10 @@ class LoyaltyEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onHermitDeath(game, instance) {
-		const info = getCardPos(game, instance)
-		if (!info) return
-		const {playerState, rowState} = info
+		const pos = getCardPos(game, instance)
+		if (!pos) return
+		const {playerState, rowState} = pos
+		if (!rowState) return
 
 		for (let i = 0; i < rowState.itemCards.length; i++) {
 			const card = rowState.itemCards[i]

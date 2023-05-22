@@ -37,7 +37,7 @@ class EffectCard extends Card {
 		if (pos.slotType !== 'effect') return false
 		if (pos.playerId !== currentPlayer.id) return false
 
-		if (!pos.rowState.hermitCard) return false
+		if (!pos.rowState?.hermitCard) return false
 
 		return true
 	}
