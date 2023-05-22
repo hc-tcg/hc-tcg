@@ -61,7 +61,9 @@ import XBCraftedRareHermitCard from './xbcrafted-rare'
 import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 import ZombieCleoRareHermitCard from './zombiecleo-rare'
+import HermitCard from './_hermit-card'
 
+/** @type {Array<HermitCard>} */
 const HERMIT_CARDS = [
 	new BdoubleO100CommonHermitCard(),
 	new BdoubleO100RareHermitCard(),

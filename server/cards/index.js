@@ -1,4 +1,5 @@
 import {CARDS} from './card-plugins'
+import Card from './card-plugins/_card'
 
 /**
  * @typedef {import('common/types/cards').CardInfoT} CardInfoT
@@ -7,7 +8,7 @@ import {CARDS} from './card-plugins'
  * @typedef {import('common/types/cards').ItemCardT} ItemCardT
  */
 
-/** @type {Record<string, CardInfoT>} */
+/** @type {Record<string, Card>} */
 const cardMap = CARDS.reduce((result, card) => {
 	result[card.id] = card
 	return result

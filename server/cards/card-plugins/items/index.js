@@ -18,7 +18,9 @@ import TerraformCommonItemCard from './terraform-common'
 import TerraformRareItemCard from './terraform-rare'
 import MinerCommonItemCard from './miner-common'
 import MinerRareItemCard from './miner-rare'
+import ItemCard from './_item-card'
 
+/** @type {Array<ItemCard>} */
 const ITEM_CARDS = [
 	new BuilderCommonItemCard(),
 	new BuilderRareItemCard(),
