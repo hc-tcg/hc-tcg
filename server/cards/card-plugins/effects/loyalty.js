@@ -1,5 +1,5 @@
 import EffectCard from './_effect-card'
-import {getCardInfo} from '../../../utils/cards'
+import {getCardPos} from '../../../utils/cards'
 
 class LoyaltyEffectCard extends EffectCard {
 	constructor() {
@@ -17,7 +17,7 @@ class LoyaltyEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onHermitDeath(game, instance) {
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return
 		const {playerState, rowState} = info
 

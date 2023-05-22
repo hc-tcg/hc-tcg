@@ -112,7 +112,7 @@ export type Slot = {
 	index: number
 }
 
-export type InstanceInfo = {
+export type CardPos = {
 	playerId: string
 	playerState: PlayerState
 	rowIndex: number

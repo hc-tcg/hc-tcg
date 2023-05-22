@@ -114,6 +114,6 @@
 
 /**
  * @typedef {import('common/types/cards').CardTypeT} CardTypeT
- * @typedef {import('common/types/cards').InstanceInfo} InstanceInfo
+ * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('../models/game-model').GameModel} GameModel
  */

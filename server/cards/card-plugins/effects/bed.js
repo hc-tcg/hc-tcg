@@ -1,7 +1,7 @@
 import EffectCard from './_effect-card'
 import {HERMIT_CARDS} from '../../../cards'
 import {discardCard} from '../../../utils'
-import {getCardInfo} from 'utils/cards'
+import {getCardPos} from 'utils/cards'
 /*
 Info confirmed by beef:
 - If knockback is used, sleeping opponent goes AFK but wakes up.
@@ -23,22 +23,18 @@ class BedEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {string} targetPlayerId
-	 * @param {number} rowIndex
-	 * @param {CardTypeT} slotType
+	 * @param {CardPos} pos
 	 * @returns {boolean}
 	 */
-	canAttach(game, targetPlayerId, rowIndex, slotType) {
+	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (slotType !== 'effect') return false
-		if (targetPlayerId !== currentPlayer.id) return false
-
-		const row = currentPlayer.board.rows[rowIndex]
-		if (!row.hermitCard) return false
+		if (pos.slotType !== 'effect') return false
+		if (pos.playerId !== currentPlayer.id) return false
+		if (!pos.rowState.hermitCard) return false
 
 		// bed addition - hermit must also be active to attach
-		if (!(currentPlayer.board.activeRow === rowIndex)) return false
+		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return false
 
 		return true
 	}
@@ -49,7 +45,7 @@ class BedEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance) {
 		// Give the current row sleeping for 3 turns
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return
 		const {rowState: row} = info
 
@@ -69,7 +65,7 @@ class BedEffectCard extends EffectCard {
 	 * @param {string} instance The card instance on the board
 	 */
 	onTurnStart(game, instance) {
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return
 		const {rowState} = info
 

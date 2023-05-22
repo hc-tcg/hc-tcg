@@ -2,9 +2,9 @@
  * Get the card instance info for a card instance
  * @param {GameModel} game
  * @param {string} instance
- * @returns {InstanceInfo | null}
+ * @returns {CardPos | null}
  */
-export function getCardInfo(game, instance) {
+export function getCardPos(game, instance) {
 	const ids = game.getPlayerIds()
 	for (let i = 0; i < ids.length; i++) {
 		const playerId = ids[i]

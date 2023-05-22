@@ -9,8 +9,21 @@ class ItemCard extends Card {
 			throw new Error('Invalid card definition')
 		}
 		this.hermitType = defs.hermitType
+	}
 
-		this.attachReq = {target: 'player', type: ['item']}
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slotType !== 'item') return false
+		if (pos.playerId !== currentPlayer.id) return false
+
+		if (!pos.rowState.hermitCard) return false
+
+		return true
 	}
 }
 

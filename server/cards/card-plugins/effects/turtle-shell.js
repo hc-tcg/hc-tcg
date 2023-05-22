@@ -1,7 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
 import {AttackModel} from '../../../models/attack-model'
-import {getCardInfo} from '../../../utils/cards'
+import {getCardPos} from '../../../utils/cards'
 
 /*
 Questions:
@@ -47,22 +47,19 @@ class TurtleShellEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {string} targetPlayerId
-	 * @param {number} rowIndex
-	 * @param {CardTypeT} slotType
+	 * @param {CardPos} pos
 	 * @returns {boolean}
 	 */
-	canAttach(game, targetPlayerId, rowIndex, slotType) {
+	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (slotType !== 'effect') return false
-		if (targetPlayerId !== currentPlayer.id) return false
+		if (pos.slotType !== 'effect') return false
+		if (pos.playerId !== currentPlayer.id) return false
 
-		const row = currentPlayer.board.rows[rowIndex]
-		if (!row.hermitCard) return false
+		if (!pos.rowState.hermitCard) return false
 
 		// turtle shell addition - hermit must be inactive to attach
-		if (!(currentPlayer.board.activeRow !== rowIndex)) return false
+		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return false
 
 		return true
 	}
@@ -73,7 +70,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance) {
 		//@TODO just look at all this sad boilerplate
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return
 		const {playerState} = info
 
@@ -86,7 +83,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onSetActive(game, instance) {
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return true
 		const {playerState} = info
 
@@ -104,7 +101,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {AttackModel} attack
 	 */
 	onDefence(game, instance, attack) {
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info || attack.type === 'ailment') return attack
 		const {playerState} = info
 
@@ -128,7 +125,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onTurnEnd(game, instance) {
-		const info = getCardInfo(game, instance)
+		const info = getCardPos(game, instance)
 		if (!info) return
 		const {playerState} = info
 

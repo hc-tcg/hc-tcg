@@ -28,32 +28,18 @@ class EffectCard extends Card {
 	}
 
 	/**
-	 * If the specified slot is empty, can this card be attached there
 	 * @param {GameModel} game
-	 * @param {string} targetPlayerId
-	 * @param {number} rowIndex
-	 * @param {CardTypeT} slotType
-	 * @returns {boolean}
+	 * @param {CardPos} pos
 	 */
-	canAttach(game, targetPlayerId, rowIndex, slotType) {
+	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (slotType !== 'effect') return false
-		if (targetPlayerId !== currentPlayer.id) return false
+		if (pos.slotType !== 'effect') return false
+		if (pos.playerId !== currentPlayer.id) return false
 
-		const row = currentPlayer.board.rows[rowIndex]
-		if (!row.hermitCard) return false
+		if (!pos.rowState.hermitCard) return false
 
 		return true
-	}
-
-	/**
-	 * Called after an instance of this card is attached anywhere on the board
-	 * @param {GameModel} game
-	 * @param {string} instance The card instance attached
-	 */
-	onAttach(game, instance) {
-		// default is do nothing
 	}
 
 	/**

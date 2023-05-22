@@ -12,8 +12,19 @@ class HermitCard extends Card {
 		this.primary = defs.primary
 		this.secondary = defs.secondary
 		this.hermitType = defs.hermitType
+	}
 
-		this.attachReq = {target: 'player', type: ['hermit']}
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slotType !== 'hermit') return false
+		if (pos.playerId !== currentPlayer.id) return false
+
+		return true
 	}
 }
 

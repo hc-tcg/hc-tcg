@@ -38,6 +38,27 @@ class Card {
 	getInstanceKey(instance, keyName = '') {
 		return this.id + ':' + instance + ':' + keyName
 	}
+
+	/**
+	 * If the specified slot is empty, can this card be attached there
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 * @abstract
+	 */
+	canAttach(game, pos) {
+		// Needs overriding
+		throw new Error('Implement canAttach!')
+	}
+
+	/**
+	 * Called after an instance of this card is attached anywhere on the board
+	 * @param {GameModel} game
+	 * @param {string} instance The card instance attached
+	 */
+	onAttach(game, instance) {
+		// default is do nothing
+	}
 }
 
 export default Card
