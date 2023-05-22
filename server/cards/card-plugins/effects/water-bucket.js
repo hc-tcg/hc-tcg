@@ -23,6 +23,11 @@ class WaterBucketEffectCard extends EffectCard {
 		this.attachReq = {target: 'player', type: ['effect', 'single_use']}
 	}
 
+	//@TODO need to figure out pick process, etc - how to nicely define when a card needs to choose another?
+	// and if we check if a card is correct programatically, then we no longer have auutomatic messages to show to to player
+	// would have to have something like this:
+	// pick info:
+
 	/**
 	 * @param {GameModel} game
 	 */

@@ -1,9 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
+import {AttackModel} from 'models/attack-model'
 
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
 class GoldArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -13,13 +11,32 @@ class GoldArmorEffectCard extends EffectCard {
 			description:
 				'Protects from the first +30hp damage taken.\n\nDiscard following any damage taken.',
 		})
-		this.protection = {target: 30, discard: true}
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	onDefence(game, instance, attack) {
+		if (attack.type !== 'ailment') {
+			attack.defence.damageReduction += 30
+		}
+
+		return attack
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('models/attack-model').AttackResult} attackResult
 	 */
-	register(game) {}
+	afterDefence(game, instance, attackResult) {
+		if (attackResult.blockedDamage > 0) {
+			discardCard(game, {cardId: this.id, cardInstance: instance})
+		}
+	}
 }
 
 export default GoldArmorEffectCard

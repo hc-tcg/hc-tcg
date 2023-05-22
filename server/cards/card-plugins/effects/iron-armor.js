@@ -1,8 +1,6 @@
+import {AttackModel} from 'models/attack-model'
 import EffectCard from './_effect-card'
 
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
 class IronArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -12,13 +10,21 @@ class IronArmorEffectCard extends EffectCard {
 			description:
 				'Protects from the first +20hp damage taken.\n\nDiscard after user is knocked out.',
 		})
-		this.protection = {target: 20}
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
 	 */
-	register(game) {}
+	onDefence(game, instance, attack) {
+		if (attack.type !== 'ailment') {
+			attack.defence.damageReduction += 20
+		}
+
+		return attack
+	}
 }
 
 export default IronArmorEffectCard

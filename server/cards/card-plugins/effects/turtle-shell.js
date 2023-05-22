@@ -1,5 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../utils'
+import {AttackModel} from '../../../models/attack-model'
+import {getCardInfo} from '../../../utils/cards'
 
 /*
 Questions:
@@ -37,47 +39,104 @@ class TurtleShellEffectCard extends EffectCard {
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
-				'Attached to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
+				'Attach to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
 		})
 
-		this.attachReq = {target: 'player', type: ['effect'], active: false}
+		this.instances = {}
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} targetPlayerId
+	 * @param {number} rowIndex
+	 * @param {CardTypeT} slotType
+	 * @returns {boolean}
 	 */
-	register(game) {
-		game.hooks.turnStart.tap(this.id, () => {
-			const {opponentPlayer, opponentHermitCard, opponentEffectCard} = game.ds
-			if (!opponentHermitCard) return
-			if (opponentEffectCard?.cardId !== this.id) return
-			opponentPlayer.custom[this.id] = opponentHermitCard.cardInstance
-		})
+	canAttach(game, targetPlayerId, rowIndex, slotType) {
+		const {currentPlayer} = game.ds
 
-		game.hooks.attack.tap(this.id, (target) => {
-			const {opponentPlayer} = game.ds
-			if (!target.isActive) return target
-			if (target.row.effectCard?.cardId !== this.id) return target
+		if (slotType !== 'effect') return false
+		if (targetPlayerId !== currentPlayer.id) return false
 
-			// In case opponent received a turtle_shell through emerald
-			opponentPlayer.custom[this.id] = target.row.hermitCard.cardInstance
+		const row = currentPlayer.board.rows[rowIndex]
+		if (!row.hermitCard) return false
 
-			target.invulnarable = true
-			return target
-		})
+		// turtle shell addition - hermit must be inactive to attach
+		if (!(currentPlayer.board.activeRow !== rowIndex)) return false
 
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {opponentPlayer} = game.ds
-			const protectedHermit = opponentPlayer.custom[this.id]
-			if (!protectedHermit) return
-			const row = opponentPlayer.board.rows.find(
-				(row) => row.hermitCard?.cardInstance === protectedHermit
-			)
-			if (!row || row.effectCard?.cardId !== this.id) return
-			discardCard(game, row.effectCard)
-			delete opponentPlayer.custom[this.id]
-			return
-		})
+		return true
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onAttach(game, instance) {
+		//@TODO just look at all this sad boilerplate
+		const info = getCardInfo(game, instance)
+		if (!info) return
+		const {playerState} = info
+
+		const instanceKey = this.getKey(instance)
+		playerState.custom[instanceKey] = false
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onSetActive(game, instance) {
+		const info = getCardInfo(game, instance)
+		if (!info) return true
+		const {playerState} = info
+
+		// This card will now block all damage till the end of the turn
+		const instanceKey = this.getKey(instance)
+		playerState.custom[instanceKey] = true
+
+		return true
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	onDefence(game, instance, attack) {
+		const info = getCardInfo(game, instance)
+		if (!info || attack.type === 'ailment') return attack
+		const {playerState} = info
+
+		// If ability active, block all damage
+		const instanceKey = this.getKey(instance)
+		if (playerState.custom[instanceKey] === true) {
+			const types = attack.getDamageTypes()
+
+			for (let i = 0; i < types.length; i++) {
+				const type = types[i]
+				attack.multiplyDamage(type, 0).lockDamage(type)
+			}
+		}
+
+		return attack
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onTurnEnd(game, instance) {
+		const info = getCardInfo(game, instance)
+		if (!info) return
+		const {playerState} = info
+
+		// End of turn, if active, remove flag and discard
+		const instanceKey = this.getKey(instance)
+		if (playerState.custom[instanceKey] === true) {
+			delete playerState.custom[instanceKey]
+		}
 	}
 }
 

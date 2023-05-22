@@ -1,3 +1,4 @@
+import {AttackModel} from 'models/attack-model'
 import EffectCard from './_effect-card'
 
 /**
@@ -13,13 +14,22 @@ class ThornsEffectCard extends EffectCard {
 			description:
 				'Opposing Hermit takes +10hp damage after attack.\n\nDiscard after user is knocked out.',
 		})
-		this.protection = {backlash: 10}
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
 	 */
-	register(game) {}
+	onDefence(game, instance, attack) {
+		// only add backlash if there's a hermit behind the attack
+		if (attack.attacker) {
+			attack.defence.backlash += 10
+		}
+
+		return attack
+	}
 }
 
 export default ThornsEffectCard

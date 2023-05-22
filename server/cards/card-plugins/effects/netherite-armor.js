@@ -1,3 +1,4 @@
+import {AttackModel} from 'models/attack-model'
 import EffectCard from './_effect-card'
 
 /**
@@ -13,13 +14,21 @@ class NetheriteArmorEffectCard extends EffectCard {
 			description:
 				'Protects from the first +40hp damage.\n\nDiscard after user is knocked out.',
 		})
-		this.protection = {target: 40}
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
 	 */
-	register(game) {}
+	onDefence(game, instance, attack) {
+		if (attack.type !== 'ailment') {
+			attack.defence.damageReduction += 40
+		}
+
+		return attack
+	}
 }
 
 export default NetheriteArmorEffectCard

@@ -5,6 +5,7 @@ import {discardCard} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
+//@TODO no longer an attachable item card, no use implementing new logic here
 // TODO - Must work with Gemintay ability to use two single use cards per turn (should mend the first one)
 class MendingEffectCard extends EffectCard {
 	constructor() {

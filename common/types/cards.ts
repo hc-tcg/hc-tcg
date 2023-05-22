@@ -1,3 +1,4 @@
+import {Ailment} from './game-state'
 import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
@@ -90,4 +91,31 @@ export type CardTypesMapT = {
 	effect: EffectCardT
 	single_use: EffectCardT
 	health: HealthCardT
+}
+
+export type CardDefs = {
+	type: CardTypeT
+	id: string
+	name: string
+	rarity: CardRarityT
+}
+
+export type EffectDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	description: string
+}
+
+export type Slot = {
+	type: 'item' | 'single_use' | 'effect' | 'hermit'
+	index: number
+}
+
+export type InstanceInfo = {
+	playerId: string
+	playerState: PlayerState
+	rowIndex: number
+	rowState: RowState
+	slotType: 'item' | 'single_use' | 'effect' | 'hermit'
 }
