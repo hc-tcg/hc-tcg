@@ -35,7 +35,7 @@ function* gameManager(game) {
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${players[0].name} + ${players[1].name}.`,
+			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
 			'Total games:',
 			root.getGameIds().length
 		)
@@ -65,7 +65,7 @@ function* gameManager(game) {
 
 		for (const player of players) {
 			const gameState = getLocalGameState(game, player)
-			const outcome = getGamePlayerOutcome(game, result, player.id)
+			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
 				gameState,
 				outcome,
@@ -115,7 +115,7 @@ function* joinQueue(action) {
 	}
 	if (inGame(playerId) || inQueue(playerId)) return
 	root.queue.push(playerId)
-	console.log(`Joining queue: ${player.name}`)
+	console.log(`Joining queue: ${player.playerName}`)
 }
 
 function* leaveMatchmaking(action) {
@@ -136,7 +136,7 @@ function* leaveMatchmaking(action) {
 	}
 	console.log(
 		'Matchmaking cancelled: ',
-		root.players[playerId]?.name || 'Unknown'
+		root.players[playerId]?.playerName || 'Unknown'
 	)
 }
 
@@ -157,7 +157,10 @@ function* createPrivateGame(action) {
 	newGame.addPlayer(player)
 	root.games[newGame.id] = newGame
 
-	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
+	console.log(
+		`Private game created by ${player.playerName}.`,
+		`Code: ${gameCode}`
+	)
 }
 
 function* joinPrivateGame(action) {
@@ -175,7 +178,7 @@ function* joinPrivateGame(action) {
 		return
 	}
 
-	console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
+	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
 	yield fork(gameManager, game)
 }

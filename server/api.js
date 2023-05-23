@@ -25,7 +25,7 @@ export function registerApis(app) {
 									id: g.id,
 									code: g.code,
 									playerIds: g.getPlayerIds(),
-									playerNames: g.getPlayers().map((p) => p.name),
+									playerNames: g.getPlayers().map((p) => p.playerName),
 									state: g.state,
 								}
 							})
