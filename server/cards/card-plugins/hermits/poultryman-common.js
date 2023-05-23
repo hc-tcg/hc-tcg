@@ -20,8 +20,6 @@ class PoultrymanCommonHermitCard extends HermitCard {
 				damage: 80,
 				power: null,
 			},
-			palette: 'alter_egos',
-			background: 'alter_egos_background',
 		})
 	}
 

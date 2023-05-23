@@ -20,8 +20,6 @@ class BeetlejhostCommonHermitCard extends HermitCard {
 				damage: 100,
 				power: null,
 			},
-			palette: 'alter_egos',
-			background: 'alter_egos_background',
 		})
 	}
 

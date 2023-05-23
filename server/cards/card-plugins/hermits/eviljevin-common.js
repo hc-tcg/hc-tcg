@@ -20,8 +20,6 @@ class EvilJevinCommonHermitCard extends HermitCard {
 				damage: 90,
 				power: null,
 			},
-			palette: 'alter_egos',
-			background: 'alter_egos_background',
 		})
 	}
 

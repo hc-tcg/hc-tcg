@@ -15,12 +15,8 @@
 .cardBackground {
 	fill: rgb(226, 202, 139);
 
-	&.alter_egos {
-		fill: rgb(25, 25, 25);
-	}
-
 	&.pharaoh {
-		fill: rgb(239, 228, 103);
+		fill: rgb(210, 203, 63);
 	}
 }
 
@@ -30,10 +26,6 @@
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
-
-	&.alter_egos {
-		fill: white;
-	}
 
 	&.pharaoh {
 		fill: rgb(246, 4, 1);
@@ -48,12 +40,9 @@
 	}
 
 	&.ultraLong {
-		font-size: 40px;
-		letter-spacing: 0.03em;
-	}
-
-	&.megaLong {
 		letter-spacing: -0.013em;
+		font-size: 40px;
+		transform: translateY(0.05em);
 	}
 }
 
@@ -78,10 +67,6 @@ text.attackName {
 	fill: black;
 	text-anchor: middle;
 
-	&.alter_egos {
-		fill: white;
-	}
-
 	&.pharaoh {
 		fill: rgb(246, 4, 1);
 	}
@@ -105,10 +90,6 @@ text.attackName.long {
 
 .attackDamage.specialMove {
 	fill: rgb(23, 66, 234);
-}
-
-.attackItems.alter_egos.prankster {
-	filter: drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white);
 }
 
 .rank {
