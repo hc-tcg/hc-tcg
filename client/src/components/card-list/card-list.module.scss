@@ -27,6 +27,17 @@
 	}
 }
 
+.game {
+	$size: 11vh;
+
+	grid-template-columns: repeat(auto-fill, $size);
+
+	.card {
+		height: $size;
+		width: $size;
+	}
+}
+
 .clickable {
 	transition: 0.25s transform;
 	transform: scale(100%);

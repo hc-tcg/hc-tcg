@@ -28,8 +28,44 @@ function Chat() {
 		dispatch(chatMessage(message))
 	}
 
+	console.log('Chat messages:', chatMessages)
+
 	return (
 		<div className={css.chat}>
+			<div className={css.messageList}>
+				{chatMessages
+					.slice()
+					.reverse()
+					.map((messageInfo) => {
+						const time = new Date(messageInfo.createdAt).toLocaleString()
+						const hmTime = new Date(messageInfo.createdAt).toLocaleTimeString([], {
+							hour: '2-digit',
+							minute: '2-digit',
+						})
+						const name = playerStates?.[messageInfo.playerId]?.playerName || 'unknown'
+						const isPlayer = playerId === messageInfo.playerId
+						return (
+							<div
+								key={messageInfo.createdAt}
+								className={classnames(css.message, {
+									[css.player]: isPlayer,
+									[css.opponent]: !isPlayer,
+								})}
+								title={time}
+							>
+								<span className={css.time}>{hmTime}</span>
+								<span className={css.playerName}>{name}</span>
+								<span className={css.text}>
+									{/* :&nbsp; */}
+									{settings.profanityFilter !== 'off'
+										? messageInfo.censoredMessage
+										: messageInfo.message}
+								</span>
+							</div>
+						)
+					})}
+			</div>
+
 			<form className={css.publisher} onSubmit={handleNewMessage}>
 				<input
 					style={{height: '2rem'}}
@@ -38,35 +74,10 @@ function Chat() {
 					name="message"
 					maxLength={140}
 				/>
-				<Button variant="default" size="small">
+				<Button variant="default" size="small" style={{height: '2rem'}}>
 					Send
 				</Button>
 			</form>
-			<div className={css.messageList}>
-				{chatMessages.map((messageInfo) => {
-					const time = new Date(messageInfo.createdAt).toLocaleString()
-					const name = playerStates?.[messageInfo.playerId]?.playerName || 'unknown'
-					const isPlayer = playerId === messageInfo.playerId
-					return (
-						<div
-							key={messageInfo.createdAt}
-							className={classnames(css.message, {
-								[css.player]: isPlayer,
-								[css.opponent]: !isPlayer,
-							})}
-							title={time}
-						>
-							<span className={css.playerName}>{name}</span>
-							<span className={css.text}>
-								:&nbsp;
-								{settings.profanityFilter !== 'off'
-									? messageInfo.censoredMessage
-									: messageInfo.message}
-							</span>
-						</div>
-					)
-				})}
-			</div>
 		</div>
 	)
 }

@@ -1,0 +1,58 @@
+.actions {
+	display: flex;
+	gap: 20px;
+	color: var(--text-light);
+	width: 100%;
+	justify-content: space-between;
+}
+
+.actionSection {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 15px 20px;
+	gap: 10px;
+	margin-top: 30px;
+	background: var(--gray-900);
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-image-source: url('images/border_frame.png');
+	border-style: solid;
+
+	> h2 {
+		position: absolute;
+		top: -30px;
+		width: 100%;
+		font-weight: bold;
+	}
+}
+
+.slot {
+	$slot-size: 90px;
+
+	height: $slot-size;
+	width: $slot-size;
+}
+
+.buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 100%;
+}
+
+#status {
+	width: 100%;
+}
+
+#singleUse {
+	width: 300px;
+}
+
+#buttons {
+	width: 300px;
+}

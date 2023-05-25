@@ -1,68 +1,70 @@
 .toolbar {
-	width: 45px;
-	height: 100%;
 	display: flex;
-	flex-flow: column nowrap;
-	overflow: hidden;
-	border-right: 1px solid #aaa;
+	justify-content: center;
+	flex-flow: row nowrap;
+	gap: 1vh;
+	background: var(--gray-700);
+	border-bottom: 1px solid #aaa;
+	padding: 1vh;
+}
+
+button {
+	cursor: pointer;
+
+	&:hover {
+		background: var(--gray-500);
+	}
 }
 
 .item {
-	width: 100%;
-	height: 45px;
+	$size: 4vh;
+
+	min-width: $size;
+	height: $size;
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 22px;
-	color: darkred;
+	font-size: 2vh;
+	color: var(--text-light);
 	user-select: none;
-}
+	background: var(--gray-900);
+	border-radius: 1vh;
 
-.clickable {
-	cursor: pointer;
-}
+	> * {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		text-align: center;
+		height: 100%;
+		width: 100%;
+		object-fit: contain;
+		padding: 0.75vh;
+	}
 
-.item:hover {
-	background: beige;
-
-	// box-shadow: 0 0 2px 2px #aaa;
-
-	border-bottom: 1px solid #aaa;
-
-	&:not(:first-child) {
-		border-top: 1px solid #aaa;
+	span {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-content: center;
+		color: var(--text-light);
 	}
 }
 
 @keyframes newMessageAnim {
 	0% {
-		background: transparent;
+		background: black;
 	}
 
-	40% {
-		background: transparent;
-	}
-
-	60% {
+	75% {
 		background: orange;
 	}
 
-	90% {
+	100% {
 		background: orange;
 	}
 }
 
 .newMessage {
-	animation-name: newMessageAnim;
-	animation-iteration-count: infinite;
-	animation-duration: 2s;
-}
-
-.soundItem img {
-	filter: invert(0.85);
-}
-
-.dynamicSpace {
-	min-height: 0;
-	flex: 1 1 auto;
+	animation: newMessageAnim 1000ms infinite alternate ease;
 }

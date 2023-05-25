@@ -1,0 +1,245 @@
+/* stylelint-disable declaration-block-no-redundant-longhand-properties */
+/* stylelint-disable selector-class-pattern */
+$grid-size: 25px;
+
+.gameBoard {
+	display: flex;
+	flex-direction: column;
+	user-select: none;
+	padding-inline: 10px;
+	justify-content: center;
+	gap: 16px;
+	overflow: hidden;
+}
+
+.playerInfoSection {
+	display: flex;
+	gap: 10px;
+}
+
+.actualBoard {
+	display: flex;
+	gap: $grid-size * 2;
+	justify-content: center;
+	border: 2px solid lightblue;
+	background: var(--gray-900);
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-image-source: url('images/border_frame.png');
+	border-style: solid;
+	padding: 20px;
+}
+
+.row {
+	// $size: 9.5px;
+	$size: $grid-size;
+
+	display: grid;
+	border: 4px solid transparent;
+	grid-template-columns: repeat(11, $size);
+	grid-template-rows: repeat(6, $size);
+	grid-template-areas:
+		'item1 item1 effect effect effect hermit hermit hermit hermit hermit hermit'
+		'item1 item1 effect effect effect hermit hermit hermit hermit hermit hermit'
+		'item2 item2 effect effect effect hermit hermit hermit hermit hermit hermit'
+		'item2 item2 health health health hermit hermit hermit hermit hermit hermit'
+		'item3 item3 health health health hermit hermit hermit hermit hermit hermit'
+		'item3 item3 health health health hermit hermit hermit hermit hermit hermit';
+
+	&.reversed {
+		grid-template-areas:
+			'hermit hermit hermit hermit hermit hermit effect effect effect item1 item1'
+			'hermit hermit hermit hermit hermit hermit effect effect effect item1 item1'
+			'hermit hermit hermit hermit hermit hermit effect effect effect item2 item2'
+			'hermit hermit hermit hermit hermit hermit health health health item2 item2'
+			'hermit hermit hermit hermit hermit hermit health health health item3 item3'
+			'hermit hermit hermit hermit hermit hermit health health health item3 item3';
+	}
+
+	&:hover {
+		filter: brightness(120%);
+	}
+}
+
+.slot {
+	background: grey;
+	position: relative;
+	height: 100%;
+	width: 100%;
+	aspect-ratio: 1;
+	overflow: hidden;
+
+	.frame {
+		width: 100%;
+		height: 100%;
+	}
+
+	&.available {
+		cursor: pointer;
+	}
+
+	&.item,
+	&.hermit,
+	&.single_use {
+		background: #aeb4b4;
+	}
+
+	&.health {
+		background: #6d6e64;
+	}
+
+	&.effect {
+		background: #353536;
+	}
+
+	&.lock {
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		width: 15px;
+		height: 15px;
+		filter: brightness(75%);
+	}
+
+	&.empty {
+		padding: 5%;
+	}
+
+	&:hover {
+		.frame {
+			box-shadow: 0 0 5px #333;
+		}
+
+		&.effect .frame {
+			box-shadow: 0 0 3px #ddd;
+		}
+	}
+}
+
+.afk {
+	filter: brightness(0.75);
+}
+
+.active {
+	$color: hsl(181deg, 61%, 66%);
+
+	border-color: $color;
+	filter: drop-shadow(0 0 8px $color);
+}
+
+// GRID AREAS
+
+#health {
+	grid-area: health;
+	aspect-ratio: 0;
+}
+
+#hermit {
+	grid-area: hermit;
+}
+
+#effect {
+	grid-area: effect;
+}
+
+@for $i from 1 through 3 {
+	#item#{$i} {
+		grid-area: item#{$i};
+	}
+}
+
+// MIDDLE SECTION
+
+.actions {
+	display: flex;
+	flex-direction: column;
+	background: var(--gray-900);
+	width: $grid-size * 8;
+	z-index: 1;
+}
+
+.opponentFollowup {
+	font-family: Minecraft;
+	text-align: center;
+	color: white;
+	font-size: 12px;
+}
+
+.singleUseSlot.used {
+	filter: brightness(50%);
+}
+
+// AILMENTS
+
+.fireAilment {
+	position: absolute;
+	left: -20px;
+	bottom: -40px;
+	width: 75px;
+	background: url('/images/status/fire-anim.gif') no-repeat;
+	filter: blur(1px);
+	height: 75px;
+	background-size: contain;
+}
+
+.poisonAilment {
+	position: absolute;
+	left: -25px;
+	bottom: -42px;
+	width: 75px;
+	background: url('/images/status/poison-anim.gif') no-repeat;
+	filter: blur(1px);
+	height: 75px;
+	background-size: contain;
+}
+
+.slownessAilment {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 25px;
+	background: url('/images/status/slowness.png') no-repeat;
+	height: 25px;
+	background-size: contain;
+}
+
+.sleepingAilment {
+	position: absolute;
+	left: -3px;
+	top: 20px;
+	width: 22px;
+	background: url('/images/status/sleeping-anim.gif') no-repeat;
+	height: 22px;
+	filter: grayscale(100%);
+	background-size: contain;
+}
+
+// UTILITIES
+
+.dynamicSpace {
+	flex: 1 1 0;
+	width: 0;
+	min-width: 0;
+}
+
+/////////////////////////////////////
+// DESKTOP / LANDSCAPE
+/////////////////////////////////////
+@media (orientation: landscape) {
+	.actualBoard {
+		gap: $grid-size;
+	}
+
+	.row {
+		$size: 80px;
+
+		grid-template-columns: repeat(6, $size);
+		grid-template-rows: repeat(1, $size);
+		grid-template-areas: 'item3 item2 item1 effect hermit health';
+
+		&.reversed {
+			grid-template-areas: 'health hermit effect item1 item2 item3';
+		}
+	}
+}

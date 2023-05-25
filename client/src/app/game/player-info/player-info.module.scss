@@ -1,0 +1,129 @@
+.playerInfo {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 1vh;
+	font-weight: bold;
+	color: var(--text-light);
+	padding: 4px 16px;
+	border: 4px solid var(--gray-900);
+	background: hsla(210deg, 2%, 20%, 50%);
+	flex-grow: 1;
+}
+
+.active {
+	border-image-slice: 30;
+	border-image-width: 20px;
+	border-image-repeat: stretch stretch;
+	border-image-source: url('images/border_frame.png');
+	border-style: solid;
+	background: linear-gradient(
+		-90deg,
+		hsla(195deg, 53%, 60%, 35%),
+		hsla(195deg, 100%, 60%, 50%)
+	);
+
+	&.right {
+		background: linear-gradient(
+			90deg,
+			hsla(195deg, 53%, 60%, 35%),
+			hsla(195deg, 100%, 60%, 50%)
+		);
+	}
+}
+
+.playerHead {
+	background: var(--gray-800);
+	clip-path: polygon(50% 0, 100% 20%, 100% 80%, 50% 100%, 0 80%, 0 20%);
+	height: 52px;
+	aspect-ratio: 20/21;
+	padding: 5px;
+}
+
+.playerName {
+	> h1 {
+		// font-size: 32px;
+		// letter-spacing: 1px;
+		// font-family: Minecrafter, sans-serif;
+		font-family: MinecraftBold;
+		filter: drop-shadow(0 2px 0 hsla(0deg, 0%, 0%, 35%));
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 20ch;
+		overflow: hidden;
+	}
+
+	> p {
+		letter-spacing: 1px;
+		font-family: Minecrafter, sans-serif;
+		text-transform: uppercase;
+		font-size: 10px;
+		font-weight: normal;
+		color: var(--gray-200);
+	}
+}
+
+.playerName.disconnected {
+	color: rgb(170, 170, 170);
+}
+
+.currentTurn {
+	text-transform: uppercase;
+	font-size: 1vh;
+	font-family: Minecraft, sans-serif;
+	font-weight: normal;
+	letter-spacing: 0.25vh;
+	line-height: 1;
+	text-align: center;
+}
+
+.turnHighlight {
+	color: var(--color-secondary);
+}
+
+.right {
+	flex-direction: row-reverse;
+	text-align: right;
+}
+
+.health {
+	display: flex;
+	flex-direction: column-reverse;
+	margin-left: auto;
+
+	> img {
+		$size: 16px;
+
+		height: $size;
+		width: $size;
+	}
+
+	&.right {
+		margin-left: 0;
+		margin-right: auto;
+	}
+}
+
+@media (orientation: landscape) {
+	.playerName {
+		> h1 {
+			max-width: 25ch;
+		}
+	}
+
+	.health {
+		flex-direction: row-reverse;
+		gap: 4px;
+
+		> img {
+			$size: 32px;
+
+			height: $size;
+			width: $size;
+		}
+
+		&.right {
+			flex-direction: row;
+		}
+	}
+}

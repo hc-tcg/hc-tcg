@@ -5,6 +5,8 @@ import classnames from 'classnames'
 import {getChatMessages} from 'logic/game/game-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
+import ChatIcon from 'components/svgs/ChatIcon'
+import ChatIconNotify from 'components/svgs/ChatIconNotify'
 
 function ChatItem() {
 	const [lastSeen, setLastSeen] = useState<number>(0)
@@ -25,15 +27,15 @@ function ChatItem() {
 	const newMessage = settings.showChat !== 'on' && lastSeen !== latestMessageTime
 
 	return (
-		<div
+		<button
 			className={classnames(css.item, css.clickable, {
 				[css.newMessage]: newMessage,
 			})}
 			title="Chat"
 			onClick={toggleChat}
 		>
-			<img src="/images/toolbar/chat.jpg" width="30" height="30" />
-		</div>
+			{newMessage ? <ChatIconNotify /> : <ChatIcon />}
+		</button>
 	)
 }
 

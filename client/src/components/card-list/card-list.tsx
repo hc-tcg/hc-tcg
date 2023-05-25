@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {useTransition, animated} from '@react-spring/web'
+import {useTransition} from '@react-spring/web'
 import {useRef} from 'react'
 import CARDS from 'common/cards'
 import {CardT} from 'common/types/game-state'
@@ -15,6 +15,7 @@ import HealthCard from 'common/cards/card-plugins/health/_health-card'
 const SIZE = {
 	medium: 200,
 	small: 120,
+	game: 102,
 }
 
 type CardListProps = {
@@ -23,12 +24,12 @@ type CardListProps = {
 	selected?: Array<CardT | null>
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
-	size: 'medium' | 'small'
+	size: 'medium' | 'small' | 'game'
 	wrap?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, size = 'medium'} = props
+	const {wrap, onClick, size} = props
 	const {cards, disabled, selected, picked} = props
 	const listRef = useRef<HTMLDivElement>(null)
 
@@ -56,8 +57,10 @@ const CardList = (props: CardListProps) => {
 			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
+
+		// TODO: FIX CARD ANIMATIONS. DISABLED TO PREVENT SIZING ISSUES ON GAME SCREEN.
 		return (
-			<animated.div
+			<div
 				style={style}
 				key={card.cardInstance}
 				className={classnames(css.card, {
@@ -71,7 +74,7 @@ const CardList = (props: CardListProps) => {
 					selected={isSelected}
 					picked={isPicked}
 				/>
-			</animated.div>
+			</div>
 		)
 	})
 

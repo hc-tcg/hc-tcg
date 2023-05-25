@@ -1,0 +1,77 @@
+.game {
+	position: relative;
+	background: #000a;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.playAreaWrapper {
+	position: relative;
+	display: grid;
+	place-content: center;
+	flex-grow: 1;
+	height: 1vh; // Height needed to prevent hand from falling off screen.
+}
+
+.playArea {
+	// Play area must be sized so all child elements fit
+	// within container for scaling to work properly.
+	// Mobile (Portrait) settings:
+	height: 1100px;
+	width: 830px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.grid {
+	$line-weight: 2px;
+	$grid-size: 10px;
+
+	display: none;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background-image: repeating-linear-gradient(
+			#ccc5 0 $line-weight,
+			transparent $line-weight 100%
+		),
+		repeating-linear-gradient(
+			90deg,
+			#ccc5 0 $line-weight,
+			transparent $line-weight 100%
+		);
+	background-size: $grid-size $grid-size;
+	z-index: -1;
+}
+
+.bottom {
+	display: flex;
+	flex-direction: column;
+	background: var(--gray-800);
+	overflow-x: auto;
+	border-top: 3px solid hsl(192deg, 56%, 58%);
+}
+
+.hand {
+	flex: 1 1 auto;
+	padding: 10px;
+	margin-bottom: 2px;
+	min-width: 0;
+	overflow-x: auto;
+	overflow-y: hidden;
+	text-align: center;
+	z-index: 1;
+}
+
+@media (orientation: landscape) {
+	.playArea {
+		// Play area must be sized so all child elements fit
+		// within container for scaling to work properly.
+		// Desktop (Landscape) settings:
+		height: 760px;
+		width: 1050px;
+	}
+}
