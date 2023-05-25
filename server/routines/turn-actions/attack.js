@@ -325,7 +325,7 @@ function* attackSaga(game, turnAction, actionState) {
 		})
 	}
 
-	//@TODO
+	//@TODO call results, then check for hermit death
 
 	//@TODO make sure to delete attack objects after - is this needed?
 
