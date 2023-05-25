@@ -1,3 +1,4 @@
+import {AttackModel} from '../../../models/attack-model'
 import Card from '../_card'
 
 class SingleUseCard extends Card {
@@ -11,6 +12,37 @@ class SingleUseCard extends Card {
 		this.description = defs.description
 
 		this.attachReq = {target: 'player', type: ['single_use']}
+	}
+
+	/**
+	 * Creates and returns attack objects
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @returns {Array<AttackModel>}
+	 */
+	getAttacks(game, instance) {
+		// default is do nothing
+		return []
+	}
+
+	/**
+	 * Called before any attack from our side of the board to the other
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	overrideAttack(game, instance, attack) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called during an attack to another row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	onAttack(game, instance, attack) {
+		// default is do nothing
 	}
 
 	/**

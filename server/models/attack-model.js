@@ -1,36 +1,36 @@
 /**
- * @typedef {'standard' | 'backlash' | 'ailment'} AttackType
+ * @typedef {{index: number, row: RowStateWithHermit} | null} Attacker
  *
- * @typedef {'mainAttack' | 'effects' | 'weakness'} DamageType
+ * @typedef {{index: number, row: RowStateWithHermit}} AttackTarget
  *
- * @typedef {{amount: number, multiplier: number, locked: boolean}} DamageSource
+ * @typedef {'primary' | 'secondary' | 'zero'} HermitAttackType
  *
- * @typedef {Record<DamageType, DamageSource>} DamageSources
+ * @typedef {HermitAttackType | 'effect' | 'weakness' | 'backlash' | 'ailment'} AttackType
  *
  * @typedef {{damageReduction: number, backlash: number}} AttackDefence
  *
  *
- * @typedef {{attacker: RowStateWithHermit, target: RowStateWithHermit, totalDamage: number, blockedDamage: number}} AttackResult
+ * @typedef {{attack: AttackModel, totalDamage: number, blockedDamage: number}} AttackResult
  */
 
 export class AttackModel {
 	/**
 	 *
-	 * @param {RowStateWithHermit | null} attacker
-	 * @param {RowStateWithHermit} target
+	 * @param {Attacker} attacker
+	 * @param {AttackTarget} target
 	 * @param {AttackType} type
 	 * @returns
 	 */
 	constructor(attacker = null, target, type) {
 		/**
 		 * The attacker
-		 * @type {RowStateWithHermit | null}
+		 * @type {Attacker}
 		 */
 		this.attacker = attacker
 
 		/**
 		 * The attack target
-		 * @type {RowStateWithHermit}
+		 * @type {AttackTarget}
 		 */
 		this.target = target
 
@@ -41,14 +41,22 @@ export class AttackModel {
 		this.type = type
 
 		/**
-		 * Where the damage is coming from
-		 * @type {DamageSources}
+		 * The damage this attack does
+		 * @type {number}
 		 */
-		this.sources = {
-			mainAttack: {amount: 0, multiplier: 1, locked: false},
-			effects: {amount: 0, multiplier: 1, locked: false},
-			weakness: {amount: 0, multiplier: 1, locked: false},
-		}
+		this.damage = 0
+
+		/**
+		 * The damage multiplier
+		 * @type {number}
+		 */
+		this.damageMultiplier = 1
+
+		/**
+		 * Is the damage on this attack changeable?
+		 * @type {boolean}
+		 */
+		this.damageLocked = false
 
 		/**
 		 * Defence against this attack
@@ -68,57 +76,41 @@ export class AttackModel {
 
 	/**
 	 * Adds damage to a damage source
-	 * @param {DamageType} type
 	 * @param {number} amount
 	 */
-	addDamage(type, amount) {
-		if (this.sources[type].locked) return this
-		this.sources[type].amount += amount
+	addDamage(amount) {
+		if (this.damageLocked) return this
+		this.damage += amount
 		return this
 	}
 
 	/**
 	 * Removes damage from a damage source
-	 * @param {DamageType} type
 	 * @param {number} amount
 	 */
 	removeDamage(type, amount) {
-		if (this.sources[type].locked) return this
-		this.sources[type].amount = Math.max(this.sources[type].amount - amount, 0)
+		if (this.damageLocked) return this
+		this.damage = Math.max(this.damage - amount, 0)
 		return this
 	}
 
 	/**
 	 * Multiplies damage for a damage source
-	 * @param {DamageType} type
 	 * @param {number} multiplier
 	 */
-	multiplyDamage(type, multiplier) {
-		const source = this.sources[type]
-		if (source.locked) return this
-		source.multiplier = Math.max(source.multiplier * multiplier, 0)
-		this.sources[type] = source
+	multiplyDamage(multiplier) {
+		if (this.damageLocked) return this
+		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
 		return this
 	}
 
 	/**
-	 * Locks damage for a damage source
+	 * Locks damage for this attack
 	 *
 	 * WARNING: Do not use lightly!
-	 * @param {DamageType} type
 	 */
-	lockDamage(type) {
-		this.sources[type].locked = true
+	lockDamage() {
+		this.damageLocked = true
 		return this
-	}
-
-	/**
-	 * Returns an array of the different damage types
-	 * @returns {Array<DamageType>}
-	 */
-	getDamageTypes() {
-		/** @type {Array<DamageType>} */
-		const types = ['mainAttack', 'effects', 'weakness']
-		return types
 	}
 }

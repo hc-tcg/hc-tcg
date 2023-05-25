@@ -1,5 +1,9 @@
 import {CARDS} from './card-plugins'
 import Card from './card-plugins/_card'
+import EffectCard from './card-plugins/effects/_effect-card'
+import HermitCard from './card-plugins/hermits/_hermit-card'
+import ItemCard from './card-plugins/items/_item-card'
+import SingleUseCard from './card-plugins/single-use/_single-use-card'
 
 /**
  * @typedef {import('common/types/cards').CardInfoT} CardInfoT
@@ -14,13 +18,13 @@ const cardMap = CARDS.reduce((result, card) => {
 	return result
 }, {})
 
-/** @type {Record<string, HermitCardT>} */
+/** @type {Record<string, HermitCard>} */
 export const HERMIT_CARDS = CARDS.reduce((result, card) => {
 	if (card.type === 'hermit') result[card.id] = card
 	return result
 }, {})
 
-/** @type {Record<string, EffectCardT>} */
+/** @type {Record<string, EffectCard>} */
 export const EFFECT_CARDS = CARDS.reduce((result, card) => {
 	if (card.type === 'effect') {
 		result[card.id] = card
@@ -28,7 +32,7 @@ export const EFFECT_CARDS = CARDS.reduce((result, card) => {
 	return result
 }, {})
 
-/** @type {Record<string, EffectCardT>} */
+/** @type {Record<string, SingleUseCard>} */
 export const SINGLE_USE_CARDS = CARDS.reduce((result, card) => {
 	if (card.type === 'single_use') {
 		result[card.id] = card
@@ -36,13 +40,10 @@ export const SINGLE_USE_CARDS = CARDS.reduce((result, card) => {
 	return result
 }, {})
 
-/** @type {Record<string, ItemCardT>} */
+/** @type {Record<string, ItemCard>} */
 export const ITEM_CARDS = CARDS.reduce((result, card) => {
 	if (card.type === 'item') result[card.id] = card
 	return result
 }, {})
-
-SINGLE_USE_CARDS['water_bucket'] = EFFECT_CARDS['water_bucket']
-SINGLE_USE_CARDS['milk_bucket'] = EFFECT_CARDS['milk_bucket']
 
 export default cardMap

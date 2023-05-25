@@ -29,9 +29,7 @@ function AttackModal({closeModal}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = HERMIT_CARDS[
-		activeRow.hermitCard.cardId
-	] as HermitCardT
+	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 	const singleUseInfo = singleUseCard

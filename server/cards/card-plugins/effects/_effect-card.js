@@ -43,15 +43,54 @@ class EffectCard extends Card {
 	}
 
 	/**
+	 * Returns an array of attack objects to carry out
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @returns {Array<AttackModel>}
+	 */
+	getAttacks(game, instance) {
+		// default is none
+		return []
+	}
+
+	/**
+	 * Called before any attack from our side of the board to the other
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	overrideAttack(game, instance, attack) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called before any attack to our side of the board
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	overrideDefence(game, instance, attack) {
+		// default is do nothing
+	}
+
+	/**
 	 * Called during an attack to another row
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {AttackModel} attack
-	 * @returns {AttackModel}
 	 */
 	onAttack(game, instance, attack) {
 		// default is do nothing
-		return attack
+	}
+
+	/**
+	 * Called during an attack on this row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
+	 */
+	onDefence(game, instance, attack) {
+		// default is do nothing
 	}
 
 	/**
@@ -62,18 +101,6 @@ class EffectCard extends Card {
 	 */
 	afterAttack(game, instance, attackResult) {
 		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 * @returns {AttackModel}
-	 */
-	onDefence(game, instance, attack) {
-		// default is do nothing
-		return attack
 	}
 
 	/**
