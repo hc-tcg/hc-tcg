@@ -1,6 +1,7 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
 import root from './models/root-model'
+import {CONFIG} from '../config'
 
 /**
  * @param {import("express").Express} app
@@ -39,4 +40,28 @@ export function registerApis(app) {
 			}
 		})
 	}
+}
+
+/**
+ * @param {import("models/game-model").GameModel} game
+ */
+export function gameEndWebhook(game) {
+	let headers = new Headers()
+	headers.append('Content-type', 'application/json')
+	try {
+		headers.append("api-key", require('./apiKeys.json')[0])
+		fetch(CONFIG['gameEndUrl'], {
+			method: 'POST',
+			headers: headers,
+			body: JSON.stringify({
+				createdTime: game.createdTime,
+				endTime: Date.now(),
+				id: game.id,
+				code: game.code,
+				playerIds: game.getPlayerIds(),
+				playerNames: game.getPlayers().map((p) => p.name),
+				endInfo: game.endInfo,
+			}),
+		}).catch(reason => {})
+	} catch {}
 }
