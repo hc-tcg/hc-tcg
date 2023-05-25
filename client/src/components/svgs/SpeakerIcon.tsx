@@ -41,6 +41,16 @@ const SpeakerIcon = ({level}: Props) => {
 					fill={level3}
 				/>
 			</g>
+			<g display={level > 0 ? 'none' : 'block'}>
+				<path d="M7 3H8V4H7V3Z" fill="white" />
+				<path d="M9 5H8V4H9V5Z" fill="white" />
+				<path
+					d="M10 5H9V6H8V7H7V8H8V7H9V6H10V7H11V8H12V7H11V6H10V5Z"
+					fill="white"
+				/>
+				<path d="M11 4V5H10V4H11Z" fill="white" />
+				<path d="M11 4V3H12V4H11Z" fill="white" />
+			</g>
 		</svg>
 	)
 }
