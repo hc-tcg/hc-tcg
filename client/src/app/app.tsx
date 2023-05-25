@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useMemo} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {getPlayerName, getToast} from 'logic/session/session-selectors'
 import LostConnection from 'components/lost-connection'
@@ -12,7 +12,8 @@ import Deck from './deck'
 import MatchMaking from './match-making'
 import Toast from 'components/toast'
 import Settings from './main-menu/settings'
-import Background from 'components/background'
+import Panorama from './main-menu/panorama'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 function App() {
 	const section = useRouter()
@@ -20,6 +21,7 @@ function App() {
 	const playerName = useSelector(getPlayerName)
 	const socketStatus = useSelector(getSocketStatus)
 	const toastMessage = useSelector(getToast)
+	const settings = useSelector(getSettings)
 	const [menuSection, setMenuSection] = useState<string>('mainmenu')
 	let enableToast = false
 
@@ -47,10 +49,14 @@ function App() {
 		return <Login />
 	}
 
+	const memoizedPanorama = useMemo(() => {
+		return <Panorama panorama={'arena-cub'} disabled={!settings.panorama} />
+	}, [settings.panorama])
+
 	return (
 		<main>
-			<Background noImage={!playerName || menuSection === 'settings'} />
 			{router()}
+			{memoizedPanorama}
 			{playerName && !socketStatus && <LostConnection />}
 			{enableToast && (
 				<Toast

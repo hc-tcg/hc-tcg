@@ -35,70 +35,77 @@ function Settings({setMenuSection}: Props) {
 	const handleResetStats = () => {
 		dispatch(resetStats())
 	}
+	const handlePanoramaToggle = () => {
+		dispatch(setSetting('panorama', !settings.panorama))
+	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
+	}
+	const getBoolDescriptor = (value?: boolean) => {
+		return value ? 'Enabled' : 'Disabled'
 	}
 	const getPercDescriptor = (value?: string) => {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
 	return (
-		<div className={css.settingsPage}>
-			<MenuLayout
-				back={() => setMenuSection('mainmenu')}
-				title="More"
-				returnText="Main Menu"
-				className={css.settingsMenu}
-			>
-				<h2>Settings</h2>
-				<div className={css.settings}>
-					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-						Music: {getPercDescriptor(settings.musicVolume)}
-					</Slider>
-					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-						Sounds: {getPercDescriptor(settings.soundVolume)}
-					</Slider>
-					<Button variant="stone" onClick={handleProfanityChange}>
-						Profanity Filter: {getDescriptor(settings.profanityFilter)}
-					</Button>
-					<Button variant="stone" onClick={handleDialogsChange}>
-						Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
-					</Button>
-					<Button variant="stone" onClick={handleResetStats}>
-						Reset Stats
-					</Button>
-				</div>
+		<MenuLayout
+			back={() => setMenuSection('mainmenu')}
+			title="More"
+			returnText="Main Menu"
+			className={css.settingsMenu}
+		>
+			<h2>Settings</h2>
+			<div className={css.settings}>
+				<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+					Music: {getPercDescriptor(settings.musicVolume)}
+				</Slider>
+				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+					Sounds: {getPercDescriptor(settings.soundVolume)}
+				</Slider>
+				<Button variant="stone" onClick={handleProfanityChange}>
+					Profanity Filter: {getDescriptor(settings.profanityFilter)}
+				</Button>
+				<Button variant="stone" onClick={handleDialogsChange}>
+					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+				</Button>
+				<Button variant="stone" onClick={handlePanoramaToggle}>
+					Toggle Panorama: {getBoolDescriptor(settings.panorama)}
+				</Button>
+				<Button variant="stone" onClick={handleResetStats}>
+					Reset Stats
+				</Button>
+			</div>
 
-				<h2>Statistics</h2>
-				<div className={css.stats}>
-					<div className={css.stat}>
-						<span>Games Played</span>
-						<span>{totalGames}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Wins</span>
-						<span>{stats.w}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Losses</span>
-						<span>{stats.l}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Ties</span>
-						<span>{stats.t}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Wins</span>
-						<span>{stats.fw}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Losses</span>
-						<span>{stats.fl}</span>
-					</div>
+			<h2>Statistics</h2>
+			<div className={css.stats}>
+				<div className={css.stat}>
+					<span>Games Played</span>
+					<span>{totalGames}</span>
 				</div>
-			</MenuLayout>
-		</div>
+				<div className={css.stat}>
+					<span>Wins</span>
+					<span>{stats.w}</span>
+				</div>
+				<div className={css.stat}>
+					<span>Losses</span>
+					<span>{stats.l}</span>
+				</div>
+				<div className={css.stat}>
+					<span>Ties</span>
+					<span>{stats.t}</span>
+				</div>
+				<div className={css.stat}>
+					<span>Forfeit Wins</span>
+					<span>{stats.fw}</span>
+				</div>
+				<div className={css.stat}>
+					<span>Forfeit Losses</span>
+					<span>{stats.fl}</span>
+				</div>
+			</div>
+		</MenuLayout>
 	)
 }
 
