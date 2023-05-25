@@ -28,12 +28,15 @@ function PlayerInfo({player, direction}: Props) {
 
 	const health = (lives: number) => {
 		const hearts = new Array(3).fill(null).map((_, index) => {
-			const empty = lives > index
+			const heartImg =
+				lives > index
+					? 'images/game/heart_full.png'
+					: 'images/game/heart_empty.png'
 			return (
 				<img
 					key={index}
 					className={css.heart}
-					src={empty ? 'images/Heart-Full.png' : 'images/Heart-Empty.png'}
+					src={heartImg}
 					width="32"
 					height="32"
 				/>

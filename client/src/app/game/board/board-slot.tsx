@@ -30,7 +30,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 	}
 
 	const ailments = Array.from(new Set(rowState?.ailments.map((a) => a.id) || []))
-	const frameImg = type === 'hermit' ? '/images/frame_glow.png' : '/images/frame.png'
+	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	return (
 		<div

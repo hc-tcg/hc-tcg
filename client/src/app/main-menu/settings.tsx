@@ -38,6 +38,10 @@ function Settings({setMenuSection}: Props) {
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panorama', !settings.panorama))
 	}
+	const handleGameSideToggle = () => {
+		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
+		dispatch(setSetting('gameSide', gameSide))
+	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
@@ -72,6 +76,9 @@ function Settings({setMenuSection}: Props) {
 				</Button>
 				<Button variant="stone" onClick={handlePanoramaToggle}>
 					Toggle Panorama: {getBoolDescriptor(settings.panorama)}
+				</Button>
+				<Button variant="stone" onClick={handleGameSideToggle}>
+					Toggle Game Side: {settings.gameSide.toString()}
 				</Button>
 				<Button variant="stone" onClick={handleResetStats}>
 					Reset Stats

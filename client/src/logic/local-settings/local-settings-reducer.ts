@@ -21,7 +21,8 @@ const defaultState: LocalSettings = {
 	profanityFilter: 'on',
 	confirmationDialogs: 'on',
 	showChat: 'off',
-	panorama: 'on',
+	panorama: true,
+	gameSide: 'Left',
 	...getSettings(),
 }
 
