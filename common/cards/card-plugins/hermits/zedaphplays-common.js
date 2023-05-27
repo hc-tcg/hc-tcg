@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class ZedaphPlaysCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'zedaphplays_common',
+			id: 'zedaphplays-common',
 			name: 'Zedaph',
 			rarity: 'common',
 			hermitType: 'redstone',

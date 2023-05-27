@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class PearlescentMoonCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'pearlescentmoon_common',
+			id: 'pearlescentmoon-common',
 			name: 'Pearl',
 			rarity: 'common',
 			hermitType: 'builder',

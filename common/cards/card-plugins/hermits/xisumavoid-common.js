@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class XisumavoidCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'xisumavoid_common',
+			id: 'xisumavoid-common',
 			name: 'Xisuma',
 			rarity: 'common',
 			hermitType: 'farm',

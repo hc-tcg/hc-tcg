@@ -5,11 +5,11 @@ import {flipCoin} from '../../../utils'
  * @typedef {import('models/game-model').GameModel} GameModel
  */
 
-// The tricky part about this one are destroyable items (shield, gold_armor, totem) since they are available at the moment of attack, but not after
+// The tricky part about this one are destroyable items (shield, gold-armor, totem) since they are available at the moment of attack, but not after
 /*
 // some assumptions that make sense to me:
-- gold_armor/shield can't be stolen as they get used up during the attack
-- if hermitMultiplier is 0 (e.g. invis potion), then shield/golden_armor don't get used and so you can steal them
+- gold-armor/shield can't be stolen as they get used up during the attack
+- if hermitMultiplier is 0 (e.g. invis potion), then shield/gold-armor don't get used and so you can steal them
 - totem can be stolen unless it was used to keep opponent hermit alive
 - if opponent hermits dies, his effect card can still be stolen
 - If Grian dies while attacking (e.g. TNT), then item still get stolen
@@ -26,7 +26,7 @@ import {flipCoin} from '../../../utils'
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'grian_rare',
+			id: 'grian-rare',
 			name: 'Grian',
 			rarity: 'rare',
 			hermitType: 'prankster',

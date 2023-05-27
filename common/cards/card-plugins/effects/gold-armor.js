@@ -5,7 +5,7 @@ import {AttackModel} from '../../../models/attack-model'
 class GoldArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'gold_armor',
+			id: 'gold-armor',
 			name: 'Gold Armor',
 			rarity: 'common',
 			description:

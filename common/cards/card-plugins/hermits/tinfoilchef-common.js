@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class TinFoilChefCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'tinfoilchef_common',
+			id: 'tinfoilchef-common',
 			name: 'TFC',
 			rarity: 'common',
 			hermitType: 'miner',

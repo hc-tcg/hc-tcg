@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class BeetlejhostCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'beetlejhost_common',
+			id: 'beetlejhost-common',
 			name: 'Beetlejhost',
 			rarity: 'common',
 			hermitType: 'speedrunner',

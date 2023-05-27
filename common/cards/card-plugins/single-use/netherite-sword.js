@@ -7,7 +7,7 @@ import SingleUseCard from './_single-use-card'
 class NetheriteSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'netherite_sword',
+			id: 'netherite-sword',
 			name: 'Netherite Sword',
 			rarity: 'ultra_rare',
 			description:

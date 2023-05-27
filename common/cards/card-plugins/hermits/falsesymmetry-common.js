@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class FalseSymmetryCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'falsesymmetry_common',
+			id: 'falsesymmetry-common',
 			name: 'False',
 			rarity: 'common',
 			hermitType: 'pvp',

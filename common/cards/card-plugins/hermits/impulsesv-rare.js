@@ -7,7 +7,7 @@ import HermitCard from './_hermit-card'
 class ImpulseSVRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'impulsesv_rare',
+			id: 'impulsesv-rare',
 			name: 'Impulse',
 			rarity: 'rare',
 			hermitType: 'redstone',

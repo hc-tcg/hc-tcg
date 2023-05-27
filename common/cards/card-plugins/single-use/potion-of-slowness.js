@@ -8,7 +8,7 @@ import {discardCard} from '../../../utils'
 class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'potion_of_slowness',
+			id: 'potion-of-slowness',
 			name: 'Potion of Slowness',
 			rarity: 'common',
 			description:

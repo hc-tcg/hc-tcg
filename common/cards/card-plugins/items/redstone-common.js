@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class RedstoneCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_redstone_common',
+			id: 'item-redstone-common',
 			name: 'Redstone',
 			rarity: 'common',
 			hermitType: 'redstone',

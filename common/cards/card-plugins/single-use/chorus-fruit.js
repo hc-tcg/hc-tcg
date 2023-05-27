@@ -8,7 +8,7 @@ import {applySingleUse, hasSingleUse} from '../../../utils'
 class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'chorus_fruit',
+			id: 'chorus-fruit',
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description:

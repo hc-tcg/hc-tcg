@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class ExplorerCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_explorer_common',
+			id: 'item-explorer-common',
 			name: 'Explorer',
 			rarity: 'common',
 			hermitType: 'explorer',

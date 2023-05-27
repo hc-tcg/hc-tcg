@@ -9,7 +9,7 @@ import {validPick} from '../../../utils/reqs'
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'golden_apple',
+			id: 'golden-apple',
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description:

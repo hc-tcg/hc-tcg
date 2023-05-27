@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class Iskall85CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'iskall85_common',
+			id: 'iskall85-common',
 			name: 'Iskall',
 			rarity: 'common',
 			hermitType: 'balanced',

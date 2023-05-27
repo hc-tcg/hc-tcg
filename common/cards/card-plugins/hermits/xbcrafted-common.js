@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class XBCraftedCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'xbcrafted_common',
+			id: 'xbcrafted-common',
 			name: 'XB',
 			rarity: 'common',
 			hermitType: 'pvp',

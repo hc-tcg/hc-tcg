@@ -8,7 +8,7 @@ import {flipCoin} from '../../../utils'
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'invisibility_potion',
+			id: 'invisibility-potion',
 			name: 'Invisibility Potion',
 			rarity: 'rare',
 			description:

@@ -13,7 +13,7 @@ import {flipCoin, discardCard} from '../../../utils'
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'goodtimeswithscar_rare',
+			id: 'goodtimeswithscar-rare',
 			name: 'Scar',
 			rarity: 'rare',
 			hermitType: 'builder',

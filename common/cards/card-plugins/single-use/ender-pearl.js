@@ -10,7 +10,7 @@ import {getEmptyRow} from '../../../utils/state-gen'
 class EnderPearlSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'ender_pearl',
+			id: 'ender-pearl',
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:

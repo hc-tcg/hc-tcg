@@ -8,7 +8,7 @@ import {discardCard} from '../../../utils'
 class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'curse_of_vanishing',
+			id: 'curse-of-vanishing',
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
 			description:

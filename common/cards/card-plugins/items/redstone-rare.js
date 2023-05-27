@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class RedstoneRareItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_redstone_rare',
+			id: 'item-redstone-rare',
 			name: 'Redstone',
 			rarity: 'rare',
 			hermitType: 'redstone',

@@ -10,7 +10,7 @@ import {validPick} from '../../../utils/reqs'
 class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'tangotek_rare',
+			id: 'tangotek-rare',
 			name: 'Tango',
 			rarity: 'rare',
 			hermitType: 'farm',
