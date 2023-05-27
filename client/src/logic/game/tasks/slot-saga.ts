@@ -2,7 +2,7 @@ import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import {checkAttachReq} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {

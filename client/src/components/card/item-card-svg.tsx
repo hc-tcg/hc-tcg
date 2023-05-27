@@ -1,15 +1,15 @@
 import classnames from 'classnames'
-import {ItemCardT} from 'common/types/cards'
+import ItemCard from '../../../../common/cards/card-plugins/items/_item-card'
 import css from './item-card-svg.module.scss'
 import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
 export type ItemCardProps = {
-	card: ItemCardT
+	card: ItemCard
 }
 
-const ItemCard = ({card}: ItemCardProps) => {
+const ItemCardModule = ({card}: ItemCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	return (
@@ -139,4 +139,4 @@ const ItemCard = ({card}: ItemCardProps) => {
 	)
 }
 
-export default ItemCard
+export default ItemCardModule

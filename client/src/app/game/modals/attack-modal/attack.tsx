@@ -1,6 +1,7 @@
 import classnames from 'classnames'
 import {useSelector} from 'react-redux'
-import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
+import {HermitTypeT} from 'common/types/cards'
 import Strengths from 'server/const/strengths'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
@@ -55,7 +56,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	const hasExtraWeakness =
 		!!currentPlayer?.custom['potion_of_weakness']?.[extraKey]
 	const hasWeakness =
-		Strengths[playerHermitInfo.hermitType]?.includes(
+		Strengths[playerHermitInfo.hermitType as HermitTypeT]?.includes(
 			opponentHermitInfo.hermitType
 		) || hasExtraWeakness
 

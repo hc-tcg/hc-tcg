@@ -1,10 +1,15 @@
 import classnames from 'classnames'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import Card from 'components/card'
 import {SlotTypeT} from 'common/types/pick-process'
 import {CardT} from 'common/types/game-state'
 import {RowState} from 'common/types/game-state'
 import css from './board.module.css'
+import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
+import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
+import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import HealthCard from 'common/cards/card-plugins/health/_health-card'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -14,8 +19,15 @@ export type SlotProps = {
 	active?: boolean
 }
 const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
-	let cardInfo = card?.cardId ? CARDS[card.cardId] : null
-	if (type === 'health' && rowState?.health) {
+	let cardInfo = card?.cardId
+		? (CARDS[card.cardId] as
+				| HermitCard
+				| EffectCard
+				| SingleUseCard
+				| ItemCard
+				| HealthCard)
+		: null
+	if (cardInfo instanceof HealthCard && rowState?.health) {
 		cardInfo = {
 			name: rowState.health + ' Health',
 			rarity: 'common',
@@ -23,6 +35,10 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 			health: rowState.health,
 			id: 'health_' + rowState.health,
 			attachReq: {target: 'player', type: ['health']},
+			getKey: () => '',
+			getInstanceKey: () => '',
+			canAttach: () => false,
+			onAttach: () => '',
 		}
 	}
 

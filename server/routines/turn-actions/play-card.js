@@ -1,4 +1,4 @@
-import CARDS from '../../cards'
+import CARDS from '../../../common/cards'
 import {equalCard} from '../../utils'
 import {checkAttachReq} from '../../utils/reqs'
 

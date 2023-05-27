@@ -1,12 +1,12 @@
 import classnames from 'classnames'
-import {HermitCardT} from 'common/types/cards'
+import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
 import css from './hermit-card-svg.module.scss'
 import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
 export type HermitCardProps = {
-	card: HermitCardT
+	card: HermitCard
 }
 
 const COST_PAD = 20
@@ -17,7 +17,7 @@ const COST_X = [
 	[COST_PAD, COST_PAD + COST_SIZE, COST_PAD + COST_SIZE * 2],
 ]
 
-const HermitCard = ({card}: HermitCardProps) => {
+const HermitCardModule = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
@@ -94,7 +94,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.primary.cost.map((type, i) => (
+					{card.primary.cost.map((type: string, i: number) => (
 						<image
 							key={i}
 							href={`/images/types/type-${type}.png`}
@@ -124,7 +124,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.secondary.cost.map((type, i) => (
+				{card.secondary.cost.map((type: string, i: number) => (
 					<image
 						key={i}
 						href={`/images/types/type-${type}.png`}
@@ -157,4 +157,4 @@ const HermitCard = ({card}: HermitCardProps) => {
 	)
 }
 
-export default HermitCard
+export default HermitCardModule

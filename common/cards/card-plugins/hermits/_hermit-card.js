@@ -11,6 +11,7 @@ class HermitCard extends Card {
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
+		/** @type {import('common/types/cards').HermitTypeT} */
 		this.hermitType = defs.hermitType
 	}
 
