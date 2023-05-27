@@ -325,7 +325,15 @@ function* attackSaga(game, turnAction, actionState) {
 		})
 	}
 
-	//@TODO call results, then check for hermit death
+	results.forEach(result => {
+		if (result.attack.target.row.health <  1) {
+			discardCard(game, result.attack.target.row.hermitCard)
+			discardCard(game, result.attack.target.row.effectCard)
+			result.attack.target.row.itemCards.forEach(card => {
+				discardCard(game, card)
+			})
+		}
+	})
 
 	//@TODO make sure to delete attack objects after - is this needed?
 
