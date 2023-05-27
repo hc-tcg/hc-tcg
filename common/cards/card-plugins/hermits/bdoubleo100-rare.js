@@ -8,7 +8,7 @@ import HermitCard from './_hermit-card'
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'bdoubleo100_rare',
+			id: 'bdoubleo100-rare',
 			name: 'Bdubs',
 			rarity: 'rare',
 			hermitType: 'balanced',

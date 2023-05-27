@@ -11,7 +11,7 @@ Combination of Totem + Scars ability can be tricky here to get right
 class XBCraftedRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'xbcrafted_rare',
+			id: 'xbcrafted-rare',
 			name: 'XB',
 			rarity: 'rare',
 			hermitType: 'explorer',

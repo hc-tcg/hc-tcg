@@ -8,7 +8,7 @@ import {flipCoin} from '../../../utils'
 class VintageBeefRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'vintagebeef_rare',
+			id: 'vintagebeef-rare',
 			name: 'Beef',
 			rarity: 'rare',
 			hermitType: 'builder',

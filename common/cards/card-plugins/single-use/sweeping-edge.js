@@ -8,7 +8,7 @@ import {discardCard} from '../../../utils'
 class SweepingEdgeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'sweeping_edge',
+			id: 'sweeping-edge',
 			name: 'Sweeping Edge',
 			rarity: 'ultra_rare',
 			description:

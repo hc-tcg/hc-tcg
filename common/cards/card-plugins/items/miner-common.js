@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class MinerCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_miner_common',
+			id: 'item-miner-common',
 			name: 'Miner',
 			rarity: 'common',
 			hermitType: 'miner',

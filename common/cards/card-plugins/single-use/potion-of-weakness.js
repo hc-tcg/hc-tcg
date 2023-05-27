@@ -9,7 +9,7 @@ import {HERMIT_CARDS} from '../../../cards'
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'potion_of_weakness',
+			id: 'potion-of-weakness',
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:

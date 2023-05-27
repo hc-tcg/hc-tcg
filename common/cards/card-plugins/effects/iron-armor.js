@@ -4,7 +4,7 @@ import EffectCard from './_effect-card'
 class IronArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'iron_armor',
+			id: 'iron-armor',
 			name: 'Iron Armor',
 			rarity: 'common',
 			description:

@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class Docm77CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'docm77_common',
+			id: 'docm77-common',
 			name: 'Docm77',
 			rarity: 'common',
 			hermitType: 'redstone',

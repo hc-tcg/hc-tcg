@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class HypnotizdCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'hypnotizd_common',
+			id: 'hypnotizd-common',
 			name: 'Hypno',
 			rarity: 'common',
 			hermitType: 'balanced',

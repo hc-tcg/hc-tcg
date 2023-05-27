@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class EthosLabCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'ethoslab_common',
+			id: 'ethoslab-common',
 			name: 'Etho',
 			rarity: 'common',
 			hermitType: 'balanced',

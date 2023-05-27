@@ -15,7 +15,7 @@ import {validPick} from '../../../utils/reqs'
 class HypnotizdRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'hypnotizd_rare',
+			id: 'hypnotizd-rare',
 			name: 'Hypno',
 			rarity: 'rare',
 			hermitType: 'miner',

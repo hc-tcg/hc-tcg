@@ -9,7 +9,7 @@ import {HERMIT_CARDS} from '../../../cards'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'potatoboy_rare',
+			id: 'potatoboy-rare',
 			name: 'Potato Boy',
 			rarity: 'rare',
 			hermitType: 'farm',

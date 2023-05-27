@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class IJevinCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'ijevin_common',
+			id: 'ijevin-common',
 			name: 'Jevin',
 			rarity: 'common',
 			hermitType: 'explorer',

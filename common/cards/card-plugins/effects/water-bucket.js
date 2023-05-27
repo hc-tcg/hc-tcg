@@ -9,7 +9,7 @@ import {validPick} from '../../../utils/reqs'
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'water_bucket',
+			id: 'water-bucket',
 			name: 'Water Bucket',
 			rarity: 'common',
 			description:

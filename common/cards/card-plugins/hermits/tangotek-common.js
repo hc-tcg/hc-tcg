@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class TangoTekCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'tangotek_common',
+			id: 'tangotek-common',
 			name: 'Tango',
 			rarity: 'common',
 			hermitType: 'redstone',

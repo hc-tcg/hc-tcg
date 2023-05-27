@@ -10,7 +10,7 @@ import CARDS from '../../../cards'
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'pearlescentmoon_rare',
+			id: 'pearlescentmoon-rare',
 			name: 'Pearl',
 			rarity: 'rare',
 			hermitType: 'terraform',

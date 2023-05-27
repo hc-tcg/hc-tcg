@@ -7,7 +7,7 @@ import SingleUseCard from './_single-use-card'
 class FishingRodSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'fishing_rod',
+			id: 'fishing-rod',
 			name: 'Fishing Rod',
 			rarity: 'ultra_rare',
 			description: 'Player draws 2 cards from deck.\n\nDiscard after use.',

@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class PvPCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item_pvp_common',
+			id: 'item-pvp-common',
 			name: 'PvP',
 			rarity: 'common',
 			hermitType: 'pvp',
