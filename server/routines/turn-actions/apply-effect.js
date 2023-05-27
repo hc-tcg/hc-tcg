@@ -1,4 +1,4 @@
-import CARDS from '../../cards'
+import CARDS from '../../../common/cards'
 import {applySingleUse} from '../../utils'
 
 // TODO - You can "apply effect" by putting it on in the slot, then selecting another clicking the slotteded one and confirmiing modal

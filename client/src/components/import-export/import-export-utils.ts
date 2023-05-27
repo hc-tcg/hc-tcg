@@ -1,5 +1,5 @@
 import {CardT} from 'common/types/game-state'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import {universe} from './import-export-const'
 
 export const getDeckFromHash = (hash: string): Array<CardT> => {

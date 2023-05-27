@@ -1,4 +1,4 @@
-import CARDS from '../cards'
+import CARDS from '../../common/cards'
 
 /**
  * @typedef {import("common/types/game-state").GameState} GameState

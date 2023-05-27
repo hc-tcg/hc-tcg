@@ -41,57 +41,11 @@ export type AttachRequirmentT = {
 	active?: boolean
 }
 
-export type AnyCardT = {
-	name: string
-	type: string
-	rarity: CardRarityT
-	id: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
-	useReqs?: Array<PickRequirmentT>
-	pickReqs?: Array<PickRequirmentT>
-	attachReq: AttachRequirmentT
-}
-
-export type ItemCardT = AnyCardT & {
-	type: 'item'
-	hermitType: HermitTypeT
-}
-
-export type EffectCardT = AnyCardT & {
-	type: 'effect' | 'single_use'
-	description: string
-	damage?: DamageT
-	protection?: ProtectionT
-}
-
-export type HealthCardT = AnyCardT & {
-	type: 'health'
-	health: number
-}
-
 export type HermitAttackT = {
 	name: string
 	cost: Array<string>
 	damage: number
 	power: string | null
-}
-
-export type HermitCardT = AnyCardT & {
-	type: 'hermit'
-	hermitType: HermitTypeT
-	health: number
-	primary: HermitAttackT
-	secondary: HermitAttackT
-}
-
-export type CardInfoT = ItemCardT | EffectCardT | HermitCardT | HealthCardT
-
-export type CardTypesMapT = {
-	hermit: HermitCardT
-	item: ItemCardT
-	effect: EffectCardT
-	single_use: EffectCardT
-	health: HealthCardT
 }
 
 export type CardDefs = {

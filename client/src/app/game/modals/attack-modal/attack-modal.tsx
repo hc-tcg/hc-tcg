@@ -1,7 +1,6 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {HermitCardT} from 'common/types/cards'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
 import {getPlayerId} from 'logic/session/session-selectors'

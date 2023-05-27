@@ -1,4 +1,4 @@
-import CARDS from '../../cards'
+import CARDS from '../../../common/cards'
 
 function* followUpSaga(game, turnAction, actionState) {
 	turnAction.payload = turnAction.payload || {}

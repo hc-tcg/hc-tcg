@@ -2,7 +2,7 @@ import {SagaIterator} from 'redux-saga'
 import {delay, put} from 'redux-saga/effects'
 import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
 import {setCoinFlip} from '../game-actions'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 
 function* coinFlipSaga(
 	gameState: LocalGameState,

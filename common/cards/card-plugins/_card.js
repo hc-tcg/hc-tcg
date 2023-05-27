@@ -4,6 +4,7 @@
  * @typedef {import("common/types/cards").CardDefs} CardDefs
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("common/types/cards").CardRarityT} CardRarityT
+ * @abstract
  */
 
 class Card {
