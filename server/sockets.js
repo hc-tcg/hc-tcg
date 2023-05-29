@@ -18,6 +18,8 @@ const isValidVersion = (clientVersion) => {
 	return version === clientVersion
 }
 
+const blacklist = ["CREATE_CUSTOM_GAME"] //Ensure server only events are not called from client
+
 function startSocketIO(server) {
 	const io = new Server(server, {
 		cors: {
@@ -50,7 +52,7 @@ function startSocketIO(server) {
 		})
 		socket.onAny((event, message) => {
 			// console.log('[received] ', event, ': ', message)
-			if (!message?.type) return
+			if (!message?.type || message?.type in blacklist) return
 			store.dispatch({...message, socket})
 		})
 		socket.on('disconnect', () => {

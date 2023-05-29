@@ -33,7 +33,7 @@ function* gameManager(game) {
 		const playerIds = game.getPlayerIds()
 		const players = game.getPlayers()
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.code ? game.code.endsWith('_custom') ? 'Custom' : 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
@@ -82,7 +82,7 @@ function* gameManager(game) {
 	} finally {
 		if (game.task) yield cancel(game.task)
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = game.code ? game.code.endsWith('_custom') ? 'Custom' : 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1
@@ -97,14 +97,14 @@ function* gameManager(game) {
 /**
  * @param {string} playerId
  */
-function inGame(playerId) {
+export function inGame(playerId) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 
 /**
  * @param {string} playerId
  */
-function inQueue(playerId) {
+export function inQueue(playerId) {
 	return root.queue.some((id) => id === playerId)
 }
 
@@ -186,6 +186,16 @@ function* joinPrivateGame(action) {
 	yield fork(gameManager, game)
 }
 
+function* createCustomGame(action) {
+	const {code, player1, player2} = action
+	const game = new GameModel(code)
+	game.addPlayer(player1)
+	game.addPlayer(player2)
+	root.addGame(game)
+	
+	yield fork(gameManager, game)
+}
+
 function* cleanUpSaga() {
 	while (true) {
 		yield delay(1000 * 60)
@@ -249,6 +259,7 @@ function* matchmakingSaga() {
 		takeEvery('RANDOM_MATCHMAKING', joinQueue),
 		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
 		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
+		takeEvery('CREATE_CUSTOM_GAME', createCustomGame),
 		takeEvery(['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'], leaveMatchmaking),
 	])
 }
