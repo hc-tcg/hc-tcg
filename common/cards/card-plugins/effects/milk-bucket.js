@@ -18,8 +18,6 @@ class MilkBucketEffectCard extends EffectCard {
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-
-		this.attachReq = {target: 'player', type: ['effect', 'single_use']}
 	}
 
 	/**
@@ -56,6 +54,22 @@ class MilkBucketEffectCard extends EffectCard {
 				return 'DONE'
 			}
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slotType !== 'single_use' && pos.slotType !== 'effect') return false
+		if (pos.slotType !== 'single_use' && pos.playerId !== currentPlayer.id)
+			return false
+		if (pos.slotType !== 'single_use' && !pos.rowState?.hermitCard) return false
+
+		return true
 	}
 }
 
