@@ -70,10 +70,11 @@ class WaterBucketEffectCard extends EffectCard {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'single_use' && pos.slotType !== 'effect') return false
-		if (pos.slotType !== 'single_use' && pos.playerId !== currentPlayer.id)
-			return false
-		if (pos.slotType !== 'single_use' && !pos.rowState?.hermitCard) return false
+		if (pos.slotType === 'single_use') return true
+
+		if (pos.slotType !== 'effect') return false
+		if (pos.playerId !== currentPlayer.id) return false
+		if (!pos.rowState?.hermitCard) return false
 
 		return true
 	}
