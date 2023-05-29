@@ -1,4 +1,8 @@
-import {HERMIT_CARDS, EFFECT_CARDS} from '../../../common/cards'
+import {
+	HERMIT_CARDS,
+	EFFECT_CARDS,
+	SINGLE_USE_CARDS,
+} from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {applySingleUse, discardCard} from '../../utils'
