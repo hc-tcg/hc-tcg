@@ -57,7 +57,7 @@ function getAvailableActions(game, pastTurnActions) {
 	 */
 	const hasTypeInHand = (type) => {
 		return currentPlayer.hand.some((card) =>
-			CARDS[card.cardId].attachReq.type.includes(type)
+			CARDS[card.cardId].type.includes(type)
 		)
 	}
 	const hasHermitInHand = hasTypeInHand('hermit')

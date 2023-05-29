@@ -19,8 +19,6 @@ class WaterBucketEffectCard extends EffectCard {
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-
-		this.attachReq = {target: 'player', type: ['effect', 'single_use']}
 	}
 
 	//@TODO need to figure out pick process, etc - how to nicely define when a card needs to choose another?

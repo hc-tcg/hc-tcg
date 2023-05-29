@@ -14,8 +14,6 @@ class SingleUseCard extends Card {
 			throw new Error('Invalid card definition')
 		}
 		this.description = defs.description
-
-		this.attachReq = {target: 'player', type: ['single_use']}
 	}
 
 	/**

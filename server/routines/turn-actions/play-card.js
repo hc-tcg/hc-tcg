@@ -1,6 +1,5 @@
 import CARDS from '../../../common/cards'
 import {equalCard} from '../../utils'
-import {checkAttachReq} from '../../utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -25,8 +24,16 @@ function* playCardSaga(game, turnAction, actionState) {
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'
 
-	if (!checkAttachReq(game.state, turnAction.payload, cardInfo.attachReq))
-		return 'INVALID'
+	// @TODO - PLAY_CARD should probably be using CardPos
+	const pos = {
+		playerId,
+		playerState: game.state.players[playerId],
+		rowIndex,
+		rowState: game.state.players[playerId].board.rows[rowIndex],
+		slotType,
+	}
+
+	if (!cardInfo.canAttach(game, pos)) return 'INVALID'
 
 	const player = game.state.players[playerId]
 	if (!player) return 'INVALID'

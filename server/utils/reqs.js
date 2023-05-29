@@ -9,8 +9,6 @@ import CARDS from '../../common/cards'
  * @typedef {import("common/types/pick-process").BoardPickedCardT} BoardPickedCardT
  * @typedef {import("common/types/pick-process").HandPickedCardT} HandPickedCardT
  * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
- * @typedef {import("common/types/cards").CardTypesMapT} CardTypesMapT
- * @typedef {import("common/types/cards").AttachRequirmentT} AttachRequirmentT
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
@@ -215,40 +213,6 @@ export function validPick(gameState, req, pickedCard) {
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
 	if (!validEmpty(req.empty || false, card)) return false
-
-	return true
-}
-
-/**
- * Check attach req for effect cards
- * @param {GameState | LocalGameState} gameState
- * @param {TurnAction['payload']} slotPayload
- * @param {AttachRequirmentT} req
- * @return {boolean}
- */
-export function checkAttachReq(gameState, slotPayload, req) {
-	if (!slotPayload) return false
-
-	const players = gameState.players
-	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
-	const {playerId, slotIndex} = slotPayload
-	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
-	const player = players[playerId]
-	const slotType = slotPayload.slotType
-	const emptyRow = slotType === 'hermit'
-
-	if (!validRow(player, rowIndex, emptyRow)) return false
-	if (!validTarget(req.target, player, turnPlayerId, slotType)) return false
-	if (!validActive(req.active, player, rowIndex)) return false
-	if (!req.type.some((type) => validType(type, slotType))) return false
-
-	// Empty checks
-	const board = player.board
-	const row = typeof rowIndex === 'number' ? board.rows[rowIndex] : null
-	if (slotType === 'single_use' && board.singleUseCard) return false
-	if (slotType === 'hermit' && row?.hermitCard) return false
-	if (slotType === 'effect' && row?.effectCard) return false
-	if (slotType === 'item' && row?.itemCards[slotIndex]) return false
 
 	return true
 }

@@ -35,17 +35,11 @@ export type ProtectionT = {
 	discard?: boolean
 }
 
-export type AttachRequirmentT = {
-	target: 'player' | 'opponent'
-	type: Array<CardTypeT | 'any'>
-	active?: boolean
-}
-
 export type HermitAttackT = {
 	name: string
 	cost: Array<string>
 	damage: number
-	power: string | null
+	power: string | null∂
 }
 
 export type CardDefs = {
