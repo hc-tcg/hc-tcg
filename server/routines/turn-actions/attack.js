@@ -1,19 +1,14 @@
-import {AttackModel} from '../../models/attack-model'
-import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../cards'
+import {HERMIT_CARDS, EFFECT_CARDS} from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
+import {AttackModel} from '../../models/attack-model'
 import {applySingleUse, discardCard} from '../../utils'
-import EffectCard from '../../cards/card-plugins/effects/_effect-card'
-import HermitCard from '../../cards/card-plugins/hermits/_hermit-card'
-import SingleUseCard from '../../cards/card-plugins/single-use/_single-use-card'
 
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import('models/attack-model').HermitAttackType} HermitAttackType
  * @typedef {import('../../models/attack-model').AttackResult} AttackResult
+ * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  */
 
 export const ATTACK_TO_ACTION = {
