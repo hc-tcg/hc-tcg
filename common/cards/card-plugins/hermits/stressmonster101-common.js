@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class StressMonster101CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'stressmonster101-common',
+			id: 'stressmonster101_common',
 			name: 'Stress',
 			rarity: 'common',
 			hermitType: 'builder',

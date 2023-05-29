@@ -9,7 +9,7 @@ import {validPick} from '../../../utils/reqs'
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'instant-health',
+			id: 'instant_health',
 			name: 'Instant Health',
 			rarity: 'common',
 			description:

@@ -18,7 +18,7 @@ const COST_X = [
 ]
 
 const HermitCardModule = ({card}: HermitCardProps) => {
-	const hermitFullName = card.id.split('-')[0]
+	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)

@@ -8,7 +8,7 @@ import EffectCard from './_effect-card'
 class NetheriteArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'netherite-armor',
+			id: 'netherite_armor',
 			name: 'Netherite Armor',
 			rarity: 'ultra_rare',
 			description:

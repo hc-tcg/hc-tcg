@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class MumboJumboCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'mumbojumbo-common',
+			id: 'mumbojumbo_common',
 			name: 'Mumbo',
 			rarity: 'common',
 			hermitType: 'redstone',

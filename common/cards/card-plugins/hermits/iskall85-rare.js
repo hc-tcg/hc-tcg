@@ -8,7 +8,7 @@ import {HERMIT_CARDS} from '../../../cards'
 class Iskall85RareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'iskall85-rare',
+			id: 'iskall85_rare',
 			name: 'Iskall',
 			rarity: 'rare',
 			hermitType: 'farm',

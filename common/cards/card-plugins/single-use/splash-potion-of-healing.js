@@ -8,7 +8,7 @@ import {HERMIT_CARDS} from '../../index'
 class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'splash-potion-of-healing',
+			id: 'splash_potion_of_healing',
 			name: 'Splash Potion of Healing',
 			rarity: 'common',
 			description:

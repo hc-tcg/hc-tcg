@@ -8,7 +8,7 @@ import {validPick} from '../../../utils/reqs'
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'milk-bucket',
+			id: 'milk_bucket',
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:

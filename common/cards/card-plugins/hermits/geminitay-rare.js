@@ -9,7 +9,7 @@ import {flipCoin, discardSingleUse} from '../../../utils'
 class GeminiTayRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'geminitay-rare',
+			id: 'geminitay_rare',
 			name: 'Gem',
 			rarity: 'rare',
 			hermitType: 'terraform',

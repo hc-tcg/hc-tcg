@@ -8,7 +8,7 @@ import {flipCoin} from '../../../utils'
 class EthosLabUltraRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'ethoslab-ultra-rare',
+			id: 'ethoslab_ultra_rare',
 			name: 'Etho',
 			rarity: 'ultra_rare',
 			hermitType: 'pvp',

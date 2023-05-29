@@ -8,7 +8,7 @@ import {discardCard} from '../../../utils'
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'bad-omen',
+			id: 'bad_omen',
 			name: 'Bad Omen',
 			rarity: 'rare',
 			description: `All of your opponent's coin flips are tails for the next 3 turns.`,

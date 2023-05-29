@@ -8,7 +8,7 @@ import {discardCard} from '../../../utils'
 class LavaBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'lava-bucket',
+			id: 'lava_bucket',
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:

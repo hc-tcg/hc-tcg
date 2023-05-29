@@ -9,7 +9,7 @@ import {HERMIT_CARDS} from '../../../cards'
 class ZombieCleoRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'zombiecleo-rare',
+			id: 'zombiecleo_rare',
 			name: 'Cleo',
 			rarity: 'rare',
 			hermitType: 'pvp',

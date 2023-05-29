@@ -9,7 +9,7 @@ import CARDS from '../../../cards'
 class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'zedaphplays-rare',
+			id: 'zedaphplays_rare',
 			name: 'Zedaph',
 			rarity: 'rare',
 			hermitType: 'explorer',

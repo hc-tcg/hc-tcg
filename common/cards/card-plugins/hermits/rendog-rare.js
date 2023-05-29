@@ -9,7 +9,7 @@ import CARDS from '../../../cards'
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'rendog-rare',
+			id: 'rendog_rare',
 			name: 'Rendog',
 			rarity: 'rare',
 			hermitType: 'builder',
