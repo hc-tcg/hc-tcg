@@ -301,7 +301,7 @@ function* attackSaga(game, turnAction, actionState) {
 	const {pickedCardsInfo} = actionState
 
 	const {type} = turnAction.payload
-	/** @type {import('models/attack-model').HermitAttackType} */
+	/** @type {import('../../models/attack-model').HermitAttackType} */
 	const hermitAttackType = ATTACK_TO_ACTION[type]
 	if (!hermitAttackType) {
 		console.log('Unknown attack type: ', type)
@@ -338,10 +338,14 @@ function* attackSaga(game, turnAction, actionState) {
 		for (let i = 0; i < attacks.length; i++) {
 			const attack = attacks[i]
 
+			// Checks all cards on the board to see if they want to override this attack
 			runOverrides(game, attack)
+			// Runs onAttack for all cards on attackers row
 			runAttackCode(game, attack)
+			// Runs onDefense for all cards on targets row
 			runDefenceCode(game, attack)
 
+			// Apply the damage
 			const result = executeAttack(game, attack)
 
 			//@TODO will attack object be able ot be modified by attack result? it's technically one object
@@ -350,6 +354,7 @@ function* attackSaga(game, turnAction, actionState) {
 			nextAttacks.push(...attack.nextAttacks)
 		}
 
+		// Loop round, doing everything again with our next set of attacks
 		attacks = nextAttacks
 	}
 
