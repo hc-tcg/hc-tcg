@@ -76,7 +76,7 @@ function getAttacks(game, attackRow, hermitAttackType) {
  */
 function runOverrides(game, attack) {
 	const {currentPlayer, opponentPlayer} = game.ds
-	const playerBoard = game.ds.currentPlayer.board
+	const playerBoard = currentPlayer.board
 
 	// First check our side of the board for overrides
 	for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
@@ -196,6 +196,98 @@ function runDefenceCode(game, attack) {
 }
 
 /**
+ *
+ * @param {GameModel} game
+ * @param {AttackModel} attack
+ * @returns {import('../../models/attack-model').AttackResult}
+ */
+function executeAttack(game, attack) {
+	const {target, damage, damageMultiplier, defence} = attack
+
+	// Calculate damage
+	const initialDamage = damage * damageMultiplier
+	const finalDamage = Math.max(initialDamage - defence.damageReduction, 0)
+
+	const {row: targetRow} = target
+	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
+
+	const currentHealth = targetRow.health
+	const maxHealth = targetHermitInfo.health
+
+	// Deduct and clamp health
+	const newHealth = Math.max(currentHealth - finalDamage, 0)
+	targetRow.health = Math.min(newHealth, maxHealth)
+
+	/** @type {import('../../models/attack-model').AttackResult} */
+	const result = {
+		attack,
+		totalDamage: currentHealth - newHealth,
+		blockedDamage: initialDamage - finalDamage,
+	}
+
+	// Attack result
+	return result
+}
+
+/**
+ *
+ * @param {GameModel} game
+ * @param {import('../../models/attack-model').AttackResult} result
+ */
+function sendAttackResult(game, result) {
+	const {attack} = result
+	// Go through attacker's cards
+	if (attack.attacker) {
+		const {row} = attack.attacker
+
+		// Hermit card
+		HERMIT_CARDS[row.hermitCard.cardId].afterAttack(
+			game,
+			row.hermitCard.cardInstance,
+			result
+		)
+
+		// Effect card
+		if (row.effectCard) {
+			EFFECT_CARDS[row.effectCard.cardId].afterAttack(
+				game,
+				row.effectCard.cardInstance,
+				result
+			)
+		}
+
+		// Single use card
+		const playerBoard = game.ds.currentPlayer.board
+		if (playerBoard.singleUseCard && !playerBoard.singleUseCardUsed) {
+			SINGLE_USE_CARDS[playerBoard.singleUseCard.cardId].afterAttack(
+				game,
+				playerBoard.singleUseCard.cardInstance,
+				result
+			)
+		}
+	}
+
+	// Go through target's cards
+	const {row: targetRow} = attack.target
+
+	// Target hermit card
+	HERMIT_CARDS[targetRow.hermitCard.cardId].afterDefence(
+		game,
+		targetRow.hermitCard.cardInstance,
+		result
+	)
+
+	// Target effect card - if not ignored
+	if (targetRow.effectCard && !attack.ignoreAttachedEffects) {
+		EFFECT_CARDS[targetRow.effectCard.cardId].afterDefence(
+			game,
+			targetRow.hermitCard.cardInstance,
+			result
+		)
+	}
+}
+
+/**
  * @param {GameModel} game
  * @param {TurnAction} turnAction
  * @param {ActionState} actionState
@@ -217,8 +309,6 @@ function* attackSaga(game, turnAction, actionState) {
 	}
 	// TODO - send hermitCard from frontend for validation?
 
-	// STEP 0 - DEFINE VARIABLES
-
 	// Attacker
 	const playerBoard = currentPlayer.board
 	const attackIndex = playerBoard.activeRow
@@ -226,12 +316,6 @@ function* attackSaga(game, turnAction, actionState) {
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'INVALID'
-
-	/** @type {import('models/attack-model').Attacker} */
-	const defaultAttacker = {
-		index: attackIndex,
-		row: attackRow,
-	}
 
 	// Defender
 	const defenceBoard = opponentPlayer.board
@@ -241,95 +325,35 @@ function* attackSaga(game, turnAction, actionState) {
 	const defenceRow = defenceBoard.rows[attackIndex]
 	if (!defenceRow.hermitCard) return 'INVALID'
 
-	// STEP 1 - GET ATTACKS
-
+	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	const attacks = getAttacks(game, attackRow, hermitAttackType)
+	let attacks = getAttacks(game, attackRow, hermitAttackType)
 
-	// STEP 2 - CHECK FOR OVERRIDES
-	// now we have our list of attacks, run attack override before determining any more info - then get info about our row all over again
-	// zombiecleo for example could override the attacker row, and thereby use an opponents ability
+	// Main attack loop
+	while (attacks.length > 0) {
+		/** @type {Array<AttackModel>} */
+		const nextAttacks = []
 
-	for (let i = 0; i < attacks.length; i++) {
-		const attack = attacks[i]
+		// Process all current attacks one at a time
+		for (let i = 0; i < attacks.length; i++) {
+			const attack = attacks[i]
 
-		runOverrides(game, attack)
+			runOverrides(game, attack)
+			runAttackCode(game, attack)
+			runDefenceCode(game, attack)
 
-		// Reapply changes back to list of attacks
-		// @TODO attack is a class does this need doing?
-		attacks[i] = attack
-	}
+			const result = executeAttack(game, attack)
 
-	// STEP 3 - PASS ATTACK THROUGH CARDS
-	// so this should call onAttack in order
-	// @TODO we need to change where we are attacking from now, based on the attack, and attack really needs row index info
-	//@TODO change code so attack object is not returned, as it doesn't need to be
+			//@TODO will attack object be able ot be modified by attack result? it's technically one object
+			sendAttackResult(game, result)
 
-	for (let i = 0; i < attacks.length; i++) {
-		const attack = attacks[i]
-
-		runAttackCode(game, attack)
-		runDefenceCode(game, attack)
-
-		// Reapply changes back to list of attacks
-		// @TODO attack is a class does this need doing?
-		attacks[i] = attack
-	}
-
-	// STEP 4 - EXECUTE ATTACKS
-
-	/** @type {Array<import('models/attack-model').AttackResult>} */
-	const results = []
-
-	for (let i = 0; i < attacks.length; i++) {
-		const attack = attacks[i]
-		const {attacker, target, damage, damageMultiplier, defence} = attack
-
-		// Calculate damage
-		const initialDamage = damage * damageMultiplier
-		const finalDamage = Math.max(initialDamage - defence.damageReduction, 0)
-
-		const {row: targetRow} = target
-		const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
-
-		const currentHealth = targetRow.health
-		const maxHealth = targetHermitInfo.health
-
-		// Deduct and clamp health
-		const newHealth = Math.max(currentHealth - finalDamage, 0)
-		targetRow.health = Math.min(newHealth, maxHealth)
-
-		// Create backlash attack if applicable
-		const hermitAttacks = ['primary', 'secondary', 'zero']
-		if (
-			attacker &&
-			hermitAttacks.includes(attack.type) &&
-			defence.backlash > 0
-		) {
-			// Create reverse attack for backlash
-			const backlashAttack = new AttackModel(target, attacker, 'backlash')
-			backlashAttack.addDamage(defence.backlash)
-
-			// Allow target to defend
-			runDefenceCode(game, backlashAttack)
-
-			// Add to list of attacks so we process it
-			attacks.push(backlashAttack)
+			nextAttacks.push(...attack.nextAttacks)
 		}
 
-		// Attack result
-		results.push({
-			attack,
-			totalDamage: currentHealth - newHealth,
-			blockedDamage: initialDamage - finalDamage,
-		})
+		attacks = nextAttacks
 	}
 
-	//@TODO call results, then check for hermit death
-
-	//@TODO make sure to delete attack objects after - is this needed?
-
-	// --- Provide result of attack ---
+	// @TODO check for hermit death after all attacks
 
 	return 'DONE'
 }

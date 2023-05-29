@@ -1,6 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import Card from '../_card'
 
+/**
+ * @typedef {import('models/attack-model').AttackResult} AttackResult
+ */
+
 class HermitCard extends Card {
 	constructor(defs) {
 		defs.type = 'hermit'
@@ -64,6 +68,26 @@ class HermitCard extends Card {
 	 * @param {AttackModel} attack
 	 */
 	onDefence(game, instance, attack) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called after damage has been applied from attack to another row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackResult} attackResult
+	 */
+	afterAttack(game, instance, attackResult) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called after damage has been applied from attack on this row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackResult} attackResult
+	 */
+	afterDefence(game, instance, attackResult) {
 		// default is do nothing
 	}
 

@@ -7,7 +7,7 @@
  *
  * @typedef {HermitAttackType | 'effect' | 'weakness' | 'backlash' | 'ailment'} AttackType
  *
- * @typedef {{damageReduction: number, backlash: number}} AttackDefence
+ * @typedef {{damageReduction: number}} AttackDefence
  *
  *
  * @typedef {{attack: AttackModel, totalDamage: number, blockedDamage: number}} AttackResult
@@ -15,13 +15,19 @@
 
 export class AttackModel {
 	/**
-	 *
+	 * Creates a new attack
+	 * @param {string} id
 	 * @param {Attacker} attacker
 	 * @param {AttackTarget} target
 	 * @param {AttackType} type
 	 * @returns
 	 */
-	constructor(attacker = null, target, type) {
+	constructor(id, attacker = null, target, type) {
+		/**
+		 * Unique id for this attack
+		 * @type {string}
+		 */
+		this.id = id
 		/**
 		 * The attacker
 		 * @type {Attacker}
@@ -64,8 +70,13 @@ export class AttackModel {
 		 */
 		this.defence = {
 			damageReduction: 0,
-			backlash: 0,
 		}
+
+		/**
+		 * Attacks to perform after this attack
+		 * @type {Array<AttackModel>}
+		 */
+		this.nextAttacks = []
 
 		// uncategorised @TODO
 		/** @type {boolean} */
@@ -111,6 +122,15 @@ export class AttackModel {
 	 */
 	lockDamage() {
 		this.damageLocked = true
+		return this
+	}
+
+	/**
+	 * Adds a new attack to be executed after this one
+	 * @param {AttackModel} newAttack
+	 */
+	addNewAttack(newAttack) {
+		this.nextAttacks.push(newAttack)
 		return this
 	}
 }

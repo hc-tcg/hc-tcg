@@ -1,6 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import Card from '../_card'
 
+/**
+ * @typedef {import('models/attack-model').AttackResult} AttackResult
+ */
+
 class SingleUseCard extends Card {
 	constructor(defs) {
 		defs.type = 'single_use'
@@ -42,6 +46,26 @@ class SingleUseCard extends Card {
 	 * @param {AttackModel} attack
 	 */
 	onAttack(game, instance, attack) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called after damage has been applied from attack to another row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackResult} attackResult
+	 */
+	afterAttack(game, instance, attackResult) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called after damage has been applied from attack on this row
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackResult} attackResult
+	 */
+	afterDefence(game, instance, attackResult) {
 		// default is do nothing
 	}
 
