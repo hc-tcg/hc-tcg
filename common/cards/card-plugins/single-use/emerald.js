@@ -13,11 +13,6 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			description:
 				'Swap 1 effect card with opposing active Hermit.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-			{target: 'player', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

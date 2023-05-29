@@ -19,10 +19,9 @@ class EggSingleUseCard extends SingleUseCard {
 		})
 		this.damage = {afkTarget: 10}
 		this.pickOn = 'followup'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1, active: false},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**

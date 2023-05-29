@@ -14,10 +14,6 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 			description:
 				'Opponent must discard any effect cards attached to their active Hermit and adjacent Hermits.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'effect', amount: 1, active: true},
-		]
 	}
 
 	/**

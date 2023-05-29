@@ -14,10 +14,6 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				'Does +40hp damage.\n\nIgnores any attached Effect card.\n\nDiscard after use.',
 		})
 		this.damage = {target: 40}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

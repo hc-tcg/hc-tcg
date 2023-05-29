@@ -14,10 +14,6 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 			description:
 				"Opponent's active hermit can only use their primary attack on their next turn.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**
