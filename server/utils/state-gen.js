@@ -160,7 +160,7 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.deck.cards
+	const pack = player.playerDeck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
@@ -187,9 +187,9 @@ export function getPlayerState(player) {
 
 	const TOTAL_ROWS = 5
 	return {
-		id: player.id,
-		playerName: player.name,
-		censoredPlayerName: player.censoredName,
+		id: player.playerId,
+		playerName: player.playerName,
+		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: {},
 		followUp: null,
 		lives: 3,
@@ -273,18 +273,20 @@ export function getLocalGameState(
 	pastTurnActions = [],
 	opponentAvailableActions = []
 ) {
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
+	const opponentPlayerId = game
+		.getPlayerIds()
+		.find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null
 	}
 
-	const playerState = game.state.players[player.id]
+	const playerState = game.state.players[player.playerId]
 	const opponentState = game.state.players[opponentPlayerId]
 
 	// convert player states
 	/** @type {Record<string, LocalPlayerState>} */
 	const players = {}
-	players[player.id] = getLocalPlayerState(playerState)
+	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	/** @type {LocalGameState} */
@@ -298,16 +300,16 @@ export function getLocalGameState(
 		discarded: playerState.discarded,
 
 		// ids
-		playerId: player.id,
+		playerId: player.playerId,
 		opponentPlayerId: opponentPlayerId,
 		currentPlayerId: game.ds.currentPlayer.id,
 
 		players,
 
 		pastTurnActions:
-			player.id === game.ds.currentPlayer.id ? pastTurnActions : [],
+			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
 		availableActions:
-			player.id === game.ds.currentPlayer.id
+			player.playerId === game.ds.currentPlayer.id
 				? availableActions
 				: opponentAvailableActions,
 

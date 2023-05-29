@@ -67,16 +67,13 @@ import HermitCard from './_hermit-card'
 const HERMIT_CARDS = [
 	new BdoubleO100CommonHermitCard(),
 	new BdoubleO100RareHermitCard(),
-	new BeetlejhostCommonHermitCard(),
 	new Cubfan135CommonHermitCard(),
 	new Cubfan135RareHermitCard(),
 	new Docm77CommonHermitCard(),
 	new Docm77RareHermitCard(),
-	// new DreamRareHermitCard(),
 	new EthosLabCommonHermitCard(),
 	new EthosLabRareHermitCard(),
 	new EthosLabUltraRareHermitCard(),
-	new EvilJevinCommonHermitCard(),
 	new FalseSymmetryCommonHermitCard(),
 	new FalseSymmetryRareHermitCard(),
 	new GeminiTayCommonHermitCard(),
@@ -99,11 +96,8 @@ const HERMIT_CARDS = [
 	new KeralisRareHermitCard(),
 	new MumboJumboCommonHermitCard(),
 	new MumboJumboRareHermitCard(),
-	new LlamadadRareHermitCard(),
 	new PearlescentMoonCommonHermitCard(),
 	new PearlescentMoonRareHermitCard(),
-	new PoultrymanCommonHermitCard(),
-	new PotatoBoyRareHermitCard(),
 	new RendogCommonHermitCard(),
 	new RendogRareHermitCard(),
 	new StressMonster101CommonHermitCard(),
@@ -126,6 +120,15 @@ const HERMIT_CARDS = [
 	new ZedaphPlaysRareHermitCard(),
 	new ZombieCleoCommonHermitCard(),
 	new ZombieCleoRareHermitCard(),
+
+	// new cards
+
+	//new BeetlejhostCommonHermitCard(),
+	//new EvilJevinCommonHermitCard(),
+	//new LlamadadRareHermitCard(),
+	//new PoultrymanCommonHermitCard(),
+	//new PotatoBoyRareHermitCard(),
+	// new DreamRareHermitCard(),
 ]
 
 export default HERMIT_CARDS

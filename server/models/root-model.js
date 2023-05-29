@@ -46,7 +46,7 @@ export class RootModel {
 
 	/** @param {PlayerModel} player */
 	addPlayer(player) {
-		this.players[player.id] = player
+		this.players[player.playerId] = player
 	}
 
 	/** @param {GameModel} game */

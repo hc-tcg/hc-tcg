@@ -22,7 +22,9 @@ import CARDS from '../../common/cards'
  * @returns {boolean}
  */
 const checkRow = (rowInfo, req) => {
-	const target = req.target === rowInfo.target || req.target === 'board'
+	if (rowInfo.emptyRow) return false
+
+	const target = req.target === rowInfo.target
 	if (!target) return false
 
 	// active or afk
@@ -113,13 +115,14 @@ export const anyAvailableReqOptions = (
 /**
  * @param {PlayerState | LocalPlayerState} cardPlayerState
  * @param {number | null} rowIndex
+ * @param {boolean} emptyRow
  * @returns {boolean}
  */
-export const validRow = (cardPlayerState, rowIndex) => {
+export const validRow = (cardPlayerState, rowIndex, emptyRow) => {
 	if (typeof rowIndex !== 'number') return true
 	const row = cardPlayerState?.board.rows[rowIndex]
 	if (!row) return false
-	return true
+	return !!row.hermitCard !== emptyRow
 }
 
 /**
@@ -133,7 +136,6 @@ export const validTarget = (target, cardPlayerState, playerId, slotType) => {
 	if (typeof target !== 'string') return true
 
 	if (target === 'hand') return slotType === 'hand'
-	if (target === 'board') return true
 	if (target === 'player' && playerId !== cardPlayerState.id) return false
 	if (target === 'opponent' && playerId === cardPlayerState.id) return false
 
@@ -204,9 +206,10 @@ export function validPick(gameState, req, pickedCard) {
 	const card = pickedCard.card
 	const slotType = pickedCard.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
+	const emptyRow = !!req.empty && slotType === 'hermit'
 
 	if (!cardPlayerState) return false
-	if (!validRow(cardPlayerState, rowIndex)) return false
+	if (!validRow(cardPlayerState, rowIndex, emptyRow)) return false
 	if (!validTarget(req.target, cardPlayerState, turnPlayerId, slotType))
 		return false
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
@@ -232,8 +235,9 @@ export function checkAttachReq(gameState, slotPayload, req) {
 	const rowIndex = 'rowIndex' in slotPayload ? slotPayload.rowIndex : null
 	const player = players[playerId]
 	const slotType = slotPayload.slotType
+	const emptyRow = slotType === 'hermit'
 
-	if (!validRow(player, rowIndex)) return false
+	if (!validRow(player, rowIndex, emptyRow)) return false
 	if (!validTarget(req.target, player, turnPlayerId, slotType)) return false
 	if (!validActive(req.active, player, rowIndex)) return false
 	if (!req.type.some((type) => validType(type, slotType))) return false
