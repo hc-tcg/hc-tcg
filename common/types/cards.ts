@@ -39,7 +39,7 @@ export type HermitAttackT = {
 	name: string
 	cost: Array<string>
 	damage: number
-	power: string | null∂
+	power: string | null
 }
 
 export type CardDefs = {
@@ -47,6 +47,8 @@ export type CardDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type EffectDefs = {

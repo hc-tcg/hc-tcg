@@ -4,6 +4,7 @@
  * @typedef {import("common/types/cards").CardDefs} CardDefs
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("common/types/cards").CardRarityT} CardRarityT
+ * @typedef {import('utils/reqs').PickRequirmentT} PickRequirmentT'
  * @abstract
  */
 
@@ -11,18 +12,22 @@ class Card {
 	/**
 	 * @param {CardDefs} defs
 	 */
-	constructor({type, id, name, rarity}) {
-		if (!type || !id || !name || !rarity) {
+	constructor(defs) {
+		if (!defs.type || !defs.id || !defs.name || !defs.rarity) {
 			throw new Error('Invalid card definition!')
 		}
 		/** @type {CardTypeT} */
-		this.type = type
+		this.type = defs.type
 		/** @type {string} */
-		this.id = id
+		this.id = defs.id
 		/** @type {string} */
-		this.name = name
+		this.name = defs.name
 		/** @type {CardRarityT} */
-		this.rarity = rarity
+		this.rarity = defs.rarity
+		/** @type {string | undefined} */
+		this.pickOn = defs.pickOn
+		/** @type {PickRequirmentT[] | undefined} */
+		this.pickReqs = defs.pickReqs
 	}
 
 	// Keys for storing info
