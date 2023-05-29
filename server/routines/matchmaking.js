@@ -19,6 +19,7 @@ import {
 	getGameOutcome,
 } from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
+import { gameEndWebhook } from '../api'
 
 /**
  * @typedef {import("redux-saga").Task} Task
@@ -86,6 +87,8 @@ function* gameManager(game) {
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1
 		)
+		gameEndWebhook(game)
+
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
 	}

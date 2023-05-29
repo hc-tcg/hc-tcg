@@ -154,5 +154,5 @@ export function flipCoin(currentPlayer, times = 1) {
 
 export const getOpponentId = (game, playerId) => {
 	const players = game.getPlayers()
-	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
+	return players.filter((p) => p.id !== playerId)[0]?.id
 }
