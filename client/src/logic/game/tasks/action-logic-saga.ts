@@ -115,7 +115,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		}
 	} else if (pState.custom.spyglass) {
 		yield put(setOpenedModal('spyglass'))
-	} else if (lastTurnAction === 'PLAY_SINGLE_USE_CARD' && !pState.board.singleUseCardUsed) {
+	} else if (lastTurnAction === 'PLAY_SINGLE_USE_CARD' && !pState.board.singleUseCardUsed && pState.board.singleUseCard) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
 	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
 		yield put(setOpenedModal('umnet-condition'))
