@@ -137,8 +137,8 @@ class EffectCard extends Card {
 	}
 
 	/**
-	 * Called after the hermit this instance is attached to is dead,
-	 * but before the cards are removed from the board
+	 * Called when the hermit this instance is attached to will die -
+	 * before the cards are removed from the board
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */

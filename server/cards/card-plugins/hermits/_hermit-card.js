@@ -92,6 +92,14 @@ class HermitCard extends Card {
 	}
 
 	/**
+	 * Called when this instance will die -
+	 * before the cards are removed from the board
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onHermitDeath(game, instance) {}
+
+	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
 	 */

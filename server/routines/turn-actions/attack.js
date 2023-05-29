@@ -12,6 +12,8 @@ import SingleUseCard from '../../cards/card-plugins/single-use/_single-use-card'
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  * @typedef {import("common/types/cards").HermitCardT} HermitCardT
  * @typedef {import("common/types/cards").EffectCardT} EffectCardT
+ * @typedef {import('models/attack-model').HermitAttackType} HermitAttackType
+ * @typedef {import('../../models/attack-model').AttackResult} AttackResult
  */
 
 export const ATTACK_TO_ACTION = {
@@ -26,7 +28,7 @@ export const WEAKNESS_DAMAGE = 20
  *
  * @param {GameModel} game
  * @param {RowStateWithHermit} attackRow
- * @param {import('models/attack-model').HermitAttackType} hermitAttackType
+ * @param {HermitAttackType} hermitAttackType
  * @returns {Array<AttackModel>}
  */
 function getAttacks(game, attackRow, hermitAttackType) {
@@ -199,7 +201,7 @@ function runDefenceCode(game, attack) {
  *
  * @param {GameModel} game
  * @param {AttackModel} attack
- * @returns {import('../../models/attack-model').AttackResult}
+ * @returns {AttackResult}
  */
 function executeAttack(game, attack) {
 	const {target, damage, damageMultiplier, defence} = attack
@@ -218,7 +220,7 @@ function executeAttack(game, attack) {
 	const newHealth = Math.max(currentHealth - finalDamage, 0)
 	targetRow.health = Math.min(newHealth, maxHealth)
 
-	/** @type {import('../../models/attack-model').AttackResult} */
+	/** @type {AttackResult} */
 	const result = {
 		attack,
 		totalDamage: currentHealth - newHealth,
@@ -232,7 +234,7 @@ function executeAttack(game, attack) {
 /**
  *
  * @param {GameModel} game
- * @param {import('../../models/attack-model').AttackResult} result
+ * @param {AttackResult} result
  */
 function sendAttackResult(game, result) {
 	const {attack} = result
@@ -318,11 +320,11 @@ function* attackSaga(game, turnAction, actionState) {
 	if (!attackRow.hermitCard) return 'INVALID'
 
 	// Defender
-	const defenceBoard = opponentPlayer.board
-	const defenceIndex = defenceBoard.activeRow
+	const opponentBoard = opponentPlayer.board
+	const defenceIndex = opponentBoard.activeRow
 	if (!defenceIndex) return 'INVALID'
 
-	const defenceRow = defenceBoard.rows[attackIndex]
+	const defenceRow = opponentBoard.rows[attackIndex]
 	if (!defenceRow.hermitCard) return 'INVALID'
 
 	// Get initial attacks
@@ -358,7 +360,30 @@ function* attackSaga(game, turnAction, actionState) {
 		attacks = nextAttacks
 	}
 
-	// @TODO check for hermit death after all attacks
+	// Check for hermit death
+	const allRows = [...playerBoard.rows, ...opponentBoard.rows]
+	for (let i = 0; i < allRows.length; i++) {
+		const row = allRows[i]
+
+		if (row.health && row.health <= 0) {
+			// Call effect card first
+			if (row.effectCard) {
+				EFFECT_CARDS[row.effectCard.cardId].onHermitDeath(
+					game,
+					row.effectCard.cardInstance
+				)
+			}
+			// We check the health again because the effect card might have healed the hermit
+			if (row.health <= 0) {
+				HERMIT_CARDS[row.hermitCard.cardId].onHermitDeath(
+					game,
+					row.hermitCard.cardInstance
+				)
+			}
+		}
+
+		// @TODO right now actually removing the cards from the board is handled in the game saga, should it be handled here?
+	}
 
 	return 'DONE'
 }
