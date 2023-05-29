@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class ImpulseSVCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'impulsesv-common',
+			id: 'impulsesv_common',
 			name: 'Impulse',
 			rarity: 'common',
 			hermitType: 'farm',

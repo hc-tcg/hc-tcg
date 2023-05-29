@@ -7,7 +7,7 @@ import SingleUseCard from './_single-use-card'
 class GoldenAxeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'golden-axe',
+			id: 'golden_axe',
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:

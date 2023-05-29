@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class RendogCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'rendog-common',
+			id: 'rendog_common',
 			name: 'Rendog',
 			rarity: 'common',
 			hermitType: 'balanced',

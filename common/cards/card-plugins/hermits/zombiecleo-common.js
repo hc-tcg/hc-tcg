@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class ZombieCleoCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'zombiecleo-common',
+			id: 'zombiecleo_common',
 			name: 'Cleo',
 			rarity: 'common',
 			hermitType: 'builder',

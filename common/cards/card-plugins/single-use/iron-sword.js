@@ -7,7 +7,7 @@ import SingleUseCard from './_single-use-card'
 class IronSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'iron-sword',
+			id: 'iron_sword',
 			name: 'Iron Sword',
 			rarity: 'common',
 			description:

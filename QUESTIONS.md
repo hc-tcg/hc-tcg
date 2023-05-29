@@ -12,7 +12,7 @@
 
 ## Does chorus fruit/Cub overwrite knockback?
 
-## Does Grian's borrow steal gold-armor/shield before attack, or is it destroyed before he can steal it?
+## Does Grian's borrow steal gold_armor/shield before attack, or is it destroyed before he can steal it?
 
 ## When scar uses shis deathloop ability and also holds a totem, should the totem be removed or stay when knocked out?
 

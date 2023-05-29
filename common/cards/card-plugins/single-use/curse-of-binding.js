@@ -7,7 +7,7 @@ import SingleUseCard from './_single-use-card'
 class CurseOfBindingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'curse-of-binding',
+			id: 'curse_of_binding',
 			name: 'Curse Of Binding',
 			rarity: 'common',
 			description:

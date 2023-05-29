@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class Cubfan135CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'cubfan135-common',
+			id: 'cubfan135_common',
 			name: 'Cub',
 			rarity: 'common',
 			hermitType: 'balanced',

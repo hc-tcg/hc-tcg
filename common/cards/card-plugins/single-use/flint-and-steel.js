@@ -9,7 +9,7 @@ import {discardCard} from '../../../utils'
 class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'flint-and-steel',
+			id: 'flint_&_steel',
 			name: 'Flint & Steel',
 			rarity: 'common',
 			description: 'Discard your hand. Draw 3 cards.\n\nDiscard after use.',

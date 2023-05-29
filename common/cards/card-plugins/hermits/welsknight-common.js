@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class WelsknightCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'welsknight-common',
+			id: 'welsknight_common',
 			name: 'Wels',
 			rarity: 'common',
 			hermitType: 'builder',

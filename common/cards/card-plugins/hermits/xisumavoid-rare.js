@@ -8,7 +8,7 @@ import {flipCoin, discardCard} from '../../../utils'
 class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'xisumavoid-rare',
+			id: 'xisumavoid_rare',
 			name: 'Xisuma',
 			rarity: 'rare',
 			hermitType: 'redstone',

@@ -10,7 +10,7 @@ import {validPick} from '../../../utils/reqs'
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'keralis-rare',
+			id: 'keralis_rare',
 			name: 'Keralis',
 			rarity: 'rare',
 			hermitType: 'terraform',

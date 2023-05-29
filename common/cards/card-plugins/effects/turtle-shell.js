@@ -35,7 +35,7 @@ Testing:
 class TurtleShellEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'turtle-shell',
+			id: 'turtle_shell',
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:

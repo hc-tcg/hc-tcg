@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class GeminiTayCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'geminitay-common',
+			id: 'geminitay_common',
 			name: 'Gem',
 			rarity: 'common',
 			hermitType: 'builder',

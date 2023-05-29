@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class GoodTimesWithScarCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'goodtimeswithscar-common',
+			id: 'goodtimeswithscar_common',
 			name: 'Scar',
 			rarity: 'common',
 			hermitType: 'terraform',

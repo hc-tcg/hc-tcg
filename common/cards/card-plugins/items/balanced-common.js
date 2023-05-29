@@ -3,7 +3,7 @@ import ItemCard from './_item-card'
 class BalancedCommonItemCard extends ItemCard {
 	constructor() {
 		super({
-			id: 'item-balanced-common',
+			id: 'item_balanced_common',
 			name: 'Balanced',
 			rarity: 'common',
 			hermitType: 'balanced',

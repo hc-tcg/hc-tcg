@@ -7,7 +7,7 @@ import EffectCard from './_effect-card'
 class DiamondArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'diamond-armor',
+			id: 'diamond_armor',
 			name: 'Diamond Armor',
 			rarity: 'rare',
 			description:

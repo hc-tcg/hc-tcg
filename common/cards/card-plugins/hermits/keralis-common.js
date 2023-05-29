@@ -3,7 +3,7 @@ import HermitCard from './_hermit-card'
 class KeralisCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'keralis-common',
+			id: 'keralis_common',
 			name: 'Keralis',
 			rarity: 'common',
 			hermitType: 'builder',
