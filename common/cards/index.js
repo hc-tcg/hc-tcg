@@ -5,13 +5,6 @@ import HermitCard from './card-plugins/hermits/_hermit-card'
 import ItemCard from './card-plugins/items/_item-card'
 import SingleUseCard from './card-plugins/single-use/_single-use-card'
 
-/**
- * @typedef {import("common/cards/card-plugins/hermits/_hermit-card").HermitCard} HermitCard
- * @typedef {import("common/cards/card-plugins/effects/_effect-card").EffectCard} EffectCard
- * @typedef {import("common/cards/card-plugins/single-use/_single-use-card").SingleUseCard} SingleUseCard
- * @typedef {import("common/cards/card-plugins/items/_item-card").ItemCard} ItemCard
- */
-
 /** @type {Record<string, Card>} */
 const cardMap = CARDS.reduce((result, card) => {
 	result[card.id] = card
