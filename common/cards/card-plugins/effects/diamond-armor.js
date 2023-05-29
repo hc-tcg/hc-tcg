@@ -1,4 +1,4 @@
-import {AttackModel} from '../../../models/attack-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 
 /**

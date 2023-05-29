@@ -1,5 +1,4 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel

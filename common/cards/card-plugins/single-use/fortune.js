@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {flipCoin} from '../../../utils'
+import {flipCoin} from '../../../../server/utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel

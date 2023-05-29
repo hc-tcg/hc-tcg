@@ -1,7 +1,7 @@
 import EffectCard from './_effect-card'
 import {HERMIT_CARDS} from '../../../cards'
-import {discardCard} from '../../../utils'
-import {getCardPos} from '../../../utils/cards'
+import {discardCard} from '../../../../server/utils'
+import {getCardPos} from '../../../../server/utils/cards'
 /*
 Info confirmed by beef:
 - If knockback is used, sleeping opponent goes AFK but wakes up.

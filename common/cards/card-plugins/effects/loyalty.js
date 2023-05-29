@@ -1,5 +1,5 @@
 import EffectCard from './_effect-card'
-import {getCardPos} from '../../../utils/cards'
+import {getCardPos} from '../../../../server/utils/cards'
 
 class LoyaltyEffectCard extends EffectCard {
 	constructor() {

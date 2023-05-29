@@ -1,5 +1,5 @@
+import {AttackModel} from '../../../../server/models/attack-model'
 import Card from '../_card'
-import {AttackModel} from '../../../models/attack-model'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs

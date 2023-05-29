@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../utils/reqs'
-import {flipCoin} from '../../../utils'
-import {applySingleUse} from '../../../utils'
+import {validPick} from '../../../../server/utils/reqs'
+import {flipCoin} from '../../../../server/utils'
+import {applySingleUse} from '../../../../server/utils'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel

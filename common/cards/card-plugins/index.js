@@ -1,7 +1,7 @@
 import SINGLE_USE_CARDS from './single-use'
 import EFFECT_CARDS from './effects'
 import HERMIT_CARDS from './hermits'
-import ITEM_CARDS from './../common/cards/items'
+import ITEM_CARDS from './items'
 import Card from './_card'
 
 /**

@@ -1,6 +1,6 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardCard} from '../../../utils'
-import {validPick} from '../../../utils/reqs'
+import {discardCard} from '../../../../server/utils'
+import {validPick} from '../../../../server/utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel

@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../utils'
+import {flipCoin} from '../../../../server/utils'
 import CARDS from '../../../cards'
 
 /**

@@ -1,6 +1,6 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../utils/reqs'
-import {getEmptyRow} from '../../../utils/state-gen'
+import {validPick} from '../../../../server/utils/reqs'
+import {getEmptyRow} from '../../../../server/utils/state-gen'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel

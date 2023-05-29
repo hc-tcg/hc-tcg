@@ -1,6 +1,6 @@
 import SingleUseCard from './_single-use-card'
-import {equalCard} from '../../../utils'
-import {validPick} from '../../../utils/reqs'
+import {equalCard} from '../../../../server/utils'
+import {validPick} from '../../../../server/utils/reqs'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
