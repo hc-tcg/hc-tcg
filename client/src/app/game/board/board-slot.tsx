@@ -27,19 +27,11 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 				| ItemCard
 				| HealthCard)
 		: null
-	if (cardInfo instanceof HealthCard && rowState?.health) {
+	if (type === 'health' && rowState?.health) {
 		cardInfo = {
-			name: rowState.health + ' Health',
-			rarity: 'common',
 			type: 'health',
 			health: rowState.health,
-			id: 'health_' + rowState.health,
-			attachReq: {target: 'player', type: ['health']},
-			getKey: () => '',
-			getInstanceKey: () => '',
-			canAttach: () => false,
-			onAttach: () => '',
-		}
+		} as HealthCard
 	}
 
 	const ailments = Array.from(
