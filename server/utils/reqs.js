@@ -1,3 +1,4 @@
+import EFFECT_CARDS from 'common/cards/card-plugins/effects'
 import CARDS from '../../common/cards'
 
 /**
@@ -39,6 +40,12 @@ const checkRow = (rowInfo, req) => {
 	const allEmpty = slots.every((card) => !card)
 	if (req.empty === true && !anyEmpty) return false
 	if (!req.empty && allEmpty) return false
+
+	// removable or not
+	const effectCard = rowInfo.row.effectCard
+	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
+	if (req.removable && effectCardInfo?.removable) return true
+	if (req.removable && !effectCardInfo?.removable) return false
 
 	return true
 }
@@ -182,6 +189,17 @@ const validEmpty = (empty, card, slotType, isEmptyRow) => {
 }
 
 /**
+ * @param {PickRequirmentT['removable']} removable
+ * @param {CardT | null} card
+ * @returns {boolean}
+ */
+const validRemovable = (removable, card) => {
+	if (typeof removable !== 'boolean') return true
+	if (!card) return true
+	return removable === EFFECT_CARDS[card.cardId]?.removable
+}
+
+/**
  * @template T
  * @template Y
  * @template {boolean} [E=false]
@@ -217,6 +235,7 @@ export function validPick(gameState, req, pickedCard) {
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
 	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
+	if (!validRemovable(req.removable, card)) return false
 
 	return true
 }
