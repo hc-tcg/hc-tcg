@@ -176,7 +176,9 @@ function* joinPrivateGame(action) {
 	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	if (invalidCode || gameRunning || inGame(playerId)) {
+	const invalidPlayer = game?.getPlayerIds().find((id) => !root.players[id])
+
+	if (invalidCode || invalidPlayer || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
 	}
