@@ -19,11 +19,14 @@ class EffectCard extends Card {
 			id: defs.id,
 			name: defs.name,
 			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
 		})
 
 		if (!defs.description) {
 			throw new Error('Invalid card definition!')
 		}
+
 		/** @type {string} */
 		this.description = defs.description
 	}
@@ -40,6 +43,17 @@ class EffectCard extends Card {
 
 		if (!pos.rowState?.hermitCard) return false
 
+		return true
+	}
+
+	/**
+	 * Returns whether this card is removable from its position
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @returns {boolean}
+	 */
+	getIsRemovable(game, instance) {
+		// default
 		return true
 	}
 
@@ -162,14 +176,6 @@ class EffectCard extends Card {
 	 * @returns {boolean} Whether this row can become active
 	 */
 	onSetActive(game, instance) {
-		return true
-	}
-
-	/**
-	 * Called to check if this card can be removed from the board
-	 * @returns {boolean}
-	 */
-	getIsRemovable() {
 		return true
 	}
 }

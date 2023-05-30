@@ -4,8 +4,7 @@
  * @typedef {import("common/types/cards").CardDefs} CardDefs
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("common/types/cards").CardRarityT} CardRarityT
- * @typedef {import('utils/reqs').PickRequirmentT} PickRequirmentT'
- * @abstract
+ * @typedef {import("../../../server/utils/reqs").PickRequirmentT} PickRequirmentT
  */
 
 class Card {

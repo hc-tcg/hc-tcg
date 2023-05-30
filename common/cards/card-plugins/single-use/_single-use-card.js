@@ -2,17 +2,29 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import Card from '../_card'
 
 /**
+ * @typedef {import('common/types/cards').SingleUseDefs} SingleUseDefs
  * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('utils').GameModel} GameModel
  */
 
 class SingleUseCard extends Card {
+	/**
+	 * @param {SingleUseDefs} defs
+	 */
 	constructor(defs) {
-		defs.type = 'single_use'
-		super(defs)
+		super({
+			type: 'single_use',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
+		})
 
 		if (!defs.description) {
 			throw new Error('Invalid card definition')
 		}
+		/** @type {string} */
 		this.description = defs.description
 	}
 
@@ -65,6 +77,17 @@ class SingleUseCard extends Card {
 	 */
 	afterDefence(game, instance, attackResult) {
 		// default is do nothing
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedCardsInfo} pickedCards
+	 * @returns {"DONE" | "INVALID"}
+	 */
+	onApply(game, instance, pickedCards) {
+		// default is do nothing
+		return 'DONE'
 	}
 
 	/**
