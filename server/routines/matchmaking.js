@@ -33,11 +33,7 @@ function* gameManager(game) {
 		const playerIds = game.getPlayerIds()
 		const players = game.getPlayers()
 
-		const gameType = game.code
-			? game.code.endsWith('_custom')
-				? 'Custom'
-				: 'Private'
-			: 'Public'
+		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
