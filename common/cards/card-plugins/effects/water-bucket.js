@@ -19,8 +19,6 @@ class WaterBucketEffectCard extends EffectCard {
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-
-		this.attachReq = {target: 'player', type: ['effect', 'single_use']}
 	}
 
 	//@TODO need to figure out pick process, etc - how to nicely define when a card needs to choose another?
@@ -62,6 +60,23 @@ class WaterBucketEffectCard extends EffectCard {
 				return 'DONE'
 			}
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slotType === 'single_use') return true
+
+		if (pos.slotType !== 'effect') return false
+		if (pos.playerId !== currentPlayer.id) return false
+		if (!pos.rowState?.hermitCard) return false
+
+		return true
 	}
 }
 
