@@ -2,8 +2,7 @@ import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
 import root from './models/root-model'
 import {CONFIG} from '../config'
-import store from '././be-store'
-import {inGame, inQueue} from './routines/matchmaking'
+import {GameModel} from './models/game-model'
 
 /**
  * @param {import("express").Express} app
@@ -47,11 +46,10 @@ export function registerApis(app) {
 			if (apiKey) {
 				if (apiKeys?.keys.includes(apiKey)) {
 					const code = Math.floor(Math.random() * 10000000).toString(16)
-					store.dispatch({
-						type: 'CREATE_PRIVATE_GAME'
-					})
+					const game = new GameModel(code)
+					root.addGame(game)
 					res.status(201).send({
-						code:code
+						code: code,
 					})
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
@@ -71,7 +69,7 @@ export function gameEndWebhook(game) {
 	headers.append('Content-type', 'application/json')
 	try {
 		headers.append('api-key', require('./apiKeys.json')[0])
-		fetch(`${CONFIG['gameEndUrl']}/admin/game_end`, {
+		fetch(`${CONFIG['botUrl']}/admin/game_end`, {
 			method: 'POST',
 			headers: headers,
 			body: JSON.stringify({

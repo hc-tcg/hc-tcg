@@ -152,12 +152,16 @@ function* leaveMatchmaking(action) {
 }
 
 function* createPrivateGame(action) {
-	const {playerId, code} = action
+	const {playerId} = action
 	const player = root.players[playerId]
-	if (player && (inGame(playerId) || inQueue(playerId))) return
+	if (!player) {
+		console.log('[Create Game] Player not found: ', playerId)
+		return
+	}
+	if (inGame(playerId) || inQueue(playerId)) return
 
 	// Create new game with code
-	const gameCode = code ? code : Math.floor(Math.random() * 10000000).toString(16)
+	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
 	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
 	const newGame = new GameModel(gameCode)
@@ -165,7 +169,7 @@ function* createPrivateGame(action) {
 	root.games[newGame.id] = newGame
 
 	console.log(
-		`Private game created by ${player?.playerName}.`,
+		`Private game created by ${player.playerName}.`,
 		`Code: ${gameCode}`
 	)
 }
@@ -187,7 +191,9 @@ function* joinPrivateGame(action) {
 
 	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
-	yield fork(gameManager, game)
+	if (game.getPlayers().length === 2) {
+		yield fork(gameManager, game)
+	}
 }
 
 function* cleanUpSaga() {
