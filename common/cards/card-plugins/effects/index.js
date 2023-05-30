@@ -13,6 +13,7 @@ import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
+import CommandBlockSingleUseCard from './command-block'
 import EffectCard from './_effect-card'
 
 /** @type {Array<EffectCard>} */
@@ -32,6 +33,7 @@ const EFFECT_CARDS = [
 	new LoyaltyEffectCard(),
 	// new StringEffectCard(),
 	// new TurtleShellEffectCard(),
+	new CommandBlockSingleUseCard(),
 ]
 
 export default EFFECT_CARDS
