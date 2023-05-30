@@ -50,12 +50,16 @@ function* joinPrivateSaga(): SagaIterator {
 				invalidCode: call(receiveMsg, 'INVALID_CODE'),
 				gameStart: call(receiveMsg, 'GAME_START'),
 				waitingForPlayer: call(receiveMsg, 'WAITING_FOR_PLAYER'),
+				timeout: call(receiveMsg, 'MATCHMAKING_TIMEOUT'),
 			})
-			if (result.gameStart) break
+			if (result.timeout) break
+			if (result.gameStart) {
+				yield call(gameSaga)
+				break
+			}
 			if (result.invalidCode) yield put(invalidCode())
 			if (result.waitingForPlayer) yield put(waitingForPlayer())
 		}
-		yield call(gameSaga)
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {
