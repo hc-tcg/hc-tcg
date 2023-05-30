@@ -9,7 +9,7 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
+import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedCardsInfo} from '../utils/picked-cards'
@@ -18,7 +18,7 @@ import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
-import registerCards from '../cards/card-plugins'
+import registerCards from '../../common/cards/card-plugins'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
@@ -27,8 +27,6 @@ import followUpSaga from './turn-actions/follow-up'
 /**
  * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
@@ -489,6 +487,22 @@ function* turnSaga(game) {
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// ailment logic
+
+	// universal ailments
+	for (let ailment of currentPlayer.ailments) {
+		// decrease duration
+		if (ailment.duration === 0) {
+			// time up, get rid of this ailment
+			currentPlayer.ailments = currentPlayer.ailments.filter(
+				(a) => a.id !== ailment.id
+			)
+		} else if (ailment.duration > -1) {
+			// ailment is not infinite, reduce duration by 1
+			ailment.duration--
+		}
+	}
+
+	// row ailments
 	for (let row of currentPlayer.board.rows) {
 		for (let ailment of row.ailments) {
 			// decrease duration

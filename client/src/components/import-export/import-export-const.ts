@@ -18,9 +18,7 @@ export const universe = [
 	'docm77_common',
 	'docm77_rare',
 	'efficiency',
-	'egg',
 	'emerald',
-	'ender_pearl',
 	'ethoslab_common',
 	'ethoslab_rare',
 	'ethoslab_ultra_rare',
@@ -29,7 +27,6 @@ export const universe = [
 	'fishing_rod',
 	'flint_&_steel',
 	'fortune',
-	'bad_omen',
 	'geminitay_common',
 	'geminitay_rare',
 	'gold_armor',
@@ -97,7 +94,6 @@ export const universe = [
 	'spyglass',
 	'stressmonster101_common',
 	'stressmonster101_rare',
-	'sweeping_edge',
 	'tangotek_common',
 	'tangotek_rare',
 	'thorns',
@@ -106,7 +102,6 @@ export const universe = [
 	'tinfoilchef_ultra_rare',
 	'tnt',
 	'totem',
-	'trident',
 	'vintagebeef_common',
 	'vintagebeef_rare',
 	'vintagebeef_ultra_rare',
@@ -122,4 +117,19 @@ export const universe = [
 	'zedaphplays_rare',
 	'zombiecleo_common',
 	'zombiecleo_rare',
+
+	// why does this exist
+	'dream',
+
+	// new cards
+	'beetlejhost_common',
+	'egg',
+	'ender_pearl',
+	'eviljevin_common',
+	'bad_omen',
+	'llamadad_rare',
+	'poultryman_common',
+	'potatoboy_rare',
+	'sweeping_edge',
+	'trident',
 ]

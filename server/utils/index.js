@@ -1,4 +1,4 @@
-import CARDS, {EFFECT_CARDS, ITEM_CARDS} from '../cards'
+import CARDS, {EFFECT_CARDS, ITEM_CARDS} from '../../common/cards'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 
 /**
@@ -134,13 +134,7 @@ export function flipCoin(currentPlayer, times = 1) {
 	// TODO - possibly replace with hook to avoid explicit card ids in code
 	const fortune = !!currentPlayer.custom['fortune']
 	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
-	let forceTails = false
-	if (currentPlayer.board.activeRow) {
-		const currentRow = currentPlayer.board.rows[currentPlayer.board.activeRow]
-		if (currentRow.ailments.find((a) => a.id === 'badomen')) {
-			forceTails = true
-		}
-	}
+	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
 
 	/** @type {Array<CoinFlipT>} */
 	const result = []

@@ -1,4 +1,4 @@
-import CARDS from '../cards'
+import CARDS from '../../common/cards'
 import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
 
 /**

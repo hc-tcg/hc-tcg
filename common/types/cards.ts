@@ -1,3 +1,4 @@
+import {Ailment} from './game-state'
 import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
@@ -20,6 +21,7 @@ export type HermitTypeT =
 	| 'explorer'
 
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
+export type SlotTypeT = 'item' | 'single_use' | 'effect' | 'hermit'
 
 export type DamageT = {
 	target?: number
@@ -39,34 +41,6 @@ export type AttachRequirmentT = {
 	active?: boolean
 }
 
-export type AnyCardT = {
-	name: string
-	type: string
-	rarity: CardRarityT
-	id: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
-	useReqs?: Array<PickRequirmentT>
-	pickReqs?: Array<PickRequirmentT>
-	attachReq: AttachRequirmentT
-}
-
-export type ItemCardT = AnyCardT & {
-	type: 'item'
-	hermitType: HermitTypeT
-}
-
-export type EffectCardT = AnyCardT & {
-	type: 'effect' | 'single_use'
-	description: string
-	damage?: DamageT
-	protection?: ProtectionT
-}
-
-export type HealthCardT = AnyCardT & {
-	type: 'health'
-	health: number
-}
-
 export type HermitAttackT = {
 	name: string
 	cost: Array<string>
@@ -74,20 +48,29 @@ export type HermitAttackT = {
 	power: string | null
 }
 
-export type HermitCardT = AnyCardT & {
-	type: 'hermit'
-	hermitType: HermitTypeT
-	health: number
-	primary: HermitAttackT
-	secondary: HermitAttackT
+export type CardDefs = {
+	type: CardTypeT
+	id: string
+	name: string
+	rarity: CardRarityT
 }
 
-export type CardInfoT = ItemCardT | EffectCardT | HermitCardT | HealthCardT
+export type EffectDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	description: string
+}
 
-export type CardTypesMapT = {
-	hermit: HermitCardT
-	item: ItemCardT
-	effect: EffectCardT
-	single_use: EffectCardT
-	health: HealthCardT
+export type Slot = {
+	type: SlotTypeT
+	index: number
+}
+
+export type CardPos = {
+	playerId: string
+	playerState: PlayerState
+	rowIndex: number | null
+	rowState: RowState | null
+	slotType: SlotTypeT
 }

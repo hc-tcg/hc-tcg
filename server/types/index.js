@@ -4,9 +4,8 @@
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').RowState} RowState
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
- * @typedef {import('common/types/game-state').RowStateWithoutHermit} RowStateWithoutHermit
  * @typedef {import('common/types/cards').CardInfoT} CardInfoT
- * @typedef {import('common/types/cards').HermitCardT} HermitCardT
+ * @typedef {import('common/cards/card-plugins/hermits/_hermit-card')} HermitCard
  * @typedef {import('common/types/pick-process').BoardPickedCardT} BoardPickedCardT
  * @typedef {import('common/types/pick-process').HandPickedCardT} HandPickedCardT
  */
@@ -15,7 +14,7 @@
  * @typedef {Object} BoardPickedCardInfoProperties
  * @property {CardInfoT | null} cardInfo
  * @property {boolean} isActive
- * @property {RowStateWithHermit | RowStateWithoutHermit} row
+ * @property {RowStateWithHermit} row
  * @typedef {BoardPickedCardT & BoardPickedCardInfoProperties} BoardPickedCardInfo
  */
 
@@ -57,7 +56,7 @@
  * @property {PlayerState} player
  * @property {RowStateWithHermit} row
  * @property {CardT} hermitCard
- * @property {HermitCardT} hermitInfo
+ * @property {HermitCard} hermitInfo
  */
 
 /**
@@ -83,11 +82,11 @@
 
 /**
  * @typedef {Object} AttackTarget
- * @property {RowStateWithHermit} row
- * @property {boolean} applyHermitDamage
- * @property {string|null} effectCardId
- * @property {boolean} isActive
- * @property {number} extraEffectDamage
+ * @property {RowStateWithHermit} row no
+ * @property {boolean} applyHermitDamage no
+ * @property {string|null} effectCardId no
+ * @property {boolean} isActive no
+ * @property {number} extraEffectDamage no
  * @property {boolean} hasWeakness
  * @property {number} extraHermitDamage
  * @property {boolean} invulnarable
@@ -95,10 +94,10 @@
  * @property {boolean} ignoreEffects
  * @property {boolean} additionalAttack
  * @property {boolean} ignoreRecovery
- * @property {boolean} reverseDamage
+ * @property {boolean} reverseDamage no
  * @property {number} backlash
- * @property {number} hermitMultiplier
- * @property {number} effectMultiplier
+ * @property {number} hermitMultiplier no
+ * @property {number} effectMultiplier no
  */
 
 /**
@@ -110,4 +109,10 @@
  * @property {number} finalDamageToAttacker
  * @property {boolean} revived
  * @property {boolean} died
+ */
+
+/**
+ * @typedef {import('common/types/cards').CardTypeT} CardTypeT
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('../models/game-model').GameModel} GameModel
  */

@@ -9,7 +9,7 @@ export type SlotTypeT =
 	| 'single_use'
 
 export type PickRequirmentT = {
-	target: 'player' | 'opponent' | 'hand'
+	target: 'player' | 'opponent' | 'board' | 'hand'
 	type: SlotTypeT | 'any'
 	amount: number
 	empty?: boolean

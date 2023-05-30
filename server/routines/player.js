@@ -47,7 +47,7 @@ function* playerDisconnectedSaga(action) {
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
-	const {playerId} = player
+	const {playerId: playerId} = player
 
 	// console.log('User disconnected: ', playerId)
 	yield put({type: 'PLAYER_DISCONNECTED', payload: player})

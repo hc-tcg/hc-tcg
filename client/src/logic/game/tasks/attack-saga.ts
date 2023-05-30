@@ -2,8 +2,7 @@ import {select} from 'typed-redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {PickedCardT} from 'common/types/pick-process'
-import {EffectCardT} from 'common/types/cards'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
@@ -27,7 +26,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	const hermitCard = activeRow.hermitCard
 	const opponentHermitCard = opponentActiveRow.hermitCard
 	const singleUseInfo = singleUseCard
-		? (SINGLE_USE_CARDS[singleUseCard.cardId] as EffectCardT)
+		? SINGLE_USE_CARDS[singleUseCard.cardId]
 		: null
 
 	const result = {} as Record<string, Array<PickedCardT>>
