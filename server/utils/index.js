@@ -223,5 +223,5 @@ export function rowHasItem(row) {
  * @returns {boolean}
  */
 export function isRemovable(effectCard) {
-	return EFFECT_CARDS[effectCard.cardId].removable
+	return EFFECT_CARDS[effectCard.cardId].getIsRemovable()
 }
