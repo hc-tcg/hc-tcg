@@ -2,17 +2,13 @@ import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
-import {removeEffect} from 'logic/game/game-actions'
 import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
 }
 function UnmetCondition({closeModal}: Props) {
-	const dispatch = useDispatch()
-
 	const handleOk = () => {
-		dispatch(removeEffect())
 		closeModal()
 	}
 

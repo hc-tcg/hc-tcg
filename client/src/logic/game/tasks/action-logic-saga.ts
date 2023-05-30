@@ -96,7 +96,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
 	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
-
+	
 	if (pState.followUp) {
 		const cardInfo = CARDS[pState.followUp] as
 			| HermitCard
@@ -118,7 +118,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	} else if (lastTurnAction === 'PLAY_SINGLE_USE_CARD' && !pState.board.singleUseCardUsed && pState.board.singleUseCard) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
 	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
-		yield put(setOpenedModal('umnet-condition'))
+		yield put(setOpenedModal('unmet-condition'))
 	}
 }
 
