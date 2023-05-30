@@ -82,11 +82,7 @@ function* gameManager(game) {
 	} finally {
 		if (game.task) yield cancel(game.task)
 
-		const gameType = game.code
-			? game.code.endsWith('_custom')
-				? 'Custom'
-				: 'Private'
-			: 'Public'
+		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1
