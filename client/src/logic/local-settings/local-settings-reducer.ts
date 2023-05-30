@@ -21,7 +21,8 @@ const defaultState: LocalSettings = {
 	profanityFilter: 'on',
 	confirmationDialogs: 'on',
 	showChat: 'off',
-	panorama: true,
+	panoramaEnabled: false,
+	panorama: 'hermit-hill',
 	gameSide: 'Left',
 	...getSettings(),
 }
