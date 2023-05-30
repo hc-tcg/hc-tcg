@@ -56,7 +56,6 @@ export type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	removable?: boolean
 }
 
 export type Slot = {

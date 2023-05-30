@@ -43,8 +43,8 @@ const checkRow = (rowInfo, req) => {
 	// removable or not
 	const effectCard = rowInfo.row.effectCard
 	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
-	if (req.removable && effectCardInfo?.removable) return true
-	if (req.removable && !effectCardInfo?.removable) return false
+	if (req.removable && effectCardInfo?.getIsRemovable()) return true
+	if (req.removable && !effectCardInfo?.getIsRemovable()) return false
 
 	return true
 }
@@ -195,7 +195,7 @@ const validEmpty = (empty, card, slotType, isEmptyRow) => {
 const validRemovable = (removable, card) => {
 	if (typeof removable !== 'boolean') return true
 	if (!card) return true
-	return removable === EFFECT_CARDS[card.cardId]?.removable
+	return removable === EFFECT_CARDS[card.cardId]?.getIsRemovable()
 }
 
 /**

@@ -26,9 +26,6 @@ class EffectCard extends Card {
 		}
 		/** @type {string} */
 		this.description = defs.description
-
-		/** @type {boolean} */
-		this.removable = defs.removable ?? true
 	}
 
 	/**
@@ -168,25 +165,12 @@ class EffectCard extends Card {
 		return true
 	}
 
-	// card picking stuff
-
-	/*
-	we need to define when a card should be selected
-	*/
-
-	getCardPicks() {
-		return {
-			selectHermit: {
-				/** @type {'attach' | 'apply' | 'beforeAttack' | 'afterAttack'} */
-				on: 'attach',
-				validatePick: (cardPos) => {
-					// validate pick
-				},
-				onSuccess: (card) => {
-					// got the card info, store it someehere for other code to use
-				},
-			},
-		}
+	/**
+	 * Called to check if this card can be removed from the board
+	 * @returns {boolean}
+	 */
+	getIsRemovable() {
+		return true
 	}
 }
 
