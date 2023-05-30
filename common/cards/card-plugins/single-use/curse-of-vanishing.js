@@ -1,8 +1,8 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../../server/utils'
+import {discardCard, isActive, isRemovable} from '../../../../server/utils'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
+ * @typedef {import('server/models/game-model').GameModel} GameModel
  */
 
 class CurseOfVanishingSingleUseCard extends SingleUseCard {
@@ -12,7 +12,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
 			description:
-				"Opponent is forced to discard their active Hermit's attached effect card.\n\nDiscard after use.",
+				"Your opponent is forced to discard their active Hermit's attached effect card.",
 		})
 
 		this.useReqs = [
@@ -22,22 +22,18 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedCardsInfo} pickedCards
+	 * @returns {string}
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentPlayer} = game.ds
-
-			if (singleUseInfo?.id === this.id) {
-				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null) return 'INVALID'
-				const activeRowState = opponentPlayer.board.rows[activeRow]
-				if (!activeRowState) return 'INVALID'
-				if (activeRowState.effectCard) {
-					discardCard(game, activeRowState.effectCard)
-				}
-				return 'DONE'
-			}
-		})
+	onApply(game, instance, pickedCards) {
+		const {opponentPlayer} = game.ds
+		
+		if (!isActive(opponentPlayer)) return 'INVALID'
+		if (activeRowState.effectCard && isRemovable(activeRowState.effectCard)) {
+			discardCard(game, activeRowState.effectCard)
+		}
+		return 'DONE'
 	}
 }
 
