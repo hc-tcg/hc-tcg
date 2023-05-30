@@ -211,6 +211,14 @@ export function isRowEmpty(row) {
 }
 
 /**
+ * @param {RowState} row
+ * @returns {boolean}
+ */
+export function rowHasItem(row) {
+	return row.itemCards.filter((card) => !!card).length > 0
+}
+
+/**
  * @param {CardT} effectCard
  * @returns {boolean}
  */
