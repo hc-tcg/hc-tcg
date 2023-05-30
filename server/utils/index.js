@@ -1,5 +1,5 @@
-import CARDS, {ITEM_CARDS} from '../../common/cards'
-import {CONFIG, DEBUG_CONFIG} from '../../config'
+import CARDS, {ITEM_CARDS, EFFECT_CARDS} from '../../common/cards'
+import {DEBUG_CONFIG} from '../../config'
 
 /**
  * @typedef {import('models/game-model').GameModel} GameModel
@@ -71,7 +71,6 @@ export function findCard(gameState, card) {
 
 		const rows = pState.board.rows
 		for (let row of rows) {
-			let key = null
 			if (equalCard(row.hermitCard, card))
 				return {playerId, target: row, key: 'hermitCard'}
 			if (equalCard(row.effectCard, card))
@@ -155,4 +154,74 @@ export function flipCoin(currentPlayer, times = 1) {
 export const getOpponentId = (game, playerId) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
+}
+
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {boolean}
+ */
+export function isActive(playerState) {
+	return playerState.board.activeRow !== null
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit[]}
+ */
+export function getNonEmptyRows(playerState) {
+	const rows = []
+	for (let row of playerState.board.rows) {
+		if (row.hermitCard) rows.push(row)
+	}
+	return rows
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
+ * @returns {RowStateWithHermit[]}
+ */
+export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
+	const result = []
+	const activeRow = playerState.board.activeRow
+	const rows = playerState.board.rows
+	for (let i = 0; i < rows.length; i++) {
+		const row = rows[i]
+		if (i === activeRow && !includeActive) continue
+		if (row.hermitCard && !isRowFull(row)) result.push(row)
+	}
+	return result
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function isRowFull(row) {
+	return row.itemCards.filter((card) => !!card).length === 3
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function isRowEmpty(row) {
+	return row.itemCards.filter((card) => !!card).length === 0
+}
+
+/**
+ * @param {RowState} row
+ * @returns {boolean}
+ */
+export function rowHasItem(row) {
+	return row.itemCards.filter((card) => !!card).length > 0
+}
+
+/**
+ * @param {CardT} effectCard
+ * @returns {boolean}
+ */
+export function isRemovable(effectCard) {
+	return EFFECT_CARDS[effectCard.cardId].getIsRemovable()
 }
