@@ -156,7 +156,6 @@ export const getOpponentId = (game, playerId) => {
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
 }
 
-
 /**
  * @param {PlayerState} playerState
  * @returns {boolean}
@@ -216,12 +215,4 @@ export function isRowEmpty(row) {
  */
 export function rowHasItem(row) {
 	return row.itemCards.filter((card) => !!card).length > 0
-}
-
-/**
- * @param {CardT} effectCard
- * @returns {boolean}
- */
-export function isRemovable(effectCard) {
-	return EFFECT_CARDS[effectCard.cardId].getIsRemovable()
 }

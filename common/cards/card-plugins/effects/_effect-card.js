@@ -43,6 +43,17 @@ class EffectCard extends Card {
 	}
 
 	/**
+	 * Returns whether this card is removable from its position
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @returns {boolean}
+	 */
+	getIsRemovable(game, instance) {
+		// default
+		return true
+	}
+
+	/**
 	 * Returns an array of attack objects to carry out
 	 * @param {GameModel} game
 	 * @param {string} instance
@@ -162,27 +173,6 @@ class EffectCard extends Card {
 	 */
 	onSetActive(game, instance) {
 		return true
-	}
-
-	// card picking stuff
-
-	/*
-	we need to define when a card should be selected
-	*/
-
-	getCardPicks() {
-		return {
-			selectHermit: {
-				/** @type {'attach' | 'apply' | 'beforeAttack' | 'afterAttack'} */
-				on: 'attach',
-				validatePick: (cardPos) => {
-					// validate pick
-				},
-				onSuccess: (card) => {
-					// got the card info, store it someehere for other code to use
-				},
-			},
-		}
 	}
 }
 
