@@ -2,20 +2,37 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import Card from '../_card'
 
 /**
+ * @typedef {import('common/types/cards').SingleUseDefs} SingleUseDefs
+ * @typedef {import('common/types/cards').CardDefs} CardDefs
+ * @typedef {import('common/types/cards').CardTypeT} CardTypeT
  * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('utils').GameModel} GameModel
+ * @typedef {import('common/types/cards').DamageT} DamageT
  */
 
+
 class SingleUseCard extends Card {
+	/**
+	* @param {SingleUseDefs & CardDefs} defs
+	*/
 	constructor(defs) {
-		defs.type = 'single_use'
-		super(defs)
+		super({
+			type: 'single_use',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
+		})
 
 		if (!defs.description) {
 			throw new Error('Invalid card definition')
 		}
+		/** @type {string} */
 		this.description = defs.description
 
-		this.attachReq = {target: 'player', type: ['single_use']}
+		/** @type {DamageT | undefined} */
+		this.damage = defs.damage
 	}
 
 	/**
