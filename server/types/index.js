@@ -4,6 +4,7 @@
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').RowState} RowState
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
+ * @typedef {import('common/types/game-state').RowStateWithoutHermit} RowStateWithoutHermit
  * @typedef {import('common/types/cards').CardInfoT} CardInfoT
  * @typedef {import('common/cards/card-plugins/hermits/_hermit-card')} HermitCard
  * @typedef {import('common/types/pick-process').BoardPickedCardT} BoardPickedCardT
@@ -14,7 +15,7 @@
  * @typedef {Object} BoardPickedCardInfoProperties
  * @property {CardInfoT | null} cardInfo
  * @property {boolean} isActive
- * @property {RowStateWithHermit} row
+ * @property {RowStateWithHermit | RowStateWithoutHermit} row
  * @typedef {BoardPickedCardT & BoardPickedCardInfoProperties} BoardPickedCardInfo
  */
 

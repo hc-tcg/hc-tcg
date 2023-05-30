@@ -15,6 +15,7 @@ export type PickRequirmentT = {
 	empty?: boolean
 	active?: boolean
 	breakIf?: Array<'active' | 'efficiency'>
+	removable?: boolean
 }
 
 export type BoardPickedCardT = {

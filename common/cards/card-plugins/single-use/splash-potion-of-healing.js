@@ -14,8 +14,6 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 			description:
 				"Heals player's active and AFK Hermits +20hp.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 
 	/**

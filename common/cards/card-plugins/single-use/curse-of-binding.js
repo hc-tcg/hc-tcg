@@ -13,10 +13,6 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			description:
 				'Opposing active Hermit can not go AFK on the following turn.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

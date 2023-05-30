@@ -57,7 +57,7 @@ function getAvailableActions(game, pastTurnActions) {
 	 */
 	const hasTypeInHand = (type) => {
 		return currentPlayer.hand.some((card) =>
-			CARDS[card.cardId].attachReq.type.includes(type)
+			CARDS[card.cardId].type.includes(type)
 		)
 	}
 	const hasHermitInHand = hasTypeInHand('hermit')
@@ -303,8 +303,8 @@ function* turnActionSaga(game, turnAction, turnState) {
 	game.hooks.actionStart.call(turnAction, actionState)
 
 	if (turnAction.type === 'PLAY_CARD') {
-		// TODO - continue on invalid?
-		yield call(playCardSaga, game, turnAction, actionState)
+		const result = yield call(playCardSaga, game, turnAction, actionState)
+		if (result === 'INVALID') pastTurnActions.push('PLAYED_INVALID_CARD')
 		//
 	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 		yield call(changeActiveHermitSaga, game, turnAction, actionState)

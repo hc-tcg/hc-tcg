@@ -41,8 +41,8 @@ export type CardDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
-	pickOn?: string
-	pickReqs?: PickRequirmentT
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type EffectDefs = {

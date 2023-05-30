@@ -12,8 +12,6 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description: `All of your opponent's coin flips are tails for the next 3 turns.`,
 		})
-
-		this.useReqs = [{target: 'opponent', type: 'hermit', amount: 1}]
 	}
 
 	/**

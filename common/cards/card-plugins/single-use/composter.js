@@ -20,10 +20,9 @@ class ComposterSingleUseCard extends SingleUseCard {
 				'Discard 2 cards in your hand. Draw 2 cards.\n\nDiscard after use.',
 		})
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'hand', type: 'any', amount: 2},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**

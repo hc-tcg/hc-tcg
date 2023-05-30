@@ -3,14 +3,12 @@ import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
 import CARDS from 'common/cards'
-import {checkAttachReq} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
 	getPickProcess,
 	getPlayerState,
-	getGameState,
 } from 'logic/game/game-selectors'
 import {
 	setSelectedCard,
@@ -26,7 +24,6 @@ function* pickWithSelectedSaga(
 	action: SlotPickedAction,
 	selectedCard: CardT
 ): SagaIterator {
-	const {slotType} = action.payload
 	const selectedCardInfo = CARDS[selectedCard.cardId]
 
 	// Validations
@@ -36,19 +33,7 @@ function* pickWithSelectedSaga(
 	}
 
 	const payload = {...action.payload, card: selectedCard}
-	const gameState = yield* select(getGameState)
-	if (
-		!gameState ||
-		!checkAttachReq(gameState, payload, selectedCardInfo.attachReq)
-	) {
-		console.log(
-			`Invalid slot. Trying to place card [${selectedCardInfo.id}] to a slot of type [${slotType}]`
-		)
-		return
-	}
-
 	yield put(playCard(payload))
-
 	yield put(setSelectedCard(null))
 }
 

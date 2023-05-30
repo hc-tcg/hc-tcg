@@ -21,11 +21,10 @@ class LeadSingleUseCard extends SingleUseCard {
 				"Move 1 of your opponents active Hermit's item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.\n\nDiscard after use.",
 		})
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'item', amount: 1, active: true},
 			{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**

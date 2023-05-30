@@ -14,10 +14,6 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 				'Does +40hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {target: 40}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

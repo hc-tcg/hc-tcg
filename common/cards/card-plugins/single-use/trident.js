@@ -17,10 +17,6 @@ class TridentSingleUseCard extends SingleUseCard {
 				'Add 30hp damage at the end of your attack.\n\nFlip a coin.\n\nIf heads, this card is returned to your hand.',
 		})
 		this.damage = {target: 30}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

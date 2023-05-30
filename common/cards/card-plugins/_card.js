@@ -25,7 +25,7 @@ class Card {
 		this.rarity = defs.rarity
 		/** @type {string | undefined} */
 		this.pickOn = defs.pickOn
-		/** @type {PickRequirmentT | undefined} */
+		/** @type {PickRequirmentT[] | undefined} */
 		this.pickReqs = defs.pickReqs
 	}
 

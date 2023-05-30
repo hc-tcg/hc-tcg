@@ -17,10 +17,9 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 		})
 		this.heal = 60
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**

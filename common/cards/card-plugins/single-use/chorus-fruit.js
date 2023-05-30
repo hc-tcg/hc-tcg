@@ -14,11 +14,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			description:
 				"Swap active Hermit with AFK Hermit at the end of the player's turn.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [
-			{target: 'player', type: 'hermit', amount: 1},
-			{target: 'player', type: 'hermit', amount: 1, active: false},
-		]
 	}
 
 	/**

@@ -15,10 +15,6 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 			description:
 				"Makes opponent's active hermit's type weak to user's active hermit's type for 3 turns.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

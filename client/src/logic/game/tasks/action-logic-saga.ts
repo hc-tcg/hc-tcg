@@ -38,22 +38,6 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.useReqs) {
-		const gameState = yield* select(getGameState)
-		const playerState = yield* select(getPlayerState)
-		const opponentState = yield* select(getOpponentState)
-		const canUse = anyAvailableReqOptions(
-			gameState,
-			playerState,
-			opponentState,
-			cardInfo.useReqs
-		)
-		if (!canUse) {
-			yield put(setOpenedModal('unmet-condition'))
-			return
-		}
-	}
-
 	if (
 		[
 			'splash_potion_of_healing',
@@ -111,6 +95,8 @@ const getFollowUpName = (
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
+	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
+	
 	if (pState.followUp) {
 		const cardInfo = CARDS[pState.followUp] as
 			| HermitCard
@@ -129,8 +115,10 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		}
 	} else if (pState.custom.spyglass) {
 		yield put(setOpenedModal('spyglass'))
-	} else if (pState.board.singleUseCard && !pState.board.singleUseCardUsed) {
+	} else if (lastTurnAction === 'PLAY_SINGLE_USE_CARD' && !pState.board.singleUseCardUsed && pState.board.singleUseCard) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
+	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
+		yield put(setOpenedModal('unmet-condition'))
 	}
 }
 
