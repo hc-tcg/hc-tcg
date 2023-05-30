@@ -35,6 +35,7 @@ import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
 import EggSingleUseCard from './egg'
 import EnderPearlSingleUseCard from './ender-pearl'
 import BadOmenSingleUseCard from './bad-omen'
+import CommandBlockSingleUseCard from './command-block'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -75,6 +76,7 @@ const SINGLE_USE_CARDS = [
 	//new EggSingleUseCard(),
 	//new EnderPearlSingleUseCard(),
 	//new BadOmenSingleUseCard(),
+	new CommandBlockSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS

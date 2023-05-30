@@ -132,4 +132,5 @@ export const universe = [
 	'potatoboy_rare',
 	'sweeping_edge',
 	'trident',
+	'command_block',
 ]
