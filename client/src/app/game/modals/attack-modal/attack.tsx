@@ -49,7 +49,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 
 	const protectionAmount = suAttackInfo
 		? 0
-		: opponentEffectInfo?.protection?.target || 0
+		: opponentEffectInfo?.protection || 0
 
 	const extraKey =
 		playerHermitInfo.hermitType + '_' + opponentHermitInfo.hermitType

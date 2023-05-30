@@ -59,7 +59,7 @@ class HermitCard extends Card {
 	 * @param {AttackModel} attack
 	 */
 	onAttack(game, instance, attack) {
-		// default is do nothing
+		attack.addDamage(attack.type === 'primary' ? this.primary.damage : this.secondary.damage)
 	}
 
 	/**

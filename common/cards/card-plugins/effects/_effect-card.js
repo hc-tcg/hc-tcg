@@ -3,6 +3,7 @@ import Card from '../_card'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
+ * @typedef {import('common/types/cards').CardDefs} CardDefs
  * @typedef {import('common/types/cards').CardTypeT} CardTypeT
  * @typedef {import('models/attack-model').AttackResult} AttackResult
  * @typedef {import('utils').GameModel} GameModel
@@ -10,21 +11,27 @@ import Card from '../_card'
 
 class EffectCard extends Card {
 	/**
-	 * @param {EffectDefs} defs
+	 * @param {EffectDefs & CardDefs} defs
 	 */
-	constructor({id, name, rarity, description}) {
+	constructor(defs) {
 		super({
 			type: 'effect',
-			id,
-			name,
-			rarity,
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
 		})
 
-		if (!description) {
+		if (!defs.description) {
 			throw new Error('Invalid card definition!')
 		}
+
 		/** @type {string} */
-		this.description = description
+		this.description = defs.description
+
+		/** @type {number | undefined} */
+		this.protection = defs.protection
 	}
 
 	/**
