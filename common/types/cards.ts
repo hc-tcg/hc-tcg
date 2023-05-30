@@ -51,7 +51,7 @@ export type EffectDefs = {
 	rarity: CardRarityT
 	description: string
 	pickOn?: string
-	pickReqs?: PickRequirmentT
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type SingleUseDefs = {
@@ -60,7 +60,7 @@ export type SingleUseDefs = {
 	rarity: CardRarityT
 	description: string
 	pickOn?: string
-	pickReqs?: PickRequirmentT
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type Slot = {
