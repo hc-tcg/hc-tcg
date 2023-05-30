@@ -1,5 +1,4 @@
-import EFFECT_CARDS from 'common/cards/card-plugins/effects'
-import CARDS from '../../common/cards'
+import CARDS, {EFFECT_CARDS} from '../../common/cards'
 
 /**
  * @typedef {import("common/types/game-state").GameState} GameState
