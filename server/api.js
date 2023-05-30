@@ -48,6 +48,9 @@ export function registerApis(app) {
 					const code = Math.floor(Math.random() * 10000000).toString(16)
 					const game = new GameModel(code)
 					root.addGame(game)
+
+					console.log(`Private game created via api.`, `Code: ${code}`)
+
 					res.status(201).send({
 						code: code,
 					})
