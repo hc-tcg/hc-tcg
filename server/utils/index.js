@@ -1,4 +1,4 @@
-import CARDS, {ITEM_CARDS} from '../../common/cards'
+import CARDS, {ITEM_CARDS, EFFECT_CARDS} from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 
 /**
@@ -211,9 +211,9 @@ export function isRowEmpty(row) {
 }
 
 /**
- * @param {RowState} row
+ * @param {CardT} effectCard
  * @returns {boolean}
  */
-export function rowHasItem(row) {
-	return row.itemCards.filter((card) => !!card).length > 0
+export function isRemovable(effectCard) {
+	return EFFECT_CARDS[effectCard.cardId].removable
 }
