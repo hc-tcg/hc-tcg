@@ -71,6 +71,17 @@ class SingleUseCard extends Card {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedCardsInfo} pickedCards
+	 * @returns {string}
+	 */
+	onApply(game, instance, pickedCards) {
+		// default is do nothing
+		return 'DONE'
+	}
+
+	/**
+	 * @param {GameModel} game
 	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
