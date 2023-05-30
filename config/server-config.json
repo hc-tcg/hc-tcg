@@ -17,6 +17,6 @@
 		"maxDeckCost": 42
 	},
 	"logoSubText": "New meta!",
-	"gameEndUrl": "http://167.71.29.107/game_end",
+	"gameEndUrl": "http://167.71.29.107",
 	"version": "0.5.6"
 }
