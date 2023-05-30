@@ -27,13 +27,28 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	 * @returns {string}
 	 */
 	onApply(game, instance, pickedCards) {
-		const {opponentPlayer} = game.ds
+		const {opponentPlayer, opponentActiveRow} = game.ds
 		
 		if (!isActive(opponentPlayer)) return 'INVALID'
-		if (activeRowState.effectCard && isRemovable(activeRowState.effectCard)) {
+		if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
 			discardCard(game, activeRowState.effectCard)
 		}
 		return 'DONE'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 */
+	canAttach(game, pos) {
+		if (!super.canAttach(game, pos)) return false
+		const {opponentActiveRow} = game.ds
+
+		if (!opponentActiveRow) return false
+		if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return false
+
+		return true
 	}
 }
 
