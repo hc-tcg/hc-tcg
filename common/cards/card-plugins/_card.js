@@ -44,10 +44,6 @@ class Card {
 		return this.id + ':' + instance + ':' + keyName
 	}
 
-	getPalette() {
-		return 'default'
-	}
-
 	/**
 	 * If the specified slot is empty, can this card be attached there
 	 * @param {GameModel} game

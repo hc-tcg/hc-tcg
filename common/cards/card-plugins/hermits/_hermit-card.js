@@ -59,9 +59,7 @@ class HermitCard extends Card {
 	 * @param {AttackModel} attack
 	 */
 	onAttack(game, instance, attack) {
-		attack.addDamage(
-			attack.type === 'primary' ? this.primary.damage : this.secondary.damage
-		)
+		attack.addDamage(attack.type === 'primary' ? this.primary.damage : this.secondary.damage)
 	}
 
 	/**
@@ -114,7 +112,7 @@ class HermitCard extends Card {
 
 		return true
 	}
-
+  
 	getBackground() {
 		return this.id.split('_')[0]
 	}
