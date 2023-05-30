@@ -9,6 +9,7 @@ import {
 	codeReceived,
 	leaveMatchmaking,
 	invalidCode,
+	waitingForPlayer,
 } from './matchmaking-actions'
 
 function* randomMatchmakingSaga(): SagaIterator {
@@ -48,9 +49,11 @@ function* joinPrivateSaga(): SagaIterator {
 			const result = yield race({
 				invalidCode: call(receiveMsg, 'INVALID_CODE'),
 				gameStart: call(receiveMsg, 'GAME_START'),
+				waitingForPlayer: call(receiveMsg, 'WAITING_FOR_PLAYER'),
 			})
 			if (result.gameStart) break
-			yield put(invalidCode())
+			if (result.invalidCode) yield put(invalidCode())
+			if (result.waitingForPlayer) yield put(waitingForPlayer())
 		}
 		yield call(gameSaga)
 	} catch (err) {
