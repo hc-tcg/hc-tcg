@@ -20,6 +20,8 @@ import CARDS from '../../common/cards'
  * @returns {boolean}
  */
 const checkRow = (rowInfo, req) => {
+	if (rowInfo.emptyRow && req.type !== 'hermit') return false
+
 	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return false
 
@@ -168,10 +170,14 @@ export const validType = (type, cardType) => {
 /**
  * @param {PickRequirmentT['empty']} empty
  * @param {CardT | null} card
+ * @param {SlotTypeT} slotType
+ * @param {boolean} isEmptyRow
  * @returns {boolean}
  */
-const validEmpty = (empty, card) => {
+const validEmpty = (empty, card, slotType, isEmptyRow) => {
 	if (typeof empty !== 'boolean') return true
+	// Only hermit cards slots can have empty rows, needed for the ender pearl card
+	if (isEmptyRow && slotType !== 'hermit') return false
 	return empty === !card
 }
 
@@ -202,6 +208,7 @@ export function validPick(gameState, req, pickedCard) {
 	const card = pickedCard.card
 	const slotType = pickedCard.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
+	const isEmptyRow = rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
 
 	if (!cardPlayerState) return false
 	if (!validRow(cardPlayerState, rowIndex)) return false
@@ -209,7 +216,7 @@ export function validPick(gameState, req, pickedCard) {
 		return false
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
-	if (!validEmpty(req.empty || false, card)) return false
+	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
 
 	return true
 }
