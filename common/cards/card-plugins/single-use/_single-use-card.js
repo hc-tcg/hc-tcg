@@ -4,6 +4,7 @@ import Card from '../_card'
 /**
  * @typedef {import('common/types/cards').SingleUseDefs} SingleUseDefs
  * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('utils').GameModel} GameModel
  */
 
 class SingleUseCard extends Card {
