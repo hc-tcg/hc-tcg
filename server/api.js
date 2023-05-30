@@ -65,22 +65,31 @@ export function registerApis(app) {
  * @param {import("models/game-model").GameModel} game
  */
 export function gameEndWebhook(game) {
-	let headers = new Headers()
-	headers.append('Content-type', 'application/json')
+	let apiKeys = null
 	try {
-		headers.append('api-key', require('./apiKeys.json')[0])
-		fetch(`${CONFIG['botUrl']}/admin/game_end`, {
-			method: 'POST',
-			headers: headers,
-			body: JSON.stringify({
-				createdTime: game.createdTime,
-				endTime: Date.now(),
-				id: game.id,
-				code: game.code,
-				playerIds: game.getPlayerIds(),
-				playerNames: game.getPlayers().map((p) => p.playerName),
-				endInfo: game.endInfo,
-			}),
-		}).catch((reason) => {})
-	} catch {}
+		apiKeys = require('./apiKeys.json')
+		/** @type {string} */
+		const botKey = apiKeys?.botKey
+
+		if (botKey) {
+			fetch(`${CONFIG.botUrl}/admin/game_end`, {
+				method: 'POST',
+				headers: [
+					['Content-type', 'application/json'],
+					['api-key', botKey],
+				],
+				body: JSON.stringify({
+					createdTime: game.createdTime,
+					endTime: Date.now(),
+					id: game.id,
+					code: game.code,
+					playerIds: game.getPlayerIds(),
+					playerNames: game.getPlayers().map((p) => p.playerName),
+					endInfo: game.endInfo,
+				}),
+			})
+		}
+	} catch (err) {
+		// do nothing, we couldn't send info to bot
+	}
 }
