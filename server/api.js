@@ -46,29 +46,12 @@ export function registerApis(app) {
 			const apiKey = req.header('api-key')
 			if (apiKey) {
 				if (apiKeys?.keys.includes(apiKey)) {
-					//Get both players, check they both exist and are ready to play then add player1 to the game
-					var player1 = root
-						.getPlayers()
-						.find((player) => player.playerId === req.body['player1'])
-					var player2 = root
-						.getPlayers()
-						.find((player) => player.playerId === req.body['player2'])
-					if (!player1 || inGame(player1.playerId) || inQueue(player1.playerId))
-						return res.status(404).send('player1 not found')
-					if (!player2 || inGame(player2.playerId) || inQueue(player2.playerId))
-						return res.status(404).send('player2 not found')
-
-					//Add the game to root, respond to client and launch gameManager
-					var code =
-						Math.floor(Math.random() * 10000000).toString(16) + '_custom'
+					const code = Math.floor(Math.random() * 10000000).toString(16)
 					store.dispatch({
-						type: 'CREATE_CUSTOM_GAME',
-						player1: player1,
-						player2: player2,
-						code: code,
+						type: 'CREATE_PRIVATE_GAME'
 					})
 					res.status(201).send({
-						code: code,
+						code:code
 					})
 				} else {
 					res.status(403).send('Access denied - Invalid API key')
@@ -99,44 +82,6 @@ export function gameEndWebhook(game) {
 				playerIds: game.getPlayerIds(),
 				playerNames: game.getPlayers().map((p) => p.playerName),
 				endInfo: game.endInfo,
-			}),
-		}).catch((reason) => {})
-	} catch {}
-}
-
-/**
- * @param {import("models/player-model").PlayerModel} player
- */
-export function newPlayerWebhook(player) {
-	let headers = new Headers()
-	headers.append('Content-type', 'application/json')
-	try {
-		headers.append('api-key', require('./apiKeys.json')[0])
-		fetch(`${CONFIG['gameEndUrl']}/tcg/newPlayer`, {
-			method: 'POST',
-			headers: headers,
-			body: JSON.stringify({
-				id: player.playerId,
-				name: player.censoredPlayerName,
-				code: player.code,
-			}),
-		}).catch((reason) => {})
-	} catch {}
-}
-
-/**
- * @param {import("models/player-model").PlayerModel} player
- */
-export function deletePlayerWebhook(player) {
-	let headers = new Headers()
-	headers.append('Content-type', 'application/json')
-	try {
-		headers.append('api-key', require('./apiKeys.json')[0])
-		fetch(`${CONFIG['gameEndUrl']}/tcg/deletePlayer`, {
-			method: 'POST',
-			headers: headers,
-			body: JSON.stringify({
-				id: player.playerId,
 			}),
 		}).catch((reason) => {})
 	} catch {}

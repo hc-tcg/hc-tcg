@@ -19,7 +19,7 @@ import {
 	getGameOutcome,
 } from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
-import { gameEndWebhook } from '../api'
+import {gameEndWebhook} from '../api'
 
 /**
  * @typedef {import("redux-saga").Task} Task
@@ -33,7 +33,11 @@ function* gameManager(game) {
 		const playerIds = game.getPlayerIds()
 		const players = game.getPlayers()
 
-		const gameType = game.code ? game.code.endsWith('_custom') ? 'Custom' : 'Private' : 'Public'
+		const gameType = game.code
+			? game.code.endsWith('_custom')
+				? 'Custom'
+				: 'Private'
+			: 'Public'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
@@ -82,7 +86,11 @@ function* gameManager(game) {
 	} finally {
 		if (game.task) yield cancel(game.task)
 
-		const gameType = game.code ? game.code.endsWith('_custom') ? 'Custom' : 'Private' : 'Public'
+		const gameType = game.code
+			? game.code.endsWith('_custom')
+				? 'Custom'
+				: 'Private'
+			: 'Public'
 		console.log(
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1
@@ -144,16 +152,12 @@ function* leaveMatchmaking(action) {
 }
 
 function* createPrivateGame(action) {
-	const {playerId} = action
+	const {playerId, code} = action
 	const player = root.players[playerId]
-	if (!player) {
-		console.log('[Create Game] Player not found: ', playerId)
-		return
-	}
-	if (inGame(playerId) || inQueue(playerId)) return
+	if (player && (inGame(playerId) || inQueue(playerId))) return
 
 	// Create new game with code
-	const gameCode = Math.floor(Math.random() * 10000000).toString(16)
+	const gameCode = code ? code : Math.floor(Math.random() * 10000000).toString(16)
 	broadcast([player], 'PRIVATE_GAME_CODE', gameCode)
 
 	const newGame = new GameModel(gameCode)
@@ -161,7 +165,7 @@ function* createPrivateGame(action) {
 	root.games[newGame.id] = newGame
 
 	console.log(
-		`Private game created by ${player.playerName}.`,
+		`Private game created by ${player?.playerName}.`,
 		`Code: ${gameCode}`
 	)
 }
@@ -183,16 +187,6 @@ function* joinPrivateGame(action) {
 
 	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
-	yield fork(gameManager, game)
-}
-
-function* createCustomGame(action) {
-	const {code, player1, player2} = action
-	const game = new GameModel(code)
-	game.addPlayer(player1)
-	game.addPlayer(player2)
-	root.addGame(game)
-	
 	yield fork(gameManager, game)
 }
 
@@ -259,7 +253,6 @@ function* matchmakingSaga() {
 		takeEvery('RANDOM_MATCHMAKING', joinQueue),
 		takeEvery('CREATE_PRIVATE_GAME', createPrivateGame),
 		takeEvery('JOIN_PRIVATE_GAME', joinPrivateGame),
-		takeEvery('CREATE_CUSTOM_GAME', createCustomGame),
 		takeEvery(['LEAVE_MATCHMAKING', 'PLAYER_DISCONNECTED'], leaveMatchmaking),
 	])
 }

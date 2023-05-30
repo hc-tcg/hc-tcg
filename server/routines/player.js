@@ -1,7 +1,6 @@
 import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
 import {PlayerModel} from '../models/player-model'
 import root from '../models/root-model'
-import {deletePlayerWebhook, newPlayerWebhook} from 'api'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
@@ -31,7 +30,6 @@ function* playerConnectedSaga(action) {
 	const newPlayer = new PlayerModel(playerName, socket)
 	if (deck) newPlayer.setPlayerDeck(deck)
 	root.addPlayer(newPlayer)
-	newPlayerWebhook(newPlayer)
 
 	root.hooks.playerJoined.call(newPlayer)
 	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
@@ -67,7 +65,6 @@ function* playerDisconnectedSaga(action) {
 		root.hooks.playerLeft.call(player)
 		yield put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
-		deletePlayerWebhook(player)
 	}
 }
 
