@@ -187,6 +187,8 @@ function* joinPrivateGame(action) {
 	game.addPlayer(player)
 	if (game.getPlayers().length === 2) {
 		yield fork(gameManager, game)
+	} else {
+		broadcast([player], 'WAITING_FOR_PLAYER')
 	}
 }
 
