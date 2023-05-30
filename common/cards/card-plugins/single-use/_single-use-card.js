@@ -73,7 +73,7 @@ class SingleUseCard extends Card {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {PickedCardsInfo} pickedCards
-	 * @returns {string}
+	 * @returns {"DONE" | "INVALID"}
 	 */
 	onApply(game, instance, pickedCards) {
 		// default is do nothing
