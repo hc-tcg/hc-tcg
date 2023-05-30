@@ -3,7 +3,6 @@ import Card from '../_card'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
- * @typedef {import('common/types/cards').CardDefs} CardDefs
  * @typedef {import('common/types/cards').CardTypeT} CardTypeT
  * @typedef {import('models/attack-model').AttackResult} AttackResult
  * @typedef {import('utils').GameModel} GameModel
@@ -11,7 +10,7 @@ import Card from '../_card'
 
 class EffectCard extends Card {
 	/**
-	 * @param {EffectDefs & CardDefs} defs
+	 * @param {EffectDefs} defs
 	 */
 	constructor(defs) {
 		super({
@@ -29,9 +28,6 @@ class EffectCard extends Card {
 
 		/** @type {string} */
 		this.description = defs.description
-
-		/** @type {number | undefined} */
-		this.protection = defs.protection
 	}
 
 	/**

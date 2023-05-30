@@ -3,18 +3,13 @@ import Card from '../_card'
 
 /**
  * @typedef {import('common/types/cards').SingleUseDefs} SingleUseDefs
- * @typedef {import('common/types/cards').CardDefs} CardDefs
- * @typedef {import('common/types/cards').CardTypeT} CardTypeT
  * @typedef {import('models/attack-model').AttackResult} AttackResult
- * @typedef {import('utils').GameModel} GameModel
- * @typedef {import('common/types/cards').DamageT} DamageT
  */
-
 
 class SingleUseCard extends Card {
 	/**
-	* @param {SingleUseDefs & CardDefs} defs
-	*/
+	 * @param {SingleUseDefs} defs
+	 */
 	constructor(defs) {
 		super({
 			type: 'single_use',
@@ -30,9 +25,6 @@ class SingleUseCard extends Card {
 		}
 		/** @type {string} */
 		this.description = defs.description
-
-		/** @type {DamageT | undefined} */
-		this.damage = defs.damage
 	}
 
 	/**

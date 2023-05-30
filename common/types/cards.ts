@@ -1,5 +1,5 @@
+import {PlayerState, RowState} from './game-state'
 import {PickRequirmentT} from './pick-process'
-import { RowState, PlayerState } from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -37,20 +37,30 @@ export type HermitAttackT = {
 }
 
 export type CardDefs = {
-	type?: CardTypeT
+	type: CardTypeT
 	id: string
 	name: string
 	rarity: CardRarityT
+	pickOn?: string
+	pickReqs?: PickRequirmentT
 }
 
 export type EffectDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
 	description: string
-	protection?: number
+	pickOn?: string
+	pickReqs?: PickRequirmentT
 }
 
 export type SingleUseDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
 	description: string
-	damage?: DamageT
+	pickOn?: string
+	pickReqs?: PickRequirmentT
 }
 
 export type Slot = {
