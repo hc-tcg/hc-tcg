@@ -65,6 +65,10 @@ class Card {
 		// default is do nothing
 	}
 
+	/**
+	 * Returns the palette to use for this card
+	 * @returns {string}
+	 */
 	getPalette() {
 		return 'default'
 	}
