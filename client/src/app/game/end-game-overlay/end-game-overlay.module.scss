@@ -1,0 +1,106 @@
+.overlay {
+	background-color: hsla(0deg, 35%, 10%, 75%);
+	position: fixed;
+	inset: 0;
+	backdrop-filter: blur(2px);
+	animation: overlayShow 500ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 99;
+
+	&.win {
+		background-color: hsla(192deg, 35%, 10%, 75%);
+	}
+}
+
+.content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90vw;
+	max-width: 550px;
+	max-height: 85vh;
+	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+	z-index: 100;
+}
+
+.title {
+	margin: 0;
+	color: var(--text-light);
+	font-size: 17px;
+	font-weight: 500;
+	padding: 0.5rem;
+	text-align: center;
+	position: absolute;
+	top: -3rem;
+}
+
+.animation {
+	width: 100%;
+	animation: float infinite alternate 2s 1s ease-in-out;
+}
+
+.description {
+	display: grid;
+	place-content: center;
+	padding: 4rem 2rem 2rem;
+	gap: 1rem;
+	text-align: center;
+	font-size: 1.1rem;
+	color: var(--text-light);
+	font-weight: bold;
+	width: 100%;
+	background: linear-gradient(
+		90deg,
+		hsla(357deg, 58%, 40%, 50%) 10%,
+		hsl(357deg, 58%, 40%, 100%) 50%,
+		hsla(357deg, 58%, 40%, 50%) 90%
+	);
+	border-image: url('images/game/border_frame_red.png') 30 / 20px;
+
+	&.win {
+		background: linear-gradient(
+			90deg,
+			hsla(192deg, 56%, 58%, 50%) 10%,
+			hsl(192deg, 56%, 58%, 100%) 50%,
+			hsla(192deg, 56%, 58%, 50%) 90%
+		);
+		border-image-source: url('images/game/border_frame.png');
+	}
+
+	button {
+		padding: 0 2rem;
+		flex-grow: 1;
+	}
+}
+
+@keyframes overlayShow {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+@keyframes float {
+	from {
+		transform: translateY(0);
+	}
+
+	to {
+		transform: translateY(-5px);
+	}
+}

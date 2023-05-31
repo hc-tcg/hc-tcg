@@ -113,6 +113,8 @@ function Game() {
 	window.addEventListener('resize', handleResize)
 	// End resizing
 
+	console.log('game: GameState:', gameState)
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -137,10 +139,8 @@ function Game() {
 			</div>
 
 			{renderModal(openedModal, handleOpenModal)}
-
 			<Chat />
-
-			{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
+			<EndGameOverlay {...endGameOverlay} />
 		</div>
 	)
 }
