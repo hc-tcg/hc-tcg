@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 class TinFoilChefRareHermitCard extends HermitCard {
 	constructor() {
@@ -28,25 +29,21 @@ class TinFoilChefRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttack(game, instance, attack) {
+		super.onAttack(game, instance, attack)
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		const {currentPlayer} = game.ds
+		if (attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
-			if (coinFlip[0] === 'tails') return target
+		const coinFlip = flipCoin(currentPlayer)
+		currentPlayer.coinFlips[this.id] = coinFlip
+		if (coinFlip[0] === 'tails') return
 
-			const drawCard = currentPlayer.pile.shift()
-			if (drawCard) currentPlayer.hand.push(drawCard)
-
-			return target
-		})
+		const drawCard = currentPlayer.pile.shift()
+		if (drawCard) currentPlayer.hand.push(drawCard)
 	}
 }
 
