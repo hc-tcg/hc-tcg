@@ -1,26 +1,25 @@
 import css from './spinner.module.scss'
 
-const Spinner = () => {
-	return (
-		<div className={css.pixelSpinner}>
-			<div className={`${css.pixel} ${css.pixel1}`}></div>
-			<div className={`${css.pixel} ${css.pixel2}`}></div>
-			<div className={`${css.pixel} ${css.pixel3}`}></div>
-			<div className={`${css.pixel} ${css.pixel4}`}></div>
-			<div className={`${css.pixel} ${css.pixel5}`}></div>
-			<div className={`${css.pixel} ${css.pixel6}`}></div>
-			<div className={`${css.pixel} ${css.pixel7}`}></div>
-			<div className={`${css.pixel} ${css.pixel8}`}></div>
-			<div className={`${css.pixel} ${css.pixel9}`}></div>
-			<div className={`${css.pixel} ${css.pixel10}`}></div>
-			<div className={`${css.pixel} ${css.pixel11}`}></div>
-			<div className={`${css.pixel} ${css.pixel12}`}></div>
-			<div className={`${css.pixel} ${css.pixel13}`}></div>
-			<div className={`${css.pixel} ${css.pixel14}`}></div>
-			<div className={`${css.pixel} ${css.pixel15}`}></div>
-			<div className={`${css.pixel} ${css.pixel16}`}></div>
-		</div>
-	)
+type SpinnerProps = {
+	color?: string
+}
+
+const Spinner = ({color}: SpinnerProps) => {
+	const pixel = new Array(16).fill(null)
+
+	const pixelArray = pixel.map((_, i) => {
+		const pixelId = 'pixel' + (i + 1)
+		return (
+			<div
+				key={i}
+				className={css.pixel}
+				id={css[pixelId]}
+				style={{backgroundColor: color}}
+			></div>
+		)
+	})
+
+	return <div className={css.pixelSpinner}>{pixelArray}</div>
 }
 
 export default Spinner

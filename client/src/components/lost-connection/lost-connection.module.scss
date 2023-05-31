@@ -1,19 +1,41 @@
 .wrapper {
 	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: rgba(30, 30, 60, 90%);
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	inset: 0;
+	background: hsla(240deg, 33%, 18%, 90%);
+	display: grid;
+	place-content: center;
 	z-index: 2000;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+			ellipse at center,
+			hsla(0deg, 0%, 0%, 0%) 0%,
+			hsla(0deg, 0%, 0%, 0%) 70%,
+			hsla(0deg, 0%, 0%, 35%) 100%
+		);
+	}
 }
 
 .message {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1vh;
 	font-family: Minecraft;
 	color: white;
 	font-size: 2vh;
 	text-align: center;
+	padding: 3vh;
+	border-image: url('images/game/border_frame_gold.png') 30 / 20px;
+
+	h1 {
+		font-size: 3vh;
+		font-family: Minecrafter, sans-serif;
+		letter-spacing: 2px;
+		margin-top: 2vh;
+		color: hsl(30deg, 56%, 58%);
+	}
 }
