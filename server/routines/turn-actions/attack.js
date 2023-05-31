@@ -323,12 +323,14 @@ function* attackSaga(game, turnAction, actionState) {
 	const defenceIndex = opponentBoard.activeRow
 	if (!defenceIndex) return 'INVALID'
 
-	const defenceRow = opponentBoard.rows[attackIndex]
+	const defenceRow = opponentBoard.rows[defenceIndex]
 	if (!defenceRow.hermitCard) return 'INVALID'
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
 	let attacks = getAttacks(game, attackRow, hermitAttackType)
+
+	console.log('We got', attacks.length, 'attacks')
 
 	// Main attack loop
 	while (attacks.length > 0) {
