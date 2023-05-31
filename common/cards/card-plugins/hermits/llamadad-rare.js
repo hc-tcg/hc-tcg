@@ -49,6 +49,15 @@ class LlamadadRareHermitCard extends HermitCard {
 			return target
 		})
 	}
+
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
+	}
+
 }
 
 export default LlamadadRareHermitCard

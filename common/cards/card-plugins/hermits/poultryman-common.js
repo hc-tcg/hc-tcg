@@ -24,6 +24,14 @@ class PoultrymanCommonHermitCard extends HermitCard {
 	}
 
 	register(game) {}
+
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
+	}
 }
 
 export default PoultrymanCommonHermitCard

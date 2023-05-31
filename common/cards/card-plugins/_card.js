@@ -64,6 +64,10 @@ class Card {
 	onAttach(game, instance) {
 		// default is do nothing
 	}
+
+	getPalette() {
+		return 'default'
+	}
 }
 
 export default Card

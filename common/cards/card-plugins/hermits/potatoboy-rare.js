@@ -25,7 +25,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power: null,
-			},
+			}
 		})
 		this.heal = 40
 	}
@@ -58,6 +58,13 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			return target
 		})
+	}
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
 	}
 }
 

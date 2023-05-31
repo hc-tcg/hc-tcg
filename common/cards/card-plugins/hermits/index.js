@@ -128,6 +128,7 @@ const HERMIT_CARDS = [
 	//new LlamadadRareHermitCard(),
 	//new PoultrymanCommonHermitCard(),
 	//new PotatoBoyRareHermitCard(),
+  
 	// new DreamRareHermitCard(),
 ]
 

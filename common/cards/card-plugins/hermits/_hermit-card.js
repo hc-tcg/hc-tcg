@@ -112,6 +112,10 @@ class HermitCard extends Card {
 
 		return true
 	}
+  
+	getBackground() {
+		return this.id.split('_')[0]
+	}
 }
 
 export default HermitCard
