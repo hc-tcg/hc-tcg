@@ -1,8 +1,5 @@
 import HermitCard from './_hermit-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class Cubfan135RareHermitCard extends HermitCard {
 	constructor() {

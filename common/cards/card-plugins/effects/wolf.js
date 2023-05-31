@@ -1,8 +1,5 @@
 import EffectCard from './_effect-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class WolfEffectCard extends EffectCard {
 	constructor() {

@@ -3,9 +3,9 @@ import {broadcast} from '../../utils/comm'
 import {getOpponentId} from '../../utils'
 import {CONFIG} from '../../../config'
 import {getLocalGameState} from '../../utils/state-gen'
+import {GameModel} from '../../models/game-model'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux").AnyAction} AnyAction
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */

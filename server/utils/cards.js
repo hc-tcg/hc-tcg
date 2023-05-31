@@ -2,7 +2,7 @@
  * Get the card position for a card instance
  * @param {GameModel} game
  * @param {string} instance
- * @returns {CardPos | null}
+ * @returns {import("../../common/types/cards").CardPos | null}
  */
 export function getCardPos(game, instance) {
 	const ids = game.getPlayerIds()

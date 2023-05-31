@@ -1,9 +1,12 @@
 // TODO - more validations (types, rarirites, other fields, ...)
 
+import {GameModel} from '../../../server/models/game-model'
+
 /**
- * @typedef {import("common/types/cards").CardDefs} CardDefs
- * @typedef {import("common/types/cards").CardTypeT} CardTypeT
- * @typedef {import("common/types/cards").CardRarityT} CardRarityT
+ * @typedef {import("../../types/cards").CardDefs} CardDefs
+ * @typedef {import("../../types/cards").CardPos} CardPos
+ * @typedef {import("../../types/cards").CardTypeT} CardTypeT
+ * @typedef {import("../../types/cards").CardRarityT} CardRarityT
  * @typedef {import("../../../server/utils/reqs").PickRequirmentT} PickRequirmentT
  */
 

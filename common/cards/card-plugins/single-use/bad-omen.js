@@ -1,8 +1,5 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {

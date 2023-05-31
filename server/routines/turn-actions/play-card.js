@@ -1,8 +1,8 @@
-import CARDS from '../../../common/cards'
+import CARDS, {HERMIT_CARDS} from '../../../common/cards'
+import {GameModel} from '../../models/game-model'
 import {equalCard} from '../../utils'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
 
@@ -47,7 +47,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		const row = player.board.rows[rowIndex]
 		row.hermitCard = card
 		if (cardInfo.type === 'hermit') {
-			row.health = cardInfo.health
+			row.health = HERMIT_CARDS[cardInfo.id].health
 			if (player.board.activeRow === null) {
 				player.board.activeRow = rowIndex
 			}

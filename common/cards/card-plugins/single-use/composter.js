@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard, discardCard} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 

@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 - Don't allow to change to knocked out hermit during next turn

@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {rowHasItem, getRowsWithEmptyItemsSlots} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -42,8 +42,7 @@ class LeadSingleUseCard extends SingleUseCard {
 
 		const itemCardInfo = pickedCards[0]
 		const targetSlotInfo = pickedCards[1]
-		if (!validPick(game.state, this.pickReqs[0], itemCardInfo))
-			return 'INVALID'
+		if (!validPick(game.state, this.pickReqs[0], itemCardInfo)) return 'INVALID'
 		if (targetSlotInfo.card !== null) return 'INVALID'
 		if (!validPick(game.state, this.pickReqs[1], targetSlotInfo))
 			return 'INVALID'
@@ -52,8 +51,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		itemCardInfo.row.itemCards[itemCardInfo.slotIndex] = null
 
 		// add item to target
-		targetSlotInfo.row.itemCards[targetSlotInfo.slotIndex] =
-			itemCardInfo.card
+		targetSlotInfo.row.itemCards[targetSlotInfo.slotIndex] = itemCardInfo.card
 
 		return 'DONE'
 	}
@@ -68,7 +66,8 @@ class LeadSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, opponentActiveRow} = game.ds
 
 		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return false
-		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0) return false
+		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0)
+			return false
 
 		return true
 	}

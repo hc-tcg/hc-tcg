@@ -1,9 +1,9 @@
 import HermitCard from './_hermit-card'
 import {discardCard} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 

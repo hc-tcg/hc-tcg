@@ -23,9 +23,9 @@ import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
+import {GameModel} from '../models/game-model'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -153,8 +153,8 @@ function getAvailableActions(game, pastTurnActions) {
 				}
 				if (
 					showZeroAttack &&
-					!currentPlayer.board.singleUseCardUsed &&
-					suInfo?.damage
+					!currentPlayer.board.singleUseCardUsed
+					//&& suInfo?.damage
 				) {
 					actions.push('ZERO_ATTACK')
 				}

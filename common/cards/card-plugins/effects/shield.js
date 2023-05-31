@@ -1,10 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class ShieldEffectCard extends EffectCard {
 	constructor() {

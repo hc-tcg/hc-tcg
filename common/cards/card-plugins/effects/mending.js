@@ -1,9 +1,6 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 //@TODO no longer an attachable item card, no use implementing new logic here
 // TODO - Must work with Gemintay ability to use two single use cards per turn (should mend the first one)

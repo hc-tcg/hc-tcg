@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import CARDS from '../../../cards'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 Combination of Totem + Scars ability can be tricky here to get right

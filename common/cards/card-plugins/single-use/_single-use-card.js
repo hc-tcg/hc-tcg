@@ -1,10 +1,12 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 
 /**
- * @typedef {import('common/types/cards').SingleUseDefs} SingleUseDefs
- * @typedef {import('models/attack-model').AttackResult} AttackResult
- * @typedef {import('utils').GameModel} GameModel
+ * @typedef {import('../../../types/cards').SingleUseDefs} SingleUseDefs
+ * @typedef {import('../../../types/cards').CardPos} CardPos
+ * @typedef {import('common/types/attack').AttackResult} AttackResult
+ * @typedef {import('../../../types/pick-process').PickedCardsInfo} PickedCardsInfo
  */
 
 class SingleUseCard extends Card {

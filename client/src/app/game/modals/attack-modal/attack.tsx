@@ -5,12 +5,12 @@ import {HermitTypeT} from 'common/types/cards'
 import Strengths from 'server/const/strengths'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
-import {HermitAttackT} from 'common/types/cards'
+import {HermitAttackInfo} from 'common/types/cards'
 import valueModifiers from './value-modifiers'
 import css from './attack-modal.module.css'
 
 type Props = {
-	attackInfo: HermitAttackT | null
+	attackInfo: HermitAttackInfo | null
 	onClick: () => void
 	icon: string
 	name: string

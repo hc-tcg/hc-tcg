@@ -2,17 +2,18 @@ import CARDS from '../../common/cards'
 import STRENGTHS from '../const/strengths'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import {getCardCost, getCardRank} from './validation'
+import {GameModel} from '../models/game-model'
+import Card from '../../common/cards/card-plugins/_card'
+import HermitCard from '../../common/cards/card-plugins/hermits/_hermit-card'
+import ItemCard from '../../common/cards/card-plugins/items/_item-card'
+import EffectCard from '../../common/cards/card-plugins/effects/_effect-card'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
- * @typedef {import("models/player-model").PlayerModel} PlayerModel
+ * @typedef {import("server/models/player-model").PlayerModel} PlayerModel
  * @typedef {import("common/types/game-state").GameState} GameState
  * @typedef {import("common/types/game-state").PlayerState} PlayerState
  * @typedef {import("common/types/game-state").RowState} RowState
- * @typedef {import("common/cards/card-plugins/hermits/_hermit-card")} HermitCard
- * @typedef {import("common/cards/card-plugins/effects/_effect-card")} EffectCard
  * @typedef {import("common/cards/card-plugins/single-use/_single-use-card")} SingleUseCard
- * @typedef {import("common/cards/card-plugins/items/_item-card")} ItemCard
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
@@ -21,13 +22,13 @@ function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCard | ItemCard} */
+/** @type {(cardInfo: Card) => cardInfo is HermitCard | ItemCard} */
 const isHermitOrItem = (cardInfo) => ['hermit', 'item'].includes(cardInfo.type)
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCard} */
+/** @type {(cardInfo: Card) => cardInfo is HermitCard} */
 const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is EffectCard} */
+/** @type {(cardInfo: Card) => cardInfo is EffectCard} */
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {

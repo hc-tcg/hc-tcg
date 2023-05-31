@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {HERMIT_CARDS} from '../../index'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	constructor() {

@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin, discardSingleUse} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class GeminiTayRareHermitCard extends HermitCard {

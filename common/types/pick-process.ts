@@ -1,4 +1,5 @@
-import {CardT} from './game-state'
+import Card from '../cards/card-plugins/_card'
+import {CardT, RowState} from './game-state'
 
 export type SlotTypeT =
 	| 'item'
@@ -41,3 +42,24 @@ export type PickProcessT = {
 	pickedCards: Array<PickedCardT>
 	currentReq: number
 }
+
+// @TODO this is a mess
+
+export type BoardPickedCardInfoProperties = {
+	cardInfo: Card | null
+	isActive: boolean
+	row: RowState
+}
+
+export type BoardPickedCardInfo = BoardPickedCardT &
+	BoardPickedCardInfoProperties
+
+export type HandPickedCardInfoProperties = {
+	cardInfo: Card | null
+}
+
+export type HandPickedCardInfo = HandPickedCardT & HandPickedCardInfoProperties
+
+export type PickedCardInfo = BoardPickedCardInfo | HandPickedCardInfo
+
+export type PickedCardsInfo = Record<string, Array<PickedCardInfo>>

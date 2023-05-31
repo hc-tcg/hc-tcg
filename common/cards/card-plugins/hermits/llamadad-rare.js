@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class LlamadadRareHermitCard extends HermitCard {
 	constructor() {
@@ -57,7 +54,6 @@ class LlamadadRareHermitCard extends HermitCard {
 	getBackground() {
 		return 'alter_egos_background'
 	}
-
 }
 
 export default LlamadadRareHermitCard

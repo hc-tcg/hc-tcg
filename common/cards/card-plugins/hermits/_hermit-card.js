@@ -1,35 +1,79 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
+import {getCardPos} from '../../../../server/utils/cards'
 import Card from '../_card'
 
 /**
- * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('../../../types/cards').HermitDefs} HermitDefs
+ * @typedef {import('../../../types/cards').HermitTypeT} HermitTypeT
+ * @typedef {import('../../../types/cards').HermitAttackInfo} HermitAttackInfo
  */
 
 class HermitCard extends Card {
+	/**
+	 * @param {HermitDefs} defs
+	 */
 	constructor(defs) {
-		defs.type = 'hermit'
-		super(defs)
+		super({
+			type: 'hermit',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
+		})
 
-		if (!defs.health || !defs.primary || !defs.secondary || !defs.hermitType) {
+		if (!defs.hermitType || !defs.health || !defs.primary || !defs.secondary) {
 			throw new Error('Invalid card definition')
 		}
-		this.health = defs.health
-		this.primary = defs.primary
-		this.secondary = defs.secondary
-		/** @type {import('common/types/cards').HermitTypeT} */
+
+		/** @type {HermitTypeT} */
 		this.hermitType = defs.hermitType
+
+		/** @type {number} */
+		this.health = defs.health
+
+		/** @type {HermitAttackInfo} */
+		this.primary = defs.primary
+
+		/** @type {HermitAttackInfo} */
+		this.secondary = defs.secondary
 	}
 
 	/**
 	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('models/attack-model').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @returns {Array<AttackModel>}
-	 * @abstract
 	 */
 	getAttacks(game, instance, hermitAttackType) {
-		throw new Error('Implement getAttacks!')
+		// default implemetation is to just create an empty attack to the opposing hermit
+		const pos = getCardPos(game, instance)
+		if (!pos || !pos.rowIndex || !pos.rowState) return []
+		if (!pos.rowState.hermitCard) return []
+
+		const {opponentPlayer} = game.ds
+		const opponentActiveIndex = opponentPlayer.board.activeRow
+		if (!opponentActiveIndex) return []
+
+		const targetRow = opponentPlayer.board.rows[opponentActiveIndex]
+		if (!targetRow.hermitCard) return []
+
+		// Create an attack from us to them, with no damage yet
+		const emptyAttack = new AttackModel({
+			attacker: {
+				index: pos.rowIndex,
+				row: pos.rowState,
+			},
+			target: {
+				index: opponentActiveIndex,
+				row: targetRow,
+			},
+			type: hermitAttackType,
+		})
+
+		return [emptyAttack]
 	}
 
 	/**
@@ -59,9 +103,12 @@ class HermitCard extends Card {
 	 * @param {AttackModel} attack
 	 */
 	onAttack(game, instance, attack) {
-		attack.addDamage(
-			attack.type === 'primary' ? this.primary.damage : this.secondary.damage
-		)
+		// default is to add the defined damage for our attacks
+		if (attack.type === 'primary') {
+			attack.addDamage(this.primary.damage)
+		} else if (attack.type === 'secondary') {
+			attack.addDamage(this.secondary.damage)
+		}
 	}
 
 	/**
@@ -78,7 +125,7 @@ class HermitCard extends Card {
 	 * Called after damage has been applied from attack to another row
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {AttackResult} attackResult
+	 * @param {import("common/types/attack").AttackResult} attackResult
 	 */
 	afterAttack(game, instance, attackResult) {
 		// default is do nothing
@@ -88,7 +135,7 @@ class HermitCard extends Card {
 	 * Called after damage has been applied from attack on this row
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {AttackResult} attackResult
+	 * @param {import("common/types/attack").AttackResult} attackResult
 	 */
 	afterDefence(game, instance, attackResult) {
 		// default is do nothing
@@ -104,7 +151,7 @@ class HermitCard extends Card {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds

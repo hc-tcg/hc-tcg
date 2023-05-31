@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 - It was confirmed by Beef that by "consecutively" it is meant not only the power but the attack for 90 itself.

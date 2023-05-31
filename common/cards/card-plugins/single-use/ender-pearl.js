@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {getEmptyRow} from '../../../../server/utils/state-gen'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 

@@ -1,17 +1,17 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
- * @typedef {import('common/types/cards').CardDefs} CardDefs
- * @typedef {import('common/types/cards').CardTypeT} CardTypeT
- * @typedef {import('models/attack-model').AttackResult} AttackResult
- * @typedef {import('utils').GameModel} GameModel
+ * @typedef {import('../../../types/cards').CardPos} CardPos
+ * @typedef {import('../../../types/cards').CardTypeT} CardTypeT
+ * @typedef {import('../../../types/attack').AttackResult} AttackResult
  */
 
 class EffectCard extends Card {
 	/**
-	 * @param {EffectDefs & CardDefs} defs
+	 * @param {EffectDefs} defs
 	 */
 	constructor(defs) {
 		super({

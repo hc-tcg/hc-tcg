@@ -1,8 +1,5 @@
 import HermitCard from './_hermit-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 // TODO - can't be used consecutively
 class BdoubleO100RareHermitCard extends HermitCard {

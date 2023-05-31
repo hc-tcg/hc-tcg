@@ -2,7 +2,6 @@ import CARDS, {ITEM_CARDS, EFFECT_CARDS} from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
  */

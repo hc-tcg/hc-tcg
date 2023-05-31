@@ -5,13 +5,13 @@ import {
 } from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
+import {GameModel} from '../../models/game-model'
 import {applySingleUse, discardCard} from '../../utils'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import('models/attack-model').HermitAttackType} HermitAttackType
- * @typedef {import('../../models/attack-model').AttackResult} AttackResult
+ * @typedef {import('common/types/attack').HermitAttackType} HermitAttackType
+ * @typedef {import('common/types/attack').AttackResult} AttackResult
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  */
 
@@ -301,11 +301,11 @@ function* attackSaga(game, turnAction, actionState) {
 	//@TODO we are currently doing nothing with picked cards
 	const {pickedCardsInfo} = actionState
 
-	const {type} = turnAction.payload
-	/** @type {import('../../models/attack-model').HermitAttackType} */
-	const hermitAttackType = ATTACK_TO_ACTION[type]
+	/** @type {HermitAttackType} */
+	const hermitAttackType = turnAction.payload.type
+
 	if (!hermitAttackType) {
-		console.log('Unknown attack type: ', type)
+		console.log('Unknown attack type: ', hermitAttackType)
 		return 'INVALID'
 	}
 	// TODO - send hermitCard from frontend for validation?
@@ -339,17 +339,23 @@ function* attackSaga(game, turnAction, actionState) {
 		for (let i = 0; i < attacks.length; i++) {
 			const attack = attacks[i]
 
+			console.log('Attack start! Type:', attack.type)
+
 			// Checks all cards on the board to see if they want to override this attack
 			runOverrides(game, attack)
+			console.log('- overrides run', attack.damage)
 			// Runs onAttack for all cards on attackers row
 			runAttackCode(game, attack)
+			console.log('- attack code run', attack.damage)
 			// Runs onDefense for all cards on targets row
 			runDefenceCode(game, attack)
+			console.log('- defence code run', attack.damage)
 
 			// Apply the damage
 			const result = executeAttack(game, attack)
+			console.log('- attack executed', attack.damage)
 
-			//@TODO will attack object be able ot be modified by attack result? it's technically one object
+			//@TODO will attack object be able to be modified by attack result? it's technically one object
 			sendAttackResult(game, result)
 
 			nextAttacks.push(...attack.nextAttacks)

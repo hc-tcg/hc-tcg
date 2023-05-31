@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 // The tricky part about this one are destroyable items (shield, gold_armor, totem) since they are available at the moment of attack, but not after
 /*

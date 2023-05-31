@@ -2,6 +2,7 @@ import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {getCardPos} from '../../../../server/utils/cards'
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 Questions:
@@ -29,9 +30,6 @@ Testing:
 - Must work with Zed's sheep stare (Zed's opponent should still receive damage either way)
 */
 
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
 class TurtleShellEffectCard extends EffectCard {
 	constructor() {
 		super({

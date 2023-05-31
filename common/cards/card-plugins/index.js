@@ -3,10 +3,7 @@ import EFFECT_CARDS from './effects'
 import HERMIT_CARDS from './hermits'
 import ITEM_CARDS from './items'
 import Card from './_card'
-
-/**
- * @typedef {import("models/game-model").GameModel} GameModel
- */
+import {GameModel} from '../../../server/models/game-model'
 
 /** @type {Array<Card>} */
 export const CARDS = [

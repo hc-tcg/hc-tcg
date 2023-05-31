@@ -29,9 +29,9 @@ export type DamageT = {
 	self?: number
 }
 
-export type HermitAttackT = {
+export type HermitAttackInfo = {
 	name: string
-	cost: Array<string>
+	cost: Array<HermitTypeT | 'any'>
 	damage: number
 	power: string | null
 }
@@ -45,12 +45,24 @@ export type CardDefs = {
 	pickReqs?: Array<PickRequirmentT>
 }
 
+export type HermitDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	hermitType: HermitTypeT
+	health: number
+	primary: HermitAttackInfo
+	secondary: HermitAttackInfo
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
+}
+
 export type EffectDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: string
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -59,7 +71,7 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: string
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
 	pickReqs?: Array<PickRequirmentT>
 }
 

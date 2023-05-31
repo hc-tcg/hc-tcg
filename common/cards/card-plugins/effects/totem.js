@@ -1,9 +1,6 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
