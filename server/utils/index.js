@@ -117,12 +117,13 @@ export function discardSingleUse(game, playerState) {
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
 
+	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
+	cardInfo.onDetach(game, suCard.cardInstance)
+
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
 
 	if (suUsed) {
-		const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
-		cardInfo.onDetach(game, suCard.cardInstance)
 		const result = game.hooks.discardCard.get('single_use')?.call(suCard, true)
 		if (!result) playerState.discarded.push(suCard)
 	} else {

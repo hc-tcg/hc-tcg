@@ -1,3 +1,5 @@
+import {discardSingleUse} from '../../utils'
+
 function* removeEffectSaga(game, turnAction, actionState) {
 	const {singleUseInfo, currentPlayer} = game.ds
 	const {pastTurnActions} = actionState
@@ -12,8 +14,8 @@ function* removeEffectSaga(game, turnAction, actionState) {
 		(value) => value === 'PLAY_SINGLE_USE_CARD'
 	)
 	if (sueIndex !== -1) pastTurnActions.splice(sueIndex, 1)
-	currentPlayer.hand.push(currentPlayer.board.singleUseCard)
-	currentPlayer.board.singleUseCard = null
+
+	discardSingleUse(game, currentPlayer)
 	return 'DONE'
 }
 
