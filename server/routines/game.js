@@ -386,15 +386,27 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 
 	try {
 		while (true) {
+			// Available actions code
+			/** @type {AvailableActionsT} */
+			let blockedActions = []
 			let availableActions = getAvailableActions(game, pastTurnActions)
 
-			// Call available actions hooks
-			const availableActionHooks = Object.values(
-				currentPlayer.hooks.availableActions
-			)
-			for (let i = 0; i < availableActionHooks.length; i++) {
-				availableActions = availableActionHooks[i](availableActions)
+			// Get blocked actions
+			const blockedHooks = Object.values(currentPlayer.hooks.blockedActions)
+			for (let i = 0; i < blockedHooks.length; i++) {
+				blockedActions = blockedHooks[i](blockedActions)
 			}
+
+			// Get available actions, while filtering out blocked actions
+			const availableHooks = Object.values(currentPlayer.hooks.availableActions)
+			for (let i = 0; i < availableHooks.length; i++) {
+				const newActions = availableHooks[i](availableActions)
+				availableActions = newActions.filter(
+					(action) => !blockedActions.includes(action)
+				)
+			}
+
+			// End of available actions code
 
 			if (turnConfig.skipTurn) {
 				if (currentPlayer.board.activeRow === null)
@@ -413,7 +425,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				opponentAvailableActions,
 				pastTurnActions,
 			}
-			game._turnStateCache = turnState
+			game.turnState = turnState
 
 			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000

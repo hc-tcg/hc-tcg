@@ -72,6 +72,10 @@ export type PlayerState = {
 	}
 
 	hooks: {
+		blockedActions: Record<
+			string,
+			(blockedActions: AvailableActionsT) => AvailableActionsT
+		>
 		availableActions: Record<
 			string,
 			(availableActions: AvailableActionsT) => AvailableActionsT
