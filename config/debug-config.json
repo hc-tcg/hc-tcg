@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["bdoubleo100_common"],
-	"noItemRequirements": true,
+	"extraStartingCards": [],
+	"noItemRequirements": false,
 	"forceCoinFlip": false
 }
