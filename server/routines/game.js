@@ -387,12 +387,14 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	try {
 		while (true) {
 			let availableActions = getAvailableActions(game, pastTurnActions)
-			let lockedActions = []
-			availableActions = game.hooks.availableActions.call(
-				availableActions,
-				pastTurnActions,
-				lockedActions
+
+			// Call available actions hooks
+			const availableActionHooks = Object.values(
+				currentPlayer.hooks.availableActions
 			)
+			for (let i = 0; i < availableActionHooks.length; i++) {
+				availableActions = availableActionHooks[i](availableActions)
+			}
 
 			if (turnConfig.skipTurn) {
 				if (currentPlayer.board.activeRow === null)
@@ -510,7 +512,12 @@ function* turnSaga(game) {
 
 	/** @type {{skipTurn?: boolean}} */
 	const turnConfig = {}
-	game.hooks.turnStart.call(turnConfig)
+
+	// Call turn start hooks
+	const turnStartHooks = Object.values(currentPlayer.hooks.turnStart)
+	for (let i = 0; i < turnStartHooks.length; i++) {
+		turnStartHooks[i]()
+	}
 
 	const result = yield call(turnActionsSaga, game, pastTurnActions, turnConfig)
 	if (result === 'GAME_END') return 'GAME_END'
@@ -524,7 +531,11 @@ function* turnSaga(game) {
 			row.health -= 20
 	}
 
-	game.hooks.turnEnd.call()
+	// Call turn end hooks
+	const turnEndHooks = Object.values(currentPlayer.hooks.turnEnd)
+	for (let i = 0; i < turnEndHooks.length; i++) {
+		turnEndHooks[i]()
+	}
 
 	currentPlayer.coinFlips = {}
 	currentPlayer.followUp = null
