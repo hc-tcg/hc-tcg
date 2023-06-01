@@ -31,68 +31,6 @@ class SingleUseCard extends Card {
 	}
 
 	/**
-	 * Creates and returns attack objects
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @returns {Array<AttackModel>}
-	 */
-	getAttacks(game, instance) {
-		// default is do nothing
-		return []
-	}
-
-	/**
-	 * Called before any attack from our side of the board to the other
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterAttack(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterDefence(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {PickedCardsInfo} pickedCards
-	 * @returns {"DONE" | "INVALID"}
-	 */
-	onApply(game, instance, pickedCards) {
-		// default is do nothing
-		return 'DONE'
-	}
-
-	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
 	 */
@@ -100,6 +38,16 @@ class SingleUseCard extends Card {
 		if (pos.slotType !== 'single_use') return false
 
 		return true
+	}
+
+	/**
+	 * Called when an instance of this card is applied
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedCardsInfo} pickedCards
+	 */
+	onApply(game, instance, pickedCards) {
+		// default is do nothing
 	}
 }
 

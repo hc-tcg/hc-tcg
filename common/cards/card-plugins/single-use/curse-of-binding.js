@@ -14,6 +14,23 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/pick-process').PickedCardsInfo} pickedCards
+	 */
+	onApply(game, instance, pickedCards) {
+		const {opponentPlayer} = game.ds
+
+		opponentPlayer.hooks.availableActions[instance] = (availableActions) => {
+			return availableActions.filter(
+				(action) => action !== 'CHANGE_ACTIVE_HERMIT'
+			)
+		}
+	}
+
+	// then when turn ends, delete opponentPlayer.hooks[this.id]
+
+	/**
+	 * @param {GameModel} game
 	 */
 	register(game) {
 		// set flag on opponent player

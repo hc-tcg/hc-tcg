@@ -45,10 +45,10 @@ class HermitCard extends Card {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/pick-process').PickedCardsInfo} pickedCards
 	 * @returns {Array<AttackModel>}
 	 */
-	getAttacks(game, instance, hermitAttackType) {
-		// default implemetation is to just create an empty attack to the opposing hermit
+	getAttacks(game, instance, hermitAttackType, pickedCards) {
 		const pos = getCardPos(game, instance)
 		if (!pos || !pos.rowIndex || !pos.rowState) return []
 		if (!pos.rowState.hermitCard) return []
@@ -60,8 +60,8 @@ class HermitCard extends Card {
 		const targetRow = opponentPlayer.board.rows[opponentActiveIndex]
 		if (!targetRow.hermitCard) return []
 
-		// Create an attack from us to them, with no damage yet
-		const emptyAttack = new AttackModel({
+		// Create an attack with default damage
+		const attack = new AttackModel({
 			attacker: {
 				index: pos.rowIndex,
 				row: pos.rowState,
@@ -72,82 +72,14 @@ class HermitCard extends Card {
 			},
 			type: hermitAttackType,
 		})
-
-		return [emptyAttack]
-	}
-
-	/**
-	 * Called before any attack from our side of the board to the other
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called before any attack to our side of the board
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideDefence(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onAttack(game, instance, attack) {
-		// default is to add the defined damage for our attacks
 		if (attack.type === 'primary') {
 			attack.addDamage(this.primary.damage)
 		} else if (attack.type === 'secondary') {
 			attack.addDamage(this.secondary.damage)
 		}
-	}
 
-	/**
-	 * Called during an attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onDefence(game, instance, attack) {
-		// default is do nothing
+		return [attack]
 	}
-
-	/**
-	 * Called after damage has been applied from attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import("common/types/attack").AttackResult} attackResult
-	 */
-	afterAttack(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import("common/types/attack").AttackResult} attackResult
-	 */
-	afterDefence(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called when this instance will die -
-	 * before the cards are removed from the board
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 */
-	onHermitDeath(game, instance) {}
 
 	/**
 	 * @param {GameModel} game

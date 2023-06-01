@@ -30,22 +30,20 @@ class LeadSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {PickedCardsInfo} pickedCardsInfo
-	 * @returns {string}
+	 * @param {import('common/types/pick-process').PickedCardsInfo} pickedCardsInfo
 	 */
 	onApply(game, instance, pickedCardsInfo) {
 		const {singleUseInfo} = game.ds
-		if (singleUseInfo?.id !== this.id) return 'INVALID'
+		if (singleUseInfo?.id !== this.id) return false
 
 		const pickedCards = pickedCardsInfo[this.id] || []
-		if (pickedCards.length !== 2) return 'INVALID'
+		if (pickedCards.length !== 2) return false
 
 		const itemCardInfo = pickedCards[0]
 		const targetSlotInfo = pickedCards[1]
-		if (!validPick(game.state, this.pickReqs[0], itemCardInfo)) return 'INVALID'
-		if (targetSlotInfo.card !== null) return 'INVALID'
-		if (!validPick(game.state, this.pickReqs[1], targetSlotInfo))
-			return 'INVALID'
+		if (!validPick(game.state, this.pickReqs[0], itemCardInfo)) return false
+		if (targetSlotInfo.card !== null) return false
+		if (!validPick(game.state, this.pickReqs[1], targetSlotInfo)) return false
 
 		// remove item from source
 		itemCardInfo.row.itemCards[itemCardInfo.slotIndex] = null
@@ -53,7 +51,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		// add item to target
 		targetSlotInfo.row.itemCards[targetSlotInfo.slotIndex] = itemCardInfo.card
 
-		return 'DONE'
+		return true
 	}
 
 	/**
