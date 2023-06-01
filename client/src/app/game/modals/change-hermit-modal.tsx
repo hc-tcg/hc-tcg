@@ -33,7 +33,8 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
-		!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT')
+		!hasActiveHermit ||
+		(!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
 
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`

@@ -89,6 +89,8 @@ function* playCardSaga(game, turnAction, actionState) {
 		(handCard) => !equalCard(handCard, card)
 	)
 
+	cardInfo.onAttach(game, card.cardInstance)
+
 	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
 
 	return 'DONE'

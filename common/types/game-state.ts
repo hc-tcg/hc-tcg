@@ -1,5 +1,8 @@
+import {AttackModel} from '../../server/models/attack-model'
+import {GameModel} from '../../server/models/game-model'
+import {AttackResult} from './attack'
 import {MessageInfoT} from './chat'
-import {PickProcessT} from './pick-process'
+import {PickProcessT, PickedCardsInfo} from './pick-process'
 
 export type PlayerId = string
 
@@ -61,6 +64,25 @@ export type PlayerState = {
 		singleUseCard: CardT | null
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
+	}
+
+	hooks: {
+		availableActions: Record<
+			string,
+			(availableActions: AvailableActionsT) => AvailableActionsT
+		>
+
+		getAttacks: Record<string, () => Array<AttackModel>>
+
+		beforeAttack: Record<string, (attack: AttackModel) => void>
+		onAttack: Record<
+			string,
+			(attack: AttackModel, pickedCards: PickedCardsInfo) => void
+		>
+		afterAttack: Record<string, (attackResult: AttackResult) => void>
+
+		turnStart: Record<string, () => void>
+		turnEnd: Record<string, () => void>
 	}
 }
 

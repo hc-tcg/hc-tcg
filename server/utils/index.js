@@ -1,4 +1,8 @@
-import CARDS, {ITEM_CARDS, EFFECT_CARDS} from '../../common/cards'
+import CARDS, {
+	ITEM_CARDS,
+	EFFECT_CARDS,
+	SINGLE_USE_CARDS,
+} from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 
 /**
@@ -98,6 +102,7 @@ export function discardCard(game, card) {
 	})
 
 	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance)
 	const result = game.hooks.discardCard.get(cardInfo.type)?.call(card)
 	if (result) return
 
@@ -116,6 +121,8 @@ export function discardSingleUse(game, playerState) {
 	playerState.board.singleUseCard = null
 
 	if (suUsed) {
+		const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
+		cardInfo.onDetach(game, suCard.cardInstance)
 		const result = game.hooks.discardCard.get('single_use')?.call(suCard, true)
 		if (!result) playerState.discarded.push(suCard)
 	} else {

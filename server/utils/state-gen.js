@@ -205,6 +205,19 @@ export function getPlayerState(player) {
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
+
+		hooks: {
+			availableActions: {},
+
+			getAttacks: {},
+
+			beforeAttack: {},
+			onAttack: {},
+			afterAttack: {},
+
+			turnStart: {},
+			turnEnd: {},
+		},
 	}
 }
 

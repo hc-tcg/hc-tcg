@@ -60,11 +60,20 @@ class Card {
 	}
 
 	/**
-	 * Called after an instance of this card is attached anywhere on the board
+	 * Called when an instance of this card is attached to the board
 	 * @param {GameModel} game
 	 * @param {string} instance The card instance attached
 	 */
 	onAttach(game, instance) {
+		// default is do nothing
+	}
+
+	/**
+	 * Called when an instance of this card is removed from the board
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
 		// default is do nothing
 	}
 
