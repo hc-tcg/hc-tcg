@@ -1,15 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
-import {RowStateWithHermit} from './game-state'
+import {RowInfo, RowStateWithHermit} from './game-state'
 
-export type Attacker = {
-	index: number
-	row: RowStateWithHermit
-} | null
-
-export type AttackTarget = {
-	index: number
-	row: RowStateWithHermit
-}
+export type Attacker = RowInfo | null
 
 export type HermitAttackType = 'primary' | 'secondary' | 'zero'
 
@@ -33,6 +25,6 @@ export type AttackResult = {
 export type AttackDefs = {
 	id?: string
 	attacker?: Attacker
-	target: AttackTarget
+	target: RowInfo
 	type: AttackType
 }

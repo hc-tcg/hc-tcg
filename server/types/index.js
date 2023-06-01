@@ -91,5 +91,4 @@
 
 /**
  * @typedef {import('common/types/cards').CardTypeT} CardTypeT
- * @typedef {import('common/types/cards').CardPos} CardPos
  */

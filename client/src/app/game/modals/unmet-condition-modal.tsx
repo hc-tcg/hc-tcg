@@ -16,7 +16,7 @@ function UnmetCondition({closeModal}: Props) {
 		<Modal title="Unmet Condition">
 			<div className={css.confirmModal}>
 				<div className={css.description}>
-					You can't use this effect at the moment.
+					You can't use this effect in that slot at the moment.
 				</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleOk}>

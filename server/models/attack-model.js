@@ -17,7 +17,7 @@ export class AttackModel {
 
 		/**
 		 * The attack target
-		 * @type {import("common/types/attack").AttackTarget}
+		 * @type {import("../../common/types/game-state").RowInfo}
 		 */
 		this.target = defs.target
 

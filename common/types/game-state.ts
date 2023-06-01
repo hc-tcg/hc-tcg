@@ -39,6 +39,11 @@ export type RowStateWithoutHermit = {
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
+export type RowInfo = {
+	index: number
+	row: RowStateWithHermit
+}
+
 export type CoinFlipT = 'heads' | 'tails'
 
 export type CurrentCoinFlipT = {

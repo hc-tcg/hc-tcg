@@ -50,14 +50,13 @@ class HermitCard extends Card {
 	 */
 	getAttacks(game, instance, hermitAttackType, pickedCards) {
 		const pos = getCardPos(game, instance)
-		if (!pos || !pos.rowIndex || !pos.rowState) return []
-		if (!pos.rowState.hermitCard) return []
+		if (!pos || !pos.rowState.hermitCard) return []
 
 		const {opponentPlayer} = game.ds
-		const opponentActiveIndex = opponentPlayer.board.activeRow
-		if (!opponentActiveIndex) return []
+		const targetIndex = opponentPlayer.board.activeRow
+		if (!targetIndex) return []
 
-		const targetRow = opponentPlayer.board.rows[opponentActiveIndex]
+		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return []
 
 		// Create an attack with default damage
@@ -67,7 +66,7 @@ class HermitCard extends Card {
 				row: pos.rowState,
 			},
 			target: {
-				index: opponentActiveIndex,
+				index: targetIndex,
 				row: targetRow,
 			},
 			type: hermitAttackType,
@@ -88,10 +87,10 @@ class HermitCard extends Card {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'hermit') return false
-		if (pos.playerId !== currentPlayer.id) return false
+		if (pos.slot.type !== 'hermit') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
 
-		return true
+		return 'YES'
 	}
 
 	/**

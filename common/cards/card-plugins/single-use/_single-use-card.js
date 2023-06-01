@@ -33,11 +33,12 @@ class SingleUseCard extends Card {
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slotType !== 'single_use') return false
+		if (pos.slot.type !== 'single_use') return 'NO'
 
-		return true
+		return 'YES'
 	}
 
 	/**

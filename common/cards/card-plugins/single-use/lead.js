@@ -56,18 +56,18 @@ class LeadSingleUseCard extends SingleUseCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 * @returns {boolean}
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (!super.canAttach(game, pos)) return false
+		if (pos.slot.type !== 'single_use') return 'NO'
+
 		const {opponentPlayer, opponentActiveRow} = game.ds
 
-		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return false
+		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'INVALID'
 		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0)
-			return false
+			return 'INVALID'
 
-		return true
+		return 'YES'
 	}
 }
 
