@@ -69,6 +69,14 @@ class Card {
 	}
 
 	/**
+	 * Returns the expansion this card is a part of
+	 * @returns {string}
+	 */
+	getExpansion() {
+		return 'default'
+	}
+
+	/**
 	 * Returns the palette to use for this card
 	 * @returns {string}
 	 */
