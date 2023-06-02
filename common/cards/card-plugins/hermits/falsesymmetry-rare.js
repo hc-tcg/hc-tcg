@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {HERMIT_CARDS} from '../..'
 
 class FalseSymmetryRareHermitCard extends HermitCard {
 	constructor() {
@@ -20,37 +21,45 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 				name: 'Supremacy',
 				cost: ['builder', 'any'],
 				damage: 70,
-				power: 'Flip a Coin.\n\nIf heads, False also restores +40HP.',
+				power: 'Flip a coin.\n\nIf heads, heal 40hp to this Hermit.',
 			},
 		})
-
-		this.heal = 40
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {typeAction, moveRef, attacker} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== this.id || attack.type !== 'secondary') return
 
-			if (moveRef.hermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'tails') return target
+			if (coinFlip[0] === 'tails') return
+			const attacker = attack.attacker
+			if (!attacker) return
 
+			// Heal 40hp
+			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			attacker.row.health = Math.min(
-				attacker.row.health + this.heal,
-				attacker.hermitInfo.health // max health
+				attacker.row.health + 40,
+				hermitInfo.health
 			)
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
