@@ -72,25 +72,35 @@ export type PlayerState = {
 	}
 
 	hooks: {
+		/** Instance key -> hook that modifies blockedActions */
 		blockedActions: Record<
 			string,
 			(blockedActions: AvailableActionsT) => AvailableActionsT
 		>
+		/** Instance key -> hook that modifies availableActions */
 		availableActions: Record<
 			string,
 			(availableActions: AvailableActionsT) => AvailableActionsT
 		>
 
-		getAttacks: Record<string, () => Array<AttackModel>>
-
+		/** Instance key -> hook that returns attacks */
+		getAttacks: Record<
+			string,
+			(pickedCards: PickedCardsInfo) => Array<AttackModel>
+		>
+		/** Instance key -> hook that modifies an attack before the main attack loop */
 		beforeAttack: Record<string, (attack: AttackModel) => void>
+		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,
 			(attack: AttackModel, pickedCards: PickedCardsInfo) => void
 		>
+		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>
 
+		/** Instance key -> hook called at the start of the turn */
 		turnStart: Record<string, () => void>
+		/** Instance key -> hook called at the end of the turn */
 		turnEnd: Record<string, () => void>
 	}
 }

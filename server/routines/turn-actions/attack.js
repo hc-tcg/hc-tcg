@@ -49,7 +49,7 @@ function getAttacks(game, attackRow, hermitAttackType, pickedCards) {
 	// all other attacks
 	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
 	for (let i = 0; i < otherAttacks.length; i++) {
-		attacks.push(...otherAttacks[i]())
+		attacks.push(...otherAttacks[i](pickedCards))
 	}
 
 	// @TODO Weakness attack
@@ -105,8 +105,6 @@ function executeAttack(game, attack) {
 function* attackSaga(game, turnAction, actionState) {
 	// defining things
 	const {currentPlayer, opponentPlayer} = game.ds
-
-	//@TODO we are currently doing nothing with picked cards
 	const {pickedCardsInfo} = actionState
 
 	/** @type {HermitAttackType} */
@@ -142,41 +140,46 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Main attack loop
 	while (attacks.length > 0) {
-		/** @type {Array<AttackModel>} */
-		const nextAttacks = []
-
 		// Process all current attacks one at a time
+
+		// STEP 1 - Call before attack for all attacks
 		for (let i = 0; i < attacks.length; i++) {
-			const attack = attacks[i]
-
-			console.log('Attack start! Type:', attack.type)
-
-			// Call before attack functions
 			const beforeAttacks = Object.values(currentPlayer.hooks.beforeAttack)
 			for (let i = 0; i < beforeAttacks.length; i++) {
-				beforeAttacks[i](attack)
+				beforeAttacks[i](attacks[i])
 			}
-
-			// Call on attack functions
-			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
-			for (let i = 0; i < onAttacks.length; i++) {
-				onAttacks[i](attack, pickedCardsInfo)
-			}
-			console.log('- attack code run', attack.damage)
-
-			// Execute attack
-			const result = executeAttack(game, attack)
-
-			const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
-			for (let i = 0; i < afterAttacks.length; i++) {
-				afterAttacks[i](result)
-			}
-
-			nextAttacks.push(...attack.nextAttacks)
 		}
 
-		// Loop round, doing everything again with our next set of attacks
-		attacks = nextAttacks
+		// STEP 2 - Call on attack for all attacks
+		for (let i = 0; i < attacks.length; i++) {
+			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
+			for (let i = 0; i < onAttacks.length; i++) {
+				//@TODO use instance key to check if we should ignore attached effect card
+				onAttacks[i](attacks[i], pickedCardsInfo)
+			}
+		}
+
+		// STEP 3 - Execute all attacks, and store the results
+		/** @type {Array<AttackResult>} */
+		const results = []
+		for (let i = 0; i < attacks.length; i++) {
+			const result = executeAttack(game, attacks[i])
+			results.push(result)
+		}
+
+		// STEP 4 - Call afterAttack for all results
+		for (let i = 0; i < results.length; i++) {
+			const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
+			for (let i = 0; i < afterAttacks.length; i++) {
+				afterAttacks[i](results[i])
+			}
+		}
+
+		// STEP 5 - Finally, get all the next attacks, and repeat the process
+		attacks = []
+		for (let i = 0; i < attacks.length; i++) {
+			attacks.push(...attacks[i].nextAttacks)
+		}
 	}
 
 	return 'DONE'
