@@ -21,31 +21,37 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 				cost: ['any', 'any'],
 				damage: 70,
 				power:
-					'Flip a Coin 3 times.\n\nDoes an additional +20HP damage for every heads.',
+					'Flip a coin 3 times.\n\nAdd an additional 20hp damage for every heads.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== this.id || attack.type !== 'secondary') return
 
-			if (moveRef.hermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer, 3)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			target.extraHermitDamage += headsAmount * 20
+			attack.damage += headsAmount * 20
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
