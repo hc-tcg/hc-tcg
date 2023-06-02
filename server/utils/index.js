@@ -5,6 +5,7 @@ import CARDS, {
 } from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 import {GameModel} from '../models/game-model'
+import {getCardPos} from './cards'
 
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
@@ -118,13 +119,22 @@ export function discardCard(game, card) {
 		return
 	}
 
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance)
+
+	// Call onDetach hook
+	const player = getCardPos(game, card.cardInstance)?.playerState
+	if (player) {
+		const onDetachs = Object.values(player.hooks.onAttach)
+		for (let i = 0; i < onDetachs.length; i++) {
+			onDetachs[i](card.cardInstance)
+		}
+	}
+
 	loc.target[loc.key] = null
 	Object.values(game.state.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
 	})
-
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance)
 
 	game.state.players[loc.playerId].discarded.push({
 		cardId: card.cardId,
@@ -143,6 +153,12 @@ export function discardSingleUse(game, playerState) {
 
 	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
 	cardInfo.onDetach(game, suCard.cardInstance)
+
+	// Call onDetach hook
+	const onDetachs = Object.values(playerState.hooks.onAttach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](suCard.cardInstance)
+	}
 
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
