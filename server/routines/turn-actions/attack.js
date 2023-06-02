@@ -143,42 +143,42 @@ function* attackSaga(game, turnAction, actionState) {
 		// Process all current attacks one at a time
 
 		// STEP 1 - Call before attack for all attacks
-		for (let i = 0; i < attacks.length; i++) {
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 			const beforeAttacks = Object.values(currentPlayer.hooks.beforeAttack)
 			for (let i = 0; i < beforeAttacks.length; i++) {
-				beforeAttacks[i](attacks[i])
+				beforeAttacks[i](attacks[attackIndex])
 			}
 		}
 
 		// STEP 2 - Call on attack for all attacks
-		for (let i = 0; i < attacks.length; i++) {
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
 			for (let i = 0; i < onAttacks.length; i++) {
 				//@TODO use instance key to check if we should ignore attached effect card
-				onAttacks[i](attacks[i], pickedCardsInfo)
+				onAttacks[i](attacks[attackIndex], pickedCardsInfo)
 			}
 		}
 
 		// STEP 3 - Execute all attacks, and store the results
 		/** @type {Array<AttackResult>} */
 		const results = []
-		for (let i = 0; i < attacks.length; i++) {
-			const result = executeAttack(game, attacks[i])
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			const result = executeAttack(game, attacks[attackIndex])
 			results.push(result)
 		}
 
 		// STEP 4 - Call afterAttack for all results
-		for (let i = 0; i < results.length; i++) {
+		for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
 			const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
 			for (let i = 0; i < afterAttacks.length; i++) {
-				afterAttacks[i](results[i])
+				afterAttacks[i](results[resultsIndex])
 			}
 		}
 
 		// STEP 5 - Finally, get all the next attacks, and repeat the process
 		attacks = []
-		for (let i = 0; i < attacks.length; i++) {
-			attacks.push(...attacks[i].nextAttacks)
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			attacks.push(...attacks[attackIndex].nextAttacks)
 		}
 	}
 
