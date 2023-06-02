@@ -24,34 +24,37 @@ class Docm77RareHermitCard extends HermitCard {
 					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, attack damage is halved.',
 			},
 		})
-
-		this.headsMultiplier = 2
-		this.tailsMultiplier = 0.5
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== this.id || attack.type !== 'secondary') return
 
-			if (moveRef.hermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				target.hermitMultiplier *= this.headsMultiplier
-			} else if (coinFlip[0] === 'tails') {
-				target.hermitMultiplier *= this.tailsMultiplier
+				attack.multiplyDamage(2)
+			} else {
+				attack.multiplyDamage(0.5)
 			}
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
