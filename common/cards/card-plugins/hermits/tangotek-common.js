@@ -22,8 +22,6 @@ class TangoTekCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default TangoTekCommonHermitCard

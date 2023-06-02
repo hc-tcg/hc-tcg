@@ -9,8 +9,6 @@ class TerraformRareItemCard extends ItemCard {
 			hermitType: 'terraform',
 		})
 	}
-
-	register(game) {}
 }
 
 export default TerraformRareItemCard

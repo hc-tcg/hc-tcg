@@ -22,8 +22,6 @@ class Docm77CommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default Docm77CommonHermitCard

@@ -9,8 +9,6 @@ class TerraformCommonItemCard extends ItemCard {
 			hermitType: 'terraform',
 		})
 	}
-
-	register(game) {}
 }
 
 export default TerraformCommonItemCard

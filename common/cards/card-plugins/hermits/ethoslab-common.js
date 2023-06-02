@@ -22,8 +22,6 @@ class EthosLabCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default EthosLabCommonHermitCard

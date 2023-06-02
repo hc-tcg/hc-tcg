@@ -22,8 +22,6 @@ class ImpulseSVCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default ImpulseSVCommonHermitCard

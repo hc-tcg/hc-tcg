@@ -23,8 +23,6 @@ class EvilJevinCommonHermitCard extends HermitCard {
 		})
 	}
 
-	register(game) {}
-  
 	getPalette() {
 		return 'alter_egos'
 	}
