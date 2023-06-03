@@ -1,13 +1,18 @@
 import {select} from 'typed-redux-saga'
 import {put, call, take, race, cancelled} from 'redux-saga/effects'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {PickedSlotT, PickRequirmentT, PickResultT} from 'common/types/pick-process'
+import {
+	PickedSlotT,
+	PickRequirmentT,
+	PickResultT,
+} from 'common/types/pick-process'
 import {equalCard} from 'server/utils'
-import {validPick, validPicks} from 'server/utils/reqs'
+import {anyAvailableReqOptions, validPick, validPicks} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getGameState,
 	getCurrentPlayerState,
+	getInactivePlayerState,
 	getPlayerStateById,
 } from 'logic/game/game-selectors'
 import {
@@ -62,7 +67,6 @@ function* breakIfSaga(
 	})
 }
 
-
 export function* runPickProcessSaga(
 	name: string,
 	reqs?: Array<PickRequirmentT>
@@ -70,8 +74,19 @@ export function* runPickProcessSaga(
 	try {
 		const gameState = yield* select(getGameState)
 		const playerId = yield* select(getPlayerId)
+		const playerState = yield* select(getCurrentPlayerState)
+		const opponentState = yield* select(getInactivePlayerState)
+
 		if (!name || !reqs || !playerId || !gameState) return null
-		
+
+		const pickPossible = anyAvailableReqOptions(
+			gameState,
+			playerState,
+			opponentState,
+			reqs
+		)
+		if (!pickPossible) return []
+
 		// Listen for Escape to cancel
 		const escapeChannel = eventChannel((emitter) => {
 			const listener = (ev: KeyboardEvent) => {
@@ -94,13 +109,13 @@ export function* runPickProcessSaga(
 
 			const pickResult: Array<PickResultT> = []
 			const allPickedSlots: Array<PickedSlotT> = []
-			req_cycle:for (const reqIndex in reqs) {
+			req_cycle: for (const reqIndex in reqs) {
 				const req = reqs[reqIndex]
 				const pickedReqSlots: Array<PickedSlotT> = []
-				const actionType = req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+				const actionType =
+					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
 
 				while (pickedReqSlots.length < req.amount) {
-
 					// Update currentReq, used to display the correct message
 					yield put(updatePickProcess({currentReq: Number(reqIndex)}))
 
@@ -117,14 +132,20 @@ export function* runPickProcessSaga(
 					}
 
 					// Validate the picked slot
-					const pickedSlot = yield call(validatePickSaga, req, result.pickAction)
+					const pickedSlot = yield call(
+						validatePickSaga,
+						req,
+						result.pickAction
+					)
 					if (isDuplicate(pickedReqSlots, pickedSlot) || !pickedSlot) continue
 					if (!pickedSlot) continue
 					pickedReqSlots.push(pickedSlot)
 
 					// Update the picked slots so far, used for outline of hand slots
 					yield put(
-						updatePickProcess({pickedSlots: [...allPickedSlots, ...pickedReqSlots]})
+						updatePickProcess({
+							pickedSlots: [...allPickedSlots, ...pickedReqSlots],
+						})
 					)
 
 					const matches = yield call(breakIfSaga, req.breakIf, pickedSlot)
@@ -133,13 +154,13 @@ export function* runPickProcessSaga(
 						break req_cycle
 					}
 				}
-				
+
 				pickResult.push({req, pickedSlots: pickedReqSlots})
 				allPickedSlots.push(...pickedReqSlots)
 			}
 
 			// Validate all the picked slots before returning otherwise restart the pick process
-			// We have to validate all the picks at once because of the adjacency requirement
+			// We have to validate all the picks at once because of the adjacent requirement
 			if (validPicks(gameState, pickResult)) {
 				yield put(setPickProcess(null))
 				return pickResult

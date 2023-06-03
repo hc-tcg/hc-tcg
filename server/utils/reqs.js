@@ -15,6 +15,128 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  */
 
 /**
+ * Checks specific row and its slots if they match given requirments
+ * @param {*} rowInfo
+ * @param {PickRequirmentT} req
+ * @param {Array<PickRequirmentT>} reqs
+ * @param {LocalGameState} gameState
+ * @returns {boolean}
+ */
+const checkRow = (rowInfo, req, reqs, gameState) => {
+	if (rowInfo.emptyRow && req.type !== 'hermit') return false
+
+	const target = req.target === rowInfo.target || req.target === 'board'
+	if (!target) return false
+
+	// active or afk
+	if (req.active === true && !rowInfo.active) return false
+	if (req.active === false && rowInfo.active) return false
+
+	const slots = []
+	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.hermitCard)
+	if (['effect', 'any'].includes(req.type)) slots.push(rowInfo.row.effectCard)
+	if (['item', 'any'].includes(req.type)) slots.push(...rowInfo.row.itemCards)
+
+	// empty slot or not
+	const anyEmpty = slots.some((card) => !card)
+	const allEmpty = slots.every((card) => !card)
+	if (req.empty === true && !anyEmpty) return false
+	if (!req.empty && allEmpty) return false
+
+	// removable or not
+	const effectCard = rowInfo.row.effectCard
+	const effectCardInfo =
+		effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
+	if (req.removable && effectCardInfo?.getIsRemovable()) return true
+	if (req.removable && !effectCardInfo?.getIsRemovable()) return false
+
+	// adjacent to active hermit or not
+	if (req.adjacent === 'active') {
+		const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
+		const opponentPlayerId = gameState.order[gameState.turn % 2]
+		const targetId =
+			rowInfo.target === 'player' ? currentPlayerId : opponentPlayerId
+		const activeRow = gameState.players[targetId].board.activeRow
+		if (activeRow === null) return false
+		if (!(rowInfo.index === activeRow - 1 || rowInfo.index === activeRow + 1))
+			return false
+	} else if (req.adjacent === 'req') {
+		if (reqs.length < 2) return false
+	}
+
+	return true
+}
+
+/**
+ * Create an info object describing various properties of a game row
+ * @param {PlayerState | LocalPlayerState} playerState
+ * @param {boolean} current
+ * @return {Array<*>}
+ */
+const getRowsInfo = (playerState, current) => {
+	return playerState.board.rows.map((row, index) => ({
+		target: current ? 'player' : 'opponent',
+		playerId: playerState.id,
+		active: index === playerState.board.activeRow,
+		emptyRow: !row.hermitCard,
+		index,
+		row,
+	}))
+}
+
+/**
+ *
+ * @param {LocalGameState} gameState
+ * @param {PickRequirmentT} req
+ * @returns {boolean}
+ */
+const checkHand = (gameState, req) => {
+	let cards = gameState.hand
+	if (req.type !== 'any') {
+		cards = gameState.hand.filter(
+			(card) => CARDS[card.cardId].type === req.type
+		)
+	}
+	return req.amount <= cards.length
+}
+
+/**
+ * Compares game state and "req" object to see if there is any slot on
+ * the board that would fit given requirments
+ * @param {LocalGameState | null} gameState
+ * @param {LocalPlayerState | null} playerState
+ * @param {LocalPlayerState | null} opponentState
+ * @param {Array<PickRequirmentT>} reqs
+ * @returns {boolean}
+ */
+export const anyAvailableReqOptions = (
+	gameState,
+	playerState,
+	opponentState,
+	reqs
+) => {
+	if (!gameState || !playerState || !opponentState) return false
+
+	const rowsInfo = []
+	rowsInfo.push(...getRowsInfo(playerState, true))
+	rowsInfo.push(...getRowsInfo(opponentState, false))
+
+	for (let req of reqs) {
+		if (req.target === 'hand') {
+			if (!checkHand(gameState, req)) return false
+			continue
+		}
+		const result = rowsInfo.filter((info) =>
+			checkRow(info, req, reqs, gameState)
+		)
+		if (result.length < req.amount) return false
+		if (req.breakIf) break
+	}
+
+	return true
+}
+
+/**
  * @param {PlayerState | LocalPlayerState} cardPlayerState
  * @param {number | null} rowIndex
  * @returns {boolean}
