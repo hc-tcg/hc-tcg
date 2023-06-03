@@ -1,4 +1,4 @@
-import { AttackModel } from '../../../../server/models/attack-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 
@@ -11,27 +11,31 @@ class WolfEffectCard extends EffectCard {
 			description:
 				'Opponent takes 20hp damage after their attack.\nIgnores armour.',
 		})
-		this.protection = {backlash: 20}
 	}
 
 	/**
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {AttackModel} attack
 	 */
-	onDefence(game, instance, attack) {
-		if (attack.attacker) {
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: attack.target,
-				target: attack.attacker,
-				type: 'backlash',
-			})
-			backlashAttack.addDamage(20)
-			backlashAttack.ignoreAttachedEffects = true
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			return backlashAttack
+		currentPlayer.hooks.onAttack[instance] = (attack, pickedCards) => {
+			if (attack.attacker) {
+				const backlashAttack = new AttackModel({
+					id: this.getInstanceKey(instance, 'backlash'),
+					target: attack.attacker,
+					type: 'backlash',
+				})
+				backlashAttack.addDamage(20)
+				backlashAttack.ignoreAttachedEffects = true
+
+				attack.addNewAttack(backlashAttack)
+				console.log('Hook called')
+			}
+
+			return attack
 		}
 	}
 }
