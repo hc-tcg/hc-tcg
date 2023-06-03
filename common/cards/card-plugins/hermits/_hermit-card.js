@@ -54,7 +54,7 @@ class HermitCard extends Card {
 
 		const {opponentPlayer} = game.ds
 		const targetIndex = opponentPlayer.board.activeRow
-		if (!targetIndex) return []
+		if (targetIndex === null) return []
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return []
