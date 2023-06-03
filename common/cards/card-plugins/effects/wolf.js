@@ -1,3 +1,4 @@
+import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 
@@ -10,13 +11,29 @@ class WolfEffectCard extends EffectCard {
 			description:
 				'Opponent takes +20hp damage every time user is attacked until user is knocked out.\n\nDiscard after user is knocked out.',
 		})
-		this.protection = {backlash: 20}
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {AttackModel} attack
 	 */
-	register(game) {}
+	onDefence(game, instance, attack) {
+		// only add backlash if there's a hermit behind the attack
+		if (attack.attacker) {
+			var backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'attack'),
+				attacker: {index: attack.target.index, row: attack.target.row},
+				target: {index: attack.attacker.index, row: attack.attacker.row},
+				type: 'effect',
+			})
+			backlashAttack.addDamage(20)
+			attack.addNewAttack(backlashAttack)
+		}
+
+		return attack
+	}
 }
 
 export default WolfEffectCard
