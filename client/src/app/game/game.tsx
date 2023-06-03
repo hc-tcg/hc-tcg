@@ -52,12 +52,22 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 		location = 'side of the board'
 	}
 
+	let adjacentTarget = ''
+	if (req.adjacent === 'active') {
+		adjacentTarget = 'active hermit'
+	} else if (req.adjacent === 'req') {
+		adjacentTarget = 'a previous pick'
+	}
+
 	const type = req.type === 'any' ? '' : req.type
 	const empty = req.empty || false
+	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
+	return `${name}: Pick ${req.amount} ${adjacent ? 'adjacent' : ''} ${
+		empty ? 'empty' : ''
+	} ${type} ${empty ? 'slot' : 'card'}${req.amount > 1 ? 's' : ''} ${
+		adjacent ? 'to' : ''
+	} ${adjacent ? adjacentTarget : ''} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
