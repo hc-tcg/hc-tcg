@@ -63,11 +63,11 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${adjacent ? 'adjacent' : ''} ${
-		empty ? 'empty' : ''
-	} ${type} ${empty ? 'slot' : 'card'}${req.amount > 1 ? 's' : ''} ${
-		adjacent ? 'to' : ''
-	} ${adjacent ? adjacentTarget : ''} from ${target} ${location}.`
+	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
+		empty ? 'slot' : 'card'
+	}${req.amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
+		adjacent ? adjacentTarget : ''
+	} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
