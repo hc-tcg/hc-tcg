@@ -5,6 +5,7 @@ import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * 
  */
 
 /*
@@ -30,13 +31,13 @@ class LeadSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('common/types/pick-process').PickedCardsInfo} pickedCardsInfo
+	 * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
 	 */
-	onApply(game, instance, pickedCardsInfo) {
+	onApply(game, instance, pickedSlotsInfo) {
 		const {singleUseInfo} = game.ds
 		if (singleUseInfo?.id !== this.id) return false
 
-		const pickedCards = pickedCardsInfo[this.id] || []
+		const pickedCards = pickedSlotsInfo[this.id] || []
 		if (pickedCards.length !== 2) return false
 
 		const itemCardInfo = pickedCards[0]

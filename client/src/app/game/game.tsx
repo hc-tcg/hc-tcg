@@ -1,6 +1,6 @@
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {PickProcessT, PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
@@ -88,7 +88,7 @@ const renderModal = (
 function Game() {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
+	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
@@ -101,9 +101,9 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedCard: PickedCardT) => {
-		console.log('Slot selected: ', pickedCard)
-		dispatch(slotPicked(pickedCard))
+	const handleBoardClick = (pickedSlot: PickedSlotT) => {
+		console.log('Slot selected: ', pickedSlot)
+		dispatch(slotPicked(pickedSlot))
 	}
 
 	const selectCard = (card: CardT) => {
@@ -111,8 +111,8 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	const pickedCardsInstances = pickedCards
-		.map((pickedCard) => pickedCard.card)
+	const pickedSlotsInstances = pickedSlots
+		.map((pickedSlot) => pickedSlot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (
@@ -130,7 +130,7 @@ function Game() {
 							cards={gameState.hand}
 							onClick={(card: CardT) => selectCard(card)}
 							selected={selectedCard}
-							picked={pickedCardsInstances}
+							picked={pickedSlotsInstances}
 						/>
 					</div>
 				</div>

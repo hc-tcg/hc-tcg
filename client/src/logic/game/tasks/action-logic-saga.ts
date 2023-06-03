@@ -12,12 +12,6 @@ import {
 	applyEffect,
 	removeEffect,
 } from 'logic/game/game-actions'
-import {
-	getPlayerState,
-	getOpponentState,
-	getGameState,
-} from 'logic/game/game-selectors'
-import {anyAvailableReqOptions} from 'server/utils/reqs'
 import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
 import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
 import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
@@ -71,7 +65,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			cardInfo.pickReqs
 		)
 		if (result && result.length) {
-			yield put(applyEffect({pickedCards: {[card.cardId]: result}}))
+			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
 			yield put(removeEffect())
 		}

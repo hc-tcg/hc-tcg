@@ -5,116 +5,14 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  * @typedef {import("common/types/game-state").PlayerState} PlayerState
  * @typedef {import("common/types/game-state").CardT} CardT
  * @typedef {import("common/types/pick-process").PickRequirmentT} PickRequirmentT
- * @typedef {import("common/types/pick-process").PickedCardT} PickedCardT
- * @typedef {import("common/types/pick-process").BoardPickedCardT} BoardPickedCardT
- * @typedef {import("common/types/pick-process").HandPickedCardT} HandPickedCardT
+ * @typedef {import("common/types/pick-process").PickedSlotT} PickedSlotT
+ * @typedef {import("common/types/pick-process").BoardPickedSlotInfo} BoardPickedSlotInfo
+ * @typedef {import("common/types/pick-process").HandPickedSlotInfo} HandPickedSlotInfo
  * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
+ * @typedef {import('common/types/pick-process').PickResultT} PickResultT
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
-
-/**
- * Checks specific row and its slots if they match given requirments
- * @param {*} rowInfo
- * @param {PickRequirmentT} req
- * @returns {boolean}
- */
-const checkRow = (rowInfo, req) => {
-	if (rowInfo.emptyRow && req.type !== 'hermit') return false
-
-	const target = req.target === rowInfo.target || req.target === 'board'
-	if (!target) return false
-
-	// active or afk
-	if (req.active === true && !rowInfo.active) return false
-	if (req.active === false && rowInfo.active) return false
-
-	const slots = []
-	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.hermitCard)
-	if (['effect', 'any'].includes(req.type)) slots.push(rowInfo.row.effectCard)
-	if (['item', 'any'].includes(req.type)) slots.push(...rowInfo.row.itemCards)
-
-	// empty slot or not
-	const anyEmpty = slots.some((card) => !card)
-	const allEmpty = slots.every((card) => !card)
-	if (req.empty === true && !anyEmpty) return false
-	if (!req.empty && allEmpty) return false
-
-	// removable or not
-	const effectCard = rowInfo.row.effectCard
-	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
-	if (req.removable && effectCardInfo?.getIsRemovable()) return true
-	if (req.removable && !effectCardInfo?.getIsRemovable()) return false
-
-	return true
-}
-
-/**
- * Create an info object describing various properties of a game row
- * @param {PlayerState | LocalPlayerState} playerState
- * @param {boolean} current
- * @return {Array<*>}
- */
-const getRowsInfo = (playerState, current) => {
-	return playerState.board.rows.map((row, index) => ({
-		target: current ? 'player' : 'opponent',
-		playerId: playerState.id,
-		active: index === playerState.board.activeRow,
-		emptyRow: !row.hermitCard,
-		index,
-		row,
-	}))
-}
-
-/**
- *
- * @param {LocalGameState} gameState
- * @param {PickRequirmentT} req
- * @returns {boolean}
- */
-const checkHand = (gameState, req) => {
-	let cards = gameState.hand
-	if (req.type !== 'any') {
-		cards = gameState.hand.filter(
-			(card) => CARDS[card.cardId].type === req.type
-		)
-	}
-	return req.amount <= cards.length
-}
-
-/**
- * Compares game state and "req" object to see if there is any slot on
- * the board that would fit given requirments
- * @param {LocalGameState | null} gameState
- * @param {LocalPlayerState | null} playerState
- * @param {LocalPlayerState | null} opponentState
- * @param {Array<PickRequirmentT>} reqs
- * @returns {boolean}
- */
-export const anyAvailableReqOptions = (
-	gameState,
-	playerState,
-	opponentState,
-	reqs
-) => {
-	if (!gameState || !playerState || !opponentState) return false
-
-	const rowsInfo = []
-	rowsInfo.push(...getRowsInfo(playerState, true))
-	rowsInfo.push(...getRowsInfo(opponentState, false))
-
-	for (let req of reqs) {
-		if (req.target === 'hand') {
-			if (!checkHand(gameState, req)) return false
-			continue
-		}
-		const result = rowsInfo.filter((info) => checkRow(info, req))
-		if (result.length < req.amount) return false
-		if (req.breakIf) break
-	}
-
-	return true
-}
 
 /**
  * @param {PlayerState | LocalPlayerState} cardPlayerState
@@ -199,31 +97,46 @@ const validRemovable = (removable, card) => {
 }
 
 /**
- * @template T
- * @template Y
- * @template {boolean} [E=false]
+ * @param {PickRequirmentT['adjacent']} adjacent
  * @param {GameState | LocalGameState} gameState
- * @param {PickRequirmentT & { target?: T, type?: Y, empty?: E }} req
- * @param {PickedCardT | undefined} pickedCard
- * @returns {pickedCard is (T extends 'hand'
- *   ? HandPickedCardT
- *   : BoardPickedCardT
- *   ) & {
- *     card: E extends true ? null : CardT,
- *     cardInfo: E extends true ? null : CardTypesMapT[Y],
- *   }
- * }
+ * @param {PickedSlotT} pickedSlot
+ * @param {PickRequirmentT} req
+ * @returns {boolean}
  */
-export function validPick(gameState, req, pickedCard) {
-	if (!pickedCard) return false
+const validAdjacent = (adjacent, gameState, pickedSlot, req) => {
+	if (typeof adjacent !== 'string') return true
+	if (adjacent === 'req') return true
+
+	const currentPlayerId = gameState.order[gameState.turn % 2]
+	const opponentPlayerId = gameState.order[(gameState.turn + 1) % 2]
+	const slot = /** @type {BoardPickedSlotInfo} */ (pickedSlot)
+	
+	if (req.target === 'opponent' && slot.playerId === currentPlayerId) return false
+	if (req.target === 'player' && slot.playerId !== currentPlayerId) return false
+
+	const targetId = req.target === 'opponent' ? opponentPlayerId : currentPlayerId
+	const activeRow = gameState.players[targetId].board.activeRow
+	if (activeRow && (slot.rowIndex === activeRow + 1 || slot.rowIndex === activeRow - 1)) return true
+
+	return false
+}
+
+/**
+ * @param {GameState | LocalGameState} gameState
+ * @param {PickRequirmentT} req
+ * @param {PickedSlotT} pickedSlot
+ * @returns {boolean}
+ */
+export function validPick(gameState, req, pickedSlot) {
+	if (!pickedSlot) return false
 
 	const players = gameState.players
 	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
-	const cardPlayerId = pickedCard.playerId
-	const rowIndex = 'rowIndex' in pickedCard ? pickedCard.rowIndex : null
+	const cardPlayerId = pickedSlot.playerId
+	const rowIndex = 'rowIndex' in pickedSlot ? pickedSlot.rowIndex : null
 	const cardPlayerState = players[cardPlayerId]
-	const card = pickedCard.card
-	const slotType = pickedCard.slotType
+	const card = pickedSlot.card
+	const slotType = pickedSlot.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
 	const isEmptyRow = rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
 
@@ -235,6 +148,55 @@ export function validPick(gameState, req, pickedCard) {
 	if (!validType(req.type, cardType)) return false
 	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
 	if (!validRemovable(req.removable, card)) return false
+	if (!validAdjacent(req.adjacent, gameState, pickedSlot, req)) return false
+	
+	return true
+}
+
+/**
+ * @param {GameState | LocalGameState} gameState
+ * @param {PickResultT[]} pickResults
+ * @returns {boolean}
+ */
+export function validPicks(gameState, pickResults) {
+	const reqAdjacents = []
+	const boardSlots = []
+	for (const result of pickResults) {
+		const pickedSlotsForReq = result.pickedSlots
+		const req = result.req
+		const reqAdjacentsBundle = []
+		for (let pickedSlot of pickedSlotsForReq) {
+			if (!validPick(gameState, req, pickedSlot)) return false
+			// Don't check adjacent for cards in hand, makes no sense, their position can change (e.g. single use cards)
+			if (pickedSlot.slotType !== 'hand') {
+				boardSlots.push(pickedSlot);
+				if (req.adjacent === 'req') reqAdjacentsBundle.push(pickedSlot);
+			}
+		}
+		if (req.adjacent === 'req' && reqAdjacentsBundle.length > 0) reqAdjacents.push(reqAdjacentsBundle)
+	}
+
+	// Check if all cards that need an adjacent card have one.
+	if (reqAdjacents.length > 0) {
+		for (let pickedCardAdjBundle of reqAdjacents) {
+			for (let pickedCardAdj of pickedCardAdjBundle) {
+				const slotAdj = /** @type {BoardPickedSlotInfo} */ (pickedCardAdj)
+				let validPairs = 0
+				for (let pickedCard of boardSlots) {
+					const slot = /** @type {BoardPickedSlotInfo} */ (pickedCard)
+					// Can't be adjacent to itself
+					if (pickedCard === pickedCardAdj) continue
+					// Can't be adjacent to a card with the same req
+					if (pickedCardAdjBundle.includes(pickedCard)) continue
+					if (slot.rowIndex === slotAdj.rowIndex + 1 || slot.rowIndex === slotAdj.rowIndex - 1) {
+						validPairs++
+						break
+					}
+				}
+				if (validPairs === 0) return false
+			}
+		}
+	}
 
 	return true
 }

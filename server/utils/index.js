@@ -229,6 +229,21 @@ export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
 }
 
 /**
+ * @param {PlayerState} playerState
+ * @returns {Array<RowStateWithHermit[]>}
+ */
+export function getAdjacentRows(playerState) {
+	const result = []
+	const rows = playerState.board.rows
+	for (let i = 1; i < rows.length; i++) {
+		const row = rows[i]
+		const prevRow = rows[i - 1]
+		if (row && prevRow && row.hermitCard && prevRow.hermitCard) result.push([prevRow, row])
+	}
+	return result
+}
+
+/**
  * @param {RowStateWithHermit} row
  * @returns {boolean}
  */
@@ -250,4 +265,12 @@ export function isRowEmpty(row) {
  */
 export function rowHasItem(row) {
 	return row.itemCards.filter((card) => !!card).length > 0
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function rowHasEmptyItemSlot(row) {
+	return row.itemCards.filter((card) => !card).length > 0
 }
