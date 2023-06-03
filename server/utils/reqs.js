@@ -107,16 +107,22 @@ const validAdjacent = (adjacent, gameState, pickedSlot, req) => {
 	if (typeof adjacent !== 'string') return true
 	if (adjacent === 'req') return true
 
-	const currentPlayerId = gameState.order[gameState.turn % 2]
-	const opponentPlayerId = gameState.order[(gameState.turn + 1) % 2]
+	const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
+	const opponentPlayerId = gameState.order[gameState.turn % 2]
 	const slot = /** @type {BoardPickedSlotInfo} */ (pickedSlot)
-	
-	if (req.target === 'opponent' && slot.playerId === currentPlayerId) return false
+
+	if (req.target === 'opponent' && slot.playerId === currentPlayerId)
+		return false
 	if (req.target === 'player' && slot.playerId !== currentPlayerId) return false
 
-	const targetId = req.target === 'opponent' ? opponentPlayerId : currentPlayerId
+	const targetId =
+		req.target === 'opponent' ? opponentPlayerId : currentPlayerId
 	const activeRow = gameState.players[targetId].board.activeRow
-	if (activeRow && (slot.rowIndex === activeRow + 1 || slot.rowIndex === activeRow - 1)) return true
+	if (
+		activeRow !== null &&
+		(slot.rowIndex === activeRow + 1 || slot.rowIndex === activeRow - 1)
+	)
+		return true
 
 	return false
 }
@@ -138,7 +144,10 @@ export function validPick(gameState, req, pickedSlot) {
 	const card = pickedSlot.card
 	const slotType = pickedSlot.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
-	const isEmptyRow = rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
+	const isEmptyRow =
+		rowIndex === null
+			? true
+			: cardPlayerState.board.rows[rowIndex].hermitCard === null
 
 	if (!cardPlayerState) return false
 	if (!validRow(cardPlayerState, rowIndex)) return false
@@ -149,7 +158,7 @@ export function validPick(gameState, req, pickedSlot) {
 	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
 	if (!validRemovable(req.removable, card)) return false
 	if (!validAdjacent(req.adjacent, gameState, pickedSlot, req)) return false
-	
+
 	return true
 }
 
@@ -169,11 +178,12 @@ export function validPicks(gameState, pickResults) {
 			if (!validPick(gameState, req, pickedSlot)) return false
 			// Don't check adjacent for cards in hand, makes no sense, their position can change (e.g. single use cards)
 			if (pickedSlot.slotType !== 'hand') {
-				boardSlots.push(pickedSlot);
-				if (req.adjacent === 'req') reqAdjacentsBundle.push(pickedSlot);
+				boardSlots.push(pickedSlot)
+				if (req.adjacent === 'req') reqAdjacentsBundle.push(pickedSlot)
 			}
 		}
-		if (req.adjacent === 'req' && reqAdjacentsBundle.length > 0) reqAdjacents.push(reqAdjacentsBundle)
+		if (req.adjacent === 'req' && reqAdjacentsBundle.length > 0)
+			reqAdjacents.push(reqAdjacentsBundle)
 	}
 
 	// Check if all cards that need an adjacent card have one.
@@ -188,7 +198,10 @@ export function validPicks(gameState, pickResults) {
 					if (pickedCard === pickedCardAdj) continue
 					// Can't be adjacent to a card with the same req
 					if (pickedCardAdjBundle.includes(pickedCard)) continue
-					if (slot.rowIndex === slotAdj.rowIndex + 1 || slot.rowIndex === slotAdj.rowIndex - 1) {
+					if (
+						slot.rowIndex === slotAdj.rowIndex + 1 ||
+						slot.rowIndex === slotAdj.rowIndex - 1
+					) {
 						validPairs++
 						break
 					}
