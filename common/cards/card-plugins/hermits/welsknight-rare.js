@@ -33,13 +33,24 @@ class WelsknightRareHermitCard extends HermitCard {
 		const {currentPlayer} = game.ds
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== this.id || attack.type !== 'secondary') return
+			const attackId = this.getInstanceKey(instance, 'attack')
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			if (!attack.attacker) return
 
 			if (attack.attacker.row.health < 200) attack.addDamage(20)
 			if (attack.attacker.row.health < 100) attack.addDamage(20)
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
