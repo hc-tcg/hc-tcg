@@ -33,8 +33,9 @@ class Cubfan135RareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== this.id || attack.type !== 'secondary') return
-
+			const attackId = this.getInstanceKey(instance, 'attack')
+			if (attack.id !== attackId || attack.type !== 'secondary') return
+			
 			// We used our secondary attack, activate power
 			currentPlayer.custom[instanceKey] = true
 		}
