@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
+import {discardCard} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
@@ -28,38 +29,49 @@ class WaterBucketEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.actionEnd.tap(this.id, () => {
-			const {currentPlayer, opponentPlayer} = game.ds
-			const allRows = [
-				...currentPlayer.board.rows,
-				...opponentPlayer.board.rows,
-			]
-			allRows.forEach((row) => {
-				const onFire = row.ailments.some((a) => a.id === 'fire')
-				const hasBucket = row.effectCard?.cardId === this.id
-				if (onFire && hasBucket) {
-					row.ailments = row.ailments.filter((a) => a.id !== 'fire')
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
+
+		currentPlayer.hooks.turnEnd[instance] = (result) => {
+			for (let i = 0; i < currentPlayer.board.rows.length; i++) {
+				const row = currentPlayer.board.rows[i]
+				if (row.effectCard?.cardInstance == instance) {
+					const onFire = row.ailments.some((a) => {
+						return a.id !== 'fire'
+					})
+					if (onFire) {
+						row.ailments = row.ailments.filter((a) => {
+							return a.id !== 'fire'
+						})
+						discardCard(game, {cardId: this.id, cardInstance: instance})
+					}
 				}
-			})
-		})
-
-		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
-			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = actionState
-			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedCardsInfo[this.id] || []
-				if (suPickedCards?.length !== 1) return 'INVALID'
-
-				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
-					return 'INVALID'
-
-				const {row} = suPickedCards[0]
-				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
-				return 'DONE'
 			}
-		})
+		}
+	}
+
+	/**
+	 * Called when an instance of this card is applied
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('common/types/pick-process').PickedCardsInfo} pickedCardsInfo
+	 */
+	onApply(game, instance, pickedCardsInfo) {
+		const {singleUseInfo} = game.ds
+
+		if (singleUseInfo?.id === this.id) {
+			const suPickedCards = pickedCardsInfo[this.id] || []
+			if (suPickedCards?.length !== 1) return 'INVALID'
+
+			if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
+				return 'INVALID'
+
+			const {row} = suPickedCards[0]
+			row.ailments = row.ailments.filter((a) => a.id !== 'fire')
+			return 'DONE'
+		}
 	}
 
 	/**
