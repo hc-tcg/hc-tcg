@@ -26,23 +26,22 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {PickedSlotsInfo} pickedSlotsInfo
-	 * @returns {"DONE" | "INVALID"}
 	 */
 	onApply(game, instance, pickedSlotsInfo) {
 		const {singleUseInfo, currentPlayer} = game.ds
-		if (singleUseInfo?.id !== this.id) return 'INVALID'
+		if (singleUseInfo?.id !== this.id) return
 
 		const pickedSlots = pickedSlotsInfo[this.id] || []
-        if (pickedSlots.length !== 1) return 'INVALID'
+        if (pickedSlots.length !== 1) return
 
         const slot = pickedSlots[0]
-		if (slot.card !== null) return 'INVALID' 
+		if (slot.card !== null) return
 
         discardCard(game, slot.card)
 
         currentPlayer.custom[this.getInstanceKey(instance)] = true
 
-		return 'DONE'
+		discardSingleUse(game, currentPlayer)
 	}
 	
     /**
@@ -51,43 +50,45 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (super.canAttach(game, pos) === 'NO') return 'NO'
+		if (super.canAttach(game, pos) === 'NO') return 'INVALID'
 		const {currentPlayer} = game.ds
 
         for (const row of currentPlayer.board.rows) {
            if (row.effectCard !== null || rowHasItem(row)) return 'YES'
         }
 
-		return 'NO'
+		return 'INVALID'
 	}
 
-    /**
+	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */
 	onAttach(game, instance) {
-        const {currentPlayer} = game.ds
-
-        currentPlayer.hooks.availableActions[instance] = (availableActions) => {
-            if (currentPlayer.custom[this.getInstanceKey(instance)]) {
-                discardSingleUse(game, currentPlayer)
-                currentPlayer.board.singleUseCardUsed = false
-                availableActions.push('PLAY_SINGLE_USE_CARD')
-            }
-            return availableActions
-        }
-    }
-
-    /**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 */
-	onDetach(game, instance) {
 		const {currentPlayer} = game.ds
 
-		// Remove all hooks and flags
-		delete currentPlayer.hooks.availableActions[instance]
-        delete currentPlayer.custom[this.getInstanceKey(instance)]
+		currentPlayer.hooks.availableActions[instance] = (availableActions) => {
+			const singleUseCardUsed = currentPlayer.board.singleUseCardUsed
+			// Allow to play another single use card until another card single use card is used
+			// We have to do this because getAvailibleActions checks pastTurnActions and won't add it if it's already there
+			// We also have to check if PLAY_SINGLE_USE_CARD is already there because it's possible that another card added it
+			// e.g. if you play a card that allows you to play another single use card like multiple Pistons back to back
+			if (currentPlayer.custom[this.getInstanceKey(instance)] && !singleUseCardUsed && !availableActions.includes('PLAY_SINGLE_USE_CARD')) {
+				availableActions.push('PLAY_SINGLE_USE_CARD')
+			} else if (currentPlayer.custom[this.getInstanceKey(instance)] && singleUseCardUsed) {
+				delete currentPlayer.hooks.availableActions[instance]
+				delete currentPlayer.custom[this.getInstanceKey(instance)]
+			}
+			return availableActions
+		}
+
+		// We remove on turnEnd instead of onDetach because we need to keep the hooks
+		// until the end of the turn in case the player plays another single use card
+		currentPlayer.hooks.turnEnd[instance] = () => {
+			delete currentPlayer.hooks.turnEnd[instance]
+			delete currentPlayer.hooks.availableActions[instance]
+			delete currentPlayer.custom[this.getInstanceKey(instance)]
+		}
 	}
 }
 
