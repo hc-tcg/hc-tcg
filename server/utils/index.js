@@ -5,6 +5,7 @@ import CARDS, {
 } from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 import {GameModel} from '../models/game-model'
+import {getCardPos} from './cards'
 
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
@@ -63,13 +64,34 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 }
 
 /**
- * @param {import('common/types/game-state').PlayerState} playerState
+ * @param {GameModel} game
+ * @param {import('../../common/types/pick-process').PickedCardsInfo} pickedCardsInfo
+ * @returns {boolean}
  */
-export function applySingleUse(playerState) {
-	const suCard = playerState.board.singleUseCard
-	const suUsed = playerState.board.singleUseCardUsed
-	if (!suCard) return
-	playerState.board.singleUseCardUsed = true
+export function applySingleUse(game, pickedCardsInfo = {}) {
+	const {singleUseInfo, currentPlayer} = game.ds
+
+	const suCard = currentPlayer.board.singleUseCard
+	if (!suCard) return false
+
+	if (!singleUseInfo) return false
+	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
+	if (!cardInstance) return false
+
+	currentPlayer.board.singleUseCardUsed = true
+
+	// Now call methods and hooks
+
+	// Apply effect
+	singleUseInfo.onApply(game, cardInstance, pickedCardsInfo)
+
+	// Call applyEffect hook
+	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
+	for (let i = 0; i < applyEffectHooks.length; i++) {
+		applyEffectHooks[i](cardInstance)
+	}
+
+	return true
 }
 
 /*
@@ -118,13 +140,22 @@ export function discardCard(game, card) {
 		return
 	}
 
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance)
+
+	// Call onDetach hook
+	const player = getCardPos(game, card.cardInstance)?.playerState
+	if (player) {
+		const onDetachs = Object.values(player.hooks.onAttach)
+		for (let i = 0; i < onDetachs.length; i++) {
+			onDetachs[i](card.cardInstance)
+		}
+	}
+
 	loc.target[loc.key] = null
 	Object.values(game.state.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
 	})
-
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance)
 
 	game.state.players[loc.playerId].discarded.push({
 		cardId: card.cardId,
@@ -143,6 +174,12 @@ export function discardSingleUse(game, playerState) {
 
 	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
 	cardInfo.onDetach(game, suCard.cardInstance)
+
+	// Call onDetach hook
+	const onDetachs = Object.values(playerState.hooks.onAttach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](suCard.cardInstance)
+	}
 
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null

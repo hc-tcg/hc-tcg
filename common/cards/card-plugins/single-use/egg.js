@@ -33,7 +33,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id !== this.id) return target
 			if (!target.isActive) return target
 
-			applySingleUse(currentPlayer)
+			applySingleUse(game)
 			currentPlayer.followUp = this.id
 
 			return target

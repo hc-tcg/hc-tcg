@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS from 'common/cards'
+import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModal,
@@ -29,32 +29,10 @@ function* borrowSaga(): SagaIterator {
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
-	const cardInfo = CARDS[card.cardId]
+	const cardInfo = SINGLE_USE_CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (
-		[
-			'splash_potion_of_healing',
-			'lava_bucket',
-			'splash_potion_of_poison',
-			'clock',
-			'invisibility_potion',
-			'fishing_rod',
-			'emerald',
-			'flint_&_steel',
-			'spyglass',
-			'efficiency',
-			'curse_of_binding',
-			'curse_of_vanishing',
-			'looting',
-			'fortune',
-			'chorus_fruit',
-			'sweeping_edge',
-			'potion_of_slowness',
-			'potion_of_weakness',
-			'bad_omen',
-		].includes(card.cardId)
-	) {
+	if (cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))
@@ -89,8 +67,9 @@ const getFollowUpName = (
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
-	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
-	
+	const lastTurnAction =
+		gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
+
 	if (pState.followUp) {
 		const cardInfo = CARDS[pState.followUp] as
 			| HermitCard
@@ -109,7 +88,11 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		}
 	} else if (pState.custom.spyglass) {
 		yield put(setOpenedModal('spyglass'))
-	} else if (lastTurnAction === 'PLAY_SINGLE_USE_CARD' && !pState.board.singleUseCardUsed && pState.board.singleUseCard) {
+	} else if (
+		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
+		!pState.board.singleUseCardUsed &&
+		pState.board.singleUseCard
+	) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
 	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
 		yield put(setOpenedModal('unmet-condition'))

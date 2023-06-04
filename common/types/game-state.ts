@@ -83,6 +83,13 @@ export type PlayerState = {
 			(availableActions: AvailableActionsT) => AvailableActionsT
 		>
 
+		/** Instance key -> hook called whenver any card is attached */
+		onAttach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver any card is detached */
+		onDetach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver a single use card is applied */
+		onApply: Record<string, (instance: string) => void>
+
 		/** Instance key -> hook that returns attacks */
 		getAttacks: Record<
 			string,
