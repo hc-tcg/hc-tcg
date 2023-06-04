@@ -20,7 +20,8 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  * @returns {boolean}
  */
 const checkRow = (rowInfo, req) => {
-	if (rowInfo.emptyRow && req.type !== 'hermit') return false
+	if (rowInfo.emptyRow && req.type.length === 1 && req.type[0] !== 'hermit')
+		return false
 
 	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return false
@@ -30,9 +31,9 @@ const checkRow = (rowInfo, req) => {
 	if (req.active === false && rowInfo.active) return false
 
 	const slots = []
-	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.hermitCard)
-	if (['effect', 'any'].includes(req.type)) slots.push(rowInfo.row.effectCard)
-	if (['item', 'any'].includes(req.type)) slots.push(...rowInfo.row.itemCards)
+	if (req.type.includes('hermit')) slots.push(rowInfo.row.hermitCard)
+	if (req.type.includes('effect')) slots.push(rowInfo.row.effectCard)
+	if (req.type.includes('item')) slots.push(...rowInfo.row.itemCards)
 
 	// empty slot or not
 	const anyEmpty = slots.some((card) => !card)
@@ -42,7 +43,8 @@ const checkRow = (rowInfo, req) => {
 
 	// removable or not
 	const effectCard = rowInfo.row.effectCard
-	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
+	const effectCardInfo =
+		effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
 	if (req.removable && effectCardInfo?.getIsRemovable()) return true
 	if (req.removable && !effectCardInfo?.getIsRemovable()) return false
 
@@ -73,12 +75,10 @@ const getRowsInfo = (playerState, current) => {
  * @returns {boolean}
  */
 const checkHand = (gameState, req) => {
-	let cards = gameState.hand
-	if (req.type !== 'any') {
-		cards = gameState.hand.filter(
-			(card) => CARDS[card.cardId].type === req.type
-		)
-	}
+	const cards = gameState.hand.filter((card) =>
+		req.type.includes(CARDS[card.cardId].type)
+	)
+
 	return req.amount <= cards.length
 }
 
@@ -169,8 +169,9 @@ export const validActive = (active, cardPlayerState, rowIndex) => {
  * @returns {boolean}
  */
 export const validType = (type, cardType) => {
-	if (typeof type !== 'string') return true
-	return type === 'any' ? true : type === cardType
+	if (type === null) return true
+	if (type.includes(cardType)) return true
+	return false
 }
 
 /**
@@ -225,7 +226,10 @@ export function validPick(gameState, req, pickedCard) {
 	const card = pickedCard.card
 	const slotType = pickedCard.slotType
 	const cardType = card ? CARDS[card.cardId].type : slotType
-	const isEmptyRow = rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
+	const isEmptyRow =
+		rowIndex === null
+			? true
+			: cardPlayerState.board.rows[rowIndex].hermitCard === null
 
 	if (!cardPlayerState) return false
 	if (!validRow(cardPlayerState, rowIndex)) return false
