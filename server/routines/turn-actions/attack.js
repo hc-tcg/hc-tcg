@@ -119,7 +119,7 @@ function* attackSaga(game, turnAction, actionState) {
 	// Attacker
 	const playerBoard = currentPlayer.board
 	const attackIndex = playerBoard.activeRow
-	if (!attackIndex) return 'INVALID'
+	if (attackIndex === null) return 'INVALID'
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'INVALID'
@@ -127,7 +127,7 @@ function* attackSaga(game, turnAction, actionState) {
 	// Defender
 	const opponentBoard = opponentPlayer.board
 	const defenceIndex = opponentBoard.activeRow
-	if (!defenceIndex) return 'INVALID'
+	if (defenceIndex === null) return 'INVALID'
 
 	const defenceRow = opponentBoard.rows[defenceIndex]
 	if (!defenceRow.hermitCard) return 'INVALID'
@@ -176,10 +176,11 @@ function* attackSaga(game, turnAction, actionState) {
 		}
 
 		// STEP 5 - Finally, get all the next attacks, and repeat the process
-		attacks = []
+		const newAttacks = []
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			attacks.push(...attacks[attackIndex].nextAttacks)
+			newAttacks.push(...attacks[attackIndex].nextAttacks)
 		}
+		attacks = newAttacks
 	}
 
 	return 'DONE'
