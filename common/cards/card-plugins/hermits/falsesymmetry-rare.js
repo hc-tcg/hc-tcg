@@ -34,9 +34,9 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 		const {currentPlayer} = game.ds
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
+			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
-			
+
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
