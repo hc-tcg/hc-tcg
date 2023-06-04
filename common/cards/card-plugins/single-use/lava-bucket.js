@@ -23,12 +23,10 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		const {singleUseInfo, opponentActiveRow} = game.ds
 		if (singleUseInfo?.id === this.id) {
 			if (opponentActiveRow === null) return 'INVALID'
-			const hasWaterBucket =
-				opponentActiveRow.effectCard?.cardId === 'water_bucket'
 			const hasDamageEffect = opponentActiveRow.ailments.some((a) =>
 				['fire', 'poison'].includes(a.id)
 			)
-			if (!hasWaterBucket && !hasDamageEffect) {
+			if (!hasDamageEffect) {
 				opponentActiveRow.ailments.push({id: 'fire', duration: -1})
 			}
 			return 'DONE'
