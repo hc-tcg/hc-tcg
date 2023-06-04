@@ -229,7 +229,7 @@ export const getOpponentId = (game, playerId) => {
 }
 
 export const isRemovable = (card) => {
-	return EFFECT_CARDS[card.cardId].removable
+	return EFFECT_CARDS[card.cardId].getIsRemovable()
 }
 
 /**
