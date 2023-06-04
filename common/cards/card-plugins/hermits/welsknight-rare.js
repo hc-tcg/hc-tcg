@@ -28,6 +28,7 @@ class WelsknightRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
 	onAttach(game, instance) {
 		const {currentPlayer} = game.ds

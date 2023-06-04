@@ -65,10 +65,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 
 /**
  * @param {GameModel} game
- * @param {import('../../common/types/pick-process').PickedCardsInfo} pickedCardsInfo
+ * @param {import('../../common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedCardsInfo = {}) {
+export function applySingleUse(game, pickedSlotsInfo = {}) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -83,7 +83,7 @@ export function applySingleUse(game, pickedCardsInfo = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pickedCardsInfo)
+	singleUseInfo.onApply(game, cardInstance, pickedSlotsInfo)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -275,7 +275,8 @@ export function getAdjacentRows(playerState) {
 	for (let i = 1; i < rows.length; i++) {
 		const row = rows[i]
 		const prevRow = rows[i - 1]
-		if (row && prevRow && row.hermitCard && prevRow.hermitCard) result.push([prevRow, row])
+		if (row && prevRow && row.hermitCard && prevRow.hermitCard)
+			result.push([prevRow, row])
 	}
 	return result
 }

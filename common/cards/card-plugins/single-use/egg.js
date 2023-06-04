@@ -41,11 +41,11 @@ class EggSingleUseCard extends SingleUseCard {
 
 		game.hooks.followUp.tap(this.id, (action, followUpState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedCardsInfo} = followUpState
+			const {followUp, pickedSlotsInfo} = followUpState
 
 			if (followUp !== this.id) return
 
-			const eggPickedCards = pickedCardsInfo[this.id] || []
+			const eggPickedCards = pickedSlotsInfo[this.id] || []
 			if (eggPickedCards.length !== 1) return 'INVALID'
 
 			const pickedHermit = eggPickedCards[0]
