@@ -21,37 +21,45 @@ class VintageBeefRareHermitCard extends HermitCard {
 				cost: ['builder', 'builder'],
 				damage: 80,
 				power:
-					"Flip a Coin.\n\nIf heads, this attack also removes all status effects from user's active and AFK Hermits.",
+					'Flip a coin. If heads, all status effects are removed from your Hermits.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance, 'attack')
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'tails') return target
+			if (coinFlip[0] !== 'heads') return
 
 			currentPlayer.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 				row.ailments = row.ailments.filter(
-					(a) => !['fire', 'poison'].includes(a.id)
+					(ailment) =>
+						!['fire', 'poison', 'bad_omen', 'weakness'].includes(ailment.id)
 				)
 			})
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
