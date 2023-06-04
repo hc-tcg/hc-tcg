@@ -85,9 +85,7 @@ class TurtleShellEffectCard extends EffectCard {
 		}
 
 		opponentPlayer.hooks.turnStart[instance] = () => {
-			if (currentPlayer.board.activeRow === null) {
-				return
-			}
+			if (currentPlayer.board.activeRow === null) return
 			if (
 				instance ===
 				currentPlayer.board.rows[currentPlayer.board.activeRow].effectCard
