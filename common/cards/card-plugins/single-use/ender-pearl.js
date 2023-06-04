@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {getEmptyRow} from '../../../../server/utils/state-gen'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -17,10 +17,9 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.\n\nDiscard after use.',
 		})
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1, empty: true},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**
@@ -29,12 +28,12 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 
 			if (singleUseInfo?.id === this.id) {
-				if (pickedCardsInfo[this.id].length !== 1) return 'INVALID'
+				if (pickedSlotsInfo[this.id].length !== 1) return 'INVALID'
 
-				const pickedSlot = pickedCardsInfo[this.id][0]
+				const pickedSlot = pickedSlotsInfo[this.id][0]
 				if (!validPick(game.state, this.pickReqs[0], pickedSlot))
 					return 'INVALID'
 				if (pickedSlot.card !== null) return 'INVALID'

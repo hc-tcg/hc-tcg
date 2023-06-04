@@ -1,8 +1,5 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class DiamondSwordSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,10 +11,6 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 				'Does +40hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {target: 40}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

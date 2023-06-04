@@ -1,10 +1,7 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {HERMIT_CARDS} from '../../../cards'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
@@ -58,6 +55,13 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			return target
 		})
+	}
+	getPalette() {
+		return 'alter_egos'
+	}
+
+	getBackground() {
+		return 'alter_egos_background'
 	}
 }
 

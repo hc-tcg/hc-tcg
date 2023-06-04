@@ -1,9 +1,6 @@
 import {isRemovable} from '../../../utils'
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,11 +11,6 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			description:
 				'Swap 1 effect card with opposing active Hermit.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-			{target: 'player', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

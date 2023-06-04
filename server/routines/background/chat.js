@@ -1,9 +1,9 @@
 import {takeEvery} from 'redux-saga/effects'
 import {broadcast} from '../../utils/comm'
 import profanityFilter from '../../utils/profanity'
+import {GameModel} from '../../models/game-model'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux").AnyAction} AnyAction
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */

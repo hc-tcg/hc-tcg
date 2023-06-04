@@ -22,8 +22,6 @@ class XBCraftedCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default XBCraftedCommonHermitCard

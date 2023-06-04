@@ -1,8 +1,8 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -18,11 +18,8 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		this.damage = {target: 40, afkTarget: 10}
 
 		this.pickOn = 'attack'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		])
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+			{target: 'opponent', type: 'hermit', amount: 1, active: true},
 		])
 	}
 
@@ -32,7 +29,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = attackState
+			const {pickedSlotsInfo} = attackState
 			if (singleUseInfo?.id !== this.id) return target
 			if (target.isActive) {
 				target.extraEffectDamage += this.damage.target
@@ -40,7 +37,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			}
 
 			// only attack selected afk target
-			const crossbowPickedCards = pickedCardsInfo[this.id] || []
+			const crossbowPickedCards = pickedSlotsInfo[this.id] || []
 			if (crossbowPickedCards.length !== 1) return target
 			const pickedHermit = crossbowPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target

@@ -1,9 +1,6 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class ThornsEffectCard extends EffectCard {
 	constructor() {

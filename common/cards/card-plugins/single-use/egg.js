@@ -2,9 +2,9 @@ import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {flipCoin} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -19,10 +19,9 @@ class EggSingleUseCard extends SingleUseCard {
 		})
 		this.damage = {afkTarget: 10}
 		this.pickOn = 'followup'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1, active: false},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**
@@ -34,7 +33,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (singleUseInfo?.id !== this.id) return target
 			if (!target.isActive) return target
 
-			applySingleUse(currentPlayer)
+			applySingleUse(game)
 			currentPlayer.followUp = this.id
 
 			return target
@@ -42,11 +41,11 @@ class EggSingleUseCard extends SingleUseCard {
 
 		game.hooks.followUp.tap(this.id, (action, followUpState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedCardsInfo} = followUpState
+			const {followUp, pickedSlotsInfo} = followUpState
 
 			if (followUp !== this.id) return
 
-			const eggPickedCards = pickedCardsInfo[this.id] || []
+			const eggPickedCards = pickedSlotsInfo[this.id] || []
 			if (eggPickedCards.length !== 1) return 'INVALID'
 
 			const pickedHermit = eggPickedCards[0]

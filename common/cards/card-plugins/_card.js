@@ -1,28 +1,35 @@
 // TODO - more validations (types, rarirites, other fields, ...)
 
+import {GameModel} from '../../../server/models/game-model'
+
 /**
- * @typedef {import("common/types/cards").CardDefs} CardDefs
- * @typedef {import("common/types/cards").CardTypeT} CardTypeT
- * @typedef {import("common/types/cards").CardRarityT} CardRarityT
- * @abstract
+ * @typedef {import("../../types/cards").CardDefs} CardDefs
+ * @typedef {import("../../types/cards").CardPos} CardPos
+ * @typedef {import("../../types/cards").CardTypeT} CardTypeT
+ * @typedef {import("../../types/cards").CardRarityT} CardRarityT
+ * @typedef {import("../../../server/utils/reqs").PickRequirmentT} PickRequirmentT
  */
 
 class Card {
 	/**
 	 * @param {CardDefs} defs
 	 */
-	constructor({type, id, name, rarity}) {
-		if (!type || !id || !name || !rarity) {
+	constructor(defs) {
+		if (!defs.type || !defs.id || !defs.name || !defs.rarity) {
 			throw new Error('Invalid card definition!')
 		}
 		/** @type {CardTypeT} */
-		this.type = type
+		this.type = defs.type
 		/** @type {string} */
-		this.id = id
+		this.id = defs.id
 		/** @type {string} */
-		this.name = name
+		this.name = defs.name
 		/** @type {CardRarityT} */
-		this.rarity = rarity
+		this.rarity = defs.rarity
+		/** @type {string | undefined} */
+		this.pickOn = defs.pickOn
+		/** @type {Array<PickRequirmentT> | undefined} */
+		this.pickReqs = defs.pickReqs
 	}
 
 	// Keys for storing info
@@ -44,7 +51,7 @@ class Card {
 	 * If the specified slot is empty, can this card be attached there
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
-	 * @returns {boolean}
+	 * @returns {"YES" | "NO" | "INVALID"} NO if we can't, INVALID if we don't meet requirements, YES if we can
 	 * @abstract
 	 */
 	canAttach(game, pos) {
@@ -53,12 +60,29 @@ class Card {
 	}
 
 	/**
-	 * Called after an instance of this card is attached anywhere on the board
+	 * Called when an instance of this card is attached to the board
 	 * @param {GameModel} game
 	 * @param {string} instance The card instance attached
 	 */
 	onAttach(game, instance) {
 		// default is do nothing
+	}
+
+	/**
+	 * Called when an instance of this card is removed from the board
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		// default is do nothing
+	}
+
+	/**
+	 * Returns the palette to use for this card
+	 * @returns {string}
+	 */
+	getPalette() {
+		return 'default'
 	}
 }
 

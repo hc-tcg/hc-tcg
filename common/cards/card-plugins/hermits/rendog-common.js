@@ -22,8 +22,6 @@ class RendogCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default RendogCommonHermitCard

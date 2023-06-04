@@ -1,8 +1,5 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class CurseOfBindingSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -13,11 +10,24 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			description:
 				'Opposing active Hermit can not go AFK on the following turn.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
+	 */
+	onApply(game, instance, pickedSlots) {
+		const {opponentPlayer} = game.ds
+
+		opponentPlayer.hooks.availableActions[instance] = (availableActions) => {
+			return availableActions.filter(
+				(action) => action !== 'CHANGE_ACTIVE_HERMIT'
+			)
+		}
+	}
+
+	// then when turn ends, delete opponentPlayer.hooks[this.id]
 
 	/**
 	 * @param {GameModel} game

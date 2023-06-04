@@ -22,8 +22,6 @@ class XisumavoidCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default XisumavoidCommonHermitCard

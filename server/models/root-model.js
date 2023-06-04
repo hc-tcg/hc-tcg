@@ -1,10 +1,7 @@
-/**
- * @typedef {import('./player-model').PlayerModel} PlayerModel
- * @typedef {import('./game-model').GameModel} GameModel
- */
-
 import {SyncHook} from 'tapable'
 import plugins from '../plugins'
+import {PlayerModel} from './player-model'
+import {GameModel} from './game-model'
 
 export class RootModel {
 	constructor() {

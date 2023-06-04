@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import {getCardPos} from '../../../../server/utils/cards'
+import {GameModel} from '../../../../server/models/game-model'
 
 class LoyaltyEffectCard extends EffectCard {
 	constructor() {
@@ -12,6 +13,7 @@ class LoyaltyEffectCard extends EffectCard {
 		})
 	}
 
+	//@TODO this method no longer exists
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance

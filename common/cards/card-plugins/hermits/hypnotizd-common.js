@@ -22,8 +22,6 @@ class HypnotizdCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default HypnotizdCommonHermitCard

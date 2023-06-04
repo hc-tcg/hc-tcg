@@ -9,8 +9,6 @@ class BalancedRareItemCard extends ItemCard {
 			hermitType: 'balanced',
 		})
 	}
-
-	register(game) {}
 }
 
 export default BalancedRareItemCard

@@ -12,7 +12,7 @@ import {buffers} from 'redux-saga'
 import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
-import {getPickedCardsInfo} from '../utils/picked-cards'
+import {getPickedSlotsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -23,13 +23,14 @@ import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
+import {validPicks} from '../../server/utils/reqs'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
+ * @typedef {import('server/models/game-model').GameModel} GameModel'
  */
 
 /**
@@ -57,7 +58,7 @@ function getAvailableActions(game, pastTurnActions) {
 	 */
 	const hasTypeInHand = (type) => {
 		return currentPlayer.hand.some((card) =>
-			CARDS[card.cardId].attachReq.type.includes(type)
+			CARDS[card.cardId].type.includes(type)
 		)
 	}
 	const hasHermitInHand = hasTypeInHand('hermit')
@@ -162,8 +163,8 @@ function getAvailableActions(game, pastTurnActions) {
 				}
 				if (
 					showZeroAttack &&
-					!currentPlayer.board.singleUseCardUsed &&
-					suInfo?.damage
+					!currentPlayer.board.singleUseCardUsed
+					//&& suInfo?.damage
 				) {
 					actions.push('ZERO_ATTACK')
 				}
@@ -293,7 +294,7 @@ function* sendGameState(game, turnState) {
 
 /**
  * @param {GameModel} game
- * @param {*} turnAction
+ * @param {TurnAction} turnAction
  * @param {TurnState} turnState
  * @returns {SagaIterator}
  */
@@ -301,19 +302,28 @@ function* turnActionSaga(game, turnAction, turnState) {
 	// TODO - avoid having socket in actions
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
 		turnState
-	const pickedCardsInfo = getPickedCardsInfo(game, turnAction)
+
+	// Validate Picked Slots
+	const {pickedSlots}= turnAction.payload || {}
+	for (let cardId in pickedSlots) {
+		const result = pickedSlots[cardId]
+		if (validPicks(game.state, result)) return
+	}
+
+	const pickedSlotsInfo = getPickedSlotsInfo(game, turnAction)
+
 	/** @type {ActionState} */
 	const actionState = {
 		...turnState,
-		pickedCardsInfo,
+		pickedSlotsInfo,
 	}
 	let endTurn = false
 
 	game.hooks.actionStart.call(turnAction, actionState)
 
 	if (turnAction.type === 'PLAY_CARD') {
-		// TODO - continue on invalid?
-		yield call(playCardSaga, game, turnAction, actionState)
+		const result = yield call(playCardSaga, game, turnAction, actionState)
+		if (result === 'INVALID') pastTurnActions.push('PLAYED_INVALID_CARD')
 		//
 	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 		yield call(changeActiveHermitSaga, game, turnAction, actionState)
@@ -338,6 +348,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
+		console.log('Attack Received with type', typeAction)
 		if (!typeAction || !availableActions.includes(typeAction)) return
 		const result = yield call(attackSaga, game, turnAction, actionState)
 		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
@@ -394,13 +405,27 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 
 	try {
 		while (true) {
+			// Available actions code
+			/** @type {AvailableActionsT} */
+			let blockedActions = []
 			let availableActions = getAvailableActions(game, pastTurnActions)
-			let lockedActions = []
-			availableActions = game.hooks.availableActions.call(
-				availableActions,
-				pastTurnActions,
-				lockedActions
-			)
+
+			// Get blocked actions
+			const blockedHooks = Object.values(currentPlayer.hooks.blockedActions)
+			for (let i = 0; i < blockedHooks.length; i++) {
+				blockedActions = blockedHooks[i](blockedActions)
+			}
+
+			// Get available actions, while filtering out blocked actions
+			const availableHooks = Object.values(currentPlayer.hooks.availableActions)
+			for (let i = 0; i < availableHooks.length; i++) {
+				const newActions = availableHooks[i](availableActions)
+				availableActions = newActions.filter(
+					(action) => !blockedActions.includes(action)
+				)
+			}
+
+			// End of available actions code
 
 			if (turnConfig.skipTurn) {
 				if (currentPlayer.board.activeRow === null)
@@ -419,7 +444,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				opponentAvailableActions,
 				pastTurnActions,
 			}
-			game._turnStateCache = turnState
+			game.turnState = turnState
 
 			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000
@@ -518,7 +543,12 @@ function* turnSaga(game) {
 
 	/** @type {{skipTurn?: boolean}} */
 	const turnConfig = {}
-	game.hooks.turnStart.call(turnConfig)
+
+	// Call turn start hooks
+	const turnStartHooks = Object.values(currentPlayer.hooks.turnStart)
+	for (let i = 0; i < turnStartHooks.length; i++) {
+		turnStartHooks[i]()
+	}
 
 	const result = yield call(turnActionsSaga, game, pastTurnActions, turnConfig)
 	if (result === 'GAME_END') return 'GAME_END'
@@ -532,7 +562,11 @@ function* turnSaga(game) {
 			row.health -= 20
 	}
 
-	game.hooks.turnEnd.call()
+	// Call turn end hooks
+	const turnEndHooks = Object.values(currentPlayer.hooks.turnEnd)
+	for (let i = 0; i < turnEndHooks.length; i++) {
+		turnEndHooks[i]()
+	}
 
 	currentPlayer.coinFlips = {}
 	currentPlayer.followUp = null

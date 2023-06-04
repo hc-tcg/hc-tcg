@@ -1,9 +1,9 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -85,11 +85,11 @@ class TangoTekRareHermitCard extends HermitCard {
 
 		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedCardsInfo} = followUpState
+			const {followUp, pickedSlotsInfo} = followUpState
 
 			if (followUp !== this.id) return
 
-			const pickedCards = pickedCardsInfo[this.id] || []
+			const pickedCards = pickedSlotsInfo[this.id] || []
 			if (pickedCards.length !== 1) {
 				this.cleanUp(game)
 				return 'DONE'

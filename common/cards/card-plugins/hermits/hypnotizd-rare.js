@@ -1,9 +1,9 @@
 import HermitCard from './_hermit-card'
 import {discardCard} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -52,12 +52,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {moveRef, typeAction, pickedCardsInfo} = attackState
+			const {moveRef, typeAction, pickedSlotsInfo} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const hypnoPickedCards = pickedCardsInfo[this.id] || []
+			const hypnoPickedCards = pickedSlotsInfo[this.id] || []
 
 			const pickedHermit = hypnoPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target

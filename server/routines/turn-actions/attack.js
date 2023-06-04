@@ -5,13 +5,13 @@ import {
 } from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
+import {GameModel} from '../../models/game-model'
 import {applySingleUse, discardCard} from '../../utils'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
- * @typedef {import('models/attack-model').HermitAttackType} HermitAttackType
- * @typedef {import('../../models/attack-model').AttackResult} AttackResult
+ * @typedef {import('common/types/attack').HermitAttackType} HermitAttackType
+ * @typedef {import('common/types/attack').AttackResult} AttackResult
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  */
 
@@ -28,9 +28,11 @@ export const WEAKNESS_DAMAGE = 20
  * @param {GameModel} game
  * @param {RowStateWithHermit} attackRow
  * @param {HermitAttackType} hermitAttackType
+ * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
  * @returns {Array<AttackModel>}
  */
-function getAttacks(game, attackRow, hermitAttackType) {
+function getAttacks(game, attackRow, hermitAttackType, pickedSlots) {
+	const {currentPlayer} = game.ds
 	const attacks = []
 
 	// hermit attacks
@@ -39,25 +41,15 @@ function getAttacks(game, attackRow, hermitAttackType) {
 		...hermitCard.getAttacks(
 			game,
 			attackRow.hermitCard.cardInstance,
-			hermitAttackType
+			hermitAttackType,
+			pickedSlots
 		)
 	)
 
-	// effect attacks
-	if (attackRow.effectCard) {
-		const effectClass = EFFECT_CARDS[attackRow.effectCard.cardId]
-		attacks.push(
-			...effectClass.getAttacks(game, attackRow.effectCard.cardInstance)
-		)
-	}
-
-	// single use attacks
-	const playerBoard = game.ds.currentPlayer.board
-	if (playerBoard.singleUseCard && !playerBoard.singleUseCardUsed) {
-		const singleUseClass = SINGLE_USE_CARDS[playerBoard.singleUseCard.cardId]
-		attacks.push(
-			...singleUseClass.getAttacks(game, playerBoard.singleUseCard.cardInstance)
-		)
+	// all other attacks
+	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
+	for (let i = 0; i < otherAttacks.length; i++) {
+		attacks.push(...otherAttacks[i](pickedSlots))
 	}
 
 	// @TODO Weakness attack
@@ -68,132 +60,6 @@ function getAttacks(game, attackRow, hermitAttackType) {
 	//)
 
 	return attacks
-}
-
-/**
- *
- * @param {GameModel} game
- * @param {AttackModel} attack
- */
-function runOverrides(game, attack) {
-	const {currentPlayer, opponentPlayer} = game.ds
-	const playerBoard = currentPlayer.board
-
-	// First check our side of the board for overrides
-	for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
-		const row = playerBoard.rows[rowIndex]
-		if (!row.hermitCard) continue
-
-		HERMIT_CARDS[row.hermitCard.cardId].overrideAttack(
-			game,
-			row.hermitCard.cardInstance,
-			attack
-		)
-
-		if (!row.effectCard) continue
-		EFFECT_CARDS[row.effectCard.cardId].overrideAttack(
-			game,
-			row.effectCard.cardInstance,
-			attack
-		)
-	}
-
-	// Our single use card
-	if (playerBoard.singleUseCard && !playerBoard.singleUseCardUsed) {
-		const singleUseClass = SINGLE_USE_CARDS[playerBoard.singleUseCard.cardId]
-		singleUseClass.overrideAttack(
-			game,
-			playerBoard.singleUseCard.cardInstance,
-			attack
-		)
-	}
-
-	// Then check opponent cards for overrides
-	for (
-		let rowIndex = 0;
-		rowIndex < opponentPlayer.board.rows.length;
-		rowIndex++
-	) {
-		const row = opponentPlayer.board.rows[rowIndex]
-		if (!row.hermitCard) continue
-
-		HERMIT_CARDS[row.hermitCard.cardId].overrideDefence(
-			game,
-			row.hermitCard.cardInstance,
-			attack
-		)
-
-		if (!row.effectCard) continue
-		EFFECT_CARDS[row.effectCard.cardId].overrideDefence(
-			game,
-			row.effectCard.cardInstance,
-			attack
-		)
-	}
-}
-
-/**
- *
- * @param {GameModel} game
- * @param {AttackModel} attack
- */
-function runAttackCode(game, attack) {
-	// Go through attacker's cards
-	if (attack.attacker) {
-		const {row} = attack.attacker
-
-		// Hermit card
-		HERMIT_CARDS[row.hermitCard.cardId].onAttack(
-			game,
-			row.hermitCard.cardInstance,
-			attack
-		)
-
-		// Effect card
-		if (row.effectCard) {
-			EFFECT_CARDS[row.effectCard.cardId].onAttack(
-				game,
-				row.effectCard.cardInstance,
-				attack
-			)
-		}
-
-		// Single use card
-		const playerBoard = game.ds.currentPlayer.board
-		if (playerBoard.singleUseCard && !playerBoard.singleUseCardUsed) {
-			SINGLE_USE_CARDS[playerBoard.singleUseCard.cardId].onAttack(
-				game,
-				playerBoard.singleUseCard.cardInstance,
-				attack
-			)
-		}
-	}
-}
-
-/**
- *
- * @param {GameModel} game
- * @param {AttackModel} attack
- */
-function runDefenceCode(game, attack) {
-	// Go through target's cards
-	const {row: targetRow} = attack.target
-
-	// Target hermit card
-	HERMIT_CARDS[targetRow.hermitCard.cardId].onDefence(
-		game,
-		targetRow.hermitCard.cardInstance,
-		attack
-	)
-
-	// Target effect card - if not ignored
-	if (targetRow.effectCard && !attack.ignoreAttachedEffects) {
-		EFFECT_CARDS[targetRow.effectCard.cardId].onDefence(
-			game,
-			targetRow.hermitCard.cardInstance,
-			attack
-		)
-	}
 }
 
 /**
@@ -231,64 +97,6 @@ function executeAttack(game, attack) {
 }
 
 /**
- *
- * @param {GameModel} game
- * @param {AttackResult} result
- */
-function sendAttackResult(game, result) {
-	const {attack} = result
-	// Go through attacker's cards
-	if (attack.attacker) {
-		const {row} = attack.attacker
-
-		// Hermit card
-		HERMIT_CARDS[row.hermitCard.cardId].afterAttack(
-			game,
-			row.hermitCard.cardInstance,
-			result
-		)
-
-		// Effect card
-		if (row.effectCard) {
-			EFFECT_CARDS[row.effectCard.cardId].afterAttack(
-				game,
-				row.effectCard.cardInstance,
-				result
-			)
-		}
-
-		// Single use card
-		const playerBoard = game.ds.currentPlayer.board
-		if (playerBoard.singleUseCard && !playerBoard.singleUseCardUsed) {
-			SINGLE_USE_CARDS[playerBoard.singleUseCard.cardId].afterAttack(
-				game,
-				playerBoard.singleUseCard.cardInstance,
-				result
-			)
-		}
-	}
-
-	// Go through target's cards
-	const {row: targetRow} = attack.target
-
-	// Target hermit card
-	HERMIT_CARDS[targetRow.hermitCard.cardId].afterDefence(
-		game,
-		targetRow.hermitCard.cardInstance,
-		result
-	)
-
-	// Target effect card - if not ignored
-	if (targetRow.effectCard && !attack.ignoreAttachedEffects) {
-		EFFECT_CARDS[targetRow.effectCard.cardId].afterDefence(
-			game,
-			targetRow.hermitCard.cardInstance,
-			result
-		)
-	}
-}
-
-/**
  * @param {GameModel} game
  * @param {TurnAction} turnAction
  * @param {ActionState} actionState
@@ -297,15 +105,13 @@ function sendAttackResult(game, result) {
 function* attackSaga(game, turnAction, actionState) {
 	// defining things
 	const {currentPlayer, opponentPlayer} = game.ds
+	const {pickedSlotsInfo} = actionState
 
-	//@TODO we are currently doing nothing with picked cards
-	const {pickedCardsInfo} = actionState
+	/** @type {HermitAttackType} */
+	const hermitAttackType = turnAction.payload.type
 
-	const {type} = turnAction.payload
-	/** @type {import('../../models/attack-model').HermitAttackType} */
-	const hermitAttackType = ATTACK_TO_ACTION[type]
 	if (!hermitAttackType) {
-		console.log('Unknown attack type: ', type)
+		console.log('Unknown attack type: ', hermitAttackType)
 		return 'INVALID'
 	}
 	// TODO - send hermitCard from frontend for validation?
@@ -313,7 +119,7 @@ function* attackSaga(game, turnAction, actionState) {
 	// Attacker
 	const playerBoard = currentPlayer.board
 	const attackIndex = playerBoard.activeRow
-	if (!attackIndex) return 'INVALID'
+	if (attackIndex === null) return 'INVALID'
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'INVALID'
@@ -321,67 +127,60 @@ function* attackSaga(game, turnAction, actionState) {
 	// Defender
 	const opponentBoard = opponentPlayer.board
 	const defenceIndex = opponentBoard.activeRow
-	if (!defenceIndex) return 'INVALID'
+	if (defenceIndex === null) return 'INVALID'
 
-	const defenceRow = opponentBoard.rows[attackIndex]
+	const defenceRow = opponentBoard.rows[defenceIndex]
 	if (!defenceRow.hermitCard) return 'INVALID'
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackRow, hermitAttackType)
+	let attacks = getAttacks(game, attackRow, hermitAttackType, pickedSlotsInfo)
+
+	console.log('We got', attacks.length, 'attacks')
 
 	// Main attack loop
 	while (attacks.length > 0) {
-		/** @type {Array<AttackModel>} */
-		const nextAttacks = []
-
 		// Process all current attacks one at a time
-		for (let i = 0; i < attacks.length; i++) {
-			const attack = attacks[i]
 
-			// Checks all cards on the board to see if they want to override this attack
-			runOverrides(game, attack)
-			// Runs onAttack for all cards on attackers row
-			runAttackCode(game, attack)
-			// Runs onDefense for all cards on targets row
-			runDefenceCode(game, attack)
-
-			// Apply the damage
-			const result = executeAttack(game, attack)
-
-			//@TODO will attack object be able ot be modified by attack result? it's technically one object
-			sendAttackResult(game, result)
-
-			nextAttacks.push(...attack.nextAttacks)
-		}
-
-		// Loop round, doing everything again with our next set of attacks
-		attacks = nextAttacks
-	}
-
-	// Check for hermit death
-	const allRows = [...playerBoard.rows, ...opponentBoard.rows]
-	for (let i = 0; i < allRows.length; i++) {
-		const row = allRows[i]
-
-		if (row.health && row.health <= 0) {
-			// Call effect card first
-			if (row.effectCard) {
-				EFFECT_CARDS[row.effectCard.cardId].onHermitDeath(
-					game,
-					row.effectCard.cardInstance
-				)
-			}
-			// We check the health again because the effect card might have healed the hermit
-			if (row.health <= 0) {
-				HERMIT_CARDS[row.hermitCard.cardId].onHermitDeath(
-					game,
-					row.hermitCard.cardInstance
-				)
+		// STEP 1 - Call before attack for all attacks
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			const beforeAttacks = Object.values(currentPlayer.hooks.beforeAttack)
+			for (let i = 0; i < beforeAttacks.length; i++) {
+				beforeAttacks[i](attacks[attackIndex])
 			}
 		}
 
-		// @TODO right now actually removing the cards from the board is handled in the game saga, should it be handled here?
+		// STEP 2 - Call on attack for all attacks
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
+			for (let i = 0; i < onAttacks.length; i++) {
+				//@TODO use instance key to check if we should ignore attached effect card
+				onAttacks[i](attacks[attackIndex], pickedSlotsInfo)
+			}
+		}
+
+		// STEP 3 - Execute all attacks, and store the results
+		/** @type {Array<AttackResult>} */
+		const results = []
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			const result = executeAttack(game, attacks[attackIndex])
+			results.push(result)
+		}
+
+		// STEP 4 - Call afterAttack for all results
+		for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
+			const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
+			for (let i = 0; i < afterAttacks.length; i++) {
+				afterAttacks[i](results[resultsIndex])
+			}
+		}
+
+		// STEP 5 - Finally, get all the next attacks, and repeat the process
+		const newAttacks = []
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			newAttacks.push(...attacks[attackIndex].nextAttacks)
+		}
+		attacks = newAttacks
 	}
 
 	return 'DONE'

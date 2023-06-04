@@ -22,8 +22,6 @@ class GrianCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default GrianCommonHermitCard

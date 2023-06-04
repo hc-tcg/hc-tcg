@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class WelsknightRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,30 +21,37 @@ class WelsknightRareHermitCard extends HermitCard {
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
 				power:
-					"If Welsknight's HP is orange, Vengeance does +20HP damage.\n\nIf Welsknight's HP is red, Vengeance does +50HP damage.",
+					'Add 20hp damage if your HP is orange. Add 40hp damage if your HP is red.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {condRef, moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			let extraDamage = 0
-			if (condRef.row.health < 200) extraDamage += 20
-			if (condRef.row.health < 100) extraDamage += 30
+			if (!attack.attacker) return
 
-			target.extraHermitDamage += extraDamage
+			if (attack.attacker.row.health < 200) attack.addDamage(20)
+			if (attack.attacker.row.health < 100) attack.addDamage(20)
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 

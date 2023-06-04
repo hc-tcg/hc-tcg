@@ -1,8 +1,5 @@
 import HermitCard from './_hermit-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class Cubfan135RareHermitCard extends HermitCard {
 	constructor() {
@@ -22,63 +19,66 @@ class Cubfan135RareHermitCard extends HermitCard {
 				name: "Let's Go",
 				cost: ['speedrunner', 'speedrunner', 'speedrunner'],
 				damage: 100,
-				power:
-					'After attack, Player can choose to swap Cubfan with AFK Hermit.',
+				power: 'After attack, you can choose to go afk.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
+		const instanceKey = this.getInstanceKey(instance)
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
-			currentPlayer.custom[this.id] = true
-			return target
-		})
+			// We used our secondary attack, activate power
+			currentPlayer.custom[instanceKey] = true
+		}
 
-		game.hooks.changeActiveHermit.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			const usedPower = currentPlayer.custom[this.id]
-			if (usedPower) {
-				delete currentPlayer.custom[this.id]
-			}
-		})
+		currentPlayer.hooks.availableActions[instance] = (availableActions) => {
+			if (currentPlayer.custom[instanceKey]) {
+				// Only activate if we have other hermit and we haven't already switched
+				const hasOtherHermit = currentPlayer.board.rows.some((row, index) => {
+					return row.hermitCard && index !== currentPlayer.board.activeRow
+				})
+				const pastTurnActions = game.turnState.pastTurnActions
 
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			delete currentPlayer.custom[this.id]
-		})
-
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, pastTurnActions, lockedActions) => {
-				const {currentPlayer} = game.ds
-				const usedPower = currentPlayer.custom[this.id]
-				const hasOtherHermit = currentPlayer.board.rows.some(
-					(row, index) =>
-						row.hermitCard && index !== currentPlayer.board.activeRow
-				)
+				//@TODO do we also need tocheck for end_turn here?
 				if (
-					usedPower &&
 					hasOtherHermit &&
 					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!lockedActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					availableActions.includes('END_TURN') &&
 					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}
-				return availableActions
 			}
-		)
+
+			return availableActions
+		}
+
+		currentPlayer.hooks.turnEnd[instance] = () => {
+			// Cleanup
+			delete currentPlayer.custom[instanceKey]
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		const instanceKey = this.getInstanceKey(instance)
+
+		// Remove all hooks and flags
+		delete currentPlayer.hooks.onAttack[instance]
+		delete currentPlayer.hooks.availableActions[instance]
+		delete currentPlayer.hooks.turnEnd[instance]
+		delete currentPlayer.custom[instanceKey]
 	}
 }
 

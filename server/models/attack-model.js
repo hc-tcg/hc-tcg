@@ -1,50 +1,31 @@
-/**
- * @typedef {{index: number, row: RowStateWithHermit} | null} Attacker
- *
- * @typedef {{index: number, row: RowStateWithHermit}} AttackTarget
- *
- * @typedef {'primary' | 'secondary' | 'zero'} HermitAttackType
- *
- * @typedef {HermitAttackType | 'effect' | 'weakness' | 'backlash' | 'ailment'} AttackType
- *
- * @typedef {{damageReduction: number}} AttackDefence
- *
- *
- * @typedef {{attack: AttackModel, totalDamage: number, blockedDamage: number}} AttackResult
- */
-
 export class AttackModel {
 	/**
 	 * Creates a new attack
-	 * @param {string} id
-	 * @param {Attacker} attacker
-	 * @param {AttackTarget} target
-	 * @param {AttackType} type
-	 * @returns
+	 * @param {import("common/types/attack").AttackDefs} defs
 	 */
-	constructor(id, attacker = null, target, type) {
+	constructor(defs) {
 		/**
 		 * Unique id for this attack
-		 * @type {string}
+		 * @type {string | undefined}
 		 */
-		this.id = id
+		this.id = defs.id
 		/**
 		 * The attacker
-		 * @type {Attacker}
+		 * @type {import("common/types/attack").Attacker | undefined}
 		 */
-		this.attacker = attacker
+		this.attacker = defs.attacker
 
 		/**
 		 * The attack target
-		 * @type {AttackTarget}
+		 * @type {import("../../common/types/game-state").RowInfo}
 		 */
-		this.target = target
+		this.target = defs.target
 
 		/**
 		 * The attack type
-		 * @type {AttackType}
+		 * @type {import("common/types/attack").AttackType}
 		 */
-		this.type = type
+		this.type = defs.type
 
 		/**
 		 * The damage this attack does
@@ -66,7 +47,7 @@ export class AttackModel {
 
 		/**
 		 * Defence against this attack
-		 * @type {AttackDefence}
+		 * @type {import("common/types/attack").AttackDefence}
 		 */
 		this.defence = {
 			damageReduction: 0,

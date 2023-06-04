@@ -2,6 +2,7 @@ import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {getCardPos} from '../../../../server/utils/cards'
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 Questions:
@@ -29,9 +30,6 @@ Testing:
 - Must work with Zed's sheep stare (Zed's opponent should still receive damage either way)
 */
 
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
 class TurtleShellEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -47,21 +45,20 @@ class TurtleShellEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 * @returns {boolean}
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'effect') return false
-		if (pos.playerId !== currentPlayer.id) return false
+		if (pos.slot.type !== 'effect') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
 
-		if (!pos.rowState?.hermitCard) return false
+		if (!pos.rowState?.hermitCard) return 'INVALID'
 
 		// turtle shell addition - hermit must be inactive to attach
-		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return false
+		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'INVALID'
 
-		return true
+		return 'YES'
 	}
 
 	/**

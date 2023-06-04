@@ -1,9 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 // - Game should not consume attached totem if deathloop is active
 // - Golden Axe should not bypass deathloop (unlike a totem)

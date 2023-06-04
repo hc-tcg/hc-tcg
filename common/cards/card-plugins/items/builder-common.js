@@ -9,8 +9,6 @@ class BuilderCommonItemCard extends ItemCard {
 			hermitType: 'builder',
 		})
 	}
-
-	register(game) {}
 }
 
 export default BuilderCommonItemCard

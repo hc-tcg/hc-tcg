@@ -9,8 +9,6 @@ class ExplorerCommonItemCard extends ItemCard {
 			hermitType: 'explorer',
 		})
 	}
-
-	register(game) {}
 }
 
 export default ExplorerCommonItemCard

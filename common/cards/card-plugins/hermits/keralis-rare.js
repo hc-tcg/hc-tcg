@@ -1,9 +1,9 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -63,11 +63,11 @@ class KeralisRareHermitCard extends HermitCard {
 
 		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
 			const {currentPlayer} = game.ds
-			const {pickedCardsInfo} = followUpState
+			const {pickedSlotsInfo} = followUpState
 
 			if (followUpState.followUp !== this.id) return
 
-			const keralisPickedCards = pickedCardsInfo[this.id] || []
+			const keralisPickedCards = pickedSlotsInfo[this.id] || []
 			if (keralisPickedCards.length !== 1) return 'DONE'
 			const healTarget = keralisPickedCards[0]
 

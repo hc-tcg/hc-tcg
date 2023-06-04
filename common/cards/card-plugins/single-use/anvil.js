@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {flipCoin, applySingleUse} from '../../../../server/utils'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -18,10 +18,9 @@ class AnvilSingleUseCard extends SingleUseCard {
 		})
 		this.damage = {target: 80, afkTarget: 30}
 		this.pickOn = 'attack'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: 'hermit', amount: 1},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**

@@ -1,9 +1,6 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
 import EffectCard from './_effect-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
 
 class NetheriteArmorEffectCard extends EffectCard {
 	constructor() {

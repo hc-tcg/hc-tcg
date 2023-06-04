@@ -22,8 +22,6 @@ class FalseSymmetryCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default FalseSymmetryCommonHermitCard

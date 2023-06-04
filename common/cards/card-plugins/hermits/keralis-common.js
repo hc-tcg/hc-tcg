@@ -22,8 +22,6 @@ class KeralisCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default KeralisCommonHermitCard

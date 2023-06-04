@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {discardCard} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class LavaBucketSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,10 +11,6 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			description:
 				'BURNS the opposing Hermit\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the BURN. Discard after use.',
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard, discardCard} from '../../../../server/utils'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -20,10 +20,9 @@ class ComposterSingleUseCard extends SingleUseCard {
 				'Discard 2 cards in your hand. Draw 2 cards.\n\nDiscard after use.',
 		})
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'hand', type: 'any', amount: 2},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**
@@ -32,10 +31,10 @@ class ComposterSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedCardsInfo[this.id] || []
+				const suPickedCards = pickedSlotsInfo[this.id] || []
 				if (suPickedCards.length !== 2) return 'INVALID'
 
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))

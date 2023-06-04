@@ -2,13 +2,13 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
-import {PickedCardT} from 'common/types/pick-process'
+import {PickedSlotT} from 'common/types/pick-process'
 import {HERMIT_CARDS} from 'common/cards'
 import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
-	info: PickedCardT
+	info: PickedSlotT
 }
 function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
@@ -33,7 +33,8 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
-		!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT')
+		!hasActiveHermit ||
+		(!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
 
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`

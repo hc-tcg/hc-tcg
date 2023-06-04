@@ -1,9 +1,6 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
-		"paths": {
-			"common/*": ["../common/*"]
-		},
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "Node",
@@ -13,5 +10,7 @@
 		"checkJs": true,
 		"noEmit": true,
 		"strictNullChecks": true
-	}
+	},
+
+	"include": ["**/*"]
 }

@@ -22,8 +22,6 @@ class BdoubleO100CommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default BdoubleO100CommonHermitCard

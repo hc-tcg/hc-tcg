@@ -9,8 +9,6 @@ class SpeedrunnerRareItemCard extends ItemCard {
 			hermitType: 'speedrunner',
 		})
 	}
-
-	register(game) {}
 }
 
 export default SpeedrunnerRareItemCard

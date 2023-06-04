@@ -1,82 +1,63 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 
 /**
- * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('../../../types/cards').SingleUseDefs} SingleUseDefs
+ * @typedef {import('../../../types/cards').CardPos} CardPos
+ * @typedef {import('common/types/attack').AttackResult} AttackResult
+ * @typedef {import('../../../types/pick-process').PickedSlotsInfo} PickedSlotsInfo
  */
 
 class SingleUseCard extends Card {
+	/**
+	 * @param {SingleUseDefs} defs
+	 */
 	constructor(defs) {
-		defs.type = 'single_use'
-		super(defs)
+		super({
+			type: 'single_use',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
+		})
 
 		if (!defs.description) {
 			throw new Error('Invalid card definition')
 		}
+		/** @type {string} */
 		this.description = defs.description
-
-		this.attachReq = {target: 'player', type: ['single_use']}
-	}
-
-	/**
-	 * Creates and returns attack objects
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @returns {Array<AttackModel>}
-	 */
-	getAttacks(game, instance) {
-		// default is do nothing
-		return []
-	}
-
-	/**
-	 * Called before any attack from our side of the board to the other
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterAttack(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterDefence(game, instance, attackResult) {
-		// default is do nothing
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slotType !== 'single_use') return false
+		if (pos.slot.type !== 'single_use') return 'NO'
 
-		return true
+		return 'YES'
+	}
+
+	/**
+	 * Returns whether this card has apply functionality or not
+	 * @returns {boolean}
+	 */
+	canApply() {
+		// default is no
+		return false
+	}
+
+	/**
+	 * Called when an instance of this card is applied
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedSlotsInfo} pickedSlots
+	 */
+	onApply(game, instance, pickedSlots) {
+		// default is do nothing
 	}
 }
 

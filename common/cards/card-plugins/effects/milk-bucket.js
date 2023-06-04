@@ -1,9 +1,9 @@
 import EffectCard from './_effect-card'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('../../../types/pick-process').PickRequirmentT} PickRequirmentT
  */
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -18,8 +18,6 @@ class MilkBucketEffectCard extends EffectCard {
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-
-		this.attachReq = {target: 'player', type: ['effect', 'single_use']}
 	}
 
 	/**
@@ -43,9 +41,9 @@ class MilkBucketEffectCard extends EffectCard {
 
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedCardsInfo[this.id] || []
+				const suPickedCards = pickedSlotsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
 
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
@@ -56,6 +54,22 @@ class MilkBucketEffectCard extends EffectCard {
 				return 'DONE'
 			}
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slot.type === 'single_use') return 'YES'
+
+		if (pos.slot.type !== 'effect') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
+		if (!pos.rowState?.hermitCard) return 'INVALID'
+
+		return 'YES'
 	}
 }
 

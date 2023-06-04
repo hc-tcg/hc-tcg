@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {equalCard} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class SpyglassSingleUseCard extends SingleUseCard {
 	constructor() {

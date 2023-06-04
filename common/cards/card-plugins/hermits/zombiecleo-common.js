@@ -22,8 +22,6 @@ class ZombieCleoCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default ZombieCleoCommonHermitCard

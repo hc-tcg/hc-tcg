@@ -1,8 +1,5 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class NetheriteSwordSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,10 +11,6 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 				'Does +60hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
 		this.damage = {target: 60}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**

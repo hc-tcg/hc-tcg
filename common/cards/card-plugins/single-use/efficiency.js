@@ -1,8 +1,5 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {
@@ -13,8 +10,6 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			description:
 				'User can execute attack without having the necessary item cards attached.\n\nCurrent turn only.\n\nDiscard after use.',
 		})
-
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1, active: true}]
 	}
 
 	/**

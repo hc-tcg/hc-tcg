@@ -22,8 +22,6 @@ class WelsknightCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default WelsknightCommonHermitCard

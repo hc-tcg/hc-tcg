@@ -1,8 +1,8 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
 
@@ -17,10 +17,9 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 		})
 		this.heal = 60
 		this.pickOn = 'apply'
-		this.useReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
+		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'player', type: 'hermit', amount: 1},
 		])
-		this.pickReqs = this.useReqs
 	}
 
 	/**
@@ -29,9 +28,9 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedCardsInfo[this.id] || []
+				const suPickedCards = pickedSlotsInfo[this.id] || []
 				if (suPickedCards.length !== 1) return 'INVALID'
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
 					return 'INVALID'

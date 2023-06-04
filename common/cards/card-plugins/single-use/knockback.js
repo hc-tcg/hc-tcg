@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 /*
 - Don't allow to change to knocked out hermit during next turn
@@ -18,10 +15,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			description:
 				"Opposing Hermit goes AFK following user's attack.\n\nOpponent chooses replacement.\n\nCan only be used if opponent has at least 1 AFK Hermit. Discard after use.",
 		})
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**
@@ -42,7 +35,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				if (!hasOtherHermits || !opponentActiveRow) return target
 				opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
 				opponentPlayer.board.activeRow = null
-				applySingleUse(currentPlayer)
+				applySingleUse(game)
 			}
 			return target
 		})

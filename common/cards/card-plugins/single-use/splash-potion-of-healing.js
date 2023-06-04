@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {HERMIT_CARDS} from '../../index'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,8 +11,6 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 			description:
 				"Heals player's active and AFK Hermits +20hp.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [{target: 'player', type: 'hermit', amount: 1}]
 	}
 
 	/**

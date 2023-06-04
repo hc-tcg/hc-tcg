@@ -1,4 +1,4 @@
-import {Ailment} from './game-state'
+import {PlayerState, RowState} from './game-state'
 import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
@@ -29,21 +29,9 @@ export type DamageT = {
 	self?: number
 }
 
-export type ProtectionT = {
-	target?: number
-	backlash?: number
-	discard?: boolean
-}
-
-export type AttachRequirmentT = {
-	target: 'player' | 'opponent'
-	type: Array<CardTypeT | 'any'>
-	active?: boolean
-}
-
-export type HermitAttackT = {
+export type HermitAttackInfo = {
 	name: string
-	cost: Array<string>
+	cost: Array<HermitTypeT | 'any'>
 	damage: number
 	power: string | null
 }
@@ -53,6 +41,20 @@ export type CardDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
+}
+
+export type HermitDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	hermitType: HermitTypeT
+	health: number
+	primary: HermitAttackInfo
+	secondary: HermitAttackInfo
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type EffectDefs = {
@@ -60,6 +62,17 @@ export type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
+}
+
+export type SingleUseDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	description: string
+	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickReqs?: Array<PickRequirmentT>
 }
 
 export type Slot = {
@@ -70,7 +83,7 @@ export type Slot = {
 export type CardPos = {
 	playerId: string
 	playerState: PlayerState
-	rowIndex: number | null
-	rowState: RowState | null
-	slotType: SlotTypeT
+	rowIndex: number
+	rowState: RowState
+	slot: Slot
 }

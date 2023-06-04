@@ -1,116 +1,105 @@
 import {AttackModel} from '../../../../server/models/attack-model'
+import {GameModel} from '../../../../server/models/game-model'
+import {getCardPos} from '../../../../server/utils/cards'
 import Card from '../_card'
 
 /**
- * @typedef {import('models/attack-model').AttackResult} AttackResult
+ * @typedef {import('../../../types/cards').HermitDefs} HermitDefs
+ * @typedef {import('../../../types/cards').HermitTypeT} HermitTypeT
+ * @typedef {import('../../../types/cards').HermitAttackInfo} HermitAttackInfo
  */
 
 class HermitCard extends Card {
+	/**
+	 * @param {HermitDefs} defs
+	 */
 	constructor(defs) {
-		defs.type = 'hermit'
-		super(defs)
+		super({
+			type: 'hermit',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+			pickOn: defs.pickOn,
+			pickReqs: defs.pickReqs,
+		})
 
-		if (!defs.health || !defs.primary || !defs.secondary || !defs.hermitType) {
+		if (!defs.hermitType || !defs.health || !defs.primary || !defs.secondary) {
 			throw new Error('Invalid card definition')
 		}
-		this.health = defs.health
-		this.primary = defs.primary
-		this.secondary = defs.secondary
-		/** @type {import('common/types/cards').HermitTypeT} */
+
+		/** @type {HermitTypeT} */
 		this.hermitType = defs.hermitType
+
+		/** @type {number} */
+		this.health = defs.health
+
+		/** @type {HermitAttackInfo} */
+		this.primary = defs.primary
+
+		/** @type {HermitAttackInfo} */
+		this.secondary = defs.secondary
 	}
 
 	/**
 	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('models/attack-model').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 * @returns {Array<AttackModel>}
-	 * @abstract
 	 */
-	getAttacks(game, instance, hermitAttackType) {
-		throw new Error('Implement getAttacks!')
+	getAttacks(game, instance, hermitAttackType, pickedSlots) {
+		const pos = getCardPos(game, instance)
+		if (!pos || !pos.rowState.hermitCard) return []
+
+		const {opponentPlayer} = game.ds
+		const targetIndex = opponentPlayer.board.activeRow
+		if (targetIndex === null) return []
+
+		const targetRow = opponentPlayer.board.rows[targetIndex]
+		if (!targetRow.hermitCard) return []
+
+		// Create an attack with default damage
+		const attack = new AttackModel({
+			id: this.getInstanceKey(instance),
+			attacker: {
+				index: pos.rowIndex,
+				row: pos.rowState,
+			},
+			target: {
+				index: targetIndex,
+				row: targetRow,
+			},
+			type: hermitAttackType,
+		})
+		if (attack.type === 'primary') {
+			attack.addDamage(this.primary.damage)
+		} else if (attack.type === 'secondary') {
+			attack.addDamage(this.secondary.damage)
+		}
+
+		return [attack]
 	}
 
 	/**
-	 * Called before any attack from our side of the board to the other
 	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called before any attack to our side of the board
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	overrideDefence(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onAttack(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called during an attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onDefence(game, instance, attack) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack to another row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterAttack(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called after damage has been applied from attack on this row
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackResult} attackResult
-	 */
-	afterDefence(game, instance, attackResult) {
-		// default is do nothing
-	}
-
-	/**
-	 * Called when this instance will die -
-	 * before the cards are removed from the board
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 */
-	onHermitDeath(game, instance) {}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'hermit') return false
-		if (pos.playerId !== currentPlayer.id) return false
+		if (pos.slot.type !== 'hermit') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
 
-		return true
+		return 'YES'
+	}
+
+	/**
+	 * Returns the background to use for this hermit card
+	 * @returns {string}
+	 */
+	getBackground() {
+		return this.id.split('_')[0]
 	}
 }
 

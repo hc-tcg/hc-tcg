@@ -22,8 +22,6 @@ class IJevinCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default IJevinCommonHermitCard

@@ -1,9 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse, hasSingleUse} from '../../../../server/utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
 
 class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,11 +11,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			description:
 				"Swap active Hermit with AFK Hermit at the end of the player's turn.\n\nDiscard after use.",
 		})
-
-		this.useReqs = [
-			{target: 'player', type: 'hermit', amount: 1},
-			{target: 'player', type: 'hermit', amount: 1, active: false},
-		]
 	}
 
 	/**

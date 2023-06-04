@@ -1,10 +1,8 @@
 import HermitCard from './_hermit-card'
+import {GameModel} from '../../../../server/models/game-model'
+import {getCardPos} from '../../../../server/utils/cards'
+import {HERMIT_CARDS} from '../..'
 
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
-
-// TODO - can't be used consecutively
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -24,66 +22,46 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				cost: ['balanced', 'balanced', 'any'],
 				damage: 0,
 				power:
-					"Bdubs sleeps for the next 2 turns. Can't attack. Restores Full health.\n\nCan still draw and attach cards while sleeping.\n\nCan't be used consecutively.",
+					'Sleep for the following 2 turns. Restore Full Health. Can not attack. Can not go AFK.\n\nCan still draw and attach cards while sleeping.',
 			},
 		})
-
-		this.turnDuration = 2
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, playerHermitInfo} = game.ds
-			const {attacker, moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			// shreep - instantly heal to max hp
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			const attacker = attack.attacker
+			if (!attacker) return
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			// e.g. if bed was used
-			if (attacker.row.ailments.find((a) => a.id === 'sleeping')) return target
+			// restore health
+			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
+			attacker.row.health = hermitInfo.health
 
-			// store current turn to disable Shreep for one turn when it is over
-			const conInfo = currentPlayer.custom[this.id] || {}
-			conInfo[attacker.hermitCard.cardInstance] = game.state.turn
-			currentPlayer.custom[this.id] = conInfo
-
-			attacker.row.health = attacker.hermitInfo.health
+			// remove old sleeping
 			attacker.row.ailments = attacker.row.ailments.filter(
 				(a) => a.id !== 'sleeping'
 			)
+
+			// sleep for 2 turns
 			attacker.row.ailments.push({id: 'sleeping', duration: 2})
+		}
+	}
 
-			return target
-		})
-
-		// Disable shreep attack consecutively
-		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {currentPlayer, playerActiveRow} = game.ds
-
-			// we must have active hermit
-			const activeHermit = playerActiveRow?.hermitCard
-			if (!activeHermit || activeHermit?.cardId !== this.id)
-				return availableActions
-
-			// we want to make changes only if shreep was used by the hermit
-			const conInfo = currentPlayer.custom[this.id]
-			const lastTurnUsed = conInfo?.[activeHermit.cardInstance]
-			if (typeof lastTurnUsed !== 'number') return availableActions
-
-			// Prevent use of shreep consecutively
-			const consecutive = lastTurnUsed + 6 >= game.state.turn
-			if (!consecutive) {
-				delete conInfo[activeHermit.cardInstance]
-				return availableActions
-			}
-
-			return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 

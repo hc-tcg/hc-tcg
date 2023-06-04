@@ -1,10 +1,9 @@
 import {getGameState} from '../utils/state-gen'
 import {HookMap, SyncBailHook, SyncHook, SyncWaterfallHook} from 'tapable'
 import {DerivedStateModel} from './derived-state-model'
+import {PlayerModel} from './player-model'
 
 /**
- * @typedef {import("./root-model").RootModel} RootModel
- * @typedef {import("./player-model").PlayerModel} PlayerModel
  * @typedef {import("common/types/game-state").GameState} GameState
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
  * @typedef {import("common/types/game-state").PlayerState} PlayerState
@@ -166,8 +165,12 @@ export class GameModel {
 			reason: null,
 		}
 
-		/** @type {*} */
-		this._turnStateCache = null
+		/** @type {TurnState} */
+		this.turnState = {
+			availableActions: [],
+			opponentAvailableActions: [],
+			pastTurnActions: [],
+		}
 	}
 
 	// methods for clarity in game code

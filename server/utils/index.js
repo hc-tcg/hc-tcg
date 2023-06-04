@@ -1,12 +1,21 @@
-import CARDS, {EFFECT_CARDS, ITEM_CARDS} from '../../common/cards'
-import {CONFIG, DEBUG_CONFIG} from '../../config'
+import CARDS, {
+	ITEM_CARDS,
+	EFFECT_CARDS,
+	SINGLE_USE_CARDS,
+} from '../../common/cards'
+import {DEBUG_CONFIG} from '../../config'
+import {GameModel} from '../models/game-model'
+import {getCardPos} from './cards'
 
 /**
- * @typedef {import('models/game-model').GameModel} GameModel
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
  */
 
+/**
+ * @param {CardT | null} card1
+ * @param {CardT | null} card2
+ */
 export function equalCard(card1, card2) {
 	if (!card1 || !card2) return false
 	return (
@@ -43,23 +52,56 @@ export function hasEnoughItems(itemCards, cost) {
 	return energy.length >= anyCost.length
 }
 
+/**
+ * @param {import('common/types/game-state').PlayerState} playerState
+ * @param {string} id
+ * @param {boolean} isUsed
+ */
 export function hasSingleUse(playerState, id, isUsed = false) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	return suCard?.cardId === id && suUsed === isUsed
 }
 
-export function applySingleUse(playerState) {
-	const suCard = playerState.board.singleUseCard
-	const suUsed = playerState.board.singleUseCardUsed
-	if (!suCard) return
-	playerState.board.singleUseCardUsed = true
+/**
+ * @param {GameModel} game
+ * @param {import('../../common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+ * @returns {boolean}
+ */
+export function applySingleUse(game, pickedSlotsInfo = {}) {
+	const {singleUseInfo, currentPlayer} = game.ds
+
+	const suCard = currentPlayer.board.singleUseCard
+	if (!suCard) return false
+
+	if (!singleUseInfo) return false
+	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
+	if (!cardInstance) return false
+
+	currentPlayer.board.singleUseCardUsed = true
+
+	// Now call methods and hooks
+
+	// Apply effect
+	singleUseInfo.onApply(game, cardInstance, pickedSlotsInfo)
+
+	// Call applyEffect hook
+	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
+	for (let i = 0; i < applyEffectHooks.length; i++) {
+		applyEffectHooks[i](cardInstance)
+	}
+
+	return true
 }
 
 /*
 Return reference to the object holding the card and key at which it is located
 Looks only through hand and item/effect/hermit slots.
 */
+/**
+ * @param {import('common/types/game-state').GameState} gameState
+ * @param {CardT | null} card
+ */
 export function findCard(gameState, card) {
 	const pStates = Object.values(gameState.players)
 	for (let pState of pStates) {
@@ -71,7 +113,6 @@ export function findCard(gameState, card) {
 
 		const rows = pState.board.rows
 		for (let row of rows) {
-			let key = null
 			if (equalCard(row.hermitCard, card))
 				return {playerId, target: row, key: 'hermitCard'}
 			if (equalCard(row.effectCard, card))
@@ -86,7 +127,12 @@ export function findCard(gameState, card) {
 	return null
 }
 
+/**
+ * @param {GameModel} game
+ * @param {CardT | null} card
+ */
 export function discardCard(game, card) {
+	if (!card) return
 	const loc = findCard(game.state, card)
 	if (!loc) {
 		const err = new Error()
@@ -94,14 +140,22 @@ export function discardCard(game, card) {
 		return
 	}
 
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance)
+
+	// Call onDetach hook
+	const player = getCardPos(game, card.cardInstance)?.playerState
+	if (player) {
+		const onDetachs = Object.values(player.hooks.onAttach)
+		for (let i = 0; i < onDetachs.length; i++) {
+			onDetachs[i](card.cardInstance)
+		}
+	}
+
 	loc.target[loc.key] = null
 	Object.values(game.state.players).forEach((pState) => {
 		pState.hand = pState.hand.filter(Boolean)
 	})
-
-	const cardInfo = CARDS[card.cardId]
-	const result = game.hooks.discardCard.get(cardInfo.type)?.call(card)
-	if (result) return
 
 	game.state.players[loc.playerId].discarded.push({
 		cardId: card.cardId,
@@ -109,10 +163,23 @@ export function discardCard(game, card) {
 	})
 }
 
+/**
+ * @param {GameModel} game
+ * @param {PlayerState} playerState
+ */
 export function discardSingleUse(game, playerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
+
+	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
+	cardInfo.onDetach(game, suCard.cardInstance)
+
+	// Call onDetach hook
+	const onDetachs = Object.values(playerState.hooks.onAttach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](suCard.cardInstance)
+	}
 
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
@@ -152,6 +219,10 @@ export function flipCoin(currentPlayer, times = 1) {
 	return result
 }
 
+/**
+ * @param {GameModel} game
+ * @param {string} playerId
+ */
 export const getOpponentId = (game, playerId) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
@@ -159,4 +230,89 @@ export const getOpponentId = (game, playerId) => {
 
 export const isRemovable = (card) => {
 	return EFFECT_CARDS[card.cardId].removable
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {boolean}
+ */
+export function isActive(playerState) {
+	return playerState.board.activeRow !== null
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit[]}
+ */
+export function getNonEmptyRows(playerState) {
+	const rows = []
+	for (let row of playerState.board.rows) {
+		if (row.hermitCard) rows.push(row)
+	}
+	return rows
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
+ * @returns {RowStateWithHermit[]}
+ */
+export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
+	const result = []
+	const activeRow = playerState.board.activeRow
+	const rows = playerState.board.rows
+	for (let i = 0; i < rows.length; i++) {
+		const row = rows[i]
+		if (i === activeRow && !includeActive) continue
+		if (row.hermitCard && !isRowFull(row)) result.push(row)
+	}
+	return result
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {Array<RowStateWithHermit[]>}
+ */
+export function getAdjacentRows(playerState) {
+	const result = []
+	const rows = playerState.board.rows
+	for (let i = 1; i < rows.length; i++) {
+		const row = rows[i]
+		const prevRow = rows[i - 1]
+		if (row && prevRow && row.hermitCard && prevRow.hermitCard)
+			result.push([prevRow, row])
+	}
+	return result
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function isRowFull(row) {
+	return row.itemCards.filter((card) => !!card).length === 3
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function isRowEmpty(row) {
+	return row.itemCards.filter((card) => !!card).length === 0
+}
+
+/**
+ * @param {RowState} row
+ * @returns {boolean}
+ */
+export function rowHasItem(row) {
+	return row.itemCards.filter((card) => !!card).length > 0
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {boolean}
+ */
+export function rowHasEmptyItemSlot(row) {
+	return row.itemCards.filter((card) => !card).length > 0
 }

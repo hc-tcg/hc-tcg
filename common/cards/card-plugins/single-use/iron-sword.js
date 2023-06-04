@@ -1,8 +1,7 @@
 import SingleUseCard from './_single-use-card'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
+import {applySingleUse} from '../../../../server/utils'
 
 class IronSwordSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -13,24 +12,54 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			description:
 				'Does +20hp damage to opposing Hermit.\n\nDiscard after use.',
 		})
-		this.damage = {target: 20}
-
-		this.useReqs = [
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
-		]
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target) => {
-			const {singleUseInfo} = game.ds
-			if (singleUseInfo?.id === this.id && target.isActive) {
-				target.extraEffectDamage += this.damage.target
-			}
-			return target
-		})
+	onAttach(game, instance) {
+		const {currentPlayer, opponentPlayer} = game.ds
+
+		currentPlayer.hooks.getAttacks[instance] = () => {
+			const index = currentPlayer.board.activeRow
+			if (!index) return []
+			const row = currentPlayer.board.rows[index]
+			if (!row || !row.hermitCard) return []
+
+			const opponentIndex = opponentPlayer.board.activeRow
+			if (!opponentIndex) return []
+			const opponentRow = opponentPlayer.board.rows[opponentIndex]
+			if (!opponentRow || !opponentRow.hermitCard) return []
+
+			const swordAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'attack'),
+				attacker: {index, row},
+				target: {index: opponentIndex, row: opponentRow},
+				type: 'effect',
+			}).addDamage(20)
+
+			return [swordAttack]
+		}
+
+		currentPlayer.hooks.afterAttack[instance] = (attackResult) => {
+			const attackId = this.getInstanceKey(instance, 'attack')
+			if (attackResult.attack.id !== attackId) return
+
+			// We've executed our attack, apply effect
+			// @TODO helper function?
+			currentPlayer.board.singleUseCardUsed = true
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		delete currentPlayer.hooks.getAttacks[instance]
+		delete currentPlayer.hooks.afterAttack[instance]
 	}
 }
 

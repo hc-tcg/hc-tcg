@@ -1,3 +1,4 @@
+import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 
 class ItemCard extends Card {
@@ -13,17 +14,18 @@ class ItemCard extends Card {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'item') return false
-		if (pos.playerId !== currentPlayer.id) return false
+		if (pos.slot.type !== 'item') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
 
-		if (!pos.rowState?.hermitCard) return false
+		// Can't attach without hermit
+		if (!pos.rowState?.hermitCard) return 'INVALID'
 
-		return true
+		return 'YES'
 	}
 }
 
