@@ -16,37 +16,32 @@ class MendingEffectCard extends EffectCard {
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.discardCard
-			.for('single_use')
-			.tap(this.id, (card, singleUseSlot) => {
-				if (!game.state.turnPlayerId) return
-				const currentPlayer = game.state.players[game.state.turnPlayerId]
-				if (!singleUseSlot) return
-
-				const activeRow = currentPlayer.board.activeRow
-				if (activeRow === null) return
-				const effectCard = currentPlayer.board.rows[activeRow]?.effectCard
-				if (effectCard?.cardId !== this.id) return
-
-				// return single use card to deck at random location
-				const randomIndex = Math.floor(
-					Math.random() * (currentPlayer.pile.length + 1)
-				)
-				currentPlayer.pile.splice(randomIndex, 0, card)
-
-				// clear single use card slot
-				currentPlayer.board.singleUseCardUsed = false
-				currentPlayer.board.singleUseCard = null
-
-				// discard mending card from board
-				discardCard(game, effectCard)
-
-				// return anything to prevent card being moved to discard pile
-				return this.id
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
+		currentPlayer.hooks.turnEnd[instance] = () => {
+			const {currentPlayer, playerEffectCard, playerActiveRow} = game.ds
+			if (!playerEffectCard) return
+			if (playerActiveRow?.effectCard?.cardInstance !== instance) return
+			// return single use card to deck at random location
+			const randomIndex = Math.floor(Math.random() * (currentPlayer.pile.length + 1))
+			currentPlayer.pile.splice(randomIndex, 0, playerEffectCard)
+			// clear single use card slot
+			currentPlayer.board.singleUseCardUsed = false
+			currentPlayer.board.singleUseCard = null
+			// discard mending card from board
+			discardCard(game, {
+				cardId: this.id,
+				cardInstance: instance,
 			})
+		}
+		game.hooks.applyEffect.tap(this.id, () => {
+			console.log('Hello')
+			
+		})
 	}
 }
 
