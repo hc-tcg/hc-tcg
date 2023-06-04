@@ -61,7 +61,7 @@ class HermitCard extends Card {
 
 		// Create an attack with default damage
 		const attack = new AttackModel({
-			id: this.getInstanceKey(instance, 'attack'),
+			id: this.getInstanceKey(instance),
 			attacker: {
 				index: pos.rowIndex,
 				row: pos.rowState,
