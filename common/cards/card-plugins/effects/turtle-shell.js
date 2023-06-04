@@ -1,6 +1,5 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
-import {AttackModel} from '../../../../server/models/attack-model'
 import {getCardPos} from '../../../../server/utils/cards'
 import {GameModel} from '../../../../server/models/game-model'
 
@@ -66,70 +65,36 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {string} instance
 	 */
 	onAttach(game, instance) {
-		//@TODO just look at all this sad boilerplate
-		const info = getCardPos(game, instance)
-		if (!info) return
-		const {playerState} = info
+		const {currentPlayer, opponentPlayer} = game.ds
 
 		const instanceKey = this.getKey(instance)
-		playerState.custom[instanceKey] = false
-	}
+		currentPlayer.custom[instanceKey] = false
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 */
-	onSetActive(game, instance) {
-		const pos = getCardPos(game, instance)
-		if (!pos) return true
-		const {playerState} = pos
+		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (currentPlayer.custom[instanceKey] === true) {
+				attack.multiplyDamage(0).lockDamage()
+			}
+			return attack
+		}
 
-		// This card will now block all damage till the end of the turn
-		const instanceKey = this.getKey(instance)
-		playerState.custom[instanceKey] = true
-
-		return true
-	}
-
-	/**
-	 *
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onDefence(game, instance, attack) {
-		const pos = getCardPos(game, instance)
-		if (!pos || attack.type === 'ailment') return attack
-		const {playerState} = pos
-
-		// If ability active, block all damage
-		const instanceKey = this.getKey(instance)
-		if (playerState.custom[instanceKey] === true) {
-			const types = attack.getDamageTypes()
-
-			for (let i = 0; i < types.length; i++) {
-				const type = types[i]
-				attack.multiplyDamage(type, 0).lockDamage(type)
+		opponentPlayer.hooks.afterAttack[instance] = () => {
+			if (currentPlayer.custom[instanceKey] === true) {
+				delete currentPlayer.custom[instanceKey]
+				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
 		}
 
-		return attack
-	}
-
-	/**
-	 *
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 */
-	onTurnEnd(game, instance) {
-		const pos = getCardPos(game, instance)
-		if (!pos) return
-		const {playerState} = pos
-
-		// End of turn, if active, remove flag and discard
-		const instanceKey = this.getKey(instance)
-		if (playerState.custom[instanceKey] === true) {
-			delete playerState.custom[instanceKey]
+		opponentPlayer.hooks.turnStart[instance] = () => {
+			if (currentPlayer.board.activeRow === null) {
+				return
+			}
+			if (
+				instance ===
+				currentPlayer.board.rows[currentPlayer.board.activeRow].effectCard
+					?.cardInstance
+			) {
+				currentPlayer.custom[instanceKey] = true
+			}
 		}
 	}
 }
