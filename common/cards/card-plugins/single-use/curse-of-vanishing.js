@@ -3,6 +3,7 @@ import {discardCard, isActive, isRemovable} from '../../../../server/utils'
 
 /**
  * @typedef {import('server/models/game-model').GameModel} GameModel
+ * @typedef {import('common/types/pick-process').PickedSlotsInfo} PickedSlotsInfo
  */
 
 class CurseOfVanishingSingleUseCard extends SingleUseCard {
@@ -19,32 +20,33 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {PickedCardsInfo} pickedCards
-	 * @returns {string}
+	 * @param {PickedSlotsInfo} pickedSlots
 	 */
-	onApply(game, instance, pickedCards) {
-		const {opponentPlayer, opponentActiveRow} = game.ds
+	onApply(game, instance, pickedSlots) {
+		const {opponentActiveRow} = game.ds
 		
-		if (!isActive(opponentPlayer)) return 'INVALID'
+		if (!opponentActiveRow) return
 		if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
-			discardCard(game, activeRowState.effectCard)
+			discardCard(game, opponentActiveRow.effectCard)
 		}
-		return 'DONE'
+	}
+
+	canApply() {
+		return true
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
-	 * @returns {boolean}
 	 */
 	canAttach(game, pos) {
-		if (!super.canAttach(game, pos)) return false
+		if (super.canAttach(game, pos) === 'NO') return 'INVALID'
 		const {opponentActiveRow} = game.ds
 
-		if (!opponentActiveRow) return false
-		if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return false
+		if (!opponentActiveRow) return 'INVALID'
+		if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return 'INVALID'
 
-		return true
+		return 'YES'
 	}
 }
 
