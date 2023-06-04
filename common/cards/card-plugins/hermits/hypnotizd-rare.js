@@ -41,8 +41,8 @@ class HypnotizdRareHermitCard extends HermitCard {
 		])
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, breakIf},
-			{target: 'player', type: 'item', amount: 1, active: true},
+			{target: 'opponent', type: ['hermit'], amount: 1, breakIf},
+			{target: 'player', type: ['item'], amount: 1, active: true},
 		])
 	}
 

@@ -21,7 +21,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'hand', type: 'any', amount: 2},
+			{target: 'hand', type: ['hermit', 'effect', 'item', 'single_use'], amount: 2},
 		])
 	}
 

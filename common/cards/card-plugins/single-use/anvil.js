@@ -19,7 +19,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 		this.damage = {target: 80, afkTarget: 30}
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1},
+			{target: 'opponent', type: ['hermit'], amount: 1},
 		])
 	}
 

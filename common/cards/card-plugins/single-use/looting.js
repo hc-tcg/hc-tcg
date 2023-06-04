@@ -18,7 +18,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'item', amount: 1, active: true},
+			{target: 'opponent', type: ['item'], amount: 1, active: true},
 		])
 	}
 
