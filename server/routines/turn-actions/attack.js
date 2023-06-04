@@ -176,10 +176,11 @@ function* attackSaga(game, turnAction, actionState) {
 		}
 
 		// STEP 5 - Finally, get all the next attacks, and repeat the process
-		attacks = []
+		const newAttacks = []
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			attacks.push(...attacks[attackIndex].nextAttacks)
+			newAttacks.push(...attacks[attackIndex].nextAttacks)
 		}
+		attacks = newAttacks
 	}
 
 	return 'DONE'
