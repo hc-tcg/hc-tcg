@@ -42,6 +42,15 @@ class SingleUseCard extends Card {
 	}
 
 	/**
+	 * Returns whether this card has apply functionality or not
+	 * @returns {boolean}
+	 */
+	canApply() {
+		// default is no
+		return false
+	}
+
+	/**
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
