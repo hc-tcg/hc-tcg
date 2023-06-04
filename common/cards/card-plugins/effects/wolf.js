@@ -32,7 +32,6 @@ class WolfEffectCard extends EffectCard {
 				backlashAttack.ignoreAttachedEffects = true
 
 				attack.addNewAttack(backlashAttack)
-				console.log('Hook called')
 			}
 
 			return attack
