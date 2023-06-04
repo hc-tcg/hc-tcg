@@ -25,40 +25,34 @@ class LadderSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {PickedSlotsInfo} pickedSlotsInfo
-	 * @returns {"DONE" | "INVALID"}
 	 */
 	onApply(game, instance, pickedSlotsInfo) {
-		const {singleUseInfo, playerActiveRow} = game.ds
-		if (singleUseInfo?.id !== this.id) return 'INVALID'
-
+		const {playerActiveRow} = game.ds
 		const pickedSlots = pickedSlotsInfo[this.id] || []
 
-        if (pickedSlots.length !== 1 || !playerActiveRow) return 'INVALID'
+        if (pickedSlots.length !== 1 || !playerActiveRow) return
 
         const activeHermitCard = playerActiveRow?.hermitCard
         const inactiveHermitCardInfo = pickedSlots[0]
         const inactiveHermitCard = inactiveHermitCardInfo.card
 
-		if (inactiveHermitCard === null) return 'INVALID' 
+		if (inactiveHermitCard === null) return
 
         playerActiveRow.hermitCard = inactiveHermitCard
         inactiveHermitCardInfo.row.hermitCard = activeHermitCard
-
-		return 'DONE'
 	}
 	
     /**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
-	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (super.canAttach(game, pos) === 'NO') return 'NO'
+		if (super.canAttach(game, pos) === 'NO') return 'INVALID'
 		const {currentPlayer} = game.ds
 
         const playerBoard = currentPlayer.board
         const activeRowIndex = playerBoard.activeRow
-        if (activeRowIndex === null) return 'NO'
+        if (activeRowIndex === null) return 'INVALID'
 
         const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter((index) => index >= 0)
         for (const rowIndex of adjacentRowsIndex) {
@@ -66,7 +60,7 @@ class LadderSingleUseCard extends SingleUseCard {
             if (row.hermitCard !== null) return 'YES'
         }
         
-		return 'NO'
+		return 'INVALID'
 	}
 }
 
