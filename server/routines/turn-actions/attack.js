@@ -28,10 +28,10 @@ export const WEAKNESS_DAMAGE = 20
  * @param {GameModel} game
  * @param {RowStateWithHermit} attackRow
  * @param {HermitAttackType} hermitAttackType
- * @param {import('common/types/pick-process').PickedCardsInfo} pickedCards
+ * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
  * @returns {Array<AttackModel>}
  */
-function getAttacks(game, attackRow, hermitAttackType, pickedCards) {
+function getAttacks(game, attackRow, hermitAttackType, pickedSlots) {
 	const {currentPlayer} = game.ds
 	const attacks = []
 
@@ -42,14 +42,14 @@ function getAttacks(game, attackRow, hermitAttackType, pickedCards) {
 			game,
 			attackRow.hermitCard.cardInstance,
 			hermitAttackType,
-			pickedCards
+			pickedSlots
 		)
 	)
 
 	// all other attacks
 	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
 	for (let i = 0; i < otherAttacks.length; i++) {
-		attacks.push(...otherAttacks[i](pickedCards))
+		attacks.push(...otherAttacks[i](pickedSlots))
 	}
 
 	// @TODO Weakness attack
@@ -105,7 +105,7 @@ function executeAttack(game, attack) {
 function* attackSaga(game, turnAction, actionState) {
 	// defining things
 	const {currentPlayer, opponentPlayer} = game.ds
-	const {pickedCardsInfo} = actionState
+	const {pickedSlotsInfo} = actionState
 
 	/** @type {HermitAttackType} */
 	const hermitAttackType = turnAction.payload.type
@@ -134,7 +134,7 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackRow, hermitAttackType, pickedCardsInfo)
+	let attacks = getAttacks(game, attackRow, hermitAttackType, pickedSlotsInfo)
 
 	console.log('We got', attacks.length, 'attacks')
 
@@ -155,7 +155,7 @@ function* attackSaga(game, turnAction, actionState) {
 			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
 			for (let i = 0; i < onAttacks.length; i++) {
 				//@TODO use instance key to check if we should ignore attached effect card
-				onAttacks[i](attacks[attackIndex], pickedCardsInfo)
+				onAttacks[i](attacks[attackIndex], pickedSlotsInfo)
 			}
 		}
 
