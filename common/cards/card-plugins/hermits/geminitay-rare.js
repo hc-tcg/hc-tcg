@@ -39,7 +39,11 @@ class GeminiTayRareHermitCard extends HermitCard {
 		// is that even in the scope of this refactor?
 		currentPlayer.hooks.afterAttack[instance] = (result) => {
 			const attack = result.attack
-			if (attack.id !== this.id || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
 
 			// To keep this simple gem will discard the single use card, if it's used
 			if (currentPlayer.board.singleUseCardUsed) {
