@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
+	"extraStartingCards": ["mumbojumbo-rare", "stressmonster-rare"],
 	"noItemRequirements": false,
 	"forceCoinFlip": false
 }
