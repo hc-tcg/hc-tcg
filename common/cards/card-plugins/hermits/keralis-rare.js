@@ -63,11 +63,11 @@ class KeralisRareHermitCard extends HermitCard {
 
 		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
 			const {currentPlayer} = game.ds
-			const {pickedCardsInfo} = followUpState
+			const {pickedSlotsInfo} = followUpState
 
 			if (followUpState.followUp !== this.id) return
 
-			const keralisPickedCards = pickedCardsInfo[this.id] || []
+			const keralisPickedCards = pickedSlotsInfo[this.id] || []
 			if (keralisPickedCards.length !== 1) return 'DONE'
 			const healTarget = keralisPickedCards[0]
 

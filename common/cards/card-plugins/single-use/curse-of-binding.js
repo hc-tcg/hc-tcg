@@ -15,9 +15,9 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/pick-process').PickedCardsInfo} pickedCards
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 */
-	onApply(game, instance, pickedCards) {
+	onApply(game, instance, pickedSlots) {
 		const {opponentPlayer} = game.ds
 
 		opponentPlayer.hooks.availableActions[instance] = (availableActions) => {

@@ -28,12 +28,12 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 
 			if (singleUseInfo?.id === this.id) {
-				if (pickedCardsInfo[this.id].length !== 1) return 'INVALID'
+				if (pickedSlotsInfo[this.id].length !== 1) return 'INVALID'
 
-				const pickedSlot = pickedCardsInfo[this.id][0]
+				const pickedSlot = pickedSlotsInfo[this.id][0]
 				if (!validPick(game.state, this.pickReqs[0], pickedSlot))
 					return 'INVALID'
 				if (pickedSlot.card !== null) return 'INVALID'
