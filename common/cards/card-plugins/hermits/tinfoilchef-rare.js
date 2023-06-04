@@ -34,8 +34,6 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance) {
 		const {currentPlayer} = game.ds
-		const pos = getCardPos(game, instance)
-		if (!pos) return
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
