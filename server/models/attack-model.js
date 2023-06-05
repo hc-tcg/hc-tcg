@@ -66,7 +66,7 @@ export class AttackModel {
 	}
 
 	/**
-	 * Adds damage to a damage source
+	 * Adds damage to the attack
 	 * @param {number} amount
 	 */
 	addDamage(amount) {
@@ -76,17 +76,17 @@ export class AttackModel {
 	}
 
 	/**
-	 * Removes damage from a damage source
+	 * Removes damage from the attack
 	 * @param {number} amount
 	 */
-	removeDamage(type, amount) {
+	reduceDamage(amount) {
 		if (this.damageLocked) return this
 		this.damage = Math.max(this.damage - amount, 0)
 		return this
 	}
 
 	/**
-	 * Multiplies damage for a damage source
+	 * Multiplies damage for the attack
 	 * @param {number} multiplier
 	 */
 	multiplyDamage(multiplier) {
