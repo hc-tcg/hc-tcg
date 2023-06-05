@@ -53,15 +53,14 @@ export class AttackModel {
 			damageReduction: 0,
 		}
 
+		/** @type {Array<import("common/types/attack").ShouldIgnoreCard>} */
+		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
+
 		/**
 		 * Attacks to perform after this attack
 		 * @type {Array<AttackModel>}
 		 */
 		this.nextAttacks = []
-
-		// uncategorised @TODO
-		/** @type {boolean} */
-		this.ignoreAttachedEffects = false
 
 		return this
 	}
