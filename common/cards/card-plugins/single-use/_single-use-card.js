@@ -36,7 +36,7 @@ class SingleUseCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'NO'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		return 'YES'
 	}

@@ -88,8 +88,8 @@ class HermitCard extends Card {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slot.type !== 'hermit') return 'NO'
-		if (pos.playerId !== currentPlayer.id) return 'NO'
+		if (pos.slot.type !== 'hermit') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
 		return 'YES'
 	}

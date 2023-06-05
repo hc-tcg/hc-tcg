@@ -5,7 +5,7 @@ import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- * 
+ *
  */
 
 /*
@@ -60,13 +60,13 @@ class LeadSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'NO'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		const {opponentPlayer, opponentActiveRow} = game.ds
 
-		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'INVALID'
+		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'NO'
 		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0)
-			return 'INVALID'
+			return 'NO'
 
 		return 'YES'
 	}

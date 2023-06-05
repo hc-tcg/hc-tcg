@@ -50,13 +50,13 @@ class TurtleShellEffectCard extends EffectCard {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slot.type !== 'effect') return 'NO'
-		if (pos.playerId !== currentPlayer.id) return 'NO'
+		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
-		if (!pos.rowState?.hermitCard) return 'INVALID'
+		if (!pos.rowState?.hermitCard) return 'NO'
 
 		// turtle shell addition - hermit must be inactive to attach
-		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'INVALID'
+		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'NO'
 
 		return 'YES'
 	}

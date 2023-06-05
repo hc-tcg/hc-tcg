@@ -49,9 +49,11 @@ class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
+	 *
+	 * Returns INVALID if it's an invalid slot, NO if we don't meet requirements, YES if we can
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
-	 * @returns {"YES" | "NO" | "INVALID"} NO if we can't, INVALID if we don't meet requirements, YES if we can
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 * @abstract
 	 */
 	canAttach(game, pos) {
