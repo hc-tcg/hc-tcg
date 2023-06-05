@@ -10,7 +10,7 @@
 	"world": "LTF42",
 	"limits": {
 		"maxTurnTime": 90,
-		"minCards": 0,
+		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
 

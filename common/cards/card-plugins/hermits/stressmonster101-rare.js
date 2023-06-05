@@ -33,7 +33,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 		const {currentPlayer} = game.ds
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
+			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 			if (!attack.attacker) return
 
@@ -41,7 +41,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 				id: attackId,
 				attacker: {index: attack.target.index, row: attack.target.row},
 				target: {index: attack.attacker.index, row: attack.attacker.row},
-				type: 'secondary',
+				type: 'backlash',
 			})
 			attack.addNewAttack(backlashAttack)
 
