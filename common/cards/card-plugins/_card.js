@@ -49,9 +49,11 @@ class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
+	 *
+	 * Returns INVALID if it's an invalid slot, NO if we don't meet requirements, YES if we can
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
-	 * @returns {"YES" | "NO" | "INVALID"} NO if we can't, INVALID if we don't meet requirements, YES if we can
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 * @abstract
 	 */
 	canAttach(game, pos) {
@@ -69,6 +71,14 @@ class Card {
 	}
 
 	/**
+	 * Returns the expansion this card is a part of
+	 * @returns {string}
+	 */
+	getExpansion() {
+		return 'default'
+  }
+    
+   /*
 	 * Called when an instance of this card is removed from the board
 	 * @param {GameModel} game
 	 * @param {string} instance
