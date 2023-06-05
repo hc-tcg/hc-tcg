@@ -45,23 +45,23 @@ class HermitCard extends Card {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
-	 * @param {import('../../../types/pick-process').PickedCardsInfo} pickedCards
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 * @returns {Array<AttackModel>}
 	 */
-	getAttacks(game, instance, hermitAttackType, pickedCards) {
+	getAttacks(game, instance, hermitAttackType, pickedSlots) {
 		const pos = getCardPos(game, instance)
 		if (!pos || !pos.rowState.hermitCard) return []
 
 		const {opponentPlayer} = game.ds
 		const targetIndex = opponentPlayer.board.activeRow
-		if (!targetIndex) return []
+		if (targetIndex === null) return []
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return []
 
 		// Create an attack with default damage
 		const attack = new AttackModel({
-			id: this.getInstanceKey(instance, 'attack'),
+			id: this.getInstanceKey(instance),
 			attacker: {
 				index: pos.rowIndex,
 				row: pos.rowState,

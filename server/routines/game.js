@@ -12,7 +12,7 @@ import {buffers} from 'redux-saga'
 import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
-import {getPickedCardsInfo} from '../utils/picked-cards'
+import {getPickedSlotsInfo} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -23,13 +23,14 @@ import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
-import {GameModel} from '../models/game-model'
+import {validPicks} from '../../server/utils/reqs'
 
 /**
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
  * @typedef {import("common/types/cards").CardTypeT} CardTypeT
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
+ * @typedef {import('server/models/game-model').GameModel} GameModel'
  */
 
 /**
@@ -284,7 +285,7 @@ function* sendGameState(game, turnState) {
 
 /**
  * @param {GameModel} game
- * @param {*} turnAction
+ * @param {TurnAction} turnAction
  * @param {TurnState} turnState
  * @returns {SagaIterator}
  */
@@ -292,11 +293,20 @@ function* turnActionSaga(game, turnAction, turnState) {
 	// TODO - avoid having socket in actions
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
 		turnState
-	const pickedCardsInfo = getPickedCardsInfo(game, turnAction)
+
+	// Validate Picked Slots
+	const {pickedSlots}= turnAction.payload || {}
+	for (let cardId in pickedSlots) {
+		const result = pickedSlots[cardId]
+		if (validPicks(game.state, result)) return
+	}
+
+	const pickedSlotsInfo = getPickedSlotsInfo(game, turnAction)
+
 	/** @type {ActionState} */
 	const actionState = {
 		...turnState,
-		pickedCardsInfo,
+		pickedSlotsInfo,
 	}
 	let endTurn = false
 

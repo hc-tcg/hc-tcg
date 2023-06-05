@@ -2,13 +2,13 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
-import {PickedCardT} from 'common/types/pick-process'
+import {PickedSlotT} from 'common/types/pick-process'
 import {HERMIT_CARDS} from 'common/cards'
 import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
-	info: PickedCardT
+	info: PickedSlotT
 }
 function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
