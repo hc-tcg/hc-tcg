@@ -33,11 +33,16 @@ class ImpulseSVRareHermitCard extends HermitCard {
 		const {currentPlayer} = game.ds
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
+			console.log('hi')
 			const boomerAmount = currentPlayer.board.rows.filter(
-				(row) =>
+				(row, index) =>
 					row.hermitCard &&
+					index !== currentPlayer.board.activeRow &&
 					[
 						'bdoubleo100_common',
 						'bdoubleo100_rare',
