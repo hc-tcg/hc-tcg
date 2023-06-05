@@ -79,7 +79,6 @@ class TurtleShellEffectCard extends EffectCard {
 
 		opponentPlayer.hooks.afterAttack[instance] = () => {
 			if (currentPlayer.custom[instanceKey] === true) {
-				delete currentPlayer.custom[instanceKey]
 				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
 		}
@@ -94,6 +93,20 @@ class TurtleShellEffectCard extends EffectCard {
 				currentPlayer.custom[instanceKey] = true
 			}
 		}
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {opponentPlayer, currentPlayer} = game.ds
+
+		delete opponentPlayer.custom[this.getInstanceKey(instance)]
+		delete currentPlayer.hooks.onAttack[instance]
+		delete currentPlayer.hooks.afterAttack[instance]
+		delete currentPlayer.hooks.turnStart[instance]
 	}
 }
 
