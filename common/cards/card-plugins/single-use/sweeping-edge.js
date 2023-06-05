@@ -1,6 +1,11 @@
 import SingleUseCard from './_single-use-card'
 import {discardCard} from '../../../../server/utils'
-import {GameModel} from '../../../../server/models/game-model'
+
+/**
+* @typedef {import('../../../../server/models/game-model').GameModel} GameModel
+* @typedef {import('../../../types/cards').CardPos} CardPos
+* @typedef {import('../../../types/pick-process').PickedSlotsInfo} PickedSlotsInfo
+*/
 
 class SweepingEdgeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -9,35 +14,60 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 			name: 'Sweeping Edge',
 			rarity: 'ultra_rare',
 			description:
-				'Opponent must discard any effect cards attached to their active Hermit and adjacent Hermits.\n\nDiscard after use.',
+				'Opponent must discard any effect cards attached to their active Hermit and adjacent Hermits.',
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentPlayer} = game.ds
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'NO') return 'INVALID'
+		const {opponentPlayer} = game.ds
 
-			if (singleUseInfo?.id === this.id) {
-				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null) return 'INVALID'
+		const activeRow = opponentPlayer.board.activeRow
+		if (activeRow === null) return 'INVALID'
 
-				const rows = opponentPlayer.board.rows
-				const targetRows = [
-					rows[activeRow - 1],
-					rows[activeRow],
-					rows[activeRow + 1],
-				].filter(Boolean)
+		const rows = opponentPlayer.board.rows
+		const targetIndex = [
+			activeRow - 1,
+			activeRow,
+			activeRow + 1
+		].filter((index) => index >= 0 && index < rows.length)
 
-				targetRows.forEach((row) => {
-					if (row.effectCard) discardCard(game, row.effectCard)
-				})
+		for (const row of targetIndex) {
+			if (rows[row].effectCard) return 'YES'
+		}
 
-				return 'DONE'
-			}
-		})
+		return 'INVALID'
+	}
+	
+	canApply() {
+		return true
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {PickedSlotsInfo} pickedSlots
+	 */
+	onApply(game, instance, pickedSlots) {
+		const {opponentPlayer} = game.ds
+
+		const activeRow = opponentPlayer.board.activeRow
+		if (activeRow === null) return
+
+		const rows = opponentPlayer.board.rows
+		const targetIndex = [
+			activeRow - 1,
+			activeRow,
+			activeRow + 1
+		].filter((index) => index >= 0 && index < rows.length)
+
+		for (const index of targetIndex) {
+			discardCard(game, rows[index].effectCard)
+		}
 	}
 }
 
