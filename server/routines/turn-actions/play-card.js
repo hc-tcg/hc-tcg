@@ -99,7 +99,11 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	cardInfo.onAttach(game, card.cardInstance)
 
-	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
+	// Call onAttach hook
+	const onAttachs = Object.values(currentPlayer.hooks.onAttach)
+	for (let i = 0; i < onAttachs.length; i++) {
+		onAttachs[i](card.cardInstance)
+	}
 
 	return 'DONE'
 }
