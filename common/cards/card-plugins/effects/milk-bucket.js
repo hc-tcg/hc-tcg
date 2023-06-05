@@ -41,9 +41,9 @@ class MilkBucketEffectCard extends EffectCard {
 
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = actionState
+			const {pickedSlotsInfo} = actionState
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedCardsInfo[this.id] || []
+				const suPickedCards = pickedSlotsInfo[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
 
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))

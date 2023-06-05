@@ -85,11 +85,11 @@ class TangoTekRareHermitCard extends HermitCard {
 
 		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedCardsInfo} = followUpState
+			const {followUp, pickedSlotsInfo} = followUpState
 
 			if (followUp !== this.id) return
 
-			const pickedCards = pickedCardsInfo[this.id] || []
+			const pickedCards = pickedSlotsInfo[this.id] || []
 			if (pickedCards.length !== 1) {
 				this.cleanUp(game)
 				return 'DONE'

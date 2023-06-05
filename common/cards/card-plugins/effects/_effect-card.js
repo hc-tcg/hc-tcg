@@ -50,11 +50,9 @@ class EffectCard extends Card {
 
 	/**
 	 * Returns whether this card is removable from its position
-	 * @param {GameModel} game
-	 * @param {string} instance
 	 * @returns {boolean}
 	 */
-	getIsRemovable(game, instance) {
+	getIsRemovable() {
 		// default
 		return true
 	}
