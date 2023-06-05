@@ -35,6 +35,7 @@ import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
 import EggSingleUseCard from './egg'
 import EnderPearlSingleUseCard from './ender-pearl'
 import BadOmenSingleUseCard from './bad-omen'
+import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-II'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -75,6 +76,7 @@ const SINGLE_USE_CARDS = [
 	//new EggSingleUseCard(),
 	//new EnderPearlSingleUseCard(),
 	//new BadOmenSingleUseCard(),
+	new SplashPotionOfHealingIISingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS

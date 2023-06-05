@@ -7,14 +7,14 @@ import {HERMIT_CARDS} from '../../index'
 * @typedef {import('../../../types/pick-process').PickedSlotsInfo} PickedSlotsInfo
 */
 
-class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
+class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'splash_potion_of_healing',
+			id: 'splash_potion_of_healing_ii',
 			name: 'Splash Potion of Healing',
 			rarity: 'common',
 			description:
-				"Heal each of your active and AFK Hermits 20hp.",
+				"Heal each of your active and AFK Hermits 30hp.",
 		})
 	}
 
@@ -47,10 +47,10 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 				if (!row.hermitCard) continue
 				const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (!currentRowInfo) continue
-				row.health = Math.min(row.health + 20, currentRowInfo.health)
+				row.health = Math.min(row.health + 30, currentRowInfo.health)
 			}
 		}
 	}
 }
 
-export default SplashPotionOfHealingSingleUseCard
+export default SplashPotionOfHealingIISingleUseCard

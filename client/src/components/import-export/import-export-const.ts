@@ -131,4 +131,5 @@ export const universe = [
 	'potatoboy_rare',
 	'sweeping_edge',
 	'trident',
+	'splash_potion_of_healing_ii',
 ]
