@@ -23,8 +23,8 @@ class LeadSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'item', amount: 1, active: true},
-			{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
+			{target: 'opponent', type: ['item'], amount: 1, active: true},
+			{target: 'opponent', type: ['item'], amount: 1, empty: true, active: false},
 		])
 	}
 

@@ -18,7 +18,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		this.heal = 100
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1},
+			{target: 'player', type: ['hermit'], amount: 1},
 		])
 	}
 
