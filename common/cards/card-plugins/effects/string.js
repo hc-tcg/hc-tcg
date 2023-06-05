@@ -20,10 +20,10 @@ class StringEffectCard extends EffectCard {
 		const {opponentPlayer} = game.ds
 
 		// attach to effect or item slot
-		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'NO'
+		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'INVALID'
 
 		// can only attach to opponent
-		if (pos.playerId !== opponentPlayer.id) return 'NO'
+		if (pos.playerId !== opponentPlayer.id) return 'INVALID'
 
 		// we don't care if there's a hermit there or not
 		return 'YES'
