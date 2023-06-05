@@ -46,8 +46,9 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 
 	return (
 		<div
-			className={cn(css.row, type === 'right' && css.reversed, {
+			className={cn(css.row, {
 				[css.active]: active,
+				[css.reversed]: type === 'right',
 			})}
 		>
 			{slots}
