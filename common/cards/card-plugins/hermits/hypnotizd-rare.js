@@ -41,8 +41,8 @@ class HypnotizdRareHermitCard extends HermitCard {
 		])
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, breakIf},
-			{target: 'player', type: 'item', amount: 1, active: true},
+			{target: 'opponent', type: ['hermit'], amount: 1, breakIf},
+			{target: 'player', type: ['item'], amount: 1, active: true},
 		])
 	}
 
@@ -52,12 +52,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {moveRef, typeAction, pickedCardsInfo} = attackState
+			const {moveRef, typeAction, pickedSlotsInfo} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const hypnoPickedCards = pickedCardsInfo[this.id] || []
+			const hypnoPickedCards = pickedSlotsInfo[this.id] || []
 
 			const pickedHermit = hypnoPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target

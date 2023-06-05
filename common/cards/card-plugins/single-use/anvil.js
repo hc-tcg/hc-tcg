@@ -15,13 +15,12 @@ class AnvilSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				'Does +30hp damage to any opposing AFK Hermit or flip a coin and If heads, does 80hp damage to to opposing active hermit If tails, does no damage.\n\nDiscard after use.',
+			pickOn: 'attack',
+			pickReqs: [{target: 'opponent', type: 'hermit', amount: 1}],
 		})
-		this.damage = {target: 80, afkTarget: 30}
-		this.pickOn = 'attack'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1},
-		])
 	}
+
+	//NOWTODO modify getAttacks method to return one attack to primary and attacks to all hermits below
 
 	/**
 	 * @param {GameModel} game
@@ -29,10 +28,10 @@ class AnvilSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedCardsInfo} = attackState
+			const {pickedSlotsInfo} = attackState
 			if (singleUseInfo?.id !== this.id) return target
 
-			const crossbowPickedCards = pickedCardsInfo[this.id] || []
+			const crossbowPickedCards = pickedSlotsInfo[this.id] || []
 			if (crossbowPickedCards.length !== 1) return target
 			const pickedHermit = crossbowPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
@@ -43,7 +42,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 				if (currentPlayer.coinFlips[this.id][0] === 'heads') {
 					target.extraEffectDamage += this.damage.target
 				} else {
-					applySingleUse(currentPlayer)
+					applySingleUse(game)
 				}
 				return target
 			}

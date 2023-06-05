@@ -47,6 +47,10 @@ class LlamadadRareHermitCard extends HermitCard {
 		})
 	}
 
+	getExpansion() {
+		return 'alter_egos'
+	}
+
 	getPalette() {
 		return 'alter_egos'
 	}

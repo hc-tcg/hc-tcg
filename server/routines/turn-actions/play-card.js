@@ -40,8 +40,13 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	// Do we meet requirements of card
 	const canAttach = cardInfo.canAttach(game, pos)
-	if (canAttach === 'NO') return
-	if (canAttach === 'INVALID') return 'INVALID'
+
+	// This is a bit confusing, but it's clearer for the method for INVALID to mean the slot is completely invalid
+
+	// Do nothing if it's the wrong kind of slot
+	if (canAttach === 'INVALID') return
+	// If it's the right kind of slot, but we can't attach, return invalid
+	if (canAttach === 'NO') return 'INVALID'
 
 	const player = game.state.players[playerId]
 	if (!player) return 'INVALID'
@@ -99,7 +104,11 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	cardInfo.onAttach(game, card.cardInstance)
 
-	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
+	// Call onAttach hook
+	const onAttachs = Object.values(currentPlayer.hooks.onAttach)
+	for (let i = 0; i < onAttachs.length; i++) {
+		onAttachs[i](card.cardInstance)
+	}
 
 	return 'DONE'
 }

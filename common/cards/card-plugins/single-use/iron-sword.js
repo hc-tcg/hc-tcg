@@ -42,13 +42,13 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			return [swordAttack]
 		}
 
-		currentPlayer.hooks.afterAttack[instance] = (attackResult) => {
+		// @TODO note to self - because gem will discard used effect cards in after attack, they should always be used before that
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attackResult.attack.id !== attackId) return
+			if (attack.id !== attackId) return
 
 			// We've executed our attack, apply effect
-			// @TODO helper function?
-			currentPlayer.board.singleUseCardUsed = true
+			applySingleUse(game)
 		}
 	}
 
@@ -59,7 +59,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 	onDetach(game, instance) {
 		const {currentPlayer} = game.ds
 		delete currentPlayer.hooks.getAttacks[instance]
-		delete currentPlayer.hooks.afterAttack[instance]
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
