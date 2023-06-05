@@ -71,6 +71,14 @@ class Card {
 	}
 
 	/**
+	 * Returns the expansion this card is a part of
+	 * @returns {string}
+	 */
+	getExpansion() {
+		return 'default'
+  }
+    
+   /*
 	 * Called when an instance of this card is removed from the board
 	 * @param {GameModel} game
 	 * @param {string} instance
