@@ -38,8 +38,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
 			const instanceKey = this.getInstanceKey(instance)
-			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 			if (currentPlayer.custom[instanceKey] === 'pearl_opponent_missed') return
 
 			currentPlayer.custom[instanceKey] = 'pearl_secondary_used'
