@@ -34,8 +34,11 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 		const {currentPlayer} = game.ds
 
 		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
 			const hasBdubs = currentPlayer.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('bdoubleo100')
 			)
