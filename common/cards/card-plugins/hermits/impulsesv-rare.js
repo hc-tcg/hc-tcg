@@ -38,7 +38,6 @@ class ImpulseSVRareHermitCard extends HermitCard {
 				attack.type !== 'secondary'
 			)
 				return
-			console.log('hi')
 			const boomerAmount = currentPlayer.board.rows.filter(
 				(row, index) =>
 					row.hermitCard &&
