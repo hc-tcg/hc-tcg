@@ -22,8 +22,6 @@ class JoeHillsCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default JoeHillsCommonHermitCard

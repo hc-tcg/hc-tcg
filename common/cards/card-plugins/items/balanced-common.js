@@ -9,8 +9,6 @@ class BalancedCommonItemCard extends ItemCard {
 			hermitType: 'balanced',
 		})
 	}
-
-	register(game) {}
 }
 
 export default BalancedCommonItemCard

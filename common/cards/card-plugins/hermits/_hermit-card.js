@@ -45,29 +45,29 @@ class HermitCard extends Card {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
-	 * @param {import('../../../types/pick-process').PickedCardsInfo} pickedCards
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 * @returns {Array<AttackModel>}
 	 */
-	getAttacks(game, instance, hermitAttackType, pickedCards) {
+	getAttacks(game, instance, hermitAttackType, pickedSlots) {
 		const pos = getCardPos(game, instance)
-		if (!pos || !pos.rowIndex || !pos.rowState) return []
-		if (!pos.rowState.hermitCard) return []
+		if (!pos || !pos.rowState.hermitCard) return []
 
 		const {opponentPlayer} = game.ds
-		const opponentActiveIndex = opponentPlayer.board.activeRow
-		if (!opponentActiveIndex) return []
+		const targetIndex = opponentPlayer.board.activeRow
+		if (targetIndex === null) return []
 
-		const targetRow = opponentPlayer.board.rows[opponentActiveIndex]
+		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return []
 
 		// Create an attack with default damage
 		const attack = new AttackModel({
+			id: this.getInstanceKey(instance),
 			attacker: {
 				index: pos.rowIndex,
 				row: pos.rowState,
 			},
 			target: {
-				index: opponentActiveIndex,
+				index: targetIndex,
 				row: targetRow,
 			},
 			type: hermitAttackType,
@@ -88,10 +88,10 @@ class HermitCard extends Card {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slotType !== 'hermit') return false
-		if (pos.playerId !== currentPlayer.id) return false
+		if (pos.slot.type !== 'hermit') return 'NO'
+		if (pos.playerId !== currentPlayer.id) return 'NO'
 
-		return true
+		return 'YES'
 	}
 
 	/**

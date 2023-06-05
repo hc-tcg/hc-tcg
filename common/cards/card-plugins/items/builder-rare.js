@@ -9,8 +9,6 @@ class BuilderRareItemCard extends ItemCard {
 			hermitType: 'builder',
 		})
 	}
-
-	register(game) {}
 }
 
 export default BuilderRareItemCard

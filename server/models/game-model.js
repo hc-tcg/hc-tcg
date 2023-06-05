@@ -165,8 +165,12 @@ export class GameModel {
 			reason: null,
 		}
 
-		/** @type {*} */
-		this._turnStateCache = null
+		/** @type {TurnState} */
+		this.turnState = {
+			availableActions: [],
+			opponentAvailableActions: [],
+			pastTurnActions: [],
+		}
 	}
 
 	// methods for clarity in game code

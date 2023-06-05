@@ -22,8 +22,6 @@ class PearlescentMoonCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default PearlescentMoonCommonHermitCard

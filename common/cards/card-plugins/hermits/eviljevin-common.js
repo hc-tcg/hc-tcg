@@ -23,6 +23,7 @@ class EvilJevinCommonHermitCard extends HermitCard {
 		})
 	}
 
+
 	register(game) {}
 
 	getExpansion() {

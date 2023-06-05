@@ -9,8 +9,6 @@ class PranksterRareItemCard extends ItemCard {
 			hermitType: 'prankster',
 		})
 	}
-
-	register(game) {}
 }
 
 export default PranksterRareItemCard

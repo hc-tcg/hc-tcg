@@ -9,8 +9,6 @@ class FarmCommonItemCard extends ItemCard {
 			hermitType: 'farm',
 		})
 	}
-
-	register(game) {}
 }
 
 export default FarmCommonItemCard

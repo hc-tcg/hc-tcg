@@ -21,38 +21,44 @@ class EthosLabRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a Coin.\n\nIf heads, this attack also BURNs the opponent. Does an additional +20HP damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the BURN.',
+					'Flip a coin. If heads, the opposing Hermit is now burned.\n\nBurn does an additional 20hp damage at the end of your turns.\n\nGoing AFK does not eliminate the burn.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			if (moveRef.hermitCard.cardId !== this.id) return target
 			const coinFlip = flipCoin(currentPlayer)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'heads') {
-				const hasWaterBucket = target.row.effectCard?.cardId === 'water_bucket'
-				const hasDamageEffect = target.row.ailments.some((a) =>
-					['fire', 'poison'].includes(a.id)
-				)
-				if (!hasWaterBucket && !hasDamageEffect) {
-					target.row.ailments.push({id: 'fire', duration: -1})
-				}
-			}
+			if (coinFlip[0] !== 'heads') return
 
-			return target
-		})
+			const hasDamageEffect = attack.target.row.ailments.some(
+				(a) => a.id === 'fire' || a.id === 'poison'
+			)
+			if (!hasDamageEffect) {
+				attack.target.row.ailments.push({id: 'fire', duration: -1})
+			}
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 

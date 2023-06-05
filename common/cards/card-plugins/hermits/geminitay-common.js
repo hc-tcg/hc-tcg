@@ -22,8 +22,6 @@ class GeminiTayCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default GeminiTayCommonHermitCard

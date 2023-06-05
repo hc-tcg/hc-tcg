@@ -2,7 +2,7 @@ import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
 import {MessageInfoT} from './chat'
-import {PickProcessT, PickedCardsInfo} from './pick-process'
+import {PickProcessT, PickedSlotsInfo} from './pick-process'
 
 export type PlayerId = string
 
@@ -39,6 +39,11 @@ export type RowStateWithoutHermit = {
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
+export type RowInfo = {
+	index: number
+	row: RowStateWithHermit
+}
+
 export type CoinFlipT = 'heads' | 'tails'
 
 export type CurrentCoinFlipT = {
@@ -67,21 +72,42 @@ export type PlayerState = {
 	}
 
 	hooks: {
+		/** Instance key -> hook that modifies blockedActions */
+		blockedActions: Record<
+			string,
+			(blockedActions: AvailableActionsT) => AvailableActionsT
+		>
+		/** Instance key -> hook that modifies availableActions */
 		availableActions: Record<
 			string,
 			(availableActions: AvailableActionsT) => AvailableActionsT
 		>
 
-		getAttacks: Record<string, () => Array<AttackModel>>
+		/** Instance key -> hook called whenver any card is attached */
+		onAttach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver any card is detached */
+		onDetach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver a single use card is applied */
+		onApply: Record<string, (instance: string) => void>
 
+		/** Instance key -> hook that returns attacks */
+		getAttacks: Record<
+			string,
+			(pickedSlots: PickedSlotsInfo) => Array<AttackModel>
+		>
+		/** Instance key -> hook that modifies an attack before the main attack loop */
 		beforeAttack: Record<string, (attack: AttackModel) => void>
+		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,
-			(attack: AttackModel, pickedCards: PickedCardsInfo) => void
+			(attack: AttackModel, pickedSlots: PickedSlotsInfo) => void
 		>
+		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>
 
+		/** Instance key -> hook called at the start of the turn */
 		turnStart: Record<string, () => void>
+		/** Instance key -> hook called at the end of the turn */
 		turnEnd: Record<string, () => void>
 	}
 }

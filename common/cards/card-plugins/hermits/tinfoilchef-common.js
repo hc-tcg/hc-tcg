@@ -22,8 +22,6 @@ class TinFoilChefCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default TinFoilChefCommonHermitCard

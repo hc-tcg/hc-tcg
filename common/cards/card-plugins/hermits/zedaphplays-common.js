@@ -22,8 +22,6 @@ class ZedaphPlaysCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default ZedaphPlaysCommonHermitCard

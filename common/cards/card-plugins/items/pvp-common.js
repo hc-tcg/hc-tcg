@@ -9,8 +9,6 @@ class PvPCommonItemCard extends ItemCard {
 			hermitType: 'pvp',
 		})
 	}
-
-	register(game) {}
 }
 
 export default PvPCommonItemCard

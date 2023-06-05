@@ -22,8 +22,6 @@ class GoodTimesWithScarCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default GoodTimesWithScarCommonHermitCard

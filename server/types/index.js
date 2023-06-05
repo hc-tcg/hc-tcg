@@ -6,14 +6,13 @@
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
  * @typedef {import('common/types/game-state').RowStateWithoutHermit} RowStateWithoutHermit
  * @typedef {import('common/cards/card-plugins/hermits/_hermit-card')} HermitCard
- * @typedef {import('common/types/pick-process').BoardPickedCardT} BoardPickedCardT
- * @typedef {import('common/types/pick-process').HandPickedCardT} HandPickedCardT
  */
 
 /**
  * @typedef {Object} TurnAction
  * @property {Object} payload
  * @property {string} playerId
+ * @property {string} type
  */
 
 /**
@@ -25,7 +24,7 @@
 
 /**
  * @typedef {Object} ActionStateProperties
- * @property {import('common/types/pick-process').PickedCardsInfo} pickedCardsInfo
+ * @property {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
  * @typedef {TurnState & ActionStateProperties} ActionState
  */
 
@@ -91,5 +90,4 @@
 
 /**
  * @typedef {import('common/types/cards').CardTypeT} CardTypeT
- * @typedef {import('common/types/cards').CardPos} CardPos
  */

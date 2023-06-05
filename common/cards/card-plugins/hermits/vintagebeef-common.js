@@ -22,8 +22,6 @@ class VintageBeefCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default VintageBeefCommonHermitCard

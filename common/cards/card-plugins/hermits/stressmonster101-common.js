@@ -22,8 +22,6 @@ class StressMonster101CommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default StressMonster101CommonHermitCard

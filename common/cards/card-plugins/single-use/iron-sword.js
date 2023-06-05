@@ -22,14 +22,20 @@ class IronSwordSingleUseCard extends SingleUseCard {
 		const {currentPlayer, opponentPlayer} = game.ds
 
 		currentPlayer.hooks.getAttacks[instance] = () => {
-			const index = opponentPlayer.board.activeRow
+			const index = currentPlayer.board.activeRow
 			if (!index) return []
-			const row = opponentPlayer.board.rows[index]
+			const row = currentPlayer.board.rows[index]
 			if (!row || !row.hermitCard) return []
+
+			const opponentIndex = opponentPlayer.board.activeRow
+			if (!opponentIndex) return []
+			const opponentRow = opponentPlayer.board.rows[opponentIndex]
+			if (!opponentRow || !opponentRow.hermitCard) return []
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {index, row},
+				attacker: {index, row},
+				target: {index: opponentIndex, row: opponentRow},
 				type: 'effect',
 			}).addDamage(20)
 

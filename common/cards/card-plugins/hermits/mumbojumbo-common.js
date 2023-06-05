@@ -22,8 +22,6 @@ class MumboJumboCommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default MumboJumboCommonHermitCard

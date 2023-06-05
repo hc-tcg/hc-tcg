@@ -1,6 +1,7 @@
 import CARDS, {HERMIT_CARDS} from '../../../common/cards'
 import {GameModel} from '../../models/game-model'
 import {equalCard} from '../../utils'
+import {getCardAtPos, getCardPos} from '../../utils/cards'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -25,15 +26,22 @@ function* playCardSaga(game, turnAction, actionState) {
 		return 'INVALID'
 
 	// @TODO - PLAY_CARD should probably be using CardPos
+	/** @type {import('../../../common/types/cards').CardPos} */
 	const pos = {
 		playerId,
 		playerState: game.state.players[playerId],
 		rowIndex,
 		rowState: game.state.players[playerId].board.rows[rowIndex],
-		slotType,
+		slot: {type: slotType, index: slotIndex || 0},
 	}
 
-	if (!cardInfo.canAttach(game, pos)) return 'INVALID'
+	// Can't attach if card is already there
+	if (getCardAtPos(game, pos)) return
+
+	// Do we meet requirements of card
+	const canAttach = cardInfo.canAttach(game, pos)
+	if (canAttach === 'NO') return
+	if (canAttach === 'INVALID') return 'INVALID'
 
 	const player = game.state.players[playerId]
 	if (!player) return 'INVALID'
@@ -91,7 +99,11 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	cardInfo.onAttach(game, card.cardInstance)
 
-	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
+	// Call onAttach hook
+	const onAttachs = Object.values(currentPlayer.hooks.onAttach)
+	for (let i = 0; i < onAttachs.length; i++) {
+		onAttachs[i](card.cardInstance)
+	}
 
 	return 'DONE'
 }

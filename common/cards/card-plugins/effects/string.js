@@ -14,20 +14,19 @@ class StringEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 * @returns {boolean}
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {opponentPlayer} = game.ds
 
 		// attach to effect or item slot
-		if (pos.slotType !== 'effect' && pos.slotType !== 'item') return false
+		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'NO'
 
 		// can only attach to opponent
-		if (pos.playerId !== opponentPlayer.id) return false
+		if (pos.playerId !== opponentPlayer.id) return 'NO'
 
 		// we don't care if there's a hermit there or not
-		return true
+		return 'YES'
 	}
 }
 

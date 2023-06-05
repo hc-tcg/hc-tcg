@@ -22,8 +22,6 @@ class Cubfan135CommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default Cubfan135CommonHermitCard

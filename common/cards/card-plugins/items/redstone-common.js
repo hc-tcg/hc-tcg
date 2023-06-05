@@ -9,8 +9,6 @@ class RedstoneCommonItemCard extends ItemCard {
 			hermitType: 'redstone',
 		})
 	}
-
-	register(game) {}
 }
 
 export default RedstoneCommonItemCard

@@ -22,8 +22,6 @@ class Iskall85CommonHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	register(game) {}
 }
 
 export default Iskall85CommonHermitCard

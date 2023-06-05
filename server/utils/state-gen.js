@@ -207,7 +207,12 @@ export function getPlayerState(player) {
 		},
 
 		hooks: {
+			blockedActions: {},
 			availableActions: {},
+
+			onAttach: {},
+			onDetach: {},
+			onApply: {},
 
 			getAttacks: {},
 

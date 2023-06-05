@@ -9,8 +9,6 @@ class MinerCommonItemCard extends ItemCard {
 			hermitType: 'miner',
 		})
 	}
-
-	register(game) {}
 }
 
 export default MinerCommonItemCard
