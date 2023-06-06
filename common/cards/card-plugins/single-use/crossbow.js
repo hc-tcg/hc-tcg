@@ -19,7 +19,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: ['hermit'], amount: 1, active: true},
 		])
 	}
 
@@ -29,7 +29,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedCardsInfo} = attackState
+			const {pickedSlotsInfo} = attackState
 			if (singleUseInfo?.id !== this.id) return target
 			if (target.isActive) {
 				target.extraEffectDamage += this.damage.target
@@ -37,7 +37,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			}
 
 			// only attack selected afk target
-			const crossbowPickedCards = pickedCardsInfo[this.id] || []
+			const crossbowPickedCards = pickedSlotsInfo[this.id] || []
 			if (crossbowPickedCards.length !== 1) return target
 			const pickedHermit = crossbowPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target

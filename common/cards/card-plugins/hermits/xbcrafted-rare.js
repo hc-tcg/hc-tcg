@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
+import {getCardPos} from '../../../../server/utils/cards'
 
 /*
 Combination of Totem + Scars ability can be tricky here to get right
@@ -23,25 +24,44 @@ class XBCraftedRareHermitCard extends HermitCard {
 				name: 'Noice!',
 				cost: ['explorer', 'any'],
 				damage: 70,
-				power: 'Noice! ignores any effect cards attached to opposing Hermit.',
+				power: 'Ignore any effect card attached to opponent.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {moveRef, typeAction} = attackState
+	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
+		const attacks = super.getAttacks(
+			game,
+			instance,
+			pos,
+			hermitAttackType,
+			pickedSlots
+		)
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		if (attacks[0].type === 'secondary') {
+			// Noice attack, ignore target effect card
+			attacks[0].shouldIgnoreCards.push((instance) => {
+				const pos = getCardPos(game, instance)
+				if (!pos) return false
 
-			target.ignoreEffects = true
-			return target
-		})
+				const onTargetRow = pos.rowIndex === attacks[0].target.index
+				if (onTargetRow && pos.slot.type === 'effect') {
+					// It's the targets effect card, ignore it
+					return true
+				}
+
+				return false
+			})
+		}
+
+		return attacks
 	}
 }
 
