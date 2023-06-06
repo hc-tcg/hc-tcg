@@ -7,6 +7,7 @@ import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse, discardCard} from '../../utils'
+import {getCardPos} from '../../utils/cards'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -26,21 +27,24 @@ export const WEAKNESS_DAMAGE = 20
 /**
  *
  * @param {GameModel} game
- * @param {RowStateWithHermit} attackRow
+ * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
  * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
  * @returns {Array<AttackModel>}
  */
-function getAttacks(game, attackRow, hermitAttackType, pickedSlots) {
+function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	const {currentPlayer} = game.ds
 	const attacks = []
 
+	if (!attackPos.row || !attackPos.row.hermitCard) return []
+
 	// hermit attacks
-	const hermitCard = HERMIT_CARDS[attackRow.hermitCard.cardId]
+	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
 	attacks.push(
 		...hermitCard.getAttacks(
 			game,
-			attackRow.hermitCard.cardInstance,
+			attackPos.row.hermitCard.cardInstance,
+			attackPos,
 			hermitAttackType,
 			pickedSlots
 		)
@@ -137,6 +141,8 @@ function* attackSaga(game, turnAction, actionState) {
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'INVALID'
+	const attackPos = getCardPos(game, attackRow.hermitCard.cardInstance)
+	if (!attackPos) return 'INVALID'
 
 	// Defender
 	const opponentBoard = opponentPlayer.board
@@ -148,7 +154,7 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackRow, hermitAttackType, pickedSlotsInfo)
+	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlotsInfo)
 
 	console.log('We got', attacks.length, 'attacks')
 

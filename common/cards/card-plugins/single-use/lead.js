@@ -24,16 +24,25 @@ class LeadSingleUseCard extends SingleUseCard {
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
 			{target: 'opponent', type: ['item'], amount: 1, active: true},
-			{target: 'opponent', type: ['item'], amount: 1, empty: true, active: false},
+			{
+				target: 'opponent',
+				type: ['item'],
+				amount: 1,
+				empty: true,
+				active: false,
+			},
 		])
 	}
+
+	// @TODO waiting on new pickedSlot types
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
 	 */
-	onApply(game, instance, pickedSlotsInfo) {
+	onApply(game, instance, pos, pickedSlotsInfo) {
 		const {singleUseInfo} = game.ds
 		if (singleUseInfo?.id !== this.id) return false
 

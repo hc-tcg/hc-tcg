@@ -73,6 +73,8 @@ export function applySingleUse(game, pickedSlotsInfo = {}) {
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return false
+	const pos = getCardPos(game, suCard.cardInstance)
+	if (!pos) return false
 
 	if (!singleUseInfo) return false
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
@@ -83,7 +85,7 @@ export function applySingleUse(game, pickedSlotsInfo = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pickedSlotsInfo)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlotsInfo)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -134,17 +136,18 @@ export function findCard(gameState, card) {
 export function discardCard(game, card) {
 	if (!card) return
 	const loc = findCard(game.state, card)
-	if (!loc) {
+	const pos = getCardPos(game, card.cardInstance)
+	if (!loc || !pos) {
 		const err = new Error()
 		console.log('Cannot find card: ', card, err.stack)
 		return
 	}
 
 	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance)
+	cardInfo.onDetach(game, card.cardInstance, pos)
 
 	// Call onDetach hook
-	const player = getCardPos(game, card.cardInstance)?.playerState
+	const player = getCardPos(game, card.cardInstance)?.player
 	if (player) {
 		const onDetachs = Object.values(player.hooks.onAttach)
 		for (let i = 0; i < onDetachs.length; i++) {
@@ -171,9 +174,11 @@ export function discardSingleUse(game, playerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
+	const pos = getCardPos(game, suCard.cardInstance)
+	if (!pos) return
 
 	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
-	cardInfo.onDetach(game, suCard.cardInstance)
+	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
 	const onDetachs = Object.values(playerState.hooks.onAttach)

@@ -31,30 +31,33 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player)
+			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 
-			const drawCard = currentPlayer.pile.shift()
-			if (drawCard) currentPlayer.hand.push(drawCard)
+			const drawCard = player.pile.shift()
+			if (drawCard) player.hand.push(drawCard)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
-		delete currentPlayer.hooks.onAttack[instance]
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 }
 
