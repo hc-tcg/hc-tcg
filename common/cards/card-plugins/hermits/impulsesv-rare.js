@@ -28,20 +28,21 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
 			)
 				return
-			const boomerAmount = currentPlayer.board.rows.filter(
+			const boomerAmount = player.board.rows.filter(
 				(row, index) =>
 					row.hermitCard &&
-					index !== currentPlayer.board.activeRow &&
+					index !== player.board.activeRow &&
 					[
 						'bdoubleo100_common',
 						'bdoubleo100_rare',
@@ -57,11 +58,12 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 
