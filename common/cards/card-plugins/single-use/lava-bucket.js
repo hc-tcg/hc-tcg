@@ -17,20 +17,25 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('./_single-use-card').PickedCardsInfo} pickedCards
+	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 */
-	onApply(game, instance, pickedCards) {
-		const {singleUseInfo, opponentActiveRow} = game.ds
-		if (singleUseInfo?.id === this.id) {
-			if (opponentActiveRow === null) return 'INVALID'
-			const hasDamageEffect = opponentActiveRow.ailments.some((a) =>
-				['fire', 'poison'].includes(a.id)
-			)
-			if (!hasDamageEffect) {
-				opponentActiveRow.ailments.push({id: 'fire', duration: -1})
-			}
-			return 'DONE'
+	onApply(game, instance, pos, pickedSlots) {
+		const opponentActiveRow = pos.otherPlayer.board.activeRow
+		if (opponentActiveRow === null) return 'INVALID'
+
+		const hasDamageEffect = pos.otherPlayer.board.rows[
+			opponentActiveRow
+		].ailments.some((ailment) => {
+			return ailment.id === 'fire' || ailment.id === 'poison'
+		})
+		if (!hasDamageEffect) {
+			pos.otherPlayer.board.rows[opponentActiveRow].ailments.push({
+				id: 'fire',
+				duration: -1,
+			})
 		}
+		return 'DONE'
 	}
 }
 
