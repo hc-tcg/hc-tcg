@@ -20,33 +20,48 @@ class ImpulseSVRareHermitCard extends HermitCard {
 				cost: ['redstone', 'any'],
 				damage: 70,
 				power:
-					'Does an additional +40HP damage for every other AFK Boomer (Bdubs, Tango) up to a maximum of +80HP damage.',
+					'For each of your AFK Bdubs or Tangos, add an additional 40hp damage up to a maximum of 80hp damage.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {condRef, moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
+			const boomerAmount = currentPlayer.board.rows.filter(
+				(row, index) =>
+					row.hermitCard &&
+					index !== currentPlayer.board.activeRow &&
+					[
+						'bdoubleo100_common',
+						'bdoubleo100_rare',
+						'tangotek_common',
+						'tangotek_rare',
+					].includes(row.hermitCard.cardId)
+			).length
 
-			const boomerRows = condRef.player.board.rows.filter((row) => {
-				const isBdubs = row.hermitCard?.cardId.startsWith('bdoubleo100')
-				const isTango = row.hermitCard?.cardId.startsWith('tangotek')
-				return isBdubs || isTango
-			})
-			const total = Math.min(boomerRows.length, 2)
-			target.extraHermitDamage += total * 40
+			attack.addDamage(Math.min(boomerAmount, 2) * 40)
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
