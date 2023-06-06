@@ -23,7 +23,7 @@ class ItemCard extends Card {
 		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit
-		if (!pos.rowState?.hermitCard) return 'NO'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
 	}
