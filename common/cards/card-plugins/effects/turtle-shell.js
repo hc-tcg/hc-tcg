@@ -1,6 +1,5 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
-import {getCardPos} from '../../../../server/utils/cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 /*
@@ -52,7 +51,7 @@ class TurtleShellEffectCard extends EffectCard {
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
-		if (!pos.rowState?.hermitCard) return 'NO'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		// turtle shell addition - hermit must be inactive to attach
 		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'NO'
@@ -63,34 +62,36 @@ class TurtleShellEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../_card').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer, opponentPlayer} = game.ds
-
+	onAttach(game, instance, pos) {
 		const instanceKey = this.getKey(instance)
-		currentPlayer.custom[instanceKey] = false
+		pos.player.custom[instanceKey] = false
 
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (currentPlayer.custom[instanceKey] === true) {
+		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
+			if (
+				pos.player.custom[instanceKey] === true &&
+				attack.target.row.effectCard?.cardInstance === instance
+			) {
 				attack.multiplyDamage(0).lockDamage()
 			}
 			return attack
 		}
 
-		opponentPlayer.hooks.afterAttack[instance] = () => {
-			if (currentPlayer.custom[instanceKey] === true) {
+		pos.otherPlayer.hooks.afterAttack[instance] = () => {
+			if (pos.player.custom[instanceKey] === true) {
 				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
 		}
 
-		opponentPlayer.hooks.turnStart[instance] = () => {
-			if (currentPlayer.board.activeRow === null) return
+		pos.otherPlayer.hooks.turnStart[instance] = () => {
+			if (pos.player.board.activeRow === null) return
 			if (
 				instance ===
-				currentPlayer.board.rows[currentPlayer.board.activeRow].effectCard
+				pos.player.board.rows[pos.player.board.activeRow].effectCard
 					?.cardInstance
 			) {
-				currentPlayer.custom[instanceKey] = true
+				pos.player.custom[instanceKey] = true
 			}
 		}
 	}
@@ -99,14 +100,13 @@ class TurtleShellEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../_card').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {opponentPlayer, currentPlayer} = game.ds
-
-		delete opponentPlayer.custom[this.getInstanceKey(instance)]
-		delete currentPlayer.hooks.onAttack[instance]
-		delete currentPlayer.hooks.afterAttack[instance]
-		delete currentPlayer.hooks.turnStart[instance]
+	onDetach(game, instance, pos) {
+		delete pos.player.custom[this.getInstanceKey(instance)]
+		delete pos.otherPlayer.hooks.onAttack[instance]
+		delete pos.otherPlayer.hooks.afterAttack[instance]
+		delete pos.otherPlayer.hooks.turnStart[instance]
 	}
 }
 
