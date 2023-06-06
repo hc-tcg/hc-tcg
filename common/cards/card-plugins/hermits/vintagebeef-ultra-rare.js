@@ -30,22 +30,22 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
 			)
 				return
-			const hasBdubs = currentPlayer.board.rows.some((row) =>
+			const hasBdubs = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('bdoubleo100')
 			)
-			const hasDoc = currentPlayer.board.rows.some((row) =>
+			const hasDoc = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('docm77')
 			)
-			const hasEtho = currentPlayer.board.rows.some((row) =>
+			const hasEtho = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('ethoslab')
 			)
 			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(2)
