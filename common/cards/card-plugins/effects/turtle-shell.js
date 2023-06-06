@@ -62,7 +62,7 @@ class TurtleShellEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../_card').CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const instanceKey = this.getKey(instance)
@@ -100,7 +100,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../_card').CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.player.custom[this.getInstanceKey(instance)]
