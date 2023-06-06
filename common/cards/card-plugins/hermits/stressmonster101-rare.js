@@ -28,11 +28,12 @@ class StressMonster101RareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
@@ -41,9 +42,9 @@ class StressMonster101RareHermitCard extends HermitCard {
 			if (!attack.attacker) return
 
 			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
-				attacker: {index: attack.attacker.index, row: attack.attacker.row},
-				target: {index: attack.attacker.index, row: attack.attacker.row},
+				id: this.getInstanceKey(instance, 'selfAttack'),
+				attacker: attack.attacker,
+				target: attack.target,
 				type: 'backlash',
 			})
 			const attackDamage = attack.attacker.row.health
@@ -57,11 +58,12 @@ class StressMonster101RareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 
