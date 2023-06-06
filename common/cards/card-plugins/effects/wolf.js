@@ -1,7 +1,6 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {getCardPos} from '../../../../server/utils/cards'
 
 class WolfEffectCard extends EffectCard {
 	constructor() {
