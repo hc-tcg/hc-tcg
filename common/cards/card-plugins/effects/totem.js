@@ -1,5 +1,4 @@
 import EffectCard from './_effect-card'
-import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 class TotemEffectCard extends EffectCard {
@@ -9,30 +8,36 @@ class TotemEffectCard extends EffectCard {
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:
-				'Player recovers +10hp after being knocked out and remains in battle.\n\nDiscard when applied.',
+				'Recover 10hp and remain in battle after you are knocked out.\nDoes not count as a knockout. Discard after use.',
 		})
-		this.recoverAmount = 10
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		// attacks
-		game.hooks.attack.tap(this.id, (target) => {
-			if (target.effectCardId === this.id) {
-				target.recovery.push({amount: this.recoverAmount, discardEffect: true})
-			}
-			return target
-		})
-
+	onAttach(game, instance, pos) {
 		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
-			const {row} = deathInfo
-			const hasTotem = row.effectCard?.cardId === this.id
-			if (!hasTotem) return recovery
-			recovery.push({amount: this.recoverAmount, discardEffect: true})
+			if (deathInfo.row.effectCard?.cardInstance === instance) {
+				recovery.push({
+					amount: 10,
+					discardEffect: true,
+				})
+			}
 			return recovery
 		})
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		delete currentPlayer.hooks.afterAttack[instance]
 	}
 }
 
