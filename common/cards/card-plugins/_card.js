@@ -64,9 +64,10 @@ class Card {
 	/**
 	 * Called when an instance of this card is attached to the board
 	 * @param {GameModel} game
-	 * @param {string} instance The card instance attached
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	onAttach(game, instance) {
+	onAttach(game, instance, pos) {
 		// default is do nothing
 	}
 
@@ -76,14 +77,15 @@ class Card {
 	 */
 	getExpansion() {
 		return 'default'
-  }
-    
-   /*
+	}
+
+	/**
 	 * Called when an instance of this card is removed from the board
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	onDetach(game, instance) {
+	onDetach(game, instance, pos) {
 		// default is do nothing
 	}
 
