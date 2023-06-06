@@ -1,7 +1,6 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 class StressMonster101RareHermitCard extends HermitCard {
 	constructor() {
@@ -21,29 +20,48 @@ class StressMonster101RareHermitCard extends HermitCard {
 				name: 'Yolo',
 				cost: ['prankster', 'prankster', 'prankster'],
 				damage: 0,
-				power:
-					'This attack instantly knocks out opposing Hermit as well as the player.',
+				power: 'You and opponent take damage equal to your health.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {playerActiveRow, opponentActiveRow} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance) {
+		const {currentPlayer} = game.ds
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			if (!playerActiveRow || !opponentActiveRow) return target
+		currentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
+			if (!attack.attacker) return
 
-			playerActiveRow.health = 0
-			opponentActiveRow.health = 0
-			return target
-		})
+			const backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'attack'),
+				attacker: {index: attack.attacker.index, row: attack.attacker.row},
+				target: {index: attack.attacker.index, row: attack.attacker.row},
+				type: 'backlash',
+			})
+			const attackDamage = attack.attacker.row.health
+			attack.addDamage(attackDamage)
+			backlashAttack.addDamage(attackDamage)
+
+			attack.addNewAttack(backlashAttack)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
