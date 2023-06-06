@@ -21,6 +21,8 @@ function* playCardSaga(game, turnAction, actionState) {
 	const {card, rowHermitCard, rowIndex, slotIndex, slotType, playerId} =
 		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== playerId)
+	if (!opponentPlayerId) return
 
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'
@@ -29,14 +31,16 @@ function* playCardSaga(game, turnAction, actionState) {
 	/** @type {import('../../../common/types/cards').CardPos} */
 	const pos = {
 		playerId,
-		playerState: game.state.players[playerId],
+		player: game.state.players[playerId],
+		otherPlayerId: opponentPlayerId,
+		otherPlayer: game.state.players[opponentPlayerId],
 		rowIndex,
-		rowState: game.state.players[playerId].board.rows[rowIndex],
+		row: game.state.players[playerId].board.rows[rowIndex],
 		slot: {type: slotType, index: slotIndex || 0},
 	}
 
 	// Can't attach if card is already there
-	if (getCardAtPos(game, pos)) return
+	if (getCardAtPos(game, pos) !== null) return
 
 	// Do we meet requirements of card
 	const canAttach = cardInfo.canAttach(game, pos)
@@ -102,7 +106,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		(handCard) => !equalCard(handCard, card)
 	)
 
-	cardInfo.onAttach(game, card.cardInstance)
+	cardInfo.onAttach(game, card.cardInstance, pos)
 
 	// Call onAttach hook
 	const onAttachs = Object.values(currentPlayer.hooks.onAttach)

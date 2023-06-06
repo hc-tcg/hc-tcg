@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["geminitay_rare", "iron_sword", "iron_sword"],
-	"noItemRequirements": true,
+	"extraStartingCards": [],
+	"noItemRequirements": false,
 	"forceCoinFlip": false
 }

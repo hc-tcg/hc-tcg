@@ -17,40 +17,26 @@ class IronArmorEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {opponentPlayer} = game.ds
-		const pos = getCardPos(game, instance)
-		if (!pos) return
+	onAttach(game, instance, pos) {
+		const {otherPlayer} = pos
 
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+		otherPlayer.hooks.onAttack[instance] = (attack) => {
 			if (attack.target.index !== pos.rowIndex) return
 
-			// reduce damage here
+			attack.reduceDamage(20)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {opponentPlayer} = game.ds
-		delete opponentPlayer.hooks.onAttack[instance]
-	}
-
-	/**
-	 *
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {AttackModel} attack
-	 */
-	onDefence(game, instance, attack) {
-		if (['primary', 'secondary', 'zero'].includes(attack.type)) {
-			attack.defence.damageReduction += 20
-		}
-
-		return attack
+	onDetach(game, instance, pos) {
+		const {otherPlayer} = pos
+		delete otherPlayer.hooks.onAttack[instance]
 	}
 }
 

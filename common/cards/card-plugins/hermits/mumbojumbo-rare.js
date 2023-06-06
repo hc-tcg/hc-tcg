@@ -33,25 +33,26 @@ class MumboJumboRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
 			)
 				return
 
-			const coinFlip = flipCoin(currentPlayer, 2)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player, 2)
+			player.coinFlips[this.id] = coinFlip
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			const pranksterAmount = currentPlayer.board.rows.filter(
+			const pranksterAmount = player.board.rows.filter(
 				(row, index) =>
 					row.hermitCard &&
-					index !== currentPlayer.board.activeRow &&
+					index !== player.board.activeRow &&
 					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 			).length
 
@@ -63,11 +64,12 @@ class MumboJumboRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 
