@@ -54,9 +54,10 @@ class SingleUseCard extends Card {
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {CardPos} pos
 	 * @param {PickedSlotsInfo} pickedSlots
 	 */
-	onApply(game, instance, pickedSlots) {
+	onApply(game, instance, pos, pickedSlots) {
 		// default is do nothing
 	}
 }

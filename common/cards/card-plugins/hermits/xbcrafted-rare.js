@@ -32,13 +32,15 @@ class XBCraftedRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
 	 */
-	getAttacks(game, instance, hermitAttackType, pickedSlots) {
+	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
 		const attacks = super.getAttacks(
 			game,
 			instance,
+			pos,
 			hermitAttackType,
 			pickedSlots
 		)

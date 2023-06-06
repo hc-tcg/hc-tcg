@@ -31,7 +31,7 @@ class BedEffectCard extends EffectCard {
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.playerId !== currentPlayer.id) return 'INVALID'
-		if (!pos.rowState?.hermitCard) return 'NO'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		// bed addition - hermit must also be active to attach
 		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'
@@ -42,14 +42,11 @@ class BedEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
-
+	onAttach(game, instance, pos) {
 		// Give the current row sleeping for 3 turns
-		const pos = getCardPos(game, instance)
-		if (!pos) return
-		const {rowState: row} = pos
+		const {player, row} = pos
 
 		if (row && row.hermitCard) {
 			row.health = HERMIT_CARDS[row.hermitCard.cardId].health
@@ -61,12 +58,12 @@ class BedEffectCard extends EffectCard {
 			row.ailments.push({id: 'sleeping', duration: 2})
 		}
 
-		currentPlayer.hooks.turnStart[instance] = () => {
+		player.hooks.turnStart[instance] = () => {
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
 			// if sleeping has worn off, discard the bed
 			if (!isSleeping) {
-				discardCard(game, row?.effectCard)
+				discardCard(game, row?.effectCard || null)
 			}
 		}
 	}
@@ -74,17 +71,16 @@ class BedEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
-		delete currentPlayer.hooks.turnStart[instance]
-
-		const pos = getCardPos(game, instance)
-		if (!pos) return
-		const {rowState} = pos
+	onDetach(game, instance, pos) {
+		const {player, row} = pos
+		delete player.hooks.turnStart[instance]
 
 		// Make sure there is no sleeping anymore
-		rowState.ailments = rowState.ailments.filter((a) => a.id !== 'sleeping')
+		if (row) {
+			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
+		}
 	}
 }
 
