@@ -30,18 +30,18 @@ class LlamadadRareHermitCard extends HermitCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
 			)
 				return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player)
+			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
 				attack.addDamage(40)
