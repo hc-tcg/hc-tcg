@@ -18,15 +18,11 @@ class WolfEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {opponentPlayer, currentPlayer} = game.ds
-
-		opponentPlayer.hooks.onAttack[instance] = (attack, pickedCards) => {
-			if (
-				attack.attacker &&
-				currentPlayer.board.activeRow === getCardPos(game, instance)?.rowIndex
-			) {
+	onAttach(game, instance, pos) {
+		pos.otherPlayer.hooks.onAttack[instance] = (attack, pickedCards) => {
+			if (attack.attacker && pos.player.board.activeRow === pos.rowIndex) {
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
 					target: attack.attacker,
@@ -50,10 +46,10 @@ class WolfEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {opponentPlayer} = game.ds
-		delete opponentPlayer.hooks.onAttack[instance]
+	onDetach(game, instance, pos) {
+		delete pos.otherPlayer.hooks.onAttack[instance]
 	}
 }
 
