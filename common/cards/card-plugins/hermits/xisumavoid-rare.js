@@ -21,38 +21,46 @@ class XisumavoidRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a Coin.\n\nIf heads, this attack also POISONS the opponent. Does an additional +20HP damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON.',
+					'Flip a coin. If heads, opponent is now poisoned.\n\nPoison does an additional 20hp damage on your turns.\n\nGoing AFK does not eliminate the poison.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, opponentActiveRow, opponentEffectCardInfo} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player)
+			player.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'heads') {
-				const hasMilkBucket = target.row.effectCard?.cardId === 'milk_bucket'
-				const hasDamageEffect = target.row.ailments.some((a) =>
-					['fire', 'poison'].includes(a.id)
-				)
-				if (!hasMilkBucket && !hasDamageEffect) {
-					target.row.ailments.push({id: 'poison', duration: -1})
-				}
+			if (coinFlip[0] !== 'heads') return
+
+			const hasDamageEffect = attack.target.row.ailments.some(
+				(a) => a.id === 'fire' || a.id === 'poison'
+			)
+			if (!hasDamageEffect) {
+				attack.target.row.ailments.push({id: 'poison', duration: -1})
 			}
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 }
 
