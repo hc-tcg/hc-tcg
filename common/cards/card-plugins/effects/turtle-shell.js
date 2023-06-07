@@ -63,7 +63,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const instanceKey = this.getKey(instance)
+		const instanceKey = this.getInstanceKey(instance)
 		pos.player.custom[instanceKey] = false
 
 		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
