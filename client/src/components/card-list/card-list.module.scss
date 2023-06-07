@@ -1,45 +1,32 @@
+$gap: 0;
+$speed: 250ms;
+
 .cardList {
-	display: inline-flex;
+	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	flex-flow: row wrap;
-	gap: 5px;
+	flex-flow: row nowrap;
+	height: 110px;
+	gap: $gap;
+}
 
-	&.noWrap {
-		flex-flow: row nowrap;
+.wrap {
+	flex-wrap: wrap;
+	height: unset;
+
+	svg {
+		height: 118px;
 	}
 }
 
 .card {
 	flex: 0 0 auto;
-	display: inline-block;
+	display: grid;
+	place-content: center;
 	vertical-align: middle;
-	width: 200px;
-	height: 200px;
 }
 
-.small {
-	grid-template-columns: repeat(auto-fill, 120px);
-
-	.card {
-		width: 120px;
-		height: 120px;
-	}
-}
-
-.game {
-	$size: 11vh;
-
-	grid-template-columns: repeat(auto-fill, $size);
-
-	.card {
-		height: $size;
-		width: $size;
-	}
-}
-
-.clickable {
-	transition: 0.25s transform;
+.clickable:not(:disabled) {
 	transform: scale(100%);
 
 	&:hover {
@@ -49,6 +36,54 @@
 	}
 }
 
-.disabled {
-	filter: brightness(50%);
+// React Transitions Group Animations
+.enter {
+	transition: all $speed ease-in;
+	opacity: 0;
+	width: 0;
+
+	> svg {
+		transition: all $speed ease-in;
+		filter: scale(0);
+	}
+}
+
+.enterActive {
+	transition: all $speed ease-in;
+	opacity: 1;
+	width: 100px;
+
+	> svg {
+		transition: all $speed ease-in;
+		filter: scale(100%);
+	}
+}
+
+.enterDone {
+	opacity: 1;
+}
+
+.exit {
+	transition: all $speed ease-in;
+	opacity: 1;
+	width: 100px;
+
+	> svg {
+		transition: all $speed ease-in;
+		opacity: 1;
+		filter: scale(100%);
+	}
+}
+
+.exitActive {
+	transition: all $speed ease-in;
+	opacity: 0;
+	width: 0;
+	margin-right: -$gap;
+
+	> svg {
+		transition: all $speed ease-in;
+		opacity: 0;
+		filter: scale(0);
+	}
 }

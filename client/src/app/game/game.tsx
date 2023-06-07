@@ -127,7 +127,6 @@ function Game() {
 				<div className={css.hand}>
 					<CardList
 						wrap={false}
-						size="game"
 						cards={gameState.hand}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}

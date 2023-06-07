@@ -44,7 +44,6 @@ function ChestModal({closeModal}: Props) {
 					<CardList
 						disabled={DISABLED}
 						onClick={handleSelection}
-						size="small"
 						cards={discarded}
 						selected={[selected]}
 					/>

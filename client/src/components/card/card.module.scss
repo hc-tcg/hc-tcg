@@ -1,38 +1,41 @@
-.selected {
-	outline: 3px solid rgba(50, 50, 255, 70%);
-	animation-name: selectedCardAnim;
-	animation-duration: 1.5s;
-	animation-iteration-count: infinite;
-	animation-timing-function: ease-in-out;
+.card {
+	height: 100%;
+	aspect-ratio: 1;
+	overflow: hidden;
+	font-family: BangersBold, Helvetica, serif;
+	user-select: none;
+	border: 2px solid transparent;
+
+	&:disabled {
+		filter: brightness(0.5);
+		cursor: not-allowed;
+	}
+
+	&:focus-visible {
+		outline: 4px solid white;
+		border: 2px solid black;
+		z-index: 2;
+	}
 }
 
-@keyframes selectedCardAnim {
-	0% {
-		transform: translate(0, 0);
-	}
-
-	50% {
-		transform: translate(0, -5px);
-	}
-
-	100% {
-		transform: translate(0, 0);
+.selected {
+	&:not(:disabled) {
+		outline: 3px solid hsl(192deg, 56%, 58%);
+		filter: drop-shadow(0 0 8px hsla(181deg, 56%, 58%, 100%));
+		animation: selectedCard 1500ms ease-in-out infinite alternate;
 	}
 }
 
 .picked {
-	outline: 3px dashed rgba(50, 50, 255, 70%);
+	outline: 3px dashed hsla(192deg, 56%, 58%, 70%);
 }
 
-.card {
-	/* height: 9em;
-	width: 9em; */
-	height: 100%;
-	overflow: hidden;
-	font-family: BangersBold, Helvetica, serif;
-	user-select: none;
-}
+@keyframes selectedCard {
+	from {
+		transform: translateY(0);
+	}
 
-.selectable {
-	cursor: pointer;
+	to {
+		transform: translateY(-5px);
+	}
 }

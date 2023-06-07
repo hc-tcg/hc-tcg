@@ -21,7 +21,7 @@ function DiscardedModal({closeModal}: Props) {
 		<Modal title="Discarded" closeModal={handleClose}>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
-					<CardList size="small" cards={discarded} />
+					<CardList cards={discarded} />
 				</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleClose}>
