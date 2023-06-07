@@ -37,8 +37,6 @@ class TurtleShellEffectCard extends EffectCard {
 			description:
 				'Attach to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
 		})
-
-		this.instances = {}
 	}
 
 	/**
@@ -84,7 +82,7 @@ class TurtleShellEffectCard extends EffectCard {
 			}
 		}
 
-		pos.otherPlayer.hooks.turnStart[instance] = () => {
+		pos.otherPlayer.hooks.beforeAttack[instance] = () => {
 			if (pos.player.board.activeRow === null) return
 			if (
 				instance ===
