@@ -1,4 +1,5 @@
 import Card from '../cards/card-plugins/_card'
+import { Slot } from './cards'
 import {CardT, RowState} from './game-state'
 
 export type SlotTypeT =
@@ -9,57 +10,45 @@ export type SlotTypeT =
 	| 'hand'
 	| 'single_use'
 
+export type SlotInfo = {
+	type: SlotTypeT
+	index: number
+	card: CardT | null
+	info: Card | null
+}
+
+export type RowInfo = {
+	index: number
+	state: RowState
+}
+
 export type PickRequirmentT = {
 	target: 'player' | 'opponent' | 'board' | 'hand'
-	type: SlotTypeT | 'any'
+	type: Array<SlotTypeT>
 	amount: number
 	empty?: boolean
 	active?: boolean
 	breakIf?: Array<'active' | 'efficiency'>
 	removable?: boolean
+	adjacent?: 'req' | 'active'
 }
 
-export type BoardPickedCardT = {
-	slotType: 'item' | 'hermit' | 'effect' | 'health'
-	card: CardT | null
-	playerId: string
-	rowIndex: number
-	slotIndex: number
-	rowHermitCard: CardT | null
-}
-
-export type HandPickedCardT = {
-	slotType: 'hand' | 'single_use'
-	card: CardT | null
+export type PickedSlotT = {
+	slot: SlotInfo
+	row?: RowInfo
 	playerId: string
 }
-
-export type PickedCardT = BoardPickedCardT | HandPickedCardT
 
 export type PickProcessT = {
 	name: string
 	requirments: Array<PickRequirmentT>
-	pickedCards: Array<PickedCardT>
+	pickedSlots: Array<PickedSlotT>
 	currentReq: number
 }
 
-// @TODO this is a mess
+export type PickedSlots = Record<string, Array<PickedSlotT>>
 
-export type BoardPickedCardInfoProperties = {
-	cardInfo: Card | null
-	isActive: boolean
-	row: RowState
+export type PickResultT = {
+	pickedSlots: Array<PickedSlotT>
+	req: PickRequirmentT
 }
-
-export type BoardPickedCardInfo = BoardPickedCardT &
-	BoardPickedCardInfoProperties
-
-export type HandPickedCardInfoProperties = {
-	cardInfo: Card | null
-}
-
-export type HandPickedCardInfo = HandPickedCardT & HandPickedCardInfoProperties
-
-export type PickedCardInfo = BoardPickedCardInfo | HandPickedCardInfo
-
-export type PickedCardsInfo = Record<string, Array<PickedCardInfo>>

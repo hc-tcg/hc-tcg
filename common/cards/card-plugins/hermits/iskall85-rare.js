@@ -27,22 +27,36 @@ class Iskall85RareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
-			if (targetHermitInfo.hermitType === 'builder') {
-				target.hermitMultiplier *= 2
-			}
+			const isBuilder =
+				attack.target.row.hermitCard &&
+				HERMIT_CARDS[attack.target.row.hermitCard.cardId]?.hermitType ===
+					'builder'
+					? 2
+					: 1
 
-			return target
-		})
+			attack.multiplyDamage(isBuilder)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 }
 

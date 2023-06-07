@@ -23,6 +23,12 @@ class PoultrymanCommonHermitCard extends HermitCard {
 		})
 	}
 
+	register(game) {}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
+
 	getPalette() {
 		return 'alter_egos'
 	}
