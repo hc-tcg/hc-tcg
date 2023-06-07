@@ -5,7 +5,7 @@ import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- * 
+ *
  */
 
 /*
@@ -23,17 +23,26 @@ class LeadSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'item', amount: 1, active: true},
-			{target: 'opponent', type: 'item', amount: 1, empty: true, active: false},
+			{target: 'opponent', type: ['item'], amount: 1, active: true},
+			{
+				target: 'opponent',
+				type: ['item'],
+				amount: 1,
+				empty: true,
+				active: false,
+			},
 		])
 	}
+
+	// @TODO waiting on new pickedSlot types
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
 	 */
-	onApply(game, instance, pickedSlotsInfo) {
+	onApply(game, instance, pos, pickedSlotsInfo) {
 		const {singleUseInfo} = game.ds
 		if (singleUseInfo?.id !== this.id) return false
 
@@ -60,13 +69,13 @@ class LeadSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'NO'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		const {opponentPlayer, opponentActiveRow} = game.ds
 
-		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'INVALID'
+		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'NO'
 		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0)
-			return 'INVALID'
+			return 'NO'
 
 		return 'YES'
 	}

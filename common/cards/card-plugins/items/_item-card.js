@@ -19,11 +19,11 @@ class ItemCard extends Card {
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slot.type !== 'item') return 'NO'
-		if (pos.playerId !== currentPlayer.id) return 'NO'
+		if (pos.slot.type !== 'item') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit
-		if (!pos.rowState?.hermitCard) return 'INVALID'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
 	}

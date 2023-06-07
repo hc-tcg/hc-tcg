@@ -2,6 +2,7 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
@@ -25,6 +26,58 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				power: null,
 			},
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+
+		player.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== instanceKey || attack.type !== 'primary') return
+
+			const coinFlip = flipCoin(player)
+			player.coinFlips[this.id] = coinFlip
+
+			if (coinFlip[0] !== 'heads') return
+
+			otherPlayer.custom[instanceKey] = flipCoin(player)
+		}
+
+		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
+			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+			if (!attack.attacker) return
+
+			const coinFlip = otherPlayer.custom[instanceKey]
+			if (!coinFlip) return
+
+			otherPlayer.coinFlips['Opponent ' + this.name] = coinFlip
+
+			if (coinFlip[0] === 'heads') {
+				// Change attack target - this just works
+				attack.target = attack.attacker
+			}
+		}
+
+		otherPlayer.hooks.turnEnd[instance] = () => {
+			// Delete our hook at the end of opponents turn
+			delete otherPlayer.custom[instanceKey]
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 
 	/**

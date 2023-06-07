@@ -7,6 +7,7 @@ import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse, discardCard} from '../../utils'
+import {getCardPos} from '../../utils/cards'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -26,21 +27,24 @@ export const WEAKNESS_DAMAGE = 20
 /**
  *
  * @param {GameModel} game
- * @param {RowStateWithHermit} attackRow
+ * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
  * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
  * @returns {Array<AttackModel>}
  */
-function getAttacks(game, attackRow, hermitAttackType, pickedSlots) {
+function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	const {currentPlayer} = game.ds
 	const attacks = []
 
+	if (!attackPos.row || !attackPos.row.hermitCard) return []
+
 	// hermit attacks
-	const hermitCard = HERMIT_CARDS[attackRow.hermitCard.cardId]
+	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
 	attacks.push(
 		...hermitCard.getAttacks(
 			game,
-			attackRow.hermitCard.cardInstance,
+			attackPos.row.hermitCard.cardInstance,
+			attackPos,
 			hermitAttackType,
 			pickedSlots
 		)
@@ -97,6 +101,20 @@ function executeAttack(game, attack) {
 }
 
 /**
+ * Returns if we should ignore the hooks for an instance or not
+ * @param {AttackModel} attack
+ * @param {string} instance
+ * @returns {boolean}
+ */
+function shouldIgnoreCard(attack, instance) {
+	for (let i = 0; i < attack.shouldIgnoreCards.length; i++) {
+		const shouldIgnore = attack.shouldIgnoreCards[i]
+		if (shouldIgnore(instance)) return true
+	}
+	return false
+}
+
+/**
  * @param {GameModel} game
  * @param {TurnAction} turnAction
  * @param {ActionState} actionState
@@ -123,6 +141,8 @@ function* attackSaga(game, turnAction, actionState) {
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'INVALID'
+	const attackPos = getCardPos(game, attackRow.hermitCard.cardInstance)
+	if (!attackPos) return 'INVALID'
 
 	// Defender
 	const opponentBoard = opponentPlayer.board
@@ -134,7 +154,7 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackRow, hermitAttackType, pickedSlotsInfo)
+	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlotsInfo)
 
 	console.log('We got', attacks.length, 'attacks')
 
@@ -143,19 +163,32 @@ function* attackSaga(game, turnAction, actionState) {
 		// Process all current attacks one at a time
 
 		// STEP 1 - Call before attack for all attacks
+		const beforeAttackKeys = Object.keys(currentPlayer.hooks.beforeAttack)
+		const beforeAttacks = Object.values(currentPlayer.hooks.beforeAttack)
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			const beforeAttacks = Object.values(currentPlayer.hooks.beforeAttack)
-			for (let i = 0; i < beforeAttacks.length; i++) {
-				beforeAttacks[i](attacks[attackIndex])
+			const attack = attacks[attackIndex]
+
+			for (let i = 0; i < beforeAttackKeys.length; i++) {
+				const instance = beforeAttackKeys[i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(attack, instance)) {
+					beforeAttacks[i](attack)
+				}
 			}
 		}
 
 		// STEP 2 - Call on attack for all attacks
+		const onAttackKeys = Object.keys(currentPlayer.hooks.onAttack)
+		const onAttacks = Object.values(currentPlayer.hooks.onAttack)
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			const onAttacks = Object.values(currentPlayer.hooks.onAttack)
-			for (let i = 0; i < onAttacks.length; i++) {
-				//@TODO use instance key to check if we should ignore attached effect card
-				onAttacks[i](attacks[attackIndex], pickedSlotsInfo)
+			const attack = attacks[attackIndex]
+
+			for (let i = 0; i < onAttackKeys.length; i++) {
+				const instance = onAttackKeys[i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(attack, instance)) {
+					onAttacks[i](attack, pickedSlotsInfo)
+				}
 			}
 		}
 
@@ -168,10 +201,17 @@ function* attackSaga(game, turnAction, actionState) {
 		}
 
 		// STEP 4 - Call afterAttack for all results
+		const afterAttackKeys = Object.keys(currentPlayer.hooks.afterAttack)
+		const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
 		for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
-			const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
-			for (let i = 0; i < afterAttacks.length; i++) {
-				afterAttacks[i](results[resultsIndex])
+			const result = results[resultsIndex]
+
+			for (let i = 0; i < afterAttackKeys.length; i++) {
+				const instance = afterAttackKeys[i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(result.attack, instance)) {
+					afterAttacks[i](result)
+				}
 			}
 		}
 

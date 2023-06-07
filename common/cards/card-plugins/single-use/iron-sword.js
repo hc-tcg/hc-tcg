@@ -17,19 +17,20 @@ class IronSwordSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer, opponentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
-		currentPlayer.hooks.getAttacks[instance] = () => {
-			const index = currentPlayer.board.activeRow
-			if (!index) return []
-			const row = currentPlayer.board.rows[index]
+		player.hooks.getAttacks[instance] = () => {
+			const index = player.board.activeRow
+			if (index === null) return []
+			const row = player.board.rows[index]
 			if (!row || !row.hermitCard) return []
 
-			const opponentIndex = opponentPlayer.board.activeRow
+			const opponentIndex = otherPlayer.board.activeRow
 			if (!opponentIndex) return []
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
+			const opponentRow = otherPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
 			const swordAttack = new AttackModel({
@@ -42,24 +43,25 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			return [swordAttack]
 		}
 
-		currentPlayer.hooks.afterAttack[instance] = (attackResult) => {
+		// @TODO note to self - because gem will discard used effect cards in after attack, they should always be used before that
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attackResult.attack.id !== attackId) return
+			if (attack.id !== attackId) return
 
 			// We've executed our attack, apply effect
-			// @TODO helper function?
-			currentPlayer.board.singleUseCardUsed = true
+			applySingleUse(game)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
-		delete currentPlayer.hooks.getAttacks[instance]
-		delete currentPlayer.hooks.afterAttack[instance]
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.getAttacks[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 

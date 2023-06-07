@@ -56,6 +56,11 @@ class PotatoBoyRareHermitCard extends HermitCard {
 			return target
 		})
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
+
 	getPalette() {
 		return 'alter_egos'
 	}
