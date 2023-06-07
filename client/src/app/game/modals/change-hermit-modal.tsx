@@ -15,20 +15,20 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
 
-	if (info.slotType !== 'hermit' || !playerState) {
+	if (info.slot.type !== 'hermit' || !playerState || !info.row) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.cardId
-		? HERMIT_CARDS[info.card.cardId].name
+	const hermitName = info.slot.card?.cardId
+		? HERMIT_CARDS[info.slot.card.cardId].name
 		: ''
-	const row = playerState.board.rows[info.rowIndex]
+	const row = playerState.board.rows[info.row.index]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const hasOtherHermits = playerState.board.rows.some(
 		(row, index) =>
 			row.hermitCard &&
-			index !== info.rowIndex &&
+			index !== info.row?.index &&
 			!row.ailments.find((a) => a.id === 'knockedout')
 	)
 	const forbidden = isKnockedout && hasOtherHermits

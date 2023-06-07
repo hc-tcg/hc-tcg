@@ -31,10 +31,10 @@ class ComposterSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedSlotsInfo} = actionState
+			const {pickedSlots} = actionState
 
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedSlotsInfo[this.id] || []
+				const suPickedCards = pickedSlots[this.id] || []
 				if (suPickedCards.length !== 2) return 'INVALID'
 
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))

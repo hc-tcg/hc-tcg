@@ -29,7 +29,7 @@ export const WEAKNESS_DAMAGE = 20
  * @param {GameModel} game
  * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
- * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
+ * @param {import('common/types/pick-process').PickedSlots} pickedSlots
  * @returns {Array<AttackModel>}
  */
 function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
@@ -123,7 +123,7 @@ function shouldIgnoreCard(attack, instance) {
 function* attackSaga(game, turnAction, actionState) {
 	// defining things
 	const {currentPlayer, opponentPlayer} = game.ds
-	const {pickedSlotsInfo} = actionState
+	const {pickedSlots} = actionState
 
 	/** @type {HermitAttackType} */
 	const hermitAttackType = turnAction.payload.type
@@ -154,7 +154,7 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlotsInfo)
+	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
 
 	console.log('We got', attacks.length, 'attacks')
 
@@ -190,7 +190,7 @@ function* attackSaga(game, turnAction, actionState) {
 				const instance = onAttackKeys[i]
 				// if we are not ignoring this hook, call it
 				if (!shouldIgnoreCard(attack, instance)) {
-					onAttacks[i](attack, pickedSlotsInfo)
+					onAttacks[i](attack, pickedSlots)
 				}
 			}
 		}
