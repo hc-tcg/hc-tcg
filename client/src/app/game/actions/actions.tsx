@@ -107,21 +107,29 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickProcess: any = useSelector(getPickProcess)
 	const settings = useSelector(getSettings)
+	const player = useSelector(getPlayerState)
 	const dispatch = useDispatch()
-
-	const turn = localGameState.currentPlayerId === playerId ? 'Your Turn' : "Opponent's Turn"
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
+		const turn = localGameState.currentPlayerId === playerId
+		const turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
+		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
+
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
 			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
+		} else if (knockedOut) {
+			return <p>Activate an AFK Hermit</p>
 		} else if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
-			return <p>Waiting for opponent's action.</p>
+			return <p>Waiting for opponent's action...</p>
 		} else {
 			return (
-				<p>{getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId) || turn}</p>
+				<>
+					<p className={css.turn}>{turnMsg}</p>
+					<p>{getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}</p>
+				</>
 			)
 		}
 	}
