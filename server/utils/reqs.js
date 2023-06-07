@@ -261,7 +261,7 @@ export function validPick(gameState, req, pickedSlot) {
 	const players = gameState.players
 	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
 	const cardPlayerId = pickedSlot.playerId
-	const rowIndex = pickedSlot.row?.index || null
+	const rowIndex = !pickedSlot.row ? null : pickedSlot.row.index
 	const cardPlayerState = players[cardPlayerId]
 	const card = pickedSlot.slot.card
 	const slotType = pickedSlot.slot.type
