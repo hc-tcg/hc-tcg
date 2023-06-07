@@ -19,7 +19,7 @@ export function validatePickedSlots(game, pickedSlots) {
 	const validPickedSlots = []
 	for (const pickedSlot of pickedSlots) {
 		const {type, card, index} = pickedSlot.slot
-		if (game.state.turnPlayerId !== pickedSlot.playerId) return null
+		if (!game.state.order.includes(pickedSlot.playerId)) return null
 
 		const player = game.state.players[pickedSlot.playerId]
 		if (!['hand', 'hermit', 'effect', 'item'].includes(type)) return null
