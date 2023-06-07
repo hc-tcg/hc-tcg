@@ -40,13 +40,13 @@ class LeadSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlotsInfo) {
+	onApply(game, instance, pos, pickedSlots) {
 		const {singleUseInfo} = game.ds
 		if (singleUseInfo?.id !== this.id) return false
 
-		const pickedCards = pickedSlotsInfo[this.id] || []
+		const pickedCards = pickedSlots[this.id] || []
 		if (pickedCards.length !== 2) return false
 
 		const itemCardInfo = pickedCards[0]

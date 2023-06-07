@@ -65,10 +65,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 
 /**
  * @param {GameModel} game
- * @param {import('../../common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+ * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlotsInfo = {}) {
+export function applySingleUse(game, pickedSlots = {}) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -85,7 +85,7 @@ export function applySingleUse(game, pickedSlotsInfo = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlotsInfo)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
