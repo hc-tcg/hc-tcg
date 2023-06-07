@@ -1,6 +1,5 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 // TODO - Prevent consecutive use
@@ -32,38 +31,39 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer, opponentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
 		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const instanceKey = this.getInstanceKey(instance)
+			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (currentPlayer.custom[instanceKey] === 'pearl_opponent_missed') return
+			if (player.custom[pearlKey] === 'pearl_opponent_missed') return
 
-			currentPlayer.custom[instanceKey] = 'pearl_secondary_used'
+			player.custom[pearlKey] = 'pearl_secondary_used'
 		}
 
 		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			const instanceKey = this.getInstanceKey(instance)
-			if (currentPlayer.custom[instanceKey] !== 'pearl_secondary_used') return
+		otherPlayer.hooks.onAttack[instance] = (attack) => {
+			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
+			if (player.custom[pearlKey] !== 'pearl_secondary_used') return
 
-			const coinFlip = flipCoin(opponentPlayer)
-			opponentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(otherPlayer)
+			otherPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
 				attack.multiplyDamage(0)
-				currentPlayer.custom[instanceKey] = 'pearl_opponent_missed'
+				player.custom[pearlKey] = 'pearl_opponent_missed'
 			}
 		}
 
 		//If the opponent missed, set the flag to "clear_state" at the end of your turn.
-		currentPlayer.hooks.turnEnd[instance] = () => {
-			const instanceKey = this.getInstanceKey(instance)
-			if (currentPlayer.custom[instanceKey] !== 'pearl_opponent_missed') return
+		player.hooks.turnEnd[instance] = () => {
+			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
+			if (player.custom[pearlKey] !== 'pearl_opponent_missed') return
 
-			currentPlayer.custom[instanceKey] = 'pearl_clear_state'
+			delete player.custom[pearlKey]
 		}
 	}
 
