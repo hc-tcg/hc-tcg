@@ -30,14 +30,15 @@ class GeminiTayRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
-		currentPlayer.hooks.afterAttack[instance] = (result) => {
+		player.hooks.afterAttack[instance] = (result) => {
 			const attack = result.attack
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
@@ -46,21 +47,21 @@ class GeminiTayRareHermitCard extends HermitCard {
 				return
 
 			// To keep this simple gem will discard the single use card, if it's used
-			if (currentPlayer.board.singleUseCardUsed) {
-				discardSingleUse(game, currentPlayer)
+			if (player.board.singleUseCardUsed) {
+				discardSingleUse(game, player)
 			}
 
 			// Set flag, so we can modify available actions
-			currentPlayer.custom[extraCardKey] = true
+			player.custom[extraCardKey] = true
 		}
 
-		currentPlayer.hooks.availableActions[instance] = (availableActions) => {
+		player.hooks.availableActions[instance] = (availableActions) => {
 			// if the flag is enabled allow playing another card
 			// @TODO what does follow up do with this
-			if (currentPlayer.custom[extraCardKey]) {
+			if (player.custom[extraCardKey]) {
 				if (
 					!availableActions.includes('PLAY_SINGLE_USE_CARD') &&
-					!currentPlayer.board.singleUseCard
+					!player.board.singleUseCard
 				) {
 					availableActions.push('PLAY_SINGLE_USE_CARD')
 				}
@@ -72,17 +73,17 @@ class GeminiTayRareHermitCard extends HermitCard {
 			return availableActions
 		}
 
-		currentPlayer.hooks.onApply[instance] = (instance) => {
+		player.hooks.onApply[instance] = (instance) => {
 			// delete flag after single use is applied
-			if (currentPlayer.custom[extraCardKey]) {
-				delete currentPlayer.custom[extraCardKey]
+			if (player.custom[extraCardKey]) {
+				delete player.custom[extraCardKey]
 			}
 		}
 
-		currentPlayer.hooks.turnEnd[instance] = () => {
+		player.hooks.turnEnd[instance] = () => {
 			// delete flag on turn end
-			if (currentPlayer.custom[extraCardKey]) {
-				delete currentPlayer.custom[extraCardKey]
+			if (player.custom[extraCardKey]) {
+				delete player.custom[extraCardKey]
 			}
 		}
 	}
@@ -90,17 +91,18 @@ class GeminiTayRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
 		// Remove hooks and flags
-		delete currentPlayer.hooks.onAttack[instance]
-		delete currentPlayer.hooks.availableActions[instance]
-		delete currentPlayer.hooks.onApply[instance]
-		delete currentPlayer.hooks.turnEnd[instance]
-		delete currentPlayer.custom[extraCardKey]
+		delete player.hooks.onAttack[instance]
+		delete player.hooks.availableActions[instance]
+		delete player.hooks.onApply[instance]
+		delete player.hooks.turnEnd[instance]
+		delete player.custom[extraCardKey]
 	}
 }
 

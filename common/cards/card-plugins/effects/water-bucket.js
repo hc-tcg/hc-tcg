@@ -17,7 +17,7 @@ class WaterBucketEffectCard extends EffectCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1},
+			{target: 'player', type: ['hermit'], amount: 1},
 		])
 	}
 
@@ -47,9 +47,9 @@ class WaterBucketEffectCard extends EffectCard {
 
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedSlotsInfo} = actionState
+			const {pickedSlots} = actionState
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedSlotsInfo[this.id] || []
+				const suPickedCards = pickedSlots[this.id] || []
 				if (suPickedCards?.length !== 1) return 'INVALID'
 
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
@@ -71,9 +71,9 @@ class WaterBucketEffectCard extends EffectCard {
 
 		if (pos.slot.type === 'single_use') return 'YES'
 
-		if (pos.slot.type !== 'effect') return 'NO'
-		if (pos.playerId !== currentPlayer.id) return 'NO'
-		if (!pos.rowState?.hermitCard) return 'INVALID'
+		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
 	}

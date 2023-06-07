@@ -43,7 +43,7 @@ class GrianRareHermitCard extends HermitCard {
 			},
 		})
 		this.pickOn = 'custom'
-		this.pickReqs = [{target: 'player', type: 'effect', amount: 1, empty: true}]
+		this.pickReqs = [{target: 'player', type: ['effect'], amount: 1, empty: true}]
 	}
 
 	/**

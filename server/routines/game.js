@@ -12,7 +12,7 @@ import {buffers} from 'redux-saga'
 import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
-import {getPickedSlotsInfo} from '../utils/picked-cards'
+import {getPickedSlots} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -23,7 +23,6 @@ import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
-import {validPicks} from '../../server/utils/reqs'
 
 /**
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
@@ -303,19 +302,14 @@ function* turnActionSaga(game, turnAction, turnState) {
 	const {availableActions, opponentAvailableActions, pastTurnActions} =
 		turnState
 
-	// Validate Picked Slots
-	const {pickedSlots}= turnAction.payload || {}
-	for (let cardId in pickedSlots) {
-		const result = pickedSlots[cardId]
-		if (validPicks(game.state, result)) return
-	}
-
-	const pickedSlotsInfo = getPickedSlotsInfo(game, turnAction)
+	const pickedSlots = getPickedSlots(game, turnAction)
+	// Validation failed
+	if (!pickedSlots) return
 
 	/** @type {ActionState} */
 	const actionState = {
 		...turnState,
-		pickedSlotsInfo,
+		pickedSlots,
 	}
 	let endTurn = false
 

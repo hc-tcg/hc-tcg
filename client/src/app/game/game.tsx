@@ -59,7 +59,19 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 		adjacentTarget = 'a previous pick'
 	}
 
-	const type = req.type === 'any' ? '' : req.type
+	let type = ''
+	if (req.type.length === 1) {
+		type = req.type[0]
+	} else {
+		// If there are more than one type, we want to display them as a list
+		// separated by commas, with the last element separated by 'or'
+		const initialElements = req.type.slice(0, -1)
+		const commaSeparated = initialElements.join(', ')
+		const lastElement = req.type[req.type.length - 1]
+
+		type = `${commaSeparated} or ${lastElement}`
+	}
+
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
@@ -122,7 +134,7 @@ function Game() {
 	}
 
 	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.card)
+		.map((pickedSlot) => pickedSlot.slot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (

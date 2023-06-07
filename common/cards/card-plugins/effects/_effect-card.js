@@ -39,11 +39,11 @@ class EffectCard extends Card {
 		const {currentPlayer} = game.ds
 
 		// Wrong slot
-		if (pos.slot.type !== 'effect') return 'NO'
-		if (pos.playerId !== currentPlayer.id) return 'NO'
+		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit card
-		if (!pos.rowState?.hermitCard) return 'INVALID'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
 	}

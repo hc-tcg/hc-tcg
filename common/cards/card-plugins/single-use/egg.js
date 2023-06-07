@@ -20,7 +20,7 @@ class EggSingleUseCard extends SingleUseCard {
 		this.damage = {afkTarget: 10}
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: false},
+			{target: 'opponent', type: ['hermit'], amount: 1, active: false},
 		])
 	}
 
@@ -41,11 +41,11 @@ class EggSingleUseCard extends SingleUseCard {
 
 		game.hooks.followUp.tap(this.id, (action, followUpState) => {
 			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedSlotsInfo} = followUpState
+			const {followUp, pickedSlots} = followUpState
 
 			if (followUp !== this.id) return
 
-			const eggPickedCards = pickedSlotsInfo[this.id] || []
+			const eggPickedCards = pickedSlots[this.id] || []
 			if (eggPickedCards.length !== 1) return 'INVALID'
 
 			const pickedHermit = eggPickedCards[0]

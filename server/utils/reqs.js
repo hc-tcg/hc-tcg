@@ -6,8 +6,6 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  * @typedef {import("common/types/game-state").CardT} CardT
  * @typedef {import("common/types/pick-process").PickRequirmentT} PickRequirmentT
  * @typedef {import("common/types/pick-process").PickedSlotT} PickedSlotT
- * @typedef {import("common/types/pick-process").BoardPickedSlotInfo} BoardPickedSlotInfo
- * @typedef {import("common/types/pick-process").HandPickedSlotInfo} HandPickedSlotInfo
  * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
  * @typedef {import('common/types/pick-process').PickResultT} PickResultT
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
@@ -23,7 +21,8 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  * @returns {boolean}
  */
 const checkRow = (rowInfo, req, reqs, gameState) => {
-	if (rowInfo.emptyRow && req.type !== 'hermit') return false
+	if (rowInfo.emptyRow && req.type.length === 1 && req.type[0] !== 'hermit')
+		return false
 
 	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return false
@@ -33,9 +32,9 @@ const checkRow = (rowInfo, req, reqs, gameState) => {
 	if (req.active === false && rowInfo.active) return false
 
 	const slots = []
-	if (['hermit', 'any'].includes(req.type)) slots.push(rowInfo.row.hermitCard)
-	if (['effect', 'any'].includes(req.type)) slots.push(rowInfo.row.effectCard)
-	if (['item', 'any'].includes(req.type)) slots.push(...rowInfo.row.itemCards)
+	if (req.type.includes('hermit')) slots.push(rowInfo.row.hermitCard)
+	if (req.type.includes('effect')) slots.push(rowInfo.row.effectCard)
+	if (req.type.includes('item')) slots.push(...rowInfo.row.itemCards)
 
 	// empty slot or not
 	const anyEmpty = slots.some((card) => !card)
@@ -91,12 +90,10 @@ const getRowsInfo = (playerState, current) => {
  * @returns {boolean}
  */
 const checkHand = (gameState, req) => {
-	let cards = gameState.hand
-	if (req.type !== 'any') {
-		cards = gameState.hand.filter(
-			(card) => CARDS[card.cardId].type === req.type
-		)
-	}
+	const cards = gameState.hand.filter((card) =>
+		req.type.includes(CARDS[card.cardId].type)
+	)
+
 	return req.amount <= cards.length
 }
 
@@ -189,8 +186,9 @@ export const validActive = (active, cardPlayerState, rowIndex) => {
  * @returns {boolean}
  */
 export const validType = (type, cardType) => {
-	if (typeof type !== 'string') return true
-	return type === 'any' ? true : type === cardType
+	if (type === null) return true
+	if (type.includes(cardType)) return true
+	return false
 }
 
 /**
@@ -228,21 +226,23 @@ const validRemovable = (removable, card) => {
 const validAdjacent = (adjacent, gameState, pickedSlot, req) => {
 	if (typeof adjacent !== 'string') return true
 	if (adjacent === 'req') return true
+	if (!pickedSlot.row) return true // Hand
 
 	const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
 	const opponentPlayerId = gameState.order[gameState.turn % 2]
-	const slot = /** @type {BoardPickedSlotInfo} */ (pickedSlot)
 
-	if (req.target === 'opponent' && slot.playerId === currentPlayerId)
+	if (req.target === 'opponent' && pickedSlot.playerId === currentPlayerId)
 		return false
-	if (req.target === 'player' && slot.playerId !== currentPlayerId) return false
+	if (req.target === 'player' && pickedSlot.playerId !== currentPlayerId)
+		return false
 
 	const targetId =
 		req.target === 'opponent' ? opponentPlayerId : currentPlayerId
 	const activeRow = gameState.players[targetId].board.activeRow
 	if (
 		activeRow !== null &&
-		(slot.rowIndex === activeRow + 1 || slot.rowIndex === activeRow - 1)
+		(pickedSlot.row.index === activeRow + 1 ||
+			pickedSlot.row.index === activeRow - 1)
 	)
 		return true
 
@@ -261,10 +261,10 @@ export function validPick(gameState, req, pickedSlot) {
 	const players = gameState.players
 	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
 	const cardPlayerId = pickedSlot.playerId
-	const rowIndex = 'rowIndex' in pickedSlot ? pickedSlot.rowIndex : null
+	const rowIndex = pickedSlot.row?.index || null
 	const cardPlayerState = players[cardPlayerId]
-	const card = pickedSlot.card
-	const slotType = pickedSlot.slotType
+	const card = pickedSlot.slot.card
+	const slotType = pickedSlot.slot.type
 	const cardType = card ? CARDS[card.cardId].type : slotType
 	const isEmptyRow =
 		rowIndex === null
@@ -299,7 +299,7 @@ export function validPicks(gameState, pickResults) {
 		for (let pickedSlot of pickedSlotsForReq) {
 			if (!validPick(gameState, req, pickedSlot)) return false
 			// Don't check adjacent for cards in hand, makes no sense, their position can change (e.g. single use cards)
-			if (pickedSlot.slotType !== 'hand') {
+			if (pickedSlot.slot.type !== 'hand') {
 				boardSlots.push(pickedSlot)
 				if (req.adjacent === 'req') reqAdjacentsBundle.push(pickedSlot)
 			}
@@ -310,19 +310,21 @@ export function validPicks(gameState, pickResults) {
 
 	// Check if all cards that need an adjacent card have one.
 	if (reqAdjacents.length > 0) {
-		for (let pickedCardAdjBundle of reqAdjacents) {
-			for (let pickedCardAdj of pickedCardAdjBundle) {
-				const slotAdj = /** @type {BoardPickedSlotInfo} */ (pickedCardAdj)
+		for (let pickedSlotAdjBundle of reqAdjacents) {
+			for (let pickedSlotAdj of pickedSlotAdjBundle) {
+				const slotAdj = pickedSlotAdj
 				let validPairs = 0
-				for (let pickedCard of boardSlots) {
-					const slot = /** @type {BoardPickedSlotInfo} */ (pickedCard)
+				for (let pickedSlot of boardSlots) {
+					const slot = pickedSlot
 					// Can't be adjacent to itself
-					if (pickedCard === pickedCardAdj) continue
+					if (pickedSlot === pickedSlotAdj) continue
 					// Can't be adjacent to a card with the same req
-					if (pickedCardAdjBundle.includes(pickedCard)) continue
+					if (pickedSlotAdjBundle.includes(pickedSlot)) continue
 					if (
-						slot.rowIndex === slotAdj.rowIndex + 1 ||
-						slot.rowIndex === slotAdj.rowIndex - 1
+						slotAdj.row &&
+						slot.row &&
+						(slot.row.index === slotAdj.row.index + 1 ||
+							slot.row.index === slotAdj.row.index - 1)
 					) {
 						validPairs++
 						break

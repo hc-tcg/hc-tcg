@@ -22,9 +22,12 @@ export type AttackResult = {
 	blockedDamage: number
 }
 
+export type ShouldIgnoreCard = (instance: string) => boolean
+
 export type AttackDefs = {
 	id?: string
 	attacker?: Attacker
 	target: RowInfo
 	type: AttackType
+	shouldIgnoreCards?: Array<ShouldIgnoreCard>
 }

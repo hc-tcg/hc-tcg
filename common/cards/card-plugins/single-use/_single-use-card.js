@@ -6,7 +6,7 @@ import Card from '../_card'
  * @typedef {import('../../../types/cards').SingleUseDefs} SingleUseDefs
  * @typedef {import('../../../types/cards').CardPos} CardPos
  * @typedef {import('common/types/attack').AttackResult} AttackResult
- * @typedef {import('../../../types/pick-process').PickedSlotsInfo} PickedSlotsInfo
+ * @typedef {import('../../../types/pick-process').PickedSlots} PickedSlots
  */
 
 class SingleUseCard extends Card {
@@ -36,7 +36,7 @@ class SingleUseCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'NO'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		return 'YES'
 	}
@@ -54,9 +54,10 @@ class SingleUseCard extends Card {
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {PickedSlotsInfo} pickedSlots
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pickedSlots) {
+	onApply(game, instance, pos, pickedSlots) {
 		// default is do nothing
 	}
 }

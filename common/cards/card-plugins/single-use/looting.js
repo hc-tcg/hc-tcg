@@ -18,7 +18,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'item', amount: 1, active: true},
+			{target: 'opponent', type: ['item'], amount: 1, active: true},
 		])
 	}
 
@@ -45,11 +45,11 @@ class LootingSingleUseCard extends SingleUseCard {
 
 		game.hooks.followUp.tap(this.id, (action, followUpState) => {
 			const {currentPlayer} = game.ds
-			const {followUp, pickedSlotsInfo} = followUpState
+			const {followUp, pickedSlots} = followUpState
 
 			if (followUp === this.id) {
 				delete currentPlayer.coinFlips[this.id]
-				const suPickedCards = pickedSlotsInfo[this.id] || []
+				const suPickedCards = pickedSlots[this.id] || []
 				if (suPickedCards.length !== 1) return 'INVALID'
 				const pickedCard = suPickedCards[0]
 				if (!validPick(game.state, this.pickReqs[0], pickedCard))

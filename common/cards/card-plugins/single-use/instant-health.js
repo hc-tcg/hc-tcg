@@ -18,7 +18,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		this.heal = 30
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1},
+			{target: 'player', type: ['hermit'], amount: 1},
 		])
 	}
 
@@ -28,9 +28,9 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
 			const {singleUseInfo} = game.ds
-			const {pickedSlotsInfo} = actionState
+			const {pickedSlots} = actionState
 			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedSlotsInfo[this.id] || []
+				const suPickedCards = pickedSlots[this.id] || []
 				if (suPickedCards.length !== 1) return 'INVALID'
 				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
 					return 'INVALID'
