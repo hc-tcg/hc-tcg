@@ -27,23 +27,24 @@ class Cubfan135RareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== this.id || attack.type !== 'secondary') return
+		player.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
-			currentPlayer.custom[instanceKey] = true
+			player.custom[instanceKey] = true
 		}
 
-		currentPlayer.hooks.availableActions[instance] = (availableActions) => {
-			if (currentPlayer.custom[instanceKey]) {
+		player.hooks.availableActions[instance] = (availableActions) => {
+			if (player.custom[instanceKey]) {
 				// Only activate if we have other hermit and we haven't already switched
-				const hasOtherHermit = currentPlayer.board.rows.some((row, index) => {
-					return row.hermitCard && index !== currentPlayer.board.activeRow
+				const hasOtherHermit = player.board.rows.some((row, index) => {
+					return row.hermitCard && index !== player.board.activeRow
 				})
 				const pastTurnActions = game.turnState.pastTurnActions
 
@@ -60,25 +61,26 @@ class Cubfan135RareHermitCard extends HermitCard {
 			return availableActions
 		}
 
-		currentPlayer.hooks.turnEnd[instance] = () => {
+		player.hooks.turnEnd[instance] = () => {
 			// Cleanup
-			delete currentPlayer.custom[instanceKey]
+			delete player.custom[instanceKey]
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		// Remove all hooks and flags
-		delete currentPlayer.hooks.onAttack[instance]
-		delete currentPlayer.hooks.availableActions[instance]
-		delete currentPlayer.hooks.turnEnd[instance]
-		delete currentPlayer.custom[instanceKey]
+		delete player.hooks.onAttack[instance]
+		delete player.hooks.availableActions[instance]
+		delete player.hooks.turnEnd[instance]
+		delete player.custom[instanceKey]
 	}
 }
 

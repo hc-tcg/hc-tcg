@@ -53,21 +53,20 @@ export class AttackModel {
 			damageReduction: 0,
 		}
 
+		/** @type {Array<import("common/types/attack").ShouldIgnoreCard>} */
+		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
+
 		/**
 		 * Attacks to perform after this attack
 		 * @type {Array<AttackModel>}
 		 */
 		this.nextAttacks = []
 
-		// uncategorised @TODO
-		/** @type {boolean} */
-		this.ignoreAttachedEffects = false
-
 		return this
 	}
 
 	/**
-	 * Adds damage to a damage source
+	 * Adds damage to the attack
 	 * @param {number} amount
 	 */
 	addDamage(amount) {
@@ -77,17 +76,17 @@ export class AttackModel {
 	}
 
 	/**
-	 * Removes damage from a damage source
+	 * Removes damage from the attack
 	 * @param {number} amount
 	 */
-	removeDamage(type, amount) {
+	reduceDamage(amount) {
 		if (this.damageLocked) return this
 		this.damage = Math.max(this.damage - amount, 0)
 		return this
 	}
 
 	/**
-	 * Multiplies damage for a damage source
+	 * Multiplies damage for the attack
 	 * @param {number} multiplier
 	 */
 	multiplyDamage(multiplier) {

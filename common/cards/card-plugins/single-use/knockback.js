@@ -35,7 +35,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				if (!hasOtherHermits || !opponentActiveRow) return target
 				opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
 				opponentPlayer.board.activeRow = null
-				applySingleUse(currentPlayer)
+				applySingleUse(game)
 			}
 			return target
 		})
