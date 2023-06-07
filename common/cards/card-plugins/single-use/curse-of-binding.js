@@ -16,7 +16,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
+	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
 		const {otherPlayer} = pos

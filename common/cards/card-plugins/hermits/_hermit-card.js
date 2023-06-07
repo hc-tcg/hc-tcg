@@ -46,7 +46,7 @@ class HermitCard extends Card {
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
-	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
+	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 * @returns {Array<AttackModel>}
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {

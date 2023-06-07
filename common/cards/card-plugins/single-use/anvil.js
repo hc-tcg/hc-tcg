@@ -28,10 +28,10 @@ class AnvilSingleUseCard extends SingleUseCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedSlotsInfo} = attackState
+			const {pickedSlots} = attackState
 			if (singleUseInfo?.id !== this.id) return target
 
-			const crossbowPickedCards = pickedSlotsInfo[this.id] || []
+			const crossbowPickedCards = pickedSlots[this.id] || []
 			if (crossbowPickedCards.length !== 1) return target
 			const pickedHermit = crossbowPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
