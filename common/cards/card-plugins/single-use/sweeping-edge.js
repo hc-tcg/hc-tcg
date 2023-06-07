@@ -1,10 +1,10 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../../server/utils'
+import {discardCard, isRemovable} from '../../../../server/utils'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
-* @typedef {import('../../../../server/models/game-model').GameModel} GameModel
-* @typedef {import('../../../types/cards').CardPos} CardPos
-* @typedef {import('../../../types/pick-process').PickedSlotsInfo} PickedSlotsInfo
+* @typedef {import('common/types/cards').CardPos} CardPos
+* @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
 */
 
 class SweepingEdgeSingleUseCard extends SingleUseCard {
@@ -23,13 +23,12 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (super.canAttach(game, pos) === 'NO') return 'INVALID'
-		const {opponentPlayer} = game.ds
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return 'INVALID'
+		const activeRow = pos.otherPlayer.board.activeRow
+		if (activeRow === null) return 'NO'
 
-		const rows = opponentPlayer.board.rows
+		const rows = pos.otherPlayer.board.rows
 		const targetIndex = [
 			activeRow - 1,
 			activeRow,
@@ -37,10 +36,11 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		].filter((index) => index >= 0 && index < rows.length)
 
 		for (const row of targetIndex) {
-			if (rows[row].effectCard) return 'YES'
+			const effectCard = rows[row].effectCard
+			if (effectCard && isRemovable(effectCard)) return 'YES'
 		}
 
-		return 'INVALID'
+		return 'NO'
 	}
 	
 	canApply() {
@@ -50,15 +50,14 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {PickedSlotsInfo} pickedSlots
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pickedSlots) {
-		const {opponentPlayer} = game.ds
-
-		const activeRow = opponentPlayer.board.activeRow
+	onApply(game, instance, pos, pickedSlots) {
+		const activeRow = pos.otherPlayer.board.activeRow
 		if (activeRow === null) return
 
-		const rows = opponentPlayer.board.rows
+		const rows = pos.otherPlayer.board.rows
 		const targetIndex = [
 			activeRow - 1,
 			activeRow,
@@ -66,7 +65,8 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		].filter((index) => index >= 0 && index < rows.length)
 
 		for (const index of targetIndex) {
-			discardCard(game, rows[index].effectCard)
+			const effectCard = rows[index].effectCard
+			if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
 		}
 	}
 }
