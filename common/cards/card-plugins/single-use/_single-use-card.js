@@ -36,7 +36,7 @@ class SingleUseCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'NO'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		return 'YES'
 	}
@@ -54,9 +54,10 @@ class SingleUseCard extends Card {
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {CardPos} pos
 	 * @param {PickedSlotsInfo} pickedSlots
 	 */
-	onApply(game, instance, pickedSlots) {
+	onApply(game, instance, pos, pickedSlots) {
 		// default is do nothing
 	}
 }

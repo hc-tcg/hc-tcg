@@ -25,42 +25,51 @@ class MumboJumboRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 40,
 				power:
-					'Flip a Coin twice.\n\n+40 HP damage for every heads.\n\nTotal damage doubles if at least 1 other Prankster type is AFK.\n\nIf player does not roll heads at least once, the above does not apply.',
+					'Flip a coin twice. Add 20hp damage for every heads. Total damage doubles if you have at least one other AFK Prankster.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {condRef, moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
 
-			const coinFlip = flipCoin(currentPlayer, 2)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player, 2)
+			player.coinFlips[this.id] = coinFlip
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			target.extraHermitDamage += 40 * headsAmount
-
-			if (headsAmount === 0) return target
-			const hasAfkPranskter = condRef.player.board.rows.some((row, index) => {
-				if (!row.hermitCard) return false
-				const isAfk = index !== condRef.player.board.activeRow
-				const isPranskter =
+			const pranksterAmount = player.board.rows.filter(
+				(row, index) =>
+					row.hermitCard &&
+					index !== player.board.activeRow &&
 					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
-				return isAfk && isPranskter
-			})
-			if (!hasAfkPranskter) return target
-			target.hermitMultiplier *= 2
+			).length
 
-			return target
-		})
+			attack.addDamage(headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(2)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 }
 

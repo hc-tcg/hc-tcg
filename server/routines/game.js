@@ -295,7 +295,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 		turnState
 
 	// Validate Picked Slots
-	const {pickedSlots}= turnAction.payload || {}
+	const {pickedSlots} = turnAction.payload || {}
 	for (let cardId in pickedSlots) {
 		const result = pickedSlots[cardId]
 		if (validPicks(game.state, result)) return
