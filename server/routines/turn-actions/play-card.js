@@ -21,6 +21,8 @@ function* playCardSaga(game, turnAction, actionState) {
 	const {card, rowHermitCard, rowIndex, slotIndex, slotType, playerId} =
 		turnAction.payload
 	const cardInfo = CARDS[card.cardId]
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== playerId)
+	if (!opponentPlayerId) return
 
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
 		return 'INVALID'
@@ -29,19 +31,26 @@ function* playCardSaga(game, turnAction, actionState) {
 	/** @type {import('../../../common/types/cards').CardPos} */
 	const pos = {
 		playerId,
-		playerState: game.state.players[playerId],
+		player: game.state.players[playerId],
+		otherPlayerId: opponentPlayerId,
+		otherPlayer: game.state.players[opponentPlayerId],
 		rowIndex,
-		rowState: game.state.players[playerId].board.rows[rowIndex],
+		row: game.state.players[playerId].board.rows[rowIndex],
 		slot: {type: slotType, index: slotIndex || 0},
 	}
 
 	// Can't attach if card is already there
-	if (getCardAtPos(game, pos)) return
+	if (getCardAtPos(game, pos) !== null) return
 
 	// Do we meet requirements of card
 	const canAttach = cardInfo.canAttach(game, pos)
-	if (canAttach === 'NO') return
-	if (canAttach === 'INVALID') return 'INVALID'
+
+	// This is a bit confusing, but it's clearer for the method for INVALID to mean the slot is completely invalid
+
+	// Do nothing if it's the wrong kind of slot
+	if (canAttach === 'INVALID') return
+	// If it's the right kind of slot, but we can't attach, return invalid
+	if (canAttach === 'NO') return 'INVALID'
 
 	const player = game.state.players[playerId]
 	if (!player) return 'INVALID'
@@ -97,9 +106,13 @@ function* playCardSaga(game, turnAction, actionState) {
 		(handCard) => !equalCard(handCard, card)
 	)
 
-	cardInfo.onAttach(game, card.cardInstance)
+	cardInfo.onAttach(game, card.cardInstance, pos)
 
-	game.hooks.playCard.get(slotType)?.call(turnAction, actionState)
+	// Call onAttach hook
+	const onAttachs = Object.values(currentPlayer.hooks.onAttach)
+	for (let i = 0; i < onAttachs.length; i++) {
+		onAttachs[i](card.cardInstance)
+	}
 
 	return 'DONE'
 }

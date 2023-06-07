@@ -210,6 +210,10 @@ export function getPlayerState(player) {
 			blockedActions: {},
 			availableActions: {},
 
+			onAttach: {},
+			onDetach: {},
+			onApply: {},
+
 			getAttacks: {},
 
 			beforeAttack: {},

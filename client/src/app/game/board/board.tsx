@@ -7,7 +7,7 @@ import {
 	LocalPlayerState,
 	RowState,
 } from 'common/types/game-state'
-import {PickedCardT} from 'common/types/pick-process'
+import {PickedSlotT} from 'common/types/pick-process'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -27,7 +27,7 @@ import Button from 'components/button'
 // TODO - Don't allow clicking on slots on the other side
 
 type Props = {
-	onClick: (meta: PickedCardT) => void
+	onClick: (meta: PickedSlotT) => void
 	localGameState: LocalGameState
 }
 
