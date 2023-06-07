@@ -67,7 +67,7 @@ class MilkBucketEffectCard extends EffectCard {
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.playerId !== currentPlayer.id) return 'INVALID'
-		if (!pos.rowState?.hermitCard) return 'NO'
+		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
 	}
