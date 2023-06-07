@@ -17,6 +17,7 @@ import {getCardPos} from './cards'
  * @param {CardT | null} card2
  */
 export function equalCard(card1, card2) {
+	if (!card1 && !card2) return true
 	if (!card1 || !card2) return false
 	return (
 		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
