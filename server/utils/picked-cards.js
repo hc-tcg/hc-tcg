@@ -22,7 +22,7 @@ const isOnPlayerBoard = (pickedCard) =>
  * Takes a list of card instances & looks them up in the current game (board/hand).
  * If found it maps it to {card, cardInfo playerId, row, rowIndex} info.
  * @param {GameState} gameState
- * @param {Array<PickedSlotT>} ickedCards
+ * @param {Array<PickedSlotT>} pickedCards
  * @returns {Array<PickedSlotInfo>}
  */
 export function getPickedSlotsInfoById(gameState, pickedCards) {

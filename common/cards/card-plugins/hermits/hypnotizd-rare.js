@@ -33,17 +33,46 @@ class HypnotizdRareHermitCard extends HermitCard {
 				power:
 					'Player can choose to have Hypno attack AFK opposing Hermits.\n\nIf AFK Hermit is attacked,\n\nHypno must discard 1 item card.',
 			},
+			pickOn: 'attack',
+			pickReqs: [
+				{
+					target: 'opponent',
+					type: ['hermit'],
+					amount: 1,
+					breakIf: ['active', 'efficiency'],
+				},
+				{target: 'player', type: ['item'], amount: 1, active: true},
+			],
 		})
+	}
 
-		const breakIf = /** @satisfies {PickRequirmentT['breakIf']} */ ([
-			'active',
-			'efficiency',
-		])
-		this.pickOn = 'attack'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, breakIf},
-			{target: 'player', type: 'item', amount: 1, active: true},
-		])
+	//@TODO waiting on pickedSlot type refactor
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {currentPlayer} = game.ds
+		const instanceKey = this.getInstanceKey(instance)
+
+		currentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+
+			const pickedHermit = pickedSlots[this.id][0]
+			const pickedItem = pickedSlots[this.id][1]
+			const efficiency = !!currentPlayer.custom['efficiency']
+
+			if (pickedHermit !== target.row) {
+				target.applyHermitDamage = false
+				return target
+			}
+			target.applyHermitDamage = true
+
+			if (!efficiency && !target.isActive) discardCard(game, pickedItem.card)
+			return target
+		}
 	}
 
 	/**

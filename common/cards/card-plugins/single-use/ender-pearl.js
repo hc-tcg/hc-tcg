@@ -18,7 +18,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 		this.pickOn = 'apply'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: 'hermit', amount: 1, empty: true},
+			{target: 'player', type: ['hermit'], amount: 1, empty: true},
 		])
 	}
 

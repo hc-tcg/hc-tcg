@@ -19,7 +19,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 
 		this.pickOn = 'attack'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: 'hermit', amount: 1, active: true},
+			{target: 'opponent', type: ['hermit'], amount: 1, active: true},
 		])
 	}
 

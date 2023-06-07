@@ -11,7 +11,7 @@ export type SlotTypeT =
 
 export type PickRequirmentT = {
 	target: 'player' | 'opponent' | 'board' | 'hand'
-	type: SlotTypeT | 'any'
+	type: Array<SlotTypeT>
 	amount: number
 	empty?: boolean
 	active?: boolean

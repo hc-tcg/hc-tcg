@@ -82,8 +82,10 @@ export type Slot = {
 
 export type CardPos = {
 	playerId: string
-	playerState: PlayerState
-	rowIndex: number
-	rowState: RowState
+	player: PlayerState
+	otherPlayerId: string
+	otherPlayer: PlayerState
+	rowIndex: number | null
+	row: RowState | null
 	slot: Slot
 }

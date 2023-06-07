@@ -29,30 +29,32 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onAttach(game, instance) {
-		const {currentPlayer} = game.ds
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		currentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(currentPlayer, 3)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player, 3)
+			player.coinFlips[this.id] = coinFlip
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.damage += headsAmount * 20
+			attack.addDamage(headsAmount * 20)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 
