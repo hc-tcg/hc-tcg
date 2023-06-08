@@ -150,7 +150,7 @@ export function discardCard(game, card) {
 	// Call onDetach hook
 	const player = getCardPos(game, card.cardInstance)?.player
 	if (player) {
-		const onDetachs = Object.values(player.hooks.onAttach)
+		const onDetachs = Object.values(player.hooks.onDetach)
 		for (let i = 0; i < onDetachs.length; i++) {
 			onDetachs[i](card.cardInstance)
 		}
@@ -182,7 +182,7 @@ export function discardSingleUse(game, playerState) {
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
-	const onDetachs = Object.values(playerState.hooks.onAttach)
+	const onDetachs = Object.values(playerState.hooks.onDetach)
 	for (let i = 0; i < onDetachs.length; i++) {
 		onDetachs[i](suCard.cardInstance)
 	}
