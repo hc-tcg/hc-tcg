@@ -24,59 +24,77 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a Coin.\n\nIf heads, opponent skips next turn.\n\nCannot be used consecutively if successful.',
+					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used consecutively.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.turnStart.tap(this.id, (turnConfig) => {
-			const {opponentPlayer} = game.ds
-			if (opponentPlayer.custom[this.id] === 'time-skip') {
-				opponentPlayer.custom[this.id] = 'prevent-consecutive'
-				turnConfig.skipTurn = true
-			} else if (opponentPlayer.custom[this.id]) {
-				delete opponentPlayer.custom[this.id]
-			}
-		})
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+		const timeSkipKey = this.getInstanceKey(instance, 'timeSkipKey')
 
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			// can't be used on first turn
-			if (game.state.turn < 2) return target
+			if (game.state.turn < 2) return
 			// can't be used consecutively
-			if (currentPlayer.custom[this.id]) return target
+			if (player.custom[this.id]) return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player)
+			player.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'heads') currentPlayer.custom[this.id] = 'time-skip'
+			if (coinFlip[0] === 'heads') player.custom[timeSkipKey] = 'time_skip'
+		}
 
-			return target
-		})
+		otherPlayer.hooks.availableActions[instance] = (availableActions) => {
+			if (player.custom[timeSkipKey] == 'time_skip') {
+				if (otherPlayer.board.activeRow === null)
+					availableActions = ['CHANGE_ACTIVE_HERMIT']
+				else availableActions = []
+				player.custom[timeSkipKey] = 'prevent_consecutive'
+			}
+
+			console.log('time skip')
+
+			return availableActions
+		}
 
 		// Disable Time Skip attack consecutively
-		game.hooks.availableActions.tap(this.id, (availableActions) => {
-			const {currentPlayer, playerActiveRow} = game.ds
-
-			// we must have active hermit
-			const activeHermit = playerActiveRow?.hermitCard
-			if (activeHermit?.cardId !== this.id) return availableActions
+		player.hooks.availableActions[instance] = (availableActions) => {
+			// The same Joe card must be active to disable time skip
+			if (player.board.activeRow !== pos.rowIndex) return availableActions
 
 			// we want to make changes only if time skip was used by the hermit
-			return currentPlayer.custom[this.id]
-				? availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-				: availableActions
-		})
+			if (player.custom[timeSkipKey] == 'prevent_consecutive') {
+				player.custom[timeSkipKey] = 'time_skip_complete'
+				return availableActions.filter(
+					(action) => action !== 'SECONDARY_ATTACK'
+				)
+			}
+			return availableActions
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+		const timeSkipKey = this.getInstanceKey(instance, 'timeSkipKey')
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
+		delete otherPlayer.hooks.availableActions[instance]
+		delete player.hooks.availableActions[instance]
+		delete player.custom[timeSkipKey]
 	}
 }
 
