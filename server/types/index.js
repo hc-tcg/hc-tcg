@@ -24,7 +24,7 @@
 
 /**
  * @typedef {Object} ActionStateProperties
- * @property {import('common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+ * @property {import('common/types/pick-process').PickedSlots} pickedSlots
  * @typedef {TurnState & ActionStateProperties} ActionState
  */
 

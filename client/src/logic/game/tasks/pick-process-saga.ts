@@ -21,6 +21,7 @@ import {
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
+import CARDS from 'common/cards'
 
 type AnyPickActionT =
 	| ReturnType<typeof setSelectedCard>
@@ -31,7 +32,9 @@ const isDuplicate = (
 	pickedSlot?: PickedSlotT
 ) => {
 	if (!pickedSlot) return null
-	return pickedSlots.some((pSlot) => equalCard(pSlot.card, pickedSlot.card))
+	return pickedSlots.some((pSlot) =>
+		equalCard(pSlot.slot.card, pickedSlot.slot.card)
+	)
 }
 
 function* validatePickSaga(
@@ -39,13 +42,27 @@ function* validatePickSaga(
 	pickAction: AnyPickActionT
 ): SagaIterator<PickedSlotT | void> {
 	const playerId = yield* select(getPlayerId)
-	const pickedSlot: PickedSlotT =
-		pickAction.type === 'SET_SELECTED_CARD'
-			? {slotType: 'hand', card: pickAction.payload, playerId}
-			: pickAction.payload
-
 	const gameState = yield* select(getGameState)
 	if (!gameState) return
+
+	let pickedSlot: PickedSlotT
+	if (pickAction.type === 'SET_SELECTED_CARD') {
+		const index = gameState.hand.findIndex((card) =>
+			equalCard(card, pickAction.payload)
+		)
+		pickedSlot = {
+			slot: {
+				type: 'hand',
+				index: index,
+				card: pickAction.payload,
+				info: pickAction.payload ? CARDS[pickAction.payload.cardId] : null,
+			},
+			playerId,
+		}
+	} else {
+		pickedSlot = pickAction.payload
+	}
+
 	if (!validPick(gameState, req, pickedSlot)) return
 	return pickedSlot
 }
