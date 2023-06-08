@@ -33,7 +33,7 @@ const Dropdown = ({button, label, options, action}: Props) => {
 						<DropdownMenu.RadioItem
 							value={option.name}
 							key={option.key || option.name}
-							onSelect={() => action(option.name)}
+							onSelect={() => action(option.key || option.name)}
 							className={css.DropdownMenuItem}
 						>
 							{option.icon && (

@@ -31,7 +31,7 @@ class KeralisRareHermitCard extends HermitCard {
 		this.heal = 100
 		this.pickOn = 'followup'
 		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'board', type: 'hermit', amount: 1, active: false},
+			{target: 'board', type: ['hermit'], amount: 1, active: false},
 		])
 	}
 
@@ -63,11 +63,11 @@ class KeralisRareHermitCard extends HermitCard {
 
 		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
 			const {currentPlayer} = game.ds
-			const {pickedCardsInfo} = followUpState
+			const {pickedSlots} = followUpState
 
 			if (followUpState.followUp !== this.id) return
 
-			const keralisPickedCards = pickedCardsInfo[this.id] || []
+			const keralisPickedCards = pickedSlots[this.id] || []
 			if (keralisPickedCards.length !== 1) return 'DONE'
 			const healTarget = keralisPickedCards[0]
 

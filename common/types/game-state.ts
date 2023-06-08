@@ -2,7 +2,7 @@ import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
 import {MessageInfoT} from './chat'
-import {PickProcessT, PickedCardsInfo} from './pick-process'
+import {PickProcessT, PickedSlots} from './pick-process'
 
 export type PlayerId = string
 
@@ -83,17 +83,24 @@ export type PlayerState = {
 			(availableActions: AvailableActionsT) => AvailableActionsT
 		>
 
+		/** Instance key -> hook called whenver any card is attached */
+		onAttach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver any card is detached */
+		onDetach: Record<string, (instance: string) => void>
+		/** Instance key -> hook called whenver a single use card is applied */
+		onApply: Record<string, (instance: string) => void>
+
 		/** Instance key -> hook that returns attacks */
 		getAttacks: Record<
 			string,
-			(pickedCards: PickedCardsInfo) => Array<AttackModel>
+			(pickedSlots: PickedSlots) => Array<AttackModel>
 		>
 		/** Instance key -> hook that modifies an attack before the main attack loop */
 		beforeAttack: Record<string, (attack: AttackModel) => void>
 		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,
-			(attack: AttackModel, pickedCards: PickedCardsInfo) => void
+			(attack: AttackModel, pickedSlots: PickedSlots) => void
 		>
 		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>
