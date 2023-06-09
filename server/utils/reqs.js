@@ -200,6 +200,7 @@ export const validType = (type, cardType) => {
  */
 const validEmpty = (empty, card, slotType, isEmptyRow) => {
 	if (typeof empty !== 'boolean') return true
+	if (slotType === 'hand') return true
 	// Only hermit cards slots can have empty rows, needed for the ender pearl card
 	if (isEmptyRow && slotType !== 'hermit') return false
 	return empty === !card
