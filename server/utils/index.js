@@ -235,6 +235,13 @@ export const getOpponentId = (game, playerId) => {
 }
 
 /**
+ * @param {CardT} card
+ */
+export const isRemovable = (card) => {
+	return EFFECT_CARDS[card.cardId].getIsRemovable()
+}
+
+/**
  * @param {PlayerState} playerState
  * @returns {boolean}
  */
@@ -244,11 +251,26 @@ export function isActive(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit | null}
+ */
+export function getActiveRow(playerState) {
+	if (playerState.board.activeRow === null) return null
+	const row = playerState.board.rows[playerState.board.activeRow]
+	if (!row.hermitCard) return null
+	return row
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
  * @returns {RowStateWithHermit[]}
  */
-export function getNonEmptyRows(playerState) {
+export function getNonEmptyRows(playerState, includeActive = true) {
 	const rows = []
-	for (let row of playerState.board.rows) {
+	const activeRowIndex = playerState.board.activeRow
+	for (let i = 0; i < playerState.board.rows.length; i++) {
+		const row = playerState.board.rows[i]
+		if (i === activeRowIndex && !includeActive) continue
 		if (row.hermitCard) rows.push(row)
 	}
 	return rows
