@@ -9,6 +9,7 @@ import FalseSymmetryCommonHermitCard from './falsesymmetry-common'
 import GeminiTayCommonHermitCard from './geminitay-common'
 import GrianCommonHermitCard from './grian-common'
 import GoodTimesWithScarCommonHermitCard from './goodtimeswithscar-common'
+import HelsknightRareHermitCard from './helsknight-rare'
 import HypnotizdCommonHermitCard from './hypnotizd-common'
 import IJevinCommonHermitCard from './ijevin-common'
 import ImpulseSVCommonHermitCard from './impulsesv-common'
@@ -125,6 +126,7 @@ const HERMIT_CARDS = [
 
 	// new BeetlejhostCommonHermitCard(),
 	// new EvilJevinCommonHermitCard(),
+	// new HelsknightRareHermitCard(),
 	// new LlamadadRareHermitCard(),
 	// new PoultrymanCommonHermitCard(),
 	// new PotatoBoyRareHermitCard(),
