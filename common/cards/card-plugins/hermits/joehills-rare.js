@@ -37,46 +37,39 @@ class JoeHillsRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player, otherPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const timeSkipKey = this.getInstanceKey(instance, 'timeSkipKey')
+		const timeSkipHeads = this.getInstanceKey(instance, 'timeSkipHeads')
+		const joeUsedSecondary = this.getInstanceKey(instance, 'joeUsedSecondary')
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+			delete player.custom[joeUsedSecondary]
+			delete player.custom[timeSkipHeads]
 
-			// can't be used on first turn
-			if (game.state.turn < 2) return
-			// can't be used consecutively
-			if (player.custom[this.id]) return
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player)
 			player.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'heads') player.custom[timeSkipKey] = 'time_skip'
+			if (coinFlip[0] === 'heads') player.custom[timeSkipHeads] = true
+			player.custom[joeUsedSecondary] = true
 		}
 
 		otherPlayer.hooks.availableActions[instance] = (availableActions) => {
-			if (player.custom[timeSkipKey] == 'time_skip') {
+			if (player.custom[timeSkipHeads]) {
 				if (otherPlayer.board.activeRow === null)
-					availableActions = ['CHANGE_ACTIVE_HERMIT']
-				else availableActions = []
-				player.custom[timeSkipKey] = 'prevent_consecutive'
+					availableActions.filter((a) =>
+						['CHANGE_ACTIVE_HERMIT', 'END_TURN'].includes(a)
+					)
+				else availableActions.filter((a) => a === 'END_TURN')
 			}
-
-			console.log('time skip')
 
 			return availableActions
 		}
 
-		// Disable Time Skip attack consecutively
 		player.hooks.availableActions[instance] = (availableActions) => {
-			// The same Joe card must be active to disable time skip
 			if (player.board.activeRow !== pos.rowIndex) return availableActions
 
-			// we want to make changes only if time skip was used by the hermit
-			if (player.custom[timeSkipKey] == 'prevent_consecutive') {
-				player.custom[timeSkipKey] = 'time_skip_complete'
-				return availableActions.filter(
-					(action) => action !== 'SECONDARY_ATTACK'
-				)
+			if (player.custom[joeUsedSecondary]) {
+				return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
 			}
 			return availableActions
 		}
