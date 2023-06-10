@@ -204,25 +204,29 @@ export function discardSingleUse(game, playerState) {
  * @returns {Array<CoinFlipT>}
  */
 export function flipCoin(currentPlayer, times = 1) {
-	// TODO - possibly replace with hook to avoid explicit card ids in code
-	const fortune = !!currentPlayer.custom['fortune']
-	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
+	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
 
 	/** @type {Array<CoinFlipT>} */
-	const result = []
+	let coinFlips = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			result.push('heads')
+			coinFlips.push('heads')
 		} else if (forceTails) {
-			result.push('tails')
+			coinFlips.push('tails')
 		} else {
 			/** @type {CoinFlipT} */
 			const coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
-			result.push(coinFlip)
+			coinFlips.push(coinFlip)
 		}
 	}
-	return result
+
+	const coinFlipHooks = Object.values(currentPlayer.hooks.coinFlip)
+	for (let i = 0; i < coinFlipHooks.length; i++) {
+		coinFlips = coinFlipHooks[i](coinFlips)
+	}
+
+	return coinFlips
 }
 
 /**
