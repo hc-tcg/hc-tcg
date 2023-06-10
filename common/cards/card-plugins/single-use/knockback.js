@@ -43,6 +43,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			applySingleUse(game, pickedSlots)
+			delete player.hooks.onAttack[instance]
 		}
 	}
 
