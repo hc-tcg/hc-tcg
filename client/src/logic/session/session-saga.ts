@@ -144,7 +144,7 @@ export function* loginSaga(): SagaIterator {
 			!!activeDeck && !validateDeck(activeDeck.cards.map((card) => card.cardId))
 
 		// if active deck is not valid, generate and save a starter deck
-		if (!!urlDeck) {
+		if (urlDeck) {
 			console.log('Selected deck found in url: ' + urlDeck.name)
 			saveDeck(urlDeck)
 			setActiveDeck(urlDeck.name)
