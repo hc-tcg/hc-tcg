@@ -93,10 +93,7 @@ export type PlayerState = {
 		/** Instance key -> hook that returns attacks */
 		getAttacks: Record<string, (pickedSlots: PickedSlots) => Array<AttackModel>>
 		/** Instance key -> hook that modifies an attack before the main attack loop */
-		beforeAttack: Record<
-			string,
-			(attack: AttackModel, pickedSlots: PickedSlots) => void
-		>
+		beforeAttack: Record<string, (attack: AttackModel) => void>
 		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,

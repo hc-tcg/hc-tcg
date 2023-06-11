@@ -27,8 +27,8 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.beforeAttack[instance] = (attack, pickedSlots) => {
-			applySingleUse(game, pickedSlots)
+		player.hooks.beforeAttack[instance] = (attack) => {
+			applySingleUse(game)
 			delete player.hooks.beforeAttack[instance]
 		}
 	}
