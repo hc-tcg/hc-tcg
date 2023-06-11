@@ -54,6 +54,7 @@ export function getPickedCardsInfoById(gameState, pickedCards) {
 			return null
 
 		const row = pState.board.rows[rowIndex]
+		if (!row || !row.hermitCard) return null
 
 		// Validate that received card & position match with server state
 		let cardOnPosition = null
