@@ -238,14 +238,18 @@ export const getOpponentId = (game, playerId) => {
  * @param {CardT} card
  */
 export const isRemovable = (card) => {
-	return EFFECT_CARDS[card.cardId].getIsRemovable()
+	const cardInfo = EFFECT_CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRemovable()
 }
 
 /**
  * @param {CardT} card
  */
 export const isRedirecting = (card) => {
-	return EFFECT_CARDS[card.cardId].getIsRedirecting()
+	const cardInfo = CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRedirecting()
 }
 
 /**
