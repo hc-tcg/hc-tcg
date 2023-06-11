@@ -56,15 +56,6 @@ class EffectCard extends Card {
 		// default
 		return true
 	}
-
-	/**
-	 * Returns wheter this card redirects attacks to itself
-	 * @returns {boolean}
-	 */
-	getIsRedirecting() {
-		// default
-		return false
-	}
 }
 
 export default EffectCard
