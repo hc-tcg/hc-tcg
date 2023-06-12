@@ -17,10 +17,16 @@ class LeadSingleUseCard extends SingleUseCard {
 			description:
 				"Move 1 of your opponent's active Hermit item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.",
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
+			pickReqs: [
 				{target: 'opponent', type: ['item'], amount: 1, active: true},
-				{target: 'opponent', type: ['item'], amount: 1, empty: true, active: false,},
-			])
+				{
+					target: 'opponent',
+					type: ['item'],
+					amount: 1,
+					empty: true,
+					active: false,
+				},
+			],
 		})
 	}
 
@@ -36,10 +42,17 @@ class LeadSingleUseCard extends SingleUseCard {
 
 		const itemCardInfo = slots[0]
 		const targetSlotInfo = slots[1]
-		if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
+		if (
+			targetSlotInfo.slot.card !== null ||
+			!itemCardInfo.row ||
+			!targetSlotInfo.row
+		)
+			return
 
-		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] = targetSlotInfo.slot.card
-		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] = itemCardInfo.slot.card
+		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] =
+			targetSlotInfo.slot.card
+		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] =
+			itemCardInfo.slot.card
 
 		return true
 	}
