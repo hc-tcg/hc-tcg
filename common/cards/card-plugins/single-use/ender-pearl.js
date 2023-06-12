@@ -57,6 +57,10 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		player.board.rows[player.board.activeRow] = pickedSlot.row.state
 		player.board.activeRow = pickedSlot.row.index
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default EnderPearlSingleUseCard
