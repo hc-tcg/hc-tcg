@@ -1,11 +1,15 @@
 import SingleUseCard from './_single-use-card'
-import {flipCoin, applySingleUse, discardSingleUse} from '../../../../server/utils'
+import {
+	flipCoin,
+	applySingleUse,
+	discardSingleUse,
+} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
-*/
+ */
 
 class TridentSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -53,7 +57,7 @@ class TridentSingleUseCard extends SingleUseCard {
 
 			const coinFlip = flipCoin(player)
 			player.coinFlips[this.id] = coinFlip
-			
+
 			// Return to hand
 			if (coinFlip[0] === 'heads' && player.board.singleUseCard) {
 				player.board.singleUseCardUsed = false
@@ -74,6 +78,10 @@ class TridentSingleUseCard extends SingleUseCard {
 
 		delete player.hooks.getAttacks[instance]
 		delete player.hooks.afterAttack[instance]
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
