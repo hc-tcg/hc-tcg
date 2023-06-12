@@ -69,6 +69,10 @@ class LightningRodEffectCard extends EffectCard {
 		delete otherPlayer.hooks.beforeAttack[instance]
 		delete otherPlayer.hooks.afterAttack[instance]
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default LightningRodEffectCard

@@ -69,6 +69,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		delete player.hooks.beforeAttack[instance]
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default TargetBlockSingleUseCard
