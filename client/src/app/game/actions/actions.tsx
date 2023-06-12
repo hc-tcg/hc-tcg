@@ -114,24 +114,29 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 	const Status = () => {
 		const turn = localGameState.currentPlayerId === playerId
-		const turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
+		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
+		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
+		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
+		const changeHermit =
+			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
 			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
-		} else if (knockedOut) {
-			return <p>Activate an AFK Hermit</p>
-		} else if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
-			return <p>Waiting for opponent's action...</p>
-		} else {
-			return (
-				<>
-					<p className={css.turn}>{turnMsg}</p>
-					<p>{getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}</p>
-				</>
-			)
 		}
+
+		return (
+			<>
+				<p className={css.turn}>{turnMsg}</p>
+				<p>
+					{knockedOut && 'Activate an AFK Hermit'}
+					{changeHermit && 'Select a new active hermit'}
+					{opponentFollowup && "Waiting for opponent's action..."}
+					{getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}
+				</p>
+			</>
+		)
 	}
 
 	const SingleUseSlot = () => {
@@ -202,6 +207,14 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				[css.desktop]: !mobile,
 			})}
 		>
+			{/* <p>
+				{availableActions
+					.toString()
+					.split(',')
+					.map((s) => (
+						<span key={s}>{s}, </span>
+					))}
+			</p> */}
 			<div className={css.actionSection} id={css.singleUse}>
 				<h2>Single Use Card</h2>
 				{SingleUseSlot()}
