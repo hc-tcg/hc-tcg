@@ -3,7 +3,7 @@ import EffectCard from './_effect-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
-*/
+ */
 
 class ChainmailArmorEffectCard extends EffectCard {
 	constructor() {
@@ -11,8 +11,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 			id: 'chainmail_armor',
 			name: 'Chainmail Armor',
 			rarity: 'common',
-			description:
-				"Prevents damage from all effect cards.",
+			description: 'Prevents damage from all effect cards.',
 		})
 	}
 
@@ -25,7 +24,8 @@ class ChainmailArmorEffectCard extends EffectCard {
 		const {otherPlayer} = pos
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment') return
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
 				return
@@ -41,6 +41,10 @@ class ChainmailArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
