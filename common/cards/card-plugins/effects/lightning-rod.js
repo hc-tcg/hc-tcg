@@ -30,7 +30,6 @@ class LightningRodEffectCard extends EffectCard {
 		const {currentPlayerId} = game.ds
 		const {player} = pos
 
-		console.log(pos)
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.playerId !== currentPlayerId) return 'INVALID'
 
