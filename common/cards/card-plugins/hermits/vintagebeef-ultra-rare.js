@@ -20,8 +20,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 				name: 'N.H.O',
 				cost: ['explorer', 'explorer', 'explorer'],
 				damage: 100,
-				power:
-					'If user has Doc, Bdubs, and Etho as AFK, attack damage doubles.',
+				power: 'If you have Doc, Bdubs AND Etho, attack damage doubles.',
 			},
 		})
 	}
@@ -29,37 +28,38 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
+
 			const hasBdubs = player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('bdoubleo100')
+				row.hermitCard?.cardId?.startsWith('bdoubleo100')
 			)
 			const hasDoc = player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('docm77')
+				row.hermitCard?.cardId?.startsWith('docm77')
 			)
 			const hasEtho = player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('ethoslab')
+				row.hermitCard?.cardId?.startsWith('ethoslab')
 			)
-			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(2)
+
+			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(attack.damage)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 
