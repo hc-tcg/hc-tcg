@@ -24,6 +24,7 @@
 		"@types/three": "^0.150.1",
 		"@typescript-eslint/eslint-plugin": "^5.52.0",
 		"@typescript-eslint/parser": "^5.52.0",
+		"@use-gesture/react": "^10.2.27",
 		"@vitejs/plugin-react": "^3.0.1",
 		"body-parser": "^1.20.1",
 		"classnames": "^2.3.2",
