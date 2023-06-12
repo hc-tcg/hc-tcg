@@ -3,9 +3,9 @@ import {discardCard, isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
-* @typedef {import('common/types/cards').CardPos} CardPos
-* @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
-*/
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ */
 
 class SweepingEdgeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -30,11 +30,9 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		if (activeRow === null) return 'NO'
 
 		const rows = otherPlayer.board.rows
-		const targetIndex = [
-			activeRow - 1,
-			activeRow,
-			activeRow + 1
-		].filter((index) => index >= 0 && index < rows.length)
+		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
+			(index) => index >= 0 && index < rows.length
+		)
 
 		for (const row of targetIndex) {
 			const effectCard = rows[row].effectCard
@@ -43,7 +41,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 
 		return 'NO'
 	}
-	
+
 	canApply() {
 		return true
 	}
@@ -60,16 +58,18 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		if (activeRow === null) return
 
 		const rows = otherPlayer.board.rows
-		const targetIndex = [
-			activeRow - 1,
-			activeRow,
-			activeRow + 1
-		].filter((index) => index >= 0 && index < rows.length)
+		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
+			(index) => index >= 0 && index < rows.length
+		)
 
 		for (const index of targetIndex) {
 			const effectCard = rows[index].effectCard
 			if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
 		}
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
