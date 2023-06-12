@@ -22,7 +22,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			description:
 				'Move 1 of your attached item cards to an adjacent active or AFK Hermit. You can use another single use effect card this turn.',
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
+			pickReqs: [
 				{target: 'player', type: ['item'], amount: 1},
 				{
 					target: 'player',
@@ -31,7 +31,7 @@ class PistonSingleUseCard extends SingleUseCard {
 					empty: true,
 					adjacent: 'req',
 				},
-			]),
+			],
 		})
 	}
 

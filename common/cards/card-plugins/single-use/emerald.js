@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {isRemovable} from '../../../../server/utils'	
+import {isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
@@ -24,11 +24,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+
 		const {player, otherPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = otherPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return 'NO'
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
+			return 'NO'
 
 		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
@@ -37,7 +39,11 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerEffect = playerActiveRow.effectCard
 
 		if (!opponentEffect && !playerEffect) return 'NO'
-		if ((opponentEffect && !isRemovable(opponentEffect)) || (playerEffect && !isRemovable(playerEffect))) return 'NO'		
+		if (
+			(opponentEffect && !isRemovable(opponentEffect)) ||
+			(playerEffect && !isRemovable(playerEffect))
+		)
+			return 'NO'
 
 		return 'YES'
 	}
