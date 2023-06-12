@@ -12,8 +12,8 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+import {validateDeck} from 'server/utils/validation'
 import {PlayerDeckT} from '../../../../common/types/deck'
-import {validateDeck} from 'common/utils/validation'
 
 type PlayerInfoT = {
 	playerName: string
