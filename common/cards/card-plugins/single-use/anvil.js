@@ -97,6 +97,10 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 		return 'YES'
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default AnvilSingleUseCard
