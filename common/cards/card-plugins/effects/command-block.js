@@ -17,6 +17,10 @@ class CommandBlockEffectCard extends EffectCard {
 	getIsRemovable() {
 		return false
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default CommandBlockEffectCard
