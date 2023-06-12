@@ -1,4 +1,3 @@
-import {isRemovable} from '../../../../server/utils'
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
@@ -23,7 +22,6 @@ class EmeraldSingleUseCard extends SingleUseCard {
 				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
 				const pEffect = playerActiveRow?.effectCard
 				const oEffect = opponentActiveRow?.effectCard
-				if (!isRemovable(pEffect) || !isRemovable(oEffect)) return 'DONE'
 				playerActiveRow.effectCard = oEffect
 				opponentActiveRow.effectCard = pEffect
 				return 'DONE'
