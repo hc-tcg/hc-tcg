@@ -13,7 +13,7 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {validateDeck} from 'server/utils/validation'
-import { PlayerDeckT } from '../../../../common/types/deck'
+import {PlayerDeckT} from '../../../../common/types/deck'
 
 type PlayerInfoT = {
 	playerName: string
@@ -56,10 +56,17 @@ const getDeck: () => PlayerDeckT | null = function () {
 	const name = urlParams.get('name')
 	if (!hash) return null
 	const deckCards = getDeckFromHash(hash)
-	if (validateDeck(deckCards.map((card) => {return card.cardId}))) return null
-	console.log("Valid deck")
-	if (!name) return {cards: deckCards, name:'Imported deck', icon: 'any'}
-	return {cards: deckCards, name:name, icon:'any'}
+	if (
+		validateDeck(
+			deckCards.map((card) => {
+				return card.cardId
+			})
+		)
+	)
+		return null
+	console.log('Valid deck')
+	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
+	return {cards: deckCards, name: name, icon: 'any'}
 }
 
 const createConnectErrorChannel = () =>
