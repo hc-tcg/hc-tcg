@@ -14,12 +14,12 @@ class LadderSingleUseCard extends SingleUseCard {
 			name: 'Ladder',
 			rarity: 'ultra_rare',
 			description:
-				'Before attacking swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
+				'Swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
 
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
+			pickReqs: [
 				{target: 'player', type: ['hermit'], amount: 1, adjacent: 'active'},
-			]),
+			],
 		})
 	}
 
