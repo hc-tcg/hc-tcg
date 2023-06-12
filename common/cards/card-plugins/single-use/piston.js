@@ -124,6 +124,10 @@ class PistonSingleUseCard extends SingleUseCard {
 			delete player.custom[this.getInstanceKey(instance)]
 		}
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default PistonSingleUseCard
