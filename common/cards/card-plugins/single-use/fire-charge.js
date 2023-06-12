@@ -104,6 +104,10 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			delete player.custom[this.getInstanceKey(instance)]
 		}
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default FireChargeSingleUseCard
