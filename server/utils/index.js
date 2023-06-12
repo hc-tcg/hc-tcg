@@ -138,21 +138,24 @@ export function discardCard(game, card) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
-	if (!loc || !pos) {
+	if (!loc) {
 		const err = new Error()
 		console.log('Cannot find card: ', card, err.stack)
 		return
 	}
 
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance, pos)
+	// Cards on the Board
+	if (pos) {
+		const cardInfo = CARDS[card.cardId]
+		cardInfo.onDetach(game, card.cardInstance, pos)
 
-	// Call onDetach hook
-	const player = getCardPos(game, card.cardInstance)?.player
-	if (player) {
-		const onDetachs = Object.values(player.hooks.onAttach)
-		for (let i = 0; i < onDetachs.length; i++) {
-			onDetachs[i](card.cardInstance)
+		// Call onDetach hook
+		const player = getCardPos(game, card.cardInstance)?.player
+		if (player) {
+			const onDetachs = Object.values(player.hooks.onDetach)
+			for (let i = 0; i < onDetachs.length; i++) {
+				onDetachs[i](card.cardInstance)
+			}
 		}
 	}
 
@@ -182,7 +185,7 @@ export function discardSingleUse(game, playerState) {
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
-	const onDetachs = Object.values(playerState.hooks.onAttach)
+	const onDetachs = Object.values(playerState.hooks.onDetach)
 	for (let i = 0; i < onDetachs.length; i++) {
 		onDetachs[i](suCard.cardInstance)
 	}
