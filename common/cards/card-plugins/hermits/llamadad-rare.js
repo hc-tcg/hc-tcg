@@ -53,10 +53,10 @@ class LlamadadRareHermitCard extends HermitCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
+	onDetach(game, instance, pos) {
+		const {player} = pos
 		// Remove hooks
-		delete currentPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 	}
 
 	getExpansion() {
