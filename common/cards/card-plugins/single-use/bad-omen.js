@@ -30,6 +30,10 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		const {otherPlayer} = pos
 		otherPlayer.ailments.push({id: 'badomen', duration: 3})
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default BadOmenSingleUseCard
