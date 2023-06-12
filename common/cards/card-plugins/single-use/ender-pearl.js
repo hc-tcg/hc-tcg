@@ -14,12 +14,10 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:
-				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.\n\nDiscard after use.',
-		
+				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.',
+
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
-				{target: 'player', type: ['hermit'], amount: 1, empty: true},
-			])
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, empty: true}],
 		})
 	}
 
