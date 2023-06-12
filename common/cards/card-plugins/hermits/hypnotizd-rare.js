@@ -81,12 +81,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 	register(game) {
 		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
 			const {currentPlayer} = game.ds
-			const {moveRef, typeAction, pickedSlotsInfo} = attackState
+			const {moveRef, typeAction, pickedSlots} = attackState
 
 			if (typeAction !== 'SECONDARY_ATTACK') return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const hypnoPickedCards = pickedSlotsInfo[this.id] || []
+			const hypnoPickedCards = pickedSlots[this.id] || []
 
 			const pickedHermit = hypnoPickedCards[0]
 			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target

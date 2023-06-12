@@ -17,6 +17,7 @@ import {getCardPos} from './cards'
  * @param {CardT | null} card2
  */
 export function equalCard(card1, card2) {
+	if (!card1 && !card2) return true
 	if (!card1 || !card2) return false
 	return (
 		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
@@ -65,10 +66,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 
 /**
  * @param {GameModel} game
- * @param {import('../../common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+ * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlotsInfo = {}) {
+export function applySingleUse(game, pickedSlots = {}) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -85,7 +86,7 @@ export function applySingleUse(game, pickedSlotsInfo = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlotsInfo)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -137,21 +138,24 @@ export function discardCard(game, card) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
-	if (!loc || !pos) {
+	if (!loc) {
 		const err = new Error()
 		console.log('Cannot find card: ', card, err.stack)
 		return
 	}
 
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance, pos)
+	// Cards on the Board
+	if (pos) {
+		const cardInfo = CARDS[card.cardId]
+		cardInfo.onDetach(game, card.cardInstance, pos)
 
-	// Call onDetach hook
-	const player = getCardPos(game, card.cardInstance)?.player
-	if (player) {
-		const onDetachs = Object.values(player.hooks.onAttach)
-		for (let i = 0; i < onDetachs.length; i++) {
-			onDetachs[i](card.cardInstance)
+		// Call onDetach hook
+		const player = getCardPos(game, card.cardInstance)?.player
+		if (player) {
+			const onDetachs = Object.values(player.hooks.onDetach)
+			for (let i = 0; i < onDetachs.length; i++) {
+				onDetachs[i](card.cardInstance)
+			}
 		}
 	}
 
@@ -181,7 +185,7 @@ export function discardSingleUse(game, playerState) {
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
-	const onDetachs = Object.values(playerState.hooks.onAttach)
+	const onDetachs = Object.values(playerState.hooks.onDetach)
 	for (let i = 0; i < onDetachs.length; i++) {
 		onDetachs[i](suCard.cardInstance)
 	}
@@ -234,6 +238,15 @@ export const getOpponentId = (game, playerId) => {
 }
 
 /**
+ * @param {CardT} card
+ */
+export const isRemovable = (card) => {
+	const cardInfo = EFFECT_CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRemovable()
+}
+
+/**
  * @param {PlayerState} playerState
  * @returns {boolean}
  */
@@ -243,11 +256,26 @@ export function isActive(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit | null}
+ */
+export function getActiveRow(playerState) {
+	if (playerState.board.activeRow === null) return null
+	const row = playerState.board.rows[playerState.board.activeRow]
+	if (!row.hermitCard) return null
+	return row
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
  * @returns {RowStateWithHermit[]}
  */
-export function getNonEmptyRows(playerState) {
+export function getNonEmptyRows(playerState, includeActive = true) {
 	const rows = []
-	for (let row of playerState.board.rows) {
+	const activeRowIndex = playerState.board.activeRow
+	for (let i = 0; i < playerState.board.rows.length; i++) {
+		const row = playerState.board.rows[i]
+		if (i === activeRowIndex && !includeActive) continue
 		if (row.hermitCard) rows.push(row)
 	}
 	return rows

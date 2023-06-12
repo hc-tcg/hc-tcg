@@ -134,7 +134,7 @@ function Game() {
 	}
 
 	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.card)
+		.map((pickedSlot) => pickedSlot.slot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (
