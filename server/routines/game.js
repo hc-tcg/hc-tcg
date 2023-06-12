@@ -133,29 +133,20 @@ function getAvailableActions(game, pastTurnActions) {
 			const suId = currentPlayer.board.singleUseCard?.cardId || null
 			const suInfo = suId ? SINGLE_USE_CARDS[suId] || null : null
 			const itemCards = rows[activeRow].itemCards.filter(Boolean)
-			const hasCommandBlock =
-				rows[activeRow].effectCard?.cardId === 'command_block'
 
 			// only add attack options if not sleeping
 			if (hermitInfo && !isSleeping) {
 				let showZeroAttack = true
-				let primaryCost = hermitInfo.primary.cost
-				let secondaryCost = hermitInfo.secondary.cost
-				if (hasCommandBlock) {
-					primaryCost = primaryCost.map(() => 'any')
-					secondaryCost = secondaryCost.map(() => 'any')
-				}
-
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
-					hasEnoughItems(itemCards, primaryCost)
+					hasEnoughItems(itemCards, hermitInfo.primary.cost)
 				) {
 					actions.push('PRIMARY_ATTACK')
 					showZeroAttack = false
 				}
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
-					(!isSlow && hasEnoughItems(itemCards, secondaryCost))
+					(!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
 					showZeroAttack = false
