@@ -175,7 +175,7 @@ function* attackSaga(game, turnAction, actionState) {
 				const instance = beforeAttackKeys[i]
 				// if we are not ignoring this hook, call it
 				if (!shouldIgnoreCard(attack, instance)) {
-					beforeAttacks[i](attack)
+					beforeAttacks[i](attack, pickedSlots)
 				}
 			}
 		}
