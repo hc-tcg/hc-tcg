@@ -244,42 +244,11 @@ export const isRemovable = (card) => {
 }
 
 /**
- * @param {CardT} card
- */
-export const isRedirecting = (card) => {
-	const cardInfo = CARDS[card.cardId]
-	if (!cardInfo) return false
-	return cardInfo.getIsRedirecting()
-}
-
-/**
  * @param {PlayerState} playerState
  * @returns {boolean}
  */
 export function isActive(playerState) {
 	return playerState.board.activeRow !== null
-}
-
-/**
- * @param {PlayerState} playerState
- * @returns {boolean}
- */
-export function getHasRedirectingCards(playerState) {
-	for (const row of playerState.board.rows) {
-		if (row.effectCard && isRedirecting(row.effectCard)) return true
-	}
-	return false
-}
-
-/**
- * @param {PlayerState} playerState
- * @return {RowStateWithHermit | null}
- */
-export function getRowWithRedirectingCard(playerState) {
-	for (const row of playerState.board.rows) {
-		if (row.effectCard && isRedirecting(row.effectCard)) return row
-	}
-	return null
 }
 
 /**
