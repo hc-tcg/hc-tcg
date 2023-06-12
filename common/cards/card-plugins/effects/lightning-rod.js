@@ -34,8 +34,6 @@ class LightningRodEffectCard extends EffectCard {
 		if (pos.playerId !== currentPlayerId) return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'NO'
-		// Restrict to one per side
-		if (getHasRedirectingCards(player)) return 'NO'
 
 		return 'YES'
 	}
@@ -54,6 +52,7 @@ class LightningRodEffectCard extends EffectCard {
 		}
 
 		otherPlayer.hooks.afterAttack[instance] = (attackResult) => {
+			if (attackResult.attack.target.index !== rowIndex) return
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}

@@ -54,8 +54,6 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 
 		// Inactive Hermits
 		if (getNonEmptyRows(otherPlayer, false).length === 0) return 'NO'
-		// Can't be used if a Lighning Rod is on that player's board
-		if (getHasRedirectingCards(otherPlayer)) return 'NO'
 
 		return 'YES'
 	}
