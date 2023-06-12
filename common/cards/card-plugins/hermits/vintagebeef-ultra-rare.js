@@ -28,29 +28,38 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {condRef, moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-
-			const hasBdubs = condRef.player.board.rows.some((row) =>
+		player.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
+			const hasBdubs = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('bdoubleo100')
 			)
-			const hasDoc = condRef.player.board.rows.some((row) =>
+			const hasDoc = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('docm77')
 			)
-			const hasEtho = condRef.player.board.rows.some((row) =>
+			const hasEtho = player.board.rows.some((row) =>
 				row.hermitCard?.cardId.startsWith('ethoslab')
 			)
+			if (hasBdubs && hasDoc && hasEtho) attack.multiplyDamage(2)
+		}
+	}
 
-			if (hasBdubs && hasDoc && hasEtho) target.hermitMultiplier *= 2
-
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 */
+	onDetach(game, instance) {
+		const {currentPlayer} = game.ds
+		// Remove hooks
+		delete currentPlayer.hooks.onAttack[instance]
 	}
 }
 
