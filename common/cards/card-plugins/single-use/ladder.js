@@ -67,6 +67,10 @@ class LadderSingleUseCard extends SingleUseCard {
 
 		return 'NO'
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default LadderSingleUseCard
