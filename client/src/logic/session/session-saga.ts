@@ -18,7 +18,11 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+<<<<<<< HEAD
 import {validateDeck} from 'common/utils/validation'
+=======
+import {validateDeck} from 'server/utils/validation'
+>>>>>>> b4b80eef (Prettify session-sage.ts)
 import {PlayerDeckT} from '../../../../common/types/deck'
 
 type PlayerInfoT = {
