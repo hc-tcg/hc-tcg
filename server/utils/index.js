@@ -235,6 +235,24 @@ export const getOpponentId = (game, playerId) => {
 }
 
 /**
+ * @param {CardT} card
+ */
+export const isRemovable = (card) => {
+	const cardInfo = EFFECT_CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRemovable()
+}
+
+/**
+ * @param {CardT} card
+ */
+export const isRedirecting = (card) => {
+	const cardInfo = CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRedirecting()
+}
+
+/**
  * @param {PlayerState} playerState
  * @returns {boolean}
  */
@@ -244,11 +262,48 @@ export function isActive(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {boolean}
+ */
+export function getHasRedirectingCards(playerState) {
+	for (const row of playerState.board.rows) {
+		if (row.effectCard && isRedirecting(row.effectCard)) return true
+	}
+	return false
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @return {RowStateWithHermit | null}
+ */
+export function getRowWithRedirectingCard(playerState) {
+	for (const row of playerState.board.rows) {
+		if (row.effectCard && isRedirecting(row.effectCard)) return row
+	}
+	return null
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit | null}
+ */
+export function getActiveRow(playerState) {
+	if (playerState.board.activeRow === null) return null
+	const row = playerState.board.rows[playerState.board.activeRow]
+	if (!row.hermitCard) return null
+	return row
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
  * @returns {RowStateWithHermit[]}
  */
-export function getNonEmptyRows(playerState) {
+export function getNonEmptyRows(playerState, includeActive = true) {
 	const rows = []
-	for (let row of playerState.board.rows) {
+	const activeRowIndex = playerState.board.activeRow
+	for (let i = 0; i < playerState.board.rows.length; i++) {
+		const row = playerState.board.rows[i]
+		if (i === activeRowIndex && !includeActive) continue
 		if (row.hermitCard) rows.push(row)
 	}
 	return rows
