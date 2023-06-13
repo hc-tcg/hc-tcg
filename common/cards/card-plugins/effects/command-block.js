@@ -1,7 +1,7 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../../../../common/cards'
-import {hasEnoughItems} from '../../../../server/utils'
+import {hasEnoughEnergy} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
@@ -27,70 +27,25 @@ class CommandBlockEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		// Used to know if the hermit has attacked this turn
-		player.custom[this.getInstanceKey(instance)] = false
-
-		player.hooks.availableActions[instance] = (availableActions) => {
-			const attacked = player.custom[this.getInstanceKey(instance)]
-
-			if (attacked || player.board.activeRow !== pos.rowIndex)
-				return availableActions
-
+		player.hooks.availableEnergy[instance] = (availableEnergy) => {
 			const {activeRow, rows} = player.board
-			if (activeRow === null || !rows[activeRow]) return availableActions
 
-			const hermitCard = rows[activeRow].hermitCard
-			if (!hermitCard) return availableActions
+			// Make sure it's our row
+			if (activeRow === null) return availableEnergy
+			if (activeRow !== pos.rowIndex) return availableEnergy
+			const row = rows[activeRow]
 
-			const ailments = rows[activeRow].ailments
-			const isSleeping = ailments.find((a) => a.id === 'sleeping')
-			const isSlow = ailments.find((a) => a.id === 'slowness')
-			const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
-			const primaryHasEnoughItems = hasEnoughItems(
-				rows[activeRow].itemCards.filter(Boolean),
-				hermitInfo.primary.cost.map(() => 'any')
-			)
-			const secondaryHasEnoughItems = hasEnoughItems(
-				rows[activeRow].itemCards.filter(Boolean),
-				hermitInfo.secondary.cost.map(() => 'any')
-			)
+			// Make sure this row has our instance
+			if (row.effectCard?.cardInstance !== instance) return availableEnergy
 
-			if (!isSleeping) {
-				if (
-					primaryHasEnoughItems &&
-					!availableActions.includes('PRIMARY_ATTACK')
-				) {
-					availableActions.push('PRIMARY_ATTACK')
-				}
-
-				if (
-					!isSlow &&
-					secondaryHasEnoughItems &&
-					!availableActions.includes('SECONDARY_ATTACK')
-				) {
-					availableActions.push('SECONDARY_ATTACK')
-				}
-			}
-
-			return availableActions
-		}
-
-		player.hooks.afterAttack[instance] = (attackResult) => {
-			player.custom[this.getInstanceKey(instance)] = true
-		}
-
-		player.hooks.turnStart[instance] = () => {
-			player.custom[this.getInstanceKey(instance)] = false
+			// Turn all the energy into any energy
+			return availableEnergy.map(() => 'any')
 		}
 	}
 
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.availableActions[instance]
-		delete player.hooks.afterAttack[instance]
-		delete player.hooks.turnStart[instance]
-		delete player.custom[this.getInstanceKey(instance, 'attacked')]
-		delete player.custom[this.getInstanceKey(instance, 'rowIndex')]
+		delete player.hooks.availableEnergy[instance]
 	}
 
 	/**
