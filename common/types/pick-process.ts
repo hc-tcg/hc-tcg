@@ -1,5 +1,5 @@
 import Card from '../cards/card-plugins/_card'
-import { Slot } from './cards'
+import {Slot} from './cards'
 import {CardT, RowState} from './game-state'
 
 export type SlotTypeT =
@@ -44,6 +44,7 @@ export type PickProcessT = {
 	requirments: Array<PickRequirmentT>
 	pickedSlots: Array<PickedSlotT>
 	currentReq: number
+	amount?: number
 }
 
 export type PickedSlots = Record<string, Array<PickedSlotT>>
