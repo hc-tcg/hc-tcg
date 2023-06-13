@@ -161,10 +161,18 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.playerDeck.cards
+	let pack = player.playerDeck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
+
+	// randomize instances
+	pack = pack.map((card) => {
+		return {
+			cardId: card.cardId,
+			cardInstance: Math.random().toString(),
+		}
+	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
