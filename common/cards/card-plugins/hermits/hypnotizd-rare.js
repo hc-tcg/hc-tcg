@@ -38,7 +38,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 					target: 'opponent',
 					type: ['hermit'],
 					amount: 1,
-					breakIf: ['active', 'efficiency'],
+					breakIf: ['active'],
 				},
 				{target: 'player', type: ['item'], amount: 1, active: true},
 			],
@@ -60,7 +60,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			const pickedHermit = pickedSlots[this.id][0]
 			const pickedItem = pickedSlots[this.id][1]
-			const efficiency = !!player.custom['efficiency']
 
 			// Change attack target
 			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
@@ -71,7 +70,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			// Discard item card
 			const isActive = player.board.activeRow === pickedHermit.row.index
-			if (!efficiency && !isActive) {
+			if (!isActive) {
 				discardCard(game, pickedItem.slot.card)
 			}
 		}
