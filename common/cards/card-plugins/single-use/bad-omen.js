@@ -28,7 +28,13 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	 */
 	onApply(game, instance, pos, pickedSlots) {
 		const {otherPlayer} = pos
-		otherPlayer.ailments.push({id: 'badomen', duration: 3})
+		const activeRow = otherPlayer.board.activeRow
+		if (activeRow === null) return
+
+		otherPlayer.board.rows[activeRow].ailments.push({
+			id: 'badomen',
+			duration: 3,
+		})
 	}
 
 	getExpansion() {
