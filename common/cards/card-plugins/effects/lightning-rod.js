@@ -1,4 +1,4 @@
-import {discardCard, getHasRedirectingCards} from '../../../../server/utils'
+import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import EffectCard from './_effect-card'
 import {getCardAtPos} from '../../../../server/utils/cards'
@@ -17,7 +17,7 @@ class LightningRodEffectCard extends EffectCard {
 				"Attach to any of your active or AFK Hermits.\n\n All damage done to you on your opponent's next turn is taken by the Hermit this card is attached to.\n\nDiscard after damage is taken.",
 		})
 	}
-	
+
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos

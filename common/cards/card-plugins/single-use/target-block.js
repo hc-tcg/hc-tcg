@@ -1,4 +1,4 @@
-import {getHasRedirectingCards, getNonEmptyRows} from '../../../../server/utils'
+import {getNonEmptyRows} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import SingleUseCard from './_single-use-card'
 
