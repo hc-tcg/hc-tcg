@@ -308,7 +308,17 @@ export function isRowEmpty(row) {
  * @returns {boolean}
  */
 export function rowHasItem(row) {
-	return row.itemCards.filter((card) => !!card).length > 0
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+		total += 1
+	}
+
+	return total > 0
 }
 
 /**
@@ -317,4 +327,27 @@ export function rowHasItem(row) {
  */
 export function rowHasEmptyItemSlot(row) {
 	return row.itemCards.filter((card) => !card).length > 0
+}
+
+/**
+ * @param {RowStateWithHermit} row
+ * @returns {number}
+ */
+export function getTotalItemCardsValue(row) {
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+
+		if (cardInfo.rarity === 'rare') {
+			total += 2
+		} else {
+			total += 1
+		}
+	}
+
+	return total
 }
