@@ -2,19 +2,21 @@ import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 
 class ItemCard extends Card {
+	/**
+	 * @param {import('types/cards').ItemDefs} defs
+	 */
 	constructor(defs) {
-		defs.type = 'item'
-		super(defs)
-
-		if (!defs.hermitType) {
-			throw new Error('Invalid card definition')
-		}
-		this.hermitType = defs.hermitType
+		super({
+			type: 'item',
+			id: defs.id,
+			name: defs.name,
+			rarity: defs.rarity,
+		})
 	}
 
 	/**
 	 * @param {GameModel} game
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
@@ -26,6 +28,16 @@ class ItemCard extends Card {
 		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 * @returns {Array<import('types/cards').EnergyT>}
+	 */
+	getEnergy(game, instance, pos) {
+		throw new Error('Implement getEnergy!')
 	}
 }
 

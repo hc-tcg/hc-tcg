@@ -24,21 +24,13 @@ export function equalCard(card1, card2) {
 	)
 }
 
-export function hasEnoughItems(itemCards, cost) {
-	const itemCardIds = itemCards.map((card) => card.cardId)
-	// transform item cards into cost
-	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
-	const energy = itemCardIds.reduce((result, cardId) => {
-		const itemCard = ITEM_CARDS[cardId]
-		if (!itemCard) return result
-		result.push(itemCard.hermitType)
-		// all rare item cards are x2
-		if (itemCard.rarity === 'rare') {
-			result.push(itemCard.hermitType)
-		}
-		return result
-	}, [])
-
+/**
+ *
+ * @param {Array<import('types/cards').EnergyT>} energy
+ * @param {Array<import('types/cards').EnergyT>} cost
+ * @returns
+ */
+export function hasEnoughEnergy(energy, cost) {
 	const specificCost = cost.filter((item) => item !== 'any')
 	const anyCost = cost.filter((item) => item === 'any')
 	const hasEnoughSpecific = specificCost.every((costItem) => {
