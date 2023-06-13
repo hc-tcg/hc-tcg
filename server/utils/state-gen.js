@@ -280,9 +280,9 @@ export function getLocalPlayerState(playerState) {
  *
  * @param {GameModel} game
  * @param {PlayerModel} player
- * @param {AvailableActionsT} availableActions
+ * @param {import('common/types/game-state').AvailableActionsT} availableActions
  * @param {Array<string>} pastTurnActions
- * @param {AvailableActionsT} opponentAvailableActions
+ * @param {import('common/types/game-state').AvailableActionsT} opponentAvailableActions
  * @returns {LocalGameState | null}
  */
 export function getLocalGameState(

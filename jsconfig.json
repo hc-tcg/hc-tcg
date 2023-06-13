@@ -15,5 +15,5 @@
 		"strictNullChecks": true
 	},
 
-	"include": ["common/*", "server/*"]
+	"include": ["common/**/*", "server/**/*"]
 }
