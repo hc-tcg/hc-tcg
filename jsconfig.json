@@ -1,6 +1,9 @@
 {
 	"compilerOptions": {
 		"baseUrl": ".",
+		"paths": {
+			"types/*": ["common/types/*"]
+		},
 		"target": "ESNext",
 		"module": "ESNext",
 		"moduleResolution": "Node",
@@ -12,5 +15,5 @@
 		"strictNullChecks": true
 	},
 
-	"include": ["**/*"]
+	"include": ["common/*", "server/*"]
 }
