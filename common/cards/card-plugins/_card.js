@@ -48,15 +48,6 @@ class Card {
 	}
 
 	/**
-	 * Returns wheter this card redirects attacks
-	 * @returns {boolean}
-	 */
-	getIsRedirecting() {
-		// default
-		return false
-	}
-
-	/**
 	 * If the specified slot is empty, can this card be attached there
 	 *
 	 * Returns INVALID if it's an invalid slot, NO if we don't meet requirements, YES if we can

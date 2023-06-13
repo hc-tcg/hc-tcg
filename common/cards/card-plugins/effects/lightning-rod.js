@@ -17,11 +17,7 @@ class LightningRodEffectCard extends EffectCard {
 				"Attach to any of your active or AFK Hermits.\n\n All damage done to you on your opponent's next turn is taken by the Hermit this card is attached to.\n\nDiscard after damage is taken.",
 		})
 	}
-
-	getIsRedirecting() {
-		return true
-	}
-
+	
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos

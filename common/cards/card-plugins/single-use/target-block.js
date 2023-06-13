@@ -17,14 +17,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			description:
 				"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
+			pickReqs: [
 				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			]),
+			],
 		})
-	}
-
-	getIsRedirecting() {
-		return true
 	}
 
 	/**
