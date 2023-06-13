@@ -29,8 +29,6 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 					"If this Hermit is knocked out next turn, they're revived with 50hp.Can only be revived once.",
 			},
 		})
-
-		this.recoverAmount = 50
 	}
 
 	/**
@@ -42,7 +40,6 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const {player, otherPlayer, row, rowIndex} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
-		player.custom[scarRevivedKey] = true
 
 		player.hooks.onAttack[instance] = (attack) => {
 			if (
@@ -56,12 +53,12 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 		otherPlayer.hooks.afterAttack[instance] = () => {
 			if (player.board.activeRow !== rowIndex) return
-			if (player.custom[reviveNextTurn] && player.custom[scarRevivedKey]) {
+			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
 				if (row?.health !== 0) return
 
 				row.health = 50
 				row.ailments = []
-				delete player.custom[scarRevivedKey]
+				player.custom[scarRevivedKey] = true
 			}
 			delete player.custom[reviveNextTurn]
 		}
