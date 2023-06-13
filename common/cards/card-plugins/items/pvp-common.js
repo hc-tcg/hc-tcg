@@ -9,6 +9,10 @@ class PvPCommonItemCard extends ItemCard {
 			hermitType: 'pvp',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType]
+	}
 }
 
 export default PvPCommonItemCard
