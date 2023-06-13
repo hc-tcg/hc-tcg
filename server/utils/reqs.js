@@ -132,8 +132,6 @@ export const anyAvailableReqOptions = (
 			total += checkRow(info, req, reqs, gameState)
 		}
 		result.push(total)
-
-		if (req.breakIf) break
 	}
 
 	return result
