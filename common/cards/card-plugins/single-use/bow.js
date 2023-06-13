@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getNonEmptyRows} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
@@ -15,13 +15,27 @@ class BowSingleUseCard extends SingleUseCard {
 			id: 'bow',
 			name: 'Bow',
 			rarity: 'common',
-			description:
-				'Do 40hp damage to an AFK Hermit of your choice.',
+			description: 'Do 40hp damage to an AFK Hermit of your choice.',
 			pickOn: 'attack',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
+			pickReqs: [
 				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			])
+			],
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {otherPlayer} = pos
+
+		// Check if there is an AFK Hermit
+		const inactiveRows = getNonEmptyRows(otherPlayer, false)
+		if (inactiveRows.length === 0) return 'NO'
+
+		return 'YES'
 	}
 
 	/**
