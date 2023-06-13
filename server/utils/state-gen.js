@@ -207,6 +207,8 @@ export function getPlayerState(player) {
 		},
 
 		hooks: {
+			availableEnergy: {},
+
 			blockedActions: {},
 			availableActions: {},
 

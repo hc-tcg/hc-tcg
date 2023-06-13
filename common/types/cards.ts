@@ -81,6 +81,7 @@ export type ItemDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
+	hermitType: HermitTypeT
 }
 
 export type Slot = {

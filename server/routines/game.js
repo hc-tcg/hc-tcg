@@ -373,13 +373,8 @@ function* turnActionSaga(game, turnAction, turnState) {
  * @returns {SagaIterator}
  */
 function* turnActionsSaga(game, pastTurnActions, turnConfig) {
-	const {
-		opponentPlayer,
-		opponentPlayerId,
-		currentPlayer,
-		currentPlayerId,
-		playerActiveRow,
-	} = game.ds
+	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} =
+		game.ds
 
 	const turnActionChannel = yield actionChannel(
 		[
@@ -402,9 +397,10 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			// Available actions code
 
 			// First, get available energy
-			/** @type {Array<import('common/types/cards').EnergyT>} */
+			/** @type {Array<import('types/cards').EnergyT>} */
 			let availableEnergy = []
 
+			const {playerActiveRow} = game.ds
 			if (playerActiveRow) {
 				// Get energy from each item card
 				for (let i = 0; i < playerActiveRow.itemCards.length; i++) {

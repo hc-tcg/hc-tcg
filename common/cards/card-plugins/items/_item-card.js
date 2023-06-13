@@ -12,6 +12,11 @@ class ItemCard extends Card {
 			name: defs.name,
 			rarity: defs.rarity,
 		})
+
+		if (!defs.hermitType) {
+			throw new Error('Invalid card definition')
+		}
+		this.hermitType = defs.hermitType
 	}
 
 	/**
