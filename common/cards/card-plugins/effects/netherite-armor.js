@@ -3,7 +3,7 @@ import EffectCard from './_effect-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
-*/
+ */
 
 class NetheriteArmorEffectCard extends EffectCard {
 	constructor() {
@@ -12,7 +12,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 			name: 'Netherite Armor',
 			rarity: 'ultra_rare',
 			description:
-			"Prevent up to 20hp damage taken.\n\nAlso prevents additional damage to this Hermit from all effect cards.\n\nOpponent can not make this Hermit go AFK.",
+				'Prevent up to 20hp damage taken.\n\nAlso prevents additional damage to this Hermit from all effect cards.\n\nOpponent can not make this Hermit go AFK.',
 		})
 	}
 
@@ -27,7 +27,8 @@ class NetheriteArmorEffectCard extends EffectCard {
 		const activeRowIndex = pos.player.board.activeRow
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment') return
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
 				return
@@ -35,8 +36,8 @@ class NetheriteArmorEffectCard extends EffectCard {
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
-			} 
-			
+			}
+
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 20) {
@@ -67,6 +68,8 @@ class NetheriteArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
+		delete otherPlayer.hooks.turnEnd[instance]
+		delete otherPlayer.hooks.onApply[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

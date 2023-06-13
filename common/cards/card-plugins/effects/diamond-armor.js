@@ -3,7 +3,7 @@ import EffectCard from './_effect-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
-*/
+ */
 
 class DiamondArmorEffectCard extends EffectCard {
 	constructor() {
@@ -12,7 +12,7 @@ class DiamondArmorEffectCard extends EffectCard {
 			name: 'Diamond Armor',
 			rarity: 'rare',
 			description:
-				"Prevent up to 20hp damage taken.\n\nAlso prevents additional damage to this Hermit from all effect cards.",
+				'Prevent up to 20hp damage taken.\n\nAlso prevents additional damage to this Hermit from all effect cards.',
 		})
 	}
 
@@ -26,7 +26,8 @@ class DiamondArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment') return
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
 				return
@@ -34,8 +35,8 @@ class DiamondArmorEffectCard extends EffectCard {
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
-			} 
-			
+			}
+
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 20) {
@@ -58,6 +59,7 @@ class DiamondArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
+		delete otherPlayer.hooks.turnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

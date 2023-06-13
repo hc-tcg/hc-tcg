@@ -4,7 +4,7 @@ import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
-*/
+ */
 
 class ShieldEffectCard extends EffectCard {
 	constructor() {
@@ -13,7 +13,7 @@ class ShieldEffectCard extends EffectCard {
 			name: 'Shield',
 			rarity: 'common',
 			description:
-			"Prevent up to 60hp damage for 1 turn.\n\nDiscard following any damage taken.",
+				'Prevent up to 60hp damage for 1 turn.\n\nDiscard following any damage taken.',
 		})
 	}
 
@@ -27,12 +27,13 @@ class ShieldEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment') return
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+				return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
-			} 
-			
+			}
+
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 60) {
@@ -63,6 +64,8 @@ class ShieldEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
+		delete otherPlayer.hooks.afterAttack[instance]
+		delete otherPlayer.hooks.turnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

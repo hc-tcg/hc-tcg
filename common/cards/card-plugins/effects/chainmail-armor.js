@@ -28,7 +28,6 @@ class ChainmailArmorEffectCard extends EffectCard {
 				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
-				return
 			}
 		}
 	}
@@ -39,7 +38,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
+		const {otherPlayer} = pos
 		delete otherPlayer.hooks.onAttack[instance]
 	}
 
