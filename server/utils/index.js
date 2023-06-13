@@ -31,18 +31,27 @@ export function equalCard(card1, card2) {
  * @returns
  */
 export function hasEnoughEnergy(energy, cost) {
+	const remainingEnergy = energy.slice()
+
 	const specificCost = cost.filter((item) => item !== 'any')
 	const anyCost = cost.filter((item) => item === 'any')
 	const hasEnoughSpecific = specificCost.every((costItem) => {
-		const index = energy.findIndex((energyItem) => energyItem === costItem)
-		if (index === -1) return false
-		energy.splice(index, 1)
+		// First try find the exact card
+		let index = remainingEnergy.findIndex(
+			(energyItem) => energyItem === costItem
+		)
+		if (index === -1) {
+			// Then try find an "any" card
+			index = remainingEnergy.findIndex((energyItem) => energyItem === 'any')
+			if (index === -1) return
+		}
+		remainingEnergy.splice(index, 1)
 		return true
 	})
 	if (!hasEnoughSpecific) return false
 
 	// check if remaining energy is enough to cover required "any" cost
-	return energy.length >= anyCost.length
+	return remainingEnergy.length >= anyCost.length
 }
 
 /**
