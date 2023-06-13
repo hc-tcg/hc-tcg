@@ -31,7 +31,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	onApply(game, instance, pos, pickedSlots) {
 		const {otherPlayer} = pos
 
-		// Block all player actions except for "CHANGE_ACTIVE_HERMIT"
+		// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and followup actions
 		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 			/** @type {AvailableActionsT}*/
 			const blocked = [
@@ -54,6 +54,17 @@ class ClockSingleUseCard extends SingleUseCard {
 			delete otherPlayer.hooks.blockedActions[instance]
 			delete otherPlayer.hooks.turnEnd[instance]
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		// The other player wouldn't be able to attach anything
+		if (game.state.turn === 1) return 'NO'
+		return 'YES'
 	}
 }
 
