@@ -203,6 +203,17 @@ export function discardSingleUse(game, playerState) {
 }
 
 /**
+ * @param {PlayerState} playerState
+ * @param {number} amount
+ */
+export function drawCards(playerState, amount) {
+	for (let i = 0; i < Math.min(playerState.pile.length, amount); i++) {
+		const drawCard = playerState.pile.shift()
+		if (drawCard) playerState.hand.push(drawCard)
+	}
+}
+
+/**
  * @param {PlayerState} currentPlayer
  * @param {number} times
  * @returns {Array<CoinFlipT>}
