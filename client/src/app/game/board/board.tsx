@@ -66,10 +66,7 @@ function Board({onClick, localGameState}: Props) {
 	}
 
 	const handleEndTurn = () => {
-		if (
-			availableActions.length === 1 ||
-			settings.confirmationDialogs === 'off'
-		) {
+		if (noAvailableActions() || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
 		} else {
 			dispatch(setOpenedModal('end-turn'))
@@ -111,7 +108,7 @@ function Board({onClick, localGameState}: Props) {
 
 		return (
 			<Button
-				variant="default"
+				variant={noAvailableActions() ? 'primary' : 'default'}
 				size="small"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
@@ -120,6 +117,9 @@ function Board({onClick, localGameState}: Props) {
 			</Button>
 		)
 	}
+
+	const noAvailableActions = () =>
+		availableActions.length === 1 && availableActions[0] === 'END_TURN'
 
 	const [player1, player2] = localGameState.order.map(
 		(playerId) => localGameState.players[playerId]
