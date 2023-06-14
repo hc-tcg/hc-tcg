@@ -27,10 +27,6 @@ class MendingSingleUseCard extends singleUseCard {
 		})
 	}
 
-	canApply() {
-		return true
-	}
-
 	/**
 	 *
 	 * @param {GameModel} game
@@ -52,7 +48,6 @@ class MendingSingleUseCard extends singleUseCard {
 			!playerActiveRow.effectCard
 		)
 			return
-		if (!validPick(game.state, this.pickReqs[0], targetSlotInfo)) return
 
 		// add effect to target
 		targetSlotInfo.row.state.effectCard = playerActiveRow.effectCard
