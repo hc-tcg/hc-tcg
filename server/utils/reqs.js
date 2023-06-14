@@ -24,7 +24,7 @@ import CARDS from '../cards'
 const checkRow = (rowInfo, req) => {
 	if (rowInfo.emptyRow) return false
 
-	const target = req.target === rowInfo.target
+	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return false
 
 	// active or afk
@@ -136,6 +136,7 @@ export const validTarget = (target, cardPlayerState, playerId, slotType) => {
 	if (typeof target !== 'string') return true
 
 	if (target === 'hand') return slotType === 'hand'
+	if (target === 'board') return true
 	if (target === 'player' && playerId !== cardPlayerState.id) return false
 	if (target === 'opponent' && playerId === cardPlayerState.id) return false
 
