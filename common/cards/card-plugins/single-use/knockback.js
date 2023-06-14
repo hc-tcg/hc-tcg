@@ -67,7 +67,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		const {otherPlayer} = pos
 		const activeRow = getActiveRow(otherPlayer)
 
-		if (activeRow && activeRow.health !== 0) {
+		if (activeRow && activeRow.health) {
 			activeRow.ailments.push({id: 'knockedout', duration: 1})
 			otherPlayer.board.activeRow = null
 		}
