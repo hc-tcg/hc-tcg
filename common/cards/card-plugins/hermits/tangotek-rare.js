@@ -1,6 +1,6 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {getNonEmptyRows} from '../../../../server/utils'
+import {getNonEmptyRows, isActionAvailable} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -104,7 +104,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (
 				playerInactiveRows.length !== 0 &&
 				attack.attacker.row.health > 0 &&
-				game.turnState.availableActions.includes('CHANGE_ACTIVE_HERMIT') // Curse of Binding
+				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
 			) {
 				attack.attacker.row.ailments.push({
 					id: 'knockedout',

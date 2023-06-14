@@ -327,6 +327,14 @@ export function getAdjacentRows(playerState) {
 }
 
 /**
+ * @param {GameModel} game
+ * @param {import('common/types/game-state').AvailableActionT}
+ */
+export function isActionAvailable(game, action) {
+	return game.turnState.availableActions.includes(action)
+}
+
+/**
  * @param {RowStateWithHermit} row
  * @returns {boolean}
  */
