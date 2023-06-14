@@ -125,8 +125,8 @@ export type PlayerState = {
 			string,
 			(followUp: string, pickedSlots: PickedSlots) => void
 		>
-		/** Instance key -> hook called when follow up timesout */
-		onFollowUpTimeout: Record<string, () => void>
+		/** Instance key -> hook called when follow up times out */
+		onFollowUpTimeout: Record<string, (followUp: string) => void>
 
 		/** Instance key -> hook called at the start of the turn */
 		turnStart: Record<string, () => void>

@@ -505,7 +505,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 						opponentPlayer.hooks.onFollowUpTimeout
 					)
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i]()
+						followUpTimeoutHooks[i](opponentFollowUp)
 					}
 					continue
 				} else if (!hasActiveHermit) {
