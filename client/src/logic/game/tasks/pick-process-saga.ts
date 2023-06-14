@@ -21,6 +21,7 @@ import {
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
+import CARDS from 'common/cards'
 
 type AnyPickActionT =
 	| ReturnType<typeof setSelectedCard>
@@ -31,7 +32,9 @@ const isDuplicate = (
 	pickedSlot?: PickedSlotT
 ) => {
 	if (!pickedSlot) return null
-	return pickedSlots.some((pSlot) => equalCard(pSlot.card, pickedSlot.card))
+	return pickedSlots.some((pSlot) =>
+		equalCard(pSlot.slot.card, pickedSlot.slot.card)
+	)
 }
 
 function* validatePickSaga(
@@ -39,13 +42,27 @@ function* validatePickSaga(
 	pickAction: AnyPickActionT
 ): SagaIterator<PickedSlotT | void> {
 	const playerId = yield* select(getPlayerId)
-	const pickedSlot: PickedSlotT =
-		pickAction.type === 'SET_SELECTED_CARD'
-			? {slotType: 'hand', card: pickAction.payload, playerId}
-			: pickAction.payload
-
 	const gameState = yield* select(getGameState)
 	if (!gameState) return
+
+	let pickedSlot: PickedSlotT
+	if (pickAction.type === 'SET_SELECTED_CARD') {
+		const index = gameState.hand.findIndex((card) =>
+			equalCard(card, pickAction.payload)
+		)
+		pickedSlot = {
+			slot: {
+				type: 'hand',
+				index: index,
+				card: pickAction.payload,
+				info: pickAction.payload ? CARDS[pickAction.payload.cardId] : null,
+			},
+			playerId,
+		}
+	} else {
+		pickedSlot = pickAction.payload
+	}
+
 	if (!validPick(gameState, req, pickedSlot)) return
 	return pickedSlot
 }
@@ -79,13 +96,13 @@ export function* runPickProcessSaga(
 
 		if (!name || !reqs || !playerId || !gameState) return null
 
-		const pickPossible = anyAvailableReqOptions(
+		const possiblePerReq = anyAvailableReqOptions(
 			gameState,
 			playerState,
 			opponentState,
 			reqs
 		)
-		if (!pickPossible) return []
+		if (possiblePerReq.length === 0) return []
 
 		// Listen for Escape to cancel
 		const escapeChannel = eventChannel((emitter) => {
@@ -114,10 +131,16 @@ export function* runPickProcessSaga(
 				const pickedReqSlots: Array<PickedSlotT> = []
 				const actionType =
 					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
-				while (pickedReqSlots.length < req.amount) {
-					// Update currentReq, used to display the correct message
-					yield put(updatePickProcess({currentReq: Number(reqIndex)}))
+				while (pickedReqSlots.length < amount) {
+					// Update currentReq and amount, used to display the correct message
+					yield put(
+						updatePickProcess({
+							currentReq: Number(reqIndex),
+							amount: amount - pickedReqSlots.length,
+						})
+					)
 
 					// Wait for the user to pick a slot
 					const result = yield race({

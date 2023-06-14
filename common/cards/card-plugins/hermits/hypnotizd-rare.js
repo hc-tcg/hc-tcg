@@ -1,6 +1,5 @@
 import HermitCard from './_hermit-card'
 import {discardCard} from '../../../../server/utils'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
@@ -31,7 +30,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				cost: ['miner', 'any'],
 				damage: 70,
 				power:
-					'Player can choose to have Hypno attack AFK opposing Hermits.\n\nIf AFK Hermit is attacked,\n\nHypno must discard 1 item card.',
+					"You can choose to attack an opponent's AFK Hermit.\n\nIf AFK Hermit is attacked, you must discard 1 attached item card.",
 			},
 			pickOn: 'attack',
 			pickReqs: [
@@ -39,14 +38,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 					target: 'opponent',
 					type: ['hermit'],
 					amount: 1,
-					breakIf: ['active', 'efficiency'],
+					breakIf: ['active'],
 				},
 				{target: 'player', type: ['item'], amount: 1, active: true},
 			],
 		})
 	}
-
-	//@TODO waiting on pickedSlot type refactor
 
 	/**
 	 * @param {GameModel} game
@@ -54,58 +51,38 @@ class HypnotizdRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {currentPlayer} = game.ds
+		const {player, otherPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		currentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.beforeAttack[instance] = (attack, pickedSlots) => {
+			// Change attack target before the main attack loop
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			const pickedHermit = pickedSlots[this.id][0]
-			const pickedItem = pickedSlots[this.id][1]
-			const efficiency = !!currentPlayer.custom['efficiency']
+			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
 
-			if (pickedHermit !== target.row) {
-				target.applyHermitDamage = false
-				return target
+			// Change attack target
+			attack.target = {
+				index: pickedHermit.row.index,
+				row: pickedHermit.row.state,
 			}
-			target.applyHermitDamage = true
 
-			if (!efficiency && !target.isActive) discardCard(game, pickedItem.card)
-			return target
+			const pickedItem = pickedSlots[this.id][1]
+			const isActive = otherPlayer.board.activeRow === pickedHermit.row?.index
+			if (isActive || !pickedItem) return
+
+			// Discard item card
+			discardCard(game, pickedItem.slot.card)
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction, pickedSlotsInfo} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-
-			const hypnoPickedCards = pickedSlotsInfo[this.id] || []
-
-			const pickedHermit = hypnoPickedCards[0]
-			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
-
-			const efficiency = !!currentPlayer.custom['efficiency']
-
-			const pickedItem = hypnoPickedCards[1]
-			if (!efficiency && !validPick(game.state, this.pickReqs[1], pickedItem))
-				return target
-
-			if (pickedHermit.row !== target.row) {
-				target.applyHermitDamage = false
-				return target
-			}
-			target.applyHermitDamage = true
-
-			if (!efficiency && !target.isActive) discardCard(game, pickedItem.card)
-			return target
-		})
+	onDetach(game, instance, pos) {
+		delete pos.player.hooks.beforeAttack[instance]
 	}
 }
 

@@ -34,6 +34,7 @@ import {
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
+	const amount = pickProcess.amount || req.amount
 	const target =
 		req.target === 'board'
 			? "anyone's"
@@ -75,9 +76,9 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
+	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
 		empty ? 'slot' : 'card'
-	}${req.amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
+	}${amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
 		adjacent ? adjacentTarget : ''
 	} from ${target} ${location}.`
 }
@@ -134,7 +135,7 @@ function Game() {
 	}
 
 	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.card)
+		.map((pickedSlot) => pickedSlot.slot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (

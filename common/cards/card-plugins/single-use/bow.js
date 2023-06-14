@@ -1,9 +1,12 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
+import {applySingleUse, getNonEmptyRows} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
 class BowSingleUseCard extends SingleUseCard {
@@ -12,37 +15,76 @@ class BowSingleUseCard extends SingleUseCard {
 			id: 'bow',
 			name: 'Bow',
 			rarity: 'common',
-			description:
-				'Does +40hp damage to any opposing AFK Hermit.\n\nDiscard after use.',
+			description: 'Do 40hp damage to an AFK Hermit of your choice.',
+			pickOn: 'attack',
+			pickReqs: [
+				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+			],
 		})
-		this.damage = {afkTarget: 40}
-		this.pickOn = 'attack'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-		])
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {singleUseInfo} = game.ds
-			const {pickedSlotsInfo} = attackState
-			if (singleUseInfo?.id !== this.id) return target
-			if (target.isActive) return target
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {otherPlayer} = pos
 
-			// only attack selected afk target
-			const bowPickedCards = pickedSlotsInfo[this.id] || []
-			if (bowPickedCards.length !== 1) return target
-			const pickedHermit = bowPickedCards[0]
-			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
-			if (pickedHermit.row !== target.row) return target
+		// Check if there is an AFK Hermit
+		const inactiveRows = getNonEmptyRows(otherPlayer, false)
+		if (inactiveRows.length === 0) return 'NO'
 
-			target.extraEffectDamage += this.damage.afkTarget
+		return 'YES'
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+
+		player.hooks.getAttacks[instance] = (pickedSlots) => {
+			const index = player.board.activeRow
+			if (index === null) return []
+			const row = player.board.rows[index]
+			if (!row || !row.hermitCard) return []
+
+			const pickedSlot = pickedSlots[this.id]
+			const opponentIndex = pickedSlot[0]?.row?.index
+			if (!opponentIndex) return []
+			const opponentRow = otherPlayer.board.rows[opponentIndex]
+			if (!opponentRow || !opponentRow.hermitCard) return []
+
+			const bowAttack = new AttackModel({
+				id: this.getInstanceKey(instance),
+				attacker: {index, row},
+				target: {index: opponentIndex, row: opponentRow},
+				type: 'effect',
+			}).addDamage(40)
+
+			return [bowAttack]
+		}
+
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId) return
+
+			applySingleUse(game)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.getAttacks[instance]
+		delete player.hooks.onAttack[instance]
 	}
 }
 

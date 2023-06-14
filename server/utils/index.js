@@ -17,39 +17,41 @@ import {getCardPos} from './cards'
  * @param {CardT | null} card2
  */
 export function equalCard(card1, card2) {
+	if (!card1 && !card2) return true
 	if (!card1 || !card2) return false
 	return (
 		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
 	)
 }
 
-export function hasEnoughItems(itemCards, cost) {
-	const itemCardIds = itemCards.map((card) => card.cardId)
-	// transform item cards into cost
-	// ['eye_of_ender_2x', 'oak_stairs'] -> ['speedrunner', 'speedrunner', 'builder']
-	const energy = itemCardIds.reduce((result, cardId) => {
-		const itemCard = ITEM_CARDS[cardId]
-		if (!itemCard) return result
-		result.push(itemCard.hermitType)
-		// all rare item cards are x2
-		if (itemCard.rarity === 'rare') {
-			result.push(itemCard.hermitType)
-		}
-		return result
-	}, [])
+/**
+ *
+ * @param {Array<import('types/cards').EnergyT>} energy
+ * @param {Array<import('types/cards').EnergyT>} cost
+ * @returns
+ */
+export function hasEnoughEnergy(energy, cost) {
+	const remainingEnergy = energy.slice()
 
 	const specificCost = cost.filter((item) => item !== 'any')
 	const anyCost = cost.filter((item) => item === 'any')
 	const hasEnoughSpecific = specificCost.every((costItem) => {
-		const index = energy.findIndex((energyItem) => energyItem === costItem)
-		if (index === -1) return false
-		energy.splice(index, 1)
+		// First try find the exact card
+		let index = remainingEnergy.findIndex(
+			(energyItem) => energyItem === costItem
+		)
+		if (index === -1) {
+			// Then try find an "any" card
+			index = remainingEnergy.findIndex((energyItem) => energyItem === 'any')
+			if (index === -1) return
+		}
+		remainingEnergy.splice(index, 1)
 		return true
 	})
 	if (!hasEnoughSpecific) return false
 
 	// check if remaining energy is enough to cover required "any" cost
-	return energy.length >= anyCost.length
+	return remainingEnergy.length >= anyCost.length
 }
 
 /**
@@ -65,10 +67,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 
 /**
  * @param {GameModel} game
- * @param {import('../../common/types/pick-process').PickedSlotsInfo} pickedSlotsInfo
+ * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlotsInfo = {}) {
+export function applySingleUse(game, pickedSlots = {}) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -85,7 +87,7 @@ export function applySingleUse(game, pickedSlotsInfo = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlotsInfo)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -137,21 +139,24 @@ export function discardCard(game, card) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
-	if (!loc || !pos) {
+	if (!loc) {
 		const err = new Error()
 		console.log('Cannot find card: ', card, err.stack)
 		return
 	}
 
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance, pos)
+	// Cards on the Board
+	if (pos) {
+		const cardInfo = CARDS[card.cardId]
+		cardInfo.onDetach(game, card.cardInstance, pos)
 
-	// Call onDetach hook
-	const player = getCardPos(game, card.cardInstance)?.player
-	if (player) {
-		const onDetachs = Object.values(player.hooks.onAttach)
-		for (let i = 0; i < onDetachs.length; i++) {
-			onDetachs[i](card.cardInstance)
+		// Call onDetach hook
+		const player = getCardPos(game, card.cardInstance)?.player
+		if (player) {
+			const onDetachs = Object.values(player.hooks.onDetach)
+			for (let i = 0; i < onDetachs.length; i++) {
+				onDetachs[i](card.cardInstance)
+			}
 		}
 	}
 
@@ -181,7 +186,7 @@ export function discardSingleUse(game, playerState) {
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
-	const onDetachs = Object.values(playerState.hooks.onAttach)
+	const onDetachs = Object.values(playerState.hooks.onDetach)
 	for (let i = 0; i < onDetachs.length; i++) {
 		onDetachs[i](suCard.cardInstance)
 	}
@@ -194,6 +199,17 @@ export function discardSingleUse(game, playerState) {
 		if (!result) playerState.discarded.push(suCard)
 	} else {
 		playerState.hand.push(suCard)
+	}
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {number} amount
+ */
+export function drawCards(playerState, amount) {
+	for (let i = 0; i < Math.min(playerState.pile.length, amount); i++) {
+		const drawCard = playerState.pile.shift()
+		if (drawCard) playerState.hand.push(drawCard)
 	}
 }
 
@@ -234,6 +250,15 @@ export const getOpponentId = (game, playerId) => {
 }
 
 /**
+ * @param {CardT} card
+ */
+export const isRemovable = (card) => {
+	const cardInfo = EFFECT_CARDS[card.cardId]
+	if (!cardInfo) return false
+	return cardInfo.getIsRemovable()
+}
+
+/**
  * @param {PlayerState} playerState
  * @returns {boolean}
  */
@@ -243,11 +268,26 @@ export function isActive(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {RowStateWithHermit | null}
+ */
+export function getActiveRow(playerState) {
+	if (playerState.board.activeRow === null) return null
+	const row = playerState.board.rows[playerState.board.activeRow]
+	if (!row.hermitCard) return null
+	return row
+}
+
+/**
+ * @param {PlayerState} playerState
+ * @param {boolean} includeActive
  * @returns {RowStateWithHermit[]}
  */
-export function getNonEmptyRows(playerState) {
+export function getNonEmptyRows(playerState, includeActive = true) {
 	const rows = []
-	for (let row of playerState.board.rows) {
+	const activeRowIndex = playerState.board.activeRow
+	for (let i = 0; i < playerState.board.rows.length; i++) {
+		const row = playerState.board.rows[i]
+		if (i === activeRowIndex && !includeActive) continue
 		if (row.hermitCard) rows.push(row)
 	}
 	return rows

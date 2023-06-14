@@ -9,6 +9,10 @@ class TerraformCommonItemCard extends ItemCard {
 			hermitType: 'terraform',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType]
+	}
 }
 
 export default TerraformCommonItemCard

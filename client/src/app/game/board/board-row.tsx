@@ -28,7 +28,7 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 		slotIndex: number,
 		card: CardT | null
 	) => {
-		onClick({slotType, slotIndex, card})
+		onClick({slotType, slotIndex: slotType === 'item' ? slotIndex : 0, card})
 	}
 	const slotTypes: Array<SlotTypeT> = [
 		'item',

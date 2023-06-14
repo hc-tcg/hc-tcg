@@ -9,6 +9,10 @@ class FarmRareItemCard extends ItemCard {
 			hermitType: 'farm',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType, this.hermitType]
+	}
 }
 
 export default FarmRareItemCard

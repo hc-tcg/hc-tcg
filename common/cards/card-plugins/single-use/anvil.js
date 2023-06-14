@@ -1,10 +1,11 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../../server/utils/reqs'
-import {flipCoin, applySingleUse} from '../../../../server/utils'
+import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class AnvilSingleUseCard extends SingleUseCard {
@@ -14,42 +15,91 @@ class AnvilSingleUseCard extends SingleUseCard {
 			name: 'Anvil',
 			rarity: 'rare',
 			description:
-				'Does +30hp damage to any opposing AFK Hermit or flip a coin and If heads, does 80hp damage to to opposing active hermit If tails, does no damage.\n\nDiscard after use.',
-			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', type: 'hermit', amount: 1}],
+				"Do 30hp damage to your opponent's Hermit directly opposite your active Hermit on the board and 10hp damage to each of their Hermits below it.",
 		})
 	}
 
-	//NOWTODO modify getAttacks method to return one attack to primary and attacks to all hermits below
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+
+		player.hooks.getAttacks[instance] = (pickedSlots) => {
+			const activeRow = player.board.activeRow
+			if (activeRow === null) return []
+			const row = player.board.rows[activeRow]
+			if (!row || !row.hermitCard) return []
+			const oppositeRow = otherPlayer.board.rows[activeRow]
+			if (!oppositeRow || !oppositeRow.hermitCard) return []
+			const opponentRows = otherPlayer.board.rows
+
+			const attacks = []
+			for (let i = activeRow; i < opponentRows.length; i++) {
+				const opponentRow = opponentRows[i]
+				if (!opponentRow || !opponentRow.hermitCard) continue
+				const attack = new AttackModel({
+					id: this.getInstanceKey(
+						instance,
+						activeRow === i ? 'active' : 'inactive'
+					),
+					attacker: {
+						index: activeRow,
+						row: row,
+					},
+					target: {
+						index: i,
+						row: opponentRow,
+					},
+					type: 'effect',
+				}).addDamage(i === activeRow ? 30 : 10)
+
+				attacks.push(attack)
+			}
+
+			return attacks
+		}
+
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance, 'active')
+			if (attack.id !== attackId) return
+
+			applySingleUse(game)
+		}
+	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedSlotsInfo} = attackState
-			if (singleUseInfo?.id !== this.id) return target
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.getAttacks[instance]
+		delete player.hooks.onAttack[instance]
+	}
 
-			const crossbowPickedCards = pickedSlotsInfo[this.id] || []
-			if (crossbowPickedCards.length !== 1) return target
-			const pickedHermit = crossbowPickedCards[0]
-			if (!validPick(game.state, this.pickReqs[0], pickedHermit)) return target
-			if (pickedHermit.row !== target.row) return target
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-			if (target.isActive) {
-				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
-				if (currentPlayer.coinFlips[this.id][0] === 'heads') {
-					target.extraEffectDamage += this.damage.target
-				} else {
-					applySingleUse(game)
-				}
-				return target
-			}
+		const {otherPlayer, player} = pos
+		const activeRow = player.board.activeRow
+		if (activeRow === null) return 'NO'
 
-			target.extraEffectDamage += this.damage.afkTarget
-			return target
-		})
+		const oppositeRow = otherPlayer.board.rows[activeRow]
+		if (!oppositeRow || !oppositeRow.hermitCard) return 'NO'
+
+		return 'YES'
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 

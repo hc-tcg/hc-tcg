@@ -29,7 +29,7 @@ export const WEAKNESS_DAMAGE = 20
  * @param {GameModel} game
  * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
- * @param {import('common/types/pick-process').PickedSlotsInfo} pickedSlots
+ * @param {import('common/types/pick-process').PickedSlots} pickedSlots
  * @returns {Array<AttackModel>}
  */
 function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
@@ -123,7 +123,7 @@ function shouldIgnoreCard(attack, instance) {
 function* attackSaga(game, turnAction, actionState) {
 	// defining things
 	const {currentPlayer, opponentPlayer} = game.ds
-	const {pickedSlotsInfo} = actionState
+	const {pickedSlots} = actionState
 
 	/** @type {HermitAttackType} */
 	const hermitAttackType = turnAction.payload.type
@@ -154,9 +154,12 @@ function* attackSaga(game, turnAction, actionState) {
 
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
-	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlotsInfo)
+	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
 
 	console.log('We got', attacks.length, 'attacks')
+
+	// Store all results
+	const results = []
 
 	// Main attack loop
 	while (attacks.length > 0) {
@@ -172,7 +175,7 @@ function* attackSaga(game, turnAction, actionState) {
 				const instance = beforeAttackKeys[i]
 				// if we are not ignoring this hook, call it
 				if (!shouldIgnoreCard(attack, instance)) {
-					beforeAttacks[i](attack)
+					beforeAttacks[i](attack, pickedSlots)
 				}
 			}
 		}
@@ -187,40 +190,39 @@ function* attackSaga(game, turnAction, actionState) {
 				const instance = onAttackKeys[i]
 				// if we are not ignoring this hook, call it
 				if (!shouldIgnoreCard(attack, instance)) {
-					onAttacks[i](attack, pickedSlotsInfo)
+					onAttacks[i](attack, pickedSlots)
 				}
 			}
 		}
 
 		// STEP 3 - Execute all attacks, and store the results
 		/** @type {Array<AttackResult>} */
-		const results = []
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 			const result = executeAttack(game, attacks[attackIndex])
 			results.push(result)
 		}
 
-		// STEP 4 - Call afterAttack for all results
-		const afterAttackKeys = Object.keys(currentPlayer.hooks.afterAttack)
-		const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
-		for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
-			const result = results[resultsIndex]
-
-			for (let i = 0; i < afterAttackKeys.length; i++) {
-				const instance = afterAttackKeys[i]
-				// if we are not ignoring this hook, call it
-				if (!shouldIgnoreCard(result.attack, instance)) {
-					afterAttacks[i](result)
-				}
-			}
-		}
-
-		// STEP 5 - Finally, get all the next attacks, and repeat the process
+		// STEP 4 - Get all the next attacks, and repeat the process
 		const newAttacks = []
 		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 			newAttacks.push(...attacks[attackIndex].nextAttacks)
 		}
 		attacks = newAttacks
+	}
+
+	// STEP 5 - Finally, call afterAttack for all results
+	const afterAttackKeys = Object.keys(currentPlayer.hooks.afterAttack)
+	const afterAttacks = Object.values(currentPlayer.hooks.afterAttack)
+	for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
+		const result = results[resultsIndex]
+
+		for (let i = 0; i < afterAttackKeys.length; i++) {
+			const instance = afterAttackKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(result.attack, instance)) {
+				afterAttacks[i](result)
+			}
+		}
 	}
 
 	return 'DONE'
