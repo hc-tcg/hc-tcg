@@ -12,7 +12,7 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'bad_omen'
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen'
 	duration: number
 }
 
