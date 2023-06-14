@@ -1,113 +1,74 @@
-import CARDS from '../../common/cards'
-import {equalCard} from '../utils'
+import {equalCard} from '.'
+import {validPicks} from './reqs'
 
 /**
  * @typedef {import('common/types/game-state').GameState} GameState
  * @typedef {import('common/types/pick-process').PickedSlotT} PickedSlotT
- * @typedef {import('common/types/pick-process').BoardPickedSlotT} BoardPickedSlotT
- * @typedef {import('common/types/pick-process').BoardPickedSlotInfo} BoardPickedSlotInfo
- * @typedef {import('common/types/pick-process').HandPickedSlotInfo} HandPickedSlotInfo
- * @typedef {import('common/types/pick-process').PickedSlotInfo} PickedSlotInfo
- * @typedef {import('common/types/pick-process').PickedSlotsInfo} PickedSlotsInfo
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/pick-process').PickResultT} PickResultT
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('server/models/game-model').GameModel} GameModel
  */
 
-/** @type {(pickedCard: PickedSlotT) => pickedCard is BoardPickedSlotT} */
-const isOnPlayerBoard = (pickedCard) =>
-	!['single_use', 'hand'].includes(pickedCard.slotType)
-
 /**
- * Takes a list of card instances & looks them up in the current game (board/hand).
- * If found it maps it to {card, cardInfo playerId, row, rowIndex} info.
- * @param {GameState} gameState
- * @param {Array<PickedSlotT>} pickedCards
- * @returns {Array<PickedSlotInfo>}
+ * @param {GameModel} game
+ * @param {PickedSlotT[]} pickedSlots
+ * @returns {PickedSlotT[] | null}
  */
-export function getPickedSlotsInfoById(gameState, pickedCards) {
-	/** @type {Array<PickedSlotInfo | null>} */
-	const result = (pickedCards || []).map((pickedCard) => {
-		const {slotType, playerId, card} = pickedCard
-		const pState = gameState.players[playerId]
-		if (!slotType || !playerId || !pState) return null
+export function validatePickedSlots(game, pickedSlots) {
+	const validPickedSlots = []
+	for (const pickedSlot of pickedSlots) {
+		const {type, card, index} = pickedSlot.slot
+		if (!game.state.order.includes(pickedSlot.playerId)) return null
 
-		const cardInfo = card?.cardId ? CARDS[card.cardId] : null
-		if (card && !cardInfo) return null
+		const player = game.state.players[pickedSlot.playerId]
+		if (!['hand', 'hermit', 'effect', 'item'].includes(type)) return null
+		if (type === 'hand' && card) {
+			if (!equalCard(player.hand[index], card)) return null
+		} else if (['hermit', 'effect', 'item'].includes(type) && pickedSlot.row) {
+			const {hermitCard, effectCard, itemCards} =
+				player.board.rows[pickedSlot.row.index]
+			if (
+				(type === 'hermit' && !equalCard(hermitCard, card)) ||
+				(type === 'effect' && !equalCard(effectCard, card)) ||
+				(type === 'item' && !equalCard(itemCards[index], card))
+			)
+				return null
 
-		if (slotType === 'hand') {
-			if (!card) return null
-			const inHand = pState.hand.some((handCard) => equalCard(handCard, card))
-			if (!inHand) return null
-			/** @type {HandPickedSlotInfo} */
-			const result = {
-				...pickedCard,
-				cardInfo,
-				playerId,
-			}
-			return result
+			// We don't trust the client
+			pickedSlot.row.state =
+				game.state.players[pickedSlot.playerId].board.rows[pickedSlot.row.index]
 		}
+		validPickedSlots.push(pickedSlot)
+	}
 
-		if (!isOnPlayerBoard(pickedCard)) return null
-
-		if (!['item', 'effect', 'hermit'].includes(slotType)) {
-			console.log(`Picking ${slotType} slot is not supported`)
-			return null
-		}
-
-		const {rowIndex, slotIndex} = pickedCard
-		if (typeof rowIndex !== 'number' || typeof slotIndex !== 'number')
-			return null
-
-		const row = pState.board.rows[rowIndex]
-
-		// Validate that received card & position match with server state
-		let cardOnPosition = null
-		if (slotType === 'hermit') cardOnPosition = row.hermitCard
-		else if (slotType === 'effect') cardOnPosition = row.effectCard
-		else if (slotType === 'item') cardOnPosition = row.itemCards[slotIndex]
-		if (card) {
-			if (!cardOnPosition || !equalCard(card, cardOnPosition)) return null
-		} else if (cardOnPosition) {
-			return null
-		}
-
-		/** @type {BoardPickedSlotInfo} */
-		const result = {
-			...pickedCard,
-			cardInfo,
-			isActive:
-				pState.board.activeRow !== null &&
-				pickedCard.rowIndex === pState.board.activeRow,
-			row,
-		}
-		return result
-	})
-
-	return /** @type {Array<PickedSlotInfo>} */ (result.filter(Boolean))
+	return validPickedSlots
 }
 
 /**
  * @param {GameModel} game
  * @param {TurnAction} turnAction
- * @returns {PickedSlotsInfo}
+ * @returns {PickedSlots | null}
  */
-export function getPickedSlotsInfo(game, turnAction) {
-	const {pickResults} = turnAction.payload || {}
-	if (!pickResults) return {}
+export function getPickedSlots(game, turnAction) {
+	if (!turnAction.payload || !turnAction.payload.pickResults) return {}
+	const pickResults = turnAction.payload.pickResults
 
-	/** @type {PickedSlotsInfo} */
-	const pickedSlotsInfo = {}
+	/** @type {PickedSlots} */
+	const pickedSlots = {}
 	for (const cardId in pickResults) {
-		const pickedSlotsForId = pickResults[cardId]
-		pickedSlotsInfo[cardId] = []
-		for (let i = 0; i < pickedSlotsForId.length; i++) {
-			const result = pickedSlotsForId[i]
-			const pickedSlotsForReq = result.pickedSlots
-			const slotsInfo = getPickedSlotsInfoById(game.state, pickedSlotsForReq)
-			pickedSlotsInfo[cardId].push(...slotsInfo)
+		/** @type {PickResultT[]} */
+		const resultsForId = pickResults[cardId]
+		if (!validPicks(game.state, resultsForId)) return null
+		for (let result of resultsForId) {
+			const validPickedSlots = validatePickedSlots(game, result.pickedSlots)
+			if (!validPickedSlots) return null
+			if (!pickedSlots[cardId]) pickedSlots[cardId] = []
+			for (let pickedSlot of validPickedSlots) {
+				pickedSlots[cardId].push(pickedSlot)
+			}
 		}
 	}
 
-	return pickedSlotsInfo
+	return pickedSlots
 }

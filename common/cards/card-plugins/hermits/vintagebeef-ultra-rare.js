@@ -20,37 +20,46 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 				name: 'N.H.O',
 				cost: ['explorer', 'explorer', 'explorer'],
 				damage: 100,
-				power:
-					'If user has Doc, Bdubs, and Etho as AFK, attack damage doubles.',
+				power: 'If you have Doc, Bdubs AND Etho, attack damage doubles.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {condRef, moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const hasBdubs = condRef.player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('bdoubleo100')
+			const hasBdubs = player.board.rows.some((row) =>
+				row.hermitCard?.cardId?.startsWith('bdoubleo100')
 			)
-			const hasDoc = condRef.player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('docm77')
+			const hasDoc = player.board.rows.some((row) =>
+				row.hermitCard?.cardId?.startsWith('docm77')
 			)
-			const hasEtho = condRef.player.board.rows.some((row) =>
-				row.hermitCard?.cardId.startsWith('ethoslab')
+			const hasEtho = player.board.rows.some((row) =>
+				row.hermitCard?.cardId?.startsWith('ethoslab')
 			)
 
-			if (hasBdubs && hasDoc && hasEtho) target.hermitMultiplier *= 2
+			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(attack.damage)
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 }
 

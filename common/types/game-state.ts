@@ -2,7 +2,7 @@ import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
 import {MessageInfoT} from './chat'
-import {PickProcessT, PickedSlotsInfo} from './pick-process'
+import {PickProcessT, PickedSlots} from './pick-process'
 
 export type PlayerId = string
 
@@ -91,16 +91,16 @@ export type PlayerState = {
 		onApply: Record<string, (instance: string) => void>
 
 		/** Instance key -> hook that returns attacks */
-		getAttacks: Record<
-			string,
-			(pickedSlots: PickedSlotsInfo) => Array<AttackModel>
-		>
+		getAttacks: Record<string, (pickedSlots: PickedSlots) => Array<AttackModel>>
 		/** Instance key -> hook that modifies an attack before the main attack loop */
-		beforeAttack: Record<string, (attack: AttackModel) => void>
+		beforeAttack: Record<
+			string,
+			(attack: AttackModel, pickedSlots: PickedSlots) => void
+		>
 		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,
-			(attack: AttackModel, pickedSlots: PickedSlotsInfo) => void
+			(attack: AttackModel, pickedSlots: PickedSlots) => void
 		>
 		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>

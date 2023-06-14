@@ -23,6 +23,7 @@ import BoardRow from './board-row'
 import PlayerInfo from './player-info'
 import Timer from './timer'
 import Button from 'components/button'
+import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
 
 // TODO - Don't allow clicking on slots on the other side
 
@@ -54,14 +55,21 @@ function Board({onClick, localGameState}: Props) {
 	const handeRowClick = (
 		playerId: string,
 		rowIndex: number,
-		rowState: RowState | null,
+		rowState: RowState,
 		meta: any
 	) => {
 		onClick({
-			...meta,
 			playerId,
-			rowIndex,
-			rowHermitCard: rowState?.hermitCard || null,
+			slot: {
+				type: meta.slotType,
+				index: meta.slotIndex,
+				card: meta.card,
+				info: meta.card ? CARDS[meta.card.cardId] : null,
+			},
+			row: {
+				index: rowIndex,
+				state: rowState,
+			},
 		})
 	}
 
@@ -145,8 +153,14 @@ function Board({onClick, localGameState}: Props) {
 							availableActions.includes('REMOVE_EFFECT')
 								? () =>
 										onClick({
-											slotType: 'single_use',
-											card: singleUseCard,
+											slot: {
+												type: 'single_use',
+												card: singleUseCard,
+												index: 0,
+												info: singleUseCard
+													? SINGLE_USE_CARDS[singleUseCard.cardId]
+													: null,
+											},
 											playerId: localGameState.currentPlayerId,
 										})
 								: undefined

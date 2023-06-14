@@ -94,7 +94,7 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 				<g>
 					<image
 						x="68"
-						y="70"
+						y="80"
 						width="70"
 						height="70"
 						href={`/images/ranks/${rank.name}.png`}

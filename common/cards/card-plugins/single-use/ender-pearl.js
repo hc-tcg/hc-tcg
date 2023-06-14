@@ -1,10 +1,10 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../../server/utils/reqs'
-import {getEmptyRow} from '../../../../server/utils/state-gen'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -14,40 +14,50 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:
-				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.\n\nDiscard after use.',
+				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.',
+
+			pickOn: 'apply',
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, empty: true}],
 		})
-		this.pickOn = 'apply'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: ['hermit'], amount: 1, empty: true},
-		])
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			const {pickedSlotsInfo} = actionState
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {player} = pos
+		for (const row of player.board.rows) {
+			if (row.hermitCard === null) return 'YES'
+		}
+		return 'NO'
+	}
 
-			if (singleUseInfo?.id === this.id) {
-				if (pickedSlotsInfo[this.id].length !== 1) return 'INVALID'
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
+	 */
+	onApply(game, instance, pos, pickedSlots) {
+		const slots = pickedSlots[this.id] || []
+		const {player} = pos
 
-				const pickedSlot = pickedSlotsInfo[this.id][0]
-				if (!validPick(game.state, this.pickReqs[0], pickedSlot))
-					return 'INVALID'
-				if (pickedSlot.card !== null) return 'INVALID'
-				if (currentPlayer.board.activeRow === null) return 'INVALID'
+		if (slots.length !== 1) return
 
-				const activeRow =
-					currentPlayer.board.rows[currentPlayer.board.activeRow]
-				if (activeRow.health) activeRow.health -= 10
-				currentPlayer.board.rows[pickedSlot.rowIndex] = activeRow
-				currentPlayer.board.rows[currentPlayer.board.activeRow] = getEmptyRow()
-				currentPlayer.board.activeRow = pickedSlot.rowIndex
-				return 'DONE'
-			}
-		})
+		const pickedSlot = slots[0]
+		if (player.board.activeRow === null || !pickedSlot.row) return
+
+		const activeRow = player.board.rows[player.board.activeRow]
+		if (activeRow.health) activeRow.health -= 10
+		player.board.rows[pickedSlot.row.index] = activeRow
+		player.board.rows[player.board.activeRow] = pickedSlot.row.state
+		player.board.activeRow = pickedSlot.row.index
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
