@@ -9,7 +9,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:
-				'BURNS the opposing Hermit\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the BURN. Discard after use.',
+				'Burn opposing active Hermit. Add 20hp damage every\nturn at the end of your turn.',
 		})
 	}
 
@@ -22,7 +22,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 */
 	onApply(game, instance, pos, pickedSlots) {
 		const opponentActiveRow = pos.otherPlayer.board.activeRow
-		if (opponentActiveRow === null) return 'INVALID'
+		if (opponentActiveRow === null) return
 
 		const hasDamageEffect = pos.otherPlayer.board.rows[
 			opponentActiveRow
@@ -35,7 +35,6 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 				duration: -1,
 			})
 		}
-		return 'DONE'
 	}
 }
 
