@@ -96,13 +96,13 @@ export function* runPickProcessSaga(
 
 		if (!name || !reqs || !playerId || !gameState) return null
 
-		const pickPossible = anyAvailableReqOptions(
+		const possiblePerReq = anyAvailableReqOptions(
 			gameState,
 			playerState,
 			opponentState,
 			reqs
 		)
-		if (!pickPossible) return []
+		if (possiblePerReq.length === 0) return []
 
 		// Listen for Escape to cancel
 		const escapeChannel = eventChannel((emitter) => {
@@ -131,10 +131,16 @@ export function* runPickProcessSaga(
 				const pickedReqSlots: Array<PickedSlotT> = []
 				const actionType =
 					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
-				while (pickedReqSlots.length < req.amount) {
-					// Update currentReq, used to display the correct message
-					yield put(updatePickProcess({currentReq: Number(reqIndex)}))
+				while (pickedReqSlots.length < amount) {
+					// Update currentReq and amount, used to display the correct message
+					yield put(
+						updatePickProcess({
+							currentReq: Number(reqIndex),
+							amount: amount - pickedReqSlots.length,
+						})
+					)
 
 					// Wait for the user to pick a slot
 					const result = yield race({

@@ -1,6 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
+import {EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
 
@@ -72,15 +73,29 @@ export type PlayerState = {
 	}
 
 	hooks: {
+		/** Instance key -> hook that modifies available energy from item cards */
+		availableEnergy: Record<
+			string,
+			(availableEnergy: Array<EnergyT>) => Array<EnergyT>
+		>
+
 		/** Instance key -> hook that modifies blockedActions */
 		blockedActions: Record<
 			string,
-			(blockedActions: AvailableActionsT) => AvailableActionsT
+			(
+				blockedActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
 		>
 		/** Instance key -> hook that modifies availableActions */
 		availableActions: Record<
 			string,
-			(availableActions: AvailableActionsT) => AvailableActionsT
+			(
+				availableActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
 		>
 
 		/** Instance key -> hook called whenver any card is attached */
@@ -91,12 +106,12 @@ export type PlayerState = {
 		onApply: Record<string, (instance: string) => void>
 
 		/** Instance key -> hook that returns attacks */
-		getAttacks: Record<
-			string,
-			(pickedSlots: PickedSlots) => Array<AttackModel>
-		>
+		getAttacks: Record<string, (pickedSlots: PickedSlots) => Array<AttackModel>>
 		/** Instance key -> hook that modifies an attack before the main attack loop */
-		beforeAttack: Record<string, (attack: AttackModel) => void>
+		beforeAttack: Record<
+			string,
+			(attack: AttackModel, pickedSlots: PickedSlots) => void
+		>
 		/** Instance key -> hook that modifies an attack during the main attack loop */
 		onAttack: Record<
 			string,
