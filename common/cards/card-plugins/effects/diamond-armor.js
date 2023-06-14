@@ -30,6 +30,7 @@ class DiamondArmorEffectCard extends EffectCard {
 				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
+				attack.lockDamage()
 				return
 			}
 
