@@ -2,9 +2,9 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-/*
-- It was confirmed by Beef that by "consecutively" it is meant not only the power but the attack for 90 itself.
-*/
+/**
+ * @typedef {import('common/types/game-state').AvailableActionsT} AvailableActionsT
+ */
 class JoeHillsRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -36,42 +36,71 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, otherPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
-		const timeSkipHeads = this.getInstanceKey(instance, 'timeSkipHeads')
-		const joeUsedSecondary = this.getInstanceKey(instance, 'joeUsedSecondary')
+		const state = this.getInstanceKey(instance, 'state')
+		const heads = this.getInstanceKey(instance, 'heads')
+
+		player.hooks.turnStart[instance] = () => {
+			delete player.custom[heads]
+			if (player.custom[state] === 'used-timeskip') {
+				player.custom[state] = 'timeskip-complete'
+			}
+		}
+
+		player.hooks.turnEnd[instance] = () => {
+			if (player.custom[state] === 'timeskip-complete') {
+				delete player.custom[state]
+			}
+		}
 
 		player.hooks.onAttack[instance] = (attack) => {
-			delete player.custom[joeUsedSecondary]
-			delete player.custom[timeSkipHeads]
-
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			) {
+				return
+			}
 
 			const coinFlip = flipCoin(player)
 			player.coinFlips[this.id] = coinFlip
 
-			if (coinFlip[0] === 'heads') player.custom[timeSkipHeads] = true
-			player.custom[joeUsedSecondary] = true
+			if (coinFlip[0] === 'heads') player.custom[heads] = true
+			player.custom[state] = 'used-timeskip'
 		}
 
-		otherPlayer.hooks.availableActions[instance] = (availableActions) => {
-			if (player.custom[timeSkipHeads]) {
-				if (otherPlayer.board.activeRow === null)
-					availableActions.filter((a) =>
-						['CHANGE_ACTIVE_HERMIT', 'END_TURN'].includes(a)
-					)
-				else availableActions.filter((a) => a === 'END_TURN')
+		player.hooks.blockedActions[instance] = (blockedActions) => {
+			if (
+				player.board.activeRow !== pos.rowIndex ||
+				player.custom[state] !== 'timeskip-complete'
+			) {
+				return blockedActions
 			}
+			/** @type {AvailableActionsT}*/
+			const blocked = ['SECONDARY_ATTACK']
+			blockedActions.push(...blocked)
 
-			return availableActions
+			return blockedActions
 		}
 
-		player.hooks.availableActions[instance] = (availableActions) => {
-			if (player.board.activeRow !== pos.rowIndex) return availableActions
+		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			if (!player.custom[heads]) return blockedActions
+			/** @type {AvailableActionsT}*/
+			const blocked = [
+				'APPLY_EFFECT',
+				'REMOVE_EFFECT',
+				'ZERO_ATTACK',
+				'PRIMARY_ATTACK',
+				'SECONDARY_ATTACK',
+				'ADD_HERMIT',
+				'PLAY_ITEM_CARD',
+				'PLAY_SINGLE_USE_CARD',
+				'PLAY_EFFECT_CARD',
+			]
 
-			if (player.custom[joeUsedSecondary]) {
-				return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
+			if (otherPlayer.board.activeRow !== null) {
+				blocked.push('CHANGE_ACTIVE_HERMIT')
 			}
-			return availableActions
+			blockedActions.push(...blocked)
+			return blockedActions
 		}
 	}
 
@@ -82,12 +111,14 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, otherPlayer} = pos
-		const timeSkipKey = this.getInstanceKey(instance, 'timeSkipKey')
+		const state = this.getInstanceKey(instance, 'state')
+		const heads = this.getInstanceKey(instance, 'heads')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.availableActions[instance]
-		delete player.hooks.availableActions[instance]
-		delete player.custom[timeSkipKey]
+		delete player.hooks.blockedActions[instance]
+		delete otherPlayer.hooks.blockedActions[instance]
+		delete player.custom[state]
+		delete player.custom[heads]
 	}
 }
 
