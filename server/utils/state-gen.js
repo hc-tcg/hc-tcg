@@ -230,6 +230,9 @@ export function getPlayerState(player) {
 			onAttack: {},
 			afterAttack: {},
 
+			onFollowUp: {},
+			onFollowUpTimeout: {},
+
 			turnStart: {},
 			turnEnd: {},
 		},

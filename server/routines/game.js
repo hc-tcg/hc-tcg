@@ -333,7 +333,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 			!opponentAvailableActions.includes('FOLLOW_UP')
 		)
 			return
-		const result = yield call(followUpSaga, game, turnAction, actionState)
+		yield call(followUpSaga, game, turnAction, actionState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
@@ -501,7 +501,12 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
 					game.state.timer.turnTime = getTimerForSeconds(20)
-					game.hooks.followUpTimeout.call()
+					const followUpTimeoutHooks = Object.values(
+						opponentPlayer.hooks.onFollowUpTimeout
+					)
+					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
+						followUpTimeoutHooks[i]()
+					}
 					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'

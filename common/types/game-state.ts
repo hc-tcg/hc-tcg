@@ -120,6 +120,14 @@ export type PlayerState = {
 		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>
 
+		/** Instance key -> hook called on follow up */
+		onFollowUp: Record<
+			string,
+			(followUp: string, pickedSlots: PickedSlots) => void
+		>
+		/** Instance key -> hook called when follow up timesout */
+		onFollowUpTimeout: Record<string, () => void>
+
 		/** Instance key -> hook called at the start of the turn */
 		turnStart: Record<string, () => void>
 		/** Instance key -> hook called at the end of the turn */
