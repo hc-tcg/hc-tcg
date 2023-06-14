@@ -9,8 +9,12 @@ import {
 	delay,
 } from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
-import CARDS, {HERMIT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
-import {hasEnoughItems, discardSingleUse, discardCard} from '../utils'
+import CARDS, {
+	HERMIT_CARDS,
+	ITEM_CARDS,
+	SINGLE_USE_CARDS,
+} from '../../common/cards'
+import {hasEnoughEnergy, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
@@ -23,6 +27,7 @@ import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
+import {getCardPos} from '../utils/cards'
 
 /**
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
@@ -43,9 +48,10 @@ const getTimerForSeconds = (seconds) => {
 
 /**
  * @param {GameModel} game
+ * @param {Array<import('common/types/cards').EnergyT>} availableEnergy
  * @return {AvailableActionsT}
  */
-function getAvailableActions(game, pastTurnActions) {
+function getAvailableActions(game, pastTurnActions, availableEnergy) {
 	const {turn} = game.state
 	const {currentPlayer, opponentPlayer} = game.ds
 	/** @type {AvailableActionsT} */
@@ -130,23 +136,21 @@ function getAvailableActions(game, pastTurnActions) {
 		if (turn > 1) {
 			const hermitId = rows[activeRow].hermitCard?.cardId
 			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
-			const suId = currentPlayer.board.singleUseCard?.cardId || null
-			const suInfo = suId ? SINGLE_USE_CARDS[suId] || null : null
-			const itemCards = rows[activeRow].itemCards.filter(Boolean)
 
 			// only add attack options if not sleeping
 			if (hermitInfo && !isSleeping) {
 				let showZeroAttack = true
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
-					hasEnoughItems(itemCards, hermitInfo.primary.cost)
+					hasEnoughEnergy(availableEnergy, hermitInfo.primary.cost)
 				) {
 					actions.push('PRIMARY_ATTACK')
 					showZeroAttack = false
 				}
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
-					(!isSlow && hasEnoughItems(itemCards, hermitInfo.secondary.cost))
+					(!isSlow &&
+						hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
 					showZeroAttack = false
@@ -329,7 +333,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 			!opponentAvailableActions.includes('FOLLOW_UP')
 		)
 			return
-		const result = yield call(followUpSaga, game, turnAction, actionState)
+		yield call(followUpSaga, game, turnAction, actionState)
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
@@ -364,7 +368,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 
 /**
  * @param {GameModel} game
- * @param {Array<string>} pastTurnActions
+ * @param {AvailableActionsT} pastTurnActions
  * @param {{skipTurn?: boolean}} turnConfig
  * @returns {SagaIterator}
  */
@@ -391,20 +395,65 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	try {
 		while (true) {
 			// Available actions code
+
+			// First, get available energy
+			/** @type {Array<import('types/cards').EnergyT>} */
+			let availableEnergy = []
+
+			const {playerActiveRow} = game.ds
+			if (playerActiveRow) {
+				// Get energy from each item card
+				for (let i = 0; i < playerActiveRow.itemCards.length; i++) {
+					const card = playerActiveRow.itemCards[i]
+					if (!card) continue
+					const pos = getCardPos(game, card.cardInstance)
+					if (!pos) continue
+					const itemInfo = ITEM_CARDS[card.cardId]
+					if (!itemInfo) continue
+
+					availableEnergy.push(
+						...itemInfo.getEnergy(game, card.cardInstance, pos)
+					)
+				}
+
+				// Modify available energy
+				const energyHooks = Object.values(currentPlayer.hooks.availableEnergy)
+				for (let i = 0; i < energyHooks.length; i++) {
+					availableEnergy = energyHooks[i](availableEnergy)
+				}
+			}
+
 			/** @type {AvailableActionsT} */
 			let blockedActions = []
-			let availableActions = getAvailableActions(game, pastTurnActions)
+			let availableActions = getAvailableActions(
+				game,
+				pastTurnActions,
+				availableEnergy
+			)
 
 			// Get blocked actions
 			const blockedHooks = Object.values(currentPlayer.hooks.blockedActions)
 			for (let i = 0; i < blockedHooks.length; i++) {
-				blockedActions = blockedHooks[i](blockedActions)
+				blockedActions = blockedHooks[i](
+					blockedActions,
+					pastTurnActions,
+					availableEnergy
+				)
 			}
+
+			// Initial blocking of actions
+			availableActions = availableActions.filter(
+				(action) => !blockedActions.includes(action)
+			)
 
 			// Get available actions, while filtering out blocked actions
 			const availableHooks = Object.values(currentPlayer.hooks.availableActions)
 			for (let i = 0; i < availableHooks.length; i++) {
-				const newActions = availableHooks[i](availableActions)
+				const newActions = availableHooks[i](
+					availableActions,
+					pastTurnActions,
+					availableEnergy
+				)
 				availableActions = newActions.filter(
 					(action) => !blockedActions.includes(action)
 				)
@@ -452,7 +501,12 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
 					game.state.timer.turnTime = getTimerForSeconds(20)
-					game.hooks.followUpTimeout.call()
+					const followUpTimeoutHooks = Object.values(
+						opponentPlayer.hooks.onFollowUpTimeout
+					)
+					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
+						followUpTimeoutHooks[i](opponentFollowUp)
+					}
 					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'
@@ -488,6 +542,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
  * @returns {SagaIterator}
  */
 function* turnSaga(game) {
+	/** @type {AvailableActionsT} */
 	const pastTurnActions = []
 
 	const {currentPlayerId, currentPlayer, opponentPlayer} = game.ds

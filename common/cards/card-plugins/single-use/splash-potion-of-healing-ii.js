@@ -3,18 +3,17 @@ import {HERMIT_CARDS} from '../../index'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
-* @typedef {import('common/types/cards').CardPos} CardPos
-* @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
-*/
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ */
 
-class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
+class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'splash_potion_of_healing',
+			id: 'splash_potion_of_healing_ii',
 			name: 'Splash Potion of Healing',
-			rarity: 'common',
-			description:
-				"Heal each of your active and AFK Hermits 20hp.",
+			rarity: 'rare',
+			description: 'Heal each of your active and AFK Hermits 30hp.',
 		})
 	}
 
@@ -33,9 +32,13 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 			if (!row.hermitCard) continue
 			const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
 			if (!currentRowInfo) continue
-			row.health = Math.min(row.health + 20, currentRowInfo.health)
+			row.health = Math.min(row.health + 30, currentRowInfo.health)
 		}
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
-export default SplashPotionOfHealingSingleUseCard
+export default SplashPotionOfHealingIISingleUseCard

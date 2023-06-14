@@ -49,6 +49,7 @@ export const setPickProcess = (pickProcess: PickProcessT | null) => ({
 
 export const updatePickProcess = (payload: {
 	currentReq?: number
+	amount?: number
 	pickedSlots?: Array<PickedSlotT>
 }) => ({
 	type: 'UPDATE_PICK_PROCESS' as const,

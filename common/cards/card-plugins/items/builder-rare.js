@@ -9,6 +9,10 @@ class BuilderRareItemCard extends ItemCard {
 			hermitType: 'builder',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType, this.hermitType]
+	}
 }
 
 export default BuilderRareItemCard

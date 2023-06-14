@@ -9,6 +9,10 @@ class BalancedCommonItemCard extends ItemCard {
 			hermitType: 'balanced',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType]
+	}
 }
 
 export default BalancedCommonItemCard

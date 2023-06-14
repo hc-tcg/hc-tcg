@@ -9,6 +9,10 @@ class SpeedrunnerRareItemCard extends ItemCard {
 			hermitType: 'speedrunner',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType, this.hermitType]
+	}
 }
 
 export default SpeedrunnerRareItemCard

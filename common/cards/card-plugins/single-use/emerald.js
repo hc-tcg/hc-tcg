@@ -1,5 +1,11 @@
 import SingleUseCard from './_single-use-card'
+import {isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ */
 
 class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -8,25 +14,65 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			name: 'Emerald',
 			rarity: 'rare',
 			description:
-				'Swap 1 effect card with opposing active Hermit.\n\nDiscard after use.',
+				"Steal or swap the attached effect card of your opponent's active Hermit.",
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, playerActiveRow, opponentActiveRow} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				if (!playerActiveRow || !opponentActiveRow) return 'INVALID'
-				const pEffect = playerActiveRow?.effectCard
-				const oEffect = opponentActiveRow?.effectCard
-				playerActiveRow.effectCard = oEffect
-				opponentActiveRow.effectCard = pEffect
-				return 'DONE'
-			}
-		})
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+
+		const {player, otherPlayer} = pos
+		const playerActiveRowIndex = player.board.activeRow
+		const opponentActiveRowIndex = otherPlayer.board.activeRow
+
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
+			return 'NO'
+
+		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
+		const playerActiveRow = player.board.rows[playerActiveRowIndex]
+
+		const opponentEffect = opponentActiveRow.effectCard
+		const playerEffect = playerActiveRow.effectCard
+
+		if (!opponentEffect && !playerEffect) return 'NO'
+		if (
+			(opponentEffect && !isRemovable(opponentEffect)) ||
+			(playerEffect && !isRemovable(playerEffect))
+		)
+			return 'NO'
+
+		return 'YES'
+	}
+
+	canApply() {
+		return true
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
+	 */
+	onApply(game, instance, pos, pickedSlots) {
+		const {player, otherPlayer} = pos
+		const playerActiveRowIndex = player.board.activeRow
+		const opponentActiveRowIndex = otherPlayer.board.activeRow
+
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
+
+		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
+		const playerActiveRow = player.board.rows[playerActiveRowIndex]
+
+		const playerEffect = playerActiveRow.effectCard
+		const opponentEffect = opponentActiveRow.effectCard
+
+		playerActiveRow.effectCard = opponentEffect
+		opponentActiveRow.effectCard = playerEffect
 	}
 }
 

@@ -9,6 +9,10 @@ class RedstoneCommonItemCard extends ItemCard {
 			hermitType: 'redstone',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType]
+	}
 }
 
 export default RedstoneCommonItemCard
