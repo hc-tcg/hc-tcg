@@ -9,6 +9,10 @@ class ExplorerRareItemCard extends ItemCard {
 			hermitType: 'explorer',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType, this.hermitType]
+	}
 }
 
 export default ExplorerRareItemCard

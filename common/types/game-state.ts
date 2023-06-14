@@ -1,6 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
+import {EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
 
@@ -72,15 +73,29 @@ export type PlayerState = {
 	}
 
 	hooks: {
+		/** Instance key -> hook that modifies available energy from item cards */
+		availableEnergy: Record<
+			string,
+			(availableEnergy: Array<EnergyT>) => Array<EnergyT>
+		>
+
 		/** Instance key -> hook that modifies blockedActions */
 		blockedActions: Record<
 			string,
-			(blockedActions: AvailableActionsT) => AvailableActionsT
+			(
+				blockedActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
 		>
 		/** Instance key -> hook that modifies availableActions */
 		availableActions: Record<
 			string,
-			(availableActions: AvailableActionsT) => AvailableActionsT
+			(
+				availableActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
 		>
 
 		/** Instance key -> hook called whenver any card is attached */
@@ -101,6 +116,14 @@ export type PlayerState = {
 		>
 		/** Instance key -> hook that modifies an attack */
 		afterAttack: Record<string, (attackResult: AttackResult) => void>
+
+		/** Instance key -> hook called on follow up */
+		onFollowUp: Record<
+			string,
+			(followUp: string, pickedSlots: PickedSlots) => void
+		>
+		/** Instance key -> hook called when follow up times out */
+		onFollowUpTimeout: Record<string, (followUp: string) => void>
 
 		/** Instance key -> hook called at the start of the turn */
 		turnStart: Record<string, () => void>

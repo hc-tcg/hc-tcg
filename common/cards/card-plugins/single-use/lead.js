@@ -1,17 +1,13 @@
 import SingleUseCard from './_single-use-card'
 import {rowHasItem, getRowsWithEmptyItemsSlots} from '../../../../server/utils'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- *
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
-/*
-Last lead version:
-EP50 23:05
-*/
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -20,56 +16,53 @@ class LeadSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Move 1 of your opponent's active Hermit item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.",
+			pickOn: 'apply',
+			pickReqs: [
+				{target: 'opponent', type: ['item'], amount: 1, active: true},
+				{
+					target: 'opponent',
+					type: ['item'],
+					amount: 1,
+					empty: true,
+					active: false,
+				},
+			],
 		})
-		this.pickOn = 'apply'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: ['item'], amount: 1, active: true},
-			{
-				target: 'opponent',
-				type: ['item'],
-				amount: 1,
-				empty: true,
-				active: false,
-			},
-		])
 	}
-
-	// @TODO waiting on new pickedSlot types
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {singleUseInfo} = game.ds
-		if (singleUseInfo?.id !== this.id) return false
+		const slots = pickedSlots[this.id] || []
+		if (slots.length !== 2) return
 
-		const pickedCards = pickedSlots[this.id] || []
-		if (pickedCards.length !== 2) return false
+		const itemCardInfo = slots[0]
+		const targetSlotInfo = slots[1]
+		if (
+			targetSlotInfo.slot.card !== null ||
+			!itemCardInfo.row ||
+			!targetSlotInfo.row
+		)
+			return
 
-		const itemCardInfo = pickedCards[0]
-		const targetSlotInfo = pickedCards[1]
-		if (!validPick(game.state, this.pickReqs[0], itemCardInfo)) return false
-		if (targetSlotInfo.card !== null) return false
-		if (!validPick(game.state, this.pickReqs[1], targetSlotInfo)) return false
-
-		// remove item from source
-		itemCardInfo.row.itemCards[itemCardInfo.slotIndex] = null
-
-		// add item to target
-		targetSlotInfo.row.itemCards[targetSlotInfo.slotIndex] = itemCardInfo.card
+		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] =
+			targetSlotInfo.slot.card
+		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] =
+			itemCardInfo.slot.card
 
 		return true
 	}
 
 	/**
 	 * @param {GameModel} game
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
 		const {opponentPlayer, opponentActiveRow} = game.ds
 

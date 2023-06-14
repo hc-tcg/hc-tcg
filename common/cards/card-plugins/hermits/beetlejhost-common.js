@@ -23,8 +23,6 @@ class BeetlejhostCommonHermitCard extends HermitCard {
 		})
 	}
 
-	register(game) {}
-
 	getExpansion() {
 		return 'alter_egos'
 	}
