@@ -19,25 +19,25 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		game.hooks.hermitDeath.tap(this.id, (recovery, deathInfo) => {
-			if (deathInfo.row.effectCard?.cardInstance === instance) {
-				recovery.push({
-					amount: 10,
-					discardEffect: true,
-				})
-			}
-			return recovery
-		})
+		pos.otherPlayer.hooks.afterAttack[instance] = (result) => {
+			if (!result.attack.target.row || result.attack.target.row.health > 0)
+				return
+			if (result.attack.target.row.effectCard?.cardInstance !== instance) return
+
+			result.attack.target.row.health = 10
+			result.attack.target.row.ailments = []
+			result.attack.target.row.effectCard = null
+		}
 	}
 
 	/**
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDetach(game, instance) {
-		const {currentPlayer} = game.ds
-		delete currentPlayer.hooks.afterAttack[instance]
+	onDetach(game, instance, pos) {
+		delete pos.otherPlayer.hooks.afterAttack[instance]
 	}
 }
 
