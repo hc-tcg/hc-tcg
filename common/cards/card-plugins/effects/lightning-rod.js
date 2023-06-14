@@ -20,22 +20,6 @@ class LightningRodEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 */
-	canAttach(game, pos) {
-		const {currentPlayerId} = game.ds
-		const {player} = pos
-
-		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayerId) return 'INVALID'
-
-		if (!pos.row?.hermitCard) return 'NO'
-
-		return 'YES'
-	}
-
-	/**
-	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
 	 */
