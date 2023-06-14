@@ -13,7 +13,6 @@ class TotemEffectCard extends EffectCard {
 	}
 
 	/**
-	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
