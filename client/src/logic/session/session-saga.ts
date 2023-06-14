@@ -13,6 +13,7 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import {validateDeck} from 'server/utils/validation'
+import {PlayerDeckT} from '../../../../common/types/deck'
 
 type PlayerInfoT = {
 	playerName: string
@@ -49,13 +50,23 @@ const getClientVersion = () => {
 	return scriptTag.src.replace(/^.*index-(\w+)\.js/i, '$1')
 }
 
-const getDeck = () => {
+const getDeck: () => PlayerDeckT | null = function () {
 	const urlParams = new URLSearchParams(document.location.search || '')
 	const hash = urlParams.get('deck')
+	const name = urlParams.get('name')
 	if (!hash) return null
 	const deckCards = getDeckFromHash(hash)
-	const deck = deckCards.map((card) => card.cardId)
-	return deck
+	if (
+		validateDeck(
+			deckCards.map((card) => {
+				return card.cardId
+			})
+		)
+	)
+		return null
+	console.log('Valid deck')
+	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
+	return {cards: deckCards, name: name, icon: 'any'}
 }
 
 const createConnectErrorChannel = () =>
@@ -79,8 +90,7 @@ export function* loginSaga(): SagaIterator {
 		socket.auth = {...session, version: getClientVersion()}
 	}
 
-	const deck = getDeck()
-	if (deck) socket.auth.deck = deck
+	const urlDeck = getDeck()
 
 	yield put(socketConnecting())
 	socket.connect()
@@ -123,7 +133,12 @@ export function* loginSaga(): SagaIterator {
 			!!activeDeck && !validateDeck(activeDeck.cards.map((card) => card.cardId))
 
 		// if active deck is not valid, generate and save a starter deck
-		if (activeDeckValid) {
+		if (urlDeck) {
+			console.log('Selected deck found in url: ' + urlDeck.name)
+			saveDeck(urlDeck)
+			setActiveDeck(urlDeck.name)
+			yield call(sendMsg, 'UPDATE_DECK', urlDeck)
+		} else if (activeDeckValid) {
 			// set player deck to active deck, and send to server
 			console.log('Selected previous active deck: ' + activeDeck.name)
 			yield call(sendMsg, 'UPDATE_DECK', activeDeck)
