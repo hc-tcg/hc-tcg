@@ -7,7 +7,6 @@ import {validPick} from '../../../../server/utils/reqs'
  *
  */
 
-// TODO - Must work with Gemintay ability to use two single use cards per turn (should mend the first one)
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
 		super({
@@ -16,19 +15,20 @@ class MendingSingleUseCard extends singleUseCard {
 			rarity: 'ultra_rare',
 			description:
 				'Move any attached effect card from your active Hermit to an AFK Hermit.',
+			pickOn: 'apply',
+			pickReqs: [
+				{
+					target: 'player',
+					type: ['effect'],
+					amount: 1,
+					empty: true,
+				},
+			],
 		})
+	}
 
-		this.pickOn = 'apply'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: ['effect'], amount: 1, active: true},
-			{
-				target: 'player',
-				type: ['effect'],
-				amount: 1,
-				empty: true,
-				active: false,
-			},
-		])
+	canApply() {
+		return true
 	}
 
 	/**
@@ -41,22 +41,36 @@ class MendingSingleUseCard extends singleUseCard {
 	onApply(game, instance, pos, pickedSlots) {
 		const pickedCards = pickedSlots[this.id] || []
 
-		const effectCardInfo = pickedCards[0]
-		const targetSlotInfo = pickedCards[1]
-		if (!effectCardInfo.row || !targetSlotInfo.row) return false
-		if (!validPick(game.state, this.pickReqs[0], effectCardInfo)) return false
+		if (pickedCards.length !== 1) return
+
+		const targetSlotInfo = pickedCards[0]
+		const {player} = pos
+		if (!player.board.activeRow || !targetSlotInfo.row) return
+		const playerActiveRow = player.board.rows[player.board.activeRow]
 		if (
 			targetSlotInfo.row.state.effectCard !== null ||
-			!effectCardInfo.row.state.effectCard
+			!playerActiveRow.effectCard
 		)
-			return false
-		if (!validPick(game.state, this.pickReqs[1], targetSlotInfo)) return false
+			return
+		if (!validPick(game.state, this.pickReqs[0], targetSlotInfo)) return
 
 		// add effect to target
-		targetSlotInfo.row.state.effectCard = effectCardInfo.row?.state.effectCard
+		targetSlotInfo.row.state.effectCard = playerActiveRow.effectCard
 
 		// remove effect from source
-		effectCardInfo.row.state.effectCard = null
+		playerActiveRow.effectCard = null
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {player} = pos
+		if (!player.board.activeRow) return 'NO'
+		if (!player.board.rows[player.board.activeRow].effectCard) return 'NO'
+		return 'YES'
 	}
 }
 
