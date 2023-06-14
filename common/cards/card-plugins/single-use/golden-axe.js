@@ -4,7 +4,7 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import {
 	applySingleUse,
 	rowHasItem,
-	getTotalItemCardsValue,
+	getItemCardsEnergy,
 } from '../../../../server/utils'
 
 /**
@@ -57,7 +57,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			const opponentRow = otherPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
-			const multiplier = getTotalItemCardsValue(opponentRow)
+			const multiplier = getItemCardsEnergy(game, opponentRow)
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: {index, row},

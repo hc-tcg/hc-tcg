@@ -369,10 +369,11 @@ export function rowHasEmptyItemSlot(row) {
 }
 
 /**
+ * @param {GameModel} game
  * @param {RowStateWithHermit} row
  * @returns {number}
  */
-export function getTotalItemCardsValue(row) {
+export function getItemCardsEnergy(game, row) {
 	const itemCards = row.itemCards
 	let total = 0
 	for (const itemCard of itemCards) {
@@ -380,12 +381,8 @@ export function getTotalItemCardsValue(row) {
 		const cardInfo = ITEM_CARDS[itemCard.cardId]
 		// String
 		if (!cardInfo) continue
-
-		if (cardInfo.rarity === 'rare') {
-			total += 2
-		} else {
-			total += 1
-		}
+		const pos = getCardPos(game, itemCard.cardInstance)
+		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos)
 	}
 
 	return total
