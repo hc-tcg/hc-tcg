@@ -48,7 +48,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			if (currentPlayer.custom[attacker.hermitCard.cardInstance]) return target
 
 			// Create coin flip beforehand to apply fortune if any
-			const coinFlip = flipCoin(currentPlayer)
+			const coinFlip = flipCoin(currentPlayer, this.id)
 			currentPlayer.custom[attacker.hermitCard.cardInstance] = coinFlip
 			currentPlayer.custom[this.id] = attacker.hermitCard.cardInstance
 

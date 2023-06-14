@@ -42,7 +42,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			if (!currentPlayer.custom[this.getKey('consecutive')]) {
-				const coinFlip = flipCoin(currentPlayer)
+				const coinFlip = flipCoin(currentPlayer, this.id)
 				currentPlayer.custom[this.getKey('coinFlip')] = coinFlip
 			}
 

@@ -216,9 +216,10 @@ export function drawCards(playerState, amount) {
 /**
  * @param {PlayerState} currentPlayer
  * @param {number} times
+ * @param {string} cardId
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(currentPlayer, times = 1) {
+export function flipCoin(currentPlayer, cardId, times = 1) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
 
@@ -238,7 +239,7 @@ export function flipCoin(currentPlayer, times = 1) {
 
 	const coinFlipHooks = Object.values(currentPlayer.hooks.coinFlip)
 	for (let i = 0; i < coinFlipHooks.length; i++) {
-		coinFlips = coinFlipHooks[i](coinFlips)
+		coinFlips = coinFlipHooks[i](cardId, coinFlips)
 	}
 
 	return coinFlips

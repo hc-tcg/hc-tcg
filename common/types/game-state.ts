@@ -130,7 +130,10 @@ export type PlayerState = {
 		/** Instance key -> hook called at the end of the turn */
 		turnEnd: Record<string, () => void>
 		/** Instance key -> hook called the player flips a coin */
-		coinFlip: Record<string, (coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+		coinFlip: Record<
+			string,
+			(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+		>
 	}
 }
 

@@ -40,12 +40,12 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		player.hooks.onAttack[instance] = (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
-			const coinFlip = flipCoin(player)
+			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] !== 'heads') return
 
-			otherPlayer.custom[instanceKey] = flipCoin(player)
+			otherPlayer.custom[instanceKey] = flipCoin(player, this.id)
 		}
 
 		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
@@ -93,11 +93,11 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const coinFlip = flipCoin(currentPlayer)
+			const coinFlip = flipCoin(currentPlayer, this.id)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
-				currentPlayer.custom[this.id] = flipCoin(currentPlayer)
+				currentPlayer.custom[this.id] = flipCoin(currentPlayer, this.id)
 			}
 
 			return target

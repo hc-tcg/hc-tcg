@@ -56,7 +56,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			// can't be used consecutively
 			if (currentPlayer.custom[this.id]) return target
 
-			const coinFlip = flipCoin(currentPlayer)
+			const coinFlip = flipCoin(currentPlayer, this.id)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') currentPlayer.custom[this.id] = 'time-skip'

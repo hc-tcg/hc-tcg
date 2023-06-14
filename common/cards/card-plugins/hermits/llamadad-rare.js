@@ -38,7 +38,7 @@ class LlamadadRareHermitCard extends HermitCard {
 			if (!target.isActive) return target
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
-			const coinFlip = flipCoin(currentPlayer)
+			const coinFlip = flipCoin(currentPlayer, this.id)
 			currentPlayer.coinFlips[this.id] = coinFlip
 
 			target.extraHermitDamage += coinFlip[0] === 'heads' ? 40 : 0
