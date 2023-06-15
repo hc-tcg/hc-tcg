@@ -30,53 +30,60 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, otherPlayer} = pos
+		const status = this.getInstanceKey(instance, 'status')
 
 		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		player.hooks.onAttack[instance] = (attack) => {
-			const instanceKey = this.getInstanceKey(instance)
-			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (player.custom[pearlKey] === 'pearl_opponent_missed') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			) {
+				return
+			}
+			if (player.custom[status] === 'opponent_missed') return
 
-			player.custom[pearlKey] = 'pearl_secondary_used'
+			player.custom[status] = 'secondary_used'
 		}
 
 		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
 		otherPlayer.hooks.onAttack[instance] = (attack) => {
-			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
-			if (player.custom[pearlKey] !== 'pearl_secondary_used') return
+			if (player.custom[status] !== 'secondary_used') return
 
 			const coinFlip = flipCoin(otherPlayer)
 			otherPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
 				attack.multiplyDamage(0)
-				player.custom[pearlKey] = 'pearl_opponent_missed'
+				attack.lockDamage()
+				player.custom[status] = 'opponent_missed'
 			}
 		}
 
-		//If the opponent missed, set the flag to "clear_state" at the end of your turn.
+		//If the opponent missed last turn, clear the flag at the end of your turn.
 		player.hooks.turnEnd[instance] = () => {
-			const pearlKey = this.getInstanceKey(instance, 'pearlKey')
-			if (player.custom[pearlKey] !== 'pearl_opponent_missed') return
+			if (player.custom[status] !== 'opponent_missed') return
 
-			delete player.custom[pearlKey]
+			delete player.custom[status]
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player, otherPlayer} = pos
+		const status = this.getInstanceKey(instance, 'status')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onAttack[instance]
 		delete player.hooks.turnEnd[instance]
+		delete player.custom[status]
 	}
 }
 
