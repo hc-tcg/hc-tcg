@@ -1,6 +1,5 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 // TODO - Prevent consecutive use
@@ -23,60 +22,68 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				cost: ['terraform', 'any'],
 				damage: 70,
 				power:
-					'Opponent flips a coin on their next turn.\n\nIf heads, their attack misses.\n\nOpponent can not miss on consecutive turns.',
+					'Opponent flips a coin on their next turn. If heads, their attack misses. Opponent can not miss on consecutive turns.',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		// set flag on Pearl's attack
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+		const status = this.getInstanceKey(instance, 'status')
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-
-			if (!currentPlayer.custom[this.getKey('consecutive')]) {
-				const coinFlip = flipCoin(currentPlayer)
-				currentPlayer.custom[this.getKey('coinFlip')] = coinFlip
+		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
+		player.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			) {
+				return
 			}
+			if (player.custom[status] === 'opponent_missed') return
 
-			return target
-		})
+			player.custom[status] = 'secondary_used'
+		}
 
-		// if coin flip is heads, damage is zero
-		game.hooks.attack.tap(this.id, (target) => {
-			const {opponentPlayer, currentPlayer} = game.ds
+		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
+		otherPlayer.hooks.onAttack[instance] = (attack) => {
+			if (player.custom[status] !== 'secondary_used') return
 
-			const coinFlip = opponentPlayer.custom[this.getKey('coinFlip')]
-			if (!coinFlip) return target
+			const coinFlip = flipCoin(otherPlayer)
+			otherPlayer.coinFlips[this.id] = coinFlip
 
-			currentPlayer.coinFlips[this.id] = coinFlip
-			if (coinFlip[0] !== 'heads') {
-				delete opponentPlayer.custom[this.getKey('coinFlip')]
-				return target
+			if (coinFlip[0] === 'heads') {
+				attack.multiplyDamage(0)
+				attack.lockDamage()
+				player.custom[status] = 'opponent_missed'
 			}
-			opponentPlayer.custom[this.getKey('consecutive')] = true
-			target.hermitMultiplier = 0
-			return target
-		})
+		}
 
-		// clear coinFlip flag at end of opponents turn
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {opponentPlayer} = game.ds
-			delete opponentPlayer.custom[this.getKey('coinFlip')]
-		})
+		//If the opponent missed last turn, clear the flag at the end of your turn.
+		player.hooks.turnEnd[instance] = () => {
+			if (player.custom[status] !== 'opponent_missed') return
 
-		// clear consecutive flag at start of opponents turn
-		game.hooks.turnStart.tap(this.id, () => {
-			const {opponentPlayer} = game.ds
-			delete opponentPlayer.custom[this.getKey('consecutive')]
-		})
+			delete player.custom[status]
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+		const status = this.getInstanceKey(instance, 'status')
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
+		delete otherPlayer.hooks.onAttack[instance]
+		delete player.hooks.turnEnd[instance]
+		delete player.custom[status]
 	}
 }
 
