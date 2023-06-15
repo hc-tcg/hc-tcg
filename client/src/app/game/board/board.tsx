@@ -65,6 +65,9 @@ function Board({onClick, localGameState}: Props) {
 		})
 	}
 
+	const noAvailableActions = () =>
+		availableActions.length === 1 && availableActions[0] === 'END_TURN'
+
 	const handleEndTurn = () => {
 		if (noAvailableActions() || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
@@ -117,9 +120,6 @@ function Board({onClick, localGameState}: Props) {
 			</Button>
 		)
 	}
-
-	const noAvailableActions = () =>
-		availableActions.length === 1 && availableActions[0] === 'END_TURN'
 
 	const [player1, player2] = localGameState.order.map(
 		(playerId) => localGameState.players[playerId]
