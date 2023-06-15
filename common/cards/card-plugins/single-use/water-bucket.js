@@ -25,7 +25,7 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 	 */
 	onAttach(game, instance, pos) {
 		if (pos.rowIndex) {
-			pos.otherPlayer.hooks.onApply[instance] = (instance) => {
+			const waterHook = () => {
 				if (!pos.row) return
 				const onFire = pos.row.ailments.some((a) => {
 					return a.id === 'fire'
@@ -36,6 +36,8 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 					})
 				}
 			}
+			pos.otherPlayer.hooks.onApply[instance] = waterHook
+			pos.otherPlayer.hooks.afterAttack[instance] = waterHook
 		}
 	}
 
@@ -46,7 +48,9 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		if (pos.otherPlayer.hooks.onApply[instance]) {
+			//If this is attached as an effect
 			delete pos.otherPlayer.hooks.onApply[instance]
+			delete pos.otherPlayer.hooks.afterAttack[instance]
 		}
 	}
 
@@ -65,6 +69,14 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 		targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
 			(a) => a.id !== 'fire'
 		)
+		if (targetSlot.row.state.effectCard?.cardId === 'string') {
+			targetSlot.row.state.effectCard = null
+		}
+		for (let i = 0; i < targetSlot.row.state.itemCards.length; i++) {
+			if (targetSlot.row.state.itemCards[i]?.cardId === 'string') {
+				targetSlot.row.state.itemCards[i] = null
+			}
+		}
 	}
 
 	/**
