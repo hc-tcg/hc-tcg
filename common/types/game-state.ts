@@ -13,12 +13,7 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
-	duration: number
-}
-
-export type PlayerAilment = {
-	id: 'badomen'
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen'
 	duration: number
 }
 
@@ -64,7 +59,6 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -192,7 +186,6 @@ export type LocalPlayerState = {
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	lives: number
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
