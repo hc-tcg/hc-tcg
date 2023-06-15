@@ -27,14 +27,9 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 		if (pos.rowIndex) {
 			const waterHook = () => {
 				if (!pos.row) return
-				const onFire = pos.row.ailments.some((a) => {
-					return a.id === 'fire'
+				pos.row.ailments = pos.row.ailments.filter((a) => {
+					return a.id !== 'fire'
 				})
-				if (onFire) {
-					pos.row.ailments = pos.row.ailments.filter((a) => {
-						return a.id !== 'fire'
-					})
-				}
 			}
 			pos.otherPlayer.hooks.onApply[instance] = waterHook
 			pos.otherPlayer.hooks.afterAttack[instance] = waterHook
@@ -87,7 +82,6 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 		if (pos.slot.type === 'single_use') return 'YES'
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== pos.player.id) return 'INVALID'
 		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
