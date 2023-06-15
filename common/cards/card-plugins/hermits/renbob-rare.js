@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 class RenbobRareHermitCard extends HermitCard {
 	constructor() {
@@ -26,28 +27,43 @@ class RenbobRareHermitCard extends HermitCard {
 	}
 
 	/**
+	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
+	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
+	 * @returns {Array<AttackModel>}
 	 */
-	onAttach(game, instance, pos) {
-		const {player, otherPlayer, rowIndex} = pos
-
-		player.hooks.beforeAttack[instance] = (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-
-			if (rowIndex === null) return
-			const otherPlayerRow = otherPlayer.board.rows[rowIndex]
-
+	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
+		const {player, otherPlayer} = pos
+		let attack = super.getAttacks(
+			game,
+			instance,
+			pos,
+			hermitAttackType,
+			pickedSlots
+		)[0]
+		if (attack.type === 'secondary' && pos.rowIndex) {
+			attack.target.index = pos.rowIndex
+			const otherPlayerRow = otherPlayer.board.rows[pos.rowIndex]
 			if (otherPlayerRow.hermitCard) {
-				attack.target.index = rowIndex
 				attack.target.row = otherPlayerRow
 			} else {
-				attack.multiplyDamage(0)
-				attack.lockDamage()
+				attack.target.row = {
+					hermitCard: {
+						cardId: 'renbob_rare',
+						cardInstance: 'random_instance',
+					},
+					effectCard: null,
+					itemCards: [],
+					health: 0,
+					ailments: [],
+				}
 			}
 		}
+
+		return [attack]
 	}
 
 	/**
