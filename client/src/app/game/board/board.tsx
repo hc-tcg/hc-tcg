@@ -2,8 +2,12 @@ import {useEffect} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import CoinFlip from 'components/coin-flip'
-import {LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
-import {PickedSlotT} from 'common/types/pick-process'
+import {
+	LocalGameState,
+	LocalPlayerState,
+	RowState,
+} from 'common/types/game-state'
+import {PickedCardT} from 'common/types/pick-process'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -19,19 +23,20 @@ import BoardRow from './board-row'
 import PlayerInfo from './player-info'
 import Timer from './timer'
 import Button from 'components/button'
-import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
 
 // TODO - Don't allow clicking on slots on the other side
 
 type Props = {
-	onClick: (meta: PickedSlotT) => void
+	onClick: (meta: PickedCardT) => void
 	localGameState: LocalGameState
 }
 
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, localGameState}: Props) {
 	const playerId = useSelector(getPlayerId)
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.currentPlayerId))
+	const currentPlayer = useSelector(
+		getPlayerStateById(localGameState.currentPlayerId)
+	)
 	const boardState = currentPlayer?.board
 	const singleUseCard = boardState?.singleUseCard || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
@@ -46,24 +51,25 @@ function Board({onClick, localGameState}: Props) {
 		}
 	}, [localGameState.currentPlayerId])
 
-	const handeRowClick = (playerId: string, rowIndex: number, rowState: RowState, meta: any) => {
+	const handeRowClick = (
+		playerId: string,
+		rowIndex: number,
+		rowState: RowState | null,
+		meta: any
+	) => {
 		onClick({
+			...meta,
 			playerId,
-			slot: {
-				type: meta.slotType,
-				index: meta.slotIndex,
-				card: meta.card,
-				info: meta.card ? CARDS[meta.card.cardId] : null,
-			},
-			row: {
-				index: rowIndex,
-				state: rowState,
-			},
+			rowIndex,
+			rowHermitCard: rowState?.hermitCard || null,
 		})
 	}
 
+	const noAvailableActions = () =>
+		availableActions.length === 1 && availableActions[0] === 'END_TURN'
+
 	const handleEndTurn = () => {
-		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+		if (noAvailableActions() || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
 		} else {
 			dispatch(setOpenedModal('end-turn'))
@@ -92,7 +98,11 @@ function Board({onClick, localGameState}: Props) {
 		}
 
 		if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
-			return <div className={css.opponentFollowup}>Waiting for opponent's action.</div>
+			return (
+				<div className={css.opponentFollowup}>
+					Waiting for opponent's action.
+				</div>
+			)
 		}
 
 		if (availableActions.includes('WAIT_FOR_TURN')) {
@@ -101,7 +111,7 @@ function Board({onClick, localGameState}: Props) {
 
 		return (
 			<Button
-				variant="default"
+				variant={noAvailableActions() ? 'primary' : 'default'}
 				size="small"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}
@@ -135,12 +145,8 @@ function Board({onClick, localGameState}: Props) {
 							availableActions.includes('REMOVE_EFFECT')
 								? () =>
 										onClick({
-											slot: {
-												type: 'single_use',
-												card: singleUseCard,
-												index: 0,
-												info: singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null,
-											},
+											slotType: 'single_use',
+											card: singleUseCard,
 											playerId: localGameState.currentPlayerId,
 										})
 								: undefined
