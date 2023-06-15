@@ -8,8 +8,12 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			name: 'Curse Of Binding',
 			rarity: 'common',
 			description:
-				'Opposing active Hermit can not go AFK on the following turn.\n\nDiscard after use.',
+				"Your opponent's active Hermit can not go AFK on their next turn.",
 		})
+	}
+
+	canApply() {
+		return true
 	}
 
 	/**
