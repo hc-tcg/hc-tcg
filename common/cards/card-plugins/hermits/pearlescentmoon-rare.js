@@ -64,7 +64,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		}
 
 		//If the opponent missed last turn, clear the flag at the end of your turn.
-		player.hooks.turnEnd[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			if (player.custom[status] !== 'opponent_missed') return
 
 			delete player.custom[status]
@@ -82,7 +82,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onAttack[instance]
-		delete player.hooks.turnEnd[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[status]
 	}
 }
