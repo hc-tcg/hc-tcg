@@ -1,6 +1,4 @@
 import HermitCard from './_hermit-card'
-import {getHasRedirectingCards, isRedirecting} from '../../../../server/utils'
-import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 class RenbobRareHermitCard extends HermitCard {
@@ -38,20 +36,16 @@ class RenbobRareHermitCard extends HermitCard {
 		player.hooks.beforeAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
-			if (
-				getHasRedirectingCards(otherPlayer) ||
-				(player.board.singleUseCard &&
-					isRedirecting(player.board.singleUseCard))
-			)
-				return
 
 			if (rowIndex === null) return
 			const otherPlayerRow = otherPlayer.board.rows[rowIndex]
+
 			if (otherPlayerRow.hermitCard) {
 				attack.target.index = rowIndex
 				attack.target.row = otherPlayerRow
 			} else {
 				attack.multiplyDamage(0)
+				attack.lockDamage()
 			}
 		}
 	}
