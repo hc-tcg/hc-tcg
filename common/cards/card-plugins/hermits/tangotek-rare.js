@@ -70,6 +70,7 @@ class TangoTekRareHermitCard extends HermitCard {
 
 					const pickedSlot = pickedSlots[this.id][0]
 					const {row} = pickedSlot
+					if (!row) return
 
 					const canBeActive = row.state.ailments.every(
 						(a) => a.id !== 'knockedout'
@@ -88,11 +89,10 @@ class TangoTekRareHermitCard extends HermitCard {
 					otherPlayer.followUp = null
 
 					// Choose the first row that doesn't have a knockedout ailment
-					for (const row of opponentInactiveRows) {
+					for (const {index, row} of opponentInactiveRows) {
 						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
 						if (canBeActive) {
-							otherPlayer.board.activeRow = row.rowIndex
-							break
+							otherPlayer.board.activeRow = index
 						}
 					}
 
@@ -103,6 +103,7 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			if (
 				playerInactiveRows.length !== 0 &&
+				attack.attacker &&
 				attack.attacker.row.health > 0 &&
 				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
 			) {
