@@ -1,7 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
-import {EnergyT} from './cards'
+import {CardPos, EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
 
@@ -128,10 +128,13 @@ export type PlayerState = {
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Record<string, (followUp: string) => void>
 
+		/** Instance key -> hook called when a hermit is about to die */
+		onHermitDeath: Record<string, (hermitPos: CardPos) => void>
+
 		/** Instance key -> hook called at the start of the turn */
-		turnStart: Record<string, () => void>
+		onTurnStart: Record<string, () => void>
 		/** Instance key -> hook called at the end of the turn */
-		turnEnd: Record<string, () => void>
+		onTurnEnd: Record<string, () => void>
 	}
 }
 

@@ -205,20 +205,15 @@ function* checkHermitHealth(game) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// recovery array {amount: number, effectCard?: CardT}
-				let result = game.hooks.hermitDeath.call([], {
-					playerState,
-					row,
-				})
-
-				// we want to apply the highest recovery amount
-				result.sort((a, b) => b.amount - a.amount)
-
-				if (result[0]) {
-					row.health = result[0].amount
-					row.ailments = []
-					if (result[0].discardEffect) discardCard(game, row.effectCard)
-					continue
+				// Call hermit death hooks
+				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
+				if (hermitPos) {
+					const hermitDeathHooks = Object.values(
+						playerState.hooks.onHermitDeath
+					)
+					for (let i = 0; i < hermitDeathHooks.length; i++) {
+						hermitDeathHooks[i](hermitPos)
+					}
 				}
 
 				if (row.hermitCard) discardCard(game, row.hermitCard)
@@ -505,7 +500,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 						opponentPlayer.hooks.onFollowUpTimeout
 					)
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](opponentFollowUp)
+						followUpTimeoutHooks[i](opponentPlayer.followUp)
 					}
 					continue
 				} else if (!hasActiveHermit) {
@@ -585,7 +580,7 @@ function* turnSaga(game) {
 	const turnConfig = {}
 
 	// Call turn start hooks
-	const turnStartHooks = Object.values(currentPlayer.hooks.turnStart)
+	const turnStartHooks = Object.values(currentPlayer.hooks.onTurnStart)
 	for (let i = 0; i < turnStartHooks.length; i++) {
 		turnStartHooks[i]()
 	}
@@ -603,7 +598,7 @@ function* turnSaga(game) {
 	}
 
 	// Call turn end hooks
-	const turnEndHooks = Object.values(currentPlayer.hooks.turnEnd)
+	const turnEndHooks = Object.values(currentPlayer.hooks.onTurnEnd)
 	for (let i = 0; i < turnEndHooks.length; i++) {
 		turnEndHooks[i]()
 	}

@@ -32,10 +32,10 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			return blockedActions
 		}
 
-		otherPlayer.hooks.turnEnd[instance] = () => {
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
 			// Remove effects of card and clean up
 			delete otherPlayer.hooks.blockedActions[instance]
-			delete otherPlayer.hooks.turnEnd[instance]
+			delete otherPlayer.hooks.onTurnEnd[instance]
 		}
 	}
 }

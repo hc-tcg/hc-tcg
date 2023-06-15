@@ -233,8 +233,10 @@ export function getPlayerState(player) {
 			onFollowUp: {},
 			onFollowUpTimeout: {},
 
-			turnStart: {},
-			turnEnd: {},
+			onHermitDeath: {},
+
+			onTurnStart: {},
+			onTurnEnd: {},
 		},
 	}
 }

@@ -63,7 +63,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			}
 		}
 
-		otherPlayer.hooks.turnEnd[instance] = () => {
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
 			// Delete our hook at the end of opponents turn
 			delete otherPlayer.custom[instanceKey]
 		}
@@ -75,55 +75,14 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, otherPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-	}
-
-	/**
-	 * @param {GameModel} game
-	 */
-	register(game) {
-		// On Zed's attack flipCoin and set flag
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, opponentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
-
-			if (typeAction !== 'PRIMARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
-
-			if (coinFlip[0] === 'heads') {
-				currentPlayer.custom[this.id] = flipCoin(currentPlayer)
-			}
-
-			return target
-		})
-
-		// When opponent attacks check flag and add second coin flip if set
-		game.hooks.attack.tap(this.id, (target) => {
-			const {opponentPlayer, currentPlayer} = game.ds
-
-			const coinFlip = opponentPlayer.custom[this.id]
-			if (!coinFlip) return target
-			delete opponentPlayer.custom[this.id]
-
-			currentPlayer.coinFlips['Opponent ' + this.name] = coinFlip
-			if (coinFlip[0] !== 'heads') return target
-
-			target.reverseDamage = true
-			return target
-		})
-
-		// When Zed has turn again, and opponent didn't attack remove flag
-		game.hooks.turnStart.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			if (!currentPlayer.custom[this.id]) return
-			delete currentPlayer.custom[this.id]
-		})
+		delete otherPlayer.hooks.beforeAttack[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
+		delete otherPlayer.custom[instanceKey]
 	}
 }
 
