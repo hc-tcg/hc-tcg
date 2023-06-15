@@ -51,10 +51,20 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			player.custom[reviveNextTurn] = true
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = () => {
-			if (player.board.activeRow !== rowIndex) return
+		otherPlayer.hooks.afterAttack[instance] = (afterAttack) => {
+			if (
+				afterAttack.attack.target.row !== pos.row ||
+				afterAttack.attack.target.index !== pos.rowIndex
+			)
+				return
 			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
-				if (row?.health !== 0) return
+				if (
+					row?.health === null ||
+					row?.health === undefined ||
+					row.health > 0
+				) {
+					return
+				}
 
 				row.health = 50
 				row.ailments = []
