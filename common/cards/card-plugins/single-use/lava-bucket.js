@@ -36,6 +36,22 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			})
 		}
 	}
+
+	canApply() {
+		return true
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (pos.slot.type !== 'single_use') return 'INVALID'
+
+		if (!pos.otherPlayer.board.activeRow) return 'NO'
+
+		return 'YES'
+	}
 }
 
 export default LavaBucketSingleUseCard
