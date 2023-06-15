@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse, hasSingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRow} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -9,63 +13,54 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description:
-				"Swap active Hermit with AFK Hermit at the end of the player's turn.\n\nDiscard after use.",
+				'Swap your active Hermit with one of your AFK Hermits after attacking.',
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		// Set flag when chorus fruit is applied
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				currentPlayer.custom[this.id] = true
-				return 'DONE'
-			}
-		})
+	onAttach(game, instance, pos) {
+		const {player} = pos
+		const activeRow = getActiveRow(player)
 
-		// Remove flag when active hermit is changed
-		game.hooks.changeActiveHermit.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			delete currentPlayer.custom[this.id]
-		})
+		player.hooks.afterAttack[instance] = (attackResult) => {
+			applySingleUse(game)
 
-		// Remove flag at end of a turn
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			delete currentPlayer.custom[this.id]
-		})
+			// Only apply single use once
+			delete player.hooks.afterAttack[instance]
+		}
 
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, pastTurnActions, lockedActions) => {
-				const {playerActiveRow, currentPlayer} = game.ds
-				const chorusFruit = currentPlayer.custom[this.id]
-
-				const activeIsSleeping = playerActiveRow?.ailments.some(
+		player.hooks.availableActions[instance] = (availableActions) => {
+			const newActiveRow = getActiveRow(player)
+			// Only allow changing hermits once
+			if (newActiveRow !== activeRow) {
+				delete player.hooks.availableActions[instance]
+			} else {
+				const isSleeping = newActiveRow?.ailments.some(
 					(a) => a.id === 'sleeping'
 				)
 
-				const hasOtherHermit = currentPlayer.board.rows.some(
-					(row, index) =>
-						row.hermitCard && index !== currentPlayer.board.activeRow
-				)
-
-				if (
-					chorusFruit &&
-					!activeIsSleeping &&
-					hasOtherHermit &&
-					pastTurnActions.includes('ATTACK') &&
-					!availableActions.includes('CHANGE_ACTIVE_HERMIT') &&
-					!lockedActions.includes('CHANGE_ACTIVE_HERMIT')
-				) {
+				if (!isSleeping && !availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
 				}
-				return availableActions
 			}
-		)
+
+			return availableActions
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.afterAttack[instance]
+		delete player.hooks.availableActions[instance]
 	}
 }
 
