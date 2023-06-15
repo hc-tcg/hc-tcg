@@ -206,7 +206,6 @@ export function getPlayerState(player) {
 		discarded: [],
 		pile: pack.slice(7),
 		custom: {},
-		ailments: [],
 		board: {
 			activeRow: null,
 			singleUseCard: null,
@@ -285,7 +284,6 @@ export function getLocalPlayerState(playerState) {
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,
 		lives: playerState.lives,
-		ailments: playerState.ailments,
 		board: playerState.board,
 	}
 	return localPlayerState
