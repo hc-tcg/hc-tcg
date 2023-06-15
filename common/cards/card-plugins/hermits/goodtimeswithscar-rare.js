@@ -1,12 +1,6 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-// - Game should not consume attached totem if deathloop is active
-// - Golden Axe should not bypass deathloop (unlike a totem)
-// - Needs to work for death by being attacked or by death by ailments
-// TODO - Combination of flip&coin abilities & scar's ability will mean double coin flip for the attack.
-// TODO - Scar's coin flip can also occur when he dies from fire/posion at end of a turn
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -26,7 +20,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				cost: ['builder', 'any'],
 				damage: 70,
 				power:
-					"If this Hermit is knocked out next turn, they're revived with 50hp.Can only be revived once.",
+					'If this Hermit is knocked out next turn, they are revived with 50hp.\n\nCan only be revived once.',
 			},
 		})
 	}
@@ -37,7 +31,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer, row, rowIndex} = pos
+		const {player, otherPlayer, row} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 
@@ -52,17 +46,10 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		}
 
 		otherPlayer.hooks.afterAttack[instance] = (afterAttack) => {
-			if (
-				afterAttack.attack.target.row !== pos.row ||
-				afterAttack.attack.target.index !== pos.rowIndex
-			)
-				return
+			if (afterAttack.attack.target.index !== pos.rowIndex) return
+
 			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
-				if (
-					row?.health === null ||
-					row?.health === undefined ||
-					row.health > 0
-				) {
+				if (!row || !row.health || row.health > 0) {
 					return
 				}
 
