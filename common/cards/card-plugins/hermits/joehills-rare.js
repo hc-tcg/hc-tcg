@@ -116,6 +116,8 @@ class JoeHillsRareHermitCard extends HermitCard {
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.blockedActions[instance]
+		delete player.hooks.turnStart[instance]
+		delete player.hooks.turnEnd[instance]
 		delete otherPlayer.hooks.blockedActions[instance]
 		delete player.custom[state]
 		delete player.custom[heads]
