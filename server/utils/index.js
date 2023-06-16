@@ -221,7 +221,16 @@ export function drawCards(playerState, amount) {
  */
 export function flipCoin(currentPlayer, cardId, times = 1) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
+	const activeRowIndex = currentPlayer.board.activeRow
+	if (!activeRowIndex) {
+		console.log(
+			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
+		)
+		return []
+	}
+	const forceTails = !!currentPlayer.board.rows[activeRowIndex].ailments.find(
+		(a) => a.id === 'badomen'
+	)
 
 	/** @type {Array<CoinFlipT>} */
 	let coinFlips = []
