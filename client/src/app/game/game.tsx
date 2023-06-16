@@ -5,18 +5,20 @@ import {PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
-import AttackModal from './modals/attack-modal'
-import ConfirmModal from './modals/confirm-modal'
-import SpyglassModal from './modals/spyglass-modal'
-import LootingModal from './modals/looting-modal'
-import ChestModal from './modals/chest-modal'
-import BorrowModal from './modals/borrow-modal'
-import EvilXModal from './modals/evil-x-modal'
-import ChangeHermitModal from './modals/change-hermit-modal'
-import ForfeitModal from './modals/forfeit-modal'
-import UnmetCondition from './modals/unmet-condition-modal'
-import EndTurnModal from './modals/end-turn-modal'
-import DiscardedModal from './modals/discarded-modal'
+import {
+	AttackModal,
+	BorrowModal,
+	ChangeHermitModal,
+	ChestModal,
+	ConfirmModal,
+	DiscardedModal,
+	EndTurnModal,
+	EvilXModal,
+	ForfeitModal,
+	LootingModal,
+	SpyglassModal,
+	UnmetConditionModal,
+} from './modals'
 import EndGameOverlay from './end-game-overlay'
 import Toolbar from './toolbar'
 import Chat from './chat'
@@ -41,7 +43,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	looting: LootingModal,
 	borrow: BorrowModal,
 	evilX: EvilXModal,
-	'unmet-condition': UnmetCondition,
+	'unmet-condition': UnmetConditionModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
 	discarded: DiscardedModal,
