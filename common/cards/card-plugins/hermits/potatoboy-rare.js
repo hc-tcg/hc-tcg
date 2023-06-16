@@ -1,7 +1,7 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
 import {HERMIT_CARDS} from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
@@ -15,7 +15,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				name: 'Peace & Love',
 				cost: ['farm'],
 				damage: 0,
-				power: 'Heals Hermit directly above and below for 40hp',
+				power: 'Heals Hermit directly above and below for 40hp.',
 			},
 			secondary: {
 				name: 'Volcarbo',
@@ -24,37 +24,50 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				power: null,
 			},
 		})
-		this.heal = 40
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-			if (typeAction === 'SECONDARY_ATTACK') return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack) => {
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'primary'
+			)
+				return
 
-			const activeRow = currentPlayer.board.activeRow || 0
-			const rows = currentPlayer.board.rows
+			const activeRow = player.board.activeRow
+			if (!activeRow) return
+
+			const rows = player.board.rows
+
 			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(
 				Boolean
 			)
 
 			targetRows.forEach((row) => {
-				if (row.hermitCard) {
-					row.health = Math.min(
-						row.health + this.heal,
-						HERMIT_CARDS[row.hermitCard.cardId].health // max health
-					)
-				}
+				if (!row.hermitCard) return
+				const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
+				if (!currentRowInfo) return
+				row.health = Math.min(row.health + 40, currentRowInfo.health)
 			})
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		// Remove hooks
+		delete player.hooks.onAttack[instance]
 	}
 
 	getExpansion() {

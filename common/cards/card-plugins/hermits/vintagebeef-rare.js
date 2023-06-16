@@ -41,7 +41,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			)
 				return
 
-			const coinFlip = flipCoin(player)
+			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] !== 'heads') return

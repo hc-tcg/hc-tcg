@@ -9,6 +9,10 @@ class MinerRareItemCard extends ItemCard {
 			hermitType: 'miner',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType, this.hermitType]
+	}
 }
 
 export default MinerRareItemCard

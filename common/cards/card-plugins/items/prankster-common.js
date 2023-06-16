@@ -9,6 +9,10 @@ class PranksterCommonItemCard extends ItemCard {
 			hermitType: 'prankster',
 		})
 	}
+
+	getEnergy(game, instance, pos) {
+		return [this.hermitType]
+	}
 }
 
 export default PranksterCommonItemCard

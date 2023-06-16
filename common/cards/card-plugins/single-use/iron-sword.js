@@ -9,8 +9,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			id: 'iron_sword',
 			name: 'Iron Sword',
 			rarity: 'common',
-			description:
-				'Does +20hp damage to opposing Hermit.\n\nDiscard after use.',
+			description: 'Do an additional 20hp damage.',
 		})
 	}
 
@@ -35,7 +34,6 @@ class IronSwordSingleUseCard extends SingleUseCard {
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				attacker: {index, row},
 				target: {index: opponentIndex, row: opponentRow},
 				type: 'effect',
 			}).addDamage(20)
@@ -43,7 +41,6 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			return [swordAttack]
 		}
 
-		// @TODO note to self - because gem will discard used effect cards in after attack, they should always be used before that
 		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
 			if (attack.id !== attackId) return
