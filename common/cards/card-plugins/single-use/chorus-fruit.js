@@ -39,7 +39,8 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			if (newActiveRow !== activeRow) {
 				delete player.hooks.availableActions[instance]
 			} else {
-				const isSleeping = newActiveRow?.ailments.some(
+				// We need to check again because of bdubs
+				const isSleeping = activeRow?.ailments.some(
 					(a) => a.id === 'sleeping'
 				)
 
@@ -50,6 +51,21 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 			return availableActions
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) !== 'INVALID') return 'INVALID'
+		const {player} = pos
+		const activeRow = getActiveRow(player)
+
+		const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
+		if (isSleeping) return 'NO'
+
+		return 'YES'
 	}
 
 	/**
