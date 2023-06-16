@@ -50,7 +50,7 @@ class HermitCard extends Card {
 	 * @returns {Array<AttackModel>}
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		if (!pos.rowIndex || !pos.row || !pos.row.hermitCard) return []
+		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
 
 		const {opponentPlayer} = game.ds
 		const targetIndex = opponentPlayer.board.activeRow
