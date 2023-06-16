@@ -24,7 +24,6 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 
 	const singleUseCard = playerState.board.singleUseCard
 	const hermitCard = activeRow.hermitCard
-	const opponentHermitCard = opponentActiveRow.hermitCard
 	const singleUseInfo = singleUseCard
 		? SINGLE_USE_CARDS[singleUseCard.cardId]
 		: null
@@ -44,9 +43,9 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		return
 	}
 
-	let cardId = hermitCard.cardId
-	let cardInfo = HERMIT_CARDS[cardId]
-	let hermitAttack = cardInfo?.[type] || null
+	const cardId = hermitCard.cardId
+	const cardInfo = HERMIT_CARDS[cardId]
+	const hermitAttack = cardInfo?.[type] || null
 
 	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(
