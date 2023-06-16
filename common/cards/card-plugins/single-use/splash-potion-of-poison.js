@@ -9,29 +9,48 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			name: 'Splash Potion of Poison',
 			rarity: 'rare',
 			description:
-				'POISONS the opposing Hermit.\n\nDoes an additional +20hp damage per turn until opponent is knocked out.\n\nGoing AFK does not eliminate the POISON. Discard after use.',
+				'Deal an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
 		})
+	}
+
+	canApply() {
+		return true
+	}
+
+	/**
+	 * Called when an instance of this card is applied
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
+	 */
+	onApply(game, instance, pos, pickedSlots) {
+		const opponentActiveRow = pos.otherPlayer.board.activeRow
+		if (opponentActiveRow === null) return
+
+		const hasDamageEffect = pos.otherPlayer.board.rows[
+			opponentActiveRow
+		].ailments.some((ailment) => {
+			return ailment.id === 'fire' || ailment.id === 'poison'
+		})
+		if (!hasDamageEffect) {
+			pos.otherPlayer.board.rows[opponentActiveRow].ailments.push({
+				id: 'poison',
+				duration: -1,
+			})
+		}
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentActiveRow} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				if (opponentActiveRow === null) return 'INVALID'
-				const hasMilkBucket =
-					opponentActiveRow.effectCard?.cardId === 'milk_bucket'
-				const hasDamageEffect = opponentActiveRow.ailments.some((a) =>
-					['fire', 'poison'].includes(a.id)
-				)
-				if (!hasMilkBucket && !hasDamageEffect) {
-					opponentActiveRow.ailments.push({id: 'poison', duration: -1})
-				}
-				return 'DONE'
-			}
-		})
+	canAttach(game, pos) {
+		if (pos.slot.type !== 'single_use') return 'INVALID'
+
+		if (!pos.otherPlayer.board.activeRow) return 'NO'
+
+		return 'YES'
 	}
 }
 

@@ -43,7 +43,9 @@ class GrianRareHermitCard extends HermitCard {
 			},
 		})
 		this.pickOn = 'custom'
-		this.pickReqs = [{target: 'player', type: ['effect'], amount: 1, empty: true}]
+		this.pickReqs = [
+			{target: 'player', type: ['effect'], amount: 1, empty: true},
+		]
 	}
 
 	/**
@@ -70,7 +72,7 @@ class GrianRareHermitCard extends HermitCard {
 
 			if (!opponentActiveRow?.effectCard) return
 
-			const coinFlip = flipCoin(currentPlayer)
+			const coinFlip = flipCoin(currentPlayer, this.id)
 			currentPlayer.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 

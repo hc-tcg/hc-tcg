@@ -52,20 +52,25 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		if (attacks[0].type !== 'secondary') return attacks
 
-		const pickedHermit = pickedSlots[this.id][0]
+		const pickedHermit = pickedSlots[this.id]?.[0]
 		if (!pickedHermit || !pickedHermit.row) return []
 		const rowState = pickedHermit.row.state
-		if (!rowState.hermitCard) return []
-		const hermitInfo = HERMIT_CARDS[rowState.hermitCard.cardId]
+		const card = rowState.hermitCard
+		if (!card) return []
+
+		// No loops please
+		if (card.cardId === this.id) return []
+
+		const hermitInfo = HERMIT_CARDS[card.cardId]
 		if (!hermitInfo) return []
 
 		// Return that cards secondary attack
 		return hermitInfo.getAttacks(
 			game,
-			rowState.hermitCard.cardInstance,
+			card.cardInstance,
 			pos,
 			hermitAttackType,
-			pickedSlots
+			{}
 		)
 	}
 

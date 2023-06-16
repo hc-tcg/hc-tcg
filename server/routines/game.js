@@ -17,7 +17,10 @@ import CARDS, {
 import {hasEnoughEnergy, discardSingleUse, discardCard} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
-import attackSaga, {ATTACK_TO_ACTION} from './turn-actions/attack'
+import attackSaga, {
+	ATTACK_TO_ACTION,
+	runAilmentAttacks,
+} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
@@ -574,14 +577,8 @@ function* turnSaga(game) {
 	const result = yield call(turnActionsSaga, game, pastTurnActions, turnConfig)
 	if (result === 'GAME_END') return 'GAME_END'
 
-	// Apply damage from ailments
-	for (let row of opponentPlayer.board.rows) {
-		if (
-			row.health &&
-			row.ailments.find((a) => a.id === 'fire' || a.id === 'poison')
-		)
-			row.health -= 20
-	}
+	// Run the ailment attacks just before turn end
+	runAilmentAttacks(game, opponentPlayer)
 
 	// Call turn end hooks
 	const turnEndHooks = Object.values(currentPlayer.hooks.onTurnEnd)

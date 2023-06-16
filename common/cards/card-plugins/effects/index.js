@@ -1,4 +1,3 @@
-import WaterBucketEffectCard from './water-bucket'
 import ShieldEffectCard from './shield'
 import IronArmorEffectCard from './iron-armor'
 import GoldArmorEffectCard from './gold-armor'
@@ -8,7 +7,6 @@ import WolfEffectCard from './wolf'
 import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
-import MendingEffectCard from './mending'
 import LoyaltyEffectCard from './loyalty'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
@@ -21,12 +19,10 @@ const EFFECT_CARDS = [
 	new GoldArmorEffectCard(),
 	new IronArmorEffectCard(),
 	new ShieldEffectCard(),
-	new WaterBucketEffectCard(),
 	new DiamondArmorEffectCard(),
 	new NetheriteArmorEffectCard(),
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
-	new MendingEffectCard(),
 	new LoyaltyEffectCard(),
 	// new StringEffectCard(),
 	// new TurtleShellEffectCard(),

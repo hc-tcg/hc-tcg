@@ -28,6 +28,8 @@ import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
 import LootingSingleUseCard from './looting'
 import FortuneSingleUseCard from './fortune'
 import MilkBucketSingleUseCard from './milk-bucket'
+import WaterBucketSingleUseCard from './water-bucket'
+import MendingSingleUseCard from './mending'
 import TridentSingleUseCard from './trident'
 import SweepingEdgeSingleUseCard from './sweeping-edge'
 import AnvilSingleUseCard from './anvil'
@@ -68,6 +70,8 @@ const SINGLE_USE_CARDS = [
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
 	new MilkBucketSingleUseCard(),
+	new WaterBucketSingleUseCard(),
+	new MendingSingleUseCard(),
 
 	// new AnvilSingleUseCard(),
 	// new PotionOfSlownessSingleUseCard(),

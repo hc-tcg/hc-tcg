@@ -1,5 +1,4 @@
 import Modal from 'components/modal'
-import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
 import Button from 'components/button'

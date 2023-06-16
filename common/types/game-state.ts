@@ -48,6 +48,8 @@ export type CurrentCoinFlipT = {
 	iterations: Array<string>
 }
 
+export type Hook<T> = Record<string, T>
+
 export type PlayerState = {
 	id: PlayerId
 	followUp?: any
@@ -68,14 +70,10 @@ export type PlayerState = {
 
 	hooks: {
 		/** Instance key -> hook that modifies available energy from item cards */
-		availableEnergy: Record<
-			string,
-			(availableEnergy: Array<EnergyT>) => Array<EnergyT>
-		>
+		availableEnergy: Hook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
 
 		/** Instance key -> hook that modifies blockedActions */
-		blockedActions: Record<
-			string,
+		blockedActions: Hook<
 			(
 				blockedActions: AvailableActionsT,
 				pastTurnActions: AvailableActionsT,
@@ -83,8 +81,7 @@ export type PlayerState = {
 			) => AvailableActionsT
 		>
 		/** Instance key -> hook that modifies availableActions */
-		availableActions: Record<
-			string,
+		availableActions: Hook<
 			(
 				availableActions: AvailableActionsT,
 				pastTurnActions: AvailableActionsT,
@@ -93,42 +90,38 @@ export type PlayerState = {
 		>
 
 		/** Instance key -> hook called whenver any card is attached */
-		onAttach: Record<string, (instance: string) => void>
+		onAttach: Hook<(instance: string) => void>
 		/** Instance key -> hook called whenver any card is detached */
-		onDetach: Record<string, (instance: string) => void>
-		/** Instance key -> hook called whenver a single use card is applied */
-		onApply: Record<string, (instance: string) => void>
+		onDetach: Hook<(instance: string) => void>
+		/** Instance key -> hook called whenever a single use card is applied */
+		onApply: Hook<(instance: string) => void>
 
 		/** Instance key -> hook that returns attacks */
-		getAttacks: Record<string, (pickedSlots: PickedSlots) => Array<AttackModel>>
+		getAttacks: Hook<(pickedSlots: PickedSlots) => Array<AttackModel>>
 		/** Instance key -> hook that modifies an attack before the main attack loop */
-		beforeAttack: Record<
-			string,
-			(attack: AttackModel, pickedSlots: PickedSlots) => void
-		>
+		beforeAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
 		/** Instance key -> hook that modifies an attack during the main attack loop */
-		onAttack: Record<
-			string,
-			(attack: AttackModel, pickedSlots: PickedSlots) => void
-		>
+		onAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
 		/** Instance key -> hook that modifies an attack */
-		afterAttack: Record<string, (attackResult: AttackResult) => void>
+		afterAttack: Hook<(attackResult: AttackResult) => void>
 
 		/** Instance key -> hook called on follow up */
-		onFollowUp: Record<
-			string,
-			(followUp: string, pickedSlots: PickedSlots) => void
-		>
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots) => void>
 		/** Instance key -> hook called when follow up times out */
-		onFollowUpTimeout: Record<string, (followUp: string) => void>
+		onFollowUpTimeout: Hook<(followUp: string) => void>
 
 		/** Instance key -> hook called when a hermit is about to die */
-		onHermitDeath: Record<string, (hermitPos: CardPos) => void>
+		onHermitDeath: Hook<(hermitPos: CardPos) => void>
 
 		/** Instance key -> hook called at the start of the turn */
-		onTurnStart: Record<string, () => void>
+		onTurnStart: Hook<() => void>
 		/** Instance key -> hook called at the end of the turn */
-		onTurnEnd: Record<string, () => void>
+		onTurnEnd: Hook<() => void>
+
+		/** Instance key -> hook called the player flips a coin */
+		onCoinFlip: Hook<
+			(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+		>
 	}
 }
 

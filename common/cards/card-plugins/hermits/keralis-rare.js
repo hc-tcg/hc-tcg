@@ -46,7 +46,7 @@ class KeralisRareHermitCard extends HermitCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const pickedHermit = pickedSlots[this.id][0]
+			const pickedHermit = pickedSlots[this.id]?.[0]
 			if (!pickedHermit || !pickedHermit.row) return
 
 			const rowState = pickedHermit.row.state

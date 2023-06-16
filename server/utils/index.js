@@ -216,28 +216,42 @@ export function drawCards(playerState, amount) {
 /**
  * @param {PlayerState} currentPlayer
  * @param {number} times
+ * @param {string} cardId
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(currentPlayer, times = 1) {
-	// TODO - possibly replace with hook to avoid explicit card ids in code
-	const fortune = !!currentPlayer.custom['fortune']
-	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
-	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
+export function flipCoin(currentPlayer, cardId, times = 1) {
+	const forceHeads = DEBUG_CONFIG.forceCoinFlip
+	const activeRowIndex = currentPlayer.board.activeRow
+	if (!activeRowIndex) {
+		console.log(
+			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
+		)
+		return []
+	}
+	const forceTails = !!currentPlayer.board.rows[activeRowIndex].ailments.find(
+		(a) => a.id === 'badomen'
+	)
 
 	/** @type {Array<CoinFlipT>} */
-	const result = []
+	let coinFlips = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			result.push('heads')
+			coinFlips.push('heads')
 		} else if (forceTails) {
-			result.push('tails')
+			coinFlips.push('tails')
 		} else {
 			/** @type {CoinFlipT} */
 			const coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
-			result.push(coinFlip)
+			coinFlips.push(coinFlip)
 		}
 	}
-	return result
+
+	const coinFlipHooks = Object.values(currentPlayer.hooks.onCoinFlip)
+	for (let i = 0; i < coinFlipHooks.length; i++) {
+		coinFlips = coinFlipHooks[i](cardId, coinFlips)
+	}
+
+	return coinFlips
 }
 
 /**
@@ -329,7 +343,7 @@ export function getAdjacentRows(playerState) {
 
 /**
  * @param {GameModel} game
- * @param {import('common/types/game-state').AvailableActionT}
+ * @param {import('common/types/game-state').AvailableActionT} action
  */
 export function isActionAvailable(game, action) {
 	return game.turnState.availableActions.includes(action)
@@ -356,7 +370,17 @@ export function isRowEmpty(row) {
  * @returns {boolean}
  */
 export function rowHasItem(row) {
-	return row.itemCards.filter((card) => !!card).length > 0
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+		total += 1
+	}
+
+	return total > 0
 }
 
 /**
@@ -365,4 +389,25 @@ export function rowHasItem(row) {
  */
 export function rowHasEmptyItemSlot(row) {
 	return row.itemCards.filter((card) => !card).length > 0
+}
+
+/**
+ * @param {GameModel} game
+ * @param {RowStateWithHermit} row
+ * @returns {number}
+ */
+export function getItemCardsEnergy(game, row) {
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+		const pos = getCardPos(game, itemCard.cardInstance)
+		if (!pos) continue
+		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos).length
+	}
+
+	return total
 }
