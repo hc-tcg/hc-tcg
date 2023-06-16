@@ -12,6 +12,8 @@ import LoyaltyEffectCard from './loyalty'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
 import EffectCard from './_effect-card'
+import ThornsIIEffectCard from './thorns_ii'
+import ThornsIIIEffectCard from './thorns_iii'
 
 /** @type {Array<EffectCard>} */
 const EFFECT_CARDS = [
@@ -25,6 +27,8 @@ const EFFECT_CARDS = [
 	new NetheriteArmorEffectCard(),
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
+	new ThornsIIEffectCard(),
+	new ThornsIIIEffectCard(),
 	new LoyaltyEffectCard(),
 	// new StringEffectCard(),
 	// new TurtleShellEffectCard(),
