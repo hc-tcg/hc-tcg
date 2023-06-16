@@ -110,10 +110,6 @@ function AttackModal({closeModal}: Props) {
 							<span className={css.infoIcon}>!</span>
 							Attack is the last action of your turn.
 						</div>
-						<div className={css.turnEndNotification}>
-							<span className={css.infoIcon}>i</span>
-							Damage bonuses from special moves are NOT included in the preview.
-						</div>
 						{attacks}
 					</>
 				) : (
