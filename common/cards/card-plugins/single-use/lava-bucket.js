@@ -13,12 +13,16 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	canApply() {
+		return true
+	}
+
 	/**
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('../../../types/pick-process').PickedSlotsInfo} pickedSlots
+	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
 		const opponentActiveRow = pos.otherPlayer.board.activeRow
@@ -35,10 +39,6 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 				duration: -1,
 			})
 		}
-	}
-
-	canApply() {
-		return true
 	}
 
 	/**
