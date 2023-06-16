@@ -123,11 +123,11 @@ const HERMIT_CARDS = [
 
 	// new cards
 
-	new BeetlejhostCommonHermitCard(),
-	new EvilJevinCommonHermitCard(),
-	new LlamadadRareHermitCard(),
-	new PoultrymanCommonHermitCard(),
-	new PotatoBoyRareHermitCard(),
+	// new BeetlejhostCommonHermitCard(),
+	// new EvilJevinCommonHermitCard(),
+	// new LlamadadRareHermitCard(),
+	// new PoultrymanCommonHermitCard(),
+	// new PotatoBoyRareHermitCard(),
 
 	// new DreamRareHermitCard(),
 ]
