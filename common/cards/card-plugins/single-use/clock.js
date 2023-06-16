@@ -50,9 +50,9 @@ class ClockSingleUseCard extends SingleUseCard {
 			return blockedActions
 		}
 
-		otherPlayer.hooks.turnEnd[instance] = () => {
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
 			delete otherPlayer.hooks.blockedActions[instance]
-			delete otherPlayer.hooks.turnEnd[instance]
+			delete otherPlayer.hooks.onTurnEnd[instance]
 		}
 	}
 

@@ -1,7 +1,5 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
-import {AttackModel} from '../../../../server/models/attack-model'
-import {getCardPos} from '../../../../server/utils/cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 /*
@@ -39,6 +37,74 @@ class TurtleShellEffectCard extends EffectCard {
 			description:
 				'Attach to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+
+		if (!pos.row?.hermitCard) return 'NO'
+
+		// turtle shell addition - hermit must be inactive to attach
+		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'NO'
+
+		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const instanceKey = this.getInstanceKey(instance)
+		pos.player.custom[instanceKey] = false
+
+		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
+			if (
+				pos.player.custom[instanceKey] === true &&
+				attack.target.row.effectCard?.cardInstance === instance
+			) {
+				attack.multiplyDamage(0).lockDamage()
+			}
+			return attack
+		}
+
+		pos.otherPlayer.hooks.afterAttack[instance] = () => {
+			if (pos.player.custom[instanceKey] === true) {
+				discardCard(game, {cardId: this.id, cardInstance: instance})
+			}
+		}
+
+		pos.otherPlayer.hooks.beforeAttack[instance] = () => {
+			if (pos.player.board.activeRow === null) return
+			if (
+				instance ===
+				pos.player.board.rows[pos.player.board.activeRow].effectCard
+					?.cardInstance
+			) {
+				pos.player.custom[instanceKey] = true
+			}
+		}
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		delete pos.player.custom[this.getInstanceKey(instance)]
+		delete pos.otherPlayer.hooks.onAttack[instance]
+		delete pos.otherPlayer.hooks.afterAttack[instance]
+		delete pos.otherPlayer.hooks.turnStart[instance]
 	}
 }
 

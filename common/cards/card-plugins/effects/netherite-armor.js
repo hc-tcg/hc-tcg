@@ -48,7 +48,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.turnEnd[instance] = () => {
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instanceKey]
 		}
 
@@ -69,7 +69,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.turnEnd[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
 		delete otherPlayer.hooks.onApply[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}

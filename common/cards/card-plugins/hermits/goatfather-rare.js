@@ -53,7 +53,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 
 		if (attacks[0].type !== 'secondary') return attacks
 
-		const coinFlip = flipCoin(player)
+		const coinFlip = flipCoin(player, this.id)
 		player.coinFlips[this.id] = coinFlip
 
 		if (coinFlip[0] === 'tails') return attacks
