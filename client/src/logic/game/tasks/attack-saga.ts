@@ -47,16 +47,6 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 	let cardId = hermitCard.cardId
 	let cardInfo = HERMIT_CARDS[cardId]
 	let hermitAttack = cardInfo?.[type] || null
-	if (cardInfo?.pickOn === 'use-opponent' && hermitAttack?.power) {
-		cardId = opponentHermitCard.cardId
-		cardInfo = HERMIT_CARDS[cardId]
-		hermitAttack = cardInfo?.[type] || null
-	} else if (cardInfo?.pickOn === 'use-ally' && extra) {
-		const hermitExtra = extra[cardId]
-		cardId = hermitExtra.hermitId
-		cardInfo = HERMIT_CARDS[cardId]
-		hermitAttack = cardInfo?.[hermitExtra.type] || null
-	}
 
 	if (cardInfo?.pickOn === 'attack' && hermitAttack?.power) {
 		result[cardId] = yield call(

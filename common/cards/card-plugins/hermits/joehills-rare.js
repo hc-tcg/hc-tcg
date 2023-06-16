@@ -39,14 +39,14 @@ class JoeHillsRareHermitCard extends HermitCard {
 		const state = this.getInstanceKey(instance, 'state')
 		const heads = this.getInstanceKey(instance, 'heads')
 
-		player.hooks.turnStart[instance] = () => {
+		player.hooks.onTurnStart[instance] = () => {
 			delete player.custom[heads]
 			if (player.custom[state] === 'used-timeskip') {
 				player.custom[state] = 'timeskip-complete'
 			}
 		}
 
-		player.hooks.turnEnd[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			if (player.custom[state] === 'timeskip-complete') {
 				delete player.custom[state]
 			}
@@ -60,7 +60,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				return
 			}
 
-			const coinFlip = flipCoin(player)
+			const coinFlip = flipCoin(player, this.id, 1)
 			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') player.custom[heads] = true
@@ -116,8 +116,8 @@ class JoeHillsRareHermitCard extends HermitCard {
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.blockedActions[instance]
-		delete player.hooks.turnStart[instance]
-		delete player.hooks.turnEnd[instance]
+		delete player.hooks.onTurnStart[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete otherPlayer.hooks.blockedActions[instance]
 		delete player.custom[state]
 		delete player.custom[heads]

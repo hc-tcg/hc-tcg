@@ -58,7 +58,7 @@ class BedEffectCard extends EffectCard {
 			row.ailments.push({id: 'sleeping', duration: 2})
 		}
 
-		player.hooks.turnStart[instance] = () => {
+		player.hooks.onTurnStart[instance] = () => {
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
 			// if sleeping has worn off, discard the bed
@@ -75,7 +75,7 @@ class BedEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, row} = pos
-		delete player.hooks.turnStart[instance]
+		delete player.hooks.onTurnStart[instance]
 
 		// Make sure there is no sleeping anymore
 		if (row) {

@@ -58,8 +58,13 @@ class HypnotizdRareHermitCard extends HermitCard {
 			// Change attack target before the main attack loop
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
-			const pickedHermit = pickedSlots[this.id][0]
-			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
+			const pickedHermit = pickedSlots[this.id]?.[0]
+			if (
+				!pickedHermit ||
+				!pickedHermit.row ||
+				!pickedHermit.row.state.hermitCard
+			)
+				return
 
 			// Change attack target
 			attack.target = {
@@ -67,7 +72,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				row: pickedHermit.row.state,
 			}
 
-			const pickedItem = pickedSlots[this.id][1]
+			const pickedItem = pickedSlots[this.id]?.[1]
 			const isActive = otherPlayer.board.activeRow === pickedHermit.row?.index
 			if (isActive || !pickedItem) return
 
