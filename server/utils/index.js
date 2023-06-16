@@ -370,7 +370,17 @@ export function isRowEmpty(row) {
  * @returns {boolean}
  */
 export function rowHasItem(row) {
-	return row.itemCards.filter((card) => !!card).length > 0
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+		total += 1
+	}
+
+	return total > 0
 }
 
 /**
@@ -379,4 +389,25 @@ export function rowHasItem(row) {
  */
 export function rowHasEmptyItemSlot(row) {
 	return row.itemCards.filter((card) => !card).length > 0
+}
+
+/**
+ * @param {GameModel} game
+ * @param {RowStateWithHermit} row
+ * @returns {number}
+ */
+export function getItemCardsEnergy(game, row) {
+	const itemCards = row.itemCards
+	let total = 0
+	for (const itemCard of itemCards) {
+		if (!itemCard) continue
+		const cardInfo = ITEM_CARDS[itemCard.cardId]
+		// String
+		if (!cardInfo) continue
+		const pos = getCardPos(game, itemCard.cardInstance)
+		if (!pos) continue
+		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos).length
+	}
+
+	return total
 }
