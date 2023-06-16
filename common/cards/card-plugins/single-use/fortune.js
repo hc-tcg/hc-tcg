@@ -42,7 +42,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		delete player.hooks.beforeAttack[instance]
-		delete player.hooks.coinFlip[instance]
+		delete player.hooks.onCoinFlip[instance]
 	}
 
 	/**
@@ -54,7 +54,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onApply(game, instance, pos, pickedSlots) {
 		const {player} = pos
 
-		player.hooks.coinFlip[instance] = (coinFlips) => {
+		player.hooks.onCoinFlip[instance] = (coinFlips) => {
 			for (let i = 0; i < coinFlips.length; i++) {
 				coinFlips[i] = 'heads'
 			}

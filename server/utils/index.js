@@ -237,7 +237,7 @@ export function flipCoin(currentPlayer, cardId, times = 1) {
 		}
 	}
 
-	const coinFlipHooks = Object.values(currentPlayer.hooks.coinFlip)
+	const coinFlipHooks = Object.values(currentPlayer.hooks.onCoinFlip)
 	for (let i = 0; i < coinFlipHooks.length; i++) {
 		coinFlips = coinFlipHooks[i](cardId, coinFlips)
 	}

@@ -237,7 +237,7 @@ export function getPlayerState(player) {
 			onTurnStart: {},
 			onTurnEnd: {},
 
-			coinFlip: {},
+			onCoinFlip: {},
 		},
 	}
 }
