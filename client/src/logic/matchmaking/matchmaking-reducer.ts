@@ -34,6 +34,11 @@ const matchmakingReducer = (
 				status: 'private_code_needed',
 				invalidCode: false,
 			}
+		case 'WAITING_FOR_PLAYER':
+			return {
+				...state,
+				status: 'waiting_for_player',
+			}
 		case 'CODE_RECEIVED':
 			return {
 				...state,

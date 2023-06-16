@@ -19,6 +19,7 @@ import {
 	getGameOutcome,
 } from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
+import {gameEndWebhook} from '../api'
 
 /**
  * @typedef {import("redux-saga").Task} Task
@@ -86,6 +87,8 @@ function* gameManager(game) {
 			`${gameType} game ended. Total games:`,
 			root.getGameIds().length - 1
 		)
+		gameEndWebhook(game)
+
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
 	}
@@ -94,14 +97,14 @@ function* gameManager(game) {
 /**
  * @param {string} playerId
  */
-function inGame(playerId) {
+export function inGame(playerId) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 
 /**
  * @param {string} playerId
  */
-function inQueue(playerId) {
+export function inQueue(playerId) {
 	return root.queue.some((id) => id === playerId)
 }
 
@@ -173,14 +176,20 @@ function* joinPrivateGame(action) {
 	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	if (invalidCode || gameRunning || inGame(playerId)) {
+	const invalidPlayer = game?.getPlayerIds().find((id) => !root.players[id])
+
+	if (invalidCode || invalidPlayer || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
 	}
 
 	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
-	yield fork(gameManager, game)
+	if (game.getPlayers().length === 2) {
+		yield fork(gameManager, game)
+	} else {
+		broadcast([player], 'WAITING_FOR_PLAYER')
+	}
 }
 
 function* cleanUpSaga() {
