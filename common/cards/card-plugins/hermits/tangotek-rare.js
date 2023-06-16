@@ -1,10 +1,9 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
+import {getNonEmptyRows, isActionAvailable} from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class TangoTekRareHermitCard extends HermitCard {
@@ -26,115 +25,106 @@ class TangoTekRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'farm'],
 				damage: 100,
 				power:
-					'At the end of the turn, both Tango and opposing Hermit are replaced by AFK Hermits.\n\nOpponent must select replacement first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
+					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
-		})
-		this.pickOn = 'followup'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-		])
-	}
-
-	/**
-	 * @param {GameModel} game
-	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {
-				currentPlayer,
-				opponentPlayer,
-				opponentActiveRow,
-				playerActiveRow,
-			} = game.ds
-			const {moveRef, typeAction} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			if (!playerActiveRow || !opponentActiveRow) return target
-
-			const opponentHasOtherHermits =
-				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-			if (opponentHasOtherHermits) {
-				currentPlayer.custom[this.id] = opponentPlayer.board.activeRow
-				opponentActiveRow.ailments.push({id: 'knockedout', duration: 0})
-				opponentPlayer.board.activeRow = null
-				opponentPlayer.followUp = this.id
-			}
-
-			const playerHasOtherHermits =
-				currentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-			if (playerHasOtherHermits) {
-				playerActiveRow.ailments.push({id: 'knockedout', duration: 0})
-				currentPlayer.board.activeRow = null
-			}
-
-			return target
-		})
-
-		// Remove followup in case all AFK hermits during attack
-		game.hooks.actionEnd.tap(this.id, () => {
-			const {opponentPlayer} = game.ds
-			if (opponentPlayer.followUp !== this.id) return
-			const opponentHasOtherHermits =
-				opponentPlayer.board.rows.filter(
-					(row) => !!row.hermitCard && row.health > 0
-				).length > 1
-			if (!opponentHasOtherHermits) delete opponentPlayer.followUp
-		})
-
-		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
-			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedSlots} = followUpState
-
-			if (followUp !== this.id) return
-
-			const pickedCards = pickedSlots[this.id] || []
-			if (pickedCards.length !== 1) {
-				this.cleanUp(game)
-				return 'DONE'
-			}
-			if (!validPick(game.state, this.pickReqs[0], pickedCards[0]))
-				return 'INVALID'
-			if (pickedCards[0].rowIndex === currentPlayer.custom[this.id])
-				return 'INVALID'
-			opponentPlayer.board.activeRow = pickedCards[0].rowIndex
-			delete currentPlayer.custom[this.id]
-
-			return 'DONE'
-		})
-
-		// follow up clenaup in case of a timeout (autopick first AFK)
-		game.hooks.followUpTimeout.tap(this.id, () => {
-			const {opponentPlayer} = game.ds
-			if (opponentPlayer.followUp !== this.id) return
-
-			opponentPlayer.followUp = null
-			this.cleanUp(game)
+			pickOn: 'followup',
+			pickReqs: [
+				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+			],
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	cleanUp(game) {
-		const {currentPlayer, opponentPlayer} = game.ds
-		delete currentPlayer.custom[this.id]
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
-		const oBoard = opponentPlayer.board
-		if (oBoard.activeRow !== null) return
+		player.hooks.afterAttack[instance] = (attackResult) => {
+			const {attack} = attackResult
 
-		const hermitIndex = oBoard.rows.findIndex((row) => {
-			const hasHermit = !!row.hermitCard
-			const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
-			return hasHermit && canBeActive
-		})
-		if (hermitIndex >= 0) {
-			oBoard.activeRow = hermitIndex
-			return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
+
+			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+			const playerInactiveRows = getNonEmptyRows(player, false)
+
+			if (opponentInactiveRows.length !== 0 && attack.target.row.health > 0) {
+				attack.target.row.ailments.push({
+					id: 'knockedout',
+					duration: 0,
+				})
+				otherPlayer.board.activeRow = null
+				otherPlayer.followUp = this.id
+
+				// We need to hook here because the follow up is called after onDetach
+				// and I can't delete it from there because Tango could die from backlash
+				otherPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
+					if (followUp !== this.id) return
+					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
+
+					const pickedSlot = pickedSlots[this.id][0]
+					const {row} = pickedSlot
+					if (!row) return
+
+					const canBeActive = row.state.ailments.every(
+						(a) => a.id !== 'knockedout'
+					)
+					if (!canBeActive) return
+					otherPlayer.board.activeRow = row.index
+					otherPlayer.followUp = null
+
+					delete otherPlayer.hooks.onFollowUp[instance]
+					delete otherPlayer.hooks.onFollowUpTimeout[instance]
+				}
+
+				otherPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
+					if (followUp !== this.id) return
+					const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+					otherPlayer.followUp = null
+
+					// Choose the first row that doesn't have a knockedout ailment
+					for (const {index, row} of opponentInactiveRows) {
+						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
+						if (canBeActive) {
+							otherPlayer.board.activeRow = index
+						}
+					}
+
+					delete otherPlayer.hooks.onFollowUp[instance]
+					delete otherPlayer.hooks.onFollowUpTimeout[instance]
+				}
+			}
+
+			if (
+				playerInactiveRows.length !== 0 &&
+				attack.attacker &&
+				attack.attacker.row.health > 0 &&
+				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
+			) {
+				attack.attacker.row.ailments.push({
+					id: 'knockedout',
+					duration: 0,
+				})
+				player.board.activeRow = null
+			}
 		}
-		const anyHermitIndex = oBoard.rows.findIndex((row) => !!row.hermitCard)
-		if (anyHermitIndex >= 0) oBoard.activeRow = anyHermitIndex
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+
+		delete player.hooks.afterAttack[instance]
 	}
 }
 

@@ -61,7 +61,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 			return availableActions
 		}
 
-		player.hooks.turnEnd[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			// Cleanup
 			delete player.custom[instanceKey]
 		}
@@ -79,7 +79,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 		// Remove all hooks and flags
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.availableActions[instance]
-		delete player.hooks.turnEnd[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[instanceKey]
 	}
 }

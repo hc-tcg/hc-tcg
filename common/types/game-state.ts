@@ -1,7 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
 import {AttackResult} from './attack'
-import {EnergyT} from './cards'
+import {CardPos, EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
 
@@ -13,12 +13,7 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
-	duration: number
-}
-
-export type PlayerAilment = {
-	id: 'badomen'
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen'
 	duration: number
 }
 
@@ -64,7 +59,6 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -125,10 +119,14 @@ export type PlayerState = {
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Record<string, (followUp: string) => void>
 
+		/** Instance key -> hook called when a hermit is about to die */
+		onHermitDeath: Record<string, (hermitPos: CardPos) => void>
+
 		/** Instance key -> hook called at the start of the turn */
-		turnStart: Record<string, () => void>
+		onTurnStart: Record<string, () => void>
 		/** Instance key -> hook called at the end of the turn */
-		turnEnd: Record<string, () => void>
+		onTurnEnd: Record<string, () => void>
+		
 		/** Instance key -> hook called the player flips a coin */
 		coinFlip: Record<
 			string,
@@ -191,7 +189,6 @@ export type LocalPlayerState = {
 	coinFlips: Record<string, Array<CoinFlipT>>
 	custom: Record<string, any>
 	lives: number
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null

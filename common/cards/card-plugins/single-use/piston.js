@@ -118,8 +118,8 @@ class PistonSingleUseCard extends SingleUseCard {
 
 		// We remove on turnEnd instead of onDetach because we need to keep the hooks
 		// until the end of the turn in case the player plays another single use card
-		player.hooks.turnEnd[instance] = () => {
-			delete player.hooks.turnEnd[instance]
+		player.hooks.onTurnEnd[instance] = () => {
+			delete player.hooks.onTurnEnd[instance]
 			delete player.hooks.availableActions[instance]
 			delete player.custom[this.getInstanceKey(instance)]
 		}

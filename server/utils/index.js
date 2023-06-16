@@ -285,15 +285,16 @@ export function getActiveRow(playerState) {
 /**
  * @param {PlayerState} playerState
  * @param {boolean} includeActive
- * @returns {RowStateWithHermit[]}
+ * @returns {import('types/game-state').RowInfo[]}
  */
 export function getNonEmptyRows(playerState, includeActive = true) {
+	/** @type {import('types/game-state').RowInfo[]} */
 	const rows = []
 	const activeRowIndex = playerState.board.activeRow
 	for (let i = 0; i < playerState.board.rows.length; i++) {
 		const row = playerState.board.rows[i]
 		if (i === activeRowIndex && !includeActive) continue
-		if (row.hermitCard) rows.push(row)
+		if (row.hermitCard) rows.push({index: i, row})
 	}
 	return rows
 }
@@ -329,6 +330,14 @@ export function getAdjacentRows(playerState) {
 			result.push([prevRow, row])
 	}
 	return result
+}
+
+/**
+ * @param {GameModel} game
+ * @param {import('common/types/game-state').AvailableActionT}
+ */
+export function isActionAvailable(game, action) {
+	return game.turnState.availableActions.includes(action)
 }
 
 /**
