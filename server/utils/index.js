@@ -383,7 +383,7 @@ export function getItemCardsEnergy(game, row) {
 		if (!cardInfo) continue
 		const pos = getCardPos(game, itemCard.cardInstance)
 		if (!pos) continue
-		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos)
+		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos).length
 	}
 
 	return total
