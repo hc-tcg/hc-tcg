@@ -31,7 +31,8 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 */
 	onApply(game, instance, pos, pickedSlots) {
 		const {player} = pos
-		const pickedSlot = pickedSlots[this.id][0]
+		const pickedSlot = pickedSlots[this.id]?.[0]
+		if (!pickedSlot) return
 
 		player.hooks.beforeAttack[instance] = (attack) => {
 			if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return

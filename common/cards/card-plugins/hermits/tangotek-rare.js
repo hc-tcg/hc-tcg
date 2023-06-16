@@ -68,7 +68,8 @@ class TangoTekRareHermitCard extends HermitCard {
 					if (followUp !== this.id) return
 					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
 
-					const pickedSlot = pickedSlots[this.id][0]
+					const pickedSlot = pickedSlots[this.id]?.[0]
+					if (!pickedSlot) return
 					const {row} = pickedSlot
 					if (!row) return
 
