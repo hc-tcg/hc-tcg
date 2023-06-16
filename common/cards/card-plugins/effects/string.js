@@ -8,7 +8,7 @@ class StringEffectCard extends EffectCard {
 			name: 'String',
 			rarity: 'ultra_rare',
 			description:
-				"Placed on any of the opposing player's effect or item slots. Prevents other cards from being placed there.",
+				"Place on one of your opponent's empty item or effect slots.\n\nOpponent can no longer place cards in that slot.",
 		})
 	}
 
@@ -25,7 +25,8 @@ class StringEffectCard extends EffectCard {
 		// can only attach to opponent
 		if (pos.playerId !== opponentPlayer.id) return 'INVALID'
 
-		// we don't care if there's a hermit there or not
+		if (!pos.row?.hermitCard) return 'NO'
+
 		return 'YES'
 	}
 }
