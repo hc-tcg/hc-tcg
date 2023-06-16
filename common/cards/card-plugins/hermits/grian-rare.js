@@ -1,24 +1,21 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
+import {discardCard, flipCoin, isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {getCardPos} from '../../../../server/utils/cards'
 
-// The tricky part about this one are destroyable items (shield, gold_armor, totem) since they are available at the moment of attack, but not after
+// The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
+
 /*
-// some assumptions that make sense to me:
-- gold_armor/shield can't be stolen as they get used up during the attack
-- if hermitMultiplier is 0 (e.g. invis potion), then shield/golden_armor don't get used and so you can steal them
-- totem can be stolen unless it was used to keep opponent hermit alive
-- if opponent hermits dies, his effect card can still be stolen
-- If Grian dies while attacking (e.g. TNT), then item still get stolen
+Some assumptions that make sense to me:
+- Shield can't be stolen as they get used up during the attack
+- If hermitMultiplier is 0 (e.g. invis potion), then shield don't get used and so you can steal it
+- Totem/Loyalty can be stolen unless it was used
+- If you choose to discard the card it gets discarded to your discard pile
 */
-/*
-# Totem
-- You can't steal totem during attack since you don't know yet if its gong to be used to revive
-- You can't do it at actionEnd since the healthCheck wasn't performed yet
-- You can't do it on actionStart since the gamestate was sent already
-= You can't do it on actionsAvasilable because it is hard to tell in case of hermit's death it is hard to tell why were his items discarded
-- Solution: Going back to using recovery effects during attack, which will enable using the actionEnd hook.
-*/
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
@@ -33,7 +30,7 @@ class GrianRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 50,
 				power:
-					"Flip a Coin.\n\nIf heads, Grian takes opponent's active effect card.\n\nPlayer can choose to attach card or discard.\n\n",
+					"Flip a coin after your attack.\n\nIf heads,take opposing active Hermit's effect card and either attach or discard it",
 			},
 			secondary: {
 				name: 'Start a War',
@@ -42,93 +39,115 @@ class GrianRareHermitCard extends HermitCard {
 				power: null,
 			},
 		})
-		this.pickOn = 'custom'
-		this.pickReqs = [
-			{target: 'player', type: ['effect'], amount: 1, empty: true},
-		]
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player, row} = pos
+		const key = this.getInstanceKey(instance)
 
-			if (typeAction !== 'PRIMARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			// It's less confusing if we wait until the Shield is broken
+			// before tossing the coin, it would work without using onAttack first
+			// because we also check on followup but it would be confusing to win
+			// the coin toss and then not get the card, having said that this won't
+			// work for Loyalty and Totem because they get discarded onHermitDeath
+			// not sure what to do about that, in theory I could toss the coin on the
+			// follow up but the modal will appear before the coin toss ¯\_(ツ)_/¯
+			player.hooks.afterAttack[instance] = (attackResult) => {
+				const {attack} = attackResult
 
-			currentPlayer.custom[this.id] = true
+				if (attack.id !== this.getInstanceKey(instance)) return
+				delete player.hooks.afterAttack[instance]
 
-			return target
-		})
+				if (attack.type !== 'primary') return
+				if (!attack.target.row.effectCard) return
 
-		game.hooks.actionEnd.tap(this.id, () => {
-			const {currentPlayer, opponentActiveRow} = game.ds
-			if (!currentPlayer.custom[this.id]) return
-			delete currentPlayer.custom[this.id]
+				const opponentEffectCard = attack.target.row.effectCard
+				if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
 
-			if (!opponentActiveRow?.effectCard) return
+				// If everyone is alive, before the decription changed you could steal
+				// the effect card if the opposite hermit died, now you can't because
+				// the coin toss happens after the attack.
+				if (
+					attack.attacker &&
+					attack.attacker.row.health &&
+					attack.target.row.health
+				) {
+					const coinFlip = flipCoin(player, this.id)
+					player.coinFlips[this.id] = coinFlip
+					if (coinFlip[0] === 'tails') return
 
-			const coinFlip = flipCoin(currentPlayer, this.id)
-			currentPlayer.coinFlips[this.id] = coinFlip
-			if (coinFlip[0] === 'tails') return
-
-			const anyEmptyEffectSlots = currentPlayer.board.rows.some(
-				(row) => !!row.hermitCard && !row.effectCard
-			)
-
-			if (!anyEmptyEffectSlots) {
-				// TODO - this doesn't run the discarded hook
-				currentPlayer.discarded.push(opponentActiveRow.effectCard)
-				opponentActiveRow.effectCard = null
-				return
+					player.custom[key] = opponentEffectCard
+					player.followUp = this.id
+				}
 			}
+		}
 
-			// need to store it to prevent the card from being discarded in case of death
-			// this will cause the card to disappear from the board until player picks a new slot in followup
-			currentPlayer.custom[this.id] = opponentActiveRow.effectCard
-			opponentActiveRow.effectCard = null
-			currentPlayer.followUp = this.id
-		})
-
-		game.hooks.followUp.tap(this.id, (turnAction, followUpState) => {
-			const {currentPlayer, playerActiveRow} = game.ds
-			const {followUp} = followUpState
+		player.hooks.onFollowUp[instance] = (
+			followUp,
+			pickedCards,
+			modalResult
+		) => {
 			if (followUp !== this.id) return
+			player.followUp = null
 
-			const attach = !!turnAction.payload?.attach
+			/** @type {CardT | undefined} */
+			const opponentEffectCard = player.custom[key]
+			delete player.custom[key]
+			if (!opponentEffectCard) return
 
-			const effectCard = currentPlayer.custom[this.id]
-			delete currentPlayer.custom[this.id]
-			if (!effectCard || !playerActiveRow) {
-				console.log('Missing effect card')
-				return 'DONE'
+			const effectCardPos = getCardPos(game, opponentEffectCard.cardInstance)
+			if (!effectCardPos || !effectCardPos.row) return
+
+			if (modalResult.attach) {
+				if (row?.effectCard) {
+					discardCard(game, row.effectCard)
+					row.effectCard = opponentEffectCard
+					effectCardPos.row.effectCard = null
+				}
+			} else {
+				// The card gets discarded to your discard pile so we can't use discardCard
+				effectCardPos.row.effectCard = null
+				player.discarded.push({
+					cardId: opponentEffectCard.cardId,
+					cardInstance: opponentEffectCard.cardInstance,
+				})
 			}
+		}
 
-			if (!attach || playerActiveRow.effectCard) {
-				currentPlayer.discarded.push(effectCard)
-				return 'DONE'
-			}
+		player.hooks.onFollowUpTimeout[instance] = (followUp) => {
+			if (followUp !== this.id) return
+			const opponentEffectCard = player.custom[key]
+			if (!opponentEffectCard) return
 
-			// TODO - deal with bed (same as emerald)
-			playerActiveRow.effectCard = effectCard
+			player.followUp = null
+			const effectCardPos = getCardPos(game, opponentEffectCard.cardInstance)
+			if (!effectCardPos || !effectCardPos.row) return
 
-			return 'DONE'
-		})
+			// Discard the card if the player didn't choose
+			effectCardPos.row.effectCard = null
+			player.discarded.push({
+				cardId: opponentEffectCard.cardId,
+				cardInstance: opponentEffectCard.cardInstance,
+			})
+		}
+	}
 
-		// follow up clenaup in case of timeout
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {currentPlayer, playerActiveRow} = game.ds
-			if (currentPlayer.followUp !== this.id) return
-			currentPlayer.followUp = null
-			const effectCard = currentPlayer.custom[this.id]
-			if (!effectCard) return
-			delete currentPlayer.custom[this.id]
-			currentPlayer.discarded.push(effectCard)
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onAttack[instance]
+		delete player.hooks.onFollowUp[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 
