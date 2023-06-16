@@ -53,7 +53,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		otherPlayer.hooks.onAttack[instance] = (attack) => {
 			if (player.custom[status] !== 'secondary_used') return
 
-			const coinFlip = flipCoin(otherPlayer)
+			const coinFlip = flipCoin(otherPlayer, this.id)
 			otherPlayer.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'heads') {

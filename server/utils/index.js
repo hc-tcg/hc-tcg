@@ -216,28 +216,42 @@ export function drawCards(playerState, amount) {
 /**
  * @param {PlayerState} currentPlayer
  * @param {number} times
+ * @param {string} cardId
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(currentPlayer, times = 1) {
-	// TODO - possibly replace with hook to avoid explicit card ids in code
-	const fortune = !!currentPlayer.custom['fortune']
-	const forceHeads = fortune || DEBUG_CONFIG.forceCoinFlip
-	const forceTails = !!currentPlayer.ailments.find((a) => a.id === 'badomen')
+export function flipCoin(currentPlayer, cardId, times = 1) {
+	const forceHeads = DEBUG_CONFIG.forceCoinFlip
+	const activeRowIndex = currentPlayer.board.activeRow
+	if (!activeRowIndex) {
+		console.log(
+			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
+		)
+		return []
+	}
+	const forceTails = !!currentPlayer.board.rows[activeRowIndex].ailments.find(
+		(a) => a.id === 'badomen'
+	)
 
 	/** @type {Array<CoinFlipT>} */
-	const result = []
+	let coinFlips = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
-			result.push('heads')
+			coinFlips.push('heads')
 		} else if (forceTails) {
-			result.push('tails')
+			coinFlips.push('tails')
 		} else {
 			/** @type {CoinFlipT} */
 			const coinFlip = Math.random() > 0.5 ? 'heads' : 'tails'
-			result.push(coinFlip)
+			coinFlips.push(coinFlip)
 		}
 	}
-	return result
+
+	const coinFlipHooks = Object.values(currentPlayer.hooks.onCoinFlip)
+	for (let i = 0; i < coinFlipHooks.length; i++) {
+		coinFlips = coinFlipHooks[i](cardId, coinFlips)
+	}
+
+	return coinFlips
 }
 
 /**
