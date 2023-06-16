@@ -37,29 +37,29 @@ class FortuneSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
 	 */
-	onDetach(game, instance, pos) {
+	onApply(game, instance, pos, pickedSlots) {
 		const {player} = pos
 
-		delete player.hooks.beforeAttack[instance]
-		delete player.hooks.onCoinFlip[instance]
+		player.hooks.onCoinFlip[instance] = (id, coinFlips) => {
+			for (let i = 0; i < coinFlips.length; i++) {
+				coinFlips[i] = 'heads'
+			}
+			return coinFlips
+		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onCoinFlip[instance] = (coinFlips) => {
-			for (let i = 0; i < coinFlips.length; i++) {
-				coinFlips[i] = 'heads'
-			}
-			return coinFlips
-		}
+		delete player.hooks.beforeAttack[instance]
+		delete player.hooks.onCoinFlip[instance]
 	}
 }
 
