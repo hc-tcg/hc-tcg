@@ -14,12 +14,15 @@ import TurtleShellEffectCard from './turtle-shell'
 import EffectCard from './_effect-card'
 import ThornsIIEffectCard from './thorns_ii'
 import ThornsIIIEffectCard from './thorns_iii'
+import ChainmailArmorEffectCard from './chainmail-armor'
+import CommandBlockEffectCard from './command-block'
+import LightningRodEffectCard from './lightning-rod'
 
 /** @type {Array<EffectCard>} */
 const EFFECT_CARDS = [
 	new BedEffectCard(),
 	new WolfEffectCard(),
-	new MilkBucketEffectCard(),
+	//new MilkBucketEffectCard(),
 	new GoldArmorEffectCard(),
 	new IronArmorEffectCard(),
 	new ShieldEffectCard(),
@@ -27,11 +30,16 @@ const EFFECT_CARDS = [
 	new NetheriteArmorEffectCard(),
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
+	new LoyaltyEffectCard(),
+
+	// AE cards
+	new ChainmailArmorEffectCard(),
+	new CommandBlockEffectCard(),
+	new LightningRodEffectCard(),
+	new StringEffectCard(),
 	new ThornsIIEffectCard(),
 	new ThornsIIIEffectCard(),
-	new LoyaltyEffectCard(),
-	// new StringEffectCard(),
-	// new TurtleShellEffectCard(),
+	new TurtleShellEffectCard(),
 ]
 
 export default EFFECT_CARDS
