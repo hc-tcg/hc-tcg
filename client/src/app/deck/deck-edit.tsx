@@ -4,9 +4,16 @@ import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import CARDS from 'server/cards'
-import {getCardRank, getTotalCost, validateDeck} from 'server/utils/validation'
-import {CardInfoT, HermitCardT, ItemCardT} from 'common/types/cards'
+import CARDS from 'common/cards'
+import {
+	getCardRank,
+	getCardExpansion,
+	getTotalCost,
+	validateDeck,
+} from 'server/utils/validation'
+import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import Card from 'common/cards/card-plugins/_card'
 import {CardT} from 'common/types/game-state'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -15,7 +22,7 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG, RANKS} from '../../../../config'
+import {CONFIG, RANKS, EXPANSIONS} from '../../../../config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 
 const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
@@ -32,6 +39,7 @@ const DECK_ICONS = [
 	'speedrunner',
 	'terraform',
 ]
+const EXPANSION_NAMES = ['any', ...Object.keys(EXPANSIONS.expansions)]
 const iconDropdownOptions = DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
@@ -41,6 +49,14 @@ const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/ranks/${option}.png`,
+}))
+interface ExpansionMap {
+	[key: string]: string
+}
+const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
+	name: (EXPANSIONS.expansions as ExpansionMap)[option] || 'Any',
+	key: option,
+	icon: `/images/expansion-icons/${option}.png`,
 }))
 
 type DeckNameT = {
@@ -98,6 +114,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [textQuery, setTextQuery] = useState<string>('')
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
+	const [expansionQuery, setExpansionQuery] = useState<string>('')
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>(deck)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
@@ -106,10 +123,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 
 	//MISC
 	const initialDeckState = deck
-	const TYPED_CARDS = CARDS as Record<string, CardInfoT>
-	const HTYPE_CARDS = CARDS as Record<string, HermitCardT | ItemCardT>
+	const TYPED_CARDS = CARDS as Record<string, Card>
+	const HTYPE_CARDS = CARDS as Record<string, HermitCard | ItemCard>
 	const allCards = Object.values(TYPED_CARDS).map(
-		(card: CardInfoT): CardT => ({
+		(card: Card): CardT => ({
 			cardId: card.id,
 			cardInstance: card.id,
 		})
@@ -125,7 +142,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				? TYPED_CARDS[card.cardId]
 				: HTYPE_CARDS[card.cardId].hermitType.includes(typeQuery)) &&
 			// Card Rarity Filter
-			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery)
+			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
+			// Card Expansion Filter
+			(expansionQuery === '' ||
+				getCardExpansion(card.cardId) === expansionQuery)
 	)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter(
@@ -169,6 +189,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		setTextQuery('')
 		setRankQuery('')
 		setTypeQuery('')
+		setExpansionQuery('')
 	}
 	const handleDeckIcon = (option: any) => {
 		setLoadedDeck((loadedDeck) => ({
@@ -279,6 +300,22 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								options={iconDropdownOptions}
 								action={(option) =>
 									setTypeQuery(option === 'any' ? '' : option)
+								}
+							/>
+							<Dropdown
+								button={
+									<button className={css.dropdownButton}>
+										<img
+											src={`/images/expansion-icons/${
+												expansionQuery === '' ? 'any' : expansionQuery
+											}.png`}
+										/>
+									</button>
+								}
+								label="Expansion Filter"
+								options={expansionDropdownOptions}
+								action={(option) =>
+									setExpansionQuery(option === 'any' ? '' : option)
 								}
 							/>
 							<input

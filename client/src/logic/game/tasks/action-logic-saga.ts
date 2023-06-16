@@ -4,8 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
-import {CardInfoT} from 'common/types/cards'
-import CARDS from 'server/cards'
+import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModal,
@@ -13,12 +12,10 @@ import {
 	applyEffect,
 	removeEffect,
 } from 'logic/game/game-actions'
-import {
-	getPlayerState,
-	getOpponentState,
-	getGameState,
-} from 'logic/game/game-selectors'
-import {anyAvailableReqOptions} from 'server/utils/reqs'
+import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
+import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
+import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
@@ -32,48 +29,10 @@ function* borrowSaga(): SagaIterator {
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
-	const cardInfo = CARDS[card.cardId]
+	const cardInfo = SINGLE_USE_CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.useReqs) {
-		const gameState = yield* select(getGameState)
-		const playerState = yield* select(getPlayerState)
-		const opponentState = yield* select(getOpponentState)
-		const canUse = anyAvailableReqOptions(
-			gameState,
-			playerState,
-			opponentState,
-			cardInfo.useReqs
-		)
-		if (!canUse) {
-			yield put(setOpenedModal('unmet-condition'))
-			return
-		}
-	}
-
-	if (
-		[
-			'splash_potion_of_healing',
-			'lava_bucket',
-			'splash_potion_of_poison',
-			'clock',
-			'invisibility_potion',
-			'fishing_rod',
-			'emerald',
-			'flint_&_steel',
-			'spyglass',
-			'efficiency',
-			'curse_of_binding',
-			'curse_of_vanishing',
-			'looting',
-			'fortune',
-			'chorus_fruit',
-			'sweeping_edge',
-			'potion_of_slowness',
-			'potion_of_weakness',
-			'bad_omen',
-		].includes(card.cardId)
-	) {
+	if (cardInfo.canApply() && cardInfo.pickOn !== 'apply') {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))
@@ -83,16 +42,23 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			cardInfo.name,
 			cardInfo.pickReqs
 		)
-		if (result && result.length) {
-			yield put(applyEffect({pickedCards: {[card.cardId]: result}}))
+		if (result && result.length && result[0].pickedSlots?.length) {
+			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
 			yield put(removeEffect())
 		}
 	}
 }
 
-const getFollowUpName = (cardInfo: CardInfoT) => {
-	if (cardInfo.type !== 'hermit') return cardInfo.name
+const getFollowUpName = (
+	cardInfo: HermitCard | EffectCard | SingleUseCard | ItemCard
+) => {
+	if (
+		cardInfo instanceof EffectCard ||
+		cardInfo instanceof SingleUseCard ||
+		cardInfo instanceof ItemCard
+	)
+		return cardInfo.name
 	if (cardInfo.primary.power) cardInfo.primary.name
 	if (cardInfo.secondary.power) cardInfo.secondary.name
 	return cardInfo.name
@@ -101,21 +67,35 @@ const getFollowUpName = (cardInfo: CardInfoT) => {
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
+	const lastTurnAction =
+		gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
+
 	if (pState.followUp) {
-		const cardInfo = CARDS[pState.followUp] as CardInfoT | null
+		const cardInfo = CARDS[pState.followUp] as
+			| HermitCard
+			| EffectCard
+			| SingleUseCard
+			| ItemCard
+			| null
 		if (cardInfo?.pickOn === 'followup') {
-			let pickedCards = null
+			let pickResults = null
 			const name = getFollowUpName(cardInfo)
-			while (!pickedCards)
-				pickedCards = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
-			yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
+			while (!pickResults)
+				pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
+			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga)
 		}
 	} else if (pState.custom.spyglass) {
 		yield put(setOpenedModal('spyglass'))
-	} else if (pState.board.singleUseCard && !pState.board.singleUseCardUsed) {
+	} else if (
+		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
+		!pState.board.singleUseCardUsed &&
+		pState.board.singleUseCard
+	) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
+	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
+		yield put(setOpenedModal('unmet-condition'))
 	}
 }
 

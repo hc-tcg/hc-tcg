@@ -1,5 +1,6 @@
-import CARDS from '../cards'
-import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
+import CARDS from '../../common/cards'
+import Card from '../../common/cards/card-plugins/_card'
+import {CONFIG, DEBUG_CONFIG, RANKS, EXPANSIONS} from '../../config'
 
 /**
  * @typedef {import('common/types/cards').RankT} RankT
@@ -27,7 +28,18 @@ export function getCardRank(cardId) {
 }
 
 /**
- * @param {CardInfoT} card
+ * @param {string} cardId
+ * @returns {string}
+ */
+export function getCardExpansion(cardId) {
+	/** @type {string} */
+	let expansion = CARDS[cardId].getExpansion()
+
+	return expansion
+}
+
+/**
+ * @param {Card} card
  */
 export function getCardCost(card) {
 	const rank = getCardRank(card.id)

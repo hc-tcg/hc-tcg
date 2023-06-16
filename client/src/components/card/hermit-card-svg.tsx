@@ -1,12 +1,12 @@
 import classnames from 'classnames'
-import {HermitCardT} from 'common/types/cards'
+import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
 import css from './hermit-card-svg.module.scss'
 import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
 export type HermitCardProps = {
-	card: HermitCardT
+	card: HermitCard
 }
 
 const COST_PAD = 20
@@ -17,11 +17,15 @@ const COST_X = [
 	[COST_PAD, COST_PAD + COST_SIZE, COST_PAD + COST_SIZE * 2],
 ]
 
-const HermitCard = ({card}: HermitCardProps) => {
+const HermitCardModule = ({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
+	const palette = card.getPalette()
+	const backgroundName = card.getBackground()
 	const showCost = !useSelector(getGameState)
+	const nameLength = card.name.length
+
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<defs>
@@ -30,7 +34,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				</clipPath>
 			</defs>
 			<rect
-				className={css.cardBackground}
+				className={classnames(css.cardBackground, css[palette])}
 				x="10"
 				y="10"
 				width="380"
@@ -38,25 +42,32 @@ const HermitCard = ({card}: HermitCardProps) => {
 				rx="15"
 				ry="15"
 			/>
-			<text x="45" y="20" className={css.name}>
+			<text
+				x="45"
+				y="20"
+				textLength={nameLength > 7 ? '180px' : ''}
+				lengthAdjust="spacingAndGlyphs"
+				className={classnames(css.name, css[palette])}
+			>
 				{card.name}
 			</text>
-			<text x="305" y="20" className={css.health}>
+			<text x="310" y="20" className={css.health}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
 				<rect x="45" y="60" fill="white" width="310" height="196" />
 				<image
-					href={`/images/backgrounds/${hermitFullName}.png`}
+					href={`/images/backgrounds/${backgroundName}.png`}
 					x="55"
 					y="70"
 					width="290"
 					clipPath="url(#myClip)"
 				/>
 				<image
+					className={css.hermitImage}
 					href={`/images/hermits-nobg/${hermitFullName}.png`}
 					x="55"
-					y="80"
+					y="70"
 					width="290"
 					clipPath="url(#myClip)"
 				/>
@@ -94,7 +105,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.primary.cost.map((type, i) => (
+					{card.primary.cost.map((type: string, i: number) => (
 						<image
 							key={i}
 							href={`/images/types/type-${type}.png`}
@@ -102,29 +113,28 @@ const HermitCard = ({card}: HermitCardProps) => {
 							y="273"
 							width={COST_SIZE}
 							height={COST_SIZE}
+							className={classnames(css.attackItems, css[palette], css[type])}
 						/>
 					))}
 				</g>
 				<text
 					x="200"
 					y="272"
-					className={classnames(css.attackName, {
-						[css.long]: card.primary.name.length > 9,
-					})}
+					className={classnames(css.attackName, css[palette])}
 				>
 					{card.primary.name}
 				</text>
 				<text
 					x="380"
 					y="270"
-					className={classnames(css.attackDamage, {
+					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.primary.power,
 					})}
 				>
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.secondary.cost.map((type, i) => (
+				{card.secondary.cost.map((type: string, i: number) => (
 					<image
 						key={i}
 						href={`/images/types/type-${type}.png`}
@@ -132,13 +142,14 @@ const HermitCard = ({card}: HermitCardProps) => {
 						y="343"
 						width={COST_SIZE}
 						height={COST_SIZE}
+						className={classnames(css.attackItems, css[palette], css[type])}
 					/>
 				))}
 				<text
 					x="200"
 					y="342"
-					className={classnames(css.attackName, {
-						[css.long]: card.secondary.name.length > 9,
+					className={classnames(css.attackName, css[palette], css[palette], {
+						[css.specialMove]: !!card.secondary.power,
 					})}
 				>
 					{card.secondary.name}
@@ -146,7 +157,7 @@ const HermitCard = ({card}: HermitCardProps) => {
 				<text
 					x="380"
 					y="340"
-					className={classnames(css.attackDamage, {
+					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.secondary.power,
 					})}
 				>
@@ -157,4 +168,4 @@ const HermitCard = ({card}: HermitCardProps) => {
 	)
 }
 
-export default HermitCard
+export default HermitCardModule

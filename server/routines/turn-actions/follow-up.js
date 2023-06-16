@@ -1,34 +1,18 @@
-import CARDS from '../../cards'
+import {GameModel} from '../../models/game-model'
 
+/**
+ * @param {GameModel} game
+ * @param {TurnAction} turnAction
+ * @param {ActionState} actionState
+ */
 function* followUpSaga(game, turnAction, actionState) {
-	turnAction.payload = turnAction.payload || {}
-	if (!turnAction.playerId) return
-
-	const {currentPlayer} = game.ds
 	const followUpPlayer = game.state.players[turnAction.playerId]
-	if (!followUpPlayer) return 'INVALID'
+	if (!followUpPlayer || !followUpPlayer.followUp) return
 
-	const {followUp} = followUpPlayer
-	if (!followUp) return 'INVALID'
-
-	const followUpResult = game.hooks.followUp.call(turnAction, {
-		...actionState,
-		followUp,
-	})
-
-	if (followUpResult === 'INVALID') {
-		return 'INVALID'
-	} else if (followUpResult === 'DONE') {
-		followUpPlayer.followUp = null
-		return 'DONE'
-	} else if (followUpResult) {
-		followUpPlayer.followUp = null
-		currentPlayer.followUp = followUpResult
-		return 'NEXT'
+	const followUpHooks = Object.values(followUpPlayer.hooks.onFollowUp)
+	for (let i = 0; i < followUpHooks.length; i++) {
+		followUpHooks[i](followUpPlayer.followUp, actionState.pickedSlots)
 	}
-	console.log('Followup not implemented: ', followUp)
-	followUpPlayer.followUp = null
-	return 'INVALID'
 }
 
 export default followUpSaga

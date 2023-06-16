@@ -2,38 +2,39 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
-import {PickedCardT} from 'common/types/pick-process'
-import {HERMIT_CARDS} from 'server/cards'
+import {PickedSlotT} from 'common/types/pick-process'
+import {HERMIT_CARDS} from 'common/cards'
 import Button from 'components/button'
 
 type Props = {
 	closeModal: () => void
-	info: PickedCardT
+	info: PickedSlotT
 }
 function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
 
-	if (info.slotType !== 'hermit' || !playerState) {
+	if (info.slot.type !== 'hermit' || !playerState || !info.row) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.card?.cardId
-		? HERMIT_CARDS[info.card.cardId].name
+	const hermitName = info.slot.card?.cardId
+		? HERMIT_CARDS[info.slot.card.cardId].name
 		: ''
-	const row = playerState.board.rows[info.rowIndex]
+	const row = playerState.board.rows[info.row.index]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const hasOtherHermits = playerState.board.rows.some(
 		(row, index) =>
 			row.hermitCard &&
-			index !== info.rowIndex &&
+			index !== info.row?.index &&
 			!row.ailments.find((a) => a.id === 'knockedout')
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
-		!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT')
+		!hasActiveHermit ||
+		(!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
 
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`

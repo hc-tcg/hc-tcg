@@ -3,9 +3,9 @@ import {broadcast} from '../../utils/comm'
 import {getOpponentId} from '../../utils'
 import {CONFIG} from '../../../config'
 import {getLocalGameState} from '../../utils/state-gen'
+import {GameModel} from '../../models/game-model'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux").AnyAction} AnyAction
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
  */
@@ -22,8 +22,8 @@ function* sendGameStateOnReconnect(game, action) {
 	const opponent = game.players[opponentId]
 
 	yield delay(1000)
-	if (!game._turnStateCache) return // @TODO we may not need this anymore
-	const {availableActions, opponentAvailableActions} = game._turnStateCache
+	if (!game.turnState) return // @TODO we may not need this anymore
+	const {availableActions, opponentAvailableActions} = game.turnState
 
 	if (game.state.timer.turnTime) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000

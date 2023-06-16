@@ -1,6 +1,6 @@
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {PickProcessT, PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
@@ -34,6 +34,7 @@ import {
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
+	const amount = pickProcess.amount || req.amount
 	const target =
 		req.target === 'board'
 			? "anyone's"
@@ -52,12 +53,34 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 		location = 'side of the board'
 	}
 
-	const type = req.type === 'any' ? '' : req.type
+	let adjacentTarget = ''
+	if (req.adjacent === 'active') {
+		adjacentTarget = 'active hermit'
+	} else if (req.adjacent === 'req') {
+		adjacentTarget = 'a previous pick'
+	}
+
+	let type = ''
+	if (req.type.length === 1) {
+		type = req.type[0]
+	} else {
+		// If there are more than one type, we want to display them as a list
+		// separated by commas, with the last element separated by 'or'
+		const initialElements = req.type.slice(0, -1)
+		const commaSeparated = initialElements.join(', ')
+		const lastElement = req.type[req.type.length - 1]
+
+		type = `${commaSeparated} or ${lastElement}`
+	}
+
 	const empty = req.empty || false
+	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
+	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
 		empty ? 'slot' : 'card'
-	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
+	}${amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
+		adjacent ? adjacentTarget : ''
+	} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
@@ -88,7 +111,7 @@ const renderModal = (
 function Game() {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
+	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
@@ -101,9 +124,9 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedCard: PickedCardT) => {
-		console.log('Slot selected: ', pickedCard)
-		dispatch(slotPicked(pickedCard))
+	const handleBoardClick = (pickedSlot: PickedSlotT) => {
+		console.log('Slot selected: ', pickedSlot)
+		dispatch(slotPicked(pickedSlot))
 	}
 
 	const selectCard = (card: CardT) => {
@@ -111,8 +134,8 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	const pickedCardsInstances = pickedCards
-		.map((pickedCard) => pickedCard.card)
+	const pickedSlotsInstances = pickedSlots
+		.map((pickedSlot) => pickedSlot.slot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (
@@ -130,7 +153,7 @@ function Game() {
 							cards={gameState.hand}
 							onClick={(card: CardT) => selectCard(card)}
 							selected={selectedCard}
-							picked={pickedCardsInstances}
+							picked={pickedSlotsInstances}
 						/>
 					</div>
 				</div>

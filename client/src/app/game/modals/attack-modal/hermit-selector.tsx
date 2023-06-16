@@ -1,8 +1,7 @@
 import {useSelector} from 'react-redux'
 import {useState} from 'react'
-import {HermitCardT} from 'common/types/cards'
 import classnames from 'classnames'
-import {HERMIT_CARDS} from 'server/cards'
+import {HERMIT_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -31,15 +30,13 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = HERMIT_CARDS[
-		activeRow.hermitCard.cardId
-	] as HermitCardT
+	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce((agg, extra) => {
 		const [hermitId, action] = extra.split(':')
-		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId]
 		if (!hermitInfo) throw new Error('Invalid extra attack')
 		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
 		const hermitFullName = hermitInfo.id.split('_')[0]
@@ -58,7 +55,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	}, {} as Record<string, any>)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
-		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId]
 		const hermitFullName = hermitInfo.id.split('_')[0]
 		return (
 			<img
