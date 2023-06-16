@@ -30,6 +30,8 @@ import {
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -64,7 +66,9 @@ function Game() {
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
+	const handRef = useRef<HTMLDivElement>(null)
 
 	if (!gameState || !playerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
@@ -90,18 +94,16 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	// Play SFX on turn start
-	useEffect(() => {
-		if (gameState.currentPlayerId === gameState.playerId) {
-			dispatch(playSound('/sfx/Click.ogg'))
+	function handleKeys(e: any) {
+		if (e.key === '/') {
+			settings.showChat === 'off' && dispatch(setSetting('showChat', 'on'))
 		}
-	}, [gameState.currentPlayerId])
 
-	// Begin resizing
-	useEffect(() => {
-		// Begin resize on page load
-		handleResize()
-	}, [])
+		if (e.key === 'Escape') {
+			dispatch(setSetting('showChat', 'off'))
+		}
+	}
+
 	function handleResize() {
 		if (!gameWrapperRef.current || !gameRef.current) return
 		const scale = Math.min(
@@ -110,8 +112,42 @@ function Game() {
 		)
 		setGameScale(scale)
 	}
-	window.addEventListener('resize', handleResize)
-	// End resizing
+
+	function horizontalScroll(e: any) {
+		const scrollSpeed = 45
+
+		if (!handRef.current) return
+
+		if (e.deltaY > 0) {
+			e.preventDefault()
+			handRef.current.scrollLeft += scrollSpeed
+		} else {
+			e.preventDefault()
+			handRef.current.scrollLeft -= scrollSpeed
+		}
+	}
+
+	// Play SFX on turn start
+	useEffect(() => {
+		if (gameState.currentPlayerId === gameState.playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
+		}
+	}, [gameState.currentPlayerId])
+
+	// Initialize Game Screen Resizing and Event Listeners
+	useEffect(() => {
+		handleResize()
+		window.addEventListener('keyup', handleKeys)
+		window.addEventListener('resize', handleResize)
+		handRef.current?.addEventListener('wheel', horizontalScroll)
+
+		// Clean up event listeners
+		return () => {
+			window.removeEventListener('keyup', handleKeys)
+			window.removeEventListener('resize', handleResize)
+			handRef.current?.removeEventListener('wheel', horizontalScroll)
+		}
+	}, [])
 
 	return (
 		<div className={css.game}>
@@ -124,7 +160,7 @@ function Game() {
 
 			<div className={css.bottom}>
 				<Toolbar />
-				<div className={css.hand}>
+				<div className={css.hand} ref={handRef}>
 					<CardList
 						wrap={false}
 						cards={gameState.hand}
