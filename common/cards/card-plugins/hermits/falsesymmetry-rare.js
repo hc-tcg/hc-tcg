@@ -38,7 +38,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player)
+			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'tails') return

@@ -32,7 +32,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	const cardInfo = SINGLE_USE_CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.canApply()) {
+	if (cardInfo.canApply() && cardInfo.pickOn !== 'apply') {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))

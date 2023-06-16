@@ -37,7 +37,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				const anyItemCards = opponentActiveRow.itemCards.some(Boolean)
 				if (!anyItemCards) return 'INVALID'
 
-				const coinFlip = flipCoin(currentPlayer)
+				const coinFlip = flipCoin(currentPlayer, this.id)
 				currentPlayer.coinFlips[this.id] = coinFlip
 				return coinFlip[0] === 'heads' ? this.id : 'DONE'
 			}

@@ -51,7 +51,7 @@ class ShieldEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.turnEnd[instance] = () => {
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instanceKey]
 		}
 	}
@@ -65,7 +65,7 @@ class ShieldEffectCard extends EffectCard {
 		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
 		delete otherPlayer.hooks.afterAttack[instance]
-		delete otherPlayer.hooks.turnEnd[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

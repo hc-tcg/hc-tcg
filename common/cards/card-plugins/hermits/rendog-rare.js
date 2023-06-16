@@ -1,6 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
+import CARDS, {HERMIT_CARDS} from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 class RendogRareHermitCard extends HermitCard {
@@ -21,128 +21,88 @@ class RendogRareHermitCard extends HermitCard {
 				name: 'Role Play',
 				cost: ['builder', 'builder', 'builder'],
 				damage: 0,
-				power: 'Ren mimics special move of the opposing Hermit.',
+				power: "Use any secondary move of your opponent's hermits.",
 			},
+			pickOn: 'attack',
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1}],
 		})
-
-		this.pickOn = 'use-opponent'
 	}
 
 	/**
-	 * @param {*} targetInfo
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 * @param {import('types/attack').HermitAttackType} hermitAttackType
+	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
-	getOpponentsPower(targetInfo) {
-		if (!targetInfo) return null
-		const attacks = [targetInfo.primary, targetInfo.secondary]
-		const powerIndex = attacks.findIndex((a) => a.power)
-		if (powerIndex === -1) return null
-		return {
-			attack: attacks[powerIndex],
-			typeAction: powerIndex === 0 ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK',
+	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
+		const attacks = super.getAttacks(
+			game,
+			instance,
+			pos,
+			hermitAttackType,
+			pickedSlots
+		)
+
+		if (attacks[0].type !== 'secondary') return attacks
+
+		const pickedHermit = pickedSlots[this.id]?.[0]
+		if (!pickedHermit || !pickedHermit.row) return []
+		const rowState = pickedHermit.row.state
+		const card = rowState.hermitCard
+		if (!card) return []
+
+		// No loops please
+		if (card.cardId === this.id) return []
+
+		const hermitInfo = HERMIT_CARDS[card.cardId]
+		if (!hermitInfo) return []
+
+		// "Attach" that card to our side of the board
+		hermitInfo.onAttach(game, instance, pos)
+
+		// Store which card we are imitating, to delete the hooks next turn
+		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
+		pos.player.custom[imitatingCard] = card.cardId
+
+		// Return that cards secondary attack
+		return hermitInfo.getAttacks(game, instance, pos, hermitAttackType, {})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player} = pos
+		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
+
+		// At the start of every turn, remove the hooks of the imitated hermit from our player
+		player.hooks.onTurnStart[instance] = () => {
+			if (player.custom[imitatingCard] === undefined) return
+
+			// Find the hermit info of the card we were imitating, and "detach" it
+			const hermitInfo = HERMIT_CARDS[player.custom[imitatingCard]]
+			if (hermitInfo) {
+				hermitInfo.onDetach(game, instance, pos)
+			}
+
+			delete player.custom[imitatingCard]
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attackState.tap(this.id, (turnAction, attackState) => {
-			const {moveRef, typeAction} = attackState
-			if (moveRef.hermitCard.cardId !== this.id) return null
-			if (typeAction !== 'SECONDARY_ATTACK') return null
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
 
-			const {opponentActiveRow, opponentHermitCard, opponentHermitInfo} =
-				game.ds
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
-			if (!opponentHermitCard || !opponentHermitInfo) return
-
-			// Find out if opponent has a special move and if it sprimary or secondary
-			const targetInfo = game.ds.opponentHermitInfo
-			const power = this.getOpponentsPower(targetInfo)
-			if (!power) return
-
-			const opponentRef = {
-				player: game.ds.opponentPlayer,
-				row: opponentActiveRow,
-				hermitCard: opponentHermitCard,
-				hermitInfo: opponentHermitInfo,
-			}
-			attackState.typeAction = power.typeAction
-			attackState.moveRef = opponentRef
-			attackState.condRef = opponentRef
-		})
-
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {attacker, moveRef, typeAction} = attackState
-			if (attacker.hermitCard.cardId !== this.id) return target
-			if (moveRef.hermitCard.cardId === this.id) return target
-
-			// Find out if opponent has a special move and if it sprimary or secondary
-			const power = this.getOpponentsPower(moveRef.hermitInfo)
-			if (!power) return target
-
-			// apply opponents damage
-			// Note that this is currently added to EVERY target, but ends up being aplied only to one thanks to `applyHermitDamage` property
-			target.extraHermitDamage += power.attack.damage
-
-			return target
-		})
-
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, pastTurnActions, lockedActions) => {
-				const {
-					playerActiveRow,
-					opponentActiveRow,
-					playerHermitCard,
-					opponentHermitCard,
-				} = game.ds
-				if (!opponentHermitCard || !playerHermitCard) return availableActions
-
-				// Run only when Ren's card is active
-				if (playerHermitCard.cardId !== this.id) return availableActions
-
-				// Both players must have active hermit (null check)
-				if (!playerActiveRow?.hermitCard || !opponentActiveRow?.hermitCard)
-					return availableActions
-
-				// Don't run logic if Ren can't use his secondary attack
-				if (!availableActions.includes('SECONDARY_ATTACK')) {
-					return availableActions
-				}
-
-				// Don't allow to copy Rens/Cleos cards to avoid loops
-				const forbiddenHermits = ['rendog_rare', 'zombiecleo_rare']
-				if (forbiddenHermits.includes(opponentHermitCard.cardId)) {
-					return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-				}
-
-				const targetInfo = game.ds.opponentHermitInfo
-				const power = this.getOpponentsPower(targetInfo)
-
-				// Can't use Ren's ability for opponent's common Hermits
-				if (!power) {
-					return availableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-				}
-
-				// Get available actions for opponents power
-				playerActiveRow.hermitCard.cardId = opponentActiveRow.hermitCard.cardId
-				const newAvailableActions = game.hooks.availableActions.call(
-					availableActions.slice(),
-					pastTurnActions,
-					lockedActions
-				)
-				playerActiveRow.hermitCard.cardId = this.id
-
-				// In case of future cards that would disable primary power
-				const hasPrimary = newAvailableActions.includes('PRIMARY_ATTACK')
-				if (power.typeAction === 'PRIMARY_ATTACK' && !hasPrimary) {
-					return newAvailableActions.filter((a) => a !== 'SECONDARY_ATTACK')
-				}
-
-				return newAvailableActions
-			}
-		)
+		delete player.hooks.onTurnEnd[instance]
+		delete player.custom[imitatingCard]
 	}
 }
 
