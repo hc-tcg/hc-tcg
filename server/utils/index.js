@@ -67,11 +67,11 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 
 /**
  * @param {GameModel} game
- * @param {import('../../common/types/pick-process').PickedSlots | null} pickedSlots
+ * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
  * @param {*} modalResult
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlots = null, modalResult = null) {
+export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
