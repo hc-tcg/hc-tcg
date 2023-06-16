@@ -104,7 +104,6 @@ class TurtleShellEffectCard extends EffectCard {
 		delete pos.player.custom[this.getInstanceKey(instance)]
 		delete pos.otherPlayer.hooks.onAttack[instance]
 		delete pos.otherPlayer.hooks.afterAttack[instance]
-		delete pos.otherPlayer.hooks.turnStart[instance]
 	}
 }
 

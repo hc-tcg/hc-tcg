@@ -43,14 +43,16 @@ class CommandBlockEffectCard extends EffectCard {
 		}
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.availableEnergy[instance]
 	}
 
-	/**
-	 * @returns {boolean}
-	 */
 	getIsRemovable() {
 		return false
 	}
