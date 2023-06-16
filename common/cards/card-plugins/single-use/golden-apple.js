@@ -29,8 +29,6 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {player} = pos
-
 		const pickedCards = pickedSlots[this.id] || []
 		if (pickedCards.length !== 1) return
 
