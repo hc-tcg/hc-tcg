@@ -132,7 +132,7 @@ export const universe = [
 
 	'beetlejhost_common',
 	'eviljevin_common',
-	'evilx_rare',
+	'evilxisuma_rare',
 	'goatfather_rare',
 	'helsknight_rare',
 	'hotguy_rare',

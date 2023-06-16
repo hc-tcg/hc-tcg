@@ -127,7 +127,7 @@ const HERMIT_CARDS = [
 	// AE Cards
 	new BeetlejhostCommonHermitCard(),
 	new EvilJevinCommonHermitCard(),
-	// @TODO Evil X (evilx_rare)
+	// @TODO Evil X (evilxisuma_rare)
 	new GoatfatherRareHermitCard(),
 	// @TODO Helsknight (helsknight)
 	new HotguyRareHermitCard(),
