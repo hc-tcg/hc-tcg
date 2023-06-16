@@ -17,16 +17,16 @@ function Chat() {
 	const playerId = useSelector(getPlayerId)
 	const settings = useSelector(getSettings)
 	const opponent = useSelector(getOpponentName)
+	const isAndroid = /(android)/i.test(navigator.userAgent)
 	const [chatHeight, setChatHeight] = useState<string | undefined>()
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
+
 	const bindChatPos = useDrag((params: any) =>
 		setChatPos({
 			x: params.offset[0],
 			y: params.offset[1],
 		})
 	)
-
-	const isAndroid = /(android)/i.test(navigator.userAgent)
 
 	if (settings.showChat !== 'on') return null
 
@@ -41,7 +41,7 @@ function Chat() {
 		dispatch(chatMessage(message))
 	}
 
-	const toggleChat = () => {
+	const closeChat = () => {
 		dispatch(setSetting('showChat', 'off'))
 	}
 
@@ -54,11 +54,12 @@ function Chat() {
 		}
 	}
 
+	// @TODO: Repopulate chat messages after reconnecting
 	return (
 		<div className={css.chat} style={{height: chatHeight, top: chatPos.y, left: chatPos.x}}>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponent}</p>
-				<button onClick={toggleChat}>
+				<button onClick={closeChat}>
 					<img src="/images/CloseX.svg" alt="close" />
 				</button>
 			</div>
