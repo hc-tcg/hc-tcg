@@ -36,7 +36,12 @@ import PotionOfSlownessSingleUseCard from './potion-of-slowness'
 import PotionOfWeaknessSingleUseCard from './potion-of-weakness'
 import EggSingleUseCard from './egg'
 import EnderPearlSingleUseCard from './ender-pearl'
+import LadderSingleUseCard from './ladder'
 import BadOmenSingleUseCard from './bad-omen'
+import FireChargeSingleUseCard from './fire-charge'
+import PistonSingleUseCard from './piston'
+import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
+import TargetBlockSingleUseCard from './target-block'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -71,14 +76,20 @@ const SINGLE_USE_CARDS = [
 	new WaterBucketSingleUseCard(),
 	new MendingSingleUseCard(),
 
-	// new AnvilSingleUseCard(),
-	// new PotionOfSlownessSingleUseCard(),
-	// new PotionOfWeaknessSingleUseCard(),
-	//new TridentSingleUseCard(),
-	//new SweepingEdgeSingleUseCard(),
-	//new EggSingleUseCard(),
-	//new EnderPearlSingleUseCard(),
-	//new BadOmenSingleUseCard(),
+	// AE Cards
+	new AnvilSingleUseCard(),
+	new BadOmenSingleUseCard(),
+	// new EggSingleUseCard(), (not converted)
+	new EnderPearlSingleUseCard(),
+	new FireChargeSingleUseCard(),
+	new LadderSingleUseCard(),
+	new PistonSingleUseCard(),
+	// new PotionOfSlownessSingleUseCard(), (not converted)
+	// new PotionOfWeaknessSingleUseCard(), (not converted)
+	new SplashPotionOfHealingIISingleUseCard(),
+	new SweepingEdgeSingleUseCard(),
+	new TargetBlockSingleUseCard(),
+	new TridentSingleUseCard(),
 ]
 
 export default SINGLE_USE_CARDS

@@ -62,6 +62,9 @@ import XisumavoidRareHermitCard from './xisumavoid-rare'
 import ZedaphPlaysRareHermitCard from './zedaphplays-rare'
 import ZombieCleoRareHermitCard from './zombiecleo-rare'
 import HermitCard from './_hermit-card'
+import GoatfatherRareHermitCard from './goatfather-rare'
+import HotguyRareHermitCard from './hotguy-rare'
+import JinglerRareHermitCard from './jingler-rare'
 
 /** @type {Array<HermitCard>} */
 const HERMIT_CARDS = [
@@ -79,7 +82,7 @@ const HERMIT_CARDS = [
 	new GeminiTayCommonHermitCard(),
 	new GeminiTayRareHermitCard(),
 	new GrianCommonHermitCard(),
-	new GrianRareHermitCard(),
+	//new GrianRareHermitCard(),
 	new GoodTimesWithScarCommonHermitCard(),
 	new GoodTimesWithScarRareHermitCard(),
 	new HypnotizdCommonHermitCard(),
@@ -121,15 +124,19 @@ const HERMIT_CARDS = [
 	new ZombieCleoCommonHermitCard(),
 	new ZombieCleoRareHermitCard(),
 
-	// new cards
-
-	// new BeetlejhostCommonHermitCard(),
-	// new EvilJevinCommonHermitCard(),
-	// new LlamadadRareHermitCard(),
-	// new PoultrymanCommonHermitCard(),
-	// new PotatoBoyRareHermitCard(),
-
-	// new DreamRareHermitCard(),
+	// AE Cards
+	new BeetlejhostCommonHermitCard(),
+	new EvilJevinCommonHermitCard(),
+	// @TODO Evil X (evilx_rare)
+	new GoatfatherRareHermitCard(),
+	// @TODO Helsknight (helsknight)
+	new HotguyRareHermitCard(),
+	// @TODO Human Cleo (humancleo_rare)
+	new JinglerRareHermitCard(),
+	new LlamadadRareHermitCard(),
+	new PotatoBoyRareHermitCard(),
+	new PoultrymanCommonHermitCard(),
+	// @TODO Renbob (renbob_rare)
 ]
 
 export default HERMIT_CARDS
