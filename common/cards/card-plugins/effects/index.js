@@ -1,4 +1,3 @@
-import WaterBucketEffectCard from './water-bucket'
 import MilkBucketEffectCard from './milk-bucket'
 import ShieldEffectCard from './shield'
 import IronArmorEffectCard from './iron-armor'
@@ -22,7 +21,6 @@ const EFFECT_CARDS = [
 	new GoldArmorEffectCard(),
 	new IronArmorEffectCard(),
 	new ShieldEffectCard(),
-	new WaterBucketEffectCard(),
 	new DiamondArmorEffectCard(),
 	new NetheriteArmorEffectCard(),
 	new TotemEffectCard(),
