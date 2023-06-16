@@ -25,6 +25,7 @@
 /**
  * @typedef {Object} ActionStateProperties
  * @property {import('common/types/pick-process').PickedSlots} pickedSlots
+ * @property {*} modalResult
  * @typedef {TurnState & ActionStateProperties} ActionState
  */
 

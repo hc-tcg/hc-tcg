@@ -55,9 +55,10 @@ class SingleUseCard extends Card {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
+	 * @param {PickedSlots | null} pickedSlots
+	 * @param {*} modalResult
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onApply(game, instance, pos, pickedSlots, modalResult) {
 		// default is do nothing
 	}
 }
