@@ -59,7 +59,7 @@ export function registerApis(app) {
 				res.status(403).send('Access denied.')
 			}
 		})
-    
+
 		console.log('apis registered')
 	} catch (err) {
 		console.log('no api keys found')
@@ -67,7 +67,7 @@ export function registerApis(app) {
 }
 
 /**
- * @param {import("models/game-model").GameModel} game
+ * @param {import("server/models/game-model").GameModel} game
  */
 export function gameEndWebhook(game) {
 	let apiKeys = null

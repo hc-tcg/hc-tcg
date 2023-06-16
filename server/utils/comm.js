@@ -1,5 +1,5 @@
 /**
- * @typedef {import('models/player-model').PlayerModel} PlayerModel
+ * @typedef {import('server/models/player-model').PlayerModel} PlayerModel
  */
 
 /**
