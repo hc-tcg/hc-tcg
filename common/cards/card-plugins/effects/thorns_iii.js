@@ -7,7 +7,7 @@ class ThornsIIIEffectCard extends EffectCard {
 		super({
 			id: 'thorns_iii',
 			name: 'Thorns III',
-			rarity: 'common',
+			rarity: 'ultra_rare',
 			description: 'Opponent takes 30hp damage after their attack.',
 		})
 	}

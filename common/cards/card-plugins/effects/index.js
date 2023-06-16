@@ -33,6 +33,7 @@ const EFFECT_CARDS = [
 	new LoyaltyEffectCard(),
 
 	// AE cards
+	// @TODO Armor Stand
 	new ChainmailArmorEffectCard(),
 	new CommandBlockEffectCard(),
 	new LightningRodEffectCard(),
