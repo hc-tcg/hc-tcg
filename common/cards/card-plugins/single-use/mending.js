@@ -1,10 +1,9 @@
 import singleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {validPick} from '../../../../server/utils/reqs'
+import {swapSlots} from '../../../../server/utils/slots'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- *
+ * @typedef {import('common/types/slots').SlotPos} SlotPos
  */
 
 class MendingSingleUseCard extends singleUseCard {
@@ -49,11 +48,20 @@ class MendingSingleUseCard extends singleUseCard {
 		)
 			return
 
-		// add effect to target
-		targetSlotInfo.row.state.effectCard = playerActiveRow.effectCard
+		// swap slots
+		/** @type {SlotPos} */ const sourcePos = {
+			index: 0,
+			type: 'effect',
+			row: playerActiveRow,
+		}
 
-		// remove effect from source
-		playerActiveRow.effectCard = null
+		/** @type {SlotPos} */ const targetPos = {
+			index: targetSlotInfo.slot.index,
+			type: 'effect',
+			row: targetSlotInfo.row.state,
+		}
+
+		swapSlots(game, sourcePos, targetPos)
 	}
 
 	/**

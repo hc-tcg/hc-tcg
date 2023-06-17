@@ -1,5 +1,5 @@
 import EffectCard from './_effect-card'
-import {getCardPos} from '../../../../server/utils/cards'
+import {removeCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 class LoyaltyEffectCard extends EffectCard {
@@ -30,7 +30,7 @@ class LoyaltyEffectCard extends EffectCard {
 			for (let i = 0; i < row.itemCards.length; i++) {
 				const card = row.itemCards[i]
 				if (card) {
-					row.itemCards[i] = null
+					removeCard(game, card)
 					player.hand.push(card)
 				}
 			}

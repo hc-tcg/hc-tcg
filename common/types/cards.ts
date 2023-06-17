@@ -98,3 +98,5 @@ export type CardPos = {
 	row: RowState | null
 	slot: Slot
 }
+
+
