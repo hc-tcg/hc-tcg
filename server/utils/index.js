@@ -136,8 +136,7 @@ export function findCard(gameState, card) {
  * @param {GameModel} game
  * @param {CardT} card
  */
-export function removeCard(game, card) {
-	if (!card) return
+export function moveCardToHand(game, card, steal = false) {
 	const cardPos = getCardPos(game, card.cardInstance)
 	if (!cardPos || !cardPos.row) return
 
@@ -156,6 +155,9 @@ export function removeCard(game, card) {
 	} else if (cardPos.slot.type === 'item') {
 		cardPos.row.itemCards[cardPos.slot.index] = null
 	}
+
+	const player = steal ? cardPos.otherPlayer : cardPos.player
+	player.hand.push(card)
 }
 
 /**
