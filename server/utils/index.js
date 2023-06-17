@@ -135,7 +135,7 @@ export function findCard(gameState, card) {
  * @param {GameModel} game
  * @param {CardT | null} card
  */
-export function discardCard(game, card) {
+export function discardCard(game, card, steal = false) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
@@ -165,7 +165,9 @@ export function discardCard(game, card) {
 		pState.hand = pState.hand.filter(Boolean)
 	})
 
-	game.state.players[loc.playerId].discarded.push({
+	const playerId = steal && pos ? pos.otherPlayerId : loc.playerId
+
+	game.state.players[playerId].discarded.push({
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})

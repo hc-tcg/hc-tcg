@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 import {discardCard, flipCoin, isRemovable} from '../../../../server/utils'
+import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 import {getCardPos} from '../../../../server/utils/cards'
 
@@ -15,6 +16,7 @@ Some assumptions that make sense to me:
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/slots').SlotPos} SlotPos
  */
 
 class GrianRareHermitCard extends HermitCard {
@@ -57,10 +59,13 @@ class GrianRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 
 			if (attack.type !== 'primary') return
+			console.log('Test')
 			if (!attack.target.row.effectCard) return
+			console.log('Test2')
 
 			const opponentEffectCard = attack.target.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
+			console.log('Test3')
 
 			player.custom[effectKey] = opponentEffectCard
 			player.custom[targetKey] = attack.target.row.hermitCard.cardInstance
@@ -73,6 +78,7 @@ class GrianRareHermitCard extends HermitCard {
 			pickedCards,
 			modalResult
 		) => {
+			console.log(followUp)
 			if (followUp !== this.getInstanceKey(instance)) return
 
 			const targetInstance = player.custom[targetKey]
@@ -81,6 +87,7 @@ class GrianRareHermitCard extends HermitCard {
 			const targetPosition = getCardPos(game, targetInstance)
 			const effectPosition = getCardPos(game, effectCard.cardInstance)
 			delete player.custom[targetKey]
+			console.log(grianPosition, targetPosition, effectPosition)
 
 			// Grian is dead, target is dead or the effect card disappeared
 			// because the coin toss technically happens after the attack that
@@ -120,18 +127,27 @@ class GrianRareHermitCard extends HermitCard {
 				if (!effectCardPos || !effectCardPos.row) return
 
 				if (modalResult.attach) {
+					// Discard the card if there is one
 					if (row?.effectCard) {
 						discardCard(game, row.effectCard)
 					}
-					effectCardPos.row.effectCard = null
-					row.effectCard = opponentEffectCard
+
+					/** @type {SlotPos} */ const opponentSlot = {
+						index: 0,
+						row: effectCardPos.row,
+						type: 'effect',
+					}
+
+					/** @type {SlotPos} */ const playerSlot = {
+						index: 0,
+						row,
+						type: 'effect',
+					}
+
+					// Grian's effect slot is going to be empty
+					swapSlots(game, opponentSlot, playerSlot)
 				} else {
-					// The card gets discarded to your discard pile so we can't use discardCard
-					effectCardPos.row.effectCard = null
-					player.discarded.push({
-						cardId: opponentEffectCard.cardId,
-						cardInstance: opponentEffectCard.cardInstance,
-					})
+					discardCard(game, opponentEffectCard, true)
 				}
 			}
 
