@@ -67,21 +67,6 @@ class BedEffectCard extends EffectCard {
 			}
 		}
 	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 */
-	onDetach(game, instance, pos) {
-		const {player, row} = pos
-		delete player.hooks.onTurnStart[instance]
-
-		// Make sure there is no sleeping anymore
-		if (row) {
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-		}
-	}
 }
 
 export default BedEffectCard
