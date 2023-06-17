@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url)
 import {CONFIG} from '../../config'
 
 /**
- * @typedef {import('models/root-model').RootModel} RootModel
+ * @typedef {import('server/models/root-model').RootModel} RootModel
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').GameLog} GameLog
  * @typedef {import('firebase-admin').database.Database} Database

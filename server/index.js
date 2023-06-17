@@ -11,6 +11,7 @@ import {registerApis} from './api'
 const port = process.env.PORT || CONFIG.port || 9000
 
 const app = express()
+app.use(express.json())
 app.use(cors({origin: CONFIG.cors}))
 
 const __filename = fileURLToPath(import.meta.url)

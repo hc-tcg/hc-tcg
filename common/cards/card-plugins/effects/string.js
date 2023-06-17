@@ -6,7 +6,7 @@ class StringEffectCard extends EffectCard {
 		super({
 			id: 'string',
 			name: 'String',
-			rarity: 'ultra_rare',
+			rarity: 'rare',
 			description:
 				"Place on one of your opponent's empty item or effect slots.\n\nOpponent can no longer place cards in that slot.",
 		})

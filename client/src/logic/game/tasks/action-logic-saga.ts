@@ -42,7 +42,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			cardInfo.name,
 			cardInfo.pickReqs
 		)
-		if (result && result.length) {
+		if (result && result.length && result[0].pickedSlots?.length) {
 			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
 			yield put(removeEffect())

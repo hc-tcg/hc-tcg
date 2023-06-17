@@ -2,13 +2,13 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 
-class ThornsEffectCard extends EffectCard {
+class ThornsIIEffectCard extends EffectCard {
 	constructor() {
 		super({
-			id: 'thorns',
-			name: 'Thorns',
-			rarity: 'common',
-			description: 'Opponent takes 10hp damage after their attack.',
+			id: 'thorns_ii',
+			name: 'Thorns II',
+			rarity: 'rare',
+			description: 'Opponent takes 20hp damage after their attack.',
 		})
 	}
 
@@ -29,7 +29,7 @@ class ThornsEffectCard extends EffectCard {
 					id: this.getInstanceKey(instance, 'backlash'),
 					target: attack.attacker,
 					type: 'backlash',
-				}).addDamage(10)
+				}).addDamage(20)
 
 				attack.addNewAttack(backlashAttack)
 			}
@@ -49,4 +49,4 @@ class ThornsEffectCard extends EffectCard {
 	}
 }
 
-export default ThornsEffectCard
+export default ThornsIIEffectCard

@@ -27,3 +27,7 @@ export const setCode = (gameCode: string | null) => ({
 export const invalidCode = () => ({
 	type: 'INVALID_CODE' as const,
 })
+
+export const waitingForPlayer = () => ({
+	type: 'WAITING_FOR_PLAYER' as const,
+})
