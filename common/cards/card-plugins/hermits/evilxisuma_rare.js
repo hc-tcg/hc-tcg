@@ -44,7 +44,6 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				attack.type !== 'secondary'
 			)
 				return
-			if (!attack.target.row.health) return
 
 			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
@@ -103,7 +102,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			}
 
 			otherPlayer.hooks.onTurnEnd[instance] = () => {
-				delete player.hooks.blockedActions[instance]
+				delete otherPlayer.hooks.blockedActions[instance]
 				delete otherPlayer.hooks.onTurnEnd[instance]
 				delete player.custom[this.getInstanceKey(instance, 'disable')]
 				delete player.custom[this.getInstanceKey(instance, 'target')]
