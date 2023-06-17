@@ -34,28 +34,32 @@ class HelsknightRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, otherPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary'
+			)
+				return
 
-			player.custom[this.id] = true
+			player.custom[instance] = true
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = () => {
-			if (
-				player.custom[this.id] == true &&
-				otherPlayer.board.singleUseCardUsed &&
-				otherPlayer.board.singleUseCard
-			) {
-				const coinFlip = flipCoin(otherPlayer)
-				otherPlayer.coinFlips[this.id] = coinFlip
+		otherPlayer.hooks.onAttack[instance] = () => {
+			if (!player.custom[instance]) return
+			otherPlayer.hooks.afterAttack[instance] = (attackResult) => {
+				if (attackResult.attack.type === 'effect') {
+					if (!otherPlayer.board.singleUseCard) return
+					const coinFlip = flipCoin(otherPlayer, this.id, 1)
+					otherPlayer.coinFlips[this.id] = coinFlip
 
-				if (coinFlip[0] == 'heads')
-					player.hand.push(otherPlayer.board.singleUseCard)
+					if (coinFlip[0] == 'heads')
+						player.hand.push(otherPlayer.board.singleUseCard)
+				}
+
+				player.custom[instance] = false
+				delete otherPlayer.hooks.afterAttack[instance]
 			}
-
-			player.custom[this.id] = false
 		}
 	}
 
@@ -66,6 +70,8 @@ class HelsknightRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, otherPlayer} = pos
+		delete player.hooks.onAttack[instance]
+		delete otherPlayer.hooks.onAttack[instance]
 	}
 
 	getExpansion() {
