@@ -2,7 +2,6 @@ import HermitCard from './_hermit-card'
 import {flipCoin, discardSingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-// Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class HelsknightRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -53,8 +52,10 @@ class HelsknightRareHermitCard extends HermitCard {
 					const coinFlip = flipCoin(otherPlayer, this.id, 1)
 					otherPlayer.coinFlips[this.id] = coinFlip
 
-					if (coinFlip[0] == 'heads')
+					if (coinFlip[0] == 'heads') {
 						player.hand.push(otherPlayer.board.singleUseCard)
+						player.board.singleUseCardUsed = false
+					}
 				}
 
 				player.custom[instance] = false
