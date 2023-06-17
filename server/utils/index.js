@@ -154,6 +154,8 @@ export function moveCardToHand(game, card, steal = false) {
 		cardPos.row.effectCard = null
 	} else if (cardPos.slot.type === 'item') {
 		cardPos.row.itemCards[cardPos.slot.index] = null
+	} else if (cardPos.slot.type === 'single_use') {
+		cardPos.player.board.singleUseCard = null
 	}
 
 	const player = steal ? cardPos.otherPlayer : cardPos.player
