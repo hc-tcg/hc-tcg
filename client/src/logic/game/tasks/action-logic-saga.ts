@@ -89,6 +89,9 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield put(setOpenedModal('spyglass'))
 		} else if (pState.followUp === 'looting') {
 			yield put(setOpenedModal('looting'))
+		} else {
+			// The server can set the next follow up
+			yield put(followUp({}))
 		}
 	} else if (
 		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
