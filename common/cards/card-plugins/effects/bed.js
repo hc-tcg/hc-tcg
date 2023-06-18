@@ -64,6 +64,7 @@ class BedEffectCard extends EffectCard {
 			// if sleeping has worn off, discard the bed
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
+				delete player.hooks.onTurnStart[instance]
 			}
 		}
 	}
