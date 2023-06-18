@@ -32,6 +32,10 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		if (!opponentActiveRow) return
 		opponentActiveRow.ailments.push({id: 'weakness', duration: 3})
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default PotionOfWeaknessSingleUseCard

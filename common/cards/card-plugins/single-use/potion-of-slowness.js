@@ -32,6 +32,10 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 		if (!opponentActiveRow) return
 		opponentActiveRow.ailments.push({id: 'slowness', duration: 1})
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default PotionOfSlownessSingleUseCard
