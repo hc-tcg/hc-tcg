@@ -151,8 +151,8 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 					showZeroAttack = false
 				}
 				if (
-					DEBUG_CONFIG.noItemRequirements ||
-					(!isSlow &&
+					!isSlow &&
+					(DEBUG_CONFIG.noItemRequirements ||
 						hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
