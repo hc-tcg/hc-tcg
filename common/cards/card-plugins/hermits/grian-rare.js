@@ -49,7 +49,7 @@ class GrianRareHermitCard extends HermitCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, row} = pos
+		const {player, row, rowIndex} = pos
 		const effectKey = this.getInstanceKey(instance, 'effectCard')
 		const targetKey = this.getInstanceKey(instance, 'targetInstance')
 
@@ -59,7 +59,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 
 			if (attack.type !== 'primary') return
-			if (!attack.target.row.effectCard) return
+			if (!attack.target || !attack.target.row.effectCard) return
 
 			const opponentEffectCard = attack.target.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
@@ -106,7 +106,7 @@ class GrianRareHermitCard extends HermitCard {
 				pickedCards,
 				modalResult
 			) => {
-				if (followUp !== this.id || !row) return
+				if (followUp !== this.id || !row || !rowIndex) return
 				player.followUp = null
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
@@ -119,7 +119,8 @@ class GrianRareHermitCard extends HermitCard {
 				delete player.custom[effectKey]
 
 				// Totem/Loyalty/Shield got used up
-				if (!effectCardPos || !effectCardPos.row) return
+				if (!effectCardPos) return
+				if (!effectCardPos.row || !effectCardPos.rowIndex) return
 
 				if (modalResult.attach) {
 					// Discard the card if there is one
@@ -128,15 +129,22 @@ class GrianRareHermitCard extends HermitCard {
 					}
 
 					/** @type {SlotPos} */ const opponentSlot = {
-						index: 0,
+						rowIndex: effectCardPos.rowIndex,
 						row: effectCardPos.row,
-						type: 'effect',
+						slot: {
+							index: 0,
+
+							type: 'effect',
+						},
 					}
 
 					/** @type {SlotPos} */ const playerSlot = {
-						index: 0,
+						rowIndex,
 						row,
-						type: 'effect',
+						slot: {
+							index: 0,
+							type: 'effect',
+						},
 					}
 
 					// Grian's effect slot is going to be empty
