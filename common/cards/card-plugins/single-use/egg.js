@@ -1,11 +1,11 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../../server/utils/reqs'
-import {flipCoin} from '../../../../server/utils'
+import {flipCoin, getNonEmptyRows} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {AttackModel} from '../../../../server/models/attack-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class EggSingleUseCard extends SingleUseCard {
@@ -15,60 +15,82 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				'After your attack, choose one of your opponent AFK Hermits to make active\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.\n\nDiscard after use.',
+				'After your attack, choose one of your opponent AFK Hermits to make active\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
+
+			pickOn: 'attack',
+			pickReqs: [
+				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+			],
 		})
-		this.damage = {afkTarget: 10}
-		this.pickOn = 'followup'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-		])
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			if (singleUseInfo?.id !== this.id) return target
-			if (!target.isActive) return target
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
+
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			const pickedSlot = pickedSlots[this.id]
+			if (pickedSlot.length !== 1) return
+			const pickedHermit = pickedSlot[0]
+			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
 
 			applySingleUse(game)
-			currentPlayer.followUp = this.id
 
-			return target
-		})
+			const coinFlip = flipCoin(player, this.id)
+			player.coinFlips[this.id] = coinFlip
+			if (coinFlip[0] === 'heads') {
+				const eggAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					target: {
+						index: pickedHermit.row.index,
+						row: pickedHermit.row.state,
+					},
+					type: 'effect',
+				}).addDamage(10)
 
-		game.hooks.followUp.tap(this.id, (action, followUpState) => {
-			const {currentPlayer, opponentPlayer} = game.ds
-			const {followUp, pickedSlots} = followUpState
-
-			if (followUp !== this.id) return
-
-			const eggPickedCards = pickedSlots[this.id] || []
-			if (eggPickedCards.length !== 1) return 'INVALID'
-
-			const pickedHermit = eggPickedCards[0]
-			if (!validPick(game.state, this.pickReqs[0], pickedHermit))
-				return 'INVALID'
-			if (!pickedHermit.row.health) return 'INVALID'
-
-			currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer, this.id)
-			if (currentPlayer.coinFlips[this.id][0] === 'heads') {
-				pickedHermit.row.health -= this.damage.afkTarget
+				attack.addNewAttack(eggAttack)
 			}
 
-			opponentPlayer.board.activeRow = pickedHermit.rowIndex
-			return 'DONE'
-		})
+			player.custom[this.getInstanceKey(instance)] = pickedHermit.row.index
 
-		game.hooks.turnEnd.tap(this.id, () => {
-			// clean up
-			const {currentPlayer} = game.ds
-			if (currentPlayer.followUp === this.id) {
-				currentPlayer.followUp = null
-			}
-		})
+			// Only do this once if there are multiple attacks
+			delete player.hooks.onAttack[instance]
+		}
+
+		player.hooks.afterAttack[instance] = (attackResult) => {
+			const eggIndex = player.custom[this.getInstanceKey(instance)]
+			otherPlayer.board.activeRow = eggIndex
+		}
+	}
+
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onAttack[instance]
+		delete player.hooks.afterAttack[instance]
+		delete player.hooks.onFollowUp[instance]
+		delete player.custom[this.getInstanceKey(instance)]
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {otherPlayer} = pos
+
+		const inactiveHermits = getNonEmptyRows(otherPlayer, false)
+		if (inactiveHermits.length === 0) return 'NO'
+
+		return 'YES'
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 

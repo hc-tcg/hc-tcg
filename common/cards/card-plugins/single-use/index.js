@@ -25,8 +25,8 @@ import KnockbackSingleUseCard from './knockback'
 import EfficiencySingleUseCard from './efficiency'
 import CurseOfBindingSingleUseCard from './curse-of-binding'
 import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
-import LootingSingleUseCard from './looting'
 import FortuneSingleUseCard from './fortune'
+import MilkBucketSingleUseCard from './milk-bucket'
 import WaterBucketSingleUseCard from './water-bucket'
 import MendingSingleUseCard from './mending'
 import TridentSingleUseCard from './trident'
@@ -70,9 +70,9 @@ const SINGLE_USE_CARDS = [
 	new FortuneSingleUseCard(),
 	new KnockbackSingleUseCard(),
 	new EfficiencySingleUseCard(),
-	new LootingSingleUseCard(),
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
+	new MilkBucketSingleUseCard(),
 	new WaterBucketSingleUseCard(),
 	new MendingSingleUseCard(),
 

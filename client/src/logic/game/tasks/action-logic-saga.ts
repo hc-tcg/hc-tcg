@@ -21,11 +21,11 @@ function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
-		yield put(followUp({attach: false}))
+		yield put(followUp({modalResult: {attach: false}}))
 		return
 	}
 
-	yield put(followUp({attach: true}))
+	yield put(followUp({modalResult: {attach: true}}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
@@ -87,9 +87,14 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield fork(borrowSaga)
 		} else if (pState.followUp === 'evilxisuma_rare') {
 			yield put(setOpenedModal('evilX'))
+		} else if (pState.followUp === 'spyglass') {
+			yield put(setOpenedModal('spyglass'))
+		} else if (pState.followUp === 'looting') {
+			yield put(setOpenedModal('looting'))
+		} else {
+			// The server can set the next follow up
+			yield put(followUp({}))
 		}
-	} else if (pState.custom.spyglass) {
-		yield put(setOpenedModal('spyglass'))
 	} else if (
 		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
 		!pState.board.singleUseCardUsed &&
