@@ -20,7 +20,6 @@ import {getPickedSlots} from '../utils/picked-cards'
 import attackSaga, {
 	ATTACK_TO_ACTION,
 	runAilmentAttacks,
-	runAttackLoop,
 } from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -32,7 +31,6 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
 import {getCardPos} from '../utils/cards'
-import {AttackModel} from '../models/attack-model'
 
 /**
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
@@ -504,16 +502,9 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 					const followUpTimeoutHooks = Object.values(
 						opponentPlayer.hooks.onFollowUpTimeout
 					)
-					/** @type {Array<AttackModel>} */
-					const newAttacks = []
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](opponentPlayer.followUp, newAttacks)
+						followUpTimeoutHooks[i](opponentPlayer.followUp)
 					}
-
-					if (newAttacks.length > 0) {
-						runAttackLoop(game, newAttacks, {})
-					}
-
 					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'

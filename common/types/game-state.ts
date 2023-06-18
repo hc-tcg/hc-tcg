@@ -106,17 +106,9 @@ export type PlayerState = {
 		afterAttack: Hook<(attackResult: AttackResult) => void>
 
 		/** Instance key -> hook called on follow up */
-		onFollowUp: Hook<
-			(
-				followUp: string,
-				pickedSlots: PickedSlots,
-				newAttacks: Array<AttackModel>
-			) => void
-		>
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots) => void>
 		/** Instance key -> hook called when follow up times out */
-		onFollowUpTimeout: Hook<
-			(followUp: string, newAttacks: Array<AttackModel>) => void
-		>
+		onFollowUpTimeout: Hook<(followUp: string) => void>
 
 		/** Instance key -> hook called when a hermit is about to die */
 		onHermitDeath: Hook<(hermitPos: CardPos) => void>
