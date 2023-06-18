@@ -54,8 +54,7 @@ class HelsknightRareHermitCard extends HermitCard {
 					otherPlayer.coinFlips[this.id] = coinFlip
 
 					if (coinFlip[0] == 'heads') {
-						moveCardToHand(game, otherPlayer.board.singleUseCard)
-						player.board.singleUseCardUsed = false
+						moveCardToHand(game, otherPlayer.board.singleUseCard, true)
 					}
 				}
 
