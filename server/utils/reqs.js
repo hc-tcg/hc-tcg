@@ -49,8 +49,10 @@ const checkRow = (rowInfo, req, reqs, gameState) => {
 	const effectCard = rowInfo.row.effectCard
 	const effectCardInfo =
 		effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
-	if (!req.removable && effectCardInfo?.getIsRemovable()) return 0
-	if (req.removable && !effectCardInfo?.getIsRemovable()) return 0
+	const removable = req.removable || true
+	const isRemovable = effectCardInfo?.getIsRemovable() || true
+	if (!removable && isRemovable) totalSlots--
+	if (removable && !isRemovable) totalSlots--
 
 	// adjacent to active hermit or not
 	if (req.adjacent === 'active') {
