@@ -8,6 +8,7 @@ import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse, discardCard} from '../../utils'
 import {getCardPos} from '../../utils/cards'
+import {DEBUG_CONFIG} from '../../../config'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -62,6 +63,12 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	//	{index: defenceIndex, row: defenceRow},
 	//	'weakness'
 	//)
+
+	if (DEBUG_CONFIG.oneShotMode) {
+		for (let i = 0; i < attacks.length; i++) {
+			attacks[i].damage = 9001
+		}
+	}
 
 	return attacks
 }
