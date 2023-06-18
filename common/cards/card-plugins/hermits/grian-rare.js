@@ -104,7 +104,6 @@ class GrianRareHermitCard extends HermitCard {
 			const effectCard = currentPlayer.custom[this.id]
 			delete currentPlayer.custom[this.id]
 			if (!effectCard || !playerActiveRow) {
-				console.log('Missing effect card')
 				return 'DONE'
 			}
 
