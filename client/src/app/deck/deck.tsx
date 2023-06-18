@@ -35,6 +35,7 @@ import {
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -52,25 +53,25 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 		const cardCostB = getCardCost(cardInfoB)
 
 		if (cardInfoA.type !== cardInfoB.type) {
-			// types
+			// seperate by types first
 			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
 		} else if (
-			// hermit types
+			// then by hermit types
 			cardInfoA instanceof HermitCard &&
 			cardInfoB instanceof HermitCard &&
 			cardInfoA.hermitType !== cardInfoB.hermitType
 		) {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+		} else if (
+			// then by item types
+			cardInfoA instanceof ItemCard &&
+			cardInfoB instanceof ItemCard &&
+			cardInfoA.hermitType !== cardInfoB.hermitType
+		) {
+			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
 		} else if (cardCostA !== cardCostB) {
-			if (cardInfoA.type === 'item' && cardInfoB.type === 'item') {
-				// order items in reverse if they are the same
-				if (cardInfoA.name.localeCompare(cardInfoB.name) === 0) {
-					return cardCostB - cardCostA
-				}
-			} else {
-				// order by ranks
-				return cardCostA - cardCostB
-			}
+			// order by ranks
+			return cardCostA - cardCostB
 		} else if (cardInfoA.name !== cardInfoB.name) {
 			return cardInfoA.name.localeCompare(cardInfoB.name)
 		}
