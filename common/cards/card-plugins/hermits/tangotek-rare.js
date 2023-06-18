@@ -43,6 +43,7 @@ class TangoTekRareHermitCard extends HermitCard {
 		const {player, otherPlayer} = pos
 
 		player.hooks.afterAttack[instance] = (attackResult) => {
+			if (!attackResult) return
 			const {attack} = attackResult
 
 			if (
@@ -54,7 +55,11 @@ class TangoTekRareHermitCard extends HermitCard {
 			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
 
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health > 0) {
+			if (
+				opponentInactiveRows.length !== 0 &&
+				attack.target &&
+				attack.target.row.health > 0
+			) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
 					duration: 0,
@@ -90,7 +95,9 @@ class TangoTekRareHermitCard extends HermitCard {
 					otherPlayer.followUp = null
 
 					// Choose the first row that doesn't have a knockedout ailment
-					for (const {index, row} of opponentInactiveRows) {
+					for (const rowInfo of opponentInactiveRows) {
+						if (!rowInfo || !rowInfo.row || !rowInfo.index) continue
+						const {row, index} = rowInfo
 						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
 						if (canBeActive) {
 							otherPlayer.board.activeRow = index
