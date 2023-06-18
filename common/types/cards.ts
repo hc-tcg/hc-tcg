@@ -99,4 +99,8 @@ export type CardPos = {
 	slot: Slot
 }
 
-
+export type SlotPos = {
+	rowIndex: number
+	row: RowState
+	slot: Slot
+}

@@ -3,7 +3,7 @@ import {useState} from 'react'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
-import css from './spyglass-modal.module.css'
+import css from './looting-modal.module.css'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {followUp} from 'logic/game/game-actions'
 import Button from 'components/button'
@@ -12,20 +12,17 @@ type Props = {
 	closeModal: () => void
 }
 
-function SpyglassModal({closeModal}: Props) {
+function LootingModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const [selected, setSelected] = useState<Array<CardT>>([])
-	const spyglass = useSelector(getPlayerState)?.custom.spyglass
-	const cards: Array<CardT> = spyglass.cards
-	const canDiscard = spyglass.canDiscard
+	const looting = useSelector(getPlayerState)?.custom.looting
+	const cards: Array<CardT> = looting.cards
 
 	const handleSelection = (newSelected: CardT) => {
-		if (!canDiscard) return
-
 		setSelected((current) => {
-			// If a second card is selected then remove the first one
+			// If a third card is selected then remove the first one
 			const newSelection = [...current]
-			if (newSelection.length >= 1) {
+			if (newSelection.length >= 2) {
 				newSelection.shift()
 			}
 			newSelection.push(newSelected)
@@ -34,20 +31,20 @@ function SpyglassModal({closeModal}: Props) {
 		})
 	}
 
-	const handleClose = () => {
-		dispatch(followUp({modalResult: {card: null}}))
-		closeModal()
-	}
-
 	const handleConfirm = () => {
-		if (selected.length === 1) {
-			dispatch(followUp({modalResult: {card: selected[0]}}))
+		// The opponent may have 1 item card
+		if (selected.length === 1 || selected.length === 2) {
+			dispatch(followUp({modalResult: {cards: selected}}))
 			closeModal()
 		}
 	}
 
 	return (
-		<Modal title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}>
+		<Modal
+			title={`Looting: Select ${
+				cards.length === 1 ? '1 card' : '2 cards'
+			} to steal`}
+		>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
 					<CardList
@@ -58,12 +55,8 @@ function SpyglassModal({closeModal}: Props) {
 					/>
 				</div>
 				<div className={css.options}>
-					<Button
-						variant="primary"
-						size="small"
-						onClick={canDiscard ? handleConfirm : handleClose}
-					>
-						{canDiscard ? 'Confirm Selection' : 'Close'}
+					<Button variant="primary" size="small" onClick={handleConfirm}>
+						Confirm Selection
 					</Button>
 				</div>
 			</div>
@@ -71,4 +64,4 @@ function SpyglassModal({closeModal}: Props) {
 	)
 }
 
-export default SpyglassModal
+export default LootingModal

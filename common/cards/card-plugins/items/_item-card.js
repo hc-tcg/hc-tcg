@@ -16,6 +16,8 @@ class ItemCard extends Card {
 		if (!defs.hermitType) {
 			throw new Error('Invalid card definition')
 		}
+
+		/** @type {import('common/types/cards').HermitTypeT} */
 		this.hermitType = defs.hermitType
 	}
 
