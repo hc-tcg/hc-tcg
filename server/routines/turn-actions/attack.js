@@ -7,6 +7,7 @@ import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import {getCardPos} from '../../utils/cards'
+import {DEBUG_CONFIG} from '../../../config'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -49,6 +50,12 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 		)
 	)
 
+	// all other attacks
+	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
+	for (let i = 0; i < otherAttacks.length; i++) {
+		attacks.push(...otherAttacks[i](pickedSlots))
+	}
+  
 	// Weakness attacks
 	// I'm assuming attacks being redirected do not affect weakness attacks.
 	// That means that for example Ranbob would not create a weakness attack
@@ -84,12 +91,12 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 
 	attacks.push(...weaknessAttacks)
 
-	// all other attacks
-	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
-	for (let i = 0; i < otherAttacks.length; i++) {
-		attacks.push(...otherAttacks[i](pickedSlots))
+	if (DEBUG_CONFIG.oneShotMode) {
+		for (let i = 0; i < attacks.length; i++) {
+			attacks[i].damage = 9001
+		}
 	}
-
+  
 	return attacks
 }
 
