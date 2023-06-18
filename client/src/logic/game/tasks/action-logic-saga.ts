@@ -85,6 +85,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga)
+		} else if (pState.followUp === 'evilxisuma_rare') {
+			yield put(setOpenedModal('evilX'))
 		} else if (pState.followUp === 'spyglass') {
 			yield put(setOpenedModal('spyglass'))
 		} else if (pState.followUp === 'looting') {

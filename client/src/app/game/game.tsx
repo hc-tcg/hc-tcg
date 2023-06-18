@@ -10,6 +10,7 @@ import SpyglassModal from './modals/spyglass-modal'
 import LootingModal from './modals/looting-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import EvilXModal from './modals/evil-x-modal'
 import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
@@ -91,6 +92,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	chest: ChestModal,
 	looting: LootingModal,
 	borrow: BorrowModal,
+	evilX: EvilXModal,
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
