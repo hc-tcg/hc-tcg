@@ -62,10 +62,12 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
 		} else if (cardCostA !== cardCostB) {
 			if (cardInfoA.type === 'item' && cardInfoB.type === 'item') {
-				// order items in reverse if they are the same
-				if (cardInfoA.name.localeCompare(cardInfoB.name) === 0) {
-					return cardCostB - cardCostA
+				// Group item cards together by Hermit type, with the regular item card
+				// first and the double item card second
+				if (cardInfoA.hermitType === cardInfoB.hermitType) {
+					return cardCostA - cardCostB
 				}
+				return cardInfoA.name.localeCompare(cardInfoB.name)
 			} else {
 				// order by ranks
 				return cardCostA - cardCostB
