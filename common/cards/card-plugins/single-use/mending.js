@@ -1,7 +1,7 @@
 import singleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {swapSlots} from '../../../../server/utils/slots'
-import {isRemovable} from '../../../../server/utils'
+import {getNonEmptyRows, isRemovable} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').SlotPos} SlotPos
@@ -84,7 +84,14 @@ class MendingSingleUseCard extends singleUseCard {
 		const effectCard = player.board.rows[player.board.activeRow].effectCard
 		if (!effectCard || !isRemovable(effectCard)) return 'NO'
 
-		return 'YES'
+		// check if there is an empty slot available to move the effect card to
+		const inactiveHermits = getNonEmptyRows(player, false)
+		for (const hermit of inactiveHermits) {
+			const effect = hermit.row.effectCard
+			if (!effect || isRemovable(effect)) return 'YES'
+		}
+
+		return 'NO'
 	}
 }
 
