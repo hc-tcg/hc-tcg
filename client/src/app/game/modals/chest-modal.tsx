@@ -34,7 +34,7 @@ function ChestModal({closeModal}: Props) {
 		if (!selected) {
 			dispatch(removeEffect())
 		} else {
-			dispatch(applyEffect(selected))
+			dispatch(applyEffect({modalResult: {card: selected}}))
 		}
 		closeModal()
 	}
@@ -48,7 +48,7 @@ function ChestModal({closeModal}: Props) {
 						onClick={handleSelection}
 						size="small"
 						cards={discarded}
-						selected={selected}
+						selected={[selected]}
 					/>
 				</div>
 				<div className={css.options}>

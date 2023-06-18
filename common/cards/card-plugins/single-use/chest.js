@@ -1,8 +1,12 @@
 import SingleUseCard from './_single-use-card'
-import {equalCard} from '../../../../server/utils'
+import {equalCard, retrieveCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-// TODO wrap card-list if there is too many cards in discard (+ scroll)
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ */
+
 class ChestSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -10,32 +14,23 @@ class ChestSingleUseCard extends SingleUseCard {
 			name: 'Chest',
 			rarity: 'rare',
 			description:
-				'Look through discard pile and select 1 card to return to hand.\n\nDiscard after use.',
+				'Look through your discard pile and select 1 card to return to your hand.\n\nCan not return "Clock" to your hand.',
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
+	 * @param {*} modalResult
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, (turnAction) => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
+	onApply(game, instance, pos, pickedSlots, modalResult) {
+		/** @type {CardT | undefined} */
+		const card = modalResult.card
+		if (!card || card.cardId === 'clock') return
 
-			if (singleUseInfo?.id === this.id) {
-				const selectedCard = turnAction.payload
-				if (!selectedCard) return 'INVALID'
-				const discardedCard = currentPlayer.discarded.find((card) =>
-					equalCard(card, selectedCard)
-				)
-				if (!discardedCard) return 'INVALID'
-				if (selectedCard.cardId === 'clock') return 'INVALID'
-				currentPlayer.discarded = currentPlayer.discarded.filter(
-					(card) => !equalCard(card, selectedCard)
-				)
-				currentPlayer.hand.push(discardedCard)
-				return 'DONE'
-			}
-		})
+		retrieveCard(game, card)
 	}
 }
 
