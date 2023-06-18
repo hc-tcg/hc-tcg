@@ -10,6 +10,7 @@ import {getCardPos} from './cards'
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
+ * @typedef {import("common/types/cards").SlotPos} SlotPos
  */
 
 /**
@@ -68,9 +69,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 /**
  * @param {GameModel} game
  * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
+ * @param {*} modalResult
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlots = {}) {
+export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -87,7 +89,7 @@ export function applySingleUse(game, pickedSlots = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots, modalResult)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -133,6 +135,36 @@ export function findCard(gameState, card) {
 
 /**
  * @param {GameModel} game
+ * @param {CardT} card
+ */
+export function moveCardToHand(game, card, steal = false) {
+	const cardPos = getCardPos(game, card.cardInstance)
+	if (!cardPos || !cardPos.row) return
+
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance, cardPos)
+
+	const onDetachs = Object.values(cardPos.player.hooks.onDetach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](card.cardInstance)
+	}
+
+	if (cardPos.slot.type === 'hermit') {
+		cardPos.row.hermitCard = null
+	} else if (cardPos.slot.type === 'effect') {
+		cardPos.row.effectCard = null
+	} else if (cardPos.slot.type === 'item') {
+		cardPos.row.itemCards[cardPos.slot.index] = null
+	} else if (cardPos.slot.type === 'single_use') {
+		cardPos.player.board.singleUseCard = null
+	}
+
+	const player = steal ? cardPos.otherPlayer : cardPos.player
+	player.hand.push(card)
+}
+
+/**
+ * @param {GameModel} game
  * @param {CardT | null} card
  */
 export function discardCard(game, card, steal = false) {
@@ -171,6 +203,24 @@ export function discardCard(game, card, steal = false) {
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})
+}
+
+/**
+ * @param {GameModel} game
+ * @param {CardT | null} card
+ */
+export function retrieveCard(game, card) {
+	if (!card) return
+	for (let playerId in game.state.players) {
+		const player = game.state.players[playerId]
+		const discarded = player.discarded
+		const index = discarded.findIndex((c) => equalCard(c, card))
+		if (index !== -1) {
+			const retrievedCard = discarded.splice(index, 1)[0]
+			player.hand.push(retrievedCard)
+			return
+		}
+	}
 }
 
 /**

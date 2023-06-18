@@ -4,6 +4,7 @@ import {universe} from './import-export-const'
 import {CopyIcon} from 'components/svgs'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import css from './import-export.module.scss'
+import {encode, decode} from 'js-base64'
 
 type Props = {
 	setOpen: boolean
@@ -13,13 +14,12 @@ type Props = {
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 	// EXPORT DECK FUNCTION
-	// TODO: Remove deprecated "btoa" function.
 	const handleExportDeck = () => {
 		const indicies = []
 		for (let i = 0; i < loadedDeck.cards.length; i++) {
 			indicies.push(universe.indexOf(String(loadedDeck.cards[i].cardId)))
 		}
-		const b64cards = btoa(String.fromCharCode.apply(null, indicies))
+		const b64cards = encode(String.fromCharCode.apply(null, indicies))
 		return b64cards
 	}
 

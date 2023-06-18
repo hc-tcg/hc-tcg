@@ -16,7 +16,7 @@ Some assumptions that make sense to me:
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/slots').SlotPos} SlotPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  */
 
 class GrianRareHermitCard extends HermitCard {

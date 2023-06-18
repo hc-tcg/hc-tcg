@@ -23,7 +23,8 @@ export type HermitTypeT =
 export type EnergyT = HermitTypeT | 'any'
 
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
-export type SlotTypeT = 'item' | 'single_use' | 'effect' | 'hermit'
+export type BoardSlotTypeT = 'item' | 'effect' | 'hermit'
+export type SlotTypeT = BoardSlotTypeT | 'single_use'
 
 export type DamageT = {
 	target?: number
@@ -89,6 +90,11 @@ export type Slot = {
 	index: number
 }
 
+export type BoardSlot = {
+	type: BoardSlotTypeT
+	index: number
+}
+
 export type CardPos = {
 	playerId: string
 	player: PlayerState
@@ -97,4 +103,10 @@ export type CardPos = {
 	rowIndex: number | null
 	row: RowState | null
 	slot: Slot
+}
+
+export type SlotPos = {
+	rowIndex: number
+	row: RowState
+	slot: BoardSlot
 }

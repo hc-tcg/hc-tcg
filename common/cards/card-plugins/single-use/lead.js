@@ -1,10 +1,12 @@
 import SingleUseCard from './_single-use-card'
 import {rowHasItem, getRowsWithEmptyItemsSlots} from '../../../../server/utils'
+import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -49,10 +51,25 @@ class LeadSingleUseCard extends SingleUseCard {
 		)
 			return
 
-		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] =
-			targetSlotInfo.slot.card
-		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] =
-			itemCardInfo.slot.card
+		/** @type {SlotPos} */ const itemPos = {
+			rowIndex: itemCardInfo.row.index,
+			row: itemCardInfo.row.state,
+			slot: {
+				index: itemCardInfo.slot.index,
+				type: 'item',
+			},
+		}
+
+		/** @type {SlotPos} */ const targetPos = {
+			rowIndex: targetSlotInfo.row.index,
+			row: targetSlotInfo.row.state,
+			slot: {
+				index: targetSlotInfo.slot.index,
+				type: 'item',
+			},
+		}
+
+		swapSlots(game, itemPos, targetPos)
 
 		return true
 	}
