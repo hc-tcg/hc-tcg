@@ -274,7 +274,7 @@ export function drawCards(playerState, amount) {
 export function flipCoin(currentPlayer, cardId, times = 1) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = currentPlayer.board.activeRow
-	if (!activeRowIndex) {
+	if (activeRowIndex === null) {
 		console.log(
 			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
 		)
