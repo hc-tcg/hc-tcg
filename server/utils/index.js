@@ -68,9 +68,10 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 /**
  * @param {GameModel} game
  * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
+ * @param {*} modalResult
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlots = {}) {
+export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 	const {singleUseInfo, currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -87,7 +88,7 @@ export function applySingleUse(game, pickedSlots = {}) {
 	// Now call methods and hooks
 
 	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
+	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots, modalResult)
 
 	// Call applyEffect hook
 	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
@@ -169,6 +170,24 @@ export function discardCard(game, card) {
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})
+}
+
+/**
+ * @param {GameModel} game
+ * @param {CardT | null} card
+ */
+export function retrieveCard(game, card) {
+	if (!card) return
+	for (let playerId in game.state.players) {
+		const player = game.state.players[playerId]
+		const discarded = player.discarded
+		const index = discarded.findIndex((c) => equalCard(c, card))
+		if (index !== -1) {
+			const retrievedCard = discarded.splice(index, 1)[0]
+			player.hand.push(retrievedCard)
+			return
+		}
+	}
 }
 
 /**
