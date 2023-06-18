@@ -88,6 +88,10 @@ class EggSingleUseCard extends SingleUseCard {
 
 		return 'YES'
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default EggSingleUseCard
