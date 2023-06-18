@@ -5,7 +5,7 @@ import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/slots').SlotPos} SlotPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -71,14 +71,20 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
 		/** @type {SlotPos} */ const playerSlot = {
-			index: 0,
-			type: 'effect',
+			rowIndex: playerActiveRowIndex,
 			row: playerActiveRow,
+			slot: {
+				index: 0,
+				type: 'effect',
+			},
 		}
 		/** @type {SlotPos} */ const opponentSlot = {
-			index: 0,
-			type: 'effect',
+			rowIndex: opponentActiveRowIndex,
 			row: opponentActiveRow,
+			slot: {
+				index: 0,
+				type: 'effect',
+			},
 		}
 
 		swapSlots(game, playerSlot, opponentSlot)
