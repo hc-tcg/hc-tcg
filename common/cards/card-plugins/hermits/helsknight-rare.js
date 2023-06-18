@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardSingleUse} from '../../../../server/utils'
+import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {moveCardToHand} from '../../../../server/utils'
 
 class HelsknightRareHermitCard extends HermitCard {
 	constructor() {
@@ -21,7 +22,7 @@ class HelsknightRareHermitCard extends HermitCard {
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
 				power:
-					'If opponent uses a single use effect card on their next turn, they must flip acoin. If heads, you take the card after its effect is applied and add it to your hand.',
+					'If opponent uses a single use effect card on their next turn, they must flip a coin. If heads, you take the card after its effect is applied and add it to your hand.',
 			},
 		})
 	}
@@ -53,14 +54,17 @@ class HelsknightRareHermitCard extends HermitCard {
 					otherPlayer.coinFlips[this.id] = coinFlip
 
 					if (coinFlip[0] == 'heads') {
-						player.hand.push(otherPlayer.board.singleUseCard)
+						moveCardToHand(game, otherPlayer.board.singleUseCard)
 						player.board.singleUseCardUsed = false
 					}
 				}
 
-				player.custom[instance] = false
 				delete otherPlayer.hooks.afterAttack[instance]
 			}
+		}
+
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
+			delete player.custom[instance]
 		}
 	}
 
@@ -73,6 +77,7 @@ class HelsknightRareHermitCard extends HermitCard {
 		const {player, otherPlayer} = pos
 		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onAttack[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
 	}
 
 	getExpansion() {
