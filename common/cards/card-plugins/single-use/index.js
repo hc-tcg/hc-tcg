@@ -79,12 +79,12 @@ const SINGLE_USE_CARDS = [
 	// AE Cards
 	new AnvilSingleUseCard(),
 	new BadOmenSingleUseCard(),
-	// new EggSingleUseCard(), (not converted)
+	new EggSingleUseCard(),
 	new EnderPearlSingleUseCard(),
 	new FireChargeSingleUseCard(),
 	new LadderSingleUseCard(),
 	new PistonSingleUseCard(),
-	// new PotionOfSlownessSingleUseCard(), (not converted)
+	new PotionOfSlownessSingleUseCard(),
 	// new PotionOfWeaknessSingleUseCard(), (not converted)
 	new SplashPotionOfHealingIISingleUseCard(),
 	new SweepingEdgeSingleUseCard(),
