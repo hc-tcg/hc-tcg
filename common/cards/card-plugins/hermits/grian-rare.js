@@ -59,13 +59,10 @@ class GrianRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 
 			if (attack.type !== 'primary') return
-			console.log('Test')
 			if (!attack.target.row.effectCard) return
-			console.log('Test2')
 
 			const opponentEffectCard = attack.target.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
-			console.log('Test3')
 
 			player.custom[effectKey] = opponentEffectCard
 			player.custom[targetKey] = attack.target.row.hermitCard.cardInstance
@@ -78,7 +75,6 @@ class GrianRareHermitCard extends HermitCard {
 			pickedCards,
 			modalResult
 		) => {
-			console.log(followUp)
 			if (followUp !== this.getInstanceKey(instance)) return
 
 			const targetInstance = player.custom[targetKey]
@@ -87,7 +83,6 @@ class GrianRareHermitCard extends HermitCard {
 			const targetPosition = getCardPos(game, targetInstance)
 			const effectPosition = getCardPos(game, effectCard.cardInstance)
 			delete player.custom[targetKey]
-			console.log(grianPosition, targetPosition, effectPosition)
 
 			// Grian is dead, target is dead or the effect card disappeared
 			// because the coin toss technically happens after the attack that
