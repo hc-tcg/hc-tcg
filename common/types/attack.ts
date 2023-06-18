@@ -20,7 +20,7 @@ export type AttackResult = {
 	attack: AttackModel
 	totalDamage: number
 	blockedDamage: number
-}
+} | null
 
 export type ShouldIgnoreCard = (instance: string) => boolean
 
