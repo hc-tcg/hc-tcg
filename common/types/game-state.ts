@@ -106,7 +106,7 @@ export type PlayerState = {
 		afterAttack: Hook<(attackResult: AttackResult) => void>
 
 		/** Instance key -> hook called on follow up */
-		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots) => void>
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Hook<(followUp: string) => void>
 

@@ -17,5 +17,6 @@
 		"maxDeckCost": 42
 	},
 	"logoSubText": "New meta!",
-	"version": "0.5.6"
+	"botUrl": "http://51.83.19.63:8194",
+	"version": "0.6.0 beta"
 }

@@ -1,6 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
+import {HERMIT_CARDS} from '../..'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
@@ -12,37 +13,28 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			id: 'instant_health',
 			name: 'Instant Health',
 			rarity: 'common',
-			description:
-				'Heals +30hp.\n\nCan be used on active or AFK Hermits.\n\nDiscard after use.',
+			description: 'Heal active or AFK Hermit 30hp.',
+			pickOn: 'apply',
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})
-		this.heal = 30
-		this.pickOn = 'apply'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: ['hermit'], amount: 1},
-		])
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
-			const {singleUseInfo} = game.ds
-			const {pickedSlots} = actionState
-			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedSlots[this.id] || []
-				if (suPickedCards.length !== 1) return 'INVALID'
-				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
-					return 'INVALID'
-				const {row, cardInfo} = suPickedCards[0]
-				if (row.health === null) return 'INVALID'
-				row.health = Math.min(
-					row.health + this.heal,
-					cardInfo.health // max health
-				)
-				return 'DONE'
-			}
-		})
+	onApply(game, instance, pos, pickedSlots) {
+		const pickedCards = pickedSlots[this.id] || []
+		if (pickedCards.length !== 1) return
+
+		const row = pickedCards[0].row?.state
+		if (!row || !row.health) return
+		const card = row.hermitCard
+		if (!card) return
+		const hermitInfo = HERMIT_CARDS[card.cardId]
+		row.health = Math.min(row.health + 30, hermitInfo.health)
 	}
 }
 

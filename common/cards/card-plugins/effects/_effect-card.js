@@ -34,6 +34,7 @@ class EffectCard extends Card {
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
@@ -42,8 +43,8 @@ class EffectCard extends Card {
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.playerId !== currentPlayer.id) return 'INVALID'
 
-		// Can't attach without hermit card
-		if (!pos.row?.hermitCard) return 'NO'
+		// Can't attach without hermit card - this is considered like the wrong slot
+		if (!pos.row?.hermitCard) return 'INVALID'
 
 		return 'YES'
 	}
