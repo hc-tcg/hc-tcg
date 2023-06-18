@@ -27,11 +27,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 		const activeRowIndex = pos.player.board.activeRow
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				!attack.target ||
-				attack.target.index !== pos.rowIndex ||
-				attack.type === 'ailment'
-			)
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
 				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)

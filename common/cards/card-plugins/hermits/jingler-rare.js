@@ -48,12 +48,8 @@ class JinglerRareHermitCard extends HermitCard {
 		const {player, otherPlayer} = pos
 
 		player.hooks.afterAttack[instance] = (attackResult) => {
-			if (
-				!attackResult ||
-				attackResult.attack.id !== this.getInstanceKey(instance)
-			)
-				return
-			const coinFlip = flipCoin(player, this.id)
+			if (attackResult.attack.id !== this.getInstanceKey(instance)) return
+			const coinFlip = flipCoin(player)
 			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 

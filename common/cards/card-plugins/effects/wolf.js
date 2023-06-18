@@ -24,11 +24,7 @@ class WolfEffectCard extends EffectCard {
 		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
 			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
 
-			if (
-				attack.attacker &&
-				attack.target &&
-				attack.target.index === pos.rowIndex
-			) {
+			if (attack.attacker && attack.target.index === pos.rowIndex) {
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
 					target: attack.attacker,

@@ -35,8 +35,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		if (!pickedSlot) return
 
 		player.hooks.beforeAttack[instance] = (attack) => {
-			if (!attack.target || !pickedSlot.row || !pickedSlot.row.state.hermitCard)
-				return
+			if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return
 			attack.target.index = pickedSlot.row.index
 			attack.target.row = pickedSlot.row.state
 		}
