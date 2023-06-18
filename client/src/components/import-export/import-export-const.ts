@@ -146,6 +146,7 @@ export const universe = [
 	'anvil',
 	'bad_omen',
 	'egg',
+	'ender_pearl',
 	'fire_charge',
 	'ladder',
 	'piston',

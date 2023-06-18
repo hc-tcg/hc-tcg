@@ -6,11 +6,13 @@ import {
 	rowHasItem,
 } from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {swapSlots} from '../../../../server/utils/slots'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/slots').SlotPos} SlotPos
  */
 
 class PistonSingleUseCard extends SingleUseCard {
@@ -57,10 +59,19 @@ class PistonSingleUseCard extends SingleUseCard {
 		)
 			return
 
-		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] =
-			targetSlotInfo.slot.card
-		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] =
-			itemCardInfo.slot.card
+		/** @type {SlotPos} */ const itemPos = {
+			index: itemCardInfo.slot.index,
+			type: 'item',
+			row: itemCardInfo.row.state,
+		}
+
+		/** @type {SlotPos} */ const targetPos = {
+			index: targetSlotInfo.slot.index,
+			type: 'item',
+			row: targetSlotInfo.row.state,
+		}
+
+		swapSlots(game, itemPos, targetPos)
 
 		player.custom[this.getInstanceKey(instance)] = true
 
