@@ -6,7 +6,7 @@ import {swapSlots} from '../../../../server/utils/slots'
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/slots').SlotPos} SlotPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  */
 
 class LadderSingleUseCard extends SingleUseCard {
@@ -46,14 +46,20 @@ class LadderSingleUseCard extends SingleUseCard {
 		if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
 
 		/** @type {SlotPos} */ const inactivePos = {
-			index: 0,
-			type: 'hermit',
+			rowIndex: activeRowIndex,
 			row: playerActiveRow,
+			slot: {
+				index: 0,
+				type: 'hermit',
+			},
 		}
 		/** @type {SlotPos} */ const activePos = {
-			index: 0,
-			type: 'hermit',
+			rowIndex: inactiveHermitCardInfo.row.index,
 			row: inactiveHermitCardInfo.row.state,
+			slot: {
+				index: 0,
+				type: 'hermit',
+			},
 		}
 
 		swapSlots(game, activePos, inactivePos)

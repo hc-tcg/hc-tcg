@@ -10,7 +10,7 @@ import {getCardPos} from './cards'
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
- * @typedef {import("common/types/slots").SlotPos} SlotPos
+ * @typedef {import("common/types/cards").SlotPos} SlotPos
  */
 
 /**

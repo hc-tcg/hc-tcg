@@ -4,7 +4,7 @@ import {swapSlots} from '../../../../server/utils/slots'
 import {isRemovable} from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/slots').SlotPos} SlotPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  */
 
 class MendingSingleUseCard extends singleUseCard {
@@ -51,15 +51,21 @@ class MendingSingleUseCard extends singleUseCard {
 
 		// swap slots
 		/** @type {SlotPos} */ const sourcePos = {
-			index: 0,
-			type: 'effect',
+			rowIndex: player.board.activeRow,
 			row: playerActiveRow,
+			slot: {
+				index: 0,
+				type: 'effect',
+			},
 		}
 
 		/** @type {SlotPos} */ const targetPos = {
-			index: targetSlotInfo.slot.index,
-			type: 'effect',
+			rowIndex: targetSlotInfo.row.index,
 			row: targetSlotInfo.row.state,
+			slot: {
+				index: targetSlotInfo.slot.index,
+				type: 'effect',
+			},
 		}
 
 		swapSlots(game, sourcePos, targetPos)

@@ -32,7 +32,6 @@ const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
-	return ['bow']
 	const limits = CONFIG.limits
 
 	// only allow some starting types
@@ -93,7 +92,6 @@ export function getStarterPack() {
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
 			itemCounts[hermitCard.type].items += 2
-			itemCount += 2
 		}
 	}
 
