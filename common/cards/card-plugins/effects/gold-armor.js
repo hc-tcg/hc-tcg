@@ -25,11 +25,7 @@ class GoldArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				!attack.target ||
-				attack.target.index !== pos.rowIndex ||
-				attack.type === 'ailment'
-			)
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
 				return
 
 			if (player.custom[instanceKey] === undefined) {

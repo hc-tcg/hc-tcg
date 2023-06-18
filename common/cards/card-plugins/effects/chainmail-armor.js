@@ -24,11 +24,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 		const {otherPlayer} = pos
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				!attack.target ||
-				attack.target.index !== pos.rowIndex ||
-				attack.type !== 'effect'
-			)
+			if (attack.target.index !== pos.rowIndex || attack.type !== 'effect')
 				return
 			attack.reduceDamage(attack.damage)
 			attack.lockDamage()

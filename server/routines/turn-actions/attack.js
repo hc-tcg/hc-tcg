@@ -73,7 +73,6 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
  * @returns {AttackResult}
  */
 function executeAttack(game, attack) {
-	if (attack.target === null) return null
 	const {target, damage, damageMultiplier, defence} = attack
 
 	// Calculate damage
@@ -156,7 +155,7 @@ function executeAttacks(game, attacks) {
 	const results = []
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const result = executeAttack(game, attacks[attackIndex])
-		if (result) results.push(result)
+		results.push(result)
 	}
 	return results
 }
@@ -175,7 +174,7 @@ function runAfterAttacks(player, results) {
 		for (let i = 0; i < afterAttackKeys.length; i++) {
 			const instance = afterAttackKeys[i]
 			// if we are not ignoring this hook, call it
-			if (result && !shouldIgnoreCard(result.attack, instance)) {
+			if (!shouldIgnoreCard(result.attack, instance)) {
 				afterAttacks[i](result)
 			}
 		}

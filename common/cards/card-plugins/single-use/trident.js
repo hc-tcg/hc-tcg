@@ -53,7 +53,7 @@ class TridentSingleUseCard extends SingleUseCard {
 
 		player.hooks.afterAttack[instance] = (attackResult) => {
 			const attackId = this.getInstanceKey(instance)
-			if (!attackResult || attackResult.attack.id !== attackId) return
+			if (attackResult.attack.id !== attackId) return
 
 			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip

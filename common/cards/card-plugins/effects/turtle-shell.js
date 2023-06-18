@@ -69,7 +69,6 @@ class TurtleShellEffectCard extends EffectCard {
 		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				pos.player.custom[instanceKey] === true &&
-				attack.target &&
 				attack.target.row.effectCard?.cardInstance === instance
 			) {
 				attack.multiplyDamage(0).lockDamage()
