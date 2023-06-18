@@ -30,14 +30,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 		const {otherPlayer} = pos
 		const opponentActiveRow = getActiveRow(otherPlayer)
 		if (!opponentActiveRow) return
-		opponentActiveRow.ailments.push(
-			{id: 'slowness', duration: 1},
-			{id: 'weakness', duration: 1},
-			{id: 'fire', duration: 1},
-			{id: 'poison', duration: 1},
-			{id: 'badomen', duration: 1},
-			{id: 'sleeping', duration: 1}
-		)
+		opponentActiveRow.ailments.push({id: 'slowness', duration: 1})
 	}
 }
 
