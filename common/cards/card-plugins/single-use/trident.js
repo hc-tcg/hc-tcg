@@ -51,19 +51,21 @@ class TridentSingleUseCard extends SingleUseCard {
 			return [tridentAttack]
 		}
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attackResult.attack.id !== attackId) return
+			if (attack.id !== attackId) return
 
 			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
+			// Apply single use for Gem, she deletes custom on apply
+			applySingleUse(game)
+
 			// Return to hand
-			if (coinFlip[0] === 'heads' && player.board.singleUseCard) {
+			if (coinFlip[0] === 'heads') {
+				// Reset single use card used, won't return to the hand otherwise
 				player.board.singleUseCardUsed = false
 				discardSingleUse(game, player)
-			} else {
-				applySingleUse(game)
 			}
 		}
 	}
