@@ -26,7 +26,11 @@ class DiamondArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+			if (
+				!attack.target ||
+				attack.target.index !== pos.rowIndex ||
+				attack.type === 'ailment'
+			)
 				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)

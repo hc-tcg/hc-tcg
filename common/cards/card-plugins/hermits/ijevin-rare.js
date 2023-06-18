@@ -43,7 +43,11 @@ class IJevinRareHermitCard extends HermitCard {
 			if (attack.type !== 'secondary') return
 
 			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
+			if (
+				opponentInactiveRows.length !== 0 &&
+				attack.target &&
+				attack.target.row.health
+			) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
 					duration: 1,

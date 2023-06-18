@@ -26,13 +26,18 @@ class LightningRodEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {otherPlayer, row, rowIndex} = pos
 		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
-			if (!row || rowIndex === null || !row.hermitCard) return
+			if (!row || rowIndex === null || !row.hermitCard || !attack.target) return
 			attack.target.index = rowIndex
 			attack.target.row = row
 		}
 
 		otherPlayer.hooks.afterAttack[instance] = (attackResult) => {
-			if (attackResult.attack.target.index !== rowIndex) return
+			if (
+				!attackResult ||
+				!attackResult.attack.target ||
+				attackResult.attack.target.index !== rowIndex
+			)
+				return
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}
