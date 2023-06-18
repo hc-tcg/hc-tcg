@@ -49,7 +49,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		}
 
 		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
-			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+			if (['backlash', 'ailment'].includes(attack.type)) return
 			if (!attack.attacker) return
 
 			const coinFlip = otherPlayer.custom[instanceKey]

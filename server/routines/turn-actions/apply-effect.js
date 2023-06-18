@@ -11,9 +11,9 @@ import {applySingleUse} from '../../utils'
  * @returns
  */
 function* applyEffectSaga(game, turnAction, actionState) {
-	const {pickedSlots} = actionState
+	const {pickedSlots, modalResult} = actionState
 
-	const result = applySingleUse(game, pickedSlots)
+	const result = applySingleUse(game, pickedSlots, modalResult)
 	if (!result) return 'INVALID'
 }
 

@@ -20,7 +20,7 @@ class TotemEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		pos.otherPlayer.hooks.afterAttack[instance] = (result) => {
 			const targetRow = result.attack.target.row
-			if (!targetRow || !targetRow.health || targetRow.health > 0) return
+			if (!targetRow || targetRow.health) return
 			if (targetRow.effectCard?.cardInstance !== instance) return
 
 			targetRow.health = 10

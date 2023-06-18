@@ -2,5 +2,6 @@
 	"disableDeckValidation": false,
 	"extraStartingCards": [],
 	"noItemRequirements": false,
-	"forceCoinFlip": false
+	"forceCoinFlip": false,
+	"oneShotMode": false
 }
