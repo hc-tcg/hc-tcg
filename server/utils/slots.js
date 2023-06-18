@@ -3,11 +3,12 @@ import {GameModel} from '../models/game-model'
 import {getCardPos} from './cards'
 
 /**
- * @param {import('common/types/slots').SlotPos} slotPos
+ * @param {import('common/types/cards').SlotPos} slotPos
  * @returns {boolean}
  */
 function isSlotEmpty(slotPos) {
-	const {index, type, row} = slotPos
+	const {row, slot} = slotPos
+	const {index, type} = slot
 	if (type === 'hermit') {
 		if (!row.hermitCard) return true
 	} else if (type === 'effect') {
@@ -20,11 +21,13 @@ function isSlotEmpty(slotPos) {
 }
 
 /**
- * @param {import('common/types/slots').SlotPos} slotPos
+ * @param {import('common/types/cards').SlotPos} slotPos
  * @return {CardT | null}
  */
 function getSlotCard(slotPos) {
-	const {index, type, row} = slotPos
+	const {row, slot} = slotPos
+	const {index, type} = slot
+
 	if (type === 'hermit') {
 		return row.hermitCard
 	} else if (type === 'effect') {
@@ -36,17 +39,19 @@ function getSlotCard(slotPos) {
 
 /**
  * @param {GameModel} game
- * @param {import('common/types/slots').SlotPos} slotA
- * @param {import('common/types/slots').SlotPos} slotB
+ * @param {import('common/types/cards').SlotPos} slotAPos
+ * @param {import('common/types/cards').SlotPos} slotBPos
  */
-export function swapSlots(game, slotA, slotB) {
+export function swapSlots(game, slotAPos, slotBPos) {
+	const {slot: slotA, row: rowA} = slotAPos
+	const {slot: slotB, row: rowB} = slotBPos
 	if (slotA.type !== slotB.type) return
 
 	// Info about non-empty slots
 	let cardsInfo = []
 
 	// onDetach and get card info
-	for (const slot of [slotA, slotB]) {
+	for (const slot of [slotAPos, slotBPos]) {
 		if (isSlotEmpty(slot)) continue
 
 		const card = getSlotCard(slot)
@@ -68,17 +73,17 @@ export function swapSlots(game, slotA, slotB) {
 
 	// Swap
 	if (slotA.type === 'hermit') {
-		let tempCard = slotA.row.hermitCard
-		slotA.row.hermitCard = slotB.row.hermitCard
-		slotB.row.hermitCard = tempCard
+		let tempCard = rowA.hermitCard
+		rowA.hermitCard = rowB.hermitCard
+		rowB.hermitCard = tempCard
 	} else if (slotA.type === 'effect') {
-		let tempCard = slotA.row.effectCard
-		slotA.row.effectCard = slotB.row.effectCard
-		slotB.row.effectCard = tempCard
+		let tempCard = rowA.effectCard
+		rowA.effectCard = rowB.effectCard
+		rowB.effectCard = tempCard
 	} else if (slotA.type === 'item') {
-		let tempCard = slotA.row.itemCards[slotA.index]
-		slotA.row.itemCards[slotA.index] = slotB.row.itemCards[slotB.index]
-		slotB.row.itemCards[slotB.index] = tempCard
+		let tempCard = rowA.itemCards[slotA.index]
+		rowA.itemCards[slotA.index] = rowB.itemCards[slotB.index]
+		rowB.itemCards[slotB.index] = tempCard
 	}
 
 	// onAttach

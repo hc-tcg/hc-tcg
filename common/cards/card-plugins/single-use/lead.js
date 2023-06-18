@@ -6,7 +6,7 @@ import {GameModel} from '../../../../server/models/game-model'
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/slots').SlotPos} SlotPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -52,15 +52,21 @@ class LeadSingleUseCard extends SingleUseCard {
 			return
 
 		/** @type {SlotPos} */ const itemPos = {
-			index: itemCardInfo.slot.index,
-			type: 'item',
+			rowIndex: itemCardInfo.row.index,
 			row: itemCardInfo.row.state,
+			slot: {
+				index: itemCardInfo.slot.index,
+				type: 'item',
+			},
 		}
 
 		/** @type {SlotPos} */ const targetPos = {
-			index: targetSlotInfo.slot.index,
-			type: 'item',
+			rowIndex: targetSlotInfo.row.index,
 			row: targetSlotInfo.row.state,
+			slot: {
+				index: targetSlotInfo.slot.index,
+				type: 'item',
+			},
 		}
 
 		swapSlots(game, itemPos, targetPos)
