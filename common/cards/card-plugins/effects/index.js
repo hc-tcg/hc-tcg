@@ -1,4 +1,3 @@
-import MilkBucketEffectCard from './milk-bucket'
 import ShieldEffectCard from './shield'
 import IronArmorEffectCard from './iron-armor'
 import GoldArmorEffectCard from './gold-armor'
@@ -23,7 +22,6 @@ import LightningRodEffectCard from './lightning-rod'
 const EFFECT_CARDS = [
 	new BedEffectCard(),
 	new WolfEffectCard(),
-	//new MilkBucketEffectCard(),
 	new GoldArmorEffectCard(),
 	new IronArmorEffectCard(),
 	new ShieldEffectCard(),
