@@ -1,9 +1,11 @@
 import SingleUseCard from './_single-use-card'
 import {isRemovable} from '../../../../server/utils'
+import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/slots').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -68,11 +70,18 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
-		const playerEffect = playerActiveRow.effectCard
-		const opponentEffect = opponentActiveRow.effectCard
+		/** @type {SlotPos} */ const playerSlot = {
+			index: 0,
+			type: 'effect',
+			row: playerActiveRow,
+		}
+		/** @type {SlotPos} */ const opponentSlot = {
+			index: 0,
+			type: 'effect',
+			row: opponentActiveRow,
+		}
 
-		playerActiveRow.effectCard = opponentEffect
-		opponentActiveRow.effectCard = playerEffect
+		swapSlots(game, playerSlot, opponentSlot)
 	}
 }
 
