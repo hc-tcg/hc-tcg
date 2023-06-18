@@ -1,6 +1,10 @@
 import SingleUseCard from './_single-use-card'
-import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {getActiveRow} from '../../../../server/utils'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -9,22 +13,31 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 			name: 'Potion of Slowness',
 			rarity: 'common',
 			description:
-				"Opponent's active hermit can only use their primary attack on their next turn.\n\nDiscard after use.",
+				"Opponent's active hermit can only use their primary attack on their next turn.",
 		})
+	}
+
+	canApply() {
+		return true
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentActiveRow} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				if (opponentActiveRow === null) return 'INVALID'
-				opponentActiveRow.ailments.push({id: 'slowness', duration: 1})
-				return 'DONE'
-			}
-		})
+	onApply(game, instance, pos) {
+		const {otherPlayer} = pos
+		const opponentActiveRow = getActiveRow(otherPlayer)
+		if (!opponentActiveRow) return
+		opponentActiveRow.ailments.push(
+			{id: 'slowness', duration: 1},
+			{id: 'weakness', duration: 1},
+			{id: 'fire', duration: 1},
+			{id: 'poison', duration: 1},
+			{id: 'badomen', duration: 1},
+			{id: 'sleeping', duration: 1}
+		)
 	}
 }
 
