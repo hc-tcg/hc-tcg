@@ -45,21 +45,14 @@ class RenbobRareHermitCard extends HermitCard {
 			pickedSlots
 		)[0]
 		if (attack.type === 'secondary' && pos.rowIndex) {
-			attack.target.index = pos.rowIndex
 			const otherPlayerRow = otherPlayer.board.rows[pos.rowIndex]
 			if (otherPlayerRow.hermitCard) {
-				attack.target.row = otherPlayerRow
-			} else {
-				attack.target.row = {
-					hermitCard: {
-						cardId: 'renbob_rare',
-						cardInstance: 'random_instance',
-					},
-					effectCard: null,
-					itemCards: [],
-					health: 0,
-					ailments: [],
+				attack.target = {
+					index: pos.rowIndex,
+					row: otherPlayerRow,
 				}
+			} else {
+				attack.target = null
 			}
 		}
 
@@ -73,8 +66,6 @@ class RenbobRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		// Remove hooks
-		delete player.hooks.onAttack[instance]
 	}
 
 	getExpansion() {
