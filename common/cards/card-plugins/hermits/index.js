@@ -84,7 +84,7 @@ const HERMIT_CARDS = [
 	new GeminiTayCommonHermitCard(),
 	new GeminiTayRareHermitCard(),
 	new GrianCommonHermitCard(),
-	//new GrianRareHermitCard(),
+	new GrianRareHermitCard(),
 	new GoodTimesWithScarCommonHermitCard(),
 	new GoodTimesWithScarRareHermitCard(),
 	new HypnotizdCommonHermitCard(),

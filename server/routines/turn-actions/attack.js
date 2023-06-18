@@ -55,7 +55,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	for (let i = 0; i < otherAttacks.length; i++) {
 		attacks.push(...otherAttacks[i](pickedSlots))
 	}
-  
+
 	// Weakness attacks
 	// I'm assuming attacks being redirected do not affect weakness attacks.
 	// That means that for example Ranbob would not create a weakness attack
@@ -96,7 +96,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 			attacks[i].damage = 9001
 		}
 	}
-  
+
 	return attacks
 }
 
@@ -270,8 +270,6 @@ function* attackSaga(game, turnAction, actionState) {
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
 	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
-
-	console.log('We got', attacks.length, 'attacks')
 
 	// Store all results
 	/** @type {Array<AttackResult>} */

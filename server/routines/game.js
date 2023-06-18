@@ -341,7 +341,6 @@ function* turnActionSaga(game, turnAction, turnState) {
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
-		console.log('Attack Received with type', typeAction)
 		if (!typeAction || !availableActions.includes(typeAction)) return
 		const result = yield call(attackSaga, game, turnAction, actionState)
 		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
