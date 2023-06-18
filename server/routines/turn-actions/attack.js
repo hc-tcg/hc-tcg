@@ -6,8 +6,8 @@ import {
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import {applySingleUse, discardCard} from '../../utils'
 import {getCardPos} from '../../utils/cards'
+import {DEBUG_CONFIG} from '../../../config'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -55,14 +55,48 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	for (let i = 0; i < otherAttacks.length; i++) {
 		attacks.push(...otherAttacks[i](pickedSlots))
 	}
+  
+	// Weakness attacks
+	// I'm assuming attacks being redirected do not affect weakness attacks.
+	// That means that for example Ranbob would not create a weakness attack
+	// if there's a hermit card on the other side.
+	const weaknessAttacks = []
+	for (const attack of attacks) {
+		const {target, attacker} = attack
+		if (!target || !attacker) continue
 
-	// @TODO Weakness attack
-	//const weaknessAttack = new AttackModel(
-	//	{index: attackIndex, row: attackRow},
-	//	{index: defenceIndex, row: defenceRow},
-	//	'weakness'
-	//)
+		const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
+		const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+		if (!attackerCardInfo || !targetCardInfo) continue
 
+		const attackId = attackerCardInfo.getInstanceKey(
+			attacker.row.hermitCard.cardInstance,
+			'weakness'
+		)
+
+		const strength = STRENGTHS[attackerCardInfo.hermitType]
+		const hasWeakness = target.row.ailments.find((a) => a.id === 'weakness')
+		if (!strength.includes(targetCardInfo.hermitType) && !hasWeakness) continue
+
+		const weaknessAttack = new AttackModel({
+			id: attackId,
+			attacker,
+			target,
+			type: 'weakness',
+		})
+
+		weaknessAttack.addDamage(WEAKNESS_DAMAGE)
+		weaknessAttacks.push(weaknessAttack)
+	}
+
+	attacks.push(...weaknessAttacks)
+
+	if (DEBUG_CONFIG.oneShotMode) {
+		for (let i = 0; i < attacks.length; i++) {
+			attacks[i].damage = 9001
+		}
+	}
+  
 	return attacks
 }
 

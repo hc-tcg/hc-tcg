@@ -24,7 +24,6 @@ app.use(
 )
 
 app.get('/', (req, res) => {
-	console.log('1')
 	res.sendFile(path.join(__dirname, '..', CONFIG.clientPath, 'index.html'))
 })
 

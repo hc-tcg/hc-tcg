@@ -1,11 +1,6 @@
 import singleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {validPick} from '../../../../server/utils/reqs'
-
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- *
- */
+import {isRemovable} from '../../../../server/utils'
 
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
@@ -63,8 +58,12 @@ class MendingSingleUseCard extends singleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
+
 		if (!player.board.activeRow) return 'NO'
-		if (!player.board.rows[player.board.activeRow].effectCard) return 'NO'
+
+		const effectCard = player.board.rows[player.board.activeRow].effectCard
+		if (!effectCard || !isRemovable(effectCard)) return 'NO'
+
 		return 'YES'
 	}
 }

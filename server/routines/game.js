@@ -301,10 +301,16 @@ function* turnActionSaga(game, turnAction, turnState) {
 	// Validation failed
 	if (!pickedSlots) return
 
+	let modalResult = null
+	if (turnAction.payload && turnAction.payload.modalResult) {
+		modalResult = turnAction.payload.modalResult
+	}
+
 	/** @type {ActionState} */
 	const actionState = {
 		...turnState,
 		pickedSlots,
+		modalResult,
 	}
 	let endTurn = false
 
@@ -498,6 +504,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			// Handle timeout
 			const hasActiveHermit = currentPlayer.board.activeRow !== null
 			const opponentFollowUp = !!opponentPlayer.followUp
+			const currentPlayerFollowUp = !!currentPlayer.followUp
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
 					game.state.timer.turnTime = getTimerForSeconds(20)
@@ -514,6 +521,14 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 						runAttackLoop(game, newAttacks, {})
 					}
 
+					continue
+				} else if (currentPlayerFollowUp) {
+					const followUpTimeoutHooks = Object.values(
+						currentPlayer.hooks.onFollowUpTimeout
+					)
+					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
+						followUpTimeoutHooks[i](currentPlayer.followUp)
+					}
 					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'
