@@ -40,9 +40,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 				delete player.hooks.availableActions[instance]
 			} else {
 				// We need to check again because of bdubs
-				const isSleeping = activeRow?.ailments.some(
-					(a) => a.id === 'sleeping'
-				)
+				const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
 
 				if (!isSleeping && !availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
@@ -58,7 +56,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (super.canAttach(game, pos) !== 'INVALID') return 'INVALID'
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
