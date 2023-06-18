@@ -66,6 +66,7 @@ import GoatfatherRareHermitCard from './goatfather-rare'
 import HotguyRareHermitCard from './hotguy-rare'
 import JinglerRareHermitCard from './jingler-rare'
 import EvilXisumaRareHermitCard from './evilxisuma_rare'
+import HelsknightRareHermitCard from './helsknight-rare'
 
 /** @type {Array<HermitCard>} */
 const HERMIT_CARDS = [
@@ -130,7 +131,7 @@ const HERMIT_CARDS = [
 	new EvilJevinCommonHermitCard(),
 	new EvilXisumaRareHermitCard(),
 	new GoatfatherRareHermitCard(),
-	// @TODO Helsknight (helsknight)
+	new HelsknightRareHermitCard(),
 	new HotguyRareHermitCard(),
 	// @TODO Human Cleo (humancleo_rare)
 	new JinglerRareHermitCard(),
