@@ -1,6 +1,11 @@
 import singleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {swapSlots} from '../../../../server/utils/slots'
 import {isRemovable} from '../../../../server/utils'
+
+/**
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
+ */
 
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
@@ -44,11 +49,26 @@ class MendingSingleUseCard extends singleUseCard {
 		)
 			return
 
-		// add effect to target
-		targetSlotInfo.row.state.effectCard = playerActiveRow.effectCard
+		// swap slots
+		/** @type {SlotPos} */ const sourcePos = {
+			rowIndex: player.board.activeRow,
+			row: playerActiveRow,
+			slot: {
+				index: 0,
+				type: 'effect',
+			},
+		}
 
-		// remove effect from source
-		playerActiveRow.effectCard = null
+		/** @type {SlotPos} */ const targetPos = {
+			rowIndex: targetSlotInfo.row.index,
+			row: targetSlotInfo.row.state,
+			slot: {
+				index: targetSlotInfo.slot.index,
+				type: 'effect',
+			},
+		}
+
+		swapSlots(game, sourcePos, targetPos)
 	}
 
 	/**

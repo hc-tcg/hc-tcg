@@ -64,22 +64,8 @@ class BedEffectCard extends EffectCard {
 			// if sleeping has worn off, discard the bed
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
+				delete player.hooks.onTurnStart[instance]
 			}
-		}
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 */
-	onDetach(game, instance, pos) {
-		const {player, row} = pos
-		delete player.hooks.onTurnStart[instance]
-
-		// Make sure there is no sleeping anymore
-		if (row) {
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 		}
 	}
 }

@@ -10,6 +10,7 @@ import {getCardPos} from './cards'
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
+ * @typedef {import("common/types/cards").SlotPos} SlotPos
  */
 
 /**
@@ -134,9 +135,39 @@ export function findCard(gameState, card) {
 
 /**
  * @param {GameModel} game
+ * @param {CardT} card
+ */
+export function moveCardToHand(game, card, steal = false) {
+	const cardPos = getCardPos(game, card.cardInstance)
+	if (!cardPos || !cardPos.row) return
+
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance, cardPos)
+
+	const onDetachs = Object.values(cardPos.player.hooks.onDetach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](card.cardInstance)
+	}
+
+	if (cardPos.slot.type === 'hermit') {
+		cardPos.row.hermitCard = null
+	} else if (cardPos.slot.type === 'effect') {
+		cardPos.row.effectCard = null
+	} else if (cardPos.slot.type === 'item') {
+		cardPos.row.itemCards[cardPos.slot.index] = null
+	} else if (cardPos.slot.type === 'single_use') {
+		cardPos.player.board.singleUseCard = null
+	}
+
+	const player = steal ? cardPos.otherPlayer : cardPos.player
+	player.hand.push(card)
+}
+
+/**
+ * @param {GameModel} game
  * @param {CardT | null} card
  */
-export function discardCard(game, card) {
+export function discardCard(game, card, steal = false) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
@@ -166,7 +197,9 @@ export function discardCard(game, card) {
 		pState.hand = pState.hand.filter(Boolean)
 	})
 
-	game.state.players[loc.playerId].discarded.push({
+	const playerId = steal && pos ? pos.otherPlayerId : loc.playerId
+
+	game.state.players[playerId].discarded.push({
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})

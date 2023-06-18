@@ -85,7 +85,7 @@ const SINGLE_USE_CARDS = [
 	new LadderSingleUseCard(),
 	new PistonSingleUseCard(),
 	new PotionOfSlownessSingleUseCard(),
-	// new PotionOfWeaknessSingleUseCard(), (not converted)
+	new PotionOfWeaknessSingleUseCard(),
 	new SplashPotionOfHealingIISingleUseCard(),
 	new SweepingEdgeSingleUseCard(),
 	new TargetBlockSingleUseCard(),
