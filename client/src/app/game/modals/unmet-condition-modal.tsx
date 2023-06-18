@@ -1,5 +1,4 @@
 import Modal from 'components/modal'
-import {useDispatch} from 'react-redux'
 import css from './confirm-modal.module.css'
 
 import Button from 'components/button'
@@ -16,7 +15,7 @@ function UnmetCondition({closeModal}: Props) {
 		<Modal title="Unmet Condition">
 			<div className={css.confirmModal}>
 				<div className={css.description}>
-					You can't use this effect in that slot at the moment.
+					You can't play this card at the moment.
 				</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleOk}>

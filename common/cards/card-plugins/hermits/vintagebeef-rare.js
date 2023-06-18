@@ -41,7 +41,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			)
 				return
 
-			const coinFlip = flipCoin(player)
+			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] !== 'heads') return
@@ -50,7 +50,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return
 				row.ailments = row.ailments.filter(
 					(ailment) =>
-						!['fire', 'poison', 'bad_omen', 'weakness'].includes(ailment.id)
+						!['fire', 'poison', 'badomen', 'weakness'].includes(ailment.id)
 				)
 			})
 		}

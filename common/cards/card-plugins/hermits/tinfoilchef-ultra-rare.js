@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardCard} from '../../../../server/utils'
+import {flipCoin, discardCard, isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 class TinFoilChefUltraRareHermitCard extends HermitCard {
@@ -28,32 +28,49 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer, opponentActiveRow} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-			if (!opponentActiveRow || !opponentActiveRow.effectCard) return target
+		player.hooks.beforeAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			// can't discard two items on the same hermit
-			const limit = currentPlayer.custom[this.id] || {}
-			if (limit[opponentActiveRow.hermitCard.cardInstance]) return target
+			if (otherPlayer.board.activeRow === null) return 'NO'
+			const opponentActiveRow =
+				otherPlayer.board.rows[otherPlayer.board.activeRow]
+			if (
+				!opponentActiveRow.effectCard ||
+				!isRemovable(opponentActiveRow.effectCard)
+			)
+				return
 
-			const coinFlip = flipCoin(currentPlayer)
-			currentPlayer.coinFlips[this.id] = coinFlip
-			if (coinFlip[0] === 'tails') return target
+			// Can't discard two items on the same hermit
+			const limit = player.custom[this.getInstanceKey(instance)] || {}
+			if (limit[opponentActiveRow.hermitCard.cardInstance]) return
+
+			const coinFlip = flipCoin(player, this.id)
+			player.coinFlips[this.id] = coinFlip
+			if (coinFlip[0] === 'tails') return
 
 			limit[opponentActiveRow.hermitCard.cardInstance] = true
-			currentPlayer.custom[this.id] = limit
+			player.custom[this.getInstanceKey(instance)] = limit
 
 			discardCard(game, opponentActiveRow.effectCard)
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+
+		delete player.hooks.onAttack[instance]
 	}
 }
 

@@ -53,7 +53,7 @@ class EggSingleUseCard extends SingleUseCard {
 				return 'INVALID'
 			if (!pickedHermit.row.health) return 'INVALID'
 
-			currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
+			currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer, this.id)
 			if (currentPlayer.coinFlips[this.id][0] === 'heads') {
 				pickedHermit.row.health -= this.damage.afkTarget
 			}

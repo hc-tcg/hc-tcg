@@ -53,6 +53,13 @@ function MatchMaking() {
 						<p>Loading</p>
 					</>
 				)
+			case 'waiting_for_player':
+				return (
+					<>
+						<Spinner />
+						<p>Waiting for second player</p>
+					</>
+				)
 			case 'starting':
 				return (
 					<>

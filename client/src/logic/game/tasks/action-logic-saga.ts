@@ -32,7 +32,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	const cardInfo = SINGLE_USE_CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.canApply()) {
+	if (cardInfo.canApply() && cardInfo.pickOn !== 'apply') {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))
@@ -42,7 +42,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 			cardInfo.name,
 			cardInfo.pickReqs
 		)
-		if (result && result.length) {
+		if (result && result.length && result[0].pickedSlots?.length) {
 			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
 			yield put(removeEffect())
@@ -78,11 +78,11 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			| ItemCard
 			| null
 		if (cardInfo?.pickOn === 'followup') {
-			let pickedCards = null
+			let pickResults = null
 			const name = getFollowUpName(cardInfo)
-			while (!pickedCards)
-				pickedCards = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
-			yield put(followUp({pickedCards: {[pState.followUp]: pickedCards}}))
+			while (!pickResults)
+				pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
+			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga)
 		}

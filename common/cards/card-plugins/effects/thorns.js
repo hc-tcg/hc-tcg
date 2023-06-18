@@ -8,8 +8,7 @@ class ThornsEffectCard extends EffectCard {
 			id: 'thorns',
 			name: 'Thorns',
 			rarity: 'common',
-			description:
-				'Opposing Hermit takes +10hp damage after attack.\n\nDiscard after user is knocked out.',
+			description: 'Opponent takes 10hp damage after their attack.',
 		})
 	}
 
@@ -17,15 +16,36 @@ class ThornsEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {AttackModel} attack
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onDefence(game, instance, attack) {
-		// only add backlash if there's a hermit behind the attack
-		if (attack.attacker) {
-			attack.defence.backlash += 10
-		}
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
-		return attack
+		otherPlayer.hooks.onAttack[instance] = (attack) => {
+			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+
+			if (attack.attacker && player.board.activeRow === pos.rowIndex) {
+				const backlashAttack = new AttackModel({
+					id: this.getInstanceKey(instance, 'backlash'),
+					target: attack.attacker,
+					type: 'backlash',
+				}).addDamage(10)
+
+				attack.addNewAttack(backlashAttack)
+			}
+
+			return attack
+		}
+	}
+
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		delete pos.otherPlayer.hooks.onAttack[instance]
 	}
 }
 

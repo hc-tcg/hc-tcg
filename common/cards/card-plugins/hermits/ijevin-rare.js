@@ -1,6 +1,10 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
+import {getNonEmptyRows} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class IJevinRareHermitCard extends HermitCard {
 	constructor() {
@@ -21,31 +25,43 @@ class IJevinRareHermitCard extends HermitCard {
 				cost: ['speedrunner', 'speedrunner', 'any'],
 				damage: 90,
 				power:
-					'After attack, opponent is forced to replace active Hermit with AFK Hermit.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
+					'After attack, your opponent must choose an AFK Hermit to replace their active Hermit, unless they have no AFK Hermits. ',
 			},
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {opponentPlayer, opponentActiveRow} = game.ds
-			const {moveRef, typeAction} = attackState
+	onAttach(game, instance, pos) {
+		const {player, otherPlayer} = pos
 
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.type !== 'secondary') return
 
-			const hasOtherHermits =
-				opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-			if (!hasOtherHermits || !opponentActiveRow) return target
-			opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
-			opponentPlayer.board.activeRow = null
+			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
+				attack.target.row.ailments.push({
+					id: 'knockedout',
+					duration: 1,
+				})
+				otherPlayer.board.activeRow = null
+			}
+		}
+	}
 
-			return target
-		})
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+
+		delete player.hooks.onAttack[instance]
 	}
 }
 

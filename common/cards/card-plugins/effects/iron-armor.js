@@ -1,7 +1,9 @@
-import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
-import {getCardPos} from '../../../../server/utils/cards'
 import EffectCard from './_effect-card'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class IronArmorEffectCard extends EffectCard {
 	constructor() {
@@ -9,34 +11,51 @@ class IronArmorEffectCard extends EffectCard {
 			id: 'iron_armor',
 			name: 'Iron Armor',
 			rarity: 'common',
-			description:
-				'Protects from the first +20hp damage taken.\n\nDiscard after user is knocked out.',
+			description: 'Prevent up to 20hp damage taken.',
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer} = pos
+		const {otherPlayer, player} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
-			if (attack.target.index !== pos.rowIndex) return
+		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+				return
 
-			attack.reduceDamage(20)
+			if (player.custom[instanceKey] === undefined) {
+				player.custom[instanceKey] = 0
+			}
+
+			const totalReduction = player.custom[instanceKey]
+
+			if (totalReduction < 20) {
+				const damageReduction = Math.min(attack.damage, 20 - totalReduction)
+				player.custom[instanceKey] += damageReduction
+				attack.reduceDamage(damageReduction)
+			}
+		}
+
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
+			delete player.custom[instanceKey]
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer} = pos
+		const {otherPlayer, player} = pos
 		delete otherPlayer.hooks.onAttack[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

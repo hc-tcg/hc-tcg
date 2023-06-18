@@ -13,24 +13,38 @@ class LoyaltyEffectCard extends EffectCard {
 		})
 	}
 
-	//@TODO this method no longer exists
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	onHermitDeath(game, instance) {
-		const pos = getCardPos(game, instance)
-		if (!pos) return
-		const {playerState, rowState} = pos
-		if (!rowState) return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		for (let i = 0; i < rowState.itemCards.length; i++) {
-			const card = rowState.itemCards[i]
-			if (card) {
-				rowState.itemCards[i] = null
-				playerState.hand.push(card)
+		player.hooks.onHermitDeath[instance] = (hermitPos) => {
+			if (!hermitPos.rowIndex || !hermitPos.row) return
+			if (hermitPos.rowIndex !== pos.rowIndex) return
+
+			// Return all attached item cards to the hand
+			const row = hermitPos.row
+			for (let i = 0; i < row.itemCards.length; i++) {
+				const card = row.itemCards[i]
+				if (card) {
+					row.itemCards[i] = null
+					player.hand.push(card)
+				}
 			}
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onHermitDeath[instance]
 	}
 }
 

@@ -8,60 +8,32 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			name: 'Efficiency',
 			rarity: 'rare',
 			description:
-				'User can execute attack without having the necessary item cards attached.\n\nCurrent turn only.\n\nDiscard after use.',
+				'Use an attack from your active Hermit without having the necessary item cards attached.',
 		})
+	}
+
+	canApply() {
+		return true
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
-	register(game) {
-		game.hooks.availableActions.tap(
-			this.id,
-			(availableActions, pastTurnActions, lockedActions) => {
-				const {currentPlayer} = game.ds
-				const efficiency = currentPlayer.custom[this.id]
-				if (efficiency) {
-					if (
-						pastTurnActions.includes('ATTACK') ||
-						pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') ||
-						game.state.turn <= 1
-					) {
-						return availableActions
-					}
+	onApply(game, instance, pos, pickedSlots) {
+		const {player} = pos
 
-					const {activeRow, rows} = currentPlayer.board
-					if (activeRow === null || !rows[activeRow]) return availableActions
-					const ailments = rows[activeRow].ailments
-					const isSleeping = ailments.find((a) => a.id === 'sleeping')
-					const isSlow = ailments.find((a) => a.id === 'slowness')
+		player.hooks.availableEnergy[instance] = (availableEnergy) => {
+			// Unliimited powwa
+			return ['any', 'any', 'any']
+		}
 
-					if (!isSleeping) {
-						if (!lockedActions.includes('PRIMARY_ATTACK')) {
-							availableActions.push('PRIMARY_ATTACK')
-						}
-
-						if (!isSlow && !lockedActions.includes('SECONDARY_ATTACK')) {
-							availableActions.push('SECONDARY_ATTACK')
-						}
-					}
-				}
-				return availableActions
-			}
-		)
-
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, currentPlayer} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				currentPlayer.custom[this.id] = true
-				return 'DONE'
-			}
-		})
-
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {currentPlayer} = game.ds
-			delete currentPlayer.custom[this.id]
-		})
+		player.hooks.afterAttack[instance] = (attackResult) => {
+			delete player.hooks.availableEnergy[instance]
+			delete player.hooks.afterAttack[instance]
+		}
 	}
 }
 

@@ -32,6 +32,7 @@ const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
+	return ['bow']
 	const limits = CONFIG.limits
 
 	// only allow some starting types
@@ -52,7 +53,6 @@ export function getStarterPack() {
 
 	const deck = []
 
-	let itemCount = 0
 	let itemCounts = {
 		[hermitTypes[0]]: {
 			items: 0,
@@ -161,10 +161,18 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.playerDeck.cards
+	let pack = player.playerDeck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
+
+	// randomize instances
+	pack = pack.map((card) => {
+		return {
+			cardId: card.cardId,
+			cardInstance: Math.random().toString(),
+		}
+	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -198,7 +206,6 @@ export function getPlayerState(player) {
 		discarded: [],
 		pile: pack.slice(7),
 		custom: {},
-		ailments: [],
 		board: {
 			activeRow: null,
 			singleUseCard: null,
@@ -207,6 +214,8 @@ export function getPlayerState(player) {
 		},
 
 		hooks: {
+			availableEnergy: {},
+
 			blockedActions: {},
 			availableActions: {},
 
@@ -220,8 +229,15 @@ export function getPlayerState(player) {
 			onAttack: {},
 			afterAttack: {},
 
-			turnStart: {},
-			turnEnd: {},
+			onFollowUp: {},
+			onFollowUpTimeout: {},
+
+			onHermitDeath: {},
+
+			onTurnStart: {},
+			onTurnEnd: {},
+
+			onCoinFlip: {},
 		},
 	}
 }
@@ -270,7 +286,6 @@ export function getLocalPlayerState(playerState) {
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,
 		lives: playerState.lives,
-		ailments: playerState.ailments,
 		board: playerState.board,
 	}
 	return localPlayerState
@@ -280,9 +295,9 @@ export function getLocalPlayerState(playerState) {
  *
  * @param {GameModel} game
  * @param {PlayerModel} player
- * @param {AvailableActionsT} availableActions
+ * @param {import('common/types/game-state').AvailableActionsT} availableActions
  * @param {Array<string>} pastTurnActions
- * @param {AvailableActionsT} opponentAvailableActions
+ * @param {import('common/types/game-state').AvailableActionsT} opponentAvailableActions
  * @returns {LocalGameState | null}
  */
 export function getLocalGameState(

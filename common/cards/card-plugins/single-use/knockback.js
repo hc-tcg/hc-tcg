@@ -1,11 +1,12 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../../server/utils'
 
-/*
-- Don't allow to change to knocked out hermit during next turn
-- Chorus fruit/Cubfun probably shouldn't allow that either
-*/
+/**
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
+
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -13,33 +14,64 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			name: 'Knockback',
 			rarity: 'rare',
 			description:
-				"Opposing Hermit goes AFK following user's attack.\n\nOpponent chooses replacement.\n\nCan only be used if opponent has at least 1 AFK Hermit. Discard after use.",
+			"After attack, your opponent must choose an AFK Hermit to replace their active Hermit, unless they have no AFK Hermits. ",
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {CardPos} pos
 	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target) => {
-			const {
-				singleUseInfo,
-				currentPlayer,
-				opponentPlayer,
-				opponentHermitCard,
-				opponentActiveRow,
-			} = game.ds
-			if (singleUseInfo?.id === this.id && target.isActive) {
-				const hasOtherHermits =
-					opponentPlayer.board.rows.filter((row) => !!row.hermitCard).length > 1
-				if (!hasOtherHermits || !opponentActiveRow) return target
-				opponentActiveRow.ailments.push({id: 'knockedout', duration: 1})
-				opponentPlayer.board.activeRow = null
-				applySingleUse(game)
-			}
-			return target
-		})
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {otherPlayer} = pos
+
+		// Check if there is an AFK Hermit
+		const inactiveRows = getNonEmptyRows(otherPlayer, false)
+		if (inactiveRows.length === 0) return 'NO'
+		
+		return 'YES'
 	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player} = pos
+
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			applySingleUse(game, pickedSlots)
+			delete player.hooks.onAttack[instance]
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onAttack[instance]
+	}
+	
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
+	 */
+	onApply(game, instance, pos, pickedSlots) {
+		const {otherPlayer} = pos
+		const activeRow = getActiveRow(otherPlayer)
+
+		if (activeRow && activeRow.health) {
+			activeRow.ailments.push({id: 'knockedout', duration: 1})
+			otherPlayer.board.activeRow = null
+		}
+	}	
 }
 
 export default KnockbackSingleUseCard

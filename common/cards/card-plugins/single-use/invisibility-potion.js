@@ -9,42 +9,39 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			name: 'Invisibility Potion',
 			rarity: 'rare',
 			description:
-				"Flip a Coin.\n\nIf heads, no damage is done on opponent's next turn. If tails, double damage is done.\n\nDiscard after use.",
+				"Flip a coin.\n\nIf heads, your opponent's next attack misses.\n\nIf tails, it does double the damage.",
 		})
-		this.damageMultiplier = 2
+	}
+
+	canApply() {
+		return true
 	}
 
 	/**
+	 *
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, currentPlayer, opponentPlayer} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				currentPlayer.coinFlips[this.id] = flipCoin(currentPlayer)
-				currentPlayer.custom[this.id] = currentPlayer.coinFlips[this.id][0]
-				return 'DONE'
+	onApply(game, instance, pos, pickedSlots) {
+		const {player, otherPlayer} = pos
+
+		const coinFlip = flipCoin(player, this.id)
+		player.coinFlips[this.id] = coinFlip
+
+		const multiplier = coinFlip[0] === 'heads' ? 0 : 2
+
+		otherPlayer.hooks.onAttack[instance] = (attack) => {
+			if (['primary', 'secondary', 'zero'].includes(attack.type)) {
+				attack.multiplyDamage(multiplier)
 			}
-		})
+		}
 
-		game.hooks.attack.tap(this.id, (target) => {
-			const {custom} = game.ds.opponentPlayer
-			if (!custom[this.id]) return target
-
-			if (custom[this.id] === 'heads') {
-				target.hermitMultiplier *= 0
-				target.effectMultiplier *= 0
-			} else if (custom[this.id] === 'tails') {
-				target.hermitMultiplier = this.damageMultiplier
-				target.effectMultiplier = this.damageMultiplier
-			}
-			return target
-		})
-
-		game.hooks.turnEnd.tap(this.id, () => {
-			const {custom} = game.ds.opponentPlayer
-			if (custom[this.id]) delete custom[this.id]
-		})
+		otherPlayer.hooks.afterAttack[instance] = () => {
+			delete otherPlayer.hooks.onAttack[instance]
+			delete otherPlayer.hooks.afterAttack[instance]
+		}
 	}
 }
 

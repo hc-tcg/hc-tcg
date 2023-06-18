@@ -20,6 +20,8 @@ export type HermitTypeT =
 	| 'miner'
 	| 'explorer'
 
+export type EnergyT = HermitTypeT | 'any'
+
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
 export type SlotTypeT = 'item' | 'single_use' | 'effect' | 'hermit'
 
@@ -31,7 +33,7 @@ export type DamageT = {
 
 export type HermitAttackInfo = {
 	name: string
-	cost: Array<HermitTypeT | 'any'>
+	cost: Array<EnergyT>
 	damage: number
 	power: string | null
 }
@@ -41,7 +43,7 @@ export type CardDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickOn?: 'attack' | 'apply' | 'followup'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -53,7 +55,7 @@ export type HermitDefs = {
 	health: number
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickOn?: 'attack' | 'apply' | 'followup'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -62,7 +64,7 @@ export type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickOn?: 'attack' | 'apply' | 'followup'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -71,8 +73,15 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply' | 'followup' | 'use-opponent' | 'use-ally'
+	pickOn?: 'attack' | 'apply' | 'followup'
 	pickReqs?: Array<PickRequirmentT>
+}
+
+export type ItemDefs = {
+	id: string
+	name: string
+	rarity: CardRarityT
+	hermitType: HermitTypeT
 }
 
 export type Slot = {

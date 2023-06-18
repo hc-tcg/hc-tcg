@@ -80,7 +80,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 			}
 		}
 
-		player.hooks.turnEnd[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			// delete flag on turn end
 			if (player.custom[extraCardKey]) {
 				delete player.custom[extraCardKey]
@@ -101,7 +101,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.availableActions[instance]
 		delete player.hooks.onApply[instance]
-		delete player.hooks.turnEnd[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[extraCardKey]
 	}
 }

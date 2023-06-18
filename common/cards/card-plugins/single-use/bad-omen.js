@@ -1,6 +1,11 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
+/**
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
+
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -11,17 +16,29 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	canApply() {
+		return true
+	}
+
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 * @param {PickedSlots} pickedSlots
 	 */
-	register(game) {
-		game.hooks.applyEffect.tap(this.id, () => {
-			const {singleUseInfo, opponentPlayer} = game.ds
-			if (singleUseInfo?.id === this.id) {
-				opponentPlayer.ailments.push({id: 'badomen', duration: 3})
-				return 'DONE'
-			}
+	onApply(game, instance, pos, pickedSlots) {
+		const {otherPlayer} = pos
+		const activeRow = otherPlayer.board.activeRow
+		if (activeRow === null) return
+
+		otherPlayer.board.rows[activeRow].ailments.push({
+			id: 'badomen',
+			duration: 3,
 		})
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 
