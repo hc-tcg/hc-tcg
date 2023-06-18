@@ -182,6 +182,45 @@ function runAfterAttacks(player, results) {
 }
 
 /**
+ * @param {GameModel} game
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+export function runAttackLoop(game, attacks, pickedSlots) {
+	const {currentPlayer} = game.ds
+
+	console.log('We got', attacks.length, 'attacks')
+
+	// Store all results
+	/** @type {Array<AttackResult>} */
+	const results = []
+
+	// Main attack loop
+	while (attacks.length > 0) {
+		// Process all current attacks one at a time
+
+		// STEP 1 - Call before attack for all attacks
+		runBeforeAttacks(currentPlayer, attacks, pickedSlots)
+
+		// STEP 2 - Call on attack for all attacks
+		runOnAttacks(currentPlayer, attacks, pickedSlots)
+
+		// STEP 3 - Execute all attacks, and store the results
+		results.push(...executeAttacks(game, attacks))
+
+		// STEP 4 - Get all the next attacks, and repeat the process
+		const newAttacks = []
+		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+			newAttacks.push(...attacks[attackIndex].nextAttacks)
+		}
+		attacks = newAttacks
+	}
+
+	// STEP 5 - Finally, call afterAttack for all results
+	runAfterAttacks(currentPlayer, results)
+}
+
+/**
  * Returns if we should ignore the hooks for an instance or not
  * @param {AttackModel} attack
  * @param {string} instance
@@ -236,36 +275,7 @@ function* attackSaga(game, turnAction, actionState) {
 	// Get initial attacks
 	/** @type {Array<AttackModel>} */
 	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
-
-	console.log('We got', attacks.length, 'attacks')
-
-	// Store all results
-	/** @type {Array<AttackResult>} */
-	const results = []
-
-	// Main attack loop
-	while (attacks.length > 0) {
-		// Process all current attacks one at a time
-
-		// STEP 1 - Call before attack for all attacks
-		runBeforeAttacks(currentPlayer, attacks, pickedSlots)
-
-		// STEP 2 - Call on attack for all attacks
-		runOnAttacks(currentPlayer, attacks, pickedSlots)
-
-		// STEP 3 - Execute all attacks, and store the results
-		results.push(...executeAttacks(game, attacks))
-
-		// STEP 4 - Get all the next attacks, and repeat the process
-		const newAttacks = []
-		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			newAttacks.push(...attacks[attackIndex].nextAttacks)
-		}
-		attacks = newAttacks
-	}
-
-	// STEP 5 - Finally, call afterAttack for all results
-	runAfterAttacks(currentPlayer, results)
+	runAttackLoop(game, attacks, pickedSlots)
 
 	return 'DONE'
 }
@@ -305,33 +315,7 @@ export function runAilmentAttacks(game, player) {
 		}
 	}
 
-	// Run the code for the attacks
-
-	// Store all results
-	/** @type {Array<AttackResult>} */
-	const results = []
-
-	// Main attack loop
-	while (attacks.length > 0) {
-		// STEP 1 - Call before attack for all attacks
-		runBeforeAttacks(player, attacks)
-
-		// STEP 2 - Call on attack for all attacks
-		runOnAttacks(player, attacks)
-
-		// STEP 3 - Execute all attacks, and store the results
-		results.push(...executeAttacks(game, attacks))
-
-		// STEP 4 - Get all the next attacks, and repeat the process
-		const newAttacks = []
-		for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
-			newAttacks.push(...attacks[attackIndex].nextAttacks)
-		}
-		attacks = newAttacks
-	}
-
-	// STEP 5 - Finally, call afterAttack for all results
-	runAfterAttacks(player, results)
+	runAttackLoop(game, attacks, {})
 }
 
 export default attackSaga
