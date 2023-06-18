@@ -91,6 +91,11 @@
 	color: rgb(23, 66, 234);
 }
 
+.specialMoveDescription {
+	width: 350px;
+	overflow: auto;
+}
+
 .hermitDamage {
 	display: inline-flex;
 	justify-content: center;
