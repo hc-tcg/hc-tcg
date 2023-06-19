@@ -48,7 +48,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (pos.slot.type !== 'single_use') return 'INVALID'
 
-		if (!pos.otherPlayer.board.activeRow) return 'NO'
+		if (pos.otherPlayer.board.activeRow === null) return 'NO'
 
 		return 'YES'
 	}
