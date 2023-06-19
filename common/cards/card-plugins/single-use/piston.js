@@ -9,7 +9,6 @@ import {GameModel} from '../../../../server/models/game-model'
 import {swapSlots} from '../../../../server/utils/slots'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/cards').SlotPos} SlotPos

@@ -1,11 +1,7 @@
 import SingleUseCard from './_single-use-card'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {

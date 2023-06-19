@@ -1,9 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
-/**
- * @typedef {import('../../../types/pick-process').PickRequirmentT} PickRequirmentT
- */
+
 class MilkBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({

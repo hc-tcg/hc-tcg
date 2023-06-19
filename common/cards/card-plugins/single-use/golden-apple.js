@@ -3,9 +3,7 @@ import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 import {getNonEmptyRows} from '../../../../server/utils'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
+
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {

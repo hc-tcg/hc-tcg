@@ -1,12 +1,7 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
 
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {

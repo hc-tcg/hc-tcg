@@ -4,7 +4,6 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import {applySingleUse} from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */

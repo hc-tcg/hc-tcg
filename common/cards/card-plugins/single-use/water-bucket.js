@@ -1,10 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
-
 class WaterBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
