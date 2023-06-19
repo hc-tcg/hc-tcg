@@ -12,7 +12,7 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 			name: 'Water Bucket',
 			rarity: 'common',
 			description:
-				'Remove burn or String on active or AFK Hermit.\nOR can be attached to prevent burn.',
+				'Remove burn or String on active or AFK Hermit.\n\nOR can be attached to prevent burn.',
 			pickOn: 'apply',
 			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})

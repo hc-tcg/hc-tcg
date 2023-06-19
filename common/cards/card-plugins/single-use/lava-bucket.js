@@ -9,7 +9,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:
-				'Burn opposing active Hermit. Add 20hp damage every\nturn at the end of your turn.',
+				'Burn opposing active Hermit. Add 20hp damage every turn at the end of your turn.',
 		})
 	}
 

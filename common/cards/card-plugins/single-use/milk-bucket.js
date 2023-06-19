@@ -11,7 +11,7 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Remove posion or bad omen on active or AFK Hermit.\nOR can be attached to prevent poison.',
+				'Remove poison or bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
 			pickOn: 'apply',
 			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})
