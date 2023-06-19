@@ -563,22 +563,6 @@ function* turnSaga(game) {
 	game.state.timer.turnTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	// ailment logic
-
-	// row ailments
-	for (let row of currentPlayer.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration === 0) {
-				// time up, get rid of this ailment
-				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-			} else if (ailment.duration > -1) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
-			}
-		}
-	}
-
 	/** @type {{skipTurn?: boolean}} */
 	const turnConfig = {}
 
@@ -628,6 +612,22 @@ function* turnSaga(game) {
 		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'
+	}
+
+	// ailment logic
+
+	// row ailments
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			// decrease duration
+			if (ailment.duration === 1) {
+				// time up, get rid of this ailment
+				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
+			} else if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
 	}
 
 	return 'DONE'
