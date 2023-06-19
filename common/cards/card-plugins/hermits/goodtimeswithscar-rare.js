@@ -31,7 +31,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer, row} = pos
+		const {player, otherPlayer, row, rowIndex} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 
@@ -46,10 +46,10 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		}
 
 		otherPlayer.hooks.afterAttack[instance] = (afterAttack) => {
-			if (afterAttack.attack.target.index !== pos.rowIndex) return
+			if (afterAttack.attack.target.index !== rowIndex) return
 
 			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
-				if (!row || !row.health || row.health > 0) {
+				if (!row || row.health === null || row.health > 0) {
 					return
 				}
 
