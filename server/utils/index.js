@@ -139,7 +139,7 @@ export function findCard(gameState, card) {
  */
 export function moveCardToHand(game, card, steal = false) {
 	const cardPos = getCardPos(game, card.cardInstance)
-	if (!cardPos || !cardPos.row) return
+	if (!cardPos) return
 
 	const cardInfo = CARDS[card.cardId]
 	cardInfo.onDetach(game, card.cardInstance, cardPos)
@@ -149,11 +149,11 @@ export function moveCardToHand(game, card, steal = false) {
 		onDetachs[i](card.cardInstance)
 	}
 
-	if (cardPos.slot.type === 'hermit') {
+	if (cardPos.row && cardPos.slot.type === 'hermit') {
 		cardPos.row.hermitCard = null
-	} else if (cardPos.slot.type === 'effect') {
+	} else if (cardPos.row && cardPos.slot.type === 'effect') {
 		cardPos.row.effectCard = null
-	} else if (cardPos.slot.type === 'item') {
+	} else if (cardPos.row && cardPos.slot.type === 'item') {
 		cardPos.row.itemCards[cardPos.slot.index] = null
 	} else if (cardPos.slot.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
