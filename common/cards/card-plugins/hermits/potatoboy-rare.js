@@ -42,7 +42,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				return
 
 			const activeRow = player.board.activeRow
-			if (!activeRow) return
+			if (activeRow === null) return
 
 			const rows = player.board.rows
 
