@@ -128,6 +128,7 @@
 	"diamond_armor": 3,
 	"netherite_sword": 3,
 	"lava_bucket": 3,
+	"splash_potion_of_poison": 3,
 
 	"netherite_armor": 4,
 	"totem": 4,
@@ -164,7 +165,7 @@
 	"beetlejhost_common": 1,
 	"eviljevin_common": 0,
 	"evilxisuma_rare": 4,
-	"helsknight_rare": 3,
+	"helsknight_rare": 2,
 	"humancleo_rare": 2,
 	"goatfather_rare": 2,
 	"hotguy_rare": 1,
@@ -198,6 +199,5 @@
 	"sweeping_edge": 2,
 	"thorns_iii": 2,
 
-	"bad_omen": 3,
-	"splash_potion_of_poison": 3
+	"bad_omen": 3
 }
