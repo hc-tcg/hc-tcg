@@ -16,7 +16,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 			description: 'Draw 2 cards.',
 		})
 	}
-	
+
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
@@ -24,11 +24,11 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
-		if (player.hand.length < 2) return 'NO'
+		if (player.pile.length <= 2) return 'NO'
 
 		return 'YES'
 	}
-		
+
 	canApply() {
 		return true
 	}
