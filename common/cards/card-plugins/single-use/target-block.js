@@ -35,6 +35,9 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		if (!pickedSlot) return
 
 		player.hooks.beforeAttack[instance] = (attack) => {
+			console.log(attack.type)
+			if (['backlash', 'ailment'].includes(attack.type)) return
+			console.log('attack', attack.type)
 			if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return
 			attack.target.index = pickedSlot.row.index
 			attack.target.row = pickedSlot.row.state
