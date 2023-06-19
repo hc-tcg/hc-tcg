@@ -60,16 +60,23 @@ class TridentSingleUseCard extends SingleUseCard {
 
 			// Apply single use for Gem, she deletes custom on apply
 			applySingleUse(game)
-
-			// Return to hand
-			if (coinFlip[0] === 'heads') {
-				// Reset single use card used, won't return to the hand otherwise
-				player.board.singleUseCardUsed = false
-				discardSingleUse(game, player)
-			}
 		}
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onApply(game, instance, pos) {
+		const {player} = pos
+		// Return to hand
+		if (player.coinFlips[this.id][0] === 'heads') {
+			// Reset single use card used, won't return to the hand otherwise
+			player.board.singleUseCardUsed = false
+			discardSingleUse(game, player)
+		}
+	}
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
