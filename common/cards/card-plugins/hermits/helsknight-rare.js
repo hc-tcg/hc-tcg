@@ -45,7 +45,7 @@ class HelsknightRareHermitCard extends HermitCard {
 			player.custom[instance] = true
 		}
 
-		otherPlayer.hooks.onAttach[instance] = () => {
+		otherPlayer.hooks.onApply[instance] = () => {
 			if (!player.custom[instance]) return
 			if (!otherPlayer.board.singleUseCard) return
 			const coinFlip = flipCoin(otherPlayer, this.id, 1)
