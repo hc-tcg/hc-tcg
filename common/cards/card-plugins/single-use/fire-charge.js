@@ -45,7 +45,9 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		if (pickedCard.slot.card === null) return
 
 		discardCard(game, pickedCard.slot.card)
-		discardSingleUse(game, player)
+
+		// Undo applySingleUse
+		player.board.singleUseCardUsed = false
 
 		player.custom[this.getInstanceKey(instance)] = true
 	}
@@ -88,12 +90,13 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		}
 
 		player.hooks.onApply[instance] = (instance) => {
-			if (
-				player.custom[this.getInstanceKey(instance)] &&
-				player.board.singleUseCardUsed
-			) {
-				delete player.hooks.availableActions[instance]
-				delete player.custom[this.getInstanceKey(instance)]
+			if (player.custom[this.getInstanceKey(instance)]) {
+				if (player.board.singleUseCardUsed) {
+					delete player.hooks.availableActions[instance]
+					delete player.custom[this.getInstanceKey(instance)]
+				} else if (player.board.singleUseCard) {
+					discardSingleUse(game, player)
+				}
 			}
 		}
 

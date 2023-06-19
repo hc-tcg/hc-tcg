@@ -79,9 +79,10 @@ class PistonSingleUseCard extends SingleUseCard {
 
 		swapSlots(game, itemPos, targetPos)
 
-		player.custom[this.getInstanceKey(instance)] = true
+		// Undo applySingleUse
+		player.board.singleUseCardUsed = false
 
-		discardSingleUse(game, player)
+		player.custom[this.getInstanceKey(instance)] = true
 	}
 
 	/**
@@ -124,12 +125,13 @@ class PistonSingleUseCard extends SingleUseCard {
 		}
 
 		player.hooks.onApply[instance] = (instance) => {
-			if (
-				player.custom[this.getInstanceKey(instance)] &&
-				player.board.singleUseCardUsed
-			) {
-				delete player.hooks.availableActions[instance]
-				delete player.custom[this.getInstanceKey(instance)]
+			if (player.custom[this.getInstanceKey(instance)]) {
+				if (player.board.singleUseCardUsed) {
+					delete player.hooks.availableActions[instance]
+					delete player.custom[this.getInstanceKey(instance)]
+				} else if (player.board.singleUseCard) {
+					discardSingleUse(game, player)
+				}
 			}
 		}
 
