@@ -35,15 +35,14 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player, otherPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
+		const attackType = this.getInstanceKey(instance, 'attackType')
 
 		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			) {
-				return
-			}
+			if (attack.id !== this.getInstanceKey(instance)) return
+			player.custom[attackType] = attack.type
+			if (attack.type !== 'secondary') return
+
 			if (player.custom[status] === 'opponent_missed') return
 
 			player.custom[status] = 'secondary_used'
@@ -65,9 +64,13 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 		//If the opponent missed last turn, clear the flag at the end of your turn.
 		player.hooks.onTurnEnd[instance] = () => {
-			if (player.custom[status] !== 'opponent_missed') return
-
-			delete player.custom[status]
+			if (
+				player.custom[attackType] !== 'secondary' ||
+				player.custom[status] === 'opponent_missed'
+			) {
+				delete player.custom[status]
+			}
+			delete player.custom[attackType]
 		}
 	}
 
@@ -79,11 +82,13 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player, otherPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
+		const attackType = this.getInstanceKey(instance, 'attackType')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[status]
+		delete player.custom[attackType]
 	}
 }
 
