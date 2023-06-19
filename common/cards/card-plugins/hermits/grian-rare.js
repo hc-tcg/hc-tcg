@@ -106,7 +106,7 @@ class GrianRareHermitCard extends HermitCard {
 				pickedCards,
 				modalResult
 			) => {
-				if (followUp !== this.id || !row || !rowIndex) return
+				if (followUp !== this.id || !row || rowIndex === null) return
 				player.followUp = null
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
@@ -120,7 +120,7 @@ class GrianRareHermitCard extends HermitCard {
 
 				// Totem/Loyalty/Shield got used up
 				if (!effectCardPos) return
-				if (!effectCardPos.row || !effectCardPos.rowIndex) return
+				if (!effectCardPos.row || effectCardPos.rowIndex === null) return
 
 				if (modalResult.attach) {
 					// Discard the card if there is one

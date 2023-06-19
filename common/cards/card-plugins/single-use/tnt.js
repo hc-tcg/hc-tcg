@@ -28,7 +28,7 @@ class TNTSingleUseCard extends SingleUseCard {
 			if (!row || !row.hermitCard) return []
 
 			const opponentIndex = otherPlayer.board.activeRow
-			if (!opponentIndex) return []
+			if (opponentIndex === null || opponentIndex === undefined) return []
 			const opponentRow = otherPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
