@@ -122,7 +122,6 @@
 	"golden_axe": 2,
 	"instant_health_ii": 2,
 	"iron_armor": 2,
-	"ladder": 2,
 	"tnt": 2,
 
 	"diamond_armor": 3,
@@ -132,9 +131,9 @@
 
 	"netherite_armor": 4,
 	"totem": 4,
+	"golden_apple": 4,
 
 	"clock": 5,
-	"golden_apple": 5,
 
 	" - ITEMS - ": "",
 
@@ -185,7 +184,6 @@
 
 	"anvil": 1,
 	"chainmail_armor": 1,
-	"egg": 1,
 	"splash_potion_of_healing_ii": 1,
 	"target_block": 1,
 	"thorns_ii": 1,
@@ -193,11 +191,13 @@
 	"turtle_shell": 1,
 
 	"armor_stand": 2,
+	"egg": 2,
 	"lightning_rod": 2,
 	"potion_of_slowness": 2,
 	"string": 2,
 	"sweeping_edge": 2,
 	"thorns_iii": 2,
 
-	"bad_omen": 3
+	"bad_omen": 3,
+	"ladder": 3
 }
