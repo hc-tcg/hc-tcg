@@ -27,17 +27,18 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 			</div>
 			<div className={css.info}>
 				<div className={css.name}>
-					{name} - {' '}
-					<span className={classnames(css.damage, {
+					{name} -{' '}
+					<span
+						className={classnames(css.damage, {
 							[css.specialMove]: !!attackInfo?.power,
-						})}>
-					{attackInfo?.damage}
+						})}
+					>
+						{attackInfo?.damage}
 					</span>
 				</div>
-				{attackInfo?.power &&
-					<div className={css.specialMoveDescription}>
-						{attackInfo?.power}
-					</div>}
+				{attackInfo?.power && (
+					<div className={css.specialMoveDescription}>{attackInfo?.power}</div>
+				)}
 			</div>
 		</div>
 	)

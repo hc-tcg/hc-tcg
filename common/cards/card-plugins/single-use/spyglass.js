@@ -59,7 +59,6 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			if (followUp !== this.id) return
 			player.followUp = null
 
-			console.log('modalResult', modalResult)
 			if (!modalResult || !modalResult.card) return
 			if (player.coinFlips[this.id][0] !== 'heads') return // You never know
 
