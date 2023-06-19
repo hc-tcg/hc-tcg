@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
-import {getNonEmptyRows} from '../../../../server/utils'
+import {getNonEmptyRows, isActive} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
@@ -46,6 +46,9 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
+
+		// Need active hermit to play
+		if (!isActive(player)) return 'NO'
 
 		// Can't attach it there are not any inactive hermits
 		const inactiveHermits = getNonEmptyRows(player, false)
