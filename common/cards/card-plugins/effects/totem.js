@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {discardCard} from '../../../../server/utils'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -25,7 +26,7 @@ class TotemEffectCard extends EffectCard {
 
 			targetRow.health = 10
 			targetRow.ailments = []
-			targetRow.effectCard = null
+			discardCard(game, targetRow.effectCard)
 		}
 	}
 

@@ -165,7 +165,7 @@ class GrianRareHermitCard extends HermitCard {
 				if (!effectCardPos || !effectCardPos.row) return
 
 				// Discard the card if the player didn't choose
-				effectCardPos.row.effectCard = null
+				discardCard(game, effectCardPos.row.effectCard)
 				player.discarded.push({
 					cardId: opponentEffectCard.cardId,
 					cardInstance: opponentEffectCard.cardInstance,

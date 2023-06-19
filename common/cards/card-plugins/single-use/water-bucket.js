@@ -1,5 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {discardCard} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
@@ -65,11 +66,11 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 			(a) => a.id !== 'fire'
 		)
 		if (targetSlot.row.state.effectCard?.cardId === 'string') {
-			targetSlot.row.state.effectCard = null
+			discardCard(game, targetSlot.row.state.effectCard)
 		}
 		for (let i = 0; i < targetSlot.row.state.itemCards.length; i++) {
 			if (targetSlot.row.state.itemCards[i]?.cardId === 'string') {
-				targetSlot.row.state.itemCards[i] = null
+				discardCard(game, targetSlot.row.state.itemCards[i])
 			}
 		}
 	}
