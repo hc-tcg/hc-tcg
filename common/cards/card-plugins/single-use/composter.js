@@ -3,7 +3,6 @@ import {equalCard, discardCard, drawCards} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
@@ -15,12 +14,16 @@ class ComposterSingleUseCard extends SingleUseCard {
 			name: 'Composter',
 			rarity: 'common',
 			description:
-				"Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.",
-		
+				'Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.',
+
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
-				{target: 'hand', type: ['hermit', 'effect', 'item', 'single_use'], amount: 2},
-			])
+			pickReqs: [
+				{
+					target: 'hand',
+					type: ['hermit', 'effect', 'item', 'single_use'],
+					amount: 2,
+				},
+			],
 		})
 	}
 
@@ -35,7 +38,6 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 		return 'YES'
 	}
-	
 
 	/**
 	 * @param {GameModel} game
@@ -48,7 +50,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		if (slots.length !== 2) return
-		
+
 		const pickedCard1 = slots[0]
 		const pickedCard2 = slots[1]
 

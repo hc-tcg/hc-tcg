@@ -41,7 +41,7 @@ class MendingSingleUseCard extends singleUseCard {
 
 		const targetSlotInfo = pickedCards[0]
 		const {player} = pos
-		if (!player.board.activeRow || !targetSlotInfo.row) return
+		if (player.board.activeRow === null || !targetSlotInfo.row) return
 		const playerActiveRow = player.board.rows[player.board.activeRow]
 		if (
 			targetSlotInfo.row.state.effectCard !== null ||
@@ -79,7 +79,7 @@ class MendingSingleUseCard extends singleUseCard {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
 
-		if (!player.board.activeRow) return 'NO'
+		if (player.board.activeRow === null) return 'NO'
 
 		const effectCard = player.board.rows[player.board.activeRow].effectCard
 		if (!effectCard || !isRemovable(effectCard)) return 'NO'

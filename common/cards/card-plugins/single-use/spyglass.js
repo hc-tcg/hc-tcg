@@ -14,7 +14,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			name: 'Spyglass',
 			rarity: 'common',
 			description:
-				'Look through your opponent’s hand.\n\nFlip a coin. If heads, opponent chooses 1 of those cards to discard.',
+				"Look at opponent's hand.\n\nFlip a coin.\n\nIf heads, choose 1 of those cards to discard.",
 		})
 	}
 
@@ -30,7 +30,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 * @param {Object} modalResult
 	 */
 	onApply(game, instance, pos, pickedSlots, modalResult) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		const coinFlip = flipCoin(player, this.id)
 		player.coinFlips[this.id] = coinFlip
@@ -38,7 +38,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		// Client uses the id instead of the instance for the modal
 		player.custom[this.id] = {
 			canDiscard: coinFlip[0] === 'heads',
-			cards: otherPlayer.hand,
+			cards: opponentPlayer.hand,
 		}
 		player.followUp = this.id
 	}
@@ -72,9 +72,9 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			if (player.coinFlips[this.id][0] !== 'heads') return
 
 			// Discard a random card from the opponent's hand
-			const {otherPlayer} = pos
-			const slotIndex = Math.floor(Math.random() * otherPlayer.hand.length)
-			discardCard(game, otherPlayer.hand[slotIndex])
+			const {opponentPlayer} = pos
+			const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
+			discardCard(game, opponentPlayer.hand[slotIndex])
 		}
 	}
 
@@ -84,10 +84,10 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
 		// Gem can use 2 spyglasses on the same turn
-		if (otherPlayer.hand.length === 0) return 'NO'
+		if (opponentPlayer.hand.length === 0) return 'NO'
 
 		// They can discard the only hermit in their hand
 		if (game.state.turn === 1) return 'NO'

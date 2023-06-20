@@ -4,7 +4,6 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import {applySingleUse, getNonEmptyRows} from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
@@ -29,10 +28,10 @@ class BowSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
-		const inactiveRows = getNonEmptyRows(otherPlayer, false)
+		const inactiveRows = getNonEmptyRows(opponentPlayer, false)
 		if (inactiveRows.length === 0) return 'NO'
 
 		return 'YES'
@@ -44,7 +43,7 @@ class BowSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
 			const index = player.board.activeRow
@@ -55,13 +54,16 @@ class BowSingleUseCard extends SingleUseCard {
 			const pickedSlot = pickedSlots[this.id]
 			const opponentIndex = pickedSlot[0]?.row?.index
 			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = otherPlayer.board.rows[opponentIndex]
+			const opponentRow = opponentPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
 			const bowAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					player: opponentPlayer,
+					rowIndex: opponentIndex,
+					row: opponentRow,
+				},
 				type: 'effect',
 			}).addDamage(40)
 

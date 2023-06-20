@@ -23,25 +23,25 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
-		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 			if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
 				return blockedActions
 			}
 
 			// Make sure the other player has an active row
-			if (otherPlayer.board.activeRow !== null) {
+			if (opponentPlayer.board.activeRow !== null) {
 				blockedActions.push('CHANGE_ACTIVE_HERMIT')
 			}
 
 			return blockedActions
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			// Remove effects of card and clean up
-			delete otherPlayer.hooks.blockedActions[instance]
-			delete otherPlayer.hooks.onTurnEnd[instance]
+			delete opponentPlayer.hooks.blockedActions[instance]
+			delete opponentPlayer.hooks.onTurnEnd[instance]
 		}
 	}
 }

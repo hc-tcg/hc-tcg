@@ -47,7 +47,7 @@ class TurtleShellEffectCard extends EffectCard {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'NO'
 
@@ -66,7 +66,7 @@ class TurtleShellEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 		pos.player.custom[instanceKey] = false
 
-		pos.otherPlayer.hooks.onAttack[instance] = (attack) => {
+		pos.opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				pos.player.custom[instanceKey] === true &&
 				attack.target.row.effectCard?.cardInstance === instance
@@ -76,13 +76,13 @@ class TurtleShellEffectCard extends EffectCard {
 			return attack
 		}
 
-		pos.otherPlayer.hooks.afterAttack[instance] = () => {
+		pos.opponentPlayer.hooks.afterAttack[instance] = () => {
 			if (pos.player.custom[instanceKey] === true) {
 				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
 		}
 
-		pos.otherPlayer.hooks.beforeAttack[instance] = () => {
+		pos.opponentPlayer.hooks.beforeAttack[instance] = () => {
 			if (pos.player.board.activeRow === null) return
 			if (
 				instance ===
@@ -102,8 +102,8 @@ class TurtleShellEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.player.custom[this.getInstanceKey(instance)]
-		delete pos.otherPlayer.hooks.onAttack[instance]
-		delete pos.otherPlayer.hooks.afterAttack[instance]
+		delete pos.opponentPlayer.hooks.onAttack[instance]
+		delete pos.opponentPlayer.hooks.afterAttack[instance]
 	}
 
 	getExpansion() {

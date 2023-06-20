@@ -159,7 +159,7 @@ export function moveCardToHand(game, card, steal = false) {
 		cardPos.player.board.singleUseCard = null
 	}
 
-	const player = steal ? cardPos.otherPlayer : cardPos.player
+	const player = steal ? cardPos.opponentPlayer : cardPos.player
 	player.hand.push(card)
 }
 
@@ -197,7 +197,7 @@ export function discardCard(game, card, steal = false) {
 		pState.hand = pState.hand.filter(Boolean)
 	})
 
-	const playerId = steal && pos ? pos.otherPlayerId : loc.playerId
+	const playerId = steal && pos ? pos.opponentPlayer.id : loc.playerId
 
 	game.state.players[playerId].discarded.push({
 		cardId: card.cardId,
@@ -346,16 +346,16 @@ export function getActiveRow(playerState) {
 /**
  * @param {PlayerState} playerState
  * @param {boolean} includeActive
- * @returns {import('types/game-state').RowInfo[]}
+ * @returns {import('types/cards').RowPos[]}
  */
 export function getNonEmptyRows(playerState, includeActive = true) {
-	/** @type {import('types/game-state').RowInfo[]} */
+	/** @type {import('types/cards').RowPos[]} */
 	const rows = []
 	const activeRowIndex = playerState.board.activeRow
 	for (let i = 0; i < playerState.board.rows.length; i++) {
 		const row = playerState.board.rows[i]
 		if (i === activeRowIndex && !includeActive) continue
-		if (row.hermitCard) rows.push({index: i, row})
+		if (row.hermitCard) rows.push({player: playerState, rowIndex: i, row})
 	}
 	return rows
 }

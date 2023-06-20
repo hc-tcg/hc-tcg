@@ -21,10 +21,10 @@ class ChainmailArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type !== 'effect')
+		opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.target.rowIndex !== pos.rowIndex || attack.type !== 'effect')
 				return
 			attack.reduceDamage(attack.damage)
 			attack.lockDamage()
@@ -37,8 +37,8 @@ class ChainmailArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer} = pos
-		delete otherPlayer.hooks.onAttack[instance]
+		const {opponentPlayer} = pos
+		delete opponentPlayer.hooks.onAttack[instance]
 	}
 
 	getExpansion() {

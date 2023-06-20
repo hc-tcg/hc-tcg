@@ -2,10 +2,6 @@ import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {discardCard} from '../../../../server/utils'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
-
 class WaterBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -13,7 +9,7 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 			name: 'Water Bucket',
 			rarity: 'common',
 			description:
-				'Remove burn or String on active or AFK Hermit.\nOR can be attached to prevent burn.',
+				'Remove burn or String on active or AFK Hermit.\n\nOR can be attached to prevent burn.',
 			pickOn: 'apply',
 			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})
@@ -32,8 +28,8 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 					return a.id !== 'fire'
 				})
 			}
-			pos.otherPlayer.hooks.onApply[instance] = waterHook
-			pos.otherPlayer.hooks.afterAttack[instance] = waterHook
+			pos.opponentPlayer.hooks.onApply[instance] = waterHook
+			pos.opponentPlayer.hooks.afterAttack[instance] = waterHook
 		}
 	}
 
@@ -43,10 +39,10 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		if (pos.otherPlayer.hooks.onApply[instance]) {
+		if (pos.opponentPlayer.hooks.onApply[instance]) {
 			//If this is attached as an effect
-			delete pos.otherPlayer.hooks.onApply[instance]
-			delete pos.otherPlayer.hooks.afterAttack[instance]
+			delete pos.opponentPlayer.hooks.onApply[instance]
+			delete pos.opponentPlayer.hooks.afterAttack[instance]
 		}
 	}
 

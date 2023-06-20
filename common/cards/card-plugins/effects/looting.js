@@ -23,11 +23,11 @@ class LootingEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack[instance] = (attackResult) => {
 			// This needs to happen after Loyalty
-			otherPlayer.hooks.onHermitDeath[instance] = (hermitPos) => {
+			opponentPlayer.hooks.onHermitDeath[instance] = (hermitPos) => {
 				// Don't activate if the row has no item cards
 				if (!hermitPos.row || !rowHasItem(hermitPos.row)) return
 
@@ -40,7 +40,7 @@ class LootingEffectCard extends EffectCard {
 
 				// Only choose from one row if multiple hermits are knocked out at once
 				// we could allow to pick from multiple rows but the UI would be confusing
-				delete otherPlayer.hooks.onHermitDeath[instance]
+				delete opponentPlayer.hooks.onHermitDeath[instance]
 			}
 		}
 
@@ -57,14 +57,17 @@ class LootingEffectCard extends EffectCard {
 			if (modalResult.cards.length > 2) return
 
 			const activeRow = getActiveRow(player)
-			if (!activeRow) return
+			if (activeRow === null) return
 			// Discard looting, can't do it on afterAttack because it would delete this hook
 			discardCard(game, activeRow?.effectCard)
 
 			for (const card of modalResult.cards) {
 				player.hand.push(card)
 				// Remove the card from the other player's discarded pile
-				otherPlayer.discarded.splice(otherPlayer.discarded.indexOf(card), 1)
+				opponentPlayer.discarded.splice(
+					opponentPlayer.discarded.indexOf(card),
+					1
+				)
 			}
 		}
 
@@ -78,12 +81,15 @@ class LootingEffectCard extends EffectCard {
 			for (const card of cards) {
 				if (totalPicked === 2) break
 				player.hand.push(card)
-				otherPlayer.discarded.splice(otherPlayer.discarded.indexOf(card), 1)
+				opponentPlayer.discarded.splice(
+					opponentPlayer.discarded.indexOf(card),
+					1
+				)
 				totalPicked++
 			}
 
 			const activeRow = getActiveRow(player)
-			if (!activeRow) return
+			if (activeRow === null) return
 			// Discard looting, can't do it on afterAttack because it would delete this hook
 			discardCard(game, activeRow?.effectCard)
 		}

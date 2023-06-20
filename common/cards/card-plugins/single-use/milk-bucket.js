@@ -1,9 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
-/**
- * @typedef {import('../../../types/pick-process').PickRequirmentT} PickRequirmentT
- */
+
 class MilkBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -11,7 +9,7 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Remove posion or bad omen on active or AFK Hermit.\nOR can be attached to prevent poison.',
+				'Remove poison or bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
 			pickOn: 'apply',
 			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})
@@ -30,8 +28,8 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 					return a.id !== 'poison'
 				})
 			}
-			pos.otherPlayer.hooks.onApply[instance] = milkHook
-			pos.otherPlayer.hooks.afterAttack[instance] = milkHook
+			pos.opponentPlayer.hooks.onApply[instance] = milkHook
+			pos.opponentPlayer.hooks.afterAttack[instance] = milkHook
 		}
 	}
 
@@ -41,10 +39,10 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		if (pos.otherPlayer.hooks.onApply[instance]) {
+		if (pos.opponentPlayer.hooks.onApply[instance]) {
 			//If this is attached as an effect
-			delete pos.otherPlayer.hooks.onApply[instance]
-			delete pos.otherPlayer.hooks.afterAttack[instance]
+			delete pos.opponentPlayer.hooks.onApply[instance]
+			delete pos.opponentPlayer.hooks.afterAttack[instance]
 		}
 	}
 

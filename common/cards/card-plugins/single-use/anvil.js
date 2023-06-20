@@ -4,7 +4,6 @@ import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
@@ -25,16 +24,14 @@ class AnvilSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
 			const activeRow = player.board.activeRow
 			if (activeRow === null) return []
-			const row = player.board.rows[activeRow]
-			if (!row || !row.hermitCard) return []
-			const oppositeRow = otherPlayer.board.rows[activeRow]
+			const oppositeRow = opponentPlayer.board.rows[activeRow]
 			if (!oppositeRow || !oppositeRow.hermitCard) return []
-			const opponentRows = otherPlayer.board.rows
+			const opponentRows = opponentPlayer.board.rows
 
 			const attacks = []
 			for (let i = activeRow; i < opponentRows.length; i++) {
@@ -45,12 +42,9 @@ class AnvilSingleUseCard extends SingleUseCard {
 						instance,
 						activeRow === i ? 'active' : 'inactive'
 					),
-					attacker: {
-						index: activeRow,
-						row: row,
-					},
 					target: {
-						index: i,
+						player: opponentPlayer,
+						rowIndex: i,
 						row: opponentRow,
 					},
 					type: 'effect',
@@ -88,11 +82,11 @@ class AnvilSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const {otherPlayer, player} = pos
+		const {opponentPlayer, player} = pos
 		const activeRow = player.board.activeRow
 		if (activeRow === null) return 'NO'
 
-		const oppositeRow = otherPlayer.board.rows[activeRow]
+		const oppositeRow = opponentPlayer.board.rows[activeRow]
 		if (!oppositeRow || !oppositeRow.hermitCard) return 'NO'
 
 		return 'YES'

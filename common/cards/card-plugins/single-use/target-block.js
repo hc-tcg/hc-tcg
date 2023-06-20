@@ -4,7 +4,6 @@ import SingleUseCard from './_single-use-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -38,7 +37,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			console.log(attack.type)
 			if (['backlash', 'ailment'].includes(attack.type)) return
 			if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return
-			attack.target.index = pickedSlot.row.index
+			attack.target.rowIndex = pickedSlot.row.index
 			attack.target.row = pickedSlot.row.state
 		}
 	}
@@ -49,10 +48,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
 		// Inactive Hermits
-		if (getNonEmptyRows(otherPlayer, false).length === 0) return 'NO'
+		if (getNonEmptyRows(opponentPlayer, false).length === 0) return 'NO'
 
 		return 'YES'
 	}

@@ -21,11 +21,11 @@ class GoldArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, player} = pos
+		const {opponentPlayer, player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+		opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.target.rowIndex !== pos.rowIndex || attack.type === 'ailment')
 				return
 
 			if (player.custom[instanceKey] === undefined) {
@@ -41,7 +41,7 @@ class GoldArmorEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instanceKey]
 		}
 	}
@@ -52,9 +52,9 @@ class GoldArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
+		const {opponentPlayer, player} = pos
+		delete opponentPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

@@ -28,7 +28,7 @@ class TridentSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
 			const index = player.board.activeRow
@@ -36,15 +36,18 @@ class TridentSingleUseCard extends SingleUseCard {
 			const row = player.board.rows[index]
 			if (!row || !row.hermitCard) return []
 
-			const opponentIndex = otherPlayer.board.activeRow
+			const opponentIndex = opponentPlayer.board.activeRow
 			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = otherPlayer.board.rows[opponentIndex]
+			const opponentRow = opponentPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
 			const tridentAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					player: opponentPlayer,
+					rowIndex: opponentIndex,
+					row: opponentRow,
+				},
 				type: 'effect',
 			}).addDamage(30)
 

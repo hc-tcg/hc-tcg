@@ -9,7 +9,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:
-				'Burn opposing active Hermit. Add 20hp damage every\nturn at the end of your turn.',
+				'Burn opposing active Hermit. Add 20hp damage every turn at the end of your turn.',
 		})
 	}
 
@@ -25,16 +25,16 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const opponentActiveRow = pos.otherPlayer.board.activeRow
+		const opponentActiveRow = pos.opponentPlayer.board.activeRow
 		if (opponentActiveRow === null) return
 
-		const hasDamageEffect = pos.otherPlayer.board.rows[
+		const hasDamageEffect = pos.opponentPlayer.board.rows[
 			opponentActiveRow
 		].ailments.some((ailment) => {
 			return ailment.id === 'fire' || ailment.id === 'poison'
 		})
 		if (!hasDamageEffect) {
-			pos.otherPlayer.board.rows[opponentActiveRow].ailments.push({
+			pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
 				id: 'fire',
 				duration: -1,
 			})
@@ -48,7 +48,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (pos.slot.type !== 'single_use') return 'INVALID'
 
-		if (pos.otherPlayer.board.activeRow === null) return 'NO'
+		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
 
 		return 'YES'
 	}

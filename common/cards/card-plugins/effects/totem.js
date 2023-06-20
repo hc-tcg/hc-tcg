@@ -9,7 +9,7 @@ class TotemEffectCard extends EffectCard {
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:
-				'Recover 10hp and remain in battle after you are knocked out.\nDoes not count as a knockout. Discard after use.',
+				'Recover 10hp and remain in battle after you are knocked out.\n\nDoes not count as a knockout. Discard after use.',
 		})
 	}
 
@@ -19,7 +19,7 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		pos.otherPlayer.hooks.afterAttack[instance] = (result) => {
+		pos.opponentPlayer.hooks.afterAttack[instance] = (result) => {
 			const targetRow = result.attack.target.row
 			if (!targetRow || targetRow.health) return
 			if (targetRow.effectCard?.cardInstance !== instance) return
@@ -37,7 +37,7 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.otherPlayer.hooks.afterAttack[instance]
+		delete pos.opponentPlayer.hooks.afterAttack[instance]
 	}
 }
 

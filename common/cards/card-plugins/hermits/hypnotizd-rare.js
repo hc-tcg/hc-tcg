@@ -2,10 +2,6 @@ import HermitCard from './_hermit-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
-
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
@@ -51,7 +47,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.beforeAttack[instance] = (attack, pickedSlots) => {
@@ -68,12 +64,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			// Change attack target
 			attack.target = {
-				index: pickedHermit.row.index,
+				player: game.state.players[pickedHermit.playerId],
+				rowIndex: pickedHermit.row.index,
 				row: pickedHermit.row.state,
 			}
 
 			const pickedItem = pickedSlots[this.id]?.[1]
-			const isActive = otherPlayer.board.activeRow === pickedHermit.row?.index
+			const isActive =
+				opponentPlayer.board.activeRow === pickedHermit.row?.index
 			if (isActive || !pickedItem) return
 
 			// Discard item card
