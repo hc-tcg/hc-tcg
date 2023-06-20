@@ -50,14 +50,29 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
 		otherPlayer.hooks.onAttack[instance] = (attack) => {
-			if (player.custom[status] !== 'secondary_used') return
+			if (
+				player.custom[status] !== 'secondary_used' ||
+				!['primary', 'secondary'].includes(attack.type)
+			) {
+				return
+			}
 
-			const coinFlip = flipCoin(otherPlayer, this.id)
-			otherPlayer.coinFlips[this.id] = coinFlip
+			if (!otherPlayer.coinFlips[this.id]) {
+				const coinFlip = flipCoin(otherPlayer, this.id)
+				otherPlayer.coinFlips[this.id] = coinFlip
+			}
 
-			if (coinFlip[0] === 'heads') {
+			if (otherPlayer.coinFlips[this.id][0] === 'heads') {
 				attack.multiplyDamage(0)
 				attack.lockDamage()
+			}
+		}
+
+		otherPlayer.hooks.onTurnEnd[instance] = () => {
+			if (
+				otherPlayer.coinFlips[this.id] &&
+				otherPlayer.coinFlips[this.id][0] === 'heads'
+			) {
 				player.custom[status] = 'opponent_missed'
 			}
 		}
@@ -83,10 +98,12 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		const {player, otherPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
+		const blocked = this.getInstanceKey(instance, 'blocked')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
+		delete otherPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[status]
 		delete player.custom[attackType]
 	}
