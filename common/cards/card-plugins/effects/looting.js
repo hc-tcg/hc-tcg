@@ -57,7 +57,7 @@ class LootingEffectCard extends EffectCard {
 			if (modalResult.cards.length > 2) return
 
 			const activeRow = getActiveRow(player)
-			if (!activeRow) return
+			if (activeRow === null) return
 			// Discard looting, can't do it on afterAttack because it would delete this hook
 			discardCard(game, activeRow?.effectCard)
 
@@ -83,7 +83,7 @@ class LootingEffectCard extends EffectCard {
 			}
 
 			const activeRow = getActiveRow(player)
-			if (!activeRow) return
+			if (activeRow === null) return
 			// Discard looting, can't do it on afterAttack because it would delete this hook
 			discardCard(game, activeRow?.effectCard)
 		}
