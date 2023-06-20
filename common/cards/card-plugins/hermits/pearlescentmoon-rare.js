@@ -98,7 +98,6 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
-		const blocked = this.getInstanceKey(instance, 'blocked')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete opponentPlayer.hooks.onAttack[instance]
