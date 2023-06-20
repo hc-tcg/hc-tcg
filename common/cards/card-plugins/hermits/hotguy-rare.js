@@ -79,6 +79,10 @@ class HotguyRareHermitCard extends HermitCard {
 				attack.addDamage(attack.damage)
 			}
 		}
+
+		player.hooks.onTurnEnd[instance] = () => {
+			delete player.custom[this.getInstanceKey(instance)]
+		}
 	}
 
 	/**
@@ -90,6 +94,7 @@ class HotguyRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		delete player.hooks.beforeAttack[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 
