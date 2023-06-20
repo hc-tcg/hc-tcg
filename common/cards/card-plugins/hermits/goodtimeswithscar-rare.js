@@ -31,7 +31,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer, row, rowIndex} = pos
+		const {player, otherPlayer, row} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 
