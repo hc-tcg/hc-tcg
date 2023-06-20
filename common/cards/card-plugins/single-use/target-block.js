@@ -4,7 +4,6 @@ import SingleUseCard from './_single-use-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 

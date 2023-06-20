@@ -9,7 +9,7 @@ class TotemEffectCard extends EffectCard {
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:
-				'Recover 10hp and remain in battle after you are knocked out.\nDoes not count as a knockout. Discard after use.',
+				'Recover 10hp and remain in battle after you are knocked out.\n\nDoes not count as a knockout. Discard after use.',
 		})
 	}
 

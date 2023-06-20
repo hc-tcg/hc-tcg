@@ -2,10 +2,6 @@ import HermitCard from './_hermit-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-/**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
- */
-
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice

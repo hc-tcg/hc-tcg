@@ -8,7 +8,6 @@ import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
@@ -23,9 +22,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
 
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
-				{target: 'player', type: ['item', 'effect'], amount: 1},
-			]),
+			pickReqs: [{target: 'player', type: ['item', 'effect'], amount: 1}],
 		})
 	}
 

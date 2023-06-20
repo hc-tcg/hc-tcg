@@ -2,7 +2,6 @@ import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
  */

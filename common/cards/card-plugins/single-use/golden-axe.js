@@ -8,7 +8,6 @@ import {
 } from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
