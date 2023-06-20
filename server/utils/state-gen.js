@@ -180,7 +180,8 @@ export function getPlayerState(player) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
 
-	const hand = pack.slice(0, 7)
+	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
+	const hand = pack.slice(0, amountOfStartingCards)
 
 	DEBUG_CONFIG.extraStartingCards.forEach((id) => {
 		const card = CARDS[id]
@@ -202,7 +203,7 @@ export function getPlayerState(player) {
 		lives: 3,
 		hand,
 		discarded: [],
-		pile: pack.slice(7),
+		pile: DEBUG_CONFIG.startWithAllCards ? [] : pack.slice(7),
 		custom: {},
 		board: {
 			activeRow: null,

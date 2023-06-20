@@ -3,5 +3,10 @@
 	"extraStartingCards": [],
 	"noItemRequirements": false,
 	"forceCoinFlip": false,
-	"oneShotMode": false
+	"oneShotMode": false,
+	"disableDamage": false,
+	"disableDeckOut": false,
+	"startWithAllCards": false,
+	"blockedActions": [],
+	"availableActions": []
 }
