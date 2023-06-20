@@ -28,7 +28,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, otherPlayer} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
 			const index = player.board.activeRow
@@ -43,8 +43,12 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				attacks.push(
 					new AttackModel({
 						id: this.getInstanceKey(instance),
-						attacker: {index, row},
-						target: {index: slot.row.index, row: slot.row.state},
+						attacker: {index, row, playerId: player.id},
+						target: {
+							index: slot.row.index,
+							row: slot.row.state,
+							playerId: otherPlayer.id,
+						},
 						type: 'effect',
 					}).addDamage(20)
 				)

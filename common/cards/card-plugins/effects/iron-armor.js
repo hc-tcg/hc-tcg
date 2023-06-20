@@ -24,7 +24,7 @@ class IronArmorEffectCard extends EffectCard {
 		const {otherPlayer, player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
 				return
 
@@ -53,7 +53,7 @@ class IronArmorEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}

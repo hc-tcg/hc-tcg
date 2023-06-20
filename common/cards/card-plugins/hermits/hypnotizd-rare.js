@@ -70,6 +70,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 			attack.target = {
 				index: pickedHermit.row.index,
 				row: pickedHermit.row.state,
+				playerId: otherPlayer.id,
 			}
 
 			const pickedItem = pickedSlots[this.id]?.[1]

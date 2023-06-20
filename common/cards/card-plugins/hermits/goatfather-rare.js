@@ -71,10 +71,12 @@ class GoatfatherRareHermitCard extends HermitCard {
 				attacker: {
 					index: rowIndex,
 					row: row,
+					playerId: player.id,
 				},
 				target: {
 					index: i,
 					row: targetRow,
+					playerId: otherPlayer.id,
 				},
 				type: hermitAttackType,
 			}).addDamage(activeRow === i ? 30 : 10)

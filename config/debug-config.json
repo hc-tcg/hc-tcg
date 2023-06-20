@@ -1,7 +1,12 @@
 {
-	"disableDeckValidation": false,
+	"disableDeckValidation": true,
 	"extraStartingCards": [],
-	"noItemRequirements": false,
-	"forceCoinFlip": false,
-	"oneShotMode": false
+	"noItemRequirements": true,
+	"forceCoinFlip": true,
+	"oneShotMode": false,
+	"disableDamage": false,
+	"startWithAllCards": true,
+	"disableDeckout": true,
+	"blockedActions": [],
+	"availableActions": ["ZERO_ATTACK"]
 }

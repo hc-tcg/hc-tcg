@@ -48,10 +48,12 @@ class AnvilSingleUseCard extends SingleUseCard {
 					attacker: {
 						index: activeRow,
 						row: row,
+						playerId: player.id,
 					},
 					target: {
 						index: i,
 						row: opponentRow,
+						playerId: otherPlayer.id,
 					},
 					type: 'effect',
 				}).addDamage(i === activeRow ? 30 : 10)

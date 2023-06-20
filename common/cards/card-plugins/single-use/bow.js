@@ -60,8 +60,12 @@ class BowSingleUseCard extends SingleUseCard {
 
 			const bowAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				attacker: {index, row, playerId: player.id},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
 				type: 'effect',
 			}).addDamage(40)
 

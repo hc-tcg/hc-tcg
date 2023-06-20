@@ -34,7 +34,16 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
+				attacker: {
+					index,
+					row,
+					playerId: player.id,
+				},
 				type: 'effect',
 			}).addDamage(60)
 

@@ -43,8 +43,12 @@ class TridentSingleUseCard extends SingleUseCard {
 
 			const tridentAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				attacker: {index, row, playerId: player.id},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
 				type: 'effect',
 			}).addDamage(30)
 

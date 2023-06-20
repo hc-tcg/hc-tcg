@@ -1,4 +1,3 @@
-import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 

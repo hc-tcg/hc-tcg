@@ -34,13 +34,22 @@ class TNTSingleUseCard extends SingleUseCard {
 
 			const tntAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
+				attacker: {
+					index,
+					row,
+					playerId: player.id,
+				},
 				type: 'effect',
 			}).addDamage(60)
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
-				target: {index, row},
+				target: {index, row, playerId: player.id},
 				type: 'backlash',
 			}).addDamage(20)
 

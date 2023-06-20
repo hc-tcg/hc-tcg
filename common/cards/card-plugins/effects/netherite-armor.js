@@ -24,9 +24,8 @@ class NetheriteArmorEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {otherPlayer, player, row} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const activeRowIndex = pos.player.board.activeRow
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
 				return
 			if (attack.type === 'effect') {
@@ -54,7 +53,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 
 		otherPlayer.hooks.onApply[instance] = (instance) => {
 			// Prevent being knocked out
-			if (activeRowIndex === pos.rowIndex && row) {
+			if (player.board.activeRow === null && row) {
 				player.board.activeRow = pos.rowIndex
 				row.ailments = row.ailments.filter((a) => a.id !== 'knockedout')
 			}
@@ -68,7 +67,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
 		delete otherPlayer.hooks.onTurnEnd[instance]
 		delete otherPlayer.hooks.onApply[instance]
 		delete player.custom[this.getInstanceKey(instance)]

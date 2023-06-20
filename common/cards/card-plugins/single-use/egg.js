@@ -37,8 +37,10 @@ class EggSingleUseCard extends SingleUseCard {
 			if (pickedSlot.length !== 1) return
 			const pickedHermit = pickedSlot[0]
 			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
-
-			applySingleUse(game)
+			const activeRow = player.board.activeRow
+			if (activeRow === null) return
+			const row = player.board.rows[activeRow]
+			if (!row || !row.hermitCard) return
 
 			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
@@ -48,6 +50,12 @@ class EggSingleUseCard extends SingleUseCard {
 					target: {
 						index: pickedHermit.row.index,
 						row: pickedHermit.row.state,
+						playerId: otherPlayer.id,
+					},
+					attacker: {
+						index: activeRow,
+						row: row,
+						playerId: player.id,
 					},
 					type: 'effect',
 				}).addDamage(10)
@@ -64,6 +72,7 @@ class EggSingleUseCard extends SingleUseCard {
 		player.hooks.afterAttack[instance] = (attackResult) => {
 			const eggIndex = player.custom[this.getInstanceKey(instance)]
 			otherPlayer.board.activeRow = eggIndex
+			applySingleUse(game)
 		}
 	}
 

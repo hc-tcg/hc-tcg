@@ -45,9 +45,8 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			player.custom[reviveNextTurn] = true
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = (afterAttack) => {
+		player.hooks.afterAttack[instance] = (afterAttack) => {
 			if (afterAttack.attack.target.index !== rowIndex) return
-
 			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
 				if (!row || row.health === null || row.health > 0) {
 					return
@@ -72,7 +71,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.afterAttack[instance]
+		delete player.hooks.afterAttack[instance]
 		delete player.custom[reviveNextTurn]
 		delete player.custom[scarRevivedKey]
 	}

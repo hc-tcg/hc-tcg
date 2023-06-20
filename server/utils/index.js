@@ -355,7 +355,7 @@ export function getNonEmptyRows(playerState, includeActive = true) {
 	for (let i = 0; i < playerState.board.rows.length; i++) {
 		const row = playerState.board.rows[i]
 		if (i === activeRowIndex && !includeActive) continue
-		if (row.hermitCard) rows.push({index: i, row})
+		if (row.hermitCard) rows.push({index: i, row, playerId: playerState.id})
 	}
 	return rows
 }

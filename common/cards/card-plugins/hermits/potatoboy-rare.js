@@ -1,7 +1,6 @@
 import HermitCard from './_hermit-card'
 import {HERMIT_CARDS} from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
-import {AttackModel} from '../../../../server/models/attack-model'
 
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {

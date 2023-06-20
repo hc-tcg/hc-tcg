@@ -60,8 +60,12 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			const multiplier = getItemCardsEnergy(game, opponentRow)
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				attacker: {index, row, playerId: player.id},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
 				type: 'effect',
 			}).addDamage(Math.min(80, 20 * multiplier))
 

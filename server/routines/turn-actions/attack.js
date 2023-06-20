@@ -25,7 +25,6 @@ export const ATTACK_TO_ACTION = {
 export const WEAKNESS_DAMAGE = 20
 
 /**
- *
  * @param {GameModel} game
  * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
@@ -59,11 +58,11 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 	// Weakness attacks
 	// I'm assuming attacks being redirected do not affect weakness attacks.
 	// That means that for example Ranbob would not create a weakness attack
-	// if there's a hermit card on the other side.
+	// if there isn't a hermit card on the other side.
 	const weaknessAttacks = []
 	for (const attack of attacks) {
-		const {target, attacker} = attack
-		if (!target || !attacker) continue
+		const {target, attacker, type} = attack
+		if (!target || !attacker || type === 'zero') continue
 
 		const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 		const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
@@ -101,7 +100,6 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 }
 
 /**
- *
  * @param {GameModel} game
  * @param {AttackModel} attack
  * @returns {AttackResult}
@@ -135,51 +133,80 @@ function executeAttack(game, attack) {
 }
 
 /**
- *
- * @param {PlayerState} player
+ * @param {GameModel} game
  * @param {Array<AttackModel>} attacks
  * @param {import('types/pick-process').PickedSlots} pickedSlots
  */
-function runBeforeAttacks(player, attacks, pickedSlots = {}) {
-	const beforeAttackKeys = Object.keys(player.hooks.beforeAttack)
-	const beforeAttacks = Object.values(player.hooks.beforeAttack)
+function runBeforeAttacks(game, attacks, pickedSlots = {}) {
+	const {currentPlayer, opponentPlayer} = game.ds
+
+	const beforeAttackKeys = {
+		[currentPlayer.id]: Object.keys(currentPlayer.hooks.beforeAttack),
+		[opponentPlayer.id]: Object.keys(opponentPlayer.hooks.beforeAttack),
+	}
+	const beforeAttacks = {
+		[currentPlayer.id]: Object.values(currentPlayer.hooks.beforeAttack),
+		[opponentPlayer.id]: Object.values(opponentPlayer.hooks.beforeAttack),
+	}
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
+		const attacker = attack.attacker
+		const target = attack.target
 
-		for (let i = 0; i < beforeAttackKeys.length; i++) {
-			const instance = beforeAttackKeys[i]
-			// if we are not ignoring this hook, call it
-			if (!shouldIgnoreCard(attack, instance)) {
-				beforeAttacks[i](attack, pickedSlots)
+		if (DEBUG_CONFIG.disableDamage) {
+			attack.reduceDamage(attack.damage)
+			attack.lockDamage()
+		}
+
+		for (const rowInfo of [attacker, target]) {
+			if (!rowInfo) continue
+			const playerId = rowInfo.playerId
+			for (let i = 0; i < beforeAttackKeys[playerId].length; i++) {
+				const instance = beforeAttackKeys[playerId][i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(attack, instance)) {
+					beforeAttacks[playerId][i](attack, pickedSlots)
+				}
 			}
 		}
 	}
 }
 
 /**
- *
- * @param {PlayerState} player
+ * @param {GameModel} game
  * @param {Array<AttackModel>} attacks
  * @param {import('types/pick-process').PickedSlots} pickedSlots
  */
-function runOnAttacks(player, attacks, pickedSlots = {}) {
-	const onAttackKeys = Object.keys(player.hooks.onAttack)
-	const onAttacks = Object.values(player.hooks.onAttack)
+function runOnAttacks(game, attacks, pickedSlots = {}) {
+	const {currentPlayer, opponentPlayer} = game.ds
+
+	const onAttackKeys = {
+		[currentPlayer.id]: Object.keys(currentPlayer.hooks.onAttack),
+		[opponentPlayer.id]: Object.keys(opponentPlayer.hooks.onAttack),
+	}
+	const onAttacks = {
+		[currentPlayer.id]: Object.values(currentPlayer.hooks.onAttack),
+		[opponentPlayer.id]: Object.values(opponentPlayer.hooks.onAttack),
+	}
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-
-		for (let i = 0; i < onAttackKeys.length; i++) {
-			const instance = onAttackKeys[i]
-			// if we are not ignoring this hook, call it
-			if (!shouldIgnoreCard(attack, instance)) {
-				onAttacks[i](attack, pickedSlots)
+		const attacker = attack.attacker
+		const target = attack.target
+		for (const rowInfo of [attacker, target]) {
+			if (!rowInfo) continue
+			const playerId = rowInfo.playerId
+			for (let i = 0; i < onAttackKeys[playerId].length; i++) {
+				const instance = onAttackKeys[playerId][i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(attack, instance)) {
+					onAttacks[playerId][i](attack, pickedSlots)
+				}
 			}
 		}
 	}
 }
 
 /**
- *
  * @param {GameModel} game
  * @param {Array<AttackModel>} attacks
  * @returns {Array<AttackResult>}
@@ -195,21 +222,33 @@ function executeAttacks(game, attacks) {
 }
 
 /**
- *
- * @param {PlayerState} player
+ * @param {GameModel} game
  * @param {Array<AttackResult>} results
  */
-function runAfterAttacks(player, results) {
-	const afterAttackKeys = Object.keys(player.hooks.afterAttack)
-	const afterAttacks = Object.values(player.hooks.afterAttack)
+function runAfterAttacks(game, results) {
+	const {currentPlayer, opponentPlayer} = game.ds
+
+	const afterAttackKeys = {
+		[currentPlayer.id]: Object.keys(currentPlayer.hooks.afterAttack),
+		[opponentPlayer.id]: Object.keys(opponentPlayer.hooks.afterAttack),
+	}
+	const afterAttacks = {
+		[currentPlayer.id]: Object.values(currentPlayer.hooks.afterAttack),
+		[opponentPlayer.id]: Object.values(opponentPlayer.hooks.afterAttack),
+	}
 	for (let resultsIndex = 0; resultsIndex < results.length; resultsIndex++) {
 		const result = results[resultsIndex]
-
-		for (let i = 0; i < afterAttackKeys.length; i++) {
-			const instance = afterAttackKeys[i]
-			// if we are not ignoring this hook, call it
-			if (!shouldIgnoreCard(result.attack, instance)) {
-				afterAttacks[i](result)
+		const attacker = result.attack.attacker
+		const target = result.attack.target
+		for (const rowInfo of [attacker, target]) {
+			if (!rowInfo) continue
+			const playerId = rowInfo.playerId
+			for (let i = 0; i < afterAttackKeys[playerId].length; i++) {
+				const instance = afterAttackKeys[playerId][i]
+				// if we are not ignoring this hook, call it
+				if (!shouldIgnoreCard(result.attack, instance)) {
+					afterAttacks[playerId][i](result)
+				}
 			}
 		}
 	}
@@ -280,10 +319,10 @@ function* attackSaga(game, turnAction, actionState) {
 		// Process all current attacks one at a time
 
 		// STEP 1 - Call before attack for all attacks
-		runBeforeAttacks(currentPlayer, attacks, pickedSlots)
+		runBeforeAttacks(game, attacks, pickedSlots)
 
 		// STEP 2 - Call on attack for all attacks
-		runOnAttacks(currentPlayer, attacks, pickedSlots)
+		runOnAttacks(game, attacks, pickedSlots)
 
 		// STEP 3 - Execute all attacks, and store the results
 		results.push(...executeAttacks(game, attacks))
@@ -297,7 +336,7 @@ function* attackSaga(game, turnAction, actionState) {
 	}
 
 	// STEP 5 - Finally, call afterAttack for all results
-	runAfterAttacks(currentPlayer, results)
+	runAfterAttacks(game, results)
 
 	return 'DONE'
 }
@@ -319,6 +358,7 @@ export function runAilmentAttacks(game, player) {
 			target: {
 				index: i,
 				row,
+				playerId: player.id,
 			},
 			type: 'ailment',
 		})
@@ -346,10 +386,10 @@ export function runAilmentAttacks(game, player) {
 	// Main attack loop
 	while (attacks.length > 0) {
 		// STEP 1 - Call before attack for all attacks
-		runBeforeAttacks(player, attacks)
+		runBeforeAttacks(game, attacks)
 
 		// STEP 2 - Call on attack for all attacks
-		runOnAttacks(player, attacks)
+		runOnAttacks(game, attacks)
 
 		// STEP 3 - Execute all attacks, and store the results
 		results.push(...executeAttacks(game, attacks))
@@ -363,7 +403,7 @@ export function runAilmentAttacks(game, player) {
 	}
 
 	// STEP 5 - Finally, call afterAttack for all results
-	runAfterAttacks(player, results)
+	runAfterAttacks(game, results)
 }
 
 export default attackSaga

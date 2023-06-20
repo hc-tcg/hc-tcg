@@ -65,10 +65,12 @@ class HermitCard extends Card {
 			attacker: {
 				index: pos.rowIndex,
 				row: pos.row,
+				playerId: pos.playerId,
 			},
 			target: {
 				index: targetIndex,
 				row: targetRow,
+				playerId: pos.otherPlayerId,
 			},
 			type: hermitAttackType,
 		})

@@ -34,7 +34,12 @@ class IronSwordSingleUseCard extends SingleUseCard {
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					index: opponentIndex,
+					row: opponentRow,
+					playerId: otherPlayer.id,
+				},
+				attacker: {index: index, row: row, playerId: player.id},
 				type: 'effect',
 			}).addDamage(20)
 
