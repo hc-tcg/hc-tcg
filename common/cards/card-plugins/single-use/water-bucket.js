@@ -28,8 +28,8 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 					return a.id !== 'fire'
 				})
 			}
-			pos.otherPlayer.hooks.onApply[instance] = waterHook
-			pos.otherPlayer.hooks.afterAttack[instance] = waterHook
+			pos.opponentPlayer.hooks.onApply[instance] = waterHook
+			pos.opponentPlayer.hooks.afterAttack[instance] = waterHook
 		}
 	}
 
@@ -39,10 +39,10 @@ class WaterBucketSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		if (pos.otherPlayer.hooks.onApply[instance]) {
+		if (pos.opponentPlayer.hooks.onApply[instance]) {
 			//If this is attached as an effect
-			delete pos.otherPlayer.hooks.onApply[instance]
-			delete pos.otherPlayer.hooks.afterAttack[instance]
+			delete pos.opponentPlayer.hooks.onApply[instance]
+			delete pos.opponentPlayer.hooks.afterAttack[instance]
 		}
 	}
 

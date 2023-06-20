@@ -17,7 +17,7 @@ export class AttackModel {
 
 		/**
 		 * The attack target
-		 * @type {import("../../common/types/game-state").RowInfo}
+		 * @type {import("types/cards").RowPos}
 		 */
 		this.target = defs.target
 
@@ -44,14 +44,6 @@ export class AttackModel {
 		 * @type {boolean}
 		 */
 		this.damageLocked = false
-
-		/**
-		 * Defence against this attack
-		 * @type {import("common/types/attack").AttackDefence}
-		 */
-		this.defence = {
-			damageReduction: 0,
-		}
 
 		/** @type {Array<import("common/types/attack").ShouldIgnoreCard>} */
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []

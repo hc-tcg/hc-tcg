@@ -33,7 +33,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
 
@@ -49,7 +49,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		}
 
 		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
+		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				player.custom[status] !== 'secondary_used' ||
 				!['primary', 'secondary'].includes(attack.type)
@@ -57,21 +57,21 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				return
 			}
 
-			if (!otherPlayer.coinFlips[this.id]) {
-				const coinFlip = flipCoin(otherPlayer, this.id)
-				otherPlayer.coinFlips[this.id] = coinFlip
+			if (!opponentPlayer.coinFlips[this.id]) {
+				const coinFlip = flipCoin(opponentPlayer, this.id)
+				opponentPlayer.coinFlips[this.id] = coinFlip
 			}
 
-			if (otherPlayer.coinFlips[this.id][0] === 'heads') {
+			if (opponentPlayer.coinFlips[this.id][0] === 'heads') {
 				attack.multiplyDamage(0)
 				attack.lockDamage()
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			if (
-				otherPlayer.coinFlips[this.id] &&
-				otherPlayer.coinFlips[this.id][0] === 'heads'
+				opponentPlayer.coinFlips[this.id] &&
+				opponentPlayer.coinFlips[this.id][0] === 'heads'
 			) {
 				player.custom[status] = 'opponent_missed'
 			}
@@ -95,15 +95,15 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
 		const blocked = this.getInstanceKey(instance, 'blocked')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[status]
 		delete player.custom[attackType]
 	}

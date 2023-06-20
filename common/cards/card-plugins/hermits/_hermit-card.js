@@ -63,11 +63,13 @@ class HermitCard extends Card {
 		const attack = new AttackModel({
 			id: this.getInstanceKey(instance),
 			attacker: {
-				index: pos.rowIndex,
+				player: pos.player,
+				rowIndex: pos.rowIndex,
 				row: pos.row,
 			},
 			target: {
-				index: targetIndex,
+				player: opponentPlayer,
+				rowIndex: targetIndex,
 				row: targetRow,
 			},
 			type: hermitAttackType,
@@ -89,7 +91,7 @@ class HermitCard extends Card {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'hermit') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		return 'YES'
 	}

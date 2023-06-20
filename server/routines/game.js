@@ -247,11 +247,11 @@ function* checkHermitHealth(game) {
 		const noHermitsLeft =
 			!firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
 		if (isDead || noHermitsLeft) {
-			console.log('Player dead: ', {
-				isDead,
-				noHermitsLeft,
-				turn: game.state.turn,
-			})
+			//console.log('Player dead: ', {
+			//	isDead,
+			//	noHermitsLeft,
+			//	turn: game.state.turn,
+			//})
 			deadPlayerIds.push(playerState.id)
 		}
 	}
@@ -605,10 +605,10 @@ function* turnSaga(game) {
 	if (drawCard) {
 		currentPlayer.hand.push(drawCard)
 	} else {
-		console.log('Player dead: ', {
-			noCards: true,
-			turn: game.state.turn,
-		})
+		//console.log('Player dead: ', {
+		//	noCards: true,
+		//	turn: game.state.turn,
+		//})
 		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'

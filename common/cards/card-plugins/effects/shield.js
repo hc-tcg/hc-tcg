@@ -23,11 +23,11 @@ class ShieldEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, player} = pos
+		const {opponentPlayer, player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+		opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.target.rowIndex !== pos.rowIndex || attack.type === 'ailment')
 				return
 
 			if (player.custom[instanceKey] === undefined) {
@@ -43,7 +43,7 @@ class ShieldEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = (attackResult) => {
+		opponentPlayer.hooks.afterAttack[instance] = (attackResult) => {
 			const {player, row} = pos
 
 			if (player.custom[instanceKey] > 0 && row) {
@@ -51,7 +51,7 @@ class ShieldEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instanceKey]
 		}
 	}
@@ -62,10 +62,10 @@ class ShieldEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.afterAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
+		const {opponentPlayer, player} = pos
+		delete opponentPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.afterAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

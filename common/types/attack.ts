@@ -1,7 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
-import {RowInfo, RowStateWithHermit} from './game-state'
+import {RowPos} from './cards'
 
-export type Attacker = RowInfo | null
+export type Attacker = RowPos | null
 
 export type HermitAttackType = 'primary' | 'secondary' | 'zero'
 
@@ -27,7 +27,7 @@ export type ShouldIgnoreCard = (instance: string) => boolean
 export type AttackDefs = {
 	id?: string
 	attacker?: Attacker
-	target: RowInfo
+	target: RowPos
 	type: AttackType
 	shouldIgnoreCards?: Array<ShouldIgnoreCard>
 }

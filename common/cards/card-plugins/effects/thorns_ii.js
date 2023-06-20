@@ -19,9 +19,9 @@ class ThornsIIEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
+		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
 
 			if (attack.attacker && player.board.activeRow === pos.rowIndex) {
@@ -45,7 +45,7 @@ class ThornsIIEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.otherPlayer.hooks.onAttack[instance]
+		delete pos.opponentPlayer.hooks.onAttack[instance]
 	}
 
 	getExpansion() {

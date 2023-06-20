@@ -36,19 +36,19 @@ class IJevinRareHermitCard extends HermitCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
-			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
 					duration: 1,
 				})
-				otherPlayer.board.activeRow = null
+				opponentPlayer.board.activeRow = null
 			}
 		}
 	}

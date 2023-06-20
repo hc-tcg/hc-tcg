@@ -36,7 +36,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (
@@ -56,7 +56,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			// lightning rod counters him and using knockback/target block
 			// is a really bad idea
 			player.custom[this.getInstanceKey(instance, 'target')] =
-				attack.target.index
+				attack.target.rowIndex
 
 			// It's easier to not duplicate the code if I use the hooks here
 			player.hooks.onFollowUp[instance] = (
@@ -85,12 +85,12 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'
 			}
 
-			otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 				const disable = player.custom[this.getInstanceKey(instance, 'disable')]
 				const targetRow = player.custom[this.getInstanceKey(instance, 'target')]
 				if (!disable) return blockedActions
 
-				const activeRow = otherPlayer.board.activeRow
+				const activeRow = opponentPlayer.board.activeRow
 				if (activeRow === null || targetRow === null) return blockedActions
 				if (activeRow !== targetRow) return blockedActions
 
@@ -101,9 +101,9 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				return blockedActions
 			}
 
-			otherPlayer.hooks.onTurnEnd[instance] = () => {
-				delete otherPlayer.hooks.blockedActions[instance]
-				delete otherPlayer.hooks.onTurnEnd[instance]
+			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+				delete opponentPlayer.hooks.blockedActions[instance]
+				delete opponentPlayer.hooks.onTurnEnd[instance]
 				delete player.custom[this.getInstanceKey(instance, 'disable')]
 				delete player.custom[this.getInstanceKey(instance, 'target')]
 			}

@@ -28,10 +28,10 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
-		if (otherPlayer.board.activeRow === null) return 'NO'
-		const activeRow = otherPlayer.board.rows[otherPlayer.board.activeRow]
+		if (opponentPlayer.board.activeRow === null) return 'NO'
+		const activeRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (rowHasItem(activeRow)) return 'YES'
 
 		return 'NO'
@@ -43,7 +43,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
 			const index = player.board.activeRow
@@ -51,16 +51,19 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			const row = player.board.rows[index]
 			if (!row || !row.hermitCard) return []
 
-			const opponentIndex = otherPlayer.board.activeRow
+			const opponentIndex = opponentPlayer.board.activeRow
 			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = otherPlayer.board.rows[opponentIndex]
+			const opponentRow = opponentPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
 			const multiplier = getItemCardsEnergy(game, opponentRow)
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				target: {
+					player: opponentPlayer,
+					rowIndex: opponentIndex,
+					row: opponentRow,
+				},
 				type: 'effect',
 			}).addDamage(Math.min(80, 20 * multiplier))
 

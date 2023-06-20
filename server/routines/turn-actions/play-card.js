@@ -35,10 +35,8 @@ function* playCardSaga(game, turnAction, actionState) {
 	// @TODO - PLAY_CARD should probably be using CardPos
 	/** @type {import('../../../common/types/cards').CardPos} */
 	const pos = {
-		playerId: pickedSlot.playerId,
-		otherPlayerId: opponentPlayerId,
 		player: game.state.players[pickedSlot.playerId],
-		otherPlayer: game.state.players[opponentPlayerId],
+		opponentPlayer: game.state.players[opponentPlayerId],
 		rowIndex: pickedSlot.row ? pickedSlot.row.index : null,
 		row: pickedSlot.row
 			? game.state.players[pickedSlot.playerId].board.rows[pickedSlot.row.index]

@@ -30,13 +30,14 @@ class EggSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			const pickedSlot = pickedSlots[this.id]
 			if (pickedSlot.length !== 1) return
 			const pickedHermit = pickedSlot[0]
 			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
+			const pickedPlayer = game.state.players[pickedHermit.playerId]
 
 			applySingleUse(game)
 
@@ -46,7 +47,8 @@ class EggSingleUseCard extends SingleUseCard {
 				const eggAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
 					target: {
-						index: pickedHermit.row.index,
+						player: pickedPlayer,
+						rowIndex: pickedHermit.row.index,
 						row: pickedHermit.row.state,
 					},
 					type: 'effect',
@@ -63,7 +65,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 		player.hooks.afterAttack[instance] = (attackResult) => {
 			const eggIndex = player.custom[this.getInstanceKey(instance)]
-			otherPlayer.board.activeRow = eggIndex
+			opponentPlayer.board.activeRow = eggIndex
 		}
 	}
 
@@ -81,9 +83,9 @@ class EggSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
-		const inactiveHermits = getNonEmptyRows(otherPlayer, false)
+		const inactiveHermits = getNonEmptyRows(opponentPlayer, false)
 		if (inactiveHermits.length === 0) return 'NO'
 
 		return 'YES'
