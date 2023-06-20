@@ -69,8 +69,8 @@ class HelsknightRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, otherPlayer} = pos
-		delete player.hooks.onApply[instance]
-		delete otherPlayer.hooks.onAttack[instance]
+		delete player.hooks.onAttack[instance]
+		delete otherPlayer.hooks.onApply[instance]
 		delete otherPlayer.hooks.onTurnEnd[instance]
 	}
 
