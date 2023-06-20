@@ -37,7 +37,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			if (!row || !row.hermitCard) return []
 
 			const opponentIndex = otherPlayer.board.activeRow
-			if (!opponentIndex) return []
+			if (opponentIndex === null || opponentIndex === undefined) return []
 			const opponentRow = otherPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 
@@ -51,23 +51,32 @@ class TridentSingleUseCard extends SingleUseCard {
 			return [tridentAttack]
 		}
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attackResult.attack.id !== attackId) return
+			if (attack.id !== attackId) return
 
 			const coinFlip = flipCoin(player, this.id)
 			player.coinFlips[this.id] = coinFlip
 
-			// Return to hand
-			if (coinFlip[0] === 'heads' && player.board.singleUseCard) {
-				player.board.singleUseCardUsed = false
-				discardSingleUse(game, player)
-			} else {
-				applySingleUse(game)
-			}
+			// Apply single use for Gem, she deletes custom on apply
+			applySingleUse(game)
 		}
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onApply(game, instance, pos) {
+		const {player} = pos
+		// Return to hand
+		if (player.coinFlips[this.id][0] === 'heads') {
+			// Reset single use card used, won't return to the hand otherwise
+			player.board.singleUseCardUsed = false
+			discardSingleUse(game, player)
+		}
+	}
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance

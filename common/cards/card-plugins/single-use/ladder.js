@@ -32,14 +32,14 @@ class LadderSingleUseCard extends SingleUseCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
+		const {player} = pos
 		const slots = pickedSlots[this.id] || []
-		const activeRowIndex = pos.player.board.activeRow
+		const activeRowIndex = player.board.activeRow
 
 		if (slots.length !== 1 || activeRowIndex === null) return
 
-		const playerActiveRow = pos.player.board.rows[activeRowIndex]
+		const playerActiveRow = player.board.rows[activeRowIndex]
 
-		const activeHermitCard = playerActiveRow?.hermitCard
 		const inactiveHermitCardInfo = slots[0]
 		const inactiveHermitCard = inactiveHermitCardInfo.slot.card
 
@@ -63,6 +63,8 @@ class LadderSingleUseCard extends SingleUseCard {
 		}
 
 		swapSlots(game, activePos, inactivePos)
+
+		player.board.activeRow = inactiveHermitCardInfo.row.index
 	}
 
 	/**

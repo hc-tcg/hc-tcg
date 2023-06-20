@@ -151,8 +151,8 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 					showZeroAttack = false
 				}
 				if (
-					DEBUG_CONFIG.noItemRequirements ||
-					(!isSlow &&
+					!isSlow &&
+					(DEBUG_CONFIG.noItemRequirements ||
 						hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
@@ -341,7 +341,6 @@ function* turnActionSaga(game, turnAction, turnState) {
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
-		console.log('Attack Received with type', typeAction)
 		if (!typeAction || !availableActions.includes(typeAction)) return
 		const result = yield call(attackSaga, game, turnAction, actionState)
 		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
@@ -564,22 +563,6 @@ function* turnSaga(game) {
 	game.state.timer.turnTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	// ailment logic
-
-	// row ailments
-	for (let row of currentPlayer.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration === 0) {
-				// time up, get rid of this ailment
-				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-			} else if (ailment.duration > -1) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
-			}
-		}
-	}
-
 	/** @type {{skipTurn?: boolean}} */
 	const turnConfig = {}
 
@@ -629,6 +612,22 @@ function* turnSaga(game) {
 		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'
+	}
+
+	// ailment logic
+
+	// row ailments
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			// decrease duration
+			if (ailment.duration === 1) {
+				// time up, get rid of this ailment
+				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
+			} else if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
 	}
 
 	return 'DONE'

@@ -13,7 +13,8 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			id: 'flint_&_steel',
 			name: 'Flint & Steel',
 			rarity: 'common',
-			description: "Discard your hand. Draw 3 cards.\n\nCan be used even if you do not have any cards in your hand.",
+			description:
+				'Discard your hand. Draw 3 cards.\n\nCan be used even if you do not have any cards in your hand.',
 		})
 	}
 
@@ -24,11 +25,11 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
-		if (player.hand.length < 3) return 'NO'
+		if (player.pile.length <= 3) return 'NO'
 
 		return 'YES'
 	}
-		
+
 	canApply() {
 		return true
 	}

@@ -30,6 +30,7 @@ const EFFECT_CARDS = [
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
 	new LoyaltyEffectCard(),
+	new LootingEffectCard(),
 
 	// AE cards
 	// @TODO Armor Stand (armor_stand)

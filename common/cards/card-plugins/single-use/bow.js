@@ -54,7 +54,7 @@ class BowSingleUseCard extends SingleUseCard {
 
 			const pickedSlot = pickedSlots[this.id]
 			const opponentIndex = pickedSlot[0]?.row?.index
-			if (!opponentIndex) return []
+			if (opponentIndex === null || opponentIndex === undefined) return []
 			const opponentRow = otherPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
 

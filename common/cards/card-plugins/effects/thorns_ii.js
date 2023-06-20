@@ -47,6 +47,10 @@ class ThornsIIEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		delete pos.otherPlayer.hooks.onAttack[instance]
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default ThornsIIEffectCard

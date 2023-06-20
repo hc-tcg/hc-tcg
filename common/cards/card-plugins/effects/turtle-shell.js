@@ -105,6 +105,10 @@ class TurtleShellEffectCard extends EffectCard {
 		delete pos.otherPlayer.hooks.onAttack[instance]
 		delete pos.otherPlayer.hooks.afterAttack[instance]
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default TurtleShellEffectCard

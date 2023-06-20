@@ -91,7 +91,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				if (!disable) return blockedActions
 
 				const activeRow = otherPlayer.board.activeRow
-				if (!activeRow || !targetRow) return blockedActions
+				if (activeRow === null || targetRow === null) return blockedActions
 				if (activeRow !== targetRow) return blockedActions
 
 				blockedActions.push(

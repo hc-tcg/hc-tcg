@@ -29,6 +29,10 @@ class StringEffectCard extends EffectCard {
 
 		return 'YES'
 	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
 }
 
 export default StringEffectCard

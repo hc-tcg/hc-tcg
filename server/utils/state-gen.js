@@ -44,7 +44,7 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.type)
+			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -91,7 +91,7 @@ export function getStarterPack() {
 		tokens += getCardCost(hermitCard) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.type].items += 2
+			itemCounts[hermitCard.hermitType].items += 2
 		}
 	}
 
