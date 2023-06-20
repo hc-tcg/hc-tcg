@@ -54,7 +54,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
 
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health > 0) {
+			if (opponentInactiveRows.length !== 0) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
 					duration: 0,

@@ -26,9 +26,15 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 		const {otherPlayer} = pos
 
 		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
-			if (!blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+			if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+				return blockedActions
+			}
+
+			// Make sure the other player has an active row
+			if (otherPlayer.board.activeRow !== null) {
 				blockedActions.push('CHANGE_ACTIVE_HERMIT')
 			}
+
 			return blockedActions
 		}
 
