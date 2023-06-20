@@ -48,7 +48,8 @@ class HotguyRareHermitCard extends HermitCard {
 			pickedSlots
 		)
 		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary') pos.player.custom[instance] = true
+		if (attacks[0].type === 'secondary')
+			pos.player.custom[this.getInstanceKey(instance)] = true
 
 		return attacks
 	}
@@ -67,7 +68,7 @@ class HotguyRareHermitCard extends HermitCard {
 			if (
 				!singleUseCard ||
 				singleUseCard.cardId !== 'bow' ||
-				!player.custom[instance]
+				!player.custom[this.getInstanceKey(instance)]
 			)
 				return
 
@@ -80,7 +81,7 @@ class HotguyRareHermitCard extends HermitCard {
 		}
 
 		player.hooks.onTurnEnd[instance] = () => {
-			delete player.custom[instance]
+			delete player.custom[this.getInstanceKey(instance)]
 		}
 	}
 
@@ -94,7 +95,7 @@ class HotguyRareHermitCard extends HermitCard {
 
 		delete player.hooks.beforeAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
-		delete player.custom[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {
