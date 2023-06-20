@@ -30,7 +30,7 @@ class BedEffectCard extends EffectCard {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 		if (!pos.row?.hermitCard) return 'NO'
 
 		// bed addition - hermit must also be active to attach

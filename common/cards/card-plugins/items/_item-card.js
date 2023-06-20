@@ -29,7 +29,7 @@ class ItemCard extends Card {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'item') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit
 		if (!pos.row?.hermitCard) return 'NO'

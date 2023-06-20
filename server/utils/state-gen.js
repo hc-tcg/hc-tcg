@@ -224,8 +224,11 @@ export function getPlayerState(player) {
 			getAttacks: {},
 
 			beforeAttack: {},
+			beforeDefence: {},
 			onAttack: {},
+			onDefence: {},
 			afterAttack: {},
+			afterDefence: {},
 
 			onFollowUp: {},
 			onFollowUpTimeout: {},

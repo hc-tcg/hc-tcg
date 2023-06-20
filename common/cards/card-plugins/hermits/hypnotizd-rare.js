@@ -47,7 +47,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.beforeAttack[instance] = (attack, pickedSlots) => {
@@ -64,12 +64,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			// Change attack target
 			attack.target = {
-				index: pickedHermit.row.index,
+				player: game.state.players[pickedHermit.playerId],
+				rowIndex: pickedHermit.row.index,
 				row: pickedHermit.row.state,
 			}
 
 			const pickedItem = pickedSlots[this.id]?.[1]
-			const isActive = otherPlayer.board.activeRow === pickedHermit.row?.index
+			const isActive =
+				opponentPlayer.board.activeRow === pickedHermit.row?.index
 			if (isActive || !pickedItem) return
 
 			// Discard item card

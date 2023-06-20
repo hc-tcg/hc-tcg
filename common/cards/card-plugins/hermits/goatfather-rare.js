@@ -49,7 +49,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 			pickedSlots
 		)
 
-		const {player, otherPlayer, row, rowIndex} = pos
+		const {player, opponentPlayer, row, rowIndex} = pos
 
 		if (attacks[0].type !== 'secondary') return attacks
 
@@ -58,8 +58,8 @@ class GoatfatherRareHermitCard extends HermitCard {
 
 		if (coinFlip[0] === 'tails') return attacks
 
-		const activeRow = otherPlayer.board.activeRow
-		const rows = otherPlayer.board.rows
+		const activeRow = opponentPlayer.board.activeRow
+		const rows = opponentPlayer.board.rows
 		if (activeRow === null || rowIndex === null || !row || !row.hermitCard)
 			return attacks
 		for (let i = activeRow; i < rows.length; i++) {
@@ -69,11 +69,13 @@ class GoatfatherRareHermitCard extends HermitCard {
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: {
-					index: rowIndex,
+					player,
+					rowIndex: rowIndex,
 					row: row,
 				},
 				target: {
-					index: i,
+					player: opponentPlayer,
+					rowIndex: i,
 					row: targetRow,
 				},
 				type: hermitAttackType,

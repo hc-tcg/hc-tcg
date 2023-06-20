@@ -96,13 +96,17 @@ export type BoardSlot = {
 }
 
 export type CardPos = {
-	playerId: string
 	player: PlayerState
-	otherPlayerId: string
-	otherPlayer: PlayerState
+	opponentPlayer: PlayerState
 	rowIndex: number | null
 	row: RowState | null
 	slot: Slot
+}
+
+export type RowPos = {
+	player: PlayerState
+	rowIndex: number
+	row: RowStateWithHermit
 }
 
 export type SlotPos = {

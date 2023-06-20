@@ -27,8 +27,8 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onApply(game, instance, pos) {
-		const {otherPlayer} = pos
-		const opponentActiveRow = getActiveRow(otherPlayer)
+		const {opponentPlayer} = pos
+		const opponentActiveRow = getActiveRow(opponentPlayer)
 		if (!opponentActiveRow) return
 		opponentActiveRow.ailments.push({id: 'slowness', duration: 1})
 	}

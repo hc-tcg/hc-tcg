@@ -34,7 +34,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack[instance] = (attack) => {
@@ -45,17 +45,17 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 
 			if (coinFlip[0] !== 'heads') return
 
-			otherPlayer.custom[instanceKey] = flipCoin(player, this.id)
+			opponentPlayer.custom[instanceKey] = flipCoin(player, this.id)
 		}
 
-		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
 			if (['backlash', 'ailment'].includes(attack.type)) return
 			if (!attack.attacker) return
 
-			const coinFlip = otherPlayer.custom[instanceKey]
+			const coinFlip = opponentPlayer.custom[instanceKey]
 			if (!coinFlip) return
 
-			otherPlayer.coinFlips['Opponent ' + this.name] = coinFlip
+			opponentPlayer.coinFlips['Opponent ' + this.name] = coinFlip
 
 			if (coinFlip[0] === 'heads') {
 				// Change attack target - this just works
@@ -63,9 +63,9 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			// Delete our hook at the end of opponents turn
-			delete otherPlayer.custom[instanceKey]
+			delete opponentPlayer.custom[instanceKey]
 		}
 	}
 
@@ -75,14 +75,14 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.beforeAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
-		delete otherPlayer.custom[instanceKey]
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
+		delete opponentPlayer.custom[instanceKey]
 	}
 }
 

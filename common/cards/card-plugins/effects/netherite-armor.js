@@ -22,12 +22,12 @@ class NetheriteArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, player, row} = pos
+		const {opponentPlayer, player, row} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		const activeRowIndex = pos.player.board.activeRow
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
+		opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			if (attack.target.rowIndex !== pos.rowIndex || attack.type === 'ailment')
 				return
 			if (attack.type === 'effect') {
 				attack.reduceDamage(attack.damage)
@@ -48,11 +48,11 @@ class NetheriteArmorEffectCard extends EffectCard {
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instanceKey]
 		}
 
-		otherPlayer.hooks.onApply[instance] = (instance) => {
+		opponentPlayer.hooks.onApply[instance] = (instance) => {
 			// Prevent being knocked out
 			if (activeRowIndex === pos.rowIndex && row) {
 				player.board.activeRow = pos.rowIndex
@@ -67,10 +67,10 @@ class NetheriteArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
-		delete otherPlayer.hooks.onApply[instance]
+		const {opponentPlayer, player} = pos
+		delete opponentPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
+		delete opponentPlayer.hooks.onApply[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

@@ -28,8 +28,8 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 					return a.id !== 'poison'
 				})
 			}
-			pos.otherPlayer.hooks.onApply[instance] = milkHook
-			pos.otherPlayer.hooks.afterAttack[instance] = milkHook
+			pos.opponentPlayer.hooks.onApply[instance] = milkHook
+			pos.opponentPlayer.hooks.afterAttack[instance] = milkHook
 		}
 	}
 
@@ -39,10 +39,10 @@ class MilkBucketSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		if (pos.otherPlayer.hooks.onApply[instance]) {
+		if (pos.opponentPlayer.hooks.onApply[instance]) {
 			//If this is attached as an effect
-			delete pos.otherPlayer.hooks.onApply[instance]
-			delete pos.otherPlayer.hooks.afterAttack[instance]
+			delete pos.opponentPlayer.hooks.onApply[instance]
+			delete pos.opponentPlayer.hooks.afterAttack[instance]
 		}
 	}
 

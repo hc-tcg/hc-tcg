@@ -27,14 +27,14 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
-		const opponentActiveRowIndex = otherPlayer.board.activeRow
+		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
 		if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
 			return 'NO'
 
-		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
+		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
 		const opponentEffect = opponentActiveRow.effectCard
@@ -61,13 +61,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
-		const opponentActiveRowIndex = otherPlayer.board.activeRow
+		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
 		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
-		const opponentActiveRow = otherPlayer.board.rows[opponentActiveRowIndex]
+		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
 		/** @type {SlotPos} */ const playerSlot = {

@@ -27,11 +27,11 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {otherPlayer} = pos
-		const activeRow = otherPlayer.board.activeRow
+		const {opponentPlayer} = pos
+		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		otherPlayer.board.rows[activeRow].ailments.push({
+		opponentPlayer.board.rows[activeRow].ailments.push({
 			id: 'badomen',
 			duration: 3,
 		})

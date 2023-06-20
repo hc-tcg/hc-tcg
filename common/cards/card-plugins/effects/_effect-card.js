@@ -41,7 +41,7 @@ class EffectCard extends Card {
 
 		// Wrong slot
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit card - this is considered like the wrong slot
 		if (!pos.row?.hermitCard) return 'INVALID'

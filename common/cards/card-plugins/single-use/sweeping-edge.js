@@ -25,11 +25,11 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const {otherPlayer} = pos
-		const activeRow = otherPlayer.board.activeRow
+		const {opponentPlayer} = pos
+		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return 'NO'
 
-		const rows = otherPlayer.board.rows
+		const rows = opponentPlayer.board.rows
 		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
 			(index) => index >= 0 && index < rows.length
 		)
@@ -53,11 +53,11 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {otherPlayer} = pos
-		const activeRow = otherPlayer.board.activeRow
+		const {opponentPlayer} = pos
+		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		const rows = otherPlayer.board.rows
+		const rows = opponentPlayer.board.rows
 		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
 			(index) => index >= 0 && index < rows.length
 		)

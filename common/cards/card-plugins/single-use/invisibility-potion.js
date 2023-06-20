@@ -25,22 +25,22 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
 	onApply(game, instance, pos, pickedSlots) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		const coinFlip = flipCoin(player, this.id)
 		player.coinFlips[this.id] = coinFlip
 
 		const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
+		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (['primary', 'secondary', 'zero'].includes(attack.type)) {
 				attack.multiplyDamage(multiplier)
 			}
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = () => {
-			delete otherPlayer.hooks.onAttack[instance]
-			delete otherPlayer.hooks.afterAttack[instance]
+		opponentPlayer.hooks.afterAttack[instance] = () => {
+			delete opponentPlayer.hooks.onAttack[instance]
+			delete opponentPlayer.hooks.afterAttack[instance]
 		}
 	}
 }

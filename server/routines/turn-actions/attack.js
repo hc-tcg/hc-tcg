@@ -107,11 +107,10 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
  * @returns {AttackResult}
  */
 function executeAttack(game, attack) {
-	const {target, damage, damageMultiplier, defence} = attack
+	const {target, damage, damageMultiplier} = attack
 
 	// Calculate damage
-	const initialDamage = damage * damageMultiplier
-	const finalDamage = Math.max(initialDamage - defence.damageReduction, 0)
+	const finalDamage = Math.max(damage * damageMultiplier, 0)
 
 	const {row: targetRow} = target
 	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
@@ -127,7 +126,7 @@ function executeAttack(game, attack) {
 	const result = {
 		attack,
 		totalDamage: currentHealth - newHealth,
-		blockedDamage: initialDamage - finalDamage,
+		blockedDamage: 0,
 	}
 
 	// Attack result
@@ -317,7 +316,8 @@ export function runAilmentAttacks(game, player) {
 
 		const attack = new AttackModel({
 			target: {
-				index: i,
+				player,
+				rowIndex: i,
 				row,
 			},
 			type: 'ailment',
