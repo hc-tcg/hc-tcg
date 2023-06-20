@@ -22,7 +22,7 @@ class LoyaltyEffectCard extends EffectCard {
 		const {player} = pos
 
 		player.hooks.onHermitDeath[instance] = (hermitPos) => {
-			if (!hermitPos.rowIndex || !hermitPos.row) return
+			if (hermitPos.rowIndex === null || !hermitPos.row) return
 			if (hermitPos.rowIndex !== pos.rowIndex) return
 
 			// Return all attached item cards to the hand
