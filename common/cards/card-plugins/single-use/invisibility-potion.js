@@ -36,6 +36,10 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			if (['primary', 'secondary', 'zero'].includes(attack.type)) {
 				attack.multiplyDamage(multiplier)
 			}
+
+			if (attack.type === 'weakness') {
+				attack.multiplyDamage(multiplier ? 1 : 0)
+			}
 		}
 
 		opponentPlayer.hooks.afterAttack[instance] = () => {
