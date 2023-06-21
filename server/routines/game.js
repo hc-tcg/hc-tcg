@@ -444,6 +444,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				)
 			}
 
+			blockedActions.push(...DEBUG_CONFIG.blockedActions)
+
 			// Initial blocking of actions
 			availableActions = availableActions.filter(
 				(action) => !blockedActions.includes(action)
@@ -461,6 +463,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 					(action) => !blockedActions.includes(action)
 				)
 			}
+
+			availableActions.push(...DEBUG_CONFIG.availableActions)
 
 			// End of available actions code
 
@@ -604,7 +608,7 @@ function* turnSaga(game) {
 	const drawCard = currentPlayer.pile.shift()
 	if (drawCard) {
 		currentPlayer.hand.push(drawCard)
-	} else {
+	} else if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
 		//console.log('Player dead: ', {
 		//	noCards: true,
 		//	turn: game.state.turn,

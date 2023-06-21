@@ -134,6 +134,11 @@ function runBeforeAttackHooks(attacks, pickedSlots = {}) {
 		const beforeAttackKeys = Object.keys(player.hooks.beforeAttack)
 		const beforeAttacks = Object.values(player.hooks.beforeAttack)
 
+		if (DEBUG_CONFIG.disableDamage) {
+			attack.reduceDamage(attack.damage)
+			attack.lockDamage()
+		}
+
 		for (let i = 0; i < beforeAttackKeys.length; i++) {
 			const instance = beforeAttackKeys[i]
 			// if we are not ignoring this hook, call it
