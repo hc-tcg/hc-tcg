@@ -368,7 +368,7 @@ function* attackSaga(game, turnAction, actionState) {
 	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
 
 	// Run all the code stuff
-	runAllAttacks(attacks)
+	runAllAttacks(attacks, pickedSlots)
 
 	return 'DONE'
 }

@@ -41,7 +41,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (!activePos) return []
 
 			const pickedSlot = pickedSlots[this.id]
-			if (pickedSlot.length !== 1) return
+			if (!pickedSlot || pickedSlot.length !== 1) return
 			const pickedHermit = pickedSlot[0]
 			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
 			const pickedPlayer = game.state.players[pickedHermit.playerId]
@@ -77,6 +77,12 @@ class EggSingleUseCard extends SingleUseCard {
 		}
 	}
 
+	/**
+	 *
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onAttack[instance]
