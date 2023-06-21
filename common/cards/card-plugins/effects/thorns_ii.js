@@ -19,14 +19,15 @@ class ThornsIIEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onDefence[instance] = (attack) => {
 			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
 
-			if (attack.attacker && player.board.activeRow === pos.rowIndex) {
+			if (attack.attacker && attack.target.rowIndex === pos.rowIndex) {
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
+					attacker: attack.target,
 					target: attack.attacker,
 					type: 'backlash',
 				}).addDamage(20)
@@ -45,7 +46,7 @@ class ThornsIIEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.opponentPlayer.hooks.onAttack[instance]
+		delete pos.player.hooks.onDefence[instance]
 	}
 
 	getExpansion() {
