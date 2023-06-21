@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -30,16 +30,20 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+
 			const attacks = []
 			const slots = pickedSlots[this.id]
 			for (const slot of slots) {
 				if (!slot.row || !slot.row.state.hermitCard) continue
-				const player = game.state.players[slot.playerId]
+				const targetPlayer = game.state.players[slot.playerId]
 				attacks.push(
 					new AttackModel({
 						id: this.getInstanceKey(instance),
+						attacker: activePos,
 						target: {
-							player,
+							player: targetPlayer,
 							rowIndex: slot.row.index,
 							row: slot.row.state,
 						},

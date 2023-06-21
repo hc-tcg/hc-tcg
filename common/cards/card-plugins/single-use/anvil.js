@@ -1,5 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
@@ -27,28 +27,31 @@ class AnvilSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
-			const activeRow = player.board.activeRow
-			if (activeRow === null) return []
-			const oppositeRow = opponentPlayer.board.rows[activeRow]
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const activeIndex = activePos.rowIndex
+
+			const oppositeRow = opponentPlayer.board.rows[activeIndex]
 			if (!oppositeRow || !oppositeRow.hermitCard) return []
 			const opponentRows = opponentPlayer.board.rows
 
 			const attacks = []
-			for (let i = activeRow; i < opponentRows.length; i++) {
+			for (let i = activeIndex; i < opponentRows.length; i++) {
 				const opponentRow = opponentRows[i]
 				if (!opponentRow || !opponentRow.hermitCard) continue
 				const attack = new AttackModel({
 					id: this.getInstanceKey(
 						instance,
-						activeRow === i ? 'active' : 'inactive'
+						activeIndex === i ? 'active' : 'inactive'
 					),
+					attacker: activePos,
 					target: {
 						player: opponentPlayer,
 						rowIndex: i,
 						row: opponentRow,
 					},
 					type: 'effect',
-				}).addDamage(i === activeRow ? 30 : 10)
+				}).addDamage(i === activeIndex ? 30 : 10)
 
 				attacks.push(attack)
 			}

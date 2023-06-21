@@ -1,6 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
 
 class NetheriteSwordSingleUseCard extends SingleUseCard {
@@ -22,23 +22,15 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
-
-			const opponentIndex = opponentPlayer.board.activeRow
-			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return []
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {
-					player: opponentPlayer,
-					rowIndex: opponentIndex,
-					row: opponentRow,
-				},
+				attacker: activePos,
+				target: opponentActivePos,
 				type: 'effect',
 			}).addDamage(60)
 

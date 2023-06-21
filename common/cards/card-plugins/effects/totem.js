@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {discardCard} from '../../../../server/utils'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -19,14 +20,19 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		pos.opponentPlayer.hooks.afterAttack[instance] = (result) => {
-			const targetRow = result.attack.target.row
-			if (!targetRow || targetRow.health) return
-			if (targetRow.effectCard?.cardInstance !== instance) return
+		const {player} = pos
 
-			targetRow.health = 10
-			targetRow.ailments = []
-			discardCard(game, targetRow.effectCard)
+		// If we are attacked from any source
+		player.hooks.afterDefence[instance] = (attack) => {
+			if (!isTargetingPos(attack, pos)) return
+			const {row} = attack.target
+			if (!row.health) return
+
+			row.health = 10
+			row.ailments = []
+
+			// This will remove this hook, so it'll only be called once
+			discardCard(game, row.effectCard)
 		}
 	}
 
@@ -37,7 +43,7 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.opponentPlayer.hooks.afterAttack[instance]
+		delete pos.player.hooks.afterDefence[instance]
 	}
 }
 

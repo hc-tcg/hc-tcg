@@ -25,7 +25,7 @@ class LootingEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.afterAttack[instance] = (attack) => {
 			// This needs to happen after Loyalty
 			opponentPlayer.hooks.onHermitDeath[instance] = (hermitPos) => {
 				// Don't activate if the row has no item cards

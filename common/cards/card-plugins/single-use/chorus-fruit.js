@@ -26,7 +26,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.afterAttack[instance] = (attack) => {
 			applySingleUse(game)
 
 			// Only apply single use once

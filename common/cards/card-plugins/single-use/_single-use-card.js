@@ -5,7 +5,6 @@ import Card from '../_card'
 /**
  * @typedef {import('../../../types/cards').SingleUseDefs} SingleUseDefs
  * @typedef {import('../../../types/cards').CardPos} CardPos
- * @typedef {import('common/types/attack').AttackResult} AttackResult
  * @typedef {import('../../../types/pick-process').PickedSlots} PickedSlots
  */
 

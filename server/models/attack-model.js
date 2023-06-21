@@ -57,6 +57,7 @@ export class AttackModel {
 		return this
 	}
 
+	// @TODO Add id to this method, then we store exactly where all damage comes from, by id
 	/**
 	 * Adds damage to the attack
 	 * @param {number} amount

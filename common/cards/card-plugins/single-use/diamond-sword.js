@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 
 class DiamondSwordSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -22,10 +22,8 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
 
 			const opponentIndex = opponentPlayer.board.activeRow
 			if (opponentIndex === null || opponentIndex === undefined) return []
@@ -34,6 +32,7 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
+				attacker: activePos,
 				target: {
 					player: opponentPlayer,
 					rowIndex: opponentIndex,

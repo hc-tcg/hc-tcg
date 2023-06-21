@@ -42,9 +42,7 @@ class TangoTekRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
-			const {attack} = attackResult
-
+		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'

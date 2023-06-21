@@ -5,6 +5,7 @@ import {
 	applySingleUse,
 	rowHasItem,
 	getItemCardsEnergy,
+	getActiveRowPos,
 } from '../../../../server/utils'
 
 /**
@@ -46,24 +47,16 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return []
 
-			const opponentIndex = opponentPlayer.board.activeRow
-			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
-
-			const multiplier = getItemCardsEnergy(game, opponentRow)
+			const multiplier = getItemCardsEnergy(game, opponentActivePos.row)
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				target: {
-					player: opponentPlayer,
-					rowIndex: opponentIndex,
-					row: opponentRow,
-				},
+				attacker: activePos,
+				target: opponentActivePos,
 				type: 'effect',
 			}).addDamage(Math.min(80, 20 * multiplier))
 

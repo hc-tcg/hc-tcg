@@ -53,9 +53,7 @@ class GrianRareHermitCard extends HermitCard {
 		const effectKey = this.getInstanceKey(instance, 'effectCard')
 		const targetKey = this.getInstanceKey(instance, 'targetInstance')
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
-			const {attack} = attackResult
-
+		player.hooks.afterAttack[instance] = (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 
 			if (attack.type !== 'primary') return

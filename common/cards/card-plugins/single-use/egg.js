@@ -1,5 +1,9 @@
 import SingleUseCard from './_single-use-card'
-import {flipCoin, getNonEmptyRows} from '../../../../server/utils'
+import {
+	flipCoin,
+	getActiveRowPos,
+	getNonEmptyRows,
+} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
@@ -33,6 +37,9 @@ class EggSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+
 			const pickedSlot = pickedSlots[this.id]
 			if (pickedSlot.length !== 1) return
 			const pickedHermit = pickedSlot[0]
@@ -46,6 +53,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
+					attacker: activePos,
 					target: {
 						player: pickedPlayer,
 						rowIndex: pickedHermit.row.index,
@@ -63,7 +71,7 @@ class EggSingleUseCard extends SingleUseCard {
 			delete player.hooks.onAttack[instance]
 		}
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.afterAttack[instance] = (attack) => {
 			const eggIndex = player.custom[this.getInstanceKey(instance)]
 			opponentPlayer.board.activeRow = eggIndex
 		}

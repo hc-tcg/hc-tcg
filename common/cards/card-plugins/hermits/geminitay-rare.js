@@ -38,8 +38,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
-		player.hooks.afterAttack[instance] = (result) => {
-			const attack = result.attack
+		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'

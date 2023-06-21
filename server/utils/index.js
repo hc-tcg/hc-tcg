@@ -345,6 +345,22 @@ export function getActiveRow(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {import('types/cards').RowPos | null}
+ */
+export function getActiveRowPos(playerState) {
+	const rowIndex = playerState.board.activeRow
+	if (rowIndex === null) return null
+	const row = playerState.board.rows[rowIndex]
+	if (!row.hermitCard) return null
+	return {
+		player: playerState,
+		rowIndex,
+		row,
+	}
+}
+
+/**
+ * @param {PlayerState} playerState
  * @param {boolean} includeActive
  * @returns {import('types/cards').RowPos[]}
  */

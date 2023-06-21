@@ -1,6 +1,5 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
-import {AttackResult} from './attack'
 import {CardPos, EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
@@ -109,9 +108,9 @@ export type PlayerState = {
 		/** Instance key -> Hook called for every attack that targets our side of the board */
 		onDefence: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
 		/** Instance key -> Hook called after the main attack loop, for every attack from our side of the board */
-		afterAttack: Hook<(attackResult: AttackResult) => void>
+		afterAttack: Hook<(attack: AttackModel) => void>
 		/** Instance key -> Hook called after the main attack loop, for every attack targeting our side of the board */
-		afterDefence: Hook<(attackResult: AttackResult) => void>
+		afterDefence: Hook<(attack: AttackModel) => void>
 
 		/** Instance key -> hook called on follow up */
 		onFollowUp: Hook<

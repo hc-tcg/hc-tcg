@@ -1,7 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 
 class TNTSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -22,29 +22,22 @@ class TNTSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const rowIndex = player.board.activeRow
-			if (rowIndex === null) return []
-			const row = player.board.rows[rowIndex]
-			if (!row || !row.hermitCard) return []
-
-			const opponentIndex = opponentPlayer.board.activeRow
-			if (opponentIndex === null || opponentIndex === undefined) return []
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return []
 
 			const tntAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
-				target: {
-					player: opponentPlayer,
-					rowIndex: opponentIndex,
-					row: opponentRow,
-				},
+				attacker: activePos,
+				target: opponentActivePos,
 				type: 'effect',
 			}).addDamage(60)
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
-				target: {player, rowIndex, row},
+				attacker: activePos,
+				target: activePos,
 				type: 'backlash',
 			}).addDamage(20)
 

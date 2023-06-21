@@ -6,7 +6,6 @@ import Card from '../_card'
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
  * @typedef {import('../../../types/cards').CardPos} CardPos
  * @typedef {import('../../../types/cards').CardTypeT} CardTypeT
- * @typedef {import('../../../types/attack').AttackResult} AttackResult
  */
 
 class EffectCard extends Card {

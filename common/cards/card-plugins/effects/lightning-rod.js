@@ -25,6 +25,8 @@ class LightningRodEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, row, rowIndex} = pos
+
+		// Only on opponents turn
 		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
 			if (['backlash', 'ailment'].includes(attack.type)) return
 			if (!row || rowIndex === null || !row.hermitCard) return
@@ -32,8 +34,8 @@ class LightningRodEffectCard extends EffectCard {
 			attack.target.row = row
 		}
 
-		opponentPlayer.hooks.afterAttack[instance] = (attackResult) => {
-			if (attackResult.attack.target.rowIndex !== rowIndex) return
+		opponentPlayer.hooks.afterAttack[instance] = (attack) => {
+			if (attack.target.rowIndex !== rowIndex || attack.damage <= 0) return
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}
