@@ -12,7 +12,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			id: 'bad_omen',
 			name: 'Bad Omen',
 			rarity: 'rare',
-			description: `All of your opponent's coin flips are tails for the next 3 turns.`,
+			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails..`,
 		})
 	}
 
