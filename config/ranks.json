@@ -31,7 +31,7 @@
 	"vintagebeef_rare": 1,
 	"falsesymmetry_rare": 1,
 	"goodtimeswithscar_rare": 1,
-	"rendog_rare": 1,
+	"rendog_rare": 2,
 
 	"EXPLORER": "",
 	"ijevin_common": 0,
@@ -46,7 +46,7 @@
 	"iskall85_rare": 0,
 	"tangotek_rare": 1,
 	"docm77_rare": 2,
-	"joehills_rare": 3,
+	"joehills_rare": 2,
 
 	"MINER": "",
 	"tinfoilchef_common": 0,
@@ -55,9 +55,9 @@
 	"tinfoilchef_ultra_rare": 2,
 
 	"PRANKSTER": "",
-	"grian_rare": 4,
-	"mumbojumbo_rare": 5,
-	"stressmonster101_rare": 5,
+	"grian_rare": 2,
+	"mumbojumbo_rare": 3,
+	"stressmonster101_rare": 4,
 
 	"PVP": "",
 	"falsesymmetry_common": 0,
@@ -95,11 +95,8 @@
 	"knockback": 0,
 	"looting": 0,
 	"loyalty": 0,
-	"mending": 0,
 	"milk_bucket": 0,
-	"shield": 0,
 	"splash_potion_of_healing": 0,
-	"spyglass": 0,
 	"thorns": 0,
 	"water_bucket": 0,
 
@@ -113,27 +110,29 @@
 	"flint_&_steel": 1,
 	"fortune": 1,
 	"lead": 1,
-	"wolf": 1,
+	"mending": 1,
+	"spyglass": 1,
 
 	"bed": 2,
 	"chest": 2,
 	"emerald": 2,
 	"fishing_rod": 2,
+	"golden_apple": 3,
 	"golden_axe": 2,
 	"instant_health_ii": 2,
 	"iron_armor": 2,
+	"shield": 2,
 	"tnt": 2,
+	"wolf": 2,
 
 	"diamond_armor": 3,
 	"netherite_sword": 3,
 	"lava_bucket": 3,
 	"splash_potion_of_poison": 3,
 
+	"clock": 4,
 	"netherite_armor": 4,
 	"totem": 4,
-	"golden_apple": 4,
-
-	"clock": 5,
 
 	" - ITEMS - ": "",
 
@@ -167,37 +166,37 @@
 	"helsknight_rare": 2,
 	"humancleo_rare": 2,
 	"goatfather_rare": 2,
-	"hotguy_rare": 1,
+	"hotguy_rare": 2,
 	"jingler_rare": 1,
 	"llamadad_rare": 2,
-	"potatoboy_rare": 2,
+	"potatoboy_rare": 1,
 	"poultryman_common": 0,
 	"renbob_rare": 1,
 
 	" - ALTER EGOS EFFECTS - ": "",
 
+	"anvil": 0,
 	"command_block": 0,
 	"ender_pearl": 0,
 	"fire_charge": 0,
 	"piston": 0,
-	"potion_of_weakness": 0,
 
-	"anvil": 1,
 	"chainmail_armor": 1,
+	"egg": 1,
 	"splash_potion_of_healing_ii": 1,
 	"target_block": 1,
 	"thorns_ii": 1,
-	"trident": 1,
 	"turtle_shell": 1,
 
 	"armor_stand": 2,
-	"egg": 2,
+	"bad_omen": 2,
 	"lightning_rod": 2,
 	"potion_of_slowness": 2,
+	"potion_of_weakness": 2,
 	"string": 2,
 	"sweeping_edge": 2,
 	"thorns_iii": 2,
+	"trident": 2,
 
-	"bad_omen": 3,
 	"ladder": 3
 }
