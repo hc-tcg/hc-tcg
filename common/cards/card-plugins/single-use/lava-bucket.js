@@ -22,22 +22,25 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const opponentActiveRow = pos.opponentPlayer.board.activeRow
-		if (opponentActiveRow === null) return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		const hasDamageEffect = pos.opponentPlayer.board.rows[
-			opponentActiveRow
-		].ailments.some((ailment) => {
-			return ailment.id === 'fire' || ailment.id === 'poison'
-		})
-		if (!hasDamageEffect) {
-			pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
-				id: 'fire',
-				duration: -1,
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const opponentActiveRow = pos.opponentPlayer.board.activeRow
+			if (opponentActiveRow === null) return
+
+			const hasDamageEffect = pos.opponentPlayer.board.rows[
+				opponentActiveRow
+			].ailments.some((ailment) => {
+				return ailment.id === 'fire' || ailment.id === 'poison'
 			})
+			if (!hasDamageEffect) {
+				pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
+					id: 'fire',
+					duration: -1,
+				})
+			}
 		}
 	}
 
@@ -51,6 +54,16 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

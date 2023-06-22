@@ -25,15 +25,28 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		for (let row of pos.player.board.rows) {
-			if (!row.hermitCard) continue
-			const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
-			if (!currentRowInfo) continue
-			row.health = Math.min(row.health + 30, currentRowInfo.health)
+	onAttach(game, instance, pos) {
+		const {player} = pos
+
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			for (let row of player.board.rows) {
+				if (!row.hermitCard) continue
+				const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
+				if (!currentRowInfo) continue
+				row.health = Math.min(row.health + 30, currentRowInfo.health)
+			}
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {

@@ -285,7 +285,7 @@ export function validPick(gameState, req, pickedSlot) {
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
 	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
-	if (cardType === 'effect' && !validRemovable(req.removable || true, card))
+	if (slotType === 'effect' && !validRemovable(req.removable || true, card))
 		return false
 	if (!validAdjacent(req.adjacent, gameState, pickedSlot, req)) return false
 

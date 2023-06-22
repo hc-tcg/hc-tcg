@@ -32,43 +32,46 @@ class MendingSingleUseCard extends singleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const pickedCards = pickedSlots[this.id] || []
-
-		if (pickedCards.length !== 1) return
-
-		const targetSlotInfo = pickedCards[0]
+	onAttach(game, instance, pos) {
 		const {player} = pos
-		if (player.board.activeRow === null || !targetSlotInfo.row) return
-		const playerActiveRow = player.board.rows[player.board.activeRow]
-		if (
-			targetSlotInfo.row.state.effectCard !== null ||
-			!playerActiveRow.effectCard
-		)
-			return
 
-		// swap slots
-		/** @type {SlotPos} */ const sourcePos = {
-			rowIndex: player.board.activeRow,
-			row: playerActiveRow,
-			slot: {
-				index: 0,
-				type: 'effect',
-			},
+		player.hooks.onApply[instance] = (pickedSlots) => {
+			const pickedCards = pickedSlots[this.id] || []
+
+			if (pickedCards.length !== 1) return
+
+			const targetSlotInfo = pickedCards[0]
+			const {player} = pos
+			if (player.board.activeRow === null || !targetSlotInfo.row) return
+			const playerActiveRow = player.board.rows[player.board.activeRow]
+			if (
+				targetSlotInfo.row.state.effectCard !== null ||
+				!playerActiveRow.effectCard
+			)
+				return
+
+			// swap slots
+			/** @type {SlotPos} */ const sourcePos = {
+				rowIndex: player.board.activeRow,
+				row: playerActiveRow,
+				slot: {
+					index: 0,
+					type: 'effect',
+				},
+			}
+
+			/** @type {SlotPos} */ const targetPos = {
+				rowIndex: targetSlotInfo.row.index,
+				row: targetSlotInfo.row.state,
+				slot: {
+					index: targetSlotInfo.slot.index,
+					type: 'effect',
+				},
+			}
+
+			swapSlots(game, sourcePos, targetPos)
 		}
-
-		/** @type {SlotPos} */ const targetPos = {
-			rowIndex: targetSlotInfo.row.index,
-			row: targetSlotInfo.row.state,
-			slot: {
-				index: targetSlotInfo.slot.index,
-				type: 'effect',
-			},
-		}
-
-		swapSlots(game, sourcePos, targetPos)
 	}
 
 	/**
