@@ -40,6 +40,12 @@ export class AttackModel {
 		this.damageMultiplier = 1
 
 		/**
+		 * The damage reduction
+		 * @type {number}
+		 */
+		this.damageReduction = 0
+
+		/**
 		 * Is the damage on this attack changeable?
 		 * @type {boolean}
 		 */
@@ -74,7 +80,7 @@ export class AttackModel {
 	 */
 	reduceDamage(amount) {
 		if (this.damageLocked) return this
-		this.damage = Math.max(this.damage - amount, 0)
+		this.damageReduction += amount
 		return this
 	}
 
