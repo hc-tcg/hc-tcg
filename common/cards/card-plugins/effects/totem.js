@@ -26,7 +26,7 @@ class TotemEffectCard extends EffectCard {
 		player.hooks.afterDefence[instance] = (attack) => {
 			if (!isTargetingPos(attack, pos)) return
 			const {row} = attack.target
-			if (!row.health) return
+			if (row.health) return
 
 			row.health = 10
 			row.ailments = []
