@@ -188,6 +188,7 @@ export class GameModel {
 	addPlayer(player) {
 		if (this.getPlayers().length > 2)
 			throw new Error('Game can have only 2 players')
+		if (!player) throw new Error('Player is null')
 		this.players[player.playerId] = player
 	}
 
