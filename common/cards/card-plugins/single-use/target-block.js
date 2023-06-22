@@ -39,6 +39,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return
 				attack.target.rowIndex = pickedSlot.row.index
 				attack.target.row = pickedSlot.row.state
+				delete player.hooks.beforeAttack[instance]
 			}
 		}
 	}
@@ -64,7 +65,6 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.beforeAttack[instance]
 		delete player.hooks.onApply[instance]
 	}
 
