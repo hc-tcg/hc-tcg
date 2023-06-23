@@ -93,10 +93,16 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onApply[instance]
 		delete player.custom[this.getInstanceKey(instance)]
+		delete player.custom[this.id]
 	}
 }
 

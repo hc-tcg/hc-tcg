@@ -80,6 +80,7 @@ class TridentSingleUseCard extends SingleUseCard {
 		delete player.hooks.getAttacks[instance]
 		delete player.hooks.onApply[instance]
 		delete player.hooks.onAttack[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {
