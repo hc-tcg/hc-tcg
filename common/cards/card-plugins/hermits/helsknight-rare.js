@@ -48,8 +48,7 @@ class HelsknightRareHermitCard extends HermitCard {
 		opponentPlayer.hooks.onApply[instance] = () => {
 			if (!player.custom[instance]) return
 			if (!opponentPlayer.board.singleUseCard) return
-			const coinFlip = flipCoin(opponentPlayer, this.id, 1)
-			opponentPlayer.coinFlips[this.id] = coinFlip
+			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
 
 			if (coinFlip[0] == 'heads') {
 				moveCardToHand(game, opponentPlayer.board.singleUseCard, true)

@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardSingleUse} from '../../../../server/utils'
+import {discardSingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook

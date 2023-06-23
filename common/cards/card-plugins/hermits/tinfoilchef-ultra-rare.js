@@ -52,7 +52,6 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			if (limit[opponentActiveRow.hermitCard.cardInstance]) return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 
 			limit[opponentActiveRow.hermitCard.cardInstance] = true

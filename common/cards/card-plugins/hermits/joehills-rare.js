@@ -61,8 +61,6 @@ class JoeHillsRareHermitCard extends HermitCard {
 			}
 
 			const coinFlip = flipCoin(player, this.id, 1)
-			player.coinFlips[this.id] = coinFlip
-
 			if (coinFlip[0] === 'heads') player.custom[heads] = true
 			player.custom[state] = 'used-timeskip'
 		}

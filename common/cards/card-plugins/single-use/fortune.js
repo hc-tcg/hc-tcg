@@ -19,18 +19,8 @@ class FortuneSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
-	onAttach(game, instance, pos) {
-		const {player} = pos
-
-		player.hooks.beforeAttack[instance] = (attack) => {
-			applySingleUse(game)
-			delete player.hooks.beforeAttack[instance]
-		}
+	canApply() {
+		return true
 	}
 
 	/**
@@ -48,18 +38,11 @@ class FortuneSingleUseCard extends SingleUseCard {
 			}
 			return coinFlips
 		}
-	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
-	onDetach(game, instance, pos) {
-		const {player} = pos
-
-		delete player.hooks.beforeAttack[instance]
-		delete player.hooks.onCoinFlip[instance]
+		player.hooks.onTurnStart[instance] = () => {
+			delete player.hooks.onTurnStart[instance]
+			delete player.hooks.onCoinFlip[instance]
+		}
 	}
 }
 

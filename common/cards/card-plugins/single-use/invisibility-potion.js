@@ -28,8 +28,6 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		const coinFlip = flipCoin(player, this.id)
-		player.coinFlips[this.id] = coinFlip
-
 		const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
