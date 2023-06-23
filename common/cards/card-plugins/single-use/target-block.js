@@ -27,13 +27,14 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
 		const setWeakness = this.getInstanceKey(instance, 'setWeakness')
-		const pickedSlot = pickedSlots[this.id]?.[0]
-		if (!pickedSlot) return
+
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const pickedSlot = pickedSlots[this.id]?.[0]
+			if (!pickedSlot) return
 
 		player.hooks.beforeAttack[instance] = (attack) => {
 			if (attack.type === 'weakness' && !player.custom[setWeakness]) {

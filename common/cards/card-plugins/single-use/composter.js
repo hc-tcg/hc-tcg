@@ -43,26 +43,39 @@ class ComposterSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const slots = pickedSlots[this.id] || []
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		if (slots.length !== 2) return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
 
-		const pickedCard1 = slots[0]
-		const pickedCard2 = slots[1]
+			if (slots.length !== 2) return
 
-		if (pickedCard1.slot.card === null || pickedCard2.slot.card === null) return
+			const pickedCard1 = slots[0]
+			const pickedCard2 = slots[1]
 
-		// @TODO Check on ValidPicks instead
-		if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return
+			if (pickedCard1.slot.card === null || pickedCard2.slot.card === null)
+				return
 
-		discardCard(game, pickedCard1.slot.card)
-		discardCard(game, pickedCard2.slot.card)
+			// @TODO Check on ValidPicks instead
+			if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return
 
-		drawCards(player, 2)
+			discardCard(game, pickedCard1.slot.card)
+			discardCard(game, pickedCard2.slot.card)
+
+			drawCards(player, 2)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

@@ -24,17 +24,28 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {opponentPlayer} = pos
+	onAttach(game, instance, pos) {
+		const {opponentPlayer, player} = pos
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		opponentPlayer.board.rows[activeRow].ailments.push({
-			id: 'badomen',
-			duration: 3,
-		})
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			opponentPlayer.board.rows[activeRow].ailments.push({
+				id: 'badomen',
+				duration: 3,
+			})
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {

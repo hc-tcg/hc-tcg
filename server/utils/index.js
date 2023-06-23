@@ -11,6 +11,7 @@ import {getCardPos} from './cards'
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
  * @typedef {import("common/types/cards").SlotPos} SlotPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
 /**
@@ -73,28 +74,45 @@ export function hasSingleUse(playerState, id, isUsed = false) {
  * @returns {boolean}
  */
 export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
-	const {singleUseInfo, currentPlayer} = game.ds
+	const {currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return false
 	const pos = getCardPos(game, suCard.cardInstance)
 	if (!pos) return false
 
-	if (!singleUseInfo) return false
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
 	if (!cardInstance) return false
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	// Now call methods and hooks
+	// Now call hooks
+	const hooks = [
+		currentPlayer.hooks.beforeApply,
+		currentPlayer.hooks.onApply,
+		currentPlayer.hooks.afterApply,
+	]
 
-	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots, modalResult)
+	// Get a hook, sort it by the type of slot and call it
+	for (const hook of hooks) {
+		// We are gping with Effect>SingleUse>Hermit>Item because of Lightning Rod/Target Block.
+		// If we decide that we want to sort the other hooks that's probably the order we want to
+		// go with, in this case we only care that Single Use>Hermit because of Fire Charge/Piston/Gem
+		/** @type { Record<string, Array<(pickedSlots: PickedSlots, modalResult: any) => void>> } */
+		const hooksByType = {effect: [], single_use: [], hermit: [], item: []}
 
-	// Call applyEffect hook
-	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
-	for (let i = 0; i < applyEffectHooks.length; i++) {
-		applyEffectHooks[i](cardInstance)
+		for (const key of Object.keys(hook)) {
+			const cardPos = getCardPos(game, key)
+			if (cardPos && hooksByType[cardPos.slot.type]) {
+				hooksByType[cardPos.slot.type].push(hook[key])
+			}
+		}
+
+		for (const slotType of Object.keys(hooksByType)) {
+			for (const hook of hooksByType[slotType]) {
+				hook(pickedSlots, modalResult)
+			}
+		}
 	}
 
 	return true
@@ -234,7 +252,8 @@ export function discardSingleUse(game, playerState) {
 	const pos = getCardPos(game, suCard.cardInstance)
 	if (!pos) return
 
-	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
+	// Water and Milk Buckets can be on this slot so we use CARDS to get the card info
+	const cardInfo = CARDS[suCard.cardId]
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
@@ -400,7 +419,7 @@ export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
 export function getAdjacentRows(playerState) {
 	const result = []
 	const rows = playerState.board.rows
-	for (let i = 1; i < rows.length; i++) {
+	for (let i = 1; i < rows.length + 1; i++) {
 		const row = rows[i]
 		const prevRow = rows[i - 1]
 		if (row && prevRow && row.hermitCard && prevRow.hermitCard)

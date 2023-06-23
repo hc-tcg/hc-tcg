@@ -3,8 +3,6 @@ import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 import {getNonEmptyRows, isActive} from '../../../../server/utils'
 
-
-
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -23,18 +21,21 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const pickedCards = pickedSlots[this.id] || []
-		if (pickedCards.length !== 1) return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		const row = pickedCards[0].row?.state
-		if (!row || !row.health) return
-		const card = row.hermitCard
-		if (!card) return
-		const hermitInfo = HERMIT_CARDS[card.cardId]
-		row.health = Math.min(row.health + 100, hermitInfo.health)
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const pickedCards = pickedSlots[this.id] || []
+			if (pickedCards.length !== 1) return
+
+			const row = pickedCards[0].row?.state
+			if (!row || !row.health) return
+			const card = row.hermitCard
+			if (!card) return
+			const hermitInfo = HERMIT_CARDS[card.cardId]
+			row.health = Math.min(row.health + 100, hermitInfo.health)
+		}
 	}
 
 	/**
@@ -53,6 +54,16 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		if (inactiveHermits.length === 0) return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 
