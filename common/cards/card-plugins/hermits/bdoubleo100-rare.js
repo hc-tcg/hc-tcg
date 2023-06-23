@@ -50,8 +50,8 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				(a) => a.id !== 'sleeping'
 			)
 
-			// sleep for 2 turns
-			attacker.row.ailments.push({id: 'sleeping', duration: 2})
+			// sleep for 3 turns (2 + the current turn)
+			attacker.row.ailments.push({id: 'sleeping', duration: 3})
 		}
 	}
 

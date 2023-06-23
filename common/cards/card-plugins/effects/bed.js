@@ -54,11 +54,11 @@ class BedEffectCard extends EffectCard {
 			// Clear any previous sleeping
 			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 
-			// Set new sleeping for two more turns
-			row.ailments.push({id: 'sleeping', duration: 2})
+			// Set new sleeping for 3 turns (2 + the current turn)
+			row.ailments.push({id: 'sleeping', duration: 3})
 		}
 
-		player.hooks.onTurnStart[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
 			// if sleeping has worn off, discard the bed
