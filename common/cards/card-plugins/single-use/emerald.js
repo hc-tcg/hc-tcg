@@ -58,36 +58,49 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
+				return
 
-		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-		const playerActiveRow = player.board.rows[playerActiveRowIndex]
+			const opponentActiveRow =
+				opponentPlayer.board.rows[opponentActiveRowIndex]
+			const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
-		/** @type {SlotPos} */ const playerSlot = {
-			rowIndex: playerActiveRowIndex,
-			row: playerActiveRow,
-			slot: {
-				index: 0,
-				type: 'effect',
-			},
+			/** @type {SlotPos} */ const playerSlot = {
+				rowIndex: playerActiveRowIndex,
+				row: playerActiveRow,
+				slot: {
+					index: 0,
+					type: 'effect',
+				},
+			}
+			/** @type {SlotPos} */ const opponentSlot = {
+				rowIndex: opponentActiveRowIndex,
+				row: opponentActiveRow,
+				slot: {
+					index: 0,
+					type: 'effect',
+				},
+			}
+
+			swapSlots(game, playerSlot, opponentSlot)
 		}
-		/** @type {SlotPos} */ const opponentSlot = {
-			rowIndex: opponentActiveRowIndex,
-			row: opponentActiveRow,
-			slot: {
-				index: 0,
-				type: 'effect',
-			},
-		}
+	}
 
-		swapSlots(game, playerSlot, opponentSlot)
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

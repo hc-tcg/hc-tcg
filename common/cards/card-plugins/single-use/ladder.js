@@ -28,42 +28,44 @@ class LadderSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
-		const slots = pickedSlots[this.id] || []
-		const activeRowIndex = player.board.activeRow
 
-		if (slots.length !== 1 || activeRowIndex === null) return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
+			const activeRowIndex = player.board.activeRow
 
-		const playerActiveRow = player.board.rows[activeRowIndex]
+			if (slots.length !== 1 || activeRowIndex === null) return
 
-		const inactiveHermitCardInfo = slots[0]
-		const inactiveHermitCard = inactiveHermitCardInfo.slot.card
+			const playerActiveRow = player.board.rows[activeRowIndex]
 
-		if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
+			const inactiveHermitCardInfo = slots[0]
+			const inactiveHermitCard = inactiveHermitCardInfo.slot.card
 
-		/** @type {SlotPos} */ const inactivePos = {
-			rowIndex: activeRowIndex,
-			row: playerActiveRow,
-			slot: {
-				index: 0,
-				type: 'hermit',
-			},
+			if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
+
+			/** @type {SlotPos} */ const inactivePos = {
+				rowIndex: activeRowIndex,
+				row: playerActiveRow,
+				slot: {
+					index: 0,
+					type: 'hermit',
+				},
+			}
+			/** @type {SlotPos} */ const activePos = {
+				rowIndex: inactiveHermitCardInfo.row.index,
+				row: inactiveHermitCardInfo.row.state,
+				slot: {
+					index: 0,
+					type: 'hermit',
+				},
+			}
+
+			swapSlots(game, activePos, inactivePos)
+
+			player.board.activeRow = inactiveHermitCardInfo.row.index
 		}
-		/** @type {SlotPos} */ const activePos = {
-			rowIndex: inactiveHermitCardInfo.row.index,
-			row: inactiveHermitCardInfo.row.state,
-			slot: {
-				index: 0,
-				type: 'hermit',
-			},
-		}
-
-		swapSlots(game, activePos, inactivePos)
-
-		player.board.activeRow = inactiveHermitCardInfo.row.index
 	}
 
 	/**
@@ -86,6 +88,16 @@ class LadderSingleUseCard extends SingleUseCard {
 		}
 
 		return 'NO'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {

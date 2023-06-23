@@ -48,18 +48,6 @@ class SingleUseCard extends Card {
 		// default is no
 		return false
 	}
-
-	/**
-	 * Called when an instance of this card is applied
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
-	 * @param {*} modalResult
-	 */
-	onApply(game, instance, pos, pickedSlots, modalResult) {
-		// default is do nothing
-	}
 }
 
 export default SingleUseCard

@@ -86,7 +86,6 @@ class EggSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.afterAttack[instance]
-		delete player.hooks.onFollowUp[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

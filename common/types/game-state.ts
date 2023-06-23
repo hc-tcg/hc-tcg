@@ -93,8 +93,13 @@ export type PlayerState = {
 		onAttach: Hook<(instance: string) => void>
 		/** Instance key -> Hook called when a card is detached */
 		onDetach: Hook<(instance: string) => void>
+
+		/** Instance key -> Hook called before a single use card is applied */
+		beforeApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
 		/** Instance key -> Hook called when a single use card is applied */
-		onApply: Hook<(instance: string) => void>
+		onApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> Hook called after a single use card is applied */
+		afterApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
 
 		/** Instance key -> Hook that returns attacks to execute */
 		getAttacks: Hook<(pickedSlots: PickedSlots) => Array<AttackModel>>

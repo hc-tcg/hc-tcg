@@ -20,9 +20,8 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {opponentPlayer} = pos
 
 		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {

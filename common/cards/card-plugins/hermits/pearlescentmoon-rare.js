@@ -54,7 +54,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (
 				player.custom[coinFlipResult] ||
 				player.custom[status] !== 'secondary_used' ||
-				!['primary', 'secondary'].includes(attack.type)
+				['ailment', 'backlash'].includes(attack.type)
 			)
 				return
 			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
@@ -70,8 +70,8 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				player.custom[status] !== 'secondary_used' ||
-				!['primary', 'secondary'].includes(attack.type) ||
-				player.custom[coinFlipResult] === 'heads'
+				['ailment', 'backlash'].includes(attack.type) ||
+				player.custom[coinFlipResult] === 'tails'
 			) {
 				return
 			}

@@ -95,6 +95,17 @@ export class AttackModel {
 	}
 
 	/**
+	 * Calculates the damage for this attack
+	 * @returns {number}
+	 */
+	calculateDamage() {
+		return Math.max(
+			this.damage * this.damageMultiplier - this.damageReduction,
+			0
+		)
+	}
+
+	/**
 	 * Locks damage for this attack
 	 *
 	 * WARNING: Do not use lightly!

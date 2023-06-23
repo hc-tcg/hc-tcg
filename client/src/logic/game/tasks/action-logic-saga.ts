@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
+import CARDS from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModal,
@@ -29,10 +29,11 @@ function* borrowSaga(): SagaIterator {
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
-	const cardInfo = SINGLE_USE_CARDS[card.cardId]
+	// We use CARDS instead of SINGLE_USE_CARDS because of Water and Milk Buckets
+	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.canApply() && cardInfo.pickOn !== 'apply') {
+	if (cardInfo instanceof SingleUseCard && cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))

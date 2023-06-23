@@ -220,7 +220,10 @@ export function getPlayerState(player) {
 
 			onAttach: {},
 			onDetach: {},
+
+			beforeApply: {},
 			onApply: {},
+			afterApply: {},
 
 			getAttacks: {},
 

@@ -17,6 +17,8 @@ import ThornsIIIEffectCard from './thorns_iii'
 import ChainmailArmorEffectCard from './chainmail-armor'
 import CommandBlockEffectCard from './command-block'
 import LightningRodEffectCard from './lightning-rod'
+import WaterBucketEffectCard from './water-bucket'
+import MilkBucketEffectCard from './milk-bucket'
 
 /** @type {Array<EffectCard>} */
 const EFFECT_CARDS = [
@@ -31,6 +33,8 @@ const EFFECT_CARDS = [
 	new ThornsEffectCard(),
 	new LoyaltyEffectCard(),
 	new LootingEffectCard(),
+	new WaterBucketEffectCard(),
+	new MilkBucketEffectCard(),
 
 	// AE cards
 	// @TODO Armor Stand (armor_stand)

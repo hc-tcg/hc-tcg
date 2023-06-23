@@ -35,42 +35,45 @@ class LeadSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const slots = pickedSlots[this.id] || []
-		if (slots.length !== 2) return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		const itemCardInfo = slots[0]
-		const targetSlotInfo = slots[1]
-		if (
-			targetSlotInfo.slot.card !== null ||
-			!itemCardInfo.row ||
-			!targetSlotInfo.row
-		)
-			return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
+			if (slots.length !== 2) return
 
-		/** @type {SlotPos} */ const itemPos = {
-			rowIndex: itemCardInfo.row.index,
-			row: itemCardInfo.row.state,
-			slot: {
-				index: itemCardInfo.slot.index,
-				type: 'item',
-			},
+			const itemCardInfo = slots[0]
+			const targetSlotInfo = slots[1]
+			if (
+				targetSlotInfo.slot.card !== null ||
+				!itemCardInfo.row ||
+				!targetSlotInfo.row
+			)
+				return
+
+			/** @type {SlotPos} */ const itemPos = {
+				rowIndex: itemCardInfo.row.index,
+				row: itemCardInfo.row.state,
+				slot: {
+					index: itemCardInfo.slot.index,
+					type: 'item',
+				},
+			}
+
+			/** @type {SlotPos} */ const targetPos = {
+				rowIndex: targetSlotInfo.row.index,
+				row: targetSlotInfo.row.state,
+				slot: {
+					index: targetSlotInfo.slot.index,
+					type: 'item',
+				},
+			}
+
+			swapSlots(game, itemPos, targetPos)
+
+			return true
 		}
-
-		/** @type {SlotPos} */ const targetPos = {
-			rowIndex: targetSlotInfo.row.index,
-			row: targetSlotInfo.row.state,
-			slot: {
-				index: targetSlotInfo.slot.index,
-				type: 'item',
-			},
-		}
-
-		swapSlots(game, itemPos, targetPos)
-
-		return true
 	}
 
 	/**
@@ -87,6 +90,16 @@ class LeadSingleUseCard extends SingleUseCard {
 			return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 
