@@ -37,22 +37,34 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const slots = pickedSlots[this.id] || []
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		if (slots.length !== 1) return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
 
-		const pickedSlot = slots[0]
-		if (player.board.activeRow === null || !pickedSlot.row) return
+			if (slots.length !== 1) return
 
-		const activeRow = player.board.rows[player.board.activeRow]
-		if (activeRow.health) activeRow.health -= 10
-		player.board.rows[pickedSlot.row.index] = activeRow
-		player.board.rows[player.board.activeRow] = pickedSlot.row.state
-		player.board.activeRow = pickedSlot.row.index
+			const pickedSlot = slots[0]
+			if (player.board.activeRow === null || !pickedSlot.row) return
+
+			const activeRow = player.board.rows[player.board.activeRow]
+			if (activeRow.health) activeRow.health -= 10
+			player.board.rows[pickedSlot.row.index] = activeRow
+			player.board.rows[player.board.activeRow] = pickedSlot.row.state
+			player.board.activeRow = pickedSlot.row.index
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {

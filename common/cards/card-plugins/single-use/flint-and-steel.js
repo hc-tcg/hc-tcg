@@ -38,16 +38,27 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		for (const card of player.hand) {
-			discardCard(game, card)
-		}
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			for (const card of player.hand) {
+				discardCard(game, card)
+			}
 
-		drawCards(player, 3)
+			drawCards(player, 3)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

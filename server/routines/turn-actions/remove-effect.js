@@ -1,10 +1,9 @@
 import {discardSingleUse} from '../../utils'
 
 function* removeEffectSaga(game, turnAction, actionState) {
-	const {singleUseInfo, currentPlayer} = game.ds
+	const {currentPlayer} = game.ds
 	const {pastTurnActions} = actionState
 
-	if (!singleUseInfo) return 'INVALID'
 	if (currentPlayer.board.singleUseCardUsed) return 'INVALID'
 
 	game.hooks.removeEffect.call(turnAction, actionState)

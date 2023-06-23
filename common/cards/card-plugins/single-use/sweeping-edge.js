@@ -50,22 +50,34 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {opponentPlayer} = pos
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return
+	onAttach(game, instance, pos) {
+		const {opponentPlayer, player} = pos
 
-		const rows = opponentPlayer.board.rows
-		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
-			(index) => index >= 0 && index < rows.length
-		)
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const activeRow = opponentPlayer.board.activeRow
+			if (activeRow === null) return
 
-		for (const index of targetIndex) {
-			const effectCard = rows[index].effectCard
-			if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
+			const rows = opponentPlayer.board.rows
+			const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
+				(index) => index >= 0 && index < rows.length
+			)
+
+			for (const index of targetIndex) {
+				const effectCard = rows[index].effectCard
+				if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
+			}
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {
