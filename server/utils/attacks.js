@@ -17,7 +17,6 @@ export function isTargetingPos(attack, pos) {
 }
 
 /**
- * Returns true if the attack is targeting the card position
  * @typedef {import('../models/attack-model').AttackModel} Attack
  * @param {Attack} attack
  * @returns {Attack | null}
