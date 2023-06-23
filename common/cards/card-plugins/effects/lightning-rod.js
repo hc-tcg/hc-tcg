@@ -2,6 +2,7 @@ import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import EffectCard from './_effect-card'
 import {getCardAtPos} from '../../../../server/utils/cards'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -24,7 +25,7 @@ class LightningRodEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {opponentPlayer, row, rowIndex} = pos
+		const {player, opponentPlayer, row, rowIndex} = pos
 
 		// Only on opponents turn
 		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
@@ -35,8 +36,9 @@ class LightningRodEffectCard extends EffectCard {
 		}
 
 		opponentPlayer.hooks.afterAttack[instance] = (attack) => {
-			if (attack.target.rowIndex !== rowIndex) return
+			if (!isTargetingPos(attack, pos)) return
 			if (attack.calculateDamage() <= 0) return
+
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}
