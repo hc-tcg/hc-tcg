@@ -55,7 +55,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (opponentInactiveRows.length !== 0) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
-					duration: 0,
+					duration: 1,
 				})
 				opponentPlayer.board.activeRow = null
 				opponentPlayer.followUp = this.id
@@ -108,7 +108,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			) {
 				attack.attacker.row.ailments.push({
 					id: 'knockedout',
-					duration: 0,
+					duration: 1,
 				})
 				player.board.activeRow = null
 			}
