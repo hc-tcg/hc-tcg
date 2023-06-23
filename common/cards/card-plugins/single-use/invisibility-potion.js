@@ -42,6 +42,10 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 				delete opponentPlayer.hooks.onAttack[instance]
 				delete opponentPlayer.hooks.afterAttack[instance]
 			}
+
+			if (attack.type === 'weakness') {
+				attack.multiplyDamage(multiplier ? 1 : 0)
+			}
 		}
 	}
 
