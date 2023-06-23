@@ -35,7 +35,8 @@ class LightningRodEffectCard extends EffectCard {
 		}
 
 		opponentPlayer.hooks.afterAttack[instance] = (attack) => {
-			if (attack.target.rowIndex !== rowIndex || attack.damage <= 0) return
+			if (attack.target.rowIndex !== rowIndex) return
+			if (attack.calculateDamage() <= 0) return
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}
