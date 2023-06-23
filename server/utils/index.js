@@ -400,7 +400,7 @@ export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
 export function getAdjacentRows(playerState) {
 	const result = []
 	const rows = playerState.board.rows
-	for (let i = 1; i < rows.length; i++) {
+	for (let i = 1; i < rows.length + 1; i++) {
 		const row = rows[i]
 		const prevRow = rows[i - 1]
 		if (row && prevRow && row.hermitCard && prevRow.hermitCard)

@@ -95,9 +95,8 @@ class PistonSingleUseCard extends SingleUseCard {
 		let validPairs = 0
 		for (const rows of adjacents) {
 			if (
-				rowHasEmptyItemSlot(rows[0]) &&
-				rowHasEmptyItemSlot(rows[1]) &&
-				(rowHasItem(rows[0]) || rowHasItem(rows[1]))
+				(rowHasItem(rows[0]) && rowHasEmptyItemSlot(rows[1])) ||
+				(rowHasItem(rows[1]) && rowHasEmptyItemSlot(rows[0]))
 			)
 				validPairs++
 		}
