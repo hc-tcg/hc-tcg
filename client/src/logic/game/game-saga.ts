@@ -90,7 +90,6 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 	}
 
 	while (true) {
-		console.log('waiting')
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
 		yield call(coinFlipSaga, payload.localGameState)
 		yield put(localGameState(payload.localGameState))
