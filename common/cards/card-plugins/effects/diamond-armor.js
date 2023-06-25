@@ -12,7 +12,7 @@ class DiamondArmorEffectCard extends EffectCard {
 			id: 'diamond_armor',
 			name: 'Diamond Armor',
 			rarity: 'rare',
-			description: 'Prevent up to 20hp damage taken.',
+			description: 'Prevent up to 30hp damage taken.',
 		})
 	}
 
