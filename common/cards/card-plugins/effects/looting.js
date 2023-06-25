@@ -101,10 +101,11 @@ class LootingEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		delete player.hooks.afterAttack[instance]
 		delete player.hooks.onFollowUp[instance]
 		delete player.hooks.onFollowUpTimeout[instance]
+		delete opponentPlayer.hooks.onHermitDeath[instance]
 		delete player.custom[this.id]
 	}
 }
