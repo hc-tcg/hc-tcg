@@ -69,6 +69,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
  */
 function executeAttack(attack) {
 	const {target} = attack
+	if (!target) return
 
 	const {row: targetRow} = target
 	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
