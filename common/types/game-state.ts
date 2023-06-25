@@ -20,7 +20,7 @@ export type Ailment = {
 		| 'slowness'
 		| 'badomen'
 		| 'weakness'
-	duration: number
+	duration?: number
 }
 
 export type RowStateWithHermit = {

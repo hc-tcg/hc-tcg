@@ -38,7 +38,6 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			if (!hasDamageEffect) {
 				pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
 					id: 'fire',
-					duration: -1,
 				})
 			}
 		}
