@@ -19,6 +19,11 @@ class FortuneSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	canApply() {
+		return true
+	}
+
+
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance

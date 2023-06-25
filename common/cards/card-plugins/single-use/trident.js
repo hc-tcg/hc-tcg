@@ -51,15 +51,17 @@ class TridentSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
+			player.custom[this.getInstanceKey(instance)] = flipCoin(
+				player,
+				this.id
+			)[0]
 
 			applySingleUse(game)
 		}
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			// Return to hand
-			if (player.coinFlips[this.id][0] === 'heads') {
+			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise
 				player.board.singleUseCardUsed = false
 				discardSingleUse(game, player)
@@ -78,6 +80,7 @@ class TridentSingleUseCard extends SingleUseCard {
 		delete player.hooks.getAttacks[instance]
 		delete player.hooks.onApply[instance]
 		delete player.hooks.onAttack[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {

@@ -285,23 +285,29 @@ export function drawCards(playerState, amount) {
 }
 
 /**
- * @param {PlayerState} currentPlayer
- * @param {number} times
+ * @param {PlayerState} playerTossingCoin
  * @param {string} cardId
+ * @param {number} times
+ * @param {PlayerState | null} currentPlayer
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(currentPlayer, cardId, times = 1) {
+export function flipCoin(
+	playerTossingCoin,
+	cardId,
+	times = 1,
+	currentPlayer = null
+) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = currentPlayer.board.activeRow
+	const activeRowIndex = playerTossingCoin.board.activeRow
 	if (activeRowIndex === null) {
 		console.log(
 			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
 		)
 		return []
 	}
-	const forceTails = !!currentPlayer.board.rows[activeRowIndex].ailments.find(
-		(a) => a.id === 'badomen'
-	)
+	const forceTails = !!playerTossingCoin.board.rows[
+		activeRowIndex
+	].ailments.find((a) => a.id === 'badomen')
 
 	/** @type {Array<CoinFlipT>} */
 	let coinFlips = []
@@ -317,10 +323,17 @@ export function flipCoin(currentPlayer, cardId, times = 1) {
 		}
 	}
 
-	const coinFlipHooks = Object.values(currentPlayer.hooks.onCoinFlip)
+	const coinFlipHooks = Object.values(playerTossingCoin.hooks.onCoinFlip)
 	for (let i = 0; i < coinFlipHooks.length; i++) {
 		coinFlips = coinFlipHooks[i](cardId, coinFlips)
 	}
+
+	const name = CARDS[cardId].name
+	const player = currentPlayer || playerTossingCoin
+	player.coinFlips.push({
+		name: !currentPlayer ? name : 'Opponent ' + name,
+		tosses: coinFlips,
+	})
 
 	return coinFlips
 }

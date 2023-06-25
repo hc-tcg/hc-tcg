@@ -1,8 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
-import {AttackModel} from '../../../../server/models/attack-model'
 
 class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
@@ -41,22 +39,19 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
-
 			if (coinFlip[0] !== 'heads') return
 
-			opponentPlayer.custom[instanceKey] = flipCoin(player, this.id)
+			player.custom[instanceKey] = true
 		}
 
 		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
 			if (['backlash', 'ailment'].includes(attack.type)) return
 			if (!attack.attacker) return
 
-			const coinFlip = opponentPlayer.custom[instanceKey]
-			if (!coinFlip) return
+			const tossCoin = player.custom[instanceKey]
+			if (!tossCoin) return
 
-			opponentPlayer.coinFlips['Opponent ' + this.name] = coinFlip
-
+			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
 			if (coinFlip[0] === 'heads') {
 				// Change attack target - this just works
 				attack.target = attack.attacker

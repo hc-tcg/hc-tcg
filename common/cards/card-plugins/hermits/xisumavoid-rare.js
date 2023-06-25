@@ -39,8 +39,6 @@ class XisumavoidRareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
-
 			if (coinFlip[0] !== 'heads') return
 
 			const hasDamageEffect = attack.target.row.ailments.some(

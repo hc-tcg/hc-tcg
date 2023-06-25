@@ -32,7 +32,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
+			player.custom[this.getInstanceKey(instance)] = coinFlip[0]
 
 			// Client uses the id instead of the instance for the modal
 			player.custom[this.id] = {
@@ -54,7 +54,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				delete player.hooks.onFollowUpTimeout[instance]
 
 				if (!modalResult || !modalResult.card) return
-				if (player.coinFlips[this.id][0] !== 'heads') return // You never know
+				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
 
 				discardCard(game, modalResult.card)
 			}
@@ -66,8 +66,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				delete player.custom[this.id]
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-
-				if (player.coinFlips[this.id][0] !== 'heads') return
+				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
 
 				// Discard a random card from the opponent's hand
 				const {opponentPlayer} = pos
@@ -94,9 +93,16 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onApply[instance]
+		delete player.custom[this.getInstanceKey(instance)]
+		delete player.custom[this.id]
 	}
 }
 

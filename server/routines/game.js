@@ -532,6 +532,9 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				break
 			}
 
+			// Reset coin flips they were already shown
+			currentPlayer.coinFlips = []
+
 			// Run action logic
 			const result = yield call(
 				turnActionSaga,
@@ -588,7 +591,6 @@ function* turnSaga(game) {
 		turnEndHooks[i]()
 	}
 
-	currentPlayer.coinFlips = {}
 	currentPlayer.followUp = null
 	opponentPlayer.followUp = null
 

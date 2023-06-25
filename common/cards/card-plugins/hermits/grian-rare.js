@@ -89,7 +89,6 @@ class GrianRareHermitCard extends HermitCard {
 				player.followUp = null
 			} else {
 				const coinFlip = flipCoin(player, this.id)
-				player.coinFlips[this.id] = coinFlip
 				if (coinFlip[0] === 'tails') {
 					player.followUp = null
 				} else {

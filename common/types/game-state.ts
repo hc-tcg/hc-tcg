@@ -46,7 +46,6 @@ export type CoinFlipT = 'heads' | 'tails'
 export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
-	iterations: Array<string>
 }
 
 export type Hook<T> = Record<string, T>
@@ -56,7 +55,7 @@ export type PlayerState = {
 	followUp?: any
 	playerName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
@@ -190,7 +189,7 @@ export type LocalPlayerState = {
 	followUp?: any
 	playerName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	lives: number
 	board: {
@@ -224,11 +223,6 @@ export type LocalGameState = {
 		turnTime: number
 		turnRemaining: number
 	}
-}
-
-export type CoinFlipInfo = {
-	shownCoinFlips: Array<string>
-	turn: number
 }
 
 // state sent to client

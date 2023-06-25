@@ -46,8 +46,6 @@ class MumboJumboRareHermitCard extends HermitCard {
 				return
 
 			const coinFlip = flipCoin(player, this.id, 2)
-			player.coinFlips[this.id] = coinFlip
-
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			const pranksterAmount = player.board.rows.filter(
 				(row, index) =>

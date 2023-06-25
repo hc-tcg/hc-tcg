@@ -36,6 +36,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
+		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
 
 		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		player.hooks.onAttack[instance] = (attack) => {
@@ -48,32 +49,44 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			player.custom[status] = 'secondary_used'
 		}
 
-		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			// We don't want to flip a coin for all the attacks on the same loop, 1 toss is enough
+			if (
+				player.custom[coinFlipResult] ||
+				player.custom[status] !== 'secondary_used' ||
+				['ailment', 'backlash'].includes(attack.type)
+			)
+				return
+			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
+			player.custom[coinFlipResult] = coinFlip[0]
+		}
+
+		player.hooks.afterDefence[instance] = (attack) => {
+			// The main loop is over, you can flip a coin again for the next loop
+			delete player.custom[coinFlipResult]
+		}
+
+		// If the coin flip is heads and the opponent's attack is secondary, lock the damage to 0.
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				player.custom[status] !== 'secondary_used' ||
-				['backlash', 'ailment', 'effect'].includes(attack.type)
+				['ailment', 'backlash'].includes(attack.type) ||
+				player.custom[coinFlipResult] === 'tails'
 			) {
 				return
 			}
 
-			if (!opponentPlayer.coinFlips[this.id]) {
-				const coinFlip = flipCoin(opponentPlayer, this.id)
-				opponentPlayer.coinFlips[this.id] = coinFlip
-			}
-
-			if (opponentPlayer.coinFlips[this.id][0] === 'heads') {
-				attack.multiplyDamage(0)
-				attack.lockDamage()
-			}
+			attack.multiplyDamage(0)
+			attack.lockDamage()
 		}
 
 		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			if (
-				opponentPlayer.coinFlips[this.id] &&
-				opponentPlayer.coinFlips[this.id][0] === 'heads'
+				player.custom[coinFlipResult] &&
+				player.custom[coinFlipResult] === 'heads'
 			) {
 				player.custom[status] = 'opponent_missed'
+				delete player.custom[coinFlipResult]
 			}
 		}
 
@@ -98,13 +111,17 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		const attackType = this.getInstanceKey(instance, 'attackType')
+		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete opponentPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete player.hooks.afterDefence[instance]
 		delete player.hooks.onTurnEnd[instance]
 		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[status]
 		delete player.custom[attackType]
+		delete player.custom[coinFlipResult]
 	}
 }
 
