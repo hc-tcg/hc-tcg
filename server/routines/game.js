@@ -585,6 +585,22 @@ function* turnSaga(game) {
 	// Run the ailment attacks just before turn end
 	runAilmentAttacks(game, opponentPlayer)
 
+	// ailment logic
+
+	// row ailments
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			// decrease duration
+			if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
+
+		// Get rid of ailments that have expired
+		row.ailments = row.ailments.filter((a) => a.duration > 0)
+	}
+
 	// Call turn end hooks
 	const turnEndHooks = Object.values(currentPlayer.hooks.onTurnEnd)
 	for (let i = 0; i < turnEndHooks.length; i++) {
@@ -618,22 +634,6 @@ function* turnSaga(game) {
 		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'
-	}
-
-	// ailment logic
-
-	// row ailments
-	for (let row of currentPlayer.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration === 1) {
-				// time up, get rid of this ailment
-				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-			} else if (ailment.duration > -1) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
-			}
-		}
 	}
 
 	return 'DONE'
