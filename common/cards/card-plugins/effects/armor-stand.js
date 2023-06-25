@@ -2,6 +2,7 @@ import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../../../cards'
 import {discardCard} from '../../../../server/utils'
 import EffectCard from '../effects/_effect-card'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -49,7 +50,11 @@ class ArmorStandEffectCard extends EffectCard {
 			}
 
 			opponentPlayer.hooks.afterAttack[instance] = (attack) => {
-				if (attack.calculateDamage() >= 50) {
+				if (
+					attack.calculateDamage() >= 50 &&
+					attack.attacker &&
+					isTargetingPos(attack, pos)
+				) {
 					// Discard to prevent losing a life
 					discardCard(game, row.hermitCard)
 					// Reset the active row so the player can switch
