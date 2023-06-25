@@ -33,6 +33,7 @@ class ArmorStandEffectCard extends EffectCard {
 				player.board.activeRow = pos.rowIndex
 			}
 
+			// The menu won't show up but just in case someone tries to cheat
 			player.hooks.blockedActions[instance] = (
 				blockedActions,
 				pastTurnActions,
@@ -41,6 +42,7 @@ class ArmorStandEffectCard extends EffectCard {
 				if (player.board.activeRow === pos.rowIndex) {
 					blockedActions.push('PRIMARY_ATTACK')
 					blockedActions.push('SECONDARY_ATTACK')
+					blockedActions.push('ZERO_ATTACK')
 				}
 
 				return blockedActions
