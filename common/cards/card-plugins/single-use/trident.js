@@ -3,6 +3,7 @@ import {
 	flipCoin,
 	applySingleUse,
 	discardSingleUse,
+	getActiveRowPos,
 } from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
@@ -28,42 +29,42 @@ class TridentSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
-
-			const opponentIndex = otherPlayer.board.activeRow
-			if (!opponentIndex) return []
-			const opponentRow = otherPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return []
 
 			const tridentAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				attacker: activePos,
+				target: opponentActivePos,
 				type: 'effect',
 			}).addDamage(30)
 
 			return [tridentAttack]
 		}
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (!attackResult || attackResult.attack.id !== attackId) return
+			if (attack.id !== attackId) return
 
-			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
+			player.custom[this.getInstanceKey(instance)] = flipCoin(
+				player,
+				this.id
+			)[0]
 
+			applySingleUse(game)
+		}
+
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			// Return to hand
-			if (coinFlip[0] === 'heads' && player.board.singleUseCard) {
+			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
+				// Reset single use card used, won't return to the hand otherwise
 				player.board.singleUseCardUsed = false
 				discardSingleUse(game, player)
-			} else {
-				applySingleUse(game)
 			}
 		}
 	}
@@ -77,7 +78,9 @@ class TridentSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		delete player.hooks.getAttacks[instance]
-		delete player.hooks.afterAttack[instance]
+		delete player.hooks.onApply[instance]
+		delete player.hooks.onAttack[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {

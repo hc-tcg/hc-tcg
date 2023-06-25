@@ -65,6 +65,8 @@ import HermitCard from './_hermit-card'
 import GoatfatherRareHermitCard from './goatfather-rare'
 import HotguyRareHermitCard from './hotguy-rare'
 import JinglerRareHermitCard from './jingler-rare'
+import EvilXisumaRareHermitCard from './evilxisuma_rare'
+import HelsknightRareHermitCard from './helsknight-rare'
 
 /** @type {Array<HermitCard>} */
 const HERMIT_CARDS = [
@@ -82,7 +84,7 @@ const HERMIT_CARDS = [
 	new GeminiTayCommonHermitCard(),
 	new GeminiTayRareHermitCard(),
 	new GrianCommonHermitCard(),
-	//new GrianRareHermitCard(),
+	new GrianRareHermitCard(),
 	new GoodTimesWithScarCommonHermitCard(),
 	new GoodTimesWithScarRareHermitCard(),
 	new HypnotizdCommonHermitCard(),
@@ -127,9 +129,9 @@ const HERMIT_CARDS = [
 	// AE Cards
 	new BeetlejhostCommonHermitCard(),
 	new EvilJevinCommonHermitCard(),
-	// @TODO Evil X (evilxisuma_rare)
+	new EvilXisumaRareHermitCard(),
 	new GoatfatherRareHermitCard(),
-	// @TODO Helsknight (helsknight)
+	new HelsknightRareHermitCard(),
 	new HotguyRareHermitCard(),
 	// @TODO Human Cleo (humancleo_rare)
 	new JinglerRareHermitCard(),

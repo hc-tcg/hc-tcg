@@ -1,44 +1,18 @@
 import {SagaIterator} from 'redux-saga'
 import {delay, put} from 'redux-saga/effects'
-import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 import {setCoinFlip} from '../game-actions'
-import CARDS from 'common/cards'
 
-function* coinFlipSaga(
-	gameState: LocalGameState,
-	coinFlipInfo: CoinFlipInfo
-): SagaIterator {
-	// reset shown coinFlips on new turn
-	if (gameState.turn !== coinFlipInfo.turn) {
-		coinFlipInfo.shownCoinFlips = []
-		coinFlipInfo.turn = gameState.turn
-	}
-
+function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 	yield put(setCoinFlip(null))
 
 	// Get new coin flips
 	const coinFlips = gameState.players[gameState.currentPlayerId].coinFlips
-	const newIds = Object.keys(coinFlips).filter(
-		(flipId) => !coinFlipInfo.shownCoinFlips.includes(flipId)
-	)
-
-	const getIterations = () => '2'
-	if (newIds.length) {
-		// Display new coin flips one by one
-		for (const id of newIds) {
-			const coinFlip = coinFlips[id]
-			const iterations = []
-			for (let i = 0; i < coinFlip.length; i++) {
-				iterations.push(getIterations())
-			}
-			coinFlipInfo.shownCoinFlips.push(id)
-			const name = Object.hasOwn(CARDS, id) ? CARDS[id].name : id
-			yield put(setCoinFlip({name, tosses: coinFlip, iterations}))
-			yield delay(2600)
-		}
-		yield put(setCoinFlip(null))
+	for (const coinFlip of coinFlips) {
+		yield put(setCoinFlip(coinFlip))
+		yield delay(2600)
 	}
-	return coinFlipInfo
+	yield put(setCoinFlip(null))
 }
 
 export default coinFlipSaga

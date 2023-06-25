@@ -1,5 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin, discardSingleUse} from '../../../../server/utils'
+import {discardSingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
@@ -38,8 +38,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
-		player.hooks.afterAttack[instance] = (result) => {
-			const attack = result.attack
+		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary'
@@ -73,18 +72,23 @@ class GeminiTayRareHermitCard extends HermitCard {
 			return availableActions
 		}
 
-		player.hooks.onApply[instance] = (instance) => {
-			// delete flag after single use is applied
-			if (player.custom[extraCardKey]) {
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			if (!player.board.singleUseCard && player.custom[extraCardKey]) {
+				// Trident was here and it's no longer here
+				delete player.custom[extraCardKey]
+			}
+		}
+
+		player.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
+			// Piston/Fire Charge won't be here.
+			// If a card is till here we need to remove the flag
+			if (player.board.singleUseCard && player.custom[extraCardKey]) {
 				delete player.custom[extraCardKey]
 			}
 		}
 
 		player.hooks.onTurnEnd[instance] = () => {
-			// delete flag on turn end
-			if (player.custom[extraCardKey]) {
-				delete player.custom[extraCardKey]
-			}
+			delete player.custom[extraCardKey]
 		}
 	}
 
@@ -101,6 +105,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.availableActions[instance]
 		delete player.hooks.onApply[instance]
+		delete player.hooks.afterApply[instance]
 		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[extraCardKey]
 	}

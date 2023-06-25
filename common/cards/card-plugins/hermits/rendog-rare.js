@@ -1,6 +1,5 @@
 import HermitCard from './_hermit-card'
-import {flipCoin} from '../../../../server/utils'
-import CARDS, {HERMIT_CARDS} from '../../../cards'
+import {HERMIT_CARDS} from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
 
 class RendogRareHermitCard extends HermitCard {
@@ -10,7 +9,7 @@ class RendogRareHermitCard extends HermitCard {
 			name: 'Rendog',
 			rarity: 'rare',
 			hermitType: 'builder',
-			health: 290,
+			health: 250,
 			primary: {
 				name: "Comin' At Ya",
 				cost: ['builder'],

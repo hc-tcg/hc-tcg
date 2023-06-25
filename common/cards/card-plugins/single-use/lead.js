@@ -1,10 +1,11 @@
 import SingleUseCard from './_single-use-card'
 import {rowHasItem, getRowsWithEmptyItemsSlots} from '../../../../server/utils'
+import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
+ * @typedef {import('common/types/cards').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -34,27 +35,45 @@ class LeadSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const slots = pickedSlots[this.id] || []
-		if (slots.length !== 2) return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		const itemCardInfo = slots[0]
-		const targetSlotInfo = slots[1]
-		if (
-			targetSlotInfo.slot.card !== null ||
-			!itemCardInfo.row ||
-			!targetSlotInfo.row
-		)
-			return
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
+			if (slots.length !== 2) return
 
-		itemCardInfo.row.state.itemCards[itemCardInfo.slot.index] =
-			targetSlotInfo.slot.card
-		targetSlotInfo.row.state.itemCards[targetSlotInfo.slot.index] =
-			itemCardInfo.slot.card
+			const itemCardInfo = slots[0]
+			const targetSlotInfo = slots[1]
+			if (
+				targetSlotInfo.slot.card !== null ||
+				!itemCardInfo.row ||
+				!targetSlotInfo.row
+			)
+				return
 
-		return true
+			/** @type {SlotPos} */ const itemPos = {
+				rowIndex: itemCardInfo.row.index,
+				row: itemCardInfo.row.state,
+				slot: {
+					index: itemCardInfo.slot.index,
+					type: 'item',
+				},
+			}
+
+			/** @type {SlotPos} */ const targetPos = {
+				rowIndex: targetSlotInfo.row.index,
+				row: targetSlotInfo.row.state,
+				slot: {
+					index: targetSlotInfo.slot.index,
+					type: 'item',
+				},
+			}
+
+			swapSlots(game, itemPos, targetPos)
+
+			return true
+		}
 	}
 
 	/**
@@ -71,6 +90,16 @@ class LeadSingleUseCard extends SingleUseCard {
 			return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

@@ -27,7 +27,7 @@ import {
 	gameState,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
-import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -89,19 +89,9 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 		yield put(localGameState(initialGameState))
 	}
 
-	// for coin flips
-	let coinFlipInfo: CoinFlipInfo = {
-		shownCoinFlips: [],
-		turn: 0,
-	}
 	while (true) {
-		console.log('waiting')
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		coinFlipInfo = yield call(
-			coinFlipSaga,
-			payload.localGameState,
-			coinFlipInfo
-		)
+		yield call(coinFlipSaga, payload.localGameState)
 		yield put(localGameState(payload.localGameState))
 	}
 }

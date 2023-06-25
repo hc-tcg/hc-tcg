@@ -1,4 +1,3 @@
-import MilkBucketEffectCard from './milk-bucket'
 import ShieldEffectCard from './shield'
 import IronArmorEffectCard from './iron-armor'
 import GoldArmorEffectCard from './gold-armor'
@@ -9,6 +8,7 @@ import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
 import LoyaltyEffectCard from './loyalty'
+import LootingEffectCard from './looting'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
 import EffectCard from './_effect-card'
@@ -17,12 +17,13 @@ import ThornsIIIEffectCard from './thorns_iii'
 import ChainmailArmorEffectCard from './chainmail-armor'
 import CommandBlockEffectCard from './command-block'
 import LightningRodEffectCard from './lightning-rod'
+import WaterBucketEffectCard from './water-bucket'
+import MilkBucketEffectCard from './milk-bucket'
 
 /** @type {Array<EffectCard>} */
 const EFFECT_CARDS = [
 	new BedEffectCard(),
 	new WolfEffectCard(),
-	//new MilkBucketEffectCard(),
 	new GoldArmorEffectCard(),
 	new IronArmorEffectCard(),
 	new ShieldEffectCard(),
@@ -31,6 +32,9 @@ const EFFECT_CARDS = [
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
 	new LoyaltyEffectCard(),
+	new LootingEffectCard(),
+	new WaterBucketEffectCard(),
+	new MilkBucketEffectCard(),
 
 	// AE cards
 	// @TODO Armor Stand (armor_stand)

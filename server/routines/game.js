@@ -151,8 +151,8 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 					showZeroAttack = false
 				}
 				if (
-					DEBUG_CONFIG.noItemRequirements ||
-					(!isSlow &&
+					!isSlow &&
+					(DEBUG_CONFIG.noItemRequirements ||
 						hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost))
 				) {
 					actions.push('SECONDARY_ATTACK')
@@ -247,11 +247,11 @@ function* checkHermitHealth(game) {
 		const noHermitsLeft =
 			!firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
 		if (isDead || noHermitsLeft) {
-			console.log('Player dead: ', {
-				isDead,
-				noHermitsLeft,
-				turn: game.state.turn,
-			})
+			//console.log('Player dead: ', {
+			//	isDead,
+			//	noHermitsLeft,
+			//	turn: game.state.turn,
+			//})
 			deadPlayerIds.push(playerState.id)
 		}
 	}
@@ -299,10 +299,16 @@ function* turnActionSaga(game, turnAction, turnState) {
 	// Validation failed
 	if (!pickedSlots) return
 
+	let modalResult = null
+	if (turnAction.payload && turnAction.payload.modalResult) {
+		modalResult = turnAction.payload.modalResult
+	}
+
 	/** @type {ActionState} */
 	const actionState = {
 		...turnState,
 		pickedSlots,
+		modalResult,
 	}
 	let endTurn = false
 
@@ -335,7 +341,6 @@ function* turnActionSaga(game, turnAction, turnState) {
 		//
 	} else if (turnAction.type === 'ATTACK') {
 		const typeAction = ATTACK_TO_ACTION[turnAction.payload.type]
-		console.log('Attack Received with type', typeAction)
 		if (!typeAction || !availableActions.includes(typeAction)) return
 		const result = yield call(attackSaga, game, turnAction, actionState)
 		if (result !== 'INVALID') pastTurnActions.push('ATTACK')
@@ -439,6 +444,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				)
 			}
 
+			blockedActions.push(...DEBUG_CONFIG.blockedActions)
+
 			// Initial blocking of actions
 			availableActions = availableActions.filter(
 				(action) => !blockedActions.includes(action)
@@ -456,6 +463,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 					(action) => !blockedActions.includes(action)
 				)
 			}
+
+			availableActions.push(...DEBUG_CONFIG.availableActions)
 
 			// End of available actions code
 
@@ -496,6 +505,7 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			// Handle timeout
 			const hasActiveHermit = currentPlayer.board.activeRow !== null
 			const opponentFollowUp = !!opponentPlayer.followUp
+			const currentPlayerFollowUp = !!currentPlayer.followUp
 			if (raceResult.timeout) {
 				if (opponentFollowUp) {
 					game.state.timer.turnTime = getTimerForSeconds(20)
@@ -506,6 +516,14 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 						followUpTimeoutHooks[i](opponentPlayer.followUp)
 					}
 					continue
+				} else if (currentPlayerFollowUp) {
+					const followUpTimeoutHooks = Object.values(
+						currentPlayer.hooks.onFollowUpTimeout
+					)
+					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
+						followUpTimeoutHooks[i](currentPlayer.followUp)
+					}
+					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
@@ -513,6 +531,9 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				}
 				break
 			}
+
+			// Reset coin flips they were already shown
+			currentPlayer.coinFlips = []
 
 			// Run action logic
 			const result = yield call(
@@ -549,22 +570,6 @@ function* turnSaga(game) {
 	game.state.timer.turnTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	// ailment logic
-
-	// row ailments
-	for (let row of currentPlayer.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration === 0) {
-				// time up, get rid of this ailment
-				row.ailments = row.ailments.filter((a) => a.id !== ailment.id)
-			} else if (ailment.duration > -1) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
-			}
-		}
-	}
-
 	/** @type {{skipTurn?: boolean}} */
 	const turnConfig = {}
 
@@ -580,13 +585,28 @@ function* turnSaga(game) {
 	// Run the ailment attacks just before turn end
 	runAilmentAttacks(game, opponentPlayer)
 
+	// ailment logic
+
+	// row ailments
+	for (let row of currentPlayer.board.rows) {
+		for (let ailment of row.ailments) {
+			// decrease duration
+			if (ailment.duration > -1) {
+				// ailment is not infinite, reduce duration by 1
+				ailment.duration--
+			}
+		}
+
+		// Get rid of ailments that have expired
+		row.ailments = row.ailments.filter((a) => a.duration > 0)
+	}
+
 	// Call turn end hooks
 	const turnEndHooks = Object.values(currentPlayer.hooks.onTurnEnd)
 	for (let i = 0; i < turnEndHooks.length; i++) {
 		turnEndHooks[i]()
 	}
 
-	currentPlayer.coinFlips = {}
 	currentPlayer.followUp = null
 	opponentPlayer.followUp = null
 
@@ -606,11 +626,11 @@ function* turnSaga(game) {
 	const drawCard = currentPlayer.pile.shift()
 	if (drawCard) {
 		currentPlayer.hand.push(drawCard)
-	} else {
-		console.log('Player dead: ', {
-			noCards: true,
-			turn: game.state.turn,
-		})
+	} else if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
+		//console.log('Player dead: ', {
+		//	noCards: true,
+		//	turn: game.state.turn,
+		//})
 		game.endInfo.reason = 'cards'
 		game.endInfo.deadPlayerIds = [currentPlayerId]
 		return 'GAME_END'

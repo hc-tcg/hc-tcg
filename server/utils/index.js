@@ -10,6 +10,8 @@ import {getCardPos} from './cards'
 /**
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').CoinFlipT} CoinFlipT
+ * @typedef {import("common/types/cards").SlotPos} SlotPos
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
 /**
@@ -68,31 +70,49 @@ export function hasSingleUse(playerState, id, isUsed = false) {
 /**
  * @param {GameModel} game
  * @param {import('../../common/types/pick-process').PickedSlots} pickedSlots
+ * @param {*} modalResult
  * @returns {boolean}
  */
-export function applySingleUse(game, pickedSlots = {}) {
-	const {singleUseInfo, currentPlayer} = game.ds
+export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
+	const {currentPlayer} = game.ds
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return false
 	const pos = getCardPos(game, suCard.cardInstance)
 	if (!pos) return false
 
-	if (!singleUseInfo) return false
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
 	if (!cardInstance) return false
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	// Now call methods and hooks
+	// Now call hooks
+	const hooks = [
+		currentPlayer.hooks.beforeApply,
+		currentPlayer.hooks.onApply,
+		currentPlayer.hooks.afterApply,
+	]
 
-	// Apply effect
-	singleUseInfo.onApply(game, cardInstance, pos, pickedSlots)
+	// Get a hook, sort it by the type of slot and call it
+	for (const hook of hooks) {
+		// We are gping with Effect>SingleUse>Hermit>Item because of Lightning Rod/Target Block.
+		// If we decide that we want to sort the other hooks that's probably the order we want to
+		// go with, in this case we only care that Single Use>Hermit because of Fire Charge/Piston/Gem
+		/** @type { Record<string, Array<(pickedSlots: PickedSlots, modalResult: any) => void>> } */
+		const hooksByType = {effect: [], single_use: [], hermit: [], item: []}
 
-	// Call applyEffect hook
-	const applyEffectHooks = Object.values(currentPlayer.hooks.onApply)
-	for (let i = 0; i < applyEffectHooks.length; i++) {
-		applyEffectHooks[i](cardInstance)
+		for (const key of Object.keys(hook)) {
+			const cardPos = getCardPos(game, key)
+			if (cardPos && hooksByType[cardPos.slot.type]) {
+				hooksByType[cardPos.slot.type].push(hook[key])
+			}
+		}
+
+		for (const slotType of Object.keys(hooksByType)) {
+			for (const hook of hooksByType[slotType]) {
+				hook(pickedSlots, modalResult)
+			}
+		}
 	}
 
 	return true
@@ -133,9 +153,39 @@ export function findCard(gameState, card) {
 
 /**
  * @param {GameModel} game
+ * @param {CardT} card
+ */
+export function moveCardToHand(game, card, steal = false) {
+	const cardPos = getCardPos(game, card.cardInstance)
+	if (!cardPos) return
+
+	const cardInfo = CARDS[card.cardId]
+	cardInfo.onDetach(game, card.cardInstance, cardPos)
+
+	const onDetachs = Object.values(cardPos.player.hooks.onDetach)
+	for (let i = 0; i < onDetachs.length; i++) {
+		onDetachs[i](card.cardInstance)
+	}
+
+	if (cardPos.row && cardPos.slot.type === 'hermit') {
+		cardPos.row.hermitCard = null
+	} else if (cardPos.row && cardPos.slot.type === 'effect') {
+		cardPos.row.effectCard = null
+	} else if (cardPos.row && cardPos.slot.type === 'item') {
+		cardPos.row.itemCards[cardPos.slot.index] = null
+	} else if (cardPos.slot.type === 'single_use') {
+		cardPos.player.board.singleUseCard = null
+	}
+
+	const player = steal ? cardPos.opponentPlayer : cardPos.player
+	player.hand.push(card)
+}
+
+/**
+ * @param {GameModel} game
  * @param {CardT | null} card
  */
-export function discardCard(game, card) {
+export function discardCard(game, card, steal = false) {
 	if (!card) return
 	const loc = findCard(game.state, card)
 	const pos = getCardPos(game, card.cardInstance)
@@ -165,10 +215,30 @@ export function discardCard(game, card) {
 		pState.hand = pState.hand.filter(Boolean)
 	})
 
-	game.state.players[loc.playerId].discarded.push({
+	const playerId = steal && pos ? pos.opponentPlayer.id : loc.playerId
+
+	game.state.players[playerId].discarded.push({
 		cardId: card.cardId,
 		cardInstance: card.cardInstance,
 	})
+}
+
+/**
+ * @param {GameModel} game
+ * @param {CardT | null} card
+ */
+export function retrieveCard(game, card) {
+	if (!card) return
+	for (let playerId in game.state.players) {
+		const player = game.state.players[playerId]
+		const discarded = player.discarded
+		const index = discarded.findIndex((c) => equalCard(c, card))
+		if (index !== -1) {
+			const retrievedCard = discarded.splice(index, 1)[0]
+			player.hand.push(retrievedCard)
+			return
+		}
+	}
 }
 
 /**
@@ -182,7 +252,8 @@ export function discardSingleUse(game, playerState) {
 	const pos = getCardPos(game, suCard.cardInstance)
 	if (!pos) return
 
-	const cardInfo = SINGLE_USE_CARDS[suCard.cardId]
+	// Water and Milk Buckets can be on this slot so we use CARDS to get the card info
+	const cardInfo = CARDS[suCard.cardId]
 	cardInfo.onDetach(game, suCard.cardInstance, pos)
 
 	// Call onDetach hook
@@ -214,23 +285,29 @@ export function drawCards(playerState, amount) {
 }
 
 /**
- * @param {PlayerState} currentPlayer
- * @param {number} times
+ * @param {PlayerState} playerTossingCoin
  * @param {string} cardId
+ * @param {number} times
+ * @param {PlayerState | null} currentPlayer
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(currentPlayer, cardId, times = 1) {
+export function flipCoin(
+	playerTossingCoin,
+	cardId,
+	times = 1,
+	currentPlayer = null
+) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = currentPlayer.board.activeRow
-	if (!activeRowIndex) {
+	const activeRowIndex = playerTossingCoin.board.activeRow
+	if (activeRowIndex === null) {
 		console.log(
 			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
 		)
 		return []
 	}
-	const forceTails = !!currentPlayer.board.rows[activeRowIndex].ailments.find(
-		(a) => a.id === 'badomen'
-	)
+	const forceTails = !!playerTossingCoin.board.rows[
+		activeRowIndex
+	].ailments.find((a) => a.id === 'badomen')
 
 	/** @type {Array<CoinFlipT>} */
 	let coinFlips = []
@@ -246,10 +323,17 @@ export function flipCoin(currentPlayer, cardId, times = 1) {
 		}
 	}
 
-	const coinFlipHooks = Object.values(currentPlayer.hooks.onCoinFlip)
+	const coinFlipHooks = Object.values(playerTossingCoin.hooks.onCoinFlip)
 	for (let i = 0; i < coinFlipHooks.length; i++) {
 		coinFlips = coinFlipHooks[i](cardId, coinFlips)
 	}
+
+	const name = CARDS[cardId].name
+	const player = currentPlayer || playerTossingCoin
+	player.coinFlips.push({
+		name: !currentPlayer ? name : 'Opponent ' + name,
+		tosses: coinFlips,
+	})
 
 	return coinFlips
 }
@@ -293,17 +377,33 @@ export function getActiveRow(playerState) {
 
 /**
  * @param {PlayerState} playerState
+ * @returns {import('types/cards').RowPos | null}
+ */
+export function getActiveRowPos(playerState) {
+	const rowIndex = playerState.board.activeRow
+	if (rowIndex === null) return null
+	const row = playerState.board.rows[rowIndex]
+	if (!row.hermitCard) return null
+	return {
+		player: playerState,
+		rowIndex,
+		row,
+	}
+}
+
+/**
+ * @param {PlayerState} playerState
  * @param {boolean} includeActive
- * @returns {import('types/game-state').RowInfo[]}
+ * @returns {import('types/cards').RowPos[]}
  */
 export function getNonEmptyRows(playerState, includeActive = true) {
-	/** @type {import('types/game-state').RowInfo[]} */
+	/** @type {import('types/cards').RowPos[]} */
 	const rows = []
 	const activeRowIndex = playerState.board.activeRow
 	for (let i = 0; i < playerState.board.rows.length; i++) {
 		const row = playerState.board.rows[i]
 		if (i === activeRowIndex && !includeActive) continue
-		if (row.hermitCard) rows.push({index: i, row})
+		if (row.hermitCard) rows.push({player: playerState, rowIndex: i, row})
 	}
 	return rows
 }
@@ -332,7 +432,7 @@ export function getRowsWithEmptyItemsSlots(playerState, includeActive = true) {
 export function getAdjacentRows(playerState) {
 	const result = []
 	const rows = playerState.board.rows
-	for (let i = 1; i < rows.length; i++) {
+	for (let i = 1; i < rows.length + 1; i++) {
 		const row = rows[i]
 		const prevRow = rows[i - 1]
 		if (row && prevRow && row.hermitCard && prevRow.hermitCard)

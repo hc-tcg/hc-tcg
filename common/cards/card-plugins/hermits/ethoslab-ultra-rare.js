@@ -39,8 +39,6 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id, 3)
-			player.coinFlips[this.id] = coinFlip
-
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			attack.addDamage(headsAmount * 20)
 		}

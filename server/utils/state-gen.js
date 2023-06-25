@@ -32,7 +32,6 @@ const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
-	return ['bow']
 	const limits = CONFIG.limits
 
 	// only allow some starting types
@@ -45,7 +44,7 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.type)
+			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -92,8 +91,7 @@ export function getStarterPack() {
 		tokens += getCardCost(hermitCard) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.type].items += 2
-			itemCount += 2
+			itemCounts[hermitCard.hermitType].items += 2
 		}
 	}
 
@@ -182,7 +180,8 @@ export function getPlayerState(player) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
 
-	const hand = pack.slice(0, 7)
+	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
+	const hand = pack.slice(0, amountOfStartingCards)
 
 	DEBUG_CONFIG.extraStartingCards.forEach((id) => {
 		const card = CARDS[id]
@@ -199,12 +198,12 @@ export function getPlayerState(player) {
 		id: player.playerId,
 		playerName: player.playerName,
 		censoredPlayerName: player.censoredPlayerName,
-		coinFlips: {},
+		coinFlips: [],
 		followUp: null,
 		lives: 3,
 		hand,
 		discarded: [],
-		pile: pack.slice(7),
+		pile: DEBUG_CONFIG.startWithAllCards ? [] : pack.slice(7),
 		custom: {},
 		board: {
 			activeRow: null,
@@ -221,13 +220,19 @@ export function getPlayerState(player) {
 
 			onAttach: {},
 			onDetach: {},
+
+			beforeApply: {},
 			onApply: {},
+			afterApply: {},
 
 			getAttacks: {},
 
 			beforeAttack: {},
+			beforeDefence: {},
 			onAttack: {},
+			onDefence: {},
 			afterAttack: {},
+			afterDefence: {},
 
 			onFollowUp: {},
 			onFollowUpTimeout: {},

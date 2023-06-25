@@ -1,10 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {applySingleUse} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
@@ -31,20 +30,23 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.getAttacks[instance] = (pickedSlots) => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
 
 			const attacks = []
 			const slots = pickedSlots[this.id]
 			for (const slot of slots) {
 				if (!slot.row || !slot.row.state.hermitCard) continue
+				const targetPlayer = game.state.players[slot.playerId]
 				attacks.push(
 					new AttackModel({
 						id: this.getInstanceKey(instance),
-						attacker: {index, row},
-						target: {index: slot.row.index, row: slot.row.state},
+						attacker: activePos,
+						target: {
+							player: targetPlayer,
+							rowIndex: slot.row.index,
+							row: slot.row.state,
+						},
 						type: 'effect',
 					}).addDamage(20)
 				)

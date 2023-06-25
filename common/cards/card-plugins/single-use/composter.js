@@ -3,7 +3,6 @@ import {equalCard, discardCard, drawCards} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
@@ -15,12 +14,16 @@ class ComposterSingleUseCard extends SingleUseCard {
 			name: 'Composter',
 			rarity: 'common',
 			description:
-				"Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.",
-		
+				'Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.',
+
 			pickOn: 'apply',
-			pickReqs: /** @satisfies {Array<PickRequirmentT>} */ ([
-				{target: 'hand', type: ['hermit', 'effect', 'item', 'single_use'], amount: 2},
-			])
+			pickReqs: [
+				{
+					target: 'hand',
+					type: ['hermit', 'effect', 'item', 'single_use'],
+					amount: 2,
+				},
+			],
 		})
 	}
 
@@ -35,32 +38,44 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 		return 'YES'
 	}
-	
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const slots = pickedSlots[this.id] || []
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		if (slots.length !== 2) return
-		
-		const pickedCard1 = slots[0]
-		const pickedCard2 = slots[1]
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const slots = pickedSlots[this.id] || []
 
-		if (pickedCard1.slot.card === null || pickedCard2.slot.card === null) return
+			if (slots.length !== 2) return
 
-		// @TODO Check on ValidPicks instead
-		if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return
+			const pickedCard1 = slots[0]
+			const pickedCard2 = slots[1]
 
-		discardCard(game, pickedCard1.slot.card)
-		discardCard(game, pickedCard2.slot.card)
+			if (pickedCard1.slot.card === null || pickedCard2.slot.card === null)
+				return
 
-		drawCards(player, 2)
+			// @TODO Check on ValidPicks instead
+			if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return
+
+			discardCard(game, pickedCard1.slot.card)
+			discardCard(game, pickedCard2.slot.card)
+
+			drawCards(player, 2)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

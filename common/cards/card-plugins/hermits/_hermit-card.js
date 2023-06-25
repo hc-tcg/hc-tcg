@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
 import {getCardPos} from '../../../../server/utils/cards'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 import Card from '../_card'
 
 /**
@@ -63,22 +64,30 @@ class HermitCard extends Card {
 		const attack = new AttackModel({
 			id: this.getInstanceKey(instance),
 			attacker: {
-				index: pos.rowIndex,
+				player: pos.player,
+				rowIndex: pos.rowIndex,
 				row: pos.row,
 			},
 			target: {
-				index: targetIndex,
+				player: opponentPlayer,
+				rowIndex: targetIndex,
 				row: targetRow,
 			},
 			type: hermitAttackType,
 		})
+
 		if (attack.type === 'primary') {
 			attack.addDamage(this.primary.damage)
 		} else if (attack.type === 'secondary') {
 			attack.addDamage(this.secondary.damage)
 		}
 
-		return [attack]
+		const attacks = [attack]
+
+		const weaknessAttack = createWeaknessAttack(attack)
+		if (weaknessAttack) attacks.push(weaknessAttack)
+
+		return attacks
 	}
 
 	/**
@@ -89,7 +98,7 @@ class HermitCard extends Card {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'hermit') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		return 'YES'
 	}

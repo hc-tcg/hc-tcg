@@ -20,20 +20,30 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('types/cards').CardPos} pos
-	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			player.hooks.availableEnergy[instance] = (availableEnergy) => {
+				// Unliimited powwa
+				return ['any', 'any', 'any']
+			}
 
-		player.hooks.availableEnergy[instance] = (availableEnergy) => {
-			// Unliimited powwa
-			return ['any', 'any', 'any']
+			player.hooks.afterAttack[instance] = (attack) => {
+				delete player.hooks.availableEnergy[instance]
+				delete player.hooks.afterAttack[instance]
+			}
 		}
+	}
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
-			delete player.hooks.availableEnergy[instance]
-			delete player.hooks.afterAttack[instance]
-		}
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

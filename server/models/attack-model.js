@@ -17,7 +17,7 @@ export class AttackModel {
 
 		/**
 		 * The attack target
-		 * @type {import("../../common/types/game-state").RowInfo}
+		 * @type {import("types/cards").RowPos}
 		 */
 		this.target = defs.target
 
@@ -40,18 +40,16 @@ export class AttackModel {
 		this.damageMultiplier = 1
 
 		/**
+		 * The damage reduction
+		 * @type {number}
+		 */
+		this.damageReduction = 0
+
+		/**
 		 * Is the damage on this attack changeable?
 		 * @type {boolean}
 		 */
 		this.damageLocked = false
-
-		/**
-		 * Defence against this attack
-		 * @type {import("common/types/attack").AttackDefence}
-		 */
-		this.defence = {
-			damageReduction: 0,
-		}
 
 		/** @type {Array<import("common/types/attack").ShouldIgnoreCard>} */
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
@@ -65,6 +63,7 @@ export class AttackModel {
 		return this
 	}
 
+	// @TODO Add id to this method, then we store exactly where all damage comes from, by id
 	/**
 	 * Adds damage to the attack
 	 * @param {number} amount
@@ -81,7 +80,7 @@ export class AttackModel {
 	 */
 	reduceDamage(amount) {
 		if (this.damageLocked) return this
-		this.damage = Math.max(this.damage - amount, 0)
+		this.damageReduction += amount
 		return this
 	}
 
@@ -93,6 +92,17 @@ export class AttackModel {
 		if (this.damageLocked) return this
 		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
 		return this
+	}
+
+	/**
+	 * Calculates the damage for this attack
+	 * @returns {number}
+	 */
+	calculateDamage() {
+		return Math.max(
+			this.damage * this.damageMultiplier - this.damageReduction,
+			0
+		)
 	}
 
 	/**

@@ -25,9 +25,7 @@ import KnockbackSingleUseCard from './knockback'
 import EfficiencySingleUseCard from './efficiency'
 import CurseOfBindingSingleUseCard from './curse-of-binding'
 import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
-import LootingSingleUseCard from './looting'
 import FortuneSingleUseCard from './fortune'
-import WaterBucketSingleUseCard from './water-bucket'
 import MendingSingleUseCard from './mending'
 import TridentSingleUseCard from './trident'
 import SweepingEdgeSingleUseCard from './sweeping-edge'
@@ -70,22 +68,20 @@ const SINGLE_USE_CARDS = [
 	new FortuneSingleUseCard(),
 	new KnockbackSingleUseCard(),
 	new EfficiencySingleUseCard(),
-	new LootingSingleUseCard(),
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
-	new WaterBucketSingleUseCard(),
 	new MendingSingleUseCard(),
 
 	// AE Cards
 	new AnvilSingleUseCard(),
 	new BadOmenSingleUseCard(),
-	// new EggSingleUseCard(), (not converted)
+	new EggSingleUseCard(),
 	new EnderPearlSingleUseCard(),
 	new FireChargeSingleUseCard(),
 	new LadderSingleUseCard(),
 	new PistonSingleUseCard(),
-	// new PotionOfSlownessSingleUseCard(), (not converted)
-	// new PotionOfWeaknessSingleUseCard(), (not converted)
+	new PotionOfSlownessSingleUseCard(),
+	new PotionOfWeaknessSingleUseCard(),
 	new SplashPotionOfHealingIISingleUseCard(),
 	new SweepingEdgeSingleUseCard(),
 	new TargetBlockSingleUseCard(),

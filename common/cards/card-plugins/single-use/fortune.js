@@ -19,6 +19,11 @@ class FortuneSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	canApply() {
+		return true
+	}
+
+
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
@@ -27,29 +32,26 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.beforeAttack[instance] = (attack) => {
-			applySingleUse(game)
-			delete player.hooks.beforeAttack[instance]
-		}
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
-	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {player} = pos
-
-		player.hooks.onCoinFlip[instance] = (id, coinFlips) => {
-			for (let i = 0; i < coinFlips.length; i++) {
-				coinFlips[i] = 'heads'
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			player.hooks.beforeAttack[instance] = (attack) => {
+				applySingleUse(game)
+				delete player.hooks.beforeAttack[instance]
 			}
-			return coinFlips
+
+			player.hooks.onCoinFlip[instance] = (id, coinFlips) => {
+				for (let i = 0; i < coinFlips.length; i++) {
+					coinFlips[i] = 'heads'
+				}
+				return coinFlips
+			}
+
+			player.hooks.onTurnStart[instance] = () => {
+				delete player.hooks.onTurnStart[instance]
+				delete player.hooks.beforeAttack[instance]
+				delete player.hooks.onCoinFlip[instance]
+			}
 		}
 	}
-
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
@@ -58,8 +60,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.beforeAttack[instance]
-		delete player.hooks.onCoinFlip[instance]
+		delete player.hooks.onApply[instance]
 	}
 }
 

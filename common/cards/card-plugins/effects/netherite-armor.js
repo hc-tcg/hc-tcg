@@ -1,4 +1,5 @@
 import {GameModel} from '../../../../server/models/game-model'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 import EffectCard from './_effect-card'
 
 /**
@@ -11,8 +12,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 			id: 'netherite_armor',
 			name: 'Netherite Armor',
 			rarity: 'ultra_rare',
-			description:
-				'Prevent up to 20hp damage taken.\n\nAlso prevents additional damage to this Hermit from all effect cards.\n\nOpponent can not make this Hermit go AFK.',
+			description: 'Prevent up to 40hp damage taken.',
 		})
 	}
 
@@ -22,22 +22,11 @@ class NetheriteArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, player, row} = pos
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const activeRowIndex = pos.player.board.activeRow
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				!attack.target ||
-				attack.target.index !== pos.rowIndex ||
-				attack.type === 'ailment'
-			)
-				return
-			if (attack.type === 'effect') {
-				attack.reduceDamage(attack.damage)
-				attack.lockDamage()
-				return
-			}
+		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+			if (!isTargetingPos(attack, pos) || attack.type === 'ailment') return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -45,22 +34,17 @@ class NetheriteArmorEffectCard extends EffectCard {
 
 			const totalReduction = player.custom[instanceKey]
 
-			if (totalReduction < 20) {
-				const damageReduction = Math.min(attack.damage, 20 - totalReduction)
+			if (totalReduction < 40) {
+				const damageReduction = Math.min(attack.damage, 40 - totalReduction)
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(damageReduction)
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
-			delete player.custom[instanceKey]
-		}
-
-		otherPlayer.hooks.onApply[instance] = (instance) => {
-			// Prevent being knocked out
-			if (activeRowIndex === pos.rowIndex && row) {
-				player.board.activeRow = pos.rowIndex
-				row.ailments = row.ailments.filter((a) => a.id !== 'knockedout')
+		// Reset counter at the start of our turn
+		player.hooks.onTurnStart[instance] = () => {
+			if (player.custom[instanceKey] !== undefined) {
+				delete player.custom[instanceKey]
 			}
 		}
 	}
@@ -71,10 +55,9 @@ class NetheriteArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
-		delete otherPlayer.hooks.onApply[instance]
+		const {player} = pos
+		delete player.hooks.onDefence[instance]
+		delete player.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

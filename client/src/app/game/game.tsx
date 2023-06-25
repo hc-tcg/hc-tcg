@@ -7,8 +7,10 @@ import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
+import LootingModal from './modals/looting-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import EvilXModal from './modals/evil-x-modal'
 import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
@@ -88,7 +90,9 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	confirm: ConfirmModal,
 	spyglass: SpyglassModal,
 	chest: ChestModal,
+	looting: LootingModal,
 	borrow: BorrowModal,
+	evilX: EvilXModal,
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
@@ -152,7 +156,7 @@ function Game() {
 							size="medium"
 							cards={gameState.hand}
 							onClick={(card: CardT) => selectCard(card)}
-							selected={selectedCard}
+							selected={[selectedCard]}
 							picked={pickedSlotsInstances}
 						/>
 					</div>

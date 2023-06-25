@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
+import CARDS from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModal,
@@ -21,18 +21,19 @@ function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
-		yield put(followUp({attach: false}))
+		yield put(followUp({modalResult: {attach: false}}))
 		return
 	}
 
-	yield put(followUp({attach: true}))
+	yield put(followUp({modalResult: {attach: true}}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
-	const cardInfo = SINGLE_USE_CARDS[card.cardId]
+	// We use CARDS instead of SINGLE_USE_CARDS because of Water and Milk Buckets
+	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo.canApply() && cardInfo.pickOn !== 'apply') {
+	if (cardInfo instanceof SingleUseCard && cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))
@@ -85,9 +86,16 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga)
+		} else if (pState.followUp === 'evilxisuma_rare') {
+			yield put(setOpenedModal('evilX'))
+		} else if (pState.followUp === 'spyglass') {
+			yield put(setOpenedModal('spyglass'))
+		} else if (pState.followUp === 'looting') {
+			yield put(setOpenedModal('looting'))
+		} else {
+			// The server can set the next follow up
+			yield put(followUp({}))
 		}
-	} else if (pState.custom.spyglass) {
-		yield put(setOpenedModal('spyglass'))
 	} else if (
 		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
 		!pState.board.singleUseCardUsed &&
