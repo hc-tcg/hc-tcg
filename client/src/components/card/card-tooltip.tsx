@@ -132,7 +132,6 @@ const getName = (
 const getRank = (
 	card: HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard
 ): React.ReactNode => {
-	if (card instanceof HealthCard) return null
 	const {name, cost} = getCardRank(card.id)
 	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
 	return (
@@ -171,6 +170,8 @@ const getHermitType = (
 }
 
 const CardTooltip = ({card}: Props) => {
+	if (card.type === 'health')
+		return <div>{(card as HealthCard).health} Health</div>
 	return (
 		<div className={css.cardTooltip}>
 			<div className={css.topLine}>
