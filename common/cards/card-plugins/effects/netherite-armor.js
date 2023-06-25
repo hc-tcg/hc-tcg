@@ -41,7 +41,8 @@ class NetheriteArmorEffectCard extends EffectCard {
 			}
 		}
 
-		player.hooks.afterDefence[instance] = () => {
+		// Reset counter at the start of our turn
+		player.hooks.onTurnStart[instance] = () => {
 			if (player.custom[instanceKey] !== undefined) {
 				delete player.custom[instanceKey]
 			}
@@ -56,7 +57,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onDefence[instance]
-		delete player.hooks.afterDefence[instance]
+		delete player.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
