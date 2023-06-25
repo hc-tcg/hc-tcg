@@ -94,10 +94,10 @@ function MatchMaking() {
 							/>
 							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
 							<div className={css.options}>
-								<Button variant="stone" onClick={handleCancel}>
+								<Button type="button" variant="stone" onClick={handleCancel}>
 									Cancel
 								</Button>
-								<Button variant="stone">Join</Button>
+								<Button type="submit" variant="stone">Join</Button>
 							</div>
 						</form>
 					</>
