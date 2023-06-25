@@ -29,7 +29,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(
 			instance,
 			'ignoreThisWeakness'
@@ -41,16 +41,15 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 
 			player.hooks.beforeAttack[instance] = (attack) => {
 				if (['backlash', 'ailment'].includes(attack.type)) return
-				if (
-					!pickedSlot.row ||
-					!pickedSlot.row.state.hermitCard ||
-					!attack.target
-				) {
+				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) {
 					return
 				}
 
-				attack.target.rowIndex = pickedSlot.row.index
-				attack.target.row = pickedSlot.row.state
+				attack.target = {
+					player: opponentPlayer,
+					rowIndex: pickedSlot.row.index,
+					row: pickedSlot.row.state,
+				}
 
 				if (['primary', 'secondary'].includes(attack.type)) {
 					const weaknessAttack = createWeaknessAttack(attack)
