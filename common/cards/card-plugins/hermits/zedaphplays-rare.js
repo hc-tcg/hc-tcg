@@ -60,7 +60,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 
 		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			// Delete our hook at the end of opponents turn
-			delete opponentPlayer.custom[instanceKey]
+			delete player.custom[instanceKey]
 		}
 	}
 
@@ -77,7 +77,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		delete player.hooks.onAttack[instance]
 		delete opponentPlayer.hooks.beforeAttack[instance]
 		delete opponentPlayer.hooks.onTurnEnd[instance]
-		delete opponentPlayer.custom[instanceKey]
+		delete player.custom[instanceKey]
 	}
 }
 
