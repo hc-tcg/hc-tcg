@@ -62,7 +62,7 @@ class Card {
 	}
 
 	/**
-	 * If this card is attached to a Hermit slot, can this card be attached to the effect slot
+	 * If this card is attached to a Hermit slot, can another card be attached to the row this card is in
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
 	 * @returns {boolean}
