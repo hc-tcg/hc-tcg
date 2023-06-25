@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import css from './change-hermit-modal.module.css'
 import {PickedSlotT} from 'common/types/pick-process'
-import {HERMIT_CARDS} from 'common/cards'
+import CARDS from 'common/cards'
 import Button from 'components/button'
 
 type Props = {
@@ -20,7 +20,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	}
 
 	const hermitName = info.slot.card?.cardId
-		? HERMIT_CARDS[info.slot.card.cardId].name
+		? CARDS[info.slot.card.cardId].name
 		: ''
 	const row = playerState.board.rows[info.row.index]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')

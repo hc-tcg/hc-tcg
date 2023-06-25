@@ -62,6 +62,17 @@ class Card {
 	}
 
 	/**
+	 * If this card is attached to a Hermit slot, can this card be attached to the effect slot
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 */
+	canAttachToCard(game, pos) {
+		// default is true
+		return true
+	}
+
+	/**
 	 * Called when an instance of this card is attached to the board
 	 * @param {GameModel} game
 	 * @param {string} instance

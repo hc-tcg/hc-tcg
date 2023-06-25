@@ -44,7 +44,7 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 				[css.available]: !!onClick,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
-				[css.afk]: cardInfo?.type === 'hermit' && !active,
+				[css.afk]: cardInfo && !active,
 			})}
 		>
 			{cardInfo ? (

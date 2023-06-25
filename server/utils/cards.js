@@ -1,3 +1,4 @@
+import CARDS from '../../common/cards'
 import {GameModel} from '../models/game-model'
 
 /**
@@ -98,4 +99,16 @@ export function getCardAtPos(game, pos) {
 	}
 
 	return null
+}
+
+/**
+ * Check if card is the type of card
+ * @param {CardT | null} card
+ * @param {CardTypeT} type
+ * @returns {boolean}
+ */
+export function isCardType(card, type) {
+	if (!card) return false
+	const cardInfo = CARDS[card.cardId]
+	return cardInfo.type === type
 }

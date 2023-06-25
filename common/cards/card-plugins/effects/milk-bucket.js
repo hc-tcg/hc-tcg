@@ -10,7 +10,7 @@ class MilkBucketEffectCard extends EffectCard {
 			description:
 				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
+			pickReqs: [{target: 'player', slot: ['hermit'], amount: 1}],
 		})
 	}
 

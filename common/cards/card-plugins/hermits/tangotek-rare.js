@@ -29,7 +29,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			},
 			pickOn: 'followup',
 			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
 			],
 		})
 	}

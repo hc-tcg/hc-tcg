@@ -1,5 +1,6 @@
 import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
+import CARDS from '../../../cards'
 
 class ItemCard extends Card {
 	/**
@@ -33,6 +34,10 @@ class ItemCard extends Card {
 
 		// Can't attach without hermit
 		if (!pos.row?.hermitCard) return 'NO'
+
+		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+		if (!cardInfo) return 'INVALID'
+		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
 		return 'YES'
 	}

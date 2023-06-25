@@ -86,6 +86,7 @@ class HermitCard extends Card {
 	/**
 	 * @param {GameModel} game
 	 * @param {import('../../../types/cards').CardPos} pos
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds

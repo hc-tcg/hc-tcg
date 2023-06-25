@@ -17,7 +17,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 				"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
 			pickOn: 'apply',
 			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
 			],
 		})
 	}

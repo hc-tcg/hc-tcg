@@ -24,7 +24,9 @@ class RendogRareHermitCard extends HermitCard {
 				power: "Use any secondary move of your opponent's hermits.",
 			},
 			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1}],
+			pickReqs: [
+				{target: 'opponent', slot: ['hermit'], type: ['hermit'], amount: 1},
+			],
 		})
 	}
 

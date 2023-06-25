@@ -29,7 +29,13 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			},
 			pickOn: 'attack',
 			pickReqs: [
-				{target: 'player', type: ['hermit'], amount: 1, active: false},
+				{
+					target: 'player',
+					slot: ['hermit'],
+					type: ['hermit'],
+					amount: 1,
+					active: false,
+				},
 			],
 		})
 	}

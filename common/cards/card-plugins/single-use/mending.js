@@ -1,7 +1,11 @@
 import singleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {swapSlots} from '../../../../server/utils/slots'
-import {getNonEmptyRows, isRemovable} from '../../../../server/utils'
+import {
+	getNonEmptyRows,
+	isRemovable,
+	canAttachToCard,
+} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').SlotPos} SlotPos
@@ -19,9 +23,10 @@ class MendingSingleUseCard extends singleUseCard {
 			pickReqs: [
 				{
 					target: 'player',
-					type: ['effect'],
+					slot: ['effect'],
 					amount: 1,
 					empty: true,
+					active: false,
 				},
 			],
 		})
@@ -45,11 +50,12 @@ class MendingSingleUseCard extends singleUseCard {
 			const {player} = pos
 			if (player.board.activeRow === null || !targetSlotInfo.row) return
 			const playerActiveRow = player.board.rows[player.board.activeRow]
-			if (
-				targetSlotInfo.row.state.effectCard !== null ||
-				!playerActiveRow.effectCard
-			)
-				return
+			if (targetSlotInfo.row.state.effectCard !== null) return
+			if (!playerActiveRow.effectCard) return
+
+			const hermitCard = targetSlotInfo.row.state.hermitCard
+			const effectCard = playerActiveRow.effectCard
+			if (!canAttachToCard(game, hermitCard, effectCard)) return
 
 			// swap slots
 			/** @type {SlotPos} */ const sourcePos = {
@@ -92,6 +98,11 @@ class MendingSingleUseCard extends singleUseCard {
 		for (const hermit of inactiveHermits) {
 			const effect = hermit.row.effectCard
 			if (!effect || isRemovable(effect)) return 'YES'
+		}
+
+		// check if the effect card can be attached to any of the inactive hermits
+		for (const hermit of inactiveHermits) {
+			if (canAttachToCard(game, hermit.row.hermitCard, effectCard)) return 'YES'
 		}
 
 		return 'NO'

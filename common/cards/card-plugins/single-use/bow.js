@@ -21,7 +21,7 @@ class BowSingleUseCard extends SingleUseCard {
 			description: 'Do 40hp damage to an AFK Hermit of your choice.',
 			pickOn: 'attack',
 			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
 			],
 		})
 	}

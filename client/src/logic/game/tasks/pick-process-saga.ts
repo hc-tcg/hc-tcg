@@ -129,8 +129,9 @@ export function* runPickProcessSaga(
 			req_cycle: for (const reqIndex in reqs) {
 				const req = reqs[reqIndex]
 				const pickedReqSlots: Array<PickedSlotT> = []
-				const actionType =
-					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+				const actionType = req.slot.includes('hand')
+					? 'SET_SELECTED_CARD'
+					: 'SLOT_PICKED'
 				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
 				while (pickedReqSlots.length < amount) {

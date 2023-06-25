@@ -23,7 +23,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 			pickOn: 'attack',
 			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
+				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
 			],
 		})
 	}

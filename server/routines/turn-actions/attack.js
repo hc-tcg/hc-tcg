@@ -109,7 +109,10 @@ function executeAttack(attack) {
 	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
 
 	const currentHealth = targetRow.health
-	const maxHealth = targetHermitInfo.health
+	let maxHealth = 50 // Armor Stand
+	if (targetHermitInfo) {
+		maxHealth = targetHermitInfo.health
+	}
 
 	// Deduct and clamp health
 	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)

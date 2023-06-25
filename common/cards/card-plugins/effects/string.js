@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import CARDS from '../../../cards'
 
 class StringEffectCard extends EffectCard {
 	constructor() {
@@ -25,7 +26,11 @@ class StringEffectCard extends EffectCard {
 		// can only attach to opponent
 		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
 
-		if (!pos.row?.hermitCard) return 'NO'
+		if (!pos.row?.hermitCard) return 'INVALID'
+
+		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+		if (!cardInfo) return 'INVALID'
+		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
 		return 'YES'
 	}

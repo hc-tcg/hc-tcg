@@ -2,7 +2,6 @@ import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 
-
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -24,7 +23,15 @@ class KeralisRareHermitCard extends HermitCard {
 				power: 'Heal any AFK Hermit for 100hp.',
 			},
 			pickOn: 'attack',
-			pickReqs: [{target: 'board', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [
+				{
+					target: 'board',
+					slot: ['hermit'],
+					type: ['hermit'],
+					amount: 1,
+					active: false,
+				},
+			],
 		})
 	}
 

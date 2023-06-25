@@ -498,3 +498,21 @@ export function getItemCardsEnergy(game, row) {
 
 	return total
 }
+
+/**
+ * @param {GameModel} game
+ * @param {CardT | null} card
+ * @param {CardT | null} cardAttaching
+ * @returns {boolean}
+ */
+export function canAttachToCard(game, card, cardAttaching) {
+	if (!card || !cardAttaching) return false
+
+	const cardAttachingPos = getCardPos(game, cardAttaching.cardInstance)
+	const cardInfo = CARDS[card.cardId]
+	if (!cardAttachingPos || !cardInfo) return false
+
+	if (!cardInfo.canAttachToCard(game, cardAttachingPos)) return false
+
+	return true
+}

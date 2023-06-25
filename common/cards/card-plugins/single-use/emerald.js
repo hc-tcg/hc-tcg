@@ -2,6 +2,7 @@ import SingleUseCard from './_single-use-card'
 import {isRemovable} from '../../../../server/utils'
 import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
+import {canAttachToCard} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -31,21 +32,27 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) {
 			return 'NO'
+		}
 
 		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
+		if (!opponentActiveRow.effectCard || !playerActiveRow.effectCard) {
+			return 'NO'
+		}
+
 		const opponentEffect = opponentActiveRow.effectCard
 		const playerEffect = playerActiveRow.effectCard
+		const opponentHermit = opponentActiveRow.hermitCard
+		const playerHermit = playerActiveRow.hermitCard
 
-		if (!opponentEffect && !playerEffect) return 'NO'
-		if (
-			(opponentEffect && !isRemovable(opponentEffect)) ||
-			(playerEffect && !isRemovable(playerEffect))
-		)
-			return 'NO'
+		if (!canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
+		if (!canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+
+		if (opponentEffect && !isRemovable(opponentEffect)) return 'NO'
+		if (playerEffect && !isRemovable(playerEffect)) return 'NO'
 
 		return 'YES'
 	}

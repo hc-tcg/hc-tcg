@@ -31,8 +31,8 @@ class JinglerRareHermitCard extends HermitCard {
 			pickOn: 'followup',
 			pickReqs: [
 				{
-					target: 'hand',
-					type: ['hermit', 'effect', 'single_use', 'item'],
+					target: 'opponent',
+					slot: ['hand'],
 					amount: 1,
 				},
 			],

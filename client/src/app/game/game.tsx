@@ -1,6 +1,6 @@
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedSlotT} from 'common/types/pick-process'
+import {PickProcessT, PickedSlotT, SlotTypeT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
@@ -28,60 +28,84 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
+import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	setOpenedModal,
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
+import {CardTypeT} from 'common/types/cards'
 
-const getPickProcessMessage = (pickProcess: PickProcessT) => {
+const getFormattedList = (list: (CardTypeT | SlotTypeT)[]): string => {
+	if (list.length === 1) {
+		return list[0].replace(/_/g, ' ')
+	}
+	const formattedList = list.map((item) => item.replace(/_/g, ' '))
+	const initialElements = formattedList.slice(0, -1).join(', ')
+	return `${initialElements} or ${formattedList[formattedList.length - 1]}`
+}
+
+const getPickProcessMessage = (
+	pickProcess: PickProcessT,
+	currentPlayerId: string,
+	yourPlayerId: string
+) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
 	const amount = pickProcess.amount || req.amount
-	const target =
-		req.target === 'board'
-			? "anyone's"
-			: req.target === 'opponent'
-			? "opponent's"
-			: 'your'
 
-	let location = ''
-	if (req.target === 'hand') {
-		location = 'hand'
-	} else if (req.active === true) {
-		location = 'active hermit'
-	} else if (req.active === false) {
-		location = 'afk hermits'
+	// Workaround to get the correct target name for the player choosing a slot/card
+	// This is needed because the current player may make the opposite player choose
+	// a slot/card on follow up (e.g the Jingler) but techincally is still their turn
+	// so we need to get the correct target name using another method
+	let target
+	if (req.target === 'player') {
+		target = currentPlayerId === yourPlayerId ? 'your' : "opponent's"
+	} else if (req.target === 'opponent') {
+		target = currentPlayerId === yourPlayerId ? "opponent's" : 'your'
 	} else {
-		location = 'side of the board'
+		target = "anyone's"
 	}
 
-	let adjacentTarget = ''
-	if (req.adjacent === 'active') {
-		adjacentTarget = 'active hermit'
-	} else if (req.adjacent === 'req') {
-		adjacentTarget = 'a previous pick'
+	let location =
+		req.active === true
+			? 'active hermit'
+			: req.active === false
+			? 'afk hermits'
+			: 'hermits'
+
+	if (req.slot[0] === 'hand' && req.slot.length === 1) {
+		location = 'hand'
 	}
+
+	const adjacentMap = {
+		active: 'active hermit',
+		req: 'a previous pick',
+	}
+	const adjacentTarget = req.adjacent ? adjacentMap[req.adjacent] : ''
 
 	let type = ''
-	if (req.type.length === 1) {
-		type = req.type[0]
+	if (req.slot[0] !== 'hand') {
+		type = getFormattedList(req.slot) + (req.amount > 1 ? ' slots' : ' slot')
 	} else {
-		// If there are more than one type, we want to display them as a list
-		// separated by commas, with the last element separated by 'or'
-		const initialElements = req.type.slice(0, -1)
-		const commaSeparated = initialElements.join(', ')
-		const lastElement = req.type[req.type.length - 1]
+		type = req.amount > 1 ? ' cards' : ' card'
+	}
 
-		type = `${commaSeparated} or ${lastElement}`
+	let cardType = ''
+	if (req.type) {
+		cardType =
+			getFormattedList(req.type) + (req.amount > 1 ? ' cards' : ' card')
 	}
 
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
+
+	const article = ['item', 'effect'].includes(cardType[0]) ? 'an' : 'a'
+
 	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
-		adjacent ? adjacentTarget : ''
+		adjacent ? 'adjacent to' : ''
+	} ${adjacent ? adjacentTarget : ''} ${req.type ? 'with' : ''} ${
+		cardType ? `${article} ${cardType}` : ''
 	} from ${target} ${location}.`
 }
 
@@ -120,6 +144,7 @@ function Game() {
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	const thisPlayerId = useSelector(getPlayerId)
 	const dispatch = useDispatch()
 
 	if (!gameState || !playerState) return <main>Loading</main>
@@ -163,7 +188,13 @@ function Game() {
 				</div>
 				{renderModal(openedModal, handleOpenModal)}
 				{pickProcess ? (
-					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
+					<MouseIndicator
+						message={getPickProcessMessage(
+							pickProcess,
+							gameState.currentPlayerId,
+							thisPlayerId
+						)}
+					/>
 				) : null}
 
 				<Chat />

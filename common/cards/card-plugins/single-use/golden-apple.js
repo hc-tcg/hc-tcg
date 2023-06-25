@@ -12,7 +12,13 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			description: 'Heal AFK Hermit 100hp.',
 			pickOn: 'apply',
 			pickReqs: [
-				{target: 'player', type: ['hermit'], amount: 1, active: false},
+				{
+					target: 'player',
+					slot: ['hermit'],
+					type: ['hermit'],
+					amount: 1,
+					active: false,
+				},
 			],
 		})
 	}
