@@ -97,7 +97,9 @@ function MatchMaking() {
 								<Button type="button" variant="stone" onClick={handleCancel}>
 									Cancel
 								</Button>
-								<Button type="submit" variant="stone">Join</Button>
+								<Button type="submit" variant="stone">
+									Join
+								</Button>
 							</div>
 						</form>
 					</>
