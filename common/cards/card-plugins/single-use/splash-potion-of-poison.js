@@ -38,7 +38,6 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			if (!hasDamageEffect) {
 				opponentPlayer.board.rows[opponentActiveRow].ailments.push({
 					id: 'poison',
-					duration: -1,
 				})
 			}
 		}

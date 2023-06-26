@@ -45,7 +45,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 				(a) => a.id === 'fire' || a.id === 'poison'
 			)
 			if (!hasDamageEffect) {
-				attack.target.row.ailments.push({id: 'poison', duration: -1})
+				attack.target.row.ailments.push({id: 'poison'})
 			}
 		}
 	}

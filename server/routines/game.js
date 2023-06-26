@@ -591,14 +591,16 @@ function* turnSaga(game) {
 	for (let row of currentPlayer.board.rows) {
 		for (let ailment of row.ailments) {
 			// decrease duration
-			if (ailment.duration > -1) {
+			if (ailment.duration) {
 				// ailment is not infinite, reduce duration by 1
 				ailment.duration--
 			}
 		}
 
 		// Get rid of ailments that have expired
-		row.ailments = row.ailments.filter((a) => a.duration > 0)
+		row.ailments = row.ailments.filter(
+			(a) => a.duration === undefined || a.duration > 0
+		)
 	}
 
 	// Call turn end hooks
