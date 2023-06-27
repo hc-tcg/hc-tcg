@@ -44,8 +44,7 @@ class Iskall85RareHermitCard extends HermitCard {
 
 			const isBuilder =
 				attack.target.row.hermitCard &&
-				HERMIT_CARDS[attack.target.row.hermitCard.cardId]?.hermitType ===
-					'builder'
+				HERMIT_CARDS[attack.target.row.hermitCard.cardId]?.hermitType === 'builder'
 					? 2
 					: 1
 

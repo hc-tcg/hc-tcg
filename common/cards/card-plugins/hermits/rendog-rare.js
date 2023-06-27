@@ -35,13 +35,7 @@ class RendogRareHermitCard extends HermitCard {
 	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type !== 'secondary') return attacks
 

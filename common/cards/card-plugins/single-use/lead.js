@@ -45,12 +45,7 @@ class LeadSingleUseCard extends SingleUseCard {
 
 			const itemCardInfo = slots[0]
 			const targetSlotInfo = slots[1]
-			if (
-				targetSlotInfo.slot.card !== null ||
-				!itemCardInfo.row ||
-				!targetSlotInfo.row
-			)
-				return
+			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
 
 			/** @type {SlotPos} */ const itemPos = {
 				rowIndex: itemCardInfo.row.index,
@@ -86,8 +81,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, opponentActiveRow} = game.ds
 
 		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'NO'
-		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0)
-			return 'NO'
+		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0) return 'NO'
 
 		return 'YES'
 	}

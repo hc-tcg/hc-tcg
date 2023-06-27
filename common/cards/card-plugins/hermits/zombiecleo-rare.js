@@ -28,9 +28,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				power: 'Use a secondary attack from any of your AFK Hermits.',
 			},
 			pickOn: 'attack',
-			pickReqs: [
-				{target: 'player', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -42,13 +40,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
@@ -65,13 +57,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		if (!hermitInfo) return []
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(
-			game,
-			card.cardInstance,
-			pos,
-			hermitAttackType,
-			{}
-		)
+		return hermitInfo.getAttacks(game, card.cardInstance, pos, hermitAttackType, {})
 	}
 
 	/**

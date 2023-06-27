@@ -41,11 +41,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			}
 			player.followUp = this.id
 
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				modalResult
-			) => {
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
 				if (followUp !== this.id) return
 				player.followUp = null
 

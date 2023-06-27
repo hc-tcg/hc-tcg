@@ -35,11 +35,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.custom[reviveNextTurn] = true
 		}

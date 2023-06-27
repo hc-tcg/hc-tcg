@@ -1,8 +1,4 @@
-import CARDS, {
-	ITEM_CARDS,
-	EFFECT_CARDS,
-	SINGLE_USE_CARDS,
-} from '../../common/cards'
+import CARDS, {ITEM_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
 import {DEBUG_CONFIG} from '../../config'
 import {GameModel} from '../models/game-model'
 import {getCardPos} from './cards'
@@ -21,9 +17,7 @@ import {getCardPos} from './cards'
 export function equalCard(card1, card2) {
 	if (!card1 && !card2) return true
 	if (!card1 || !card2) return false
-	return (
-		card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
-	)
+	return card1.cardId === card2.cardId && card1.cardInstance === card2.cardInstance
 }
 
 /**
@@ -39,9 +33,7 @@ export function hasEnoughEnergy(energy, cost) {
 	const anyCost = cost.filter((item) => item === 'any')
 	const hasEnoughSpecific = specificCost.every((costItem) => {
 		// First try find the exact card
-		let index = remainingEnergy.findIndex(
-			(energyItem) => energyItem === costItem
-		)
+		let index = remainingEnergy.findIndex((energyItem) => energyItem === costItem)
 		if (index === -1) {
 			// Then try find an "any" card
 			index = remainingEnergy.findIndex((energyItem) => energyItem === 'any')
@@ -130,22 +122,15 @@ export function findCard(gameState, card) {
 	const pStates = Object.values(gameState.players)
 	for (let pState of pStates) {
 		const playerId = pState.id
-		const handIndex = pState.hand.findIndex((handCard) =>
-			equalCard(handCard, card)
-		)
+		const handIndex = pState.hand.findIndex((handCard) => equalCard(handCard, card))
 		if (handIndex !== -1) return {playerId, target: pState.hand, key: handIndex}
 
 		const rows = pState.board.rows
 		for (let row of rows) {
-			if (equalCard(row.hermitCard, card))
-				return {playerId, target: row, key: 'hermitCard'}
-			if (equalCard(row.effectCard, card))
-				return {playerId, target: row, key: 'effectCard'}
-			const itemIndex = row.itemCards.findIndex((itemCard) =>
-				equalCard(itemCard, card)
-			)
-			if (itemIndex !== -1)
-				return {playerId, target: row.itemCards, key: itemIndex}
+			if (equalCard(row.hermitCard, card)) return {playerId, target: row, key: 'hermitCard'}
+			if (equalCard(row.effectCard, card)) return {playerId, target: row, key: 'effectCard'}
+			const itemIndex = row.itemCards.findIndex((itemCard) => equalCard(itemCard, card))
+			if (itemIndex !== -1) return {playerId, target: row.itemCards, key: itemIndex}
 		}
 	}
 	return null
@@ -291,23 +276,16 @@ export function drawCards(playerState, amount) {
  * @param {PlayerState | null} currentPlayer
  * @returns {Array<CoinFlipT>}
  */
-export function flipCoin(
-	playerTossingCoin,
-	cardId,
-	times = 1,
-	currentPlayer = null
-) {
+export function flipCoin(playerTossingCoin, cardId, times = 1, currentPlayer = null) {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.board.activeRow
 	if (activeRowIndex === null) {
-		console.log(
-			`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`
-		)
+		console.log(`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`)
 		return []
 	}
-	const forceTails = !!playerTossingCoin.board.rows[
-		activeRowIndex
-	].ailments.find((a) => a.id === 'badomen')
+	const forceTails = !!playerTossingCoin.board.rows[activeRowIndex].ailments.find(
+		(a) => a.id === 'badomen'
+	)
 
 	/** @type {Array<CoinFlipT>} */
 	let coinFlips = []
@@ -435,8 +413,7 @@ export function getAdjacentRows(playerState) {
 	for (let i = 1; i < rows.length + 1; i++) {
 		const row = rows[i]
 		const prevRow = rows[i - 1]
-		if (row && prevRow && row.hermitCard && prevRow.hermitCard)
-			result.push([prevRow, row])
+		if (row && prevRow && row.hermitCard && prevRow.hermitCard) result.push([prevRow, row])
 	}
 	return result
 }

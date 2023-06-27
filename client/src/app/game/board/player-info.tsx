@@ -32,14 +32,10 @@ function PlayerInfo({player, dir}: Props) {
 
 	return (
 		<div className={classnames(css.playerInfo, css[dir])}>
-			<div className={classnames(css.playerName, css[connClass])}>
-				{getName(player)}
-			</div>
+			<div className={classnames(css.playerName, css[connClass])}>{getName(player)}</div>
 			{gameState.currentPlayerId === player.id ? (
 				<div className={css.currentTurn}>
-					{gameState.currentPlayerId === playerId
-						? 'Your turn'
-						: "Opponent's turn"}
+					{gameState.currentPlayerId === playerId ? 'Your turn' : "Opponent's turn"}
 				</div>
 			) : null}
 			<div className={css.dynamicSpace} />

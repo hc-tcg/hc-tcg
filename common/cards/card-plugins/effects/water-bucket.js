@@ -28,9 +28,7 @@ class WaterBucketEffectCard extends EffectCard {
 				if (pickedCards.length !== 1) return
 				const targetSlot = pickedCards[0]
 				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
-				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
-					(a) => a.id !== 'fire'
-				)
+				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter((a) => a.id !== 'fire')
 
 				if (targetSlot.row.state.effectCard?.cardId === 'string') {
 					discardCard(game, targetSlot.row.state.effectCard)
@@ -47,10 +45,7 @@ class WaterBucketEffectCard extends EffectCard {
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			}
 
-			opponentPlayer.hooks.afterApply[instance] = (
-				pickedSlots,
-				modalResult
-			) => {
+			opponentPlayer.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			}

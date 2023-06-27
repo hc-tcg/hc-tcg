@@ -37,16 +37,12 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
+					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
 						<div>
 							{/* EXPORT SECTION */}
 							<div>
 								<p className={css.instructions}>
-									Export the "{loadedDeck.name}" deck to share with your
-									friends!
+									Export the "{loadedDeck.name}" deck to share with your friends!
 								</p>
 								<div className={css.exportControls}>
 									<input type="text" readOnly value={handleExportDeck()} />

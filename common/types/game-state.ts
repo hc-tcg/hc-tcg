@@ -12,15 +12,8 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id:
-		| 'poison'
-		| 'fire'
-		| 'sleeping'
-		| 'knockedout'
-		| 'slowness'
-		| 'badomen'
-		| 'weakness'
-	duration: number
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen' | 'weakness'
+	duration?: number
 }
 
 export type RowStateWithHermit = {
@@ -117,9 +110,7 @@ export type PlayerState = {
 		afterDefence: Hook<(attack: AttackModel) => void>
 
 		/** Instance key -> hook called on follow up */
-		onFollowUp: Hook<
-			(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void
-		>
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Hook<(followUp: string) => void>
 
@@ -132,9 +123,7 @@ export type PlayerState = {
 		onTurnEnd: Hook<() => void>
 
 		/** Instance key -> hook called the player flips a coin */
-		onCoinFlip: Hook<
-			(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
-		>
+		onCoinFlip: Hook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 	}
 }
 

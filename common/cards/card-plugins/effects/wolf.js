@@ -10,8 +10,7 @@ class WolfEffectCard extends EffectCard {
 			id: 'wolf',
 			name: 'Wolf',
 			rarity: 'rare',
-			description:
-				'Opponent takes 20hp damage after their attack.\n\nIgnores armour.',
+			description: 'Opponent takes 20hp damage after their attack.\n\nIgnores armour.',
 		})
 	}
 
@@ -41,12 +40,9 @@ class WolfEffectCard extends EffectCard {
 					if (!pos) return false
 					if (!pos.row?.effectCard) return false
 
-					return [
-						'diamond_armor',
-						'gold_armor',
-						'iron_armor',
-						'netherite_armor',
-					].includes(pos.row.effectCard.cardId)
+					return ['diamond_armor', 'gold_armor', 'iron_armor', 'netherite_armor'].includes(
+						pos.row.effectCard.cardId
+					)
 				})
 
 				attack.addNewAttack(backlashAttack)

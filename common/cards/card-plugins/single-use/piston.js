@@ -82,12 +82,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			const itemCardInfo = slots[0]
 			const targetSlotInfo = slots[1]
 
-			if (
-				targetSlotInfo.slot.card !== null ||
-				!itemCardInfo.row ||
-				!targetSlotInfo.row
-			)
-				return
+			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
 
 			/** @type {SlotPos} */ const itemPos = {
 				rowIndex: itemCardInfo.row.index,

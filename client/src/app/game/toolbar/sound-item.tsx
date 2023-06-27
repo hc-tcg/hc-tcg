@@ -9,9 +9,7 @@ function SoundItem() {
 	const settings = useSelector(getSettings)
 
 	const handleSoundChange = () => {
-		dispatch(
-			setSetting('soundVolume', settings.soundVolume !== '0' ? '0' : '100')
-		)
+		dispatch(setSetting('soundVolume', settings.soundVolume !== '0' ? '0' : '100'))
 	}
 
 	return (

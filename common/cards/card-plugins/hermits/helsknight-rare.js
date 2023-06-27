@@ -36,11 +36,7 @@ class HelsknightRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.custom[instance] = true
 		}

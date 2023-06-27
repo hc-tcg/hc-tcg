@@ -2,7 +2,6 @@ import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
 
-
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
 		super({

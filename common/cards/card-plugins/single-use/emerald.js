@@ -15,8 +15,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			id: 'emerald',
 			name: 'Emerald',
 			rarity: 'rare',
-			description:
-				"Steal or swap the attached effect card of your opponent's active Hermit.",
+			description: "Steal or swap the attached effect card of your opponent's active Hermit.",
 		})
 	}
 
@@ -31,8 +30,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
-			return 'NO'
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return 'NO'
 
 		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
@@ -65,11 +63,9 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			if (playerActiveRowIndex === null || opponentActiveRowIndex === null)
-				return
+			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
-			const opponentActiveRow =
-				opponentPlayer.board.rows[opponentActiveRowIndex]
+			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 			const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
 			/** @type {SlotPos} */ const playerSlot = {

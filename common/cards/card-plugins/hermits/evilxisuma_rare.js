@@ -55,15 +55,10 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			// He only disables the attack of the target, that means that
 			// lightning rod counters him and using knockback/target block
 			// is a really bad idea
-			player.custom[this.getInstanceKey(instance, 'target')] =
-				attack.target.rowIndex
+			player.custom[this.getInstanceKey(instance, 'target')] = attack.target.rowIndex
 
 			// It's easier to not duplicate the code if I use the hooks here
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				modalResult
-			) => {
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
 				if (followUp !== this.id) return
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
@@ -71,8 +66,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 				if (!modalResult || !modalResult.disable) return
 
-				player.custom[this.getInstanceKey(instance, 'disable')] =
-					modalResult.disable
+				player.custom[this.getInstanceKey(instance, 'disable')] = modalResult.disable
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
@@ -94,9 +88,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				if (activeRow === null || targetRow === null) return blockedActions
 				if (activeRow !== targetRow) return blockedActions
 
-				blockedActions.push(
-					disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				)
+				blockedActions.push(disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK')
 
 				return blockedActions
 			}

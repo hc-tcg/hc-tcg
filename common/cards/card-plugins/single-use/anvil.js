@@ -40,10 +40,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 				const opponentRow = opponentRows[i]
 				if (!opponentRow || !opponentRow.hermitCard) continue
 				const attack = new AttackModel({
-					id: this.getInstanceKey(
-						instance,
-						activeIndex === i ? 'active' : 'inactive'
-					),
+					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
