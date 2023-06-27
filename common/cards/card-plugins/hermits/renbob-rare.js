@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
 class RenbobRareHermitCard extends HermitCard {
 	constructor() {
@@ -36,36 +37,27 @@ class RenbobRareHermitCard extends HermitCard {
 	 * @returns {Array<AttackModel>}
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const {player, otherPlayer} = pos
-		let attack = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)[0]
+		const {opponentPlayer} = pos
+		let attack = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)[0]
 		if (attack.type === 'secondary' && pos.rowIndex) {
-			const otherPlayerRow = otherPlayer.board.rows[pos.rowIndex]
-			if (otherPlayerRow.hermitCard) {
+			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
+			if (opponentPlayerRow.hermitCard) {
 				attack.target = {
-					index: pos.rowIndex,
-					row: otherPlayerRow,
+					player: opponentPlayer,
+					rowIndex: pos.rowIndex,
+					row: opponentPlayerRow,
 				}
 			} else {
 				attack.target = null
 			}
 		}
 
-		return [attack]
-	}
+		const attacks = [attack]
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 */
-	onDetach(game, instance, pos) {
-		const {player} = pos
+		const weaknessAttack = createWeaknessAttack(attack)
+		if (weaknessAttack) attacks.push(weaknessAttack)
+
+		return attacks
 	}
 
 	getExpansion() {
