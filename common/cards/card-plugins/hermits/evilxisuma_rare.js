@@ -41,7 +41,8 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
+				attack.type !== 'secondary' ||
+				!attack.target
 			)
 				return
 

@@ -24,7 +24,7 @@ class TotemEffectCard extends EffectCard {
 
 		// If we are attacked from any source
 		player.hooks.afterDefence[instance] = (attack) => {
-			if (!isTargetingPos(attack, pos)) return
+			if (!isTargetingPos(attack, pos) || !attack.target) return
 			const {row} = attack.target
 			if (row.health) return
 
