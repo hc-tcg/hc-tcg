@@ -1,7 +1,7 @@
 export class AttackModel {
 	/**
 	 * Creates a new attack
-	 * @param {import("common/types/attack").AttackDefs} defs
+	 * @param {import("types/attack").AttackDefs} defs
 	 */
 	constructor(defs) {
 		/**
@@ -11,7 +11,7 @@ export class AttackModel {
 		this.id = defs.id
 		/**
 		 * The attacker
-		 * @type {import("common/types/attack").Attacker | undefined}
+		 * @type {import("types/cards").RowPos | undefined}
 		 */
 		this.attacker = defs.attacker
 
@@ -23,7 +23,7 @@ export class AttackModel {
 
 		/**
 		 * The attack type
-		 * @type {import("common/types/attack").AttackType}
+		 * @type {import("types/attack").AttackType}
 		 */
 		this.type = defs.type
 
@@ -51,8 +51,11 @@ export class AttackModel {
 		 */
 		this.damageLocked = false
 
-		/** @type {Array<import("common/types/attack").ShouldIgnoreCard>} */
+		/** @type {Array<import("types/attack").ShouldIgnoreCard>} */
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
+
+		/** @type {Array<import("types/attack").AttackDamageChange>} */
+		this.damageChanges = []
 
 		/**
 		 * Attacks to perform after this attack
@@ -66,31 +69,52 @@ export class AttackModel {
 	// @TODO Add id to this method, then we store exactly where all damage comes from, by id
 	/**
 	 * Adds damage to the attack
+	 * @param {string} sourceId
 	 * @param {number} amount
 	 */
-	addDamage(amount) {
+	addDamage(sourceId, amount) {
 		if (this.damageLocked) return this
 		this.damage += amount
+		this.damageChanges.push({
+			sourceId,
+			type: 'add',
+			value: amount,
+		})
+
 		return this
 	}
 
 	/**
 	 * Removes damage from the attack
+	 * @param {string} sourceId
 	 * @param {number} amount
 	 */
-	reduceDamage(amount) {
+	reduceDamage(sourceId, amount) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
+		this.damageChanges.push({
+			sourceId,
+			type: 'reduce',
+			value: amount,
+		})
+
 		return this
 	}
 
 	/**
 	 * Multiplies damage for the attack
+	 * @param {string} sourceId
 	 * @param {number} multiplier
 	 */
-	multiplyDamage(multiplier) {
+	multiplyDamage(sourceId, multiplier) {
 		if (this.damageLocked) return this
 		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
+		this.damageChanges.push({
+			sourceId,
+			type: 'multiply',
+			value: multiplier,
+		})
+
 		return this
 	}
 
