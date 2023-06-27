@@ -65,6 +65,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
  */
 function executeAttack(attack) {
 	const {target} = attack
+	if (!target) return
 
 	const {row: targetRow} = target
 	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
@@ -115,6 +116,7 @@ function runBeforeAttackHooks(attacks, pickedSlots = {}) {
 function runBeforeDefenceHooks(attacks, pickedSlots = {}) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the target of the attack
 		const player = attack.target.player
@@ -164,6 +166,7 @@ function runOnAttackHooks(attacks, pickedSlots = {}) {
 function runOnDefenceHooks(attacks, pickedSlots = {}) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the target of the attack
 		const player = attack.target.player
@@ -211,6 +214,7 @@ function runAfterAttackHooks(attacks) {
 function runAfterDefenceHooks(attacks) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the source of the attack
 		const player = attack.target.player

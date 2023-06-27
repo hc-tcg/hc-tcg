@@ -85,6 +85,7 @@ class MendingSingleUseCard extends singleUseCard {
 		// check if there is an empty slot available to move the effect card to
 		const inactiveHermits = getNonEmptyRows(player, false)
 		for (const hermit of inactiveHermits) {
+			if (!hermit) continue
 			const effect = hermit.row.effectCard
 			if (!effect || isRemovable(effect)) return 'YES'
 		}

@@ -39,7 +39,12 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+			if (
+				attack.id !== this.getInstanceKey(instance) ||
+				attack.type !== 'secondary' ||
+				!attack.target
+			)
+				return
 
 			const coinFlip = flipCoin(player, this.id)
 

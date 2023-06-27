@@ -10,6 +10,7 @@ import {WEAKNESS_DAMAGE} from '../routines/turn-actions/attack.js'
  * @returns {boolean}
  */
 export function isTargetingPos(attack, pos) {
+	if (!attack.target) return false
 	const targetingPlayer = attack.target.player.id === pos.player.id
 	const targetingRow = attack.target.rowIndex === pos.rowIndex
 
