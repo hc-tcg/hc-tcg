@@ -35,7 +35,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			if (!pickedSlot) return
 
 			player.hooks.beforeAttack[instance] = (attack) => {
-				if (['backlash', 'ailment'].includes(attack.type)) return
+				if (attack.isType('ailment') || attack.isBacklash) return
 				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) {
 					return
 				}
@@ -46,7 +46,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 					row: pickedSlot.row.state,
 				}
 
-				if (['primary', 'secondary'].includes(attack.type)) {
+				if (attack.isType('primary', 'secondary')) {
 					const weaknessAttack = createWeaknessAttack(attack)
 					if (weaknessAttack) {
 						attack.addNewAttack(weaknessAttack)

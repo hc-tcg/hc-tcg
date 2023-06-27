@@ -31,8 +31,8 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
 			opponentPlayer.hooks.onAttack[instance] = (attack) => {
-				if (['ailment', 'backlash'].includes(attack.type)) return
-				attack.multiplyDamage(multiplier)
+				if (attack.isType('ailment') || attack.isBacklash) return
+				attack.multiplyDamage(this.id, multiplier)
 			}
 
 			opponentPlayer.hooks.afterAttack[instance] = () => {

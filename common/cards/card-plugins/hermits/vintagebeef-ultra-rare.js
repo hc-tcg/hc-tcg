@@ -45,7 +45,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 				row.hermitCard?.cardId?.startsWith('ethoslab')
 			)
 
-			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(attack.damage)
+			if (hasBdubs && hasDoc && hasEtho) attack.addDamage(this.id, attack.getDamage())
 		}
 	}
 

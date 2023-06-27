@@ -48,7 +48,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 						row: opponentRow,
 					},
 					type: 'effect',
-				}).addDamage(i === activeIndex ? 30 : 10)
+				}).addDamage(this.id, i === activeIndex ? 30 : 10)
 
 				attacks.push(attack)
 			}

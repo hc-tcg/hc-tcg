@@ -42,7 +42,7 @@ export function createWeaknessAttack(attack) {
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

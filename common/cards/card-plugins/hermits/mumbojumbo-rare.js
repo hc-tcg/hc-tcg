@@ -50,8 +50,8 @@ class MumboJumboRareHermitCard extends HermitCard {
 					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 			).length
 
-			attack.addDamage(headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(2)
+			attack.addDamage(this.id, headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(this.id, 2)
 		}
 	}
 

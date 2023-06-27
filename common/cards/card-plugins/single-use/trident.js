@@ -37,7 +37,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(30)
+			}).addDamage(this.id, 30)
 
 			return [tridentAttack]
 		}

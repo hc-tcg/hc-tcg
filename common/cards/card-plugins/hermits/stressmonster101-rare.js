@@ -41,11 +41,12 @@ class StressMonster101RareHermitCard extends HermitCard {
 				id: this.getInstanceKey(instance, 'selfAttack'),
 				attacker: attack.target,
 				target: attack.attacker,
-				type: 'backlash',
+				type: 'effect',
+				isBacklash: true,
 			})
 			const attackDamage = attack.attacker.row.health
-			attack.addDamage(attackDamage)
-			backlashAttack.addDamage(attackDamage)
+			attack.addDamage(this.id, attackDamage)
+			backlashAttack.addDamage(this.id, attackDamage)
 
 			attack.addNewAttack(backlashAttack)
 		}

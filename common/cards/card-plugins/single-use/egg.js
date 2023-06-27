@@ -53,7 +53,7 @@ class EggSingleUseCard extends SingleUseCard {
 						row: pickedHermit.row.state,
 					},
 					type: 'effect',
-				}).addDamage(10)
+				}).addDamage(this.id, 10)
 
 				attack.addNewAttack(eggAttack)
 			}

@@ -26,7 +26,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
-			if (!isTargetingPos(attack, pos) || attack.type === 'ailment') return
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -35,9 +35,9 @@ class NetheriteArmorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 40) {
-				const damageReduction = Math.min(attack.damage, 40 - totalReduction)
+				const damageReduction = Math.min(attack.getDamage(), 40 - totalReduction)
 				player.custom[instanceKey] += damageReduction
-				attack.reduceDamage(damageReduction)
+				attack.reduceDamage(this.id, damageReduction)
 			}
 		}
 

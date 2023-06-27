@@ -32,7 +32,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(60)
+			}).addDamage(this.id, 60)
 
 			return [swordAttack]
 		}

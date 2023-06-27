@@ -13,10 +13,11 @@ export type ShouldIgnoreCard = (instance: string) => boolean
 
 export type AttackDefs = {
 	id?: string
-	attacker?: RowPos
-	target: RowPos
+	attacker?: RowPos | null
+	target?: RowPos | null
 	type: AttackType
 	shouldIgnoreCards?: Array<ShouldIgnoreCard>
+	isBacklash?: boolean
 }
 
 export type AttackDamageChange = {

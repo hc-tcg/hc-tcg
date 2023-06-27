@@ -41,9 +41,9 @@ class Docm77RareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(attack.damage)
+				attack.addDamage(this.id, this.secondary.damage)
 			} else {
-				attack.reduceDamage(attack.damage / 2)
+				attack.reduceDamage(this.id, this.secondary.damage / 2)
 			}
 		}
 	}

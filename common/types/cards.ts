@@ -107,7 +107,7 @@ export type RowPos = {
 	player: PlayerState
 	rowIndex: number
 	row: RowStateWithHermit
-} | null
+}
 
 export type SlotPos = {
 	rowIndex: number

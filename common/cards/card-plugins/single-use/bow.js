@@ -62,7 +62,7 @@ class BowSingleUseCard extends SingleUseCard {
 					row: opponentRow,
 				},
 				type: 'effect',
-			}).addDamage(40)
+			}).addDamage(this.id, 40)
 
 			return [bowAttack]
 		}

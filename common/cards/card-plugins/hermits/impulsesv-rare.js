@@ -44,7 +44,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 					)
 			).length
 
-			attack.addDamage(Math.min(boomerAmount, 2) * 40)
+			attack.addDamage(this.id, Math.min(boomerAmount, 2) * 40)
 		}
 	}
 

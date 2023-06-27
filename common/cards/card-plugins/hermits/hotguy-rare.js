@@ -55,7 +55,7 @@ class HotguyRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		// How do I avoid using the cardId here?
+		// How do I avoid using the cardId here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack[instance] = (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (
@@ -67,7 +67,7 @@ class HotguyRareHermitCard extends HermitCard {
 
 			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.cardInstance)
 			if (attack.id === bowId) {
-				attack.addDamage(attack.damage)
+				attack.addDamage(this.id, attack.getDamage())
 			}
 		}
 

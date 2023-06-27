@@ -77,9 +77,9 @@ class HermitCard extends Card {
 		})
 
 		if (attack.type === 'primary') {
-			attack.addDamage(this.primary.damage)
+			attack.addDamage(this.id, this.primary.damage)
 		} else if (attack.type === 'secondary') {
-			attack.addDamage(this.secondary.damage)
+			attack.addDamage(this.id, this.secondary.damage)
 		}
 
 		const attacks = [attack]

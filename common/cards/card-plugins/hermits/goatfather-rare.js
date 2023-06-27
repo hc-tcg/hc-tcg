@@ -71,7 +71,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 					row: targetRow,
 				},
 				type: hermitAttackType,
-			}).addDamage(activeRow === i ? 30 : 10)
+			}).addDamage(this.id, activeRow === i ? 30 : 10)
 			attacks.push(attack)
 		}
 

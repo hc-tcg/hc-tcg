@@ -29,8 +29,12 @@ class LightningRodEffectCard extends EffectCard {
 
 		// Only on opponents turn
 		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
-			if (['backlash', 'ailment'].includes(attack.type)) return
+			if (attack.isType('ailment') || attack.isBacklash) return
 			if (!row || rowIndex === null || !row.hermitCard) return
+
+			// Attack already has to be targeting us
+			if (attack.target?.player.id !== player.id) return
+
 			attack.target = {
 				player: player,
 				rowIndex: rowIndex,

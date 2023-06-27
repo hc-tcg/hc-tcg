@@ -70,9 +70,10 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
 			if (
 				player.custom[status] === 'opponent_miss' &&
-				!['effect', 'ailment', 'backlash'].includes(attack.type)
+				!attack.isType('effect', 'ailment') &&
+				!attack.isBacklash
 			) {
-				attack.multiplyDamage(0).lockDamage()
+				attack.multiplyDamage(this.id, 0).lockDamage()
 			}
 		}
 
