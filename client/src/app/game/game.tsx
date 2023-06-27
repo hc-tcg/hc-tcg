@@ -7,8 +7,10 @@ import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
+import LootingModal from './modals/looting-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import EvilXModal from './modals/evil-x-modal'
 import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
@@ -26,21 +28,13 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
-import {
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
 	const amount = pickProcess.amount || req.amount
 	const target =
-		req.target === 'board'
-			? "anyone's"
-			: req.target === 'opponent'
-			? "opponent's"
-			: 'your'
+		req.target === 'board' ? "anyone's" : req.target === 'opponent' ? "opponent's" : 'your'
 
 	let location = ''
 	if (req.target === 'hand') {
@@ -76,11 +70,9 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
-		adjacent ? adjacentTarget : ''
-	} from ${target} ${location}.`
+	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${empty ? 'slot' : 'card'}${
+		amount > 1 ? 's' : ''
+	} ${adjacent ? 'adjacent to' : ''} ${adjacent ? adjacentTarget : ''} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
@@ -88,7 +80,9 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	confirm: ConfirmModal,
 	spyglass: SpyglassModal,
 	chest: ChestModal,
+	looting: LootingModal,
 	borrow: BorrowModal,
+	evilX: EvilXModal,
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
@@ -101,8 +95,7 @@ const renderModal = (
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
-		return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id)) return null
 
 	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
@@ -152,15 +145,13 @@ function Game() {
 							size="medium"
 							cards={gameState.hand}
 							onClick={(card: CardT) => selectCard(card)}
-							selected={selectedCard}
+							selected={[selectedCard]}
 							picked={pickedSlotsInstances}
 						/>
 					</div>
 				</div>
 				{renderModal(openedModal, handleOpenModal)}
-				{pickProcess ? (
-					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
-				) : null}
+				{pickProcess ? <MouseIndicator message={getPickProcessMessage(pickProcess)} /> : null}
 
 				<Chat />
 

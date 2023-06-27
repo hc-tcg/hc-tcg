@@ -6,12 +6,7 @@ import Card from './_card'
 import {GameModel} from '../../../server/models/game-model'
 
 /** @type {Array<Card>} */
-export const CARDS = [
-	...SINGLE_USE_CARDS,
-	...EFFECT_CARDS,
-	...HERMIT_CARDS,
-	...ITEM_CARDS,
-]
+export const CARDS = [...SINGLE_USE_CARDS, ...EFFECT_CARDS, ...HERMIT_CARDS, ...ITEM_CARDS]
 
 /**
  * @param {GameModel} game

@@ -23,14 +23,11 @@ const Card = (props: CardProps) => {
 	const {type} = props.card
 	const {onClick, selected, picked, ...otherProps} = props
 	let card = null
-	if (type === 'hermit')
-		card = <HermitCardModule {...(otherProps as HermitCardProps)} />
-	else if (type === 'item')
-		card = <ItemCardModule {...(otherProps as ItemCardProps)} />
+	if (type === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
+	else if (type === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
 	else if (['effect', 'single_use'].includes(type))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
-	else if (type === 'health')
-		card = <HealthCardModule {...(otherProps as HealthCardProps)} />
+	else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
 	else throw new Error('Unsupported card type: ' + type)
 	return (
 		<Tooltip tooltip={<CardTooltip card={props.card} />}>

@@ -2,7 +2,6 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
-// TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -33,41 +32,56 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
+		// secondary_used, opponent_miss, opponent_hit
 		const status = this.getInstanceKey(instance, 'status')
 
-		//If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
+		// If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			) {
-				return
-			}
-			if (player.custom[status] === 'opponent_missed') return
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.type !== 'secondary') return
+
+			// If opponent missed last turn, don't allow ability to activate
+			if (player.custom[status] === 'opponent_miss') return
 
 			player.custom[status] = 'secondary_used'
 		}
 
-		//Create coin flip on opponent's turn if the flag is set to "secondary_used". If heads, set flag to "opponent_missed".
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
-			if (player.custom[status] !== 'secondary_used') return
-
-			const coinFlip = flipCoin(otherPlayer, this.id)
-			otherPlayer.coinFlips[this.id] = coinFlip
-
-			if (coinFlip[0] === 'heads') {
-				attack.multiplyDamage(0)
-				attack.lockDamage()
-				player.custom[status] = 'opponent_missed'
+		// If the opponent missed last turn, clear the flag at the end of our turn.
+		player.hooks.onTurnEnd[instance] = () => {
+			if (player.custom[status] === 'opponent_miss') {
+				delete player.custom[status]
 			}
 		}
 
-		//If the opponent missed last turn, clear the flag at the end of your turn.
-		player.hooks.onTurnEnd[instance] = () => {
-			if (player.custom[status] !== 'opponent_missed') return
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			// Flip a coin once at the start of their attack loop
+			if (player.custom[status] !== 'secondary_used') return
 
-			delete player.custom[status]
+			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
+			if (coinFlip[0] === 'heads') {
+				player.custom[status] = 'opponent_miss'
+			} else {
+				player.custom[status] = 'opponent_hit'
+			}
+		}
+
+		// If the coin flip is heads and it's the opponent hermit attack, lock the damage to 0.
+		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+			if (
+				player.custom[status] === 'opponent_miss' &&
+				!attack.isType('effect', 'ailment') &&
+				!attack.isBacklash
+			) {
+				attack.multiplyDamage(this.id, 0).lockDamage()
+			}
+		}
+
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
+			// Their turn is over, delete the status unless it's opponent missed
+			if (player.custom[status] !== 'opponent_miss') {
+				delete player.custom[status]
+			}
 		}
 	}
 
@@ -77,12 +91,17 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
+
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
+
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
+
 		delete player.custom[status]
 	}
 }

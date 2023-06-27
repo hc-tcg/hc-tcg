@@ -35,7 +35,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 * @param {import('common/types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const state = this.getInstanceKey(instance, 'state')
 		const heads = this.getInstanceKey(instance, 'heads')
 
@@ -53,25 +53,17 @@ class JoeHillsRareHermitCard extends HermitCard {
 		}
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			) {
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') {
 				return
 			}
 
 			const coinFlip = flipCoin(player, this.id, 1)
-			player.coinFlips[this.id] = coinFlip
-
 			if (coinFlip[0] === 'heads') player.custom[heads] = true
 			player.custom[state] = 'used-timeskip'
 		}
 
 		player.hooks.blockedActions[instance] = (blockedActions) => {
-			if (
-				player.board.activeRow !== pos.rowIndex ||
-				player.custom[state] !== 'timeskip-complete'
-			) {
+			if (player.board.activeRow !== pos.rowIndex || player.custom[state] !== 'timeskip-complete') {
 				return blockedActions
 			}
 			/** @type {AvailableActionsT}*/
@@ -81,7 +73,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			return blockedActions
 		}
 
-		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 			if (!player.custom[heads]) return blockedActions
 			/** @type {AvailableActionsT}*/
 			const blocked = [
@@ -96,7 +88,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				'PLAY_EFFECT_CARD',
 			]
 
-			if (otherPlayer.board.activeRow !== null) {
+			if (opponentPlayer.board.activeRow !== null) {
 				blocked.push('CHANGE_ACTIVE_HERMIT')
 			}
 			blockedActions.push(...blocked)
@@ -110,7 +102,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const state = this.getInstanceKey(instance, 'state')
 		const heads = this.getInstanceKey(instance, 'heads')
 		// Remove hooks
@@ -118,7 +110,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 		delete player.hooks.blockedActions[instance]
 		delete player.hooks.onTurnStart[instance]
 		delete player.hooks.onTurnEnd[instance]
-		delete otherPlayer.hooks.blockedActions[instance]
+		delete opponentPlayer.hooks.blockedActions[instance]
 		delete player.custom[state]
 		delete player.custom[heads]
 	}

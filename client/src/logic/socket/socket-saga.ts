@@ -3,11 +3,7 @@ import {select} from 'typed-redux-saga'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
-import {
-	socketConnect,
-	socketDisconnect,
-	socketConnectError,
-} from './socket-actions'
+import {socketConnect, socketDisconnect, socketConnectError} from './socket-actions'
 import {getSession} from 'logic/session/session-selectors'
 
 export function* sendMsg(type: string, payload?: any): any {

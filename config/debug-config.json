@@ -1,6 +1,12 @@
 {
-	"disableDeckValidation": false,
-	"extraStartingCards": [],
-	"noItemRequirements": false,
-	"forceCoinFlip": false
+	"disableDeckValidation": true,
+	"extraStartingCards": ["pearlescentmoon_rare"],
+	"noItemRequirements": true,
+	"forceCoinFlip": false,
+	"oneShotMode": false,
+	"disableDamage": false,
+	"disableDeckOut": false,
+	"startWithAllCards": true,
+	"blockedActions": [],
+	"availableActions": []
 }

@@ -39,7 +39,6 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] === 'tails') return
 			const attacker = attack.attacker
@@ -47,10 +46,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 
 			// Heal 40hp
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			attacker.row.health = Math.min(
-				attacker.row.health + 40,
-				hermitInfo.health
-			)
+			attacker.row.health = Math.min(attacker.row.health + 40, hermitInfo.health)
 		}
 	}
 

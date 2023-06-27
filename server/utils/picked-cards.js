@@ -26,8 +26,7 @@ export function validatePickedSlots(game, pickedSlots) {
 		if (type === 'hand' && card) {
 			if (!equalCard(player.hand[index], card)) return null
 		} else if (['hermit', 'effect', 'item'].includes(type) && pickedSlot.row) {
-			const {hermitCard, effectCard, itemCards} =
-				player.board.rows[pickedSlot.row.index]
+			const {hermitCard, effectCard, itemCards} = player.board.rows[pickedSlot.row.index]
 			if (
 				(type === 'hermit' && !equalCard(hermitCard, card)) ||
 				(type === 'effect' && !equalCard(effectCard, card)) ||

@@ -10,20 +10,13 @@ import {
 	getPickProcess,
 	getPlayerState,
 } from 'logic/game/game-selectors'
-import {
-	setSelectedCard,
-	setOpenedModal,
-	removeEffect,
-} from 'logic/game/game-actions'
+import {setSelectedCard, setOpenedModal, removeEffect} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
-function* pickWithSelectedSaga(
-	action: SlotPickedAction,
-	selectedCard: CardT
-): SagaIterator {
+function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
 	const selectedCardInfo = CARDS[selectedCard.cardId]
 
 	// Validations
@@ -42,9 +35,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const {slot, row} = action.payload
 	const playerId = yield* select(getPlayerId)
 	const playerState = yield* select(getPlayerState)
-	const rowHermitCard = row
-		? playerState?.board.rows[row?.index]?.hermitCard
-		: null
+	const rowHermitCard = row ? playerState?.board.rows[row?.index]?.hermitCard : null
 	const settings = yield* select(getSettings)
 	const clickedOnHermit = slot.type === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
@@ -73,10 +64,7 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 
 	if (action.payload.slot.type === 'single_use') {
 		const playerState = yield* select(getPlayerState)
-		if (
-			playerState?.board.singleUseCard &&
-			!playerState?.board.singleUseCardUsed
-		) {
+		if (playerState?.board.singleUseCard && !playerState?.board.singleUseCardUsed) {
 			yield put(removeEffect())
 			return
 		}

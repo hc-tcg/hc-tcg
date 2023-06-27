@@ -16,7 +16,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 			description: 'Draw 2 cards.',
 		})
 	}
-	
+
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
@@ -24,11 +24,11 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
-		if (player.hand.length < 2) return 'NO'
+		if (player.pile.length <= 2) return 'NO'
 
 		return 'YES'
 	}
-		
+
 	canApply() {
 		return true
 	}
@@ -37,12 +37,23 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		drawCards(player, 2)
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			drawCards(player, 2)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

@@ -1,8 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
-import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
-import {AttackModel} from '../../../../server/models/attack-model'
 
 class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
@@ -34,38 +32,36 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack[instance] = (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
-
 			if (coinFlip[0] !== 'heads') return
 
-			otherPlayer.custom[instanceKey] = flipCoin(player, this.id)
+			player.custom[instanceKey] = true
 		}
 
-		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
-			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			if (attack.isType('ailment') || attack.isBacklash) return
 			if (!attack.attacker) return
 
-			const coinFlip = otherPlayer.custom[instanceKey]
-			if (!coinFlip) return
+			const tossCoin = player.custom[instanceKey]
+			if (!tossCoin) return
 
-			otherPlayer.coinFlips['Opponent ' + this.name] = coinFlip
-
+			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
 			if (coinFlip[0] === 'heads') {
 				// Change attack target - this just works
 				attack.target = attack.attacker
+				attack.isBacklash = true
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			// Delete our hook at the end of opponents turn
-			delete otherPlayer.custom[instanceKey]
+			delete player.custom[instanceKey]
 		}
 	}
 
@@ -75,14 +71,14 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.beforeAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
-		delete otherPlayer.custom[instanceKey]
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
+		delete player.custom[instanceKey]
 	}
 }
 

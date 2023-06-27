@@ -7,6 +7,7 @@ import Dropdown from 'components/dropdown'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
+import {decode} from 'js-base64'
 
 type Props = {
 	setOpen: boolean
@@ -20,14 +21,13 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
 
 	//IMPORT DECK FUNCTION
-	// TODO: Remove deprecated "atob" function.
 	const handleImportDeck = () => {
 		if (!hashRef.current) return
 		const deck = []
 		let b64: Array<number> = []
 
 		try {
-			b64 = atob(hashRef.current.value)
+			b64 = decode(hashRef.current.value)
 				.split('')
 				.map((char) => char.charCodeAt(0))
 		} catch {
@@ -85,10 +85,7 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
+					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
 						<div>
 							{/* IMPORT SECTION */}
 							<div>

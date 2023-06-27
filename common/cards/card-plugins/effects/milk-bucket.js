@@ -1,10 +1,6 @@
-import EffectCard from './_effect-card'
-import {validPick} from '../../../../server/utils/reqs'
 import {GameModel} from '../../../../server/models/game-model'
+import EffectCard from './_effect-card'
 
-/**
- * @typedef {import('../../../types/pick-process').PickRequirmentT} PickRequirmentT
- */
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -12,48 +8,53 @@ class MilkBucketEffectCard extends EffectCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Stops POISON.\n\nCan be used on active or AFK Hermits. Discard after Use.\n\nCan also be attached to prevent POISON.\n\nDiscard after user is knocked out.',
+				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
+			pickOn: 'apply',
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
 		})
-		this.pickOn = 'apply'
-		this.pickReqs = /** @satisfies {Array<PickRequirmentT>} */ ([
-			{target: 'player', type: ['hermit'], amount: 1},
-		])
 	}
 
 	/**
 	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
-	register(game) {
-		game.hooks.actionEnd.tap(this.id, () => {
-			const {currentPlayer, opponentPlayer} = game.ds
-			const allRows = [
-				...currentPlayer.board.rows,
-				...opponentPlayer.board.rows,
-			]
-			allRows.forEach((row) => {
-				const isPoisoned = row.ailments.some((a) => a.id === 'poison')
-				const hasBucket = row.effectCard?.cardId === this.id
-				if (isPoisoned && hasBucket) {
-					row.ailments = row.ailments.filter((a) => a.id !== 'poison')
-				}
-			})
-		})
+	onAttach(game, instance, pos) {
+		const {player, opponentPlayer, slot, row} = pos
+		if (slot.type === 'single_use') {
+			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+				const pickedCards = pickedSlots[this.id] || []
+				if (pickedCards.length !== 1) return
+				const targetSlot = pickedCards[0]
+				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
 
-		game.hooks.applyEffect.tap(this.id, (action, actionState) => {
-			const {singleUseInfo} = game.ds
-			const {pickedSlots} = actionState
-			if (singleUseInfo?.id === this.id) {
-				const suPickedCards = pickedSlots[this.id] || []
-				if (suPickedCards?.length !== 1) return 'INVALID'
-
-				if (!validPick(game.state, this.pickReqs[0], suPickedCards[0]))
-					return 'INVALID'
-
-				const {row} = suPickedCards[0]
-				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
-				return 'DONE'
+				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
+					(a) => a.id !== 'poison' && a.id !== 'badomen'
+				)
 			}
-		})
+		} else if (slot.type === 'effect') {
+			player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+			}
+
+			opponentPlayer.hooks.afterApply[instance] = (attack, pickedSlots) => {
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+			}
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player, opponentPlayer} = pos
+		delete player.hooks.onApply[instance]
+		delete player.hooks.onDefence[instance]
+		delete opponentPlayer.hooks.afterApply[instance]
 	}
 
 	/**
@@ -61,13 +62,8 @@ class MilkBucketEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		const {currentPlayer} = game.ds
-
-		if (pos.slot.type === 'single_use') return 'YES'
-
-		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
-		if (!pos.row?.hermitCard) return 'NO'
+		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
+		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
 
 		return 'YES'
 	}

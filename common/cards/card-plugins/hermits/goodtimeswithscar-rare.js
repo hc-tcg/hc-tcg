@@ -31,32 +31,27 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer, row} = pos
+		const {player, opponentPlayer, row} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
-		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.custom[reviveNextTurn] = true
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = (afterAttack) => {
-			if (afterAttack.attack.target.index !== pos.rowIndex) return
-
-			if (player.custom[reviveNextTurn] && !player.custom[scarRevivedKey]) {
-				if (!row || !row.health || row.health > 0) {
-					return
-				}
+		opponentPlayer.hooks.afterAttack[instance] = () => {
+			if (player.custom[reviveNextTurn]) {
+				if (!row || row.health === null || row.health > 0) return
 
 				row.health = 50
 				row.ailments = []
-				player.custom[scarRevivedKey] = true
+
+				delete opponentPlayer.hooks.afterAttack[instance]
 			}
+		}
+
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[reviveNextTurn]
 		}
 	}
@@ -67,14 +62,13 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
-		const scarRevivedKey = this.getInstanceKey(instance, 'revived')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.afterAttack[instance]
+		delete opponentPlayer.hooks.afterAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[reviveNextTurn]
-		delete player.custom[scarRevivedKey]
 	}
 }
 

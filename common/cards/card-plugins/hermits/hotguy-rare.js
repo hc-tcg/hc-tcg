@@ -40,16 +40,9 @@ class HotguyRareHermitCard extends HermitCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary')
-			pos.player.custom[this.getInstanceKey(instance)] = true
+		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
 
 		return attacks
 	}
@@ -62,7 +55,7 @@ class HotguyRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		// How do I avoid using the cardId here?
+		// How do I avoid using the cardId here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack[instance] = (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (
@@ -72,12 +65,14 @@ class HotguyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(
-				singleUseCard.cardInstance
-			)
+			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.cardInstance)
 			if (attack.id === bowId) {
-				attack.addDamage(attack.damage)
+				attack.addDamage(this.id, attack.getDamage())
 			}
+		}
+
+		player.hooks.onTurnEnd[instance] = () => {
+			delete player.custom[this.getInstanceKey(instance)]
 		}
 	}
 
@@ -90,6 +85,7 @@ class HotguyRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		delete player.hooks.beforeAttack[instance]
+		delete player.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

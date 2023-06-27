@@ -12,19 +12,17 @@ export function getCardPos(game, instance) {
 		const playerId = ids[i]
 		const player = game.state.players[playerId]
 
-		const otherPlayerId = ids.find((id) => id !== playerId)
-		if (!otherPlayerId) continue
-		const otherPlayer = game.state.players[otherPlayerId]
+		const opponentPlayerId = ids.find((id) => id !== playerId)
+		if (!opponentPlayerId) continue
+		const opponentPlayer = game.state.players[opponentPlayerId]
 
 		const board = game.state.players[playerId].board
 
 		// single use slot
 		if (board.singleUseCard?.cardInstance === instance) {
 			return {
-				playerId,
 				player,
-				otherPlayerId,
-				otherPlayer,
+				opponentPlayer,
 				rowIndex: null,
 				row: null,
 				slot: {type: 'single_use', index: 0},
@@ -37,20 +35,16 @@ export function getCardPos(game, instance) {
 
 			if (row.hermitCard?.cardInstance === instance) {
 				return {
-					playerId,
 					player,
-					otherPlayerId,
-					otherPlayer,
+					opponentPlayer,
 					rowIndex,
 					row,
 					slot: {type: 'hermit', index: 0},
 				}
 			} else if (row.effectCard?.cardInstance === instance) {
 				return {
-					playerId,
 					player,
-					otherPlayerId,
-					otherPlayer,
+					opponentPlayer,
 					rowIndex,
 					row,
 					slot: {type: 'effect', index: 0},
@@ -60,10 +54,8 @@ export function getCardPos(game, instance) {
 					const card = row.itemCards[i]
 					if (card?.cardInstance === instance) {
 						return {
-							playerId,
 							player,
-							otherPlayerId,
-							otherPlayer,
+							opponentPlayer,
 							rowIndex,
 							row,
 							slot: {type: 'item', index: i},

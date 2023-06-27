@@ -35,20 +35,14 @@ class PotatoBoyRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'primary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
 
 			const activeRow = player.board.activeRow
-			if (!activeRow) return
+			if (activeRow === null) return
 
 			const rows = player.board.rows
 
-			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(
-				Boolean
-			)
+			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(Boolean)
 
 			targetRows.forEach((row) => {
 				if (!row.hermitCard) return

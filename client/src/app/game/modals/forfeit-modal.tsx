@@ -22,9 +22,7 @@ function AttackModal({closeModal}: Props) {
 	return (
 		<Modal title="!! Forfeit !!">
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Do you really wish to forfeit this game?
-				</div>
+				<div className={css.description}>Do you really wish to forfeit this game?</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleYes}>
 						Yes

@@ -25,19 +25,11 @@ function Settings({setMenuSection}: Props) {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
 	const handleProfanityChange = () => {
-		dispatch(
-			setSetting(
-				'profanityFilter',
-				settings.profanityFilter !== 'off' ? 'off' : 'on'
-			)
-		)
+		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
 	}
 	const handleDialogsChange = () => {
 		dispatch(
-			setSetting(
-				'confirmationDialogs',
-				settings.confirmationDialogs !== 'off' ? 'off' : 'on'
-			)
+			setSetting('confirmationDialogs', settings.confirmationDialogs !== 'off' ? 'off' : 'on')
 		)
 	}
 	const handleResetStats = () => {

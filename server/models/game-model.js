@@ -102,23 +102,17 @@ export class GameModel {
 			 * For extra validation when players attempts to place down a card
 			 * @type {HookMap<SyncBailHook<[TurnAction, ActionState]>>}
 			 */
-			validateCard: new HookMap(
-				(cardType) => new SyncBailHook(['turnAction', 'actionState'])
-			),
+			validateCard: new HookMap((cardType) => new SyncBailHook(['turnAction', 'actionState'])),
 			/**
 			 * When a card is succesfully placed on board
 			 * @type {HookMap<SyncHook<[TurnAction, ActionState]>>}
 			 */
-			playCard: new HookMap(
-				(cardType) => new SyncHook(['turnAction', 'actionState'])
-			),
+			playCard: new HookMap((cardType) => new SyncHook(['turnAction', 'actionState'])),
 			/**
 			 * When a card is discarded (hand or board)
 			 * @type {HookMap<SyncBailHook<[Object, boolean]>>}
 			 */
-			discardCard: new HookMap(
-				(cardType) => new SyncBailHook(['card', 'singleUseSlot'])
-			),
+			discardCard: new HookMap((cardType) => new SyncBailHook(['card', 'singleUseSlot'])),
 			/**
 			 * When player swaps hermits
 			 * @type {SyncHook<[TurnAction, ActionState]>}
@@ -186,14 +180,13 @@ export class GameModel {
 
 	/** @param {PlayerModel} player */
 	addPlayer(player) {
-		if (this.getPlayers().length > 2)
-			throw new Error('Game can have only 2 players')
+		if (this.getPlayers().length > 2) throw new Error('Game can have only 2 players')
+		if (!player) throw new Error('Player is null')
 		this.players[player.playerId] = player
 	}
 
 	initialize() {
-		if (this.getPlayers().length !== 2)
-			throw new Error('Game must 2 have 2 players to start')
+		if (this.getPlayers().length !== 2) throw new Error('Game must 2 have 2 players to start')
 		this.state = getGameState(this)
 	}
 }

@@ -1,6 +1,5 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
-import {AttackResult} from './attack'
 import {CardPos, EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
@@ -13,8 +12,8 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen'
-	duration: number
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen' | 'weakness'
+	duration?: number
 }
 
 export type RowStateWithHermit = {
@@ -35,17 +34,11 @@ export type RowStateWithoutHermit = {
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
-export type RowInfo = {
-	index: number
-	row: RowStateWithHermit
-}
-
 export type CoinFlipT = 'heads' | 'tails'
 
 export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
-	iterations: Array<string>
 }
 
 export type Hook<T> = Record<string, T>
@@ -55,7 +48,7 @@ export type PlayerState = {
 	followUp?: any
 	playerName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
@@ -89,24 +82,35 @@ export type PlayerState = {
 			) => AvailableActionsT
 		>
 
-		/** Instance key -> hook called whenver any card is attached */
+		/** Instance key -> Hook called when a card is attached */
 		onAttach: Hook<(instance: string) => void>
-		/** Instance key -> hook called whenver any card is detached */
+		/** Instance key -> Hook called when a card is detached */
 		onDetach: Hook<(instance: string) => void>
-		/** Instance key -> hook called whenever a single use card is applied */
-		onApply: Hook<(instance: string) => void>
 
-		/** Instance key -> hook that returns attacks */
+		/** Instance key -> Hook called before a single use card is applied */
+		beforeApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> Hook called when a single use card is applied */
+		onApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> Hook called after a single use card is applied */
+		afterApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+
+		/** Instance key -> Hook that returns attacks to execute */
 		getAttacks: Hook<(pickedSlots: PickedSlots) => Array<AttackModel>>
-		/** Instance key -> hook that modifies an attack before the main attack loop */
+		/** Instance key -> Hook called before the main attack loop, for every attack from our side of the board */
 		beforeAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
-		/** Instance key -> hook that modifies an attack during the main attack loop */
+		/** Instance key -> Hook called before the main attack loop, for every attack targeting our side of the board */
+		beforeDefence: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called for every attack from our side of the board */
 		onAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
-		/** Instance key -> hook that modifies an attack */
-		afterAttack: Hook<(attackResult: AttackResult) => void>
+		/** Instance key -> Hook called for every attack that targets our side of the board */
+		onDefence: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called after the main attack loop, for every attack from our side of the board */
+		afterAttack: Hook<(attack: AttackModel) => void>
+		/** Instance key -> Hook called after the main attack loop, for every attack targeting our side of the board */
+		afterDefence: Hook<(attack: AttackModel) => void>
 
 		/** Instance key -> hook called on follow up */
-		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots) => void>
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Hook<(followUp: string) => void>
 
@@ -119,9 +123,7 @@ export type PlayerState = {
 		onTurnEnd: Hook<() => void>
 
 		/** Instance key -> hook called the player flips a coin */
-		onCoinFlip: Hook<
-			(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
-		>
+		onCoinFlip: Hook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 	}
 }
 
@@ -176,7 +178,7 @@ export type LocalPlayerState = {
 	followUp?: any
 	playerName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	lives: number
 	board: {
@@ -210,11 +212,6 @@ export type LocalGameState = {
 		turnTime: number
 		turnRemaining: number
 	}
-}
-
-export type CoinFlipInfo = {
-	shownCoinFlips: Array<string>
-	turn: number
 }
 
 // state sent to client

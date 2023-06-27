@@ -43,8 +43,7 @@ function EndTurnModal({closeModal}: Props) {
 		<Modal title="End Turn">
 			<div className={css.confirmModal}>
 				<div className={css.description}>
-					Are you sure you want to end your turn? These actions are still
-					available:
+					Are you sure you want to end your turn? These actions are still available:
 				</div>
 				<ul className={css.availableActions}>
 					{availableActions.map((action) => {

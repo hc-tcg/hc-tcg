@@ -20,7 +20,7 @@ const SIZE = {
 type CardListProps = {
 	cards: Array<CardT>
 	disabled?: Array<string>
-	selected?: CardT | null
+	selected?: Array<CardT | null>
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
 	size: 'medium' | 'small'
@@ -51,7 +51,9 @@ const CardList = (props: CardListProps) => {
 			| ItemCard
 			| HealthCard
 		if (!info) return null
-		const isSelected = equalCard(card, selected)
+		const isSelected = selected
+			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 		return (
@@ -76,11 +78,7 @@ const CardList = (props: CardListProps) => {
 	return (
 		<div
 			ref={listRef}
-			className={classnames(
-				css.cardList,
-				css[size],
-				wrap === false ? css.noWrap : null
-			)}
+			className={classnames(css.cardList, css[size], wrap === false ? css.noWrap : null)}
 		>
 			{cardsOutput}
 		</div>

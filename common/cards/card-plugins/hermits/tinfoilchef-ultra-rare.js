@@ -32,27 +32,21 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.beforeAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			if (otherPlayer.board.activeRow === null) return 'NO'
-			const opponentActiveRow =
-				otherPlayer.board.rows[otherPlayer.board.activeRow]
-			if (
-				!opponentActiveRow.effectCard ||
-				!isRemovable(opponentActiveRow.effectCard)
-			)
-				return
+			if (opponentPlayer.board.activeRow === null) return 'NO'
+			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+			if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return
 
 			// Can't discard two items on the same hermit
 			const limit = player.custom[this.getInstanceKey(instance)] || {}
 			if (limit[opponentActiveRow.hermitCard.cardInstance]) return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 
 			limit[opponentActiveRow.hermitCard.cardInstance] = true

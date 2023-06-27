@@ -29,18 +29,14 @@ function* sendGameStateOnReconnect(game, action) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000
 		const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
 		const graceTime = 1000
-		game.state.timer.turnRemaining = Math.floor(
-			(remainingTime + graceTime) / 1000
-		)
+		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 	}
 
 	const payload = {
 		localGameState: getLocalGameState(
 			game,
 			player,
-			playerId === game.ds.currentPlayer.id
-				? availableActions
-				: opponentAvailableActions
+			playerId === game.ds.currentPlayer.id ? availableActions : opponentAvailableActions
 		),
 	}
 	broadcast([player], 'GAME_STATE', payload)
@@ -65,9 +61,7 @@ function* statusChangedSaga(game, action) {
  */
 function* connectionStatusSaga(game) {
 	yield takeEvery(
-		(action) =>
-			action.type === 'PLAYER_RECONNECTED' &&
-			!!game.players[action.payload.playerId],
+		(action) => action.type === 'PLAYER_RECONNECTED' && !!game.players[action.payload.playerId],
 		sendGameStateOnReconnect,
 		game
 	)

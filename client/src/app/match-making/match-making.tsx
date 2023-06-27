@@ -1,11 +1,7 @@
 import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {setCode, leaveMatchmaking} from 'logic/matchmaking/matchmaking-actions'
-import {
-	getStatus,
-	getCode,
-	getInvalidCode,
-} from 'logic/matchmaking/matchmaking-selectors'
+import {getStatus, getCode, getInvalidCode} from 'logic/matchmaking/matchmaking-selectors'
 import css from './match-making.module.scss'
 import TcgLogo from 'components/tcg-logo'
 import Button from 'components/button'
@@ -94,10 +90,12 @@ function MatchMaking() {
 							/>
 							{invalidCode && <ErrorBanner>Invalid Code</ErrorBanner>}
 							<div className={css.options}>
-								<Button variant="stone" onClick={handleCancel}>
+								<Button type="button" variant="stone" onClick={handleCancel}>
 									Cancel
 								</Button>
-								<Button variant="stone">Join</Button>
+								<Button type="submit" variant="stone">
+									Join
+								</Button>
 							</div>
 						</form>
 					</>

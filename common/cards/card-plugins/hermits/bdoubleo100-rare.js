@@ -46,12 +46,10 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			attacker.row.health = hermitInfo.health
 
 			// remove old sleeping
-			attacker.row.ailments = attacker.row.ailments.filter(
-				(a) => a.id !== 'sleeping'
-			)
+			attacker.row.ailments = attacker.row.ailments.filter((a) => a.id !== 'sleeping')
 
-			// sleep for 2 turns
-			attacker.row.ailments.push({id: 'sleeping', duration: 2})
+			// sleep for 3 turns (2 + the current turn)
+			attacker.row.ailments.push({id: 'sleeping', duration: 3})
 		}
 	}
 

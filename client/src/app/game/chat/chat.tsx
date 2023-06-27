@@ -45,8 +45,7 @@ function Chat() {
 			<div className={css.messageList}>
 				{chatMessages.map((messageInfo) => {
 					const time = new Date(messageInfo.createdAt).toLocaleString()
-					const name =
-						playerStates?.[messageInfo.playerId]?.playerName || 'unknown'
+					const name = playerStates?.[messageInfo.playerId]?.playerName || 'unknown'
 					const isPlayer = playerId === messageInfo.playerId
 					return (
 						<div

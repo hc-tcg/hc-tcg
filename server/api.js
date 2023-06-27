@@ -3,6 +3,7 @@ const require = createRequire(import.meta.url)
 import root from './models/root-model'
 import {CONFIG} from '../config'
 import {GameModel} from './models/game-model'
+import fetch from 'node-fetch'
 
 /**
  * @param {import("express").Express} app
