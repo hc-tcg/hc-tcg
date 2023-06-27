@@ -13,8 +13,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 			id: 'curse_of_vanishing',
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
-			description:
-				"Your opponent is forced to discard their active Hermit's attached effect card.",
+			description: "Your opponent is forced to discard their active Hermit's attached effect card.",
 		})
 	}
 
@@ -28,12 +27,8 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			if (opponentPlayer.board.activeRow === null) return
-			const opponentActiveRow =
-				opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (
-				opponentActiveRow.effectCard &&
-				isRemovable(opponentActiveRow.effectCard)
-			) {
+			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
 				discardCard(game, opponentActiveRow.effectCard)
 			}
 		}
@@ -52,13 +47,8 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 		const {opponentPlayer} = pos
 
 		if (opponentPlayer.board.activeRow === null) return 'NO'
-		const opponentActiveRow =
-			opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-		if (
-			!opponentActiveRow.effectCard ||
-			!isRemovable(opponentActiveRow.effectCard)
-		)
-			return 'NO'
+		const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
+		if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return 'NO'
 
 		return 'YES'
 	}

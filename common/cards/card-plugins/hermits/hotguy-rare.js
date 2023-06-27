@@ -40,16 +40,9 @@ class HotguyRareHermitCard extends HermitCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary')
-			pos.player.custom[this.getInstanceKey(instance)] = true
+		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
 
 		return attacks
 	}
@@ -72,9 +65,7 @@ class HotguyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(
-				singleUseCard.cardInstance
-			)
+			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.cardInstance)
 			if (attack.id === bowId) {
 				attack.addDamage(attack.damage)
 			}

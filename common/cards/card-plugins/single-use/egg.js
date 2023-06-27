@@ -1,9 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {
-	flipCoin,
-	getActiveRowPos,
-	getNonEmptyRows,
-} from '../../../../server/utils'
+import {flipCoin, getActiveRowPos, getNonEmptyRows} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
@@ -22,9 +18,7 @@ class EggSingleUseCard extends SingleUseCard {
 				'After your attack, choose one of your opponent AFK Hermits to make active.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
 
 			pickOn: 'attack',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 

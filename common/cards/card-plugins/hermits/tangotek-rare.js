@@ -28,9 +28,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
 			pickOn: 'followup',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -43,11 +41,7 @@ class TangoTekRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
@@ -71,9 +65,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					const {row} = pickedSlot
 					if (!row) return
 
-					const canBeActive = row.state.ailments.every(
-						(a) => a.id !== 'knockedout'
-					)
+					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
 					if (!canBeActive) return
 					opponentPlayer.board.activeRow = row.index
 					opponentPlayer.followUp = null

@@ -3,10 +3,7 @@
 		"browser": true,
 		"es2021": true
 	},
-	"extends": [
-		"eslint:recommended",
-		"prettier"
-	],
+	"extends": ["eslint:recommended", "prettier"],
 	"overrides": [
 		{
 			"files": ["**/*.js"]

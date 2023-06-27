@@ -1,8 +1,4 @@
-import {
-	HERMIT_CARDS,
-	EFFECT_CARDS,
-	SINGLE_USE_CARDS,
-} from '../../../common/cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'

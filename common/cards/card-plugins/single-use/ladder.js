@@ -18,9 +18,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				'Swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
 
 			pickOn: 'apply',
-			pickReqs: [
-				{target: 'player', type: ['hermit'], amount: 1, adjacent: 'active'},
-			],
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, adjacent: 'active'}],
 		})
 	}
 

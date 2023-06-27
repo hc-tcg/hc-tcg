@@ -98,11 +98,7 @@ class GrianRareHermitCard extends HermitCard {
 			}
 
 			// Modal Result
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedCards,
-				modalResult
-			) => {
+			player.hooks.onFollowUp[instance] = (followUp, pickedCards, modalResult) => {
 				if (followUp !== this.id || !row || rowIndex === null) return
 				player.followUp = null
 				delete player.hooks.onFollowUp[instance]

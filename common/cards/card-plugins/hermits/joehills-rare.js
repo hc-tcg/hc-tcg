@@ -53,10 +53,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 		}
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			) {
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') {
 				return
 			}
 
@@ -66,10 +63,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 		}
 
 		player.hooks.blockedActions[instance] = (blockedActions) => {
-			if (
-				player.board.activeRow !== pos.rowIndex ||
-				player.custom[state] !== 'timeskip-complete'
-			) {
+			if (player.board.activeRow !== pos.rowIndex || player.custom[state] !== 'timeskip-complete') {
 				return blockedActions
 			}
 			/** @type {AvailableActionsT}*/

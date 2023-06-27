@@ -12,11 +12,7 @@ type Props = {
 
 const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	return (
-		<div
-			key={name}
-			className={classnames(css.attack, {[css.extra]: extra})}
-			onClick={onClick}
-		>
+		<div key={name} className={classnames(css.attack, {[css.extra]: extra})} onClick={onClick}>
 			<div
 				className={classnames(css.icon, {
 					[css.effectIcon]: !attackInfo,
@@ -36,9 +32,7 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 						{attackInfo?.damage}
 					</span>
 				</div>
-				{attackInfo?.power && (
-					<div className={css.specialMoveDescription}>{attackInfo?.power}</div>
-				)}
+				{attackInfo?.power && <div className={css.specialMoveDescription}>{attackInfo?.power}</div>}
 			</div>
 		</div>
 	)

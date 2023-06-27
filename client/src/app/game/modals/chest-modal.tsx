@@ -20,9 +20,7 @@ function ChestModal({closeModal}: Props) {
 	const discarded: Array<CardT> = useSelector(getGameState)?.discarded || []
 
 	const handleSelection = (newSelected: CardT) => {
-		setSelected((current) =>
-			equalCard(current, newSelected) ? null : newSelected
-		)
+		setSelected((current) => (equalCard(current, newSelected) ? null : newSelected))
 	}
 
 	const handleClose = () => {

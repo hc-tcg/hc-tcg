@@ -13,8 +13,7 @@ class ShieldEffectCard extends EffectCard {
 			id: 'shield',
 			name: 'Shield',
 			rarity: 'common',
-			description:
-				'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',
+			description: 'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',
 		})
 	}
 
@@ -48,11 +47,7 @@ class ShieldEffectCard extends EffectCard {
 		player.hooks.afterDefence[instance] = (attack) => {
 			const {player, row} = pos
 
-			if (
-				player.custom[instanceKey] !== undefined &&
-				player.custom[instanceKey] > 0 &&
-				row
-			) {
+			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
 				discardCard(game, row.effectCard)
 			}
 

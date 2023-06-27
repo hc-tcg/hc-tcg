@@ -13,8 +13,7 @@ class MendingSingleUseCard extends singleUseCard {
 			id: 'mending',
 			name: 'Mending',
 			rarity: 'ultra_rare',
-			description:
-				'Move any attached effect card from your active Hermit to an AFK Hermit.',
+			description: 'Move any attached effect card from your active Hermit to an AFK Hermit.',
 			pickOn: 'apply',
 			pickReqs: [
 				{
@@ -45,11 +44,7 @@ class MendingSingleUseCard extends singleUseCard {
 			const {player} = pos
 			if (player.board.activeRow === null || !targetSlotInfo.row) return
 			const playerActiveRow = player.board.rows[player.board.activeRow]
-			if (
-				targetSlotInfo.row.state.effectCard !== null ||
-				!playerActiveRow.effectCard
-			)
-				return
+			if (targetSlotInfo.row.state.effectCard !== null || !playerActiveRow.effectCard) return
 
 			// swap slots
 			/** @type {SlotPos} */ const sourcePos = {

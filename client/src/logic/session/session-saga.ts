@@ -93,11 +93,7 @@ export function* loginSaga(): SagaIterator {
 		timeout: delay(8000),
 	})
 
-	if (
-		result.invalidPlayer ||
-		result.connectError ||
-		Object.hasOwn(result, 'timeout')
-	) {
+	if (result.invalidPlayer || result.connectError || Object.hasOwn(result, 'timeout')) {
 		clearSession()
 		let errorType
 		if (result.invalidPlayer) errorType = 'session_expired'
@@ -113,9 +109,7 @@ export function* loginSaga(): SagaIterator {
 	if (result.playerReconnected) {
 		if (!session) return
 		console.log('User reconnected')
-		yield put(
-			setPlayerInfo({...session, playerDeck: result.playerReconnected.payload})
-		)
+		yield put(setPlayerInfo({...session, playerDeck: result.playerReconnected.payload}))
 	}
 
 	if (result.playerInfo) {

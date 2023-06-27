@@ -40,9 +40,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 			const hasBdubs = player.board.rows.some((row) =>
 				row.hermitCard?.cardId?.startsWith('bdoubleo100')
 			)
-			const hasDoc = player.board.rows.some((row) =>
-				row.hermitCard?.cardId?.startsWith('docm77')
-			)
+			const hasDoc = player.board.rows.some((row) => row.hermitCard?.cardId?.startsWith('docm77'))
 			const hasEtho = player.board.rows.some((row) =>
 				row.hermitCard?.cardId?.startsWith('ethoslab')
 			)

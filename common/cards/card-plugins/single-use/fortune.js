@@ -14,15 +14,13 @@ class FortuneSingleUseCard extends SingleUseCard {
 			id: 'fortune',
 			name: 'Fortune',
 			rarity: 'ultra_rare',
-			description:
-				'Any coin flips needed on your attack are not needed and "heads" is assumed.',
+			description: 'Any coin flips needed on your attack are not needed and "heads" is assumed.',
 		})
 	}
 
 	canApply() {
 		return true
 	}
-
 
 	/**
 	 * @param {GameModel} game

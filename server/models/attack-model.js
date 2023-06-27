@@ -123,10 +123,7 @@ export class AttackModel {
 	 * @returns {number}
 	 */
 	calculateDamage() {
-		return Math.max(
-			this.damage * this.damageMultiplier - this.damageReduction,
-			0
-		)
+		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
 	}
 
 	/**

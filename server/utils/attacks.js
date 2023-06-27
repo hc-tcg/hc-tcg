@@ -27,10 +27,7 @@ export function createWeaknessAttack(attack) {
 	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 
-	const attackId = attackerCardInfo.getInstanceKey(
-		attacker.row.hermitCard.cardInstance,
-		'weakness'
-	)
+	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
 
 	const strength = STRENGTHS[attackerCardInfo.hermitType]
 	const hasWeakness = target.row.ailments.find((a) => a.id === 'weakness')

@@ -3,9 +3,7 @@ import {SagaIterator} from 'redux-saga'
 import {chatMessage, chatUpdate} from '../game-actions'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 
-function* chatMessageSaga(
-	action: ReturnType<typeof chatMessage>
-): SagaIterator {
+function* chatMessageSaga(action: ReturnType<typeof chatMessage>): SagaIterator {
 	yield call(sendMsg, 'CHAT_MESSAGE', action.payload)
 }
 

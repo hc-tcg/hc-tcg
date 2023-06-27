@@ -24,9 +24,7 @@ function ConfirmModal({closeModal}: Props) {
 	return (
 		<Modal title="Confirm">
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Do you want to apply selected single use effect?
-				</div>
+				<div className={css.description}>Do you want to apply selected single use effect?</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleYes}>
 						Yes

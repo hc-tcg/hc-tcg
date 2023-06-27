@@ -12,8 +12,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			id: 'chorus_fruit',
 			name: 'Chorus Fruit',
 			rarity: 'common',
-			description:
-				'Swap your active Hermit with one of your AFK Hermits after attacking.',
+			description: 'Swap your active Hermit with one of your AFK Hermits after attacking.',
 		})
 	}
 

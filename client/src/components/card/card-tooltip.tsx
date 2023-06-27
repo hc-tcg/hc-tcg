@@ -28,9 +28,7 @@ type Props = {
 }
 
 const getOneDescription = (desc: string): React.ReactNode => {
-	return desc
-		.split('\n\n')
-		.map((part, index) => <div key={index}>{part || <>&nbsp;</>}</div>)
+	return desc.split('\n\n').map((part, index) => <div key={index}>{part || <>&nbsp;</>}</div>)
 }
 
 const getDescription = (
@@ -44,9 +42,7 @@ const getDescription = (
 					{card.primary.name}
 				</div>
 			)
-			result.push(
-				<div key="primary-power">{getOneDescription(card.primary.power)}</div>
-			)
+			result.push(<div key="primary-power">{getOneDescription(card.primary.power)}</div>)
 		}
 
 		if (card.secondary.power) {
@@ -55,9 +51,7 @@ const getDescription = (
 					{card.secondary.name}
 				</div>
 			)
-			result.push(
-				<div key="primary-power">{getOneDescription(card.secondary.power)}</div>
-			)
+			result.push(<div key="primary-power">{getOneDescription(card.secondary.power)}</div>)
 		}
 	}
 
@@ -120,11 +114,7 @@ const getName = (
 	card: HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard
 ): React.ReactNode => {
 	if (card instanceof ItemCard) {
-		return (
-			<div className={classnames(css.name, css[card.hermitType])}>
-				{card.name}
-			</div>
-		)
+		return <div className={classnames(css.name, css[card.hermitType])}>{card.name}</div>
 	}
 	return <div className={css.name}>{card.name}</div>
 }
@@ -170,8 +160,7 @@ const getHermitType = (
 }
 
 const CardTooltip = ({card}: Props) => {
-	if (card.type === 'health')
-		return <div>{(card as HealthCard).health} Health</div>
+	if (card.type === 'health') return <div>{(card as HealthCard).health} Health</div>
 	return (
 		<div className={css.cardTooltip}>
 			<div className={css.topLine}>

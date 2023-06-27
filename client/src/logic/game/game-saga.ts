@@ -1,14 +1,4 @@
-import {
-	all,
-	take,
-	takeEvery,
-	fork,
-	call,
-	put,
-	race,
-	takeLatest,
-	cancel,
-} from 'redux-saga/effects'
+import {all, take, takeEvery, fork, call, put, race, takeLatest, cancel} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
@@ -53,11 +43,7 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.endTurn) {
 		yield call(sendMsg, 'END_TURN')
 	} else if (turnAction.changeActiveHermit) {
-		yield call(
-			sendMsg,
-			'CHANGE_ACTIVE_HERMIT',
-			turnAction.changeActiveHermit.payload
-		)
+		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
 	}
 }
 
@@ -104,10 +90,7 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
-	const backgroundTasks = yield all([
-		fork(opponentConnectionSaga),
-		fork(chatSaga),
-	])
+	const backgroundTasks = yield all([fork(opponentConnectionSaga), fork(chatSaga)])
 	try {
 		yield put(gameStart())
 		const result = yield race({

@@ -6,12 +6,7 @@ import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
 import CARDS from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {
-	setOpenedModal,
-	followUp,
-	applyEffect,
-	removeEffect,
-} from 'logic/game/game-actions'
+import {setOpenedModal, followUp, applyEffect, removeEffect} from 'logic/game/game-actions'
 import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
 import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
 import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
@@ -38,11 +33,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	} else if (card.cardId === 'chest') {
 		yield put(setOpenedModal('chest'))
 	} else if (cardInfo.pickOn === 'apply') {
-		const result = yield call(
-			runPickProcessSaga,
-			cardInfo.name,
-			cardInfo.pickReqs
-		)
+		const result = yield call(runPickProcessSaga, cardInfo.name, cardInfo.pickReqs)
 		if (result && result.length && result[0].pickedSlots?.length) {
 			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
@@ -51,9 +42,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	}
 }
 
-const getFollowUpName = (
-	cardInfo: HermitCard | EffectCard | SingleUseCard | ItemCard
-) => {
+const getFollowUpName = (cardInfo: HermitCard | EffectCard | SingleUseCard | ItemCard) => {
 	if (
 		cardInfo instanceof EffectCard ||
 		cardInfo instanceof SingleUseCard ||
@@ -68,8 +57,7 @@ const getFollowUpName = (
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
-	const lastTurnAction =
-		gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
+	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
 
 	if (pState.followUp) {
 		const cardInfo = CARDS[pState.followUp] as
@@ -81,8 +69,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		if (cardInfo?.pickOn === 'followup') {
 			let pickResults = null
 			const name = getFollowUpName(cardInfo)
-			while (!pickResults)
-				pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
+			while (!pickResults) pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
 			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
 		} else if (pState.followUp === 'grian_rare') {
 			yield fork(borrowSaga)

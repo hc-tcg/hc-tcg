@@ -25,8 +25,7 @@ function MainMenu({setMenuSection}: Props) {
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
 
-	const welcomeMessage =
-		playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
+	const welcomeMessage = playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
 
 	return (
 		<div className={css.mainmenu}>
@@ -35,36 +34,20 @@ function MainMenu({setMenuSection}: Props) {
 					{welcomeMessage}, {playerName}
 				</p>
 				<p id={css.infoDeck}>{'Active Deck - ' + playerDeck.name}</p>
-				<img
-					id={css.infoIcon}
-					src={`/images/types/type-${playerDeck.icon}.png`}
-					alt="deck-icon"
-				/>
+				<img id={css.infoIcon} src={`/images/types/type-${playerDeck.icon}.png`} alt="deck-icon" />
 			</div>
 			<div className={css.content}>
 				<div className={css.logo}>
 					<TcgLogo />
 				</div>
 				<nav>
-					<Button
-						variant="stone"
-						id={css.public}
-						onClick={handleRandomMatchmaking}
-					>
+					<Button variant="stone" id={css.public} onClick={handleRandomMatchmaking}>
 						Public Game
 					</Button>
-					<Button
-						variant="stone"
-						id={css.privateCreate}
-						onClick={handleCreatePrivateGame}
-					>
+					<Button variant="stone" id={css.privateCreate} onClick={handleCreatePrivateGame}>
 						Create Private Game
 					</Button>
-					<Button
-						variant="stone"
-						id={css.privateJoin}
-						onClick={handleJoinPrivateGame}
-					>
+					<Button variant="stone" id={css.privateJoin} onClick={handleJoinPrivateGame}>
 						Join Private Game
 					</Button>
 					<Button variant="stone" id={css.deck} onClick={handleDeck}>

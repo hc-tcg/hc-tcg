@@ -30,11 +30,11 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 
-			const hasDamageEffect = opponentPlayer.board.rows[
-				opponentActiveRow
-			].ailments.some((ailment) => {
-				return ailment.id === 'fire' || ailment.id === 'poison'
-			})
+			const hasDamageEffect = opponentPlayer.board.rows[opponentActiveRow].ailments.some(
+				(ailment) => {
+					return ailment.id === 'fire' || ailment.id === 'poison'
+				}
+			)
 			if (!hasDamageEffect) {
 				opponentPlayer.board.rows[opponentActiveRow].ailments.push({
 					id: 'poison',

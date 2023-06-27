@@ -1,10 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {
-	flipCoin,
-	applySingleUse,
-	discardSingleUse,
-	getActiveRowPos,
-} from '../../../../server/utils'
+import {flipCoin, applySingleUse, discardSingleUse, getActiveRowPos} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
@@ -51,10 +46,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			player.custom[this.getInstanceKey(instance)] = flipCoin(
-				player,
-				this.id
-			)[0]
+			player.custom[this.getInstanceKey(instance)] = flipCoin(player, this.id)[0]
 
 			applySingleUse(game)
 		}

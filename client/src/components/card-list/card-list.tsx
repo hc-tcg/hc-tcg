@@ -78,11 +78,7 @@ const CardList = (props: CardListProps) => {
 	return (
 		<div
 			ref={listRef}
-			className={classnames(
-				css.cardList,
-				css[size],
-				wrap === false ? css.noWrap : null
-			)}
+			className={classnames(css.cardList, css[size], wrap === false ? css.noWrap : null)}
 		>
 			{cardsOutput}
 		</div>

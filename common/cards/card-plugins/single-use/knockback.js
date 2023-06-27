@@ -1,10 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {
-	applySingleUse,
-	getActiveRow,
-	getNonEmptyRows,
-} from '../../../../server/utils'
+import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots

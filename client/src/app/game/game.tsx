@@ -28,21 +28,13 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
-import {
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
 	const amount = pickProcess.amount || req.amount
 	const target =
-		req.target === 'board'
-			? "anyone's"
-			: req.target === 'opponent'
-			? "opponent's"
-			: 'your'
+		req.target === 'board' ? "anyone's" : req.target === 'opponent' ? "opponent's" : 'your'
 
 	let location = ''
 	if (req.target === 'hand') {
@@ -78,11 +70,9 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const empty = req.empty || false
 	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${amount > 1 ? 's' : ''} ${adjacent ? 'adjacent to' : ''} ${
-		adjacent ? adjacentTarget : ''
-	} from ${target} ${location}.`
+	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${empty ? 'slot' : 'card'}${
+		amount > 1 ? 's' : ''
+	} ${adjacent ? 'adjacent to' : ''} ${adjacent ? adjacentTarget : ''} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
@@ -105,8 +95,7 @@ const renderModal = (
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
-		return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id)) return null
 
 	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
@@ -162,9 +151,7 @@ function Game() {
 					</div>
 				</div>
 				{renderModal(openedModal, handleOpenModal)}
-				{pickProcess ? (
-					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
-				) : null}
+				{pickProcess ? <MouseIndicator message={getPickProcessMessage(pickProcess)} /> : null}
 
 				<Chat />
 

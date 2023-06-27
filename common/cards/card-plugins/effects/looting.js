@@ -44,11 +44,7 @@ class LootingEffectCard extends EffectCard {
 			}
 		}
 
-		player.hooks.onFollowUp[instance] = (
-			followUp,
-			pickedSlots,
-			modalResult
-		) => {
+		player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
 			if (followUp !== this.id) return
 			player.followUp = null
 
@@ -64,10 +60,7 @@ class LootingEffectCard extends EffectCard {
 			for (const card of modalResult.cards) {
 				player.hand.push(card)
 				// Remove the card from the other player's discarded pile
-				opponentPlayer.discarded.splice(
-					opponentPlayer.discarded.indexOf(card),
-					1
-				)
+				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
 			}
 		}
 
@@ -81,10 +74,7 @@ class LootingEffectCard extends EffectCard {
 			for (const card of cards) {
 				if (totalPicked === 2) break
 				player.hand.push(card)
-				opponentPlayer.discarded.splice(
-					opponentPlayer.discarded.indexOf(card),
-					1
-				)
+				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
 				totalPicked++
 			}
 
