@@ -22,8 +22,7 @@ function ChatItem() {
 		}
 	}
 
-	const newMessage =
-		settings.showChat !== 'on' && lastSeen !== latestMessageTime
+	const newMessage = settings.showChat !== 'on' && lastSeen !== latestMessageTime
 
 	return (
 		<div

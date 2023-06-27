@@ -23,11 +23,15 @@ class StringEffectCard extends EffectCard {
 		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'INVALID'
 
 		// can only attach to opponent
-		if (pos.playerId !== opponentPlayer.id) return 'INVALID'
+		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'NO'
 
 		return 'YES'
+	}
+
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 

@@ -1,11 +1,7 @@
 import {select} from 'typed-redux-saga'
 import {put, call, take, race, cancelled} from 'redux-saga/effects'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {
-	PickedSlotT,
-	PickRequirmentT,
-	PickResultT,
-} from 'common/types/pick-process'
+import {PickedSlotT, PickRequirmentT, PickResultT} from 'common/types/pick-process'
 import {equalCard} from 'server/utils'
 import {anyAvailableReqOptions, validPick, validPicks} from 'server/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -23,18 +19,11 @@ import {
 } from 'logic/game/game-actions'
 import CARDS from 'common/cards'
 
-type AnyPickActionT =
-	| ReturnType<typeof setSelectedCard>
-	| ReturnType<typeof slotPicked>
+type AnyPickActionT = ReturnType<typeof setSelectedCard> | ReturnType<typeof slotPicked>
 
-const isDuplicate = (
-	pickedSlots: Array<PickedSlotT>,
-	pickedSlot?: PickedSlotT
-) => {
+const isDuplicate = (pickedSlots: Array<PickedSlotT>, pickedSlot?: PickedSlotT) => {
 	if (!pickedSlot) return null
-	return pickedSlots.some((pSlot) =>
-		equalCard(pSlot.slot.card, pickedSlot.slot.card)
-	)
+	return pickedSlots.some((pSlot) => equalCard(pSlot.slot.card, pickedSlot.slot.card))
 }
 
 function* validatePickSaga(
@@ -47,9 +36,7 @@ function* validatePickSaga(
 
 	let pickedSlot: PickedSlotT
 	if (pickAction.type === 'SET_SELECTED_CARD') {
-		const index = gameState.hand.findIndex((card) =>
-			equalCard(card, pickAction.payload)
-		)
+		const index = gameState.hand.findIndex((card) => equalCard(card, pickAction.payload))
 		pickedSlot = {
 			slot: {
 				type: 'hand',
@@ -96,12 +83,7 @@ export function* runPickProcessSaga(
 
 		if (!name || !reqs || !playerId || !gameState) return null
 
-		const possiblePerReq = anyAvailableReqOptions(
-			gameState,
-			playerState,
-			opponentState,
-			reqs
-		)
+		const possiblePerReq = anyAvailableReqOptions(gameState, playerState, opponentState, reqs)
 		if (possiblePerReq.length === 0) return []
 
 		// Listen for Escape to cancel
@@ -129,8 +111,7 @@ export function* runPickProcessSaga(
 			req_cycle: for (const reqIndex in reqs) {
 				const req = reqs[reqIndex]
 				const pickedReqSlots: Array<PickedSlotT> = []
-				const actionType =
-					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+				const actionType = req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
 				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
 				while (pickedReqSlots.length < amount) {
@@ -155,11 +136,7 @@ export function* runPickProcessSaga(
 					}
 
 					// Validate the picked slot
-					const pickedSlot = yield call(
-						validatePickSaga,
-						req,
-						result.pickAction
-					)
+					const pickedSlot = yield call(validatePickSaga, req, result.pickAction)
 					if (isDuplicate(pickedReqSlots, pickedSlot) || !pickedSlot) continue
 					if (!pickedSlot) continue
 					pickedReqSlots.push(pickedSlot)

@@ -22,15 +22,22 @@ class ChestSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
-	 * @param {*} modalResult
 	 */
-	onApply(game, instance, pos, pickedSlots, modalResult) {
-		/** @type {CardT | undefined} */
-		const card = modalResult.card
-		if (!card || card.cardId === 'clock') return
+	onAttach(game, instance, pos) {
+		const {player} = pos
 
-		retrieveCard(game, card)
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			/** @type {CardT | undefined} */
+			const card = modalResult.card
+			if (!card || card.cardId === 'clock') return
+
+			retrieveCard(game, card)
+		}
+	}
+
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

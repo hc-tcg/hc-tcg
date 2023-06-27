@@ -15,10 +15,7 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (
-	state = defaultState,
-	action: AnyAction
-): LocalGameRoot => {
+const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => {
 	switch (action.type) {
 		case 'LOCAL_GAME_STATE':
 			const newGame: LocalGameRoot = {
@@ -28,10 +25,7 @@ const gameReducer = (
 				openedModal: null,
 				pickProcess: null,
 			}
-			if (
-				state.localGameState?.currentPlayerId ===
-				action.payload.localGameState?.currentPlayerId
-			)
+			if (state.localGameState?.currentPlayerId === action.payload.localGameState?.currentPlayerId)
 				return newGame
 			return {...newGame}
 		case 'GAME_START':
@@ -53,9 +47,7 @@ const gameReducer = (
 			if (state.pickProcess) return state
 			return {
 				...state,
-				selectedCard: equalCard(action.payload, state.selectedCard)
-					? null
-					: action.payload,
+				selectedCard: equalCard(action.payload, state.selectedCard) ? null : action.payload,
 			}
 		case 'SET_OPENED_MODAL':
 			return {

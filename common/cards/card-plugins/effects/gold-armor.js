@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -21,12 +22,11 @@ class GoldArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, player} = pos
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type === 'ailment')
-				return
+		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -35,14 +35,17 @@ class GoldArmorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 10) {
-				const damageReduction = Math.min(attack.damage, 10 - totalReduction)
+				const damageReduction = Math.min(attack.getDamage(), 10 - totalReduction)
 				player.custom[instanceKey] += damageReduction
-				attack.reduceDamage(damageReduction)
+				attack.reduceDamage(this.id, damageReduction)
 			}
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
-			delete player.custom[instanceKey]
+		// Reset counter at the start of our turn
+		player.hooks.onTurnStart[instance] = () => {
+			if (player.custom[instanceKey] !== undefined) {
+				delete player.custom[instanceKey]
+			}
 		}
 	}
 
@@ -52,9 +55,9 @@ class GoldArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer, player} = pos
-		delete otherPlayer.hooks.onAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
+		const {player} = pos
+		delete player.hooks.onDefence[instance]
+		delete player.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

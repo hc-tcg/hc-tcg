@@ -50,19 +50,10 @@ function SpyglassModal({closeModal}: Props) {
 		<Modal title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
-					<CardList
-						onClick={handleSelection}
-						size="small"
-						cards={cards}
-						selected={selected}
-					/>
+					<CardList onClick={handleSelection} size="small" cards={cards} selected={selected} />
 				</div>
 				<div className={css.options}>
-					<Button
-						variant="primary"
-						size="small"
-						onClick={canDiscard ? handleConfirm : handleClose}
-					>
+					<Button variant="primary" size="small" onClick={canDiscard ? handleConfirm : handleClose}>
 						{canDiscard ? 'Confirm Selection' : 'Close'}
 					</Button>
 				</div>

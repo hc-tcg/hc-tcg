@@ -2,6 +2,7 @@ import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import EffectCard from './_effect-card'
 import {getCardAtPos} from '../../../../server/utils/cards'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -24,15 +25,27 @@ class LightningRodEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer, row, rowIndex} = pos
-		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
+		const {player, opponentPlayer, row, rowIndex} = pos
+
+		// Only on opponents turn
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			if (attack.isType('ailment') || attack.isBacklash) return
 			if (!row || rowIndex === null || !row.hermitCard) return
-			attack.target.index = rowIndex
-			attack.target.row = row
+
+			// Attack already has to be targeting us
+			if (attack.target?.player.id !== player.id) return
+
+			attack.target = {
+				player: player,
+				rowIndex: rowIndex,
+				row: row,
+			}
 		}
 
-		otherPlayer.hooks.afterAttack[instance] = (attackResult) => {
-			if (attackResult.attack.target.index !== rowIndex) return
+		opponentPlayer.hooks.afterAttack[instance] = (attack) => {
+			if (!isTargetingPos(attack, pos)) return
+			if (attack.calculateDamage() <= 0) return
+
 			discardCard(game, getCardAtPos(game, pos))
 		}
 	}
@@ -43,9 +56,9 @@ class LightningRodEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer} = pos
-		delete otherPlayer.hooks.beforeAttack[instance]
-		delete otherPlayer.hooks.afterAttack[instance]
+		const {opponentPlayer} = pos
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.afterAttack[instance]
 	}
 
 	getExpansion() {

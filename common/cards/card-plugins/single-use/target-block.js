@@ -1,10 +1,10 @@
 import {getNonEmptyRows} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 import SingleUseCard from './_single-use-card'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -17,9 +17,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			description:
 				"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
 			pickOn: 'apply',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -27,17 +25,40 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {player} = pos
-		const pickedSlot = pickedSlots[this.id]?.[0]
-		if (!pickedSlot) return
+	onAttach(game, instance, pos) {
+		const {player, opponentPlayer} = pos
+		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
-		player.hooks.beforeAttack[instance] = (attack) => {
-			if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) return
-			attack.target.index = pickedSlot.row.index
-			attack.target.row = pickedSlot.row.state
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const pickedSlot = pickedSlots[this.id]?.[0]
+			if (!pickedSlot) return
+
+			player.hooks.beforeAttack[instance] = (attack) => {
+				if (attack.isType('ailment') || attack.isBacklash) return
+				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) {
+					return
+				}
+
+				attack.target = {
+					player: opponentPlayer,
+					rowIndex: pickedSlot.row.index,
+					row: pickedSlot.row.state,
+				}
+
+				if (attack.isType('primary', 'secondary')) {
+					const weaknessAttack = createWeaknessAttack(attack)
+					if (weaknessAttack) {
+						attack.addNewAttack(weaknessAttack)
+						player.custom[ignoreThisWeakness] = true
+					}
+				} else if (attack.type === 'weakness') {
+					if (!player.custom[ignoreThisWeakness]) {
+						attack.target = null
+					}
+					delete player.custom[ignoreThisWeakness]
+				}
+			}
 		}
 	}
 
@@ -47,10 +68,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
 		// Inactive Hermits
-		if (getNonEmptyRows(otherPlayer, false).length === 0) return 'NO'
+		if (getNonEmptyRows(opponentPlayer, false).length === 0) return 'NO'
 
 		return 'YES'
 	}
@@ -62,7 +83,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
+		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
+		delete player.hooks.onApply[instance]
 		delete player.hooks.beforeAttack[instance]
+		delete player.custom[ignoreThisWeakness]
 	}
 
 	getExpansion() {

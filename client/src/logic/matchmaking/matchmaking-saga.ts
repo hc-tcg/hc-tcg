@@ -5,12 +5,7 @@ import {AnyAction} from 'redux'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
-import {
-	codeReceived,
-	leaveMatchmaking,
-	invalidCode,
-	waitingForPlayer,
-} from './matchmaking-actions'
+import {codeReceived, leaveMatchmaking, invalidCode, waitingForPlayer} from './matchmaking-actions'
 
 function* randomMatchmakingSaga(): SagaIterator {
 	try {

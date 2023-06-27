@@ -12,8 +12,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			id: 'chorus_fruit',
 			name: 'Chorus Fruit',
 			rarity: 'common',
-			description:
-				'Swap your active Hermit with one of your AFK Hermits after attacking.',
+			description: 'Swap your active Hermit with one of your AFK Hermits after attacking.',
 		})
 	}
 
@@ -26,7 +25,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
+		player.hooks.afterAttack[instance] = (attack) => {
 			applySingleUse(game)
 
 			// Only apply single use once
@@ -40,9 +39,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 				delete player.hooks.availableActions[instance]
 			} else {
 				// We need to check again because of bdubs
-				const isSleeping = activeRow?.ailments.some(
-					(a) => a.id === 'sleeping'
-				)
+				const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
 
 				if (!isSleeping && !availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')
@@ -58,7 +55,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (super.canAttach(game, pos) !== 'INVALID') return 'INVALID'
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 

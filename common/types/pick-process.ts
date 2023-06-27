@@ -2,13 +2,7 @@ import Card from '../cards/card-plugins/_card'
 import {Slot} from './cards'
 import {CardT, RowState} from './game-state'
 
-export type SlotTypeT =
-	| 'item'
-	| 'effect'
-	| 'hermit'
-	| 'health'
-	| 'hand'
-	| 'single_use'
+export type SlotTypeT = 'item' | 'effect' | 'hermit' | 'health' | 'hand' | 'single_use'
 
 export type SlotInfo = {
 	type: SlotTypeT

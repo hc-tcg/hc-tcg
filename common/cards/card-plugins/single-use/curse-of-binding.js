@@ -7,8 +7,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			id: 'curse_of_binding',
 			name: 'Curse Of Binding',
 			rarity: 'common',
-			description:
-				"Your opponent's active Hermit can not go AFK on their next turn.",
+			description: "Your opponent's active Hermit can not go AFK on their next turn.",
 		})
 	}
 
@@ -20,22 +19,27 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('common/types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {otherPlayer} = pos
+	onAttach(game, instance, pos) {
+		const {opponentPlayer} = pos
 
-		otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
-			if (!blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+				return blockedActions
+			}
+
+			// Make sure the other player has an active row
+			if (opponentPlayer.board.activeRow !== null) {
 				blockedActions.push('CHANGE_ACTIVE_HERMIT')
 			}
+
 			return blockedActions
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			// Remove effects of card and clean up
-			delete otherPlayer.hooks.blockedActions[instance]
-			delete otherPlayer.hooks.onTurnEnd[instance]
+			delete opponentPlayer.hooks.blockedActions[instance]
+			delete opponentPlayer.hooks.onTurnEnd[instance]
 		}
 	}
 }

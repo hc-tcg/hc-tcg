@@ -13,7 +13,8 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			id: 'flint_&_steel',
 			name: 'Flint & Steel',
 			rarity: 'common',
-			description: "Discard your hand. Draw 3 cards.\n\nCan be used even if you do not have any cards in your hand.",
+			description:
+				'Discard your hand. Draw 3 cards.\n\nCan be used even if you do not have any cards in your hand.',
 		})
 	}
 
@@ -24,11 +25,11 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {player} = pos
-		if (player.hand.length < 3) return 'NO'
+		if (player.pile.length <= 3) return 'NO'
 
 		return 'YES'
 	}
-		
+
 	canApply() {
 		return true
 	}
@@ -37,16 +38,27 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
+	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		for (const card of player.hand) {
-			discardCard(game, card)
-		}
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			for (const card of player.hand) {
+				discardCard(game, card)
+			}
 
-		drawCards(player, 3)
+			drawCards(player, 3)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

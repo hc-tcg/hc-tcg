@@ -35,6 +35,7 @@
 		"husky": "^8.0.3",
 		"js-base64": "^3.7.5",
 		"lint-staged": "^13.1.2",
+		"node-fetch": "^3.3.1",
 		"prettier": "^2.8.4",
 		"profanity-filter": "^0.2.1",
 		"react": "^18.2.0",

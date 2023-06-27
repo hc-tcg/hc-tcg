@@ -36,17 +36,17 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
+				attack.type !== 'secondary' ||
+				!attack.target
 			)
 				return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] !== 'heads') return
 
@@ -55,15 +55,10 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			// He only disables the attack of the target, that means that
 			// lightning rod counters him and using knockback/target block
 			// is a really bad idea
-			player.custom[this.getInstanceKey(instance, 'target')] =
-				attack.target.index
+			player.custom[this.getInstanceKey(instance, 'target')] = attack.target.rowIndex
 
 			// It's easier to not duplicate the code if I use the hooks here
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				modalResult
-			) => {
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
 				if (followUp !== this.id) return
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
@@ -71,8 +66,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 				if (!modalResult || !modalResult.disable) return
 
-				player.custom[this.getInstanceKey(instance, 'disable')] =
-					modalResult.disable
+				player.custom[this.getInstanceKey(instance, 'disable')] = modalResult.disable
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
@@ -85,25 +79,23 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'
 			}
 
-			otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 				const disable = player.custom[this.getInstanceKey(instance, 'disable')]
 				const targetRow = player.custom[this.getInstanceKey(instance, 'target')]
 				if (!disable) return blockedActions
 
-				const activeRow = otherPlayer.board.activeRow
-				if (!activeRow || !targetRow) return blockedActions
+				const activeRow = opponentPlayer.board.activeRow
+				if (activeRow === null || targetRow === null) return blockedActions
 				if (activeRow !== targetRow) return blockedActions
 
-				blockedActions.push(
-					disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				)
+				blockedActions.push(disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK')
 
 				return blockedActions
 			}
 
-			otherPlayer.hooks.onTurnEnd[instance] = () => {
-				delete otherPlayer.hooks.blockedActions[instance]
-				delete otherPlayer.hooks.onTurnEnd[instance]
+			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+				delete opponentPlayer.hooks.blockedActions[instance]
+				delete opponentPlayer.hooks.onTurnEnd[instance]
 				delete player.custom[this.getInstanceKey(instance, 'disable')]
 				delete player.custom[this.getInstanceKey(instance, 'target')]
 			}

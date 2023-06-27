@@ -12,7 +12,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			id: 'bad_omen',
 			name: 'Bad Omen',
 			rarity: 'rare',
-			description: `All of your opponent's coin flips are tails for the next 3 turns.`,
+			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails..`,
 		})
 	}
 
@@ -24,17 +24,28 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {otherPlayer} = pos
-		const activeRow = otherPlayer.board.activeRow
+	onAttach(game, instance, pos) {
+		const {opponentPlayer, player} = pos
+		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		otherPlayer.board.rows[activeRow].ailments.push({
-			id: 'badomen',
-			duration: 3,
-		})
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			opponentPlayer.board.rows[activeRow].ailments.push({
+				id: 'badomen',
+				duration: 3,
+			})
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 
 	getExpansion() {

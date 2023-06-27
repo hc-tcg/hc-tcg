@@ -39,15 +39,9 @@ class MumboJumboRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id, 2)
-			player.coinFlips[this.id] = coinFlip
-
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			const pranksterAmount = player.board.rows.filter(
 				(row, index) =>
@@ -56,8 +50,8 @@ class MumboJumboRareHermitCard extends HermitCard {
 					HERMIT_CARDS[row.hermitCard.cardId]?.hermitType === 'prankster'
 			).length
 
-			attack.addDamage(headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(2)
+			attack.addDamage(this.id, headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(this.id, 2)
 		}
 	}
 

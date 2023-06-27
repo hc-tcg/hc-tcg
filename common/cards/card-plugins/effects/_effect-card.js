@@ -6,7 +6,6 @@ import Card from '../_card'
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
  * @typedef {import('../../../types/cards').CardPos} CardPos
  * @typedef {import('../../../types/cards').CardTypeT} CardTypeT
- * @typedef {import('../../../types/attack').AttackResult} AttackResult
  */
 
 class EffectCard extends Card {
@@ -41,7 +40,7 @@ class EffectCard extends Card {
 
 		// Wrong slot
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit card - this is considered like the wrong slot
 		if (!pos.row?.hermitCard) return 'INVALID'

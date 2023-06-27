@@ -6,10 +6,7 @@ import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {runPickProcessSaga} from './pick-process-saga'
 import {getPlayerState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
-import {
-	getPlayerActiveRow,
-	getOpponentActiveRow,
-} from '../../../app/game/game-selectors'
+import {getPlayerActiveRow, getOpponentActiveRow} from '../../../app/game/game-selectors'
 import {attack, startAttack} from '../game-actions'
 
 type AttackAction = ReturnType<typeof startAttack>
@@ -24,9 +21,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 
 	const singleUseCard = playerState.board.singleUseCard
 	const hermitCard = activeRow.hermitCard
-	const singleUseInfo = singleUseCard
-		? SINGLE_USE_CARDS[singleUseCard.cardId]
-		: null
+	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
 
 	const result = {} as Record<string, Array<PickResultT>>
 	if (singleUseInfo?.pickOn === 'attack') {

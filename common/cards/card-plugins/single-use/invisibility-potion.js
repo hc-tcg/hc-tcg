@@ -22,26 +22,34 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('server/utils/picked-cards').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const {player, otherPlayer} = pos
+	onAttach(game, instance, pos) {
+		const {player, opponentPlayer} = pos
 
-		const coinFlip = flipCoin(player, this.id)
-		player.coinFlips[this.id] = coinFlip
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const coinFlip = flipCoin(player, this.id)
+			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
-		const multiplier = coinFlip[0] === 'heads' ? 0 : 2
+			opponentPlayer.hooks.onAttack[instance] = (attack) => {
+				if (attack.isType('ailment') || attack.isBacklash) return
+				attack.multiplyDamage(this.id, multiplier)
+			}
 
-		otherPlayer.hooks.onAttack[instance] = (attack) => {
-			if (['primary', 'secondary', 'zero'].includes(attack.type)) {
-				attack.multiplyDamage(multiplier)
+			opponentPlayer.hooks.afterAttack[instance] = () => {
+				delete opponentPlayer.hooks.onAttack[instance]
+				delete opponentPlayer.hooks.afterAttack[instance]
 			}
 		}
+	}
 
-		otherPlayer.hooks.afterAttack[instance] = () => {
-			delete otherPlayer.hooks.onAttack[instance]
-			delete otherPlayer.hooks.afterAttack[instance]
-		}
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

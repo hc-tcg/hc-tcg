@@ -5,10 +5,10 @@ import {
 	applySingleUse,
 	rowHasItem,
 	getItemCardsEnergy,
+	getActiveRowPos,
 } from '../../../../server/utils'
 
 /**
- * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
@@ -29,10 +29,10 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
-		if (otherPlayer.board.activeRow === null) return 'NO'
-		const activeRow = otherPlayer.board.rows[otherPlayer.board.activeRow]
+		if (opponentPlayer.board.activeRow === null) return 'NO'
+		const activeRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 		if (rowHasItem(activeRow)) return 'YES'
 
 		return 'NO'
@@ -44,26 +44,21 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttacks[instance] = () => {
-			const index = player.board.activeRow
-			if (index === null) return []
-			const row = player.board.rows[index]
-			if (!row || !row.hermitCard) return []
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return []
 
-			const opponentIndex = otherPlayer.board.activeRow
-			if (!opponentIndex) return []
-			const opponentRow = otherPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
-
-			const multiplier = getItemCardsEnergy(game, opponentRow)
+			const multiplier = getItemCardsEnergy(game, opponentActivePos.row)
 			const attack = new AttackModel({
 				id: this.getInstanceKey(instance),
-				attacker: {index, row},
-				target: {index: opponentIndex, row: opponentRow},
+				attacker: activePos,
+				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(Math.min(80, 20 * multiplier))
+			}).addDamage(this.id, Math.min(80, 20 * multiplier))
 
 			return [attack]
 		}

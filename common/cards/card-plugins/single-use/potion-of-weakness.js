@@ -26,11 +26,27 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	 * @param {string} instance
 	 * @param {CardPos} pos
 	 */
-	onApply(game, instance, pos) {
-		const {otherPlayer} = pos
-		const opponentActiveRow = getActiveRow(otherPlayer)
-		if (!opponentActiveRow) return
-		opponentActiveRow.ailments.push({id: 'weakness', duration: 3})
+	onAttach(game, instance, pos) {
+		const {opponentPlayer, player} = pos
+
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const opponentActiveRow = getActiveRow(opponentPlayer)
+			if (!opponentActiveRow) return
+			opponentActiveRow.ailments.push({id: 'weakness', duration: 3})
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
+	}
+	getExpansion() {
+		return 'alter_egos'
 	}
 }
 

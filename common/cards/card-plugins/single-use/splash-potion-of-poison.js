@@ -22,22 +22,24 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos
-	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
-	onApply(game, instance, pos, pickedSlots) {
-		const opponentActiveRow = pos.otherPlayer.board.activeRow
-		if (opponentActiveRow === null) return
+	onAttach(game, instance, pos) {
+		const {player, opponentPlayer} = pos
 
-		const hasDamageEffect = pos.otherPlayer.board.rows[
-			opponentActiveRow
-		].ailments.some((ailment) => {
-			return ailment.id === 'fire' || ailment.id === 'poison'
-		})
-		if (!hasDamageEffect) {
-			pos.otherPlayer.board.rows[opponentActiveRow].ailments.push({
-				id: 'poison',
-				duration: -1,
-			})
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const opponentActiveRow = opponentPlayer.board.activeRow
+			if (opponentActiveRow === null) return
+
+			const hasDamageEffect = opponentPlayer.board.rows[opponentActiveRow].ailments.some(
+				(ailment) => {
+					return ailment.id === 'fire' || ailment.id === 'poison'
+				}
+			)
+			if (!hasDamageEffect) {
+				opponentPlayer.board.rows[opponentActiveRow].ailments.push({
+					id: 'poison',
+				})
+			}
 		}
 	}
 
@@ -48,9 +50,19 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (pos.slot.type !== 'single_use') return 'INVALID'
 
-		if (!pos.otherPlayer.board.activeRow) return 'NO'
+		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
 
 		return 'YES'
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
 	}
 }
 

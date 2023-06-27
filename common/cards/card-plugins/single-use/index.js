@@ -26,8 +26,6 @@ import EfficiencySingleUseCard from './efficiency'
 import CurseOfBindingSingleUseCard from './curse-of-binding'
 import CurseOfVanishingSingleUseCard from './curse-of-vanishing'
 import FortuneSingleUseCard from './fortune'
-import MilkBucketSingleUseCard from './milk-bucket'
-import WaterBucketSingleUseCard from './water-bucket'
 import MendingSingleUseCard from './mending'
 import TridentSingleUseCard from './trident'
 import SweepingEdgeSingleUseCard from './sweeping-edge'
@@ -72,8 +70,6 @@ const SINGLE_USE_CARDS = [
 	new EfficiencySingleUseCard(),
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
-	new MilkBucketSingleUseCard(),
-	new WaterBucketSingleUseCard(),
 	new MendingSingleUseCard(),
 
 	// AE Cards
@@ -85,7 +81,7 @@ const SINGLE_USE_CARDS = [
 	new LadderSingleUseCard(),
 	new PistonSingleUseCard(),
 	new PotionOfSlownessSingleUseCard(),
-	// new PotionOfWeaknessSingleUseCard(), (not converted)
+	new PotionOfWeaknessSingleUseCard(),
 	new SplashPotionOfHealingIISingleUseCard(),
 	new SweepingEdgeSingleUseCard(),
 	new TargetBlockSingleUseCard(),

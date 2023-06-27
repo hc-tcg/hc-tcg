@@ -30,7 +30,7 @@ class BedEffectCard extends EffectCard {
 		const {currentPlayer} = game.ds
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.playerId !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 		if (!pos.row?.hermitCard) return 'NO'
 
 		// bed addition - hermit must also be active to attach
@@ -54,32 +54,18 @@ class BedEffectCard extends EffectCard {
 			// Clear any previous sleeping
 			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 
-			// Set new sleeping for two more turns
-			row.ailments.push({id: 'sleeping', duration: 2})
+			// Set new sleeping for 3 turns (2 + the current turn)
+			row.ailments.push({id: 'sleeping', duration: 3})
 		}
 
-		player.hooks.onTurnStart[instance] = () => {
+		player.hooks.onTurnEnd[instance] = () => {
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
 			// if sleeping has worn off, discard the bed
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
+				delete player.hooks.onTurnStart[instance]
 			}
-		}
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 */
-	onDetach(game, instance, pos) {
-		const {player, row} = pos
-		delete player.hooks.onTurnStart[instance]
-
-		// Make sure there is no sleeping anymore
-		if (row) {
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 		}
 	}
 }

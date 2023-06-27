@@ -28,16 +28,12 @@ export class DerivedStateModel {
 
 	get playerActiveRow() {
 		const player = this.currentPlayer
-		return player.board.activeRow !== null
-			? player.board.rows[player.board.activeRow]
-			: null
+		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
 	}
 
 	get opponentActiveRow() {
 		const player = this.opponentPlayer
-		return player.board.activeRow !== null
-			? player.board.rows[player.board.activeRow]
-			: null
+		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
 	}
 
 	get playerHermitCard() {

@@ -1,4 +1,5 @@
 import {GameModel} from '../../../../server/models/game-model'
+import {isTargetingPos} from '../../../../server/utils/attacks'
 import EffectCard from './_effect-card'
 
 /**
@@ -21,13 +22,12 @@ class ChainmailArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {otherPlayer} = pos
+		const {player} = pos
 
-		otherPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (attack.target.index !== pos.rowIndex || attack.type !== 'effect')
-				return
-			attack.reduceDamage(attack.damage)
-			attack.lockDamage()
+		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+			if (!isTargetingPos(attack, pos) || attack.type !== 'effect') return
+
+			attack.multiplyDamage(this.id, 0).lockDamage()
 		}
 	}
 
@@ -37,8 +37,8 @@ class ChainmailArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {otherPlayer} = pos
-		delete otherPlayer.hooks.onAttack[instance]
+		const {player} = pos
+		delete player.hooks.onDefence[instance]
 	}
 
 	getExpansion() {

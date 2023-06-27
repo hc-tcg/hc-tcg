@@ -28,9 +28,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
 			pickOn: 'followup',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -40,31 +38,30 @@ class TangoTekRareHermitCard extends HermitCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack[instance] = (attackResult) => {
-			const {attack} = attackResult
-
+		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
+				attack.type !== 'secondary' ||
+				!attack.target
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
 
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health > 0) {
+			if (opponentInactiveRows.length !== 0) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
-					duration: 0,
+					duration: 1,
 				})
-				otherPlayer.board.activeRow = null
-				otherPlayer.followUp = this.id
+				opponentPlayer.board.activeRow = null
+				opponentPlayer.followUp = this.id
 
 				// We need to hook here because the follow up is called after onDetach
 				// and I can't delete it from there because Tango could die from backlash
-				otherPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
+				opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
 					if (followUp !== this.id) return
 					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
 
@@ -73,32 +70,32 @@ class TangoTekRareHermitCard extends HermitCard {
 					const {row} = pickedSlot
 					if (!row) return
 
-					const canBeActive = row.state.ailments.every(
-						(a) => a.id !== 'knockedout'
-					)
+					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
 					if (!canBeActive) return
-					otherPlayer.board.activeRow = row.index
-					otherPlayer.followUp = null
+					opponentPlayer.board.activeRow = row.index
+					opponentPlayer.followUp = null
 
-					delete otherPlayer.hooks.onFollowUp[instance]
-					delete otherPlayer.hooks.onFollowUpTimeout[instance]
+					delete opponentPlayer.hooks.onFollowUp[instance]
+					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				}
 
-				otherPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
+				opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
 					if (followUp !== this.id) return
-					const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
-					otherPlayer.followUp = null
+					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+					opponentPlayer.followUp = null
 
 					// Choose the first row that doesn't have a knockedout ailment
-					for (const {index, row} of opponentInactiveRows) {
+					for (const inactiveHermit of opponentInactiveRows) {
+						if (!inactiveHermit) continue
+						const {rowIndex, row} = inactiveHermit
 						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
 						if (canBeActive) {
-							otherPlayer.board.activeRow = index
+							opponentPlayer.board.activeRow = rowIndex
 						}
 					}
 
-					delete otherPlayer.hooks.onFollowUp[instance]
-					delete otherPlayer.hooks.onFollowUpTimeout[instance]
+					delete opponentPlayer.hooks.onFollowUp[instance]
+					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				}
 			}
 
@@ -110,7 +107,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			) {
 				attack.attacker.row.ailments.push({
 					id: 'knockedout',
-					duration: 0,
+					duration: 1,
 				})
 				player.board.activeRow = null
 			}

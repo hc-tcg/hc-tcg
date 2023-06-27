@@ -22,8 +22,7 @@ import CARDS, {EFFECT_CARDS} from '../../common/cards'
  */
 const checkRow = (rowInfo, req, reqs, gameState) => {
 	let totalSlots = 0
-	if (rowInfo.emptyRow && req.type.length === 1 && req.type[0] !== 'hermit')
-		return 0
+	if (rowInfo.emptyRow && req.type.length === 1 && req.type[0] !== 'hermit') return 0
 
 	const target = req.target === rowInfo.target || req.target === 'board'
 	if (!target) return 0
@@ -47,21 +46,20 @@ const checkRow = (rowInfo, req, reqs, gameState) => {
 
 	// removable or not
 	const effectCard = rowInfo.row.effectCard
-	const effectCardInfo =
-		effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
-	if (!req.removable && effectCardInfo?.getIsRemovable()) return 0
-	if (req.removable && !effectCardInfo?.getIsRemovable()) return 0
+	const effectCardInfo = effectCard !== null ? EFFECT_CARDS[effectCard.cardId] : null
+	const removable = req.removable || true
+	const isRemovable = effectCardInfo?.getIsRemovable() || true
+	if (!removable && isRemovable) totalSlots--
+	if (removable && !isRemovable) totalSlots--
 
 	// adjacent to active hermit or not
 	if (req.adjacent === 'active') {
 		const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
 		const opponentPlayerId = gameState.order[gameState.turn % 2]
-		const targetId =
-			rowInfo.target === 'player' ? currentPlayerId : opponentPlayerId
+		const targetId = rowInfo.target === 'player' ? currentPlayerId : opponentPlayerId
 		const activeRow = gameState.players[targetId].board.activeRow
 		if (activeRow === null) return 0
-		if (!(rowInfo.index === activeRow - 1 || rowInfo.index === activeRow + 1))
-			return 0
+		if (!(rowInfo.index === activeRow - 1 || rowInfo.index === activeRow + 1)) return 0
 	} else if (req.adjacent === 'req') {
 		if (reqs.length < 2) return 0
 	}
@@ -93,9 +91,7 @@ const getRowsInfo = (playerState, current) => {
  * @returns {number}
  */
 const checkHand = (gameState, req) => {
-	const cards = gameState.hand.filter((card) =>
-		req.type.includes(CARDS[card.cardId].type)
-	)
+	const cards = gameState.hand.filter((card) => req.type.includes(CARDS[card.cardId].type))
 
 	return cards.length
 }
@@ -109,12 +105,7 @@ const checkHand = (gameState, req) => {
  * @param {Array<PickRequirmentT>} reqs
  * @returns {Array<number>}
  */
-export const anyAvailableReqOptions = (
-	gameState,
-	playerState,
-	opponentState,
-	reqs
-) => {
+export const anyAvailableReqOptions = (gameState, playerState, opponentState, reqs) => {
 	const result = []
 	if (!gameState || !playerState || !opponentState) return result
 
@@ -178,8 +169,7 @@ export const validActive = (active, cardPlayerState, rowIndex) => {
 	if (rowIndex === null) return false
 
 	const hasActiveHermit = cardPlayerState?.board.activeRow !== null
-	const isActive =
-		hasActiveHermit && rowIndex === cardPlayerState?.board.activeRow
+	const isActive = hasActiveHermit && rowIndex === cardPlayerState?.board.activeRow
 
 	return active === isActive
 }
@@ -236,18 +226,14 @@ const validAdjacent = (adjacent, gameState, pickedSlot, req) => {
 	const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
 	const opponentPlayerId = gameState.order[gameState.turn % 2]
 
-	if (req.target === 'opponent' && pickedSlot.playerId === currentPlayerId)
-		return false
-	if (req.target === 'player' && pickedSlot.playerId !== currentPlayerId)
-		return false
+	if (req.target === 'opponent' && pickedSlot.playerId === currentPlayerId) return false
+	if (req.target === 'player' && pickedSlot.playerId !== currentPlayerId) return false
 
-	const targetId =
-		req.target === 'opponent' ? opponentPlayerId : currentPlayerId
+	const targetId = req.target === 'opponent' ? opponentPlayerId : currentPlayerId
 	const activeRow = gameState.players[targetId].board.activeRow
 	if (
 		activeRow !== null &&
-		(pickedSlot.row.index === activeRow + 1 ||
-			pickedSlot.row.index === activeRow - 1)
+		(pickedSlot.row.index === activeRow + 1 || pickedSlot.row.index === activeRow - 1)
 	)
 		return true
 
@@ -272,19 +258,15 @@ export function validPick(gameState, req, pickedSlot) {
 	const slotType = pickedSlot.slot.type
 	const cardType = card ? CARDS[card.cardId].type : slotType
 	const isEmptyRow =
-		rowIndex === null
-			? true
-			: cardPlayerState.board.rows[rowIndex].hermitCard === null
+		rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
 
 	if (!cardPlayerState) return false
 	if (!validRow(cardPlayerState, rowIndex)) return false
-	if (!validTarget(req.target, cardPlayerState, turnPlayerId, slotType))
-		return false
+	if (!validTarget(req.target, cardPlayerState, turnPlayerId, slotType)) return false
 	if (!validActive(req.active, cardPlayerState, rowIndex)) return false
 	if (!validType(req.type, cardType)) return false
 	if (!validEmpty(req.empty || false, card, slotType, isEmptyRow)) return false
-	if (cardType === 'effect' && !validRemovable(req.removable || true, card))
-		return false
+	if (slotType === 'effect' && !validRemovable(req.removable || true, card)) return false
 	if (!validAdjacent(req.adjacent, gameState, pickedSlot, req)) return false
 
 	return true
@@ -329,8 +311,7 @@ export function validPicks(gameState, pickResults) {
 					if (
 						slotAdj.row &&
 						slot.row &&
-						(slot.row.index === slotAdj.row.index + 1 ||
-							slot.row.index === slotAdj.row.index - 1)
+						(slot.row.index === slotAdj.row.index + 1 || slot.row.index === slotAdj.row.index - 1)
 					) {
 						validPairs++
 						break

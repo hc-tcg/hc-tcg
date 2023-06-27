@@ -89,10 +89,7 @@ const Background = ({noImage}: Props) => {
 					exitActive: css.exitActive,
 				}}
 			>
-				<div
-					className={classNames(css.innerBackground, css.image)}
-					ref={nodeRef1}
-				></div>
+				<div className={classNames(css.innerBackground, css.image)} ref={nodeRef1}></div>
 			</CSSTransition>
 			<CSSTransition
 				nodeRef={nodeRef2}
@@ -106,10 +103,7 @@ const Background = ({noImage}: Props) => {
 					exitActive: css.exitActive,
 				}}
 			>
-				<div
-					className={classNames(css.innerBackground, css.noImage)}
-					ref={nodeRef2}
-				></div>
+				<div className={classNames(css.innerBackground, css.noImage)} ref={nodeRef2}></div>
 			</CSSTransition>
 		</div>
 	)

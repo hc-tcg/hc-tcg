@@ -14,7 +14,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			name: 'Spyglass',
 			rarity: 'common',
 			description:
-				'Look through your opponent’s hand.\n\nFlip a coin. If heads, opponent chooses 1 of those cards to discard.',
+				"Look at opponent's hand.\n\nFlip a coin.\n\nIf heads, choose 1 of those cards to discard.",
 		})
 	}
 
@@ -26,56 +26,49 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {CardPos} pos
-	 * @param {PickedSlots} pickedSlots
-	 * @param {Object} modalResult
-	 */
-	onApply(game, instance, pos, pickedSlots, modalResult) {
-		const {player, otherPlayer} = pos
-
-		const coinFlip = flipCoin(player, this.id)
-		player.coinFlips[this.id] = coinFlip
-
-		// Client uses the id instead of the instance for the modal
-		player.custom[this.id] = {
-			canDiscard: coinFlip[0] === 'heads',
-			cards: otherPlayer.hand,
-		}
-		player.followUp = this.id
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
-		player.hooks.onFollowUp[instance] = (
-			followUp,
-			pickedSlots,
-			modalResult
-		) => {
-			if (followUp !== this.id) return
-			player.followUp = null
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			const coinFlip = flipCoin(player, this.id)
+			player.custom[this.getInstanceKey(instance)] = coinFlip[0]
 
-			console.log('modalResult', modalResult)
-			if (!modalResult || !modalResult.card) return
-			if (player.coinFlips[this.id][0] !== 'heads') return // You never know
+			// Client uses the id instead of the instance for the modal
+			player.custom[this.id] = {
+				canDiscard: coinFlip[0] === 'heads',
+				cards: opponentPlayer.hand,
+			}
+			player.followUp = this.id
 
-			discardCard(game, modalResult.card)
-		}
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+				if (followUp !== this.id) return
+				player.followUp = null
 
-		player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-			if (followUp !== this.id) return
-			player.followUp = null
+				delete player.custom[this.id]
+				delete player.hooks.onFollowUp[instance]
+				delete player.hooks.onFollowUpTimeout[instance]
 
-			if (player.coinFlips[this.id][0] !== 'heads') return
+				if (!modalResult || !modalResult.card) return
+				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
 
-			// Discard a random card from the opponent's hand
-			const {otherPlayer} = pos
-			const slotIndex = Math.floor(Math.random() * otherPlayer.hand.length)
-			discardCard(game, otherPlayer.hand[slotIndex])
+				discardCard(game, modalResult.card)
+			}
+
+			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
+				if (followUp !== this.id) return
+				player.followUp = null
+
+				delete player.custom[this.id]
+				delete player.hooks.onFollowUp[instance]
+				delete player.hooks.onFollowUpTimeout[instance]
+				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
+
+				// Discard a random card from the opponent's hand
+				const {opponentPlayer} = pos
+				const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
+				discardCard(game, opponentPlayer.hand[slotIndex])
+			}
 		}
 	}
 
@@ -85,10 +78,10 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 */
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {otherPlayer} = pos
+		const {opponentPlayer} = pos
 
 		// Gem can use 2 spyglasses on the same turn
-		if (otherPlayer.hand.length === 0) return 'NO'
+		if (opponentPlayer.hand.length === 0) return 'NO'
 
 		// They can discard the only hermit in their hand
 		if (game.state.turn === 1) return 'NO'
@@ -96,11 +89,16 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
+		delete player.hooks.onApply[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 		delete player.custom[this.id]
-		delete player.hooks.onFollowUp[instance]
-		delete player.hooks.onFollowUpTimeout[instance]
 	}
 }
 
