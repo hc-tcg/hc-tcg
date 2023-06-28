@@ -18,14 +18,10 @@ function* changeActiveHermit(game, turnAction, actionState) {
 	)
 	if (result === -1) return 'INVALID'
 
-	const isKnockedout = currentPlayer.board.rows[result].ailments.find(
-		(a) => a.id === 'knockedout'
-	)
+	const isKnockedout = currentPlayer.board.rows[result].ailments.find((a) => a.id === 'knockedout')
 	const hasOtherHermits = currentPlayer.board.rows.some(
 		(row, index) =>
-			!!row.hermitCard &&
-			index !== result &&
-			!row.ailments.find((a) => a.id === 'knockedout')
+			!!row.hermitCard && index !== result && !row.ailments.find((a) => a.id === 'knockedout')
 	)
 	if (isKnockedout && hasOtherHermits) return 'INVALID'
 

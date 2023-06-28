@@ -17,11 +17,7 @@ const CoinFlip = ({name, tosses}: Props) => {
 		const coinPics = pics.slice()
 		if (face === 'tails') coinPics.reverse()
 		return (
-			<div
-				className={css.coin}
-				key={index}
-				style={{animationIterationCount: 2}}
-			>
+			<div className={css.coin} key={index} style={{animationIterationCount: 2}}>
 				<div className={classnames(css.face, css.front)}>
 					<img src={coinPics[0]} />
 				</div>

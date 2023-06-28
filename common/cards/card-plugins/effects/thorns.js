@@ -23,15 +23,16 @@ class ThornsEffectCard extends EffectCard {
 		const {opponentPlayer} = pos
 		// Only when the opponent attacks us
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+			if (!attack.isType('primary', 'secondary', 'zero') || attack.isBacklash) return
 
 			if (attack.attacker && isTargetingPos(attack, pos)) {
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
 					attacker: attack.target,
 					target: attack.attacker,
-					type: 'backlash',
-				}).addDamage(10)
+					type: 'effect',
+					isBacklash: true,
+				}).addDamage(this.id, 10)
 
 				attack.addNewAttack(backlashAttack)
 			}

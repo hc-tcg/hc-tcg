@@ -43,7 +43,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
-				if (['backlash', 'ailment'].includes(attack.type)) return
+				if (attack.isType('ailment') || attack.isBacklash) return
 				if (!attack.attacker) return
 
 				// No need to flip a coin for multiple attacks
@@ -55,6 +55,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				if (player.custom[coinFlipResult] === 'heads') {
 					// Change attack target - this just works
 					attack.target = attack.attacker
+					attack.isBacklash = true
 				}
 			}
 

@@ -75,9 +75,9 @@ class TurtleShellEffectCard extends EffectCard {
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, pos)) return
 
-			if (attack.damage > 0) {
+			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(0).lockDamage()
+				attack.multiplyDamage(this.id, 0).lockDamage()
 
 				player.custom[instanceKey] = true
 			}

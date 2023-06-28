@@ -20,8 +20,7 @@ class WelsknightRareHermitCard extends HermitCard {
 				name: 'Vengeance',
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
-				power:
-					'Add 20hp damage if your HP is orange. Add 40hp damage if your HP is red.',
+				power: 'Add 20hp damage if your HP is orange. Add 40hp damage if your HP is red.',
 			},
 		})
 	}
@@ -40,8 +39,8 @@ class WelsknightRareHermitCard extends HermitCard {
 
 			if (!attack.attacker) return
 
-			if (attack.attacker.row.health < 200) attack.addDamage(20)
-			if (attack.attacker.row.health < 100) attack.addDamage(20)
+			if (attack.attacker.row.health < 200) attack.addDamage(this.id, 20)
+			if (attack.attacker.row.health < 100) attack.addDamage(this.id, 20)
 		}
 	}
 

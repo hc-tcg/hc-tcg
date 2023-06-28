@@ -7,8 +7,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 			id: 'curse_of_binding',
 			name: 'Curse Of Binding',
 			rarity: 'common',
-			description:
-				"Your opponent's active Hermit can not go AFK on their next turn.",
+			description: "Your opponent's active Hermit can not go AFK on their next turn.",
 		})
 	}
 

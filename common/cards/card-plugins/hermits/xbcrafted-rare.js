@@ -37,19 +37,13 @@ class XBCraftedRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type === 'secondary') {
 			// Noice attack, ignore target effect card
 			attacks[0].shouldIgnoreCards.push((instance) => {
 				const pos = getCardPos(game, instance)
-				if (!pos) return false
+				if (!pos || !attacks[0].target) return false
 
 				const onTargetRow = pos.rowIndex === attacks[0].target.rowIndex
 				if (onTargetRow && pos.slot.type === 'effect') {

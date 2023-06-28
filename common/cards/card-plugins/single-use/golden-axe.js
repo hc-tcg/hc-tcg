@@ -58,7 +58,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(Math.min(80, 20 * multiplier))
+			}).addDamage(this.id, Math.min(80, 20 * multiplier))
 
 			return [attack]
 		}

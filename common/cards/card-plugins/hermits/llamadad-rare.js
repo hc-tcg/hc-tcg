@@ -20,8 +20,7 @@ class LlamadadRareHermitCard extends HermitCard {
 				name: 'Matilda',
 				cost: ['balanced', 'balanced'],
 				damage: 80,
-				power:
-					'Flip a coin.\n\nIf heads, Matilda does an additional 40hp damage.',
+				power: 'Flip a coin.\n\nIf heads, Matilda does an additional 40hp damage.',
 			},
 		})
 	}
@@ -35,15 +34,11 @@ class LlamadadRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(40)
+				attack.addDamage(this.id, 40)
 			}
 		}
 	}

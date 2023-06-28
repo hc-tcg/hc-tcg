@@ -10,8 +10,7 @@ class WolfEffectCard extends EffectCard {
 			id: 'wolf',
 			name: 'Wolf',
 			rarity: 'rare',
-			description:
-				'Opponent takes 20hp damage after their attack.\n\nIgnores armour.',
+			description: 'Opponent takes 20hp damage after their attack.\n\nIgnores armour.',
 		})
 	}
 
@@ -26,27 +25,25 @@ class WolfEffectCard extends EffectCard {
 
 		// Only on opponents turn
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (!['primary', 'secondary', 'zero'].includes(attack.type)) return
+			if (!attack.isType('primary', 'secondary', 'zero') || attack.isBacklash) return
 
 			if (attack.attacker && isTargetingPos(attack, pos)) {
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
 					attacker: attack.target,
 					target: attack.attacker,
-					type: 'backlash',
-				}).addDamage(20)
+					type: 'effect',
+					isBacklash: true,
+				}).addDamage(this.id, 20)
 
 				backlashAttack.shouldIgnoreCards.push((instance) => {
 					const pos = getCardPos(game, instance)
 					if (!pos) return false
 					if (!pos.row?.effectCard) return false
 
-					return [
-						'diamond_armor',
-						'gold_armor',
-						'iron_armor',
-						'netherite_armor',
-					].includes(pos.row.effectCard.cardId)
+					return ['diamond_armor', 'gold_armor', 'iron_armor', 'netherite_armor'].includes(
+						pos.row.effectCard.cardId
+					)
 				})
 
 				attack.addNewAttack(backlashAttack)

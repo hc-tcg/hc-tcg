@@ -26,7 +26,7 @@ class DiamondArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
-			if (!isTargetingPos(attack, pos) || attack.type === 'ailment') return
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -35,9 +35,9 @@ class DiamondArmorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 30) {
-				const damageReduction = Math.min(attack.damage, 30 - totalReduction)
+				const damageReduction = Math.min(attack.getDamage(), 30 - totalReduction)
 				player.custom[instanceKey] += damageReduction
-				attack.reduceDamage(damageReduction)
+				attack.reduceDamage(this.id, damageReduction)
 			}
 		}
 

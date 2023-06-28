@@ -28,9 +28,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
 			pickOn: 'followup',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -46,7 +44,8 @@ class TangoTekRareHermitCard extends HermitCard {
 		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
+				attack.type !== 'secondary' ||
+				!attack.target
 			)
 				return
 
@@ -76,9 +75,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					const {row} = pickedSlot
 					if (!row) return
 
-					const canBeActive = row.state.ailments.every(
-						(a) => a.id !== 'knockedout'
-					)
+					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
 					if (!canBeActive) return
 					opponentPlayer.board.activeRow = row.index
 				}
@@ -92,7 +89,9 @@ class TangoTekRareHermitCard extends HermitCard {
 					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 
 					// Choose the first row that doesn't have a knockedout ailment
-					for (const {rowIndex, row} of opponentInactiveRows) {
+					for (const inactiveHermit of opponentInactiveRows) {
+						if (!inactiveHermit) continue
+						const {rowIndex, row} = inactiveHermit
 						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
 						if (canBeActive) {
 							opponentPlayer.board.activeRow = rowIndex

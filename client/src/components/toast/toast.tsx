@@ -33,18 +33,11 @@ const ToastMessage = ({setOpen, title, description, image}: Props) => {
 
 	return (
 		<>
-			<Toast.Root
-				open={setOpen}
-				onOpenChange={handleClose}
-				duration={5000}
-				className={css.toast}
-			>
+			<Toast.Root open={setOpen} onOpenChange={handleClose} duration={5000} className={css.toast}>
 				{image && <img src={image} draggable={false} alt="icon" />}
 				<div className={css.content}>
 					<Toast.Title className={css.title}>{title}</Toast.Title>
-					<Toast.Description className={css.description}>
-						{description}
-					</Toast.Description>
+					<Toast.Description className={css.description}>{description}</Toast.Description>
 				</div>
 			</Toast.Root>
 		</>

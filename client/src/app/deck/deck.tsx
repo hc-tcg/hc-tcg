@@ -14,13 +14,7 @@ import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
-import {
-	CopyIcon,
-	DeleteIcon,
-	EditIcon,
-	ErrorIcon,
-	ExportIcon,
-} from 'components/svgs'
+import {CopyIcon, DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
 import {getCardCost} from 'server/utils/validation'
 import {ImportModal, ExportModal} from 'components/import-export'
@@ -108,27 +102,22 @@ const Deck = ({setMenuSection}: Props) => {
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
 
-	const savedDeckNames = savedDecks.map((deck) =>
-		deck ? getSavedDeck(deck)?.name : null
-	)
+	const savedDeckNames = savedDecks.map((deck) => (deck ? getSavedDeck(deck)?.name : null))
 	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
-	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
-		useState<boolean>(false)
+	const [showDuplicateDeckModal, setShowDuplicateDeckModal] = useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
-	const [showValidateDeckModal, setShowValidateDeckModal] =
-		useState<boolean>(false)
+	const [showValidateDeckModal, setShowValidateDeckModal] = useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
 
 	// TOASTS
-	const dispatchToast = (toast: ToastT) =>
-		dispatch({type: 'SET_TOAST', payload: toast})
+	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
 	const deleteToast: ToastT = {
 		open: true,
 		title: 'Deck Deleted!',
@@ -176,11 +165,9 @@ const Deck = ({setMenuSection}: Props) => {
 
 	//DECK LOGIC
 	const loadDeck = (deckName: string) => {
-		if (!deckName)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+		if (!deckName) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 		const deck = getSavedDeck(deckName)
-		if (!deck)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
 		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
 
@@ -239,60 +226,36 @@ const Deck = ({setMenuSection}: Props) => {
 			return deck
 		})
 		.sort((a, b) => a.name.localeCompare(b.name))
-	const deckList: ReactNode = sortedDecks.map(
-		(deck: PlayerDeckT, i: number) => {
-			return (
-				<li
-					className={classNames(
-						css.myDecksItem,
-						loadedDeck.name === deck.name && css.selectedDeck
-					)}
-					key={i}
-					onClick={() => {
-						playSwitchDeckSFX()
-						loadDeck(deck.name)
-					}}
-				>
-					<div className={css.deckImage}>
-						<img
-							src={'../images/types/type-' + deck.icon + '.png'}
-							alt={'deck-icon'}
-						/>
-					</div>
-					{deck.name}
-				</li>
-			)
-		}
-	)
-	const validationMessage = validateDeck(
-		loadedDeck.cards.map((card) => card.cardId)
-	)
+	const deckList: ReactNode = sortedDecks.map((deck: PlayerDeckT, i: number) => {
+		return (
+			<li
+				className={classNames(css.myDecksItem, loadedDeck.name === deck.name && css.selectedDeck)}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck.name)
+				}}
+			>
+				<div className={css.deckImage}>
+					<img src={'../images/types/type-' + deck.icon + '.png'} alt={'deck-icon'} />
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
+	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'hermit'
-		),
-		items: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'item'
-		),
-		attachableEffects: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'effect'
-		),
-		singleUseEffects: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'single_use'
-		),
+		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
+		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
+		attachableEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'effect'),
+		singleUseEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'single_use'),
 	}
 
 	//MISC
 	const playSwitchDeckSFX = () => {
 		if (settings.soundOn !== 'off') {
-			const pageTurn = [
-				'/sfx/Page_turn1.ogg',
-				'/sfx/Page_turn2.ogg',
-				'/sfx/Page_turn3.ogg',
-			]
-			const audio = new Audio(
-				pageTurn[Math.floor(Math.random() * pageTurn.length)]
-			)
+			const pageTurn = ['/sfx/Page_turn1.ogg', '/sfx/Page_turn2.ogg', '/sfx/Page_turn3.ogg']
+			const audio = new Audio(pageTurn[Math.floor(Math.random() * pageTurn.length)])
 			audio.play()
 		}
 	}
@@ -350,11 +313,7 @@ const Deck = ({setMenuSection}: Props) => {
 					actionText="Overwrite"
 				/>
 
-				<DeckLayout
-					title="Deck Selection"
-					back={backToMenu}
-					returnText="Back To Menu"
-				>
+				<DeckLayout title="Deck Selection" back={backToMenu} returnText="Back To Menu">
 					<DeckLayout.Main
 						header={
 							<>
@@ -380,11 +339,8 @@ const Deck = ({setMenuSection}: Props) => {
 									</p>
 									<div className={css.cardCount}>
 										<p className={css.tokens}>
-											{getTotalCost(
-												loadedDeck.cards.map((card) => card.cardId)
-											)}
-											/{CONFIG.limits.maxDeckCost}{' '}
-											<span className={css.hideOnMobile}>tokens</span>
+											{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
+											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
 										</p>
 									</div>
 								</div>
@@ -437,26 +393,16 @@ const Deck = ({setMenuSection}: Props) => {
 						</div>
 						{validationMessage && (
 							<div className={css.validationMessage}>
-								<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span>{' '}
-								{validationMessage}
+								<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span> {validationMessage}
 							</div>
 						)}
 
-						<Accordion
-							header={cardGroupHeader('Hermits', selectedCards.hermits)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.hermits)}
-								size="small"
-								wrap={true}
-							/>
+						<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
+							<CardList cards={sortCards(selectedCards.hermits)} size="small" wrap={true} />
 						</Accordion>
 
 						<Accordion
-							header={cardGroupHeader(
-								'Attachable Effects',
-								selectedCards.attachableEffects
-							)}
+							header={cardGroupHeader('Attachable Effects', selectedCards.attachableEffects)}
 						>
 							<CardList
 								cards={sortCards(selectedCards.attachableEffects)}
@@ -465,10 +411,7 @@ const Deck = ({setMenuSection}: Props) => {
 							/>
 						</Accordion>
 						<Accordion
-							header={cardGroupHeader(
-								'Single Use Effects',
-								selectedCards.singleUseEffects
-							)}
+							header={cardGroupHeader('Single Use Effects', selectedCards.singleUseEffects)}
 						>
 							<CardList
 								cards={sortCards(selectedCards.singleUseEffects)}
@@ -478,21 +421,13 @@ const Deck = ({setMenuSection}: Props) => {
 						</Accordion>
 
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								size="small"
-								wrap={true}
-							/>
+							<CardList cards={sortCards(selectedCards.items)} size="small" wrap={true} />
 						</Accordion>
 					</DeckLayout.Main>
 					<DeckLayout.Sidebar
 						header={
 							<>
-								<img
-									src="../images/card-icon.png"
-									alt="card-icon"
-									className={css.sidebarIcon}
-								/>
+								<img src="../images/card-icon.png" alt="card-icon" className={css.sidebarIcon} />
 								<p style={{textAlign: 'center'}}>My Decks</p>
 							</>
 						}
@@ -524,10 +459,7 @@ const Deck = ({setMenuSection}: Props) => {
 									<Button variant="primary" onClick={() => setMode('create')}>
 										Create New Deck
 									</Button>
-									<Button
-										variant="primary"
-										onClick={() => setShowImportModal(!showImportModal)}
-									>
+									<Button variant="primary" onClick={() => setShowImportModal(!showImportModal)}>
 										<ExportIcon reversed />
 										<span>Import Deck</span>
 									</Button>

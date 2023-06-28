@@ -10,6 +10,7 @@ import {WEAKNESS_DAMAGE} from '../routines/turn-actions/attack.js'
  * @returns {boolean}
  */
 export function isTargetingPos(attack, pos) {
+	if (!attack.target) return false
 	const targetingPlayer = attack.target.player.id === pos.player.id
 	const targetingRow = attack.target.rowIndex === pos.rowIndex
 
@@ -27,10 +28,7 @@ export function createWeaknessAttack(attack) {
 	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 
-	const attackId = attackerCardInfo.getInstanceKey(
-		attacker.row.hermitCard.cardInstance,
-		'weakness'
-	)
+	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
 
 	const strength = STRENGTHS[attackerCardInfo.hermitType]
 	const hasWeakness = target.row.ailments.find((a) => a.id === 'weakness')
@@ -44,7 +42,7 @@ export function createWeaknessAttack(attack) {
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

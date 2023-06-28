@@ -51,25 +51,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
 		const {opponentPlayer} = pos
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
 		const hermitAttack = attacks[0]
 
 		const pickedHermit = pickedSlots[this.id]?.[0]
-		if (
-			!pickedHermit ||
-			!pickedHermit.row ||
-			!pickedHermit.row.state.hermitCard
-		)
-			return attacks
+		if (!pickedHermit || !pickedHermit.row || !pickedHermit.row.state.hermitCard) return attacks
 
 		// Change attack target
 		hermitAttack.target = {

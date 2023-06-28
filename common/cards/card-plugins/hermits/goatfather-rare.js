@@ -41,13 +41,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 	 * @param {PickedSlots} pickedSlots
 	 */
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
-		const attacks = super.getAttacks(
-			game,
-			instance,
-			pos,
-			hermitAttackType,
-			pickedSlots
-		)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		const {player, opponentPlayer, row, rowIndex} = pos
 
@@ -59,8 +53,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 
 		const activeRow = opponentPlayer.board.activeRow
 		const rows = opponentPlayer.board.rows
-		if (activeRow === null || rowIndex === null || !row || !row.hermitCard)
-			return attacks
+		if (activeRow === null || rowIndex === null || !row || !row.hermitCard) return attacks
 		for (let i = activeRow; i < rows.length; i++) {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue
@@ -78,7 +71,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 					row: targetRow,
 				},
 				type: hermitAttackType,
-			}).addDamage(activeRow === i ? 30 : 10)
+			}).addDamage(this.id, activeRow === i ? 30 : 10)
 			attacks.push(attack)
 		}
 

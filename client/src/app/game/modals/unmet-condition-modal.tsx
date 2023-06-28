@@ -14,9 +14,7 @@ function UnmetCondition({closeModal}: Props) {
 	return (
 		<Modal title="Unmet Condition">
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					You can't play this card at the moment.
-				</div>
+				<div className={css.description}>You can't play this card at the moment.</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleOk}>
 						Ok

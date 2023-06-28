@@ -1,11 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {
-	applySingleUse,
-	getActiveRowPos,
-	getNonEmptyRows,
-} from '../../../../server/utils'
+import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/cards').CardPos} CardPos
@@ -20,9 +16,7 @@ class BowSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description: 'Do 40hp damage to an AFK Hermit of your choice.',
 			pickOn: 'attack',
-			pickReqs: [
-				{target: 'opponent', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -68,7 +62,7 @@ class BowSingleUseCard extends SingleUseCard {
 					row: opponentRow,
 				},
 				type: 'effect',
-			}).addDamage(40)
+			}).addDamage(this.id, 40)
 
 			return [bowAttack]
 		}

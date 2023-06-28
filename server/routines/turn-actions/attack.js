@@ -1,8 +1,4 @@
-import {
-	HERMIT_CARDS,
-	EFFECT_CARDS,
-	SINGLE_USE_CARDS,
-} from '../../../common/cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
@@ -57,7 +53,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
 
 	if (DEBUG_CONFIG.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
-			attacks[i].damage = 9001
+			attacks[i].addDamage('debug', 1001)
 		}
 	}
 
@@ -69,6 +65,7 @@ function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
  */
 function executeAttack(attack) {
 	const {target} = attack
+	if (!target) return
 
 	const {row: targetRow} = target
 	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
@@ -97,8 +94,7 @@ function runBeforeAttackHooks(attacks, pickedSlots = {}) {
 		const beforeAttacks = Object.values(player.hooks.beforeAttack)
 
 		if (DEBUG_CONFIG.disableDamage) {
-			attack.reduceDamage(attack.damage)
-			attack.lockDamage()
+			attack.multiplyDamage('debug', 0).lockDamage()
 		}
 
 		for (let i = 0; i < beforeAttackKeys.length; i++) {
@@ -119,6 +115,7 @@ function runBeforeAttackHooks(attacks, pickedSlots = {}) {
 function runBeforeDefenceHooks(attacks, pickedSlots = {}) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the target of the attack
 		const player = attack.target.player
@@ -168,6 +165,7 @@ function runOnAttackHooks(attacks, pickedSlots = {}) {
 function runOnDefenceHooks(attacks, pickedSlots = {}) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the target of the attack
 		const player = attack.target.player
@@ -215,6 +213,7 @@ function runAfterAttackHooks(attacks) {
 function runAfterDefenceHooks(attacks) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the source of the attack
 		const player = attack.target.player
@@ -348,8 +347,12 @@ export function runAilmentAttacks(game, player) {
 		const row = player.board.rows[i]
 		if (!row.health) continue
 
+		const hasFire = !!row.ailments.find((a) => a.id === 'fire')
+		const hasPoison = !!row.ailments.find((a) => a.id === 'poison')
+
 		// NOTE - only ailment attacks have no attacker, all others do
 		const attack = new AttackModel({
+			id: hasFire ? 'fire' : hasPoison ? 'poison' : undefined,
 			target: {
 				player,
 				rowIndex: i,
@@ -358,17 +361,12 @@ export function runAilmentAttacks(game, player) {
 			type: 'ailment',
 		})
 
-		if (row.ailments.find((a) => a.id === 'fire')) {
-			attack.id = 'fire'
-			attacks.push(attack.addDamage(20))
-		}
-
-		if (row.ailments.find((a) => a.id === 'poison')) {
-			attack.id = 'poison'
-
+		if (hasFire) {
+			attacks.push(attack.addDamage('ailment', 20))
+		} else if (hasPoison) {
 			// Calculate max poison damage
 			const poisonDamage = Math.max(Math.min(row.health - 10, 20), 0)
-			attacks.push(attack.addDamage(poisonDamage))
+			attacks.push(attack.addDamage('ailment', poisonDamage))
 		}
 	}
 

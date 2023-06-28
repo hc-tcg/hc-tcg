@@ -21,8 +21,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 				name: 'Geminislay',
 				cost: ['terraform', 'terraform'],
 				damage: 80,
-				power:
-					'You may play an additional single use effect card at the end of your turn.',
+				power: 'You may play an additional single use effect card at the end of your turn.',
 			},
 		})
 	}
@@ -39,11 +38,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
 		player.hooks.afterAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			// To keep this simple gem will discard the single use card, if it's used
 			if (player.board.singleUseCardUsed) {
@@ -58,10 +53,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 			// if the flag is enabled allow playing another card
 			// @TODO what does follow up do with this
 			if (player.custom[extraCardKey]) {
-				if (
-					!availableActions.includes('PLAY_SINGLE_USE_CARD') &&
-					!player.board.singleUseCard
-				) {
+				if (!availableActions.includes('PLAY_SINGLE_USE_CARD') && !player.board.singleUseCard) {
 					availableActions.push('PLAY_SINGLE_USE_CARD')
 				}
 				if (!availableActions.includes('ZERO_ATTACK')) {

@@ -24,8 +24,7 @@ class JinglerRareHermitCard extends HermitCard {
 				name: 'Deception',
 				cost: ['speedrunner', 'speedrunner', 'any'],
 				damage: 80,
-				power:
-					'Flip a coin. If heads, opponent must discard a card from their hand.',
+				power: 'Flip a coin. If heads, opponent must discard a card from their hand.',
 			},
 
 			pickOn: 'followup',
@@ -50,7 +49,7 @@ class JinglerRareHermitCard extends HermitCard {
 
 		player.hooks.afterAttack[instance] = (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary') return
+			if (attack.type !== 'secondary' || !attack.target) return
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'tails') return
 
