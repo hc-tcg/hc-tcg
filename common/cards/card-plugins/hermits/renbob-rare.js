@@ -39,7 +39,7 @@ class RenbobRareHermitCard extends HermitCard {
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
 		const {opponentPlayer} = pos
 		let attack = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)[0]
-		if (attack.type === 'secondary' && pos.rowIndex) {
+		if (attack.type === 'secondary' && pos.rowIndex !== null) {
 			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
 			if (opponentPlayerRow.hermitCard) {
 				attack.target = {
