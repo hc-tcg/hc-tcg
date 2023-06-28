@@ -1,7 +1,7 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {RowPos} from './cards'
 
-export type HermitAttackType = 'primary' | 'secondary' | 'zero'
+export type HermitAttackType = 'primary' | 'secondary' | 'zero' | 'redirect'
 
 export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'ailment'
 

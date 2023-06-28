@@ -2,7 +2,7 @@
 	"disableDeckValidation": true,
 	"extraStartingCards": ["pearlescentmoon_rare"],
 	"noItemRequirements": true,
-	"forceCoinFlip": false,
+	"forceCoinFlip": true,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,

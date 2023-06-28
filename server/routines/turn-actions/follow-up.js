@@ -1,6 +1,6 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import {runAttackLoop} from './attack'
+import {runAllAttacks} from './attack.js'
 
 /**
  * @param {GameModel} game
@@ -16,7 +16,11 @@ function* followUpSaga(game, turnAction, actionState) {
 	const newAttacks = []
 	const followUpHooks = Object.values(followUpPlayer.hooks.onFollowUp)
 	for (let i = 0; i < followUpHooks.length; i++) {
-		followUpHooks[i](followUpPlayer.followUp, pickedSlots, modalResult)
+		followUpHooks[i](followUpPlayer.followUp, pickedSlots, newAttacks)
+	}
+
+	if (newAttacks.length > 0) {
+		runAllAttacks(newAttacks)
 	}
 }
 

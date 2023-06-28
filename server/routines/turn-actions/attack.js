@@ -249,7 +249,7 @@ function shouldIgnoreCard(attack, instance) {
  * @param {Array<AttackModel>} attacks
  * @param {import('types/pick-process').PickedSlots} pickedSlots
  */
-function runAllAttacks(attacks, pickedSlots = {}) {
+export function runAllAttacks(attacks, pickedSlots = {}) {
 	/** @type {Array<AttackModel>} */
 	const allAttacks = []
 

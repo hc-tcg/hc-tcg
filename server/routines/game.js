@@ -15,6 +15,7 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import followUpSaga from './turn-actions/follow-up'
 import {getCardPos} from '../utils/cards'
+import {AttackModel} from '../../server/models/attack-model'
 
 /**
  * @typedef {import("common/types/game-state").AvailableActionsT} AvailableActionsT
@@ -442,14 +443,18 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				if (opponentFollowUp) {
 					game.state.timer.turnTime = getTimerForSeconds(20)
 					const followUpTimeoutHooks = Object.values(opponentPlayer.hooks.onFollowUpTimeout)
+					/** @type {Array<AttackModel>} */
+					const newAttacks = []
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](opponentPlayer.followUp)
+						followUpTimeoutHooks[i](opponentPlayer.followUp, newAttacks)
 					}
 					continue
 				} else if (currentPlayerFollowUp) {
 					const followUpTimeoutHooks = Object.values(currentPlayer.hooks.onFollowUpTimeout)
+					/** @type {Array<AttackModel>} */
+					const newAttacks = []
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](currentPlayer.followUp)
+						followUpTimeoutHooks[i](currentPlayer.followUp, newAttacks)
 					}
 					continue
 				} else if (!hasActiveHermit) {

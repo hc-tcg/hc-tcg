@@ -4,16 +4,11 @@ import {GameModel} from '../../../../server/models/game-model'
 import {flipCoin} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {getNonEmptyRows, hasEnoughEnergy} from '../../../../server/utils'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
 /**
  * @typedef {import('common/types/pick-process').PickRequirmentT} PickRequirmentT
  */
-
-/*
-- Has to support having two different afk targets (one for hypno, one for su effect like bow)
-- If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
-- TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
-*/
 class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -36,9 +31,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					'Flip a coin, twice. If both are heads, your opponent must attack one of their own AFK Hermits on their next turn. Opponent must have necessary item cards attached to execute an attack.',
 			},
 			pickOn: 'followup',
-			pickReqs: [
-				{target: 'player', type: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -48,14 +41,10 @@ class HumanCleoRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id, 2)
 			player.coinFlips[this.id] = coinFlip
@@ -65,9 +54,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 			player.custom[instance] = true
 
-			otherPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 				if (!player.custom[instance]) return blockedActions
-				const opponentRowIndex = otherPlayer.board.activeRow
+				const opponentRowIndex = opponentPlayer.board.activeRow
 
 				//Remove "Change active hermit", unless you do not have an active Hermit.
 				if (opponentRowIndex !== null) {
@@ -76,7 +65,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				if (opponentRowIndex === null) return blockedActions
 
 				//If you are not able to attack, you can end your turn.
-				const opponentActiveRow = otherPlayer.board.rows[opponentRowIndex]
+				const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
 				if (!opponentActiveRow.hermitCard) return blockedActions
 
 				const itemCards = opponentActiveRow.itemCards
@@ -86,8 +75,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					energyTypes.push(ITEM_CARDS[item.cardId].hermitType)
 				})
 
-				const activeHermitInfo =
-					HERMIT_CARDS[opponentActiveRow.hermitCard.cardId]
+				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.hermitCard.cardId]
 
 				if (
 					hasEnoughEnergy(energyTypes, activeHermitInfo.primary.cost) ||
@@ -100,19 +88,16 @@ class HumanCleoRareHermitCard extends HermitCard {
 			}
 		}
 
-		otherPlayer.hooks.beforeAttack[instance] = (attack) => {
-			const opponentInactiveRows = getNonEmptyRows(otherPlayer, false)
+		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			if (!player.custom[instance] || opponentInactiveRows.length === 0) return
 
-			attack.target = null
+			if (!attack.isType('effect', 'ailment')) attack.target = null
+			if (!attack.isType('primary', 'secondary')) return
 
-			otherPlayer.followUp = this.id
+			opponentPlayer.followUp = this.id
 
-			otherPlayer.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				newAttacks
-			) => {
+			opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots, newAttacks) => {
 				if (followUp !== this.id) return
 				const slots = pickedSlots[this.id]
 				if (!slots || slots.length !== 1) return
@@ -122,25 +107,29 @@ class HumanCleoRareHermitCard extends HermitCard {
 				// Create new attack
 				const newAttack = new AttackModel({
 					id: attack.id,
+					attacker: attack.attacker,
 					target: {
-						index: pickedHermit.row.index,
+						player: opponentPlayer,
+						rowIndex: pickedHermit.row.index,
 						row: pickedHermit.row.state,
 					},
-					type: attack.type,
+					type: 'redirect',
+					isBacklash: true,
 				})
-				newAttack.addDamage(attack.damage)
+				newAttack.addDamage(this.id, attack.getDamage())
 				newAttacks.push(newAttack)
 
-				otherPlayer.followUp = null
+				const weaknessAttack = createWeaknessAttack(newAttack)
+				if (weaknessAttack) newAttacks.push(weaknessAttack)
 
-				delete otherPlayer.hooks.onFollowUp[instance]
-				delete otherPlayer.hooks.onFollowUpTimeout[instance]
+				opponentPlayer.followUp = null
+
+				delete opponentPlayer.hooks.onFollowUp[instance]
+				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				delete player.custom[instance]
 			}
 
-			otherPlayer.hooks.onFollowUpTimeout[instance] = (
-				followUp,
-				newAttacks
-			) => {
+			opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp, newAttacks) => {
 				if (followUp !== this.id) return
 
 				const attackTarget = opponentInactiveRows[0]
@@ -148,24 +137,28 @@ class HumanCleoRareHermitCard extends HermitCard {
 				// Create new attack, but choose the first AFK hermit for the target.
 				const newAttack = new AttackModel({
 					id: attack.id,
+					attacker: attack.attacker,
 					target: attackTarget,
-					type: attack.type,
+					type: 'redirect',
+					isBacklash: true,
 				})
-				newAttack.addDamage(attack.damage)
+				newAttack.addDamage(this.id, attack.getDamage())
 				newAttacks.push(newAttack)
 
-				otherPlayer.followUp = null
+				const weaknessAttack = createWeaknessAttack(attack)
+				if (weaknessAttack) newAttacks.push(weaknessAttack)
 
-				delete otherPlayer.hooks.onFollowUp[instance]
-				delete otherPlayer.hooks.onFollowUpTimeout[instance]
+				opponentPlayer.followUp = null
+
+				delete opponentPlayer.hooks.onFollowUp[instance]
+				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				delete player.custom[instance]
 			}
-
-			delete player.custom[instance]
 		}
 
-		otherPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete player.custom[instance]
-			delete otherPlayer.hooks.blockedActions[instance]
+			delete opponentPlayer.hooks.blockedActions[instance]
 		}
 	}
 
@@ -175,13 +168,13 @@ class HumanCleoRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, otherPlayer} = pos
+		const {player, opponentPlayer} = pos
 
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
-		delete otherPlayer.hooks.beforeAttack[instance]
-		delete otherPlayer.hooks.onTurnEnd[instance]
-		delete otherPlayer.hooks.blockedActions[instance]
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
+		delete opponentPlayer.hooks.blockedActions[instance]
 		delete player.custom[instance]
 	}
 
