@@ -21,26 +21,39 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {opponentPlayer} = pos
+		const {opponentPlayer, player} = pos
 
-		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
-			if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+				if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
+					return blockedActions
+				}
+
+				// Make sure the other player has an active row
+				if (opponentPlayer.board.activeRow !== null) {
+					blockedActions.push('CHANGE_ACTIVE_HERMIT')
+				}
+
 				return blockedActions
 			}
 
-			// Make sure the other player has an active row
-			if (opponentPlayer.board.activeRow !== null) {
-				blockedActions.push('CHANGE_ACTIVE_HERMIT')
+			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+				// Remove effects of card and clean up
+				delete opponentPlayer.hooks.blockedActions[instance]
+				delete opponentPlayer.hooks.onTurnEnd[instance]
 			}
-
-			return blockedActions
 		}
+	}
 
-		opponentPlayer.hooks.onTurnEnd[instance] = () => {
-			// Remove effects of card and clean up
-			delete opponentPlayer.hooks.blockedActions[instance]
-			delete opponentPlayer.hooks.onTurnEnd[instance]
-		}
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+
+		delete player.hooks.onApply[instance]
 	}
 }
 
