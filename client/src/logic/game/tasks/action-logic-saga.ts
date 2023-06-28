@@ -59,29 +59,26 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
 
-	if (pState.followUp) {
-		const cardInfo = CARDS[pState.followUp] as
-			| HermitCard
-			| EffectCard
-			| SingleUseCard
-			| ItemCard
-			| null
-		if (cardInfo?.pickOn === 'followup') {
-			let pickResults = null
-			const name = getFollowUpName(cardInfo)
-			while (!pickResults) pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
-			yield put(followUp({pickResults: {[pState.followUp]: pickResults}}))
-		} else if (pState.followUp === 'grian_rare') {
-			yield fork(borrowSaga)
-		} else if (pState.followUp === 'evilxisuma_rare') {
-			yield put(setOpenedModal('evilX'))
-		} else if (pState.followUp === 'spyglass') {
-			yield put(setOpenedModal('spyglass'))
-		} else if (pState.followUp === 'looting') {
-			yield put(setOpenedModal('looting'))
-		} else {
-			// The server can set the next follow up
-			yield put(followUp({}))
+	if (Object.keys(pState.followUp).length > 0) {
+		for (const cardId of Object.values(pState.followUp)) {
+			const cardInfo = CARDS[cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | null
+			if (cardInfo?.pickOn === 'followup') {
+				let pickResults = null
+				const name = getFollowUpName(cardInfo)
+				while (!pickResults) pickResults = yield call(runPickProcessSaga, name, cardInfo.pickReqs)
+				yield put(followUp({pickResults: {[cardId]: pickResults}}))
+			} else if (cardId === 'grian_rare') {
+				yield fork(borrowSaga)
+			} else if (cardId === 'evilxisuma_rare') {
+				yield put(setOpenedModal('evilX'))
+			} else if (cardId === 'spyglass') {
+				yield put(setOpenedModal('spyglass'))
+			} else if (cardId === 'looting') {
+				yield put(setOpenedModal('looting'))
+			} else {
+				// The server can set the next follow up
+				yield put(followUp({}))
+			}
 		}
 	} else if (
 		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&

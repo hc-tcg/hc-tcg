@@ -8,5 +8,10 @@
 	"disableDeckOut": false,
 	"startWithAllCards": true,
 	"blockedActions": [],
-	"availableActions": []
+	"availableActions": [],
+	"showHooksState": {
+		"enabled": false,
+		"clearConsole": true
+	},
+	"autoEndTurn": false
 }

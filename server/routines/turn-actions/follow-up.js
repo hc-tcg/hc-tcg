@@ -6,13 +6,16 @@ import {GameModel} from '../../models/game-model'
  * @param {ActionState} actionState
  */
 function* followUpSaga(game, turnAction, actionState) {
+	const {currentPlayer, opponentPlayer} = game.ds
 	const {pickedSlots, modalResult} = actionState
-	const followUpPlayer = game.state.players[turnAction.playerId]
-	if (!followUpPlayer || !followUpPlayer.followUp) return
-
-	const followUpHooks = Object.values(followUpPlayer.hooks.onFollowUp)
-	for (let i = 0; i < followUpHooks.length; i++) {
-		followUpHooks[i](followUpPlayer.followUp, pickedSlots, modalResult)
+	for (const player of [currentPlayer, opponentPlayer]) {
+		if (Object.keys(player.followUp).length === 0) continue
+		const followUpHooks = Object.values(player.hooks.onFollowUp)
+		for (let i = 0; i < followUpHooks.length; i++) {
+			for (const followUp of Object.keys(player.followUp)) {
+				followUpHooks[i](followUp, pickedSlots, modalResult)
+			}
+		}
 	}
 }
 

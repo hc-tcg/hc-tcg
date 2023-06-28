@@ -30,7 +30,7 @@ function PlayerInfo() {
 		return () => clearInterval(interval)
 	}, [time, gameState.timer.turnRemaining])
 
-	const timeClass = getTimeClass(remainingTime, !!inactivePlayer.followUp)
+	const timeClass = getTimeClass(remainingTime, Object.keys(inactivePlayer.followUp).length > 0)
 	return <div className={classnames(css.timer, timeClass)}>{remainingTime}</div>
 }
 
