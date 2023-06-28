@@ -100,7 +100,7 @@ class RendogRareHermitCard extends HermitCard {
 		const {player} = pos
 		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
 
-		delete player.hooks.onTurnEnd[instance]
+		delete player.hooks.onTurnStart[instance]
 		delete player.custom[imitatingCard]
 	}
 }

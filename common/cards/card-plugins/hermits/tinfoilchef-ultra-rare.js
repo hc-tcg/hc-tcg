@@ -69,7 +69,8 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.onAttack[instance]
+		delete player.hooks.beforeAttack[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

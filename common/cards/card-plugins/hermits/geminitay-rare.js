@@ -102,7 +102,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
 		// Remove hooks and flags
-		delete player.hooks.onAttack[instance]
+		delete player.hooks.afterAttack[instance]
 		delete player.hooks.availableActions[instance]
 		delete player.hooks.onApply[instance]
 		delete player.hooks.afterApply[instance]

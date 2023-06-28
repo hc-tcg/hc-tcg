@@ -18,7 +18,6 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	}
 
 	/**
-	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
 	 * @param {import('../../../types/cards').CardPos} pos

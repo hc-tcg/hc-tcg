@@ -2,6 +2,7 @@ import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
+// TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -33,53 +34,53 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		// secondary_used, opponent_miss, opponent_hit
+		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
 		const status = this.getInstanceKey(instance, 'status')
+		player.custom[status] = 'normal'
 
-		// If pearl's secondary is used, set flag to "secondary_used". However, if the opponent missed the previous turn the flag is unchanged.
 		player.hooks.onAttack[instance] = (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
+			if (player.custom[status] === 'missed') {
+				player.custom[status] = 'normal'
+				return
+			}
 			if (attack.type !== 'secondary') return
 
-			// If opponent missed last turn, don't allow ability to activate
-			if (player.custom[status] === 'opponent_miss') return
+			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+				if (['ailment', 'backlash'].includes(attack.type)) return
 
-			player.custom[status] = 'secondary_used'
+				// No need to flip a coin for multiple attacks
+				if (!player.custom[coinFlipResult]) {
+					const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
+					if (coinFlip[0] === 'tails') return
+					player.custom[coinFlipResult] = coinFlip[0]
+					player.custom[status] = 'missed'
+				}
+
+				if (player.custom[coinFlipResult] === 'heads') {
+					attack.multiplyDamage(0)
+					attack.lockDamage()
+				}
+			}
+
+			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+				const isPearlDead = pos.row?.hermitCard?.cardInstance !== instance
+				const isActive = opponentPlayer.board.activeRow === pos.rowIndex
+
+				if (isPearlDead || !isActive) {
+					player.custom[status] = 'normal'
+				}
+				delete opponentPlayer.hooks.beforeAttack[instance]
+				delete opponentPlayer.hooks.onTurnEnd[instance]
+				delete player.custom[coinFlipResult]
+			}
 		}
 
-		// If the opponent missed last turn, clear the flag at the end of our turn.
+		// If the opponent missed the previous turn and we switch hermits or we don't
+		// attack this turn then we reset the status
 		player.hooks.onTurnEnd[instance] = () => {
-			if (player.custom[status] === 'opponent_miss') {
-				delete player.custom[status]
-			}
-		}
-
-		opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
-			// Flip a coin once at the start of their attack loop
-			if (player.custom[status] !== 'secondary_used') return
-
-			const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
-			if (coinFlip[0] === 'heads') {
-				player.custom[status] = 'opponent_miss'
-			} else {
-				player.custom[status] = 'opponent_hit'
-			}
-		}
-
-		// If the coin flip is heads and it's the opponent hermit attack, lock the damage to 0.
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (
-				player.custom[status] === 'opponent_miss' &&
-				!['effect', 'ailment', 'backlash'].includes(attack.type)
-			) {
-				attack.multiplyDamage(0).lockDamage()
-			}
-		}
-
-		opponentPlayer.hooks.onTurnEnd[instance] = () => {
-			// Their turn is over, delete the status unless it's opponent missed
-			if (player.custom[status] !== 'opponent_miss') {
-				delete player.custom[status]
+			if (player.custom[status] === 'missed') {
+				player.custom[status] = 'normal'
 			}
 		}
 	}
@@ -90,18 +91,10 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
-
-		// Remove hooks
+		const {player} = pos
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
-
-		delete opponentPlayer.hooks.beforeAttack[instance]
-		delete opponentPlayer.hooks.onAttack[instance]
-		delete opponentPlayer.hooks.onTurnEnd[instance]
-
-		delete player.custom[status]
+		delete player.custom[this.getInstanceKey(instance, 'status')]
 	}
 }
 

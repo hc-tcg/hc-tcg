@@ -37,19 +37,17 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
 
 			if (coinFlip[0] !== 'heads') return
 
-			player.followUp = this.id
+			player.followUp[instanceKey] = this.id
 
 			// He only disables the attack of the target, that means that
 			// lightning rod counters him and using knockback/target block
@@ -63,10 +61,10 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				pickedSlots,
 				modalResult
 			) => {
-				if (followUp !== this.id) return
+				if (followUp !== instanceKey) return
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-				player.followUp = null
+				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.disable) return
 
@@ -75,10 +73,10 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-				if (followUp !== this.id) return
+				if (followUp !== instanceKey) return
 				delete player.hooks.onFollowUpTimeout[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-				player.followUp = null
+				delete player.followUp[instanceKey]
 
 				// Disable the secondary attack if the player didn't choose one
 				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'

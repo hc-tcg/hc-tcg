@@ -29,44 +29,44 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			const coinFlip = flipCoin(player, this.id)
-			player.custom[this.getInstanceKey(instance)] = coinFlip[0]
+			player.custom[coinResult] = coinFlip[0]
 
 			// Client uses the id instead of the instance for the modal
 			player.custom[this.id] = {
 				canDiscard: coinFlip[0] === 'heads',
 				cards: opponentPlayer.hand,
 			}
-			player.followUp = this.id
+			player.followUp[instanceKey] = this.id
 
 			player.hooks.onFollowUp[instance] = (
 				followUp,
 				pickedSlots,
 				modalResult
 			) => {
-				if (followUp !== this.id) return
-				player.followUp = null
-
+				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
+				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.card) return
-				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
+				if (player.custom[coinResult] !== 'heads') return
 
 				discardCard(game, modalResult.card)
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-				if (followUp !== this.id) return
-				player.followUp = null
-
+				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-				if (player.custom[this.getInstanceKey(instance)] !== 'heads') return
+				delete player.followUp[instanceKey]
+				if (player.custom[coinResult] !== 'heads') return
 
 				// Discard a random card from the opponent's hand
 				const {opponentPlayer} = pos
@@ -101,7 +101,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onApply[instance]
-		delete player.custom[this.getInstanceKey(instance)]
+		delete player.custom[this.getInstanceKey(instance, 'coinResult')]
 		delete player.custom[this.id]
 	}
 }

@@ -32,6 +32,14 @@ class EfficiencySingleUseCard extends SingleUseCard {
 			player.hooks.afterAttack[instance] = (attack) => {
 				delete player.hooks.availableEnergy[instance]
 				delete player.hooks.afterAttack[instance]
+				delete player.hooks.onTurnEnd[instance]
+			}
+
+			// In case the player does not attack
+			player.hooks.onTurnEnd[instance] = () => {
+				delete player.hooks.availableEnergy[instance]
+				delete player.hooks.afterAttack[instance]
+				delete player.hooks.onTurnEnd[instance]
 			}
 		}
 	}

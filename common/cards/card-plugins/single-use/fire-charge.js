@@ -93,6 +93,8 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 				if (player.board.singleUseCard?.cardInstance === instance) return
 				delete player.hooks.availableActions[instance]
+				delete player.hooks.onTurnEnd[instance]
+				delete player.hooks.onApply[instance]
 			}
 		}
 

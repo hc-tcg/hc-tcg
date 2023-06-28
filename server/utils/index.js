@@ -95,7 +95,7 @@ export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 
 	// Get a hook, sort it by the type of slot and call it
 	for (const hook of hooks) {
-		// We are gping with Effect>SingleUse>Hermit>Item because of Lightning Rod/Target Block.
+		// We are going with Effect>SingleUse>Hermit>Item because of Lightning Rod/Target Block.
 		// If we decide that we want to sort the other hooks that's probably the order we want to
 		// go with, in this case we only care that Single Use>Hermit because of Fire Charge/Piston/Gem
 		/** @type { Record<string, Array<(pickedSlots: PickedSlots, modalResult: any) => void>> } */
@@ -105,6 +105,19 @@ export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 			const cardPos = getCardPos(game, key)
 			if (cardPos && hooksByType[cardPos.slot.type]) {
 				hooksByType[cardPos.slot.type].push(hook[key])
+			} else {
+				// The card is no longer on the board, we can use the card type instead of the slot type
+				// that should be mostly ok for now, in the future for a card that's not attached to the
+				// "correct" slot like the Armor Stand or the String this may cause issues (those 2 cards
+				// don't cause any issues) but it should be fine for most cases
+				for (const player of Object.values(game.state.players)) {
+					for (const card of player.playerDeck) {
+						if (card.cardInstance === key) {
+							const cardInfo = CARDS[card.cardId]
+							hooksByType[cardInfo.type].push(hook[key])
+						}
+					}
+				}
 			}
 		}
 
@@ -510,4 +523,137 @@ export function getItemCardsEnergy(game, row) {
 	}
 
 	return total
+}
+
+/**
+ * @param {GameModel} game
+ */
+export function printHooksState(game) {
+	const {currentPlayer, opponentPlayer} = game.ds
+	const cardsInfo = {}
+	const instancesInfo = {}
+	const customValues = {}
+
+	// First loop to populate cardsInfo
+	for (const player of [currentPlayer, opponentPlayer]) {
+		for (const card of player.playerDeck) {
+			cardsInfo[card.cardInstance] = {
+				card,
+				player: player,
+			}
+		}
+	}
+
+	// Second loop to populate instancesInfo and customValues
+	for (const id in game.state.players) {
+		const player = game.state.players[id]
+
+		// Instance Info
+		for (const hookName of Object.keys(player.hooks)) {
+			for (const instance of Object.keys(player.hooks[hookName])) {
+				const pos = getCardPos(game, instance)
+				const inBoard = pos ? true : false
+				if (!instancesInfo[instance]) {
+					instancesInfo[instance] = {
+						board: inBoard,
+						hooks: [`${player.playerName}.${hookName}`],
+						card: cardsInfo[instance].card,
+						player: cardsInfo[instance].player,
+						slot: pos ? pos.slot : null,
+						row: pos ? pos.rowIndex : null,
+					}
+				} else {
+					instancesInfo[instance].hooks.push(`${player.playerName}.${hookName}`)
+				}
+			}
+		}
+
+		// Custom Values
+		for (const instanceKey in player.custom) {
+			const custom = player.custom[instanceKey]
+			const [id, instance, keyName] = instanceKey.split(':')
+			customValues[instance] = {id, value: custom, keyName}
+		}
+	}
+
+	// Helpers to print
+	const colorize = (text, color) => {
+		const colors = {
+			reset: '\x1b[0m',
+			blink: '\x1b[5m',
+			black: '\x1b[30m',
+			red: '\x1b[31m',
+			green: '\x1b[32m',
+			yellow: '\x1b[33m',
+			blue: '\x1b[34m',
+			magenta: '\x1b[35m',
+			cyan: '\x1b[36m',
+			white: '\x1b[37m',
+			brightBlack: '\x1b[30;1m',
+			brightRed: '\x1b[31;1m',
+			brightGreen: '\x1b[32;1m',
+			brightYellow: '\x1b[33;1m',
+			brightBlue: '\x1b[34;1m',
+			brightMagenta: '\x1b[35;1m',
+			brightCyan: '\x1b[36;1m',
+			brightWhite: '\x1b[37;1m',
+		}
+
+		return colors[color] + text + colors['reset']
+	}
+
+	const drawLine = (width) => {
+		return '\u2550'.repeat(width)
+	}
+
+	const drawBox = (text, width) => {
+		const lines = text.split('\n')
+		const maxLength = Math.max(width, ...lines.map((line) => line.length))
+		const top = `\u2554${drawLine(maxLength)}\u2557`
+		const bottom = `\u255A${drawLine(maxLength)}\u255D`
+		const middle = lines
+			.map((line) => `\u2551 ${line.padEnd(maxLength - 2, ' ')} \u2551`)
+			.join('\n')
+
+		return `${top}\n${middle}\n${bottom}`
+	}
+
+	// Print to console
+	if (DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
+	const turnInfo = `TURN: ${game.state.turn}, CURRENT PLAYER: ${currentPlayer.playerName}`
+	console.log(colorize(drawBox(turnInfo, 60), 'cyan'))
+
+	for (const instance in instancesInfo) {
+		const info = instancesInfo[instance]
+		const slot = info.slot
+		const row = info.row
+		const attachedStatus = info.board
+			? colorize('ATTACHED', 'green')
+			: colorize('DETACHED', 'brightRed') +
+			  colorize(colorize('!', 'blink'), 'brightRed')
+		const slotIndex = slot?.type === 'item' ? ':' + slot.index : ''
+		const slotType = slot?.type ? slot.type : ''
+		const rowIndex = row ? 'Row: ' + row + ' - ' : ''
+
+		console.log(
+			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${
+				slotType ? ' | ' : ''
+			}${info.card.cardId} - ${attachedStatus}`
+		)
+		console.log(colorize(drawLine(60), 'white'))
+
+		for (const hook of info.hooks) {
+			console.log(colorize(hook, 'brightYellow'))
+		}
+
+		const custom = customValues[instance]
+		if (custom) {
+			let output = custom.keyName
+				? custom.keyName + ' = ' + custom.value
+				: custom.id + ':' + instance + ' = ' + custom.value
+			console.log(colorize(output, 'brightMagenta'))
+		}
+
+		console.log('\n')
+	}
 }

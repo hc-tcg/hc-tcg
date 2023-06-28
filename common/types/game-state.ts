@@ -52,8 +52,9 @@ export type Hook<T> = Record<string, T>
 
 export type PlayerState = {
 	id: PlayerId
-	followUp?: any
+	followUp: Record<string, string>
 	playerName: string
+	playerDeck: Array<CardT>
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
@@ -186,7 +187,7 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
-	followUp?: any
+	followUp: Record<string, string>
 	playerName: string
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
