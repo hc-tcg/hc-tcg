@@ -36,3 +36,6 @@ fly.toml
 
 # api keys
 *apiKeys*
+
+# debug config
+config/debug-config.json
