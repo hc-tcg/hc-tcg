@@ -156,5 +156,4 @@ export const universe = [
 	'sweeping_edge',
 	'target_block',
 	'trident',
-	'renbob_rare',
 ]
