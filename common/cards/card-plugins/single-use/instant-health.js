@@ -10,9 +10,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description: 'Heal active or AFK Hermit 30hp.',
 			pickOn: 'apply',
-			pickReqs: [
-				{target: 'player', slot: ['hermit'], type: ['hermit'], amount: 1},
-			],
+			pickReqs: [{target: 'player', slot: ['hermit'], type: ['hermit'], amount: 1}],
 		})
 	}
 

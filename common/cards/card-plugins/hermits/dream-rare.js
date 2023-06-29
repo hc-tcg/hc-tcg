@@ -38,7 +38,6 @@ class DreamRareHermitCard extends HermitCard {
 			if (moveRef.hermitCard.cardId !== this.id) return target
 
 			const coinFlip = flipCoin(currentPlayer, this.id)
-			currentPlayer.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return target
 
 			attacker.row.health = (Math.floor(Math.random() * 29) + 1) * 10

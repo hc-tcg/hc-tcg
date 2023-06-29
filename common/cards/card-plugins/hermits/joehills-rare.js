@@ -24,7 +24,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used consecutively.',
+					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used statusly.',
 			},
 		})
 	}
@@ -36,44 +36,53 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		const state = this.getInstanceKey(instance, 'state')
-		const heads = this.getInstanceKey(instance, 'heads')
-
-		player.hooks.onTurnStart[instance] = () => {
-			delete player.custom[heads]
-			if (player.custom[state] === 'used-timeskip') {
-				player.custom[state] = 'timeskip-complete'
-			}
-		}
-
-		player.hooks.onTurnEnd[instance] = () => {
-			if (player.custom[state] === 'timeskip-complete') {
-				delete player.custom[state]
-			}
-		}
+		const status = this.getInstanceKey(instance, 'status')
+		player.custom[status] = 'normal'
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			) {
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (player.custom[status] != 'normal') {
+				player.custom[status] = 'normal'
 				return
 			}
+			if (attack.type !== 'secondary') return
+			player.custom[status] = 'block'
 
 			const coinFlip = flipCoin(player, this.id, 1)
-			player.coinFlips[this.id] = coinFlip
+			if (coinFlip[0] !== 'heads') return
 
-			if (coinFlip[0] === 'heads') player.custom[heads] = true
-			player.custom[state] = 'used-timeskip'
-		}
+			// Block all the actions of the opponent
+			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+				/** @type {AvailableActionsT}*/
+				const blocked = [
+					'APPLY_EFFECT',
+					'REMOVE_EFFECT',
+					'ZERO_ATTACK',
+					'PRIMARY_ATTACK',
+					'SECONDARY_ATTACK',
+					'ADD_HERMIT',
+					'PLAY_ITEM_CARD',
+					'PLAY_SINGLE_USE_CARD',
+					'PLAY_EFFECT_CARD',
+				]
 
-		player.hooks.blockedActions[instance] = (blockedActions) => {
-			if (
-				player.board.activeRow !== pos.rowIndex ||
-				player.custom[state] !== 'timeskip-complete'
-			) {
+				if (opponentPlayer.board.activeRow !== null) {
+					blocked.push('CHANGE_ACTIVE_HERMIT')
+				}
+				blockedActions.push(...blocked)
 				return blockedActions
 			}
+
+			// Stop blocking the actions of the opponent when their turn ends
+			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+				delete opponentPlayer.hooks.blockedActions[instance]
+				delete opponentPlayer.hooks.onTurnEnd[instance]
+			}
+		}
+
+		// Block the secondary attack of Joe
+		player.hooks.blockedActions[instance] = (blockedActions) => {
+			if (player.custom[status] === 'normal') return blockedActions
 			/** @type {AvailableActionsT}*/
 			const blocked = ['SECONDARY_ATTACK']
 			blockedActions.push(...blocked)
@@ -81,26 +90,16 @@ class JoeHillsRareHermitCard extends HermitCard {
 			return blockedActions
 		}
 
-		opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
-			if (!player.custom[heads]) return blockedActions
-			/** @type {AvailableActionsT}*/
-			const blocked = [
-				'APPLY_EFFECT',
-				'REMOVE_EFFECT',
-				'ZERO_ATTACK',
-				'PRIMARY_ATTACK',
-				'SECONDARY_ATTACK',
-				'ADD_HERMIT',
-				'PLAY_ITEM_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'PLAY_EFFECT_CARD',
-			]
+		// Advance the status flag at the start of your turn after time skip
+		player.hooks.onTurnStart[instance] = () => {
+			if (player.custom[status] !== 'block') return
+			player.custom[status] = 'blocked'
+		}
 
-			if (opponentPlayer.board.activeRow !== null) {
-				blocked.push('CHANGE_ACTIVE_HERMIT')
-			}
-			blockedActions.push(...blocked)
-			return blockedActions
+		// If you didn't attack or switched your active hermit, reset the status flag
+		player.hooks.onTurnEnd[instance] = () => {
+			if (player.custom[status] !== 'blocked') return
+			player.custom[status] = 'normal'
 		}
 	}
 
@@ -111,16 +110,13 @@ class JoeHillsRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		const state = this.getInstanceKey(instance, 'state')
-		const heads = this.getInstanceKey(instance, 'heads')
+		const status = this.getInstanceKey(instance, 'status')
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.blockedActions[instance]
-		delete player.hooks.onTurnStart[instance]
 		delete player.hooks.onTurnEnd[instance]
-		delete opponentPlayer.hooks.blockedActions[instance]
-		delete player.custom[state]
-		delete player.custom[heads]
+		delete player.hooks.onTurnStart[instance]
+		delete player.custom[status]
 	}
 }
 

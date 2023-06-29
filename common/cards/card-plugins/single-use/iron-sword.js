@@ -32,7 +32,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(20)
+			}).addDamage(this.id, 20)
 
 			return [swordAttack]
 		}

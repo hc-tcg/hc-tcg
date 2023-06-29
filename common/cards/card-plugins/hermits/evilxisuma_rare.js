@@ -37,49 +37,40 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.type !== 'secondary' || !attack.target) return
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 
 			if (coinFlip[0] !== 'heads') return
 
-			player.followUp = this.id
+			player.followUp[instanceKey] = this.id
 
 			// He only disables the attack of the target, that means that
 			// lightning rod counters him and using knockback/target block
 			// is a really bad idea
-			player.custom[this.getInstanceKey(instance, 'target')] =
-				attack.target.rowIndex
+			player.custom[this.getInstanceKey(instance, 'target')] = attack.target.rowIndex
 
 			// It's easier to not duplicate the code if I use the hooks here
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				modalResult
-			) => {
-				if (followUp !== this.id) return
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+				if (followUp !== instanceKey) return
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-				player.followUp = null
+				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.disable) return
 
-				player.custom[this.getInstanceKey(instance, 'disable')] =
-					modalResult.disable
+				player.custom[this.getInstanceKey(instance, 'disable')] = modalResult.disable
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-				if (followUp !== this.id) return
+				if (followUp !== instanceKey) return
 				delete player.hooks.onFollowUpTimeout[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-				player.followUp = null
+				delete player.followUp[instanceKey]
 
 				// Disable the secondary attack if the player didn't choose one
 				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'
@@ -94,9 +85,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				if (activeRow === null || targetRow === null) return blockedActions
 				if (activeRow !== targetRow) return blockedActions
 
-				blockedActions.push(
-					disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				)
+				blockedActions.push(disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK')
 
 				return blockedActions
 			}

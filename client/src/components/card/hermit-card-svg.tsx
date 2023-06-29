@@ -117,11 +117,7 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 						/>
 					))}
 				</g>
-				<text
-					x="200"
-					y="272"
-					className={classnames(css.attackName, css[palette])}
-				>
+				<text x="200" y="272" className={classnames(css.attackName, css[palette])}>
 					{card.primary.name}
 				</text>
 				<text

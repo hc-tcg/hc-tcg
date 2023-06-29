@@ -47,15 +47,9 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 			<div className={css.message}>
 				{reason && outcome === 'you_won' ? 'You won.' : 'Game Over'}
 				<br />
-				{reason && outcome === 'you_won' ? (
-					<span>{WIN_MESSAGE[reason]}</span>
-				) : null}
-				{reason && outcome === 'you_lost' ? (
-					<span>{LOSS_MESSAGE[reason]}</span>
-				) : null}
-				{!reason || !['you_won', 'you_lost'].includes(outcome)
-					? MESSAGE[outcome]
-					: null}
+				{reason && outcome === 'you_won' ? <span>{WIN_MESSAGE[reason]}</span> : null}
+				{reason && outcome === 'you_lost' ? <span>{LOSS_MESSAGE[reason]}</span> : null}
+				{!reason || !['you_won', 'you_lost'].includes(outcome) ? MESSAGE[outcome] : null}
 			</div>
 			<div className={css.buttonWrapper}>
 				<Button size="small" onClick={handleClick}>

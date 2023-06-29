@@ -30,15 +30,14 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			const opponentActiveRow = pos.opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 
-			const hasDamageEffect = pos.opponentPlayer.board.rows[
-				opponentActiveRow
-			].ailments.some((ailment) => {
-				return ailment.id === 'fire' || ailment.id === 'poison'
-			})
+			const hasDamageEffect = pos.opponentPlayer.board.rows[opponentActiveRow].ailments.some(
+				(ailment) => {
+					return ailment.id === 'fire' || ailment.id === 'poison'
+				}
+			)
 			if (!hasDamageEffect) {
 				pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
 					id: 'fire',
-					duration: -1,
 				})
 			}
 		}

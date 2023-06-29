@@ -1,9 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {
-	flipCoin,
-	getActiveRowPos,
-	getNonEmptyRows,
-} from '../../../../server/utils'
+import {flipCoin, getActiveRowPos, getNonEmptyRows} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
@@ -22,9 +18,7 @@ class EggSingleUseCard extends SingleUseCard {
 				'After your attack, choose one of your opponent AFK Hermits to make active.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
 
 			pickOn: 'attack',
-			pickReqs: [
-				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -49,7 +43,6 @@ class EggSingleUseCard extends SingleUseCard {
 			applySingleUse(game)
 
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
@@ -60,7 +53,7 @@ class EggSingleUseCard extends SingleUseCard {
 						row: pickedHermit.row.state,
 					},
 					type: 'effect',
-				}).addDamage(10)
+				}).addDamage(this.id, 10)
 
 				attack.addNewAttack(eggAttack)
 			}

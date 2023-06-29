@@ -39,7 +39,7 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 					row: opponentRow,
 				},
 				type: 'effect',
-			}).addDamage(40)
+			}).addDamage(this.id, 40)
 
 			return [swordAttack]
 		}

@@ -46,12 +46,7 @@ function Tooltip({children, tooltip}: Props) {
 	const role = useRole(context, {role: 'tooltip'})
 
 	// Merge all the interactions into prop getters
-	const {getReferenceProps, getFloatingProps} = useInteractions([
-		hover,
-		focus,
-		dismiss,
-		role,
-	])
+	const {getReferenceProps, getFloatingProps} = useInteractions([hover, focus, dismiss, role])
 
 	return (
 		<>

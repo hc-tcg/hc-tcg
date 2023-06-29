@@ -43,8 +43,7 @@ export function getStarterPack() {
 		.slice(0, hermitTypesCount)
 
 	const cards = Object.values(CARDS).filter(
-		(cardInfo) =>
-			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
+		(cardInfo) => !isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -71,9 +70,7 @@ export function getStarterPack() {
 	let tokens = 0
 
 	// hermits, but not diamond ones
-	let hermitCards = cards
-		.filter(isHermit)
-		.filter((card) => getCardRank(card.id).name !== 'diamond')
+	let hermitCards = cards.filter(isHermit).filter((card) => getCardRank(card.id).name !== 'diamond')
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -83,10 +80,7 @@ export function getStarterPack() {
 		hermitCards = hermitCards.filter((card, index) => index !== randomIndex)
 
 		// add 1 - 3 of this hermit
-		const hermitAmount = Math.min(
-			randomBetween(1, 3),
-			hermitCount - deck.length
-		)
+		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
 
 		tokens += getCardCost(hermitCard) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
@@ -107,8 +101,7 @@ export function getStarterPack() {
 	let loopBreaker = 0
 	// effects
 	while (deck.length < limits.maxCards) {
-		const effectCard =
-			effectCards[Math.floor(Math.random() * effectCards.length)]
+		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
 		const duplicates = deck.filter((card) => card.id === effectCard.id)
 		if (duplicates.length >= limits.maxDuplicates) continue
@@ -197,9 +190,10 @@ export function getPlayerState(player) {
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
-		coinFlips: {},
-		followUp: null,
+		coinFlips: [],
+		followUp: {},
 		lives: 3,
 		hand,
 		discarded: [],
@@ -312,9 +306,7 @@ export function getLocalGameState(
 	pastTurnActions = [],
 	opponentAvailableActions = []
 ) {
-	const opponentPlayerId = game
-		.getPlayerIds()
-		.find((id) => id !== player.playerId)
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null
 	}
@@ -345,12 +337,9 @@ export function getLocalGameState(
 
 		players,
 
-		pastTurnActions:
-			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
+		pastTurnActions: player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
 		availableActions:
-			player.playerId === game.ds.currentPlayer.id
-				? availableActions
-				: opponentAvailableActions,
+			player.playerId === game.ds.currentPlayer.id ? availableActions : opponentAvailableActions,
 
 		timer: game.state.timer,
 	}

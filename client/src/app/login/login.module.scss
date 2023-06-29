@@ -96,8 +96,7 @@
 	background: var(--color-error);
 	color: var(--text-light);
 	font-size: 1.7vh;
-	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%))
-		drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
+	filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 35%)) drop-shadow(0 2px 10px rgba(0, 0, 0, 50%));
 	animation: shake 150ms forwards;
 }
 

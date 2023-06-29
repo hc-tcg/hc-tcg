@@ -40,19 +40,10 @@ function LootingModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal
-			title={`Looting: Select ${
-				cards.length === 1 ? '1 card' : '2 cards'
-			} to steal`}
-		>
+		<Modal title={`Looting: Select ${cards.length === 1 ? '1 card' : '2 cards'} to steal`}>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
-					<CardList
-						onClick={handleSelection}
-						size="small"
-						cards={cards}
-						selected={selected}
-					/>
+					<CardList onClick={handleSelection} size="small" cards={cards} selected={selected} />
 				</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={handleConfirm}>

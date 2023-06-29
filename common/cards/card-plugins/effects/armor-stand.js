@@ -50,11 +50,7 @@ class ArmorStandEffectCard extends EffectCard {
 			}
 
 			opponentPlayer.hooks.afterAttack[instance] = (attack) => {
-				if (
-					attack.calculateDamage() >= 50 &&
-					attack.attacker &&
-					isTargetingPos(attack, pos)
-				) {
+				if (attack.calculateDamage() >= 50 && attack.attacker && isTargetingPos(attack, pos)) {
 					// Discard to prevent losing a life
 					discardCard(game, row.hermitCard)
 					// Reset the active row so the player can switch
@@ -65,11 +61,7 @@ class ArmorStandEffectCard extends EffectCard {
 			const instanceKey = this.getInstanceKey(instance)
 
 			opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-				if (
-					attack.target.rowIndex !== pos.rowIndex ||
-					attack.type === 'ailment'
-				)
-					return
+				if (attack.target.rowIndex !== pos.rowIndex || attack.type === 'ailment') return
 
 				if (player.custom[instanceKey] === undefined) {
 					player.custom[instanceKey] = 0

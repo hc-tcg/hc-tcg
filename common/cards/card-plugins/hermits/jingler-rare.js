@@ -24,8 +24,7 @@ class JinglerRareHermitCard extends HermitCard {
 				name: 'Deception',
 				cost: ['speedrunner', 'speedrunner', 'any'],
 				damage: 80,
-				power:
-					'Flip a coin. If heads, opponent must discard a card from their hand.',
+				power: 'Flip a coin. If heads, opponent must discard a card from their hand.',
 			},
 
 			pickOn: 'followup',
@@ -46,41 +45,38 @@ class JinglerRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const followUpKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack[instance] = (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary') return
+			if (attack.type !== 'secondary' || !attack.target) return
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
 			if (coinFlip[0] === 'tails') return
 
-			opponentPlayer.followUp = this.id
+			opponentPlayer.followUp[followUpKey] = this.id
 
 			opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
-				if (followUp !== this.id) return
-				const slots = pickedSlots[this.id]
-				if (!slots || slots.length !== 1) return
-
-				discardCard(game, slots[0].slot.card)
-
-				opponentPlayer.followUp = null
-
+				if (followUp !== followUpKey) return
 				// We can't delete on onDetach because the hermit can die from
 				// a backlash attack and the followUp will trigger after onDetach
 				delete opponentPlayer.hooks.onFollowUp[instance]
 				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				delete opponentPlayer.followUp[followUpKey]
+
+				const slots = pickedSlots[this.id]
+				if (!slots || slots.length !== 1) return
+
+				discardCard(game, slots[0].slot.card)
 			}
 
 			opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
-				if (followUp !== this.id) return
+				if (followUp !== followUpKey) return
+				delete opponentPlayer.hooks.onFollowUp[instance]
+				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				delete opponentPlayer.followUp[followUpKey]
 
 				// Discard the first card in the opponent's hand
 				discardCard(game, opponentPlayer.hand[0])
-
-				opponentPlayer.followUp = null
-
-				delete opponentPlayer.hooks.onFollowUp[instance]
-				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 			}
 		}
 	}

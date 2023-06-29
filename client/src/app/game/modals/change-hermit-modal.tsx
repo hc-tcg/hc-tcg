@@ -19,9 +19,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.slot.card?.cardId
-		? CARDS[info.slot.card.cardId].name
-		: ''
+	const hermitName = info.slot.card?.cardId ? CARDS[info.slot.card.cardId].name : ''
 	const row = playerState.board.rows[info.row.index]
 	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
@@ -33,13 +31,11 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =
-		!hasActiveHermit ||
-		(!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
+		!hasActiveHermit || (!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
 
 	let message = `Are you sure you want to activate ${hermitName}?`
 	if (forbidden) message = `You can not activate this hermit.`
-	else if (!canChange)
-		message = `You can not change your active hermit at this moment.`
+	else if (!canChange) message = `You can not change your active hermit at this moment.`
 
 	const lastAction = hasActiveHermit && canChange
 

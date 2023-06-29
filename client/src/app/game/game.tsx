@@ -29,11 +29,7 @@ import {
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {CardTypeT} from 'common/types/cards'
 
 const getFormattedList = (list: (CardTypeT | SlotTypeT)[]): string => {
@@ -67,11 +63,7 @@ const getPickProcessMessage = (
 	}
 
 	let location =
-		req.active === true
-			? 'active hermit'
-			: req.active === false
-			? 'afk hermits'
-			: 'hermits'
+		req.active === true ? 'active hermit' : req.active === false ? 'afk hermits' : 'hermits'
 
 	if (req.slot[0] === 'hand' && req.slot.length === 1) {
 		location = 'hand'
@@ -92,8 +84,7 @@ const getPickProcessMessage = (
 
 	let cardType = ''
 	if (req.type) {
-		cardType =
-			getFormattedList(req.type) + (req.amount > 1 ? ' cards' : ' card')
+		cardType = getFormattedList(req.type) + (req.amount > 1 ? ' cards' : ' card')
 	}
 
 	const empty = req.empty || false
@@ -129,8 +120,7 @@ const renderModal = (
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
-		return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id)) return null
 
 	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
@@ -189,11 +179,7 @@ function Game() {
 				{renderModal(openedModal, handleOpenModal)}
 				{pickProcess ? (
 					<MouseIndicator
-						message={getPickProcessMessage(
-							pickProcess,
-							gameState.currentPlayerId,
-							thisPlayerId
-						)}
+						message={getPickProcessMessage(pickProcess, gameState.currentPlayerId, thisPlayerId)}
 					/>
 				) : null}
 

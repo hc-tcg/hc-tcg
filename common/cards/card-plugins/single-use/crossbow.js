@@ -48,7 +48,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 							row: slot.row.state,
 						},
 						type: 'effect',
-					}).addDamage(20)
+					}).addDamage(this.id, 20)
 				)
 			}
 			return attacks

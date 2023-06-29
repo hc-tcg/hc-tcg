@@ -1,10 +1,5 @@
 import SingleUseCard from './_single-use-card'
-import {
-	flipCoin,
-	applySingleUse,
-	discardSingleUse,
-	getActiveRowPos,
-} from '../../../../server/utils'
+import {flipCoin, applySingleUse, discardSingleUse, getActiveRowPos} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
@@ -42,7 +37,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(30)
+			}).addDamage(this.id, 30)
 
 			return [tridentAttack]
 		}
@@ -51,15 +46,14 @@ class TridentSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
+			player.custom[this.getInstanceKey(instance)] = flipCoin(player, this.id)[0]
 
 			applySingleUse(game)
 		}
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			// Return to hand
-			if (player.coinFlips[this.id][0] === 'heads') {
+			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise
 				player.board.singleUseCardUsed = false
 				discardSingleUse(game, player)
@@ -78,6 +72,7 @@ class TridentSingleUseCard extends SingleUseCard {
 		delete player.hooks.getAttacks[instance]
 		delete player.hooks.onApply[instance]
 		delete player.hooks.onAttack[instance]
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {

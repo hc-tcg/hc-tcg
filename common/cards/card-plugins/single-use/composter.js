@@ -55,8 +55,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			const pickedCard1 = slots[0]
 			const pickedCard2 = slots[1]
 
-			if (pickedCard1.slot.card === null || pickedCard2.slot.card === null)
-				return
+			if (pickedCard1.slot.card === null || pickedCard2.slot.card === null) return
 
 			// @TODO Check on ValidPicks instead
 			if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return

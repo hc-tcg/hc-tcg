@@ -24,8 +24,11 @@ class LootingEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack[instance] = (attack) => {
+			// Don'r activate if the books is not attached to the attacker
+			if (attack.attacker?.rowIndex != pos.rowIndex) return
 			// This needs to happen after Loyalty
 			opponentPlayer.hooks.onHermitDeath[instance] = (hermitPos) => {
 				// Don't activate if the row has no item cards
@@ -36,7 +39,7 @@ class LootingEffectCard extends EffectCard {
 					cards: [...hermitPos.row.itemCards.filter(Boolean)],
 				}
 
-				player.followUp = this.id
+				player.followUp[instanceKey] = this.id
 
 				// Only choose from one row if multiple hermits are knocked out at once
 				// we could allow to pick from multiple rows but the UI would be confusing
@@ -44,13 +47,9 @@ class LootingEffectCard extends EffectCard {
 			}
 		}
 
-		player.hooks.onFollowUp[instance] = (
-			followUp,
-			pickedSlots,
-			modalResult
-		) => {
-			if (followUp !== this.id) return
-			player.followUp = null
+		player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+			if (followUp !== instanceKey) return
+			delete player.followUp[instanceKey]
 
 			if (!modalResult || !modalResult.cards) return
 			if (modalResult.cards.length === 0) return
@@ -64,16 +63,13 @@ class LootingEffectCard extends EffectCard {
 			for (const card of modalResult.cards) {
 				player.hand.push(card)
 				// Remove the card from the other player's discarded pile
-				opponentPlayer.discarded.splice(
-					opponentPlayer.discarded.indexOf(card),
-					1
-				)
+				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
 			}
 		}
 
 		player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-			if (followUp !== this.id) return
-			player.followUp = null
+			if (followUp !== instanceKey) return
+			delete player.followUp[instanceKey]
 
 			// If the player didn't pick any cards, pick 1 or 2 random cards
 			const cards = player.custom[this.id].cards
@@ -81,10 +77,7 @@ class LootingEffectCard extends EffectCard {
 			for (const card of cards) {
 				if (totalPicked === 2) break
 				player.hand.push(card)
-				opponentPlayer.discarded.splice(
-					opponentPlayer.discarded.indexOf(card),
-					1
-				)
+				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
 				totalPicked++
 			}
 
@@ -101,10 +94,11 @@ class LootingEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		delete player.hooks.afterAttack[instance]
 		delete player.hooks.onFollowUp[instance]
 		delete player.hooks.onFollowUpTimeout[instance]
+		delete opponentPlayer.hooks.onHermitDeath[instance]
 		delete player.custom[this.id]
 	}
 }

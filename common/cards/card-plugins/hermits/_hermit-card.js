@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
 import {getCardPos} from '../../../../server/utils/cards'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 import Card from '../_card'
 
 /**
@@ -74,13 +75,19 @@ class HermitCard extends Card {
 			},
 			type: hermitAttackType,
 		})
+
 		if (attack.type === 'primary') {
-			attack.addDamage(this.primary.damage)
+			attack.addDamage(this.id, this.primary.damage)
 		} else if (attack.type === 'secondary') {
-			attack.addDamage(this.secondary.damage)
+			attack.addDamage(this.id, this.secondary.damage)
 		}
 
-		return [attack]
+		const attacks = [attack]
+
+		const weaknessAttack = createWeaknessAttack(attack)
+		if (weaknessAttack) attacks.push(weaknessAttack)
+
+		return attacks
 	}
 
 	/**

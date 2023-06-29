@@ -27,8 +27,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
 			if (!isTargetingPos(attack, pos) || attack.type !== 'effect') return
 
-			attack.multiplyDamage(0)
-			attack.lockDamage()
+			attack.multiplyDamage(this.id, 0).lockDamage()
 		}
 	}
 

@@ -4,10 +4,7 @@ import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from './attack-modal.module.css'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {
-	getAvailableActions,
-	getPlayerStateById,
-} from 'logic/game/game-selectors'
+import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors'
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
 import HermitSelector from './hermit-selector'
@@ -32,9 +29,7 @@ function AttackModal({closeModal}: Props) {
 	if (!playerHermitInfo) return null // Armor Stand
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
-	const singleUseInfo = singleUseCard
-		? SINGLE_USE_CARDS[singleUseCard.cardId]
-		: null
+	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
 
 	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))

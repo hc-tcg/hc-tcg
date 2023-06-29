@@ -28,9 +28,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
 			pickOn: 'followup',
-			pickReqs: [
-				{target: 'opponent', slot: ['hermit'], amount: 1, active: false},
-			],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -41,11 +39,13 @@ class TangoTekRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack[instance] = (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
+				attack.type !== 'secondary' ||
+				!attack.target
 			)
 				return
 
@@ -58,45 +58,45 @@ class TangoTekRareHermitCard extends HermitCard {
 					duration: 1,
 				})
 				opponentPlayer.board.activeRow = null
-				opponentPlayer.followUp = this.id
+				opponentPlayer.followUp[instanceKey] = this.id
 
 				// We need to hook here because the follow up is called after onDetach
 				// and I can't delete it from there because Tango could die from backlash
 				opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
-					if (followUp !== this.id) return
+					if (followUp !== instanceKey) return
 					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
+
+					delete opponentPlayer.hooks.onFollowUp[instance]
+					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+					delete opponentPlayer.followUp[instanceKey]
 
 					const pickedSlot = pickedSlots[this.id]?.[0]
 					if (!pickedSlot) return
 					const {row} = pickedSlot
 					if (!row) return
 
-					const canBeActive = row.state.ailments.every(
-						(a) => a.id !== 'knockedout'
-					)
+					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
 					if (!canBeActive) return
 					opponentPlayer.board.activeRow = row.index
-					opponentPlayer.followUp = null
-
-					delete opponentPlayer.hooks.onFollowUp[instance]
-					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				}
 
 				opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
-					if (followUp !== this.id) return
+					if (followUp !== instanceKey) return
+					delete opponentPlayer.hooks.onFollowUp[instance]
+					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+					delete opponentPlayer.followUp[instanceKey]
+
 					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-					opponentPlayer.followUp = null
 
 					// Choose the first row that doesn't have a knockedout ailment
-					for (const {rowIndex, row} of opponentInactiveRows) {
+					for (const inactiveHermit of opponentInactiveRows) {
+						if (!inactiveHermit) continue
+						const {rowIndex, row} = inactiveHermit
 						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
 						if (canBeActive) {
 							opponentPlayer.board.activeRow = rowIndex
 						}
 					}
-
-					delete opponentPlayer.hooks.onFollowUp[instance]
-					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				}
 			}
 

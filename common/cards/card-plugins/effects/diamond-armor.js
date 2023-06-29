@@ -12,7 +12,7 @@ class DiamondArmorEffectCard extends EffectCard {
 			id: 'diamond_armor',
 			name: 'Diamond Armor',
 			rarity: 'rare',
-			description: 'Prevent up to 20hp damage taken.',
+			description: 'Prevent up to 30hp damage taken.',
 		})
 	}
 
@@ -26,7 +26,7 @@ class DiamondArmorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
-			if (!isTargetingPos(attack, pos) || attack.type === 'ailment') return
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -35,13 +35,14 @@ class DiamondArmorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 30) {
-				const damageReduction = Math.min(attack.damage, 30 - totalReduction)
+				const damageReduction = Math.min(attack.getDamage(), 30 - totalReduction)
 				player.custom[instanceKey] += damageReduction
-				attack.reduceDamage(damageReduction)
+				attack.reduceDamage(this.id, damageReduction)
 			}
 		}
 
-		player.hooks.afterDefence[instance] = () => {
+		// Reset counter at the start of our turn
+		player.hooks.onTurnStart[instance] = () => {
 			if (player.custom[instanceKey] !== undefined) {
 				delete player.custom[instanceKey]
 			}
@@ -56,7 +57,7 @@ class DiamondArmorEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onDefence[instance]
-		delete player.hooks.afterDefence[instance]
+		delete player.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

@@ -38,12 +38,7 @@ const AlertModal = ({
 				<AlertDialog.Description className={css.AlertDialogDescription}>
 					{description}
 				</AlertDialog.Description>
-				<div
-					className={cn(
-						css.buttonContainer,
-						buttonDirection === 'column' && css.column
-					)}
-				>
+				<div className={cn(css.buttonContainer, buttonDirection === 'column' && css.column)}>
 					<AlertDialog.Cancel asChild>
 						<Button.Ref>Cancel</Button.Ref>
 					</AlertDialog.Cancel>

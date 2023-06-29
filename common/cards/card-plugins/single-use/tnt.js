@@ -32,14 +32,15 @@ class TNTSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-			}).addDamage(60)
+			}).addDamage(this.id, 60)
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
 				attacker: activePos,
 				target: activePos,
-				type: 'backlash',
-			}).addDamage(20)
+				type: 'effect',
+				isBacklash: true,
+			}).addDamage(this.id, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 

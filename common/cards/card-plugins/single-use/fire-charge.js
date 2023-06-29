@@ -1,9 +1,4 @@
-import {
-	discardCard,
-	discardSingleUse,
-	rowHasItem,
-	isRemovable,
-} from '../../../../server/utils'
+import {discardCard, discardSingleUse, rowHasItem, isRemovable} from '../../../../server/utils'
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import CARDS from '../../../cards'
@@ -55,8 +50,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				}
 			}
 
-			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0)
-				return 'YES'
+			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0) return 'YES'
 		}
 
 		return 'NO'
@@ -100,6 +94,8 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 				if (player.board.singleUseCard?.cardInstance === instance) return
 				delete player.hooks.availableActions[instance]
+				delete player.hooks.onTurnEnd[instance]
+				delete player.hooks.onApply[instance]
 			}
 		}
 

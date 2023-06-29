@@ -79,16 +79,6 @@ class PistonSingleUseCard extends SingleUseCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
-		player.hooks.availableActions[instance] = (availableActions) => {
-			// We have to check if PLAY_SINGLE_USE_CARD is already there because it's possible that another card added it
-			// e.g. if you play a card that allows you to play another single use card like multiple Pistons back to back
-			if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) {
-				availableActions.push('PLAY_SINGLE_USE_CARD')
-			}
-
-			return availableActions
-		}
-
 		player.hooks.beforeApply[instance] = (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 
@@ -97,12 +87,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			const itemCardInfo = slots[0]
 			const targetSlotInfo = slots[1]
 
-			if (
-				targetSlotInfo.slot.card !== null ||
-				!itemCardInfo.row ||
-				!targetSlotInfo.row
-			)
-				return
+			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
 
 			const hermitCard = targetSlotInfo.row.state.hermitCard
 			const itemCard = itemCardInfo.slot.card
@@ -149,6 +134,8 @@ class PistonSingleUseCard extends SingleUseCard {
 			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 				if (player.board.singleUseCard?.cardInstance === instance) return
 				delete player.hooks.availableActions[instance]
+				delete player.hooks.onTurnEnd[instance]
+				delete player.hooks.onApply[instance]
 			}
 		}
 

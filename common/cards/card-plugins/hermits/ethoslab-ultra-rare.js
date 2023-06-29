@@ -20,8 +20,7 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 				name: 'Slab',
 				cost: ['any', 'any'],
 				damage: 70,
-				power:
-					'Flip a coin 3 times.\n\nAdd an additional 20hp damage for every heads.',
+				power: 'Flip a coin 3 times.\n\nAdd an additional 20hp damage for every heads.',
 			},
 		})
 	}
@@ -39,10 +38,8 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id, 3)
-			player.coinFlips[this.id] = coinFlip
-
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.addDamage(headsAmount * 20)
+			attack.addDamage(this.id, headsAmount * 20)
 		}
 	}
 

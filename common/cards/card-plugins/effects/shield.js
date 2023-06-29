@@ -13,8 +13,7 @@ class ShieldEffectCard extends EffectCard {
 			id: 'shield',
 			name: 'Shield',
 			rarity: 'common',
-			description:
-				'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',
+			description: 'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',
 		})
 	}
 
@@ -30,7 +29,7 @@ class ShieldEffectCard extends EffectCard {
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 
 		player.hooks.onDefence[instance] = (attack) => {
-			if (!isTargetingPos || attack.type === 'ailment') return
+			if (!isTargetingPos || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -39,20 +38,16 @@ class ShieldEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 60) {
-				const damageReduction = Math.min(attack.damage, 60 - totalReduction)
+				const damageReduction = Math.min(attack.getDamage(), 60 - totalReduction)
 				player.custom[instanceKey] += damageReduction
-				attack.reduceDamage(damageReduction)
+				attack.reduceDamage(this.id, damageReduction)
 			}
 		}
 
 		player.hooks.afterDefence[instance] = (attack) => {
 			const {player, row} = pos
 
-			if (
-				player.custom[instanceKey] !== undefined &&
-				player.custom[instanceKey] > 0 &&
-				row
-			) {
+			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
 				discardCard(game, row.effectCard)
 			}
 

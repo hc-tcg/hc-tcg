@@ -5,12 +5,7 @@ import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import CARDS from 'common/cards'
-import {
-	getCardRank,
-	getCardExpansion,
-	getTotalCost,
-	validateDeck,
-} from 'server/utils/validation'
+import {getCardRank, getCardExpansion, getTotalCost, validateDeck} from 'server/utils/validation'
 import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
 import ItemCard from 'common/cards/card-plugins/items/_item-card'
 import Card from 'common/cards/card-plugins/_card'
@@ -93,8 +88,7 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				data-focused={inputIsFocused}
 			/>
 			<p className={css.errorMessage}>
-				Deck name should be between 1-32 characters and shouldn't include any
-				special characters.
+				Deck name should be between 1-32 characters and shouldn't include any special characters.
 			</p>
 		</div>
 	)
@@ -134,9 +128,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const filteredCards: CardT[] = allCards.filter(
 		(card) =>
 			// Card Name Filter
-			TYPED_CARDS[card.cardId].name
-				.toLowerCase()
-				.includes(deferredTextQuery.toLowerCase()) &&
+			TYPED_CARDS[card.cardId].name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
 			// Card Type Filter
 			(HTYPE_CARDS[card.cardId].hermitType === undefined
 				? TYPED_CARDS[card.cardId]
@@ -144,16 +136,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			// Card Rarity Filter
 			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
 			// Card Expansion Filter
-			(expansionQuery === '' ||
-				getCardExpansion(card.cardId) === expansionQuery)
+			(expansionQuery === '' || getCardExpansion(card.cardId) === expansionQuery)
 	)
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'hermit'
-		),
-		items: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'item'
-		),
+		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'hermit'),
+		items: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'item'),
 		attachableEffects: loadedDeck.cards.filter(
 			(card) => TYPED_CARDS[card.cardId].type === 'effect'
 		),
@@ -169,18 +156,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const addCard = (card: CardT) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: [
-				...loadedDeck.cards,
-				{cardId: card.cardId, cardInstance: Math.random().toString()},
-			],
+			cards: [...loadedDeck.cards, {cardId: card.cardId, cardInstance: Math.random().toString()}],
 		}))
 	}
 	const removeCard = (card: CardT) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: loadedDeck.cards.filter(
-				(pickedCard) => pickedCard.cardInstance !== card.cardInstance
-			),
+			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.cardInstance !== card.cardInstance),
 		}))
 	}
 
@@ -243,9 +225,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		})
 		back()
 	}
-	const validationMessage = validateDeck(
-		loadedDeck.cards.map((card) => card.cardId)
-	)
+	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
 
 	return (
 		<>
@@ -273,34 +253,24 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								button={
 									<button className={css.dropdownButton}>
 										<img
-											src={`/images/ranks/${
-												rankQuery === '' ? 'any' : rankQuery
-											}.png`}
+											src={`/images/ranks/${rankQuery === '' ? 'any' : rankQuery}.png`}
 											draggable={false}
 										/>
 									</button>
 								}
 								label="Rank Filter"
 								options={rarityDropdownOptions}
-								action={(option) =>
-									setRankQuery(option === 'any' ? '' : option)
-								}
+								action={(option) => setRankQuery(option === 'any' ? '' : option)}
 							/>
 							<Dropdown
 								button={
 									<button className={css.dropdownButton}>
-										<img
-											src={`/images/types/type-${
-												typeQuery === '' ? 'any' : typeQuery
-											}.png`}
-										/>
+										<img src={`/images/types/type-${typeQuery === '' ? 'any' : typeQuery}.png`} />
 									</button>
 								}
 								label="Type Filter"
 								options={iconDropdownOptions}
-								action={(option) =>
-									setTypeQuery(option === 'any' ? '' : option)
-								}
+								action={(option) => setTypeQuery(option === 'any' ? '' : option)}
 							/>
 							<Dropdown
 								button={
@@ -314,9 +284,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								}
 								label="Expansion Filter"
 								options={expansionDropdownOptions}
-								action={(option) =>
-									setExpansionQuery(option === 'any' ? '' : option)
-								}
+								action={(option) => setExpansionQuery(option === 'any' ? '' : option)}
 							/>
 							<input
 								placeholder="Search cards..."
@@ -388,12 +356,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
-								<div
-									className={classNames(css.cardCount, css.dark, css.tokens)}
-								>
+								<div className={classNames(css.cardCount, css.dark, css.tokens)}>
 									{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
-									{CONFIG.limits.maxDeckCost}{' '}
-									<span className={css.hideOnMobile}>tokens</span>
+									{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>
 						</>
@@ -413,8 +378,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					<div style={{margin: '0.5rem'}}>
 						{validationMessage && (
 							<div className={css.validationMessage}>
-								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span>{' '}
-								{validationMessage}
+								<span style={{paddingRight: '0.5rem'}}>{errorIcon()}</span> {validationMessage}
 							</div>
 						)}
 
@@ -425,9 +389,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									<Dropdown
 										button={
 											<button className={css.dropdownButton}>
-												<img
-													src={`/images/types/type-${loadedDeck.icon}.png`}
-												/>
+												<img src={`/images/types/type-${loadedDeck.icon}.png`} />
 											</button>
 										}
 										label="Deck Icon"
@@ -457,9 +419,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 						</div>
 
 						<div style={{zIndex: '-1'}}>
-							<Accordion
-								header={cardGroupHeader('Hermits', selectedCards.hermits)}
-							>
+							<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
 								<CardList
 									cards={sortCards(selectedCards.hermits)}
 									size="small"
@@ -469,10 +429,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							</Accordion>
 						</div>
 						<Accordion
-							header={cardGroupHeader(
-								'Attachable Effects',
-								selectedCards.attachableEffects
-							)}
+							header={cardGroupHeader('Attachable Effects', selectedCards.attachableEffects)}
 						>
 							<CardList
 								cards={sortCards(selectedCards.attachableEffects)}
@@ -482,10 +439,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							/>
 						</Accordion>
 						<Accordion
-							header={cardGroupHeader(
-								'Single Use Effects',
-								selectedCards.singleUseEffects
-							)}
+							header={cardGroupHeader('Single Use Effects', selectedCards.singleUseEffects)}
 						>
 							<CardList
 								cards={sortCards(selectedCards.singleUseEffects)}

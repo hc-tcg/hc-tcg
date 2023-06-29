@@ -85,10 +85,7 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
+					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
 						<div>
 							{/* IMPORT SECTION */}
 							<div>

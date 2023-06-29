@@ -22,15 +22,11 @@ function* playCardSaga(game, turnAction, actionState) {
 	/** @type {import('common/types/pick-process').PickedSlotT} */
 	const pickedSlot = turnAction.payload.pickedSlot
 	const cardInfo = CARDS[card.cardId]
-	const opponentPlayerId = game
-		.getPlayerIds()
-		.find((id) => id !== pickedSlot.playerId)
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== pickedSlot.playerId)
 	if (!opponentPlayerId) return
 
-	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand')
-		return 'INVALID'
-	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card)))
-		return 'INVALID'
+	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand') return 'INVALID'
+	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return 'INVALID'
 
 	// @TODO - PLAY_CARD should probably be using CardPos
 	/** @type {import('../../../common/types/cards').CardPos} */
@@ -60,8 +56,7 @@ function* playCardSaga(game, turnAction, actionState) {
 	const player = game.state.players[pickedSlot.playerId]
 	if (!player) return 'INVALID'
 
-	const validate = (type) =>
-		game.hooks.validateCard.get(type)?.call(turnAction, actionState)
+	const validate = (type) => game.hooks.validateCard.get(type)?.call(turnAction, actionState)
 
 	if (pos.slot.type === 'hermit' && pickedSlot.row) {
 		if (!availableActions.includes('ADD_HERMIT')) return
@@ -107,9 +102,7 @@ function* playCardSaga(game, turnAction, actionState) {
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')
 	}
 
-	currentPlayer.hand = currentPlayer.hand.filter(
-		(handCard) => !equalCard(handCard, card)
-	)
+	currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
 
 	cardInfo.onAttach(game, card.cardInstance, pos)
 

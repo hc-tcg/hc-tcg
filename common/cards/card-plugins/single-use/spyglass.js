@@ -29,45 +29,40 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			const coinFlip = flipCoin(player, this.id)
-			player.coinFlips[this.id] = coinFlip
+			player.custom[coinResult] = coinFlip[0]
 
 			// Client uses the id instead of the instance for the modal
 			player.custom[this.id] = {
 				canDiscard: coinFlip[0] === 'heads',
 				cards: opponentPlayer.hand,
 			}
-			player.followUp = this.id
+			player.followUp[instanceKey] = this.id
 
-			player.hooks.onFollowUp[instance] = (
-				followUp,
-				pickedSlots,
-				modalResult
-			) => {
-				if (followUp !== this.id) return
-				player.followUp = null
-
+			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
+				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.card) return
-				if (player.coinFlips[this.id][0] !== 'heads') return // You never know
+				if (player.custom[coinResult] !== 'heads') return
 
 				discardCard(game, modalResult.card)
 			}
 
 			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-				if (followUp !== this.id) return
-				player.followUp = null
-
+				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
 				delete player.hooks.onFollowUp[instance]
 				delete player.hooks.onFollowUpTimeout[instance]
-
-				if (player.coinFlips[this.id][0] !== 'heads') return
+				delete player.followUp[instanceKey]
+				if (player.custom[coinResult] !== 'heads') return
 
 				// Discard a random card from the opponent's hand
 				const {opponentPlayer} = pos
@@ -94,9 +89,16 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onApply[instance]
+		delete player.custom[this.getInstanceKey(instance, 'coinResult')]
+		delete player.custom[this.id]
 	}
 }
 

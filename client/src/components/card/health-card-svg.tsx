@@ -57,15 +57,7 @@ const HealthCardModule = ({card}: HealthCardProps) => {
 			height="100%"
 			viewBox="0 0 400 400"
 		>
-			<rect
-				className={css.cardBackground}
-				x="10"
-				y="10"
-				width="380"
-				height="380"
-				rx="15"
-				ry="15"
-			/>
+			<rect className={css.cardBackground} x="10" y="10" width="380" height="380" rx="15" ry="15" />
 			<g id="type">
 				<rect
 					className={css.typeBackground}
@@ -81,13 +73,7 @@ const HealthCardModule = ({card}: HealthCardProps) => {
 				</text>
 			</g>
 			<g>
-				<ellipse
-					className={css.healthBackground}
-					cx="200"
-					cy="250"
-					rx="205"
-					ry="130"
-				/>
+				<ellipse className={css.healthBackground} cx="200" cy="250" rx="205" ry="130" />
 				<text x="200" y="200" className={css.health}>
 					{displayHealth}
 				</text>

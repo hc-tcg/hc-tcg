@@ -20,12 +20,7 @@ export type SlotProps = {
 }
 const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 	let cardInfo = card?.cardId
-		? (CARDS[card.cardId] as
-				| HermitCard
-				| EffectCard
-				| SingleUseCard
-				| ItemCard
-				| HealthCard)
+		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
 	if (type === 'health' && rowState?.health) {
 		cardInfo = {
@@ -34,9 +29,7 @@ const Slot = ({type, onClick, card, rowState, active}: SlotProps) => {
 		} as HealthCard
 	}
 
-	const ailments = Array.from(
-		new Set(rowState?.ailments.map((a) => a.id) || [])
-	)
+	const ailments = Array.from(new Set(rowState?.ailments.map((a) => a.id) || []))
 	return (
 		<div
 			onClick={onClick}

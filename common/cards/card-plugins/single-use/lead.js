@@ -57,12 +57,7 @@ class LeadSingleUseCard extends SingleUseCard {
 
 			const itemCardInfo = slots[0]
 			const targetSlotInfo = slots[1]
-			if (
-				targetSlotInfo.slot.card !== null ||
-				!itemCardInfo.row ||
-				!targetSlotInfo.row
-			)
-				return
+			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
 
 			const hermitCard = targetSlotInfo.row.state.hermitCard
 			const itemCard = itemCardInfo.slot.card

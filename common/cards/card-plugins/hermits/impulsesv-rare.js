@@ -34,24 +34,17 @@ class ImpulseSVRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 			const boomerAmount = player.board.rows.filter(
 				(row, index) =>
 					row.hermitCard &&
 					index !== player.board.activeRow &&
-					[
-						'bdoubleo100_common',
-						'bdoubleo100_rare',
-						'tangotek_common',
-						'tangotek_rare',
-					].includes(row.hermitCard.cardId)
+					['bdoubleo100_common', 'bdoubleo100_rare', 'tangotek_common', 'tangotek_rare'].includes(
+						row.hermitCard.cardId
+					)
 			).length
 
-			attack.addDamage(Math.min(boomerAmount, 2) * 40)
+			attack.addDamage(this.id, Math.min(boomerAmount, 2) * 40)
 		}
 	}
 

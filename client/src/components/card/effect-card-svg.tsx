@@ -14,23 +14,9 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
-			<rect
-				className={css.cardBackground}
-				x="10"
-				y="10"
-				width="380"
-				height="380"
-				rx="15"
-				ry="15"
-			/>
+			<rect className={css.cardBackground} x="10" y="10" width="380" height="380" rx="15" ry="15" />
 			<g>
-				<image
-					className={css.star}
-					href={`/images/star_color.svg`}
-					x="-15"
-					y="65"
-					width="390"
-				/>
+				<image className={css.star} href={`/images/star_color.svg`} x="-15" y="65" width="390" />
 				<image
 					className={css.icon}
 					href={`/images/effects/${card.id}.png`}
@@ -56,15 +42,7 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 			</g>
 			{showCost && rank.name !== 'stone' ? (
 				<g>
-					<rect
-						className={css.rarity}
-						x="0"
-						y="302"
-						width="100"
-						height="100"
-						rx="50"
-						ry="50"
-					/>
+					<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
 					<image
 						x="15"
 						y="315"
@@ -84,21 +62,11 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 					height="200%"
 					width="200%"
 				>
-					<feGaussianBlur
-						id="blur"
-						in="SourceAlpha"
-						stdDeviation="5"
-						result="SA-o-blur"
-					/>
+					<feGaussianBlur id="blur" in="SourceAlpha" stdDeviation="5" result="SA-o-blur" />
 					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
 						<feFuncA id="contour" type="table" tableValues="0 1" />
 					</feComponentTransfer>
-					<feComposite
-						operator="in"
-						in="SA-o-blur"
-						in2="SA-o-b-contIN"
-						result="SA-o-b-cont"
-					/>
+					<feComposite operator="in" in="SA-o-blur" in2="SA-o-b-contIN" result="SA-o-b-cont" />
 					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
 						<feFuncA id="spread-ctrl" type="linear" slope="200" />
 					</feComponentTransfer>

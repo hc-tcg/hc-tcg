@@ -12,8 +12,7 @@
 		position: absolute;
 
 		&.image {
-			background: url('/images/menu-background-image.png') center center
-				no-repeat;
+			background: url('/images/menu-background-image.png') center center no-repeat;
 			background-size: cover;
 
 			@media screen and (max-width: 100vh) {

@@ -66,8 +66,7 @@ class FirebaseLogs {
 				startHand1: getHand(playerStates[0]),
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
-				startDeck:
-					game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
+				startDeck: game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -77,10 +76,7 @@ class FirebaseLogs {
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 
-				if (
-					!game.endInfo.outcome ||
-					['error', 'timeout'].includes(game.endInfo.outcome)
-				) {
+				if (!game.endInfo.outcome || ['error', 'timeout'].includes(game.endInfo.outcome)) {
 					delete this.gameLogs[game.id]
 					return
 				}
