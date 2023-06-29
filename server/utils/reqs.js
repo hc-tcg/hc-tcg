@@ -45,7 +45,6 @@ const checkRow = (rowInfo, req, reqs, gameState) => {
 	if (req.type) {
 		const type = req.type
 		slots = slots.filter((card) => {
-			console.log(card)
 			if (!card) {
 				return true
 			}
