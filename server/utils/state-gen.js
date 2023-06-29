@@ -190,9 +190,10 @@ export function getPlayerState(player) {
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: [],
-		followUp: null,
+		followUp: {},
 		lives: 3,
 		hand,
 		discarded: [],

@@ -6,7 +6,12 @@
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,
-	"startWithAllCards": true,
+	"startWithAllCards": false,
 	"blockedActions": [],
-	"availableActions": []
+	"availableActions": [],
+	"showHooksState": {
+		"enabled": false,
+		"clearConsole": true
+	},
+	"autoEndTurn": false
 }

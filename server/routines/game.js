@@ -1,7 +1,7 @@
 import {all, take, fork, actionChannel, call, cancel, race, delay} from 'redux-saga/effects'
 import {buffers} from 'redux-saga'
 import CARDS, {HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
-import {hasEnoughEnergy, discardSingleUse, discardCard} from '../utils'
+import {hasEnoughEnergy, discardSingleUse, discardCard, printHooksState} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
 import attackSaga, {ATTACK_TO_ACTION, runAilmentAttacks} from './turn-actions/attack'
@@ -57,12 +57,12 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 	const hasEffectInHand = hasTypeInHand('effect')
 	const hasSingleUseInHand = hasTypeInHand('single_use')
 
-	if (opponentPlayer.followUp) {
+	if (Object.keys(opponentPlayer.followUp).length > 0) {
 		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
 		return actions
 	}
 
-	if (currentPlayer.followUp) {
+	if (Object.keys(currentPlayer.followUp).length > 0) {
 		actions.push('FOLLOW_UP')
 		return actions
 	}
@@ -334,6 +334,7 @@ function* turnActionSaga(game, turnAction, turnState) {
  */
 function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game.ds
+	let turnRemaining = game.state.timer.turnRemaining
 
 	const turnActionChannel = yield actionChannel(
 		[
@@ -353,6 +354,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 
 	try {
 		while (true) {
+			if (DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
+
 			// Available actions code
 
 			// First, get available energy
@@ -404,6 +407,13 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 
 			availableActions.push(...DEBUG_CONFIG.availableActions)
 
+			if (
+				DEBUG_CONFIG.autoEndTurn &&
+				availableActions.includes('END_TURN') &&
+				availableActions.length === 1
+			) {
+				break
+			}
 			// End of available actions code
 
 			if (turnConfig.skipTurn) {
@@ -412,7 +422,8 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 			}
 
 			/** @type {AvailableActionsT} */
-			const opponentAvailableActions = opponentPlayer.followUp ? ['FOLLOW_UP'] : ['WAIT_FOR_TURN']
+			const opponentAvailableActions =
+				Object.keys(opponentPlayer.followUp).length > 0 ? ['FOLLOW_UP'] : ['WAIT_FOR_TURN']
 
 			/** @type {TurnState} */
 			const turnState = {
@@ -435,49 +446,62 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 				timeout: delay(remainingTime + graceTime),
 			})
 
+			// Reset coin flips they were already shown
+			currentPlayer.coinFlips = []
+			opponentPlayer.coinFlips = []
+
 			// Handle timeout
 			const hasActiveHermit = currentPlayer.board.activeRow !== null
-			const opponentFollowUp = !!opponentPlayer.followUp
-			const currentPlayerFollowUp = !!currentPlayer.followUp
+			const playerFollowUp = Object.keys(currentPlayer.followUp).length > 0
+			const opponentFollowUp = Object.keys(opponentPlayer.followUp).length > 0
+			const playerWithFollowUp = opponentFollowUp
+				? opponentPlayer
+				: playerFollowUp
+				? currentPlayer
+				: null
 			if (raceResult.timeout) {
-				if (opponentFollowUp) {
-					game.state.timer.turnTime = getTimerForSeconds(20)
-					const followUpTimeoutHooks = Object.values(opponentPlayer.hooks.onFollowUpTimeout)
+				if (playerWithFollowUp) {
+					const followUpTimeoutHooks = Object.values(playerWithFollowUp.hooks.onFollowUpTimeout)
 					/** @type {Array<AttackModel>} */
 					const newAttacks = []
 					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](opponentPlayer.followUp, newAttacks)
+						for (const followUp of Object.keys(playerWithFollowUp.followUp)) {
+							followUpTimeoutHooks[i](followUp, newAttacks)
+						}
 					}
-					continue
-				} else if (currentPlayerFollowUp) {
-					const followUpTimeoutHooks = Object.values(currentPlayer.hooks.onFollowUpTimeout)
-					/** @type {Array<AttackModel>} */
-					const newAttacks = []
-					for (let i = 0; i < followUpTimeoutHooks.length; i++) {
-						followUpTimeoutHooks[i](currentPlayer.followUp, newAttacks)
-					}
+
+					// Restore the previous time
+					game.state.timer.turnTime = getTimerForSeconds(turnRemaining)
 					continue
 				} else if (!hasActiveHermit) {
 					game.endInfo.reason = 'time'
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
 					return 'GAME_END'
+				} else {
+					// The timeout is not from a follow up, so end the turn
+					break
 				}
-				break
 			}
-
-			// Reset coin flips they were already shown
-			currentPlayer.coinFlips = []
 
 			// Run action logic
 			const result = yield call(turnActionSaga, game, raceResult.turnAction, turnState)
 
-			// set timer to 20s on new followup (for opponent)
-			// or succesful followup (for current player)
-			if (opponentFollowUp !== !!opponentPlayer.followUp) {
+			if (result === 'END_TURN') break
+
+			const playerHasFollowUp = Object.keys(currentPlayer.followUp).length !== 0
+			const opponentHasFollowUp = Object.keys(opponentPlayer.followUp).length !== 0
+			// If the there's a follow up then set the timer to 20 seconds
+			if (playerHasFollowUp || opponentHasFollowUp) {
+				turnRemaining = game.state.timer.turnRemaining
 				game.state.timer.turnTime = getTimerForSeconds(20)
 			}
 
-			if (result === 'END_TURN') break
+			// If there was a follow up and it was resolved then set the timer to the previous
+			// time otherwise you could use a single use card and the timer would be too short
+			// to do anything else.
+			if ((!opponentHasFollowUp && opponentFollowUp) || (!playerHasFollowUp && playerFollowUp)) {
+				game.state.timer.turnTime = getTimerForSeconds(turnRemaining)
+			}
 		}
 	} finally {
 		turnActionChannel.close()
@@ -535,8 +559,8 @@ function* turnSaga(game) {
 		turnEndHooks[i]()
 	}
 
-	currentPlayer.followUp = null
-	opponentPlayer.followUp = null
+	currentPlayer.followUp = {}
+	opponentPlayer.followUp = {}
 
 	const deadPlayerIds = yield call(checkHermitHealth, game)
 	if (deadPlayerIds.length) {
