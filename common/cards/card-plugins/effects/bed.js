@@ -58,6 +58,15 @@ class BedEffectCard extends EffectCard {
 			row.ailments.push({id: 'sleeping', duration: 3})
 		}
 
+		// Knockback/Tango/Jevin/etc
+		player.hooks.onTurnStart[instance] = () => {
+			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
+			if (!isSleeping) {
+				discardCard(game, row?.effectCard || null)
+				return
+			}
+		}
+
 		player.hooks.onTurnEnd[instance] = () => {
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
@@ -67,6 +76,17 @@ class BedEffectCard extends EffectCard {
 				delete player.hooks.onTurnEnd[instance]
 			}
 		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onTurnEnd[instance]
+		delete player.hooks.onTurnStart[instance]
 	}
 }
 
