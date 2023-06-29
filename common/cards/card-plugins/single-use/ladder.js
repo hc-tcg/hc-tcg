@@ -43,6 +43,12 @@ class LadderSingleUseCard extends SingleUseCard {
 
 			if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
 
+			// Swap ailments
+			const activeRowAilments = playerActiveRow.ailments
+			const inactiveRowAilments = inactiveHermitCardInfo.row.state.ailments
+			playerActiveRow.ailments = inactiveRowAilments
+			inactiveHermitCardInfo.row.state.ailments = activeRowAilments
+
 			/** @type {SlotPos} */ const inactivePos = {
 				rowIndex: activeRowIndex,
 				row: playerActiveRow,
