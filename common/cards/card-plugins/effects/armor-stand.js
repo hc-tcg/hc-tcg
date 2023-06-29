@@ -61,7 +61,7 @@ class ArmorStandEffectCard extends EffectCard {
 			const instanceKey = this.getInstanceKey(instance)
 
 			opponentPlayer.hooks.onAttack[instance] = (attack, pickedSlots) => {
-				if (attack.target.rowIndex !== pos.rowIndex || attack.type === 'ailment') return
+				if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 				if (player.custom[instanceKey] === undefined) {
 					player.custom[instanceKey] = 0
@@ -70,9 +70,9 @@ class ArmorStandEffectCard extends EffectCard {
 				const totalReduction = player.custom[instanceKey]
 
 				if (totalReduction < 50) {
-					const damageReduction = Math.min(attack.damage, 50 - totalReduction)
+					const damageReduction = Math.min(attack.getDamage(), 60 - totalReduction)
 					player.custom[instanceKey] += damageReduction
-					attack.reduceDamage(damageReduction)
+					attack.reduceDamage(this.id, damageReduction)
 				}
 			}
 
