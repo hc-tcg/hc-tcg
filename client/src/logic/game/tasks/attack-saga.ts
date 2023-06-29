@@ -52,18 +52,14 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[cardId]) return
 	}
 
-	const opponentHermit = opponentActiveRow.hermitCard
-	const opponentCardInfo = opponentHermit ? HERMIT_CARDS[opponentHermit.cardId] : null
-	if (
-		opponentCardInfo?.pickOn === 'opponent-attack' &&
-		opponentState?.custom[opponentCardInfo.id]
-	) {
-		result[opponentHermit.cardId] = yield call(
+	const opponentAttackPick = opponentState?.custom['opponent-attack']
+	if (opponentAttackPick) {
+		result[opponentAttackPick.cardId] = yield call(
 			runPickProcessSaga,
-			opponentCardInfo?.[type]?.name || opponentCardInfo.name,
-			opponentCardInfo.pickReqs
+			opponentAttackPick.name,
+			opponentAttackPick.pickReqs
 		)
-		if (!result[opponentHermit.cardId]) return
+		if (!result[opponentAttackPick.cardId]) return
 	}
 
 	yield put(attack(type, result, extra))

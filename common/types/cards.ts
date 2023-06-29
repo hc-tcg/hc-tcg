@@ -56,7 +56,7 @@ export type HermitDefs = {
 	health: number
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	pickOn?: 'attack' | 'apply' | 'followup' | 'opponent-attack'
+	pickOn?: 'attack' | 'apply' | 'followup'
 	pickReqs?: Array<PickRequirmentT>
 }
 
