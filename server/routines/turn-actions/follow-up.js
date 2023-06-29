@@ -17,7 +17,7 @@ function* followUpSaga(game, turnAction, actionState) {
 		const followUpHooks = Object.values(player.hooks.onFollowUp)
 		for (let i = 0; i < followUpHooks.length; i++) {
 			for (const followUp of Object.keys(player.followUp)) {
-				followUpHooks[i](followUp, pickedSlots, newAttacks)
+				followUpHooks[i](followUp, pickedSlots, modalResult, newAttacks)
 			}
 
 			if (newAttacks.length > 0) {

@@ -112,10 +112,15 @@ export type PlayerState = {
 
 		/** Instance key -> hook called on follow up */
 		onFollowUp: Hook<
-			(followUp: string, pickedSlots: PickedSlots, newAttacks: Array<AttackModel>) => void
+			(
+				followUp: string,
+				pickedSlots: PickedSlots,
+				modalResult: any,
+				followUpAttacks: Array<AttackModel>
+			) => void
 		>
 		/** Instance key -> hook called when follow up times out */
-		onFollowUpTimeout: Hook<(followUp: string, newAttacks: Array<AttackModel>) => void>
+		onFollowUpTimeout: Hook<(followUp: string, followUpAttacks: Array<AttackModel>) => void>
 
 		/** Instance key -> hook called when a hermit is about to die */
 		onHermitDeath: Hook<(hermitPos: CardPos) => void>

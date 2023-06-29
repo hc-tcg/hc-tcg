@@ -42,9 +42,11 @@ class HumanCleoRareHermitCard extends HermitCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
+		const instanceKey = this.getInstanceKey(instance)
+		const attackType = this.getInstanceKey(instance, 'attackType')
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id, 2)
 			player.coinFlips[this.id] = coinFlip
@@ -95,10 +97,15 @@ class HumanCleoRareHermitCard extends HermitCard {
 			if (!attack.isType('effect', 'ailment')) attack.target = null
 			if (!attack.isType('primary', 'secondary')) return
 
-			opponentPlayer.followUp = this.id
+			opponentPlayer.followUp[instanceKey] = this.id
 
-			opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots, newAttacks) => {
-				if (followUp !== this.id) return
+			opponentPlayer.hooks.onFollowUp[instance] = (
+				followUp,
+				pickedSlots,
+				modalResult,
+				newAttacks
+			) => {
+				if (followUp !== instanceKey) return
 				const slots = pickedSlots[this.id]
 				if (!slots || slots.length !== 1) return
 				const pickedHermit = slots[0]
@@ -117,19 +124,19 @@ class HumanCleoRareHermitCard extends HermitCard {
 					isBacklash: true,
 				})
 				newAttack.addDamage(this.id, attack.getDamage())
+				newAttack.multiplyDamage(this.id, attack.getDamageMultiplier())
 				newAttacks.push(newAttack)
 
 				const weaknessAttack = createWeaknessAttack(newAttack)
 				if (weaknessAttack) newAttacks.push(weaknessAttack)
 
-				opponentPlayer.followUp = null
-
 				delete opponentPlayer.hooks.onFollowUp[instance]
 				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				delete player.custom[instance]
+				delete opponentPlayer.followUp[instanceKey]
 			}
 
-			opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp, newAttacks) => {
+			opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp, modalResult, newAttacks) => {
 				if (followUp !== this.id) return
 
 				const attackTarget = opponentInactiveRows[0]
@@ -148,11 +155,10 @@ class HumanCleoRareHermitCard extends HermitCard {
 				const weaknessAttack = createWeaknessAttack(attack)
 				if (weaknessAttack) newAttacks.push(weaknessAttack)
 
-				opponentPlayer.followUp = null
-
 				delete opponentPlayer.hooks.onFollowUp[instance]
 				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
 				delete player.custom[instance]
+				delete opponentPlayer.followUp[instanceKey]
 			}
 		}
 
