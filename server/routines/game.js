@@ -550,10 +550,13 @@ function* turnSaga(game) {
 		row.ailments = row.ailments.filter((a) => a.duration === undefined || a.duration > 0)
 	}
 
+	// Create card draw array
+	const drawCards = []
+
 	// Call turn end hooks
 	const turnEndHooks = Object.values(currentPlayer.hooks.onTurnEnd)
 	for (let i = 0; i < turnEndHooks.length; i++) {
-		turnEndHooks[i]()
+		turnEndHooks[i](drawCards)
 	}
 
 	currentPlayer.followUp = {}
@@ -571,17 +574,24 @@ function* turnSaga(game) {
 	discardSingleUse(game, currentPlayer)
 
 	// Draw a card from deck when turn ends
-	const drawCard = currentPlayer.pile.shift()
-	if (drawCard) {
-		currentPlayer.hand.push(drawCard)
-	} else if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
-		//console.log('Player dead: ', {
-		//	noCards: true,
-		//	turn: game.state.turn,
-		//})
-		game.endInfo.reason = 'cards'
-		game.endInfo.deadPlayerIds = [currentPlayerId]
-		return 'GAME_END'
+	if (drawCards.length === 0) {
+		drawCards.push(currentPlayer.pile.shift())
+	}
+	for (let i = 0; i < drawCards.length; i++) {
+		const card = drawCards[i]
+		if (!card) {
+			if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
+				//console.log('Player dead: ', {
+				//	noCards: true,
+				//	turn: game.state.turn,
+				//})
+				game.endInfo.reason = 'cards'
+				game.endInfo.deadPlayerIds = [currentPlayerId]
+				return 'GAME_END'
+			}
+			continue
+		}
+		currentPlayer.hand.push(card)
 	}
 
 	return 'DONE'
