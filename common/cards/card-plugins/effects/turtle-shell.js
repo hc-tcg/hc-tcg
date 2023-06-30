@@ -36,7 +36,7 @@ class TurtleShellEffectCard extends EffectCard {
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
-				'Attach to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
+				"Attach to any of your AFK Hermits. When that Hermit becomes active, this card prevents any damage for that Hermit's first turn, and is then discarded.",
 		})
 	}
 
