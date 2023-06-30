@@ -48,6 +48,19 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		delete player.hooks.onApply[instance]
 	}
 
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {opponentPlayer} = pos
+		const activeRow = opponentPlayer.board.activeRow
+		if (activeRow === null) return 'NO'
+
+		return 'YES'
+	}
+
 	getExpansion() {
 		return 'alter_egos'
 	}
