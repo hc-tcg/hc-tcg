@@ -29,7 +29,7 @@ class ShieldEffectCard extends EffectCard {
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 
 		player.hooks.onDefence[instance] = (attack) => {
-			if (!isTargetingPos || attack.isType('ailment')) return
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
