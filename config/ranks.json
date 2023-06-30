@@ -97,7 +97,7 @@
 	"loyalty": 0,
 	"milk_bucket": 0,
 	"splash_potion_of_healing": 0,
-	"thorns": 0,
+	"thorns": 2,
 	"water_bucket": 0,
 
 	"bow": 1,
@@ -112,6 +112,7 @@
 	"lead": 1,
 	"mending": 1,
 	"spyglass": 1,
+	"wolf": 1,
 
 	"bed": 2,
 	"chest": 2,
@@ -123,7 +124,6 @@
 	"iron_armor": 2,
 	"shield": 2,
 	"tnt": 2,
-	"wolf": 2,
 
 	"diamond_armor": 3,
 	"netherite_sword": 3,
@@ -185,7 +185,6 @@
 	"egg": 1,
 	"splash_potion_of_healing_ii": 1,
 	"target_block": 1,
-	"thorns_ii": 1,
 	"turtle_shell": 1,
 
 	"armor_stand": 2,
@@ -195,8 +194,10 @@
 	"potion_of_weakness": 2,
 	"string": 2,
 	"sweeping_edge": 2,
-	"thorns_iii": 2,
 	"trident": 2,
 
-	"ladder": 3
+	"ladder": 3,
+	"thorns_ii": 3,
+
+	"thorns_iii": 4
 }

@@ -108,7 +108,7 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 
 	if (activeRow !== null) {
 		if (turn > 1) {
-			const hermitId = rows[activeRow].hermitCard?.cardId
+			const hermitId = rows[activeRow]?.hermitCard?.cardId
 			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
 
 			// only add attack options if not sleeping
