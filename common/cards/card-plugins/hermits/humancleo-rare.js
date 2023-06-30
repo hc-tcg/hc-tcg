@@ -3,7 +3,7 @@ import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 import {GameModel} from '../../../../server/models/game-model'
 import {flipCoin} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
-import {getNonEmptyRows, hasEnoughEnergy} from '../../../../server/utils'
+import {getNonEmptyRows, hasEnoughEnergy, getActiveRowPos} from '../../../../server/utils'
 import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
 /**
@@ -82,10 +82,8 @@ class HumanCleoRareHermitCard extends HermitCard {
 			opponentPlayer.hooks.onTurnTimeout[instance] = (newAttacks) => {
 				if (!player.custom[instance]) return
 				const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-				const activeRowIndex = player.board.activeRow
-				if (!activeRowIndex) return
-				const activeRow = player.board.rows[activeRowIndex]
-				if (!activeRow.hermitCard) return
+				const activeRow = getActiveRowPos(player)
+				if (!activeRow?.row.hermitCard) return
 
 				if (opponentInactiveRows.length === 0) return
 
@@ -93,22 +91,19 @@ class HumanCleoRareHermitCard extends HermitCard {
 					id: this.getInstanceKey(instance, 'newAttack'),
 					attacker: {
 						player: player,
-						rowIndex: activeRowIndex,
-						row: activeRow,
+						rowIndex: activeRow.rowIndex,
+						row: activeRow.row,
 					},
 					target: opponentInactiveRows[0],
 					type: 'primary',
 				})
 
-				const opponentRowIndex = opponentPlayer.board.activeRow
-				if (opponentRowIndex === null) return
+				const opponentActiveRow = getActiveRowPos(opponentPlayer)
+				if (!opponentActiveRow?.row.hermitCard) return
 
-				const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
-				if (!opponentActiveRow.hermitCard) return
+				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
-				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.hermitCard.cardId]
-
-				const itemCards = opponentActiveRow.itemCards
+				const itemCards = opponentActiveRow.row.itemCards
 				const energyTypes = []
 				itemCards.forEach((item) => {
 					if (!item || !item.cardId) return
@@ -145,26 +140,23 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
 				if (!player.custom[instance]) return blockedActions
-				const opponentRowIndex = opponentPlayer.board.activeRow
 
-				//Remove "Change active hermit", unless you do not have an active Hermit.
-				if (opponentRowIndex !== null) {
-					blockedActions.push('CHANGE_ACTIVE_HERMIT')
-				}
-				if (opponentRowIndex === null) return blockedActions
+				const opponentActiveRow = getActiveRowPos(opponentPlayer)
+				const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 
-				//If you are not able to attack, you can end your turn.
-				const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
-				if (!opponentActiveRow.hermitCard) return blockedActions
+				if (!opponentActiveRow || opponentInactiveRows.length === 0) return blockedActions
+				if (!opponentActiveRow.row.hermitCard) return blockedActions
 
-				const itemCards = opponentActiveRow.itemCards
+				blockedActions.push('CHANGE_ACTIVE_HERMIT')
+
+				const itemCards = opponentActiveRow.row.itemCards
 				const energyTypes = []
 				itemCards.forEach((item) => {
 					if (!item || !item.cardId) return blockedActions
 					energyTypes.push(ITEM_CARDS[item.cardId].hermitType)
 				})
 
-				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.hermitCard.cardId]
+				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
 				if (
 					hasEnoughEnergy(energyTypes, activeHermitInfo.primary.cost) ||
