@@ -579,19 +579,13 @@ function* turnSaga(game) {
 	}
 	for (let i = 0; i < drawCards.length; i++) {
 		const card = drawCards[i]
-		if (!card) {
-			if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
-				//console.log('Player dead: ', {
-				//	noCards: true,
-				//	turn: game.state.turn,
-				//})
-				game.endInfo.reason = 'cards'
-				game.endInfo.deadPlayerIds = [currentPlayerId]
-				return 'GAME_END'
-			}
-			continue
+		if (card) {
+			currentPlayer.hand.push(card)
+		} else if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
+			game.endInfo.reason = 'cards'
+			game.endInfo.deadPlayerIds = [currentPlayerId]
+			return 'GAME_END'
 		}
-		currentPlayer.hand.push(card)
 	}
 
 	return 'DONE'
