@@ -87,6 +87,7 @@
 
 	" - EFFECTS - ": "",
 
+	"composter": 0,
 	"curse_of_binding": 0,
 	"gold_armor": 0,
 	"instant_health": 0,
@@ -102,7 +103,6 @@
 
 	"bow": 1,
 	"chorus_fruit": 1,
-	"composter": 1,
 	"crossbow": 1,
 	"curse_of_vanishing": 1,
 	"diamond_sword": 1,
@@ -126,13 +126,13 @@
 	"tnt": 2,
 
 	"diamond_armor": 3,
-	"netherite_sword": 3,
 	"lava_bucket": 3,
+	"netherite_sword": 3,
 	"splash_potion_of_poison": 3,
+	"totem": 3,
 
 	"clock": 4,
 	"netherite_armor": 4,
-	"totem": 4,
 
 	" - ITEMS - ": "",
 
@@ -181,6 +181,7 @@
 	"fire_charge": 0,
 	"piston": 0,
 
+	"bad_omen": 1,
 	"chainmail_armor": 1,
 	"egg": 1,
 	"splash_potion_of_healing_ii": 1,
@@ -188,7 +189,7 @@
 	"turtle_shell": 1,
 
 	"armor_stand": 2,
-	"bad_omen": 2,
+	"ladder": 2,
 	"lightning_rod": 2,
 	"potion_of_slowness": 2,
 	"potion_of_weakness": 2,
@@ -196,7 +197,6 @@
 	"sweeping_edge": 2,
 	"trident": 2,
 
-	"ladder": 3,
 	"thorns_ii": 3,
 
 	"thorns_iii": 4
