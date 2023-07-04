@@ -1,5 +1,5 @@
 import EffectCard from './_effect-card'
-import {discardCard, getActiveRow, rowHasItem} from '../../../../server/utils'
+import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
 
 /**
@@ -13,7 +13,7 @@ class LootingEffectCard extends EffectCard {
 			name: 'Looting',
 			rarity: 'rare',
 			description:
-				"When your opponent's Hermit is knocked out by your active Hermit that this card is attached to, pick 2 attached item cards from the opposing active Hermit and add them to your hand.",
+				"If you attacked this turn, flip a coin. If heads, draw a card from your opponent's deck instead of your own.",
 		})
 	}
 
@@ -24,67 +24,29 @@ class LootingEffectCard extends EffectCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const coinFlipKey = this.getInstanceKey(instance, 'coinFlipKey')
 
 		player.hooks.afterAttack[instance] = (attack) => {
-			// Don'r activate if the books is not attached to the attacker
-			if (attack.attacker?.rowIndex != pos.rowIndex) return
-			// This needs to happen after Loyalty
-			opponentPlayer.hooks.onHermitDeath[instance] = (hermitPos) => {
-				// Don't activate if the row has no item cards
-				if (!hermitPos.row || !rowHasItem(hermitPos.row)) return
+			const {activeRow, rows} = player.board
 
-				// Client uses the id instead of the instance for the modal
-				player.custom[this.id] = {
-					cards: [...hermitPos.row.itemCards.filter(Boolean)],
-				}
+			// Make sure the attack is a hermit attack
+			if (!attack.isType('primary', 'secondary')) return
 
-				player.followUp[instanceKey] = this.id
+			// Make sure looting is on the active row
+			if (activeRow === null) return
+			if (activeRow !== pos.rowIndex) return
 
-				// Only choose from one row if multiple hermits are knocked out at once
-				// we could allow to pick from multiple rows but the UI would be confusing
-				delete opponentPlayer.hooks.onHermitDeath[instance]
-			}
+			const coinFlip = flipCoin(player, this.id)
+			player.custom[coinFlipKey] = coinFlip
 		}
 
-		player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
-			if (followUp !== instanceKey) return
-			delete player.followUp[instanceKey]
-
-			if (!modalResult || !modalResult.cards) return
-			if (modalResult.cards.length === 0) return
-			if (modalResult.cards.length > 2) return
-
-			const activeRow = getActiveRow(player)
-			if (activeRow === null) return
-			// Discard looting, can't do it on afterAttack because it would delete this hook
-			discardCard(game, activeRow?.effectCard)
-
-			for (const card of modalResult.cards) {
-				player.hand.push(card)
-				// Remove the card from the other player's discarded pile
-				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
+		player.hooks.onTurnEnd[instance] = (drawCards) => {
+			const coinFlip = player.custom[coinFlipKey]
+			if (coinFlip && coinFlip[0] === 'heads') {
+				const drawCard = opponentPlayer.pile.shift()
+				if (drawCard) drawCards.push(drawCard)
 			}
-		}
-
-		player.hooks.onFollowUpTimeout[instance] = (followUp) => {
-			if (followUp !== instanceKey) return
-			delete player.followUp[instanceKey]
-
-			// If the player didn't pick any cards, pick 1 or 2 random cards
-			const cards = player.custom[this.id].cards
-			let totalPicked = 0
-			for (const card of cards) {
-				if (totalPicked === 2) break
-				player.hand.push(card)
-				opponentPlayer.discarded.splice(opponentPlayer.discarded.indexOf(card), 1)
-				totalPicked++
-			}
-
-			const activeRow = getActiveRow(player)
-			if (activeRow === null) return
-			// Discard looting, can't do it on afterAttack because it would delete this hook
-			discardCard(game, activeRow?.effectCard)
+			delete player.custom[coinFlipKey]
 		}
 	}
 
@@ -96,10 +58,7 @@ class LootingEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 		delete player.hooks.afterAttack[instance]
-		delete player.hooks.onFollowUp[instance]
-		delete player.hooks.onFollowUpTimeout[instance]
-		delete opponentPlayer.hooks.onHermitDeath[instance]
-		delete player.custom[this.id]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 	}
 }
 
