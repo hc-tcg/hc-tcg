@@ -126,6 +126,8 @@ export type PlayerState = {
 		onTurnStart: Hook<() => void>
 		/** Instance key -> hook called at the end of the turn */
 		onTurnEnd: Hook<(drawCards: Array<CardT>) => void>
+		/** Instance key -> hook called when the time runs out*/
+		onTurnTimeout: Hook<(newAttacks: Array<AttackModel>) => void>
 
 		/** Instance key -> hook called the player flips a coin */
 		onCoinFlip: Hook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>

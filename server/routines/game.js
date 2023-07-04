@@ -4,7 +4,7 @@ import CARDS, {HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from '../../common/ca
 import {hasEnoughEnergy, discardSingleUse, discardCard, printHooksState} from '../utils'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
-import attackSaga, {ATTACK_TO_ACTION, runAilmentAttacks} from './turn-actions/attack'
+import attackSaga, {ATTACK_TO_ACTION, runAilmentAttacks, runAllAttacks} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
@@ -477,7 +477,16 @@ function* turnActionsSaga(game, pastTurnActions, turnConfig) {
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
 					return 'GAME_END'
 				} else {
-					// The timeout is not from a follow up, so end the turn
+					const newAttacks = []
+					for (const player of [currentPlayer, opponentPlayer]) {
+						const timeoutHooks = Object.values(player.hooks.onTurnTimeout)
+						for (let i = 0; i < timeoutHooks.length; i++) {
+							timeoutHooks[i](newAttacks)
+						}
+					}
+					if (newAttacks.length > 0) {
+						runAllAttacks(newAttacks)
+					}
 					break
 				}
 			}
