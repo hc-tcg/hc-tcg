@@ -47,8 +47,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			if (attack.type !== 'secondary') return
 
 			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
-				if (!attack.isType('effect', 'ailment') && !attack.isBacklash) return
-
+				if (attack.isType('ailment') || attack.isBacklash) return
 				// No need to flip a coin for multiple attacks
 				if (!player.custom[coinFlipResult]) {
 					const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)

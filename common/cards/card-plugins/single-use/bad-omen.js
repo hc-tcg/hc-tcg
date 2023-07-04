@@ -12,7 +12,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			id: 'bad_omen',
 			name: 'Bad Omen',
 			rarity: 'rare',
-			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails..`,
+			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails.`,
 		})
 	}
 
@@ -46,6 +46,19 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		delete player.hooks.onApply[instance]
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {opponentPlayer} = pos
+		const activeRow = opponentPlayer.board.activeRow
+		if (activeRow === null) return 'NO'
+
+		return 'YES'
 	}
 
 	getExpansion() {

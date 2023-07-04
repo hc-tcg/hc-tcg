@@ -2,6 +2,7 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
+import {getCardPos} from '../../../../server/utils/cards'
 
 class ThornsIIEffectCard extends EffectCard {
 	constructor() {
@@ -9,7 +10,8 @@ class ThornsIIEffectCard extends EffectCard {
 			id: 'thorns_ii',
 			name: 'Thorns II',
 			rarity: 'rare',
-			description: 'Opponent takes 20hp damage after their attack.',
+			description:
+				'When the hermit this card is attached to takes damage, your opponent takes 30hp damage.',
 		})
 	}
 
@@ -33,7 +35,7 @@ class ThornsIIEffectCard extends EffectCard {
 					target: attack.attacker,
 					type: 'effect',
 					isBacklash: true,
-				}).addDamage(this.id, 20)
+				}).addDamage(this.id, 30)
 
 				attack.addNewAttack(backlashAttack)
 			}
