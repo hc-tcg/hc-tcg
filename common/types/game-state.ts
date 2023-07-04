@@ -115,8 +115,12 @@ export type PlayerState = {
 		/** Instance key -> hook called when follow up times out */
 		onFollowUpTimeout: Hook<(followUp: string) => void>
 
-		/** Instance key -> hook called when a hermit is about to die */
-		onHermitDeath: Hook<(hermitPos: CardPos) => void>
+		/**
+		 * Instance key -> hook called when a hermit is about to die.
+		 *
+		 * If STOP is returned the cards are not removed from the board and no reward card is issued.
+		 */
+		onHermitDeath: Hook<(hermitPos: CardPos) => void | 'STOP'>
 
 		/** Instance key -> hook called at the start of the turn */
 		onTurnStart: Hook<() => void>

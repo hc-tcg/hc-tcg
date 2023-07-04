@@ -174,13 +174,14 @@ function* checkHermitHealth(game) {
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
-			if (row.hermitCard && row.health <= 0) {
+			deathCode: if (row.hermitCard && row.health <= 0) {
 				// Call hermit death hooks
 				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
 				if (hermitPos) {
 					const hermitDeathHooks = Object.values(playerState.hooks.onHermitDeath)
 					for (let i = 0; i < hermitDeathHooks.length; i++) {
-						hermitDeathHooks[i](hermitPos)
+						const result = hermitDeathHooks[i](hermitPos)
+						if (result === 'STOP') break deathCode
 					}
 				}
 
@@ -193,7 +194,7 @@ function* checkHermitHealth(game) {
 				}
 				playerState.lives -= 1
 
-				// reward cards
+				// reward card
 				const opponentState = playerStates.find((s) => s.id !== playerState.id)
 				if (!opponentState) continue
 				const rewardCard = playerState.pile.shift()
@@ -276,6 +277,7 @@ function* turnActionSaga(game, turnAction, turnState) {
 	if (turnAction.type === 'PLAY_CARD') {
 		const result = yield call(playCardSaga, game, turnAction, actionState)
 		if (result === 'INVALID') pastTurnActions.push('PLAYED_INVALID_CARD')
+		else if (!result) pastTurnActions.push('PLAY_CARD_FAILED')
 		//
 	} else if (turnAction.type === 'CHANGE_ACTIVE_HERMIT') {
 		yield call(changeActiveHermitSaga, game, turnAction, actionState)

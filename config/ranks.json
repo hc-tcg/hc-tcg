@@ -94,7 +94,6 @@
 	"iron_sword": 0,
 	"invisibility_potion": 0,
 	"knockback": 0,
-	"looting": 0,
 	"loyalty": 0,
 	"milk_bucket": 0,
 	"splash_potion_of_healing": 0,
@@ -113,8 +112,8 @@
 	"mending": 1,
 	"spyglass": 1,
 	"wolf": 1,
+	"looting": 1,
 
-	"bed": 2,
 	"chest": 2,
 	"emerald": 2,
 	"fishing_rod": 2,
@@ -133,6 +132,7 @@
 
 	"clock": 4,
 	"netherite_armor": 4,
+	"bed": 4,
 
 	" - ITEMS - ": "",
 
