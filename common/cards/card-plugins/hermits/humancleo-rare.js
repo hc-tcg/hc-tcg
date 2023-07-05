@@ -175,7 +175,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			delete opponentPlayer.hooks.blockedActions[instance]
+			delete opponentPlayer.hooks.beforeAttack[instance]
 			delete opponentPlayer.hooks.onTurnEnd[instance]
+			delete opponentPlayer.hooks.onTurnTimeout[instance]
 			delete player.custom['opponent-attack']
 			delete player.custom[instance]
 		}
@@ -191,8 +193,12 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 		// Remove hooks
 		delete player.hooks.onAttack[instance]
+		delete opponentPlayer.hooks.blockedActions[instance]
 		delete opponentPlayer.hooks.beforeAttack[instance]
 		delete opponentPlayer.hooks.onTurnEnd[instance]
+		delete opponentPlayer.hooks.onTurnTimeout[instance]
+		delete player.custom['opponent-attack']
+		delete player.custom[instance]
 	}
 
 	getExpansion() {
