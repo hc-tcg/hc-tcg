@@ -36,7 +36,7 @@ class TurtleShellEffectCard extends EffectCard {
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
-				"Attach to any of your AFK Hermits. When that Hermit becomes active, this card prevents any damage for that Hermit's first turn, and is then discarded.",
+				"Attach to any of your AFK Hermits. When that Hermit becomes active, this card prevents any damage done by your opponent for that Hermit's first turn, and is then discarded.",
 		})
 	}
 
@@ -74,6 +74,8 @@ class TurtleShellEffectCard extends EffectCard {
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, pos)) return
+			// Do not block backlash attacks
+			if (attack.isBacklash) return
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
