@@ -1,6 +1,8 @@
 import EffectCard from './_effect-card'
+import {HERMIT_CARDS} from '../../../cards'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+
 class BedEffectCard extends EffectCard {
 	constructor() {
 		super({
@@ -8,8 +10,25 @@ class BedEffectCard extends EffectCard {
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:
-				'When the hermit this card is attached to is knocked out, all attached cards are discarded, and the hermit card is returned to your hand.\n\nDoes not count as a knockout.',
+				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health when bed is attached.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go afk while sleeping.\n\nIf made afk by opponent player, hermit goes afk but also wakes up.",
 		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {import('../../../types/cards').CardPos} pos
+	 */
+	canAttach(game, pos) {
+		const {currentPlayer} = game.ds
+
+		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (!pos.row?.hermitCard) return 'NO'
+
+		// bed addition - hermit must also be active to attach
+		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'
+
+		return 'YES'
 	}
 
 	/**
@@ -20,25 +39,52 @@ class BedEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		// Give the current row sleeping for 3 turns
 		const {player, row} = pos
-		if (!row) return
+		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
 
-		player.hooks.onHermitDeath[instance] = (hermitPos) => {
-			if (hermitPos.rowIndex && hermitPos.rowIndex === pos.rowIndex) {
-				// Return the hermit card to your hand
-				const hermitCard = row.hermitCard
-				row.hermitCard = null
-				if (!hermitCard) return
-				player.hand.push(hermitCard)
+		if (row && row.hermitCard) {
+			row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
-				// Discard the rest of the row
-				discardCard(game, row.effectCard)
-				row.itemCards.forEach((itemCard) => discardCard(game, itemCard))
+			// Clear any previous sleeping
+			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 
-				// Remove the active row
-				player.board.activeRow = null
+			// Set new sleeping for 3 turns (2 + the current turn)
+			row.ailments.push({id: 'sleeping', duration: 3})
+		}
 
-				// Prevent actual death
-				return 'STOP'
+		// Knockback/Tango/Jevin/etc
+		player.hooks.onTurnStart[instance] = () => {
+			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
+			if (!isSleeping) {
+				discardCard(game, row?.effectCard || null)
+				return
+			}
+		}
+
+		player.hooks.beforeApply[instance] = (pickedSlots, modalResult) => {
+			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
+		}
+
+		//Ladder
+		player.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
+			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
+				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
+
+				// Clear any previous sleeping
+				row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
+
+				// Set new sleeping for 3 turns (2 + the current turn)
+				row.ailments.push({id: 'sleeping', duration: 3})
+			}
+			delete player.custom[hermitSlot]
+		}
+
+		player.hooks.onTurnEnd[instance] = () => {
+			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
+
+			// if sleeping has worn off, discard the bed
+			if (!isSleeping) {
+				discardCard(game, row?.effectCard || null)
+				delete player.hooks.onTurnEnd[instance]
 			}
 		}
 	}
@@ -46,11 +92,15 @@ class BedEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onHermitDeath[instance]
+		delete player.hooks.onTurnEnd[instance]
+		delete player.hooks.onTurnStart[instance]
+		delete player.hooks.beforeApply[instance]
+		delete player.hooks.afterApply[instance]
+		delete player.custom[this.getInstanceKey(instance, 'hermitSlot')]
 	}
 }
 
