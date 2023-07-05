@@ -54,8 +54,10 @@ class RenbobRareHermitCard extends HermitCard {
 
 		const attacks = [attack]
 
-		const weaknessAttack = createWeaknessAttack(attack)
-		if (weaknessAttack) attacks.push(weaknessAttack)
+		if (attack.isType('primary', 'secondary')) {
+			const weaknessAttack = createWeaknessAttack(attack)
+			if (weaknessAttack) attacks.push(weaknessAttack)
+		}
 
 		return attacks
 	}
