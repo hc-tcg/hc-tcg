@@ -8,7 +8,6 @@ import TotemEffectCard from './totem'
 import BedEffectCard from './bed'
 import ThornsEffectCard from './thorns'
 import LoyaltyEffectCard from './loyalty'
-import LootingEffectCard from './looting'
 import StringEffectCard from './string'
 import TurtleShellEffectCard from './turtle-shell'
 import EffectCard from './_effect-card'
@@ -32,7 +31,6 @@ const EFFECT_CARDS = [
 	new TotemEffectCard(),
 	new ThornsEffectCard(),
 	new LoyaltyEffectCard(),
-	new LootingEffectCard(),
 	new WaterBucketEffectCard(),
 	new MilkBucketEffectCard(),
 
