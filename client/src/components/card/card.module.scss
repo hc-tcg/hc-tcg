@@ -5,6 +5,7 @@
 	font-family: BangersBold, Helvetica, serif;
 	user-select: none;
 	border: 2px solid transparent;
+	cursor: pointer;
 
 	&:disabled {
 		filter: brightness(0.5);

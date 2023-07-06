@@ -1,7 +1,10 @@
 import Modal from 'components/modal'
-import {useDispatch} from 'react-redux'
-import css from './confirm-modal.module.css'
+import {useDispatch, useSelector} from 'react-redux'
+// import css from './confirm-modal.module.css'
+import css from './game-modals.module.scss'
 import Button from 'components/button'
+import {getPlayerState} from 'logic/game/game-selectors'
+import CARDS from 'server/cards'
 
 type Props = {
 	closeModal: () => void
@@ -19,20 +22,28 @@ function BorrowModal({closeModal}: Props) {
 		closeModal()
 	}
 
+	const getBorrowedCard = () => {
+		const playerState = useSelector(getPlayerState)
+		if (!playerState) return null
+
+		const custom = Object.values(playerState.custom)
+		if (!custom.length) return null
+
+		const borrowedId = custom[0].cardId
+		const borrowedName = CARDS[borrowedId].name
+
+		return borrowedName
+	}
+
 	return (
-		<Modal title="Borrow">
-			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Do you wish to attach the "borrowed" card or discard it?
-				</div>
-				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleAttach}>
-						Attach
-					</Button>
-					<Button variant="primary" size="small" onClick={handleDiscard}>
-						Discard
-					</Button>
-				</div>
+		<Modal title="Borrow" closeModal={handleDiscard}>
+			<div className={css.description}>
+				Would you like to attach or discard your opponents' {getBorrowedCard()}{' '}
+				card?
+			</div>
+			<div className={css.options}>
+				<Button onClick={handleAttach}>Attach</Button>
+				<Button onClick={handleDiscard}>Discard</Button>
 			</div>
 		</Modal>
 	)
