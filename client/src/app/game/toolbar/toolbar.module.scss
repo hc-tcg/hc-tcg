@@ -6,13 +6,17 @@
 	background: var(--gray-700);
 	border-bottom: 1px solid #aaa;
 	padding: 1vh;
-}
 
-button {
-	cursor: pointer;
+	span {
+		font-family: Minecraft;
+	}
 
-	&:hover {
-		background: var(--gray-500);
+	button {
+		cursor: pointer;
+
+		&:hover {
+			background: var(--gray-500);
+		}
 	}
 }
 
