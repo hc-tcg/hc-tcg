@@ -12,7 +12,7 @@ class DiamondArmorEffectCard extends EffectCard {
 			id: 'diamond_armor',
 			name: 'Diamond Armor',
 			rarity: 'rare',
-			description: 'Prevent up to 30hp damage taken.',
+			description: 'Prevent up to 30hp damage each turn.',
 		})
 	}
 
@@ -22,7 +22,7 @@ class DiamondArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
@@ -41,12 +41,15 @@ class DiamondArmorEffectCard extends EffectCard {
 			}
 		}
 
-		// Reset counter at the start of our turn
-		player.hooks.onTurnStart[instance] = () => {
+		const resetCounter = () => {
 			if (player.custom[instanceKey] !== undefined) {
 				delete player.custom[instanceKey]
 			}
 		}
+
+		// Reset counter at the start of every turn
+		player.hooks.onTurnStart[instance] = resetCounter
+		opponentPlayer.hooks.onTurnStart[instance] = resetCounter
 	}
 
 	/**
@@ -55,9 +58,10 @@ class DiamondArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		delete player.hooks.onDefence[instance]
 		delete player.hooks.onTurnStart[instance]
+		delete opponentPlayer.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
