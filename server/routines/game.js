@@ -104,8 +104,6 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 
 	const isSlow = activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
 
-	if (!hasNoHermit && hasEffectInHand) actions.push('PLAY_EFFECT_CARD')
-
 	if (activeRow !== null) {
 		if (turn > 1) {
 			const hermitId = rows[activeRow]?.hermitCard?.cardId
@@ -140,8 +138,27 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 		}
 	}
 
-	if (!pastTurnActions.includes('PLAY_ITEM_CARD') && !hasNoHermit && hasItemInHand)
+	let hasEmptyEffectSlot = false
+	let hasEmptyItemSlot = false
+	for (let i = 0; i < rows.length; i++) {
+		if (!rows[i].hermitCard) continue
+		hasEmptyEffectSlot = hasEmptyEffectSlot || !rows[i].effectCard
+		hasEmptyItemSlot =
+			hasEmptyItemSlot ||
+			rows[i].itemCards.some((value) => {
+				return !value
+			})
+	}
+
+	if (
+		!pastTurnActions.includes('PLAY_ITEM_CARD') &&
+		!hasNoHermit &&
+		hasItemInHand &&
+		hasEmptyItemSlot
+	)
 		actions.push('PLAY_ITEM_CARD')
+
+	if (!hasNoHermit && hasEffectInHand && hasEmptyEffectSlot) actions.push('PLAY_EFFECT_CARD')
 
 	if (
 		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
