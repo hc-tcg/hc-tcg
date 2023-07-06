@@ -41,6 +41,11 @@
 
 	img {
 		filter: brightness(0.1);
+		cursor: pointer;
+
+		&:hover {
+			filter: brightness(2);
+		}
 	}
 }
 
@@ -49,7 +54,7 @@
 	flex-flow: row nowrap;
 	flex: 0 0 auto;
 
-	input {
+	> input {
 		flex: 1 1 auto;
 		height: 2rem;
 		width: 0;
@@ -58,8 +63,8 @@
 		color: var(--text-light);
 	}
 
-	button {
-		height: 1.7rem;
+	> button {
+		height: 2rem;
 		flex: 0 0 auto;
 		padding-inline: 1rem;
 	}
