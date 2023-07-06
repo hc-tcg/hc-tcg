@@ -27,7 +27,7 @@ class KeralisRareHermitCard extends HermitCard {
 				{
 					target: 'board',
 					slot: ['hermit'],
-					type: ['hermit'],
+					type: ['hermit', 'effect'],
 					amount: 1,
 					active: false,
 				},
@@ -55,13 +55,16 @@ class KeralisRareHermitCard extends HermitCard {
 			if (!rowState.hermitCard) return
 
 			const hermitInfo = HERMIT_CARDS[rowState.hermitCard.cardId]
-			if (!hermitInfo) return
-
-			// Heal
-			rowState.health = Math.min(
-				rowState.health + 100,
-				hermitInfo.health // Max health
-			)
+			if (hermitInfo) {
+				// Heal
+				rowState.health = Math.min(
+					rowState.health + 100,
+					hermitInfo.health // Max health
+				)
+			} else {
+				// Armor Stand
+				rowState.health += 100
+			}
 		}
 	}
 

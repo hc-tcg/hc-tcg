@@ -15,7 +15,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 				{
 					target: 'player',
 					slot: ['hermit'],
-					type: ['hermit'],
+					type: ['hermit', 'effect'],
 					amount: 1,
 					active: false,
 				},
@@ -40,7 +40,12 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			const card = row.hermitCard
 			if (!card) return
 			const hermitInfo = HERMIT_CARDS[card.cardId]
-			row.health = Math.min(row.health + 100, hermitInfo.health)
+			if (hermitInfo) {
+				row.health = Math.min(row.health + 100, hermitInfo.health)
+			} else {
+				// Armor Stand
+				row.health += 100
+			}
 		}
 	}
 

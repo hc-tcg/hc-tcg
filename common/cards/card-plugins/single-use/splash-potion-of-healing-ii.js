@@ -32,9 +32,13 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 			for (let row of player.board.rows) {
 				if (!row.hermitCard) continue
-				const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
-				if (!currentRowInfo) continue
-				row.health = Math.min(row.health + 30, currentRowInfo.health)
+				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+				if (hermitInfo) {
+					row.health = Math.min(row.health + 30, hermitInfo.health)
+				} else {
+					// Armor Stand
+					row.health += 30
+				}
 			}
 		}
 	}

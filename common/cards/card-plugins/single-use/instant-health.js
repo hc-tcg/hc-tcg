@@ -31,7 +31,12 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			const card = row.hermitCard
 			if (!card) return
 			const hermitInfo = HERMIT_CARDS[card.cardId]
-			row.health = Math.min(row.health + 30, hermitInfo.health)
+			if (hermitInfo) {
+				row.health = Math.min(row.health + 30, hermitInfo.health)
+			} else {
+				// Armor Stand
+				row.health += 30
+			}
 		}
 	}
 

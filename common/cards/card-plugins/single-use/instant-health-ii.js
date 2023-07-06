@@ -1,6 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
+import e from 'cors'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {
@@ -31,7 +32,12 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			const card = row.hermitCard
 			if (!card) return
 			const hermitInfo = HERMIT_CARDS[card.cardId]
-			row.health = Math.min(row.health + 60, hermitInfo.health)
+			if (hermitInfo) {
+				row.health = Math.min(row.health + 60, hermitInfo.health)
+			} else {
+				// Armor Stand
+				row.health += 60
+			}
 		}
 	}
 
