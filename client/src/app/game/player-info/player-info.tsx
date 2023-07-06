@@ -45,20 +45,12 @@ function PlayerInfo({player, direction}: Props) {
 		return hearts
 	}
 
-	// const randomAbilities = Object.entries(HERMIT_CARDS)
-	// 	.map(([key]) => HERMIT_CARDS[key].primary.name)
-	// 	.concat(
-	// 		Object.entries(HERMIT_CARDS).map(
-	// 			([key]) => HERMIT_CARDS[key].secondary.name
-	// 		)
-	// 	)
-
-	// const randomAbility =
-	// 	randomAbilities[Math.floor(Math.random() * randomAbilities.length)]
-
 	const connected = player.id === playerId ? playerConnected : opponentConnected
 	const thisPlayer = gameState.currentPlayerId === player.id
 	const headDirection = direction === 'left' ? 'right' : 'left'
+	const playerTag = '' // TODO: Implement player tags...
+	// Player tags ideally would be a list of predetermined phrases
+	// or attack moves that users would select from the main menu.
 
 	return (
 		<div
@@ -79,7 +71,7 @@ function PlayerInfo({player, direction}: Props) {
 					{getName(player)}
 				</h1>
 				<p className={css.tag}>
-					{!connected ? 'Player Disconnected' : 'Chuffed to Bits'}
+					{!connected ? 'Player Disconnected' : playerTag}
 				</p>
 			</div>
 
