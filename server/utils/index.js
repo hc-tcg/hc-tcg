@@ -533,8 +533,8 @@ export function printHooksState(game) {
 					hooks: [],
 					card: cardsInfo[instance].card,
 					player: cardsInfo[instance].player,
-					slot: pos?.slot || null,
-					row: pos?.rowIndex || null,
+					slot: pos?.slot,
+					row: pos?.rowIndex,
 				}
 
 				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
@@ -617,7 +617,7 @@ export function printHooksState(game) {
 			: colorize('DETACHED', 'brightRed') + colorize(colorize('!', 'blink'), 'brightRed')
 		const slotIndex = slot?.type === 'item' ? ':' + slot.index : ''
 		const slotType = slot?.type ? slot.type : ''
-		const rowIndex = row ? 'Row: ' + row + ' - ' : ''
+		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
 
 		console.log(
 			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
