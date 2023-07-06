@@ -98,6 +98,10 @@ class ArmorStandEffectCard extends EffectCard {
 	getExpansion() {
 		return 'alter_egos'
 	}
+
+	isAttachable() {
+		return false
+	}
 }
 
 export default ArmorStandEffectCard

@@ -61,6 +61,10 @@ class EffectCard extends Card {
 		// default
 		return true
 	}
+
+	isAttachable() {
+		return true
+	}
 }
 
 export default EffectCard

@@ -135,7 +135,7 @@ const getRank = (
 const getAttach = (
 	card: HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard
 ): React.ReactNode => {
-	if (!(card instanceof EffectCard)) return null
+	if (!card.isAttachable()) return null
 	return <div className={css.attach}>Attach</div>
 }
 
