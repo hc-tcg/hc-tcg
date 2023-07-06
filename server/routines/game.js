@@ -140,14 +140,32 @@ function getAvailableActions(game, pastTurnActions, availableEnergy) {
 		}
 	}
 
-	if (!pastTurnActions.includes('PLAY_ITEM_CARD') && !hasNoHermit && hasItemInHand)
+	let hasEmptyEffectSlot = false
+	let hasEmptyItemSlot = false
+	for (let i = 0; i < rows.length; i++) {
+		if (!rows[i].hermitCard) continue
+		hasEmptyEffectSlot = hasEmptyEffectSlot || !rows[i].effectCard
+		hasEmptyItemSlot =
+			hasEmptyItemSlot ||
+			rows[i].itemCards.filter((item) => {
+				return !item
+			}).length === 0
+	}
+
+	if (
+		!pastTurnActions.includes('PLAY_ITEM_CARD') &&
+		!hasNoHermit &&
+		hasItemInHand &&
+		hasEmptyItemSlot
+	)
 		actions.push('PLAY_ITEM_CARD')
 
 	if (
 		!pastTurnActions.includes('PLAY_SINGLE_USE_CARD') &&
 		!hasNoHermit &&
 		!currentPlayer.board.singleUseCard &&
-		hasSingleUseInHand
+		hasSingleUseInHand &&
+		hasEmptyEffectSlot
 	)
 		actions.push('PLAY_SINGLE_USE_CARD')
 
