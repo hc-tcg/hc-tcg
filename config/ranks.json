@@ -71,8 +71,8 @@
 	"mumbojumbo_common": 0,
 	"tangotek_common": 0,
 	"zedaphplays_common": 0,
+	"xisumavoid_rare": 2,
 	"ethoslab_rare": 3,
-	"xisumavoid_rare": 3,
 	"impulsesv_rare": 3,
 
 	"SPEEDRUNNER": "",
@@ -124,11 +124,11 @@
 	"shield": 2,
 	"tnt": 2,
 	"bed": 2,
+	"splash_potion_of_poison": 2,
 
 	"diamond_armor": 3,
 	"lava_bucket": 3,
 	"netherite_sword": 3,
-	"splash_potion_of_poison": 3,
 	"totem": 3,
 
 	"clock": 4,
