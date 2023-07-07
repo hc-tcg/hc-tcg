@@ -124,6 +124,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 				const weaknessAttack = createWeaknessAttack(attack)
 				if (weaknessAttack) newAttacks.push(weaknessAttack)
+
+				delete player.custom['opponent-attack']
+				delete opponentPlayer.hooks.beforeAttack[instance]
 			}
 
 			opponentPlayer.hooks.onAttack[instance] = (attack) => {
@@ -158,18 +161,19 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
+				const isSleeping = opponentActiveRow.row.ailments.some((a) => a.id === 'sleeping')
+				if (isSleeping) return blockedActions
+
 				if (
-					hasEnoughEnergy(energyTypes, activeHermitInfo.primary.cost) ||
-					hasEnoughEnergy(energyTypes, activeHermitInfo.secondary.cost)
+					!hasEnoughEnergy(energyTypes, activeHermitInfo.primary.cost) &&
+					!hasEnoughEnergy(energyTypes, activeHermitInfo.secondary.cost)
 				) {
-					blockedActions.push('END_TURN')
+					return blockedActions
 				}
 
-				return blockedActions
-			}
+				blockedActions.push('END_TURN')
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
-				delete player.custom[instance]
+				return blockedActions
 			}
 		}
 
