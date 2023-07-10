@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
 
 class ThornsEffectCard extends EffectCard {
@@ -9,7 +10,8 @@ class ThornsEffectCard extends EffectCard {
 			id: 'thorns',
 			name: 'Thorns',
 			rarity: 'common',
-			description: 'Opponent takes 10hp damage after their attack.',
+			description:
+				'When the hermit this card is attached to takes damage, your opponent takes 20hp damage.',
 		})
 	}
 
@@ -17,7 +19,7 @@ class ThornsEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {opponentPlayer} = pos
@@ -32,7 +34,7 @@ class ThornsEffectCard extends EffectCard {
 					target: attack.attacker,
 					type: 'effect',
 					isBacklash: true,
-				}).addDamage(this.id, 10)
+				}).addDamage(this.id, 20)
 
 				attack.addNewAttack(backlashAttack)
 			}
@@ -45,7 +47,7 @@ class ThornsEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.opponentPlayer.hooks.onAttack[instance]

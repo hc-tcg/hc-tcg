@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {PickResultT} from 'common/types/pick-process'
 import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {runPickProcessSaga} from './pick-process-saga'
-import {getPlayerState} from 'logic/game/game-selectors'
+import {getPlayerState, getOpponentState} from 'logic/game/game-selectors'
 // TODO - get rid of app game-selectors
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../../app/game/game-selectors'
 import {attack, startAttack} from '../game-actions'
@@ -14,6 +14,7 @@ type AttackAction = ReturnType<typeof startAttack>
 export function* attackSaga(action: AttackAction): SagaIterator {
 	const {type, extra} = action.payload
 	const playerState = yield* select(getPlayerState)
+	const opponentState = yield* select(getOpponentState)
 	const activeRow = yield* select(getPlayerActiveRow)
 	const opponentActiveRow = yield* select(getOpponentActiveRow)
 	if (!playerState || !activeRow || !activeRow.hermitCard) return
@@ -49,6 +50,16 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 			cardInfo.pickReqs
 		)
 		if (!result[cardId]) return
+	}
+
+	const opponentAttackPick = opponentState?.custom['opponent-attack']
+	if (opponentAttackPick) {
+		result[opponentAttackPick.cardId] = yield call(
+			runPickProcessSaga,
+			opponentAttackPick.name,
+			opponentAttackPick.pickReqs
+		)
+		if (!result[opponentAttackPick.cardId]) return
 	}
 
 	yield put(attack(type, result, extra))

@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /*
@@ -36,18 +37,18 @@ class TurtleShellEffectCard extends EffectCard {
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
-				'Attach to any of your afk hermits. When the hermit is made active, it prevents any damage for its first turn and then is discarded.',
+				"Attach to any of your AFK Hermits. When that Hermit becomes active, this card prevents any damage done by your opponent for that Hermit's first turn, and is then discarded.",
 		})
 	}
 
 	/**
 	 * @param {GameModel} game
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slot.type !== 'effect') return 'INVALID'
+		if (!pos.slot || pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'NO'
@@ -61,10 +62,10 @@ class TurtleShellEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		// Store whether we blocked any damage
@@ -74,6 +75,8 @@ class TurtleShellEffectCard extends EffectCard {
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, pos)) return
+			// Do not block backlash attacks
+			if (attack.isBacklash) return
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
@@ -83,7 +86,7 @@ class TurtleShellEffectCard extends EffectCard {
 			}
 		}
 
-		player.hooks.afterDefence[instance] = (attack) => {
+		opponentPlayer.hooks.onTurnEnd[instance] = () => {
 			if (player.custom[instanceKey] === true) {
 				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
@@ -94,7 +97,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.player.hooks.onDefence[instance]

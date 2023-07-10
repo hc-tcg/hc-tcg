@@ -64,15 +64,15 @@
 	"xbcrafted_common": 0,
 	"welsknight_rare": 2,
 	"zombiecleo_rare": 3,
-	"ethoslab_ultra_rare": 4,
+	"ethoslab_ultra_rare": 3,
 
 	"REDSTONE": "",
 	"docm77_common": 0,
 	"mumbojumbo_common": 0,
 	"tangotek_common": 0,
 	"zedaphplays_common": 0,
+	"xisumavoid_rare": 2,
 	"ethoslab_rare": 3,
-	"xisumavoid_rare": 3,
 	"impulsesv_rare": 3,
 
 	"SPEEDRUNNER": "",
@@ -87,22 +87,21 @@
 
 	" - EFFECTS - ": "",
 
+	"composter": 0,
 	"curse_of_binding": 0,
 	"gold_armor": 0,
 	"instant_health": 0,
 	"iron_sword": 0,
 	"invisibility_potion": 0,
 	"knockback": 0,
-	"looting": 0,
 	"loyalty": 0,
 	"milk_bucket": 0,
 	"splash_potion_of_healing": 0,
-	"thorns": 0,
 	"water_bucket": 0,
+	"wolf": 0,
 
 	"bow": 1,
 	"chorus_fruit": 1,
-	"composter": 1,
 	"crossbow": 1,
 	"curse_of_vanishing": 1,
 	"diamond_sword": 1,
@@ -112,8 +111,9 @@
 	"lead": 1,
 	"mending": 1,
 	"spyglass": 1,
+	"looting": 1,
+	"thorns": 1,
 
-	"bed": 2,
 	"chest": 2,
 	"emerald": 2,
 	"fishing_rod": 2,
@@ -123,16 +123,16 @@
 	"iron_armor": 2,
 	"shield": 2,
 	"tnt": 2,
-	"wolf": 2,
+	"bed": 2,
+	"splash_potion_of_poison": 2,
 
 	"diamond_armor": 3,
-	"netherite_sword": 3,
 	"lava_bucket": 3,
-	"splash_potion_of_poison": 3,
+	"netherite_sword": 3,
+	"totem": 3,
 
 	"clock": 4,
 	"netherite_armor": 4,
-	"totem": 4,
 
 	" - ITEMS - ": "",
 
@@ -181,22 +181,23 @@
 	"fire_charge": 0,
 	"piston": 0,
 
+	"bad_omen": 1,
 	"chainmail_armor": 1,
 	"egg": 1,
 	"splash_potion_of_healing_ii": 1,
 	"target_block": 1,
-	"thorns_ii": 1,
 	"turtle_shell": 1,
 
 	"armor_stand": 2,
-	"bad_omen": 2,
+	"ladder": 2,
 	"lightning_rod": 2,
 	"potion_of_slowness": 2,
 	"potion_of_weakness": 2,
 	"string": 2,
 	"sweeping_edge": 2,
-	"thorns_iii": 2,
 	"trident": 2,
 
-	"ladder": 3
+	"thorns_ii": 3,
+
+	"thorns_iii": 4
 }

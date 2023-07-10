@@ -3,7 +3,6 @@ import {useSelector, useDispatch} from 'react-redux'
 import classnames from 'classnames'
 import CoinFlip from 'components/coin-flip'
 import {LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
-import {PickedSlotT} from 'common/types/pick-process'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -19,7 +18,9 @@ import BoardRow from './board-row'
 import PlayerInfo from './player-info'
 import Timer from './timer'
 import Button from 'components/button'
-import CARDS, {SINGLE_USE_CARDS} from 'common/cards'
+import {PickedSlotT} from 'common/types/pick-process'
+import {CARDS} from 'common/cards/card-plugins'
+import {SINGLE_USE_CARDS} from 'common/cards'
 
 // TODO - Don't allow clicking on slots on the other side
 
@@ -62,8 +63,11 @@ function Board({onClick, localGameState}: Props) {
 		})
 	}
 
+	const noAvailableActions = () =>
+		availableActions.length === 1 && availableActions[0] === 'END_TURN'
+
 	const handleEndTurn = () => {
-		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+		if (noAvailableActions() || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
 		} else {
 			dispatch(setOpenedModal('end-turn'))
@@ -101,7 +105,7 @@ function Board({onClick, localGameState}: Props) {
 
 		return (
 			<Button
-				variant="default"
+				variant={noAvailableActions() ? 'primary' : 'default'}
 				size="small"
 				onClick={handleEndTurn}
 				disabled={!availableActions.includes('END_TURN')}

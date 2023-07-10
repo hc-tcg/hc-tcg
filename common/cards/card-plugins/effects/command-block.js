@@ -1,11 +1,9 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {HERMIT_CARDS} from '../../../../common/cards'
-import {hasEnoughEnergy} from '../../../../server/utils'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
- * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class CommandBlockEffectCard extends EffectCard {

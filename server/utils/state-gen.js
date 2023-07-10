@@ -176,15 +176,18 @@ export function getPlayerState(player) {
 	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
 	const hand = pack.slice(0, amountOfStartingCards)
 
-	DEBUG_CONFIG.extraStartingCards.forEach((id) => {
+	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+		const id = DEBUG_CONFIG.extraStartingCards[i]
 		const card = CARDS[id]
-		if (!!card) {
-			hand.unshift({
-				cardId: id,
-				cardInstance: Math.random().toString(),
-			})
+		if (!card) continue
+
+		const cardInfo = {
+			cardId: id,
+			cardInstance: Math.random().toString(),
 		}
-	})
+		pack.push(cardInfo)
+		hand.unshift(cardInfo)
+	}
 
 	const TOTAL_ROWS = 5
 	return {
@@ -235,6 +238,7 @@ export function getPlayerState(player) {
 
 			onTurnStart: {},
 			onTurnEnd: {},
+			onTurnTimeout: {},
 
 			onCoinFlip: {},
 		},

@@ -1,10 +1,7 @@
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
 import EffectCard from './_effect-card'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
 
 class IronArmorEffectCard extends EffectCard {
 	constructor() {
@@ -12,7 +9,7 @@ class IronArmorEffectCard extends EffectCard {
 			id: 'iron_armor',
 			name: 'Iron Armor',
 			rarity: 'common',
-			description: 'Prevent up to 20hp damage taken.',
+			description: 'Prevent up to 20hp damage each turn.',
 		})
 	}
 
@@ -22,7 +19,7 @@ class IronArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
@@ -41,12 +38,15 @@ class IronArmorEffectCard extends EffectCard {
 			}
 		}
 
-		// Reset counter at the start of our turn
-		player.hooks.onTurnStart[instance] = () => {
+		const resetCounter = () => {
 			if (player.custom[instanceKey] !== undefined) {
 				delete player.custom[instanceKey]
 			}
 		}
+
+		// Reset counter at the start of every turn
+		player.hooks.onTurnStart[instance] = resetCounter
+		opponentPlayer.hooks.onTurnStart[instance] = resetCounter
 	}
 
 	/**
@@ -55,9 +55,10 @@ class IronArmorEffectCard extends EffectCard {
 	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		delete player.hooks.onDefence[instance]
 		delete player.hooks.onTurnStart[instance]
+		delete opponentPlayer.hooks.onTurnStart[instance]
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

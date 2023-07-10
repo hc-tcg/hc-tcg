@@ -1,5 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {
@@ -19,7 +20,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -47,7 +48,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

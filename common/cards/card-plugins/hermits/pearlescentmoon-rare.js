@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 // TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
@@ -30,69 +31,65 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
 		const status = this.getInstanceKey(instance, 'status')
-		player.custom[status] = 'normal'
+		player.custom[status] = 'none'
 
 		player.hooks.onAttack[instance] = (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+
 			if (player.custom[status] === 'missed') {
-				player.custom[status] = 'normal'
+				player.custom[status] = 'none'
 				return
 			}
-			if (attack.type !== 'secondary') return
 
 			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
-				if (!attack.isType('effect', 'ailment') && !attack.isBacklash) return
+				if (attack.isType('ailment', 'effect') || attack.isBacklash) return
 
-				// No need to flip a coin for multiple attacks
-				if (!player.custom[coinFlipResult]) {
+				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
+
+				// Only flip a coin once
+				if (!hasFlipped) {
 					const coinFlip = flipCoin(player, this.id, 1, opponentPlayer)
-					if (coinFlip[0] === 'tails') return
-					player.custom[coinFlipResult] = coinFlip[0]
-					player.custom[status] = 'missed'
+					player.custom[status] = coinFlip[0]
 				}
 
-				if (player.custom[coinFlipResult] === 'heads') {
+				if (player.custom[status] === 'heads') {
 					attack.multiplyDamage(this.id, 0).lockDamage()
 				}
 			}
 
 			opponentPlayer.hooks.onTurnEnd[instance] = () => {
-				const isPearlDead = pos.row?.hermitCard?.cardInstance !== instance
-				const isActive = opponentPlayer.board.activeRow === pos.rowIndex
-
-				if (isPearlDead || !isActive) {
-					player.custom[status] = 'normal'
+				if (player.custom[status] === 'heads') {
+					player.custom[status] = 'missed'
 				}
+
 				delete opponentPlayer.hooks.beforeAttack[instance]
 				delete opponentPlayer.hooks.onTurnEnd[instance]
-				delete player.custom[coinFlipResult]
 			}
 		}
 
 		// If the opponent missed the previous turn and we switch hermits or we don't
 		// attack this turn then we reset the status
 		player.hooks.onTurnEnd[instance] = () => {
-			if (player.custom[status] === 'missed') {
-				player.custom[status] = 'normal'
-			}
+			player.custom[status] = 'none'
 		}
 	}
 
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		delete player.hooks.onAttack[instance]
 		delete player.hooks.onTurnEnd[instance]
+		delete opponentPlayer.hooks.beforeAttack[instance]
+		delete opponentPlayer.hooks.onTurnEnd[instance]
 		delete player.custom[this.getInstanceKey(instance, 'status')]
 	}
 }

@@ -2,11 +2,8 @@ import SingleUseCard from './_single-use-card'
 import {flipCoin, getActiveRowPos, getNonEmptyRows} from '../../../../server/utils'
 import {applySingleUse} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
 
 class EggSingleUseCard extends SingleUseCard {
 	constructor() {

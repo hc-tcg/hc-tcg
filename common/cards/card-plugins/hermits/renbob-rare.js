@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
@@ -31,7 +32,7 @@ class RenbobRareHermitCard extends HermitCard {
 	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 * @returns {Array<AttackModel>}
@@ -39,7 +40,7 @@ class RenbobRareHermitCard extends HermitCard {
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
 		const {opponentPlayer} = pos
 		let attack = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)[0]
-		if (attack.type === 'secondary' && pos.rowIndex) {
+		if (attack.type === 'secondary' && pos.rowIndex !== null) {
 			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
 			if (opponentPlayerRow.hermitCard) {
 				attack.target = {
@@ -54,8 +55,10 @@ class RenbobRareHermitCard extends HermitCard {
 
 		const attacks = [attack]
 
-		const weaknessAttack = createWeaknessAttack(attack)
-		if (weaknessAttack) attacks.push(weaknessAttack)
+		if (attack.isType('primary', 'secondary')) {
+			const weaknessAttack = createWeaknessAttack(attack)
+			if (weaknessAttack) attacks.push(weaknessAttack)
+		}
 
 		return attacks
 	}

@@ -7,11 +7,11 @@ import {
 	canAttachToCard,
 } from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {swapSlots} from '../../../../server/utils/slots'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
- * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/cards').SlotPos} SlotPos
  */
 

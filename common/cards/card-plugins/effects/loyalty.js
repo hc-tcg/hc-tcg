@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {moveCardToHand} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 class LoyaltyEffectCard extends EffectCard {
 	constructor() {
@@ -16,7 +17,7 @@ class LoyaltyEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -39,7 +40,7 @@ class LoyaltyEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

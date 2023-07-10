@@ -3,9 +3,9 @@ import {isRemovable} from '../../../../server/utils'
 import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 import {canAttachToCard} from '../../../../server/utils'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 /**
- * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/cards').SlotPos} SlotPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
@@ -98,7 +98,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

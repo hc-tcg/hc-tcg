@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
-import {getCardPos} from '../../../../server/utils/cards'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {createWeaknessAttack} from '../../../../server/utils/attacks'
 import Card from '../_card'
 
@@ -45,7 +45,7 @@ class HermitCard extends Card {
 	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 * @returns {Array<AttackModel>}
@@ -84,21 +84,23 @@ class HermitCard extends Card {
 
 		const attacks = [attack]
 
-		const weaknessAttack = createWeaknessAttack(attack)
-		if (weaknessAttack) attacks.push(weaknessAttack)
+		if (attack.isType('primary', 'secondary')) {
+			const weaknessAttack = createWeaknessAttack(attack)
+			if (weaknessAttack) attacks.push(weaknessAttack)
+		}
 
 		return attacks
 	}
 
 	/**
 	 * @param {GameModel} game
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (pos.slot.type !== 'hermit') return 'INVALID'
+		if (!pos.slot || pos.slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		return 'YES'

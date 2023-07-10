@@ -1,10 +1,10 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import Card from '../_card'
 
 /**
  * @typedef {import('../../../types/cards').SingleUseDefs} SingleUseDefs
- * @typedef {import('../../../types/cards').CardPos} CardPos
  * @typedef {import('../../../types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -35,7 +35,7 @@ class SingleUseCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+		if (!pos.slot || pos.slot.type !== 'single_use') return 'INVALID'
 
 		return 'YES'
 	}

@@ -1,32 +1,16 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {CardPos} from '../../../../server/models/card-pos-model'
-import {drawCards} from '../../../../server/utils'
 
-/**
- * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
- */
-
-class FishingRodSingleUseCard extends SingleUseCard {
+class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'fishing_rod',
-			name: 'Fishing Rod',
-			rarity: 'ultra_rare',
-			description: 'Draw 2 cards.',
+			id: 'looting',
+			name: 'Looting',
+			rarity: 'rare',
+			description:
+				"At the end of the turn, draw a card from your opponent's deck instead of your own.",
 		})
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 */
-	canAttach(game, pos) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		const {player} = pos
-		if (player.pile.length <= 2) return 'NO'
-
-		return 'YES'
 	}
 
 	canApply() {
@@ -39,10 +23,15 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			drawCards(player, 2)
+			player.hooks.onTurnEnd[instance] = (drawCards) => {
+				const drawCard = opponentPlayer.pile.shift()
+				if (drawCard) drawCards.push(drawCard)
+
+				delete player.hooks.onTurnEnd[instance]
+			}
 		}
 	}
 
@@ -57,4 +46,4 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default FishingRodSingleUseCard
+export default LootingSingleUseCard

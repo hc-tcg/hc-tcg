@@ -1,10 +1,7 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {getActiveRow} from '../../../../server/utils'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
 
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -39,7 +36,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

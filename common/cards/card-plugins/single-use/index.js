@@ -40,6 +40,7 @@ import FireChargeSingleUseCard from './fire-charge'
 import PistonSingleUseCard from './piston'
 import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
 import TargetBlockSingleUseCard from './target-block'
+import LootingSingleUseCard from './looting'
 
 const SINGLE_USE_CARDS = [
 	new InstantHealthSingleUseCard(),
@@ -71,6 +72,7 @@ const SINGLE_USE_CARDS = [
 	new CurseOfBindingSingleUseCard(),
 	new CurseOfVanishingSingleUseCard(),
 	new MendingSingleUseCard(),
+	new LootingSingleUseCard(),
 
 	// AE Cards
 	new AnvilSingleUseCard(),

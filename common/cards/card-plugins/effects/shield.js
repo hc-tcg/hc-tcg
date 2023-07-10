@@ -1,11 +1,8 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
 
 class ShieldEffectCard extends EffectCard {
 	constructor() {
@@ -29,7 +26,7 @@ class ShieldEffectCard extends EffectCard {
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 
 		player.hooks.onDefence[instance] = (attack) => {
-			if (!isTargetingPos || attack.isType('ailment')) return
+			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0

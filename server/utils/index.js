@@ -95,7 +95,7 @@ export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 
 		for (const key of Object.keys(hook)) {
 			const cardPos = getCardPos(game, key)
-			if (cardPos && hooksByType[cardPos.slot.type]) {
+			if (cardPos && cardPos.slot && hooksByType[cardPos.slot.type]) {
 				hooksByType[cardPos.slot.type].push(hook[key])
 			} else {
 				// The card is no longer on the board, we can use the card type instead of the slot type
@@ -165,13 +165,13 @@ export function moveCardToHand(game, card, steal = false) {
 		onDetachs[i](card.cardInstance)
 	}
 
-	if (cardPos.row && cardPos.slot.type === 'hermit') {
+	if (cardPos.row && cardPos.slot?.type === 'hermit') {
 		cardPos.row.hermitCard = null
-	} else if (cardPos.row && cardPos.slot.type === 'effect') {
+	} else if (cardPos.row && cardPos.slot?.type === 'effect') {
 		cardPos.row.effectCard = null
-	} else if (cardPos.row && cardPos.slot.type === 'item') {
-		cardPos.row.itemCards[cardPos.slot.index] = null
-	} else if (cardPos.slot.type === 'single_use') {
+	} else if (cardPos.row && cardPos.slot?.type === 'item') {
+		cardPos.row.itemCards[cardPos.slot?.index] = null
+	} else if (cardPos.slot?.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
 	}
 
@@ -526,7 +526,7 @@ export function canAttachToCard(game, card, cardAttaching) {
 export function printHooksState(game) {
 	const {currentPlayer, opponentPlayer} = game.ds
 	const cardsInfo = {}
-	const instancesInfo = {}
+	let instancesInfo = {}
 	const customValues = {}
 
 	// First loop to populate cardsInfo
@@ -540,32 +540,40 @@ export function printHooksState(game) {
 	}
 
 	// Second loop to populate instancesInfo and customValues
-	for (const id in game.state.players) {
-		const player = game.state.players[id]
-
+	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
-		for (const hookName of Object.keys(player.hooks)) {
-			for (const instance of Object.keys(player.hooks[hookName])) {
+		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
+			Object.keys(hookValue).forEach((instance, i) => {
 				const pos = getCardPos(game, instance)
-				const inBoard = pos ? true : false
-				if (!instancesInfo[instance]) {
-					instancesInfo[instance] = {
-						board: inBoard,
-						hooks: [`${player.playerName}.${hookName}`],
-						card: cardsInfo[instance].card,
-						player: cardsInfo[instance].player,
-						slot: pos ? pos.slot : null,
-						row: pos ? pos.rowIndex : null,
-					}
-				} else {
-					instancesInfo[instance].hooks.push(`${player.playerName}.${hookName}`)
+				const inBoard = Boolean(pos)
+				const instanceEntry = instancesInfo[instance] || {
+					board: inBoard,
+					hooks: [],
+					card: cardsInfo[instance].card,
+					player: cardsInfo[instance].player,
+					slot: pos?.slot,
+					row: pos?.rowIndex,
 				}
-			}
+
+				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
+				instancesInfo[instance] = instanceEntry
+			})
 		}
 
+		// Sort by row
+		instancesInfo = Object.fromEntries(
+			Object.entries(instancesInfo).sort(([, valueA], [, valueB]) => {
+				let aRow = valueA.row
+				let bRow = valueB.row
+				if (aRow === null && bRow === null) return 0
+				if (aRow === null) return -1
+				if (bRow === null) return 1
+				return aRow - bRow
+			})
+		)
+
 		// Custom Values
-		for (const instanceKey in player.custom) {
-			const custom = player.custom[instanceKey]
+		for (const [instanceKey, custom] of Object.entries(player.custom)) {
 			const [id, instance, keyName] = instanceKey.split(':')
 			customValues[instance] = {id, value: custom, keyName}
 		}
@@ -627,7 +635,7 @@ export function printHooksState(game) {
 			: colorize('DETACHED', 'brightRed') + colorize(colorize('!', 'blink'), 'brightRed')
 		const slotIndex = slot?.type === 'item' ? ':' + slot.index : ''
 		const slotType = slot?.type ? slot.type : ''
-		const rowIndex = row ? 'Row: ' + row + ' - ' : ''
+		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
 
 		console.log(
 			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${

@@ -1,10 +1,7 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {getNonEmptyRows, isActionAvailable} from '../../../../server/utils'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
 
 class TangoTekRareHermitCard extends HermitCard {
 	constructor() {

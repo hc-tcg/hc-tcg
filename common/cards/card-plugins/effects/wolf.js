@@ -1,8 +1,10 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {getCardPos} from '../../../../server/utils/cards'
 import {isTargetingPos} from '../../../../server/utils/attacks'
+import {getActiveRowPos} from '../../../../server/utils'
 
 class WolfEffectCard extends EffectCard {
 	constructor() {
@@ -10,7 +12,8 @@ class WolfEffectCard extends EffectCard {
 			id: 'wolf',
 			name: 'Wolf',
 			rarity: 'rare',
-			description: 'Opponent takes 20hp damage after their attack.\n\nIgnores armour.',
+			description:
+				"For every hermit attacked on your opponent's turn, your opponent's active hermit takes 10hp damage.",
 		})
 	}
 
@@ -18,38 +21,44 @@ class WolfEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {opponentPlayer} = pos
+		const {player, opponentPlayer} = pos
+		const attackedRows = this.getInstanceKey(instance, 'attackedRows')
+
+		opponentPlayer.hooks.onTurnStart[instance] = () => {
+			// Clear the rows that were attacked
+			player.custom[attackedRows] = []
+		}
 
 		// Only on opponents turn
 		opponentPlayer.hooks.onAttack[instance] = (attack) => {
-			if (!attack.isType('primary', 'secondary', 'zero') || attack.isBacklash) return
+			if (attack.isType('ailment') || attack.isBacklash) return
 
-			if (attack.attacker && isTargetingPos(attack, pos)) {
-				const backlashAttack = new AttackModel({
-					id: this.getInstanceKey(instance, 'backlash'),
-					attacker: attack.target,
-					target: attack.attacker,
-					type: 'effect',
-					isBacklash: true,
-				}).addDamage(this.id, 20)
+			// Make sure they are targeting this player
+			if (!attack.target || attack.target.player.id !== player.id) return
 
-				backlashAttack.shouldIgnoreCards.push((instance) => {
-					const pos = getCardPos(game, instance)
-					if (!pos) return false
-					if (!pos.row?.effectCard) return false
+			// Make sure our row is active
+			const activeRow = getActiveRowPos(player)
+			if (!activeRow || activeRow.rowIndex !== pos.rowIndex) return
 
-					return ['diamond_armor', 'gold_armor', 'iron_armor', 'netherite_armor'].includes(
-						pos.row.effectCard.cardId
-					)
-				})
+			if (player.custom[attackedRows].includes(attack.target.rowIndex)) return
+			player.custom[attackedRows].push(attack.target.rowIndex)
 
-				attack.addNewAttack(backlashAttack)
-			}
+			// Add a backlash attack, targeting the opponent's active hermit.
+			// Note that the opponent active row could be null, but then the attack will just do nothing.
+			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 
-			return attack
+			const backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'backlash'),
+				attacker: activeRow,
+				target: opponentActiveRow,
+				type: 'effect',
+				isBacklash: true,
+			}).addDamage(this.id, 10)
+
+			attack.addNewAttack(backlashAttack)
 		}
 	}
 
@@ -57,10 +66,15 @@ class WolfEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.opponentPlayer.hooks.onAttack[instance]
+		const {player, opponentPlayer} = pos
+
+		// Delete hooks and custom
+		delete player.custom[this.getInstanceKey(instance, 'attackedRows')]
+		delete opponentPlayer.hooks.onTurnStart[instance]
+		delete opponentPlayer.hooks.onAttack[instance]
 	}
 }
 

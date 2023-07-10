@@ -1,6 +1,7 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 import CARDS from '../../../cards'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 class StringEffectCard extends EffectCard {
 	constructor() {
@@ -15,13 +16,13 @@ class StringEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {opponentPlayer} = game.ds
 
 		// attach to effect or item slot
-		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'INVALID'
+		if (!pos.slot || (pos.slot.type !== 'effect' && pos.slot.type !== 'item')) return 'INVALID'
 
 		// can only attach to opponent
 		if (pos.player.id !== opponentPlayer.id) return 'INVALID'

@@ -1,10 +1,7 @@
 import HermitCard from './_hermit-card'
 import {discardCard, flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 class JinglerRareHermitCard extends HermitCard {
 	constructor() {
