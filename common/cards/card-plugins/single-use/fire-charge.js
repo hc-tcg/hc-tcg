@@ -18,7 +18,14 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
 
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['item', 'effect'], amount: 1}],
+			pickReqs: [
+				{
+					target: 'player',
+					type: ['item', 'effect'],
+					slot: ['item', 'effect'],
+					amount: 1,
+				},
+			],
 		})
 	}
 

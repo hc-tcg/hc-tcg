@@ -24,7 +24,15 @@ class KeralisRareHermitCard extends HermitCard {
 				power: 'Heal any AFK Hermit for 100hp.',
 			},
 			pickOn: 'attack',
-			pickReqs: [{target: 'board', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [
+				{
+					target: 'board',
+					slot: ['hermit'],
+					type: ['hermit', 'effect'],
+					amount: 1,
+					active: false,
+				},
+			],
 		})
 	}
 
@@ -48,13 +56,16 @@ class KeralisRareHermitCard extends HermitCard {
 			if (!rowState.hermitCard) return
 
 			const hermitInfo = HERMIT_CARDS[rowState.hermitCard.cardId]
-			if (!hermitInfo) return
-
-			// Heal
-			rowState.health = Math.min(
-				rowState.health + 100,
-				hermitInfo.health // Max health
-			)
+			if (hermitInfo) {
+				// Heal
+				rowState.health = Math.min(
+					rowState.health + 100,
+					hermitInfo.health // Max health
+				)
+			} else {
+				// Armor Stand
+				rowState.health += 100
+			}
 		}
 	}
 

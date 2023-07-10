@@ -26,6 +26,7 @@ function AttackModal({closeModal}: Props) {
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
 	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
+	if (!playerHermitInfo) return null // Armor Stand
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null

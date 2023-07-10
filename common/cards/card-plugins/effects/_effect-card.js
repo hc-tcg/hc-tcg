@@ -2,6 +2,7 @@ import {AttackModel} from '../../../../server/models/attack-model'
 import {GameModel} from '../../../../server/models/game-model'
 import {CardPos} from '../../../../server/models/card-pos-model'
 import Card from '../_card'
+import CARDS from '../../../cards'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
@@ -45,6 +46,10 @@ class EffectCard extends Card {
 		// Can't attach without hermit card - this is considered like the wrong slot
 		if (!pos.row?.hermitCard) return 'INVALID'
 
+		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+		if (!cardInfo) return 'INVALID'
+		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+
 		return 'YES'
 	}
 
@@ -54,6 +59,10 @@ class EffectCard extends Card {
 	 */
 	getIsRemovable() {
 		// default
+		return true
+	}
+
+	isAttachable() {
 		return true
 	}
 }

@@ -15,7 +15,7 @@ class EggSingleUseCard extends SingleUseCard {
 				'After your attack, choose one of your opponent AFK Hermits to make active.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
 
 			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 

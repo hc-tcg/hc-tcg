@@ -17,7 +17,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			description:
 				'Do an additional 20hp damage to up to 3 Hermits of your choice.\n\nCan not apply the damage to the same Hermit more than once.',
 			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 3}],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 3}],
 		})
 	}
 

@@ -12,7 +12,7 @@ class WaterBucketEffectCard extends EffectCard {
 			description:
 				'Remove burn and String on active or AFK Hermit.\n\nOR can be attached to prevent burn.',
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
+			pickReqs: [{target: 'player', slot: ['hermit'], amount: 1}],
 		})
 	}
 

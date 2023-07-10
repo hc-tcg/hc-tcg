@@ -34,11 +34,18 @@ class HypnotizdRareHermitCard extends HermitCard {
 			pickReqs: [
 				{
 					target: 'opponent',
-					type: ['hermit'],
+					slot: ['hermit'],
 					amount: 1,
 					breakIf: ['active'],
+					active: false,
 				},
-				{target: 'player', type: ['item'], amount: 1, active: true},
+				{
+					target: 'player',
+					slot: ['item'],
+					type: ['item'],
+					amount: 1,
+					active: true,
+				},
 			],
 		})
 	}

@@ -95,6 +95,7 @@ class HermitCard extends Card {
 	/**
 	 * @param {GameModel} game
 	 * @param {CardPos} pos
+	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds

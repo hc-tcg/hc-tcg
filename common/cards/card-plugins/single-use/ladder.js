@@ -2,6 +2,7 @@ import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {CardPos} from '../../../../server/models/card-pos-model'
 import {swapSlots} from '../../../../server/utils/slots'
+import {isCardType} from '../../../../server/utils/cards'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
@@ -18,7 +19,15 @@ class LadderSingleUseCard extends SingleUseCard {
 				'Swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
 
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, adjacent: 'active'}],
+			pickReqs: [
+				{
+					target: 'player',
+					slot: ['hermit'],
+					type: ['hermit'],
+					amount: 1,
+					adjacent: 'active',
+				},
+			],
 		})
 	}
 
@@ -88,6 +97,7 @@ class LadderSingleUseCard extends SingleUseCard {
 		)
 		for (const index of adjacentRowsIndex) {
 			const row = playerBoard.rows[index]
+			if (!isCardType(row.hermitCard, 'hermit')) continue
 			if (row.hermitCard !== null) return 'YES'
 		}
 

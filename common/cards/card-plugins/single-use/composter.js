@@ -19,8 +19,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 			pickOn: 'apply',
 			pickReqs: [
 				{
-					target: 'hand',
-					type: ['hermit', 'effect', 'item', 'single_use'],
+					target: 'player',
+					slot: ['hand'],
 					amount: 2,
 				},
 			],

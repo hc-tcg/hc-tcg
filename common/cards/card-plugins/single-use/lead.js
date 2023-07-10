@@ -1,5 +1,11 @@
 import SingleUseCard from './_single-use-card'
-import {rowHasItem, getRowsWithEmptyItemsSlots} from '../../../../server/utils'
+import {
+	rowHasItem,
+	getRowsWithEmptyItemsSlots,
+	canAttachToCard,
+	getNonEmptyRows,
+	getActiveRow,
+} from '../../../../server/utils'
 import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
 import {CardPos} from '../../../../server/models/card-pos-model'
@@ -19,10 +25,16 @@ class LeadSingleUseCard extends SingleUseCard {
 				"Move 1 of your opponent's active Hermit item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.",
 			pickOn: 'apply',
 			pickReqs: [
-				{target: 'opponent', type: ['item'], amount: 1, active: true},
 				{
 					target: 'opponent',
+					slot: ['item'],
 					type: ['item'],
+					amount: 1,
+					active: true,
+				},
+				{
+					target: 'opponent',
+					slot: ['item'],
 					amount: 1,
 					empty: true,
 					active: false,
@@ -46,6 +58,10 @@ class LeadSingleUseCard extends SingleUseCard {
 			const itemCardInfo = slots[0]
 			const targetSlotInfo = slots[1]
 			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
+
+			const hermitCard = targetSlotInfo.row.state.hermitCard
+			const itemCard = itemCardInfo.slot.card
+			if (!canAttachToCard(game, hermitCard, itemCard)) return
 
 			/** @type {SlotPos} */ const itemPos = {
 				rowIndex: itemCardInfo.row.index,
@@ -78,12 +94,21 @@ class LeadSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const {opponentPlayer, opponentActiveRow} = game.ds
+		const {opponentPlayer} = pos
 
-		if (!opponentActiveRow || !rowHasItem(opponentActiveRow)) return 'NO'
-		if (getRowsWithEmptyItemsSlots(opponentPlayer, false).length === 0) return 'NO'
+		const activeRow = getActiveRow(opponentPlayer)
+		if (!activeRow || !rowHasItem(activeRow)) return 'NO'
+		const rowsWithEmptySlots = getRowsWithEmptyItemsSlots(opponentPlayer, false)
+		if (rowsWithEmptySlots.length === 0) return 'NO'
 
-		return 'YES'
+		// check if the effect card can be attached to any of the inactive hermits
+		for (const row of rowsWithEmptySlots) {
+			for (const item of activeRow.itemCards) {
+				if (canAttachToCard(game, row.hermitCard, item)) return 'YES'
+			}
+		}
+
+		return 'NO'
 	}
 
 	/**

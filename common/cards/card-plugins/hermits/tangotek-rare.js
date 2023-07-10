@@ -25,7 +25,7 @@ class TangoTekRareHermitCard extends HermitCard {
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
 			pickOn: 'followup',
-			pickReqs: [{target: 'opponent', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 

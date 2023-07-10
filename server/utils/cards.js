@@ -1,3 +1,4 @@
+import CARDS from '../../common/cards'
 import {GameModel} from '../models/game-model'
 import {CardPos} from '..//models/card-pos-model'
 
@@ -56,4 +57,47 @@ export function getCardPos(game, instance) {
 	}
 
 	return null
+}
+
+/**
+ * Get the card position on the board for a card instance
+ * @param {GameModel} game
+ * @param {import('../../common/types/cards').CardPos} pos
+ * @returns {CardT | null}
+ */
+export function getCardAtPos(game, pos) {
+	const {player, row, slot} = pos
+
+	const suCard = player.board.singleUseCard
+	if (slot.type === 'single_use' && suCard) {
+		return suCard
+	}
+
+	if (!row) return null
+
+	if (slot.type === 'hermit' && row.hermitCard) {
+		return row.hermitCard
+	}
+
+	if (slot.type === 'effect' && row.effectCard) {
+		return row.effectCard
+	}
+
+	if (slot.type === 'item' && row.itemCards[slot.index]) {
+		return row.itemCards[slot.index] || null
+	}
+
+	return null
+}
+
+/**
+ * Check if card is the type of card
+ * @param {CardT | null} card
+ * @param {CardTypeT} type
+ * @returns {boolean}
+ */
+export function isCardType(card, type) {
+	if (!card) return false
+	const cardInfo = CARDS[card.cardId]
+	return cardInfo.type === type
 }

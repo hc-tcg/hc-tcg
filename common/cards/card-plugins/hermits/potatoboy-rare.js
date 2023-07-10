@@ -46,9 +46,13 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			targetRows.forEach((row) => {
 				if (!row.hermitCard) return
-				const currentRowInfo = HERMIT_CARDS[row.hermitCard.cardId]
-				if (!currentRowInfo) return
-				row.health = Math.min(row.health + 40, currentRowInfo.health)
+				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+				if (hermitInfo) {
+					row.health = Math.min(row.health + 40, hermitInfo.health)
+				} else {
+					// Armor Stand
+					row.health += 40
+				}
 			})
 		}
 	}

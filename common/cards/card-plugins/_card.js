@@ -62,6 +62,17 @@ class Card {
 	}
 
 	/**
+	 * If this card is attached to a Hermit slot, can another card be attached to the row this card is in
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 * @returns {boolean}
+	 */
+	canAttachToCard(game, pos) {
+		// default is true
+		return true
+	}
+
+	/**
 	 * Called when an instance of this card is attached to the board
 	 * @param {GameModel} game
 	 * @param {string} instance
@@ -69,14 +80,6 @@ class Card {
 	 */
 	onAttach(game, instance, pos) {
 		// default is do nothing
-	}
-
-	/**
-	 * Returns the expansion this card is a part of
-	 * @returns {string}
-	 */
-	getExpansion() {
-		return 'default'
 	}
 
 	/**
@@ -90,11 +93,27 @@ class Card {
 	}
 
 	/**
+	 * Returns the expansion this card is a part of
+	 * @returns {string}
+	 */
+	getExpansion() {
+		return 'default'
+	}
+
+	/**
 	 * Returns the palette to use for this card
 	 * @returns {string}
 	 */
 	getPalette() {
 		return 'default'
+	}
+
+	/**
+	 * Returns whether this card is attachable to the Effect slot
+	 * @returns {boolean}
+	 */
+	isAttachable() {
+		return false
 	}
 }
 

@@ -11,7 +11,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description: 'Heal active or AFK Hermit 30hp.',
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1}],
+			pickReqs: [{target: 'player', slot: ['hermit', 'effect'], type: ['hermit'], amount: 1}],
 		})
 	}
 
@@ -32,7 +32,12 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			const card = row.hermitCard
 			if (!card) return
 			const hermitInfo = HERMIT_CARDS[card.cardId]
-			row.health = Math.min(row.health + 30, hermitInfo.health)
+			if (hermitInfo) {
+				row.health = Math.min(row.health + 30, hermitInfo.health)
+			} else {
+				// Armor Stand
+				row.health += 30
+			}
 		}
 	}
 

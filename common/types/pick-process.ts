@@ -1,6 +1,6 @@
 import Card from '../cards/card-plugins/_card'
-import {Slot} from './cards'
 import {CardT, RowState} from './game-state'
+import {CardTypeT} from './cards'
 
 export type SlotTypeT = 'item' | 'effect' | 'hermit' | 'health' | 'hand' | 'single_use'
 
@@ -17,10 +17,12 @@ export type RowInfo = {
 }
 
 export type PickRequirmentT = {
-	target: 'player' | 'opponent' | 'board' | 'hand'
-	type: Array<SlotTypeT>
+	target: 'player' | 'opponent' | 'board'
+	slot: Array<SlotTypeT>
 	amount: number
+	type?: Array<CardTypeT>
 	empty?: boolean
+	emptyRow?: boolean
 	active?: boolean
 	breakIf?: Array<'active' | 'efficiency'>
 	removable?: boolean

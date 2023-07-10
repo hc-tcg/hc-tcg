@@ -29,7 +29,15 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				power: 'Use a secondary attack from any of your AFK Hermits.',
 			},
 			pickOn: 'attack',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [
+				{
+					target: 'player',
+					slot: ['hermit'],
+					type: ['hermit'],
+					amount: 1,
+					active: false,
+				},
+			],
 		})
 	}
 

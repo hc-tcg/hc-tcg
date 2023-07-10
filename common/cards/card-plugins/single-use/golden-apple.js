@@ -12,7 +12,15 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			rarity: 'ultra_rare',
 			description: 'Heal AFK Hermit 100hp.',
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, active: false}],
+			pickReqs: [
+				{
+					target: 'player',
+					slot: ['hermit'],
+					type: ['hermit', 'effect'],
+					amount: 1,
+					active: false,
+				},
+			],
 		})
 	}
 
@@ -33,7 +41,12 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			const card = row.hermitCard
 			if (!card) return
 			const hermitInfo = HERMIT_CARDS[card.cardId]
-			row.health = Math.min(row.health + 100, hermitInfo.health)
+			if (hermitInfo) {
+				row.health = Math.min(row.health + 100, hermitInfo.health)
+			} else {
+				// Armor Stand
+				row.health += 100
+			}
 		}
 	}
 

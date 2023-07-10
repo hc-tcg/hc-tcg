@@ -16,7 +16,15 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.',
 
 			pickOn: 'apply',
-			pickReqs: [{target: 'player', type: ['hermit'], amount: 1, empty: true}],
+			pickReqs: [
+				{
+					target: 'player',
+					slot: ['hermit'],
+					amount: 1,
+					empty: true,
+					emptyRow: true,
+				},
+			],
 		})
 	}
 
