@@ -95,13 +95,6 @@ export type BoardSlot = {
 	index: number
 }
 
-export type CardPos = {
-	player: PlayerState
-	opponentPlayer: PlayerState
-	rowIndex: number | null
-	row: RowState | null
-	slot: Slot
-}
 
 export type RowPos = {
 	player: PlayerState

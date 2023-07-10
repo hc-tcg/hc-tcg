@@ -1,10 +1,10 @@
 // TODO - more validations (types, rarirites, other fields, ...)
 
 import {GameModel} from '../../../server/models/game-model'
+import CardPos from '../../../server/models/card-pos-model'
 
 /**
  * @typedef {import("../../types/cards").CardDefs} CardDefs
- * @typedef {import("../../types/cards").CardPos} CardPos
  * @typedef {import("../../types/cards").CardTypeT} CardTypeT
  * @typedef {import("../../types/cards").CardRarityT} CardRarityT
  * @typedef {import("../../../server/utils/reqs").PickRequirmentT} PickRequirmentT

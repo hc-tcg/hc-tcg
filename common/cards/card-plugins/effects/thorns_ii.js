@@ -1,8 +1,8 @@
 import {AttackModel} from '../../../../server/models/attack-model'
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
-import {getCardPos} from '../../../../server/utils/cards'
 
 class ThornsIIEffectCard extends EffectCard {
 	constructor() {
@@ -19,7 +19,7 @@ class ThornsIIEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {opponentPlayer} = pos
@@ -48,7 +48,7 @@ class ThornsIIEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.opponentPlayer.hooks.onAttack[instance]

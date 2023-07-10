@@ -1,6 +1,7 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 
 class EthosLabRareHermitCard extends HermitCard {
 	constructor() {
@@ -29,19 +30,14 @@ class EthosLabRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (
-				attack.id !== attackId ||
-				attack.type !== 'secondary' ||
-				!attack.target
-			)
-				return
+			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
 
 			const coinFlip = flipCoin(player, this.id)
 
@@ -59,7 +55,7 @@ class EthosLabRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

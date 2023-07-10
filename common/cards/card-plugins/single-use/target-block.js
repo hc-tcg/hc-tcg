@@ -1,10 +1,10 @@
 import {getNonEmptyRows} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {createWeaknessAttack} from '../../../../server/utils/attacks'
 import SingleUseCard from './_single-use-card'
 
 /**
- * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 

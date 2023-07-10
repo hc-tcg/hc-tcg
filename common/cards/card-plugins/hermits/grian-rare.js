@@ -2,6 +2,7 @@ import HermitCard from './_hermit-card'
 import {discardCard, flipCoin, isRemovable} from '../../../../server/utils'
 import {swapSlots} from '../../../../server/utils/slots'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {getCardPos} from '../../../../server/utils/cards'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -15,7 +16,6 @@ Some assumptions that make sense to me:
 */
 
 /**
- * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/cards').SlotPos} SlotPos
  */
 
@@ -71,11 +71,7 @@ class GrianRareHermitCard extends HermitCard {
 		}
 
 		// We need to wait until Loyalty disappear, it uses onHermitDeath
-		player.hooks.onFollowUp[instance] = (
-			followUp,
-			pickedCards,
-			modalResult
-		) => {
+		player.hooks.onFollowUp[instance] = (followUp, pickedCards, modalResult) => {
 			if (followUp === instanceKey) {
 				delete player.followUp[instanceKey]
 				const targetInstance = player.custom[targetKey]

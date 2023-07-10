@@ -1,7 +1,7 @@
 import CARDS, {HERMIT_CARDS} from '../../../common/cards'
 import {GameModel} from '../../models/game-model'
+import {CardPos} from '../..//models/card-pos-model'
 import {equalCard} from '../../utils'
-import {getCardAtPos} from '../../utils/cards'
 
 /**
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
@@ -28,20 +28,19 @@ function* playCardSaga(game, turnAction, actionState) {
 	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand') return 'INVALID'
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return 'INVALID'
 
+	if (pickedSlot.slot.card) return
+
 	// @TODO - PLAY_CARD should probably be using CardPos
-	/** @type {import('../../../common/types/cards').CardPos} */
-	const pos = {
-		player: game.state.players[pickedSlot.playerId],
-		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex: pickedSlot.row ? pickedSlot.row.index : null,
-		row: pickedSlot.row
-			? game.state.players[pickedSlot.playerId].board.rows[pickedSlot.row.index]
-			: null,
-		slot: {type: pickedSlot.slot.type, index: pickedSlot.slot.index},
-	}
+	const pos = new CardPos(
+		game.state.players[pickedSlot.playerId],
+		game.state.players[opponentPlayerId],
+		null,
+		pickedSlot.row ? pickedSlot.row.index : null,
+		{index: pickedSlot.slot.index, type: pickedSlot.slot.type}
+	)
 
 	// Can't attach if card is already there
-	if (getCardAtPos(game, pos) !== null) return
+	if (pickedSlot.slot.card !== null) return
 
 	// Do we meet requirements of card
 	const canAttach = cardInfo.canAttach(game, pos)
@@ -58,7 +57,7 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	const validate = (type) => game.hooks.validateCard.get(type)?.call(turnAction, actionState)
 
-	if (pos.slot.type === 'hermit' && pickedSlot.row) {
+	if (pickedSlot.slot.type === 'hermit' && pickedSlot.row) {
 		if (!availableActions.includes('ADD_HERMIT')) return
 		if (validate('hermit') === 'INVALID') return
 		const row = player.board.rows[pickedSlot.row.index]
@@ -104,6 +103,7 @@ function* playCardSaga(game, turnAction, actionState) {
 
 	currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
 
+	pos.instance = card.cardInstance
 	cardInfo.onAttach(game, card.cardInstance, pos)
 
 	// Call onAttach hook

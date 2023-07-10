@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 
 class StressMonster101RareHermitCard extends HermitCard {
@@ -28,7 +29,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('common/types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -55,7 +56,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('common/types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
