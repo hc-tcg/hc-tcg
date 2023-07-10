@@ -62,11 +62,13 @@ export function getCardPos(game, instance) {
 /**
  * Get the card position on the board for a card instance
  * @param {GameModel} game
- * @param {import('../../common/types/cards').CardPos} pos
+ * @param {CardPos} pos
  * @returns {CardT | null}
  */
 export function getCardAtPos(game, pos) {
 	const {player, row, slot} = pos
+
+	if (!slot) return null
 
 	const suCard = player.board.singleUseCard
 	if (slot.type === 'single_use' && suCard) {

@@ -2,10 +2,7 @@ import {GameModel} from '../../../../server/models/game-model'
 import {discardCard} from '../../../../server/utils'
 import EffectCard from '../effects/_effect-card'
 import {isTargetingPos} from '../../../../server/utils/attacks'
-
-/**
- * @typedef {import('common/types/cards').CardPos} CardPos
- */
+import CardPos from '../../../../server/models/card-pos-model'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -62,7 +59,7 @@ class ArmorStandEffectCard extends EffectCard {
 		const {player, opponentPlayer, slot, row} = pos
 		// Just in case we decide that Fire Charge/Mending/etc work on an Armor Stand that
 		// is attached to a Hermit slot
-		if (slot.type === 'hermit' && row) {
+		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
 		}
 
@@ -81,7 +78,7 @@ class ArmorStandEffectCard extends EffectCard {
 		const {slot} = pos
 		const {currentPlayer} = game.ds
 
-		if (slot.type !== 'hermit') return 'INVALID'
+		if (!slot || slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		return 'YES'
