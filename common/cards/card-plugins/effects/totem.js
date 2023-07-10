@@ -1,5 +1,6 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {discardCard} from '../../../../server/utils'
 import {isTargetingPos} from '../../../../server/utils/attacks'
 
@@ -17,7 +18,7 @@ class TotemEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -40,7 +41,7 @@ class TotemEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.player.hooks.afterDefence[instance]

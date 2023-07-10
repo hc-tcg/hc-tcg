@@ -1,5 +1,6 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
@@ -31,7 +32,7 @@ class RenbobRareHermitCard extends HermitCard {
 	 * Creates and returns attack objects
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
+	 * @param {CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 * @returns {Array<AttackModel>}

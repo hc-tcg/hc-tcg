@@ -1,10 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
 import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
- * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class KnockbackSingleUseCard extends SingleUseCard {
