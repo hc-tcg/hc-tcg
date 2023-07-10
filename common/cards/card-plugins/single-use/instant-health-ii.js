@@ -1,7 +1,6 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {HERMIT_CARDS} from '../..'
-import e from 'cors'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {
