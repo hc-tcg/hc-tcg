@@ -1,8 +1,5 @@
 import {equalCard} from '../../utils'
-
-/**
- * @typedef {import('models/game-model').GameModel} GameModel
- */
+import {GameModel} from '../../../server/models/game-model'
 
 /**
  *
@@ -15,20 +12,16 @@ function* changeActiveHermit(game, turnAction, actionState) {
 	const {availableActions, pastTurnActions} = actionState
 	if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) return 'INVALID'
 
-	const rowHermitCard = turnAction.payload.rowHermitCard
+	const rowHermitCard = turnAction.payload.row.state.hermitCard
 	const result = currentPlayer.board.rows.findIndex((row) =>
 		equalCard(row.hermitCard, rowHermitCard)
 	)
 	if (result === -1) return 'INVALID'
 
-	const isKnockedout = currentPlayer.board.rows[result].ailments.find(
-		(a) => a.id === 'knockedout'
-	)
+	const isKnockedout = currentPlayer.board.rows[result].ailments.find((a) => a.id === 'knockedout')
 	const hasOtherHermits = currentPlayer.board.rows.some(
 		(row, index) =>
-			!!row.hermitCard &&
-			index !== result &&
-			!row.ailments.find((a) => a.id === 'knockedout')
+			!!row.hermitCard && index !== result && !row.ailments.find((a) => a.id === 'knockedout')
 	)
 	if (isKnockedout && hasOtherHermits) return 'INVALID'
 

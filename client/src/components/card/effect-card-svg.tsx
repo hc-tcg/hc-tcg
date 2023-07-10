@@ -1,35 +1,22 @@
-import {EffectCardT} from 'common/types/cards'
+import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
+import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
 import css from './effect-card-svg.module.scss'
 import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 
 export type EffectCardProps = {
-	card: EffectCardT
+	card: EffectCard | SingleUseCard
 }
 
-const HermitCard = ({card}: EffectCardProps) => {
+const EffectCardModule = ({card}: EffectCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	return (
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
-			<rect
-				className={css.cardBackground}
-				x="10"
-				y="10"
-				width="380"
-				height="380"
-				rx="15"
-				ry="15"
-			/>
+			<rect className={css.cardBackground} x="10" y="10" width="380" height="380" rx="15" ry="15" />
 			<g>
-				<image
-					className={css.star}
-					href={`/images/star_color.svg`}
-					x="-15"
-					y="65"
-					width="390"
-				/>
+				<image className={css.star} href={`/images/star_color.svg`} x="-15" y="65" width="390" />
 				<image
 					className={css.icon}
 					href={`/images/effects/${card.id}.png`}
@@ -55,15 +42,7 @@ const HermitCard = ({card}: EffectCardProps) => {
 			</g>
 			{showCost && rank.name !== 'stone' ? (
 				<g>
-					<rect
-						className={css.rarity}
-						x="0"
-						y="302"
-						width="100"
-						height="100"
-						rx="50"
-						ry="50"
-					/>
+					<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
 					<image
 						x="15"
 						y="315"
@@ -83,21 +62,11 @@ const HermitCard = ({card}: EffectCardProps) => {
 					height="200%"
 					width="200%"
 				>
-					<feGaussianBlur
-						id="blur"
-						in="SourceAlpha"
-						stdDeviation="5"
-						result="SA-o-blur"
-					/>
+					<feGaussianBlur id="blur" in="SourceAlpha" stdDeviation="5" result="SA-o-blur" />
 					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
 						<feFuncA id="contour" type="table" tableValues="0 1" />
 					</feComponentTransfer>
-					<feComposite
-						operator="in"
-						in="SA-o-blur"
-						in2="SA-o-b-contIN"
-						result="SA-o-b-cont"
-					/>
+					<feComposite operator="in" in="SA-o-blur" in2="SA-o-b-contIN" result="SA-o-b-cont" />
 					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
 						<feFuncA id="spread-ctrl" type="linear" slope="200" />
 					</feComponentTransfer>
@@ -118,4 +87,4 @@ const HermitCard = ({card}: EffectCardProps) => {
 	)
 }
 
-export default HermitCard
+export default EffectCardModule

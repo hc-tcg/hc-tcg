@@ -1,0 +1,97 @@
+import SingleUseCard from './_single-use-card'
+import {applySingleUse, getActiveRowPos} from '../../../../server/utils'
+import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
+import {AttackModel} from '../../../../server/models/attack-model'
+
+class AnvilSingleUseCard extends SingleUseCard {
+	constructor() {
+		super({
+			id: 'anvil',
+			name: 'Anvil',
+			rarity: 'rare',
+			description:
+				"Do 30hp damage to your opponent's Hermit directly opposite your active Hermit on the board and 10hp damage to each of their Hermits below it.",
+		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player, opponentPlayer} = pos
+
+		player.hooks.getAttacks[instance] = (pickedSlots) => {
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+			const activeIndex = activePos.rowIndex
+
+			const oppositeRow = opponentPlayer.board.rows[activeIndex]
+			if (!oppositeRow || !oppositeRow.hermitCard) return []
+			const opponentRows = opponentPlayer.board.rows
+
+			const attacks = []
+			for (let i = activeIndex; i < opponentRows.length; i++) {
+				const opponentRow = opponentRows[i]
+				if (!opponentRow || !opponentRow.hermitCard) continue
+				const attack = new AttackModel({
+					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: i,
+						row: opponentRow,
+					},
+					type: 'effect',
+				}).addDamage(this.id, i === activeIndex ? 30 : 10)
+
+				attacks.push(attack)
+			}
+
+			return attacks
+		}
+
+		player.hooks.onAttack[instance] = (attack) => {
+			const attackId = this.getInstanceKey(instance, 'active')
+			if (attack.id !== attackId) return
+
+			applySingleUse(game)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.getAttacks[instance]
+		delete player.hooks.onAttack[instance]
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+
+		const {opponentPlayer, player} = pos
+		const activeRow = player.board.activeRow
+		if (activeRow === null) return 'NO'
+
+		const oppositeRow = opponentPlayer.board.rows[activeRow]
+		if (!oppositeRow || !oppositeRow.hermitCard) return 'NO'
+
+		return 'YES'
+	}
+
+	getExpansion() {
+		return 'alter_egos'
+	}
+}
+
+export default AnvilSingleUseCard

@@ -1,13 +1,15 @@
-import {HERMIT_CARDS, EFFECT_CARDS} from '../../cards'
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../../common/cards'
 import STRENGTHS from '../../const/strengths'
-import {applySingleUse, discardCard} from '../../utils'
+import {AttackModel} from '../../models/attack-model'
+import {GameModel} from '../../models/game-model'
+import {CardPos} from '../../../server/models/card-pos-model'
+import {getCardPos} from '../../utils/cards'
+import {DEBUG_CONFIG} from '../../../config'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
  * @typedef {import("redux-saga").SagaIterator} SagaIterator
+ * @typedef {import('common/types/attack').HermitAttackType} HermitAttackType
  * @typedef {import('common/types/game-state').RowStateWithHermit} RowStateWithHermit
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
  */
 
 export const ATTACK_TO_ACTION = {
@@ -19,240 +21,358 @@ export const ATTACK_TO_ACTION = {
 export const WEAKNESS_DAMAGE = 20
 
 /**
+ *
+ * @param {GameModel} game
+ * @param {CardPos} attackPos
+ * @param {HermitAttackType} hermitAttackType
+ * @param {import('common/types/pick-process').PickedSlots} pickedSlots
+ * @returns {Array<AttackModel>}
+ */
+function getAttacks(game, attackPos, hermitAttackType, pickedSlots) {
+	const {currentPlayer} = game.ds
+	const attacks = []
+
+	if (!attackPos.row || !attackPos.row.hermitCard) return []
+
+	// hermit attacks
+	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
+	attacks.push(
+		...hermitCard.getAttacks(
+			game,
+			attackPos.row.hermitCard.cardInstance,
+			attackPos,
+			hermitAttackType,
+			pickedSlots
+		)
+	)
+
+	// all other attacks
+	const otherAttacks = Object.values(currentPlayer.hooks.getAttacks)
+	for (let i = 0; i < otherAttacks.length; i++) {
+		attacks.push(...otherAttacks[i](pickedSlots))
+	}
+
+	if (DEBUG_CONFIG.oneShotMode) {
+		for (let i = 0; i < attacks.length; i++) {
+			attacks[i].addDamage('debug', 1001)
+		}
+	}
+
+	return attacks
+}
+
+/**
+ * @param {AttackModel} attack
+ */
+function executeAttack(attack) {
+	const {target} = attack
+	if (!target) return
+
+	const {row: targetRow} = target
+	const targetHermitInfo = HERMIT_CARDS[targetRow.hermitCard.cardId]
+
+	const currentHealth = targetRow.health
+	const maxHealth = targetHermitInfo.health
+
+	// Deduct and clamp health
+	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
+	targetRow.health = Math.min(newHealth, maxHealth)
+}
+
+/**
+ * Call before attack hooks for each attack that has an attacker
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+function runBeforeAttackHooks(attacks, pickedSlots = {}) {
+	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+		const attack = attacks[attackIndex]
+		if (!attack.attacker) continue
+
+		// The hooks we call are determined by the source of the attack
+		const player = attack.attacker.player
+		const beforeAttackKeys = Object.keys(player.hooks.beforeAttack)
+		const beforeAttacks = Object.values(player.hooks.beforeAttack)
+
+		if (DEBUG_CONFIG.disableDamage) {
+			attack.multiplyDamage('debug', 0).lockDamage()
+		}
+
+		for (let i = 0; i < beforeAttackKeys.length; i++) {
+			const instance = beforeAttackKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				beforeAttacks[i](attack, pickedSlots)
+			}
+		}
+	}
+}
+
+/**
+ * Call before defence hooks, based on each attack's target
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+function runBeforeDefenceHooks(attacks, pickedSlots = {}) {
+	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+		const attack = attacks[attackIndex]
+		if (!attack.target) continue
+
+		// The hooks we call are determined by the target of the attack
+		const player = attack.target.player
+		const beforeDefenceKeys = Object.keys(player.hooks.beforeDefence)
+		const beforeDefenceHooks = Object.values(player.hooks.beforeDefence)
+
+		for (let i = 0; i < beforeDefenceKeys.length; i++) {
+			const instance = beforeDefenceKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				beforeDefenceHooks[i](attack, pickedSlots)
+			}
+		}
+	}
+}
+
+/**
+ * Call attack hooks for each attack that has an attacker
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+function runOnAttackHooks(attacks, pickedSlots = {}) {
+	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+		const attack = attacks[attackIndex]
+		if (!attack.attacker) continue
+
+		// The hooks we call are determined by the source of the attack
+		const player = attack.attacker.player
+		const onAttackKeys = Object.keys(player.hooks.onAttack)
+		const onAttacks = Object.values(player.hooks.onAttack)
+
+		for (let i = 0; i < onAttackKeys.length; i++) {
+			const instance = onAttackKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				onAttacks[i](attack, pickedSlots)
+			}
+		}
+	}
+}
+
+/**
+ * Call defence hooks, based on each attack's target
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+function runOnDefenceHooks(attacks, pickedSlots = {}) {
+	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
+		const attack = attacks[attackIndex]
+		if (!attack.target) continue
+
+		// The hooks we call are determined by the target of the attack
+		const player = attack.target.player
+		const onDefenceKeys = Object.keys(player.hooks.onDefence)
+		const onDefenceHooks = Object.values(player.hooks.onDefence)
+
+		for (let i = 0; i < onDefenceKeys.length; i++) {
+			const instance = onDefenceKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				onDefenceHooks[i](attack, pickedSlots)
+			}
+		}
+	}
+}
+
+/**
+ * Call after attack hooks for each attack that has an attacker
+ * @param {Array<AttackModel>} attacks
+ */
+function runAfterAttackHooks(attacks) {
+	for (let i = 0; i < attacks.length; i++) {
+		const attack = attacks[i]
+		if (!attack.attacker) continue
+
+		// The hooks we call are determined by the source of the attack
+		const player = attack.attacker.player
+		const afterAttackKeys = Object.keys(player.hooks.afterAttack)
+		const afterAttackHooks = Object.values(player.hooks.afterAttack)
+
+		for (let i = 0; i < afterAttackKeys.length; i++) {
+			const instance = afterAttackKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				afterAttackHooks[i](attack)
+			}
+		}
+	}
+}
+
+/**
+ * Call after defence hooks, based on each attack's target
+ * @param {Array<AttackModel>} attacks
+ */
+function runAfterDefenceHooks(attacks) {
+	for (let i = 0; i < attacks.length; i++) {
+		const attack = attacks[i]
+		if (!attack.target) continue
+
+		// The hooks we call are determined by the source of the attack
+		const player = attack.target.player
+		const afterDefenceKeys = Object.keys(player.hooks.afterDefence)
+		const afterDefenceHooks = Object.values(player.hooks.afterDefence)
+
+		for (let i = 0; i < afterDefenceKeys.length; i++) {
+			const instance = afterDefenceKeys[i]
+			// if we are not ignoring this hook, call it
+			if (!shouldIgnoreCard(attack, instance)) {
+				afterDefenceHooks[i](attack)
+			}
+		}
+	}
+}
+
+/**
+ * Returns if we should ignore the hooks for an instance or not
+ * @param {AttackModel} attack
+ * @param {string} instance
+ * @returns {boolean}
+ */
+function shouldIgnoreCard(attack, instance) {
+	for (let i = 0; i < attack.shouldIgnoreCards.length; i++) {
+		const shouldIgnore = attack.shouldIgnoreCards[i]
+		if (shouldIgnore(instance)) return true
+	}
+	return false
+}
+
+/**
+ *
+ * @param {Array<AttackModel>} attacks
+ * @param {import('types/pick-process').PickedSlots} pickedSlots
+ */
+export function runAllAttacks(attacks, pickedSlots = {}) {
+	/** @type {Array<AttackModel>} */
+	const allAttacks = []
+
+	// Main attack loop
+	while (attacks.length > 0) {
+		// Process all current attacks one at a time
+
+		// STEP 1 - Call before attack and defence for all attacks
+		runBeforeAttackHooks(attacks, pickedSlots)
+		runBeforeDefenceHooks(attacks, pickedSlots)
+
+		// STEP 2 - Call on attack and defence for all attacks
+		runOnAttackHooks(attacks, pickedSlots)
+		runOnDefenceHooks(attacks, pickedSlots)
+
+		// STEP 3 - Execute all attacks
+		for (let i = 0; i < attacks.length; i++) {
+			executeAttack(attacks[i])
+
+			// Add this attack to the final list
+			allAttacks.push(attacks[i])
+		}
+
+		// STEP 4 - Get all the next attacks, and repeat the process
+		const newAttacks = []
+		for (let i = 0; i < attacks.length; i++) {
+			newAttacks.push(...attacks[i].nextAttacks)
+		}
+		attacks = newAttacks
+	}
+
+	// STEP 5 - Finally, after all attacks have been executed, call after attack and defence hooks
+	runAfterAttackHooks(allAttacks)
+	runAfterDefenceHooks(allAttacks)
+}
+
+/**
  * @param {GameModel} game
  * @param {TurnAction} turnAction
  * @param {ActionState} actionState
  * @return {SagaIterator}
  */
 function* attackSaga(game, turnAction, actionState) {
-	const {
-		currentPlayer,
-		opponentPlayer,
-		playerActiveRow,
-		opponentActiveRow,
-		playerHermitInfo,
-	} = game.ds
-	const {pickedCardsInfo} = actionState
-	const {type} = turnAction.payload
-	const typeAction = ATTACK_TO_ACTION[type]
-	if (!typeAction) {
-		console.log('Unknown attack type: ', type)
+	// defining things
+	const {currentPlayer, opponentPlayer} = game.ds
+	const {pickedSlots} = actionState
+
+	/** @type {HermitAttackType} */
+	const hermitAttackType = turnAction.payload.type
+
+	if (!hermitAttackType) {
+		console.log('Unknown attack type: ', hermitAttackType)
 		return 'INVALID'
 	}
 	// TODO - send hermitCard from frontend for validation?
 
-	const attackerActiveRow = playerActiveRow
+	// Attacker
+	const playerBoard = currentPlayer.board
+	const attackIndex = playerBoard.activeRow
+	if (attackIndex === null) return 'INVALID'
 
-	const singleUseCard = !currentPlayer.board.singleUseCardUsed
-		? currentPlayer.board.singleUseCard
-		: null
+	const attackRow = playerBoard.rows[attackIndex]
+	if (!attackRow.hermitCard) return 'INVALID'
+	const attackPos = getCardPos(game, attackRow.hermitCard.cardInstance)
+	if (!attackPos) return 'INVALID'
 
-	if (!attackerActiveRow || !attackerActiveRow.hermitCard) return 'INVALID'
+	// Defender
+	const opponentBoard = opponentPlayer.board
+	const defenceIndex = opponentBoard.activeRow
+	if (defenceIndex === null) return 'INVALID'
 
-	const attackerHermitCard = attackerActiveRow.hermitCard
-	const attackerHermitInfo = HERMIT_CARDS[attackerHermitCard.cardId]
-	if (!attackerHermitInfo) return 'INVALID'
-	const strengths = STRENGTHS[attackerHermitInfo.hermitType]
+	const defenceRow = opponentBoard.rows[defenceIndex]
+	if (!defenceRow.hermitCard) return 'INVALID'
 
-	const attackerRef = {
-		player: currentPlayer,
-		row: attackerActiveRow,
-		hermitCard: attackerHermitCard,
-		hermitInfo: attackerHermitInfo,
-	}
-	const attackState = {
-		...actionState,
-		typeAction,
-		// Represents actual attacker (e.g. Ren/Cleo)
-		attacker: {...attackerRef},
-		// Represents hermit whose attacks are being used
-		moveRef: {...attackerRef},
-		// Represents hermit we use for conditions (e.g. Wels health)
-		condRef: {...attackerRef},
-	}
+	// Get initial attacks
+	/** @type {Array<AttackModel>} */
+	let attacks = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
 
-	game.hooks.attackState.call(turnAction, attackState)
-
-	/**
-	 * @param {RowStateWithHermit} row
-	 * @returns {AttackTarget}
-	 */
-	const makeTarget = (row) => ({
-		row,
-		applyHermitDamage: row === opponentActiveRow,
-		effectCardId: row.effectCard?.cardId || null,
-		isActive: row === opponentActiveRow,
-		extraEffectDamage: 0,
-		hasWeakness: strengths.includes(
-			HERMIT_CARDS[row.hermitCard.cardId]?.hermitType
-		),
-		extraHermitDamage: 0,
-		invulnarable: false,
-		recovery: [],
-		ignoreEffects: false,
-		additionalAttack: false,
-		ignoreRecovery: false,
-		reverseDamage: false,
-		backlash: 0,
-		hermitMultiplier: 1,
-		effectMultiplier: 1,
-	})
-
-	const targets = {}
-
-	// Add active row
-	if (opponentActiveRow?.hermitCard) {
-		const instance = opponentActiveRow.hermitCard.cardInstance
-		targets[instance] = makeTarget(opponentActiveRow)
-	}
-
-	// Add picked targets (generally AFK bow/hypno)
-	Object.values(pickedCardsInfo).forEach((pickedCards) => {
-		if (!pickedCards.length) return
-		const firstCard = pickedCards[0]
-		if (firstCard.slotType !== 'hermit') return
-		if (firstCard.playerId !== opponentPlayer.id) return
-		if (!firstCard.row.hermitCard) return
-		if (!firstCard.card) return
-		const instance = firstCard.card.cardInstance
-		if (Object.hasOwn(targets, instance)) return
-		targets[instance] = makeTarget(firstCard.row)
-	})
-	if (!Object.values(targets).length) return 'INVALID'
-
-	for (let id in targets) {
-		const target = targets[id]
-		const result = game.hooks.attack.call(target, turnAction, attackState)
-		const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
-		const hermitAttack = target.applyHermitDamage
-			? attackerHermitInfo[type]?.damage || 0
-			: 0
-		const extraHermitAttack = target.applyHermitDamage
-			? target.extraHermitDamage || 0
-			: 0
-
-		/* --- Damage to target --- */
-		const health = target.row.health
-		const maxHealth = targetHermitInfo.health
-		const targetEffectInfo = EFFECT_CARDS[target.row.effectCard?.cardId]
-		let protection =
-			target.ignoreEffects || target.additionalAttack
-				? 0
-				: targetEffectInfo?.protection?.target || 0
-
-		const weaknessDamage =
-			target.hasWeakness && hermitAttack + extraHermitAttack > 0
-				? WEAKNESS_DAMAGE
-				: 0
-		const hermitDamage = hermitAttack + extraHermitAttack + weaknessDamage
-		const totalDamage =
-			target.hermitMultiplier * hermitDamage +
-			target.effectMultiplier * target.extraEffectDamage
-
-		const finalDamage = Math.max(totalDamage - protection, 0)
-
-		/** @type {AttackTargetResult} */
-		const targetResult = {
-			row: target.row,
-			totalDamage,
-			finalDamage,
-			totalDamageToAttacker: 0,
-			finalDamageToAttacker: 0,
-			revived: false,
-			died: false,
-		}
-
-		// Discard single use protective cards (Shield/Gold Armor)
-		if (
-			totalDamage > 0 &&
-			targetEffectInfo?.protection?.discard &&
-			!target.reverseDamage
-		) {
-			discardCard(game, target.row.effectCard)
-		}
-
-		const invulnarable = target.invulnarable && !target.ignoreEffects
-
-		// Deal damage
-		if (!target.reverseDamage && !invulnarable) {
-			target.row.health = Math.min(maxHealth, health - finalDamage)
-		}
-
-		/* --- Revival (Totem/Scar) --- */
-
-		target.recovery.sort((a, b) => b.amount - a.amount)
-
-		const isDead = target.row.health <= 0
-		const recovery = target.recovery[0]
-		const ignoreRecovery = target.ignoreEffects && recovery?.discardEffect
-		if (isDead) targetResult.died = true
-		if (isDead && recovery) {
-			if (!ignoreRecovery) {
-				target.row.health = recovery.amount
-				target.row.ailments = []
-				targetResult.revived = true
-				targetResult.died = false
-			}
-			if (recovery.discardEffect) discardCard(game, target.row.effectCard)
-		}
-
-		/* --- Counter attack (TNT/Thorns/Wolf/Zed) --- */
-
-		const attackerEffectInfo = playerActiveRow.effectCard?.cardId
-			? EFFECT_CARDS[playerActiveRow.effectCard?.cardId]
-			: null
-		const attackerProtection = attackerEffectInfo?.protection?.target || 0
-		const attackerBacklash = targetEffectInfo?.protection?.backlash || 0
-
-		// from su effects & special movs
-		let totalDamageToAttacker = target.backlash
-		// from opponent's effects
-		if (
-			!target.ignoreEffects &&
-			!target.additionalAttack &&
-			!target.reverseDamage &&
-			totalDamage > 0
-		)
-			totalDamageToAttacker += attackerBacklash
-		// hacky flag for Zedaph
-		if (target.reverseDamage) totalDamageToAttacker += totalDamage
-		// protection
-		let finalDamageToAttacker = totalDamageToAttacker
-		if (attackerProtection) {
-			finalDamageToAttacker = Math.max(
-				totalDamageToAttacker - attackerProtection,
-				0
-			)
-		}
-
-		// We don't need to worry about revival of attacker here
-		// since there is no way to lose the totem effect card while attacking
-
-		// Discard single use protective cards (Shield/Gold Armor)
-		if (totalDamageToAttacker > 0 && attackerEffectInfo?.protection?.discard) {
-			discardCard(game, playerActiveRow.effectCard)
-		}
-
-		const attackMaxHealth = attackerHermitInfo.health
-		attackerActiveRow.health = Math.min(
-			attackMaxHealth,
-			attackerActiveRow.health - finalDamageToAttacker
-		)
-
-		targetResult.totalDamageToAttacker = totalDamageToAttacker
-		targetResult.finalDamageToAttacker = finalDamageToAttacker
-
-		game.hooks.attackResult.call(targetResult, turnAction, attackState)
-	}
-
-	const anyEffectDamage = Object.values(targets).some(
-		(target) => target.extraEffectDamage
-	)
-	if (anyEffectDamage) applySingleUse(currentPlayer)
-
-	// --- Provide result of attack ---
+	// Run all the code stuff
+	runAllAttacks(attacks, pickedSlots)
 
 	return 'DONE'
+}
+
+/**
+ * @param {GameModel} game
+ * @param {PlayerState} player
+ */
+export function runAilmentAttacks(game, player) {
+	/** @type {Array<AttackModel>} */
+	let attacks = []
+
+	// Get ailment attacks
+	for (let i = 0; i < player.board.rows.length; i++) {
+		const row = player.board.rows[i]
+		if (!row.health) continue
+
+		const hasFire = !!row.ailments.find((a) => a.id === 'fire')
+		const hasPoison = !!row.ailments.find((a) => a.id === 'poison')
+
+		// NOTE - only ailment attacks have no attacker, all others do
+		const attack = new AttackModel({
+			id: hasFire ? 'fire' : hasPoison ? 'poison' : undefined,
+			target: {
+				player,
+				rowIndex: i,
+				row,
+			},
+			type: 'ailment',
+		})
+
+		if (hasFire) {
+			attacks.push(attack.addDamage('ailment', 20))
+		} else if (hasPoison) {
+			// Calculate max poison damage
+			const poisonDamage = Math.max(Math.min(row.health - 10, 20), 0)
+			attacks.push(attack.addDamage('ailment', poisonDamage))
+		}
+	}
+
+	// Run the code for the attacks
+	runAllAttacks(attacks)
 }
 
 export default attackSaga

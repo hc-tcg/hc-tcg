@@ -2,31 +2,21 @@ import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS from 'server/cards'
-import {checkAttachReq} from 'server/utils/reqs'
+import CARDS from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
 	getPickProcess,
 	getPlayerState,
-	getGameState,
 } from 'logic/game/game-selectors'
-import {
-	setSelectedCard,
-	setOpenedModal,
-	removeEffect,
-} from 'logic/game/game-actions'
+import {setSelectedCard, setOpenedModal, removeEffect} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
-function* pickWithSelectedSaga(
-	action: SlotPickedAction,
-	selectedCard: CardT
-): SagaIterator {
-	const {slotType} = action.payload
+function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
 	const selectedCardInfo = CARDS[selectedCard.cardId]
 
 	// Validations
@@ -35,34 +25,23 @@ function* pickWithSelectedSaga(
 		return
 	}
 
-	const payload = {...action.payload, card: selectedCard}
-	const gameState = yield* select(getGameState)
-	if (
-		!gameState ||
-		!checkAttachReq(gameState, payload, selectedCardInfo.attachReq)
-	) {
-		console.log(
-			`Invalid slot. Trying to place card [${selectedCardInfo.id}] to a slot of type [${slotType}]`
-		)
-		return
-	}
-
+	const payload = {pickedSlot: action.payload, card: selectedCard}
 	yield put(playCard(payload))
-
 	yield put(setSelectedCard(null))
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
-	if (action.payload.slotType !== 'hermit') return
-	const {slotType, rowHermitCard, rowIndex} = action.payload
+	if (action.payload.slot.type !== 'hermit') return
+	const {slot, row} = action.payload
 	const playerId = yield* select(getPlayerId)
 	const playerState = yield* select(getPlayerState)
+	const rowHermitCard = row ? playerState?.board.rows[row?.index]?.hermitCard : null
 	const settings = yield* select(getSettings)
-	const clickedOnHermit = slotType === 'hermit' && rowHermitCard
+	const clickedOnHermit = slot.type === 'hermit' && rowHermitCard
 	if (!playerState || !clickedOnHermit) return
 	if (playerId !== action.payload.playerId) return
 
-	if (playerState.board.activeRow === rowIndex) {
+	if (playerState.board.activeRow === row?.index) {
 		yield put(setOpenedModal('attack'))
 	} else {
 		if (settings.confirmationDialogs !== 'off') {
@@ -83,12 +62,9 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	const pickProcess = yield* select(getPickProcess)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
 
-	if (action.payload.slotType === 'single_use') {
+	if (action.payload.slot.type === 'single_use') {
 		const playerState = yield* select(getPlayerState)
-		if (
-			playerState?.board.singleUseCard &&
-			!playerState?.board.singleUseCardUsed
-		) {
+		if (playerState?.board.singleUseCard && !playerState?.board.singleUseCardUsed) {
 			yield put(removeEffect())
 			return
 		}

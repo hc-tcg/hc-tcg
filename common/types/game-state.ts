@@ -1,5 +1,9 @@
+import {AttackModel} from '../../server/models/attack-model'
+import {GameModel} from '../../server/models/game-model'
+import {CardPos} from '../../server/models/card-pos-model'
+import {EnergyT} from './cards'
 import {MessageInfoT} from './chat'
-import {PickProcessT} from './pick-process'
+import {PickProcessT, PickedSlots} from './pick-process'
 
 export type PlayerId = string
 
@@ -9,13 +13,8 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
-	duration: number
-}
-
-export type PlayerAilment = {
-	id: 'badomen'
-	duration: number
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen' | 'weakness'
+	duration?: number
 }
 
 export type RowStateWithHermit = {
@@ -41,26 +40,98 @@ export type CoinFlipT = 'heads' | 'tails'
 export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
-	iterations: Array<string>
 }
+
+export type Hook<T> = Record<string, T>
 
 export type PlayerState = {
 	id: PlayerId
-	followUp?: any
+	followUp: Record<string, string>
 	playerName: string
+	playerDeck: Array<CardT>
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
+	}
+
+	hooks: {
+		/** Instance key -> hook that modifies available energy from item cards */
+		availableEnergy: Hook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
+
+		/** Instance key -> hook that modifies blockedActions */
+		blockedActions: Hook<
+			(
+				blockedActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
+		>
+		/** Instance key -> hook that modifies availableActions */
+		availableActions: Hook<
+			(
+				availableActions: AvailableActionsT,
+				pastTurnActions: AvailableActionsT,
+				availableEnergy: Array<EnergyT>
+			) => AvailableActionsT
+		>
+
+		/** Instance key -> Hook called when a card is attached */
+		onAttach: Hook<(instance: string) => void>
+		/** Instance key -> Hook called when a card is detached */
+		onDetach: Hook<(instance: string) => void>
+
+		/** Instance key -> Hook called before a single use card is applied */
+		beforeApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> Hook called when a single use card is applied */
+		onApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> Hook called after a single use card is applied */
+		afterApply: Hook<(pickedSlots: PickedSlots, modalResult: any) => void>
+
+		/** Instance key -> Hook that returns attacks to execute */
+		getAttacks: Hook<(pickedSlots: PickedSlots) => Array<AttackModel>>
+		/** Instance key -> Hook called before the main attack loop, for every attack from our side of the board */
+		beforeAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called before the main attack loop, for every attack targeting our side of the board */
+		beforeDefence: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called for every attack from our side of the board */
+		onAttack: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called for every attack that targets our side of the board */
+		onDefence: Hook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Instance key -> Hook called after the main attack loop, for every attack from our side of the board */
+		afterAttack: Hook<(attack: AttackModel) => void>
+		/** Instance key -> Hook called after the main attack loop, for every attack targeting our side of the board */
+		afterDefence: Hook<(attack: AttackModel) => void>
+
+		/** Instance key -> hook called on follow up */
+		onFollowUp: Hook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Instance key -> hook called when follow up times out */
+		onFollowUpTimeout: Hook<(followUp: string) => void>
+
+		/**
+		 * Instance key -> hook called when a hermit is about to die.
+		 *
+		 * If STOP is returned the cards are not removed from the board and no reward card is issued.
+		 */
+		onHermitDeath: Hook<(hermitPos: CardPos) => void | 'STOP'>
+
+		/** Instance key -> hook called at the start of the turn */
+		onTurnStart: Hook<() => void>
+		/** Instance key -> hook called at the end of the turn */
+		onTurnEnd: Hook<(drawCards: Array<CardT>) => void>
+		/** Instance key -> hook called when the time runs out*/
+		onTurnTimeout: Hook<(newAttacks: Array<AttackModel>) => void>
+
+		/** Instance key -> hook called the player flips a coin */
+		onCoinFlip: Hook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 	}
 }
 
@@ -112,13 +183,12 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
-	followUp?: any
+	followUp: Record<string, string>
 	playerName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	lives: number
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -150,11 +220,6 @@ export type LocalGameState = {
 		turnTime: number
 		turnRemaining: number
 	}
-}
-
-export type CoinFlipInfo = {
-	shownCoinFlips: Array<string>
-	turn: number
 }
 
 // state sent to client

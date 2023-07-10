@@ -1,11 +1,16 @@
 import classnames from 'classnames'
 import {useTransition, animated} from '@react-spring/web'
 import {useRef} from 'react'
-import CARDS from 'server/cards'
+import CARDS from 'common/cards'
 import {CardT} from 'common/types/game-state'
 import Card from 'components/card'
 import css from './card-list.module.scss'
 import {equalCard} from 'server/utils'
+import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
+import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
+import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
+import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import HealthCard from 'common/cards/card-plugins/health/_health-card'
 
 const SIZE = {
 	medium: 200,
@@ -15,7 +20,7 @@ const SIZE = {
 type CardListProps = {
 	cards: Array<CardT>
 	disabled?: Array<string>
-	selected?: CardT | null
+	selected?: Array<CardT | null>
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
 	size: 'medium' | 'small'
@@ -39,9 +44,16 @@ const CardList = (props: CardListProps) => {
 	})
 
 	const cardsOutput = transitions((style: any, card: CardT) => {
-		const info = CARDS[card.cardId]
+		const info = CARDS[card.cardId] as
+			| HermitCard
+			| EffectCard
+			| SingleUseCard
+			| ItemCard
+			| HealthCard
 		if (!info) return null
-		const isSelected = equalCard(card, selected)
+		const isSelected = selected
+			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 		return (
@@ -66,11 +78,7 @@ const CardList = (props: CardListProps) => {
 	return (
 		<div
 			ref={listRef}
-			className={classnames(
-				css.cardList,
-				css[size],
-				wrap === false ? css.noWrap : null
-			)}
+			className={classnames(css.cardList, css[size], wrap === false ? css.noWrap : null)}
 		>
 			{cardsOutput}
 		</div>

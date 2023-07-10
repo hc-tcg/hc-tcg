@@ -1,14 +1,16 @@
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {PickProcessT, PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.css'
 import AttackModal from './modals/attack-modal'
 import ConfirmModal from './modals/confirm-modal'
 import SpyglassModal from './modals/spyglass-modal'
+import LootingModal from './modals/looting-modal'
 import ChestModal from './modals/chest-modal'
 import BorrowModal from './modals/borrow-modal'
+import EvilXModal from './modals/evil-x-modal'
 import ChangeHermitModal from './modals/change-hermit-modal'
 import ForfeitModal from './modals/forfeit-modal'
 import UnmetCondition from './modals/unmet-condition-modal'
@@ -26,20 +28,13 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
-import {
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 
 const getPickProcessMessage = (pickProcess: PickProcessT) => {
 	const req = pickProcess.requirments[pickProcess.currentReq]
+	const amount = pickProcess.amount || req.amount
 	const target =
-		req.target === 'board'
-			? "anyone's"
-			: req.target === 'opponent'
-			? "opponent's"
-			: 'your'
+		req.target === 'board' ? "anyone's" : req.target === 'opponent' ? "opponent's" : 'your'
 
 	let location = ''
 	if (req.target === 'hand') {
@@ -52,12 +47,32 @@ const getPickProcessMessage = (pickProcess: PickProcessT) => {
 		location = 'side of the board'
 	}
 
-	const type = req.type === 'any' ? '' : req.type
+	let adjacentTarget = ''
+	if (req.adjacent === 'active') {
+		adjacentTarget = 'active hermit'
+	} else if (req.adjacent === 'req') {
+		adjacentTarget = 'a previous pick'
+	}
+
+	let type = ''
+	if (req.type.length === 1) {
+		type = req.type[0]
+	} else {
+		// If there are more than one type, we want to display them as a list
+		// separated by commas, with the last element separated by 'or'
+		const initialElements = req.type.slice(0, -1)
+		const commaSeparated = initialElements.join(', ')
+		const lastElement = req.type[req.type.length - 1]
+
+		type = `${commaSeparated} or ${lastElement}`
+	}
+
 	const empty = req.empty || false
+	const adjacent = req.adjacent || false
 	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
+	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${empty ? 'slot' : 'card'}${
+		amount > 1 ? 's' : ''
+	} ${adjacent ? 'adjacent to' : ''} ${adjacent ? adjacentTarget : ''} from ${target} ${location}.`
 }
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
@@ -65,7 +80,9 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	confirm: ConfirmModal,
 	spyglass: SpyglassModal,
 	chest: ChestModal,
+	looting: LootingModal,
 	borrow: BorrowModal,
+	evilX: EvilXModal,
 	'unmet-condition': UnmetCondition,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
@@ -78,8 +95,7 @@ const renderModal = (
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
-		return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id)) return null
 
 	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
@@ -88,7 +104,7 @@ const renderModal = (
 function Game() {
 	const gameState = useSelector(getGameState)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
+	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
 	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
@@ -101,9 +117,9 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedCard: PickedCardT) => {
-		console.log('Slot selected: ', pickedCard)
-		dispatch(slotPicked(pickedCard))
+	const handleBoardClick = (pickedSlot: PickedSlotT) => {
+		console.log('Slot selected: ', pickedSlot)
+		dispatch(slotPicked(pickedSlot))
 	}
 
 	const selectCard = (card: CardT) => {
@@ -111,8 +127,8 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	const pickedCardsInstances = pickedCards
-		.map((pickedCard) => pickedCard.card)
+	const pickedSlotsInstances = pickedSlots
+		.map((pickedSlot) => pickedSlot.slot.card)
 		.filter(Boolean) as Array<CardT>
 
 	return (
@@ -129,15 +145,13 @@ function Game() {
 							size="medium"
 							cards={gameState.hand}
 							onClick={(card: CardT) => selectCard(card)}
-							selected={selectedCard}
-							picked={pickedCardsInstances}
+							selected={[selectedCard]}
+							picked={pickedSlotsInstances}
 						/>
 					</div>
 				</div>
 				{renderModal(openedModal, handleOpenModal)}
-				{pickProcess ? (
-					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
-				) : null}
+				{pickProcess ? <MouseIndicator message={getPickProcessMessage(pickProcess)} /> : null}
 
 				<Chat />
 

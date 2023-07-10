@@ -1,14 +1,4 @@
-import {
-	all,
-	take,
-	takeEvery,
-	fork,
-	call,
-	put,
-	race,
-	takeLatest,
-	cancel,
-} from 'redux-saga/effects'
+import {all, take, takeEvery, fork, call, put, race, takeLatest, cancel} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
@@ -27,7 +17,7 @@ import {
 	gameState,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
-import {CoinFlipInfo, LocalGameState} from 'common/types/game-state'
+import {LocalGameState} from 'common/types/game-state'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -53,11 +43,7 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.endTurn) {
 		yield call(sendMsg, 'END_TURN')
 	} else if (turnAction.changeActiveHermit) {
-		yield call(
-			sendMsg,
-			'CHANGE_ACTIVE_HERMIT',
-			turnAction.changeActiveHermit.payload
-		)
+		yield call(sendMsg, 'CHANGE_ACTIVE_HERMIT', turnAction.changeActiveHermit.payload)
 	}
 }
 
@@ -89,19 +75,9 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 		yield put(localGameState(initialGameState))
 	}
 
-	// for coin flips
-	let coinFlipInfo: CoinFlipInfo = {
-		shownCoinFlips: [],
-		turn: 0,
-	}
 	while (true) {
-		console.log('waiting')
 		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		coinFlipInfo = yield call(
-			coinFlipSaga,
-			payload.localGameState,
-			coinFlipInfo
-		)
+		yield call(coinFlipSaga, payload.localGameState)
 		yield put(localGameState(payload.localGameState))
 	}
 }
@@ -114,10 +90,7 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
-	const backgroundTasks = yield all([
-		fork(opponentConnectionSaga),
-		fork(chatSaga),
-	])
+	const backgroundTasks = yield all([fork(opponentConnectionSaga), fork(chatSaga)])
 	try {
 		yield put(gameStart())
 		const result = yield race({

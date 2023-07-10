@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url)
 import {CONFIG} from '../../config'
 
 /**
- * @typedef {import('models/root-model').RootModel} RootModel
+ * @typedef {import('server/models/root-model').RootModel} RootModel
  * @typedef {import('common/types/game-state').PlayerState} PlayerState
  * @typedef {import('common/types/game-state').GameLog} GameLog
  * @typedef {import('firebase-admin').database.Database} Database
@@ -66,8 +66,7 @@ class FirebaseLogs {
 				startHand1: getHand(playerStates[0]),
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
-				startDeck:
-					game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
+				startDeck: game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -77,10 +76,7 @@ class FirebaseLogs {
 				const gameLog = this.gameLogs[game.id]
 				if (!gameLog) return
 
-				if (
-					!game.endInfo.outcome ||
-					['error', 'timeout'].includes(game.endInfo.outcome)
-				) {
+				if (!game.endInfo.outcome || ['error', 'timeout'].includes(game.endInfo.outcome)) {
 					delete this.gameLogs[game.id]
 					return
 				}

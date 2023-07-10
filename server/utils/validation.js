@@ -1,5 +1,6 @@
-import CARDS from '../cards'
-import {CONFIG, DEBUG_CONFIG, RANKS} from '../../config'
+import CARDS from '../../common/cards'
+import Card from '../../common/cards/card-plugins/_card'
+import {CONFIG, DEBUG_CONFIG, RANKS, EXPANSIONS} from '../../config'
 
 /**
  * @typedef {import('common/types/cards').RankT} RankT
@@ -27,7 +28,18 @@ export function getCardRank(cardId) {
 }
 
 /**
- * @param {CardInfoT} card
+ * @param {string} cardId
+ * @returns {string}
+ */
+export function getCardExpansion(cardId) {
+	/** @type {string} */
+	let expansion = CARDS[cardId].getExpansion()
+
+	return expansion
+}
+
+/**
+ * @param {Card} card
  */
 export function getCardCost(card) {
 	const rank = getCardRank(card.id)
@@ -69,9 +81,7 @@ export function validateDeck(deckCards) {
 		limits.maxDuplicates &&
 		deckCards.some((cardId) => {
 			if (CARDS[cardId].type === 'item') return false
-			const duplicates = deckCards.filter(
-				(filterCardId) => filterCardId === cardId
-			)
+			const duplicates = deckCards.filter((filterCardId) => filterCardId === cardId)
 			return duplicates.length > limits.maxDuplicates
 		})
 
@@ -87,11 +97,7 @@ export function validateDeck(deckCards) {
 	const exactAmountText = `Deck must have exactly ${limits.minCards} cards.`
 
 	if (deckCards.length < limits.minCards)
-		return exactAmount
-			? exactAmountText
-			: `Deck must have at least ${limits.minCards} cards.`
+		return exactAmount ? exactAmountText : `Deck must have at least ${limits.minCards} cards.`
 	if (deckCards.length > limits.maxCards)
-		return exactAmount
-			? exactAmountText
-			: `Deck can not have more than ${limits.maxCards} cards.`
+		return exactAmount ? exactAmountText : `Deck can not have more than ${limits.maxCards} cards.`
 }

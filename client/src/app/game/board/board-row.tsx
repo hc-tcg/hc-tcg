@@ -23,21 +23,10 @@ type BoardRowProps = {
 	active: boolean
 }
 const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
-	const handleSlotClick = (
-		slotType: SlotTypeT,
-		slotIndex: number,
-		card: CardT | null
-	) => {
-		onClick({slotType, slotIndex, card})
+	const handleSlotClick = (slotType: SlotTypeT, slotIndex: number, card: CardT | null) => {
+		onClick({slotType, slotIndex: slotType === 'item' ? slotIndex : 0, card})
 	}
-	const slotTypes: Array<SlotTypeT> = [
-		'item',
-		'item',
-		'item',
-		'effect',
-		'hermit',
-		'health',
-	]
+	const slotTypes: Array<SlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const card = getCardBySlot(slotType, index, rowState)
 		return (

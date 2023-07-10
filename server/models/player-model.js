@@ -57,10 +57,8 @@ export class PlayerModel {
 
 	/** @param {PlayerDeckT} newDeck */
 	setPlayerDeck(newDeck) {
-		if (!newDeck) return
-		const validationMessage = validateDeck(
-			newDeck.cards.map((card) => card.cardId)
-		)
+		if (!newDeck || !newDeck.cards) return
+		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
 		if (validationMessage) return
 		this.playerDeck = newDeck
 	}

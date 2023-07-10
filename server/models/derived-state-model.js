@@ -1,10 +1,5 @@
-import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../cards'
-
-/**
- * @typedef {import("./root-model").GameModel} GameModel
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
- */
+import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../common/cards'
+import {GameModel} from './game-model'
 
 export class DerivedStateModel {
 	/**
@@ -33,16 +28,12 @@ export class DerivedStateModel {
 
 	get playerActiveRow() {
 		const player = this.currentPlayer
-		return player.board.activeRow !== null
-			? player.board.rows[player.board.activeRow]
-			: null
+		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
 	}
 
 	get opponentActiveRow() {
 		const player = this.opponentPlayer
-		return player.board.activeRow !== null
-			? player.board.rows[player.board.activeRow]
-			: null
+		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
 	}
 
 	get playerHermitCard() {

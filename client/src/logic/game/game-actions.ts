@@ -1,11 +1,6 @@
 import {LocalGameState} from 'common/types/game-state'
-import {
-	CardT,
-	GameEndOutcomeT,
-	GameEndReasonT,
-	CurrentCoinFlipT,
-} from 'common/types/game-state'
-import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
+import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
 export const gameState = (localGameState: LocalGameState) => ({
@@ -49,13 +44,14 @@ export const setPickProcess = (pickProcess: PickProcessT | null) => ({
 
 export const updatePickProcess = (payload: {
 	currentReq?: number
-	pickedCards?: Array<PickedCardT>
+	amount?: number
+	pickedSlots?: Array<PickedSlotT>
 }) => ({
 	type: 'UPDATE_PICK_PROCESS' as const,
 	payload,
 })
 
-export const slotPicked = (pickInfo: PickedCardT) => ({
+export const slotPicked = (pickInfo: PickedSlotT) => ({
 	type: 'SLOT_PICKED' as const,
 	payload: pickInfo,
 })
@@ -74,10 +70,7 @@ export const startAttack = (
 	payload: {type, extra},
 })
 
-export const showEndGameOverlay = (
-	outcome: GameEndOutcomeT,
-	reason: GameEndReasonT = null
-) => ({
+export const showEndGameOverlay = (outcome: GameEndOutcomeT, reason: GameEndReasonT = null) => ({
 	type: 'SHOW_END_GAME_OVERLAY' as const,
 	payload: {
 		outcome,
@@ -127,11 +120,11 @@ export const endTurn = () => ({
 
 export const attack = (
 	type: 'zero' | 'primary' | 'secondary',
-	pickedCards: Record<string, Array<PickedCardT>>,
+	pickResults: Record<string, Array<PickResultT>>,
 	extra?: Record<string, any>
 ) => ({
 	type: 'ATTACK' as const,
-	payload: {type, pickedCards, extra},
+	payload: {type, pickResults, extra},
 })
 
 export const chatMessage = (message: string) => ({

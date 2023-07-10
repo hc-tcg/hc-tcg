@@ -1,0 +1,60 @@
+import SingleUseCard from './_single-use-card'
+import {GameModel} from '../../../../server/models/game-model'
+import {CardPos} from '../../../../server/models/card-pos-model'
+import {drawCards} from '../../../../server/utils'
+
+/**
+ * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ */
+
+class FishingRodSingleUseCard extends SingleUseCard {
+	constructor() {
+		super({
+			id: 'fishing_rod',
+			name: 'Fishing Rod',
+			rarity: 'ultra_rare',
+			description: 'Draw 2 cards.',
+		})
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {CardPos} pos
+	 */
+	canAttach(game, pos) {
+		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const {player} = pos
+		if (player.pile.length <= 2) return 'NO'
+
+		return 'YES'
+	}
+
+	canApply() {
+		return true
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onAttach(game, instance, pos) {
+		const {player} = pos
+
+		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			drawCards(player, 2)
+		}
+	}
+
+	/**
+	 * @param {GameModel} game
+	 * @param {string} instance
+	 * @param {CardPos} pos
+	 */
+	onDetach(game, instance, pos) {
+		const {player} = pos
+		delete player.hooks.onApply[instance]
+	}
+}
+
+export default FishingRodSingleUseCard

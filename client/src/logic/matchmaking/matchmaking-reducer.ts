@@ -13,10 +13,7 @@ const defaultState: MatchmakingState = {
 	invalidCode: false,
 }
 
-const matchmakingReducer = (
-	state = defaultState,
-	action: AnyAction
-): MatchmakingState => {
+const matchmakingReducer = (state = defaultState, action: AnyAction): MatchmakingState => {
 	switch (action.type) {
 		case 'RANDOM_MATCHMAKING':
 			return {
@@ -33,6 +30,11 @@ const matchmakingReducer = (
 				...state,
 				status: 'private_code_needed',
 				invalidCode: false,
+			}
+		case 'WAITING_FOR_PLAYER':
+			return {
+				...state,
+				status: 'waiting_for_player',
 			}
 		case 'CODE_RECEIVED':
 			return {

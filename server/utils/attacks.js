@@ -1,0 +1,49 @@
+import STRENGTHS from '../const/strengths'
+import {HERMIT_CARDS} from '../../common/cards'
+import {AttackModel} from '../models/attack-model'
+import {WEAKNESS_DAMAGE} from '../routines/turn-actions/attack.js'
+import CardPos from '../../server/models/card-pos-model'
+
+/**
+ * Returns true if the attack is targeting the card position
+ * @param {import('../models/attack-model').AttackModel} attack
+ * @param {CardPos} pos
+ * @returns {boolean}
+ */
+export function isTargetingPos(attack, pos) {
+	if (!attack.target) return false
+	const targetingPlayer = attack.target.player.id === pos.player.id
+	const targetingRow = attack.target.rowIndex === pos.rowIndex
+
+	return targetingPlayer && targetingRow
+}
+
+/**
+ * @typedef {import('../models/attack-model').AttackModel} Attack
+ * @param {Attack} attack
+ * @returns {Attack | null}
+ */
+export function createWeaknessAttack(attack) {
+	if (!attack.attacker || !attack.target) return null
+	const {target, attacker} = attack
+	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
+	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+
+	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
+
+	const strength = STRENGTHS[attackerCardInfo.hermitType]
+	const hasWeakness = target.row.ailments.find((a) => a.id === 'weakness')
+	if (!strength.includes(targetCardInfo.hermitType) && !hasWeakness) return null
+
+	/** @type {Attack} **/
+	const weaknessAttack = new AttackModel({
+		id: attackId,
+		attacker,
+		target,
+		type: 'weakness',
+	})
+
+	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
+
+	return weaknessAttack
+}

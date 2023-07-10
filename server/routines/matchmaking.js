@@ -1,24 +1,11 @@
-import {
-	all,
-	take,
-	takeEvery,
-	join,
-	cancel,
-	spawn,
-	fork,
-	race,
-	delay,
-} from 'redux-saga/effects'
+import {all, take, takeEvery, join, cancel, spawn, fork, race, delay} from 'redux-saga/effects'
 import {broadcast} from '../utils/comm'
 import gameSaga from './game'
 import root from '../models/root-model'
 import {GameModel} from '../models/game-model'
-import {
-	getGamePlayerOutcome,
-	getWinner,
-	getGameOutcome,
-} from '../utils/win-conditions'
+import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
+import {gameEndWebhook} from '../api'
 
 /**
  * @typedef {import("redux-saga").Task} Task
@@ -53,14 +40,9 @@ function* gameManager(game) {
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
-				(action) =>
-					action.type === 'PLAYER_REMOVED' &&
-					playerIds.includes(action.payload.playerId)
+				(action) => action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.playerId)
 			),
-			forfeit: take(
-				(action) =>
-					action.type === 'FORFEIT' && playerIds.includes(action.playerId)
-			),
+			forfeit: take((action) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)),
 		})
 
 		for (const player of players) {
@@ -82,10 +64,9 @@ function* gameManager(game) {
 		if (game.task) yield cancel(game.task)
 
 		const gameType = game.code ? 'Private' : 'Public'
-		console.log(
-			`${gameType} game ended. Total games:`,
-			root.getGameIds().length - 1
-		)
+		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
+		gameEndWebhook(game)
+
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
 	}
@@ -94,14 +75,14 @@ function* gameManager(game) {
 /**
  * @param {string} playerId
  */
-function inGame(playerId) {
+export function inGame(playerId) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 
 /**
  * @param {string} playerId
  */
-function inQueue(playerId) {
+export function inQueue(playerId) {
 	return root.queue.some((id) => id === playerId)
 }
 
@@ -119,25 +100,17 @@ function* joinQueue(action) {
 }
 
 function* leaveMatchmaking(action) {
-	const playerId =
-		action.type === 'LEAVE_MATCHMAKING'
-			? action.playerId
-			: action.payload.playerId
+	const playerId = action.type === 'LEAVE_MATCHMAKING' ? action.playerId : action.payload.playerId
 
 	const queueIndex = root.queue.indexOf(playerId)
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
 	} else {
-		const game = root
-			.getGames()
-			.find((game) => !game.task && !!game.players[playerId])
+		const game = root.getGames().find((game) => !game.task && !!game.players[playerId])
 		if (!game) return
 		delete root.games[game.id]
 	}
-	console.log(
-		'Matchmaking cancelled: ',
-		root.players[playerId]?.playerName || 'Unknown'
-	)
+	console.log('Matchmaking cancelled: ', root.players[playerId]?.playerName || 'Unknown')
 }
 
 function* createPrivateGame(action) {
@@ -157,10 +130,7 @@ function* createPrivateGame(action) {
 	newGame.addPlayer(player)
 	root.games[newGame.id] = newGame
 
-	console.log(
-		`Private game created by ${player.playerName}.`,
-		`Code: ${gameCode}`
-	)
+	console.log(`Private game created by ${player.playerName}.`, `Code: ${gameCode}`)
 }
 
 function* joinPrivateGame(action) {
@@ -173,14 +143,20 @@ function* joinPrivateGame(action) {
 	const game = root.getGames().find((game) => game.code === code)
 	const invalidCode = !game
 	const gameRunning = !!game?.task
-	if (invalidCode || gameRunning || inGame(playerId)) {
+	const invalidPlayer = game?.getPlayerIds().find((id) => !root.players[id])
+
+	if (invalidCode || invalidPlayer || gameRunning || inGame(playerId)) {
 		broadcast([player], 'INVALID_CODE')
 		return
 	}
 
 	console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 	game.addPlayer(player)
-	yield fork(gameManager, game)
+	if (game.getPlayers().length === 2) {
+		yield fork(gameManager, game)
+	} else {
+		broadcast([player], 'WAITING_FOR_PLAYER')
+	}
 }
 
 function* cleanUpSaga() {
@@ -205,8 +181,7 @@ function* randomMatchmakingSaga() {
 		yield delay(1000 * 3)
 		if (!(root.queue.length > 1)) continue
 
-		const extraPlayer =
-			root.queue.length % 2 === 1 ? root.queue.pop() || null : null
+		const extraPlayer = root.queue.length % 2 === 1 ? root.queue.pop() || null : null
 
 		// Shuffle
 		for (var i = root.queue.length - 1; i > 0; i--) {

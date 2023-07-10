@@ -161,19 +161,38 @@
 	position: absolute;
 	right: 0px;
 	bottom: 0px;
-	width: 25px;
+	width: 22px;
 	background: url(/images/status/slowness.png) no-repeat;
-	height: 25px;
+	height: 22px;
 	background-size: contain;
 }
 
 .sleepingAilment {
 	position: absolute;
-	left: -3px;
+	left: 0px;
 	top: 20px;
 	width: 22px;
 	background: url(/images/status/sleeping-anim.gif) no-repeat;
 	height: 22px;
-	filter: grayscale(100%);
+	background-size: contain;
+}
+
+.weaknessAilment {
+	position: absolute;
+	right: 0px;
+	top: 20px;
+	width: 22px;
+	background: url(/images/status/weakness.png) no-repeat;
+	height: 22px;
+	background-size: contain;
+}
+
+.badomenAilment {
+	position: absolute;
+	right: 33px;
+	top: 20px;
+	width: 22px;
+	background: url(/images/status/bad-omen.png) no-repeat;
+	height: 22px;
 	background-size: contain;
 }

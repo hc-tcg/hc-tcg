@@ -5,11 +5,7 @@ import {AnyAction} from 'redux'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
-import {
-	codeReceived,
-	leaveMatchmaking,
-	invalidCode,
-} from './matchmaking-actions'
+import {codeReceived, leaveMatchmaking, invalidCode, waitingForPlayer} from './matchmaking-actions'
 
 function* randomMatchmakingSaga(): SagaIterator {
 	try {
@@ -48,11 +44,17 @@ function* joinPrivateSaga(): SagaIterator {
 			const result = yield race({
 				invalidCode: call(receiveMsg, 'INVALID_CODE'),
 				gameStart: call(receiveMsg, 'GAME_START'),
+				waitingForPlayer: call(receiveMsg, 'WAITING_FOR_PLAYER'),
+				timeout: call(receiveMsg, 'MATCHMAKING_TIMEOUT'),
 			})
-			if (result.gameStart) break
-			yield put(invalidCode())
+			if (result.timeout) break
+			if (result.gameStart) {
+				yield call(gameSaga)
+				break
+			}
+			if (result.invalidCode) yield put(invalidCode())
+			if (result.waitingForPlayer) yield put(waitingForPlayer())
 		}
-		yield call(gameSaga)
 	} catch (err) {
 		console.error('Game crashed: ', err)
 	} finally {

@@ -1,17 +1,19 @@
-import CARDS from '../cards'
+import CARDS from '../../common/cards'
 import STRENGTHS from '../const/strengths'
 import {CONFIG, DEBUG_CONFIG} from '../../config'
 import {getCardCost, getCardRank} from './validation'
+import {GameModel} from '../models/game-model'
+import Card from '../../common/cards/card-plugins/_card'
+import HermitCard from '../../common/cards/card-plugins/hermits/_hermit-card'
+import ItemCard from '../../common/cards/card-plugins/items/_item-card'
+import EffectCard from '../../common/cards/card-plugins/effects/_effect-card'
 
 /**
- * @typedef {import("models/game-model").GameModel} GameModel
- * @typedef {import("models/player-model").PlayerModel} PlayerModel
+ * @typedef {import("server/models/player-model").PlayerModel} PlayerModel
  * @typedef {import("common/types/game-state").GameState} GameState
  * @typedef {import("common/types/game-state").PlayerState} PlayerState
  * @typedef {import("common/types/game-state").RowState} RowState
- * @typedef {import("common/types/cards").HermitCardT} HermitCardT
- * @typedef {import("common/types/cards").EffectCardT} EffectCardT
- * @typedef {import("common/types/cards").ItemCardT} ItemCardT
+ * @typedef {import("common/cards/card-plugins/single-use/_single-use-card")} SingleUseCard
  * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
  * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
  */
@@ -20,13 +22,13 @@ function randomBetween(min, max) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT | ItemCardT} */
+/** @type {(cardInfo: Card) => cardInfo is HermitCard | ItemCard} */
 const isHermitOrItem = (cardInfo) => ['hermit', 'item'].includes(cardInfo.type)
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is HermitCardT} */
+/** @type {(cardInfo: Card) => cardInfo is HermitCard} */
 const isHermit = (cardInfo) => cardInfo.type === 'hermit'
 
-/** @type {(cardInfo: CardInfoT) => cardInfo is EffectCardT} */
+/** @type {(cardInfo: Card) => cardInfo is EffectCard} */
 const isEffect = (cardInfo) => ['effect', 'single_use'].includes(cardInfo.type)
 
 export function getStarterPack() {
@@ -41,8 +43,7 @@ export function getStarterPack() {
 		.slice(0, hermitTypesCount)
 
 	const cards = Object.values(CARDS).filter(
-		(cardInfo) =>
-			!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
+		(cardInfo) => !isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -50,7 +51,6 @@ export function getStarterPack() {
 
 	const deck = []
 
-	let itemCount = 0
 	let itemCounts = {
 		[hermitTypes[0]]: {
 			items: 0,
@@ -70,9 +70,7 @@ export function getStarterPack() {
 	let tokens = 0
 
 	// hermits, but not diamond ones
-	let hermitCards = cards
-		.filter(isHermit)
-		.filter((card) => getCardRank(card.id).name !== 'diamond')
+	let hermitCards = cards.filter(isHermit).filter((card) => getCardRank(card.id).name !== 'diamond')
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -82,16 +80,12 @@ export function getStarterPack() {
 		hermitCards = hermitCards.filter((card, index) => index !== randomIndex)
 
 		// add 1 - 3 of this hermit
-		const hermitAmount = Math.min(
-			randomBetween(1, 3),
-			hermitCount - deck.length
-		)
+		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
 
 		tokens += getCardCost(hermitCard) * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
 			itemCounts[hermitCard.hermitType].items += 2
-			itemCount += 2
 		}
 	}
 
@@ -107,8 +101,7 @@ export function getStarterPack() {
 	let loopBreaker = 0
 	// effects
 	while (deck.length < limits.maxCards) {
-		const effectCard =
-			effectCards[Math.floor(Math.random() * effectCards.length)]
+		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
 		const duplicates = deck.filter((card) => card.id === effectCard.id)
 		if (duplicates.length >= limits.maxDuplicates) continue
@@ -159,10 +152,18 @@ export function getEmptyRow() {
  * @returns {PlayerState}
  */
 export function getPlayerState(player) {
-	const pack = player.playerDeck.cards
+	let pack = player.playerDeck.cards
 
 	// shuffle cards
 	pack.sort(() => 0.5 - Math.random())
+
+	// randomize instances
+	pack = pack.map((card) => {
+		return {
+			cardId: card.cardId,
+			cardInstance: Math.random().toString(),
+		}
+	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -172,36 +173,74 @@ export function getPlayerState(player) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
 
-	const hand = pack.slice(0, 7)
+	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
+	const hand = pack.slice(0, amountOfStartingCards)
 
-	DEBUG_CONFIG.extraStartingCards.forEach((id) => {
+	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+		const id = DEBUG_CONFIG.extraStartingCards[i]
 		const card = CARDS[id]
-		if (!!card) {
-			hand.unshift({
-				cardId: id,
-				cardInstance: Math.random().toString(),
-			})
+		if (!card) continue
+
+		const cardInfo = {
+			cardId: id,
+			cardInstance: Math.random().toString(),
 		}
-	})
+		pack.push(cardInfo)
+		hand.unshift(cardInfo)
+	}
 
 	const TOTAL_ROWS = 5
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
-		coinFlips: {},
-		followUp: null,
+		coinFlips: [],
+		followUp: {},
 		lives: 3,
 		hand,
 		discarded: [],
-		pile: pack.slice(7),
+		pile: DEBUG_CONFIG.startWithAllCards ? [] : pack.slice(7),
 		custom: {},
-		ailments: [],
 		board: {
 			activeRow: null,
 			singleUseCard: null,
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
+		},
+
+		hooks: {
+			availableEnergy: {},
+
+			blockedActions: {},
+			availableActions: {},
+
+			onAttach: {},
+			onDetach: {},
+
+			beforeApply: {},
+			onApply: {},
+			afterApply: {},
+
+			getAttacks: {},
+
+			beforeAttack: {},
+			beforeDefence: {},
+			onAttack: {},
+			onDefence: {},
+			afterAttack: {},
+			afterDefence: {},
+
+			onFollowUp: {},
+			onFollowUpTimeout: {},
+
+			onHermitDeath: {},
+
+			onTurnStart: {},
+			onTurnEnd: {},
+			onTurnTimeout: {},
+
+			onCoinFlip: {},
 		},
 	}
 }
@@ -250,7 +289,6 @@ export function getLocalPlayerState(playerState) {
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,
 		lives: playerState.lives,
-		ailments: playerState.ailments,
 		board: playerState.board,
 	}
 	return localPlayerState
@@ -260,9 +298,9 @@ export function getLocalPlayerState(playerState) {
  *
  * @param {GameModel} game
  * @param {PlayerModel} player
- * @param {AvailableActionsT} availableActions
+ * @param {import('common/types/game-state').AvailableActionsT} availableActions
  * @param {Array<string>} pastTurnActions
- * @param {AvailableActionsT} opponentAvailableActions
+ * @param {import('common/types/game-state').AvailableActionsT} opponentAvailableActions
  * @returns {LocalGameState | null}
  */
 export function getLocalGameState(
@@ -272,9 +310,7 @@ export function getLocalGameState(
 	pastTurnActions = [],
 	opponentAvailableActions = []
 ) {
-	const opponentPlayerId = game
-		.getPlayerIds()
-		.find((id) => id !== player.playerId)
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null
 	}
@@ -305,12 +341,9 @@ export function getLocalGameState(
 
 		players,
 
-		pastTurnActions:
-			player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
+		pastTurnActions: player.playerId === game.ds.currentPlayer.id ? pastTurnActions : [],
 		availableActions:
-			player.playerId === game.ds.currentPlayer.id
-				? availableActions
-				: opponentAvailableActions,
+			player.playerId === game.ds.currentPlayer.id ? availableActions : opponentAvailableActions,
 
 		timer: game.state.timer,
 	}
