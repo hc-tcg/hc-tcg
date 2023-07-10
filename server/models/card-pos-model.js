@@ -23,7 +23,8 @@ export class CardPos {
 	}
 
 	/**
-	 * Checks if the instance is in the same position as the current one
+	 * Checks if the instance is in the same position as before
+	 * @returns {Boolean}
 	 */
 	#checkInstancePos = () => {
 		// The card hasn't been attached yet
