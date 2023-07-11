@@ -25,8 +25,8 @@ function* playCardSaga(game, turnAction, actionState) {
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== pickedSlot.playerId)
 	if (!opponentPlayerId) return
 
-	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand') return 'INVALID'
-	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return 'INVALID'
+	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand') return
+	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) return
 
 	if (pickedSlot.slot.card) return
 
