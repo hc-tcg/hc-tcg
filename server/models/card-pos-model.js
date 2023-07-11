@@ -138,7 +138,7 @@ export class CardPos {
 	 * @returns {CardT | null}
 	 */
 	get card() {
-		if (!this.#rowIndex) return null
+		if (this.#rowIndex === null) return null
 		// if the instance is not in the same position as the current one, search for it
 		if (!this.#checkInstancePos() && !this.#searchInstance()) {
 			return null
