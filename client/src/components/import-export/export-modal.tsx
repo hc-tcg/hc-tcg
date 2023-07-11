@@ -4,7 +4,7 @@ import {universe} from './import-export-const'
 import {CopyIcon} from 'components/svgs'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import css from './import-export.module.scss'
-import {encode, decode} from 'js-base64'
+import {encode} from 'js-base64'
 
 type Props = {
 	setOpen: boolean
