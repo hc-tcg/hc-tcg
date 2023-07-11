@@ -1,10 +1,10 @@
 import HermitCard from './_hermit-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {flipCoin} from '../../../../server/utils'
 
 /**
+ * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/attack').HermitAttackType} HermitAttackType
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */

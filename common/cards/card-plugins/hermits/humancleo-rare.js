@@ -1,7 +1,6 @@
 import HermitCard from './_hermit-card'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {flipCoin} from '../../../../server/utils'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {getNonEmptyRows, hasEnoughEnergy, getActiveRowPos} from '../../../../server/utils'
@@ -37,7 +36,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
@@ -191,7 +190,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos

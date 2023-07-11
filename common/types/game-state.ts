@@ -1,7 +1,6 @@
 import {AttackModel} from '../../server/models/attack-model'
 import {GameModel} from '../../server/models/game-model'
-import {CardPos} from '../../server/models/card-pos-model'
-import {EnergyT} from './cards'
+import {CardPos, EnergyT} from './cards'
 import {MessageInfoT} from './chat'
 import {PickProcessT, PickedSlots} from './pick-process'
 

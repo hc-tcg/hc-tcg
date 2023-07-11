@@ -1,7 +1,8 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
+import {AttackModel} from '../../../../server/models/attack-model'
+import {getCardPos} from '../../../../server/utils/cards'
 
 class TinFoilChefRareHermitCard extends HermitCard {
 	constructor() {
@@ -29,7 +30,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -49,7 +50,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

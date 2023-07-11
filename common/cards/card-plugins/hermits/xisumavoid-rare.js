@@ -1,7 +1,6 @@
 import HermitCard from './_hermit-card'
 import {flipCoin} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 
 class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
@@ -30,14 +29,19 @@ class XisumavoidRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
 		player.hooks.onAttack[instance] = (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
+			if (
+				attack.id !== attackId ||
+				attack.type !== 'secondary' ||
+				!attack.target
+			)
+				return
 
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] !== 'heads') return
@@ -54,7 +58,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

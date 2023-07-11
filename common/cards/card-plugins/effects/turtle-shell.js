@@ -1,7 +1,6 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
 
 /*
@@ -43,12 +42,12 @@ class TurtleShellEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (!pos.slot || pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'NO'
@@ -62,7 +61,7 @@ class TurtleShellEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
@@ -97,7 +96,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 *
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		delete pos.player.hooks.onDefence[instance]

@@ -1,9 +1,9 @@
 import SingleUseCard from './_single-use-card'
 import {discardCard, isRemovable} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 
 /**
+ * @typedef {import('common/types/cards').CardPos} CardPos
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
  */
 
@@ -73,7 +73,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

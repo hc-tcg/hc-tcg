@@ -2,7 +2,6 @@ import {HERMIT_CARDS, EFFECT_CARDS, SINGLE_USE_CARDS} from '../../../common/card
 import STRENGTHS from '../../const/strengths'
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import {CardPos} from '../../../server/models/card-pos-model'
 import {getCardPos} from '../../utils/cards'
 import {DEBUG_CONFIG} from '../../../config'
 
@@ -23,7 +22,7 @@ export const WEAKNESS_DAMAGE = 20
 /**
  *
  * @param {GameModel} game
- * @param {CardPos} attackPos
+ * @param {import('common/types/cards').CardPos} attackPos
  * @param {HermitAttackType} hermitAttackType
  * @param {import('common/types/pick-process').PickedSlots} pickedSlots
  * @returns {Array<AttackModel>}

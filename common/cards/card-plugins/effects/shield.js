@@ -1,8 +1,11 @@
 import EffectCard from './_effect-card'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class ShieldEffectCard extends EffectCard {
 	constructor() {

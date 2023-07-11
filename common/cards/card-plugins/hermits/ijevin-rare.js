@@ -1,7 +1,10 @@
 import HermitCard from './_hermit-card'
 import {getNonEmptyRows} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class IJevinRareHermitCard extends HermitCard {
 	constructor() {

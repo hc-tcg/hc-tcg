@@ -1,5 +1,4 @@
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import Card from '../_card'
 import CARDS from '../../../cards'
 
@@ -25,12 +24,12 @@ class ItemCard extends Card {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (!pos.slot || pos.slot.type !== 'item') return 'INVALID'
+		if (pos.slot.type !== 'item') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit
@@ -46,7 +45,7 @@ class ItemCard extends Card {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 * @returns {Array<import('types/cards').EnergyT>}
 	 */
 	getEnergy(game, instance, pos) {

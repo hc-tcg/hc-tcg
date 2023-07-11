@@ -1,11 +1,11 @@
 import {discardCard, discardSingleUse, rowHasItem, isRemovable} from '../../../../server/utils'
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import CARDS from '../../../cards'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 class FireChargeSingleUseCard extends SingleUseCard {

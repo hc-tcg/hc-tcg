@@ -2,12 +2,11 @@ import STRENGTHS from '../const/strengths'
 import {HERMIT_CARDS} from '../../common/cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../routines/turn-actions/attack.js'
-import CardPos from '../../server/models/card-pos-model'
 
 /**
  * Returns true if the attack is targeting the card position
  * @param {import('../models/attack-model').AttackModel} attack
- * @param {CardPos} pos
+ * @param {import('types/cards').CardPos} pos
  * @returns {boolean}
  */
 export function isTargetingPos(attack, pos) {

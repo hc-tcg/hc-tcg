@@ -95,7 +95,7 @@ export function applySingleUse(game, pickedSlots = {}, modalResult = null) {
 
 		for (const key of Object.keys(hook)) {
 			const cardPos = getCardPos(game, key)
-			if (cardPos && cardPos.slot && hooksByType[cardPos.slot.type]) {
+			if (cardPos && hooksByType[cardPos.slot.type]) {
 				hooksByType[cardPos.slot.type].push(hook[key])
 			} else {
 				// The card is no longer on the board, we can use the card type instead of the slot type
@@ -165,13 +165,13 @@ export function moveCardToHand(game, card, steal = false) {
 		onDetachs[i](card.cardInstance)
 	}
 
-	if (cardPos.row && cardPos.slot?.type === 'hermit') {
+	if (cardPos.row && cardPos.slot.type === 'hermit') {
 		cardPos.row.hermitCard = null
-	} else if (cardPos.row && cardPos.slot?.type === 'effect') {
+	} else if (cardPos.row && cardPos.slot.type === 'effect') {
 		cardPos.row.effectCard = null
-	} else if (cardPos.row && cardPos.slot?.type === 'item') {
-		cardPos.row.itemCards[cardPos.slot?.index] = null
-	} else if (cardPos.slot?.type === 'single_use') {
+	} else if (cardPos.row && cardPos.slot.type === 'item') {
+		cardPos.row.itemCards[cardPos.slot.index] = null
+	} else if (cardPos.slot.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
 	}
 

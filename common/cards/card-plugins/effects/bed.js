@@ -2,7 +2,6 @@ import EffectCard from './_effect-card'
 import {HERMIT_CARDS} from '../../../cards'
 import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 
 class BedEffectCard extends EffectCard {
 	constructor() {
@@ -17,12 +16,12 @@ class BedEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {currentPlayer} = game.ds
 
-		if (!pos.slot || pos.slot.type !== 'effect') return 'INVALID'
+		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 		if (!pos.row?.hermitCard) return 'NO'
 
@@ -35,7 +34,7 @@ class BedEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		// Give the current row sleeping for 3 turns
@@ -54,20 +53,19 @@ class BedEffectCard extends EffectCard {
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart[instance] = () => {
-			const isSleeping = pos.row?.ailments.some((a) => a.id === 'sleeping')
+			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 			if (!isSleeping) {
-				discardCard(game, pos.row?.effectCard || null)
+				discardCard(game, row?.effectCard || null)
 				return
 			}
 		}
 
 		player.hooks.beforeApply[instance] = (pickedSlots, modalResult) => {
-			player.custom[hermitSlot] = pos.row?.hermitCard?.cardInstance
+			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
 		}
 
 		//Ladder
 		player.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
-			const {row} = pos
 			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
 				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
@@ -81,7 +79,6 @@ class BedEffectCard extends EffectCard {
 		}
 
 		player.hooks.onTurnEnd[instance] = () => {
-			const {row} = pos
 			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
 
 			// if sleeping has worn off, discard the bed
@@ -95,7 +92,7 @@ class BedEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

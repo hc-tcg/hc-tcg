@@ -1,7 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {applySingleUse, getActiveRow} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {

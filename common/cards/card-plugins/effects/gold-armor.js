@@ -1,7 +1,10 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class GoldArmorEffectCard extends EffectCard {
 	constructor() {

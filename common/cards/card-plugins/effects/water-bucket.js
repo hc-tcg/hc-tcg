@@ -1,5 +1,4 @@
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {discardCard} from '../../../../server/utils'
 import EffectCard from './_effect-card'
 
@@ -19,11 +18,10 @@ class WaterBucketEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, opponentPlayer, slot} = pos
-		if (!slot) return
+		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
 			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 				const pickedCards = pickedSlots[this.id] || []
@@ -43,13 +41,13 @@ class WaterBucketEffectCard extends EffectCard {
 			}
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence[instance] = (attack) => {
-				if (!pos.row) return
-				pos.row.ailments = pos.row.ailments.filter((a) => a.id !== 'fire')
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			}
 
 			opponentPlayer.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
-				if (!pos.row) return
-				pos.row.ailments = pos.row.ailments.filter((a) => a.id !== 'fire')
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			}
 		}
 	}
@@ -57,7 +55,7 @@ class WaterBucketEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
@@ -68,10 +66,9 @@ class WaterBucketEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (!pos.slot) return 'INVALID'
 		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
 		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
 

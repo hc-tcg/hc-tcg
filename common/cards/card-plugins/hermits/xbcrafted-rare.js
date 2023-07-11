@@ -1,6 +1,6 @@
 import HermitCard from './_hermit-card'
+import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {getCardPos} from '../../../../server/utils/cards'
 
 /*
@@ -32,7 +32,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 * @param {import('../../../types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('../../../types/pick-process').PickedSlots} pickedSlots
 	 */
@@ -46,7 +46,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				if (!pos || !attacks[0].target) return false
 
 				const onTargetRow = pos.rowIndex === attacks[0].target.rowIndex
-				if (onTargetRow && pos.slot && pos.slot.type === 'effect') {
+				if (onTargetRow && pos.slot.type === 'effect') {
 					// It's the targets effect card, ignore it
 					return true
 				}

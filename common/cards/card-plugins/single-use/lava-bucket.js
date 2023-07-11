@@ -1,6 +1,6 @@
 import SingleUseCard from './_single-use-card'
+import {discardCard} from '../../../../server/utils'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 
 class LavaBucketSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -21,7 +21,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	 * Called when an instance of this card is applied
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -45,10 +45,10 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (!pos.slot || pos.slot.type !== 'single_use') return 'INVALID'
+		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
 
@@ -58,7 +58,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

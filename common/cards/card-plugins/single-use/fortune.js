@@ -1,9 +1,10 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
+import {applySingleUse} from '../../../../server/utils'
 
 /**
  * @typedef {import('common/types/pick-process').PickedSlots} PickedSlots
+ * @typedef {import('common/types/cards').CardPos} CardPos
  */
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.

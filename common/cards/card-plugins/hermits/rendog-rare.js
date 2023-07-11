@@ -1,7 +1,6 @@
 import HermitCard from './_hermit-card'
 import {HERMIT_CARDS} from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
@@ -31,7 +30,7 @@ class RendogRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 * @param {import('types/attack').HermitAttackType} hermitAttackType
 	 * @param {import('types/pick-process').PickedSlots} pickedSlots
 	 */
@@ -66,7 +65,7 @@ class RendogRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
@@ -89,7 +88,7 @@ class RendogRareHermitCard extends HermitCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos

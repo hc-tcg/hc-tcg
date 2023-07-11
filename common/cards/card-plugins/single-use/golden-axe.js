@@ -1,6 +1,5 @@
 import SingleUseCard from './_single-use-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import {AttackModel} from '../../../../server/models/attack-model'
 import {
 	applySingleUse,
@@ -9,6 +8,10 @@ import {
 	getActiveRowPos,
 } from '../../../../server/utils'
 import {getCardPos} from '../../../../server/utils/cards'
+
+/**
+ * @typedef {import('common/types/cards').CardPos} CardPos
+ */
 
 class GoldenAxeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -58,7 +61,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				if (!pos || !attack.target) return false
 
 				const onTargetRow = pos.rowIndex === attack.target.rowIndex
-				if (onTargetRow && pos.slot && pos.slot.type === 'effect') {
+				if (onTargetRow && pos.slot.type === 'effect') {
 					// It's the targets effect card, ignore it
 					return true
 				}

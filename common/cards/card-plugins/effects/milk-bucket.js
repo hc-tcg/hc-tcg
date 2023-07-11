@@ -1,5 +1,4 @@
 import {GameModel} from '../../../../server/models/game-model'
-import {CardPos} from '../../../../server/models/card-pos-model'
 import EffectCard from './_effect-card'
 
 class MilkBucketEffectCard extends EffectCard {
@@ -18,11 +17,10 @@ class MilkBucketEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
-		const {player, opponentPlayer, slot} = pos
-		if (!slot) return
+		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
 			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
 				const pickedCards = pickedSlots[this.id] || []
@@ -36,13 +34,13 @@ class MilkBucketEffectCard extends EffectCard {
 			}
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence[instance] = (attack, pickedSlots) => {
-				if (!pos.row) return
-				pos.row.ailments = pos.row.ailments.filter((a) => a.id !== 'poison')
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 			}
 
 			opponentPlayer.hooks.afterApply[instance] = (attack, pickedSlots) => {
-				if (!pos.row) return
-				pos.row.ailments = pos.row.ailments.filter((a) => a.id !== 'poison')
+				if (!row) return
+				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 			}
 		}
 	}
@@ -50,7 +48,7 @@ class MilkBucketEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
@@ -61,10 +59,10 @@ class MilkBucketEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		if (!pos.slot || !['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
+		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
 		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
 
 		return 'YES'

@@ -1,12 +1,11 @@
 import CARDS from '../../common/cards'
 import {GameModel} from '../models/game-model'
-import {CardPos} from '..//models/card-pos-model'
 
 /**
  * Get the card position on the board for a card instance
  * @param {GameModel} game
  * @param {string} instance
- * @returns {CardPos | null}
+ * @returns {import("../../common/types/cards").CardPos | null}
  */
 export function getCardPos(game, instance) {
 	const ids = game.getPlayerIds()
@@ -22,10 +21,13 @@ export function getCardPos(game, instance) {
 
 		// single use slot
 		if (board.singleUseCard?.cardInstance === instance) {
-			return new CardPos(player, opponentPlayer, instance, null, {
-				type: 'single_use',
-				index: 0,
-			})
+			return {
+				player,
+				opponentPlayer,
+				rowIndex: null,
+				row: null,
+				slot: {type: 'single_use', index: 0},
+			}
 		}
 
 		// go through rows to find instance
@@ -33,23 +35,32 @@ export function getCardPos(game, instance) {
 			const row = board.rows[rowIndex]
 
 			if (row.hermitCard?.cardInstance === instance) {
-				return new CardPos(player, opponentPlayer, instance, rowIndex, {
-					type: 'hermit',
-					index: 0,
-				})
+				return {
+					player,
+					opponentPlayer,
+					rowIndex,
+					row,
+					slot: {type: 'hermit', index: 0},
+				}
 			} else if (row.effectCard?.cardInstance === instance) {
-				return new CardPos(player, opponentPlayer, instance, rowIndex, {
-					type: 'effect',
-					index: 0,
-				})
+				return {
+					player,
+					opponentPlayer,
+					rowIndex,
+					row,
+					slot: {type: 'effect', index: 0},
+				}
 			} else {
 				for (let i = 0; i < row.itemCards.length; i++) {
 					const card = row.itemCards[i]
 					if (card?.cardInstance === instance) {
-						return new CardPos(player, opponentPlayer, instance, rowIndex, {
-							type: 'item',
-							index: i,
-						})
+						return {
+							player,
+							opponentPlayer,
+							rowIndex,
+							row,
+							slot: {type: 'item', index: i},
+						}
 					}
 				}
 			}
@@ -62,13 +73,11 @@ export function getCardPos(game, instance) {
 /**
  * Get the card position on the board for a card instance
  * @param {GameModel} game
- * @param {CardPos} pos
+ * @param {import('../../common/types/cards').CardPos} pos
  * @returns {CardT | null}
  */
 export function getCardAtPos(game, pos) {
 	const {player, row, slot} = pos
-
-	if (!slot) return null
 
 	const suCard = player.board.singleUseCard
 	if (slot.type === 'single_use' && suCard) {
