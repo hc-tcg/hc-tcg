@@ -295,6 +295,7 @@ export function validPick(gameState, req, pickedSlot) {
 	const card = pickedSlot.slot.card
 	const slotType = pickedSlot.slot.type
 	const cardType = card ? CARDS[card.cardId].type : null
+	const checkForEmpty = !['hand', 'single_use'].includes(slotType)
 	const isEmptyRow =
 		rowIndex === null ? true : cardPlayerState.board.rows[rowIndex].hermitCard === null
 
@@ -305,7 +306,7 @@ export function validPick(gameState, req, pickedSlot) {
 	if (!validType(req.type, cardType)) return false
 	if (!validSlot(req.slot, slotType)) return false
 	if (!validEmpty(req.empty || false, card, slotType)) return false
-	if (!validEmptyRow(req.emptyRow || false, isEmptyRow)) return false
+	if (checkForEmpty && !validEmptyRow(req.emptyRow || false, isEmptyRow)) return false
 	if (slotType === 'effect' && !validRemovable(req.removable || true, card)) return false
 	if (!validAdjacent(req.adjacent, gameState, pickedSlot, req)) return false
 

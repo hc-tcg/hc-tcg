@@ -2,7 +2,6 @@ import {GameModel} from '../../../../server/models/game-model'
 import {discardCard} from '../../../../server/utils'
 import EffectCard from '../effects/_effect-card'
 import {isTargetingPos} from '../../../../server/utils/attacks'
-import CardPos from '../../../../server/models/card-pos-model'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -18,7 +17,7 @@ class ArmorStandEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer, row} = pos
@@ -53,7 +52,7 @@ class ArmorStandEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer, slot, row} = pos
@@ -72,7 +71,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
 		const {slot} = pos
@@ -86,7 +85,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 	/**
 	 * @param {GameModel} game
-	 * @param {CardPos} pos
+	 * @param {import('types/cards').CardPos} pos
 	 */
 	canAttachToCard(game, pos) {
 		return false

@@ -39,11 +39,11 @@ class ThornsIIIEffectCard extends EffectCard {
 
 				backlashAttack.shouldIgnoreCards.push((instance) => {
 					const pos = getCardPos(game, instance)
-					if (!pos || !pos.card) return false
+					if (!pos || !pos.row || !pos.row.effectCard) return false
 
 					if (
 						['gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor'].includes(
-							pos.card.cardId
+							pos.row.effectCard.cardId
 						)
 					) {
 						// It's an armor card, ignore it
