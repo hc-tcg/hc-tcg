@@ -3,6 +3,7 @@ import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
 import {CardPos} from '../../../../server/models/card-pos-model'
 import {isTargetingPos} from '../../../../server/utils/attacks'
+import {getCardPos} from '../../../../server/utils/cards'
 
 class ThornsIIIEffectCard extends EffectCard {
 	constructor() {
@@ -11,7 +12,7 @@ class ThornsIIIEffectCard extends EffectCard {
 			name: 'Thorns III',
 			rarity: 'ultra_rare',
 			description:
-				'When the hermit this card is attached to takes damage, your opponent takes 40hp damage.',
+				'When the hermit this card is attached to takes damage, your opponent takes 40hp damage.\n\nIgnores armor.',
 		})
 	}
 
@@ -36,6 +37,22 @@ class ThornsIIIEffectCard extends EffectCard {
 					type: 'effect',
 					isBacklash: true,
 				}).addDamage(this.id, 40)
+
+				backlashAttack.shouldIgnoreCards.push((instance) => {
+					const pos = getCardPos(game, instance)
+					if (!pos || !pos.card) return false
+
+					if (
+						['gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor'].includes(
+							pos.card.cardId
+						)
+					) {
+						// It's an armor card, ignore it
+						return true
+					}
+
+					return false
+				})
 
 				attack.addNewAttack(backlashAttack)
 			}
