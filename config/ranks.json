@@ -112,7 +112,6 @@
 	"mending": 1,
 	"spyglass": 1,
 	"looting": 1,
-	"thorns": 1,
 
 	"chest": 2,
 	"emerald": 2,
@@ -125,6 +124,7 @@
 	"tnt": 2,
 	"bed": 2,
 	"splash_potion_of_poison": 2,
+	"thorns": 2,
 
 	"diamond_armor": 3,
 	"lava_bucket": 3,
