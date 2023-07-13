@@ -32,8 +32,8 @@ import {
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {setSetting} from 'logic/local-settings/local-settings-actions'
+// import {getSettings} from 'logic/local-settings/local-settings-selectors'
+// import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -68,7 +68,7 @@ function Game() {
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
-	const settings = useSelector(getSettings)
+	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
 
@@ -96,26 +96,28 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	function handleKeys(e: any) {
-		const chatIsClosed = settings.showChat === 'off'
+	// TODO: handleKeys is disabled due to eventListeners not able to use state
+	// function handleKeys(e: any) {
+	// 	// const chatIsClosed = settings.showChat === 'off'
+	// 	const chatIsClosed = false
 
-		if (e.key === 'Escape') {
-			dispatch(setSetting('showChat', 'off'))
-		}
+	// 	if (e.key === 'Escape') {
+	// 		dispatch(setSetting('showChat', 'off'))
+	// 	}
 
-		if (chatIsClosed) {
-			e.key === '/' && dispatch(setSetting('showChat', 'on'))
-			if (e.key === 'a' || e.key === 'A') {
-				dispatch(setOpenedModal('attack'))
-			}
-			if (e.key === 'e' || e.key === 'E') {
-				dispatch(setOpenedModal('end-turn'))
-			}
-			if (e.key === 'm' || e.key === 'M') {
-				console.log('Mute!')
-			}
-		}
-	}
+	// 	if (chatIsClosed) {
+	// 		e.key === '/' && dispatch(setSetting('showChat', 'on'))
+	// 		if (e.key === 'a' || e.key === 'A') {
+	// 			dispatch(setOpenedModal('attack'))
+	// 		}
+	// 		if (e.key === 'e' || e.key === 'E') {
+	// 			dispatch(setOpenedModal('end-turn'))
+	// 		}
+	// 		if (e.key === 'm' || e.key === 'M') {
+	// 			console.log('Mute!')
+	// 		}
+	// 	}
+	// }
 
 	function handleResize() {
 		if (!gameWrapperRef.current || !gameRef.current) return
@@ -150,13 +152,13 @@ function Game() {
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
-		window.addEventListener('keyup', handleKeys)
+		// window.addEventListener('keyup', handleKeys)
 		window.addEventListener('resize', handleResize)
 		handRef.current?.addEventListener('wheel', horizontalScroll)
 
 		// Clean up event listeners
 		return () => {
-			window.removeEventListener('keyup', handleKeys)
+			// window.removeEventListener('keyup', handleKeys)
 			window.removeEventListener('resize', handleResize)
 			handRef.current?.removeEventListener('wheel', horizontalScroll)
 		}
