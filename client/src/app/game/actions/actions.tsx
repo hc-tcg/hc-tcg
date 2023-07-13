@@ -104,7 +104,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
-	const pickProcess: any = useSelector(getPickProcess)
+	const pickProcess = useSelector(getPickProcess)
 	const player = useSelector(getPlayerState)
 	const dispatch = useDispatch()
 
@@ -131,7 +131,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 					{knockedOut && 'Activate an AFK Hermit'}
 					{changeHermit && 'Select a new active hermit'}
 					{opponentFollowup && "Waiting for opponent's action..."}
-					{getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}
+					{pickProcess && getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}
 				</p>
 			</>
 		)
