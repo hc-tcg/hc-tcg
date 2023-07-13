@@ -33,11 +33,9 @@ const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 						})}
 					>
 						{attackInfo?.damage}
-						{attackInfo?.power && (
-							<div className={css.specialMoveDescription}>{attackInfo?.power}</div>
-						)}
 					</span>
 				</p>
+				{attackInfo?.power && <p>{attackInfo?.power}</p>}
 			</div>
 		</button>
 	)

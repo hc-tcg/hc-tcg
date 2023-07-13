@@ -104,9 +104,6 @@ function AttackModal({closeModal}: Props) {
 				{attacks.length ? (
 					<>
 						<Modal.Notice icon={'!'}>Attacking will end your turn!</Modal.Notice>
-						<Modal.Notice icon={'i'}>
-							Damage bonuses from special moves are NOT included in the preview.
-						</Modal.Notice>
 						{attacks}
 					</>
 				) : (
