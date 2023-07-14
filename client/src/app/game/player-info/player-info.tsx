@@ -28,19 +28,8 @@ function PlayerInfo({player, direction}: Props) {
 
 	const health = (lives: number) => {
 		const hearts = new Array(3).fill(null).map((_, index) => {
-			const heartImg =
-				lives > index
-					? 'images/game/heart_full.png'
-					: 'images/game/heart_empty.png'
-			return (
-				<img
-					key={index}
-					className={css.heart}
-					src={heartImg}
-					width="32"
-					height="32"
-				/>
-			)
+			const heartImg = lives > index ? 'images/game/heart_full.png' : 'images/game/heart_empty.png'
+			return <img key={index} className={css.heart} src={heartImg} width="32" height="32" />
 		})
 		return hearts
 	}
@@ -53,9 +42,7 @@ function PlayerInfo({player, direction}: Props) {
 	// or attack moves that users would select from the main menu.
 
 	return (
-		<div
-			className={cn(css.playerInfo, css[direction], {[css.active]: thisPlayer})}
-		>
+		<div className={cn(css.playerInfo, css[direction], {[css.active]: thisPlayer})}>
 			<img
 				className={css.playerHead}
 				src={`https://mc-heads.net/head/${player.playerName}/${headDirection}`}
@@ -70,14 +57,10 @@ function PlayerInfo({player, direction}: Props) {
 				>
 					{getName(player)}
 				</h1>
-				<p className={css.tag}>
-					{!connected ? 'Player Disconnected' : playerTag}
-				</p>
+				<p className={css.tag}>{!connected ? 'Player Disconnected' : playerTag}</p>
 			</div>
 
-			<div className={cn(css.health, css[direction])}>
-				{health(player.lives)}
-			</div>
+			<div className={cn(css.health, css[direction])}>{health(player.lives)}</div>
 		</div>
 	)
 }

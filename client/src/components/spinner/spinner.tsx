@@ -10,12 +10,7 @@ const Spinner = ({color}: SpinnerProps) => {
 	const pixelArray = pixel.map((_, i) => {
 		const pixelId = 'pixel' + (i + 1)
 		return (
-			<div
-				key={i}
-				className={css.pixel}
-				id={css[pixelId]}
-				style={{backgroundColor: color}}
-			></div>
+			<div key={i} className={css.pixel} id={css[pixelId]} style={{backgroundColor: color}}></div>
 		)
 	})
 

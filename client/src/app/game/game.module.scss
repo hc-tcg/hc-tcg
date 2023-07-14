@@ -34,15 +34,8 @@
 	position: absolute;
 	height: 100%;
 	width: 100%;
-	background-image: repeating-linear-gradient(
-			#ccc5 0 $line-weight,
-			transparent $line-weight 100%
-		),
-		repeating-linear-gradient(
-			90deg,
-			#ccc5 0 $line-weight,
-			transparent $line-weight 100%
-		);
+	background-image: repeating-linear-gradient(#ccc5 0 $line-weight, transparent $line-weight 100%),
+		repeating-linear-gradient(90deg, #ccc5 0 $line-weight, transparent $line-weight 100%);
 	background-size: $grid-size $grid-size;
 	z-index: -1;
 }

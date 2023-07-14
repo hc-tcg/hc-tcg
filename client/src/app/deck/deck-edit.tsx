@@ -442,11 +442,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							/>
 						</Accordion>
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								wrap={true}
-								onClick={removeCard}
-							/>
+							<CardList cards={sortCards(selectedCards.items)} wrap={true} onClick={removeCard} />
 						</Accordion>
 					</div>
 				</DeckLayout.Sidebar>

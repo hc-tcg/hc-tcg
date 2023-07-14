@@ -19,10 +19,7 @@ function Toolbar() {
 	}
 
 	function handleEndTurn() {
-		if (
-			availableActions.length === 1 ||
-			settings.confirmationDialogs === 'off'
-		) {
+		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
 		} else {
 			dispatch(setOpenedModal('end-turn'))
