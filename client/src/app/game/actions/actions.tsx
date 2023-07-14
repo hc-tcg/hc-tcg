@@ -177,7 +177,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				<Button
 					variant="default"
 					size="small"
-					style={{height: '3.5vh'}}
+					style={{height: '32px'}}
 					onClick={handleAttack}
 					disabled={!attackOptions}
 				>
