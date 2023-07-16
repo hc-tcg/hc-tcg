@@ -1,4 +1,3 @@
-import {AttackModel} from '../../server/models/attack-model'
 import {RowPos} from './cards'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'zero'

@@ -42,13 +42,13 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			for (const card of player.hand) {
 				discardCard(game, card)
 			}
 
 			drawCards(player, 3)
-		}
+		})
 	}
 
 	/**
@@ -58,7 +58,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"allowJs": true,
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"strictNullChecks": true,
+		"strict": true,
+		"esModuleInterop": true,
+		"outDir": "../dist"
+	},
+	"include": [".", "**.json"]
+}

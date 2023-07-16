@@ -33,14 +33,14 @@ class Cubfan135RareHermitCard extends HermitCard {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
 			player.custom[instanceKey] = true
-		}
+		})
 
-		player.hooks.availableActions[instance] = (availableActions) => {
+		player.hooks.availableActions.add(instance, (availableActions) => {
 			if (player.custom[instanceKey]) {
 				// Only activate if we have other hermit and we haven't already switched
 				const hasOtherHermit = player.board.rows.some((row, index) => {
@@ -59,12 +59,12 @@ class Cubfan135RareHermitCard extends HermitCard {
 			}
 
 			return availableActions
-		}
+		})
 
-		player.hooks.onTurnEnd[instance] = () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			// Cleanup
 			delete player.custom[instanceKey]
-		}
+		})
 	}
 
 	/**
@@ -77,9 +77,9 @@ class Cubfan135RareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		// Remove all hooks and flags
-		delete player.hooks.onAttack[instance]
-		delete player.hooks.availableActions[instance]
-		delete player.hooks.onTurnEnd[instance]
+		player.hooks.onAttack.remove(instance)
+		player.hooks.availableActions.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 		delete player.custom[instanceKey]
 	}
 }

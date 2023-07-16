@@ -34,7 +34,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
@@ -47,7 +47,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			// Heal 40hp
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			attacker.row.health = Math.min(attacker.row.health + 40, hermitInfo.health)
-		}
+		})
 	}
 
 	/**
@@ -58,7 +58,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

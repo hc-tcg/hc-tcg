@@ -21,7 +21,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks[instance] = () => {
+		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
@@ -35,15 +35,15 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 			}).addDamage(this.id, 60)
 
 			return [swordAttack]
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
 			if (attack.id !== attackId) return
 
 			// We've executed our attack, apply effect
 			applySingleUse(game)
-		}
+		})
 	}
 
 	/**
@@ -53,8 +53,8 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.getAttacks[instance]
-		delete player.hooks.onAttack[instance]
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

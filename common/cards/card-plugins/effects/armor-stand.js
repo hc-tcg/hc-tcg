@@ -17,7 +17,7 @@ class ArmorStandEffectCard extends EffectCard {
 	/**
 	 * @param {GameModel} game
 	 * @param {string} instance
-	 * @param {import('types/cards').CardPos} pos
+	 * @param {import('common/types/cards').CardPos} pos
 	 */
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer, row} = pos
@@ -29,24 +29,27 @@ class ArmorStandEffectCard extends EffectCard {
 		}
 
 		// The menu won't show up but just in case someone tries to cheat
-		player.hooks.blockedActions[instance] = (blockedActions, pastTurnActions, availableEnergy) => {
-			if (player.board.activeRow === pos.rowIndex) {
-				blockedActions.push('PRIMARY_ATTACK')
-				blockedActions.push('SECONDARY_ATTACK')
-				blockedActions.push('ZERO_ATTACK')
+		player.hooks.blockedActions.add(
+			instance,
+			(blockedActions, pastTurnActions, availableEnergy) => {
+				if (player.board.activeRow === pos.rowIndex) {
+					blockedActions.push('PRIMARY_ATTACK')
+					blockedActions.push('SECONDARY_ATTACK')
+					blockedActions.push('ZERO_ATTACK')
+				}
+
+				return blockedActions
 			}
+		)
 
-			return blockedActions
-		}
-
-		opponentPlayer.hooks.afterAttack[instance] = (attack) => {
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				// Reset the active row so the player can switch
 				player.board.activeRow = null
 			}
-		}
+		})
 	}
 
 	/**
@@ -62,10 +65,8 @@ class ArmorStandEffectCard extends EffectCard {
 			row.health = null
 		}
 
-		delete player.hooks.blockedActions[instance]
-		delete opponentPlayer.hooks.onAttack[instance]
-		delete opponentPlayer.hooks.afterAttack[instance]
-		delete opponentPlayer.hooks.onTurnEnd[instance]
+		player.hooks.blockedActions.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 
@@ -75,7 +76,7 @@ class ArmorStandEffectCard extends EffectCard {
 	 */
 	canAttach(game, pos) {
 		const {slot} = pos
-		const {currentPlayer} = game.ds
+		const {currentPlayer} = game
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'

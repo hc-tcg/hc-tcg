@@ -47,7 +47,7 @@ class JinglerRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const followUpKey = this.getInstanceKey(instance)
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 			const coinFlip = flipCoin(player, this.id)
@@ -55,30 +55,30 @@ class JinglerRareHermitCard extends HermitCard {
 
 			opponentPlayer.followUp[followUpKey] = this.id
 
-			opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
+			opponentPlayer.hooks.onFollowUp.add(instance, (followUp, pickedSlots) => {
 				if (followUp !== followUpKey) return
 				// We can't delete on onDetach because the hermit can die from
 				// a backlash attack and the followUp will trigger after onDetach
-				delete opponentPlayer.hooks.onFollowUp[instance]
-				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				opponentPlayer.hooks.onFollowUp.remove(instance)
+				opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
 				delete opponentPlayer.followUp[followUpKey]
 
 				const slots = pickedSlots[this.id]
 				if (!slots || slots.length !== 1) return
 
 				discardCard(game, slots[0].slot.card)
-			}
+			})
 
-			opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
+			opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
 				if (followUp !== followUpKey) return
-				delete opponentPlayer.hooks.onFollowUp[instance]
-				delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+				opponentPlayer.hooks.onFollowUp.remove(instance)
+				opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
 				delete opponentPlayer.followUp[followUpKey]
 
 				// Discard the first card in the opponent's hand
 				discardCard(game, opponentPlayer.hand[0])
-			}
-		}
+			})
+		})
 	}
 
 	/**
@@ -88,7 +88,7 @@ class JinglerRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.afterAttack[instance]
+		player.hooks.afterAttack.remove(instance)
 	}
 
 	getExpansion() {

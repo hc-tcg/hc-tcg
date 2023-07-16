@@ -27,7 +27,7 @@ class ItemCard extends Card {
 	 * @param {import('types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		const {currentPlayer} = game.ds
+		const {currentPlayer} = game
 
 		if (pos.slot.type !== 'item') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'

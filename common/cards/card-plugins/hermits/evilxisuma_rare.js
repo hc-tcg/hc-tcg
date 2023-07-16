@@ -39,7 +39,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 
@@ -55,28 +55,28 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			player.custom[this.getInstanceKey(instance, 'target')] = attack.target.rowIndex
 
 			// It's easier to not duplicate the code if I use the hooks here
-			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+			player.hooks.onFollowUp.add(instance, (followUp, pickedSlots, modalResult) => {
 				if (followUp !== instanceKey) return
-				delete player.hooks.onFollowUp[instance]
-				delete player.hooks.onFollowUpTimeout[instance]
+				player.hooks.onFollowUp.remove(instance)
+				player.hooks.onFollowUpTimeout.remove(instance)
 				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.disable) return
 
 				player.custom[this.getInstanceKey(instance, 'disable')] = modalResult.disable
-			}
+			})
 
-			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
+			player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
 				if (followUp !== instanceKey) return
-				delete player.hooks.onFollowUpTimeout[instance]
-				delete player.hooks.onFollowUpTimeout[instance]
+				player.hooks.onFollowUpTimeout.remove(instance)
+				player.hooks.onFollowUpTimeout.remove(instance)
 				delete player.followUp[instanceKey]
 
 				// Disable the secondary attack if the player didn't choose one
 				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'
-			}
+			})
 
-			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				const disable = player.custom[this.getInstanceKey(instance, 'disable')]
 				const targetRow = player.custom[this.getInstanceKey(instance, 'target')]
 				if (!disable) return blockedActions
@@ -88,15 +88,15 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				blockedActions.push(disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK')
 
 				return blockedActions
-			}
+			})
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
-				delete opponentPlayer.hooks.blockedActions[instance]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
 				delete player.custom[this.getInstanceKey(instance, 'disable')]
 				delete player.custom[this.getInstanceKey(instance, 'target')]
-			}
-		}
+			})
+		})
 	}
 
 	/**
@@ -106,7 +106,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 
 	getExpansion() {

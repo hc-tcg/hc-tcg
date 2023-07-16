@@ -26,7 +26,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 
@@ -40,7 +40,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 					id: 'poison',
 				})
 			}
-		}
+		})
 	}
 
 	/**
@@ -62,7 +62,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

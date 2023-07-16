@@ -3,7 +3,8 @@
 		"baseUrl": "src",
 		"paths": {
 			"server/*": ["../../server/*"],
-			"common/*": ["../../common/*"]
+			"common/*": ["../../common/*"],
+			"const/*": ["../../common/const/*"]
 		},
 		"target": "ESNext",
 		"useDefineForClassFields": true,

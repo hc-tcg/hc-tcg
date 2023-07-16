@@ -34,14 +34,9 @@ class EthosLabRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (
-				attack.id !== attackId ||
-				attack.type !== 'secondary' ||
-				!attack.target
-			)
-				return
+			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
 
 			const coinFlip = flipCoin(player, this.id)
 
@@ -53,7 +48,7 @@ class EthosLabRareHermitCard extends HermitCard {
 			if (!hasDamageEffect) {
 				attack.target.row.ailments.push({id: 'fire'})
 			}
-		}
+		})
 	}
 
 	/**
@@ -64,7 +59,7 @@ class EthosLabRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

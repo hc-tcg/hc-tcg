@@ -76,7 +76,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.blockedActions[instance] = (blockedActions) => {
+		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			const afkHermits = getNonEmptyRows(player, false).length
 			if (
 				player.board.activeRow === pos.rowIndex &&
@@ -87,7 +87,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			}
 
 			return blockedActions
-		}
+		})
 	}
 
 	/**
@@ -97,7 +97,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.blockedActions[instance]
+		player.hooks.blockedActions.remove(instance)
 	}
 }
 

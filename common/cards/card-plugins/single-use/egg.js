@@ -30,7 +30,7 @@ class EggSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
@@ -61,13 +61,13 @@ class EggSingleUseCard extends SingleUseCard {
 			player.custom[this.getInstanceKey(instance)] = pickedHermit.row.index
 
 			// Only do this once if there are multiple attacks
-			delete player.hooks.onAttack[instance]
-		}
+			player.hooks.onAttack.remove(instance)
+		})
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			const eggIndex = player.custom[this.getInstanceKey(instance)]
 			opponentPlayer.board.activeRow = eggIndex
-		}
+		})
 	}
 
 	/**
@@ -78,8 +78,8 @@ class EggSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onAttack[instance]
-		delete player.hooks.afterAttack[instance]
+		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

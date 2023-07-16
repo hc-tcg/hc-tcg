@@ -33,7 +33,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 			if (!attack.attacker) return
 
@@ -49,7 +49,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 			backlashAttack.addDamage(this.id, attackDamage)
 
 			attack.addNewAttack(backlashAttack)
-		}
+		})
 	}
 
 	/**
@@ -60,7 +60,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

@@ -39,7 +39,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 		const status = this.getInstanceKey(instance, 'status')
 		player.custom[status] = 'normal'
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (player.custom[status] != 'normal') {
 				player.custom[status] = 'normal'
@@ -52,7 +52,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			// Block all the actions of the opponent
-			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				/** @type {AvailableActionsT}*/
 				const blocked = [
 					'APPLY_EFFECT',
@@ -71,36 +71,36 @@ class JoeHillsRareHermitCard extends HermitCard {
 				}
 				blockedActions.push(...blocked)
 				return blockedActions
-			}
+			})
 
 			// Stop blocking the actions of the opponent when their turn ends
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
-				delete opponentPlayer.hooks.blockedActions[instance]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
-			}
-		}
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+			})
+		})
 
 		// Block the secondary attack of Joe
-		player.hooks.blockedActions[instance] = (blockedActions) => {
+		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			if (player.custom[status] === 'normal') return blockedActions
 			/** @type {AvailableActionsT}*/
 			const blocked = ['SECONDARY_ATTACK']
 			blockedActions.push(...blocked)
 
 			return blockedActions
-		}
+		})
 
 		// Advance the status flag at the start of your turn after time skip
-		player.hooks.onTurnStart[instance] = () => {
+		player.hooks.onTurnStart.add(instance, () => {
 			if (player.custom[status] !== 'block') return
 			player.custom[status] = 'blocked'
-		}
+		})
 
 		// If you didn't attack or switched your active hermit, reset the status flag
-		player.hooks.onTurnEnd[instance] = () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			if (player.custom[status] !== 'blocked') return
 			player.custom[status] = 'normal'
-		}
+		})
 	}
 
 	/**
@@ -112,10 +112,10 @@ class JoeHillsRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
-		delete player.hooks.blockedActions[instance]
-		delete player.hooks.onTurnEnd[instance]
-		delete player.hooks.onTurnStart[instance]
+		player.hooks.onAttack.remove(instance)
+		player.hooks.blockedActions.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[status]
 	}
 }

@@ -51,7 +51,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 			if (slots.length !== 2) return
 
@@ -84,7 +84,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			swapSlots(game, itemPos, targetPos)
 
 			return true
-		}
+		})
 	}
 
 	/**
@@ -118,7 +118,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

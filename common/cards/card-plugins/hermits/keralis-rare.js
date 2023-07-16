@@ -44,7 +44,7 @@ class KeralisRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
@@ -65,7 +65,7 @@ class KeralisRareHermitCard extends HermitCard {
 				// Armor Stand
 				rowState.health += 100
 			}
-		}
+		})
 	}
 
 	/**
@@ -74,7 +74,7 @@ class KeralisRareHermitCard extends HermitCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.player.hooks.onAttack[instance]
+		pos.player.hooks.onAttack.remove(instance)
 	}
 }
 

@@ -1,9 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux'
-import {
-	randomMatchmaking,
-	createPrivateGame,
-	joinPrivateGame,
-} from 'logic/matchmaking/matchmaking-actions'
+import {joinQueue, createPrivateGame, joinPrivateGame} from 'logic/matchmaking/matchmaking-actions'
 import {logout} from 'logic/session/session-actions'
 import {getSession} from 'logic/session/session-selectors'
 import css from './main-menu.module.scss'
@@ -18,7 +14,7 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleRandomMatchmaking = () => dispatch(randomMatchmaking())
+	const handleJoinQueue = () => dispatch(joinQueue())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
 	const handleLogOut = () => dispatch(logout())
@@ -41,7 +37,7 @@ function MainMenu({setMenuSection}: Props) {
 					<TcgLogo />
 				</div>
 				<nav>
-					<Button variant="stone" id={css.public} onClick={handleRandomMatchmaking}>
+					<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 						Public Game
 					</Button>
 					<Button variant="stone" id={css.privateCreate} onClick={handleCreatePrivateGame}>

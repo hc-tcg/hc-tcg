@@ -23,25 +23,25 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	 */
 	onAttach(game, instance, pos) {
 		const {player} = pos
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			player.hooks.availableEnergy[instance] = (availableEnergy) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			player.hooks.availableEnergy.add(instance, (availableEnergy) => {
 				// Unliimited powwa
 				return ['any', 'any', 'any']
-			}
+			})
 
-			player.hooks.afterAttack[instance] = (attack) => {
-				delete player.hooks.availableEnergy[instance]
-				delete player.hooks.afterAttack[instance]
-				delete player.hooks.onTurnEnd[instance]
-			}
+			player.hooks.afterAttack.add(instance, (attack) => {
+				player.hooks.availableEnergy.remove(instance)
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
 
 			// In case the player does not attack
-			player.hooks.onTurnEnd[instance] = () => {
-				delete player.hooks.availableEnergy[instance]
-				delete player.hooks.afterAttack[instance]
-				delete player.hooks.onTurnEnd[instance]
-			}
-		}
+			player.hooks.onTurnEnd.add(instance, () => {
+				player.hooks.availableEnergy.remove(instance)
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
+		})
 	}
 
 	/**
@@ -51,7 +51,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

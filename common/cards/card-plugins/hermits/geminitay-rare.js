@@ -37,7 +37,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			// To keep this simple gem will discard the single use card, if it's used
@@ -47,9 +47,9 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 			// Set flag, so we can modify available actions
 			player.custom[extraCardKey] = true
-		}
+		})
 
-		player.hooks.availableActions[instance] = (availableActions) => {
+		player.hooks.availableActions.add(instance, (availableActions) => {
 			// if the flag is enabled allow playing another card
 			// @TODO what does follow up do with this
 			if (player.custom[extraCardKey]) {
@@ -62,26 +62,26 @@ class GeminiTayRareHermitCard extends HermitCard {
 			}
 
 			return availableActions
-		}
+		})
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			if (!player.board.singleUseCard && player.custom[extraCardKey]) {
 				// Trident was here and it's no longer here
 				delete player.custom[extraCardKey]
 			}
-		}
+		})
 
-		player.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
 			// Piston/Fire Charge won't be here.
 			// If a card is till here we need to remove the flag
 			if (player.board.singleUseCard && player.custom[extraCardKey]) {
 				delete player.custom[extraCardKey]
 			}
-		}
+		})
 
-		player.hooks.onTurnEnd[instance] = () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			delete player.custom[extraCardKey]
-		}
+		})
 	}
 
 	/**
@@ -94,11 +94,11 @@ class GeminiTayRareHermitCard extends HermitCard {
 		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
 		// Remove hooks and flags
-		delete player.hooks.afterAttack[instance]
-		delete player.hooks.availableActions[instance]
-		delete player.hooks.onApply[instance]
-		delete player.hooks.afterApply[instance]
-		delete player.hooks.onTurnEnd[instance]
+		player.hooks.afterAttack.remove(instance)
+		player.hooks.availableActions.remove(instance)
+		player.hooks.onApply.remove(instance)
+		player.hooks.afterApply.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 		delete player.custom[extraCardKey]
 	}
 }

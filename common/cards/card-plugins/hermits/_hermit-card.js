@@ -53,7 +53,7 @@ class HermitCard extends Card {
 	getAttacks(game, instance, pos, hermitAttackType, pickedSlots) {
 		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
 
-		const {opponentPlayer} = game.ds
+		const {opponentPlayer} = game
 		const targetIndex = opponentPlayer.board.activeRow
 		if (targetIndex === null) return []
 
@@ -98,7 +98,7 @@ class HermitCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		const {currentPlayer} = game.ds
+		const {currentPlayer} = game
 
 		if (pos.slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'

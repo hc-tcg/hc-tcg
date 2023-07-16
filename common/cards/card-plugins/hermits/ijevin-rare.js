@@ -38,7 +38,7 @@ class IJevinRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 
@@ -50,7 +50,7 @@ class IJevinRareHermitCard extends HermitCard {
 				})
 				opponentPlayer.board.activeRow = null
 			}
-		}
+		})
 	}
 
 	/**
@@ -61,7 +61,7 @@ class IJevinRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

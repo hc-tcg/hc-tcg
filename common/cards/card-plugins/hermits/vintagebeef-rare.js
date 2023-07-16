@@ -33,7 +33,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
@@ -45,7 +45,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 					(ailment) => !['fire', 'poison', 'badomen', 'weakness'].includes(ailment.id)
 				)
 			})
-		}
+		})
 	}
 
 	/**
@@ -56,7 +56,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

@@ -41,9 +41,9 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			drawCards(player, 2)
-		}
+		})
 	}
 
 	/**
@@ -53,7 +53,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

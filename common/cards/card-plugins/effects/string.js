@@ -18,7 +18,7 @@ class StringEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		const {opponentPlayer} = game.ds
+		const {opponentPlayer} = game
 
 		// attach to effect or item slot
 		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'INVALID'

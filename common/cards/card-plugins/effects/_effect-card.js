@@ -1,7 +1,6 @@
-import {AttackModel} from '../../../../server/models/attack-model'
-import {GameModel} from '../../../../server/models/game-model'
 import Card from '../_card'
 import CARDS from '../../../cards'
+import {GameModel} from '../../../../server/models/game-model'
 
 /**
  * @typedef {import('common/types/cards').EffectDefs} EffectDefs
@@ -27,7 +26,6 @@ class EffectCard extends Card {
 			throw new Error('Invalid card definition!')
 		}
 
-		/** @type {string} */
 		this.description = defs.description
 	}
 
@@ -37,7 +35,7 @@ class EffectCard extends Card {
 	 * @returns {"YES" | "NO" | "INVALID"}
 	 */
 	canAttach(game, pos) {
-		const {currentPlayer} = game.ds
+		const {currentPlayer} = game
 
 		// Wrong slot
 		if (pos.slot.type !== 'effect') return 'INVALID'

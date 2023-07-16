@@ -55,7 +55,7 @@ class GrianRareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 		const modalKey = this.getInstanceKey(instance, 'modal')
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 
 			if (attack.type !== 'primary') return
@@ -68,14 +68,10 @@ class GrianRareHermitCard extends HermitCard {
 			player.custom[targetKey] = attack.target.row.hermitCard.cardInstance
 			// Don't show the modal yet
 			player.followUp[instanceKey] = ''
-		}
+		})
 
 		// We need to wait until Loyalty disappear, it uses onHermitDeath
-		player.hooks.onFollowUp[instance] = (
-			followUp,
-			pickedCards,
-			modalResult
-		) => {
+		player.hooks.onFollowUp.add(instance, (followUp, pickedCards, modalResult) => {
 			if (followUp === instanceKey) {
 				delete player.followUp[instanceKey]
 				const targetInstance = player.custom[targetKey]
@@ -102,7 +98,7 @@ class GrianRareHermitCard extends HermitCard {
 				delete player.followUp[modalKey]
 				if (!row || rowIndex === null) return
 
-				/** @type {CardT} */
+				/** @type {import('../../../types/game-state').CardT} */
 				const opponentEffectCard = player.custom[effectKey]
 				if (!opponentEffectCard) return
 
@@ -144,9 +140,9 @@ class GrianRareHermitCard extends HermitCard {
 					discardCard(game, opponentEffectCard, true)
 				}
 			}
-		}
+		})
 
-		player.hooks.onFollowUpTimeout[instance] = (followUp) => {
+		player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
 			// Disable the followUp for both of them, we want to avoid infinite loops
 			// between the client and the server, the first one should never time out
 			// but just in case
@@ -166,7 +162,7 @@ class GrianRareHermitCard extends HermitCard {
 				cardId: opponentEffectCard.cardId,
 				cardInstance: opponentEffectCard.cardInstance,
 			})
-		}
+		})
 	}
 
 	/**
@@ -176,9 +172,9 @@ class GrianRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.afterAttack[instance]
-		delete player.hooks.onFollowUp[instance]
-		delete player.hooks.onFollowUpTimeout[instance]
+		player.hooks.afterAttack.remove(instance)
+		player.hooks.onFollowUp.remove(instance)
+		player.hooks.onFollowUpTimeout.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'effectCard')]
 		delete player.custom[this.getInstanceKey(instance, 'targetInstance')]
 		// The hooks were deleted so it won't ever find the hook

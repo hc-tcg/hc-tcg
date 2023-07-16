@@ -26,18 +26,18 @@ class ChestSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			/** @type {CardT | undefined} */
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			/** @type {import('../../../types/game-state').CardT | undefined} */
 			const card = modalResult.card
 			if (!card || card.cardId === 'clock') return
 
 			retrieveCard(game, card)
-		}
+		})
 	}
 
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

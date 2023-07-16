@@ -29,7 +29,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.getAttacks[instance] = (pickedSlots) => {
+		player.hooks.getAttacks.add(instance, (pickedSlots) => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
@@ -52,17 +52,17 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				)
 			}
 			return attacks
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
 
 			// Do not apply single use more than once
-			delete player.hooks.onAttack[instance]
-		}
+			player.hooks.onAttack.remove(instance)
+		})
 	}
 
 	/**
@@ -72,8 +72,8 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.getAttacks[instance]
-		delete player.hooks.onAttack[instance]
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

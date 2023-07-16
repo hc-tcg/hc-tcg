@@ -39,7 +39,7 @@ class LadderSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 			const activeRowIndex = player.board.activeRow
 
@@ -78,7 +78,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			swapSlots(game, activePos, inactivePos)
 
 			player.board.activeRow = inactiveHermitCardInfo.row.index
-		}
+		})
 	}
 
 	/**
@@ -111,7 +111,7 @@ class LadderSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 
 	getExpansion() {

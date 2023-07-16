@@ -24,27 +24,6 @@ class DreamRareHermitCard extends HermitCard {
 			},
 		})
 	}
-
-	/**
-	 * @param {GameModel} game
-	 */
-	register(game) {
-		game.hooks.attack.tap(this.id, (target, turnAction, attackState) => {
-			const {currentPlayer} = game.ds
-			const {typeAction, moveRef, attacker} = attackState
-
-			if (typeAction !== 'SECONDARY_ATTACK') return target
-			if (!target.isActive) return target
-			if (moveRef.hermitCard.cardId !== this.id) return target
-
-			const coinFlip = flipCoin(currentPlayer, this.id)
-			if (coinFlip[0] === 'tails') return target
-
-			attacker.row.health = (Math.floor(Math.random() * 29) + 1) * 10
-
-			return target
-		})
-	}
 }
 
 export default DreamRareHermitCard

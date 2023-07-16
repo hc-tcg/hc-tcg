@@ -35,7 +35,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.attacker
 			if (!attacker) return
 			const attackId = this.getInstanceKey(instance)
@@ -50,7 +50,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 
 			// sleep for 3 turns (2 + the current turn)
 			attacker.row.ailments.push({id: 'sleeping', duration: 3})
-		}
+		})
 	}
 
 	/**
@@ -61,7 +61,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

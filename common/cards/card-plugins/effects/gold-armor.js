@@ -25,7 +25,7 @@ class GoldArmorEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+		player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
 			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
@@ -39,7 +39,7 @@ class GoldArmorEffectCard extends EffectCard {
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(this.id, damageReduction)
 			}
-		}
+		})
 
 		const resetCounter = () => {
 			if (player.custom[instanceKey] !== undefined) {
@@ -48,8 +48,8 @@ class GoldArmorEffectCard extends EffectCard {
 		}
 
 		// Reset counter at the start of every turn
-		player.hooks.onTurnStart[instance] = resetCounter
-		opponentPlayer.hooks.onTurnStart[instance] = resetCounter
+		player.hooks.onTurnStart.add(instance, resetCounter)
+		opponentPlayer.hooks.onTurnStart.add(instance, resetCounter)
 	}
 
 	/**
@@ -59,9 +59,9 @@ class GoldArmorEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		delete player.hooks.onDefence[instance]
-		delete player.hooks.onTurnStart[instance]
-		delete opponentPlayer.hooks.onTurnStart[instance]
+		player.hooks.onDefence.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
+		opponentPlayer.hooks.onTurnStart.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

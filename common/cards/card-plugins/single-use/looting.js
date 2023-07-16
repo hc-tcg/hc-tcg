@@ -29,14 +29,14 @@ class LootingSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			player.hooks.onTurnEnd[instance] = (drawCards) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			player.hooks.onTurnEnd.add(instance, (drawCards) => {
 				const drawCard = opponentPlayer.pile.shift()
 				if (drawCard) drawCards.push(drawCard)
 
-				delete player.hooks.onTurnEnd[instance]
-			}
-		}
+				player.hooks.onTurnEnd.remove(instance)
+			})
+		})
 	}
 
 	/**
@@ -46,7 +46,7 @@ class LootingSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

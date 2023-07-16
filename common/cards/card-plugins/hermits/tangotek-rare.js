@@ -41,7 +41,7 @@ class TangoTekRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary' ||
@@ -62,12 +62,12 @@ class TangoTekRareHermitCard extends HermitCard {
 
 				// We need to hook here because the follow up is called after onDetach
 				// and I can't delete it from there because Tango could die from backlash
-				opponentPlayer.hooks.onFollowUp[instance] = (followUp, pickedSlots) => {
+				opponentPlayer.hooks.onFollowUp.add(instance, (followUp, pickedSlots) => {
 					if (followUp !== instanceKey) return
 					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
 
-					delete opponentPlayer.hooks.onFollowUp[instance]
-					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+					opponentPlayer.hooks.onFollowUp.remove(instance)
+					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
 					delete opponentPlayer.followUp[instanceKey]
 
 					const pickedSlot = pickedSlots[this.id]?.[0]
@@ -78,12 +78,12 @@ class TangoTekRareHermitCard extends HermitCard {
 					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
 					if (!canBeActive) return
 					opponentPlayer.board.activeRow = row.index
-				}
+				})
 
-				opponentPlayer.hooks.onFollowUpTimeout[instance] = (followUp) => {
+				opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
 					if (followUp !== instanceKey) return
-					delete opponentPlayer.hooks.onFollowUp[instance]
-					delete opponentPlayer.hooks.onFollowUpTimeout[instance]
+					opponentPlayer.hooks.onFollowUp.remove(instance)
+					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
 					delete opponentPlayer.followUp[instanceKey]
 
 					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
@@ -97,7 +97,7 @@ class TangoTekRareHermitCard extends HermitCard {
 							opponentPlayer.board.activeRow = rowIndex
 						}
 					}
-				}
+				})
 			}
 
 			if (
@@ -112,7 +112,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				})
 				player.board.activeRow = null
 			}
-		}
+		})
 	}
 
 	/**
@@ -123,7 +123,7 @@ class TangoTekRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.afterAttack[instance]
+		player.hooks.afterAttack.remove(instance)
 	}
 }
 

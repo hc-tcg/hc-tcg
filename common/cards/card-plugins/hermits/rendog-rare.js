@@ -72,7 +72,7 @@ class RendogRareHermitCard extends HermitCard {
 		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
 
 		// At the start of every turn, remove the hooks of the imitated hermit from our player
-		player.hooks.onTurnStart[instance] = () => {
+		player.hooks.onTurnStart.add(instance, () => {
 			if (player.custom[imitatingCard] === undefined) return
 
 			// Find the hermit info of the card we were imitating, and "detach" it
@@ -82,7 +82,7 @@ class RendogRareHermitCard extends HermitCard {
 			}
 
 			delete player.custom[imitatingCard]
-		}
+		})
 	}
 
 	/**
@@ -94,7 +94,7 @@ class RendogRareHermitCard extends HermitCard {
 		const {player} = pos
 		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
 
-		delete player.hooks.onTurnStart[instance]
+		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[imitatingCard]
 	}
 }

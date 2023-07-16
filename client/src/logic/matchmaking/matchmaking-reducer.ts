@@ -1,8 +1,8 @@
 import {AnyAction} from 'redux'
-import {MatchmakingStatusT} from './matchmaking-types'
+import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
-	status: MatchmakingStatusT
+	status: MatchmakingStatus
 	code: string | null
 	invalidCode: boolean
 }
@@ -15,7 +15,7 @@ const defaultState: MatchmakingState = {
 
 const matchmakingReducer = (state = defaultState, action: AnyAction): MatchmakingState => {
 	switch (action.type) {
-		case 'RANDOM_MATCHMAKING':
+		case 'JOIN_QUEUE':
 			return {
 				...state,
 				status: 'random_waiting',

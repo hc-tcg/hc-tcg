@@ -37,7 +37,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		const status = this.getInstanceKey(instance, 'status')
 		player.custom[status] = 'none'
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			if (player.custom[status] === 'missed') {
@@ -45,7 +45,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				return
 			}
 
-			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (attack.isType('ailment', 'effect') || attack.isBacklash) return
 
 				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
@@ -59,23 +59,23 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				if (player.custom[status] === 'heads') {
 					attack.multiplyDamage(this.id, 0).lockDamage()
 				}
-			}
+			})
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 				if (player.custom[status] === 'heads') {
 					player.custom[status] = 'missed'
 				}
 
-				delete opponentPlayer.hooks.beforeAttack[instance]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
-			}
-		}
+				opponentPlayer.hooks.beforeAttack.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+			})
+		})
 
 		// If the opponent missed the previous turn and we switch hermits or we don't
 		// attack this turn then we reset the status
-		player.hooks.onTurnEnd[instance] = () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			player.custom[status] = 'none'
-		}
+		})
 	}
 
 	/**
@@ -85,10 +85,10 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		delete player.hooks.onAttack[instance]
-		delete player.hooks.onTurnEnd[instance]
-		delete opponentPlayer.hooks.beforeAttack[instance]
-		delete opponentPlayer.hooks.onTurnEnd[instance]
+		player.hooks.onAttack.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
+		opponentPlayer.hooks.beforeAttack.remove(instance)
+		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'status')]
 	}
 }

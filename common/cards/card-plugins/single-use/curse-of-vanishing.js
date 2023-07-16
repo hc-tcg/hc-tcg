@@ -25,13 +25,13 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			if (opponentPlayer.board.activeRow === null) return
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
 				discardCard(game, opponentActiveRow.effectCard)
 			}
-		}
+		})
 	}
 
 	canApply() {
@@ -60,7 +60,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

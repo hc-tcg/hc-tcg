@@ -1,8 +1,7 @@
 import {CardT} from 'common/types/game-state'
 import CARDS from 'common/cards'
 import {universe} from './import-export-const'
-import {encode} from 'punycode'
-import {decode} from 'js-base64'
+import {encode, decode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<CardT> => {
 	const b64 = decode(hash)

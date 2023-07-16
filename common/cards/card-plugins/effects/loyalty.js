@@ -21,7 +21,7 @@ class LoyaltyEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onHermitDeath[instance] = (hermitPos) => {
+		player.hooks.onHermitDeath.add(instance, (hermitPos) => {
 			if (hermitPos.rowIndex === null || !hermitPos.row) return
 			if (hermitPos.rowIndex !== pos.rowIndex) return
 
@@ -33,7 +33,7 @@ class LoyaltyEffectCard extends EffectCard {
 					moveCardToHand(game, card)
 				}
 			}
-		}
+		})
 	}
 
 	/**
@@ -43,7 +43,7 @@ class LoyaltyEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onHermitDeath[instance]
+		player.hooks.onHermitDeath.remove(instance)
 	}
 }
 

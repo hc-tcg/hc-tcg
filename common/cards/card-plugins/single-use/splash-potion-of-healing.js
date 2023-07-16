@@ -29,7 +29,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			for (let row of player.board.rows) {
 				if (!row.hermitCard) continue
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
@@ -40,7 +40,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 					row.health += 20
 				}
 			}
-		}
+		})
 	}
 
 	/**
@@ -50,7 +50,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

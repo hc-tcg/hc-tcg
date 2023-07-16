@@ -32,7 +32,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		const instanceKey = this.getInstanceKey(instance)
 		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const coinFlip = flipCoin(player, this.id)
 			player.custom[coinResult] = coinFlip[0]
 
@@ -43,24 +43,24 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			}
 			player.followUp[instanceKey] = this.id
 
-			player.hooks.onFollowUp[instance] = (followUp, pickedSlots, modalResult) => {
+			player.hooks.onFollowUp.add(instance, (followUp, pickedSlots, modalResult) => {
 				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
-				delete player.hooks.onFollowUp[instance]
-				delete player.hooks.onFollowUpTimeout[instance]
+				player.hooks.onFollowUp.remove(instance)
+				player.hooks.onFollowUpTimeout.remove(instance)
 				delete player.followUp[instanceKey]
 
 				if (!modalResult || !modalResult.card) return
 				if (player.custom[coinResult] !== 'heads') return
 
 				discardCard(game, modalResult.card)
-			}
+			})
 
-			player.hooks.onFollowUpTimeout[instance] = (followUp) => {
+			player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
 				if (followUp !== instanceKey) return
 				delete player.custom[this.id]
-				delete player.hooks.onFollowUp[instance]
-				delete player.hooks.onFollowUpTimeout[instance]
+				player.hooks.onFollowUp.remove(instance)
+				player.hooks.onFollowUpTimeout.remove(instance)
 				delete player.followUp[instanceKey]
 				if (player.custom[coinResult] !== 'heads') return
 
@@ -68,8 +68,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				const {opponentPlayer} = pos
 				const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
 				discardCard(game, opponentPlayer.hand[slotIndex])
-			}
-		}
+			})
+		})
 	}
 
 	/**
@@ -96,7 +96,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'coinResult')]
 		delete player.custom[this.id]
 	}

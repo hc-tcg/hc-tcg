@@ -22,7 +22,7 @@ class MilkBucketEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 				const pickedCards = pickedSlots[this.id] || []
 				if (pickedCards.length !== 1) return
 				const targetSlot = pickedCards[0]
@@ -31,17 +31,17 @@ class MilkBucketEffectCard extends EffectCard {
 				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
 					(a) => a.id !== 'poison' && a.id !== 'badomen'
 				)
-			}
+			})
 		} else if (slot.type === 'effect') {
-			player.hooks.onDefence[instance] = (attack, pickedSlots) => {
+			player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
-			}
+			})
 
-			opponentPlayer.hooks.afterApply[instance] = (attack, pickedSlots) => {
+			opponentPlayer.hooks.afterApply.add(instance, (attack, pickedSlots) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
-			}
+			})
 		}
 	}
 
@@ -52,9 +52,9 @@ class MilkBucketEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		delete player.hooks.onApply[instance]
-		delete player.hooks.onDefence[instance]
-		delete opponentPlayer.hooks.afterApply[instance]
+		player.hooks.onApply.remove(instance)
+		player.hooks.onDefence.remove(instance)
+		opponentPlayer.hooks.afterApply.remove(instance)
 	}
 
 	/**

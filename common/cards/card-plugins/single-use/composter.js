@@ -47,7 +47,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 
 			if (slots.length !== 2) return
@@ -64,7 +64,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			discardCard(game, pickedCard2.slot.card)
 
 			drawCards(player, 2)
-		}
+		})
 	}
 
 	/**
@@ -74,7 +74,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

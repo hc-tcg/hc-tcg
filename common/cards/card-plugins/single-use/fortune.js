@@ -30,19 +30,19 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			player.hooks.onCoinFlip[instance] = (id, coinFlips) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			player.hooks.onCoinFlip.add(instance, (id, coinFlips) => {
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i] = 'heads'
 				}
 				return coinFlips
-			}
+			})
 
-			player.hooks.onTurnStart[instance] = () => {
-				delete player.hooks.onTurnStart[instance]
-				delete player.hooks.onCoinFlip[instance]
-			}
-		}
+			player.hooks.onTurnStart.add(instance, () => {
+				player.hooks.onTurnStart.remove(instance)
+				player.hooks.onCoinFlip.remove(instance)
+			})
+		})
 	}
 	/**
 	 * @param {GameModel} game
@@ -52,7 +52,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

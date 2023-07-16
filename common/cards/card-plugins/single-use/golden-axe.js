@@ -32,7 +32,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks[instance] = () => {
+		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
@@ -46,9 +46,9 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			}).addDamage(this.id, 40)
 
 			return [axeAttack]
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 
 			if (attack.id === attackId) {
@@ -68,17 +68,17 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 
 				return false
 			})
-		}
+		})
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id === attackId) {
 				// Clean up
-				delete player.hooks.getAttacks[instance]
-				delete player.hooks.onAttack[instance]
-				delete player.hooks.afterAttack[instance]
+				player.hooks.getAttacks.remove(instance)
+				player.hooks.onAttack.remove(instance)
+				player.hooks.afterAttack.remove(instance)
 			}
-		}
+		})
 	}
 }
 

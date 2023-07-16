@@ -21,7 +21,7 @@ class TNTSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks[instance] = () => {
+		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
@@ -45,15 +45,15 @@ class TNTSingleUseCard extends SingleUseCard {
 			tntAttack.addNewAttack(backlashAttack)
 
 			return [tntAttack]
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const backlashId = this.getInstanceKey(instance, 'backlash')
 			if (attack.id !== backlashId) return
 
 			// We've executed our final attack, apply effect
 			applySingleUse(game)
-		}
+		})
 	}
 
 	/**
@@ -63,8 +63,8 @@ class TNTSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.getAttacks[instance]
-		delete player.hooks.onAttack[instance]
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

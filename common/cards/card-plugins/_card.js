@@ -7,7 +7,6 @@ import {GameModel} from '../../../server/models/game-model'
  * @typedef {import("../../types/cards").CardPos} CardPos
  * @typedef {import("../../types/cards").CardTypeT} CardTypeT
  * @typedef {import("../../types/cards").CardRarityT} CardRarityT
- * @typedef {import("../../../server/utils/reqs").PickRequirmentT} PickRequirmentT
  */
 
 class Card {
@@ -28,7 +27,7 @@ class Card {
 		this.rarity = defs.rarity
 		/** @type {string | undefined} */
 		this.pickOn = defs.pickOn
-		/** @type {Array<PickRequirmentT> | undefined} */
+		/** @type {Array<import('../../types/pick-process').PickRequirmentT> | undefined} */
 		this.pickReqs = defs.pickReqs
 	}
 

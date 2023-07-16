@@ -24,7 +24,7 @@ class ThornsEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer} = pos
 		// Only when the opponent attacks us
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
 			if (!attack.isType('primary', 'secondary', 'zero') || attack.isBacklash) return
 
 			if (attack.attacker && isTargetingPos(attack, pos)) {
@@ -56,7 +56,7 @@ class ThornsEffectCard extends EffectCard {
 			}
 
 			return attack
-		}
+		})
 	}
 
 	/**
@@ -66,7 +66,7 @@ class ThornsEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.opponentPlayer.hooks.onAttack[instance]
+		pos.opponentPlayer.hooks.onAttack.remove(instance)
 	}
 }
 

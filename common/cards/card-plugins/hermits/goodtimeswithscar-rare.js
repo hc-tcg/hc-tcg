@@ -34,26 +34,26 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const {player, opponentPlayer, row} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.custom[reviveNextTurn] = true
-		}
+		})
 
-		opponentPlayer.hooks.afterAttack[instance] = () => {
+		opponentPlayer.hooks.afterAttack.add(instance, () => {
 			if (player.custom[reviveNextTurn]) {
 				if (!row || row.health === null || row.health > 0) return
 
 				row.health = 50
 				row.ailments = []
 
-				delete opponentPlayer.hooks.afterAttack[instance]
+				opponentPlayer.hooks.afterAttack.remove(instance)
 			}
-		}
+		})
 
-		opponentPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			delete player.custom[reviveNextTurn]
-		}
+		})
 	}
 
 	/**
@@ -65,9 +65,9 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
-		delete opponentPlayer.hooks.afterAttack[instance]
-		delete opponentPlayer.hooks.onTurnEnd[instance]
+		player.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[reviveNextTurn]
 	}
 }

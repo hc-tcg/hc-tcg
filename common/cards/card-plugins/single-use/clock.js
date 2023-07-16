@@ -30,9 +30,9 @@ class ClockSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and followup actions
-			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				/** @type {AvailableActionsT}*/
 				const blocked = [
 					'APPLY_EFFECT',
@@ -48,13 +48,13 @@ class ClockSingleUseCard extends SingleUseCard {
 
 				blockedActions.push(...blocked)
 				return blockedActions
-			}
+			})
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
-				delete opponentPlayer.hooks.blockedActions[instance]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
-			}
-		}
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+			})
+		})
 	}
 
 	/**
@@ -75,7 +75,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

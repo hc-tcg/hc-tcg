@@ -33,7 +33,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 			const boomerAmount = player.board.rows.filter(
 				(row, index) =>
@@ -45,7 +45,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 			).length
 
 			attack.addDamage(this.id, Math.min(boomerAmount, 2) * 40)
-		}
+		})
 	}
 
 	/**
@@ -56,7 +56,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

@@ -41,21 +41,21 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack[instance] = (attack, pickedSlots) => {
+		player.hooks.afterAttack.add(instance, (attack, pickedSlots) => {
 			applySingleUse(game, pickedSlots)
 
 			// Only Apply this for the first attack
-			delete player.hooks.afterAttack[instance]
-		}
+			player.hooks.afterAttack.remove(instance)
+		})
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
 				activeRow.ailments.push({id: 'knockedout', duration: 1})
 				opponentPlayer.board.activeRow = null
 			}
-		}
+		})
 	}
 
 	/**
@@ -65,8 +65,8 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.afterAttack[instance]
-		delete player.hooks.onApply[instance]
+		player.hooks.afterAttack.remove(instance)
+		player.hooks.onApply.remove(instance)
 	}
 }
 

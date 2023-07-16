@@ -22,7 +22,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const pickedCards = pickedSlots[this.id] || []
 			if (pickedCards.length !== 1) return
 
@@ -37,7 +37,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				// Armor Stand
 				row.health += 30
 			}
-		}
+		})
 	}
 
 	/**
@@ -47,7 +47,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

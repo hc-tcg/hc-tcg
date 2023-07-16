@@ -26,7 +26,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks[instance] = (pickedSlots) => {
+		player.hooks.getAttacks.add(instance, (pickedSlots) => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 			const activeIndex = activePos.rowIndex
@@ -54,14 +54,14 @@ class AnvilSingleUseCard extends SingleUseCard {
 			}
 
 			return attacks
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
-		}
+		})
 	}
 
 	/**
@@ -71,8 +71,8 @@ class AnvilSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.getAttacks[instance]
-		delete player.hooks.onAttack[instance]
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	/**

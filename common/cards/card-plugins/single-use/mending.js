@@ -36,7 +36,7 @@ class MendingSingleUseCard extends singleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedCards = pickedSlots[this.id] || []
 
 			if (pickedCards.length !== 1) return
@@ -72,7 +72,7 @@ class MendingSingleUseCard extends singleUseCard {
 			}
 
 			swapSlots(game, sourcePos, targetPos)
-		}
+		})
 	}
 
 	/**
@@ -111,7 +111,7 @@ class MendingSingleUseCard extends singleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

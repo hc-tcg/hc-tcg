@@ -25,18 +25,18 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
-		player.hooks.afterAttack[instance] = (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			applySingleUse(game)
 
 			// Only apply single use once
-			delete player.hooks.afterAttack[instance]
-		}
+			player.hooks.afterAttack.remove(instance)
+		})
 
-		player.hooks.availableActions[instance] = (availableActions) => {
+		player.hooks.availableActions.add(instance, (availableActions) => {
 			const newActiveRow = getActiveRow(player)
 			// Only allow changing hermits once
 			if (newActiveRow !== activeRow) {
-				delete player.hooks.availableActions[instance]
+				player.hooks.availableActions.remove(instance)
 			} else {
 				// We need to check again because of bdubs
 				const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
@@ -47,7 +47,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			}
 
 			return availableActions
-		}
+		})
 	}
 
 	/**
@@ -72,8 +72,8 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.afterAttack[instance]
-		delete player.hooks.availableActions[instance]
+		player.hooks.afterAttack.remove(instance)
+		player.hooks.availableActions.remove(instance)
 	}
 }
 

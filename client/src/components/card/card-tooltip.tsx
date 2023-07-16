@@ -6,11 +6,11 @@ import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
 import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
 import ItemCard from 'common/cards/card-plugins/items/_item-card'
 import HealthCard from 'common/cards/card-plugins/health/_health-card'
-import STRENGTHS from 'server/const/strengths'
 import css from './card-tooltip.module.scss'
+import STRENGTHS from '../../../../common/const/strengths'
 import {getCardRank} from 'server/utils/validation'
 
-const HERMIT_TYPES: Record<HermitTypeT, string> = {
+const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
 	builder: 'Builder',
 	speedrunner: 'Speedrunner',
@@ -78,7 +78,7 @@ const getStrengthsAndWeaknesses = (
 ): React.ReactNode => {
 	if (!(card instanceof HermitCard)) return null
 
-	const strengths = STRENGTHS[card.hermitType]
+	const strengths = [card.hermitType]
 	const weaknesses = Object.entries(STRENGTHS)
 		.filter(([, value]) => value.includes(card.hermitType))
 		.map(([key]) => key) as Array<HermitTypeT>

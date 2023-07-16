@@ -1,5 +1,9 @@
-export const randomMatchmaking = () => ({
-	type: 'RANDOM_MATCHMAKING' as const,
+export type JoinQueueAction = {
+	type: 'JOIN_QUEUE'
+}
+
+export const joinQueue = () => ({
+	type: 'JOIN_QUEUE' as const,
 })
 
 export const createPrivateGame = () => ({

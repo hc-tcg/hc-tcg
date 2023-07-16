@@ -49,7 +49,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 
 			if (slots.length !== 1) return
@@ -62,7 +62,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			player.board.rows[pickedSlot.row.index] = activeRow
 			player.board.rows[player.board.activeRow] = pickedSlot.row.state
 			player.board.activeRow = pickedSlot.row.index
-		}
+		})
 	}
 
 	/**
@@ -72,7 +72,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 
 	getExpansion() {

@@ -26,13 +26,13 @@ class WolfEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const attackedRows = this.getInstanceKey(instance, 'attackedRows')
 
-		opponentPlayer.hooks.onTurnStart[instance] = () => {
+		opponentPlayer.hooks.onTurnStart.add(instance, () => {
 			// Clear the rows that were attacked
 			player.custom[attackedRows] = []
-		}
+		})
 
 		// Only on opponents turn
-		opponentPlayer.hooks.onAttack[instance] = (attack) => {
+		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
 			if (attack.isType('ailment') || attack.isBacklash) return
 
 			// Make sure they are targeting this player
@@ -58,7 +58,7 @@ class WolfEffectCard extends EffectCard {
 			}).addDamage(this.id, 10)
 
 			attack.addNewAttack(backlashAttack)
-		}
+		})
 	}
 
 	/**
@@ -72,8 +72,8 @@ class WolfEffectCard extends EffectCard {
 
 		// Delete hooks and custom
 		delete player.custom[this.getInstanceKey(instance, 'attackedRows')]
-		delete opponentPlayer.hooks.onTurnStart[instance]
-		delete opponentPlayer.hooks.onAttack[instance]
+		opponentPlayer.hooks.onTurnStart.remove(instance)
+		opponentPlayer.hooks.onAttack.remove(instance)
 	}
 }
 

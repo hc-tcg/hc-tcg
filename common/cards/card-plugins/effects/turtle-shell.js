@@ -45,7 +45,7 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	canAttach(game, pos) {
-		const {currentPlayer} = game.ds
+		const {currentPlayer} = game
 
 		if (pos.slot.type !== 'effect') return 'INVALID'
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
@@ -70,7 +70,7 @@ class TurtleShellEffectCard extends EffectCard {
 		// Store whether we blocked any damage
 		player.custom[instanceKey] = false
 
-		player.hooks.onDefence[instance] = (attack) => {
+		player.hooks.onDefence.add(instance, (attack) => {
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, pos)) return
@@ -83,13 +83,13 @@ class TurtleShellEffectCard extends EffectCard {
 
 				player.custom[instanceKey] = true
 			}
-		}
+		})
 
-		opponentPlayer.hooks.onTurnEnd[instance] = () => {
+		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			if (player.custom[instanceKey] === true) {
 				discardCard(game, {cardId: this.id, cardInstance: instance})
 			}
-		}
+		})
 	}
 
 	/**
@@ -99,8 +99,8 @@ class TurtleShellEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.player.hooks.onDefence[instance]
-		delete pos.player.hooks.afterDefence[instance]
+		pos.player.hooks.onDefence.remove(instance)
+		pos.player.hooks.afterDefence.remove(instance)
 		delete pos.player.custom[this.getInstanceKey(instance)]
 	}
 

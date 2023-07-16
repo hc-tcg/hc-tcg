@@ -34,7 +34,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
 
 			const activeRow = player.board.activeRow
@@ -54,7 +54,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 					row.health += 40
 				}
 			})
-		}
+		})
 	}
 
 	/**
@@ -65,7 +65,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 
 	getExpansion() {

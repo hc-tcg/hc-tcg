@@ -30,11 +30,11 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const pickedSlot = pickedSlots[this.id]?.[0]
 			if (!pickedSlot) return
 
-			player.hooks.beforeAttack[instance] = (attack) => {
+			player.hooks.beforeAttack.add(instance, (attack) => {
 				if (attack.isType('ailment') || attack.isBacklash) return
 				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) {
 					return
@@ -58,8 +58,8 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 					}
 					delete player.custom[ignoreThisWeakness]
 				}
-			}
-		}
+			})
+		})
 	}
 
 	/**
@@ -84,8 +84,8 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
-		delete player.hooks.onApply[instance]
-		delete player.hooks.beforeAttack[instance]
+		player.hooks.onApply.remove(instance)
+		player.hooks.beforeAttack.remove(instance)
 		delete player.custom[ignoreThisWeakness]
 	}
 

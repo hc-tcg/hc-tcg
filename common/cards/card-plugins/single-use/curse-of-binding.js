@@ -23,8 +23,8 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
-			opponentPlayer.hooks.blockedActions[instance] = (blockedActions) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
 					return blockedActions
 				}
@@ -35,14 +35,14 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 				}
 
 				return blockedActions
-			}
+			})
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 				// Remove effects of card and clean up
-				delete opponentPlayer.hooks.blockedActions[instance]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
-			}
-		}
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+			})
+		})
 	}
 
 	/**
@@ -53,7 +53,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

@@ -36,13 +36,13 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] !== 'heads') return
 
-			opponentPlayer.hooks.beforeAttack[instance] = (attack) => {
+			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (attack.isType('ailment') || attack.isBacklash) return
 				if (!attack.attacker) return
 
@@ -57,15 +57,15 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 					attack.target = attack.attacker
 					attack.isBacklash = true
 				}
-			}
+			})
 
-			opponentPlayer.hooks.onTurnEnd[instance] = () => {
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 				// Delete our hook at the end of opponents turn
 				delete player.custom[coinFlipResult]
-				delete opponentPlayer.hooks.onTurnEnd[instance]
-				delete opponentPlayer.hooks.beforeAttack[instance]
-			}
-		}
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
+			})
+		})
 	}
 
 	/**
@@ -77,7 +77,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

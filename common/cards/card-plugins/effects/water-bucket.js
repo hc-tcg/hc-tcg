@@ -23,7 +23,7 @@ class WaterBucketEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+			player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 				const pickedCards = pickedSlots[this.id] || []
 				if (pickedCards.length !== 1) return
 				const targetSlot = pickedCards[0]
@@ -38,17 +38,17 @@ class WaterBucketEffectCard extends EffectCard {
 						discardCard(game, targetSlot.row.state.itemCards[i])
 					}
 				}
-			}
+			})
 		} else if (slot.type === 'effect') {
-			player.hooks.onDefence[instance] = (attack) => {
+			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
-			}
+			})
 
-			opponentPlayer.hooks.afterApply[instance] = (pickedSlots, modalResult) => {
+			opponentPlayer.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
-			}
+			})
 		}
 	}
 
@@ -59,9 +59,9 @@ class WaterBucketEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
-		delete player.hooks.onApply[instance]
-		delete opponentPlayer.hooks.afterApply[instance]
-		delete player.hooks.onDefence[instance]
+		player.hooks.onApply.remove(instance)
+		opponentPlayer.hooks.afterApply.remove(instance)
+		player.hooks.onDefence.remove(instance)
 	}
 
 	/**

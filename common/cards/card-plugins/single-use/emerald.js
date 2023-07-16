@@ -67,7 +67,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
 			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
@@ -91,7 +91,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			}
 
 			swapSlots(game, playerSlot, opponentSlot)
-		}
+		})
 	}
 
 	/**
@@ -101,7 +101,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 }
 

@@ -28,7 +28,7 @@ class ShieldEffectCard extends EffectCard {
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 
-		player.hooks.onDefence[instance] = (attack) => {
+		player.hooks.onDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {
@@ -42,9 +42,9 @@ class ShieldEffectCard extends EffectCard {
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(this.id, damageReduction)
 			}
-		}
+		})
 
-		player.hooks.afterDefence[instance] = (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const {player, row} = pos
 
 			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
@@ -55,8 +55,8 @@ class ShieldEffectCard extends EffectCard {
 			delete player.custom[instanceKey]
 
 			// We only need to check once
-			delete player.hooks.afterDefence[instance]
-		}
+			player.hooks.afterDefence.remove(instance)
+		})
 	}
 
 	/**
@@ -66,8 +66,8 @@ class ShieldEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onDefence[instance]
-		delete player.hooks.afterDefence[instance]
+		player.hooks.onDefence.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 }

@@ -28,11 +28,11 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
 			opponentActiveRow.ailments.push({id: 'slowness', duration: 1})
-		}
+		})
 	}
 
 	/**
@@ -42,7 +42,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 	getExpansion() {
 		return 'alter_egos'

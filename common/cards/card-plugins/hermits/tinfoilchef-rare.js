@@ -35,7 +35,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
@@ -44,7 +44,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 
 			const drawCard = player.pile.shift()
 			if (drawCard) player.hand.push(drawCard)
-		}
+		})
 	}
 
 	/**
@@ -55,7 +55,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		delete player.hooks.onAttack[instance]
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

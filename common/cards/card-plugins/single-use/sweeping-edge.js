@@ -54,7 +54,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const activeRow = opponentPlayer.board.activeRow
 			if (activeRow === null) return
 
@@ -67,7 +67,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 				const effectCard = rows[index].effectCard
 				if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
 			}
-		}
+		})
 	}
 
 	/**
@@ -77,7 +77,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 
 	getExpansion() {

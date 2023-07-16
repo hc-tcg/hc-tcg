@@ -56,7 +56,7 @@ class HotguyRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// How do I avoid using the cardId here? | Impossible so long as this is about a specific card - sense
-		player.hooks.beforeAttack[instance] = (attack) => {
+		player.hooks.beforeAttack.add(instance, (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (
 				!singleUseCard ||
@@ -69,11 +69,11 @@ class HotguyRareHermitCard extends HermitCard {
 			if (attack.id === bowId) {
 				attack.addDamage(this.id, attack.getDamage())
 			}
-		}
+		})
 
-		player.hooks.onTurnEnd[instance] = () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			delete player.custom[this.getInstanceKey(instance)]
-		}
+		})
 	}
 
 	/**
@@ -84,8 +84,8 @@ class HotguyRareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 
-		delete player.hooks.beforeAttack[instance]
-		delete player.hooks.onTurnEnd[instance]
+		player.hooks.beforeAttack.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

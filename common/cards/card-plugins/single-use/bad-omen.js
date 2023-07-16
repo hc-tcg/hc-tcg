@@ -30,12 +30,12 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		player.hooks.onApply[instance] = (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			opponentPlayer.board.rows[activeRow].ailments.push({
 				id: 'badomen',
 				duration: 3,
 			})
-		}
+		})
 	}
 
 	/**
@@ -45,7 +45,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.onApply[instance]
+		player.hooks.onApply.remove(instance)
 	}
 
 	/**

@@ -27,7 +27,7 @@ class CommandBlockEffectCard extends EffectCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.availableEnergy[instance] = (availableEnergy) => {
+		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
 			const {activeRow, rows} = player.board
 
 			// Make sure it's our row
@@ -40,7 +40,7 @@ class CommandBlockEffectCard extends EffectCard {
 
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')
-		}
+		})
 	}
 
 	/**
@@ -50,7 +50,7 @@ class CommandBlockEffectCard extends EffectCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.availableEnergy[instance]
+		player.hooks.availableEnergy.remove(instance)
 	}
 
 	getIsRemovable() {

@@ -12,7 +12,8 @@
 		"allowJs": true,
 		"checkJs": true,
 		"noEmit": true,
-		"strictNullChecks": true
+		"strictNullChecks": true,
+		"outDir": "./dist"
 	},
 
 	"include": ["common/**/*", "server/**/*"]

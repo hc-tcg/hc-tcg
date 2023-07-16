@@ -23,7 +23,7 @@ class TotemEffectCard extends EffectCard {
 		const {player} = pos
 
 		// If we are attacked from any source
-		player.hooks.afterDefence[instance] = (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || !attack.target) return
 			const {row} = attack.target
 			if (row.health) return
@@ -33,7 +33,7 @@ class TotemEffectCard extends EffectCard {
 
 			// This will remove this hook, so it'll only be called once
 			discardCard(game, row.effectCard)
-		}
+		})
 	}
 
 	/**
@@ -43,7 +43,7 @@ class TotemEffectCard extends EffectCard {
 	 * @param {import('../../../types/cards').CardPos} pos
 	 */
 	onDetach(game, instance, pos) {
-		delete pos.player.hooks.afterDefence[instance]
+		pos.player.hooks.afterDefence.remove(instance)
 	}
 }
 

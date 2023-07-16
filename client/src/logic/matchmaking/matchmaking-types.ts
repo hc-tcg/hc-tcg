@@ -1,4 +1,4 @@
-export type MatchmakingStatusT =
+export type MatchmakingStatus =
 	| 'loading'
 	| 'random_waiting'
 	| 'private_waiting'

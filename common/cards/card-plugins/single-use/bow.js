@@ -43,7 +43,7 @@ class BowSingleUseCard extends SingleUseCard {
 	onAttach(game, instance, pos) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks[instance] = (pickedSlots) => {
+		player.hooks.getAttacks.add(instance, (pickedSlots) => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
@@ -65,14 +65,14 @@ class BowSingleUseCard extends SingleUseCard {
 			}).addDamage(this.id, 40)
 
 			return [bowAttack]
-		}
+		})
 
-		player.hooks.onAttack[instance] = (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
-		}
+		})
 	}
 
 	/**
@@ -82,8 +82,8 @@ class BowSingleUseCard extends SingleUseCard {
 	 */
 	onDetach(game, instance, pos) {
 		const {player} = pos
-		delete player.hooks.getAttacks[instance]
-		delete player.hooks.onAttack[instance]
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 
