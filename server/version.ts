@@ -8,7 +8,7 @@ const __dirname = path.dirname(__filename)
 
 let hash: string | null = null
 
-const assetsPath = path.join(__dirname, '..', CONFIG.clientPath, './assets')
+const assetsPath = path.join(__dirname, '../../..', CONFIG.clientPath, './assets')
 if (fs.existsSync(assetsPath)) {
 	const assetFiles = fs.readdirSync(assetsPath)
 
