@@ -83,7 +83,6 @@ function* playCardSaga(game: GameModel, turnAction: any, actionState: any): Saga
 		pastTurnActions.push('PLAY_EFFECT_CARD')
 	} else if (pickedSlot.slot.type === 'single_use') {
 		if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) return
-		if (player.board.singleUseCard) return
 
 		player.board.singleUseCard = card
 		pastTurnActions.push('PLAY_SINGLE_USE_CARD')

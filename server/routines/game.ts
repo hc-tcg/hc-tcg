@@ -236,7 +236,7 @@ function* checkHermitHealth(game: GameModel): SagaIterator {
 	return deadPlayerIds
 }
 
-function* sendGameState(game: GameModel, turnState: any): SagaIterator {
+function* sendGameState(game: GameModel, turnState: any) {
 	const {availableActions, opponentAvailableActions, pastTurnActions} = turnState
 	game.getPlayers().forEach((player) => {
 		const localGameState = getLocalGameState(

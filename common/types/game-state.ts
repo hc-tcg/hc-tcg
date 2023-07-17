@@ -64,7 +64,7 @@ export class Hook<T extends (...args: any) => any> {
 		const results: Array<ReturnType<T>> = []
 		const hooks = Object.values(this.listeners)
 		for (let i = 0; i < hooks.length; i++) {
-			const result = hooks[i](params)
+			const result = hooks[i](...(params as Array<any>))
 			if (result !== undefined) {
 				results.push(result)
 			}
@@ -97,7 +97,7 @@ export class GameHook<T extends (...args: any) => any> extends Hook<(...args: an
 		const hooks = Object.values(this.listeners)
 		for (let i = 0; i < instances.length; i++) {
 			if (!ignoreInstance(instances[i])) {
-				const result = hooks[i](params)
+				const result = hooks[i](...(params as Array<any>))
 				if (result !== undefined) {
 					results.push(result)
 				}
@@ -123,7 +123,7 @@ export class WaterfallHook<T extends (...args: any) => Parameters<T>[0]> {
 		let newParams = params
 		const hooks = Object.values(this.listeners)
 		for (let i = 0; i < hooks.length; i++) {
-			newParams[0] = hooks[i](newParams)
+			newParams[0] = hooks[i](...(newParams as Array<any>))
 		}
 
 		return newParams[0]
