@@ -23,7 +23,7 @@ app.use(
 )
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '..', CONFIG.clientPath, 'index.html'))
+	res.sendFile(path.join(__dirname, '../../..', CONFIG.clientPath, 'index.html'))
 })
 
 registerApis(app)
