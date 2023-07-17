@@ -1,10 +1,8 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {PlayerDeckT} from 'common/types/deck'
-import {universe} from './import-export-const'
 import {CopyIcon} from 'components/svgs'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import css from './import-export.module.scss'
-import {encode} from 'js-base64'
 import {getHashFromDeck} from './import-export-utils'
 
 type Props = {
