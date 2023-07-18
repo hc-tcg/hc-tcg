@@ -1,5 +1,5 @@
 import {call, cancelled, fork, put, race, take, takeEvery} from 'typed-redux-saga'
-import {sendMsg, receiveMsg, ServerMessage} from 'logic/socket/socket-saga'
+import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
 import {codeReceived, leaveMatchmaking, invalidCode, waitingForPlayer} from './matchmaking-actions'
@@ -87,8 +87,6 @@ function* joinPrivateGameSaga() {
 					if (queueResponse.gameStart) yield* call(gameSaga)
 				} else if (result.invalidCode) {
 					yield* put(invalidCode())
-				} else if (result.success) {
-					yield* call(gameSaga)
 				}
 
 				// For anything but invalid code, we exit loop

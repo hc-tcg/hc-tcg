@@ -35,20 +35,16 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
 		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
-		if (!opponentActiveRow.effectCard || !playerActiveRow.effectCard) {
-			return 'NO'
-		}
-
 		const opponentEffect = opponentActiveRow.effectCard
 		const playerEffect = playerActiveRow.effectCard
 		const opponentHermit = opponentActiveRow.hermitCard
 		const playerHermit = playerActiveRow.hermitCard
 
-		if (!canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
-		if (!canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+		if (opponentEffect && !canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
+		if (playerEffect && !canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
 
-		if (opponentEffect && !isRemovable(opponentEffect)) return 'NO'
-		if (playerEffect && !isRemovable(playerEffect)) return 'NO'
+		if (opponentEffect) if (!isRemovable(opponentEffect)) return 'NO'
+		if (playerEffect) if (!isRemovable(playerEffect)) return 'NO'
 
 		return 'YES'
 	}

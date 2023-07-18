@@ -1,5 +1,5 @@
 import {takeEvery, put} from 'redux-saga/effects'
-import {cancelled, select} from 'typed-redux-saga'
+import {select} from 'typed-redux-saga'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'

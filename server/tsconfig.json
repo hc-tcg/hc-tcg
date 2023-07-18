@@ -10,7 +10,8 @@
 		"strictNullChecks": true,
 		"strict": true,
 		"esModuleInterop": true,
-		"outDir": "../dist"
+		"outDir": "./dist"
 	},
-	"include": [".", "**.json"]
+	"include": [".", "**.json"],
+	"exclude": ["./dist"]
 }

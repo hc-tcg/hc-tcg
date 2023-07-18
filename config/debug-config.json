@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["composter"],
+	"extraStartingCards": [],
 	"noItemRequirements": false,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
