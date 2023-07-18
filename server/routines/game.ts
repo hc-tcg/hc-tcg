@@ -109,8 +109,6 @@ function getAvailableActions(
 		actions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
-	const isSlow = activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
-
 	if (activeRow !== null) {
 		if (turn > 1) {
 			const hermitId = rows[activeRow]?.hermitCard?.cardId
@@ -118,24 +116,19 @@ function getAvailableActions(
 
 			// only add attack options if not sleeping
 			if (hermitInfo && !isSleeping) {
-				let showZeroAttack = true
 				if (
 					DEBUG_CONFIG.noItemRequirements ||
 					hasEnoughEnergy(availableEnergy, hermitInfo.primary.cost)
 				) {
 					actions.push('PRIMARY_ATTACK')
-					showZeroAttack = false
 				}
 				if (
-					!isSlow &&
-					(DEBUG_CONFIG.noItemRequirements ||
-						hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost))
+					DEBUG_CONFIG.noItemRequirements ||
+					hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost)
 				) {
 					actions.push('SECONDARY_ATTACK')
-					showZeroAttack = false
 				}
 				if (
-					showZeroAttack &&
 					!currentPlayer.board.singleUseCardUsed
 					//&& suInfo?.damage
 				) {
@@ -174,6 +167,23 @@ function getAvailableActions(
 		hasSingleUseInHand
 	)
 		actions.push('PLAY_SINGLE_USE_CARD')
+
+	return actions
+}
+
+function getBlockedActions(game: GameModel): AvailableActionsT {
+	const {currentPlayer, opponentPlayer} = game
+
+	/** @type {AvailableActionsT} */
+	const actions: AvailableActionsT = []
+
+	const {activeRow, rows} = currentPlayer.board
+
+	const isSlow = activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
+
+	if (isSlow) {
+		actions.push('SECONDARY_ATTACK')
+	}
 
 	return actions
 }
@@ -380,11 +390,10 @@ function* turnActionsSaga(
 				availableEnergy = currentPlayer.hooks.availableEnergy.call(availableEnergy)
 			}
 
-			/** @type {AvailableActionsT} */
-			let blockedActions: AvailableActionsT = []
+			let blockedActions = getBlockedActions(game)
 			let availableActions = getAvailableActions(game, pastTurnActions, availableEnergy)
 
-			// Get blocked actions
+			// Get blocked actions from hooks
 			blockedActions = currentPlayer.hooks.blockedActions.call(
 				blockedActions,
 				pastTurnActions,
@@ -393,17 +402,22 @@ function* turnActionsSaga(
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
 
-			// Initial blocking of actions
-			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
+			// Block ZERO_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
+			if (
+				!blockedActions.includes('PRIMARY_ATTACK') ||
+				!blockedActions.includes('SECONDARY_ATTACK')
+			) {
+				blockedActions.push('ZERO_ATTACK')
+			}
 
-			// Get available actions, while filtering out blocked actions
+			// Get available actions from hooks
 			availableActions = currentPlayer.hooks.availableActions.call(
 				availableActions,
 				pastTurnActions,
 				availableEnergy
 			)
 
-			// Block actions again after hooks
+			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
 
 			availableActions.push(...DEBUG_CONFIG.availableActions)
