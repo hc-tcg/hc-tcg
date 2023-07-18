@@ -10,7 +10,7 @@ class RenbobRareHermitCard extends HermitCard {
 			name: 'Renbob',
 			rarity: 'rare',
 			hermitType: 'explorer',
-			health: 280,
+			health: 300,
 			primary: {
 				name: 'Loose Change',
 				cost: ['any'],
