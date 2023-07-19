@@ -12,7 +12,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 			id: 'potion_of_slowness',
 			name: 'Potion of Slowness',
 			rarity: 'common',
-			description: "Opponent's active hermit can only use their primary attack on their next turn.",
+			description: "Opponent's active Hermit can only use their primary attack on their next turn.",
 		})
 	}
 

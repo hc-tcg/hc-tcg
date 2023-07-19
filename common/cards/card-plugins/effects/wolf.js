@@ -12,7 +12,7 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"For every hermit attacked on your opponent's turn, your opponent's active hermit takes 10hp damage.",
+				"For every Hermit attacked on your opponent's turn, your opponent's active Hermit takes 10hp damage.",
 		})
 	}
 

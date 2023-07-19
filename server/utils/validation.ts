@@ -54,7 +54,7 @@ export function validateDeck(deckCards: Array<string>) {
 
 	// less than one hermit
 	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')
-	if (!hasHermit) return 'Deck must have at least one hermit.'
+	if (!hasHermit) return 'Deck must have at least one Hermit.'
 
 	// more than max duplicates
 	const tooManyDuplicates =

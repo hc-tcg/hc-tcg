@@ -20,7 +20,7 @@ class RendogRareHermitCard extends HermitCard {
 				name: 'Role Play',
 				cost: ['builder', 'builder', 'builder'],
 				damage: 0,
-				power: "Use any secondary move of your opponent's hermits.",
+				power: "Use any secondary move of your opponent's Hermits.",
 			},
 			pickOn: 'attack',
 			pickReqs: [{target: 'opponent', slot: ['hermit'], type: ['hermit'], amount: 1}],
