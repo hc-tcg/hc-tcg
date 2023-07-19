@@ -568,7 +568,7 @@ function* turnSaga(game: GameModel): SagaIterator {
 	}
 
 	// Create card draw array
-	const drawCards: Array<CardT> = []
+	const drawCards: Array<CardT | null> = []
 
 	// Call turn end hooks
 	currentPlayer.hooks.onTurnEnd.call(drawCards)
@@ -590,8 +590,9 @@ function* turnSaga(game: GameModel): SagaIterator {
 	// Draw a card from deck when turn ends
 	if (drawCards.length === 0) {
 		const card = currentPlayer.pile.shift()
-		if (card) drawCards.push(card)
+		drawCards.push(card || null)
 	}
+
 	for (let i = 0; i < drawCards.length; i++) {
 		const card = drawCards[i]
 		if (card) {
