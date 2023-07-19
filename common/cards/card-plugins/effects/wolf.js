@@ -42,6 +42,7 @@ class WolfEffectCard extends EffectCard {
 			const activeRow = getActiveRowPos(player)
 			if (!activeRow || activeRow.rowIndex !== pos.rowIndex) return
 
+			if (!player.custom[attackedRows]) player.custom[attackedRows] = []
 			if (player.custom[attackedRows].includes(attack.target.rowIndex)) return
 			player.custom[attackedRows].push(attack.target.rowIndex)
 
