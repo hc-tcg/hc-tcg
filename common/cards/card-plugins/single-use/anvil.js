@@ -31,8 +31,6 @@ class AnvilSingleUseCard extends SingleUseCard {
 			if (!activePos) return []
 			const activeIndex = activePos.rowIndex
 
-			const oppositeRow = opponentPlayer.board.rows[activeIndex]
-			if (!oppositeRow || !oppositeRow.hermitCard) return []
 			const opponentRows = opponentPlayer.board.rows
 
 			const attacks = []
@@ -82,12 +80,9 @@ class AnvilSingleUseCard extends SingleUseCard {
 	canAttach(game, pos) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 
-		const {opponentPlayer, player} = pos
+		const {player} = pos
 		const activeRow = player.board.activeRow
 		if (activeRow === null) return 'NO'
-
-		const oppositeRow = opponentPlayer.board.rows[activeRow]
-		if (!oppositeRow || !oppositeRow.hermitCard) return 'NO'
 
 		return 'YES'
 	}
