@@ -3,7 +3,7 @@ import {useState} from 'react'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
-import css from './chest-modal.module.css'
+import css from './game-modals.module.scss'
 import {equalCard} from 'server/utils'
 import {getGameState} from 'logic/game/game-selectors'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
@@ -44,15 +44,13 @@ function ChestModal({closeModal}: Props) {
 					<CardList
 						disabled={DISABLED}
 						onClick={handleSelection}
-						size="small"
 						cards={discarded}
 						selected={[selected]}
+						wrap
 					/>
 				</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleConfirm}>
-						Confirm Selection
-					</Button>
+					<Button onClick={handleConfirm}>Confirm Selection</Button>
 				</div>
 			</div>
 		</Modal>

@@ -1,0 +1,36 @@
+.timer {
+	display: grid;
+	place-content: center;
+	text-align: center;
+	background: hsla(195deg, 53%, 60%, 35%);
+
+	// padding: 0 15px;
+	width: 10vh;
+	border: 4px solid hsl(192deg, 56%, 58%);
+
+	> p {
+		color: yellow;
+		font-size: 14px;
+	}
+
+	> span {
+		font-family: Minecrafter, sans-serif;
+		font-size: 24px;
+	}
+}
+
+.white {
+	color: var(--text-light);
+}
+
+.orange {
+	color: rgb(255, 179, 0);
+}
+
+.red {
+	color: rgb(255, 4, 0);
+}
+
+.blue {
+	color: rgb(42, 84, 251);
+}

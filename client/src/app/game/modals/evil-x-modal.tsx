@@ -21,7 +21,7 @@ function EvilXModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Evil X: Disable an attack for 1 turn">
+		<Modal closeModal={handleSecondary} title="Evil X: Disable an attack for 1 turn">
 			<div className={css.confirmModal}>
 				<div className={css.description}>
 					Which of the opponent's attacks do you want to disable?

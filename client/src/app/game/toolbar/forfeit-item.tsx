@@ -1,7 +1,6 @@
 import {useDispatch, useSelector} from 'react-redux'
 import {setOpenedModal} from 'logic/game/game-actions'
 import {getOpenedModal} from 'logic/game/game-selectors'
-import classnames from 'classnames'
 import css from './toolbar.module.scss'
 
 function ForfeitItem() {
@@ -13,13 +12,9 @@ function ForfeitItem() {
 	}
 
 	return (
-		<div
-			className={classnames(css.item, css.clickable)}
-			title="Forfeit"
-			onClick={handleSoundChange}
-		>
+		<button className={css.item} title="Forfeit" onClick={handleSoundChange}>
 			<img src="/images/toolbar/banner.png" height="30" />
-		</div>
+		</button>
 	)
 }
 

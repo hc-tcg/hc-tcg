@@ -1,33 +1,9 @@
-@keyframes rotation {
-	0% {
-		transform: rotate3d(0, 1, 0, 0deg);
-	}
-
-	50% {
-		transform: rotate3d(0, 1, 0, 180deg);
-	}
-
-	100% {
-		transform: rotate3d(0, 1, 0, 360deg);
-	}
-}
-
 .name {
-	font-family: Minecraft;
-	color: white;
-	font-size: 12px;
 	text-align: center;
-	max-width: 130px;
-	overflow: hidden;
-	text-overflow: ellipsis;
 	margin-bottom: 10px;
 }
 
-.coinFlip {
-	max-width: 130px;
-}
-
-.tosses {
+.coins {
 	display: flex;
 	flex-flow: row wrap;
 	width: 100%;
@@ -36,33 +12,35 @@
 }
 
 .coin {
+	$size: 35px;
+
 	position: relative;
-	width: 60px;
-	height: 60px;
+	width: $size;
+	height: $size;
 	text-align: center;
-	line-height: 60px;
+	line-height: $size;
 	animation-name: rotation;
 	animation-timing-function: ease-out;
 	animation-duration: 0.7s;
 	transform: rotateY(0deg);
 	transform-style: preserve-3d;
-}
 
-.face {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-	backface-visibility: hidden;
-	overflow: hidden;
-	border: 4px solid #e1b530;
-	box-shadow: 0 0 4px #79611a;
-
-	img {
+	.face {
+		position: absolute;
+		top: 0;
+		left: 0;
 		width: 100%;
 		height: 100%;
+		border-radius: 50%;
+		backface-visibility: hidden;
+		overflow: hidden;
+		border: calc($size / 15) solid #e1b530;
+		box-shadow: 0 0 4px #79611a;
+
+		img {
+			width: 100%;
+			height: 100%;
+		}
 	}
 }
 
@@ -76,4 +54,32 @@
 	background-color: gray;
 	z-index: 1;
 	transform: rotateY(180deg);
+}
+
+.coinGroup {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5px;
+}
+
+.result {
+	z-index: 3;
+
+	// font-size: 20px;
+	text-align: center;
+}
+
+@keyframes rotation {
+	0% {
+		transform: rotate3d(0, 1, 0, 0deg);
+	}
+
+	50% {
+		transform: rotate3d(0, 1, 0, 180deg);
+	}
+
+	100% {
+		transform: rotate3d(0, 1, 0, 360deg);
+	}
 }

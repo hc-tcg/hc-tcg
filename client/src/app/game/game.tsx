@@ -1,25 +1,28 @@
+import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedSlotT, SlotTypeT} from 'common/types/pick-process'
+import {PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
-import css from './game.module.css'
-import AttackModal from './modals/attack-modal'
-import ConfirmModal from './modals/confirm-modal'
-import SpyglassModal from './modals/spyglass-modal'
-import LootingModal from './modals/looting-modal'
-import ChestModal from './modals/chest-modal'
-import BorrowModal from './modals/borrow-modal'
-import EvilXModal from './modals/evil-x-modal'
-import ChangeHermitModal from './modals/change-hermit-modal'
-import ForfeitModal from './modals/forfeit-modal'
-import UnmetCondition from './modals/unmet-condition-modal'
-import EndTurnModal from './modals/end-turn-modal'
-import DiscardedModal from './modals/discarded-modal'
-import MouseIndicator from './mouse-indicator'
+import css from './game.module.scss'
+import {
+	AttackModal,
+	BorrowModal,
+	ChangeHermitModal,
+	ChestModal,
+	ConfirmModal,
+	DiscardedModal,
+	EndTurnModal,
+	EvilXModal,
+	ForfeitModal,
+	LootingModal,
+	SpyglassModal,
+	UnmetConditionModal,
+} from './modals'
 import EndGameOverlay from './end-game-overlay'
 import Toolbar from './toolbar'
 import Chat from './chat'
+import {playSound} from 'logic/sound/sound-actions'
 import {
 	getGameState,
 	getSelectedCard,
@@ -28,91 +31,23 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
-import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
-import {CardTypeT} from 'common/types/cards'
-
-const getFormattedList = (list: (CardTypeT | SlotTypeT)[]): string => {
-	if (list.length === 1) {
-		return list[0].replace(/_/g, ' ')
-	}
-	const formattedList = list.map((item) => item.replace(/_/g, ' '))
-	const initialElements = formattedList.slice(0, -1).join(', ')
-	return `${initialElements} or ${formattedList[formattedList.length - 1]}`
-}
-
-const getPickProcessMessage = (
-	pickProcess: PickProcessT,
-	currentPlayerId: string,
-	yourPlayerId: string
-) => {
-	const req = pickProcess.requirments[pickProcess.currentReq]
-	const amount = pickProcess.amount || req.amount
-
-	// Workaround to get the correct target name for the player choosing a slot/card
-	// This is needed because the current player may make the opposite player choose
-	// a slot/card on follow up (e.g the Jingler) but techincally is still their turn
-	// so we need to get the correct target name using another method
-	let target
-	if (req.target === 'player') {
-		target = currentPlayerId === yourPlayerId ? 'your' : "opponent's"
-	} else if (req.target === 'opponent') {
-		target = currentPlayerId === yourPlayerId ? "opponent's" : 'your'
-	} else {
-		target = "anyone's"
-	}
-
-	let location =
-		req.active === true ? 'active hermit' : req.active === false ? 'afk hermits' : 'hermits'
-
-	if (req.slot[0] === 'hand' && req.slot.length === 1) {
-		location = 'hand'
-	}
-
-	const adjacentMap = {
-		active: 'active hermit',
-		req: 'a previous pick',
-	}
-	const adjacentTarget = req.adjacent ? adjacentMap[req.adjacent] : ''
-
-	let type = ''
-	if (req.slot[0] !== 'hand') {
-		type = getFormattedList(req.slot) + (req.amount > 1 ? ' slots' : ' slot')
-	} else {
-		type = req.amount > 1 ? ' cards' : ' card'
-	}
-
-	let cardType = ''
-	if (req.type) {
-		cardType = getFormattedList(req.type) + (req.amount > 1 ? ' cards' : ' card')
-	}
-
-	const empty = req.empty || false
-	const adjacent = req.adjacent || false
-	const name = pickProcess.name
-
-	const article = ['item', 'effect'].includes(cardType[0]) ? 'an' : 'a'
-
-	return `${name}: Pick ${amount} ${empty ? 'empty' : ''} ${type} ${
-		adjacent ? 'adjacent to' : ''
-	} ${adjacent ? adjacentTarget : ''} ${req.type ? 'with' : ''} ${
-		cardType ? `${article} ${cardType}` : ''
-	} from ${target} ${location}.`
-}
+// import {getSettings} from 'logic/local-settings/local-settings-selectors'
+// import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
-	confirm: ConfirmModal,
-	spyglass: SpyglassModal,
-	chest: ChestModal,
-	looting: LootingModal,
 	borrow: BorrowModal,
+	confirm: ConfirmModal,
+	chest: ChestModal,
+	discarded: DiscardedModal,
 	evilX: EvilXModal,
-	'unmet-condition': UnmetCondition,
+	forfeit: ForfeitModal,
+	looting: LootingModal,
+	spyglass: SpyglassModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
-	discarded: DiscardedModal,
-	forfeit: ForfeitModal,
+	'unmet-condition': UnmetConditionModal,
 }
 
 const renderModal = (
@@ -131,13 +66,21 @@ function Game() {
 	const selectedCard = useSelector(getSelectedCard)
 	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
-	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
-	const thisPlayerId = useSelector(getPlayerId)
+	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
+	const handRef = useRef<HTMLDivElement>(null)
 
-	if (!gameState || !playerState) return <main>Loading</main>
+	if (!gameState || !playerState) return <p>Loading</p>
+	const [gameScale, setGameScale] = useState<number>(1)
+
+	const pickedSlotsInstances = pickedSlots
+		.map((pickedSlot) => pickedSlot.slot.card)
+		.filter(Boolean) as Array<CardT>
+
+	const gameWrapperRef = useRef<HTMLDivElement>(null)
+	const gameRef = useRef<HTMLDivElement>(null)
 
 	const handleOpenModal = (id: string | null) => {
 		dispatch(setOpenedModal(id))
@@ -153,40 +96,99 @@ function Game() {
 		dispatch(setSelectedCard(card))
 	}
 
-	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.slot.card)
-		.filter(Boolean) as Array<CardT>
+	// TODO: handleKeys is disabled due to eventListeners not able to use state
+	// function handleKeys(e: any) {
+	// 	// const chatIsClosed = settings.showChat === 'off'
+	// 	const chatIsClosed = false
+
+	// 	if (e.key === 'Escape') {
+	// 		dispatch(setSetting('showChat', 'off'))
+	// 	}
+
+	// 	if (chatIsClosed) {
+	// 		e.key === '/' && dispatch(setSetting('showChat', 'on'))
+	// 		if (e.key === 'a' || e.key === 'A') {
+	// 			dispatch(setOpenedModal('attack'))
+	// 		}
+	// 		if (e.key === 'e' || e.key === 'E') {
+	// 			dispatch(setOpenedModal('end-turn'))
+	// 		}
+	// 		if (e.key === 'm' || e.key === 'M') {
+	// 			console.log('Mute!')
+	// 		}
+	// 	}
+	// }
+
+	function handleResize() {
+		if (!gameWrapperRef.current || !gameRef.current) return
+		const scale = Math.min(
+			gameWrapperRef.current.clientWidth / gameRef.current.clientWidth,
+			gameWrapperRef.current.clientHeight / gameRef.current.clientHeight
+		)
+		setGameScale(scale)
+	}
+
+	function horizontalScroll(e: any) {
+		const scrollSpeed = 45
+
+		if (!handRef.current) return
+
+		if (e.deltaY > 0) {
+			e.preventDefault()
+			handRef.current.scrollLeft += scrollSpeed
+		} else {
+			e.preventDefault()
+			handRef.current.scrollLeft -= scrollSpeed
+		}
+	}
+
+	// Play SFX on turn start
+	useEffect(() => {
+		if (gameState.currentPlayerId === gameState.playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
+		}
+	}, [gameState.currentPlayerId])
+
+	// Initialize Game Screen Resizing and Event Listeners
+	useEffect(() => {
+		handleResize()
+		// window.addEventListener('keyup', handleKeys)
+		window.addEventListener('resize', handleResize)
+		handRef.current?.addEventListener('wheel', horizontalScroll)
+
+		// Clean up event listeners
+		return () => {
+			// window.removeEventListener('keyup', handleKeys)
+			window.removeEventListener('resize', handleResize)
+			handRef.current?.removeEventListener('wheel', horizontalScroll)
+		}
+	}, [])
 
 	return (
 		<div className={css.game}>
-			<div className={css.innerGame}>
-				<Board onClick={handleBoardClick} localGameState={gameState} />
-				<div className={css.bottom}>
-					<div className={css.toolbar}>
-						<Toolbar />
-					</div>
-					<div className={css.hand}>
-						<CardList
-							wrap={false}
-							size="medium"
-							cards={gameState.hand}
-							onClick={(card: CardT) => selectCard(card)}
-							selected={[selectedCard]}
-							picked={pickedSlotsInstances}
-						/>
-					</div>
+			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
+				<div className={css.playArea} ref={gameRef} style={{transform: `scale(${gameScale})`}}>
+					<div className={css.grid} />
+					<Board onClick={handleBoardClick} localGameState={gameState} />
 				</div>
-				{renderModal(openedModal, handleOpenModal)}
-				{pickProcess ? (
-					<MouseIndicator
-						message={getPickProcessMessage(pickProcess, gameState.currentPlayerId, thisPlayerId)}
-					/>
-				) : null}
-
-				<Chat />
-
-				{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 			</div>
+
+			<div className={css.bottom}>
+				<Toolbar />
+				<div className={css.hand} ref={handRef}>
+					<CardList
+						wrap={false}
+						cards={gameState.hand}
+						onClick={(card: CardT) => selectCard(card)}
+						selected={[selectedCard]}
+						picked={pickedSlotsInstances}
+					/>
+				</div>
+			</div>
+
+			{renderModal(openedModal, handleOpenModal)}
+			<Chat />
+			<EndGameOverlay {...endGameOverlay} />
 		</div>
 	)
 }

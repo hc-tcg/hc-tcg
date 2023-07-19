@@ -1,38 +1,65 @@
 import css from './toolbar.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
-import classnames from 'classnames'
-import {getGameState} from 'logic/game/game-selectors'
-import {setOpenedModal} from 'logic/game/game-actions'
+import {getAvailableActions, getGameState} from 'logic/game/game-selectors'
+import {setOpenedModal, endTurn} from 'logic/game/game-actions'
 import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
+import Button from 'components/button'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
-
+	const availableActions = useSelector(getAvailableActions)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
-	if (!gameState) return null
 
 	const handleDiscarded = () => {
 		dispatch(setOpenedModal('discarded'))
 	}
 
+	function handleEndTurn() {
+		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+			dispatch(endTurn())
+		} else {
+			dispatch(setOpenedModal('end-turn'))
+		}
+	}
+
+	if (!gameState) return null
+
 	return (
 		<div className={css.toolbar}>
-			<div className={css.item} title="Draw deck">
-				{gameState.pileCount}
+			{/* Cards in Deck */}
+			<div className={css.item} title="Cards Remaining in Deck">
+				<p>{gameState.pileCount}</p>
 			</div>
-			<div
-				className={classnames(css.item, css.clickable)}
-				title="Discarded"
-				onClick={handleDiscarded}
-			>
-				<img src="/images/toolbar/white_shulker.png" width="35" height="35" />
-			</div>
+
+			{/* Discard */}
+			<button className={css.item} title="Discarded" onClick={handleDiscarded}>
+				<img src="/images/toolbar/red_shulker.png" width="35" height="35" />
+				<span>{useSelector(getGameState)?.discarded.length}</span>
+			</button>
+
+			{/* Toggle Chat */}
 			<ChatItem />
+
+			{/* Toggle Sounds */}
 			<SoundItem />
-			<div className={css.dynamicSpace} />
+
+			{/* Forfeit Game */}
 			<ForfeitItem />
+
+			{/* End Turn */}
+			<Button
+				variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+				size="small"
+				style={{height: '4vh', padding: '0 2vh', borderRadius: '1vh'}}
+				onClick={handleEndTurn}
+				disabled={!availableActions.includes('END_TURN')}
+			>
+				End Turn
+			</Button>
 		</div>
 	)
 }
