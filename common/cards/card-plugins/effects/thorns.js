@@ -11,7 +11,7 @@ class ThornsEffectCard extends EffectCard {
 			name: 'Thorns',
 			rarity: 'common',
 			description:
-				'When the hermit this card is attached to takes damage, your opponent takes 20hp damage.\n\nIgnores armor.',
+				'When the Hermit this card is attached to takes damage, your opponent takes 20hp damage.\n\nIgnores armor.',
 		})
 	}
 

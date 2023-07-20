@@ -19,7 +19,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 				name: "Let's Go",
 				cost: ['speedrunner', 'speedrunner', 'speedrunner'],
 				damage: 100,
-				power: 'After attack, you can choose to go afk.',
+				power: 'After attack, you can choose to go AFK.',
 			},
 		})
 	}

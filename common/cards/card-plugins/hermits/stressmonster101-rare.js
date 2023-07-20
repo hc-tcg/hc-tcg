@@ -20,7 +20,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 				name: 'Yolo',
 				cost: ['prankster', 'prankster', 'prankster'],
 				damage: 0,
-				power: 'You and opponent take damage equal to your health.',
+				power: 'You and your opponent take damage equal to your health.',
 			},
 		})
 	}
