@@ -404,8 +404,9 @@ function* turnActionsSaga(
 
 			// Block ZERO_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
 			if (
-				!blockedActions.includes('PRIMARY_ATTACK') ||
-				!blockedActions.includes('SECONDARY_ATTACK')
+				(availableActions.includes('PRIMARY_ATTACK') ||
+					availableActions.includes('SECONDARY_ATTACK')) &&
+				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
 			) {
 				blockedActions.push('ZERO_ATTACK')
 			}
