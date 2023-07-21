@@ -11,7 +11,7 @@ class ThornsIIEffectCard extends EffectCard {
 			name: 'Thorns II',
 			rarity: 'rare',
 			description:
-				'When the hermit this card is attached to takes damage, your opponent takes 30hp damage.\n\nIgnores armor.',
+				'When the Hermit this card is attached to takes damage, your opponent takes 30hp damage.\n\nIgnores armor.',
 		})
 	}
 
@@ -27,6 +27,8 @@ class ThornsIIEffectCard extends EffectCard {
 		// Only when the opponent attacks us
 		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
 			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+			// Only return a backlash attack if the attack would do damage
+			if (attack.calculateDamage() <= 0) return
 
 			if (attack.attacker && isTargetingPos(attack, pos)) {
 				const backlashAttack = new AttackModel({

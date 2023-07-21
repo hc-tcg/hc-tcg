@@ -78,7 +78,7 @@ const getStrengthsAndWeaknesses = (
 ): React.ReactNode => {
 	if (!(card instanceof HermitCard)) return null
 
-	const strengths = [card.hermitType]
+	const strengths = STRENGTHS[card.hermitType]
 	const weaknesses = Object.entries(STRENGTHS)
 		.filter(([, value]) => value.includes(card.hermitType))
 		.map(([key]) => key) as Array<HermitTypeT>

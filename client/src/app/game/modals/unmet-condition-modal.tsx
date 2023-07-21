@@ -1,6 +1,5 @@
 import Modal from 'components/modal'
-import css from './confirm-modal.module.css'
-
+import css from './game-modals.module.scss'
 import Button from 'components/button'
 
 type Props = {
@@ -12,13 +11,11 @@ function UnmetCondition({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Unmet Condition">
+		<Modal title="Unmet Condition" closeModal={closeModal}>
 			<div className={css.confirmModal}>
 				<div className={css.description}>You can't play this card at the moment.</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleOk}>
-						Ok
-					</Button>
+					<Button onClick={handleOk}>Okay</Button>
 				</div>
 			</div>
 		</Modal>

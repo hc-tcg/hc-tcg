@@ -1,6 +1,6 @@
-import classnames from 'classnames'
+import cn from 'classnames'
 import {HermitAttackInfo} from 'common/types/cards'
-import css from './attack-modal.module.css'
+import css from '../game-modals.module.scss'
 
 type Props = {
 	attackInfo: HermitAttackInfo | null
@@ -12,29 +12,32 @@ type Props = {
 
 const Attack = ({attackInfo, onClick, name, icon, extra}: Props) => {
 	return (
-		<div key={name} className={classnames(css.attack, {[css.extra]: extra})} onClick={onClick}>
+		<button key={name} className={cn(css.attack, {[css.extra]: extra})} onClick={onClick}>
+			{/* PORTRAIT */}
 			<div
-				className={classnames(css.icon, {
+				className={cn(css.portrait, {
 					[css.effectIcon]: !attackInfo,
 					[css.hermitIcon]: !!attackInfo,
 				})}
 			>
 				<img src={icon} />
 			</div>
+
+			{/* ATTACK NAME */}
 			<div className={css.info}>
-				<div className={css.name}>
+				<p className={css.name}>
 					{name} -{' '}
 					<span
-						className={classnames(css.damage, {
+						className={cn(css.damage, {
 							[css.specialMove]: !!attackInfo?.power,
 						})}
 					>
 						{attackInfo?.damage}
 					</span>
-				</div>
-				{attackInfo?.power && <div className={css.specialMoveDescription}>{attackInfo?.power}</div>}
+				</p>
+				{attackInfo?.power && <p>{attackInfo?.power}</p>}
 			</div>
-		</div>
+		</button>
 	)
 }
 

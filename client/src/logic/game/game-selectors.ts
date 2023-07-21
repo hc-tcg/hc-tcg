@@ -31,6 +31,17 @@ export const getPlayerState = (state: RootState) => {
 	return getPlayerStateById(playerId)(state)
 }
 
+export const getOpponentName = (state: RootState) => {
+	const settings = state.localSettings
+	const gameState = getGameState(state)
+	const opponentId = getOpponentId(state)
+	const opponent = opponentId && gameState?.players[opponentId]
+
+	if (!opponent) return
+	if (settings.profanityFilter === 'off') return opponent.playerName
+	return opponent.censoredPlayerName
+}
+
 export const getOpponentState = (state: RootState) => {
 	const playerId = getOpponentId(state)
 	return playerId ? getPlayerStateById(playerId)(state) : null

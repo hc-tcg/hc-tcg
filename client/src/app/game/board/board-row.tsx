@@ -2,7 +2,8 @@ import {RowState} from 'common/types/game-state'
 import {CardT} from 'common/types/game-state'
 import Slot from './board-slot'
 import {SlotTypeT} from 'common/types/pick-process'
-import css from './board.module.css'
+import css from './board.module.scss'
+import cn from 'classnames'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
@@ -29,8 +30,10 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 	const slotTypes: Array<SlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const card = getCardBySlot(slotType, index, rowState)
+		const cssId = slotType === 'item' ? slotType + (index + 1) : slotType
 		return (
 			<Slot
+				cssId={cssId}
 				onClick={() => handleSlotClick(slotType, index, card)}
 				card={card}
 				rowState={rowState}
@@ -40,8 +43,17 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 			/>
 		)
 	})
-	if (type === 'right') slots.reverse()
-	return <div className={css.hermitRow}>{slots}</div>
+
+	return (
+		<div
+			className={cn(css.row, {
+				[css.active]: active,
+				[css.reversed]: type === 'right',
+			})}
+		>
+			{slots}
+		</div>
+	)
 }
 
 export default BoardRow

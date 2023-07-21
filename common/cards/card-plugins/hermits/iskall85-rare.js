@@ -33,7 +33,7 @@ class Iskall85RareHermitCard extends HermitCard {
 	onAttach(game, instance, pos) {
 		const {player} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.beforeAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
 
@@ -55,7 +55,7 @@ class Iskall85RareHermitCard extends HermitCard {
 	onDetach(game, instance, pos) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.beforeAttack.remove(instance)
 	}
 }
 

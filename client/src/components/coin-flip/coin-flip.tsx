@@ -24,6 +24,7 @@ const CoinFlip = ({name, tosses}: Props) => {
 				<div className={classnames(css.face, css.back)}>
 					<img src={coinPics[1]} />
 				</div>
+				<p className={css.result}>{face.toString()}</p>
 			</div>
 		)
 	})
@@ -31,7 +32,7 @@ const CoinFlip = ({name, tosses}: Props) => {
 	return (
 		<div className={css.coinFlip}>
 			<div className={css.name}>{name}</div>
-			<div className={css.tosses}>{coins}</div>
+			<div className={css.coins}>{coins}</div>
 		</div>
 	)
 }

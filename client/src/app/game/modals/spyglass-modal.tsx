@@ -3,7 +3,7 @@ import {useState} from 'react'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
-import css from './spyglass-modal.module.css'
+import css from './game-modals.module.scss'
 import {getPlayerState} from 'logic/game/game-selectors'
 import {followUp} from 'logic/game/game-actions'
 import Button from 'components/button'
@@ -46,11 +46,16 @@ function SpyglassModal({closeModal}: Props) {
 		}
 	}
 
+	console.log('Spyglass:', useSelector(getPlayerState))
+
 	return (
-		<Modal title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}>
+		<Modal
+			title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}
+			closeModal={handleClose}
+		>
 			<div className={css.wrapper}>
 				<div className={css.cards}>
-					<CardList onClick={handleSelection} size="small" cards={cards} selected={selected} />
+					<CardList onClick={handleSelection} cards={cards} selected={selected} />
 				</div>
 				<div className={css.options}>
 					<Button variant="primary" size="small" onClick={canDiscard ? handleConfirm : handleClose}>

@@ -12,7 +12,7 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"For every hermit attacked on your opponent's turn, your opponent's active hermit takes 10hp damage.",
+				"For every Hermit attacked on your opponent's turn, your opponent's active Hermit takes 10hp damage.",
 		})
 	}
 
@@ -42,6 +42,7 @@ class WolfEffectCard extends EffectCard {
 			const activeRow = getActiveRowPos(player)
 			if (!activeRow || activeRow.rowIndex !== pos.rowIndex) return
 
+			if (!player.custom[attackedRows]) player.custom[attackedRows] = []
 			if (player.custom[attackedRows].includes(attack.target.rowIndex)) return
 			player.custom[attackedRows].push(attack.target.rowIndex)
 

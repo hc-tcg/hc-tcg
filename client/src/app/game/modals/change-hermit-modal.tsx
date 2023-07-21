@@ -1,9 +1,9 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
-import css from './change-hermit-modal.module.css'
 import {PickedSlotT} from 'common/types/pick-process'
 import CARDS from 'common/cards'
+import css from './game-modals.module.scss'
 import Button from 'components/button'
 
 type Props = {
@@ -50,30 +50,28 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	}
 
 	return (
-		<Modal title="Change active hermit">
+		<Modal title="Change active hermit" closeModal={handleNo}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>{message}</div>
-				{lastAction && (
-					<div className={css.turnEndNotification}>
-						<span className={css.infoIcon}>!</span>
-						Hermit change is the last action of your turn.
-					</div>
-				)}
+				<div className={css.description}>
+					{lastAction && (
+						<div className={css.turnEndNotification}>
+							<span className={css.infoIcon}>!</span>
+							{/* Hermit change is the last action of your turn. */}
+							<p>Changing your hermit will end your turn!</p>
+						</div>
+					)}
+					{message}
+				</div>
+
 				<div className={css.options}>
 					{canChange ? (
 						<>
-							<Button variant="primary" size="small" onClick={handleYes}>
-								Yes
-							</Button>
-							<Button variant="primary" size="small" onClick={handleNo}>
-								No
-							</Button>
+							<Button onClick={handleYes}>Yes</Button>
+							<Button onClick={handleNo}>Cancel</Button>
 						</>
 					) : (
 						<>
-							<Button variant="primary" size="small" onClick={handleNo}>
-								Ok
-							</Button>
+							<Button onClick={handleNo}>Ok</Button>
 						</>
 					)}
 				</div>
