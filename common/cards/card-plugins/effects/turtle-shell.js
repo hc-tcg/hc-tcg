@@ -67,9 +67,6 @@ class TurtleShellEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		// Store whether we blocked any damage
-		player.custom[instanceKey] = false
-
 		player.hooks.onDefence.add(instance, (attack) => {
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
@@ -80,15 +77,13 @@ class TurtleShellEffectCard extends EffectCard {
 			if (attack.getDamage() > 0) {
 				// Block all damage
 				attack.multiplyDamage(this.id, 0).lockDamage()
-
-				player.custom[instanceKey] = true
 			}
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			if (player.custom[instanceKey] === true) {
-				discardCard(game, {cardId: this.id, cardInstance: instance})
-			}
+			const isActive = player.board.activeRow === pos.rowIndex
+			if (!isActive) return
+			discardCard(game, {cardId: this.id, cardInstance: instance})
 		})
 	}
 
@@ -101,7 +96,6 @@ class TurtleShellEffectCard extends EffectCard {
 	onDetach(game, instance, pos) {
 		pos.player.hooks.onDefence.remove(instance)
 		pos.player.hooks.afterDefence.remove(instance)
-		delete pos.player.custom[this.getInstanceKey(instance)]
 	}
 
 	getExpansion() {
