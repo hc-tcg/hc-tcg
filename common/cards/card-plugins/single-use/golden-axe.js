@@ -45,6 +45,20 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				type: 'effect',
 			}).addDamage(this.id, 40)
 
+			// Ignore attached effect cards
+			axeAttack.shouldIgnoreCards.push((instance) => {
+				const pos = getCardPos(game, instance)
+				if (!pos || !axeAttack.target) return false
+
+				const onTargetRow = pos.rowIndex === axeAttack.target.rowIndex
+				if (onTargetRow && pos.slot.type === 'effect') {
+					// It's the targets effect card, ignore it
+					return true
+				}
+
+				return false
+			})
+
 			return [axeAttack]
 		})
 
@@ -54,20 +68,6 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			if (attack.id === attackId) {
 				applySingleUse(game)
 			}
-
-			// Ignore attached effect cards
-			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !attack.target) return false
-
-				const onTargetRow = pos.rowIndex === attack.target.rowIndex
-				if (onTargetRow && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
-
-				return false
-			})
 		})
 
 		player.hooks.afterAttack.add(instance, (attack) => {
