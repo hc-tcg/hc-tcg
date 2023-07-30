@@ -51,6 +51,11 @@ class ItemCard extends Card {
 	getEnergy(game, instance, pos) {
 		throw new Error('Implement getEnergy!')
 	}
+
+	isAttachableToSlotType(slot) {
+		if (slot === 'item') return true
+		return false
+	}
 }
 
 export default ItemCard

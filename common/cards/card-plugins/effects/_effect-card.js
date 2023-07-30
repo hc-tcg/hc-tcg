@@ -60,8 +60,9 @@ class EffectCard extends Card {
 		return true
 	}
 
-	isAttachable() {
-		return true
+	isAttachableToSlotType(slot) {
+		if (slot === 'effect') return true
+		return false
 	}
 }
 

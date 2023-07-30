@@ -113,6 +113,11 @@ class HermitCard extends Card {
 	getBackground() {
 		return this.id.split('_')[0]
 	}
+
+	isAttachableToSlotType(slot) {
+		if (slot === 'hermit') return true
+		return false
+	}
 }
 
 export default HermitCard

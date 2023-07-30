@@ -17,7 +17,7 @@ import followUpSaga from './turn-actions/follow-up'
 import {getCardPos} from '../utils/cards'
 import {AvailableActionsT, CardT, PlayerState} from '../../common/types/game-state'
 import {GameModel} from '../models/game-model'
-import {CardTypeT, EnergyT} from '../../common/types/cards'
+import {EnergyT, SlotTypeT} from '../../common/types/cards'
 import {AttackModel} from '../models/attack-model'
 
 ////////////////////////////////////////
@@ -52,16 +52,16 @@ function getAvailableActions(
 	const actions: AvailableActionsT = []
 
 	/**
-	 * @param {CardTypeT} type
+	 * @param {SlotTypeT} slot
 	 * @returns {boolean}
 	 */
-	const hasTypeInHand = (type: CardTypeT): boolean => {
-		return currentPlayer.hand.some((card) => CARDS[card.cardId].type.includes(type))
+	const hasAttachableInHand = (slot: SlotTypeT): boolean => {
+		return currentPlayer.hand.some((card) => CARDS[card.cardId].isAttachableToSlotType(slot))
 	}
-	const hasHermitInHand = hasTypeInHand('hermit')
-	const hasItemInHand = hasTypeInHand('item')
-	const hasEffectInHand = hasTypeInHand('effect')
-	const hasSingleUseInHand = hasTypeInHand('single_use')
+	const hasHermitInHand = hasAttachableInHand('hermit')
+	const hasItemInHand = hasAttachableInHand('item')
+	const hasEffectInHand = hasAttachableInHand('effect')
+	const hasSingleUseInHand = hasAttachableInHand('single_use')
 
 	if (Object.keys(opponentPlayer.followUp).length > 0) {
 		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')

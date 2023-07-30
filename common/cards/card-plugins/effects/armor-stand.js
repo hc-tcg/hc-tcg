@@ -96,7 +96,8 @@ class ArmorStandEffectCard extends EffectCard {
 		return 'alter_egos'
 	}
 
-	isAttachable() {
+	isAttachableToSlotType(slot) {
+		if (slot === 'hermit') return true
 		return false
 	}
 }

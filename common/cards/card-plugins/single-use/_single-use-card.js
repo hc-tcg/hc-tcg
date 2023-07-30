@@ -48,6 +48,11 @@ class SingleUseCard extends Card {
 		// default is no
 		return false
 	}
+
+	isAttachableToSlotType(slot) {
+		if (slot === 'single_use') return true
+		return false
+	}
 }
 
 export default SingleUseCard

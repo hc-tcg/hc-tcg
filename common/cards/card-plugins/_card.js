@@ -7,6 +7,7 @@ import {GameModel} from '../../../server/models/game-model'
  * @typedef {import("../../types/cards").CardPos} CardPos
  * @typedef {import("../../types/cards").CardTypeT} CardTypeT
  * @typedef {import("../../types/cards").CardRarityT} CardRarityT
+ * @typedef {import("../../types/cards").SlotTypeT} SlotTypeT
  */
 
 class Card {
@@ -108,10 +109,11 @@ class Card {
 	}
 
 	/**
-	 * Returns whether this card is attachable to the Effect slot
+	 * Returns whether this card is attachable to a specified slot type
+	 * @param {SlotTypeT} slot
 	 * @returns {boolean}
 	 */
-	isAttachable() {
+	isAttachableToSlotType(slot) {
 		return false
 	}
 }
