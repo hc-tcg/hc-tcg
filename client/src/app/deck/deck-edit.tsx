@@ -36,7 +36,7 @@ const DECK_ICONS = [
 	'speedrunner',
 	'terraform',
 ]
-const EXPANSION_NAMES = ['any', ...Object.keys(EXPANSIONS.expansions)]
+const EXPANSION_NAMES = [...Object.keys(EXPANSIONS.expansions)]
 const iconDropdownOptions = DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
@@ -51,7 +51,7 @@ interface ExpansionMap {
 	[key: string]: string
 }
 const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
-	name: (EXPANSIONS.expansions as ExpansionMap)[option] || 'Any',
+	name: (EXPANSIONS.expansions as ExpansionMap)[option],
 	key: option,
 	icon: `/images/expansion-icons/${option}.png`,
 }))
@@ -110,7 +110,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [textQuery, setTextQuery] = useState<string>('')
 	const [rankQuery, setRankQuery] = useState<string>('')
 	const [typeQuery, setTypeQuery] = useState<string>('')
-	const [expansionQuery, setExpansionQuery] = useState<string>('')
+	const [expansionQuery, setExpansionQuery] = useState<string>('default')
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>(deck)
 	const [validDeckName, setValidDeckName] = useState<boolean>(true)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
@@ -274,20 +274,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								options={iconDropdownOptions}
 								action={(option) => setTypeQuery(option === 'any' ? '' : option)}
 							/>
-							<Dropdown
-								button={
-									<button className={css.dropdownButton}>
-										<img
-											src={`/images/expansion-icons/${
-												expansionQuery === '' ? 'any' : expansionQuery
-											}.png`}
-										/>
-									</button>
-								}
-								label="Expansion Filter"
-								options={expansionDropdownOptions}
-								action={(option) => setExpansionQuery(option === 'any' ? '' : option)}
-							/>
 							<input
 								placeholder="Search cards..."
 								className={css.input}
@@ -306,6 +292,21 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 						</>
 					}
 				>
+					<Dropdown
+						button={
+							<button className={css.packDropdown}>
+								<img
+									src={`/images/expansion-icons/${
+										expansionQuery === '' ? 'any' : expansionQuery
+									}.png`}
+								/>{' '}
+								Current Pack - {EXPANSIONS.expansions[expansionQuery]}
+							</button>
+						}
+						label="Choose Expansion Pack"
+						options={expansionDropdownOptions}
+						action={(option) => setExpansionQuery(option)}
+					/>
 					<Accordion header={'Hermits'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
