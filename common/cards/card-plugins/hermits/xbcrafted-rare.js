@@ -2,6 +2,7 @@ import HermitCard from './_hermit-card'
 import CARDS from '../../../cards'
 import {GameModel} from '../../../../server/models/game-model'
 import {getCardPos} from '../../../../server/utils/cards'
+import {createWeaknessAttack} from '../../../../server/utils/attacks'
 
 /*
 Combination of Totem + Scars ability can be tricky here to get right
@@ -55,7 +56,12 @@ class XBCraftedRareHermitCard extends HermitCard {
 			})
 		}
 
-		return attacks
+		const newAttacks = [attacks[0]]
+
+		const weaknessAttack = createWeaknessAttack(attacks[0])
+		if (weaknessAttack) newAttacks.push(weaknessAttack)
+
+		return newAttacks
 	}
 }
 
