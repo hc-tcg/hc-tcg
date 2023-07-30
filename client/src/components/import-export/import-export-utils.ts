@@ -1,5 +1,5 @@
 import {CardT} from 'common/types/game-state'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 import {universe} from './import-export-const'
 import {encode, decode} from 'js-base64'
 

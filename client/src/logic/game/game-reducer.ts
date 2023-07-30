@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux'
 import {LocalGameRoot} from 'common/types/game-state'
-import {equalCard} from 'server/utils'
+import {equalCard} from 'common/utils/cards'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,

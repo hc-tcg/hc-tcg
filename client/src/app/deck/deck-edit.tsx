@@ -4,11 +4,10 @@ import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
-import CARDS from 'common/cards'
-import {getCardRank, getCardExpansion, getTotalCost, validateDeck} from 'server/utils/validation'
-import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
-import Card from 'common/cards/card-plugins/_card'
+import {CARDS} from 'common/cards'
+import HermitCard from 'common/cards/base/hermit-card'
+import ItemCard from 'common/cards/base/item-card'
+import Card from 'common/cards/base/card'
 import {CardT} from 'common/types/game-state'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -17,8 +16,11 @@ import Button from 'components/button'
 import errorIcon from 'components/svgs/errorIcon'
 import Dropdown from 'components/dropdown'
 import AlertModal from 'components/alert-modal'
-import {CONFIG, RANKS, EXPANSIONS} from '../../../../config'
+import {CONFIG, RANKS, EXPANSIONS} from '../../../../common/config'
 import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
+import {getCardExpansion} from 'common/utils/cards'
+import {getCardRank, getDeckCost} from 'common/utils/ranks'
+import {validateDeck} from 'common/utils/validation'
 
 const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
 const DECK_ICONS = [
@@ -353,7 +355,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
 								<div className={classNames(css.cardCount, css.dark, css.tokens)}>
-									{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
+									{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
 									{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
 								</div>
 							</div>

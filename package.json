@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
-	"main": "server/index.js",
+	"main": "server/src/index.ts",
 	"engines": {
 		"node": ">=16 <19"
 	},
@@ -37,7 +37,6 @@
 		"husky": "^8.0.3",
 		"js-base64": "^3.7.5",
 		"lint-staged": "^13.1.2",
-		"node-fetch": "^3.3.1",
 		"prettier": "^2.8.4",
 		"profanity-filter": "^0.2.1",
 		"react": "^18.2.0",
@@ -53,14 +52,15 @@
 		"stylelint-config-standard-scss": "^7.0.1",
 		"terser": "^5.16.1",
 		"typed-redux-saga": "^1.5.0",
-		"typescript": "^5.0.0-beta",
+		"typescript": "^5.1.6",
 		"vite": "^4.0.4",
 		"vite-plugin-eslint": "^1.8.1"
 	},
 	"scripts": {
 		"start": "npm run server",
 		"docker-start": "npm run build && npm run start",
-		"server": "node --experimental-specifier-resolution=node server/dist/server/index.js",
+		"server": "tsx --tsconfig server/tsconfig.json server/src",
+		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:inspect": "node --experimental-specifier-resolution=node --inspect server/dist/server/index.js",
 		"dev": "vite client/",
 		"tsc": "tsc --p client/",
@@ -82,5 +82,8 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
+	},
+	"devDependencies": {
+		"tsx": "^3.12.7"
 	}
 }

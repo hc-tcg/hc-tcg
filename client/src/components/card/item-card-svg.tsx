@@ -1,9 +1,9 @@
 import classnames from 'classnames'
-import ItemCard from '../../../../common/cards/card-plugins/items/_item-card'
+import ItemCard from '../../../../common/cards/base/item-card'
 import css from './item-card-svg.module.scss'
-import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
+import {getCardRank} from 'common/utils/ranks'
 
 export type ItemCardProps = {
 	card: ItemCard

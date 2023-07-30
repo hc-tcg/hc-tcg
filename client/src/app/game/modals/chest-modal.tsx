@@ -4,10 +4,10 @@ import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './game-modals.module.scss'
-import {equalCard} from 'server/utils'
 import {getGameState} from 'logic/game/game-selectors'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
 import Button from 'components/button'
+import {equalCard} from 'common/utils/cards'
 
 const DISABLED = ['clock']
 

@@ -4,7 +4,8 @@
 		"paths": {
 			"server/*": ["../../server/*"],
 			"common/*": ["../../common/*"],
-			"const/*": ["../../common/const/*"]
+			"const/*": ["../../common/const/*"],
+			"config/*": ["../../common/config/*"]
 		},
 		"target": "ESNext",
 		"useDefineForClassFields": true,
@@ -22,6 +23,6 @@
 		"noEmit": true,
 		"jsx": "react-jsx"
 	},
-	"include": ["src"],
+	"include": ["src", "vite.config.ts"],
 	"references": [{"path": "./tsconfig.node.json"}]
 }
