@@ -4,8 +4,7 @@
 		"iron": [1],
 		"gold": [2],
 		"emerald": [3],
-		"diamond": [4],
-		"obsidian": [5]
+		"diamond": [4]
 	},
 
 	" - HERMITS - ": "Ordered by type and cost",
