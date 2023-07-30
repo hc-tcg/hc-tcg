@@ -36,7 +36,7 @@ const DECK_ICONS = [
 	'speedrunner',
 	'terraform',
 ]
-const EXPANSION_NAMES = [...Object.keys(EXPANSIONS.expansions)]
+const EXPANSION_NAMES = [...Object.keys(EXPANSIONS.expansions), 'all']
 const iconDropdownOptions = DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
@@ -51,7 +51,7 @@ interface ExpansionMap {
 	[key: string]: string
 }
 const expansionDropdownOptions = EXPANSION_NAMES.map((option) => ({
-	name: (EXPANSIONS.expansions as ExpansionMap)[option],
+	name: (EXPANSIONS.expansions as ExpansionMap)[option] || 'All Cards',
 	key: option,
 	icon: `/images/expansion-icons/${option}.png`,
 }))
@@ -296,15 +296,15 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<button className={css.packDropdown}>
 								<img
 									src={`/images/expansion-icons/${
-										expansionQuery === '' ? 'any' : expansionQuery
+										expansionQuery === '' ? 'all' : expansionQuery
 									}.png`}
 								/>{' '}
-								Current Pack - {EXPANSIONS.expansions[expansionQuery]}
+								Current Pack - {EXPANSIONS.expansions[expansionQuery] || 'All Cards'}
 							</button>
 						}
 						label="Choose Expansion Pack"
 						options={expansionDropdownOptions}
-						action={(option) => setExpansionQuery(option)}
+						action={(option) => setExpansionQuery(option === 'all' ? '' : option)}
 					/>
 					<Accordion header={'Hermits'}>
 						<CardList
