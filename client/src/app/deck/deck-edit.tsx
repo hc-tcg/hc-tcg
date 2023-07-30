@@ -299,7 +299,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 										expansionQuery === '' ? 'all' : expansionQuery
 									}.png`}
 								/>{' '}
-								Current Pack - {EXPANSIONS.expansions[expansionQuery] || 'All Cards'}
+								Current Pack -{' '}
+								{(EXPANSIONS.expansions as ExpansionMap)[expansionQuery] || 'All Cards'}
 							</button>
 						}
 						label="Choose Expansion Pack"
