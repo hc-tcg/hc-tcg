@@ -173,7 +173,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		setTextQuery('')
 		setRankQuery('')
 		setTypeQuery('')
-		setExpansionQuery('')
 	}
 	const handleDeckIcon = (option: any) => {
 		setLoadedDeck((loadedDeck) => ({
