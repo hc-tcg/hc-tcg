@@ -27,7 +27,7 @@ class KeralisRareHermitCard extends HermitCard {
 				{
 					target: 'board',
 					slot: ['hermit'],
-					type: ['hermit', 'effect'],
+					type: ['hermit'],
 					amount: 1,
 					active: false,
 				},
