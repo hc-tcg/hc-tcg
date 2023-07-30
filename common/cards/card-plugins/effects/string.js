@@ -1,6 +1,6 @@
 import EffectCard from './_effect-card'
 import {GameModel} from '../../../../server/models/game-model'
-import {CARDS} from '..'
+import {HERMIT_CARDS} from '../../../cards'
 
 class StringEffectCard extends EffectCard {
 	constructor() {
@@ -28,8 +28,9 @@ class StringEffectCard extends EffectCard {
 
 		if (!pos.row?.hermitCard) return 'INVALID'
 
-		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+		const cardInfo = HERMIT_CARDS[pos.row.hermitCard?.cardId]
 		if (!cardInfo) return 'INVALID'
+
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
 		return 'YES'
