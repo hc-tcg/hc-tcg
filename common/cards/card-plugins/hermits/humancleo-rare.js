@@ -54,7 +54,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			player.custom['opponent-attack'] = {
 				cardId: this.id,
 				name: this.name,
-				pickReqs: [{target: 'player', type: ['hermit'], amount: 1, active: false}],
+				pickReqs: [{target: 'player', slot: ['hermit'], amount: 1, active: false}],
 			}
 			player.custom[instanceKey] = true
 
