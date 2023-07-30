@@ -32,6 +32,9 @@ function* changeActiveHermit(game: GameModel, turnAction: any, actionState: any)
 		})
 	}
 
+	// Run hooks
+	currentPlayer.hooks.onBecomeActive.call(currentPlayer.board.activeRow)
+
 	return 'DONE'
 }
 
