@@ -11,7 +11,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do an additional 40hp damage.\\The opponent's attached effect card is ignored during this attack.",
+				"Do an additional 40hp damage.\nThe opponent's attached effect card is ignored during this attack.",
 		})
 	}
 
