@@ -4,13 +4,13 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal, followUp, applyEffect, removeEffect} from 'logic/game/game-actions'
-import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
-import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
-import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import HermitCard from 'common/cards/base/hermit-card'
+import EffectCard from 'common/cards/base/effect-card'
+import SingleUseCard from 'common/cards/base/single-use-card'
+import ItemCard from 'common/cards/base/item-card'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))

@@ -1,6 +1,15 @@
 {
+	"ts-node": {
+		"require": ["tsconfig-paths/register"],
+		"files": true,
+		"esm": true
+	},
 	"compilerOptions": {
-		"baseUrl": ".",
+		"baseUrl": "./src",
+		"paths": {
+			"common/*": ["../../common/*"],
+			"types/*": ["../../common/types/*"]
+		},
 		"allowJs": true,
 		"target": "esnext",
 		"module": "esnext",
@@ -9,9 +18,10 @@
 		"isolatedModules": true,
 		"strictNullChecks": true,
 		"strict": true,
+		"noEmit": true,
+		"noImplicitOverride": true,
 		"esModuleInterop": true,
 		"outDir": "./dist"
 	},
-	"include": [".", "**.json"],
-	"exclude": ["./dist"]
+	"include": ["src/*", "src/**.json"]
 }

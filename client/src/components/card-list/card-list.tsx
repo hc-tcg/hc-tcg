@@ -1,16 +1,12 @@
 import cn from 'classnames'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 import {CardT} from 'common/types/game-state'
-import Card from 'components/card'
+import CardComponent from 'components/card'
 import css from './card-list.module.scss'
-import {equalCard} from 'server/utils'
-import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
-import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
-import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
-import HealthCard from 'common/cards/card-plugins/health/_health-card'
 
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import Card from 'common/cards/base/card'
+import {equalCard} from 'common/utils/cards'
 
 type CardListProps = {
 	cards: Array<CardT>
@@ -25,12 +21,7 @@ const CardList = (props: CardListProps) => {
 	const {wrap, onClick, cards, disabled, selected, picked} = props
 
 	const cardsOutput = cards.map((card) => {
-		const info = CARDS[card.cardId] as
-			| HermitCard
-			| EffectCard
-			| SingleUseCard
-			| ItemCard
-			| HealthCard
+		const info = CARDS[card.cardId] as Card
 		if (!info) return null
 		const isSelected = selected
 			? selected.some((selectedCard) => equalCard(card, selectedCard))
@@ -51,7 +42,7 @@ const CardList = (props: CardListProps) => {
 					exitActive: css.exitActive,
 				}}
 			>
-				<Card
+				<CardComponent
 					key={card.cardInstance}
 					className={cn(css.card, {
 						[css.clickable]: !!onClick && !isDisabled,

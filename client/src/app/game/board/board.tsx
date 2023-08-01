@@ -7,7 +7,7 @@ import BoardRow from './board-row'
 import PlayerInfo from '../player-info'
 import Timer from '../timer'
 import Actions from '../actions/actions'
-import {CARDS} from 'common/cards/card-plugins'
+import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 type Props = {

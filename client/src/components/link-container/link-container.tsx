@@ -1,5 +1,5 @@
 import css from './link-container.module.scss'
-import {CONFIG} from '../../../../config'
+import {CONFIG} from '../../../../common/config'
 
 export function VersionLinks() {
 	return (

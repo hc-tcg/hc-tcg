@@ -4,7 +4,7 @@ import css from './game-modals.module.scss'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
 import {getPlayerState} from 'logic/game/game-selectors'
 import Button from 'components/button'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void
