@@ -1,6 +1,7 @@
 import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {PickRequirmentT} from '../../types/pick-process'
+import {SlotTypeT} from 'common/types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 
 type CardDefs = {
@@ -47,6 +48,14 @@ abstract class Card {
 	public canAttachToCard(game: GameModel, pos: CardPosModel): boolean {
 		// default is true
 		return true
+	}
+
+	/**
+	 * Returns if card is attachable to slot type
+	 */
+	public isAttachableToSlotType(slot: SlotTypeT): boolean {
+		// default is false
+		return false
 	}
 
 	/**

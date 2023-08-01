@@ -125,10 +125,8 @@ const getRank = (card: Card): React.ReactNode => {
 	)
 }
 
-const getAttach = (
-	(card: Card)
-): React.ReactNode => {
-	if (!card.isAttachableToSlotType('effect')) return null
+const getAttach = (card: Card): React.ReactNode => {
+	if (!card.showAttachTooltip()) return null
 	return <div className={css.attach}>Attach</div>
 }
 

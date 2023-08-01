@@ -1,6 +1,7 @@
 import {CardRarityT} from '../../types/cards'
 import Card from './card'
 import {PickRequirmentT} from '../../types/pick-process'
+import {SlotTypeT} from 'common/types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 
@@ -37,6 +38,14 @@ class SingleUseCard extends Card {
 
 	public override showSingleUseTooltip(): boolean {
 		return true
+	}
+
+	/**
+	 * Returns if card is attachable to slot type
+	 */
+	public isAttachableToSlotType(slot: SlotTypeT): boolean {
+		if (slot === 'hermit') return true
+		return false
 	}
 
 	/**

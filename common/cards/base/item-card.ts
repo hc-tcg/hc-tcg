@@ -1,6 +1,6 @@
 import Card from './card'
 import {CARDS} from '..'
-import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import {CardRarityT, EnergyT, HermitTypeT, SlotTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 
@@ -23,6 +23,14 @@ abstract class ItemCard extends Card {
 		})
 
 		this.hermitType = defs.hermitType
+	}
+
+	/**
+	 * Returns if card is attachable to slot type
+	 */
+	public isAttachableToSlotType(slot: SlotTypeT): boolean {
+		if (slot === 'hermit') return true
+		return false
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel) {

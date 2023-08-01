@@ -3,6 +3,7 @@ import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
 import {PickRequirmentT} from '../../types/pick-process'
+import {SlotTypeT} from 'common/types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 
 type EffectDefs = {
@@ -54,7 +55,7 @@ abstract class EffectCard extends Card {
 	/**
 	 * Returns if card is attachable to slot type
 	 */
-	public isAttachableToSlotType(slot): boolean {
+	public isAttachableToSlotType(slot: SlotTypeT): boolean {
 		if (slot === 'effect') return true
 		return false
 	}

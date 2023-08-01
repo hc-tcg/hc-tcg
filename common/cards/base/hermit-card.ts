@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import Card from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {PickRequirmentT, PickedSlots} from '../../types/pick-process'
+import {SlotTypeT} from 'common/types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {createWeaknessAttack} from '../../utils/attacks'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -106,7 +107,10 @@ abstract class HermitCard extends Card {
 		return this.id.split('_')[0]
 	}
 
-	isAttachableToSlotType(slot) {
+	/**
+	 * Returns if card is attachable to slot type
+	 */
+	public isAttachableToSlotType(slot: SlotTypeT): boolean {
 		if (slot === 'hermit') return true
 		return false
 	}
