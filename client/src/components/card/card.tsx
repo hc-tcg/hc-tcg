@@ -6,18 +6,14 @@ import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
 import HealthCardModule, {HealthCardProps} from './health-card-svg'
-import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
-import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
-import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
-import HealthCard from 'common/cards/card-plugins/health/_health-card'
+import CardClass from 'common/cards/base/card'
 
 interface CardProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard
+	card: CardClass
 	selected?: boolean
 	picked?: boolean
 	onClick?: () => void
