@@ -5,6 +5,7 @@ const url =
 		? `${window.location.protocol}//${window.location.hostname}:${__PORT__}`
 		: window.location.protocol + '//' + window.location.host
 
+console.log(url)
 const socket = io(url, {autoConnect: false})
 
 socket.on('error', (error) => {

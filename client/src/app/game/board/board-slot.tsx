@@ -1,14 +1,14 @@
 import classnames from 'classnames'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 import Card from 'components/card'
 import {SlotTypeT} from 'common/types/pick-process'
 import {CardT, RowState} from 'common/types/game-state'
 import css from './board.module.scss'
-import HermitCard from 'common/cards/card-plugins/hermits/_hermit-card'
-import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
-import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
-import HealthCard from 'common/cards/card-plugins/health/_health-card'
+import HermitCard from 'common/cards/base/hermit-card'
+import EffectCard from 'common/cards/base/effect-card'
+import SingleUseCard from 'common/cards/base/single-use-card'
+import ItemCard from 'common/cards/base/item-card'
+import HealthCard from 'common/cards/base/health-card'
 
 export type SlotProps = {
 	type: SlotTypeT
