@@ -2,8 +2,9 @@ import {select} from 'typed-redux-saga'
 import {put, call, take, race, cancelled} from 'redux-saga/effects'
 import {SagaIterator, eventChannel} from 'redux-saga'
 import {PickedSlotT, PickRequirmentT, PickResultT} from 'common/types/pick-process'
-import {equalCard} from 'server/utils'
-import {anyAvailableReqOptions, validPick, validPicks} from 'server/utils/reqs'
+import {equalCard} from 'common/utils/cards'
+//@TODO remove import from server
+import {anyAvailableReqOptions, validPick, validPicks} from 'server/src/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getGameState,
@@ -17,7 +18,7 @@ import {
 	setSelectedCard,
 	slotPicked,
 } from 'logic/game/game-actions'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 
 type AnyPickActionT = ReturnType<typeof setSelectedCard> | ReturnType<typeof slotPicked>
 
