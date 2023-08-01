@@ -3,7 +3,7 @@ import {useDispatch, useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
 import {getPlayerState} from 'logic/game/game-selectors'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void

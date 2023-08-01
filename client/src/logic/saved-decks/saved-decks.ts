@@ -1,5 +1,5 @@
 import {PlayerDeckT} from 'common/types/deck'
-import {validateDeck} from 'server/utils/validation'
+import {validateDeck} from 'common/utils/validation'
 
 export const getActiveDeckName = () => {
 	return localStorage.getItem('activeDeck')

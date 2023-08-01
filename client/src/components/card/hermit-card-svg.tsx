@@ -1,9 +1,9 @@
 import classnames from 'classnames'
-import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
+import HermitCard from '../../../../common/cards/base/hermit-card'
 import css from './hermit-card-svg.module.scss'
-import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
+import {getCardRank} from 'common/utils/ranks'
 
 export type HermitCardProps = {
 	card: HermitCard
