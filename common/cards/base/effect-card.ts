@@ -55,7 +55,7 @@ abstract class EffectCard extends Card {
 	/**
 	 * Returns if card is attachable to slot type
 	 */
-	public isAttachableToSlotType(slot: SlotTypeT): boolean {
+	public override isAttachableToSlotType(slot: SlotTypeT): boolean {
 		if (slot === 'effect') return true
 		return false
 	}

@@ -3,7 +3,7 @@ import {isTargetingPos} from '../../utils/attacks'
 import {GameModel} from '../../models/game-model'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
-import {SlotTypeT} from 'types/pick-process'
+import {SlotTypeT} from '../../types/cards'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {

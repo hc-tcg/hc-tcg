@@ -43,8 +43,8 @@ class SingleUseCard extends Card {
 	/**
 	 * Returns if card is attachable to slot type
 	 */
-	public isAttachableToSlotType(slot: SlotTypeT): boolean {
-		if (slot === 'hermit') return true
+	public override isAttachableToSlotType(slot: SlotTypeT): boolean {
+		if (slot === 'single_use') return true
 		return false
 	}
 

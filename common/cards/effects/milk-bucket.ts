@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import EffectCard from '../base/effect-card'
+import {SlotTypeT} from 'common/types/cards'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -57,6 +58,11 @@ class MilkBucketEffectCard extends EffectCard {
 
 	override showSingleUseTooltip(): boolean {
 		return true
+	}
+
+	override isAttachableToSlotType(slot: SlotTypeT): boolean {
+		if (slot === 'single_use' || slot === 'effect') return true
+		return false
 	}
 }
 
