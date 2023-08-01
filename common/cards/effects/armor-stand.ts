@@ -3,6 +3,7 @@ import {isTargetingPos} from '../../utils/attacks'
 import {GameModel} from '../../models/game-model'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
+import {SlotTypeT} from 'types/pick-process'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -83,7 +84,7 @@ class ArmorStandEffectCard extends EffectCard {
 		return 'alter_egos'
 	}
 
-	override isAttachableToSlotType(slot) {
+	override isAttachableToSlotType(slot: SlotTypeT) {
 		if (slot === 'hermit') return true
 		return false
 	}
