@@ -1,6 +1,6 @@
 import {HermitTypeT} from '../../common/types/cards'
 
-const STRENGTHS: Record<HermitTypeT, Array<HermitTypeT>> = {
+export const STRENGTHS: Record<HermitTypeT, Array<HermitTypeT>> = {
 	balanced: [],
 	builder: ['terraform'],
 	explorer: ['builder'],
@@ -12,5 +12,3 @@ const STRENGTHS: Record<HermitTypeT, Array<HermitTypeT>> = {
 	speedrunner: ['miner', 'prankster'],
 	terraform: ['redstone'],
 }
-
-export default STRENGTHS

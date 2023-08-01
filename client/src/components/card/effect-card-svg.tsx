@@ -1,9 +1,9 @@
-import EffectCard from 'common/cards/card-plugins/effects/_effect-card'
-import SingleUseCard from 'common/cards/card-plugins/single-use/_single-use-card'
 import css from './effect-card-svg.module.scss'
-import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
+import EffectCard from 'common/cards/base/effect-card'
+import SingleUseCard from 'common/cards/base/single-use-card'
+import {getCardRank} from 'common/utils/ranks'
 
 export type EffectCardProps = {
 	card: EffectCard | SingleUseCard
