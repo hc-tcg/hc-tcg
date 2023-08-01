@@ -3,8 +3,8 @@ import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
-import CARDS from 'common/cards'
-import {getTotalCost, validateDeck} from 'server/utils/validation'
+import {CARDS} from 'common/cards'
+import {validateDeck} from 'common/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
 import DeckLayout from './layout'
@@ -16,9 +16,9 @@ import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
 import {CopyIcon, DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
-import {getCardCost} from 'server/utils/validation'
+import {getCardCost, getDeckCost} from 'common/utils/ranks'
 import {ImportModal, ExportModal} from 'components/import-export'
-import {CONFIG} from '../../../../config'
+import {CONFIG} from '../../../../common/config'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -28,8 +28,8 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import HermitCard from '../../../../common/cards/card-plugins/hermits/_hermit-card'
-import ItemCard from 'common/cards/card-plugins/items/_item-card'
+import HermitCard from '../../../../common/cards/base/hermit-card'
+import ItemCard from 'common/cards/base/item-card'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -83,7 +83,7 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getTotalCost(cards.map((card) => card.cardId))} tokens
+			{getDeckCost(cards.map((card) => card.cardId))} tokens
 		</span>
 	</p>
 )
@@ -339,7 +339,7 @@ const Deck = ({setMenuSection}: Props) => {
 									</p>
 									<div className={css.cardCount}>
 										<p className={css.tokens}>
-											{getTotalCost(loadedDeck.cards.map((card) => card.cardId))}/
+											{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
 											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
 										</p>
 									</div>

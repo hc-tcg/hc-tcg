@@ -1,4 +1,4 @@
-import HealthCard from 'common/cards/card-plugins/health/_health-card'
+import HealthCard from 'common/cards/base/health-card'
 import {useState, useRef, useMemo, useEffect} from 'react'
 import css from './health-card-svg.module.scss'
 import classnames from 'classnames'

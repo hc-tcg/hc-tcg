@@ -2,7 +2,7 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
 import {PickedSlotT} from 'common/types/pick-process'
-import CARDS from 'common/cards'
+import {CARDS} from 'common/cards'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
 

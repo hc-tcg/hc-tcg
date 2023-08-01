@@ -1,4 +1,4 @@
-import Card from '../cards/card-plugins/_card'
+import Card from '../cards/base/card'
 import {CardT, RowState} from './game-state'
 import {CardTypeT} from './cards'
 
