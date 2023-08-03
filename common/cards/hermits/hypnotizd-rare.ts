@@ -4,6 +4,7 @@ import {HermitAttackType} from '../../types/attack'
 import {PickedSlots} from '../../types/pick-process'
 import {createWeaknessAttack} from '../../utils/attacks'
 import {discardCard} from '../../utils/movement'
+import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
 
 /*
@@ -38,8 +39,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 					target: 'opponent',
 					slot: ['hermit'],
 					amount: 1,
-					breakIf: ['active'],
-					active: false,
 				},
 				{
 					target: 'player',
@@ -62,7 +61,12 @@ class HypnotizdRareHermitCard extends HermitCard {
 		const {opponentPlayer} = pos
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
+		console.log(pickedSlots)
+
 		if (attacks[0].type !== 'secondary') return attacks
+
+		const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+		if (opponentInactiveRows.length === 0) return attacks
 
 		const hermitAttack = attacks[0]
 
@@ -76,9 +80,11 @@ class HypnotizdRareHermitCard extends HermitCard {
 			row: pickedHermit.row.state,
 		}
 
-		const pickedItem = pickedSlots[this.id]?.[1]
 		const isActive = opponentPlayer.board.activeRow === pickedHermit.row?.index
-		if (isActive || !pickedItem) return attacks
+		if (isActive || opponentInactiveRows.length === 0) return attacks
+
+		const pickedItem = pickedSlots[this.id]?.[1]
+		if (!pickedItem) return attacks
 
 		// Discard item card
 		discardCard(game, pickedItem.slot.card)
