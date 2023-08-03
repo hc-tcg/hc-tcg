@@ -19,11 +19,20 @@ import Button from 'components/button'
 import {CardTypeT} from 'common/types/cards'
 import {SINGLE_USE_CARDS} from 'common/cards'
 
+const formattingMap: Record<string, string> = {
+	hermit: 'Hermit',
+	effect: 'attach effect',
+	single_use: 'single use effect',
+}
+
 const getFormattedList = (list: (CardTypeT | SlotTypeT)[]): string => {
-	if (list.length === 1) {
-		return list[0].replace(/_/g, ' ')
+	const formattedList: string[] = []
+	for (const e of list) {
+		formattedList.push(formattingMap[e] ? formattingMap[e] : e)
 	}
-	const formattedList = list.map((item) => item.replace(/_/g, ' '))
+
+	if (formattedList.length === 1) return formattedList[0]
+
 	const initialElements = formattedList.slice(0, -1).join(', ')
 	return `${initialElements} or ${formattedList[formattedList.length - 1]}`
 }
@@ -50,14 +59,14 @@ const getPickProcessMessage = (
 	}
 
 	let location =
-		req.active === true ? 'active hermit' : req.active === false ? 'afk hermits' : 'hermits'
+		req.active === true ? 'active Hermit' : req.active === false ? 'AFK Hermits' : 'Hermits'
 
 	if (req.slot[0] === 'hand' && req.slot.length === 1) {
 		location = 'hand'
 	}
 
 	const adjacentMap = {
-		active: 'active hermit',
+		active: 'active Hermit',
 		req: 'a previous pick',
 	}
 	const adjacentTarget = req.adjacent ? adjacentMap[req.adjacent] : ''
@@ -71,7 +80,9 @@ const getPickProcessMessage = (
 
 	let cardType = ''
 	if (req.type) {
-		cardType = getFormattedList(req.type) + (req.amount > 1 ? ' cards' : ' card')
+		cardType =
+			(req.type.length < 4 ? getFormattedList(req.type) : '') +
+			(req.amount > 1 ? ' cards' : ' card')
 	}
 
 	const empty = req.empty || false
@@ -129,7 +140,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				<p className={css.turn}>{turnMsg}</p>
 				<p>
 					{knockedOut && 'Activate an AFK Hermit'}
-					{changeHermit && 'Select a new active hermit'}
+					{changeHermit && 'Select a new active Hermit'}
 					{opponentFollowup && "Waiting for opponent's action..."}
 					{pickProcess && getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}
 				</p>
