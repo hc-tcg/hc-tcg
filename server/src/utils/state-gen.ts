@@ -302,6 +302,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 			/** hook called the player flips a coin */
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
+
+			/** hook called when Hermit becomes active */
+			onBecomeActive: new GameHook<(row: number) => void>(),
 		},
 	}
 }

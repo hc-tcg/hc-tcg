@@ -128,6 +128,9 @@ export type PlayerState = {
 
 		/** hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+
+		/** hook called when Hermit becomes active */
+		onBecomeActive: GameHook<(row: number) => void>
 	}
 }
 
