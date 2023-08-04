@@ -22,8 +22,6 @@
 		"@types/react-dom": "^18.0.10",
 		"@types/react-transition-group": "^4.4.6",
 		"@types/three": "^0.150.1",
-		"@typescript-eslint/eslint-plugin": "^5.52.0",
-		"@typescript-eslint/parser": "^5.52.0",
 		"@use-gesture/react": "^10.2.27",
 		"@vitejs/plugin-react": "^3.0.1",
 		"body-parser": "^1.20.1",
@@ -52,7 +50,7 @@
 		"stylelint-config-standard-scss": "^7.0.1",
 		"terser": "^5.16.1",
 		"typed-redux-saga": "^1.5.0",
-		"typescript": "^5.0.0-beta",
+		"typescript": "^5.1.6",
 		"vite": "^4.0.4",
 		"vite-plugin-eslint": "^1.8.1"
 	},
@@ -65,10 +63,9 @@
 		"dev": "vite client/",
 		"tsc": "tsc --p client/",
 		"server:tsc": "tsc --p server/tsconfig.json",
-		"lint": "eslint client/src/",
-		"build": "npm run lint && npm run tsc && npm run server:tsc && vite build client/",
+		"build": "npm run tsc && npm run server:tsc && vite build client/",
 		"clean": "rm -rf client/dist",
-		"preview": "vite preview client/",
+		"preview": "vite preview --port 3002 client/",
 		"husky": "husky install"
 	},
 	"browserslist": {

@@ -23,10 +23,12 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
 	if (type === 'health' && rowState?.health) {
-		cardInfo = {
-			type: 'health',
+		cardInfo = new HealthCard({
+			id: 'health',
+			name: 'Health Card',
+			rarity: 'common',
 			health: rowState.health,
-		} as HealthCard
+		})
 	}
 
 	const ailments = Array.from(new Set(rowState?.ailments.map((a) => a.id) || []))

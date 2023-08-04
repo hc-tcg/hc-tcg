@@ -1,16 +1,17 @@
 import {PlayerModel} from './player-model'
-import {AvailableActionsT, GameState} from '../../common/types/game-state'
-import {MessageInfoT} from '../../common/types/chat'
+import {TurnAction, GameState, ActionResult, TurnActions} from '../types/game-state'
+import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 
 export class GameModel {
-	public createdTime: number
-	public id: string
-	public code: string | null
+	private internalCreatedTime: number
+	private internalId: string
+	private internalCode: string | null
+
+	public chat: Array<MessageInfoT>
 	public players: Record<string, PlayerModel>
 	public task: any
 	public state: GameState
-	public chat: Array<MessageInfoT>
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -19,30 +20,19 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
-	public turnState: {
-		availableActions: AvailableActionsT
-		opponentAvailableActions: AvailableActionsT
-		pastTurnActions: Array<string>
-	}
-
 	constructor(player1: PlayerModel, player2: PlayerModel, code: string | null = null) {
-		this.createdTime = Date.now()
-		this.id = 'game_' + Math.random().toString()
-		this.code = code
-		this.task = null
+		this.internalCreatedTime = Date.now()
+		this.internalId = 'game_' + Math.random().toString()
+		this.internalCode = code
 		this.chat = []
+
+		this.task = null
 
 		this.endInfo = {
 			deadPlayerIds: [],
 			winner: null,
 			outcome: null,
 			reason: null,
-		}
-
-		this.turnState = {
-			availableActions: [],
-			opponentAvailableActions: [],
-			pastTurnActions: [],
 		}
 
 		this.players = {
@@ -54,11 +44,11 @@ export class GameModel {
 	}
 
 	public get currentPlayerId() {
-		return this.state.order[(this.state.turn + 1) % 2]
+		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
 
 	public get opponentPlayerId() {
-		return this.state.order[this.state.turn % 2]
+		return this.state.order[this.state.turn.turnNumber % 2]
 	}
 
 	public get currentPlayer() {
@@ -85,5 +75,33 @@ export class GameModel {
 
 	public getPlayers() {
 		return Object.values(this.players)
+	}
+
+	public get createdTime() {
+		return this.internalCreatedTime
+	}
+
+	public get id() {
+		return this.internalId
+	}
+
+	public get code() {
+		return this.internalCode
+	}
+
+	// Functions
+
+	/** Set actions as completed so they cannot be done again this turn */
+	public addCompletedActions(...actions: TurnActions) {
+		for (let i = 0; i < actions.length; i++) {
+			const action = actions[i]
+			if (!this.state.turn.completedActions.includes(action)) {
+				this.state.turn.completedActions.push(action)
+			}
+		}
+	}
+
+	public setLastActionResult(action: TurnAction, result: ActionResult) {
+		this.state.lastActionResult = {action, result}
 	}
 }

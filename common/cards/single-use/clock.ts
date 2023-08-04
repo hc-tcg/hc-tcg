@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import {AvailableActionsT} from '../../types/game-state'
+import {TurnActions} from '../../types/game-state'
 import SingleUseCard from '../base/single-use-card'
 
 class ClockSingleUseCard extends SingleUseCard {
@@ -24,13 +24,13 @@ class ClockSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and followup actions
 			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: AvailableActionsT = [
+				const blocked: TurnActions = [
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'ZERO_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
-					'ADD_HERMIT',
+					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
 					'PLAY_EFFECT_CARD',
@@ -50,7 +50,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		// The other player wouldn't be able to attach anything
-		if (game.state.turn === 1) return 'NO'
+		if (game.state.turn.turnNumber === 1) return 'NO'
 		return 'YES'
 	}
 

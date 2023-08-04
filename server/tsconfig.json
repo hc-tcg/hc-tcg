@@ -1,11 +1,6 @@
 {
-	"ts-node": {
-		"require": ["tsconfig-paths/register"],
-		"files": true,
-		"esm": true
-	},
 	"compilerOptions": {
-		"baseUrl": "./src",
+		"baseUrl": "src",
 		"paths": {
 			"common/*": ["../../common/*"],
 			"types/*": ["../../common/types/*"]
@@ -16,12 +11,10 @@
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
-		"strictNullChecks": true,
 		"strict": true,
 		"noEmit": true,
 		"noImplicitOverride": true,
-		"esModuleInterop": true,
-		"outDir": "./dist"
+		"esModuleInterop": true
 	},
 	"include": ["src/*", "src/**.json"]
 }

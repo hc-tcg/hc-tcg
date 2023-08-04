@@ -2,7 +2,7 @@ import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import {
-	AvailableActionsT,
+	TurnActions,
 	CardT,
 	CoinFlipT,
 	GameState,
@@ -27,16 +27,6 @@ import {getCardCost, getCardRank} from 'common/utils/ranks'
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
-
-/**
- * @typedef {import("server/models/player-model").PlayerModel} PlayerModel
- * @typedef {import("common/types/game-state").GameState} GameState
- * @typedef {import("common/types/game-state").PlayerState} PlayerState
- * @typedef {import("common/types/game-state").RowState} RowState
- * @typedef {import("common/cards/card-plugins/single-use/_single-use-card")} SingleUseCard
- * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
- * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
- */
 
 function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
@@ -147,16 +137,10 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	/**
-	 * @type {Array<string>}
-	 */
 	const deckIds: Array<string> = deck.map((card) => card.id)
 	return deckIds
 }
 
-/**
- * @returns {RowState}
- */
 export function getEmptyRow(): RowState {
 	const MAX_ITEMS = 3
 
@@ -171,10 +155,6 @@ export function getEmptyRow(): RowState {
 	return rowState
 }
 
-/**
- * @param {PlayerModel} player
- * @returns {PlayerState}
- */
 export function getPlayerState(player: PlayerModel): PlayerState {
 	let pack = player.playerDeck.cards
 
@@ -234,88 +214,37 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		},
 
 		hooks: {
-			/** Hook that modifies and returns available energy from item cards */
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
+			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
+			availableActions: new WaterfallHook<(availableActions: TurnActions) => TurnActions>(),
 
-			/** Hook that modifies and returns blockedActions */
-			blockedActions: new WaterfallHook<
-				(
-					blockedActions: AvailableActionsT,
-					pastTurnActions: AvailableActionsT,
-					availableEnergy: Array<EnergyT>
-				) => AvailableActionsT
-			>(),
-			/** Hook that modifies and returns availableActions */
-			availableActions: new WaterfallHook<
-				(
-					availableActions: AvailableActionsT,
-					pastTurnActions: AvailableActionsT,
-					availableEnergy: Array<EnergyT>
-				) => AvailableActionsT
-			>(),
-
-			/** Hook called when a card is attached */
 			onAttach: new GameHook<(instance: string) => void>(),
-			/** Hook called when a card is detached */
 			onDetach: new GameHook<(instance: string) => void>(),
-
-			/** Hook called before a single use card is applied */
 			beforeApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			/** Hook called when a single use card is applied */
 			onApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			/** Hook called after a single use card is applied */
 			afterApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-
-			/** Hook that returns attacks to execute */
 			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
-			/** Hook called before the main attack loop, for every attack from our side of the board */
 			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			/** Hook called before the main attack loop, for every attack targeting our side of the board */
 			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			/** Hook called for every attack from our side of the board */
 			onAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			/** Hook called for every attack that targets our side of the board */
 			onDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			/** Hook called after the main attack loop, for every attack from our side of the board */
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
-			/** Hook called after the main attack loop, for every attack targeting our side of the board */
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-
-			/** Hook called on follow up */
 			onFollowUp: new GameHook<
 				(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void
 			>(),
-			/** Hook called when follow up times out */
 			onFollowUpTimeout: new GameHook<(followUp: string) => void>(),
-
-			/**
-			 * Hook called when a hermit is about to die.
-			 */
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
-
-			/** hook called at the start of the turn */
 			onTurnStart: new GameHook<() => void>(),
-			/** hook called at the end of the turn */
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			/** hook called when the time runs out*/
 			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
-
-			/** hook called the player flips a coin */
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-
-			/** hook called when Hermit becomes active */
-			onBecomeActive: new GameHook<(row: number) => void>(),
+			onActiveHermitChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
 		},
 	}
 }
 
-/**
- *
- * @param {PlayerState} playerState
- * @returns {LocalPlayerState}
- */
 export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
-	/** @type {LocalPlayerState} */
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
 		followUp: playerState.followUp,
@@ -329,22 +258,7 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 	return localPlayerState
 }
 
-/**
- *
- * @param {GameModel} game
- * @param {PlayerModel} player
- * @param {import('common/types/game-state').AvailableActionsT} availableActions
- * @param {Array<string>} pastTurnActions
- * @param {import('common/types/game-state').AvailableActionsT} opponentAvailableActions
- * @returns {LocalGameState | null}
- */
-export function getLocalGameState(
-	game: GameModel,
-	player: PlayerModel,
-	availableActions: AvailableActionsT = [],
-	pastTurnActions: Array<string> = [],
-	opponentAvailableActions: AvailableActionsT = []
-): LocalGameState | null {
+export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null
@@ -352,17 +266,23 @@ export function getLocalGameState(
 
 	const playerState = game.state.players[player.playerId]
 	const opponentState = game.state.players[opponentPlayerId]
+	const turnState = game.state.turn
+	const isCurrentPlayer = turnState.currentPlayerId === player.playerId
 
 	// convert player states
-	/** @type {Record<string, LocalPlayerState>} */
 	const players: Record<string, LocalPlayerState> = {}
 	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
-	/** @type {LocalGameState} */
 	const localGameState: LocalGameState = {
-		turn: game.state?.turn || 0,
-		order: game.state?.order || [],
+		turn: {
+			turnNumber: turnState.turnNumber,
+			currentPlayerId: turnState.currentPlayerId,
+			availableActions: isCurrentPlayer
+				? turnState.availableActions
+				: turnState.opponentAvailableActions,
+		},
+		order: game.state.order,
 
 		// personal info
 		hand: playerState.hand,
@@ -372,13 +292,10 @@ export function getLocalGameState(
 		// ids
 		playerId: player.playerId,
 		opponentPlayerId: opponentPlayerId,
-		currentPlayerId: game.currentPlayer.id,
+
+		lastActionResult: game.state.lastActionResult,
 
 		players,
-
-		pastTurnActions: player.playerId === game.currentPlayer.id ? pastTurnActions : [],
-		availableActions:
-			player.playerId === game.currentPlayer.id ? availableActions : opponentAvailableActions,
 
 		timer: game.state.timer,
 	}

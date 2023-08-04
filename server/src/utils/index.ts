@@ -1,49 +1,14 @@
-import {CardT, GameState, RowStateWithHermit} from 'common/types/game-state'
+import {RowStateWithHermit} from 'common/types/game-state'
 import {ITEM_CARDS} from 'common/cards'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
-import {equalCard} from 'common/utils/cards'
 import {getCardPos} from 'common/models/card-pos-model'
-/*
-Return reference to the object holding the card and key at which it is located
-Looks only through hand and item/effect/hermit slots.
-*/
-/**
- * @param {import('common/types/game-state').GameState} gameState
- * @param {CardT | null} card
- */
-export function findCard(gameState: GameState, card: CardT | null) {
-	const pStates = Object.values(gameState.players)
-	for (let pState of pStates) {
-		const playerId = pState.id
-		const handIndex = pState.hand.findIndex((handCard) => equalCard(handCard, card))
-		if (handIndex !== -1) return {playerId, target: pState.hand, key: handIndex}
 
-		const rows = pState.board.rows
-		for (let row of rows) {
-			if (equalCard(row.hermitCard, card)) return {playerId, target: row, key: 'hermitCard'}
-			if (equalCard(row.effectCard, card)) return {playerId, target: row, key: 'effectCard'}
-			const itemIndex = row.itemCards.findIndex((itemCard) => equalCard(itemCard, card))
-			if (itemIndex !== -1) return {playerId, target: row.itemCards, key: itemIndex}
-		}
-	}
-	return null
-}
-
-/**
- * @param {GameModel} game
- * @param {string} playerId
- */
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
 	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
 }
 
-/**
- * @param {GameModel} game
- * @param {RowStateWithHermit} row
- * @returns {number}
- */
 export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): number {
 	const itemCards = row.itemCards
 	let total = 0
@@ -60,11 +25,8 @@ export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): nu
 	return total
 }
 
-/**
- * @param {GameModel} game
- */
 export function printHooksState(game: GameModel) {
-	const {currentPlayer, opponentPlayer: opponentPlayer} = game
+	const {currentPlayer, opponentPlayer} = game
 	const cardsInfo: Record<string, any> = {}
 	let instancesInfo: Record<string, any> = {}
 	const customValues: Record<string, any> = {}
@@ -163,7 +125,7 @@ export function printHooksState(game: GameModel) {
 
 	// Print to console
 	if (DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
-	const turnInfo = `TURN: ${game.state.turn}, CURRENT PLAYER: ${currentPlayer.playerName}`
+	const turnInfo = `TURN: ${game.state.turn.turnNumber}, CURRENT PLAYER: ${currentPlayer.playerName}`
 	console.log(colorize(drawBox(turnInfo, 60), 'cyan'))
 
 	for (const instance in instancesInfo) {

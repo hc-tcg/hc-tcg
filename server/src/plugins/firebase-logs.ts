@@ -49,7 +49,7 @@ export class FirebaseLogs {
 				startHand1: getHand(playerStates[0]),
 				startHand2: getHand(playerStates[1]),
 				startTimestamp: new Date().getTime(),
-				startDeck: game.state.order[0] == playerStates[0].id ? 'deck1' : 'deck2',
+				startDeck: game.getPlayerIds()[0] == playerStates[0].id ? 'deck1' : 'deck2',
 			}
 		})
 
@@ -71,7 +71,7 @@ export class FirebaseLogs {
 					startTimestamp: gameLog.startTimestamp,
 					startDeck: gameLog.startDeck,
 					endTimestamp: new Date().getTime(),
-					turns: game.state.turn,
+					turns: game.state.turn.turnNumber,
 					world: CONFIG.world,
 				}
 				if (gameLog.type === 'private') {

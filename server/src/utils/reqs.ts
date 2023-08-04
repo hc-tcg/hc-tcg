@@ -14,18 +14,6 @@ import {PickRequirmentT, PickResultT, PickedSlotT, SlotTypeT} from 'common/types
 /////////////////////////////////////////
 
 /**
- * @typedef {import("common/types/game-state").GameState} GameState
- * @typedef {import("common/types/game-state").PlayerState} PlayerState
- * @typedef {import("common/types/game-state").CardT} CardT
- * @typedef {import("common/types/pick-process").PickRequirmentT} PickRequirmentT
- * @typedef {import("common/types/pick-process").PickedSlotT} PickedSlotT
- * @typedef {import("common/types/pick-process").SlotTypeT} SlotTypeT
- * @typedef {import('common/types/pick-process').PickResultT} PickResultT
- * @typedef {import('common/types/game-state').LocalGameState} LocalGameState
- * @typedef {import('common/types/game-state').LocalPlayerState} LocalPlayerState
- */
-
-/**
  * Checks specific row and its slots if they match given requirments
  * @param {*} rowInfo
  * @param {PickRequirmentT} req
@@ -90,8 +78,8 @@ const checkRow = (
 
 	// adjacent to active hermit or not
 	if (req.adjacent === 'active') {
-		const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
-		const opponentPlayerId = gameState.order[gameState.turn % 2]
+		const currentPlayerId = gameState.order[(gameState.turn.turnNumber + 1) % 2]
+		const opponentPlayerId = gameState.order[gameState.turn.turnNumber % 2]
 		const targetId = rowInfo.target === 'player' ? currentPlayerId : opponentPlayerId
 		const activeRow = gameState.players[targetId].board.activeRow
 		if (activeRow === null) return 0
@@ -304,8 +292,8 @@ const validAdjacent = (
 	if (adjacent === 'req') return true
 	if (!pickedSlot.row) return true // Hand
 
-	const currentPlayerId = gameState.order[(gameState.turn + 1) % 2]
-	const opponentPlayerId = gameState.order[gameState.turn % 2]
+	const currentPlayerId = gameState.order[(gameState.turn.turnNumber + 1) % 2]
+	const opponentPlayerId = gameState.order[gameState.turn.turnNumber % 2]
 
 	if (req.target === 'opponent' && pickedSlot.playerId === currentPlayerId) return false
 	if (req.target === 'player' && pickedSlot.playerId !== currentPlayerId) return false

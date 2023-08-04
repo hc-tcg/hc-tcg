@@ -3,14 +3,6 @@ import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/t
 import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
-export const gameState = (localGameState: LocalGameState) => ({
-	type: 'GAME_STATE' as const,
-	payload: {
-		localGameState,
-		time: Date.now(),
-	},
-})
-
 export const localGameState = (localGameState: LocalGameState) => ({
 	type: 'LOCAL_GAME_STATE' as const,
 	payload: {
@@ -109,22 +101,8 @@ export const changeActiveHermit = (payload: any) => ({
 	payload,
 })
 
-export const playCard = (payload: any) => ({
-	type: 'PLAY_CARD' as const,
-	payload,
-})
-
 export const endTurn = () => ({
 	type: 'END_TURN' as const,
-})
-
-export const attack = (
-	type: 'zero' | 'primary' | 'secondary',
-	pickResults: Record<string, Array<PickResultT>>,
-	extra?: Record<string, any>
-) => ({
-	type: 'ATTACK' as const,
-	payload: {type, pickResults, extra},
 })
 
 export const chatMessage = (message: string) => ({

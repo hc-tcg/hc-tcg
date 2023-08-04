@@ -11,6 +11,7 @@ import HermitCard from 'common/cards/base/hermit-card'
 import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
+import Card from 'common/cards/base/card'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
@@ -42,26 +43,23 @@ function* singleUseSaga(card: CardT): SagaIterator {
 	}
 }
 
-const getFollowUpName = (cardInfo: HermitCard | EffectCard | SingleUseCard | ItemCard) => {
-	if (
-		cardInfo instanceof EffectCard ||
-		cardInfo instanceof SingleUseCard ||
-		cardInfo instanceof ItemCard
-	)
-		return cardInfo.name
-	if (cardInfo.primary.power) cardInfo.primary.name
-	if (cardInfo.secondary.power) cardInfo.secondary.name
+const getFollowUpName = (cardInfo: Card) => {
+	if (cardInfo instanceof HermitCard) {
+		if (cardInfo.primary.power) return cardInfo.primary.name
+		if (cardInfo.secondary.power) return cardInfo.secondary.name
+	}
+
 	return cardInfo.name
 }
 
 function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const playerId = yield* select(getPlayerId)
 	const pState = gameState.players[playerId]
-	const lastTurnAction = gameState.pastTurnActions[gameState.pastTurnActions.length - 1]
+	const lastActionResult = gameState.lastActionResult
 
 	if (Object.keys(pState.followUp).length > 0) {
 		for (const cardId of Object.values(pState.followUp)) {
-			const cardInfo = CARDS[cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | null
+			const cardInfo = CARDS[cardId]
 			if (cardInfo?.pickOn === 'followup') {
 				let pickResults = null
 				const name = getFollowUpName(cardInfo)
@@ -81,12 +79,13 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			}
 		}
 	} else if (
-		lastTurnAction === 'PLAY_SINGLE_USE_CARD' &&
+		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&
+		lastActionResult?.result === 'SUCCESS' &&
 		!pState.board.singleUseCardUsed &&
 		pState.board.singleUseCard
 	) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
-	} else if (lastTurnAction === 'PLAYED_INVALID_CARD') {
+	} else if (lastActionResult?.result === 'FAILURE_CANNOT_ATTACH') {
 		yield put(setOpenedModal('unmet-condition'))
 	}
 }

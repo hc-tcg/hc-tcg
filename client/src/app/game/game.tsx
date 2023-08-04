@@ -144,10 +144,10 @@ function Game() {
 
 	// Play SFX on turn start
 	useEffect(() => {
-		if (gameState.currentPlayerId === gameState.playerId) {
+		if (gameState.turn.currentPlayerId === gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.currentPlayerId])
+	}, [gameState.turn.currentPlayerId])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {

@@ -3,6 +3,7 @@ import Card from './card'
 import {PickRequirmentT} from '../../types/pick-process'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
+import {TurnActions} from '../../types/game-state'
 
 export type SingleUseDefs = {
 	id: string
@@ -33,6 +34,15 @@ class SingleUseCard extends Card {
 		if (pos.slot.type !== 'single_use') return 'INVALID'
 
 		return 'YES'
+	}
+
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		const hasHermit = currentPlayer.board.rows.some((row) => !!row.hermitCard)
+		const spaceForSingleUse = !currentPlayer.board.singleUseCard
+
+		return hasHermit && spaceForSingleUse ? ['PLAY_SINGLE_USE_CARD'] : []
 	}
 
 	public override showSingleUseTooltip(): boolean {

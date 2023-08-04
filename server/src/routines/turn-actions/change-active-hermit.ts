@@ -1,41 +1,51 @@
 import {GameModel} from 'common/models/game-model'
+import {GenericActionResult} from 'common/types/game-state'
 import {equalCard} from 'common/utils/cards'
 
-function* changeActiveHermit(game: GameModel, turnAction: any, actionState: any) {
+function* changeActiveHermit(
+	game: GameModel,
+	turnAction: any
+): Generator<never, GenericActionResult> {
 	const {currentPlayer} = game
-	const {availableActions, pastTurnActions} = actionState
-	if (!availableActions.includes('CHANGE_ACTIVE_HERMIT')) return 'INVALID'
 
-	const rowHermitCard = turnAction.payload.row.state.hermitCard
-	const result = currentPlayer.board.rows.findIndex((row) =>
+	// Find the row we are trying to change to
+	const rowHermitCard = turnAction?.payload?.row?.state?.hermitCard
+	const rowIndex = currentPlayer.board.rows.findIndex((row) => {
 		equalCard(row.hermitCard, rowHermitCard)
-	)
-	if (result === -1) return 'INVALID'
+	})
+	if (rowIndex === -1) return 'FAILURE_INVALID_DATA'
+	const row = currentPlayer.board.rows[rowIndex]
 
-	const isKnockedout = currentPlayer.board.rows[result].ailments.find((a) => a.id === 'knockedout')
-	const hasOtherHermits = currentPlayer.board.rows.some(
-		(row, index) =>
-			!!row.hermitCard && index !== result && !row.ailments.find((a) => a.id === 'knockedout')
-	)
-	if (isKnockedout && hasOtherHermits) return 'INVALID'
+	// Can't change to existing active row
+	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'
+
+	// Can't change to knocked out if we have other hermits
+	const isKnockedout = row.ailments.find((a) => a.id === 'knockedout')
+	const hasOtherHermits = currentPlayer.board.rows.some((row, index) => {
+		!!row.hermitCard && index !== rowIndex
+	})
+	if (isKnockedout && hasOtherHermits) return 'FAILURE_CANNOT_COMPLETE'
 
 	const hadActiveHermit = currentPlayer.board.activeRow !== null
-	currentPlayer.board.activeRow = result
+	const oldActiveRow = currentPlayer.board.activeRow
 
-	// After a player has a hermit killed/knockout, he can activate next one
-	// without losing the ability to attack again
+	// Actually change row
+	currentPlayer.board.activeRow = rowIndex
+
 	if (hadActiveHermit) {
-		pastTurnActions.push('CHANGE_ACTIVE_HERMIT')
+		// We switched from one hermit to another, prevent this from being done again
+		game.addCompletedActions('CHANGE_ACTIVE_HERMIT')
 	} else {
+		// We activated a hermit when we had none active before, allow switching to all other hermits again
 		currentPlayer.board.rows.forEach((row) => {
 			row.ailments = row.ailments.filter((a) => a.id !== 'knockedout')
 		})
 	}
 
 	// Run hooks
-	currentPlayer.hooks.onBecomeActive.call(currentPlayer.board.activeRow)
+	currentPlayer.hooks.onActiveHermitChange.call(oldActiveRow, currentPlayer.board.activeRow)
 
-	return 'DONE'
+	return 'SUCCESS'
 }
 
 export default changeActiveHermit

@@ -6,6 +6,7 @@ import {PickRequirmentT, PickedSlots} from '../../types/pick-process'
 import {HermitAttackType} from '../../types/attack'
 import {createWeaknessAttack} from '../../utils/attacks'
 import {CardPosModel} from '../../models/card-pos-model'
+import {TurnActions} from '../../types/game-state'
 
 type HermitDefs = {
 	id: string
@@ -97,6 +98,15 @@ abstract class HermitCard extends Card {
 		}
 
 		return attacks
+	}
+
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		// Is there a hermit slot free on the board
+		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
+
+		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
 
 	/**

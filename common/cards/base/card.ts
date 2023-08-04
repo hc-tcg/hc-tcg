@@ -2,6 +2,7 @@ import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
+import {TurnActions} from '../../types/game-state'
 
 type CardDefs = {
 	type: CardTypeT
@@ -89,6 +90,14 @@ abstract class Card {
 	 */
 	public showSingleUseTooltip(): boolean {
 		return false
+	}
+
+	/**
+	 * Returns the actions this card makes available when in the hand
+	 */
+	public getActions(game: GameModel): TurnActions {
+		// default is to return nothing
+		return []
 	}
 }
 

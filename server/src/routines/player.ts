@@ -1,11 +1,10 @@
-import {takeEvery, put, take, race, delay} from 'redux-saga/effects'
+import {takeEvery, put, take, race, delay} from 'typed-redux-saga'
 import {PlayerModel} from 'common/models/player-model'
-import {SagaIterator} from 'redux-saga'
 import root from 'serverRoot'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
-function* playerConnectedSaga(action: any): SagaIterator {
+function* playerConnectedSaga(action: any) {
 	const {playerName, deck, socket} = action.payload
 
 	if (action.payload.playerId) {
@@ -15,7 +14,7 @@ function* playerConnectedSaga(action: any): SagaIterator {
 		if (validPlayer) {
 			existingPlayer.socket = socket
 			if (deck) existingPlayer.setPlayerDeck(deck)
-			yield put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
+			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
 				payload: existingPlayer.playerDeck,
@@ -31,9 +30,9 @@ function* playerConnectedSaga(action: any): SagaIterator {
 	root.addPlayer(newPlayer)
 
 	root.hooks.playerJoined.call(newPlayer)
-	yield put({type: 'PLAYER_CONNECTED', payload: newPlayer})
+	yield* put({type: 'PLAYER_CONNECTED', payload: newPlayer})
 
-	yield delay(500)
+	yield* delay(500)
 
 	socket.emit('PLAYER_INFO', {
 		type: 'PLAYER_INFO',
@@ -41,16 +40,16 @@ function* playerConnectedSaga(action: any): SagaIterator {
 	})
 }
 
-function* playerDisconnectedSaga(action: any): SagaIterator {
+function* playerDisconnectedSaga(action: any) {
 	const {socket} = action.payload
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
 	const {playerId: playerId} = player
 
-	yield put({type: 'PLAYER_DISCONNECTED', payload: player})
+	yield* put({type: 'PLAYER_DISCONNECTED', payload: player})
 
-	const result = yield race({
+	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
 			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.playerId === playerId
@@ -59,12 +58,12 @@ function* playerDisconnectedSaga(action: any): SagaIterator {
 
 	if (result.timeout) {
 		root.hooks.playerLeft.call(player)
-		yield put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
+		yield* put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
 	}
 }
 
-function* updateDeckSaga(action: any): SagaIterator {
+function* updateDeckSaga(action: any) {
 	const {playerId} = action
 	let newDeck = action.payload
 	const player = root.players[playerId]
@@ -77,8 +76,8 @@ function* updateDeckSaga(action: any): SagaIterator {
 	})
 }
 
-export function* playerSaga(): SagaIterator {
-	yield takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
-	yield takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
-	yield takeEvery('UPDATE_DECK', updateDeckSaga)
+export function* playerSaga() {
+	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
+	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
+	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
 }

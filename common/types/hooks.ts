@@ -47,6 +47,20 @@ export class GameHook<T extends (...args: any) => any> extends Hook<(...args: an
 		delete this.listeners[instance]
 	}
 
+	// Overriding this is needed to get proper types
+	public override call(...params: Parameters<T>) {
+		const results: Array<ReturnType<T>> = []
+		const hooks = Object.values(this.listeners)
+		for (let i = 0; i < hooks.length; i++) {
+			const result = hooks[i](...(params as Array<any>))
+			if (result !== undefined) {
+				results.push(result)
+			}
+		}
+
+		return results
+	}
+
 	public callSome(params: Parameters<T>, ignoreInstance: (instance: string) => boolean) {
 		const results: Array<ReturnType<T>> = []
 		const instances = Object.keys(this.listeners)

@@ -106,7 +106,7 @@ type Props = {
 }
 
 const Actions = ({onClick, localGameState, mobile, id}: Props) => {
-	const currentPlayer = useSelector(getPlayerStateById(localGameState.currentPlayerId))
+	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
 	const playerId = useSelector(getPlayerId)
@@ -122,7 +122,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
-		const turn = localGameState.currentPlayerId === playerId
+		const turn = localGameState.turn.currentPlayerId === playerId
 		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
 		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
 		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
@@ -142,7 +142,8 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 					{knockedOut && 'Activate an AFK Hermit'}
 					{changeHermit && 'Select a new active Hermit'}
 					{opponentFollowup && "Waiting for opponent's action..."}
-					{pickProcess && getPickProcessMessage(pickProcess, gameState.currentPlayerId, playerId)}
+					{pickProcess &&
+						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
 				</p>
 			</>
 		)
@@ -162,7 +163,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 						index: 0,
 						info: singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null,
 					},
-					playerId: localGameState.currentPlayerId,
+					playerId: localGameState.turn.currentPlayerId,
 				})
 		}
 

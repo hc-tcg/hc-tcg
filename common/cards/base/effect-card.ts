@@ -4,6 +4,7 @@ import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
 import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
+import {TurnActions} from '../../types/game-state'
 
 type EffectDefs = {
 	id: string
@@ -45,6 +46,17 @@ abstract class EffectCard extends Card {
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
 		return 'YES'
+	}
+
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		// Is there is a hermit on the board with space for an effect card
+		const spaceForEffect = currentPlayer.board.rows.some((row) => {
+			return !!row.hermitCard && !row.effectCard
+		})
+
+		return spaceForEffect ? ['PLAY_EFFECT_CARD'] : []
 	}
 
 	public override showAttachTooltip() {
