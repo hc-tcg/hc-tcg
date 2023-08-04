@@ -1,11 +1,16 @@
 import {GameModel} from 'common/models/game-model'
+import {GenericActionResult} from 'common/types/game-state'
+import {PickedSlots} from 'common/types/pick-process'
 import {applySingleUse} from 'common/utils/board'
 
-function* applyEffectSaga(game: GameModel, turnAction: any, actionState: any) {
-	const {pickedSlots, modalResult} = actionState
-
+function* applyEffectSaga(
+	game: GameModel,
+	pickedSlots: PickedSlots,
+	modalResult: any
+): Generator<never, GenericActionResult> {
 	const result = applySingleUse(game, pickedSlots, modalResult)
-	if (!result) return 'INVALID'
+
+	return result
 }
 
 export default applyEffectSaga

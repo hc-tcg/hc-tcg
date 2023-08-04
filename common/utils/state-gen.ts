@@ -6,11 +6,16 @@ export function getGameState(game: GameModel): GameState {
 	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
 
-	/** @type {GameState} */
 	const gameState: GameState = {
-		turn: 0,
+		turn: {
+			turnNumber: 0,
+			currentPlayerId: playerIds[0],
+			availableActions: [],
+			opponentAvailableActions: [],
+			completedActions: [],
+		},
 		order: playerIds,
-		turnPlayerId: playerIds[0],
+		lastActionResult: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,

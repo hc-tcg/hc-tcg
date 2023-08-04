@@ -31,7 +31,9 @@ function* createPrivateGameSaga() {
 				timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
 			})
 
-			if (queueResponse.gameStart) yield* call(gameSaga)
+			if (queueResponse.gameStart) {
+				yield* call(gameSaga)
+			}
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
@@ -84,7 +86,9 @@ function* joinPrivateGameSaga() {
 						timeout: call(receiveMsg, 'PRIVATE_GAME_TIMEOUT'),
 					})
 
-					if (queueResponse.gameStart) yield* call(gameSaga)
+					if (queueResponse.gameStart) {
+						yield* call(gameSaga)
+					}
 				} else if (result.invalidCode) {
 					yield* put(invalidCode())
 				}
@@ -149,11 +153,11 @@ function* joinQueueSaga() {
 		matchmaking: call(matchmaking),
 	})
 
-	console.log(result)
-
 	if (result.leave) {
 		// Tell the server we left the queue
 		yield* call(sendMsg, 'LEAVE_QUEUE')
+	} else {
+		yield* put(leaveMatchmaking())
 	}
 }
 

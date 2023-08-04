@@ -4,11 +4,11 @@ import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
 import {PickedSlots} from 'common/types/pick-process'
-import {SagaIterator} from 'redux-saga'
-import {PlayerState} from 'common/types/game-state'
+import {TurnAction, PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
+import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 
-export const ATTACK_TO_ACTION = {
+export const ATTACK_TO_ACTION: Record<string, TurnAction> = {
 	primary: 'PRIMARY_ATTACK',
 	secondary: 'SECONDARY_ATTACK',
 	zero: 'ZERO_ATTACK',
@@ -185,7 +185,6 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 }
 
 export function runAllAttacks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
-	/** @type {Array<AttackModel>} */
 	const allAttacks: Array<AttackModel> = []
 
 	// Main attack loop
@@ -221,37 +220,37 @@ export function runAllAttacks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 	runAfterDefenceHooks(allAttacks)
 }
 
-function* attackSaga(game: GameModel, turnAction: any, actionState: any): SagaIterator {
-	// defining things
-	const {currentPlayer, opponentPlayer: opponentPlayer} = game
-	const {pickedSlots} = actionState
-
-	/** @type {HermitAttackType} */
-	const hermitAttackType: HermitAttackType = turnAction.payload.type
-
-	if (!hermitAttackType) {
-		console.log('Unknown attack type: ', hermitAttackType)
-		return 'INVALID'
+function* attackSaga(
+	game: GameModel,
+	turnAction: AttackActionData,
+	pickedSlots: PickedSlots
+): Generator<any, GenericActionResult> {
+	if (!turnAction?.type) {
+		return 'FAILURE_INVALID_DATA'
 	}
+
+	const hermitAttackType = attackActionToAttack[turnAction.type]
+	const {currentPlayer, opponentPlayer} = game
+
 	// TODO - send hermitCard from frontend for validation?
 
 	// Attacker
 	const playerBoard = currentPlayer.board
 	const attackIndex = playerBoard.activeRow
-	if (attackIndex === null) return 'INVALID'
+	if (attackIndex === null) return 'FAILURE_CANNOT_COMPLETE'
 
 	const attackRow = playerBoard.rows[attackIndex]
-	if (!attackRow.hermitCard) return 'INVALID'
+	if (!attackRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 	const attackPos = getCardPos(game, attackRow.hermitCard.cardInstance)
-	if (!attackPos) return 'INVALID'
+	if (!attackPos) return 'FAILURE_UNKNOWN_ERROR'
 
 	// Defender
 	const opponentBoard = opponentPlayer.board
 	const defenceIndex = opponentBoard.activeRow
-	if (defenceIndex === null) return 'INVALID'
+	if (defenceIndex === null) return 'FAILURE_CANNOT_COMPLETE'
 
 	const defenceRow = opponentBoard.rows[defenceIndex]
-	if (!defenceRow.hermitCard) return 'INVALID'
+	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
@@ -259,7 +258,20 @@ function* attackSaga(game: GameModel, turnAction: any, actionState: any): SagaIt
 	// Run all the code stuff
 	runAllAttacks(attacks, pickedSlots)
 
-	return 'DONE'
+	// Attack complete, mark most actions as completed
+	game.addCompletedActions(
+		'ZERO_ATTACK',
+		'PRIMARY_ATTACK',
+		'SECONDARY_ATTACK',
+		'PLAY_HERMIT_CARD',
+		'PLAY_ITEM_CARD',
+		'PLAY_EFFECT_CARD',
+		'PLAY_SINGLE_USE_CARD',
+		'APPLY_EFFECT',
+		'CHANGE_ACTIVE_HERMIT'
+	)
+
+	return 'SUCCESS'
 }
 
 export function runAilmentAttacks(game: GameModel, player: PlayerState) {

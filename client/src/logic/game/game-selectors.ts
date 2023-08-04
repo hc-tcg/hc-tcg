@@ -50,20 +50,22 @@ export const getOpponentState = (state: RootState) => {
 export const getCurrentPlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	return getPlayerStateById(gameState.currentPlayerId)(state)
+	return getPlayerStateById(gameState.turn.currentPlayerId)(state)
 }
 
 export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	const currentPlayerId = gameState.currentPlayerId
+	const currentPlayerId = gameState.turn.currentPlayerId
 	const inactiveId = gameState.order.filter((id) => id !== currentPlayerId)[0]
 	if (!inactiveId) return null
 	return getPlayerStateById(inactiveId)(state)
 }
 
 export const getAvailableActions = (state: RootState) => {
-	return getGameState(state)?.availableActions || []
+	const gameState = getGameState(state)
+	if (!gameState) return []
+	return gameState.turn.availableActions
 }
 
 export const getSelectedCard = (state: RootState) => {

@@ -42,12 +42,12 @@ class Cubfan135RareHermitCard extends HermitCard {
 				const hasOtherHermit = player.board.rows.some((row, index) => {
 					return row.hermitCard && index !== player.board.activeRow
 				})
-				const pastTurnActions = game.turnState.pastTurnActions
+				const {completedActions} = game.state.turn
 
 				//@TODO do we also need tocheck for end_turn here?
 				if (
 					hasOtherHermit &&
-					!pastTurnActions.includes('CHANGE_ACTIVE_HERMIT') &&
+					!completedActions.includes('CHANGE_ACTIVE_HERMIT') &&
 					!availableActions.includes('CHANGE_ACTIVE_HERMIT')
 				) {
 					availableActions.push('CHANGE_ACTIVE_HERMIT')

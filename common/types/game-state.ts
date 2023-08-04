@@ -66,21 +66,9 @@ export type PlayerState = {
 		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
 
 		/** Hook that modifies and returns blockedActions */
-		blockedActions: WaterfallHook<
-			(
-				blockedActions: AvailableActionsT,
-				pastTurnActions: AvailableActionsT,
-				availableEnergy: Array<EnergyT>
-			) => AvailableActionsT
-		>
+		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 		/** Hook that modifies and returns availableActions */
-		availableActions: WaterfallHook<
-			(
-				availableActions: AvailableActionsT,
-				pastTurnActions: AvailableActionsT,
-				availableEnergy: Array<EnergyT>
-			) => AvailableActionsT
-		>
+		availableActions: WaterfallHook<(availableActions: TurnActions) => TurnActions>
 
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
@@ -122,23 +110,53 @@ export type PlayerState = {
 		/** hook called at the start of the turn */
 		onTurnStart: GameHook<() => void>
 		/** hook called at the end of the turn */
-		onTurnEnd: GameHook<(drawCards: Array<CardT>) => void>
+		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
 		/** hook called when the time runs out*/
 		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>
 
 		/** hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
-		/** hook called when Hermit becomes active */
-		onBecomeActive: GameHook<(row: number) => void>
+		/** hook called when the active Hermit changes */
+		onActiveHermitChange: GameHook<(oldRow: number | null, newRow: number) => void>
 	}
 }
 
+export type GenericActionResult =
+	| 'SUCCESS'
+	| 'FAILURE_INVALID_DATA'
+	| 'FAILURE_NOT_APPLICABLE'
+	| 'FAILURE_ACTION_NOT_AVAILABLE'
+	| 'FAILURE_CANNOT_COMPLETE'
+	| 'FAILURE_UNKNOWN_ERROR'
+
+export type PlayCardActionResult = 'FAILURE_INVALID_SLOT' | 'FAILURE_CANNOT_ATTACH'
+
+export type ActionResult = GenericActionResult | PlayCardActionResult
+
+export type TurnState = {
+	turnNumber: number
+	currentPlayerId: string
+	availableActions: TurnActions
+	opponentAvailableActions: TurnActions
+	completedActions: TurnActions
+}
+
+export type LocalTurnState = {
+	turnNumber: number
+	currentPlayerId: string
+	availableActions: TurnActions
+}
+
 export type GameState = {
-	turn: number
-	turnPlayerId: string
+	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
+
+	lastActionResult: {
+		action: TurnAction
+		result: ActionResult
+	} | null
 
 	timer: {
 		turnTime: number
@@ -146,23 +164,30 @@ export type GameState = {
 	}
 }
 
-export type AvailableActionT =
-	| 'END_TURN'
-	| 'APPLY_EFFECT'
-	| 'REMOVE_EFFECT'
-	| 'ZERO_ATTACK'
-	| 'PRIMARY_ATTACK'
-	| 'SECONDARY_ATTACK'
-	| 'FOLLOW_UP'
-	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
-	| 'CHANGE_ACTIVE_HERMIT'
-	| 'ADD_HERMIT'
+export type PlayCardAction =
+	| 'PLAY_HERMIT_CARD'
 	| 'PLAY_ITEM_CARD'
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
+
+export type AttackAction = 'ZERO_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+
+export type TurnAction =
+	| PlayCardAction
+	| AttackAction
+	| 'END_TURN'
+	| 'APPLY_EFFECT'
+	| 'REMOVE_EFFECT'
+	| 'FOLLOW_UP'
+	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
+	| 'CHANGE_ACTIVE_HERMIT'
 	| 'WAIT_FOR_TURN'
 
-export type AvailableActionsT = Array<AvailableActionT>
+export type GameRules = {
+	disableTimer: boolean
+}
+
+export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
 	| 'client_crash'
@@ -197,7 +222,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
-	turn: number
+	turn: LocalTurnState
 	order: Array<PlayerId>
 
 	// personal data
@@ -208,12 +233,13 @@ export type LocalGameState = {
 	// ids
 	playerId: PlayerId
 	opponentPlayerId: PlayerId
-	currentPlayerId: PlayerId
+
+	lastActionResult: {
+		action: TurnAction
+		result: ActionResult
+	} | null
 
 	players: Record<string, LocalPlayerState>
-
-	pastTurnActions: Array<string>
-	availableActions: AvailableActionsT
 
 	timer: {
 		turnTime: number

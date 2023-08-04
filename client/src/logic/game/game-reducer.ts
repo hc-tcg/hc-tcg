@@ -25,7 +25,10 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				openedModal: null,
 				pickProcess: null,
 			}
-			if (state.localGameState?.currentPlayerId === action.payload.localGameState?.currentPlayerId)
+			if (
+				state.localGameState?.turn.currentPlayerId ===
+				action.payload.localGameState?.currentPlayerId
+			)
 				return newGame
 			return {...newGame}
 		case 'GAME_START':

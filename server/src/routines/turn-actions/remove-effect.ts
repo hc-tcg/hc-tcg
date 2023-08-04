@@ -1,18 +1,21 @@
 import {GameModel} from 'common/models/game-model'
+import {GenericActionResult} from 'common/types/game-state'
 import {discardSingleUse} from 'common/utils/movement'
 
-function* removeEffectSaga(game: GameModel, turnAction: any, actionState: any) {
+function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResult> {
 	const {currentPlayer} = game
-	const {pastTurnActions} = actionState
 
-	if (currentPlayer.board.singleUseCardUsed) return 'INVALID'
+	if (!currentPlayer.board.singleUseCard) {
+		return 'FAILURE_NOT_APPLICABLE'
+	}
 
-	// ideally we should not modify history, but this in this case it should be okay
-	const sueIndex = pastTurnActions.findIndex((value: string) => value === 'PLAY_SINGLE_USE_CARD')
-	if (sueIndex !== -1) pastTurnActions.splice(sueIndex, 1)
+	if (currentPlayer.board.singleUseCardUsed) {
+		return 'FAILURE_CANNOT_COMPLETE'
+	}
 
 	discardSingleUse(game, currentPlayer)
-	return 'DONE'
+
+	return 'SUCCESS'
 }
 
 export default removeEffectSaga

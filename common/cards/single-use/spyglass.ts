@@ -72,7 +72,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		if (opponentPlayer.hand.length === 0) return 'NO'
 
 		// They can discard the only hermit in their hand
-		if (game.state.turn === 1) return 'NO'
+		if (game.state.turn.turnNumber === 1) return 'NO'
 
 		return 'YES'
 	}

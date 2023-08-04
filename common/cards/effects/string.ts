@@ -1,6 +1,7 @@
 import {CARDS} from '..'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 
 class StringEffectCard extends EffectCard {
@@ -25,11 +26,32 @@ class StringEffectCard extends EffectCard {
 
 		if (!pos.row?.hermitCard) return 'INVALID'
 
-		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+		const cardInfo = CARDS[pos.row.hermitCard.cardId]
 		if (!cardInfo) return 'INVALID'
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
 		return 'YES'
+	}
+
+	// This card allows placing on either effect or item slot
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		// Is there is a hermit on the board with space for an item card
+		const spaceForItem = currentPlayer.board.rows.some((row) => {
+			const hasHermit = !!row.hermitCard
+			const hasEmptyItemSlot = row.itemCards.some((card) => card === null)
+			return hasHermit && hasEmptyItemSlot
+		})
+		// Is there is a hermit on the board with space for an effect card
+		const spaceForEffect = currentPlayer.board.rows.some((row) => {
+			return !!row.hermitCard && !row.effectCard
+		})
+
+		const actions: TurnActions = []
+		if (spaceForItem) actions.push('PLAY_ITEM_CARD')
+		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
+		return actions
 	}
 
 	override getExpansion() {

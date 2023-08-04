@@ -1,7 +1,8 @@
 import {select} from 'typed-redux-saga'
-import {put, takeLeading, call, take} from 'redux-saga/effects'
+import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
+import {PlayCardActionData, slotToPlayCardAction} from 'common/types/action-data'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
@@ -12,22 +13,30 @@ import {
 } from 'logic/game/game-selectors'
 import {setSelectedCard, setOpenedModal, removeEffect} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {changeActiveHermit, playCard, slotPicked} from 'logic/game/game-actions'
+import {changeActiveHermit, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
 function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
 	const selectedCardInfo = CARDS[selectedCard.cardId]
 
-	// Validations
-	if (!selectedCardInfo) {
-		console.log('Unknown card id: ', selectedCard)
-		return
-	}
+	yield putResolve(setSelectedCard(null))
 
-	const payload = {pickedSlot: action.payload, card: selectedCard}
-	yield put(playCard(payload))
-	yield put(setSelectedCard(null))
+	// If it's the hand or health slot don't even bother sending
+	if (action.payload.slot.type !== 'hand' && action.payload.slot.type !== 'health') {
+		if (!selectedCardInfo) {
+			// Validations
+			console.log('Unknown card id: ', selectedCard)
+			return
+		}
+
+		const actionData: PlayCardActionData = {
+			type: slotToPlayCardAction[action.payload.slot.type],
+			payload: {pickedSlot: action.payload, card: selectedCard, playerId: action.payload.playerId},
+		}
+
+		yield put(actionData)
+	}
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {

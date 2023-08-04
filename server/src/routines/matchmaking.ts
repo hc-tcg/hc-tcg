@@ -1,11 +1,10 @@
-import {all, take, takeEvery, join, cancel, spawn, fork, race, delay} from 'redux-saga/effects'
+import {all, take, takeEvery, join, cancel, spawn, fork, race, delay} from 'typed-redux-saga'
 import {broadcast} from '../utils/comm'
 import gameSaga from './game'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
 import {gameEndWebhook} from '../api'
-import {SagaIterator} from 'redux-saga'
 import {PlayerModel} from 'common/models/player-model'
 import root from 'serverRoot'
 
@@ -16,7 +15,7 @@ export type ClientMessage = {
 	payload?: any
 }
 
-function* gameManager(game: GameModel): SagaIterator {
+function* gameManager(game: GameModel) {
 	// @TODO this one method needs cleanup still
 	try {
 		const playerIds = game.getPlayerIds()
@@ -32,10 +31,10 @@ function* gameManager(game: GameModel): SagaIterator {
 
 		broadcast(players, 'GAME_START')
 		root.hooks.newGame.call(game)
-		game.task = yield spawn(gameSaga, game)
+		game.task = yield* spawn(gameSaga, game)
 
 		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield race({
+		const result = yield* race({
 			// game ended (or crashed -> catch)
 			gameEnd: join(/** @type {Task} */ game.task),
 			// kill a game after two hours
@@ -49,6 +48,8 @@ function* gameManager(game: GameModel): SagaIterator {
 				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
 			),
 		})
+
+		console.log('4')
 
 		for (const player of players) {
 			const gameState = getLocalGameState(game, player)
@@ -66,7 +67,7 @@ function* gameManager(game: GameModel): SagaIterator {
 		game.endInfo.outcome = 'error'
 		broadcast(game.getPlayers(), 'GAME_CRASH')
 	} finally {
-		if (game.task) yield cancel(game.task)
+		if (game.task) yield* cancel(game.task)
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
@@ -77,16 +78,10 @@ function* gameManager(game: GameModel): SagaIterator {
 	}
 }
 
-/**
- * @param {string} playerId
- */
 export function inGame(playerId: string) {
 	return root.getGames().some((game) => !!game.players[playerId])
 }
 
-/**
- * @param {string} playerId
- */
 export function inQueue(playerId: string) {
 	return (
 		root.queue.some((id) => id === playerId) ||
@@ -97,7 +92,7 @@ export function inQueue(playerId: string) {
 function* randomMatchmakingSaga() {
 	while (true) {
 		// Wait 3 seconds
-		yield delay(1000 * 3)
+		yield* delay(1000 * 3)
 		if (!(root.queue.length > 1)) continue
 
 		// Remove extra player
@@ -120,7 +115,7 @@ function* randomMatchmakingSaga() {
 				// Create a new game for these players
 				const newGame = new GameModel(player1, player2)
 				root.addGame(newGame)
-				yield fork(gameManager, newGame)
+				yield* fork(gameManager, newGame)
 			} else {
 				// Something went wrong, broadcast to both players to leave matchmaking
 				broadcast([player1, player2], 'LEAVE_MATCHMAKING')
@@ -140,7 +135,7 @@ function* randomMatchmakingSaga() {
 function* cleanUpSaga() {
 	// Clean up private games that have been around longer than 10 minutes
 	while (true) {
-		yield delay(1000 * 30)
+		yield* delay(1000 * 30)
 		for (let code in root.privateQueue) {
 			const info = root.privateQueue[code]
 			const overTenMinutes = Date.now() - info.createdTime > 1000 * 60 * 10
@@ -265,7 +260,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 		console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 
 		broadcast([player], 'JOIN_PRIVATE_GAME_SUCCESS')
-		yield fork(gameManager, newGame)
+		yield* fork(gameManager, newGame)
 	} else {
 		// Assign this player to the game
 		root.privateQueue[code].playerId = playerId
@@ -317,7 +312,7 @@ function onPlayerLeft(player: PlayerModel) {
 function* matchmakingSaga() {
 	root.hooks.playerLeft.add('matchmaking', onPlayerLeft)
 
-	yield all([
+	yield* all([
 		fork(randomMatchmakingSaga),
 		fork(cleanUpSaga),
 

@@ -2,15 +2,15 @@ import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions} from 'logic/game/game-selectors'
 import {endTurn} from 'logic/game/game-actions'
-import {AvailableActionT} from 'common/types/game-state'
+import {TurnAction} from 'common/types/game-state'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
 
-const ActionMap: Record<AvailableActionT, string | null> = {
+const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_ITEM_CARD: 'Playing an item card',
 	PLAY_SINGLE_USE_CARD: 'Playing a single use effect card',
 	PLAY_EFFECT_CARD: 'Attaching an effect card',
-	ADD_HERMIT: 'Playing a hermit card',
+	PLAY_HERMIT_CARD: 'Playing a hermit card',
 	CHANGE_ACTIVE_HERMIT: 'Changing your active hermit',
 	ZERO_ATTACK: 'Attacking opponent with an effect',
 	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',

@@ -3,6 +3,7 @@ import {isTargetingPos} from '../../utils/attacks'
 import {GameModel} from '../../models/game-model'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
+import {TurnActions} from '../../types/game-state'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -25,18 +26,15 @@ class ArmorStandEffectCard extends EffectCard {
 		}
 
 		// The menu won't show up but just in case someone tries to cheat
-		player.hooks.blockedActions.add(
-			instance,
-			(blockedActions, pastTurnActions, availableEnergy) => {
-				if (player.board.activeRow === pos.rowIndex) {
-					blockedActions.push('PRIMARY_ATTACK')
-					blockedActions.push('SECONDARY_ATTACK')
-					blockedActions.push('ZERO_ATTACK')
-				}
-
-				return blockedActions
+		player.hooks.blockedActions.add(instance, (blockedActions) => {
+			if (player.board.activeRow === pos.rowIndex) {
+				blockedActions.push('PRIMARY_ATTACK')
+				blockedActions.push('SECONDARY_ATTACK')
+				blockedActions.push('ZERO_ATTACK')
 			}
-		)
+
+			return blockedActions
+		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
@@ -71,12 +69,17 @@ class ArmorStandEffectCard extends EffectCard {
 		return 'YES'
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {import('types/cards').CardPos} pos
-	 */
 	override canAttachToCard(game: GameModel, pos: CardPosModel) {
 		return false
+	}
+
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		// Is there a hermit slot free on the board
+		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
+
+		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
 
 	override getExpansion() {

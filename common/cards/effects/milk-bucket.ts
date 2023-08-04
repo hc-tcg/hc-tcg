@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 
 class MilkBucketEffectCard extends EffectCard {
@@ -53,6 +54,23 @@ class MilkBucketEffectCard extends EffectCard {
 		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
 
 		return 'YES'
+	}
+
+	// Allows placing in effect or single use slot
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer} = game
+
+		// Is there is a hermit on the board with space for an effect card
+		const spaceForEffect = currentPlayer.board.rows.some((row) => {
+			return !!row.hermitCard && !row.effectCard
+		})
+		const hasHermit = currentPlayer.board.rows.some((row) => !!row.hermitCard)
+		const spaceForSingleUse = !game.currentPlayer.board.singleUseCard
+
+		const actions: TurnActions = []
+		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
+		if (hasHermit && spaceForSingleUse) actions.push('PLAY_SINGLE_USE_CARD')
+		return actions
 	}
 
 	override showSingleUseTooltip(): boolean {

@@ -35,7 +35,7 @@ function PlayerInfo({player, direction}: Props) {
 	}
 
 	const connected = player.id === playerId ? playerConnected : opponentConnected
-	const thisPlayer = gameState.currentPlayerId === player.id
+	const thisPlayer = gameState.turn.currentPlayerId === player.id
 	const headDirection = direction === 'left' ? 'right' : 'left'
 	const playerTag = '' // TODO: Implement player tags...
 	// Player tags ideally would be a list of predetermined phrases

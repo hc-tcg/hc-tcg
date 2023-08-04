@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import {AvailableActionsT} from '../../types/game-state'
+import {TurnActions} from '../../types/game-state'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
 
@@ -47,13 +47,13 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 			// Block all the actions of the opponent
 			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: AvailableActionsT = [
+				const blocked: TurnActions = [
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'ZERO_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
-					'ADD_HERMIT',
+					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
 					'PLAY_EFFECT_CARD',
@@ -76,8 +76,8 @@ class JoeHillsRareHermitCard extends HermitCard {
 		// Block the secondary attack of Joe
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			if (player.custom[status] === 'normal') return blockedActions
-			/** @type {AvailableActionsT}*/
-			const blocked: AvailableActionsT = ['SECONDARY_ATTACK']
+			/** @type {TurnActions}*/
+			const blocked: TurnActions = ['SECONDARY_ATTACK']
 			blockedActions.push(...blocked)
 
 			return blockedActions

@@ -2,7 +2,13 @@ import {CARDS, ITEM_CARDS} from '../cards'
 import {getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
-import {CardT, PlayerState, RowState, RowStateWithHermit} from '../types/game-state'
+import {
+	CardT,
+	GenericActionResult,
+	PlayerState,
+	RowState,
+	RowStateWithHermit,
+} from '../types/game-state'
 import {PickedSlots} from '../types/pick-process'
 
 export function getActiveRow(playerState: PlayerState) {
@@ -100,16 +106,16 @@ export function applySingleUse(
 	game: GameModel,
 	pickedSlots: PickedSlots = {},
 	modalResult: any = null
-): boolean {
+): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
-	if (!suCard) return false
+	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 	const pos = getCardPos(game, suCard.cardInstance)
-	if (!pos) return false
+	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
-	if (!cardInstance) return false
+	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call(pickedSlots, modalResult)
 
@@ -118,7 +124,10 @@ export function applySingleUse(
 	currentPlayer.hooks.onApply.call(pickedSlots, modalResult)
 	currentPlayer.hooks.afterApply.call(pickedSlots, modalResult)
 
-	return true
+	// This can only be done once per turn
+	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
+
+	return 'SUCCESS'
 }
 
 export function canAttachToCard(

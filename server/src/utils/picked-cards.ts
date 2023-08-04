@@ -3,11 +3,6 @@ import {GameModel} from 'common/models/game-model'
 import {validPicks} from './reqs'
 import {equalCard} from 'common/utils/cards'
 
-/**
- * @param {GameModel} game
- * @param {PickedSlotT[]} pickedSlots
- * @returns {PickedSlotT[] | null}
- */
 export function validatePickedSlots(
 	game: GameModel,
 	pickedSlots: PickedSlotT[]
@@ -15,7 +10,7 @@ export function validatePickedSlots(
 	const validPickedSlots: PickedSlotT[] = []
 	for (const pickedSlot of pickedSlots) {
 		const {type, card, index} = pickedSlot.slot
-		if (!game.state.order.includes(pickedSlot.playerId)) return null
+		if (!game.getPlayerIds().includes(pickedSlot.playerId)) return null
 
 		const player = game.state.players[pickedSlot.playerId]
 		if (!['hand', 'hermit', 'effect', 'item'].includes(type)) return null
