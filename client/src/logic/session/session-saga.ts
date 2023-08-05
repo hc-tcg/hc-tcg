@@ -4,7 +4,7 @@ import {SagaIterator, eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
-import {setPlayerInfo, disconnect, setNewDeck} from './session-actions'
+import {setPlayerInfo, disconnect, setNewDeck, setMinecraftName} from './session-actions'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
 import {
 	getActiveDeckName,
@@ -17,26 +17,30 @@ import {validateDeck} from 'common/utils/validation'
 
 type PlayerInfoT = {
 	playerName: string
+	minecraftName: string
 	playerId: string
 	playerSecret: string
 }
 
 const loadSession = (): PlayerInfoT | null => {
 	const playerName = sessionStorage.getItem('playerName')
+	const minecraftName = sessionStorage.getItem('minecraftName')
 	const playerId = sessionStorage.getItem('playerId')
 	const playerSecret = sessionStorage.getItem('playerSecret')
-	if (!playerName || !playerId || !playerSecret) return null
-	return {playerName, playerId, playerSecret}
+	if (!playerName || !minecraftName || !playerId || !playerSecret) return null
+	return {playerName, minecraftName, playerId, playerSecret}
 }
 
 const saveSession = (playerInfo: PlayerInfoT) => {
 	sessionStorage.setItem('playerName', playerInfo.playerName)
+	sessionStorage.setItem('minecraftName', playerInfo.minecraftName)
 	sessionStorage.setItem('playerId', playerInfo.playerId)
 	sessionStorage.setItem('playerSecret', playerInfo.playerSecret)
 }
 
 const clearSession = () => {
 	sessionStorage.removeItem('playerName')
+	sessionStorage.removeItem('minecraftName')
 	sessionStorage.removeItem('playerId')
 	sessionStorage.removeItem('playerSecret')
 }
@@ -149,6 +153,13 @@ export function* loginSaga(): SagaIterator {
 			console.log('Generated new starter deck')
 		}
 
+		const minecraftName = localStorage.getItem('minecraftName')
+		if (minecraftName) {
+			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', minecraftName)
+		} else {
+			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', payload.playerName)
+		}
+
 		// set user info for reconnects
 		socket.auth.playerId = payload.playerId
 		socket.auth.playerSecret = payload.playerSecret
@@ -158,6 +169,9 @@ export function* loginSaga(): SagaIterator {
 export function* logoutSaga(): SagaIterator {
 	yield takeEvery('UPDATE_DECK', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_DECK', action.payload)
+	})
+	yield takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
+		yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', action.payload)
 	})
 	yield race([take('LOGOUT'), call(receiveMsg, 'INVALID_PLAYER')])
 	clearSession()
@@ -169,5 +183,12 @@ export function* newDeckSaga(): SagaIterator {
 	while (true) {
 		const result = yield call(receiveMsg, 'NEW_DECK')
 		yield put(setNewDeck(result.payload))
+	}
+}
+
+export function* minecraftNameSaga(): SagaIterator {
+	while (true) {
+		const result = yield call(receiveMsg, 'NEW_MINECRAFT_NAME')
+		yield put(setMinecraftName(result.payload))
 	}
 }

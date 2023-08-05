@@ -57,6 +57,9 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 				</nav>
 				<Beef />
+				{/* <div>
+					NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
+				</div> */}
 				<VersionLinks />
 			</div>
 		</div>

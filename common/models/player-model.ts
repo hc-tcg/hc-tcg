@@ -14,10 +14,11 @@ export class PlayerModel {
 		cards: Array<CardT>
 	}
 	public playerName: string
+	public minecraftName: string
 	public censoredPlayerName: string
 	public socket: Socket
 
-	constructor(playerName: string, socket: Socket) {
+	constructor(playerName: string, minecraftName: string, socket: Socket) {
 		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
 		// need to make sure it's done everywhere tho
 		this.playerId = Math.random().toString()
@@ -33,6 +34,7 @@ export class PlayerModel {
 		}
 
 		this.playerName = playerName
+		this.minecraftName = minecraftName
 		this.censoredPlayerName = profanityFilter(playerName)
 		this.socket = socket
 	}
@@ -43,6 +45,7 @@ export class PlayerModel {
 			playerSecret: this.playerSecret,
 			playerDeck: this.playerDeck,
 			playerName: this.playerName,
+			minecraftName: this.minecraftName,
 			censoredPlayerName: this.censoredPlayerName,
 		}
 	}
@@ -52,5 +55,9 @@ export class PlayerModel {
 		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
 		if (validationMessage) return
 		this.playerDeck = newDeck
+	}
+
+	setMinecraftName(name: string) {
+		this.minecraftName = name
 	}
 }

@@ -46,6 +46,7 @@ export type PlayerState = {
 	id: PlayerId
 	followUp: Record<string, string>
 	playerName: string
+	minecraftName: string
 	playerDeck: Array<CardT>
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
@@ -209,6 +210,7 @@ export type LocalPlayerState = {
 	id: PlayerId
 	followUp: Record<string, string>
 	playerName: string
+	minecraftName: string
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>

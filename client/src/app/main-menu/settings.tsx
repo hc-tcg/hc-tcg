@@ -27,20 +27,11 @@ function Settings({setMenuSection}: Props) {
 	const handleProfanityChange = () => {
 		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
 	}
-	const handleDialogsChange = () => {
-		dispatch(
-			setSetting('confirmationDialogs', settings.confirmationDialogs !== 'off' ? 'off' : 'on')
-		)
-	}
 	const handleResetStats = () => {
 		dispatch(resetStats())
 	}
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
-	}
-	const handleGameSideToggle = () => {
-		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
-		dispatch(setSetting('gameSide', gameSide))
 	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
@@ -53,6 +44,7 @@ function Settings({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
+	const handleGameSettings = () => setMenuSection('game-settings')
 
 	return (
 		<MenuLayout
@@ -69,17 +61,14 @@ function Settings({setMenuSection}: Props) {
 				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 					Sounds: {getPercDescriptor(settings.soundVolume)}
 				</Slider>
+				<Button variant="stone" onClick={handleGameSettings}>
+					Game Settings
+				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
 					Profanity Filter: {getDescriptor(settings.profanityFilter)}
 				</Button>
-				<Button variant="stone" onClick={handleDialogsChange}>
-					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
-				</Button>
 				<Button variant="stone" onClick={handlePanoramaToggle}>
 					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-				</Button>
-				<Button variant="stone" onClick={handleGameSideToggle}>
-					Game Side: {settings.gameSide.toString()}
 				</Button>
 				<Button variant="stone" onClick={handleResetStats}>
 					Reset Stats

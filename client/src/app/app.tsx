@@ -12,6 +12,7 @@ import Deck from './deck'
 import MatchMaking from './match-making'
 import Toast from 'components/toast'
 import Settings from './main-menu/settings'
+import GameSettings from './main-menu/game-settings'
 import LostConnection from 'components/lost-connection'
 import Background from 'components/background'
 
@@ -41,6 +42,8 @@ function App() {
 					return <Deck setMenuSection={setMenuSection} />
 				case 'settings':
 					return <Settings setMenuSection={setMenuSection} />
+				case 'game-settings':
+					return <GameSettings setMenuSection={setMenuSection} />
 				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />

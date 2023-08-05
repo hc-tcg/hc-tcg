@@ -24,6 +24,7 @@ const defaultState: LocalSettings = {
 	panoramaEnabled: false,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
+	minecraftName: 'alex',
 	...getSettings(),
 }
 
