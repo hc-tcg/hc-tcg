@@ -11,7 +11,7 @@ function* changeActiveHermit(
 	// Find the row we are trying to change to
 	const rowHermitCard = turnAction?.payload?.row?.state?.hermitCard
 	const rowIndex = currentPlayer.board.rows.findIndex((row) => {
-		equalCard(row.hermitCard, rowHermitCard)
+		return equalCard(row.hermitCard, rowHermitCard)
 	})
 	if (rowIndex === -1) return 'FAILURE_INVALID_DATA'
 	const row = currentPlayer.board.rows[rowIndex]
