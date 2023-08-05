@@ -57,6 +57,9 @@ class WaterBucketEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+
 		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
 		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
 

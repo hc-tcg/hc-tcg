@@ -35,8 +35,11 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
 		const {opponentPlayer} = pos
+
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return 'NO'
 
