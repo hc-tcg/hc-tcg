@@ -131,6 +131,13 @@ export function* loginSaga(): SagaIterator {
 		yield put(setPlayerInfo({...payload}))
 		saveSession(payload)
 
+		const minecraftName = localStorage.getItem('minecraftName')
+		if (minecraftName) {
+			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', minecraftName)
+		} else {
+			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', payload.playerName)
+		}
+
 		const activeDeckName = getActiveDeckName()
 		const activeDeck = activeDeckName ? getSavedDeck(activeDeckName) : null
 		const activeDeckValid =
@@ -151,13 +158,6 @@ export function* loginSaga(): SagaIterator {
 			saveDeck(payload.playerDeck)
 			setActiveDeck(payload.playerDeck.name)
 			console.log('Generated new starter deck')
-		}
-
-		const minecraftName = localStorage.getItem('minecraftName')
-		if (minecraftName) {
-			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', minecraftName)
-		} else {
-			yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', payload.playerName)
 		}
 
 		// set user info for reconnects

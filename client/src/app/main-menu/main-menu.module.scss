@@ -116,6 +116,7 @@ nav {
 		font-size: 3vh;
 		color: var(--text-light);
 		margin-bottom: 2vh;
+		margin-top: 2vh;
 		filter: drop-shadow(1px 1px 0 var(--text-dark));
 	}
 }
@@ -125,7 +126,7 @@ nav {
 	grid-template-columns: 1fr;
 	gap: 1vh;
 	width: 100%;
-	margin-bottom: 4vh;
+	margin-bottom: 2vh;
 }
 
 .stats {
@@ -206,6 +207,13 @@ nav {
 		font-size: 1.5vh;
 		line-height: 100%;
 	}
+}
+
+.creditsContainer {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	border-radius: 0.5vh;
+	padding: 1vh 2vh;
 }
 
 /* DESKTOP */

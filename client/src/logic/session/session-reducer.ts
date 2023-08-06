@@ -66,7 +66,7 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 		case 'SET_MINECRAFT_NAME':
 			return {
 				...state,
-				playerDeck: action.payload,
+				minecraftName: action.payload,
 			}
 		default:
 			return state

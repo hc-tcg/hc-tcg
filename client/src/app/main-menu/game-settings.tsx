@@ -1,20 +1,16 @@
 import React, {SyntheticEvent} from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
-import Slider from 'components/slider'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
-function Settings({setMenuSection}: Props) {
+function GameSettings({setMenuSection}: Props) {
 	const dispatch = useDispatch()
-	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 
 	const handleDialogsChange = () => {
@@ -26,30 +22,34 @@ function Settings({setMenuSection}: Props) {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
 		dispatch(setSetting('gameSide', gameSide))
 	}
+	const handlePanoramaToggle = () => {
+		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
 	}
+	const getBoolDescriptor = (value?: boolean) => {
+		return value ? 'Enabled' : 'Disabled'
+	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const username = ev.currentTarget.minecraftName.value.trim()
-		console.log(username)
 		if (username.length > 3) {
-			dispatch(setSetting('minecraftName', username))
-			console.log('dispatching')
 			dispatch({
 				type: 'UPDATE_MINECRAFT_NAME',
 				payload: username,
 			})
+			dispatch(setSetting('minecraftName', username))
 			localStorage.setItem('minecraftName', username)
 		}
 	}
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('mainmenu')}
-			title="More"
-			returnText="Main Menu"
+			back={() => setMenuSection('settings')}
+			title="Game Settings"
+			returnText="Settings"
 			className={css.settingsMenu}
 		>
 			<h2>Game Settings</h2>
@@ -59,6 +59,9 @@ function Settings({setMenuSection}: Props) {
 				</Button>
 				<Button variant="stone" onClick={handleDialogsChange}>
 					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+				</Button>
+				<Button variant="stone" onClick={handlePanoramaToggle}>
+					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
 				</Button>
 				<div className={css.minecraftNameArea}>
 					<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
@@ -85,4 +88,4 @@ function Settings({setMenuSection}: Props) {
 	)
 }
 
-export default Settings
+export default GameSettings

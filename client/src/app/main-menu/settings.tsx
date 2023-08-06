@@ -30,21 +30,17 @@ function Settings({setMenuSection}: Props) {
 	const handleResetStats = () => {
 		dispatch(resetStats())
 	}
-	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
-	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
-	}
-	const getBoolDescriptor = (value?: boolean) => {
-		return value ? 'Enabled' : 'Disabled'
 	}
 	const getPercDescriptor = (value?: string) => {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
 	const handleGameSettings = () => setMenuSection('game-settings')
+
+	const handleCredits = () => setMenuSection('credits')
 
 	return (
 		<MenuLayout
@@ -67,11 +63,15 @@ function Settings({setMenuSection}: Props) {
 				<Button variant="stone" onClick={handleProfanityChange}>
 					Profanity Filter: {getDescriptor(settings.profanityFilter)}
 				</Button>
-				<Button variant="stone" onClick={handlePanoramaToggle}>
-					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-				</Button>
 				<Button variant="stone" onClick={handleResetStats}>
 					Reset Stats
+				</Button>
+			</div>
+
+			<h2>Credits</h2>
+			<div className={css.settings}>
+				<Button variant="stone" onClick={handleCredits}>
+					Credits
 				</Button>
 			</div>
 
