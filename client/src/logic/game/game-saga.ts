@@ -1,5 +1,6 @@
-import {all, take, takeEvery, fork, call, put, race, cancel} from 'redux-saga/effects'
+import {all, take, takeEvery, fork, call, put, race, takeLatest, cancel} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
+import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
 import {receiveMsg, sendMsg} from 'logic/socket/socket-saga'
 import slotSaga from './tasks/slot-saga'
@@ -17,7 +18,7 @@ import {
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
 
-function* actionSaga(gameState: LocalGameState): SagaIterator {
+function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
 		playCard: take([
 			'PLAY_HERMIT_CARD',
@@ -50,35 +51,20 @@ function* actionSaga(gameState: LocalGameState): SagaIterator {
 	}
 }
 
-function* gameStateSaga(gameState: LocalGameState): SagaIterator {
-	// Call coin flip saga before anything else
-	yield call(coinFlipSaga, gameState)
+function* gameStateSaga(action: AnyAction): SagaIterator {
+	const gameState: LocalGameState = action.payload.localGameState
 
-	// Update the state object locally
-	yield put(localGameState(gameState))
-
-	console.log('Available Actions:', gameState.turn.availableActions)
-
-	// If we should not be doing anything wait for another state update
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
 
-	// Handle user clicking on board
-	const slotSagaRef = yield fork(slotSaga)
-	// Handle special card logic
-	const actionLogicSagaRef = yield fork(actionLogicSaga, gameState)
-	// Attack logic
-	const attackSagaRef = yield takeEvery('START_ATTACK', attackSaga)
-
-	console.log('waiting for action')
-
-	// Wait till we send a message to the server
-	yield call(actionSaga, gameState)
-
-	// Disable logic
-	yield cancel(slotSagaRef)
-	yield cancel(actionLogicSagaRef)
-	yield cancel(attackSagaRef)
+	// handle user clicking on board
+	yield fork(slotSaga)
+	// some cards have special logic bound to them
+	yield fork(actionLogicSaga, gameState)
+	// attack logic
+	yield takeEvery('START_ATTACK', attackSaga)
+	// handles core funcionality
+	yield fork(actionSaga)
 }
 
 function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
@@ -86,20 +72,17 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 		yield call(sendMsg, 'FORFEIT')
 	})
 
+	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
+
 	console.log('Game started')
 	if (initialGameState) {
-		yield call(gameStateSaga, initialGameState)
+		yield put(localGameState(initialGameState))
 	}
 
 	while (true) {
-		// Wait to receive game state
-		const gameStateData = yield call(receiveMsg, 'GAME_STATE')
-		const gameState: LocalGameState = gameStateData.payload.localGameState
-
-		// Run the game state saga, which ends once we send a message to the server
-		yield call(gameStateSaga, gameState)
-
-		// And the cycle repeats, nothing more can happen on the client now till we receive the next game state
+		const {payload} = yield call(receiveMsg, 'GAME_STATE')
+		yield call(coinFlipSaga, payload.localGameState)
+		yield put(localGameState(payload.localGameState))
 	}
 }
 

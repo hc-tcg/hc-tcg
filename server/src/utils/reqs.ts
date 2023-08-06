@@ -187,7 +187,6 @@ export const validTarget = (
 	playerId: string
 ): boolean => {
 	if (typeof target !== 'string') return true
-
 	if (target === 'board') return true
 	if (target === 'player' && playerId !== cardPlayerState.id) return false
 	if (target === 'opponent' && playerId === cardPlayerState.id) return false
@@ -324,7 +323,7 @@ export function validPick(
 
 	const players = gameState.players
 	//@ts-ignore
-	const turnPlayerId = gameState['turnPlayerId'] || gameState['currentPlayerId']
+	const turnPlayerId = gameState.turn.currentPlayerId
 	const cardPlayerId = pickedSlot.playerId
 	const rowIndex = !pickedSlot.row ? null : pickedSlot.row.index
 	const cardPlayerState = players[cardPlayerId]

@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {TurnActions} from '../../types/game-state'
 import {discardCard} from '../../utils/movement'
 import EffectCard from '../base/effect-card'
+import {CARDS} from '..'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -57,8 +58,16 @@ class WaterBucketEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
+		const {currentPlayer} = game
+
 		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
-		if (!pos.row?.hermitCard && pos.slot.type === 'effect') return 'NO'
+		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (pos.slot.type === 'effect') {
+			if (!pos.row?.hermitCard) return 'INVALID'
+			const cardInfo = CARDS[pos.row.hermitCard?.cardId]
+			if (!cardInfo) return 'INVALID'
+			if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+		}
 
 		return 'YES'
 	}

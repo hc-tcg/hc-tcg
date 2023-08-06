@@ -65,7 +65,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 		const {opponentPlayer} = pos
 
 		// Gem can use 2 spyglasses on the same turn

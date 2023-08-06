@@ -3,10 +3,6 @@ import {GameModel} from '../../models/game-model'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
 
-/**
- * @typedef {import('common/types/cards').BasicCardPos} CardPos
- */
-
 class IJevinRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -34,7 +30,7 @@ class IJevinRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 
@@ -52,7 +48,7 @@ class IJevinRareHermitCard extends HermitCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 	}
 }
 

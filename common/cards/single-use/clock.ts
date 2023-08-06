@@ -48,7 +48,9 @@ class ClockSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+		
 		// The other player wouldn't be able to attach anything
 		if (game.state.turn.turnNumber === 1) return 'NO'
 		return 'YES'

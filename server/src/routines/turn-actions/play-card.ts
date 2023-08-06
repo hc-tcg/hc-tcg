@@ -71,7 +71,7 @@ function* playCardSaga(
 		player.board.singleUseCard = card
 	} else {
 		// All other positions requires us to have selected a valid row
-		if (!row || !rowIndex) return 'FAILURE_CANNOT_COMPLETE'
+		if (!row || rowIndex === null) return 'FAILURE_CANNOT_COMPLETE'
 
 		switch (slot.type) {
 			case 'hermit': {

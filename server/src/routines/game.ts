@@ -27,7 +27,7 @@ import {AttackModel} from 'common/models/attack-model'
 // @TODO sort this whole thing out properly
 /////////////////////////////////////////
 
-const getTimerForSeconds = (seconds: number): number => {
+export const getTimerForSeconds = (seconds: number): number => {
 	const maxTime = CONFIG.limits.maxTurnTime * 1000
 	return Date.now() - maxTime + seconds * 1000
 }
@@ -87,7 +87,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 				) {
 					actions.push('SECONDARY_ATTACK')
 				}
-				if (!currentPlayer.board.singleUseCardUsed) {
+				if (currentPlayer.board.singleUseCard && !currentPlayer.board.singleUseCardUsed) {
 					actions.push('ZERO_ATTACK')
 				}
 			}
@@ -129,7 +129,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	)
 
 	// If we have completed an attack, prevent all actions except end turn
-	if (game.state.turn.completedActions.includes('ZERO_ATTACK')) {
+	if (
+		game.state.turn.completedActions.includes('PRIMARY_ATTACK') ||
+		game.state.turn.completedActions.includes('CHANGE_ACTIVE_HERMIT')
+	) {
 		filteredActions = ['END_TURN']
 	}
 
@@ -317,8 +320,6 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game
 	let turnRemaining = game.state.timer.turnRemaining
 
-	console.log('hey')
-
 	const turnActionChannel = yield* actionChannel(
 		[
 			...['FOLLOW_UP'].map((type) => playerAction(type, opponentPlayerId)),
@@ -385,7 +386,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			}
 
 			// Modify available turn actions with hooks
-			currentPlayer.hooks.availableActions.call(availableActions)
+			availableActions = currentPlayer.hooks.availableActions.call(availableActions)
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
@@ -414,7 +415,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			// End of available actions code
 
 			// Timer calculation
-			game.state.timer.turnTime = game.state.timer.turnTime
+			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000
 			const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
 			game.state.timer.turnRemaining = Math.floor(remainingTime / 1000)
@@ -424,7 +425,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
 				timeout: delay(remainingTime),
-			}) as any // NOTE - need to type as any due to typed-redux-saga inferring the wrong return type
+			}) as any // NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
 
 			// Reset coin flips they were already shown
 			currentPlayer.coinFlips = []
@@ -446,7 +447,6 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 					}
 
 					// Restore the previous time
-					//@ts-ignore
 					game.state.timer.turnTime = getTimerForSeconds(turnRemaining)
 					continue
 				} else if (!hasActiveHermit) {
