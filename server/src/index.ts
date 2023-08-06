@@ -24,13 +24,13 @@ app.use(express.json())
 app.use(cors({origin: CONFIG.cors}))
 
 app.use(
-	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
+	express.static(path.join(__dirname, '../../..', CONFIG.clientPath), {
 		maxAge: 1000 * 60 * 60,
 	})
 )
 
 app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
+	res.sendFile(path.join(__dirname, '../../..', CONFIG.clientPath, 'index.html'))
 })
 
 server.listen(port, () => {
