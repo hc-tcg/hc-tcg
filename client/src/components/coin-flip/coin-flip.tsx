@@ -24,7 +24,6 @@ const CoinFlip = ({name, tosses}: Props) => {
 				<div className={classnames(css.face, css.back)}>
 					<img src={coinPics[1]} />
 				</div>
-				<p className={css.result}>{face.toString()}</p>
 			</div>
 		)
 	})
