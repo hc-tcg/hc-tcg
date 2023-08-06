@@ -129,7 +129,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	)
 
 	// If we have completed an attack, prevent all actions except end turn
-	if (game.state.turn.completedActions.includes('PRIMARY_ATTACK')) {
+	if (
+		game.state.turn.completedActions.includes('PRIMARY_ATTACK') ||
+		game.state.turn.completedActions.includes('CHANGE_ACTIVE_HERMIT')
+	) {
 		filteredActions = ['END_TURN']
 	}
 
