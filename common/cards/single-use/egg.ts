@@ -59,30 +59,17 @@ class EggSingleUseCard extends SingleUseCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			const eggIndex = player.custom[this.getInstanceKey(instance)]
 			opponentPlayer.board.activeRow = eggIndex
+
+			delete player.custom[this.getInstanceKey(instance)]
+
+			player.hooks.afterAttack.remove(instance)
 		})
 	}
 
-	/**
-	 *
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
-	}
-
-	/**
-	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 */
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		const inactiveHermits = getNonEmptyRows(opponentPlayer, false)
