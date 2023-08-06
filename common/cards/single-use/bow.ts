@@ -17,7 +17,9 @@ class BowSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+		
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit

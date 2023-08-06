@@ -26,7 +26,9 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+		
 		const {player} = pos
 
 		for (const row of player.board.rows) {

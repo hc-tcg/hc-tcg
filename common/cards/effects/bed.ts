@@ -17,9 +17,8 @@ class BedEffectCard extends EffectCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {currentPlayer} = game
 
-		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
-		if (!pos.row?.hermitCard) return 'NO'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 
 		// bed addition - hermit must also be active to attach
 		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'

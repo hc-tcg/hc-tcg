@@ -73,7 +73,8 @@ class LadderSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 
 		const playerBoard = pos.player.board
 		const activeRowIndex = playerBoard.activeRow

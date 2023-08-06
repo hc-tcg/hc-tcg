@@ -16,8 +16,8 @@ class LightningRodEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (super.canAttach(game, pos) === 'INVALID') return 'INVALID'
-		console.log('hey there')
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 
 		const board = pos.player.board
 		if (board.rows.find((row) => row.effectCard?.cardId === this.id)) {
