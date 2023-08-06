@@ -1,6 +1,6 @@
 import {all, take, takeEvery, join, cancel, spawn, fork, race, delay} from 'typed-redux-saga'
 import {broadcast} from '../utils/comm'
-import gameSaga from './game'
+import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
@@ -49,10 +49,12 @@ function* gameManager(game: GameModel) {
 			),
 		})
 
-		console.log('4')
-
 		for (const player of players) {
 			const gameState = getLocalGameState(game, player)
+			if (gameState) {
+				gameState.timer.turnRemaining = 0
+				gameState.timer.turnTime = getTimerForSeconds(0)
+			}
 			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
 				gameState,
