@@ -194,7 +194,7 @@
 	justify-content: center;
 	flex-shrink: 0;
 
-	background-color: var(--gray-500);
+	background-color: var(--gray-700);
 	border-radius: 6px;
 	margin-bottom: 0.5rem;
 	padding: 0.5rem;
@@ -212,8 +212,8 @@
 	}
 
 	&:hover {
-		background: var(--gray-600);
-		filter: brightness(1.1);
+		background: var(--gray-700);
+		filter: brightness(1.2);
 	}
 }
 
