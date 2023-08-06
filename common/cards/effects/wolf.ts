@@ -11,7 +11,7 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"For every Hermit attacked on your opponent's turn, your opponent's active Hermit takes 10hp damage.",
+				"For every Hermit attacked on your opponent's turn, your opponent's active Hermit takes 20hp damage.",
 		})
 	}
 
@@ -49,7 +49,7 @@ class WolfEffectCard extends EffectCard {
 				target: opponentActiveRow,
 				type: 'effect',
 				isBacklash: true,
-			}).addDamage(this.id, 10)
+			}).addDamage(this.id, 20)
 
 			attack.addNewAttack(backlashAttack)
 		})

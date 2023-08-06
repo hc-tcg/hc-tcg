@@ -97,8 +97,8 @@
 	"milk_bucket": 0,
 	"splash_potion_of_healing": 0,
 	"water_bucket": 0,
-	"wolf": 0,
 
+	"wolf": 1,
 	"bow": 1,
 	"chorus_fruit": 1,
 	"crossbow": 1,
