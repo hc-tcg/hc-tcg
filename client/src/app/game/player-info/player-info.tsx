@@ -45,7 +45,7 @@ function PlayerInfo({player, direction}: Props) {
 		<div className={cn(css.playerInfo, css[direction], {[css.active]: thisPlayer})}>
 			<img
 				className={css.playerHead}
-				src={`https://mc-heads.net/head/${player.playerName}/${headDirection}`}
+				src={`https://mc-heads.net/head/${player.minecraftName}/${headDirection}`}
 				alt="player head"
 			/>
 			<div className={cn(css.playerName, css[direction])}>

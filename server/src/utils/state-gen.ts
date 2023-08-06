@@ -197,6 +197,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		minecraftName: player.minecraftName,
 		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: [],
@@ -249,6 +250,7 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 		id: playerState.id,
 		followUp: playerState.followUp,
 		playerName: playerState.playerName,
+		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,

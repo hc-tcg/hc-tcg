@@ -5,7 +5,7 @@ import root from 'serverRoot'
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 
 function* playerConnectedSaga(action: any) {
-	const {playerName, deck, socket} = action.payload
+	const {playerName, minecraftName, deck, socket} = action.payload
 
 	if (action.payload.playerId) {
 		const existingPlayer = root.players[action.payload.playerId]
@@ -25,7 +25,7 @@ function* playerConnectedSaga(action: any) {
 		return
 	}
 
-	const newPlayer = new PlayerModel(playerName, socket)
+	const newPlayer = new PlayerModel(playerName, minecraftName, socket)
 	if (deck) newPlayer.setPlayerDeck(deck)
 	root.addPlayer(newPlayer)
 
@@ -76,8 +76,22 @@ function* updateDeckSaga(action: any) {
 	})
 }
 
+function* updateMinecraftNameSaga(action: any) {
+	const {playerId} = action
+	let minecraftName = action.payload
+	const player = root.players[playerId]
+	if (!player) return
+	player.setMinecraftName(minecraftName)
+
+	player.socket?.emit('NEW_MINECRAFT_NAME', {
+		type: 'NEW_MINECRAFT_NAME',
+		payload: player.minecraftName,
+	})
+}
+
 export function* playerSaga() {
 	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
 	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
 	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
+	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
 }

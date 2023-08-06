@@ -4,6 +4,7 @@ import {ToastT} from 'common/types/app'
 
 type SessionState = {
 	playerName: string
+	minecraftName: string
 	playerId: string
 	playerSecret: string
 	playerDeck: PlayerDeckT
@@ -14,6 +15,7 @@ type SessionState = {
 
 const defaultState: SessionState = {
 	playerName: '',
+	minecraftName: '',
 	playerId: '',
 	playerSecret: '',
 	playerDeck: {name: '', icon: 'any', cards: []},
@@ -30,6 +32,7 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 				...state,
 				connecting: false,
 				playerName: '',
+				minecraftName: '',
 				playerId: '',
 				playerSecret: '',
 				playerDeck: state.playerDeck,
@@ -59,6 +62,11 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 					...state.toast,
 					open: false,
 				},
+			}
+		case 'SET_MINECRAFT_NAME':
+			return {
+				...state,
+				minecraftName: action.payload,
 			}
 		default:
 			return state
