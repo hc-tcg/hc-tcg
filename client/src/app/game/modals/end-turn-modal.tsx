@@ -7,10 +7,10 @@ import css from './game-modals.module.scss'
 import Button from 'components/button'
 
 const ActionMap: Record<TurnAction, string | null> = {
-	PLAY_ITEM_CARD: 'Playing an item card',
+	PLAY_ITEM_CARD: 'Playing a card in am item slot',
 	PLAY_SINGLE_USE_CARD: 'Playing a single use effect card',
-	PLAY_EFFECT_CARD: 'Attaching an effect card',
-	PLAY_HERMIT_CARD: 'Playing a hermit card',
+	PLAY_EFFECT_CARD: 'Attaching an card in the effect slot',
+	PLAY_HERMIT_CARD: 'Playing a card in the hermit slot',
 	CHANGE_ACTIVE_HERMIT: 'Changing your active hermit',
 	ZERO_ATTACK: 'Attacking opponent with an effect',
 	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',
