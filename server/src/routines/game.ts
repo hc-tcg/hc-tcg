@@ -87,7 +87,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 				) {
 					actions.push('SECONDARY_ATTACK')
 				}
-				if (!currentPlayer.board.singleUseCardUsed) {
+				if (currentPlayer.board.singleUseCard && !currentPlayer.board.singleUseCardUsed) {
 					actions.push('ZERO_ATTACK')
 				}
 			}
@@ -129,7 +129,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	)
 
 	// If we have completed an attack, prevent all actions except end turn
-	if (game.state.turn.completedActions.includes('ZERO_ATTACK')) {
+	if (game.state.turn.completedActions.includes('PRIMARY_ATTACK')) {
 		filteredActions = ['END_TURN']
 	}
 
@@ -383,7 +383,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			}
 
 			// Modify available turn actions with hooks
-			currentPlayer.hooks.availableActions.call(availableActions)
+			availableActions = currentPlayer.hooks.availableActions.call(availableActions)
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
