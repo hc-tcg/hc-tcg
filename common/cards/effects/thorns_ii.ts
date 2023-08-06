@@ -14,17 +14,22 @@ class ThornsIIEffectCard extends EffectCard {
 				'When the Hermit this card is attached to takes damage, your opponent takes 30hp damage.\n\nIgnores armor.',
 		})
 	}
-
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer} = pos
+		const {player, opponentPlayer} = pos
+		const triggeredKey = this.getInstanceKey(instance, 'triggered')
 
 		// Only when the opponent attacks us
 		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
-			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+			// If we have already triggered once this turn do not do so again
+			if (player.custom[triggeredKey]) return
+
+			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack would do damage
 			if (attack.calculateDamage() <= 0) return
 
 			if (attack.attacker && isTargetingPos(attack, pos)) {
+				player.custom[triggeredKey] = true
+
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
 					attacker: attack.target,
@@ -54,10 +59,18 @@ class ThornsIIEffectCard extends EffectCard {
 
 			return attack
 		})
+
+		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+			delete player.custom[triggeredKey]
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.opponentPlayer.hooks.onAttack.remove(instance)
+		const {player, opponentPlayer} = pos
+		const triggeredKey = this.getInstanceKey(instance, 'triggered')
+		opponentPlayer.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		delete player.custom[triggeredKey]
 	}
 
 	override getExpansion() {
