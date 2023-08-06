@@ -35,16 +35,16 @@ class StringEffectCard extends EffectCard {
 
 	// This card allows placing on either effect or item slot
 	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
+		const {opponentPlayer} = game
 
-		// Is there is a hermit on the board with space for an item card
-		const spaceForItem = currentPlayer.board.rows.some((row) => {
+		// Is there is a hermit on the opponent's board with space for an item card
+		const spaceForItem = opponentPlayer.board.rows.some((row) => {
 			const hasHermit = !!row.hermitCard
 			const hasEmptyItemSlot = row.itemCards.some((card) => card === null)
 			return hasHermit && hasEmptyItemSlot
 		})
-		// Is there is a hermit on the board with space for an effect card
-		const spaceForEffect = currentPlayer.board.rows.some((row) => {
+		// Is there is a hermit on the opponent's board with space for an effect card
+		const spaceForEffect = opponentPlayer.board.rows.some((row) => {
 			return !!row.hermitCard && !row.effectCard
 		})
 
