@@ -1,12 +1,12 @@
 {
-	"disableDeckValidation": true,
+	"disableDeckValidation": false,
 	"extraStartingCards": [],
-	"noItemRequirements": true,
+	"noItemRequirements": false,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
-	"disableDamage": true,
-	"disableDeckOut": true,
-	"startWithAllCards": true,
+	"disableDamage": false,
+	"disableDeckOut": false,
+	"startWithAllCards": false,
 	"blockedActions": [],
 	"availableActions": [],
 	"showHooksState": {
