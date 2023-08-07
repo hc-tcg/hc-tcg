@@ -60,7 +60,7 @@
 		"docker-start": "npm run build && npm run start",
 		"husky": "husky install",
 		
-		"build": "npm run tsc && npm run server:tsc && vite build client/",
+		"build": "npm run client:tsc && npm run server:tsc && vite build client/",
 		"clean": "rm -rf client/dist",
 
 		"server": "tsx --tsconfig server/tsconfig.json server/src",
