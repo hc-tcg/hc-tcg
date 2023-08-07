@@ -17,7 +17,8 @@ function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	if (game.state.timer.turnTime) {
 		const maxTime = CONFIG.limits.maxTurnTime * 1000
 		const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
-		game.state.timer.turnRemaining = Math.floor(remainingTime / 1000)
+		const graceTime = 1000
+		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 	}
 
 	const payload = {

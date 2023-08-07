@@ -63,13 +63,6 @@
 	gap: 5px;
 }
 
-.result {
-	z-index: 3;
-
-	// font-size: 20px;
-	text-align: center;
-}
-
 @keyframes rotation {
 	0% {
 		transform: rotate3d(0, 1, 0, 0deg);

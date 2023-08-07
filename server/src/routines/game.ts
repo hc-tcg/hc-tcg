@@ -418,13 +418,14 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
 			const maxTime = CONFIG.limits.maxTurnTime * 1000
 			const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
-			game.state.timer.turnRemaining = Math.floor(remainingTime / 1000)
+			const graceTime = 1000
+			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
-				timeout: delay(remainingTime),
+				timeout: delay(remainingTime + graceTime),
 			}) as any // NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
 
 			// Reset coin flips they were already shown

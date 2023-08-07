@@ -118,7 +118,14 @@ $grid-size: 25px;
 }
 
 .afk {
-	filter: brightness(0.75);
+	filter: brightness(0.9);
+}
+
+#left .slot.hermit.afk {
+	transform: rotate(90deg);
+}
+#right .slot.hermit.afk {
+	transform: rotate(-90deg);
 }
 
 .active {
@@ -164,10 +171,6 @@ $grid-size: 25px;
 	text-align: center;
 	color: white;
 	font-size: 12px;
-}
-
-.singleUseSlot.used {
-	filter: brightness(50%);
 }
 
 // AILMENTS
