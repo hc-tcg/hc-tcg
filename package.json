@@ -58,16 +58,19 @@
 	"scripts": {
 		"start": "npm run server",
 		"docker-start": "npm run build && npm run start",
+		"husky": "husky install",
+		
+		"build": "npm run tsc && npm run server:tsc && vite build client/",
+		"clean": "rm -rf client/dist",
+
 		"server": "tsx --tsconfig server/tsconfig.json server/src",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:inspect": "node --experimental-specifier-resolution=node --inspect server/dist/server/index.js",
-		"dev": "vite client/",
-		"tsc": "tsc --p client/",
 		"server:tsc": "tsc --p server/tsconfig.json",
-		"build": "npm run tsc && npm run server:tsc && vite build client/",
-		"clean": "rm -rf client/dist",
-		"preview": "vite preview --port 3002 client/",
-		"husky": "husky install"
+		
+		"client:dev": "vite client/",
+		"client:tsc": "tsc --p client/",
+		"client:preview": "vite preview --port 3002 client/"
 	},
 	"browserslist": {
 		"production": [
