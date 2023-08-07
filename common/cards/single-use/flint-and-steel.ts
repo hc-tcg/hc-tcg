@@ -17,7 +17,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		if (player.pile.length <= 3) return 'NO'
 
@@ -40,11 +40,6 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('types/cards').BasicCardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)

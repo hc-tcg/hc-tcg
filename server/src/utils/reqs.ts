@@ -322,7 +322,6 @@ export function validPick(
 	if (!pickedSlot) return false
 
 	const players = gameState.players
-	//@ts-ignore
 	const turnPlayerId = gameState.turn.currentPlayerId
 	const cardPlayerId = pickedSlot.playerId
 	const rowIndex = !pickedSlot.row ? null : pickedSlot.row.index

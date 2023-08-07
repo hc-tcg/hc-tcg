@@ -22,15 +22,12 @@ function GameSettings({setMenuSection}: Props) {
 		const gameSide = settings.gameSide === 'Left' ? 'Right' : 'Left'
 		dispatch(setSetting('gameSide', gameSide))
 	}
-	const handlePanoramaToggle = () => {
-		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
-	}
 	const getDescriptor = (value?: string) => {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
 	}
-	const getBoolDescriptor = (value?: boolean) => {
-		return value ? 'Enabled' : 'Disabled'
+	const handleProfanityChange = () => {
+		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
 	}
 	const handleMinecraftName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
@@ -49,7 +46,7 @@ function GameSettings({setMenuSection}: Props) {
 		<MenuLayout
 			back={() => setMenuSection('settings')}
 			title="Game Settings"
-			returnText="Settings"
+			returnText="More"
 			className={css.settingsMenu}
 		>
 			<h2>Game Settings</h2>
@@ -60,10 +57,18 @@ function GameSettings({setMenuSection}: Props) {
 				<Button variant="stone" onClick={handleDialogsChange}>
 					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
 				</Button>
-				<Button variant="stone" onClick={handlePanoramaToggle}>
-					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+				<Button variant="stone" onClick={handleProfanityChange}>
+					Profanity Filter: {getDescriptor(settings.profanityFilter)}
 				</Button>
 				<div className={css.minecraftNameArea}>
+					<div className={css.upper}>
+						<h3>Ingame Player head</h3>
+						<img
+							className={css.playerHead}
+							src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
+							alt="player head"
+						/>
+					</div>
 					<form className={css.playerHeadForm} onSubmit={handleMinecraftName}>
 						<div className={css.customInput}>
 							<input
@@ -77,11 +82,6 @@ function GameSettings({setMenuSection}: Props) {
 						</div>
 						<Button variant="stone">Select</Button>
 					</form>
-					<img
-						className={css.playerHead}
-						src={`https://mc-heads.net/head/${settings.minecraftName}/left`}
-						alt="player head"
-					/>
 				</div>
 			</div>
 		</MenuLayout>

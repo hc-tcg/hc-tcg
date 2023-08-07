@@ -24,15 +24,14 @@ function Settings({setMenuSection}: Props) {
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
-	const handleProfanityChange = () => {
-		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
-	}
 	const handleResetStats = () => {
 		dispatch(resetStats())
 	}
-	const getDescriptor = (value?: string) => {
-		if (value !== 'off') return 'Enabled'
-		return 'Disabled'
+	const handlePanoramaToggle = () => {
+		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
+	}
+	const getBoolDescriptor = (value?: boolean) => {
+		return value ? 'Enabled' : 'Disabled'
 	}
 	const getPercDescriptor = (value?: string) => {
 		if (value !== '0') return `${value}%`
@@ -57,11 +56,11 @@ function Settings({setMenuSection}: Props) {
 				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 					Sounds: {getPercDescriptor(settings.soundVolume)}
 				</Slider>
+				<Button variant="stone" onClick={handlePanoramaToggle}>
+					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+				</Button>
 				<Button variant="stone" onClick={handleGameSettings}>
 					Game Settings
-				</Button>
-				<Button variant="stone" onClick={handleProfanityChange}>
-					Profanity Filter: {getDescriptor(settings.profanityFilter)}
 				</Button>
 				<Button variant="stone" onClick={handleResetStats}>
 					Reset Stats
