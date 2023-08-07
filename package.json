@@ -52,7 +52,8 @@
 		"typed-redux-saga": "^1.5.0",
 		"typescript": "^5.1.6",
 		"vite": "^4.0.4",
-		"vite-plugin-eslint": "^1.8.1"
+		"vite-plugin-eslint": "^1.8.1",
+		"tsx": "^3.12.7"
 	},
 	"scripts": {
 		"start": "npm run server",
@@ -79,8 +80,5 @@
 			"last 1 firefox version",
 			"last 1 safari version"
 		]
-	},
-	"devDependencies": {
-		"tsx": "^3.12.7"
 	}
 }
