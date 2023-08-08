@@ -101,6 +101,16 @@ export class GameModel {
 		}
 	}
 
+	/** Set actions as blocked so they cannot be done this turn */
+	public addBlockedActions(...actions: TurnActions) {
+		for (let i = 0; i < actions.length; i++) {
+			const action = actions[i]
+			if (!this.state.turn.blockedActions.includes(action)) {
+				this.state.turn.blockedActions.push(action)
+			}
+		}
+	}
+
 	public setLastActionResult(action: TurnAction, result: ActionResult) {
 		this.state.lastActionResult = {action, result}
 	}

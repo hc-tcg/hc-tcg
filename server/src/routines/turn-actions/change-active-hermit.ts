@@ -33,8 +33,19 @@ function* changeActiveHermit(
 	currentPlayer.board.activeRow = rowIndex
 
 	if (hadActiveHermit) {
-		// We switched from one hermit to another, prevent this from being done again
+		// We switched from one hermit to another, mark this action as completed
 		game.addCompletedActions('CHANGE_ACTIVE_HERMIT')
+
+		// Attack phase complete, mark most actions as blocked now
+		game.addBlockedActions(
+			'ZERO_ATTACK',
+			'PRIMARY_ATTACK',
+			'SECONDARY_ATTACK',
+			'PLAY_HERMIT_CARD',
+			'PLAY_ITEM_CARD',
+			'PLAY_EFFECT_CARD',
+			'PLAY_SINGLE_USE_CARD'
+		)
 	} else {
 		// We activated a hermit when we had none active before, allow switching to all other hermits again
 		currentPlayer.board.rows.forEach((row) => {

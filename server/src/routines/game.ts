@@ -124,17 +124,13 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	actions.push(...allDesiredActions)
 
 	// Filter out actions that have already been completed - once an action is completed it cannot be used again for the turn
-	let filteredActions = actions.filter(
-		(action) => !game.state.turn.completedActions.includes(action)
-	)
-
-	// If we have completed an attack, prevent all actions except end turn
-	if (
-		game.state.turn.completedActions.includes('PRIMARY_ATTACK') ||
-		game.state.turn.completedActions.includes('CHANGE_ACTIVE_HERMIT')
-	) {
-		filteredActions = ['END_TURN']
-	}
+	// Also filter out blocked actions
+	let filteredActions = actions.filter((action) => {
+		return (
+			!game.state.turn.completedActions.includes(action) &&
+			!game.state.turn.blockedActions.includes(action)
+		)
+	})
 
 	// Even if change active hermit is completed, always allow it if no active row
 	if (
@@ -502,6 +498,7 @@ function* turnSaga(game: GameModel) {
 	game.state.turn.availableActions = []
 	game.state.turn.currentPlayerId = currentPlayerId
 	game.state.turn.completedActions = []
+	game.state.turn.blockedActions = []
 
 	game.state.timer.turnTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
