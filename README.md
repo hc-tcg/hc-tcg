@@ -11,8 +11,8 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 ## How to run the project
 
 - First, you must install packages using `npm ci` - _use this instead of `npm install` to avoid unneccesary changes in package-lock.json_
-- Both the client and server are written in typescript so need to be build using `npm run build` before use
-- The server can then be run using npm run start or npm run server
+- The client is compiled, so must be built before use with `npm run build`
+- The server can then be run using `npm run start` or `npm run server`
 - Whilst developing, it may be useful so run the client or server such that they reload if you make a change. This can be done by running `npm run client:dev` and `npm run server:dev` respectively.
 
 ## Configuration
