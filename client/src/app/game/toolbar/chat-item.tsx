@@ -13,22 +13,22 @@ function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)
 	const settings = useSelector(getSettings)
 	const playerId = useSelector(getPlayerId)
-	const latestEnemyMessageTime =
+	const latestOpponentMessageTime =
 		chatMessages.map((msg) => {
 			return msg.playerId !== playerId ? msg : null
 		})[0]?.createdAt || 0
-	const [lastSeen, setLastSeen] = useState<number>(latestEnemyMessageTime)
+	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
 	const dispatch = useDispatch()
 
 	const toggleChat = () => {
-		setLastSeen(latestEnemyMessageTime)
+		setLastSeen(latestOpponentMessageTime)
 
 		settings.showChat === 'on'
 			? dispatch(setSetting('showChat', 'off'))
 			: dispatch(setSetting('showChat', 'on'))
 	}
 
-	const newMessage = settings.showChat !== 'on' && lastSeen !== latestEnemyMessageTime
+	const newMessage = settings.showChat !== 'on' && lastSeen !== latestOpponentMessageTime
 
 	return (
 		<button

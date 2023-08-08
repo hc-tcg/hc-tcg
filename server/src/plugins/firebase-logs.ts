@@ -77,7 +77,6 @@ export class FirebaseLogs {
 				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
-
 				let pid0 = playerStates[0].id
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
