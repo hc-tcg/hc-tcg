@@ -8,48 +8,28 @@ Use Node.js 16-18 (19+ is not supported).
 
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
-## Installation
-
-```console
-npm ci
-```
-
-_Please use `npm ci` instead of `npm install` to avoid unnecesary changes in package-lock.json._
-
 ## How to run the project
 
-To create a build for frontend:
-
-```console
-npm run build
-```
-
-To run the server:
-
-```console
-npm start
-```
+- First, you must install packages using `npm ci` - _use this instead of `npm install` to avoid unneccesary changes in package-lock.json_
+- The client is compiled, so must be built before use with `npm run build`
+- The server can then be run using `npm run start` or `npm run server`
+- Whilst developing, it may be useful so run the client or server such that they reload if you make a change. This can be done by running `npm run client:dev` and `npm run server:dev` respectively.
 
 ## Configuration
 
-You can configureyour instance using the `config/server-config.json` file.
+You can configure your instance using the `config/server-config.json` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
 | port          | Server port                                                                         |
-| clientDevPort | Port for vite dev. server                                                           |
+| clientDevPort | Port for vite client server                                                         |
+| clientPath    | Path for the client build used                                                      |
 | cors          | Useful when testing on local network or when your server runs on a different domain |
 | world         | Identifier for your instance when tracking stats                                    |
 | limits        | Limits for players' decks                                                           |
 | logoSubText   | Animated text to show next to logo                                                  |
-
-## Development
-
-To run frontend in development mode:
-
-```console
-npm run dev
-```
+| botUrl        | Url to report game results to                                                       |
+| version       | Version displayed on the client                                                     |
 
 ### Formatting & coding style
 
