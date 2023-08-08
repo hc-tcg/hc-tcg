@@ -132,13 +132,9 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		)
 	})
 
-	// Even if change active hermit is completed, always allow it if no active row
-	if (
-		currentPlayer.board.activeRow === null &&
-		hasOtherHermit &&
-		!filteredActions.includes('CHANGE_ACTIVE_HERMIT')
-	) {
-		filteredActions.push('CHANGE_ACTIVE_HERMIT')
+	// If we have no active row only allow to chage active hermit
+	if (currentPlayer.board.activeRow === null && hasOtherHermit) {
+		filteredActions = ['CHANGE_ACTIVE_HERMIT']
 	}
 
 	return filteredActions
