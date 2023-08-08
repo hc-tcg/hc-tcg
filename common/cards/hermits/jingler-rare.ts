@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
-import {discardCard} from '../../utils/movement'
+import {discardFromHand} from '../../utils/movement'
 import HermitCard from '../base/hermit-card'
 
 class JinglerRareHermitCard extends HermitCard {
@@ -59,7 +59,7 @@ class JinglerRareHermitCard extends HermitCard {
 				const slots = pickedSlots[this.id]
 				if (!slots || slots.length !== 1) return
 
-				discardCard(game, slots[0].slot.card)
+				discardFromHand(opponentPlayer, slots[0].slot.card)
 			})
 
 			opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
@@ -69,7 +69,7 @@ class JinglerRareHermitCard extends HermitCard {
 				delete opponentPlayer.followUp[followUpKey]
 
 				// Discard the first card in the opponent's hand
-				discardCard(game, opponentPlayer.hand[0])
+				discardFromHand(opponentPlayer, opponentPlayer.hand[0])
 			})
 		})
 	}
