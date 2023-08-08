@@ -13,7 +13,10 @@ function ChatItem() {
 	const chatMessages = useSelector(getChatMessages)
 	const settings = useSelector(getSettings)
 	const playerId = useSelector(getPlayerId)
-	const latestEnemyMessageTime = chatMessages.map((msg) => {return msg.playerId !== playerId ? msg : null})[0]?.createdAt || 0
+	const latestEnemyMessageTime =
+		chatMessages.map((msg) => {
+			return msg.playerId !== playerId ? msg : null
+		})[0]?.createdAt || 0
 	const [lastSeen, setLastSeen] = useState<number>(latestEnemyMessageTime)
 	const dispatch = useDispatch()
 
