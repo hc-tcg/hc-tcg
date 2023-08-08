@@ -139,7 +139,12 @@ export function moveCardToHand(game: GameModel, card: CardT, steal = false) {
 	player.hand.push(card)
 }
 
-export function swapSlots(game: GameModel, slotAPos: SlotPos, slotBPos: SlotPos) {
+export function swapSlots(
+	game: GameModel,
+	slotAPos: SlotPos,
+	slotBPos: SlotPos,
+	withoutDetach: boolean = false
+) {
 	function isSlotEmpty(slotPos: SlotPos): boolean {
 		const {row, slot} = slotPos
 		const {index, type} = slot
@@ -185,9 +190,12 @@ export function swapSlots(game: GameModel, slotAPos: SlotPos, slotBPos: SlotPos)
 		if (!cardPos) continue
 
 		const cardInfo = CARDS[card.cardId]
-		cardInfo.onDetach(game, card.cardInstance, cardPos)
 
-		cardPos.player.hooks.onDetach.call(card.cardInstance)
+		if (!withoutDetach) {
+			cardInfo.onDetach(game, card.cardInstance, cardPos)
+
+			cardPos.player.hooks.onDetach.call(card.cardInstance)
+		}
 
 		cardsInfo.push({cardInfo, card})
 	}
@@ -207,14 +215,16 @@ export function swapSlots(game: GameModel, slotAPos: SlotPos, slotBPos: SlotPos)
 		rowB.itemCards[slotB.index] = tempCard
 	}
 
-	// onAttach
-	for (let {cardInfo, card} of cardsInfo) {
-		// New card position after swap
-		const cardPos = getCardPos(game, card.cardInstance)
-		if (!cardPos) continue
+	if (!withoutDetach) {
+		// onAttach
+		for (let {cardInfo, card} of cardsInfo) {
+			// New card position after swap
+			const cardPos = getCardPos(game, card.cardInstance)
+			if (!cardPos) continue
 
-		cardInfo.onAttach(game, card.cardInstance, cardPos)
+			cardInfo.onAttach(game, card.cardInstance, cardPos)
 
-		cardPos.player.hooks.onAttach.call(card.cardInstance)
+			cardPos.player.hooks.onAttach.call(card.cardInstance)
+		}
 	}
 }

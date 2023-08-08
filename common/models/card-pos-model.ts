@@ -143,7 +143,7 @@ export class CardPosModel {
 	}
 
 	public get card() {
-		// Return the card at the position, or try to recalculate if we moved (ender pearl)
+		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
 		let card = getCardAtPos(this.game, this.internalPos)
 		if (!this.fake && !card) {
 			this.recalculateInternalPos()
