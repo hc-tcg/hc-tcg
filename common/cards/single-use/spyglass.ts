@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
-import {discardCard} from '../../utils/movement'
+import {discardFromHand} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
 class SpyglassSingleUseCard extends SingleUseCard {
@@ -45,7 +45,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				if (!modalResult || !modalResult.card) return
 				if (player.custom[coinResult] !== 'heads') return
 
-				discardCard(game, modalResult.card)
+				discardFromHand(opponentPlayer, modalResult.card)
 			})
 
 			player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
@@ -59,7 +59,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				// Discard a random card from the opponent's hand
 				const {opponentPlayer} = pos
 				const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
-				discardCard(game, opponentPlayer.hand[slotIndex])
+				discardFromHand(opponentPlayer, opponentPlayer.hand[slotIndex])
 			})
 		})
 	}
