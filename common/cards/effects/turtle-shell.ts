@@ -31,8 +31,8 @@ class TurtleShellEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onActiveHermitChange.add(instance, (row) => {
-			if (row !== pos.rowIndex) return
+		player.hooks.onActiveHermitChange.add(instance, (oldROw, newRow) => {
+			if (newRow !== pos.rowIndex) return
 			player.custom[instanceKey] = true
 		})
 
