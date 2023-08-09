@@ -14,6 +14,7 @@ import {
 	gameEnd,
 	showEndGameOverlay,
 	setOpponentConnection,
+	gameStateReceived,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
@@ -54,17 +55,34 @@ function* actionSaga(): SagaIterator {
 function* gameStateSaga(action: AnyAction): SagaIterator {
 	const gameState: LocalGameState = action.payload.localGameState
 
+	// First show coin flips, if any
+	yield call(coinFlipSaga, gameState)
+
+	// Actually update the local state
+	yield put(localGameState(gameState))
+
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
 
-	// handle user clicking on board
-	yield fork(slotSaga)
-	// some cards have special logic bound to them
-	yield fork(actionLogicSaga, gameState)
-	// attack logic
-	yield takeEvery('START_ATTACK', attackSaga)
-	// handles core funcionality
-	yield fork(actionSaga)
+	const logic = yield all([
+		fork(slotSaga),
+		fork(actionLogicSaga, gameState),
+		takeEvery('START_ATTACK', attackSaga),
+	])
+
+	// Handle core funcionality
+	yield call(actionSaga)
+
+	// After we send an action, disable logic till the next game state is received
+	yield cancel(logic)
+}
+
+function* gameStateReceiver(): SagaIterator {
+	// constantly forward GAME_STATE messages from the server to the store
+	while (true) {
+		const {payload} = yield call(receiveMsg, 'GAME_STATE')
+		yield put(gameStateReceived(payload.localGameState))
+	}
 }
 
 function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
@@ -72,17 +90,13 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 		yield call(sendMsg, 'FORFEIT')
 	})
 
-	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
+	yield fork(gameStateReceiver)
+
+	yield takeLatest('GAME_STATE_RECEIVED', gameStateSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
 		yield put(localGameState(initialGameState))
-	}
-
-	while (true) {
-		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		yield call(coinFlipSaga, payload.localGameState)
-		yield put(localGameState(payload.localGameState))
 	}
 }
 
