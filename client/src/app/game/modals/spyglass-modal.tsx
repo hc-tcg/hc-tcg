@@ -46,22 +46,20 @@ function SpyglassModal({closeModal}: Props) {
 		}
 	}
 
-	console.log('Spyglass:', useSelector(getPlayerState))
-
 	return (
 		<Modal
 			title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}
 			closeModal={handleClose}
 		>
-			<div className={css.wrapper}>
+			<div className={css.description}>
 				<div className={css.cards}>
-					<CardList onClick={handleSelection} cards={cards} selected={selected} />
+					<CardList onClick={handleSelection} cards={cards} selected={selected} wrap />
 				</div>
-				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={canDiscard ? handleConfirm : handleClose}>
-						{canDiscard ? 'Confirm Selection' : 'Close'}
-					</Button>
-				</div>
+			</div>
+			<div className={css.options}>
+				<Button onClick={canDiscard ? handleConfirm : handleClose}>
+					{canDiscard ? 'Confirm Selection' : 'Close'}
+				</Button>
 			</div>
 		</Modal>
 	)
