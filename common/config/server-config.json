@@ -5,7 +5,8 @@
 	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev", "https://hc-tcg-beta.fly.dev"],
 	"world": "beta",
 	"limits": {
-		"maxTurnTime": 90,
+		"maxTurnTime": 900,
+		"maxFollowupTime": 60,
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
