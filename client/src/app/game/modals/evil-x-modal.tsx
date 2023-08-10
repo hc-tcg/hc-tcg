@@ -1,6 +1,6 @@
 import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
-import css from './evil-x-modal.module.css'
+import css from './game-modals.module.scss'
 import Button from 'components/button'
 import {followUp} from 'logic/game/game-actions'
 
