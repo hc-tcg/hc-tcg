@@ -22,6 +22,8 @@
 		"@types/react-dom": "^18.0.10",
 		"@types/react-transition-group": "^4.4.6",
 		"@types/three": "^0.150.1",
+		"@typescript-eslint/eslint-plugin": "^5.52.0",
+		"@typescript-eslint/parser": "^5.52.0",
 		"@use-gesture/react": "^10.2.27",
 		"@vitejs/plugin-react": "^3.0.1",
 		"body-parser": "^1.20.1",
@@ -59,15 +61,12 @@
 		"start": "npm run server",
 		"docker-start": "npm run build && npm run start",
 		"husky": "husky install",
-		
 		"build": "npm run client:tsc && npm run server:tsc && vite build client/",
 		"clean": "rm -rf client/dist",
-
 		"server": "tsx --tsconfig server/tsconfig.json server/src",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:inspect": "node --experimental-specifier-resolution=node --inspect server/dist/server/index.js",
 		"server:tsc": "tsc --p server/tsconfig.json",
-		
 		"client:dev": "vite client/",
 		"client:tsc": "tsc --p client/",
 		"client:preview": "vite preview --port 3002 client/"
