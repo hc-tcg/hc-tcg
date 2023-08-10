@@ -98,10 +98,7 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 export function discardFromHand(player: PlayerState, card: CardT | null) {
 	if (!card) return
 
-	const index = player.hand.findIndex((c) => equalCard(c, card))
-	if (index > -1) {
-		player.hand.splice(index, 1)
-	}
+	player.hand = player.hand.filter((c) => equalCard(c, card))
 
 	player.discarded.push({
 		cardId: card.cardId,
