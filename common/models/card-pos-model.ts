@@ -77,10 +77,10 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 }
 
 export function getCardPos(game: GameModel, instance: string) {
-	const internalPos = getBasicCardPos(game, instance)
+	const basicPos = getBasicCardPos(game, instance)
 
-	if (internalPos) {
-		return new CardPosModel(game, internalPos, instance)
+	if (basicPos) {
+		return new CardPosModel(game, basicPos, instance)
 	}
 
 	return null

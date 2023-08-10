@@ -18,7 +18,7 @@ export function getActiveRow(playerState: PlayerState) {
 	return row
 }
 
-export function getActiveRowPos(playerState: PlayerState) {
+export function getActiveRowPos(playerState: PlayerState): RowPos | null {
 	const rowIndex = playerState.board.activeRow
 	if (rowIndex === null) return null
 	const row = playerState.board.rows[rowIndex]
