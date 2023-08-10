@@ -70,7 +70,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
 		// Clean up on detach
