@@ -156,10 +156,16 @@ export function getEmptyRow(): RowState {
 }
 
 export function getPlayerState(player: PlayerModel): PlayerState {
-	let pack = player.playerDeck.cards
+	const allCards = Object.values(CARDS).map(
+		(card: Card): CardT => ({
+			cardId: card.id,
+			cardInstance: card.id,
+		})
+	)
+	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.playerDeck.cards
 
 	// shuffle cards
-	pack.sort(() => 0.5 - Math.random())
+	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
 
 	// randomize instances
 	pack = pack.map((card) => {
