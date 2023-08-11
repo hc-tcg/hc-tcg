@@ -32,6 +32,7 @@ import {
 	getEndGameOverlay,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {DEBUG_CONFIG} from 'common/config'
 // import {getSettings} from 'logic/local-settings/local-settings-selectors'
 // import {setSetting} from 'logic/local-settings/local-settings-actions'
 
@@ -71,9 +72,13 @@ function Game() {
 	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
+	const [filter, setFilter] = useState<string>('')
 
 	if (!gameState || !playerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
+	const filteredCards = DEBUG_CONFIG.unlimitedCards
+		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
+		: gameState.hand
 
 	const pickedSlotsInstances = pickedSlots
 		.map((pickedSlot) => pickedSlot.slot.card)
@@ -164,6 +169,21 @@ function Game() {
 		}
 	}, [])
 
+	// Search for cards when debug.unlimitedCards is enabled
+	const Filter = () => {
+		if (DEBUG_CONFIG.unlimitedCards) {
+			return (
+				<input
+					type="text"
+					placeholder="Search for cards..."
+					value={filter}
+					onChange={(e) => setFilter(e.target.value)}
+				/>
+			)
+		}
+		return null
+	}
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -176,9 +196,11 @@ function Game() {
 			<div className={css.bottom}>
 				<Toolbar />
 				<div className={css.hand} ref={handRef}>
+					{Filter()}
 					<CardList
 						wrap={false}
-						cards={gameState.hand}
+						// cards={gameState.hand}
+						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
 						picked={pickedSlotsInstances}
