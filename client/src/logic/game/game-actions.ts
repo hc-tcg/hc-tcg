@@ -1,5 +1,11 @@
 import {LocalGameState} from 'common/types/game-state'
-import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
+import {
+	CardT,
+	GameEndOutcomeT,
+	GameEndReasonT,
+	CurrentCoinFlipT,
+	BattleLogT,
+} from 'common/types/game-state'
 import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
@@ -72,6 +78,11 @@ export const showEndGameOverlay = (outcome: GameEndOutcomeT, reason: GameEndReas
 
 export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
 	type: 'SET_COIN_FLIP',
+	payload,
+})
+
+export const addBattleLogEntry = (payload: BattleLogT | null) => ({
+	type: 'ADD_BATTLE_LOG_ENTRY',
 	payload,
 })
 

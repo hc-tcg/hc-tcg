@@ -11,6 +11,7 @@ const defaultState: LocalGameRoot = {
 	pickProcess: null,
 	endGameOverlay: null,
 	chat: [],
+	battleLog: [],
 	currentCoinFlip: null,
 	opponentConnected: true,
 }
@@ -43,6 +44,7 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				endGameOverlay: null,
 				currentCoinFlip: null,
 				chat: [],
+				battleLog: [],
 				opponentConnected: true,
 			}
 
@@ -92,6 +94,11 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 			return {
 				...state,
 				currentCoinFlip: action.payload,
+			}
+		case 'ADD_BATTLE_LOG_ENTRY':
+			return {
+				...state,
+				battleLog: action.payload,
 			}
 		default:
 			return state

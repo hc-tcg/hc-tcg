@@ -1,5 +1,5 @@
 import {PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions} from '../types/game-state'
+import {TurnAction, GameState, ActionResult, TurnActions, BattleLogT} from '../types/game-state'
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 
@@ -9,6 +9,7 @@ export class GameModel {
 	private internalCode: string | null
 
 	public chat: Array<MessageInfoT>
+	public battleLog: Array<BattleLogT>
 	public players: Record<string, PlayerModel>
 	public task: any
 	public state: GameState
@@ -25,6 +26,7 @@ export class GameModel {
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
 		this.chat = []
+		this.battleLog = []
 
 		this.task = null
 

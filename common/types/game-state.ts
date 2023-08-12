@@ -38,8 +38,27 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 export type CoinFlipT = 'heads' | 'tails'
 
 export type CurrentCoinFlipT = {
+	cardId: string
+	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>
+}
+
+export type BattleLogT = {
+	player: PlayerId
+	icon: string
+	secondIcon?: string
+	cornerLayout?: boolean
+	description: BattleLogDescriptionT[]
+	renderingMode?: string
+	grayscale?: boolean
+	small?: boolean
+}
+
+export type BattleLogDescriptionT = {
+	text: string
+	format: string
+	condition?: 'player' | 'opponent'
 }
 
 export type PlayerState = {
@@ -266,6 +285,7 @@ export type LocalGameRoot = {
 		outcome: GameEndOutcomeT
 	} | null
 	chat: Array<MessageInfoT>
+	battleLog: Array<BattleLogT>
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }

@@ -1,3 +1,4 @@
+import {call} from 'typed-redux-saga'
 import {HERMIT_CARDS} from 'common/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
@@ -7,6 +8,7 @@ import {PickedSlots} from 'common/types/pick-process'
 import {TurnAction, PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
+import {addAttackEntry} from 'utils/battle-log'
 
 export const ATTACK_TO_ACTION: Record<string, TurnAction> = {
 	primary: 'PRIMARY_ATTACK',
@@ -268,6 +270,9 @@ function* attackSaga(
 		'PLAY_SINGLE_USE_CARD',
 		'CHANGE_ACTIVE_HERMIT'
 	)
+
+	//Add entry to battle log
+	yield* call(addAttackEntry, game, turnAction)
 
 	return 'SUCCESS'
 }

@@ -1,0 +1,93 @@
+.log {
+	border: 2px solid lightblue;
+	background: var(--gray-900);
+	color: white;
+	height: 455px;
+	width: 51px;
+	display: flex;
+	flex-direction: column;
+	position: absolute;
+	transform: translate(-555px, -8px);
+	padding: 5px;
+	gap: 5px;
+	overflow: hidden;
+}
+
+.topElement {
+	flex-grow: 1;
+	flex-basis: 0;
+	width: 0;
+}
+
+.entry {
+	height: 36px;
+	width: 36px;
+	border-radius: 4px;
+	text-align: center;
+
+	&.player {
+		border: 2px solid #add8e6;
+		background-color: #365863;
+	}
+
+	&.otherPlayer {
+		border: 2px solid #da8686;
+		background-color: #633636;
+	}
+
+	&.small {
+		height: 20px;
+	}
+}
+
+.entryIcon {
+	image-rendering: crisp-edges;
+	width: 100%;
+
+	&.grayscale {
+		filter: grayscale(1) brightness(0.8);
+	}
+
+	&.small {
+		width: 50%;
+	}
+
+	&.cornerLayout {
+		width: 40%;
+		position: absolute;
+		transform: translate(-16px);
+	}
+}
+
+.entryOverlay {
+	width: 50%;
+	image-rendering: crisp-edges;
+
+	&.cornerLayout {
+		width: 50%;
+		position: absolute;
+		transform: translate(-7px, 8px);
+	}
+}
+
+.smoothRendering {
+	image-rendering: auto;
+}
+
+.entryTooltip {
+	color: white;
+
+	&.highlight {
+		font-family: MinecraftBold;
+	}
+
+	&.player {
+		color: #56ccf2;
+		font-family: MinecraftBold;
+	}
+
+	&.opponent {
+		color: #eb5757;
+		font-family: MinecraftBold;
+	}
+}

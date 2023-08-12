@@ -19,9 +19,8 @@ import {discardCard, discardSingleUse} from 'common/utils/movement'
 import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from 'utils'
 import {buffers} from 'redux-saga'
-import {AnyAction} from 'redux'
-import {PlayCardActionData} from 'common/types/action-data'
 import {AttackModel} from 'common/models/attack-model'
+import {addCoinFlipEntry, addAilmentEntry, addDeathEntry, addTimeoutEntry} from 'utils/battle-log'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -172,12 +171,15 @@ function* checkHermitHealth(game: GameModel) {
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
-			deathCode: if (row.hermitCard && row.health <= 0) {
+			if (row.hermitCard && row.health <= 0) {
 				// Call hermit death hooks
 				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
 				if (hermitPos) {
 					playerState.hooks.onHermitDeath.call(hermitPos)
 				}
+
+				// Add battle log entry
+				yield* call(addDeathEntry, game, playerState, row)
 
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
@@ -254,8 +256,9 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'PLAY_SINGLE_USE_CARD':
 			result = yield* call(playCardSaga, game, turnAction)
 			break
-
 		case 'ZERO_ATTACK':
+			result = yield* call(attackSaga, game, turnAction, pickedSlots)
+			break
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
 			result = yield* call(attackSaga, game, turnAction, pickedSlots)
@@ -414,6 +417,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
+			yield* call(addCoinFlipEntry, game, currentPlayer.coinFlips)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
@@ -447,6 +451,8 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 					game.endInfo.deadPlayerIds = [currentPlayer.id]
 					return 'GAME_END'
 				} else {
+					yield* call(addTimeoutEntry, game)
+
 					const newAttacks: Array<AttackModel> = []
 					for (const player of [currentPlayer, opponentPlayer]) {
 						player.hooks.onTurnTimeout.call(newAttacks)
@@ -506,6 +512,9 @@ function* turnSaga(game: GameModel) {
 
 	const result = yield* call(turnActionsSaga, game, turnConfig)
 	if (result === 'GAME_END') return 'GAME_END'
+
+	// Create battle log entry for ailments
+	yield* call(addAilmentEntry, game, opponentPlayer)
 
 	// Run the ailment attacks just before turn end
 	runAilmentAttacks(game, opponentPlayer)

@@ -92,6 +92,10 @@ export const getCurrentCoinFlip = (state: RootState) => {
 	return getGame(state).currentCoinFlip
 }
 
+export const getBattleLog = (state: RootState) => {
+	return getGame(state).battleLog
+}
+
 export const getOpponentConnection = (state: RootState) => {
 	return getGame(state).opponentConnected
 }

@@ -9,6 +9,7 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import BattleLog from '../../game/battle-log'
 
 type Props = {
 	onClick: (meta: PickedSlotT) => void
@@ -73,6 +74,7 @@ function Board({onClick, localGameState}: Props) {
 			</div>
 
 			<div className={css.actualBoard}>
+				<BattleLog player={player.id} />
 				{PlayerBoard(leftPlayer, 'left')}
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>

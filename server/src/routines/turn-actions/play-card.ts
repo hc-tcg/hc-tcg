@@ -4,11 +4,13 @@ import {equalCard} from 'common/utils/cards'
 import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
+import {call} from 'typed-redux-saga'
+import {addPlayCardEntry} from 'utils/battle-log'
 
 function* playCardSaga(
 	game: GameModel,
 	turnAction: PlayCardActionData
-): Generator<never, ActionResult> {
+): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
 	if (!turnAction?.payload?.card || !turnAction?.payload?.pickedSlot) {
 		return 'FAILURE_INVALID_DATA'
@@ -116,6 +118,9 @@ function* playCardSaga(
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card.cardInstance)
+
+	// Add entry to battle log
+	yield* call(addPlayCardEntry, game, turnAction)
 
 	return 'SUCCESS'
 }

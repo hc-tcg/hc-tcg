@@ -1,11 +1,13 @@
 import {GameModel} from 'common/models/game-model'
 import {GenericActionResult} from 'common/types/game-state'
 import {equalCard} from 'common/utils/cards'
+import {call} from 'typed-redux-saga'
+import {addChangeHermitEntry} from 'utils/battle-log'
 
 function* changeActiveHermit(
 	game: GameModel,
 	turnAction: any
-): Generator<never, GenericActionResult> {
+): Generator<any, GenericActionResult> {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
@@ -28,6 +30,9 @@ function* changeActiveHermit(
 
 	const hadActiveHermit = currentPlayer.board.activeRow !== null
 	const oldActiveRow = currentPlayer.board.activeRow
+
+	// Create battle log entry
+	yield* call(addChangeHermitEntry, game, turnAction)
 
 	// Actually change row
 	currentPlayer.board.activeRow = rowIndex
