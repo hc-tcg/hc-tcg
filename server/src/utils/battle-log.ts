@@ -228,7 +228,7 @@ export function* addAttackEntry(game: GameModel, turnAction: AttackActionData) {
 }
 
 export function* addCoinFlipEntry(game: GameModel, coinFlips: Array<CurrentCoinFlipT>) {
-	const otherPlayer = game.opponentPlayer.playerName
+	const otherPlayer = game.currentPlayer.playerName
 
 	if (coinFlips.length === 0) return
 	for (const coinFlip of coinFlips) {

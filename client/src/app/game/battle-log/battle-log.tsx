@@ -74,7 +74,7 @@ const Entry = ({
 					<img
 						src={icon}
 						className={classnames(css.entryIcon, {
-							[css.small]: (secondIcon !== undefined && small === undefined) || small,
+							[css.small]: secondIcon !== undefined,
 							[css.cornerLayout]: cornerLayout,
 							[css.smoothRendering]: renderingMode === 'auto',
 							[css.grayscale]: grayscale === true,
@@ -98,6 +98,7 @@ const Entry = ({
 
 function BattleLog({player}: BattleLogProps) {
 	const entries = useSelector(getBattleLog)
+	console.log('Entries', entries)
 	return (
 		<div className={css.log}>
 			<div className={css.topElement}></div>
