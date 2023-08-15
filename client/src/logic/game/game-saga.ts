@@ -30,6 +30,7 @@ import {
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
 import {leaveMatchmaking} from 'logic/matchmaking/matchmaking-actions'
+import actionModalsSaga from './tasks/action-modals-saga'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -77,6 +78,7 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
 
 	const logic = yield all([
+		fork(actionModalsSaga),
 		fork(slotSaga),
 		fork(actionLogicSaga, gameState),
 		takeEvery('START_ATTACK', attackSaga),

@@ -76,7 +76,6 @@ class JoeHillsRareHermitCard extends HermitCard {
 		// Block the secondary attack of Joe
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			if (player.custom[status] === 'normal') return blockedActions
-			/** @type {TurnActions}*/
 			const blocked: TurnActions = ['SECONDARY_ATTACK']
 			blockedActions.push(...blocked)
 

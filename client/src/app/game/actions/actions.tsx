@@ -2,7 +2,7 @@ import css from './actions.module.scss'
 import cn from 'classnames'
 import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
-import {endTurn, setOpenedModal} from 'logic/game/game-actions'
+import {attackAction, endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
 import {
 	getPlayerStateById,
 	getAvailableActions,
@@ -125,14 +125,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
-	function handleEndTurn() {
-		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
-			dispatch(endTurn())
-		} else {
-			dispatch(setOpenedModal('end-turn'))
-		}
-	}
-
 	const Status = () => {
 		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
 		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
@@ -191,7 +183,14 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(setOpenedModal('attack'))
+			dispatch(attackAction())
+		}
+		function handleEndTurn() {
+			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+				dispatch(endTurn())
+			} else {
+				dispatch(endTurnAction())
+			}
 		}
 
 		const attackOptions =

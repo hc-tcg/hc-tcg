@@ -122,3 +122,11 @@ export const chatUpdate = (messages: Array<MessageInfoT>) => ({
 	type: 'CHAT_UPDATE',
 	payload: messages,
 })
+
+export const attackAction = () => ({
+	type: 'ATTACK_ACTION',
+})
+
+export const endTurnAction = () => ({
+	type: 'END_TURN_ACTION',
+})
