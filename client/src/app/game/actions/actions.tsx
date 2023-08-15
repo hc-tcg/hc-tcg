@@ -121,6 +121,8 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
+	const turn = localGameState.turn.currentPlayerId === playerId
+
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
@@ -132,7 +134,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	}
 
 	const Status = () => {
-		const turn = localGameState.turn.currentPlayerId === playerId
 		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
 		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
 		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
@@ -193,15 +194,13 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(setOpenedModal('attack'))
 		}
 
-		const turn = localGameState.turn.currentPlayerId === playerId
-
 		const attackOptions =
 			availableActions.includes('SINGLE_USE_ATTACK') ||
 			availableActions.includes('PRIMARY_ATTACK') ||
 			availableActions.includes('SECONDARY_ATTACK')
 
 		return (
-			<div className={cn(css.buttons, !turn && css.fade)}>
+			<div className={css.buttons}>
 				<Button
 					variant="default"
 					size="small"
@@ -227,7 +226,10 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	return (
 		<div id={id} className={cn(css.actions, css.desktop)}>
 			{Status()}
-			{ActionButtons()}
+			<div className={cn(css.actionSection, !turn && css.fade)}>
+				<h2>Actions</h2>
+				{ActionButtons()}
+			</div>
 			{SingleUseSlot()}
 		</div>
 	)

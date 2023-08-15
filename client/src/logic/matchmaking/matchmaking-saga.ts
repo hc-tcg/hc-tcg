@@ -1,4 +1,4 @@
-import {call, cancelled, fork, put, race, take, takeEvery} from 'typed-redux-saga'
+import {call, cancelled, fork, put, putResolve, race, take, takeEvery} from 'typed-redux-saga'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
@@ -135,7 +135,6 @@ function* joinQueueSaga() {
 			// We have joined the queue, wait for game start
 			yield* call(receiveMsg, 'GAME_START')
 			yield* call(gameSaga)
-			yield* put(leaveMatchmaking())
 			console.log('end game sagas')
 		} catch (err) {
 			console.error('Game crashed: ', err)
@@ -143,8 +142,8 @@ function* joinQueueSaga() {
 			if (yield* cancelled()) {
 				console.log('cancelled')
 				// Clear state and back to menu
-				yield* put(gameEnd())
 				yield* put(leaveMatchmaking())
+				yield* put(gameEnd())
 			}
 		}
 	}
@@ -153,6 +152,8 @@ function* joinQueueSaga() {
 		leave: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
+
+	yield* putResolve(leaveMatchmaking())
 
 	if (result.leave) {
 		// Tell the server we left the queue

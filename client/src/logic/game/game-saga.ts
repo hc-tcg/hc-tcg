@@ -1,4 +1,15 @@
-import {all, take, takeEvery, fork, call, put, race, takeLatest, cancel} from 'redux-saga/effects'
+import {
+	all,
+	take,
+	takeEvery,
+	fork,
+	call,
+	put,
+	race,
+	takeLatest,
+	cancel,
+	putResolve,
+} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
@@ -18,6 +29,7 @@ import {
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
+import {leaveMatchmaking} from 'logic/matchmaking/matchmaking-actions'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({

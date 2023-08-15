@@ -100,15 +100,20 @@
 		margin-top: 30px;
 	}
 
+	.actionSection {
+		padding: 0;
+
+		&.fade {
+			filter: brightness(0.8);
+		}
+	}
+
 	.buttons {
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-		width: 55%;
-
-		&.fade {
-			filter: brightness(0.7);
-		}
+		width: 160px;
+		margin: 20px;
 	}
 }
 
