@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"type": "module",
-	"main": "server/src/index.ts",
+	"main": "server/dist/index.ts",
 	"engines": {
 		"node": ">=16 <19"
 	},
@@ -53,23 +53,26 @@
 		"typescript": "^5.1.6",
 		"vite": "^4.0.4",
 		"vite-plugin-eslint": "^1.8.1",
+		"esbuild": "^0.19.2",
+		"esbuild-plugin-copy": "^2.1.1"
+	},
+	"devDependencies": {
 		"tsx": "^3.12.7"
 	},
 	"scripts": {
-		"start": "npm run server",
-		"docker-start": "npm run build && npm run start",
+		"docker-start": "npm run build && npm run server",
 		"husky": "husky install",
-		
-		"build": "npm run client:tsc && npm run server:tsc && vite build client/",
-		"clean": "rm -rf client/dist",
+		"clean": "rm -rf client/dist && rm -rf server/dist",
+		"build": "npm run client:build && npm run server:build",
 
-		"server": "tsx --tsconfig server/tsconfig.json server/src",
+		"server": "node server/dist/index.js",
+		"server:build": "npm run server:tsc && node esbuild.js",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
-		"server:inspect": "node --experimental-specifier-resolution=node --inspect server/dist/server/index.js",
 		"server:tsc": "tsc --p server/tsconfig.json",
 		
-		"client:dev": "vite client/",
+		"client:build": "npm run client:tsc && vite build client/",
 		"client:tsc": "tsc --p client/",
+		"client:dev": "vite client/",
 		"client:preview": "vite preview --port 3002 client/"
 	},
 	"browserslist": {

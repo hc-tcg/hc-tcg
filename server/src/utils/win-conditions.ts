@@ -1,4 +1,4 @@
-import {getOpponentId} from './index'
+import {getOpponentId} from '../utils'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
