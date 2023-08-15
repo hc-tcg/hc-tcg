@@ -6,7 +6,7 @@
 	"world": "beta",
 	"limits": {
 		"maxTurnTime": 90,
-		"maxFollowupTime": 20,
+		"maxFollowUpTime": 20,
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
