@@ -468,7 +468,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			// If the there's a follow up then set the timer to 20 seconds
 			if (playerHasFollowUp || opponentHasFollowUp) {
 				turnRemaining = game.state.timer.turnRemaining
-				game.state.timer.turnTime = getTimerForSeconds(20)
+				game.state.timer.turnTime = getTimerForSeconds(CONFIG.limits.maxFollowupTime)
 			}
 
 			// If there was a follow up and it was resolved then set the timer to the previous
