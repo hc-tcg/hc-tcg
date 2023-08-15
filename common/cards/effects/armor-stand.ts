@@ -40,8 +40,11 @@ class ArmorStandEffectCard extends EffectCard {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
-				// Reset the active row so the player can switch
-				player.board.activeRow = null
+
+				if (attack.attacker.player.id !== pos.player.id) {
+					// Reset the active row so the player can switch
+					player.board.activeRow = null
+				}
 			}
 		})
 
@@ -49,8 +52,11 @@ class ArmorStandEffectCard extends EffectCard {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
-				// Reset the active row so the player can switch
-				player.board.activeRow = null
+
+				if (attack.attacker.player.id !== pos.player.id) {
+					// Reset the active row so the player can switch
+					player.board.activeRow = null
+				}
 			}
 		})
 	}
