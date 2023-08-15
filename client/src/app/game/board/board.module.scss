@@ -242,10 +242,11 @@ $grid-size: 25px;
 @media (orientation: landscape) {
 	.actualBoard {
 		gap: $grid-size;
+		justify-content: space-between;
 	}
 
 	.row {
-		$size: 80px;
+		$size: 100px;
 
 		grid-template-columns: repeat(6, $size);
 		grid-template-rows: repeat(1, $size);

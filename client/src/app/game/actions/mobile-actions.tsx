@@ -106,7 +106,7 @@ type Props = {
 	id?: string
 }
 
-const Actions = ({onClick, localGameState, mobile, id}: Props) => {
+const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
@@ -142,24 +142,20 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
-			return (
-				<div id={css.status}>
-					<CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
-				</div>
-			)
+			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
 		}
 
 		return (
-			<div id={css.status}>
+			<>
 				<p className={css.turn}>{turnMsg}</p>
-				<p className={css.message}>
+				<p>
 					{knockedOut && 'Activate an AFK Hermit'}
-					{!knockedOut && changeHermit && 'Select a new active Hermit'}
+					{changeHermit && 'Select a new active Hermit'}
 					{opponentFollowup && "Waiting for opponent's action..."}
 					{pickProcess &&
 						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
 				</p>
-			</div>
+			</>
 		)
 	}
 
@@ -193,19 +189,17 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(setOpenedModal('attack'))
 		}
 
-		const turn = localGameState.turn.currentPlayerId === playerId
-
 		const attackOptions =
 			availableActions.includes('ZERO_ATTACK') ||
 			availableActions.includes('PRIMARY_ATTACK') ||
 			availableActions.includes('SECONDARY_ATTACK')
 
 		return (
-			<div className={cn(css.buttons, !turn && css.fade)}>
+			<div className={css.buttons}>
 				<Button
 					variant="default"
 					size="small"
-					style={{height: '34px'}}
+					style={{height: '32px'}}
 					onClick={handleAttack}
 					disabled={!attackOptions}
 				>
@@ -214,7 +208,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				<Button
 					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
 					size="small"
-					style={{height: '34px'}}
+					style={{height: '32px'}}
 					onClick={handleEndTurn}
 					disabled={!availableActions.includes('END_TURN')}
 				>
@@ -225,12 +219,22 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	}
 
 	return (
-		<div id={id} className={cn(css.actions, css.desktop)}>
-			{Status()}
-			{ActionButtons()}
-			{SingleUseSlot()}
+		<div id={id} className={cn(css.actions, css.mobile)}>
+			<div className={css.actionSection} id={css.singleUse}>
+				<h2>Single Use Card</h2>
+				{SingleUseSlot()}
+			</div>
+			<div className={css.actionSection} id={css.status}>
+				<h2>Game State</h2>
+				{Status()}
+			</div>
+
+			<div className={css.actionSection} id={css.buttons}>
+				<h2>Actions</h2>
+				{ActionButtons()}
+			</div>
 		</div>
 	)
 }
 
-export default Actions
+export default MobileActions

@@ -9,6 +9,7 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import MobileActions from '../actions/mobile-actions'
 
 type Props = {
 	onClick: (meta: PickedSlotT) => void
@@ -74,10 +75,11 @@ function Board({onClick, localGameState}: Props) {
 
 			<div className={css.actualBoard}>
 				{PlayerBoard(leftPlayer, 'left')}
+				<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
 				{PlayerBoard(rightPlayer, 'right')}
 			</div>
 
-			<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
+			<MobileActions localGameState={localGameState} onClick={onClick} id={css.actions} />
 		</div>
 	)
 }
