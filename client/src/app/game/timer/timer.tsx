@@ -8,9 +8,9 @@ import {getGameState, getTime, getInactivePlayerState} from 'logic/game/game-sel
 
 const getTimeClass = (time: number, inactiveFollowup: boolean) => {
 	if (inactiveFollowup) return css.blue
-	if (time > 60) return css.white
-	if (time > 20) return css.orange
-	return css.red
+	return css.white
+	//if (time > 20) return css.orange
+	//return css.red
 }
 
 function Timer() {
