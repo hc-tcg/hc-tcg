@@ -183,7 +183,8 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
 
-	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
+	const amountOfStartingCards =
+		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 	const hand = pack.slice(0, amountOfStartingCards)
 
 	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
@@ -211,7 +212,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		lives: 3,
 		hand,
 		discarded: [],
-		pile: DEBUG_CONFIG.startWithAllCards ? [] : pack.slice(7),
+		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
 		custom: {},
 		board: {
 			activeRow: null,

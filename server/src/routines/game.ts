@@ -556,7 +556,11 @@ function* turnSaga(game: GameModel) {
 		const card = drawCards[i]
 		if (card) {
 			currentPlayer.hand.push(card)
-		} else if (!DEBUG_CONFIG.disableDeckOut && !DEBUG_CONFIG.startWithAllCards) {
+		} else if (
+			!DEBUG_CONFIG.disableDeckOut &&
+			!DEBUG_CONFIG.startWithAllCards &&
+			!DEBUG_CONFIG.unlimitedCards
+		) {
 			game.endInfo.reason = 'cards'
 			game.endInfo.deadPlayerIds = [currentPlayerId]
 			return 'GAME_END'
