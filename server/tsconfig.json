@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"baseUrl": "src",
+		"baseUrl": "./src",
 		"paths": {
 			"common/*": ["../../common/*"],
 			"types/*": ["../../common/types/*"]
