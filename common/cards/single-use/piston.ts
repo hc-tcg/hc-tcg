@@ -61,7 +61,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.beforeApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			const slots = pickedSlots[this.id] || []
 
 			if (slots.length !== 2) return
@@ -75,7 +75,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			const itemCard = itemCardInfo.slot.card
 			if (!canAttachToCard(game, hermitCard, itemCard)) return
 
-			/** @type {SlotPos} */ const itemPos: SlotPos = {
+			const itemPos: SlotPos = {
 				rowIndex: itemCardInfo.row.index,
 				row: itemCardInfo.row.state,
 				slot: {
@@ -84,7 +84,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				},
 			}
 
-			/** @type {SlotPos} */ const targetPos: SlotPos = {
+			const targetPos: SlotPos = {
 				rowIndex: targetSlotInfo.row.index,
 				row: targetSlotInfo.row.state,
 				slot: {
@@ -95,42 +95,23 @@ class PistonSingleUseCard extends SingleUseCard {
 
 			swapSlots(game, itemPos, targetPos)
 
-			// We remove on turnEnd instead of onDetach because we need to keep the hooks
-			// until the end of the turn in case the player plays another single use card
-			player.hooks.onTurnEnd.add(instance, () => {
-				player.hooks.onTurnEnd.remove(instance)
-				player.hooks.availableActions.remove(instance)
-				player.hooks.onApply.remove(instance)
-			})
-
-			player.hooks.availableActions.add(instance, (availableActions) => {
-				// We have to check if PLAY_SINGLE_USE_CARD is already there because it's possible that another card added it
-				// e.g. if you play a card that allows you to play another single use card like multiple Pistons back to back
-				if (!availableActions.includes('PLAY_SINGLE_USE_CARD')) {
-					availableActions.push('PLAY_SINGLE_USE_CARD')
-				}
-
-				return availableActions
-			})
-
-			player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-				if (player.board.singleUseCard?.cardInstance === instance) return
-				player.hooks.availableActions.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
-				player.hooks.onApply.remove(instance)
-			})
+			// Remove playing a single use from completed actions so it can be done again
+			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 		})
 
 		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
 			discardSingleUse(game, player)
+
+			player.hooks.onApply.remove(instance)
+			player.hooks.afterApply.remove(instance)
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
+		player.hooks.onApply.remove(instance)
 		player.hooks.afterApply.remove(instance)
-		player.hooks.beforeApply.remove(instance)
 	}
 
 	override getExpansion() {

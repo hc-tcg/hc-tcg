@@ -100,6 +100,14 @@ export class GameModel {
 			}
 		}
 	}
+	/** Remove action from the completed list so they can be done again this turn */
+	public removeCompletedActions(...actions: TurnActions) {
+		for (let i = 0; i < actions.length; i++) {
+			this.state.turn.completedActions = this.state.turn.completedActions.filter(
+				(action) => !actions.includes(action)
+			)
+		}
+	}
 
 	/** Set actions as blocked so they cannot be done this turn */
 	public addBlockedActions(...actions: TurnActions) {

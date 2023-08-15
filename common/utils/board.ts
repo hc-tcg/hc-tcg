@@ -120,12 +120,11 @@ export function applySingleUse(
 	currentPlayer.hooks.beforeApply.call(pickedSlots, modalResult)
 
 	currentPlayer.board.singleUseCardUsed = true
+	// This can only be done once per turn
+	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	currentPlayer.hooks.onApply.call(pickedSlots, modalResult)
 	currentPlayer.hooks.afterApply.call(pickedSlots, modalResult)
-
-	// This can only be done once per turn
-	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	return 'SUCCESS'
 }
