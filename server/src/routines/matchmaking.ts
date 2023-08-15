@@ -6,7 +6,7 @@ import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-cond
 import {getLocalGameState} from '../utils/state-gen'
 import {gameEndWebhook} from '../api'
 import {PlayerModel} from 'common/models/player-model'
-import root from 'serverRoot'
+import root from '../serverRoot'
 
 export type ClientMessage = {
 	type: string

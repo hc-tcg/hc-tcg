@@ -1,6 +1,6 @@
 import {takeEvery, put, take, race, delay} from 'typed-redux-saga'
 import {PlayerModel} from 'common/models/player-model'
-import root from 'serverRoot'
+import root from '../serverRoot'
 
 const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
 

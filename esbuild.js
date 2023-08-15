@@ -3,7 +3,7 @@ import {copy} from 'esbuild-plugin-copy'
 
 await build({
 	entryPoints: ['./server/src'],
-	tsconfig: 'server/tsconfig.json',
+	tsconfig: './server/tsconfig.json',
 	platform: 'node',
 	packages: 'external',
 	format: 'esm',
