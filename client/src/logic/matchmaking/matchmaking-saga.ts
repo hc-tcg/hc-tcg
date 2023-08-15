@@ -135,6 +135,7 @@ function* joinQueueSaga() {
 			// We have joined the queue, wait for game start
 			yield* call(receiveMsg, 'GAME_START')
 			yield* call(gameSaga)
+			yield* put(leaveMatchmaking())
 			console.log('end game sagas')
 		} catch (err) {
 			console.error('Game crashed: ', err)
