@@ -11,7 +11,11 @@ await build({
 	outfile: 'server/dist/index.js',
 	plugins: [
 		copy({
-			assets: [{from: './server/src/**.json', to: '.'}],
+			assets: [
+				// This is kinda hardcoded for apiKeys and adminKeys but it works
+				{from: './server/src/*.json', to: '.'},
+				{from: './server/src/plugins/*.json', to: '.'},
+			],
 		}),
 	],
 })
