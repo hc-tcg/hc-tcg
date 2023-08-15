@@ -46,16 +46,16 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 		case 'you_won':
 		case 'leave_win':
 		case 'forfeit_win':
-			animation = 'images/animations/victory.gif'
+			animation = '/images/animations/victory.gif'
 			winCondition = true
 			break
 		case 'you_lost':
 		case 'leave_loss':
 		case 'forfeit_loss':
-			animation = 'images/animations/defeat.gif'
+			animation = '/images/animations/defeat.gif'
 			break
 		default:
-			animation = 'images/animations/draw.gif'
+			animation = '/images/animations/draw.gif'
 	}
 
 	return (
