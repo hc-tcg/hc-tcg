@@ -78,6 +78,10 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 	}
+
+	override canAttack() {
+		return true
+	}
 }
 
 export default GoldenAxeSingleUseCard

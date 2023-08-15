@@ -38,7 +38,7 @@ function* changeActiveHermit(
 
 		// Attack phase complete, mark most actions as blocked now
 		game.addBlockedActions(
-			'ZERO_ATTACK',
+			'SINGLE_USE_ATTACK',
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
 			'PLAY_HERMIT_CARD',

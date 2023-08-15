@@ -37,7 +37,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 		if (!result[singleUseInfo.id]) return
 	}
 
-	if (type !== 'zero') {
+	if (type !== 'single-use') {
 		const cardId = hermitCard.cardId
 		const cardInfo = HERMIT_CARDS[cardId]
 		const hermitAttack = cardInfo?.[type] || null

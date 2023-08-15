@@ -30,7 +30,7 @@ function* actionSaga(): SagaIterator {
 		applyEffect: take('APPLY_EFFECT'),
 		removeEffect: take('REMOVE_EFFECT'),
 		followUp: take('FOLLOW_UP'),
-		attack: take(['ZERO_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
+		attack: take(['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
 		endTurn: take('END_TURN'),
 		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
 	})

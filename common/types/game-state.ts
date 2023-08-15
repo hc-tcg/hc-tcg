@@ -172,7 +172,7 @@ export type PlayCardAction =
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
 
-export type AttackAction = 'ZERO_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
 
 export type TurnAction =
 	| PlayCardAction

@@ -19,7 +19,7 @@ class BowSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
@@ -29,11 +29,6 @@ class BowSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
@@ -69,15 +64,14 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

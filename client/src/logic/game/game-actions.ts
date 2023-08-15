@@ -63,7 +63,7 @@ export const forfeit = () => ({
 type ExtraItemT = {hermitId: string; type: 'primary' | 'secondary'}
 
 export const startAttack = (
-	type: 'zero' | 'primary' | 'secondary',
+	type: 'single-use' | 'primary' | 'secondary',
 	extra?: Record<string, ExtraItemT>
 ) => ({
 	type: 'START_ATTACK' as const,

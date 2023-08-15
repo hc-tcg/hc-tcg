@@ -30,7 +30,7 @@ class ArmorStandEffectCard extends EffectCard {
 			if (player.board.activeRow === pos.rowIndex) {
 				blockedActions.push('PRIMARY_ATTACK')
 				blockedActions.push('SECONDARY_ATTACK')
-				blockedActions.push('ZERO_ATTACK')
+				blockedActions.push('SINGLE_USE_ATTACK')
 			}
 
 			return blockedActions

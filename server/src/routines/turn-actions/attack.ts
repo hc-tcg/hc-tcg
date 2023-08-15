@@ -4,15 +4,9 @@ import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
 import {PickedSlots} from 'common/types/pick-process'
-import {TurnAction, PlayerState, GenericActionResult} from 'common/types/game-state'
+import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
-
-export const ATTACK_TO_ACTION: Record<string, TurnAction> = {
-	primary: 'PRIMARY_ATTACK',
-	secondary: 'SECONDARY_ATTACK',
-	zero: 'ZERO_ATTACK',
-}
 
 function getAttacks(
 	game: GameModel,
@@ -220,7 +214,7 @@ export function runAllAttacks(
 	}
 
 	// STEP 5 - All attacks have been completed, mark actions appropriately
-	game.addCompletedActions('ZERO_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+	game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
 	game.addBlockedActions(
 		'PLAY_HERMIT_CARD',
 		'PLAY_ITEM_CARD',

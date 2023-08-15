@@ -47,6 +47,10 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
 	}
+
+	override canAttack() {
+		return true
+	}
 }
 
 export default NetheriteSwordSingleUseCard

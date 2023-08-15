@@ -52,8 +52,8 @@ class GeminiTayRareHermitCard extends HermitCard {
 				if (!availableActions.includes('PLAY_SINGLE_USE_CARD') && !player.board.singleUseCard) {
 					availableActions.push('PLAY_SINGLE_USE_CARD')
 				}
-				if (!availableActions.includes('ZERO_ATTACK')) {
-					availableActions.push('ZERO_ATTACK')
+				if (!availableActions.includes('SINGLE_USE_ATTACK')) {
+					availableActions.push('SINGLE_USE_ATTACK')
 				}
 			}
 

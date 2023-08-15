@@ -1,8 +1,8 @@
 import {all, take, fork, cancel, race, delay, call, actionChannel} from 'typed-redux-saga'
-import {CARDS, HERMIT_CARDS, ITEM_CARDS} from 'common/cards'
+import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
-import attackSaga, {ATTACK_TO_ACTION, runAilmentAttacks, runAllAttacks} from './turn-actions/attack'
+import attackSaga, {runAilmentAttacks, runAllAttacks} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
@@ -88,7 +88,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 					actions.push('SECONDARY_ATTACK')
 				}
 				if (currentPlayer.board.singleUseCard && !currentPlayer.board.singleUseCardUsed) {
-					actions.push('ZERO_ATTACK')
+					const suInfo = SINGLE_USE_CARDS[currentPlayer.board.singleUseCard.cardId]
+					if (suInfo && suInfo.canAttack()) {
+						actions.push('SINGLE_USE_ATTACK')
+					}
 				}
 			}
 		}
@@ -255,7 +258,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(playCardSaga, game, turnAction)
 			break
 
-		case 'ZERO_ATTACK':
+		case 'SINGLE_USE_ATTACK':
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
 			result = yield* call(attackSaga, game, turnAction, pickedSlots)
@@ -324,7 +327,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 				'CHANGE_ACTIVE_HERMIT',
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
-				'ZERO_ATTACK',
+				'SINGLE_USE_ATTACK',
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
@@ -368,13 +371,13 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
 
-			// Block ZERO_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
+			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
 			if (
 				(availableActions.includes('PRIMARY_ATTACK') ||
 					availableActions.includes('SECONDARY_ATTACK')) &&
 				(!blockedActions.includes('PRIMARY_ATTACK') || !blockedActions.includes('SECONDARY_ATTACK'))
 			) {
-				blockedActions.push('ZERO_ATTACK')
+				blockedActions.push('SINGLE_USE_ATTACK')
 			}
 
 			// Modify available turn actions with hooks

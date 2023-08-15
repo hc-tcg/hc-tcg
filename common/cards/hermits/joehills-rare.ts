@@ -50,7 +50,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				const blocked: TurnActions = [
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
-					'ZERO_ATTACK',
+					'SINGLE_USE_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'PLAY_HERMIT_CARD',

@@ -190,7 +190,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 		}
 
 		const attackOptions =
-			availableActions.includes('ZERO_ATTACK') ||
+			availableActions.includes('SINGLE_USE_ATTACK') ||
 			availableActions.includes('PRIMARY_ATTACK') ||
 			availableActions.includes('SECONDARY_ATTACK')
 

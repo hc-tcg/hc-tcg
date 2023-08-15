@@ -10,12 +10,12 @@ export const slotToPlayCardAction: Record<SlotTypeT, PlayCardAction> = {
 	single_use: 'PLAY_SINGLE_USE_CARD',
 }
 export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
-	zero: 'ZERO_ATTACK',
+	'single-use': 'SINGLE_USE_ATTACK',
 	primary: 'PRIMARY_ATTACK',
 	secondary: 'SECONDARY_ATTACK',
 }
 export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
-	ZERO_ATTACK: 'zero',
+	SINGLE_USE_ATTACK: 'single-use',
 	PRIMARY_ATTACK: 'primary',
 	SECONDARY_ATTACK: 'secondary',
 }

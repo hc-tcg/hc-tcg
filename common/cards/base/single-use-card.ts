@@ -56,6 +56,14 @@ class SingleUseCard extends Card {
 		// default is no
 		return false
 	}
+
+	/**
+	 * Returns whether you can attack with this card alone or not
+	 */
+	public canAttack(): boolean {
+		// default is no
+		return false
+	}
 }
 
 export default SingleUseCard

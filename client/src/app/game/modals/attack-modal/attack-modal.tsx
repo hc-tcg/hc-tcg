@@ -32,7 +32,7 @@ function AttackModal({closeModal}: Props) {
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
 
-	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
+	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))
 		closeModal()
 	}
@@ -45,15 +45,15 @@ function AttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
-	const effectAttack = () => handleAttack('zero')
+	const effectAttack = () => handleAttack('single-use')
 	const primaryAttack = () => handleAttack('primary')
 	const secondaryAttack = () => handleAttack('secondary')
 
 	const attacks = []
-	if (singleUseInfo && availableActions.includes('ZERO_ATTACK')) {
+	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
 		attacks.push(
 			<Attack
-				key="zero"
+				key="single-use"
 				name={singleUseInfo.name}
 				icon={`/images/effects/${singleUseInfo?.id}.png`}
 				attackInfo={null}

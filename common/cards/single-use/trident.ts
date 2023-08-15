@@ -67,6 +67,10 @@ class TridentSingleUseCard extends SingleUseCard {
 	override getExpansion() {
 		return 'alter_egos'
 	}
+
+	override canAttack() {
+		return true
+	}
 }
 
 export default TridentSingleUseCard

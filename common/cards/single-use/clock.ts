@@ -27,7 +27,7 @@ class ClockSingleUseCard extends SingleUseCard {
 				const blocked: TurnActions = [
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
-					'ZERO_ATTACK',
+					'SINGLE_USE_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'PLAY_HERMIT_CARD',
@@ -50,7 +50,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		// The other player wouldn't be able to attach anything
 		if (game.state.turn.turnNumber === 1) return 'NO'
 		return 'YES'

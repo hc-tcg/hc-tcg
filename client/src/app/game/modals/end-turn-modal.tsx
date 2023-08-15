@@ -12,7 +12,7 @@ const ActionMap: Record<TurnAction, string | null> = {
 	PLAY_EFFECT_CARD: 'Attaching an card in the effect slot',
 	PLAY_HERMIT_CARD: 'Playing a card in the hermit slot',
 	CHANGE_ACTIVE_HERMIT: 'Changing your active hermit',
-	ZERO_ATTACK: 'Attacking opponent with an effect',
+	SINGLE_USE_ATTACK: 'Attacking opponent with a single use effect',
 	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',
 	SECONDARY_ATTACK: 'Attacking opponent with a secondary attack',
 	WAIT_FOR_OPPONENT_FOLLOWUP: null,
