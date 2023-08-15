@@ -118,6 +118,14 @@ export class GameModel {
 			}
 		}
 	}
+	/** Remove action from the completed list so they can be done again this turn */
+	public removeBlockedActions(...actions: TurnActions) {
+		for (let i = 0; i < actions.length; i++) {
+			this.state.turn.blockedActions = this.state.turn.blockedActions.filter(
+				(action) => !actions.includes(action)
+			)
+		}
+	}
 
 	public setLastActionResult(action: TurnAction, result: ActionResult) {
 		this.state.lastActionResult = {action, result}

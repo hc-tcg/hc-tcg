@@ -452,7 +452,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 						player.hooks.onTurnTimeout.call(newAttacks)
 					}
 					if (newAttacks.length > 0) {
-						runAllAttacks(newAttacks)
+						runAllAttacks(game, newAttacks)
 					}
 					break
 				}

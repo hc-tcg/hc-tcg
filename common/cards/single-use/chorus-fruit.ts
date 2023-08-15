@@ -15,37 +15,22 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const activeRow = getActiveRow(player)
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			applySingleUse(game)
 
+			// Remove change active hermit from the blocked actions so it can be done once more
+			game.removeBlockedActions('CHANGE_ACTIVE_HERMIT')
+
 			// Only apply single use once
 			player.hooks.afterAttack.remove(instance)
-		})
-
-		player.hooks.availableActions.add(instance, (availableActions) => {
-			const newActiveRow = getActiveRow(player)
-			// Only allow changing hermits once
-			if (newActiveRow !== activeRow) {
-				player.hooks.availableActions.remove(instance)
-			} else {
-				// We need to check again because of bdubs
-				const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
-
-				if (!isSleeping && !availableActions.includes('CHANGE_ACTIVE_HERMIT')) {
-					availableActions.push('CHANGE_ACTIVE_HERMIT')
-				}
-			}
-
-			return availableActions
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
@@ -58,7 +43,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.remove(instance)
-		player.hooks.availableActions.remove(instance)
 	}
 }
 
