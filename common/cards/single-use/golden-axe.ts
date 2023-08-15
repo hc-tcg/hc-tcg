@@ -1,6 +1,7 @@
 import {AttackModel} from '../../models/attack-model'
 import {CardPosModel, getCardPos} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {isTargetingPos} from '../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../utils/board'
 import SingleUseCard from '../base/single-use-card'
 
@@ -11,7 +12,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do an additional 40hp damage.\nThe opponent's attached effect card is ignored during this attack.",
+				"Do an additional 40hp damage.\nThe opponent Hermit's attached effect card is ignored during this attack.",
 		})
 	}
 
@@ -31,29 +32,31 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				type: 'effect',
 			}).addDamage(this.id, 40)
 
-			// Ignore attached effect cards
-			axeAttack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !axeAttack.target) return false
+			return [axeAttack]
+		})
 
-				const onTargetRow = pos.rowIndex === axeAttack.target.rowIndex
-				if (onTargetRow && pos.slot.type === 'effect') {
+		player.hooks.beforeAttack.addBefore(instance, (attack) => {
+			const attackId = this.getInstanceKey(instance)
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return
+
+			if (attack.id === attackId) {
+				applySingleUse(game)
+			}
+
+			// All attacks from our side should ignore opponent attached effect card this turn
+			attack.shouldIgnoreCards.push((instance) => {
+				const pos = getCardPos(game, instance)
+				if (!pos || !attack.target) return false
+
+				const isTargeting = isTargetingPos(attack, opponentActivePos)
+				if (isTargeting && pos.slot.type === 'effect') {
 					// It's the targets effect card, ignore it
 					return true
 				}
 
 				return false
 			})
-
-			return [axeAttack]
-		})
-
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-
-			if (attack.id === attackId) {
-				applySingleUse(game)
-			}
 		})
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -65,6 +68,15 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				player.hooks.afterAttack.remove(instance)
 			}
 		})
+	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		// Clean up on detach
+		player.hooks.getAttacks.remove(instance)
+		player.hooks.beforeAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 	}
 }
 

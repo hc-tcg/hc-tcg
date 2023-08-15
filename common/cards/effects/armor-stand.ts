@@ -36,6 +36,15 @@ class ArmorStandEffectCard extends EffectCard {
 			return blockedActions
 		})
 
+		player.hooks.afterAttack.add(instance, (attack) => {
+			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
+				// Discard to prevent losing a life
+				discardCard(game, row.hermitCard)
+				// Reset the active row so the player can switch
+				player.board.activeRow = null
+			}
+		})
+
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
@@ -56,6 +65,7 @@ class ArmorStandEffectCard extends EffectCard {
 		}
 
 		player.hooks.blockedActions.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}

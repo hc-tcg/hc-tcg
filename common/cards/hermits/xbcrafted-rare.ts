@@ -46,7 +46,8 @@ class XBCraftedRareHermitCard extends HermitCard {
 				const pos = getCardPos(game, instance)
 				if (!pos || !attacks[0].target) return false
 
-				const onTargetRow = pos.rowIndex === attacks[0].target.rowIndex
+				const onTargetRow =
+					pos.player === attacks[0].target.player && pos.rowIndex === attacks[0].target.rowIndex
 				if (onTargetRow && pos.slot.type === 'effect') {
 					// It's the targets effect card, ignore it
 					return true

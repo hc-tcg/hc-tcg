@@ -3,7 +3,7 @@ import {HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {CardPosModel} from '../models/card-pos-model'
-import {EnergyT} from '../types/cards'
+import {EnergyT, RowPos} from '../types/cards'
 
 export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 	const remainingEnergy = energy.slice()
@@ -28,9 +28,9 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 }
 
 /**
- * Returns true if the attack is targeting the card position
+ * Returns true if the attack is targeting the card / row position
  */
-export function isTargetingPos(attack: AttackModel, pos: CardPosModel): boolean {
+export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos): boolean {
 	if (!attack.target) return false
 	const targetingPlayer = attack.target.player.id === pos.player.id
 	const targetingRow = attack.target.rowIndex === pos.rowIndex

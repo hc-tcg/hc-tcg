@@ -14,7 +14,7 @@ export class FirebaseLogs {
 
 	constructor() {
 		try {
-			const serviceAccount: ServiceAccount = require('../adminKey.json')
+			const serviceAccount: ServiceAccount = require('./adminKey.json')
 			const admin = require('firebase-admin')
 			admin.initializeApp({
 				credential: admin.credential.cert(serviceAccount),

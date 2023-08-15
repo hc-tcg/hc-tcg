@@ -32,7 +32,8 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			for (const card of player.hand) {
+			const hand = player.hand
+			for (const card of hand) {
 				discardFromHand(player, card)
 			}
 

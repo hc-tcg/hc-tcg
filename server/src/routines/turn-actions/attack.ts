@@ -258,16 +258,14 @@ function* attackSaga(
 	// Run all the code stuff
 	runAllAttacks(attacks, pickedSlots)
 
-	// Attack complete, mark most actions as completed
-	game.addCompletedActions(
-		'ZERO_ATTACK',
-		'PRIMARY_ATTACK',
-		'SECONDARY_ATTACK',
+	game.addCompletedActions('ZERO_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+
+	// Attack phase complete, mark most actions as blocked now
+	game.addBlockedActions(
 		'PLAY_HERMIT_CARD',
 		'PLAY_ITEM_CARD',
 		'PLAY_EFFECT_CARD',
 		'PLAY_SINGLE_USE_CARD',
-		'APPLY_EFFECT',
 		'CHANGE_ACTIVE_HERMIT'
 	)
 

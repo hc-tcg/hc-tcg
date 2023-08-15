@@ -3,9 +3,10 @@
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
 	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev", "https://hc-tcg-beta.fly.dev"],
-	"world": "LTF42",
+	"world": "beta",
 	"limits": {
 		"maxTurnTime": 90,
+		"maxFollowUpTime": 20,
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
@@ -14,5 +15,5 @@
 	},
 	"logoSubText": "New meta!",
 	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.10 beta"
+	"version": "0.6.11 beta"
 }

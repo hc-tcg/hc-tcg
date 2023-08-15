@@ -41,6 +41,24 @@ export class GameHook<T extends (...args: any) => any> extends Hook<(...args: an
 	}
 
 	/**
+	 * Adds a new listener to this hook before any other existing listeners
+	 */
+	public addBefore(instance: string, listener: T) {
+		const currentInstances = Object.keys(this.listeners)
+		const currentListeners = Object.values(this.listeners) as Array<T>
+		currentInstances.unshift(instance)
+		currentListeners.unshift(listener)
+
+		this.listeners = currentInstances.reduce(
+			(result: Record<string, T>, currentInstance, index) => {
+				result[currentInstance] = currentListeners[index]
+				return result
+			},
+			{}
+		)
+	}
+
+	/**
 	 * Removes the specified listener
 	 */
 	public override remove(instance: string) {

@@ -141,6 +141,7 @@ export type TurnState = {
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
+	blockedActions: TurnActions
 }
 
 export type LocalTurnState = {

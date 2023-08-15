@@ -3,6 +3,14 @@ import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/t
 import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
+export const gameStateReceived = (localGameState: LocalGameState) => ({
+	type: 'GAME_STATE_RECEIVED' as const,
+	payload: {
+		localGameState,
+		time: Date.now(),
+	},
+})
+
 export const localGameState = (localGameState: LocalGameState) => ({
 	type: 'LOCAL_GAME_STATE' as const,
 	payload: {

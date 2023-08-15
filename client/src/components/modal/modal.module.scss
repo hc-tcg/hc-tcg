@@ -2,14 +2,14 @@
 	background: hsla(0deg, 0%, 10%, 80%);
 	position: fixed;
 	inset: 0;
-	z-index: 99;
+	z-index: 119;
 	backdrop-filter: blur(2px);
 	animation: overlayShow 500ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal {
 	position: fixed;
-	z-index: 100;
+	z-index: 120;
 	top: 30%;
 	left: 50%;
 	transform: translate(-50%, -50%);

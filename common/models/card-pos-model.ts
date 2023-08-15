@@ -77,10 +77,10 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 }
 
 export function getCardPos(game: GameModel, instance: string) {
-	const internalPos = getBasicCardPos(game, instance)
+	const basicPos = getBasicCardPos(game, instance)
 
-	if (internalPos) {
-		return new CardPosModel(game, internalPos, instance)
+	if (basicPos) {
+		return new CardPosModel(game, basicPos, instance)
 	}
 
 	return null
@@ -143,7 +143,7 @@ export class CardPosModel {
 	}
 
 	public get card() {
-		// Return the card at the position, or try to recalculate if we moved (ender pearl)
+		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
 		let card = getCardAtPos(this.game, this.internalPos)
 		if (!this.fake && !card) {
 			this.recalculateInternalPos()

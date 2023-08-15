@@ -66,7 +66,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				},
 			}
 
-			swapSlots(game, activePos, inactivePos)
+			swapSlots(game, activePos, inactivePos, true)
 
 			player.board.activeRow = inactiveHermitCardInfo.row.index
 		})
