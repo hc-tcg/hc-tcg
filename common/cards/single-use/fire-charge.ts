@@ -70,11 +70,11 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
 			discardSingleUse(game, player)
 
-			player.hooks.onApply.remove(instance)
-			player.hooks.afterApply.remove(instance)
-
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+
+			player.hooks.onApply.remove(instance)
+			player.hooks.afterApply.remove(instance)
 		})
 	}
 

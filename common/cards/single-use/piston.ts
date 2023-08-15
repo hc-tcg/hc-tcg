@@ -94,13 +94,13 @@ class PistonSingleUseCard extends SingleUseCard {
 			}
 
 			swapSlots(game, itemPos, targetPos)
-
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 		})
 
 		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
 			discardSingleUse(game, player)
+
+			// Remove playing a single use from completed actions so it can be done again
+			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 
 			player.hooks.onApply.remove(instance)
 			player.hooks.afterApply.remove(instance)
