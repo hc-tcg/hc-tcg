@@ -24,6 +24,12 @@
 	width: 36px;
 	border-radius: 4px;
 	text-align: center;
+	overflow: hidden;
+	display: flex;
+	flex: 0 0 auto;
+	padding-top: 4px;
+	align-items: center;
+	justify-content: center;
 
 	&.player {
 		border: 2px solid #add8e6;
@@ -53,9 +59,9 @@
 	}
 
 	&.cornerLayout {
-		width: 40%;
+		width: 30%;
 		position: absolute;
-		transform: translate(-16px);
+		transform: translate(-15px, -17px);
 	}
 }
 
@@ -64,9 +70,11 @@
 	image-rendering: crisp-edges;
 
 	&.cornerLayout {
-		width: 50%;
+		width: 45%;
 		position: absolute;
-		transform: translate(-7px, 8px);
+		transform: translate(-6px, -8px);
+		border: 1px solid lightyellow;
+		filter: drop-shadow(0 0 2px lightyellow);
 	}
 }
 
