@@ -58,6 +58,10 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 			animation = '/images/animations/draw.gif'
 	}
 
+	function pointerDownHandler(event: any) {
+		event.preventDefault()
+	}
+
 	return (
 		<Dialog.Root open={!!outcome} onOpenChange={closeModal}>
 			<Dialog.Portal container={document.getElementById('modal')}>
@@ -66,7 +70,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 						[css.win]: winCondition,
 					})}
 				/>
-				<Dialog.Content className={css.content}>
+				<Dialog.Content className={css.content} onPointerDownOutside={pointerDownHandler}>
 					<Dialog.Title className={css.title}>
 						<img src={animation} alt="defeat" draggable={false} className={css.animation} />
 					</Dialog.Title>

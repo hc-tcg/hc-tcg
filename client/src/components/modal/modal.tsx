@@ -1,6 +1,13 @@
 import React, {ReactNode} from 'react'
 import css from './modal.module.scss'
-import * as Dialog from '@radix-ui/react-dialog'
+import {
+	Dialog,
+	DialogPortal,
+	DialogOverlay,
+	DialogContent,
+	DialogTitle,
+	DialogClose,
+} from '@radix-ui/react-dialog'
 import cn from 'classnames'
 
 type Props = {
@@ -12,22 +19,27 @@ type Props = {
 }
 
 function Modal({children, description, closeModal, title, centered}: Props) {
+	function pointerDownHandler(event: any) {
+		event.preventDefault()
+	}
 	return (
-		<Dialog.Root open={true} onOpenChange={closeModal}>
-			<Dialog.Portal container={document.getElementById('modal')}>
-				<Dialog.Overlay className={css.overlay} />
-				<Dialog.Content
+		<Dialog onOpenChange={closeModal} defaultOpen>
+			<DialogPortal container={document.getElementById('modal')}>
+				<DialogOverlay className={css.overlay} />
+				<DialogContent
 					className={cn(css.modal, {[css.center]: centered})}
 					aria-describedby={description}
+					onPointerDownOutside={pointerDownHandler}
+					onEscapeKeyDown={closeModal}
 				>
-					{title && <Dialog.Title className={css.title}>{title}</Dialog.Title>}
-					<Dialog.Close className={css.close}>
+					{title && <DialogTitle className={css.title}>{title}</DialogTitle>}
+					<DialogClose className={css.close}>
 						<img src="/images/CloseX.svg" alt="close" />
-					</Dialog.Close>
+					</DialogClose>
 					{children}
-				</Dialog.Content>
-			</Dialog.Portal>
-		</Dialog.Root>
+				</DialogContent>
+			</DialogPortal>
+		</Dialog>
 	)
 }
 

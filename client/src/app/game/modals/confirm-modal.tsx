@@ -36,18 +36,15 @@ function ConfirmModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Play Single Use Card" closeModal={closeModal}>
+		<Modal title="Play Single Use Card" closeModal={handleNo}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Are you sure you want to use the {getCardName()}?
-					{/* Would you like to apply the {getCardName()}? */}
-				</div>
+				<div className={css.description}>Are you sure you want to use {getCardName()}?</div>
 				<div className={css.options}>
-					<Button size="medium" onClick={handleYes}>
-						Yes
-					</Button>
 					<Button size="medium" onClick={handleNo}>
 						No
+					</Button>
+					<Button size="medium" onClick={handleYes}>
+						Yes
 					</Button>
 				</div>
 			</div>
