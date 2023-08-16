@@ -63,6 +63,13 @@ const matchmakingReducer = (state = defaultState, action: AnyAction): Matchmakin
 				status: null,
 				invalidCode: false,
 			}
+		case 'CLEAR_MATCHMAKING':
+			return {
+				...state,
+				code: null,
+				status: null,
+				invalidCode: false,
+			}
 		case 'GAME_START':
 			return {
 				...state,

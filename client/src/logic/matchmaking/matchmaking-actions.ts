@@ -23,6 +23,10 @@ export const leaveMatchmaking = () => ({
 	type: 'LEAVE_MATCHMAKING' as const,
 })
 
+export const clearMatchmaking = () => ({
+	type: 'CLEAR_MATCHMAKING' as const,
+})
+
 export const setCode = (gameCode: string | null) => ({
 	type: 'SET_MATCHMAKING_CODE' as const,
 	payload: gameCode,

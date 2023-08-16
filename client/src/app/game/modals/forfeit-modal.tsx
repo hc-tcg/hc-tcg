@@ -24,10 +24,10 @@ function AttackModal({closeModal}: Props) {
 			<div className={css.confirmModal}>
 				<div className={css.description}>Are you sure you want to forfeit this game?</div>
 				<div className={css.options}>
+					<Button onClick={handleNo}>Cancel</Button>
 					<Button variant="error" onClick={handleYes}>
 						Forfeit
 					</Button>
-					<Button onClick={handleNo}>Cancel</Button>
 				</div>
 			</div>
 		</Modal>

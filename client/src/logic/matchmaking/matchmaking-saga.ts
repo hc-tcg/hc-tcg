@@ -2,7 +2,7 @@ import {call, cancelled, fork, put, putResolve, race, take, takeEvery} from 'typ
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
-import {codeReceived, leaveMatchmaking, invalidCode, waitingForPlayer} from './matchmaking-actions'
+import {codeReceived, invalidCode, waitingForPlayer, clearMatchmaking} from './matchmaking-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -21,7 +21,7 @@ function* createPrivateGameSaga() {
 				yield* put(codeReceived(gameCode))
 			} else {
 				// Something went wrong, go back to menu
-				yield* put(leaveMatchmaking())
+				yield* put(clearMatchmaking())
 				return
 			}
 
@@ -45,6 +45,8 @@ function* createPrivateGameSaga() {
 		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
+
+	yield* put(clearMatchmaking())
 
 	if (result.cancel) {
 		// Tell the server the private game is cancelled
@@ -74,7 +76,7 @@ function* joinPrivateGameSaga() {
 
 				if (result.failure) {
 					// Something went wrong, go back to menu
-					yield* put(leaveMatchmaking())
+					yield* put(clearMatchmaking())
 				} else if (result.success || result.waitingForPlayer) {
 					if (result.waitingForPlayer) {
 						yield put(waitingForPlayer())
@@ -108,6 +110,8 @@ function* joinPrivateGameSaga() {
 		matchmaking: call(matchmaking),
 	})
 
+	yield* put(clearMatchmaking())
+
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
 		yield* call(sendMsg, 'CANCEL_PRIVATE_GAME')
@@ -128,7 +132,7 @@ function* joinQueueSaga() {
 
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
-				yield* put(leaveMatchmaking())
+				yield* put(clearMatchmaking())
 				return
 			}
 
@@ -142,7 +146,6 @@ function* joinQueueSaga() {
 			if (yield* cancelled()) {
 				console.log('cancelled')
 				// Clear state and back to menu
-				yield* put(leaveMatchmaking())
 				yield* put(gameEnd())
 			}
 		}
@@ -153,19 +156,19 @@ function* joinQueueSaga() {
 		matchmaking: call(matchmaking),
 	})
 
-	yield* putResolve(leaveMatchmaking())
+	yield* put(clearMatchmaking())
 
 	if (result.leave) {
 		// Tell the server we left the queue
 		yield* call(sendMsg, 'LEAVE_QUEUE')
 	} else {
-		yield* put(leaveMatchmaking())
+		yield* put(clearMatchmaking())
 	}
 }
 
 function* reconnectSaga() {
 	const reconnectState = yield* call(receiveMsg, 'GAME_STATE_ON_RECONNECT')
-	yield* put(leaveMatchmaking())
+	yield* put(clearMatchmaking())
 	yield* call(gameSaga, reconnectState.payload.localGameState)
 }
 
