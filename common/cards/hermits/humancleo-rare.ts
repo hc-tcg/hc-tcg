@@ -95,6 +95,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				if (!opponentActiveRow?.row.hermitCard) return
 
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
+				if (!activeHermitInfo) return
 
 				const itemCards = opponentActiveRow.row.itemCards
 				const energyTypes: Array<HermitTypeT> = []

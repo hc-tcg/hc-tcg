@@ -32,126 +32,131 @@ export const getTimerForSeconds = (seconds: number): number => {
 	return Date.now() - maxTime + seconds * 1000
 }
 
+function getAvailableEnergy(game: GameModel) {
+	const {currentPlayer, activeRow} = game
+
+	let availableEnergy: Array<EnergyT> = []
+
+	if (activeRow) {
+		// Get energy from each item card
+		for (let i = 0; i < activeRow.itemCards.length; i++) {
+			const card = activeRow.itemCards[i]
+			if (!card) continue
+			const pos = getCardPos(game, card.cardInstance)
+			if (!pos) continue
+			const itemInfo = ITEM_CARDS[card.cardId]
+			if (!itemInfo) continue
+
+			availableEnergy.push(...itemInfo.getEnergy(game, card.cardInstance, pos))
+		}
+
+		// Modify available energy
+		availableEnergy = currentPlayer.hooks.availableEnergy.call(availableEnergy)
+	}
+
+	return availableEnergy
+}
+
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
-	const {turn} = game.state
+	const {turn: turnState} = game.state
 	const {currentPlayer, opponentPlayer} = game
 	const actions: TurnActions = []
 
+	// Follow up
 	if (Object.keys(opponentPlayer.followUp).length > 0) {
-		actions.push('WAIT_FOR_OPPONENT_FOLLOWUP')
-		return actions
+		return ['WAIT_FOR_OPPONENT_FOLLOWUP']
 	}
-
 	if (Object.keys(currentPlayer.followUp).length > 0) {
-		actions.push('FOLLOW_UP')
-		return actions
+		return ['FOLLOW_UP']
 	}
 
-	if (currentPlayer.board.activeRow !== null) {
-		actions.push('END_TURN')
-	}
-	if (currentPlayer.board.singleUseCard && !currentPlayer.board.singleUseCardUsed) {
-		actions.push('APPLY_EFFECT')
-		actions.push('REMOVE_EFFECT')
-	}
+	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
+	const hasOtherHermit = rows.some((row, index) => row.hermitCard && index !== activeRow)
 
-	// Player can't change active hermit if he has no other hermits
-	const hasOtherHermit = currentPlayer.board.rows.some(
-		(row, index) => row.hermitCard && index !== currentPlayer.board.activeRow
-	)
-
-	const {activeRow, rows} = currentPlayer.board
-	const isSleeping =
-		activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
-
-	if (hasOtherHermit && !isSleeping) {
-		actions.push('CHANGE_ACTIVE_HERMIT')
-	}
-
+	// Actions that require us to have an active row
 	if (activeRow !== null) {
-		if (turn.turnNumber > 1) {
+		const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
+
+		// Change active hermit
+		if (hasOtherHermit && !isSleeping) {
+			actions.push('CHANGE_ACTIVE_HERMIT')
+		}
+
+		// Su actions
+		if (su && !suUsed) {
+			actions.push('APPLY_EFFECT')
+			actions.push('REMOVE_EFFECT')
+		}
+
+		// Attack actions
+		if (activeRow !== null && turnState.turnNumber > 1) {
 			const hermitId = rows[activeRow]?.hermitCard?.cardId
-			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] || null : null
+			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] : null
 
 			// only add attack options if not sleeping
 			if (hermitInfo && !isSleeping) {
-				if (
-					DEBUG_CONFIG.noItemRequirements ||
-					hasEnoughEnergy(availableEnergy, hermitInfo.primary.cost)
-				) {
+				if (hasEnoughEnergy(availableEnergy, hermitInfo.primary.cost)) {
 					actions.push('PRIMARY_ATTACK')
 				}
-				if (
-					DEBUG_CONFIG.noItemRequirements ||
-					hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost)
-				) {
+				if (hasEnoughEnergy(availableEnergy, hermitInfo.secondary.cost)) {
 					actions.push('SECONDARY_ATTACK')
 				}
-				if (currentPlayer.board.singleUseCard && !currentPlayer.board.singleUseCardUsed) {
-					const suInfo = SINGLE_USE_CARDS[currentPlayer.board.singleUseCard.cardId]
+				if (su && !suUsed) {
+					const suInfo = SINGLE_USE_CARDS[su.cardId]
 					if (suInfo && suInfo.canAttack()) {
 						actions.push('SINGLE_USE_ATTACK')
 					}
 				}
 			}
 		}
+
+		// End turn action
+		actions.push('END_TURN')
 	}
 
-	let hasEmptyEffectSlot = false
-	let hasEmptyItemSlot = false
-	for (let i = 0; i < rows.length; i++) {
-		if (!rows[i].hermitCard) continue
-		hasEmptyEffectSlot = hasEmptyEffectSlot || !rows[i].effectCard
-		hasEmptyItemSlot =
-			hasEmptyItemSlot ||
-			rows[i].itemCards.some((value) => {
-				return !value
-			})
-	}
-
-	// We now get play card actions from all the cards in the hand
-	const handCards = currentPlayer.hand.map((card) => CARDS[card.cardId])
-	const allDesiredActions: TurnActions = []
-	for (let x = 0; x < handCards.length; x++) {
-		const card = handCards[x]
-
-		const desiredActions: TurnActions = card.getActions(game)
-		for (let i = 0; i < desiredActions.length; i++) {
-			const desiredAction = desiredActions[i]
-			if (!allDesiredActions.includes(desiredAction)) {
-				allDesiredActions.push(desiredAction)
+	// Play card actions require an active row unless it's the players first turn
+	if (activeRow !== null || turnState.turnNumber <= 2) {
+		const handCards = currentPlayer.hand.map((card) => CARDS[card.cardId])
+		const allDesiredActions: TurnActions = []
+		for (let x = 0; x < handCards.length; x++) {
+			const card = handCards[x]
+			const desiredActions: TurnActions = card.getActions(game)
+			for (let i = 0; i < desiredActions.length; i++) {
+				const desiredAction = desiredActions[i]
+				if (!allDesiredActions.includes(desiredAction)) {
+					allDesiredActions.push(desiredAction)
+				}
 			}
 		}
+		actions.push(...allDesiredActions)
 	}
 
-	actions.push(...allDesiredActions)
+	// We also add change active hermit if the active row is null and we have a hermit to switch to
+	if (activeRow === null && hasOtherHermit) {
+		actions.push('CHANGE_ACTIVE_HERMIT')
+	}
 
 	// Filter out actions that have already been completed - once an action is completed it cannot be used again for the turn
 	// Also filter out blocked actions
 	let filteredActions = actions.filter((action) => {
 		return (
-			!game.state.turn.completedActions.includes(action) &&
-			!game.state.turn.blockedActions.includes(action)
+			!turnState.completedActions.includes(action) && !turnState.blockedActions.includes(action)
 		)
 	})
-
-	// If we have no active row only allow to chage active hermit
-	if (currentPlayer.board.activeRow === null && hasOtherHermit) {
-		filteredActions = ['CHANGE_ACTIVE_HERMIT']
-	}
 
 	return filteredActions
 }
 
 function getBlockedActions(game: GameModel): TurnActions {
-	const {currentPlayer, opponentPlayer: opponentPlayer} = game
+	const {currentPlayer} = game
 
-	/** @type {TurnActions} */
 	const actions: TurnActions = []
 
 	const {activeRow, rows} = currentPlayer.board
 
 	const isSlow = activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
+
+	// @TODO slowness ailment can just turn into blocked action
 
 	if (isSlow) {
 		actions.push('SECONDARY_ATTACK')
@@ -166,16 +171,14 @@ function playerAction(actionType: string, playerId: string) {
 
 // return false in case one player is dead
 function* checkHermitHealth(game: GameModel) {
-	/** @type {Array<PlayerState>} */
 	const playerStates: Array<PlayerState> = Object.values(game.state.players)
-	/** @type {Array<string>} */
 	const deadPlayerIds: Array<string> = []
 	for (let playerState of playerStates) {
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
-			deathCode: if (row.hermitCard && row.health <= 0) {
+			if (row.hermitCard && row.health <= 0) {
 				// Call hermit death hooks
 				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
 				if (hermitPos) {
@@ -341,28 +344,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			if (DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
 
 			// Available actions code
-
-			// First, get available energy
-			let availableEnergy: Array<EnergyT> = []
-
-			const {activeRow} = game
-			if (activeRow) {
-				// Get energy from each item card
-				for (let i = 0; i < activeRow.itemCards.length; i++) {
-					const card = activeRow.itemCards[i]
-					if (!card) continue
-					const pos = getCardPos(game, card.cardInstance)
-					if (!pos) continue
-					const itemInfo = ITEM_CARDS[card.cardId]
-					if (!itemInfo) continue
-
-					availableEnergy.push(...itemInfo.getEnergy(game, card.cardInstance, pos))
-				}
-
-				// Modify available energy
-				availableEnergy = currentPlayer.hooks.availableEnergy.call(availableEnergy)
-			}
-
+			const availableEnergy = getAvailableEnergy(game)
 			let blockedActions = getBlockedActions(game)
 			let availableActions = getAvailableActions(game, availableEnergy)
 
@@ -379,9 +361,6 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 			) {
 				blockedActions.push('SINGLE_USE_ATTACK')
 			}
-
-			// Modify available turn actions with hooks
-			availableActions = currentPlayer.hooks.availableActions.call(availableActions)
 
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))

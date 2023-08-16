@@ -46,7 +46,7 @@ class MendingSingleUseCard extends singleUseCard {
 			if (!canAttachToCard(game, hermitCard, effectCard)) return
 
 			// swap slots
-			/** @type {SlotPos} */ const sourcePos: SlotPos = {
+			const sourcePos: SlotPos = {
 				rowIndex: player.board.activeRow,
 				row: playerActiveRow,
 				slot: {
@@ -55,7 +55,7 @@ class MendingSingleUseCard extends singleUseCard {
 				},
 			}
 
-			/** @type {SlotPos} */ const targetPos: SlotPos = {
+			const targetPos: SlotPos = {
 				rowIndex: targetSlotInfo.row.index,
 				row: targetSlotInfo.row.state,
 				slot: {

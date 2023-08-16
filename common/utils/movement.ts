@@ -53,10 +53,6 @@ export function discardCard(game: GameModel, card: CardT | null, steal = false) 
 	})
 }
 
-/**
- * @param {GameModel} game
- * @param {CardT | null} card
- */
 export function retrieveCard(game: GameModel, card: CardT | null) {
 	if (!card) return
 	for (let playerId in game.state.players) {

@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {CardT} from '../../types/game-state'
 import {retrieveCard} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
@@ -18,8 +19,7 @@ class ChestSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			/** @type {import('../../types/game-state').CardT | undefined} */
-			const card: import('../../types/game-state').CardT | undefined = modalResult.card
+			const card: CardT | undefined = modalResult.card
 			if (!card || card.cardId === 'clock') return
 
 			retrieveCard(game, card)

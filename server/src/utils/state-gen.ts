@@ -32,16 +32,13 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/** @type {(cardInfo: Card) => cardInfo is HermitCard | ItemCard} */
 const isHermitOrItem: (cardInfo: Card) => cardInfo is HermitCard | ItemCard = (
 	cardInfo
 ): cardInfo is HermitCard | ItemCard => ['hermit', 'item'].includes(cardInfo.type)
 
-/** @type {(cardInfo: Card) => cardInfo is HermitCard} */
 const isHermit: (cardInfo: Card) => cardInfo is HermitCard = (cardInfo): cardInfo is HermitCard =>
 	cardInfo.type === 'hermit'
 
-/** @type {(cardInfo: Card) => cardInfo is EffectCard} */
 const isEffect: (cardInfo: Card) => cardInfo is EffectCard = (cardInfo): cardInfo is EffectCard =>
 	['effect', 'single_use'].includes(cardInfo.type)
 
@@ -144,7 +141,6 @@ export function getStarterPack() {
 export function getEmptyRow(): RowState {
 	const MAX_ITEMS = 3
 
-	/** @type {RowState} */
 	const rowState: RowState = {
 		hermitCard: null,
 		effectCard: null,
@@ -190,7 +186,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
 		const id = DEBUG_CONFIG.extraStartingCards[i]
 		const card = CARDS[id]
-		if (!card) continue
+		if (!card) {
+			console.log('Invalid extra starting card in debug config:', id)
+		}
 
 		const cardInfo = {
 			cardId: id,
@@ -224,7 +222,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-			availableActions: new WaterfallHook<(availableActions: TurnActions) => TurnActions>(),
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),

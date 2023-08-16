@@ -32,12 +32,6 @@ class TotemEffectCard extends EffectCard {
 		})
 	}
 
-	/**
-	 *
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('../../../types/cards').CardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
 	}

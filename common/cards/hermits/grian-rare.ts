@@ -17,11 +17,6 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-/**
- * @typedef {import('common/types/cards').BasicCardPos} CardPos
- * @typedef {import('common/types/cards').SlotPos} SlotPos
- */
-
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -162,11 +157,6 @@ class GrianRareHermitCard extends HermitCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.remove(instance)

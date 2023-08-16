@@ -4,8 +4,11 @@ import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {CardPosModel} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
+import {DEBUG_CONFIG} from '../config'
 
 export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
+	if (DEBUG_CONFIG.noItemRequirements) return true
+
 	const remainingEnergy = energy.slice()
 
 	const specificCost = cost.filter((item) => item !== 'any')

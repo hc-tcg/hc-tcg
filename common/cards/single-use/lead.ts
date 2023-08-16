@@ -53,7 +53,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			const itemCard = itemCardInfo.slot.card
 			if (!canAttachToCard(game, hermitCard, itemCard)) return
 
-			/** @type {SlotPos} */ const itemPos: SlotPos = {
+			const itemPos: SlotPos = {
 				rowIndex: itemCardInfo.row.index,
 				row: itemCardInfo.row.state,
 				slot: {
@@ -62,7 +62,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				},
 			}
 
-			/** @type {SlotPos} */ const targetPos: SlotPos = {
+			const targetPos: SlotPos = {
 				rowIndex: targetSlotInfo.row.index,
 				row: targetSlotInfo.row.state,
 				slot: {

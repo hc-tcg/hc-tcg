@@ -29,7 +29,6 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
@@ -41,56 +40,18 @@ class GeminiTayRareHermitCard extends HermitCard {
 				discardSingleUse(game, player)
 			}
 
-			// Set flag, so we can modify available actions
-			player.custom[extraCardKey] = true
-		})
-
-		player.hooks.availableActions.add(instance, (availableActions) => {
-			// if the flag is enabled allow playing another card
-			// @TODO what does follow up do with this
-			if (player.custom[extraCardKey]) {
-				if (!availableActions.includes('PLAY_SINGLE_USE_CARD') && !player.board.singleUseCard) {
-					availableActions.push('PLAY_SINGLE_USE_CARD')
-				}
-				if (!availableActions.includes('SINGLE_USE_ATTACK')) {
-					availableActions.push('SINGLE_USE_ATTACK')
-				}
-			}
-
-			return availableActions
-		})
-
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			if (!player.board.singleUseCard && player.custom[extraCardKey]) {
-				// Trident was here and it's no longer here
-				delete player.custom[extraCardKey]
-			}
-		})
-
-		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
-			// Piston/Fire Charge won't be here.
-			// If a card is till here we need to remove the flag
-			if (player.board.singleUseCard && player.custom[extraCardKey]) {
-				delete player.custom[extraCardKey]
-			}
-		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[extraCardKey]
+			// We are hooking into afterAttack, so we just remove the blocks on actions
+			// The beauty of this is that there is no need to replicate any of the esixting logic anymore
+			game.removeCompletedActions('SINGLE_USE_ATTACK')
+			game.removeBlockedActions('PLAY_SINGLE_USE_CARD')
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const extraCardKey = this.getInstanceKey(instance, 'extraCard')
 
-		// Remove hooks and flags
+		// Remove hook
 		player.hooks.afterAttack.remove(instance)
-		player.hooks.availableActions.remove(instance)
-		player.hooks.onApply.remove(instance)
-		player.hooks.afterApply.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		delete player.custom[extraCardKey]
 	}
 }
 

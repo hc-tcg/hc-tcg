@@ -20,7 +20,6 @@ export class FirebaseLogs {
 				credential: admin.credential.cert(serviceAccount),
 				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
 			})
-			/** @type {Database} */
 			this.db = admin.database()
 		} catch (err) {
 			console.log('No valid firebase key. Statistics will not be stored.')

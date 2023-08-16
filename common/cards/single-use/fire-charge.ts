@@ -49,11 +49,6 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		return 'NO'
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 

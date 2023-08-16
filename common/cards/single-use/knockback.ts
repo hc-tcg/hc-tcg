@@ -17,7 +17,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
@@ -27,11 +27,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 

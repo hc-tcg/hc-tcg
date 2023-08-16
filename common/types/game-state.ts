@@ -68,8 +68,6 @@ export type PlayerState = {
 
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
-		/** Hook that modifies and returns availableActions */
-		availableActions: WaterfallHook<(availableActions: TurnActions) => TurnActions>
 
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
@@ -93,7 +91,11 @@ export type PlayerState = {
 		onAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
 		/** Hook called for every attack that targets our side of the board */
 		onDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
-		/** Hook called after the main attack loop, for every attack from our side of the board */
+		/**
+		 * Hook called after the main attack loop, for every attack from our side of the board.
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 * */
 		afterAttack: GameHook<(attack: AttackModel) => void>
 		/** Hook called after the main attack loop, for every attack targeting our side of the board */
 		afterDefence: GameHook<(attack: AttackModel) => void>
