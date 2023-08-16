@@ -139,7 +139,8 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 		} else if (Object.hasOwn(result, 'gameEnd')) {
 			const {gameState: newGameState, outcome, reason} = result.gameEnd.payload
 			if (newGameState) {
-				yield put(
+				yield call(coinFlipSaga, newGameState)
+				yield putResolve(
 					localGameState({
 						...newGameState,
 						availableActions: [],
