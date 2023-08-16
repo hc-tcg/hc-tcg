@@ -17,6 +17,7 @@ import {
 	updatePickProcess,
 	setSelectedCard,
 	slotPicked,
+	setOpenedModal,
 } from 'logic/game/game-actions'
 import {CARDS} from 'common/cards'
 
@@ -113,6 +114,12 @@ export function* runPickProcessSaga(
 				const req = reqs[reqIndex]
 				const pickedReqSlots: Array<PickedSlotT> = []
 				const actionType = req.slot.includes('hand') ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+
+				if (!req.canPickLess && possiblePerReq[reqIndex] < req.amount) {
+					yield put(setPickProcess(null))
+					return null
+				}
+
 				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
 				while (pickedReqSlots.length < amount) {

@@ -8,10 +8,9 @@ import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal, followUp, applyEffect, removeEffect} from 'logic/game/game-actions'
 import HermitCard from 'common/cards/base/hermit-card'
-import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
-import ItemCard from 'common/cards/base/item-card'
 import Card from 'common/cards/base/card'
+import {receiveMsg} from 'logic/socket/socket-saga'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
@@ -38,7 +37,7 @@ function* singleUseSaga(card: CardT): SagaIterator {
 		if (result && result.length && result[0].pickedSlots?.length) {
 			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
 		} else {
-			yield put(removeEffect())
+			yield put(setOpenedModal('unmet-condition', {removeSuAfter: true}))
 		}
 	}
 }

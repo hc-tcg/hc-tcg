@@ -110,7 +110,7 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 
 	console.log('Game started')
 	if (initialGameState) {
-		yield put(localGameState(initialGameState))
+		yield put(gameStateReceived(initialGameState))
 	}
 }
 

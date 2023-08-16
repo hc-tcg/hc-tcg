@@ -27,7 +27,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		if (player.hand.length < 2) return 'NO'
 
@@ -55,7 +55,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			discardFromHand(player, pickedCard1.slot.card)
 			discardFromHand(player, pickedCard2.slot.card)
 
-			drawCards(player, 2)
+			//drawCards(player, 2)
 		})
 	}
 

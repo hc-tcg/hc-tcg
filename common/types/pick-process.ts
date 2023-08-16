@@ -20,6 +20,7 @@ export type PickRequirmentT = {
 	target: 'player' | 'opponent' | 'board'
 	slot: Array<SlotTypeT>
 	amount: number
+	canPickLess?: boolean
 	type?: Array<CardTypeT>
 	empty?: boolean
 	emptyRow?: boolean
