@@ -42,7 +42,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 			// We are hooking into afterAttack, so we just remove the blocks on actions
 			// The beauty of this is that there is no need to replicate any of the esixting logic anymore
-			game.removeCompletedActions('SINGLE_USE_ATTACK')
+			game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 			game.removeBlockedActions('PLAY_SINGLE_USE_CARD')
 		})
 	}
