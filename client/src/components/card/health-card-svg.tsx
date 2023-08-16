@@ -68,13 +68,27 @@ const HealthCardModule = ({card}: HealthCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					HEALTH
 				</text>
 			</g>
 			<g>
 				<ellipse className={css.healthBackground} cx="200" cy="250" rx="205" ry="130" />
-				<text x="200" y="200" className={css.health}>
+				<text
+					x="200"
+					y="200"
+					className={css.health}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					{displayHealth}
 				</text>
 			</g>

@@ -36,7 +36,14 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					EFFECT
 				</text>
 			</g>

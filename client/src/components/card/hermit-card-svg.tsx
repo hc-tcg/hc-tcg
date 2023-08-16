@@ -48,10 +48,12 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 				textLength={nameLength > 7 ? '180px' : ''}
 				lengthAdjust="spacingAndGlyphs"
 				className={classnames(css.name, css[palette])}
+				dominantBaseline="hanging"
+				key={Math.random()}
 			>
 				{card.name}
 			</text>
-			<text x="310" y="20" className={css.health}>
+			<text x="310" y="20" className={css.health} dominantBaseline="hanging" key={Math.random()}>
 				{card.health}
 			</text>
 			<g id="hermit-image">
@@ -117,7 +119,14 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 						/>
 					))}
 				</g>
-				<text x="200" y="272" className={classnames(css.attackName, css[palette])}>
+				<text
+					x="200"
+					y="272"
+					className={classnames(css.attackName, css[palette])}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					{card.primary.name}
 				</text>
 				<text
@@ -126,6 +135,9 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.primary.power,
 					})}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
 				>
 					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
@@ -147,6 +159,9 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 					className={classnames(css.attackName, css[palette], css[palette], {
 						[css.specialMove]: !!card.secondary.power,
 					})}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
 				>
 					{card.secondary.name}
 				</text>
@@ -156,6 +171,9 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 					className={classnames(css.attackDamage, css[palette], {
 						[css.specialMove]: !!card.secondary.power,
 					})}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
 				>
 					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
 				</text>

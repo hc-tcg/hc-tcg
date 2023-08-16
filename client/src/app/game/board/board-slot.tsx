@@ -48,7 +48,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 			})}
 		>
 			{cardInfo ? (
-				<div>
+				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
 					{type === 'health' &&
 						ailments.map((id) => {

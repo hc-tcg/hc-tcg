@@ -46,7 +46,14 @@ const ItemCardModule = ({card}: ItemCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					ITEM
 				</text>
 			</g>
