@@ -18,6 +18,14 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		return true
 	}
 
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		if (pos.slot.type !== 'single_use') return 'INVALID'
+
+		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+
+		return 'YES'
+	}
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
