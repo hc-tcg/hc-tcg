@@ -20,9 +20,9 @@ function* changeActiveHermit(
 	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Can't change to knocked out if we have other hermits
-	const isKnockedout = row.ailments.find((a) => a.id === 'knockedout')
+	const isKnockedout = !!row.ailments.find((a) => a.id === 'knockedout')
 	const hasOtherHermits = currentPlayer.board.rows.some((row, index) => {
-		!!row.hermitCard && index !== rowIndex
+		return !!row.hermitCard && index !== rowIndex
 	})
 	if (isKnockedout && hasOtherHermits) return 'FAILURE_CANNOT_COMPLETE'
 

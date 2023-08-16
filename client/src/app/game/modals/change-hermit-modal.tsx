@@ -64,10 +64,10 @@ function ChangeHermitModal({closeModal, info}: Props) {
 				</div>
 
 				<div className={css.options}>
-					{canChange ? (
+					{canChange && !forbidden ? (
 						<>
-							<Button onClick={handleYes}>Yes</Button>
 							<Button onClick={handleNo}>Cancel</Button>
+							<Button onClick={handleYes}>Yes</Button>
 						</>
 					) : (
 						<>
