@@ -60,7 +60,14 @@ const ItemCardModule = ({card}: ItemCardProps) => {
 			{card.rarity === 'rare' ? (
 				<g>
 					<rect className={css.rarity} x="302" y="302" width="100" height="100" rx="50" ry="50" />
-					<text x="351" y="331" className={css.x2} fill="black">
+					<text
+						x="351"
+						y="331"
+						className={css.x2}
+						fill="black"
+						dominantBaseline="hanging"
+						key={Math.random()}
+					>
 						x2
 					</text>
 				</g>
