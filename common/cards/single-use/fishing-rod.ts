@@ -16,7 +16,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		if (player.pile.length <= 2) return 'NO'
 
@@ -32,6 +32,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
 			drawCards(player, 2)
+			player.hooks.onApply.remove(instance)
 		})
 	}
 
