@@ -61,8 +61,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 		const {opponentPlayer} = pos
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
-		console.log(pickedSlots)
-
 		if (attacks[0].type !== 'secondary') return attacks
 
 		const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
