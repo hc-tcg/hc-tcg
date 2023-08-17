@@ -87,14 +87,15 @@ export function getCardPos(game: GameModel, instance: string) {
 }
 
 function getCardAtPos(game: GameModel, pos: BasicCardPos) {
-	const {player, row, slot} = pos
+	const {player, rowIndex, slot} = pos
 
 	const suCard = player.board.singleUseCard
 	if (slot.type === 'single_use' && suCard) {
 		return suCard
 	}
 
-	if (!row) return null
+	if (rowIndex === null) return null
+	const row = player.board.rows[rowIndex]
 
 	if (slot.type === 'hermit' && row.hermitCard) {
 		return row.hermitCard
