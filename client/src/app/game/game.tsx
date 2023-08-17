@@ -15,7 +15,6 @@ import {
 	EndTurnModal,
 	EvilXModal,
 	ForfeitModal,
-	LootingModal,
 	SpyglassModal,
 	UnmetConditionModal,
 } from './modals'
@@ -30,25 +29,29 @@ import {
 	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
+	getAvailableActions,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
+import {PickCardActionData} from 'common/types/action-data'
+import {equalCard} from 'common/utils/cards'
 // import {getSettings} from 'logic/local-settings/local-settings-selectors'
 // import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
-	borrow: BorrowModal,
 	confirm: ConfirmModal,
-	chest: ChestModal,
 	discarded: DiscardedModal,
-	evilX: EvilXModal,
 	forfeit: ForfeitModal,
-	looting: LootingModal,
-	spyglass: SpyglassModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
 	'unmet-condition': UnmetConditionModal,
+
+	// Custom modals
+	borrow: BorrowModal,
+	chest: ChestModal,
+	evilX: EvilXModal,
+	spyglass: SpyglassModal,
 }
 
 const renderModal = (
@@ -64,6 +67,7 @@ const renderModal = (
 
 function Game() {
 	const gameState = useSelector(getGameState)
+	const availableActions = useSelector(getAvailableActions)
 	const selectedCard = useSelector(getSelectedCard)
 	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
@@ -97,8 +101,33 @@ function Game() {
 	}
 
 	const selectCard = (card: CardT) => {
-		console.log('Card selected: ', card.cardId)
-		dispatch(setSelectedCard(card))
+		if (availableActions.includes('PICK_CARD')) {
+			const index = gameState.hand.findIndex((c) => equalCard(c, card))
+			if (index === -1) return
+
+			// Send pick card action with the hand info
+			const actionData: PickCardActionData = {
+				type: 'PICK_CARD',
+				payload: {
+					pickResult: {
+						playerId: gameState.playerId,
+						card: card,
+						slot: {
+							type: 'hand',
+							index,
+						},
+					},
+				},
+			}
+
+			dispatch(actionData)
+		} else {
+			dispatch(setSelectedCard(card))
+		}
+	}
+
+	if (availableActions.includes('PICK_CARD')) {
+		dispatch(setSelectedCard(null))
 	}
 
 	// TODO: handleKeys is disabled due to eventListeners not able to use state

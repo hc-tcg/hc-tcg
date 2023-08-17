@@ -2,6 +2,7 @@ import {HermitAttackType} from './attack'
 import {SlotTypeT} from './cards'
 import {AttackAction, CardT, PlayCardAction} from './game-state'
 import {PickResultT, PickedSlotT} from './pick-process'
+import {PickResult} from './server-requests'
 
 export const slotToPlayCardAction: Record<SlotTypeT, PlayCardAction> = {
 	hermit: 'PLAY_HERMIT_CARD',
@@ -39,4 +40,11 @@ export type AttackActionData = {
 	}
 }
 
-export type AnyActionData = PlayCardActionData | AttackActionData
+export type PickCardActionData = {
+	type: 'PICK_CARD'
+	payload: {
+		pickResult: PickResult
+	}
+}
+
+export type AnyActionData = PlayCardActionData | AttackActionData | PickCardActionData

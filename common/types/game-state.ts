@@ -1,9 +1,10 @@
 import {AttackModel} from '../models/attack-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {EnergyT} from './cards'
+import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {PickProcessT, PickedSlots} from './pick-process'
+import {ModalRequest, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
@@ -44,7 +45,6 @@ export type CurrentCoinFlipT = {
 
 export type PlayerState = {
 	id: PlayerId
-	followUp: Record<string, string>
 	playerName: string
 	minecraftName: string
 	playerDeck: Array<CardT>
@@ -61,6 +61,11 @@ export type PlayerState = {
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
 	}
+
+	pickRequests: Array<PickRequest>
+	//@TODO for now this is not an array because it's faster to code it that way, however, long term it needs be an array
+	//and the code also needs to check for the opponents modal requests
+	modalRequest: ModalRequest | null
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
@@ -95,15 +100,14 @@ export type PlayerState = {
 		 * Hook called after the main attack loop, for every attack from our side of the board.
 		 *
 		 * This is called after actions are marked as completed and blocked
-		 * */
+		 */
 		afterAttack: GameHook<(attack: AttackModel) => void>
-		/** Hook called after the main attack loop, for every attack targeting our side of the board */
+		/**
+		 * Hook called after the main attack loop, for every attack targeting our side of the board
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
 		afterDefence: GameHook<(attack: AttackModel) => void>
-
-		/** Hook called on follow up */
-		onFollowUp: GameHook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
-		/** Hook called when follow up times out */
-		onFollowUpTimeout: GameHook<(followUp: string) => void>
 
 		/**
 		 * Hook called when a hermit is about to die.
@@ -135,7 +139,12 @@ export type GenericActionResult =
 
 export type PlayCardActionResult = 'FAILURE_INVALID_SLOT' | 'FAILURE_CANNOT_ATTACH'
 
-export type ActionResult = GenericActionResult | PlayCardActionResult
+export type PickCardActionResult =
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_WRONG_PLAYER'
+	| 'FAILURE_WRONG_PICK'
+
+export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
 export type TurnState = {
 	turnNumber: number
@@ -176,16 +185,18 @@ export type PlayCardAction =
 
 export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
 
+export type PickCardAction = 'PICK_CARD' | 'WAIT_FOR_OPPONENT_PICK'
+
 export type TurnAction =
 	| PlayCardAction
 	| AttackAction
+	| PickCardAction
 	| 'END_TURN'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
-	| 'FOLLOW_UP'
-	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
 	| 'CHANGE_ACTIVE_HERMIT'
 	| 'WAIT_FOR_TURN'
+	| 'CUSTOM_MODAL'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -211,7 +222,6 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
-	followUp: Record<string, string>
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -243,6 +253,9 @@ export type LocalGameState = {
 		action: TurnAction
 		result: ActionResult
 	} | null
+
+	currentPickMessage: string | null
+	currentCustomModal: string | null
 
 	players: Record<string, LocalPlayerState>
 

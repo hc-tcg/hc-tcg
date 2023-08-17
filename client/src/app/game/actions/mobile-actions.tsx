@@ -10,6 +10,7 @@ import {
 	getPickProcess,
 	getGameState,
 	getPlayerState,
+	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
 import {PickProcessT, PickedSlotT, SlotTypeT} from 'common/types/pick-process'
 import {LocalGameState} from 'common/types/game-state'
@@ -116,6 +117,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
+	const pickMessage = useSelector(getCurrentPickMessage)
 	const pickProcess = useSelector(getPickProcess)
 	const player = useSelector(getPlayerState)
 	const settings = useSelector(getSettings)
@@ -133,9 +135,9 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 
 	const Status = () => {
 		const turn = localGameState.turn.currentPlayerId === playerId
-		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
-		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
-		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
+		const waitingForOpponentPick =
+			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
+		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick a card' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const changeHermit =
 			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
@@ -151,7 +153,8 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 				<p>
 					{knockedOut && 'Activate an AFK Hermit'}
 					{changeHermit && 'Select a new active Hermit'}
-					{opponentFollowup && "Waiting for opponent's action..."}
+					{waitingForOpponentPick && "Waiting for opponent's action..."}
+					{pickMessage}
 					{pickProcess &&
 						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
 				</p>

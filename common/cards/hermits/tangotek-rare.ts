@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {GenericActionResult} from '../../types/game-state'
+import {PickResult} from '../../types/server-requests'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'
@@ -25,14 +27,11 @@ class TangoTekRareHermitCard extends HermitCard {
 				power:
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
-			pickOn: 'followup',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (
@@ -48,48 +47,38 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (opponentInactiveRows.length !== 0) {
 				attack.target.row.ailments.push({
 					id: 'knockedout',
-					duration: 1,
+					duration: 0, // Last till the start of their next turn
 				})
 				opponentPlayer.board.activeRow = null
-				opponentPlayer.followUp[instanceKey] = this.id
 
-				// We need to hook here because the follow up is called after onDetach
-				// and I can't delete it from there because Tango could die from backlash
-				opponentPlayer.hooks.onFollowUp.add(instance, (followUp, pickedSlots) => {
-					if (followUp !== instanceKey) return
-					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
+				// Add a new pick request to the opponent player
+				opponentPlayer.pickRequests.push({
+					message: 'Pick a new active Hermit from your afk hermits',
+					onResult(pickResult) {
+						// Validation
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						const row = opponentPlayer.board.rows[pickResult.rowIndex]
+						if (row.ailments.find((a) => a.id === 'knockedout')) return 'FAILURE_WRONG_PICK'
 
-					opponentPlayer.hooks.onFollowUp.remove(instance)
-					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-					delete opponentPlayer.followUp[instanceKey]
+						opponentPlayer.board.activeRow = pickResult.rowIndex
 
-					const pickedSlot = pickedSlots[this.id]?.[0]
-					if (!pickedSlot) return
-					const {row} = pickedSlot
-					if (!row) return
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 
-					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
-					if (!canBeActive) return
-					opponentPlayer.board.activeRow = row.index
-				})
-
-				opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-					if (followUp !== instanceKey) return
-					opponentPlayer.hooks.onFollowUp.remove(instance)
-					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-					delete opponentPlayer.followUp[instanceKey]
-
-					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-
-					// Choose the first row that doesn't have a knockedout ailment
-					for (const inactiveHermit of opponentInactiveRows) {
-						if (!inactiveHermit) continue
-						const {rowIndex, row} = inactiveHermit
-						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
-						if (canBeActive) {
-							opponentPlayer.board.activeRow = rowIndex
+						// Choose the first row that doesn't have a knockedout ailment
+						for (const inactiveHermit of opponentInactiveRows) {
+							if (!inactiveHermit) continue
+							const {rowIndex, row} = inactiveHermit
+							const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
+							if (canBeActive) {
+								opponentPlayer.board.activeRow = rowIndex
+							}
 						}
-					}
+					},
 				})
 			}
 

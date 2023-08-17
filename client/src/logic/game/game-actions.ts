@@ -90,8 +90,8 @@ export const setOpponentConnection = (payload: boolean) => ({
 
 // ---
 
-export const followUp = (payload: any) => ({
-	type: 'FOLLOW_UP' as const,
+export const customModal = (payload: any) => ({
+	type: 'CUSTOM_MODAL' as const,
 	payload,
 })
 

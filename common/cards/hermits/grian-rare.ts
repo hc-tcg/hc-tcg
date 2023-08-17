@@ -1,8 +1,10 @@
+import {CARDS} from '..'
 import {CardPosModel, getCardPos} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {SlotPos} from '../../types/cards'
 import {CardT} from '../../types/game-state'
-import {isRemovable} from '../../utils/cards'
+import {getActiveRowPos} from '../../utils/board'
+import {equalCard, isRemovable} from '../../utils/cards'
 import {flipCoin} from '../../utils/coinFlips'
 import {discardCard, swapSlots} from '../../utils/movement'
 import HermitCard from '../base/hermit-card'
@@ -42,131 +44,63 @@ class GrianRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, row, rowIndex} = pos
-		const effectKey = this.getInstanceKey(instance, 'effectCard')
-		const targetKey = this.getInstanceKey(instance, 'targetInstance')
-		const instanceKey = this.getInstanceKey(instance)
-		const modalKey = this.getInstanceKey(instance, 'modal')
+		const {player, opponentPlayer, row} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-
 			if (attack.type !== 'primary') return
-			if (!attack.target || !attack.target.row.effectCard) return
 
-			const opponentEffectCard = attack.target.row.effectCard
+			const coinFlip = flipCoin(player, this.id)
+
+			if (coinFlip[0] === 'tails') return
+
+			const opponentRowPos = getActiveRowPos(opponentPlayer)
+			if (!row || !opponentRowPos) return
+
+			const opponentEffectCard = opponentRowPos.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
 
-			player.custom[effectKey] = opponentEffectCard
-			player.custom[targetKey] = attack.target.row.hermitCard.cardInstance
-			// Don't show the modal yet
-			player.followUp[instanceKey] = ''
-		})
+			// Discard straight away
+			discardCard(game, opponentEffectCard, true)
+			// But remove it from our discard pile for now
+			player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
 
-		// We need to wait until Loyalty disappear, it uses onHermitDeath
-		player.hooks.onFollowUp.add(instance, (followUp, pickedCards, modalResult) => {
-			if (followUp === instanceKey) {
-				delete player.followUp[instanceKey]
-				const targetInstance = player.custom[targetKey]
-				const effectCard = player.custom[effectKey]
-				const grianPosition = getCardPos(game, instance)
-				const targetPosition = getCardPos(game, targetInstance)
-				const effectPosition = getCardPos(game, effectCard.cardInstance)
-				delete player.custom[targetKey]
+			player.modalRequest = {
+				id: this.id,
+				onResult(modalResult) {
+					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
 
-				// Grian is dead, target is dead or the effect card disappeared
-				// because the coin toss technically happens after the attack that
-				// means that nothing gets stolen
-				if (!grianPosition || !targetPosition || !effectPosition) return
+					if (modalResult.attach) {
+						// Discard our current attached card if there is one
+						if (row?.effectCard) {
+							discardCard(game, row.effectCard)
+						}
 
-				const coinFlip = flipCoin(player, this.id)
-				if (coinFlip[0] === 'tails') {
-					delete player.custom[effectKey]
-				} else {
-					// Show the modal
-					player.followUp[modalKey] = this.id
-				}
-			} else if (followUp === modalKey) {
-				// Modal Result
-				delete player.followUp[modalKey]
-				if (!row || rowIndex === null) return
+						// Manually attach the new effect card to ourselves
+						row.effectCard = opponentEffectCard
 
-				const opponentEffectCard: CardT = player.custom[effectKey]
-				if (!opponentEffectCard) return
-
-				const effectCardPos = getCardPos(game, opponentEffectCard.cardInstance)
-				delete player.custom[effectKey]
-
-				// Totem/Loyalty/Shield got used up
-				if (!effectCardPos) return
-				if (!effectCardPos.row || effectCardPos.rowIndex === null) return
-
-				if (modalResult.attach) {
-					// Discard the card if there is one
-					if (row?.effectCard) {
-						discardCard(game, row.effectCard)
+						// Call onAttach
+						const cardInfo = CARDS[opponentEffectCard.cardId]
+						cardInfo.onAttach(game, opponentEffectCard.cardInstance, pos)
+						player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+					} else {
+						// Add it to our discard pile
+						player.discarded.push(opponentEffectCard)
 					}
 
-					const opponentSlot: SlotPos = {
-						rowIndex: effectCardPos.rowIndex,
-						row: effectCardPos.row,
-						slot: {
-							index: 0,
-
-							type: 'effect',
-						},
-					}
-
-					const playerSlot: SlotPos = {
-						rowIndex,
-						row,
-						slot: {
-							index: 0,
-							type: 'effect',
-						},
-					}
-
-					// Grian's effect slot is going to be empty
-					swapSlots(game, opponentSlot, playerSlot)
-				} else {
-					discardCard(game, opponentEffectCard, true)
-				}
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					// Just add the card to our discard pile
+					player.discarded.push(opponentEffectCard)
+				},
 			}
-		})
-
-		player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-			// Disable the followUp for both of them, we want to avoid infinite loops
-			// between the client and the server, the first one should never time out
-			// but just in case
-			if ([instanceKey, modalKey].includes(followUp)) {
-				delete player.followUp[instanceKey]
-				delete player.followUp[modalKey]
-			}
-			if (followUp !== modalKey) return
-
-			const opponentEffectCard = player.custom[effectKey]
-			const effectCardPos = getCardPos(game, opponentEffectCard.cardInstance)
-			if (!effectCardPos || !effectCardPos.row) return
-
-			// Discard the card if the player didn't choose
-			discardCard(game, effectCardPos.row.effectCard)
-			player.discarded.push({
-				cardId: opponentEffectCard.cardId,
-				cardInstance: opponentEffectCard.cardInstance,
-			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.remove(instance)
-		player.hooks.onFollowUp.remove(instance)
-		player.hooks.onFollowUpTimeout.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'effectCard')]
-		delete player.custom[this.getInstanceKey(instance, 'targetInstance')]
-		// The hooks were deleted so it won't ever find the hook
-		delete player.followUp[this.getInstanceKey(instance)]
-		delete player.followUp[this.getInstanceKey(instance, 'modal')]
 	}
 }
 

@@ -2,7 +2,7 @@ import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
-import {followUp} from 'logic/game/game-actions'
+import {customModal} from 'logic/game/game-actions'
 
 type Props = {
 	closeModal: () => void
@@ -11,12 +11,12 @@ function EvilXModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handlePrimary = () => {
-		dispatch(followUp({modalResult: {disable: 'primary'}}))
+		dispatch(customModal({modalResult: {disable: 'primary'}}))
 		closeModal()
 	}
 
 	const handleSecondary = () => {
-		dispatch(followUp({modalResult: {disable: 'secondary'}}))
+		dispatch(customModal({modalResult: {disable: 'secondary'}}))
 		closeModal()
 	}
 
@@ -27,10 +27,10 @@ function EvilXModal({closeModal}: Props) {
 					Which of the opponent's attacks do you want to disable?
 				</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handlePrimary}>
+					<Button variant="primary" size="medium" onClick={handlePrimary}>
 						Primary
 					</Button>
-					<Button variant="primary" size="small" onClick={handleSecondary}>
+					<Button variant="primary" size="medium" onClick={handleSecondary}>
 						Secondary
 					</Button>
 				</div>

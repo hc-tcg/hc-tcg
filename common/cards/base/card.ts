@@ -9,7 +9,7 @@ type CardDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
-	pickOn?: 'attack' | 'apply' | 'followup'
+	pickOn?: 'attack' | 'apply'
 	pickReqs?: Array<PickRequirmentT>
 }
 

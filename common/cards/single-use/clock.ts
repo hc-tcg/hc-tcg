@@ -22,7 +22,7 @@ class ClockSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and followup actions
+			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and pick actions
 			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				const blocked: TurnActions = [
 					'APPLY_EFFECT',

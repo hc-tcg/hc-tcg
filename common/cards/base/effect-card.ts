@@ -11,7 +11,7 @@ type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply' | 'followup'
+	pickOn?: 'attack' | 'apply'
 	pickReqs?: Array<PickRequirmentT>
 }
 

@@ -15,12 +15,13 @@ const ActionMap: Record<TurnAction, string | null> = {
 	SINGLE_USE_ATTACK: 'Attacking opponent with a single use effect',
 	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',
 	SECONDARY_ATTACK: 'Attacking opponent with a secondary attack',
-	WAIT_FOR_OPPONENT_FOLLOWUP: null,
-	FOLLOW_UP: null,
+	WAIT_FOR_OPPONENT_PICK: null,
+	PICK_CARD: null,
 	APPLY_EFFECT: null,
 	REMOVE_EFFECT: null,
 	END_TURN: null,
 	WAIT_FOR_TURN: null,
+	CUSTOM_MODAL: null,
 }
 
 type Props = {

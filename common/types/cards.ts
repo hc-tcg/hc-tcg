@@ -1,5 +1,4 @@
 import {PlayerState, RowState, RowStateWithHermit} from './game-state'
-import {PickRequirmentT} from './pick-process'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 

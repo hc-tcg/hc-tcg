@@ -67,7 +67,16 @@ export class GameHook<T extends (...args: any) => any> extends Hook<(...args: an
 		super.remove(instance)
 	}
 	public override call(...params: Parameters<T>) {
-		return super.call(...(params as Array<any>))
+		const results: Array<ReturnType<T>> = []
+		const hooks = Object.values(this.listeners)
+		for (let i = 0; i < hooks.length; i++) {
+			const result = hooks[i](...(params as Array<any>))
+			if (result !== undefined) {
+				results.push(result)
+			}
+		}
+
+		return results
 	}
 
 	/**

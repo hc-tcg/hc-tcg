@@ -2,7 +2,7 @@ import css from './actions.module.scss'
 import cn from 'classnames'
 import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
-import {attackAction, endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
+import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
 import {
 	getPlayerStateById,
 	getAvailableActions,
@@ -10,6 +10,7 @@ import {
 	getPickProcess,
 	getGameState,
 	getPlayerState,
+	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
 import {PickProcessT, PickedSlotT, SlotTypeT} from 'common/types/pick-process'
 import {LocalGameState} from 'common/types/game-state'
@@ -117,6 +118,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickProcess = useSelector(getPickProcess)
+	const pickMessage = useSelector(getCurrentPickMessage)
 	const player = useSelector(getPlayerState)
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
@@ -126,9 +128,9 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
-		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
-		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
-		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
+		const waitingForOpponentPick =
+			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
+		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick a card' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const changeHermit =
 			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
@@ -148,7 +150,8 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				<p className={css.message}>
 					{knockedOut && 'Activate an AFK Hermit'}
 					{!knockedOut && changeHermit && 'Select a new active Hermit'}
-					{opponentFollowup && "Waiting for opponent's action..."}
+					{waitingForOpponentPick && "Waiting for opponent's action..."}
+					{pickMessage}
 					{pickProcess &&
 						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
 				</p>

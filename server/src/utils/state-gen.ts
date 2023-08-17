@@ -10,6 +10,8 @@ import {
 	LocalPlayerState,
 	PlayerState,
 	RowState,
+	ActionResult,
+	GenericActionResult,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
@@ -206,7 +208,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: [],
-		followUp: {},
 		lives: 3,
 		hand,
 		discarded: [],
@@ -218,6 +219,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
+
+		pickRequests: [],
+		modalRequest: null,
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
@@ -235,10 +239,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onFollowUp: new GameHook<
-				(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void
-			>(),
-			onFollowUpTimeout: new GameHook<(followUp: string) => void>(),
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
@@ -252,7 +252,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
-		followUp: playerState.followUp,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -300,6 +299,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		opponentPlayerId: opponentPlayerId,
 
 		lastActionResult: game.state.lastActionResult,
+
+		currentPickMessage: playerState.pickRequests[0]?.message || null,
+		currentCustomModal: playerState.modalRequest?.id || null,
 
 		players,
 

@@ -21,7 +21,6 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
 		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
 		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
@@ -33,34 +32,26 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				canDiscard: coinFlip[0] === 'heads',
 				cards: opponentPlayer.hand,
 			}
-			player.followUp[instanceKey] = this.id
 
-			player.hooks.onFollowUp.add(instance, (followUp, pickedSlots, modalResult) => {
-				if (followUp !== instanceKey) return
-				delete player.custom[this.id]
-				player.hooks.onFollowUp.remove(instance)
-				player.hooks.onFollowUpTimeout.remove(instance)
-				delete player.followUp[instanceKey]
+			player.modalRequest = {
+				id: this.id,
+				onResult(modalResult) {
+					if (!modalResult || !modalResult.card) return 'FAILURE_INVALID_DATA'
 
-				if (!modalResult || !modalResult.card) return
-				if (player.custom[coinResult] !== 'heads') return
+					if (player.custom[coinResult] === 'heads') {
+						discardFromHand(opponentPlayer, modalResult.card)
+					}
 
-				discardFromHand(opponentPlayer, modalResult.card)
-			})
-
-			player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-				if (followUp !== instanceKey) return
-				delete player.custom[this.id]
-				player.hooks.onFollowUp.remove(instance)
-				player.hooks.onFollowUpTimeout.remove(instance)
-				delete player.followUp[instanceKey]
-				if (player.custom[coinResult] !== 'heads') return
-
-				// Discard a random card from the opponent's hand
-				const {opponentPlayer} = pos
-				const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
-				discardFromHand(opponentPlayer, opponentPlayer.hand[slotIndex])
-			})
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					if (player.custom[coinResult] === 'heads') {
+						// Discard a random card from the opponent's hand
+						const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
+						discardFromHand(opponentPlayer, opponentPlayer.hand[slotIndex])
+					}
+				},
+			}
 		})
 	}
 
