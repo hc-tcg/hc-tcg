@@ -48,9 +48,12 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance, 'active')
-			if (attack.id !== attackId) return
+			const inactiveAttackId = this.getInstanceKey(instance, 'active')
+			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
 			applySingleUse(game)
+
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 
