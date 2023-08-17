@@ -185,10 +185,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.onAttack.remove(instance)
 		opponentPlayer.hooks.blockedActions.remove(instance)
 		opponentPlayer.hooks.beforeAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		opponentPlayer.hooks.onTurnTimeout.remove(instance)
 		delete player.custom['opponent-attack']
 		delete player.custom[this.getInstanceKey(instance)]
