@@ -106,7 +106,6 @@ nav {
 	max-width: 70vh;
 	margin-inline: auto;
 	padding: 1vh;
-
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -198,6 +197,7 @@ nav {
 		justify-content: center;
 		align-items: center;
 		margin: 2vh 0;
+
 		> h3 {
 			font-size: 2.5vh;
 			color: var(--text-light);
@@ -208,7 +208,7 @@ nav {
 		.playerHead {
 			width: 8vh;
 			height: 8vh;
-			filter: drop-shadow(0px 0px 2px var(--text-light));
+			filter: drop-shadow(0 0 2px var(--text-light));
 		}
 	}
 
@@ -227,11 +227,13 @@ nav {
 		}
 	}
 }
+
 .creditsContainer {
 	display: grid;
 	grid-template-columns: 50% 50%;
 	border-radius: 0.5vh;
 	padding: 1vh 2vh;
+	gap: 1vh;
 }
 
 /* DESKTOP */
