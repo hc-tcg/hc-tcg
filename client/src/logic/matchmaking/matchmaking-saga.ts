@@ -37,7 +37,10 @@ function* createPrivateGameSaga() {
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
-			if (yield* cancelled()) yield* put(gameEnd())
+			if (yield* cancelled()) {
+				yield* put(clearMatchmaking())
+				yield* put(gameEnd())
+			}
 		}
 	}
 
@@ -101,7 +104,10 @@ function* joinPrivateGameSaga() {
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
-			if (yield* cancelled()) yield put(gameEnd())
+			if (yield* cancelled()) {
+				yield put(gameEnd())
+				yield* put(clearMatchmaking())
+			}
 		}
 	}
 
@@ -144,7 +150,6 @@ function* joinQueueSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
-				console.log('cancelled')
 				// Clear state and back to menu
 				yield* put(clearMatchmaking())
 				yield* put(gameEnd())
@@ -171,6 +176,7 @@ function* reconnectSaga() {
 	const reconnectState = yield* call(receiveMsg, 'GAME_STATE_ON_RECONNECT')
 	yield* put(clearMatchmaking())
 	yield* call(gameSaga, reconnectState.payload.localGameState)
+	yield* put(clearMatchmaking())
 }
 
 function* matchmakingSaga() {
