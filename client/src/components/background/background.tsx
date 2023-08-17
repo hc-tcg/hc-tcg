@@ -6,6 +6,8 @@ import css from './background.module.scss'
 import {PerspectiveCamera} from '@react-three/drei'
 import {Canvas, useFrame} from '@react-three/fiber'
 import cn from 'classnames'
+import {useSelector} from 'react-redux'
+import {getGameState} from 'logic/game/game-selectors'
 
 type Props = {
 	panorama: string
@@ -21,6 +23,8 @@ type CameraProps = {
 }
 
 const Panorama = ({panorama, camera, disabled}: Props) => {
+	const gameState = useSelector(getGameState)
+
 	const Camera = ({rotationEnabled, rotationSpeed, startingRotation, fov}: CameraProps) => {
 		const cameraRef = useRef<THREE.PerspectiveCamera>(null)
 
@@ -71,7 +75,7 @@ const Panorama = ({panorama, camera, disabled}: Props) => {
 		)
 	}
 
-	if (disabled) return <div className={cn(css.background, css.canvas)} />
+	if (disabled || gameState) return <div className={cn(css.background, css.canvas)} />
 
 	return (
 		<Canvas linear flat className={css.canvas}>
