@@ -146,6 +146,7 @@ function* joinQueueSaga() {
 			if (yield* cancelled()) {
 				console.log('cancelled')
 				// Clear state and back to menu
+				yield* put(clearMatchmaking())
 				yield* put(gameEnd())
 			}
 		}
