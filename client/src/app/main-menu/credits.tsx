@@ -40,19 +40,19 @@ function Credits({setMenuSection}: Props) {
 				/>
 				<Credit
 					name="ChimeraDev"
-					handle="ChimeraDev"
+					handle="chimeradev"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/109681545?v=4"
 				/>
 				<Credit
 					name="Harou"
-					handle="Harou"
+					handle="minionharou"
 					social="discord"
 					avatar="https://cdn.discordapp.com/avatars/171689337954500608/c17287ea15fbbbf66f8bfcbcdf6bd705.webp"
 				/>
 				<Credit
 					name="ImagineFyre"
-					handle="ImagineFyre"
+					handle="imaginefyre"
 					social="discord"
 					avatar="https://cdn.discordapp.com/avatars/395760322864218113/89d3e188881c3aacd62a91c8f6b0b2f5.webp"
 				/>
@@ -64,25 +64,25 @@ function Credits({setMenuSection}: Props) {
 				/>
 				<Credit
 					name="ProfNinja"
-					handle="ProfNinja"
+					handle="profninja"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/671639?v=4"
 				/>
 				<Credit
 					name="Scopop"
-					handle="Scopop"
+					handle="scopop"
 					social="discord"
 					avatar="https://cdn.discordapp.com/avatars/625061304939446273/6ec5d4462e4d4a0e4833ed908dbd9c2f.webp"
 				/>
 				<Credit
 					name="Sense"
-					handle="Sense101"
+					handle="sense101"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/67970865?v=4"
 				/>
 				<Credit
 					name="Tyrannicodin"
-					handle="Tyrannicodin"
+					handle="tyrannicodin"
 					social="discord"
 					avatar="https://cdn.discordapp.com/avatars/547104418131083285/0e6fa62e2f647943f21ecbe2d21a9291.webp"
 				/>
