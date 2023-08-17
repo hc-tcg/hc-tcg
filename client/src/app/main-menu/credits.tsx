@@ -33,6 +33,18 @@ function Credits({setMenuSection}: Props) {
 			<h2>Website Developers</h2>
 			<div className={css.creditsContainer}>
 				<Credit
+					name="Minion Harou"
+					handle="minionharou"
+					social="discord"
+					avatar="https://cdn.discordapp.com/avatars/171689337954500608/c17287ea15fbbbf66f8bfcbcdf6bd705.webp"
+				/>
+				<Credit
+					name="ImagineFyre"
+					handle="imaginefyre"
+					social="discord"
+					avatar="https://cdn.discordapp.com/avatars/395760322864218113/89d3e188881c3aacd62a91c8f6b0b2f5.webp"
+				/>
+				<Credit
 					name="Benji"
 					handle="alicetouhou"
 					social="discord"
@@ -43,18 +55,6 @@ function Credits({setMenuSection}: Props) {
 					handle="chimeradev"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/109681545?v=4"
-				/>
-				<Credit
-					name="Harou"
-					handle="minionharou"
-					social="discord"
-					avatar="https://cdn.discordapp.com/avatars/171689337954500608/c17287ea15fbbbf66f8bfcbcdf6bd705.webp"
-				/>
-				<Credit
-					name="ImagineFyre"
-					handle="imaginefyre"
-					social="discord"
-					avatar="https://cdn.discordapp.com/avatars/395760322864218113/89d3e188881c3aacd62a91c8f6b0b2f5.webp"
 				/>
 				<Credit
 					name="Niko"
@@ -75,7 +75,7 @@ function Credits({setMenuSection}: Props) {
 					avatar="https://cdn.discordapp.com/avatars/625061304939446273/6ec5d4462e4d4a0e4833ed908dbd9c2f.webp"
 				/>
 				<Credit
-					name="Sense"
+					name="Sense_101"
 					handle="sense101"
 					social="discord"
 					avatar="https://avatars.githubusercontent.com/u/67970865?v=4"

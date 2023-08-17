@@ -8,15 +8,16 @@
 	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
 	text-decoration: none;
 	margin-bottom: 10px;
-	background: hsla(0deg, 0, 0%, 70%);
+	background: hsla(0deg, 0, 0%, 50%);
 	padding: 0.5vh;
 	border-radius: 1vh;
 }
 
 .avatar {
 	box-shadow: 0 0 2px black;
-	width: 7vh;
-	height: 7vh;
+	width: 6vh;
+	height: 6vh;
+	margin: 0.5vh;
 	border-radius: 3.5vh;
 }
 

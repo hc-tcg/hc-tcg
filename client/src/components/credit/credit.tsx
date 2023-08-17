@@ -9,13 +9,13 @@ interface Props {
 	avatar: string
 }
 
-const Credits = ({name, social, handle, link, avatar}: Props) => {
+const Credit = ({name, social, handle, link, avatar}: Props) => {
 	const hasLink = link !== undefined
 	const content = (
 		<>
 			<img src={avatar} className={css.avatar} />
 			<div>
-				<div>{name}</div>
+				<div className={css.name}>{name}</div>
 				<div className={css.handle}>
 					<img
 						src={`images/icons/${social}.svg`}
@@ -36,4 +36,4 @@ const Credits = ({name, social, handle, link, avatar}: Props) => {
 	)
 }
 
-export default Credits
+export default Credit
