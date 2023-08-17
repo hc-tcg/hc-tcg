@@ -22,6 +22,8 @@
 }
 
 .handle {
+	display: flex;
+	align-items: center;
 	color: #aaa;
 
 	.handleImage {
