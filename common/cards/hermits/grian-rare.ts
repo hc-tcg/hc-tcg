@@ -62,8 +62,14 @@ class GrianRareHermitCard extends HermitCard {
 
 			// Discard straight away
 			discardCard(game, opponentEffectCard, true)
-			// But remove it from our discard pile for now
-			player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
+
+			if (!row.effectCard) {
+				// But remove it from our discard pile for now
+				player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
+			} else {
+				// We already have an effect card, so we just leave it in our discard
+				return
+			}
 
 			player.modalRequest = {
 				id: this.id,
