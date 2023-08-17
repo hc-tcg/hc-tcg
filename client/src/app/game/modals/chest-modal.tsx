@@ -47,6 +47,7 @@ function ChestModal({closeModal}: Props) {
 						cards={discarded}
 						selected={[selected]}
 						wrap
+						tooltipAboveModal
 					/>
 				</div>
 				<div className={css.options}>

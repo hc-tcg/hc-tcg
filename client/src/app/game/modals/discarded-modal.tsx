@@ -22,7 +22,7 @@ function DiscardedModal({closeModal}: Props) {
 			<div className={css.description}>
 				<div className={css.cards}>
 					{!discarded.length && <p>No cards have been discarded yet!</p>}
-					<CardList cards={discarded} wrap />
+					<CardList cards={discarded} wrap tooltipAboveModal />
 				</div>
 			</div>
 			<div className={css.options}>

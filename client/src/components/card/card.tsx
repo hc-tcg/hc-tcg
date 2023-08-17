@@ -16,6 +16,7 @@ interface CardProps
 	card: CardClass
 	selected?: boolean
 	picked?: boolean
+	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
