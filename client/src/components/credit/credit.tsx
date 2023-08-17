@@ -1,6 +1,5 @@
 import css from './credit.module.scss'
 import classnames from 'classnames'
-import {Fragment} from 'react'
 
 interface Props {
 	name: string
@@ -10,27 +9,26 @@ interface Props {
 	avatar: string
 }
 
-const Credits = (inputProps: Props) => {
-	const props = {...inputProps}
-	const hasLink = props.link !== undefined
+const Credits = ({name, social, handle, link, avatar}: Props) => {
+	const hasLink = link !== undefined
 	const content = (
-		<Fragment>
-			<img src={props.avatar} className={css.avatar} />
+		<>
+			<img src={avatar} className={css.avatar} />
 			<div>
-				<div>{props.name}</div>
+				<div>{name}</div>
 				<div className={css.handle}>
 					<img
-						src={`images/icons/${props.social}.svg`}
+						src={`images/icons/${social}.svg`}
 						className={classnames(css.handle, css.handleImage)}
 					/>
-					{props.handle}
+					{handle}
 				</div>
 			</div>
-		</Fragment>
+		</>
 	)
 
 	return hasLink ? (
-		<a className={css.credit} href={props.link} target="_blank" rel="noreferrer">
+		<a className={css.credit} href={link} target="_blank" rel="noreferrer">
 			{content}
 		</a>
 	) : (
