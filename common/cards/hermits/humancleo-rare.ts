@@ -169,15 +169,15 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 				return blockedActions
 			})
-		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			opponentPlayer.hooks.blockedActions.remove(instance)
-			opponentPlayer.hooks.beforeAttack.remove(instance)
-			opponentPlayer.hooks.onTurnEnd.remove(instance)
-			opponentPlayer.hooks.onTurnTimeout.remove(instance)
-			delete player.custom['opponent-attack']
-			delete player.custom[this.getInstanceKey(instance)]
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+				opponentPlayer.hooks.onTurnTimeout.remove(instance)
+				delete player.custom['opponent-attack']
+				delete player.custom[this.getInstanceKey(instance)]
+			})
 		})
 	}
 
