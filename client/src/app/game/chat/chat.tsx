@@ -17,16 +17,14 @@ function Chat() {
 	const playerId = useSelector(getPlayerId)
 	const settings = useSelector(getSettings)
 	const opponent = useSelector(getOpponentName)
-	const isAndroid = /(android)/i.test(navigator.userAgent)
-	const [chatHeight, setChatHeight] = useState<string | undefined>()
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
-	const bindChatPos = useDrag((params: any) =>
+	const bindChatPos = useDrag((params: any) => {
 		setChatPos({
 			x: params.offset[0],
 			y: params.offset[1],
 		})
-	)
+	})
 
 	if (settings.showChat !== 'on') return null
 
@@ -45,18 +43,12 @@ function Chat() {
 		dispatch(setSetting('showChat', 'off'))
 	}
 
-	const handleChatHeight = (toggle: boolean) => {
-		if (isAndroid && toggle) {
-			setChatHeight('55vh')
-		}
-		if (!toggle) {
-			setChatHeight(undefined)
-		}
-	}
-
 	// @TODO: Repopulate chat messages after reconnecting
 	return (
-		<div className={css.chat} style={{height: chatHeight, top: chatPos.y, left: chatPos.x}}>
+		<div
+			className={css.chat}
+			style={{top: chatPos.y, left: chatPos.x, width: '94vw', height: '50vh'}}
+		>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponent}</p>
 				<button onClick={closeChat}>
@@ -98,14 +90,7 @@ function Chat() {
 			</div>
 
 			<form className={css.publisher} onSubmit={handleNewMessage}>
-				<input
-					autoComplete="off"
-					autoFocus
-					onFocus={() => handleChatHeight(true)}
-					onBlur={() => handleChatHeight(false)}
-					name="message"
-					maxLength={140}
-				/>
+				<input autoComplete="off" autoFocus name="message" maxLength={140} />
 				<Button variant="default" size="small">
 					Send
 				</Button>
