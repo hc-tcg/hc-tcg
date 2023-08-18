@@ -1,52 +1,10 @@
 .background {
-	width: 100%;
+	background: url('/images/menu-background-image.png') center center no-repeat;
+	background-size: cover;
 	height: 100%;
-	overflow: hidden;
+	width: 100%;
 	position: absolute;
 	filter: blur(1px);
-	z-index: -1;
-
-	.innerBackground {
-		height: 100%;
-		width: 100%;
-		position: absolute;
-
-		&.image {
-			background: url('/images/menu-background-image.png') center center
-				no-repeat;
-			background-size: cover;
-
-			@media screen and (max-width: 100vh) {
-				background: url('/images/menu-background.png') center center no-repeat;
-				background-size: cover;
-			}
-		}
-
-		&.noImage {
-			background: url('/images/menu-background.png') center center no-repeat;
-			background-size: cover;
-		}
-	}
-}
-
-@media screen and (min-width: 100vh) {
-	.enter {
-		opacity: 0;
-	}
-
-	.enterActive {
-		opacity: 1;
-		transition: opacity 0.5s;
-	}
-
-	.exit {
-		opacity: 1;
-	}
-
-	.exitActive {
-		opacity: 0;
-		transition: opacity 0.5s;
-	}
 }
 
 .canvas {

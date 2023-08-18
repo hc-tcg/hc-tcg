@@ -10,4 +10,8 @@
 	width: max-content;
 	max-width: 470px;
 	z-index: 110;
+
+	&.showAboveModal {
+		z-index: 121;
+	}
 }

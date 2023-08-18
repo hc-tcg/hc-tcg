@@ -1,5 +1,10 @@
+import {AttackModel} from '../models/attack-model'
+import {CardPosModel} from '../models/card-pos-model'
+import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
-import {PickProcessT} from './pick-process'
+import {GameHook, WaterfallHook} from './hooks'
+import {PickProcessT, PickedSlots} from './pick-process'
+import {ModalRequest, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
@@ -9,13 +14,8 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness'
-	duration: number
-}
-
-export type PlayerAilment = {
-	id: 'badomen'
-	duration: number
+	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen' | 'weakness'
+	duration?: number
 }
 
 export type RowStateWithHermit = {
@@ -41,34 +41,135 @@ export type CoinFlipT = 'heads' | 'tails'
 export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
-	iterations: Array<string>
 }
 
 export type PlayerState = {
 	id: PlayerId
-	followUp?: any
 	playerName: string
+	minecraftName: string
+	playerDeck: Array<CardT>
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	hand: Array<CardT>
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
 	}
+
+	pickRequests: Array<PickRequest>
+	//@TODO for now this is not an array because it's faster to code it that way, however, long term it needs be an array
+	//and the code also needs to check for the opponents modal requests
+	modalRequest: ModalRequest | null
+
+	hooks: {
+		/** Hook that modifies and returns available energy from item cards */
+		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
+
+		/** Hook that modifies and returns blockedActions */
+		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
+
+		/** Hook called when a card is attached */
+		onAttach: GameHook<(instance: string) => void>
+		/** Hook called when a card is detached */
+		onDetach: GameHook<(instance: string) => void>
+
+		/** Hook called before a single use card is applied */
+		beforeApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Hook called when a single use card is applied */
+		onApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		/** Hook called after a single use card is applied */
+		afterApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+
+		/** Hook that returns attacks to execute */
+		getAttacks: GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>
+		/** Hook called before the main attack loop, for every attack from our side of the board */
+		beforeAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Hook called before the main attack loop, for every attack targeting our side of the board */
+		beforeDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Hook called for every attack from our side of the board */
+		onAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/** Hook called for every attack that targets our side of the board */
+		onDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		/**
+		 * Hook called after the main attack loop, for every attack from our side of the board.
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
+		afterAttack: GameHook<(attack: AttackModel) => void>
+		/**
+		 * Hook called after the main attack loop, for every attack targeting our side of the board
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
+		afterDefence: GameHook<(attack: AttackModel) => void>
+
+		/**
+		 * Hook called when a hermit is about to die.
+		 */
+		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
+
+		/** hook called at the start of the turn */
+		onTurnStart: GameHook<() => void>
+		/** hook called at the end of the turn */
+		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
+		/** hook called when the time runs out*/
+		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>
+
+		/** hook called the player flips a coin */
+		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+
+		/** hook called when the active Hermit changes */
+		onActiveHermitChange: GameHook<(oldRow: number | null, newRow: number) => void>
+	}
+}
+
+export type GenericActionResult =
+	| 'SUCCESS'
+	| 'FAILURE_INVALID_DATA'
+	| 'FAILURE_NOT_APPLICABLE'
+	| 'FAILURE_ACTION_NOT_AVAILABLE'
+	| 'FAILURE_CANNOT_COMPLETE'
+	| 'FAILURE_UNKNOWN_ERROR'
+
+export type PlayCardActionResult = 'FAILURE_INVALID_SLOT' | 'FAILURE_CANNOT_ATTACH'
+
+export type PickCardActionResult =
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_WRONG_PLAYER'
+	| 'FAILURE_WRONG_PICK'
+
+export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
+
+export type TurnState = {
+	turnNumber: number
+	currentPlayerId: string
+	availableActions: TurnActions
+	opponentAvailableActions: TurnActions
+	completedActions: TurnActions
+	blockedActions: TurnActions
+}
+
+export type LocalTurnState = {
+	turnNumber: number
+	currentPlayerId: string
+	availableActions: TurnActions
 }
 
 export type GameState = {
-	turn: number
-	turnPlayerId: string
+	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
+
+	lastActionResult: {
+		action: TurnAction
+		result: ActionResult
+	} | null
 
 	timer: {
 		turnTime: number
@@ -76,23 +177,32 @@ export type GameState = {
 	}
 }
 
-export type AvailableActionT =
-	| 'END_TURN'
-	| 'APPLY_EFFECT'
-	| 'REMOVE_EFFECT'
-	| 'ZERO_ATTACK'
-	| 'PRIMARY_ATTACK'
-	| 'SECONDARY_ATTACK'
-	| 'FOLLOW_UP'
-	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
-	| 'CHANGE_ACTIVE_HERMIT'
-	| 'ADD_HERMIT'
+export type PlayCardAction =
+	| 'PLAY_HERMIT_CARD'
 	| 'PLAY_ITEM_CARD'
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
-	| 'WAIT_FOR_TURN'
 
-export type AvailableActionsT = Array<AvailableActionT>
+export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+
+export type PickCardAction = 'PICK_CARD' | 'WAIT_FOR_OPPONENT_PICK'
+
+export type TurnAction =
+	| PlayCardAction
+	| AttackAction
+	| PickCardAction
+	| 'END_TURN'
+	| 'APPLY_EFFECT'
+	| 'REMOVE_EFFECT'
+	| 'CHANGE_ACTIVE_HERMIT'
+	| 'WAIT_FOR_TURN'
+	| 'CUSTOM_MODAL'
+
+export type GameRules = {
+	disableTimer: boolean
+}
+
+export type TurnActions = Array<TurnAction>
 
 export type GameEndOutcomeT =
 	| 'client_crash'
@@ -112,13 +222,12 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
-	followUp?: any
 	playerName: string
+	minecraftName: string
 	censoredPlayerName: string
-	coinFlips: Record<string, Array<CoinFlipT>>
+	coinFlips: Array<CurrentCoinFlipT>
 	custom: Record<string, any>
 	lives: number
-	ailments: Array<PlayerAilment>
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -128,7 +237,7 @@ export type LocalPlayerState = {
 }
 
 export type LocalGameState = {
-	turn: number
+	turn: LocalTurnState
 	order: Array<PlayerId>
 
 	// personal data
@@ -139,22 +248,21 @@ export type LocalGameState = {
 	// ids
 	playerId: PlayerId
 	opponentPlayerId: PlayerId
-	currentPlayerId: PlayerId
+
+	lastActionResult: {
+		action: TurnAction
+		result: ActionResult
+	} | null
+
+	currentPickMessage: string | null
+	currentCustomModal: string | null
 
 	players: Record<string, LocalPlayerState>
-
-	pastTurnActions: Array<string>
-	availableActions: AvailableActionsT
 
 	timer: {
 		turnTime: number
 		turnRemaining: number
 	}
-}
-
-export type CoinFlipInfo = {
-	shownCoinFlips: Array<string>
-	turn: number
 }
 
 // state sent to client

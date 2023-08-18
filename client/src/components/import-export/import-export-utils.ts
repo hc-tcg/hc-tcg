@@ -1,9 +1,10 @@
 import {CardT} from 'common/types/game-state'
-import CARDS from 'server/cards'
+import {CARDS} from 'common/cards'
 import {universe} from './import-export-const'
+import {encode, decode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<CardT> => {
-	const b64 = atob(hash)
+	const b64 = decode(hash)
 		.split('')
 		.map((char) => char.charCodeAt(0))
 	const deck = []
@@ -24,6 +25,6 @@ export const getHashFromDeck = (pickedCards: Array<CardT>): string => {
 		const index = universe.indexOf(cardId)
 		if (index >= 0) indicies.push(index)
 	}
-	const b64cards = btoa(String.fromCharCode.apply(null, indicies))
+	const b64cards = encode(String.fromCharCode.apply(null, indicies))
 	return b64cards
 }

@@ -31,6 +31,17 @@ export const getPlayerState = (state: RootState) => {
 	return getPlayerStateById(playerId)(state)
 }
 
+export const getOpponentName = (state: RootState) => {
+	const settings = state.localSettings
+	const gameState = getGameState(state)
+	const opponentId = getOpponentId(state)
+	const opponent = opponentId && gameState?.players[opponentId]
+
+	if (!opponent) return
+	if (settings.profanityFilter === 'off') return opponent.playerName
+	return opponent.censoredPlayerName
+}
+
 export const getOpponentState = (state: RootState) => {
 	const playerId = getOpponentId(state)
 	return playerId ? getPlayerStateById(playerId)(state) : null
@@ -39,20 +50,22 @@ export const getOpponentState = (state: RootState) => {
 export const getCurrentPlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	return getPlayerStateById(gameState.currentPlayerId)(state)
+	return getPlayerStateById(gameState.turn.currentPlayerId)(state)
 }
 
 export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
-	const currentPlayerId = gameState.currentPlayerId
+	const currentPlayerId = gameState.turn.currentPlayerId
 	const inactiveId = gameState.order.filter((id) => id !== currentPlayerId)[0]
 	if (!inactiveId) return null
 	return getPlayerStateById(inactiveId)(state)
 }
 
 export const getAvailableActions = (state: RootState) => {
-	return getGameState(state)?.availableActions || []
+	const gameState = getGameState(state)
+	if (!gameState) return []
+	return gameState.turn.availableActions
 }
 
 export const getSelectedCard = (state: RootState) => {
@@ -63,8 +76,13 @@ export const getOpenedModal = (state: RootState) => {
 	return getGame(state).openedModal
 }
 
+//@TODO intergrate with pick request system
 export const getPickProcess = (state: RootState) => {
 	return getGame(state).pickProcess
+}
+
+export const getCurrentPickMessage = (state: RootState) => {
+	return getGameState(state)?.currentPickMessage || null
 }
 
 export const getEndGameOverlay = (state: RootState) => {

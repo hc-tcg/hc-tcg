@@ -1,5 +1,5 @@
 import css from './link-container.module.scss'
-import {CONFIG} from '../../../../config'
+import {CONFIG} from '../../../../common/config'
 
 export function VersionLinks() {
 	return (
@@ -23,12 +23,7 @@ export function VersionLinks() {
 				<img draggable={false} src="/images/icons/github.svg" />
 				GitHub
 			</a>
-			<a
-				href="https://discord.gg/AjGbqNfcQX"
-				target="_blank"
-				rel="noreferrer"
-				title="Discord"
-			>
+			<a href="https://discord.gg/AjGbqNfcQX" target="_blank" rel="noreferrer" title="Discord">
 				<img draggable={false} src="/images/icons/discord.svg" />
 				Discord
 			</a>
@@ -56,12 +51,7 @@ function LinkContainer() {
 				<img draggable={false} src="/images/icons/github.svg" />
 			</a>
 
-			<a
-				href="https://discord.gg/AjGbqNfcQX"
-				target="_blank"
-				rel="noreferrer"
-				title="Discord"
-			>
+			<a href="https://discord.gg/AjGbqNfcQX" target="_blank" rel="noreferrer" title="Discord">
 				<img draggable={false} src="/images/icons/discord.svg" />
 			</a>
 		</div>

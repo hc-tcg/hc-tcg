@@ -5,15 +5,23 @@
 .card {
 	background: white;
 	letter-spacing: 0.065em;
-	position: relative;
+	font-family: BangersRegular !important;
 }
 
-.card text {
-	dominant-baseline: hanging;
+.hermitImage {
+	filter: drop-shadow(0px 0px 8px black);
 }
 
 .cardBackground {
 	fill: rgb(226, 202, 139);
+
+	&.alter_egos {
+		fill: rgb(25, 25, 25);
+	}
+
+	&.pharaoh {
+		fill: rgb(239, 228, 103);
+	}
 }
 
 .name {
@@ -22,13 +30,21 @@
 	fill: black;
 	font-size: 45px;
 	display: inline-block;
+
+	&.alter_egos {
+		fill: white;
+	}
+
+	&.pharaoh {
+		fill: rgb(246, 4, 1);
+	}
 }
 
 .health {
 	fill: rgb(246, 4, 1);
 	font-size: 45px;
 	text-anchor: end;
-	letter-spacing: 0.0889em;
+	letter-spacing: 0.0389em;
 }
 
 .hermitTypeBackground {
@@ -44,11 +60,18 @@ text.attackName {
 	text-transform: uppercase;
 	fill: black;
 	text-anchor: middle;
-}
 
-text.attackName.long {
-	letter-spacing: 0.013em;
-	font-family: BangersRegular !important;
+	&.alter_egos {
+		fill: white;
+	}
+
+	&.pharaoh {
+		fill: rgb(246, 4, 1);
+	}
+
+	&.pharaoh.specialMove {
+		fill: rgb(23, 66, 234);
+	}
 }
 
 .attackDamage {
@@ -60,6 +83,10 @@ text.attackName.long {
 
 .attackDamage.specialMove {
 	fill: rgb(23, 66, 234);
+}
+
+.attackItems.alter_egos.prankster {
+	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
 }
 
 .rank {

@@ -1,6 +1,6 @@
 import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
-import css from './forfeit-modal.module.css'
+import css from './game-modals.module.scss'
 import {forfeit} from 'logic/game/game-actions'
 import Button from 'components/button/button'
 
@@ -20,17 +20,13 @@ function AttackModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="!! Forfeit !!">
+		<Modal title="Forfeit Match" closeModal={handleNo}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Do you really wish to forfeit this game?
-				</div>
+				<div className={css.description}>Are you sure you want to forfeit this game?</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleYes}>
-						Yes
-					</Button>
-					<Button variant="primary" size="small" onClick={handleNo}>
-						No
+					<Button onClick={handleNo}>Cancel</Button>
+					<Button variant="error" onClick={handleYes}>
+						Forfeit
 					</Button>
 				</div>
 			</div>

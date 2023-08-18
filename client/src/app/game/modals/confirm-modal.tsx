@@ -1,9 +1,10 @@
 import Modal from 'components/modal'
-import {useDispatch} from 'react-redux'
-import css from './confirm-modal.module.css'
-
+import {useDispatch, useSelector} from 'react-redux'
+import css from './game-modals.module.scss'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
+import {getPlayerState} from 'logic/game/game-selectors'
 import Button from 'components/button'
+import {CARDS} from 'common/cards'
 
 type Props = {
 	closeModal: () => void
@@ -21,18 +22,29 @@ function ConfirmModal({closeModal}: Props) {
 		closeModal()
 	}
 
+	const getCardName = () => {
+		const playerState = useSelector(getPlayerState)
+
+		if (!playerState) return null
+		const singleUseCard = playerState.board.singleUseCard
+
+		if (!singleUseCard) return null
+		const cardId = singleUseCard.cardId
+		const cardName = CARDS[cardId].name
+
+		return cardName
+	}
+
 	return (
-		<Modal title="Confirm">
+		<Modal title="Play Single Use Card" closeModal={handleNo}>
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Do you want to apply selected single use effect?
-				</div>
+				<div className={css.description}>Are you sure you want to use {getCardName()}?</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleYes}>
-						Yes
-					</Button>
-					<Button variant="primary" size="small" onClick={handleNo}>
+					<Button size="medium" onClick={handleNo}>
 						No
+					</Button>
+					<Button size="medium" onClick={handleYes}>
+						Yes
 					</Button>
 				</div>
 			</div>

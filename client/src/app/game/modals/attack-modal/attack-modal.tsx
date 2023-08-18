@@ -1,14 +1,10 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {HermitCardT} from 'common/types/cards'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'server/cards'
+import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
-import css from './attack-modal.module.css'
+import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {
-	getAvailableActions,
-	getPlayerStateById,
-} from 'logic/game/game-selectors'
+import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors'
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
 import HermitSelector from './hermit-selector'
@@ -28,17 +24,15 @@ function AttackModal({closeModal}: Props) {
 
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
+	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
-	const playerHermitInfo = HERMIT_CARDS[
-		activeRow.hermitCard.cardId
-	] as HermitCardT
+	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
+	if (!playerHermitInfo) return null // Armor Stand
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
-	const singleUseInfo = singleUseCard
-		? SINGLE_USE_CARDS[singleUseCard.cardId]
-		: null
+	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
 
-	const handleAttack = (type: 'zero' | 'primary' | 'secondary') => {
+	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))
 		closeModal()
 	}
@@ -51,15 +45,15 @@ function AttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
-	const effectAttack = () => handleAttack('zero')
+	const effectAttack = () => handleAttack('single-use')
 	const primaryAttack = () => handleAttack('primary')
 	const secondaryAttack = () => handleAttack('secondary')
 
 	const attacks = []
-	if (singleUseInfo && availableActions.includes('ZERO_ATTACK')) {
+	if (singleUseInfo && availableActions.includes('SINGLE_USE_ATTACK')) {
 		attacks.push(
 			<Attack
-				key="zero"
+				key="single-use"
 				name={singleUseInfo.name}
 				icon={`/images/effects/${singleUseInfo?.id}.png`}
 				attackInfo={null}
@@ -105,22 +99,15 @@ function AttackModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Attack" closeModal={closeModal}>
-			<div className={css.attackModal}>
+		<Modal title="Attack" closeModal={closeModal} centered>
+			<div className={css.description}>
 				{attacks.length ? (
 					<>
-						<div className={css.turnEndNotification}>
-							<span className={css.infoIcon}>!</span>
-							Attack is the last action of your turn.
-						</div>
-						<div className={css.turnEndNotification}>
-							<span className={css.infoIcon}>i</span>
-							Damage bonuses from special moves are NOT included in the preview.
-						</div>
+						<Modal.Notice icon={'!'}>Attacking will end your turn!</Modal.Notice>
 						{attacks}
 					</>
 				) : (
-					<span className={css.noAttacks}>No attacks available.</span>
+					<span>No attacks available.</span>
 				)}
 			</div>
 		</Modal>

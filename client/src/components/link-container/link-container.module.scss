@@ -20,8 +20,7 @@
 
 		&:hover {
 			img {
-				filter: invert(1) brightness(100%) sepia(100) saturate(7)
-					hue-rotate(341deg);
+				filter: invert(1) brightness(100%) sepia(100) saturate(7) hue-rotate(341deg);
 			}
 		}
 	}
@@ -61,8 +60,7 @@
 			color: hsl(60deg, 90%, 80%);
 
 			img {
-				filter: invert(1) brightness(100%) sepia(100) saturate(7)
-					hue-rotate(341deg);
+				filter: invert(1) brightness(100%) sepia(100) saturate(7) hue-rotate(341deg);
 			}
 		}
 	}

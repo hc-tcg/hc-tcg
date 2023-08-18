@@ -3,11 +3,11 @@ import {useState} from 'react'
 import Modal from 'components/modal'
 import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
-import css from './chest-modal.module.css'
-import {equalCard} from 'server/utils'
+import css from './game-modals.module.scss'
 import {getGameState} from 'logic/game/game-selectors'
 import {applyEffect, removeEffect} from 'logic/game/game-actions'
 import Button from 'components/button'
+import {equalCard} from 'common/utils/cards'
 
 const DISABLED = ['clock']
 
@@ -20,9 +20,7 @@ function ChestModal({closeModal}: Props) {
 	const discarded: Array<CardT> = useSelector(getGameState)?.discarded || []
 
 	const handleSelection = (newSelected: CardT) => {
-		setSelected((current) =>
-			equalCard(current, newSelected) ? null : newSelected
-		)
+		setSelected((current) => (equalCard(current, newSelected) ? null : newSelected))
 	}
 
 	const handleClose = () => {
@@ -34,7 +32,7 @@ function ChestModal({closeModal}: Props) {
 		if (!selected) {
 			dispatch(removeEffect())
 		} else {
-			dispatch(applyEffect(selected))
+			dispatch(applyEffect({modalResult: {card: selected}}))
 		}
 		closeModal()
 	}
@@ -46,15 +44,14 @@ function ChestModal({closeModal}: Props) {
 					<CardList
 						disabled={DISABLED}
 						onClick={handleSelection}
-						size="small"
 						cards={discarded}
-						selected={selected}
+						selected={[selected]}
+						wrap
+						tooltipAboveModal
 					/>
 				</div>
 				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={handleConfirm}>
-						Confirm Selection
-					</Button>
+					<Button onClick={handleConfirm}>Confirm Selection</Button>
 				</div>
 			</div>
 		</Modal>

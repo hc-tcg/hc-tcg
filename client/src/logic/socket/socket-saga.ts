@@ -1,13 +1,9 @@
-import {takeEvery, put, cancelled} from 'redux-saga/effects'
+import {takeEvery, put} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {SagaIterator} from 'redux-saga'
 import {eventChannel} from 'redux-saga'
 import socket from 'socket'
-import {
-	socketConnect,
-	socketDisconnect,
-	socketConnectError,
-} from './socket-actions'
+import {socketConnect, socketDisconnect, socketConnectError} from './socket-actions'
 import {getSession} from 'logic/session/session-selectors'
 
 export function* sendMsg(type: string, payload?: any): any {
@@ -29,19 +25,18 @@ export function* sendMsg(type: string, payload?: any): any {
 	}
 }
 
-export function* receiveMsg(type: string): any {
-	let listener
-	try {
-		return yield new Promise((resolve: any) => {
-			listener = (message: string) => {
-				// console.log('[receive]', type, message)
-				resolve(message)
-			}
-			socket.once(type, listener)
-		})
-	} finally {
-		if (yield cancelled()) socket.off(type, listener)
-	}
+export type ServerMessage = {
+	type: string
+	payload?: any
+}
+
+export const receiveMsg = (type: string) => {
+	return new Promise<ServerMessage>((resolve) => {
+		const listener = (message: ServerMessage) => {
+			resolve(message)
+		}
+		socket.once(type, listener)
+	})
 }
 
 function* socketSaga(): SagaIterator {
