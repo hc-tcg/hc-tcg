@@ -53,7 +53,14 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 			>
 				{card.name}
 			</text>
-			<text x="310" y="20" className={css.health} dominantBaseline="hanging" key={Math.random()}>
+			<text
+				x="310"
+				y="20"
+				className={css.health}
+				textAnchor="middle"
+				dominantBaseline="hanging"
+				key={Math.random()}
+			>
 				{card.health}
 			</text>
 			<g id="hermit-image">
