@@ -1,7 +1,7 @@
-import config from './server-config.json' assert {type: 'json'}
-import debugConfig from './debug-config.json' assert {type: 'json'}
-import ranks from './ranks.json' assert {type: 'json'}
-import expansions from './expansions.json' assert {type: 'json'}
+import config from './server-config.json'
+import debugConfig from './debug-config.json'
+import ranks from './ranks.json'
+import expansions from './expansions.json'
 
 export const CONFIG = config
 export const DEBUG_CONFIG = debugConfig
