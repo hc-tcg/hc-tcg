@@ -21,7 +21,7 @@ const defaultState: LocalSettings = {
 	profanityFilter: 'on',
 	confirmationDialogs: 'on',
 	showChat: 'off',
-	panoramaEnabled: false,
+	panoramaEnabled: true,
 	panorama: 'hermit-hill',
 	gameSide: 'Left',
 	minecraftName: 'alex',
