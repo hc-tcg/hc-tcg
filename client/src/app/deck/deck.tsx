@@ -63,6 +63,13 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 			cardInfoA.hermitType !== cardInfoB.hermitType
 		) {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+		} else if (
+			cardInfoA instanceof HermitCard &&
+			cardInfoB instanceof HermitCard &&
+			cardInfoA.getExpansion() !== cardInfoB.getExpansion()
+		) {
+			// then by expansion if they are both hermits
+			return cardInfoA.getExpansion().localeCompare(cardInfoA.getExpansion())
 		} else if (cardCostA !== cardCostB) {
 			// order by ranks
 			return cardCostA - cardCostB

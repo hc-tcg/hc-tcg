@@ -67,7 +67,7 @@ abstract class Card {
 	/**
 	 * Returns the expansion this card is a part of
 	 */
-	public getExpansion(): string {
+	public getExpansion(): 'default' | 'alter_egos' {
 		return 'default'
 	}
 
