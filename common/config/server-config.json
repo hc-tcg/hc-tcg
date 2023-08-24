@@ -3,7 +3,7 @@
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
 	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev", "https://hc-tcg-beta.fly.dev"],
-	"world": "beta",
+	"world": "LTF42",
 	"limits": {
 		"maxTurnTime": 90,
 		"extraActionTime": 30,
@@ -15,5 +15,5 @@
 	},
 	"logoSubText": "Alter egos!",
 	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.18"
+	"version": "0.6.19"
 }

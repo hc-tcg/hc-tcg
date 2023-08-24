@@ -36,10 +36,10 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			player.modalRequest = {
 				id: this.id,
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.card) return 'FAILURE_INVALID_DATA'
+					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
 					if (player.custom[coinResult] === 'heads') {
-						discardFromHand(opponentPlayer, modalResult.card)
+						discardFromHand(opponentPlayer, modalResult.card || null)
 					}
 
 					return 'SUCCESS'

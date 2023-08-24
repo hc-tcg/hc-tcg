@@ -58,7 +58,7 @@ export function* attackSaga(action: AttackAction): SagaIterator {
 				opponentAttackPick.name,
 				opponentAttackPick.pickReqs
 			)
-			if (!result[opponentAttackPick.cardId]) return
+			if (!result[opponentAttackPick.cardId]) result[opponentAttackPick.cardId] = []
 		}
 	}
 
