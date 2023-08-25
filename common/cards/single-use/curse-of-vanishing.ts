@@ -34,7 +34,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		if (opponentPlayer.board.activeRow === null) return 'NO'
