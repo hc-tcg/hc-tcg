@@ -4,7 +4,7 @@ class GoodTimesWithScarCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'goodtimeswithscar_common',
-			numeric_id: 32,
+			numericId: 32,
 			name: 'Scar',
 			rarity: 'common',
 			hermitType: 'terraform',

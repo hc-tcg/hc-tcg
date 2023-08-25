@@ -7,7 +7,7 @@ import {TurnActions} from '../../types/game-state'
 type CardDefs = {
 	type: CardTypeT
 	id: string
-	numeric_id: number
+	numericId: number
 	name: string
 	rarity: CardRarityT
 	pickOn?: 'attack' | 'apply'
@@ -17,7 +17,7 @@ type CardDefs = {
 abstract class Card {
 	public type: CardTypeT
 	public id: string
-	public numeric_id: number
+	public numericId: number
 	public name: string
 	public rarity: CardRarityT
 	public pickOn: string | undefined
@@ -26,7 +26,7 @@ abstract class Card {
 	constructor(defs: CardDefs) {
 		this.type = defs.type
 		this.id = defs.id
-		this.numeric_id = defs.numeric_id
+		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
 		this.pickOn = defs.pickOn

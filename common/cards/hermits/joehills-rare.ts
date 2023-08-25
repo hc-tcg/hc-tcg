@@ -8,7 +8,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'joehills_rare',
-			numeric_id: 70,
+			numericId: 70,
 			name: 'Joe',
 			rarity: 'rare',
 			hermitType: 'farm',

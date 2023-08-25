@@ -7,7 +7,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'stressmonster101_rare',
-			numeric_id: 93,
+			numericId: 93,
 			name: 'Stress',
 			rarity: 'rare',
 			hermitType: 'prankster',

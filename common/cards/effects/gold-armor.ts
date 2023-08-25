@@ -7,7 +7,7 @@ class GoldArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'gold_armor',
-			numeric_id: 29,
+			numericId: 29,
 			name: 'Gold Armor',
 			rarity: 'common',
 			description: 'Prevent up to 10hp damage each turn.',

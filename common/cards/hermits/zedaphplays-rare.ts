@@ -7,7 +7,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'zedaphplays_rare',
-			numeric_id: 114,
+			numericId: 114,
 			name: 'Zedaph',
 			rarity: 'rare',
 			hermitType: 'explorer',

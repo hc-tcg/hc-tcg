@@ -8,7 +8,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'composter',
-			numeric_id: 7,
+			numericId: 7,
 			name: 'Composter',
 			rarity: 'common',
 			description:

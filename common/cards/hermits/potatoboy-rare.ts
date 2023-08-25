@@ -6,7 +6,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'potatoboy_rare',
-			numeric_id: 135,
+			numericId: 135,
 			name: 'Potato Boy',
 			rarity: 'rare',
 			hermitType: 'farm',

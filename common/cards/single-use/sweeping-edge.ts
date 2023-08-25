@@ -8,7 +8,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'sweeping_edge',
-			numeric_id: 148,
+			numericId: 148,
 			name: 'Sweeping Edge',
 			rarity: 'ultra_rare',
 			description:

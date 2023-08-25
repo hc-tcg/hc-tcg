@@ -8,7 +8,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'evilxisuma_rare',
-			numeric_id: 128,
+			numericId: 128,
 			name: 'Evil X',
 			rarity: 'rare',
 			hermitType: 'balanced',

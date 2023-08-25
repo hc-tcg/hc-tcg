@@ -4,7 +4,7 @@ class GrianCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'grian_common',
-			numeric_id: 34,
+			numericId: 34,
 			name: 'Grian',
 			rarity: 'common',
 			hermitType: 'builder',

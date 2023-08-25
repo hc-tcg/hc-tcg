@@ -4,7 +4,7 @@ class KeralisCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'keralis_common',
-			numeric_id: 71,
+			numericId: 71,
 			name: 'Keralis',
 			rarity: 'common',
 			hermitType: 'builder',

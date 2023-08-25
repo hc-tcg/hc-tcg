@@ -6,7 +6,7 @@ class PvPRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_pvp_rare',
-			numeric_id: 62,
+			numericId: 62,
 			name: 'PvP',
 			rarity: 'rare',
 			hermitType: 'pvp',

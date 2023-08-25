@@ -8,7 +8,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'iron_sword',
-			numeric_id: 46,
+			numericId: 46,
 			name: 'Iron Sword',
 			rarity: 'common',
 			description: 'Do an additional 20hp damage.',

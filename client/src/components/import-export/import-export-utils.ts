@@ -8,10 +8,10 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 		.map((char) => char.charCodeAt(0))
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
-		const card_id = Object.values(CARDS).find((value) => value.numeric_id === b64[i])?.id
-		if (!card_id) continue
+		const cardId = Object.values(CARDS).find((value) => value.numericId === b64[i])?.id
+		if (!cardId) continue
 		deck.push({
-			cardId: card_id,
+			cardId: cardId,
 			cardInstance: Math.random().toString(),
 		})
 	}
@@ -22,7 +22,7 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 export const getHashFromDeck = (pickedCards: Array<CardT>): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
-		const id = CARDS[pickedCards[i].cardId].numeric_id
+		const id = CARDS[pickedCards[i].cardId].numericId
 		if (id >= 0) indicies.push(id)
 	}
 	const b64cards = encode(String.fromCharCode.apply(null, indicies))

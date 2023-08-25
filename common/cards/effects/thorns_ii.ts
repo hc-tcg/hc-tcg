@@ -8,7 +8,7 @@ class ThornsIIEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'thorns_ii',
-			numeric_id: 123,
+			numericId: 123,
 			name: 'Thorns II',
 			rarity: 'rare',
 			description:

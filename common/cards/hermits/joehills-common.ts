@@ -4,7 +4,7 @@ class JoeHillsCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'joehills_common',
-			numeric_id: 69,
+			numericId: 69,
 			name: 'Joe',
 			rarity: 'common',
 			hermitType: 'explorer',

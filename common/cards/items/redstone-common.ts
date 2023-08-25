@@ -6,7 +6,7 @@ class RedstoneCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_redstone_common',
-			numeric_id: 63,
+			numericId: 63,
 			name: 'Redstone',
 			rarity: 'common',
 			hermitType: 'redstone',

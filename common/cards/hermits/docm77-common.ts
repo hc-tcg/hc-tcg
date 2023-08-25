@@ -4,7 +4,7 @@ class Docm77CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'docm77_common',
-			numeric_id: 15,
+			numericId: 15,
 			name: 'Docm77',
 			rarity: 'common',
 			hermitType: 'redstone',

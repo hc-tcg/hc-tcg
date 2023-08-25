@@ -9,7 +9,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'golden_axe',
-			numeric_id: 31,
+			numericId: 31,
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:

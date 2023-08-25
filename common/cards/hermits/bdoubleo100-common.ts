@@ -4,7 +4,7 @@ class BdoubleO100CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'bdoubleo100_common',
-			numeric_id: 0,
+			numericId: 0,
 			name: 'Bdubs',
 			rarity: 'common',
 			hermitType: 'builder',

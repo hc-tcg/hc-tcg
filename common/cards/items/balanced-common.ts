@@ -6,7 +6,7 @@ class BalancedCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_balanced_common',
-			numeric_id: 49,
+			numericId: 49,
 			name: 'Balanced',
 			rarity: 'common',
 			hermitType: 'balanced',

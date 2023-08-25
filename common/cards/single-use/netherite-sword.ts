@@ -8,7 +8,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'netherite_sword',
-			numeric_id: 83,
+			numericId: 83,
 			name: 'Netherite Sword',
 			rarity: 'ultra_rare',
 			description: 'Do an additional 60hp damage.',

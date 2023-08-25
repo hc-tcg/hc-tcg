@@ -7,7 +7,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'chorus_fruit',
-			numeric_id: 5,
+			numericId: 5,
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description: 'Swap your active Hermit with one of your AFK Hermits after attacking.',

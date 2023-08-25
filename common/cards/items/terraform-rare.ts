@@ -6,7 +6,7 @@ class TerraformRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_terraform_rare',
-			numeric_id: 68,
+			numericId: 68,
 			name: 'Terraform',
 			rarity: 'rare',
 			hermitType: 'terraform',

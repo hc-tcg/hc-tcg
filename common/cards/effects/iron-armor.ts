@@ -7,7 +7,7 @@ class IronArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'iron_armor',
-			numeric_id: 45,
+			numericId: 45,
 			name: 'Iron Armor',
 			rarity: 'common',
 			description: 'Prevent up to 20hp damage each turn.',

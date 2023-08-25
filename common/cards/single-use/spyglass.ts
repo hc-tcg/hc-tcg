@@ -8,7 +8,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'spyglass',
-			numeric_id: 91,
+			numericId: 91,
 			name: 'Spyglass',
 			rarity: 'common',
 			description:

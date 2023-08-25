@@ -7,7 +7,7 @@ class IJevinRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ijevin_rare',
-			numeric_id: 39,
+			numericId: 39,
 			name: 'Jevin',
 			rarity: 'rare',
 			hermitType: 'speedrunner',

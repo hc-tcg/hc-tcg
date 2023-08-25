@@ -7,7 +7,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'flint_&_steel',
-			numeric_id: 25,
+			numericId: 25,
 			name: 'Flint & Steel',
 			rarity: 'common',
 			description:

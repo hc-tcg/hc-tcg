@@ -8,7 +8,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'falsesymmetry_rare',
-			numeric_id: 23,
+			numericId: 23,
 			name: 'False',
 			rarity: 'rare',
 			hermitType: 'builder',

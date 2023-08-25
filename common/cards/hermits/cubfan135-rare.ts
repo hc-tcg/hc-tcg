@@ -6,7 +6,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'cubfan135_rare',
-			numeric_id: 10,
+			numericId: 10,
 			name: 'Cub',
 			rarity: 'rare',
 			hermitType: 'speedrunner',

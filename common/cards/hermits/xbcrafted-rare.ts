@@ -12,7 +12,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xbcrafted_rare',
-			numeric_id: 110,
+			numericId: 110,
 			name: 'XB',
 			rarity: 'rare',
 			hermitType: 'explorer',

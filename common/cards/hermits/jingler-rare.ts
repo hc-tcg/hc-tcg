@@ -8,7 +8,7 @@ class JinglerRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'jingler_rare',
-			numeric_id: 133,
+			numericId: 133,
 			name: 'Jingler',
 			rarity: 'rare',
 			hermitType: 'speedrunner',

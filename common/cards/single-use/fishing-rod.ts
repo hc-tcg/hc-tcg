@@ -7,7 +7,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'fishing_rod',
-			numeric_id: 24,
+			numericId: 24,
 			name: 'Fishing Rod',
 			rarity: 'ultra_rare',
 			description: 'Draw 2 cards.',

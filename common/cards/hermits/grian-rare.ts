@@ -23,7 +23,7 @@ class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'grian_rare',
-			numeric_id: 35,
+			numericId: 35,
 			name: 'Grian',
 			rarity: 'rare',
 			hermitType: 'prankster',

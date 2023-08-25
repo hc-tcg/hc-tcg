@@ -9,7 +9,7 @@ class ArmorStandEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'armor_stand',
-			numeric_id: 118,
+			numericId: 118,
 			name: 'Armour Stand',
 			rarity: 'ultra_rare',
 			description:

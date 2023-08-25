@@ -4,7 +4,7 @@ class ImpulseSVCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'impulsesv_common',
-			numeric_id: 40,
+			numericId: 40,
 			name: 'Impulse',
 			rarity: 'common',
 			hermitType: 'farm',

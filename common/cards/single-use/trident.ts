@@ -10,7 +10,7 @@ class TridentSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'trident',
-			numeric_id: 150,
+			numericId: 150,
 			name: 'Trident',
 			rarity: 'rare',
 			description:

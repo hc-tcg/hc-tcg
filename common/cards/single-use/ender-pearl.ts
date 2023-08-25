@@ -6,7 +6,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'ender_pearl',
-			numeric_id: 141,
+			numericId: 141,
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:

@@ -8,7 +8,7 @@ class LightningRodEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'lightning_rod',
-			numeric_id: 121,
+			numericId: 121,
 			name: 'Lightning Rod',
 			rarity: 'rare',
 			description:

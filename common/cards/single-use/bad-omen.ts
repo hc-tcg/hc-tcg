@@ -6,7 +6,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'bad_omen',
-			numeric_id: 139,
+			numericId: 139,
 			name: 'Bad Omen',
 			rarity: 'rare',
 			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails.`,

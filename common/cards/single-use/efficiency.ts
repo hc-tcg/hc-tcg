@@ -6,7 +6,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'efficiency',
-			numeric_id: 17,
+			numericId: 17,
 			name: 'Efficiency',
 			rarity: 'rare',
 			description:
