@@ -7,6 +7,7 @@ class KeralisRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'keralis_rare',
+			numeric_id: 72,
 			name: 'Keralis',
 			rarity: 'rare',
 			hermitType: 'terraform',

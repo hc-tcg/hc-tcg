@@ -8,6 +8,7 @@ import {TurnActions} from '../../types/game-state'
 
 type EffectDefs = {
 	id: string
+	numeric_id: number
 	name: string
 	rarity: CardRarityT
 	description: string
@@ -22,6 +23,7 @@ abstract class EffectCard extends Card {
 		super({
 			type: 'effect',
 			id: defs.id,
+			numeric_id: defs.numeric_id,
 			name: defs.name,
 			rarity: defs.rarity,
 			pickOn: defs.pickOn,

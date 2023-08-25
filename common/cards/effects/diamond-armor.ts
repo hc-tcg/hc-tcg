@@ -7,6 +7,7 @@ class DiamondArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'diamond_armor',
+			numeric_id: 13,
 			name: 'Diamond Armor',
 			rarity: 'rare',
 			description: 'Prevent up to 30hp damage each turn.',

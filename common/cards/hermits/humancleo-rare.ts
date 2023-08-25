@@ -12,6 +12,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'humancleo_rare',
+			numeric_id: 132,
 			name: 'Human Cleo',
 			rarity: 'rare',
 			hermitType: 'pvp',

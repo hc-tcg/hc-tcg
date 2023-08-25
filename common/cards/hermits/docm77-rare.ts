@@ -7,6 +7,7 @@ class Docm77RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'docm77_rare',
+			numeric_id: 16,
 			name: 'Docm77',
 			rarity: 'rare',
 			hermitType: 'farm',

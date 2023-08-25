@@ -6,6 +6,7 @@ class CommandBlockEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'command_block',
+			numeric_id: 120,
 			name: 'Command Block',
 			rarity: 'rare',
 			description:

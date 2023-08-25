@@ -6,6 +6,7 @@ class BuilderCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_builder_common',
+			numeric_id: 51,
 			name: 'Builder',
 			rarity: 'common',
 			hermitType: 'builder',

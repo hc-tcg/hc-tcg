@@ -4,6 +4,7 @@ class StressMonster101CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'stressmonster101_common',
+			numeric_id: 92,
 			name: 'Stress',
 			rarity: 'common',
 			hermitType: 'builder',

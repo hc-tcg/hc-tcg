@@ -7,6 +7,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'bdoubleo100_rare',
+			numeric_id: 1,
 			name: 'Bdubs',
 			rarity: 'rare',
 			hermitType: 'balanced',

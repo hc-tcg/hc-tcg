@@ -7,6 +7,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'chainmail_armor',
+			numeric_id: 119,
 			name: 'Chainmail Armor',
 			rarity: 'common',
 			description: 'Prevents damage from all effect cards.',

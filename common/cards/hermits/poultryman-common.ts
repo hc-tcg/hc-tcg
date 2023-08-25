@@ -4,6 +4,7 @@ class PoultrymanCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'poultryman_common',
+			numeric_id: 136,
 			name: 'Poultry Man',
 			rarity: 'common',
 			hermitType: 'prankster',

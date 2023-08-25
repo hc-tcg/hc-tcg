@@ -6,6 +6,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 
 type HealthDefs = {
 	id: string
+	numeric_id: number
 	name: string
 	rarity: CardRarityT
 	health: number
@@ -19,6 +20,7 @@ class HealthCard extends Card {
 		super({
 			type: 'health',
 			id: defs.id,
+			numeric_id: defs.numeric_id,
 			name: defs.name,
 			rarity: defs.rarity,
 		})

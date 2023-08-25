@@ -6,6 +6,7 @@ class ExplorerRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_explorer_rare',
+			numeric_id: 54,
 			name: 'Explorer',
 			rarity: 'rare',
 			hermitType: 'explorer',

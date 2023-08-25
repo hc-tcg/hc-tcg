@@ -6,6 +6,7 @@ class TerraformCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_terraform_common',
+			numeric_id: 67,
 			name: 'Terraform',
 			rarity: 'common',
 			hermitType: 'terraform',

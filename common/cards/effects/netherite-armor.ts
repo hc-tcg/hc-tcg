@@ -7,6 +7,7 @@ class NetheriteArmorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'netherite_armor',
+			numeric_id: 82,
 			name: 'Netherite Armor',
 			rarity: 'ultra_rare',
 			description: 'Prevent up to 40hp damage each turn.',

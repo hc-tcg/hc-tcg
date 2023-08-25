@@ -7,6 +7,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'potion_of_weakness',
+			numeric_id: 146,
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:

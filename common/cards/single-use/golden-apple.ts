@@ -9,6 +9,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'golden_apple',
+			numeric_id: 29,
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description: 'Heal AFK Hermit 100hp.',

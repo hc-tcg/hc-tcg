@@ -4,6 +4,7 @@ class BeetlejhostCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'beetlejhost_common',
+			numeric_id: 126,
 			name: 'Beetlejhost',
 			rarity: 'common',
 			hermitType: 'speedrunner',

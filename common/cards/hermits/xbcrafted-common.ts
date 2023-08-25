@@ -4,6 +4,7 @@ class XBCraftedCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xbcrafted_common',
+			numeric_id: 109,
 			name: 'XB',
 			rarity: 'common',
 			hermitType: 'pvp',

@@ -8,6 +8,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'target_block',
+			numeric_id: 149,
 			name: 'Target Block',
 			rarity: 'rare',
 			description:

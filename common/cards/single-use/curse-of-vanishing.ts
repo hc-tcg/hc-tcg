@@ -8,6 +8,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'curse_of_vanishing',
+			numeric_id: 12,
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
 			description: "Your opponent is forced to discard their active Hermit's attached effect card.",

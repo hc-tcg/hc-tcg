@@ -6,6 +6,7 @@ class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'looting',
+			numeric_id: 76,
 			name: 'Looting',
 			rarity: 'rare',
 			description:

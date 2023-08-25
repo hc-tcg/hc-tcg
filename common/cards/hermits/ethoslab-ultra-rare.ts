@@ -7,6 +7,7 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ethoslab_ultra_rare',
+			numeric_id: 21,
 			name: 'Etho',
 			rarity: 'ultra_rare',
 			hermitType: 'pvp',

@@ -6,6 +6,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'splash_potion_of_poison',
+			numeric_id: 90,
 			name: 'Splash Potion of Poison',
 			rarity: 'rare',
 			description:

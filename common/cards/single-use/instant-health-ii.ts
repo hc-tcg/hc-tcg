@@ -7,6 +7,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'instant_health_ii',
+			numeric_id: 43,
 			name: 'Instant Health II',
 			rarity: 'rare',
 			description: 'Heal active or AFK Hermit 60hp.',

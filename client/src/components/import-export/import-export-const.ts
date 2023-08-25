@@ -6,24 +6,24 @@ export const universe = [
 	'chest',
 	'chorus_fruit',
 	'clock',
-	'composter',
+	'composter', //
 	'crossbow',
 	'cubfan135_common',
-	'cubfan135_rare',
+	'cubfan135_rare', //10
 	'curse_of_binding',
 	'curse_of_vanishing',
 	'diamond_armor',
-	'diamond_sword',
+	'diamond_sword', //14
 	'docm77_common',
 	'docm77_rare',
 	'efficiency',
 	'emerald',
 	'ethoslab_common',
-	'ethoslab_rare',
+	'ethoslab_rare', //20
 	'ethoslab_ultra_rare',
 	'falsesymmetry_common',
 	'falsesymmetry_rare',
-	'fishing_rod',
+	'fishing_rod', //24
 	'flint_&_steel',
 	'fortune',
 	'geminitay_common',
@@ -41,14 +41,14 @@ export const universe = [
 	'ijevin_rare',
 	'impulsesv_common',
 	'impulsesv_rare',
-	'instant_health',
+	'instant_health', //42
 	'instant_health_ii',
 	'invisibility_potion',
 	'iron_armor',
 	'iron_sword',
 	'iskall85_common',
 	'iskall85_rare',
-	'item_balanced_common',
+	'item_balanced_common', //49
 	'item_balanced_rare',
 	'item_builder_common',
 	'item_builder_rare',
@@ -68,7 +68,7 @@ export const universe = [
 	'item_speedrunner_rare',
 	'item_terraform_common',
 	'item_terraform_rare',
-	'joehills_common',
+	'joehills_common', // 69
 	'joehills_rare',
 	'keralis_common',
 	'keralis_rare',
@@ -79,7 +79,7 @@ export const universe = [
 	'loyalty',
 	'mending',
 	'milk_bucket',
-	'mumbojumbo_common',
+	'mumbojumbo_common', //80
 	'mumbojumbo_rare',
 	'netherite_armor',
 	'netherite_sword',
@@ -87,7 +87,7 @@ export const universe = [
 	'pearlescentmoon_rare',
 	'rendog_common',
 	'rendog_rare',
-	'shield',
+	'shield', //88
 	'splash_potion_of_healing',
 	'splash_potion_of_poison',
 	'spyglass',
@@ -96,7 +96,7 @@ export const universe = [
 	'tangotek_common',
 	'tangotek_rare',
 	'thorns',
-	'tinfoilchef_common',
+	'tinfoilchef_common', //97
 	'tinfoilchef_rare',
 	'tinfoilchef_ultra_rare',
 	'tnt',
@@ -107,7 +107,7 @@ export const universe = [
 	'water_bucket',
 	'welsknight_common',
 	'welsknight_rare',
-	'wolf',
+	'wolf', //108
 	'xbcrafted_common',
 	'xbcrafted_rare',
 	'xisumavoid_common',
@@ -118,7 +118,7 @@ export const universe = [
 	'zombiecleo_rare',
 
 	// why does this exist
-	'dream',
+	'dream', //117
 
 	// new cards, in final order
 	'armor_stand',
@@ -136,14 +136,14 @@ export const universe = [
 	'goatfather_rare',
 	'helsknight_rare',
 	'hotguy_rare',
-	'humancleo_rare',
+	'humancleo_rare', //32
 	'jingler_rare',
 	'llamadad_rare',
 	'potatoboy_rare',
 	'poultryman_common',
 	'renbob_rare',
 
-	'anvil',
+	'anvil', //38
 	'bad_omen',
 	'egg',
 	'ender_pearl',
@@ -155,5 +155,5 @@ export const universe = [
 	'splash_potion_of_healing_ii',
 	'sweeping_edge',
 	'target_block',
-	'trident',
+	'trident', //150
 ]

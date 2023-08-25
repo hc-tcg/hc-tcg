@@ -10,6 +10,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'emerald',
+			numeric_id: 18,
 			name: 'Emerald',
 			rarity: 'rare',
 			description: "Steal or swap the attached effect card of your opponent's active Hermit.",

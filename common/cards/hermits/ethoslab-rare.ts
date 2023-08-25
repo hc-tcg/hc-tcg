@@ -7,6 +7,7 @@ class EthosLabRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ethoslab_rare',
+			numeric_id: 20,
 			name: 'Etho',
 			rarity: 'rare',
 			hermitType: 'redstone',

@@ -6,6 +6,7 @@ class SpeedrunnerCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_speedrunner_common',
+			numeric_id: 65,
 			name: 'Speedrunner',
 			rarity: 'common',
 			hermitType: 'speedrunner',

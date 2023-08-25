@@ -4,6 +4,7 @@ class HypnotizdCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'hypnotizd_common',
+			numeric_id: 36,
 			name: 'Hypno',
 			rarity: 'common',
 			hermitType: 'balanced',

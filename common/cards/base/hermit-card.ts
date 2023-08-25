@@ -10,6 +10,7 @@ import {TurnActions} from '../../types/game-state'
 
 type HermitDefs = {
 	id: string
+	numeric_id: number
 	name: string
 	rarity: CardRarityT
 	hermitType: HermitTypeT
@@ -30,6 +31,7 @@ abstract class HermitCard extends Card {
 		super({
 			type: 'hermit',
 			id: defs.id,
+			numeric_id: defs.numeric_id,
 			name: defs.name,
 			rarity: defs.rarity,
 			pickOn: defs.pickOn,

@@ -9,6 +9,7 @@ class RendogRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'rendog_rare',
+			numeric_id: 87,
 			name: 'Rendog',
 			rarity: 'rare',
 			hermitType: 'builder',

@@ -10,6 +10,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'goatfather_rare',
+			numeric_id: 129,
 			name: 'Goatfather',
 			rarity: 'rare',
 			hermitType: 'prankster',
