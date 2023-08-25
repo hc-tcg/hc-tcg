@@ -1,10 +1,9 @@
 import {useSelector} from 'react-redux'
 import {useState} from 'react'
-import {HermitCardT} from 'common/types/cards'
 import classnames from 'classnames'
-import {HERMIT_CARDS} from 'server/cards'
+import {HERMIT_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
-import css from './attack-modal.module.css'
+import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import Attack from './attack'
@@ -31,15 +30,13 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = HERMIT_CARDS[
-		activeRow.hermitCard.cardId
-	] as HermitCardT
+	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
 
 	const hermitFullName = playerHermitInfo.id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce((agg, extra) => {
 		const [hermitId, action] = extra.split(':')
-		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId]
 		if (!hermitInfo) throw new Error('Invalid extra attack')
 		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
 		const hermitFullName = hermitInfo.id.split('_')[0]
@@ -58,7 +55,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	}, {} as Record<string, any>)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
-		const hermitInfo = HERMIT_CARDS[hermitId] as HermitCardT
+		const hermitInfo = HERMIT_CARDS[hermitId]
 		const hermitFullName = hermitInfo.id.split('_')[0]
 		return (
 			<img
@@ -69,19 +66,23 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 				})}
 				src={`/images/hermits-emoji/${hermitFullName}.png`}
 				alt={hermitInfo.name}
+				title={hermitInfo.name}
 			/>
 		)
 	})
 
 	return (
 		<div className={css.hermitSelector}>
-			<div className={css.attack}>
-				<div className={classnames(css.icon, css.hermitIcon)}>
+			<div className={css.attack} style={{cursor: 'default'}}>
+				<div className={classnames(css.portrait, css.hermitIcon)}>
 					<img src={`/images/hermits-nobg/${hermitFullName}.png`} />
 				</div>
 				<div className={css.info}>
-					<div className={css.name}>{playerHermitInfo.secondary.name}</div>
-					<div className={css.hermitOptions}>{hermitOptions}</div>
+					<div className={css.name}>
+						{playerHermitInfo.secondary.name}
+						<span className={css.select}> Select a hermit...</span>
+					</div>
+					<button className={css.hermitOptions}>{hermitOptions}</button>
 				</div>
 			</div>
 			<div className={css.extraAttacks}>

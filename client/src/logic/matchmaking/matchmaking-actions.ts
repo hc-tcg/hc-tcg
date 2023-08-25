@@ -1,5 +1,9 @@
-export const randomMatchmaking = () => ({
-	type: 'RANDOM_MATCHMAKING' as const,
+export type JoinQueueAction = {
+	type: 'JOIN_QUEUE'
+}
+
+export const joinQueue = () => ({
+	type: 'JOIN_QUEUE' as const,
 })
 
 export const createPrivateGame = () => ({
@@ -19,6 +23,10 @@ export const leaveMatchmaking = () => ({
 	type: 'LEAVE_MATCHMAKING' as const,
 })
 
+export const clearMatchmaking = () => ({
+	type: 'CLEAR_MATCHMAKING' as const,
+})
+
 export const setCode = (gameCode: string | null) => ({
 	type: 'SET_MATCHMAKING_CODE' as const,
 	payload: gameCode,
@@ -26,4 +34,8 @@ export const setCode = (gameCode: string | null) => ({
 
 export const invalidCode = () => ({
 	type: 'INVALID_CODE' as const,
+})
+
+export const waitingForPlayer = () => ({
+	type: 'WAITING_FOR_PLAYER' as const,
 })

@@ -1,79 +1,69 @@
-import classnames from 'classnames'
-import {useTransition, animated} from '@react-spring/web'
-import {useRef} from 'react'
-import CARDS from 'server/cards'
+import cn from 'classnames'
+import {CARDS} from 'common/cards'
 import {CardT} from 'common/types/game-state'
-import Card from 'components/card'
+import CardComponent from 'components/card'
 import css from './card-list.module.scss'
-import {equalCard} from 'server/utils'
 
-const SIZE = {
-	medium: 200,
-	small: 120,
-}
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
+import Card from 'common/cards/base/card'
+import {equalCard} from 'common/utils/cards'
+import {forwardRef, useRef} from 'react'
 
 type CardListProps = {
 	cards: Array<CardT>
 	disabled?: Array<string>
-	selected?: CardT | null
+	selected?: Array<CardT | null>
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
-	size: 'medium' | 'small'
 	wrap?: boolean
+	tooltipAboveModal?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, size = 'medium'} = props
-	const {cards, disabled, selected, picked} = props
-	const listRef = useRef<HTMLDivElement>(null)
+	const {wrap, onClick, cards, disabled, selected, picked} = props
 
-	const transitions = useTransition(cards, {
-		config: {duration: 200},
-		key: (card: CardT) => card.cardInstance,
-		from: {
-			width: listRef.current ? 0 : SIZE[size],
-			height: listRef.current ? 0 : SIZE[size],
-		},
-		enter: {width: SIZE[size], height: SIZE[size]},
-		leave: {width: 0, height: 0},
-	})
-
-	const cardsOutput = transitions((style: any, card: CardT) => {
-		const info = CARDS[card.cardId]
+	const cardsOutput = cards.map((card) => {
+		const info = CARDS[card.cardId] as Card
 		if (!info) return null
-		const isSelected = equalCard(card, selected)
+		const isSelected = selected
+			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
+
 		return (
-			<animated.div
-				style={style}
+			<CSSTransition
+				timeout={250}
 				key={card.cardInstance}
-				className={classnames(css.card, {
-					[css.clickable]: !!onClick && !isDisabled,
-					[css.disabled]: isDisabled,
-				})}
+				unmountOnExit={true}
+				classNames={{
+					enter: css.enter,
+					enterActive: css.enterActive,
+					enterDone: css.enterDone,
+					exit: css.exit,
+					exitActive: css.exitActive,
+				}}
 			>
-				<Card
+				<CardComponent
+					key={card.cardInstance}
+					className={cn(css.card, {
+						[css.clickable]: !!onClick && !isDisabled,
+					})}
 					onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
 					card={info}
+					disabled={isDisabled}
 					selected={isSelected}
-					picked={isPicked}
+					picked={!!isPicked}
+					tooltipAboveModal={props.tooltipAboveModal}
 				/>
-			</animated.div>
+			</CSSTransition>
 		)
 	})
 
 	return (
-		<div
-			ref={listRef}
-			className={classnames(
-				css.cardList,
-				css[size],
-				wrap === false ? css.noWrap : null
-			)}
-		>
+		<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
 			{cardsOutput}
-		</div>
+		</TransitionGroup>
 	)
 }
 

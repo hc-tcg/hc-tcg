@@ -4,21 +4,18 @@ import {ToastT} from 'common/types/app'
 
 type SessionState = {
 	playerName: string
+	minecraftName: string
 	playerId: string
 	playerSecret: string
 	playerDeck: PlayerDeckT
 	connecting: boolean
-	errorType?:
-		| 'invalid_name'
-		| 'invalid_version'
-		| 'session_expired'
-		| 'timeout'
-		| string
+	errorType?: 'invalid_name' | 'invalid_version' | 'session_expired' | 'timeout' | string
 	toast: ToastT
 }
 
 const defaultState: SessionState = {
 	playerName: '',
+	minecraftName: '',
 	playerId: '',
 	playerSecret: '',
 	playerDeck: {name: '', icon: 'any', cards: []},
@@ -26,10 +23,7 @@ const defaultState: SessionState = {
 	toast: {open: false, title: '', description: '', image: ''},
 }
 
-const loginReducer = (
-	state = defaultState,
-	action: AnyAction
-): SessionState => {
+const loginReducer = (state = defaultState, action: AnyAction): SessionState => {
 	switch (action.type) {
 		case 'LOGIN':
 			return {...state, connecting: true, errorType: undefined}
@@ -38,6 +32,7 @@ const loginReducer = (
 				...state,
 				connecting: false,
 				playerName: '',
+				minecraftName: '',
 				playerId: '',
 				playerSecret: '',
 				playerDeck: state.playerDeck,
@@ -67,6 +62,11 @@ const loginReducer = (
 					...state.toast,
 					open: false,
 				},
+			}
+		case 'SET_MINECRAFT_NAME':
+			return {
+				...state,
+				minecraftName: action.payload,
 			}
 		default:
 			return state

@@ -1,9 +1,10 @@
 import {select} from 'typed-redux-saga'
 import {put, call, take, race, cancelled} from 'redux-saga/effects'
 import {SagaIterator, eventChannel} from 'redux-saga'
-import {PickedCardT, PickRequirmentT} from 'common/types/pick-process'
-import {equalCard} from 'server/utils'
-import {anyAvailableReqOptions, validPick} from 'server/utils/reqs'
+import {PickedSlotT, PickRequirmentT, PickResultT} from 'common/types/pick-process'
+import {equalCard} from 'common/utils/cards'
+//@TODO remove import from server
+import {anyAvailableReqOptions, validPick, validPicks} from 'server/src/utils/reqs'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getGameState,
@@ -16,40 +17,48 @@ import {
 	updatePickProcess,
 	setSelectedCard,
 	slotPicked,
+	setOpenedModal,
 } from 'logic/game/game-actions'
+import {CARDS} from 'common/cards'
 
-type AnyPickActionT =
-	| ReturnType<typeof setSelectedCard>
-	| ReturnType<typeof slotPicked>
+type AnyPickActionT = ReturnType<typeof setSelectedCard> | ReturnType<typeof slotPicked>
 
-const isDuplicate = (
-	pickedCards: Array<PickedCardT>,
-	pickedCard?: PickedCardT
-) => {
-	if (!pickedCard) return null
-	console.log({pickedCards, pickedCard})
-	return pickedCards.some((pCard) => equalCard(pCard.card, pickedCard.card))
+const isDuplicate = (pickedSlots: Array<PickedSlotT>, pickedSlot?: PickedSlotT) => {
+	if (!pickedSlot) return null
+	return pickedSlots.some((pSlot) => equalCard(pSlot.slot.card, pickedSlot.slot.card))
 }
 
 function* validatePickSaga(
 	req: PickRequirmentT,
 	pickAction: AnyPickActionT
-): SagaIterator<PickedCardT | void> {
+): SagaIterator<PickedSlotT | void> {
 	const playerId = yield* select(getPlayerId)
-	const pickedCard: PickedCardT =
-		pickAction.type === 'SET_SELECTED_CARD'
-			? {slotType: 'hand', card: pickAction.payload, playerId}
-			: pickAction.payload
-
 	const gameState = yield* select(getGameState)
 	if (!gameState) return
-	if (!validPick(gameState, req, pickedCard)) return
-	return pickedCard
+
+	let pickedSlot: PickedSlotT
+	if (pickAction.type === 'SET_SELECTED_CARD') {
+		const index = gameState.hand.findIndex((card) => equalCard(card, pickAction.payload))
+		pickedSlot = {
+			slot: {
+				type: 'hand',
+				index: index,
+				card: pickAction.payload,
+				info: pickAction.payload ? CARDS[pickAction.payload.cardId] : null,
+			},
+			playerId,
+		}
+	} else {
+		pickedSlot = pickAction.payload
+	}
+
+	if (!validPick(gameState, req, pickedSlot)) return
+	return pickedSlot
 }
 
 function* breakIfSaga(
 	breakIf: PickRequirmentT['breakIf'],
-	pickedCard: PickedCardT
+	pickedCard: PickedSlotT
 ): SagaIterator<boolean> {
 	if (!breakIf) return false
 	const cardPlayerState = yield* select(getPlayerStateById(pickedCard.playerId))
@@ -67,32 +76,19 @@ function* breakIfSaga(
 export function* runPickProcessSaga(
 	name: string,
 	reqs?: Array<PickRequirmentT>
-): SagaIterator<Array<PickedCardT> | null> {
+): SagaIterator<Array<PickResultT> | null> {
 	try {
-		const playerId = yield* select(getPlayerId)
-		if (!name || !reqs || !playerId) return null
-
 		const gameState = yield* select(getGameState)
+		const playerId = yield* select(getPlayerId)
 		const playerState = yield* select(getCurrentPlayerState)
 		const opponentState = yield* select(getInactivePlayerState)
 
-		const pickPossible = anyAvailableReqOptions(
-			gameState,
-			playerState,
-			opponentState,
-			reqs
-		)
-		if (!pickPossible) return []
+		if (!name || !reqs || !playerId || !gameState) return null
 
-		yield put(
-			setPickProcess({
-				name,
-				requirments: reqs,
-				pickedCards: [],
-				currentReq: 0,
-			})
-		)
+		const possiblePerReq = anyAvailableReqOptions(gameState, playerState, opponentState, reqs)
+		if (possiblePerReq.length === 0) return []
 
+		// Listen for Escape to cancel
 		const escapeChannel = eventChannel((emitter) => {
 			const listener = (ev: KeyboardEvent) => {
 				if (ev.key === 'Escape') emitter('Escape')
@@ -101,47 +97,83 @@ export function* runPickProcessSaga(
 			return () => document.removeEventListener('keydown', listener)
 		})
 
-		const pickedCards: Array<PickedCardT> = []
-		req_cycle: for (const reqIndex in reqs) {
-			const req = reqs[reqIndex]
-			const pickedReqCards = []
-
-			while (pickedReqCards.length < req.amount) {
-				const actionType =
-					req.target === 'hand' ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
-
-				yield put(updatePickProcess({currentReq: Number(reqIndex)}))
-				console.log('waiting for card')
-				const result = yield race({
-					esc: take(escapeChannel),
-					pickAction: take(actionType),
+		while (true) {
+			// Start Pick Process
+			yield put(
+				setPickProcess({
+					name,
+					requirments: reqs,
+					pickedSlots: [],
+					currentReq: 0,
 				})
-				console.log('racing done')
+			)
 
-				if (result.esc) {
+			const pickResult: Array<PickResultT> = []
+			const allPickedSlots: Array<PickedSlotT> = []
+			req_cycle: for (const reqIndex in reqs) {
+				const req = reqs[reqIndex]
+				const pickedReqSlots: Array<PickedSlotT> = []
+				const actionType = req.slot.includes('hand') ? 'SET_SELECTED_CARD' : 'SLOT_PICKED'
+
+				if (!req.canPickLess && possiblePerReq[reqIndex] < req.amount) {
 					yield put(setPickProcess(null))
 					return null
 				}
-				const {pickAction} = result
-				const pickedCard = yield call(validatePickSaga, req, pickAction)
-				if (isDuplicate(pickedReqCards, pickedCard)) continue
-				if (!pickedCard) continue
-				pickedReqCards.push(pickedCard)
 
-				yield put(
-					updatePickProcess({pickedCards: [...pickedCards, ...pickedReqCards]})
-				)
+				const amount = Math.min(req.amount, possiblePerReq[reqIndex])
 
-				const matches = yield call(breakIfSaga, req.breakIf, pickedCard)
-				if (matches) {
-					pickedCards.push(...pickedReqCards)
-					break req_cycle
+				while (pickedReqSlots.length < amount) {
+					// Update currentReq and amount, used to display the correct message
+					yield put(
+						updatePickProcess({
+							currentReq: Number(reqIndex),
+							amount: amount - pickedReqSlots.length,
+						})
+					)
+
+					// Wait for the user to pick a slot
+					const result = yield race({
+						esc: take(escapeChannel),
+						pickAction: take(actionType),
+					})
+
+					// If Escape was pressed, cancel pick process
+					if (result.esc) {
+						yield put(setPickProcess(null))
+						return null
+					}
+
+					// Validate the picked slot
+					const pickedSlot = yield call(validatePickSaga, req, result.pickAction)
+					if (isDuplicate(pickedReqSlots, pickedSlot) || !pickedSlot) continue
+					if (!pickedSlot) continue
+					pickedReqSlots.push(pickedSlot)
+
+					// Update the picked slots so far, used for outline of hand slots
+					yield put(
+						updatePickProcess({
+							pickedSlots: [...allPickedSlots, ...pickedReqSlots],
+						})
+					)
+
+					const matches = yield call(breakIfSaga, req.breakIf, pickedSlot)
+					if (matches) {
+						pickResult.push({req, pickedSlots: pickedReqSlots})
+						break req_cycle
+					}
 				}
+
+				pickResult.push({req, pickedSlots: pickedReqSlots})
+				allPickedSlots.push(...pickedReqSlots)
 			}
-			pickedCards.push(...pickedReqCards)
+
+			// Validate all the picked slots before returning otherwise restart the pick process
+			// We have to validate all the picks at once because of the adjacent requirement
+			if (validPicks(gameState, pickResult)) {
+				yield put(setPickProcess(null))
+				return pickResult
+			}
 		}
-		yield put(setPickProcess(null))
-		return pickedCards
 	} finally {
 		if (yield cancelled()) {
 			yield put(setPickProcess(null))

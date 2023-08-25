@@ -1,6 +1,6 @@
 import {AnyAction} from 'redux'
 import {LocalGameRoot} from 'common/types/game-state'
-import {equalCard} from 'server/utils'
+import {equalCard} from 'common/utils/cards'
 
 const defaultState: LocalGameRoot = {
 	localGameState: null,
@@ -15,10 +15,7 @@ const defaultState: LocalGameRoot = {
 	opponentConnected: true,
 }
 
-const gameReducer = (
-	state = defaultState,
-	action: AnyAction
-): LocalGameRoot => {
+const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => {
 	switch (action.type) {
 		case 'LOCAL_GAME_STATE':
 			const newGame: LocalGameRoot = {
@@ -29,7 +26,7 @@ const gameReducer = (
 				pickProcess: null,
 			}
 			if (
-				state.localGameState?.currentPlayerId ===
+				state.localGameState?.turn.currentPlayerId ===
 				action.payload.localGameState?.currentPlayerId
 			)
 				return newGame
@@ -53,9 +50,7 @@ const gameReducer = (
 			if (state.pickProcess) return state
 			return {
 				...state,
-				selectedCard: equalCard(action.payload, state.selectedCard)
-					? null
-					: action.payload,
+				selectedCard: equalCard(action.payload, state.selectedCard) ? null : action.payload,
 			}
 		case 'SET_OPENED_MODAL':
 			return {

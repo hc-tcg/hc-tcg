@@ -1,9 +1,9 @@
 import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {PlayerDeckT} from 'common/types/deck'
-import {universe} from './import-export-const'
 import {CopyIcon} from 'components/svgs'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import css from './import-export.module.scss'
+import {getHashFromDeck} from './import-export-utils'
 
 type Props = {
 	setOpen: boolean
@@ -13,14 +13,8 @@ type Props = {
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 	// EXPORT DECK FUNCTION
-	// TODO: Remove deprecated "btoa" function.
 	const handleExportDeck = () => {
-		const indicies = []
-		for (let i = 0; i < loadedDeck.cards.length; i++) {
-			indicies.push(universe.indexOf(String(loadedDeck.cards[i].cardId)))
-		}
-		const b64cards = btoa(String.fromCharCode.apply(null, indicies))
-		return b64cards
+		return getHashFromDeck(loadedDeck.cards)
 	}
 
 	//JSX
@@ -37,16 +31,12 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
+					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
 						<div>
 							{/* EXPORT SECTION */}
 							<div>
 								<p className={css.instructions}>
-									Export the "{loadedDeck.name}" deck to share with your
-									friends!
+									Export the "{loadedDeck.name}" deck to share with your friends!
 								</p>
 								<div className={css.exportControls}>
 									<input type="text" readOnly value={handleExportDeck()} />

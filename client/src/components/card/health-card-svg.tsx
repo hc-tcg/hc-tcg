@@ -1,10 +1,10 @@
-import {HealthCardT} from 'common/types/cards'
+import HealthCard from 'common/cards/base/health-card'
 import {useState, useRef, useMemo, useEffect} from 'react'
 import css from './health-card-svg.module.scss'
 import classnames from 'classnames'
 
 export type HealthCardProps = {
-	card: HealthCardT
+	card: HealthCard
 }
 
 function useCountdownAnimation(value: number, duration = 500) {
@@ -43,7 +43,7 @@ function useCountdownAnimation(value: number, duration = 500) {
 	return Math.round(displayValue)
 }
 
-const HealthCard = ({card}: HealthCardProps) => {
+const HealthCardModule = ({card}: HealthCardProps) => {
 	const displayHealth = useCountdownAnimation(card.health)
 
 	return (
@@ -57,15 +57,7 @@ const HealthCard = ({card}: HealthCardProps) => {
 			height="100%"
 			viewBox="0 0 400 400"
 		>
-			<rect
-				className={css.cardBackground}
-				x="10"
-				y="10"
-				width="380"
-				height="380"
-				rx="15"
-				ry="15"
-			/>
+			<rect className={css.cardBackground} x="10" y="10" width="380" height="380" rx="15" ry="15" />
 			<g id="type">
 				<rect
 					className={css.typeBackground}
@@ -76,19 +68,27 @@ const HealthCard = ({card}: HealthCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					HEALTH
 				</text>
 			</g>
 			<g>
-				<ellipse
-					className={css.healthBackground}
-					cx="200"
-					cy="250"
-					rx="205"
-					ry="130"
-				/>
-				<text x="200" y="200" className={css.health}>
+				<ellipse className={css.healthBackground} cx="200" cy="250" rx="205" ry="130" />
+				<text
+					x="200"
+					y="200"
+					className={css.health}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					{displayHealth}
 				</text>
 			</g>
@@ -96,4 +96,4 @@ const HealthCard = ({card}: HealthCardProps) => {
 	)
 }
 
-export default HealthCard
+export default HealthCardModule

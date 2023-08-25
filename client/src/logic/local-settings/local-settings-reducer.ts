@@ -21,13 +21,14 @@ const defaultState: LocalSettings = {
 	profanityFilter: 'on',
 	confirmationDialogs: 'on',
 	showChat: 'off',
+	panoramaEnabled: true,
+	panorama: 'hermit-hill',
+	gameSide: 'Left',
+	minecraftName: 'alex',
 	...getSettings(),
 }
 
-const localSettingsReducer = (
-	state = defaultState,
-	action: AnyAction
-): LocalSettings => {
+const localSettingsReducer = (state = defaultState, action: AnyAction): LocalSettings => {
 	switch (action.type) {
 		case 'SET_SETTING':
 			return {...state, [action.payload.key]: action.payload.value}

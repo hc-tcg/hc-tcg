@@ -8,6 +8,7 @@ export const login = (playerName: string) => ({
 type PlayerInfoT = {
 	playerId: string
 	playerName: string
+	minecraftName: string
 	playerSecret: string
 	playerDeck: PlayerDeckT
 }
@@ -29,4 +30,9 @@ export const logout = () => ({
 export const setNewDeck = (newDeck: PlayerDeckT) => ({
 	type: 'SET_NEW_DECK',
 	payload: newDeck,
+})
+
+export const setMinecraftName = (name: string) => ({
+	type: 'SET_MINECRAFT_NAME',
+	payload: name,
 })

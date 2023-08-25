@@ -3,8 +3,8 @@ import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
 import CardList from 'components/card-list'
-import CARDS from 'server/cards'
-import {getTotalCost, validateDeck} from 'server/utils/validation'
+import {CARDS} from 'common/cards'
+import {validateDeck} from 'common/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
 import DeckLayout from './layout'
@@ -14,17 +14,11 @@ import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
 import Button from 'components/button'
 import AlertModal from 'components/alert-modal'
-import {
-	CopyIcon,
-	DeleteIcon,
-	EditIcon,
-	ErrorIcon,
-	ExportIcon,
-} from 'components/svgs'
+import {CopyIcon, DeleteIcon, EditIcon, ErrorIcon, ExportIcon} from 'components/svgs'
 import {ToastT} from 'common/types/app'
-import {getCardCost} from 'server/utils/validation'
+import {getCardCost, getDeckCost} from 'common/utils/ranks'
 import {ImportModal, ExportModal} from 'components/import-export'
-import {CONFIG} from '../../../../config'
+import {CONFIG} from '../../../../common/config'
 import {
 	convertLegacyDecks,
 	deleteDeck,
@@ -34,6 +28,8 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
+import HermitCard from '../../../../common/cards/base/hermit-card'
+import ItemCard from 'common/cards/base/item-card'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -51,25 +47,32 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 		const cardCostB = getCardCost(cardInfoB)
 
 		if (cardInfoA.type !== cardInfoB.type) {
-			// types
+			// seperate by types first
 			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
 		} else if (
-			// hermit types
-			cardInfoA.type === 'hermit' &&
-			cardInfoB.type === 'hermit' &&
+			// then by hermit types
+			cardInfoA instanceof HermitCard &&
+			cardInfoB instanceof HermitCard &&
 			cardInfoA.hermitType !== cardInfoB.hermitType
 		) {
 			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+		} else if (
+			// then by item types
+			cardInfoA instanceof ItemCard &&
+			cardInfoB instanceof ItemCard &&
+			cardInfoA.hermitType !== cardInfoB.hermitType
+		) {
+			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+		} else if (
+			cardInfoA instanceof HermitCard &&
+			cardInfoB instanceof HermitCard &&
+			cardInfoA.getExpansion() !== cardInfoB.getExpansion()
+		) {
+			// then by expansion if they are both hermits
+			return cardInfoA.getExpansion().localeCompare(cardInfoA.getExpansion())
 		} else if (cardCostA !== cardCostB) {
-			if (cardInfoA.type === 'item' && cardInfoB.type === 'item') {
-				// order items in reverse if they are the same
-				if (cardInfoA.name.localeCompare(cardInfoB.name) === 0) {
-					return cardCostB - cardCostA
-				}
-			} else {
-				// order by ranks
-				return cardCostA - cardCostB
-			}
+			// order by ranks
+			return cardCostA - cardCostB
 		} else if (cardInfoA.name !== cardInfoB.name) {
 			return cardInfoA.name.localeCompare(cardInfoB.name)
 		}
@@ -87,7 +90,7 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
 		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getTotalCost(cards.map((card) => card.cardId))} tokens
+			{getDeckCost(cards.map((card) => card.cardId))} tokens
 		</span>
 	</p>
 )
@@ -106,27 +109,22 @@ const Deck = ({setMenuSection}: Props) => {
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
 	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
 
-	const savedDeckNames = savedDecks.map((deck) =>
-		deck ? getSavedDeck(deck)?.name : null
-	)
+	const savedDeckNames = savedDecks.map((deck) => (deck ? getSavedDeck(deck)?.name : null))
 	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
-	const [showDuplicateDeckModal, setShowDuplicateDeckModal] =
-		useState<boolean>(false)
+	const [showDuplicateDeckModal, setShowDuplicateDeckModal] = useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
-	const [showValidateDeckModal, setShowValidateDeckModal] =
-		useState<boolean>(false)
+	const [showValidateDeckModal, setShowValidateDeckModal] = useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
 
 	// TOASTS
-	const dispatchToast = (toast: ToastT) =>
-		dispatch({type: 'SET_TOAST', payload: toast})
+	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
 	const deleteToast: ToastT = {
 		open: true,
 		title: 'Deck Deleted!',
@@ -174,11 +172,9 @@ const Deck = ({setMenuSection}: Props) => {
 
 	//DECK LOGIC
 	const loadDeck = (deckName: string) => {
-		if (!deckName)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+		if (!deckName) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 		const deck = getSavedDeck(deckName)
-		if (!deck)
-			return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
 		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
 
@@ -237,60 +233,36 @@ const Deck = ({setMenuSection}: Props) => {
 			return deck
 		})
 		.sort((a, b) => a.name.localeCompare(b.name))
-	const deckList: ReactNode = sortedDecks.map(
-		(deck: PlayerDeckT, i: number) => {
-			return (
-				<li
-					className={classNames(
-						css.myDecksItem,
-						loadedDeck.name === deck.name && css.selectedDeck
-					)}
-					key={i}
-					onClick={() => {
-						playSwitchDeckSFX()
-						loadDeck(deck.name)
-					}}
-				>
-					<div className={css.deckImage}>
-						<img
-							src={'../images/types/type-' + deck.icon + '.png'}
-							alt={'deck-icon'}
-						/>
-					</div>
-					{deck.name}
-				</li>
-			)
-		}
-	)
-	const validationMessage = validateDeck(
-		loadedDeck.cards.map((card) => card.cardId)
-	)
+	const deckList: ReactNode = sortedDecks.map((deck: PlayerDeckT, i: number) => {
+		return (
+			<li
+				className={classNames(css.myDecksItem, loadedDeck.name === deck.name && css.selectedDeck)}
+				key={i}
+				onClick={() => {
+					playSwitchDeckSFX()
+					loadDeck(deck.name)
+				}}
+			>
+				<div className={css.deckImage}>
+					<img src={'../images/types/type-' + deck.icon + '.png'} alt={'deck-icon'} />
+				</div>
+				{deck.name}
+			</li>
+		)
+	})
+	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'hermit'
-		),
-		items: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'item'
-		),
-		attachableEffects: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'effect'
-		),
-		singleUseEffects: loadedDeck.cards.filter(
-			(card) => CARDS[card.cardId]?.type === 'single_use'
-		),
+		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
+		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
+		attachableEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'effect'),
+		singleUseEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'single_use'),
 	}
 
 	//MISC
 	const playSwitchDeckSFX = () => {
 		if (settings.soundOn !== 'off') {
-			const pageTurn = [
-				'/sfx/Page_turn1.ogg',
-				'/sfx/Page_turn2.ogg',
-				'/sfx/Page_turn3.ogg',
-			]
-			const audio = new Audio(
-				pageTurn[Math.floor(Math.random() * pageTurn.length)]
-			)
+			const pageTurn = ['/sfx/Page_turn1.ogg', '/sfx/Page_turn2.ogg', '/sfx/Page_turn3.ogg']
+			const audio = new Audio(pageTurn[Math.floor(Math.random() * pageTurn.length)])
 			audio.play()
 		}
 	}
@@ -348,11 +320,7 @@ const Deck = ({setMenuSection}: Props) => {
 					actionText="Overwrite"
 				/>
 
-				<DeckLayout
-					title="Deck Selection"
-					back={backToMenu}
-					returnText="Back To Menu"
-				>
+				<DeckLayout title="Deck Selection" back={backToMenu} returnText="Back To Menu">
 					<DeckLayout.Main
 						header={
 							<>
@@ -378,11 +346,8 @@ const Deck = ({setMenuSection}: Props) => {
 									</p>
 									<div className={css.cardCount}>
 										<p className={css.tokens}>
-											{getTotalCost(
-												loadedDeck.cards.map((card) => card.cardId)
-											)}
-											/{CONFIG.limits.maxDeckCost}{' '}
-											<span className={css.hideOnMobile}>tokens</span>
+											{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
+											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
 										</p>
 									</div>
 								</div>
@@ -435,62 +400,33 @@ const Deck = ({setMenuSection}: Props) => {
 						</div>
 						{validationMessage && (
 							<div className={css.validationMessage}>
-								<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span>{' '}
-								{validationMessage}
+								<span style={{paddingRight: '0.5rem'}}>{<ErrorIcon />}</span> {validationMessage}
 							</div>
 						)}
 
-						<Accordion
-							header={cardGroupHeader('Hermits', selectedCards.hermits)}
-						>
-							<CardList
-								cards={sortCards(selectedCards.hermits)}
-								size="small"
-								wrap={true}
-							/>
+						<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
+							<CardList cards={sortCards(selectedCards.hermits)} wrap={true} />
 						</Accordion>
 
 						<Accordion
-							header={cardGroupHeader(
-								'Attachable Effects',
-								selectedCards.attachableEffects
-							)}
+							header={cardGroupHeader('Attachable Effects', selectedCards.attachableEffects)}
 						>
-							<CardList
-								cards={sortCards(selectedCards.attachableEffects)}
-								size="small"
-								wrap={true}
-							/>
+							<CardList cards={sortCards(selectedCards.attachableEffects)} wrap={true} />
 						</Accordion>
 						<Accordion
-							header={cardGroupHeader(
-								'Single Use Effects',
-								selectedCards.singleUseEffects
-							)}
+							header={cardGroupHeader('Single Use Effects', selectedCards.singleUseEffects)}
 						>
-							<CardList
-								cards={sortCards(selectedCards.singleUseEffects)}
-								size="small"
-								wrap={true}
-							/>
+							<CardList cards={sortCards(selectedCards.singleUseEffects)} wrap={true} />
 						</Accordion>
 
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList
-								cards={sortCards(selectedCards.items)}
-								size="small"
-								wrap={true}
-							/>
+							<CardList cards={sortCards(selectedCards.items)} wrap={true} />
 						</Accordion>
 					</DeckLayout.Main>
 					<DeckLayout.Sidebar
 						header={
 							<>
-								<img
-									src="../images/card-icon.png"
-									alt="card-icon"
-									className={css.sidebarIcon}
-								/>
+								<img src="../images/card-icon.png" alt="card-icon" className={css.sidebarIcon} />
 								<p style={{textAlign: 'center'}}>My Decks</p>
 							</>
 						}
@@ -522,10 +458,7 @@ const Deck = ({setMenuSection}: Props) => {
 									<Button variant="primary" onClick={() => setMode('create')}>
 										Create New Deck
 									</Button>
-									<Button
-										variant="primary"
-										onClick={() => setShowImportModal(!showImportModal)}
-									>
+									<Button variant="primary" onClick={() => setShowImportModal(!showImportModal)}>
 										<ExportIcon reversed />
 										<span>Import Deck</span>
 									</Button>

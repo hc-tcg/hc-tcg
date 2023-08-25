@@ -2,11 +2,12 @@ import * as AlertDialog from '@radix-ui/react-alert-dialog'
 import {useState, useRef} from 'react'
 import Button from 'components/button'
 import {PlayerDeckT} from 'common/types/deck'
-import {universe} from './import-export-const'
 import Dropdown from 'components/dropdown'
 import ModalCSS from 'components/alert-modal/alert-modal.module.scss'
 import DropdownCSS from '../../app/deck/deck.module.scss'
 import css from './import-export.module.scss'
+import {getDeckFromHash} from './import-export-utils'
+import {CardT} from '../../../../common/types/game-state'
 
 type Props = {
 	setOpen: boolean
@@ -20,28 +21,18 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 	const [deckIcon, setDeckIcon] = useState<PlayerDeckT['icon']>('any')
 
 	//IMPORT DECK FUNCTION
-	// TODO: Remove deprecated "atob" function.
 	const handleImportDeck = () => {
 		if (!hashRef.current) return
-		const deck = []
-		let b64: Array<number> = []
+		let deck: Array<CardT> = []
 
 		try {
-			b64 = atob(hashRef.current.value)
-				.split('')
-				.map((char) => char.charCodeAt(0))
+			deck = getDeckFromHash(hashRef.current.value)
 		} catch {
 			console.log('Invalid deck to import: ' + hashRef.current.value)
 		}
 
-		if (b64.length < 1) return null
+		if (deck.length < 1) return null
 
-		for (let i = 0; i < b64.length; i++) {
-			deck.push({
-				cardId: universe[b64[i]],
-				cardInstance: Math.random().toString(),
-			})
-		}
 		if (!deck) return null
 
 		importDeck({
@@ -85,10 +76,7 @@ export const ImportModal = ({setOpen, onClose, importDeck}: Props) => {
 							</button>
 						</AlertDialog.Cancel>
 					</AlertDialog.Title>
-					<AlertDialog.Description
-						asChild
-						className={ModalCSS.AlertDialogDescription}
-					>
+					<AlertDialog.Description asChild className={ModalCSS.AlertDialogDescription}>
 						<div>
 							{/* IMPORT SECTION */}
 							<div>

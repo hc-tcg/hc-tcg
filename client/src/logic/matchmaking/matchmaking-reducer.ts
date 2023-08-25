@@ -1,8 +1,8 @@
 import {AnyAction} from 'redux'
-import {MatchmakingStatusT} from './matchmaking-types'
+import {MatchmakingStatus} from './matchmaking-types'
 
 type MatchmakingState = {
-	status: MatchmakingStatusT
+	status: MatchmakingStatus
 	code: string | null
 	invalidCode: boolean
 }
@@ -13,12 +13,9 @@ const defaultState: MatchmakingState = {
 	invalidCode: false,
 }
 
-const matchmakingReducer = (
-	state = defaultState,
-	action: AnyAction
-): MatchmakingState => {
+const matchmakingReducer = (state = defaultState, action: AnyAction): MatchmakingState => {
 	switch (action.type) {
-		case 'RANDOM_MATCHMAKING':
+		case 'JOIN_QUEUE':
 			return {
 				...state,
 				status: 'random_waiting',
@@ -33,6 +30,11 @@ const matchmakingReducer = (
 				...state,
 				status: 'private_code_needed',
 				invalidCode: false,
+			}
+		case 'WAITING_FOR_PLAYER':
+			return {
+				...state,
+				status: 'waiting_for_player',
 			}
 		case 'CODE_RECEIVED':
 			return {
@@ -55,6 +57,13 @@ const matchmakingReducer = (
 		case 'DISCONNECT':
 		case 'GAME_STATE':
 		case 'LEAVE_MATCHMAKING':
+			return {
+				...state,
+				code: null,
+				status: null,
+				invalidCode: false,
+			}
+		case 'CLEAR_MATCHMAKING':
 			return {
 				...state,
 				code: null,

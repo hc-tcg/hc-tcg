@@ -1,23 +1,27 @@
+import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickProcessT, PickedCardT} from 'common/types/pick-process'
+import {PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
-import css from './game.module.css'
-import AttackModal from './modals/attack-modal'
-import ConfirmModal from './modals/confirm-modal'
-import SpyglassModal from './modals/spyglass-modal'
-import ChestModal from './modals/chest-modal'
-import BorrowModal from './modals/borrow-modal'
-import ChangeHermitModal from './modals/change-hermit-modal'
-import ForfeitModal from './modals/forfeit-modal'
-import UnmetCondition from './modals/unmet-condition-modal'
-import EndTurnModal from './modals/end-turn-modal'
-import DiscardedModal from './modals/discarded-modal'
-import MouseIndicator from './mouse-indicator'
+import css from './game.module.scss'
+import {
+	AttackModal,
+	BorrowModal,
+	ChangeHermitModal,
+	ChestModal,
+	ConfirmModal,
+	DiscardedModal,
+	EndTurnModal,
+	EvilXModal,
+	ForfeitModal,
+	SpyglassModal,
+	UnmetConditionModal,
+} from './modals'
 import EndGameOverlay from './end-game-overlay'
 import Toolbar from './toolbar'
 import Chat from './chat'
+import {playSound} from 'logic/sound/sound-actions'
 import {
 	getGameState,
 	getSelectedCard,
@@ -25,52 +29,29 @@ import {
 	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
+	getAvailableActions,
 } from 'logic/game/game-selectors'
-import {
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
-
-const getPickProcessMessage = (pickProcess: PickProcessT) => {
-	const req = pickProcess.requirments[pickProcess.currentReq]
-	const target =
-		req.target === 'board'
-			? "anyone's"
-			: req.target === 'opponent'
-			? "opponent's"
-			: 'your'
-
-	let location = ''
-	if (req.target === 'hand') {
-		location = 'hand'
-	} else if (req.active === true) {
-		location = 'active hermit'
-	} else if (req.active === false) {
-		location = 'afk hermits'
-	} else {
-		location = 'side of the board'
-	}
-
-	const type = req.type === 'any' ? '' : req.type
-	const empty = req.empty || false
-	const name = pickProcess.name
-	return `${name}: Pick ${req.amount} ${empty ? 'empty' : ''} ${type} ${
-		empty ? 'slot' : 'card'
-	}${req.amount > 1 ? 's' : ''} from ${target} ${location}.`
-}
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {DEBUG_CONFIG} from 'common/config'
+import {PickCardActionData} from 'common/types/action-data'
+import {equalCard} from 'common/utils/cards'
+// import {getSettings} from 'logic/local-settings/local-settings-selectors'
+// import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
 	confirm: ConfirmModal,
-	spyglass: SpyglassModal,
-	chest: ChestModal,
-	borrow: BorrowModal,
-	'unmet-condition': UnmetCondition,
-	'change-hermit-modal': ChangeHermitModal,
-	'end-turn': EndTurnModal,
 	discarded: DiscardedModal,
 	forfeit: ForfeitModal,
+	'change-hermit-modal': ChangeHermitModal,
+	'end-turn': EndTurnModal,
+	'unmet-condition': UnmetConditionModal,
+
+	// Custom modals
+	borrow: BorrowModal,
+	chest: ChestModal,
+	evilX: EvilXModal,
+	spyglass: SpyglassModal,
 }
 
 const renderModal = (
@@ -78,8 +59,7 @@ const renderModal = (
 	handleOpenModalId: (modalId: string | null) => void
 ) => {
 	const closeModal = () => handleOpenModalId(null)
-	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id))
-		return null
+	if (!openedModal || !Object.hasOwn(MODAL_COMPONENTS, openedModal.id)) return null
 
 	const ModalComponent = MODAL_COMPONENTS[openedModal.id]
 	return <ModalComponent closeModal={closeModal} info={openedModal.info} />
@@ -87,62 +67,179 @@ const renderModal = (
 
 function Game() {
 	const gameState = useSelector(getGameState)
+	const availableActions = useSelector(getAvailableActions)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedCards = useSelector(getPickProcess)?.pickedCards || []
+	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
-	const pickProcess = useSelector(getPickProcess)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
+	const handRef = useRef<HTMLDivElement>(null)
+	const [filter, setFilter] = useState<string>('')
 
-	if (!gameState || !playerState) return <main>Loading</main>
+	if (!gameState || !playerState) return <p>Loading</p>
+	const [gameScale, setGameScale] = useState<number>(1)
+	const filteredCards = DEBUG_CONFIG.unlimitedCards
+		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
+		: gameState.hand
+
+	const pickedSlotsInstances = pickedSlots
+		.map((pickedSlot) => pickedSlot.slot.card)
+		.filter(Boolean) as Array<CardT>
+
+	const gameWrapperRef = useRef<HTMLDivElement>(null)
+	const gameRef = useRef<HTMLDivElement>(null)
 
 	const handleOpenModal = (id: string | null) => {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedCard: PickedCardT) => {
-		console.log('Slot selected: ', pickedCard)
-		dispatch(slotPicked(pickedCard))
+	const handleBoardClick = (pickedSlot: PickedSlotT) => {
+		console.log('Slot selected: ', pickedSlot)
+		dispatch(slotPicked(pickedSlot))
 	}
 
 	const selectCard = (card: CardT) => {
-		console.log('Card selected: ', card.cardId)
-		dispatch(setSelectedCard(card))
+		if (availableActions.includes('PICK_CARD')) {
+			const index = gameState.hand.findIndex((c) => equalCard(c, card))
+			if (index === -1) return
+
+			// Send pick card action with the hand info
+			const actionData: PickCardActionData = {
+				type: 'PICK_CARD',
+				payload: {
+					pickResult: {
+						playerId: gameState.playerId,
+						card: card,
+						slot: {
+							type: 'hand',
+							index,
+						},
+					},
+				},
+			}
+
+			dispatch(actionData)
+		} else {
+			dispatch(setSelectedCard(card))
+		}
 	}
 
-	const pickedCardsInstances = pickedCards
-		.map((pickedCard) => pickedCard.card)
-		.filter(Boolean) as Array<CardT>
+	if (availableActions.includes('PICK_CARD')) {
+		dispatch(setSelectedCard(null))
+	}
+
+	// TODO: handleKeys is disabled due to eventListeners not able to use state
+	// function handleKeys(e: any) {
+	// 	// const chatIsClosed = settings.showChat === 'off'
+	// 	const chatIsClosed = false
+
+	// 	if (e.key === 'Escape') {
+	// 		dispatch(setSetting('showChat', 'off'))
+	// 	}
+
+	// 	if (chatIsClosed) {
+	// 		e.key === '/' && dispatch(setSetting('showChat', 'on'))
+	// 		if (e.key === 'a' || e.key === 'A') {
+	// 			dispatch(setOpenedModal('attack'))
+	// 		}
+	// 		if (e.key === 'e' || e.key === 'E') {
+	// 			dispatch(setOpenedModal('end-turn'))
+	// 		}
+	// 		if (e.key === 'm' || e.key === 'M') {
+	// 			console.log('Mute!')
+	// 		}
+	// 	}
+	// }
+
+	function handleResize() {
+		if (!gameWrapperRef.current || !gameRef.current) return
+		const scale = Math.min(
+			gameWrapperRef.current.clientWidth / gameRef.current.clientWidth,
+			gameWrapperRef.current.clientHeight / gameRef.current.clientHeight
+		)
+		setGameScale(scale)
+	}
+
+	function horizontalScroll(e: any) {
+		const scrollSpeed = 45
+
+		if (!handRef.current) return
+
+		if (e.deltaY > 0) {
+			e.preventDefault()
+			handRef.current.scrollLeft += scrollSpeed
+		} else {
+			e.preventDefault()
+			handRef.current.scrollLeft -= scrollSpeed
+		}
+	}
+
+	// Play SFX on turn start
+	useEffect(() => {
+		if (gameState.turn.currentPlayerId === gameState.playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
+		}
+	}, [gameState.turn.currentPlayerId])
+
+	// Initialize Game Screen Resizing and Event Listeners
+	useEffect(() => {
+		handleResize()
+		// window.addEventListener('keyup', handleKeys)
+		window.addEventListener('resize', handleResize)
+		handRef.current?.addEventListener('wheel', horizontalScroll)
+
+		// Clean up event listeners
+		return () => {
+			// window.removeEventListener('keyup', handleKeys)
+			window.removeEventListener('resize', handleResize)
+			handRef.current?.removeEventListener('wheel', horizontalScroll)
+		}
+	}, [])
+
+	// Search for cards when debug.unlimitedCards is enabled
+	const Filter = () => {
+		if (DEBUG_CONFIG.unlimitedCards) {
+			return (
+				<input
+					type="text"
+					placeholder="Search for cards..."
+					value={filter}
+					onChange={(e) => setFilter(e.target.value)}
+				/>
+			)
+		}
+		return null
+	}
 
 	return (
 		<div className={css.game}>
-			<div className={css.innerGame}>
-				<Board onClick={handleBoardClick} localGameState={gameState} />
-				<div className={css.bottom}>
-					<div className={css.toolbar}>
-						<Toolbar />
-					</div>
-					<div className={css.hand}>
-						<CardList
-							wrap={false}
-							size="medium"
-							cards={gameState.hand}
-							onClick={(card: CardT) => selectCard(card)}
-							selected={selectedCard}
-							picked={pickedCardsInstances}
-						/>
-					</div>
+			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
+				<div className={css.playArea} ref={gameRef} style={{transform: `scale(${gameScale})`}}>
+					<div className={css.grid} />
+					<Board onClick={handleBoardClick} localGameState={gameState} />
 				</div>
-				{renderModal(openedModal, handleOpenModal)}
-				{pickProcess ? (
-					<MouseIndicator message={getPickProcessMessage(pickProcess)} />
-				) : null}
-
-				<Chat />
-
-				{endGameOverlay && <EndGameOverlay {...endGameOverlay} />}
 			</div>
+
+			<div className={css.bottom}>
+				<Toolbar />
+				<div className={css.hand} ref={handRef}>
+					{Filter()}
+					<CardList
+						wrap={false}
+						// cards={gameState.hand}
+						cards={filteredCards}
+						onClick={(card: CardT) => selectCard(card)}
+						selected={[selectedCard]}
+						picked={pickedSlotsInstances}
+					/>
+				</div>
+			</div>
+
+			{renderModal(openedModal, handleOpenModal)}
+			<Chat />
+			<EndGameOverlay {...endGameOverlay} />
 		</div>
 	)
 }

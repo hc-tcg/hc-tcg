@@ -12,9 +12,7 @@ const ErrorBanner = ({children, textOnly, ...attributes}: Props) => {
 	return (
 		<div
 			{...attributes}
-			className={`${css.error} ${textOnly && css.text} ${
-				attributes?.className
-			}`}
+			className={`${css.error} ${textOnly && css.text} ${attributes?.className}`}
 		>
 			<span>{<ErrorIcon />}</span> {children}
 		</div>

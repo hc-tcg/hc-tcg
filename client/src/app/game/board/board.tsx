@@ -1,165 +1,85 @@
-import {useEffect} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
-import classnames from 'classnames'
-import CoinFlip from 'components/coin-flip'
-import {
-	LocalGameState,
-	LocalPlayerState,
-	RowState,
-} from 'common/types/game-state'
-import {PickedCardT} from 'common/types/pick-process'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {useSelector} from 'react-redux'
+import {LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
+import {PickedSlotT} from 'common/types/pick-process'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {
-	getPlayerStateById,
-	getAvailableActions,
-	getCurrentCoinFlip,
-} from 'logic/game/game-selectors'
-import {setOpenedModal, endTurn} from 'logic/game/game-actions'
-import {playSound} from 'logic/sound/sound-actions'
-import css from './board.module.css'
-import Slot from './board-slot'
+import css from './board.module.scss'
 import BoardRow from './board-row'
-import PlayerInfo from './player-info'
-import Timer from './timer'
-import Button from 'components/button'
-
-// TODO - Don't allow clicking on slots on the other side
+import PlayerInfo from '../player-info'
+import Timer from '../timer'
+import Actions from '../actions/actions'
+import {CARDS} from 'common/cards'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import MobileActions from '../actions/mobile-actions'
 
 type Props = {
-	onClick: (meta: PickedCardT) => void
+	onClick: (meta: PickedSlotT) => void
 	localGameState: LocalGameState
 }
 
+// TODO - Don't allow clicking on slots on the other side
 // TODO - Use selectors instead of passing gameState
 function Board({onClick, localGameState}: Props) {
-	const playerId = useSelector(getPlayerId)
-	const currentPlayer = useSelector(
-		getPlayerStateById(localGameState.currentPlayerId)
-	)
-	const boardState = currentPlayer?.board
-	const singleUseCard = boardState?.singleUseCard || null
-	const singleUseCardUsed = boardState?.singleUseCardUsed || false
-	const availableActions = useSelector(getAvailableActions)
-	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const settings = useSelector(getSettings)
-	const dispatch = useDispatch()
+	const playerId = useSelector(getPlayerId)
+	const player = localGameState.players[playerId]
+	const opponent = localGameState.players[localGameState.opponentPlayerId]
+	const side = settings.gameSide
+	const leftPlayer = side === 'Left' ? player : opponent
+	const rightPlayer = side === 'Right' ? player : opponent
 
-	useEffect(() => {
-		if (localGameState.currentPlayerId === playerId) {
-			dispatch(playSound('/sfx/Click.ogg'))
-		}
-	}, [localGameState.currentPlayerId])
-
-	const handeRowClick = (
-		playerId: string,
-		rowIndex: number,
-		rowState: RowState | null,
-		meta: any
-	) => {
+	const handleRowClick = (playerId: string, rowIndex: number, rowState: RowState, meta: any) => {
 		onClick({
-			...meta,
 			playerId,
-			rowIndex,
-			rowHermitCard: rowState?.hermitCard || null,
+			slot: {
+				type: meta.slotType,
+				index: meta.slotIndex,
+				card: meta.card,
+				info: meta.card ? CARDS[meta.card.cardId] : null,
+			},
+			row: {
+				index: rowIndex,
+				state: rowState,
+			},
 		})
 	}
 
-	const handleEndTurn = () => {
-		if (
-			availableActions.length === 1 ||
-			settings.confirmationDialogs === 'off'
-		) {
-			dispatch(endTurn())
-		} else {
-			dispatch(setOpenedModal('end-turn'))
-		}
-	}
-
-	const makeRows = (playerState: LocalPlayerState, type: 'left' | 'right') => {
-		const rows = playerState.board.rows
-		return new Array(5).fill(null).map((_, index) => {
-			if (!rows[index]) throw new Error('Rendering board row failed')
-			return (
-				<BoardRow
-					key={index}
-					rowState={rows[index]}
-					active={index === playerState.board.activeRow}
-					onClick={handeRowClick.bind(null, playerState.id, index, rows[index])}
-					type={type}
-				/>
-			)
-		})
-	}
-
-	const renderMiddle = () => {
-		if (currentCoinFlip) {
-			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
-		}
-
-		if (availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) {
-			return (
-				<div className={css.opponentFollowup}>
-					Waiting for opponent's action.
-				</div>
-			)
-		}
-
-		if (availableActions.includes('WAIT_FOR_TURN')) {
-			return null
-		}
+	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
+		const rows = player.board.rows
+		const boardArray = new Array(5).fill(null)
 
 		return (
-			<Button
-				variant="default"
-				size="small"
-				onClick={handleEndTurn}
-				disabled={!availableActions.includes('END_TURN')}
-			>
-				End Turn
-			</Button>
+			<div className={css.playerBoard} id={css[direction]}>
+				{boardArray.map((_, index) => {
+					if (!rows[index]) throw new Error('Rendering board row failed!')
+					return (
+						<BoardRow
+							key={index}
+							rowState={rows[index]}
+							active={index === player.board.activeRow}
+							onClick={handleRowClick.bind(null, player.id, index, rows[index])}
+							type={direction}
+						/>
+					)
+				})}
+			</div>
 		)
 	}
 
-	const [player1, player2] = localGameState.order.map(
-		(playerId) => localGameState.players[playerId]
-	)
 	return (
-		<div className={css.board}>
-			<div className={css.leftPlayer}>
-				<PlayerInfo player={player1} dir="left" />
-				{makeRows(player1, 'left')}
+		<div className={css.gameBoard}>
+			<div className={css.playerInfoSection}>
+				<PlayerInfo player={leftPlayer} direction="left" />
+				<Timer />
+				<PlayerInfo player={rightPlayer} direction="right" />
 			</div>
 
-			<div className={css.middle}>
-				<Timer />
-				{renderMiddle()}
-				<div
-					className={classnames(css.singleUseSlot, {
-						[css.used]: singleUseCardUsed,
-					})}
-				>
-					<Slot
-						onClick={
-							availableActions.includes('PLAY_SINGLE_USE_CARD') ||
-							availableActions.includes('REMOVE_EFFECT')
-								? () =>
-										onClick({
-											slotType: 'single_use',
-											card: singleUseCard,
-											playerId: localGameState.currentPlayerId,
-										})
-								: undefined
-						}
-						card={singleUseCard}
-						type={'single_use'}
-					/>
-				</div>
+			<div className={css.actualBoard}>
+				{PlayerBoard(leftPlayer, 'left')}
+				<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
+				{PlayerBoard(rightPlayer, 'right')}
 			</div>
-			<div className={css.rightPlayer}>
-				<PlayerInfo player={player2} dir="right" />
-				{makeRows(player2, 'right')}
-			</div>
+
+			<MobileActions localGameState={localGameState} onClick={onClick} id={css.actions} />
 		</div>
 	)
 }

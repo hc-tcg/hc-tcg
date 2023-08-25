@@ -45,16 +45,7 @@ const Button = ({
 }
 
 const RefButton = forwardRef(function TestButton(
-	{
-		variant,
-		size,
-		emphasis,
-		leftSlot,
-		rightSlot,
-		children,
-		onClick,
-		...props
-	}: ButtonProps,
+	{variant, size, emphasis, leftSlot, rightSlot, children, onClick, ...props}: ButtonProps,
 	ref: React.ForwardedRef<any>
 ) {
 	return (

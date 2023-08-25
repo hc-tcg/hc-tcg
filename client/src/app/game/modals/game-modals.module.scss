@@ -1,0 +1,182 @@
+.description {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+
+	hr {
+		margin: 0.25rem 0;
+	}
+
+	li {
+		list-style: square inside;
+	}
+}
+
+.options {
+	text-align: center;
+	padding: 0.5rem;
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	border-top: 2px solid var(--gray-400);
+	background: var(--gray-500);
+	flex-grow: 1;
+
+	> button {
+		flex-grow: 1;
+		max-width: 50%;
+	}
+}
+
+.cards {
+	padding: 5px;
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.card {
+	margin-inline: auto;
+}
+
+.infoIcon {
+	border: 2px solid var(--gray-50);
+	width: 20px;
+	height: 20px;
+	flex: 0 0 auto;
+	border-radius: 50%;
+	font-size: 16px;
+	line-height: 16px;
+	text-align: center;
+	display: inline-block;
+	vertical-align: baseline;
+	font-family: serif;
+	font-weight: bold;
+}
+
+.turnEndNotification {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+	font-size: 1rem;
+	border: 1px solid var(--gray-300);
+	padding: 0.5rem 1rem;
+	background: var(--gray-900);
+}
+
+.attack {
+	display: flex;
+	align-items: center;
+	flex: 0 0 auto;
+	padding: 1rem;
+	gap: 1rem;
+	border: 1px solid var(--gray-300);
+	font-family: Minecraft;
+	text-align: left;
+	color: var(--text-light);
+	cursor: pointer;
+
+	&:hover {
+		background: var(--gray-900);
+	}
+
+	.portrait {
+		$size: 60px;
+
+		display: flex;
+		justify-content: center;
+		align-items: flex-start;
+		flex: 0 0 auto;
+		height: $size;
+		width: $size;
+		overflow: hidden;
+		border: 2px solid var(--gray-300);
+		border-right: 2px solid var(--gray-700);
+		border-bottom: 2px solid var(--gray-700);
+		background: var(--gray-100);
+
+		img {
+			flex: 0 0 auto;
+			margin-top: 5px;
+			width: 85px;
+			height: auto;
+		}
+	}
+
+	.info {
+		flex: 1 1 auto;
+	}
+
+	.name {
+		font-weight: bold;
+		font-size: 1.2rem;
+
+		.select {
+			font-size: 0.8rem;
+			font-weight: normal;
+			font-style: italic;
+			opacity: 0.9;
+		}
+
+		.damage {
+			color: hsl(0deg, 90%, 50%);
+		}
+
+		.specialMove {
+			color: hsl(220deg, 90%, 50%);
+		}
+	}
+
+	.details {
+		display: flex;
+		flex-flow: row nowrap;
+		gap: 0.5rem;
+		align-items: center;
+		line-height: 1;
+	}
+
+	.attackPart {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	.attackIcon {
+		background: var(--gray-100);
+		padding: 2px;
+		height: 32px;
+		width: 32px;
+	}
+}
+
+.hermitOptions {
+	display: flex;
+	gap: 10px;
+}
+
+.hermitOption {
+	width: 35px;
+	height: 35px;
+	opacity: 0.5;
+	cursor: pointer;
+	filter: saturate(0);
+
+	&.selected {
+		filter: saturate(1);
+		opacity: 1;
+		box-shadow: 0 0 2px #333;
+	}
+
+	&:hover:not(.selected) {
+		filter: saturate(0.5);
+		opacity: 1;
+	}
+}
+
+.extraAttacks {
+	display: flex;
+	flex-direction: column;
+	margin-left: 1rem;
+}

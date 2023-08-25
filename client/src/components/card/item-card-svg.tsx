@@ -1,15 +1,15 @@
 import classnames from 'classnames'
-import {ItemCardT} from 'common/types/cards'
+import ItemCard from '../../../../common/cards/base/item-card'
 import css from './item-card-svg.module.scss'
-import {getCardRank} from 'server/utils/validation'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
+import {getCardRank} from 'common/utils/ranks'
 
 export type ItemCardProps = {
-	card: ItemCardT
+	card: ItemCard
 }
 
-const ItemCard = ({card}: ItemCardProps) => {
+const ItemCardModule = ({card}: ItemCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	return (
@@ -26,13 +26,7 @@ const ItemCard = ({card}: ItemCardProps) => {
 				ry="15"
 			/>
 			<g>
-				<image
-					className={css.star}
-					href={`/images/star_white.svg`}
-					x="-15"
-					y="65"
-					width="390"
-				/>
+				<image className={css.star} href={`/images/star_white.svg`} x="-15" y="65" width="390" />
 				<image
 					className={css.icon}
 					href={`/images/types/type-${card.hermitType}.png`}
@@ -52,22 +46,29 @@ const ItemCard = ({card}: ItemCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					ITEM
 				</text>
 			</g>
 			{card.rarity === 'rare' ? (
 				<g>
-					<rect
-						className={css.rarity}
-						x="302"
-						y="302"
-						width="100"
-						height="100"
-						rx="50"
-						ry="50"
-					/>
-					<text x="351" y="331" className={css.x2} fill="black">
+					<rect className={css.rarity} x="302" y="302" width="100" height="100" rx="50" ry="50" />
+					<text
+						x="351"
+						y="331"
+						className={css.x2}
+						fill="black"
+						textAnchor="middle"
+						dominantBaseline="hanging"
+						key={Math.random()}
+					>
 						x2
 					</text>
 				</g>
@@ -75,15 +76,7 @@ const ItemCard = ({card}: ItemCardProps) => {
 
 			{showCost && rank.name !== 'stone' ? (
 				<g>
-					<rect
-						className={css.rarity}
-						x="0"
-						y="302"
-						width="100"
-						height="100"
-						rx="50"
-						ry="50"
-					/>
+					<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
 					<image
 						x="15"
 						y="315"
@@ -104,21 +97,11 @@ const ItemCard = ({card}: ItemCardProps) => {
 					height="200%"
 					width="200%"
 				>
-					<feGaussianBlur
-						id="blur"
-						in="SourceAlpha"
-						stdDeviation="5"
-						result="SA-o-blur"
-					/>
+					<feGaussianBlur id="blur" in="SourceAlpha" stdDeviation="5" result="SA-o-blur" />
 					<feComponentTransfer in="SA-o-blur" result="SA-o-b-contIN">
 						<feFuncA id="contour" type="table" tableValues="0 1" />
 					</feComponentTransfer>
-					<feComposite
-						operator="in"
-						in="SA-o-blur"
-						in2="SA-o-b-contIN"
-						result="SA-o-b-cont"
-					/>
+					<feComposite operator="in" in="SA-o-blur" in2="SA-o-b-contIN" result="SA-o-b-cont" />
 					<feComponentTransfer in="SA-o-b-cont" result="SA-o-b-c-sprd">
 						<feFuncA id="spread-ctrl" type="linear" slope="200" />
 					</feComponentTransfer>
@@ -139,4 +122,4 @@ const ItemCard = ({card}: ItemCardProps) => {
 	)
 }
 
-export default ItemCard
+export default ItemCardModule

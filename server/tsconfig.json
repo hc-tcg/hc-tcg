@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"baseUrl": "./src",
+		"paths": {
+			"common/*": ["../../common/*"],
+			"types/*": ["../../common/types/*"]
+		},
+		"allowJs": true,
+		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"strict": true,
+		"noEmit": true,
+		"noImplicitOverride": true,
+		"esModuleInterop": true
+	},
+	"include": ["src/*", "src/**.json"]
+}
