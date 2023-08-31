@@ -29,9 +29,6 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			const hermitInfo = HERMIT_CARDS[card.cardId]
 			if (hermitInfo) {
 				row.health = Math.min(row.health + 60, hermitInfo.health)
-			} else {
-				// Armor Stand
-				row.health += 60
 			}
 		})
 	}

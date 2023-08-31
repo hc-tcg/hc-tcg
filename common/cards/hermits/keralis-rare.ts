@@ -57,9 +57,6 @@ class KeralisRareHermitCard extends HermitCard {
 					rowState.health + 100,
 					hermitInfo.health // Max health
 				)
-			} else {
-				// Armor Stand
-				rowState.health += 100
 			}
 		})
 	}
