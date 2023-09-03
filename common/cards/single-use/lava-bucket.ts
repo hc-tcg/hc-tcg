@@ -6,6 +6,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'lava_bucket',
+			numericId: 74,
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:

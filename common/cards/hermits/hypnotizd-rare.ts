@@ -16,6 +16,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'hypnotizd_rare',
+			numericId: 37,
 			name: 'Hypno',
 			rarity: 'rare',
 			hermitType: 'miner',

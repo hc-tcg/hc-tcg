@@ -6,6 +6,7 @@ class FarmRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_farm_rare',
+			numericId: 56,
 			name: 'Farm',
 			rarity: 'rare',
 			hermitType: 'farm',

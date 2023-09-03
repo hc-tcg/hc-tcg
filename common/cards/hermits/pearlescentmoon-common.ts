@@ -4,6 +4,7 @@ class PearlescentMoonCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'pearlescentmoon_common',
+			numericId: 84,
 			name: 'Pearl',
 			rarity: 'common',
 			hermitType: 'builder',

@@ -8,6 +8,7 @@ class MilkBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'milk_bucket',
+			numericId: 79,
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:

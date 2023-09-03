@@ -6,6 +6,7 @@ class BalancedRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_balanced_rare',
+			numericId: 50,
 			name: 'Balanced',
 			rarity: 'rare',
 			hermitType: 'balanced',

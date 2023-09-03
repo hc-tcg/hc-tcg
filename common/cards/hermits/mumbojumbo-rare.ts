@@ -11,6 +11,7 @@ class MumboJumboRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'mumbojumbo_rare',
+			numericId: 81,
 			name: 'Mumbo',
 			rarity: 'rare',
 			hermitType: 'prankster',

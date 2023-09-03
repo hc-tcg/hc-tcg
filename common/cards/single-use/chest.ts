@@ -8,6 +8,7 @@ class ChestSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'chest',
+			numericId: 4,
 			name: 'Chest',
 			rarity: 'rare',
 			description:

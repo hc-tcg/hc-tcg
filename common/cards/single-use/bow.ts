@@ -8,6 +8,7 @@ class BowSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'bow',
+			numericId: 3,
 			name: 'Bow',
 			rarity: 'common',
 			description: 'Do 40hp damage to an AFK Hermit of your choice.',

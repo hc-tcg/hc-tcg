@@ -6,6 +6,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'curse_of_binding',
+			numericId: 11,
 			name: 'Curse Of Binding',
 			rarity: 'common',
 			description: "Your opponent's active Hermit can not go AFK on their next turn.",

@@ -9,6 +9,7 @@ class EggSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'egg',
+			numericId: 140,
 			name: 'Egg',
 			rarity: 'rare',
 			description:

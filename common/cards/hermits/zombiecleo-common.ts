@@ -4,6 +4,7 @@ class ZombieCleoCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'zombiecleo_common',
+			numericId: 115,
 			name: 'Cleo',
 			rarity: 'common',
 			hermitType: 'builder',

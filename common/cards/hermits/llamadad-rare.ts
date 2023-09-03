@@ -7,6 +7,7 @@ class LlamadadRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'llamadad_rare',
+			numericId: 134,
 			name: 'Llamadad',
 			rarity: 'rare',
 			hermitType: 'balanced',

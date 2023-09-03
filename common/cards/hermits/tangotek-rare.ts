@@ -10,6 +10,7 @@ class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tangotek_rare',
+			numericId: 95,
 			name: 'Tango',
 			rarity: 'rare',
 			hermitType: 'farm',

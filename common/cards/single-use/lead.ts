@@ -14,6 +14,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'lead',
+			numericId: 75,
 			name: 'Lead',
 			rarity: 'common',
 			description:

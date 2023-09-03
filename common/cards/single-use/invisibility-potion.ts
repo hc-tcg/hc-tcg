@@ -7,6 +7,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'invisibility_potion',
+			numericId: 44,
 			name: 'Invisibility Potion',
 			rarity: 'rare',
 			description:

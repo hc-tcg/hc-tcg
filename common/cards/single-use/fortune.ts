@@ -7,6 +7,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'fortune',
+			numericId: 26,
 			name: 'Fortune',
 			rarity: 'ultra_rare',
 			description: 'Any coin flips needed on your attack are not needed and "heads" is assumed.',

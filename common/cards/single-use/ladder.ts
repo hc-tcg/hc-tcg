@@ -9,6 +9,7 @@ class LadderSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'ladder',
+			numericId: 143,
 			name: 'Ladder',
 			rarity: 'ultra_rare',
 			description:

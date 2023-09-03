@@ -1,6 +1,5 @@
 import {CardT} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
-import {universe} from './import-export-const'
 import {encode, decode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<CardT> => {
@@ -9,8 +8,10 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 		.map((char) => char.charCodeAt(0))
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
+		const cardId = Object.values(CARDS).find((value) => value.numericId === b64[i])?.id
+		if (!cardId) continue
 		deck.push({
-			cardId: universe[b64[i]],
+			cardId: cardId,
 			cardInstance: Math.random().toString(),
 		})
 	}
@@ -21,9 +22,8 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 export const getHashFromDeck = (pickedCards: Array<CardT>): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
-		const cardId = String(pickedCards[i].cardId)
-		const index = universe.indexOf(cardId)
-		if (index >= 0) indicies.push(index)
+		const id = CARDS[pickedCards[i].cardId].numericId
+		if (id >= 0) indicies.push(id)
 	}
 	const b64cards = encode(String.fromCharCode.apply(null, indicies))
 	return b64cards

@@ -7,6 +7,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xisumavoid_rare',
+			numericId: 112,
 			name: 'Xisuma',
 			rarity: 'rare',
 			hermitType: 'redstone',
