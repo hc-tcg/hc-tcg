@@ -79,6 +79,14 @@ class EggSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
+		delete player.custom[this.getInstanceKey(instance)]
+	}
+
 	override getExpansion() {
 		return 'alter_egos'
 	}
