@@ -19,6 +19,7 @@ class HealthCard extends Card {
 		super({
 			type: 'health',
 			id: defs.id,
+			numericId: -1,
 			name: defs.name,
 			rarity: defs.rarity,
 		})

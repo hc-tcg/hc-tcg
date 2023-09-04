@@ -6,6 +6,7 @@ class PvPCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_pvp_common',
+			numericId: 61,
 			name: 'PvP',
 			rarity: 'common',
 			hermitType: 'pvp',

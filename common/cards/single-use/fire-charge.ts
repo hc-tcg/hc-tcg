@@ -9,6 +9,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'fire_charge',
+			numericId: 142,
 			name: 'Fire Charge',
 			rarity: 'common',
 			description:

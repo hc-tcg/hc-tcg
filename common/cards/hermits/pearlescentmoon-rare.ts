@@ -7,6 +7,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'pearlescentmoon_rare',
+			numericId: 85,
 			name: 'Pearl',
 			rarity: 'rare',
 			hermitType: 'terraform',

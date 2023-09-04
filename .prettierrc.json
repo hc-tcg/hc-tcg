@@ -6,5 +6,6 @@
 	"tabWidth": 2,
 	"arrowParens": "always",
 	"useTabs": true,
-	"bracketSpacing": false
+	"bracketSpacing": false,
+	"endOfLine": "auto"
 }

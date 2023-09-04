@@ -7,6 +7,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'knockback',
+			numericId: 73,
 			name: 'Knockback',
 			rarity: 'rare',
 			description:

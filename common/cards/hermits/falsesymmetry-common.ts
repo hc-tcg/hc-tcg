@@ -4,6 +4,7 @@ class FalseSymmetryCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'falsesymmetry_common',
+			numericId: 22,
 			name: 'False',
 			rarity: 'common',
 			hermitType: 'pvp',

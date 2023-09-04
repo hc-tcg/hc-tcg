@@ -7,6 +7,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'potion_of_slowness',
+			numericId: 145,
 			name: 'Potion of Slowness',
 			rarity: 'common',
 			description: "Opponent's active Hermit can only use their primary attack on their next turn.",

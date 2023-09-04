@@ -4,6 +4,7 @@ class GeminiTayCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'geminitay_common',
+			numericId: 27,
 			name: 'Gem',
 			rarity: 'common',
 			hermitType: 'builder',

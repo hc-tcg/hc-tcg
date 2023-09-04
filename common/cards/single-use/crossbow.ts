@@ -8,6 +8,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'crossbow',
+			numericId: 8,
 			name: 'Crossbow',
 			rarity: 'rare',
 			description:

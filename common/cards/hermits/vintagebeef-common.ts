@@ -4,6 +4,7 @@ class VintageBeefCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'vintagebeef_common',
+			numericId: 102,
 			name: 'Beef',
 			rarity: 'common',
 			hermitType: 'balanced',

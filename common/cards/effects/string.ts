@@ -8,6 +8,7 @@ class StringEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'string',
+			numericId: 122,
 			name: 'String',
 			rarity: 'rare',
 			description:

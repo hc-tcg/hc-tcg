@@ -4,6 +4,7 @@ class EvilJevinCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'eviljevin_common',
+			numericId: 127,
 			name: 'Evil Jevin',
 			rarity: 'common',
 			hermitType: 'miner',

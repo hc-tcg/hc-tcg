@@ -7,6 +7,7 @@ import {TurnActions} from '../../types/game-state'
 
 export type SingleUseDefs = {
 	id: string
+	numericId: number
 	name: string
 	rarity: CardRarityT
 	description: string
@@ -21,6 +22,7 @@ class SingleUseCard extends Card {
 		super({
 			type: 'single_use',
 			id: defs.id,
+			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
 			pickOn: defs.pickOn,

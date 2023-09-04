@@ -6,6 +6,7 @@ class MinerCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_miner_common',
+			numericId: 57,
 			name: 'Miner',
 			rarity: 'common',
 			hermitType: 'miner',
