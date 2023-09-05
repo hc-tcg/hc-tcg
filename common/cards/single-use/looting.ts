@@ -21,7 +21,7 @@ class LootingSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			player.hooks.onTurnEnd.add(instance, (drawCards) => {
 				const drawCard = opponentPlayer.pile.shift()
 				if (drawCard) drawCards.push(drawCard)

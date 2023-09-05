@@ -38,7 +38,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			player.hooks.afterAttack.remove(instance)
 		})
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {

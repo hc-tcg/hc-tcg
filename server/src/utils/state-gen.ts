@@ -229,9 +229,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			onApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			afterApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
+			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
 			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
 			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),

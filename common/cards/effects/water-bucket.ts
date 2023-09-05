@@ -22,7 +22,7 @@ class WaterBucketEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			player.hooks.onApply.add(instance, (pickedSlots) => {
 				const pickedCards = pickedSlots[this.id] || []
 				if (pickedCards.length !== 1) return
 				const targetSlot = pickedCards[0]
@@ -44,7 +44,7 @@ class WaterBucketEffectCard extends EffectCard {
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
+			opponentPlayer.hooks.afterApply.add(instance, (pickedSlots) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'fire')
 			})

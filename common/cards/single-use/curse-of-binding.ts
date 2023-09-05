@@ -20,7 +20,7 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
 					return blockedActions

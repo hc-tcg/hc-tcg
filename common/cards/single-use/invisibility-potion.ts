@@ -22,7 +22,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const coinFlip = flipCoin(player, this.id)
 			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 

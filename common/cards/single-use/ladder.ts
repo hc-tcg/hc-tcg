@@ -31,7 +31,7 @@ class LadderSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const slots = pickedSlots[this.id] || []
 			const activeRowIndex = player.board.activeRow
 

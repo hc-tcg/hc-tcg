@@ -21,7 +21,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 

@@ -22,7 +22,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedSlot = pickedSlots[this.id]?.[0]
 			if (!pickedSlot) return
 
