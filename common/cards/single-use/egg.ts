@@ -57,13 +57,15 @@ class EggSingleUseCard extends SingleUseCard {
 			player.hooks.onAttack.remove(instance)
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const eggIndex = player.custom[this.getInstanceKey(instance)]
-			opponentPlayer.board.activeRow = eggIndex
+		player.hooks.onApply.add(instance, () => {
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const eggIndex = player.custom[this.getInstanceKey(instance)]
+				opponentPlayer.board.activeRow = eggIndex
 
-			delete player.custom[this.getInstanceKey(instance)]
+				delete player.custom[this.getInstanceKey(instance)]
 
-			player.hooks.afterAttack.remove(instance)
+				player.hooks.afterAttack.remove(instance)
+			})
 		})
 	}
 
@@ -83,7 +85,7 @@ class EggSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onApply.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 
