@@ -4,6 +4,7 @@ class ZedaphPlaysCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'zedaphplays_common',
+			numericId: 113,
 			name: 'Zedaph',
 			rarity: 'common',
 			hermitType: 'redstone',

@@ -8,6 +8,7 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'diamond_sword',
+			numericId: 14,
 			name: 'Diamond Sword',
 			rarity: 'rare',
 			description: 'Do an additional 40hp damage.',

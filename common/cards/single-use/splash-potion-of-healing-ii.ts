@@ -7,6 +7,7 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'splash_potion_of_healing_ii',
+			numericId: 147,
 			name: 'Splash Potion of Healing II',
 			rarity: 'rare',
 			description: 'Heal each of your active and AFK Hermits 30hp.',

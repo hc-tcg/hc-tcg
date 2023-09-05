@@ -8,6 +8,7 @@ class TotemEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'totem',
+			numericId: 101,
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:

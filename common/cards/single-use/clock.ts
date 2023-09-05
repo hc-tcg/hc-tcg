@@ -7,6 +7,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'clock',
+			numericId: 6,
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:

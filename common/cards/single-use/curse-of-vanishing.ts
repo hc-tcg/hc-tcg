@@ -8,6 +8,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'curse_of_vanishing',
+			numericId: 12,
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
 			description: "Your opponent is forced to discard their active Hermit's attached effect card.",
@@ -33,7 +34,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		if (opponentPlayer.board.activeRow === null) return 'NO'

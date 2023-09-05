@@ -4,6 +4,7 @@ class TinFoilChefCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tinfoilchef_common',
+			numericId: 97,
 			name: 'TFC',
 			rarity: 'common',
 			hermitType: 'miner',

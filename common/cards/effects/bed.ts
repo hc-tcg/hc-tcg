@@ -8,6 +8,7 @@ class BedEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'bed',
+			numericId: 2,
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:

@@ -8,6 +8,7 @@ class WolfEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'wolf',
+			numericId: 108,
 			name: 'Wolf',
 			rarity: 'rare',
 			description:

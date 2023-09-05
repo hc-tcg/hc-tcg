@@ -9,6 +9,7 @@ class WaterBucketEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'water_bucket',
+			numericId: 105,
 			name: 'Water Bucket',
 			rarity: 'common',
 			description:

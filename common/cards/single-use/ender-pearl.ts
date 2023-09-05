@@ -6,6 +6,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'ender_pearl',
+			numericId: 141,
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:
@@ -27,7 +28,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		for (const row of player.board.rows) {
 			if (row.hermitCard === null) return 'YES'

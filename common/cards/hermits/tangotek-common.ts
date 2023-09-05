@@ -4,6 +4,7 @@ class TangoTekCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tangotek_common',
+			numericId: 94,
 			name: 'Tango',
 			rarity: 'common',
 			hermitType: 'redstone',

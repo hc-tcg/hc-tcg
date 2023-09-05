@@ -6,6 +6,7 @@ class RedstoneRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_redstone_rare',
+			numericId: 64,
 			name: 'Redstone',
 			rarity: 'rare',
 			hermitType: 'redstone',

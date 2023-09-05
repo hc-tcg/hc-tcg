@@ -8,6 +8,7 @@ class TNTSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'tnt',
+			numericId: 100,
 			name: 'TNT',
 			rarity: 'common',
 			description: 'Do an additional 60hp damage. You also take 20hp damage.',

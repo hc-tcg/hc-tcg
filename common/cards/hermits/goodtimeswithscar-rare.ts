@@ -6,6 +6,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'goodtimeswithscar_rare',
+			numericId: 33,
 			name: 'Scar',
 			rarity: 'rare',
 			hermitType: 'builder',
