@@ -27,7 +27,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			if (!pickedSlot) return
 
 			player.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('ailment') || attack.isBacklash) return
+				if (attack.isType('ailment')) return
 				if (!pickedSlot.row || !pickedSlot.row.state.hermitCard) {
 					return
 				}
