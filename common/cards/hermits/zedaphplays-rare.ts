@@ -52,7 +52,6 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				if (player.custom[coinFlipResult] === 'heads') {
 					// Change attack target - this just works
 					attack.target = attack.attacker
-					attack.isBacklash = true
 				}
 			})
 
