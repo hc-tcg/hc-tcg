@@ -24,31 +24,30 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used statusly.',
+					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used consecutively.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
-		player.custom[status] = 'normal'
+		// normal | skipped
+		const skipped = this.getInstanceKey(instance, 'skipped')
+		player.custom[skipped] = false
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (player.custom[status] != 'normal') {
-				player.custom[status] = 'normal'
-				return
-			}
 			if (attack.type !== 'secondary') return
-			player.custom[status] = 'block'
 
 			const coinFlip = flipCoin(player, this.id, 1)
 			if (coinFlip[0] !== 'heads') return
 
-			// Block all the actions of the opponent
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: TurnActions = [
+			// This will tell us to block actions at the start of our next turn
+			player.custom[skipped] = true
+
+			// Block all actions of opponent for one turn
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+				game.addBlockedActions(
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'SINGLE_USE_ATTACK',
@@ -57,54 +56,31 @@ class JoeHillsRareHermitCard extends HermitCard {
 					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD',
-				]
-
-				if (opponentPlayer.board.activeRow !== null) {
-					blocked.push('CHANGE_ACTIVE_HERMIT')
-				}
-				blockedActions.push(...blocked)
-				return blockedActions
-			})
-
-			// Stop blocking the actions of the opponent when their turn ends
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+					'PLAY_EFFECT_CARD'
+				)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 
-		// Block the secondary attack of Joe
-		player.hooks.blockedActions.add(instance, (blockedActions) => {
-			if (player.custom[status] === 'normal') return blockedActions
-			const blocked: TurnActions = ['SECONDARY_ATTACK']
-			blockedActions.push(...blocked)
-
-			return blockedActions
-		})
-
-		// Advance the status flag at the start of your turn after time skip
+		// Blcok secondary attack if we skipped
 		player.hooks.onTurnStart.add(instance, () => {
-			if (player.custom[status] !== 'block') return
-			player.custom[status] = 'blocked'
-		})
+			const weAreActive = game.activeRow?.hermitCard?.cardInstance === instance
+			if (player.custom[skipped] && weAreActive) {
+				// We skipped last turn and we are still the active hermit, block secondary attacks
+				game.addBlockedActions('SECONDARY_ATTACK')
+			}
 
-		// If you didn't attack or switched your active hermit, reset the status flag
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (player.custom[status] !== 'blocked') return
-			player.custom[status] = 'normal'
+			player.custom[skipped] = false
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
+		const {player} = pos
+		const skipped = this.getInstanceKey(instance, 'skipped')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
-		player.hooks.blockedActions.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[status]
+		delete player.custom[skipped]
 	}
 }
 
