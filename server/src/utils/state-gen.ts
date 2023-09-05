@@ -221,7 +221,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		},
 
 		pickRequests: [],
-		modalRequest: null,
+		modalRequests: [],
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
@@ -301,7 +301,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		lastActionResult: game.state.lastActionResult,
 
 		currentPickMessage: playerState.pickRequests[0]?.message || null,
-		currentCustomModal: playerState.modalRequest?.id || null,
+		currentCustomModal: playerState.modalRequests[0]?.id || null,
 
 		players,
 

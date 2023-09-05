@@ -63,9 +63,8 @@ export type PlayerState = {
 	}
 
 	pickRequests: Array<PickRequest>
-	//@TODO for now this is not an array because it's faster to code it that way, however, long term it needs be an array
-	//and the code also needs to check for the opponents modal requests
-	modalRequest: ModalRequest | null
+	//@TODO the code also needs to check for the opponents modal requests
+	modalRequests: Array<ModalRequest>
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */

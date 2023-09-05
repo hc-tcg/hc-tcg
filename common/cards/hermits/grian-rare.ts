@@ -72,7 +72,7 @@ class GrianRareHermitCard extends HermitCard {
 				return
 			}
 
-			player.modalRequest = {
+			player.modalRequests.push({
 				id: this.id,
 				onResult(modalResult) {
 					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
@@ -101,7 +101,7 @@ class GrianRareHermitCard extends HermitCard {
 					// Just add the card to our discard pile
 					player.discarded.push(opponentEffectCard)
 				},
-			}
+			})
 		})
 	}
 
