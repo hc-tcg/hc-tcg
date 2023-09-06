@@ -1,7 +1,7 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
-	"noItemRequirements": false,
+	"extraStartingCards": ["potatoboy_rare"],
+	"noItemRequirements": true,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,

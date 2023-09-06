@@ -2,6 +2,9 @@ import HermitCard from '../base/hermit-card'
 import {HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
+import {AttackModel} from '../../models/attack-model'
+import {HermitAttackType} from '../../types/attack'
+import {PickedSlots} from '../../types/pick-process'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -23,6 +26,22 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				damage: 90,
 				power: null,
 			},
+		})
+	}
+
+	public override getAttacks(
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel,
+		hermitAttackType: HermitAttackType,
+		pickedSlots: PickedSlots
+	): AttackModel[] {
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+
+		if (hermitAttackType !== 'primary') return attacks
+
+		return attacks.filter((attack) => {
+			return attack.type !== 'weakness'
 		})
 	}
 

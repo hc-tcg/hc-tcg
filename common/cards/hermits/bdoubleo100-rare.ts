@@ -1,6 +1,9 @@
 import {HERMIT_CARDS} from '..'
+import { AttackModel } from '../../models/attack-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import { HermitAttackType } from '../../types/attack'
+import { PickedSlots } from '../../types/pick-process'
 import HermitCard from '../base/hermit-card'
 
 class BdoubleO100RareHermitCard extends HermitCard {
@@ -25,6 +28,22 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				power:
 					'Sleep for the following 2 turns. Restore Full Health. Can not attack. Can not go AFK.\n\nCan still draw and attach cards while sleeping.',
 			},
+		})
+	}
+
+	public override getAttacks(
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel,
+		hermitAttackType: HermitAttackType,
+		pickedSlots: PickedSlots
+	): AttackModel[] {
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+
+		if (hermitAttackType !== 'secondary') return attacks
+
+		return attacks.filter((attack) => {
+			return attack.type !== 'weakness'
 		})
 	}
 
