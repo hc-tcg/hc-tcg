@@ -27,8 +27,6 @@ function* singleUseSaga(card: CardT): SagaIterator {
 
 	if (cardInfo instanceof SingleUseCard && cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
-	} else if (card.cardId === 'chest') {
-		yield put(setOpenedModal('chest'))
 	} else if (cardInfo.pickOn === 'apply') {
 		const result = yield call(runPickProcessSaga, cardInfo.name, cardInfo.pickReqs)
 		if (result && result.length && result[0].pickedSlots?.length) {
@@ -54,6 +52,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield put(setOpenedModal('spyglass'))
 		} else if (id === 'looting') {
 			yield put(setOpenedModal('looting'))
+		} else if (id === 'chest') {
+			yield put(setOpenedModal('chest'))
 		}
 	} else if (
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&

@@ -21,7 +21,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			player.hooks.onCoinFlip.add(instance, (id, coinFlips) => {
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i] = 'heads'

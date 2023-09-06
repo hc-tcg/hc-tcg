@@ -63,9 +63,8 @@ export type PlayerState = {
 	}
 
 	pickRequests: Array<PickRequest>
-	//@TODO for now this is not an array because it's faster to code it that way, however, long term it needs be an array
-	//and the code also needs to check for the opponents modal requests
-	modalRequest: ModalRequest | null
+	//@TODO the code also needs to check for the opponents modal requests
+	modalRequests: Array<ModalRequest>
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
@@ -80,11 +79,11 @@ export type PlayerState = {
 		onDetach: GameHook<(instance: string) => void>
 
 		/** Hook called before a single use card is applied */
-		beforeApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		beforeApply: GameHook<(pickedSlots: PickedSlots) => void>
 		/** Hook called when a single use card is applied */
-		onApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		onApply: GameHook<(pickedSlots: PickedSlots) => void>
 		/** Hook called after a single use card is applied */
-		afterApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		afterApply: GameHook<(pickedSlots: PickedSlots) => void>
 
 		/** Hook that returns attacks to execute */
 		getAttacks: GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>

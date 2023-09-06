@@ -65,7 +65,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			if (attack.id === attackId) {
 				// Clean up
 				player.hooks.getAttacks.remove(instance)
-				player.hooks.onAttack.remove(instance)
+				player.hooks.beforeAttack.remove(instance)
 				player.hooks.afterAttack.remove(instance)
 			}
 		})

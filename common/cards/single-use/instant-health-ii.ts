@@ -19,7 +19,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedCards = pickedSlots[this.id] || []
 			if (pickedCards.length !== 1) return
 

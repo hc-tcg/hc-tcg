@@ -93,7 +93,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				})
 
 				const opponentActiveRow = getActiveRowPos(opponentPlayer)
-				if (!opponentActiveRow?.row.hermitCard) return
+				if (!opponentActiveRow?.row?.hermitCard) return
 
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 				if (!activeHermitInfo) return
@@ -154,6 +154,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					energyTypes.push(ITEM_CARDS[item.cardId].hermitType)
 				})
 
+				if (!opponentActiveRow?.row?.hermitCard) return blockedActions
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
 				const isSleeping = opponentActiveRow.row.ailments.some((a) => a.id === 'sleeping')

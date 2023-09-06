@@ -22,7 +22,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			opponentPlayer.board.rows[activeRow].ailments.push({
 				id: 'badomen',
 				duration: 3,

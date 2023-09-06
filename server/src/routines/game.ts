@@ -62,8 +62,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const {currentPlayer, opponentPlayer} = game
 	const actions: TurnActions = []
 
-	// Custom modal
-	if (currentPlayer.modalRequest) {
+	// Custom modals
+	if (currentPlayer.modalRequests.length > 0) {
 		return ['CUSTOM_MODAL']
 	}
 
@@ -530,11 +530,10 @@ function* turnSaga(game: GameModel) {
 
 	// Timeout and clear modal requests
 	// @TODO again modal requests don't handle opponents now
-	if (currentPlayer.modalRequest) {
-		currentPlayer.modalRequest.onTimeout()
-		currentPlayer.modalRequest = null
+	for (let i = 0; i < currentPlayer.modalRequests.length; i++) {
+		currentPlayer.modalRequests[i].onTimeout()
 	}
-	opponentPlayer.modalRequest = null
+	currentPlayer.modalRequests = []
 
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) {

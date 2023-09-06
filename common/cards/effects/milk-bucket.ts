@@ -21,7 +21,7 @@ class MilkBucketEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+			player.hooks.onApply.add(instance, (pickedSlots) => {
 				const pickedCards = pickedSlots[this.id] || []
 				if (pickedCards.length !== 1) return
 				const targetSlot = pickedCards[0]
@@ -37,7 +37,7 @@ class MilkBucketEffectCard extends EffectCard {
 				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, (attack, pickedSlots) => {
+			opponentPlayer.hooks.afterApply.add(instance, (attack) => {
 				if (!row) return
 				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
 			})
