@@ -4,6 +4,7 @@ class XisumavoidCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xisumavoid_common',
+			numericId: 111,
 			name: 'Xisuma',
 			rarity: 'common',
 			hermitType: 'farm',

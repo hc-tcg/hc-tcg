@@ -6,6 +6,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'impulsesv_rare',
+			numericId: 41,
 			name: 'Impulse',
 			rarity: 'rare',
 			hermitType: 'redstone',

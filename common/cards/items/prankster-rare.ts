@@ -6,6 +6,7 @@ class PranksterRareItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_prankster_rare',
+			numericId: 60,
 			name: 'Prankster',
 			rarity: 'rare',
 			hermitType: 'prankster',

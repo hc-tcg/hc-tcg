@@ -8,6 +8,7 @@ class ShieldEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'shield',
+			numericId: 88,
 			name: 'Shield',
 			rarity: 'common',
 			description: 'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',

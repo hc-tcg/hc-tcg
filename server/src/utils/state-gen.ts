@@ -221,7 +221,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		},
 
 		pickRequests: [],
-		modalRequest: null,
+		modalRequests: [],
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
@@ -229,9 +229,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			onApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			afterApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
+			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
 			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
 			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
@@ -301,7 +301,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		lastActionResult: game.state.lastActionResult,
 
 		currentPickMessage: playerState.pickRequests[0]?.message || null,
-		currentCustomModal: playerState.modalRequest?.id || null,
+		currentCustomModal: playerState.modalRequests[0]?.id || null,
 
 		players,
 

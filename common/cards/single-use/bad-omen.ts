@@ -6,6 +6,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'bad_omen',
+			numericId: 139,
 			name: 'Bad Omen',
 			rarity: 'rare',
 			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails.`,
@@ -21,7 +22,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			opponentPlayer.board.rows[activeRow].ailments.push({
 				id: 'badomen',
 				duration: 3,

@@ -9,6 +9,7 @@ class PistonSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'piston',
+			numericId: 144,
 			name: 'Piston',
 			rarity: 'common',
 			description:
@@ -61,7 +62,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const slots = pickedSlots[this.id] || []
 
 			if (slots.length !== 2) return
@@ -96,7 +97,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			swapSlots(game, itemPos, targetPos)
 		})
 
-		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.afterApply.add(instance, (pickedSlots) => {
 			discardSingleUse(game, player)
 
 			// Remove playing a single use from completed actions so it can be done again

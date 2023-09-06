@@ -4,6 +4,7 @@ class Iskall85CommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'iskall85_common',
+			numericId: 47,
 			name: 'Iskall',
 			rarity: 'common',
 			hermitType: 'balanced',

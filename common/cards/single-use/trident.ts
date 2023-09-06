@@ -10,6 +10,7 @@ class TridentSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'trident',
+			numericId: 150,
 			name: 'Trident',
 			rarity: 'rare',
 			description:
@@ -45,7 +46,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			applySingleUse(game)
 		})
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			// Return to hand
 			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise

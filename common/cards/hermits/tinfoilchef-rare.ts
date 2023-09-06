@@ -7,6 +7,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tinfoilchef_rare',
+			numericId: 98,
 			name: 'TFC',
 			rarity: 'rare',
 			hermitType: 'miner',

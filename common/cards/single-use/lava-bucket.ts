@@ -6,6 +6,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'lava_bucket',
+			numericId: 74,
 			name: 'Lava Bucket',
 			rarity: 'rare',
 			description:
@@ -20,7 +21,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const opponentActiveRow = pos.opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 

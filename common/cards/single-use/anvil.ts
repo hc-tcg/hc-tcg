@@ -8,6 +8,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'anvil',
+			numericId: 138,
 			name: 'Anvil',
 			rarity: 'rare',
 			description:

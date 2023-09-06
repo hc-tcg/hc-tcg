@@ -8,6 +8,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'evilxisuma_rare',
+			numericId: 128,
 			name: 'Evil X',
 			rarity: 'rare',
 			hermitType: 'balanced',
@@ -43,7 +44,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 			if (!opponentActiveRow) return
 
-			player.modalRequest = {
+			player.modalRequests.push({
 				id: this.id,
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.disable) return 'FAILURE_INVALID_DATA'
@@ -56,7 +57,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 					// Disable the secondary attack if we didn't choose one
 					player.custom[disableKey] = 'secondary'
 				},
-			}
+			})
 
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				const disable = player.custom[this.getInstanceKey(instance, 'disable')]

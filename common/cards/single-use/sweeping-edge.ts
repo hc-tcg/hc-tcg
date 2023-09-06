@@ -8,6 +8,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'sweeping_edge',
+			numericId: 148,
 			name: 'Sweeping Edge',
 			rarity: 'ultra_rare',
 			description:
@@ -43,7 +44,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const activeRow = opponentPlayer.board.activeRow
 			if (activeRow === null) return
 

@@ -8,6 +8,7 @@ class TurtleShellEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'turtle_shell',
+			numericId: 125,
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:

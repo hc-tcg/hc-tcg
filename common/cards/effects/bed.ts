@@ -8,6 +8,7 @@ class BedEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'bed',
+			numericId: 2,
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:
@@ -50,12 +51,12 @@ class BedEffectCard extends EffectCard {
 			}
 		})
 
-		player.hooks.beforeApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.beforeApply.add(instance, (pickedSlots) => {
 			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
 		})
 
 		//Ladder
-		player.hooks.afterApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.afterApply.add(instance, (pickedSlots) => {
 			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
 				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 

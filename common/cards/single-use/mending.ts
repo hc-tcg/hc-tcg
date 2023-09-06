@@ -10,6 +10,7 @@ class MendingSingleUseCard extends singleUseCard {
 	constructor() {
 		super({
 			id: 'mending',
+			numericId: 78,
 			name: 'Mending',
 			rarity: 'ultra_rare',
 			description: 'Move any attached effect card from your active Hermit to an AFK Hermit.',

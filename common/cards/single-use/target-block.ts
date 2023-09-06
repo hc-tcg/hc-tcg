@@ -8,6 +8,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'target_block',
+			numericId: 149,
 			name: 'Target Block',
 			rarity: 'rare',
 			description:
@@ -21,7 +22,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedSlot = pickedSlots[this.id]?.[0]
 			if (!pickedSlot) return
 

@@ -10,6 +10,7 @@ class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tangotek_rare',
+			numericId: 95,
 			name: 'Tango',
 			rarity: 'rare',
 			hermitType: 'farm',
@@ -59,6 +60,7 @@ class TangoTekRareHermitCard extends HermitCard {
 						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
 						const row = opponentPlayer.board.rows[pickResult.rowIndex]
 						if (row.ailments.find((a) => a.id === 'knockedout')) return 'FAILURE_WRONG_PICK'
 

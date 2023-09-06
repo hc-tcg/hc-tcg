@@ -3,15 +3,13 @@ import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
 import {PickedSlots} from '../../types/pick-process'
 import HermitCard from '../base/hermit-card'
-import {createWeaknessAttack} from '../../utils/attacks'
-
-/*
-Combination of Totem + Scars ability can be tricky here to get right
-*/
+import {createWeaknessAttack, isTargetingPos} from '../../utils/attacks'
+import {getActiveRowPos} from '../../utils/board'
 class XBCraftedRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xbcrafted_rare',
+			numericId: 110,
 			name: 'XB',
 			rarity: 'rare',
 			hermitType: 'explorer',
@@ -26,7 +24,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				name: 'Noice!',
 				cost: ['explorer', 'any'],
 				damage: 70,
-				power: 'Ignore any effect card attached to opponent.',
+				power: "The opponent Hermit's attached effect card is ignored during this attack.",
 			},
 		})
 	}
@@ -41,20 +39,8 @@ class XBCraftedRareHermitCard extends HermitCard {
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type === 'secondary') {
-			// Noice attack, ignore target effect card
-			attacks[0].shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !attacks[0].target) return false
-
-				const onTargetRow =
-					pos.player === attacks[0].target.player && pos.rowIndex === attacks[0].target.rowIndex
-				if (onTargetRow && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
-
-				return false
-			})
+			// Noice attack, set flag to ignore target effect card
+			pos.player.custom[this.getInstanceKey(instance, 'ignore')] = true
 		}
 
 		const newAttacks = [attacks[0]]
@@ -63,6 +49,46 @@ class XBCraftedRareHermitCard extends HermitCard {
 		if (weaknessAttack) newAttacks.push(weaknessAttack)
 
 		return newAttacks
+	}
+
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player, opponentPlayer} = pos
+		const ignoreKey = this.getInstanceKey(instance, 'ignore')
+
+		player.hooks.beforeAttack.addBefore(instance, (attack) => {
+			if (!player.custom[ignoreKey]) return
+			const opponentActivePos = getActiveRowPos(opponentPlayer)
+			if (!opponentActivePos) return
+
+			// All attacks from our side should ignore opponent attached effect card this turn
+			attack.shouldIgnoreCards.push((instance) => {
+				const pos = getCardPos(game, instance)
+				if (!pos || !attack.target) return false
+
+				const isTargeting = isTargetingPos(attack, opponentActivePos)
+				if (isTargeting && pos.slot.type === 'effect') {
+					// It's the targets effect card, ignore it
+					return true
+				}
+
+				return false
+			})
+		})
+
+		player.hooks.afterAttack.add(instance, () => {
+			// Remove ignore flag
+			if (player.custom[ignoreKey]) {
+				delete player.custom[ignoreKey]
+			}
+		})
+	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		// Remove hooks
+		player.hooks.beforeAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 	}
 }
 

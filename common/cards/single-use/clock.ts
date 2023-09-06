@@ -7,6 +7,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'clock',
+			numericId: 6,
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
@@ -21,7 +22,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and pick actions
 			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
 				const blocked: TurnActions = [

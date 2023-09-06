@@ -4,6 +4,7 @@ class DreamRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'dream_rare',
+			numericId: 117,
 			name: 'Dream',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
