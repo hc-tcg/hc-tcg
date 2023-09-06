@@ -31,19 +31,20 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		// normal | skipped
-		const skipped = this.getInstanceKey(instance, 'skipped')
-		player.custom[skipped] = false
+		// null | card instance
+		const skippedKey = this.getInstanceKey(instance, 'skipped')
+		player.custom[skippedKey] = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary') return
+			if (!attack.attacker || attack.type !== 'secondary') return
+
+			// This will tell us to block actions at the start of our next turn
+			// Storing the cardInstance of the card that attacked
+			player.custom[skippedKey] = attack.attacker.row.hermitCard.cardInstance
 
 			const coinFlip = flipCoin(player, this.id, 1)
 			if (coinFlip[0] !== 'heads') return
-
-			// This will tell us to block actions at the start of our next turn
-			player.custom[skipped] = true
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
@@ -62,25 +63,25 @@ class JoeHillsRareHermitCard extends HermitCard {
 			})
 		})
 
-		// Blcok secondary attack if we skipped
+		// Block secondary attack if we skipped
 		player.hooks.onTurnStart.add(instance, () => {
-			const weAreActive = game.activeRow?.hermitCard?.cardInstance === instance
-			if (player.custom[skipped] && weAreActive) {
+			const sameActive = game.activeRow?.hermitCard?.cardInstance === player.custom[skippedKey]
+			if (player.custom[skippedKey] && sameActive) {
 				// We skipped last turn and we are still the active hermit, block secondary attacks
 				game.addBlockedActions('SECONDARY_ATTACK')
 			}
 
-			player.custom[skipped] = false
+			player.custom[skippedKey] = null
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const skipped = this.getInstanceKey(instance, 'skipped')
+		const skippedKey = this.getInstanceKey(instance, 'skipped')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[skipped]
+		delete player.custom[skippedKey]
 	}
 }
 
