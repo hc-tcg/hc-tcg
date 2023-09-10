@@ -311,7 +311,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		lastActionResult: game.state.lastActionResult,
 
-		currentPickMessage: playerState.pickRequests[0]?.message || null,
+		currentPickMessage,
 		currentCustomModal: playerState.modalRequests[0]?.id || null,
 
 		players,

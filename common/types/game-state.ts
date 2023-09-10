@@ -171,8 +171,9 @@ export type GameState = {
 	} | null
 
 	timer: {
-		turnTime: number
+		turnStartTime: number
 		turnRemaining: number
+		opponentActionStartTime: number | null
 	}
 }
 
