@@ -54,6 +54,7 @@ class TangoTekRareHermitCard extends HermitCard {
 
 				// Add a new pick request to the opponent player
 				opponentPlayer.pickRequests.push({
+					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
 					onResult(pickResult) {
 						// Validation
