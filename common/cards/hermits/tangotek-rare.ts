@@ -46,14 +46,12 @@ class TangoTekRareHermitCard extends HermitCard {
 			const playerInactiveRows = getNonEmptyRows(player, false)
 
 			if (opponentInactiveRows.length !== 0) {
-				attack.target.row.ailments.push({
-					id: 'knockedout',
-					duration: 0, // Last till the start of their next turn
-				})
+				const lastActiveRow = opponentPlayer.board.activeRow
 				opponentPlayer.board.activeRow = null
 
 				// Add a new pick request to the opponent player
 				opponentPlayer.pickRequests.push({
+					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
 					onResult(pickResult) {
 						// Validation
@@ -61,8 +59,7 @@ class TangoTekRareHermitCard extends HermitCard {
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						const row = opponentPlayer.board.rows[pickResult.rowIndex]
-						if (row.ailments.find((a) => a.id === 'knockedout')) return 'FAILURE_WRONG_PICK'
+						if (pickResult.rowIndex === lastActiveRow) return 'FAILURE_WRONG_PICK'
 
 						opponentPlayer.board.activeRow = pickResult.rowIndex
 

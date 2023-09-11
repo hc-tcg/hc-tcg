@@ -40,6 +40,7 @@ class JinglerRareHermitCard extends HermitCard {
 
 			// Add a new pick request to the opponent player
 			opponentPlayer.pickRequests.push({
+				id: this.id,
 				message: 'Pick 1 card from your hand to discard',
 				onResult(pickResult) {
 					// Validation

@@ -26,8 +26,9 @@ export function getGameState(game: GameModel): GameState {
 		),
 
 		timer: {
-			turnTime: 0,
+			turnStartTime: 0,
 			turnRemaining: 0,
+			opponentActionStartTime: null,
 		},
 	}
 	return gameState

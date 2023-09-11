@@ -53,7 +53,7 @@ function* gameManager(game: GameModel) {
 			const gameState = getLocalGameState(game, player)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(0)
 			}
 			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
