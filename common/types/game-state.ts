@@ -260,7 +260,7 @@ export type LocalGameState = {
 	players: Record<string, LocalPlayerState>
 
 	timer: {
-		turnTime: number
+		turnStartTime: number
 		turnRemaining: number
 	}
 }
