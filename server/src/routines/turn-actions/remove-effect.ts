@@ -13,6 +13,14 @@ function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResul
 		return 'FAILURE_CANNOT_COMPLETE'
 	}
 
+	if (currentPlayer.pickRequests.length >= 0) {
+		// Cancel and clear pick requests
+		for (let i = 0; i < currentPlayer.pickRequests.length; i++) {
+			currentPlayer.pickRequests[i].onCancel?.()
+		}
+		currentPlayer.pickRequests = []
+	}
+
 	discardSingleUse(game, currentPlayer)
 
 	return 'SUCCESS'

@@ -450,7 +450,7 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 				// First check to see if the opponent had a pick request active
 				if (opponentPlayer.pickRequests[0]) {
 					// If yes, timout that pick request and remove it
-					opponentPlayer.pickRequests.shift()?.onTimeout()
+					opponentPlayer.pickRequests.shift()?.onTimeout?.()
 					// Reset timer to max time
 					game.state.timer.turnStartTime = Date.now()
 					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
@@ -532,7 +532,7 @@ function* turnSaga(game: GameModel) {
 	// Timeout and clear pick requests
 	const allPickRequests = [...currentPlayer.pickRequests, ...opponentPlayer.pickRequests]
 	for (let i = 0; i < allPickRequests.length; i++) {
-		allPickRequests[i].onTimeout()
+		allPickRequests[i].onTimeout?.()
 	}
 	currentPlayer.pickRequests = []
 	opponentPlayer.pickRequests = []

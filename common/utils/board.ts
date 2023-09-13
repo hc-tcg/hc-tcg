@@ -104,8 +104,7 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 
 export function applySingleUse(
 	game: GameModel,
-	pickedSlots: PickedSlots = {},
-	modalResult: any = null
+	pickedSlots: PickedSlots = {}
 ): GenericActionResult {
 	const {currentPlayer} = game
 
