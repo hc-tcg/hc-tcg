@@ -1,9 +1,10 @@
 import SingleUseCard from '../base/single-use-card'
 import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../../models/card-pos-model'
 import {isRemovable} from '../../utils/cards'
 import {discardCard, discardSingleUse} from '../../utils/movement'
+import {applySingleUse} from '../../utils/board'
 
 class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,16 +15,6 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
-
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					type: ['item', 'effect'],
-					slot: ['item', 'effect'],
-					amount: 1,
-				},
-			],
 		})
 	}
 	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
@@ -53,14 +44,28 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const slots = pickedSlots[this.id] || []
-			if (slots.length !== 1) return
+		player.pickRequests.push({
+			id: this.id,
+			message: 'Pick an item or effect card from one of your active or AFK Hermits',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
+					return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-			const pickedCard = slots[0]
-			if (pickedCard.slot.card === null) return
+				const row = player.board.rows[pickResult.rowIndex]
+				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
-			discardCard(game, pickedCard.slot.card)
+				const pos = getCardPos(game, pickResult.card.cardInstance)
+				if (!pos) return 'FAILURE_CANNOT_COMPLETE'
+
+				// Discard the picked card and apply su card
+				discardCard(game, pickResult.card)
+				applySingleUse(game)
+
+				return 'SUCCESS'
+			},
 		})
 
 		player.hooks.afterApply.add(instance, (pickedSlots) => {
@@ -69,7 +74,6 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 
-			player.hooks.onApply.remove(instance)
 			player.hooks.afterApply.remove(instance)
 		})
 	}
@@ -77,7 +81,6 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.remove(instance)
 		player.hooks.afterApply.remove(instance)
 	}
 
