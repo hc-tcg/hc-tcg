@@ -17,6 +17,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
 		})
 	}
+
 	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
