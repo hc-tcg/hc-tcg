@@ -14,7 +14,7 @@ class HelsknightRareHermitCard extends HermitCard {
 			hermitType: 'pvp',
 			health: 270,
 			primary: {
-				name: 'Pitfall',
+				name: 'Pitiful',
 				cost: ['any'],
 				damage: 40,
 				power: null,
