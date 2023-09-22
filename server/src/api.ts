@@ -71,7 +71,7 @@ export function gameEndWebhook(game: GameModel) {
 	let apiKeys = null
 	try {
 		apiKeys = require('./apiKeys.json')
-		const botKey = apiKeys
+		const botKey = apiKeys?.botKey
 
 		if (botKey) {
 			fetch(`${CONFIG.botUrl}/admin/game_end`, {

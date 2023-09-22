@@ -5,10 +5,9 @@ import {applySingleUse} from 'common/utils/board'
 
 function* applyEffectSaga(
 	game: GameModel,
-	pickedSlots: PickedSlots,
-	modalResult: any
+	pickedSlots: PickedSlots
 ): Generator<never, GenericActionResult> {
-	const result = applySingleUse(game, pickedSlots, modalResult)
+	const result = applySingleUse(game, pickedSlots)
 
 	return result
 }
