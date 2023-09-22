@@ -299,10 +299,10 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(attackSaga, game, turnAction, pickedSlots)
 			break
 		case 'CHANGE_ACTIVE_HERMIT':
-			result = yield* call(changeActiveHermitSaga, game, turnAction, pickedSlots, modalResult)
+			result = yield* call(changeActiveHermitSaga, game, turnAction)
 			break
 		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, pickedSlots, modalResult)
+			result = yield* call(applyEffectSaga, game, pickedSlots)
 			break
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
