@@ -69,12 +69,12 @@ class TangoTekRareHermitCard extends HermitCard {
 						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 
 						// Choose the first row that doesn't have a knockedout ailment
-						for (const inactiveHermit of opponentInactiveRows) {
-							if (!inactiveHermit) continue
-							const {rowIndex, row} = inactiveHermit
-							const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
+						for (const inactiveRow of opponentInactiveRows) {
+							const {rowIndex} = inactiveRow
+							const canBeActive = rowIndex !== lastActiveRow
 							if (canBeActive) {
 								opponentPlayer.board.activeRow = rowIndex
+								break
 							}
 						}
 					},
