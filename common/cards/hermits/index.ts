@@ -68,6 +68,7 @@ import EvilXisumaRareHermitCard from './evilxisuma_rare'
 import HelsknightRareHermitCard from './helsknight-rare'
 import RenbobRareHermitCard from './renbob-rare'
 import HumanCleoRareHermitCard from './humancleo-rare'
+import DungeonTangoRareHermitCard from './dungeontango-rare'
 import HermitCard from '../base/hermit-card'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
@@ -140,6 +141,9 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new PotatoBoyRareHermitCard(),
 	new PoultrymanCommonHermitCard(),
 	new RenbobRareHermitCard(),
+
+	//Advent calendar cards
+	new DungeonTangoRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES
