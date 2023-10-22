@@ -15,10 +15,11 @@ export type PickResult = {
 }
 
 export type PickRequest = {
-	id?: string
+	id: string
 	message: string // The message to display to the player
 	onResult: (pickResult: PickResult) => ActionResult // The function that will be called when we receive the pick result
-	onTimeout: () => void // Called when the request times out before being resolved successfully
+	onCancel?: () => void // Called when the pick request is cancelled
+	onTimeout?: () => void // Called when the request times out before being resolved successfully
 }
 
 // @TODO this is a quick and dirty way to get modals working
