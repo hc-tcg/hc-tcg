@@ -41,6 +41,7 @@ import PistonSingleUseCard from './piston'
 import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
 import TargetBlockSingleUseCard from './target-block'
 import LootingSingleUseCard from './looting'
+import TreasureHunterSingleUseCard from './treasure-hunter'
 import SingleUseCard from '../base/single-use-card'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
@@ -89,4 +90,7 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new SweepingEdgeSingleUseCard(),
 	new TargetBlockSingleUseCard(),
 	new TridentSingleUseCard(),
+
+	// Advent calendar cards
+	new TreasureHunterSingleUseCard(),
 ]
