@@ -21,7 +21,7 @@ class DungeonTangoRareHermitCard extends HermitCard {
 			},
 			secondary: {
 				name: 'Ravager',
-				cost: ['any', 'miner', 'miner'],
+				cost: ['miner', 'miner', 'any'],
 				damage: 90,
 				power: null,
 			},
@@ -69,6 +69,18 @@ class DungeonTangoRareHermitCard extends HermitCard {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override getExpansion() {
+		return 'advent_of_tcg'
+	}
+
+	override getPalette() {
+		return 'advent_of_tcg'
+	}
+
+	override getBackground() {
+		return 'advent_of_tcg'
 	}
 }
 

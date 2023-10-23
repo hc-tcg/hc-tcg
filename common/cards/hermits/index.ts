@@ -69,6 +69,7 @@ import HelsknightRareHermitCard from './helsknight-rare'
 import RenbobRareHermitCard from './renbob-rare'
 import HumanCleoRareHermitCard from './humancleo-rare'
 import DungeonTangoRareHermitCard from './dungeontango-rare'
+import PythonGBRareHermitCard from './pythongb-rare'
 import HermitCard from '../base/hermit-card'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
@@ -144,6 +145,7 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 
 	//Advent calendar cards
 	new DungeonTangoRareHermitCard(),
+	new PythonGBRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES

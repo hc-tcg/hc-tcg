@@ -130,7 +130,7 @@ const getExpansion = (card: Card): React.ReactNode => {
 	if (card.getExpansion() !== 'default') {
 		return (
 			<div className={classnames(css.expansion)}>
-				■ {EXPANSIONS.expansions[card.getExpansion() as 'default' | 'alter_egos']} Card ■
+				■ {EXPANSIONS.expansions[card.getExpansion() as 'default' | 'alter_egos' | 'advent_of_tcg']} Card ■
 			</div>
 		)
 	}
