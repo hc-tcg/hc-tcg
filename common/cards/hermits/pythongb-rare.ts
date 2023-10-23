@@ -6,7 +6,7 @@ class PythonGBRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'pythongb_rare',
-			numericId: 41,
+			numericId: 154,
 			name: 'Python',
 			rarity: 'rare',
 			hermitType: 'redstone',
