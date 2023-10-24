@@ -8,7 +8,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		super({
 			id: 'orionsound_rare',
 			numericId: 155,
-			name: 'TheOrionSound',
+			name: 'Ollie',
 			rarity: 'rare',
 			hermitType: 'explorer',
 			health: 260,
