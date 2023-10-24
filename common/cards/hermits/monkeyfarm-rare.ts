@@ -35,14 +35,6 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			const opponentAfkAmount = opponentPlayer.board.rows.length - 1
-			if (opponentAfkAmount == 0)
-				return
-			
-			const opponentActiveRowIndex = opponentPlayer.board.activeRow
-			if (!opponentActiveRowIndex)
-				return
-
 			const emptyRows = getNonEmptyRows(opponentPlayer, false)
 			const opponentItemCards = emptyRows.reduce(
 				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length, 0
