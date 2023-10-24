@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {discardCard} from '../../utils/movement'
 import HermitCard from '../base/hermit-card'
+import { getNonEmptyRows } from '../../utils/board'
 
 class MonkeyfarmRareHermitCard extends HermitCard {
 	constructor() {
@@ -41,10 +42,11 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			const opponentActiveRowIndex = opponentPlayer.board.activeRow
 			if (!opponentActiveRowIndex)
 				return
-			const opponentItemCards = opponentPlayer.board.rows.reduce(
-				(partialSum, a) => partialSum + a.itemCards.filter((x) => x != null).length, 0
-			) - opponentPlayer.board.rows[opponentActiveRowIndex].itemCards.filter((x) => x != null).length
-			console.log(opponentItemCards)
+
+			const emptyRows = getNonEmptyRows(opponentPlayer, false)
+			const opponentItemCards = emptyRows.reduce(
+				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length, 0
+			)
 
 			if (opponentItemCards == 0)
 				return
