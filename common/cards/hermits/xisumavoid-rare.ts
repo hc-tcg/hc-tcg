@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
+import { applyAilment } from '../../utils/board'
 
 class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
@@ -38,12 +39,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] !== 'heads') return
 
-			const hasDamageEffect = attack.target.row.ailments.some(
-				(a) => a.id === 'fire' || a.id === 'poison'
-			)
-			if (!hasDamageEffect) {
-				attack.target.row.ailments.push({id: 'poison'})
-			}
+			applyAilment(game, 'poison', attack.target.row.hermitCard.cardInstance)
 		})
 	}
 

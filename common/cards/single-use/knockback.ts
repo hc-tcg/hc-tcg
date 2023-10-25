@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../utils/board'
 import SingleUseCard from '../base/single-use-card'
+import { applyAilment } from '../../utils/board'
 
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -42,8 +43,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
-				activeRow.ailments.push({id: 'knockedout', duration: 1})
-				opponentPlayer.board.activeRow = null
+				applyAilment(game, 'knockedout', activeRow.hermitCard.cardInstance)
 			}
 		})
 	}

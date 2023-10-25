@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {isTargetingPos} from '../../utils/attacks'
 import {discardCard} from '../../utils/movement'
 import EffectCard from '../base/effect-card'
+import { removeAilment } from '../../utils/board'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -26,7 +27,13 @@ class TotemEffectCard extends EffectCard {
 			if (row.health) return
 
 			row.health = 10
-			row.ailments = []
+
+			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+				return ail.targetInstance === pos.card?.cardInstance
+			})
+			ailmentsToRemove.map((ail) => {
+				removeAilment(game, pos, ail.ailmentInstance)
+			})
 
 			// This will remove this hook, so it'll only be called once
 			discardCard(game, row.effectCard)

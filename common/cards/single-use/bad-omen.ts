@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import SingleUseCard from '../base/single-use-card'
+import { applyAilment } from '../../utils/board'
 
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -23,10 +24,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		if (activeRow === null) return
 
 		player.hooks.onApply.add(instance, (pickedSlots) => {
-			opponentPlayer.board.rows[activeRow].ailments.push({
-				id: 'badomen',
-				duration: 3,
-			})
+			applyAilment(game, 'badomen', opponentPlayer.board.rows[activeRow].hermitCard?.cardInstance)
 		})
 	}
 

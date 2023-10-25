@@ -1,9 +1,11 @@
 import {CARDS, ITEM_CARDS} from '../cards'
-import {getCardPos} from '../models/card-pos-model'
+import { AILMENTS } from '../ailments'
+import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
 import {
 	CardT,
+	AilmentT,
 	GenericActionResult,
 	PlayerState,
 	RowState,
@@ -126,6 +128,55 @@ export function applySingleUse(
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	currentPlayer.hooks.afterApply.call(pickedSlots)
+
+	return 'SUCCESS'
+}
+
+/**
+ * Apply an ailment to a card instance. ailmentId and targetInstance must be card instances.
+ */
+export function applyAilment(
+	game: GameModel,
+	ailmentId: string,
+	targetInstance: string | undefined,
+): GenericActionResult {
+	if (!targetInstance) return 'FAILURE_INVALID_DATA'
+
+	const pos = getCardPos(game, targetInstance)
+
+	if (!pos) return 'FAILURE_INVALID_DATA'
+	
+	const ailment = AILMENTS[ailmentId]
+	const ailmentInstance = Math.random().toString()
+
+	const ailmentInfo: AilmentT = {
+		ailmentId: ailmentId,
+		ailmentInstance: ailmentInstance,
+		targetInstance: targetInstance
+	}
+
+	ailment.onApply(game, ailmentInfo, pos)
+
+	if (ailment.duration > 0) ailmentInfo.duration = ailment.duration
+
+	game.state.ailments.push(ailmentInfo)
+
+	return 'SUCCESS'
+}
+
+/**
+ * Remove an ailment from the game.
+ */
+export function removeAilment(
+	game: GameModel,
+	pos: CardPosModel,
+	ailmentInstance: string,
+): GenericActionResult {
+	const ailments = game.state.ailments.filter((a) => a.ailmentInstance === ailmentInstance)
+
+	const ailmentObject = AILMENTS[ailments[0].ailmentId]
+	ailmentObject.onRemoval(game, ailments[0], pos)
+	game.state.ailments = game.state.ailments.filter((a) => !ailments.includes(a))
 
 	return 'SUCCESS'
 }

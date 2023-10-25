@@ -5,6 +5,8 @@ import {PickedSlotT} from 'common/types/pick-process'
 import {CARDS} from 'common/cards'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
+import { getGameState } from 'logic/game/game-selectors'
+import game from '..'
 
 type Props = {
 	closeModal: () => void
@@ -14,20 +16,21 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
+	const gameState = useSelector(getGameState)
 
-	if (info.slot.type !== 'hermit' || !playerState || !info.row) {
+	if (info.slot.type !== 'hermit' || !playerState || !gameState || !info.row) {
 		throw new Error('This should never happen')
 	}
 
 	const hermitName = info.slot.card?.cardId ? CARDS[info.slot.card.cardId].name : ''
 	const row = playerState.board.rows[info.row.index]
-	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
+	const isKnockedout = gameState.ailments.some((a) => a.ailmentId === 'knockedout' && a.targetInstance == row.hermitCard?.cardInstance)
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const hasOtherHermits = playerState.board.rows.some(
 		(row, index) =>
 			row.hermitCard &&
 			index !== info.row?.index &&
-			!row.ailments.find((a) => a.id === 'knockedout')
+			!gameState.ailments.find((a) => a.ailmentId === 'knockedout' && a.targetInstance == row.hermitCard?.cardInstance)
 	)
 	const forbidden = isKnockedout && hasOtherHermits
 	const canChange =

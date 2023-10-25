@@ -5,6 +5,7 @@ import {PickResult} from '../../types/server-requests'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'
+import { applyAilment } from '../../utils/board'
 
 class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
@@ -72,8 +73,10 @@ class TangoTekRareHermitCard extends HermitCard {
 						for (const inactiveHermit of opponentInactiveRows) {
 							if (!inactiveHermit) continue
 							const {rowIndex, row} = inactiveHermit
-							const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
-							if (canBeActive) {
+							const isKnockedOut = game.state.ailments.some((a) => {
+								return a.targetInstance === row.hermitCard.cardInstance || a.ailmentId == "knockedout"
+							})
+							if (!isKnockedOut) {
 								opponentPlayer.board.activeRow = rowIndex
 							}
 						}
@@ -87,11 +90,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				attack.attacker.row.health > 0 &&
 				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
 			) {
-				attack.attacker.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
-				})
-				player.board.activeRow = null
+				applyAilment(game, 'knockedout', attack.attacker.row.hermitCard.cardInstance)
 			}
 		})
 	}

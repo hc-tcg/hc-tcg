@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
+import { applyAilment } from '../../utils/board'
 
 class IJevinRareHermitCard extends HermitCard {
 	constructor() {
@@ -37,11 +38,7 @@ class IJevinRareHermitCard extends HermitCard {
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
-				attack.target.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
-				})
-				opponentPlayer.board.activeRow = null
+				applyAilment(game, 'knockedout', attack.target.row.hermitCard.cardInstance)
 			}
 		})
 	}

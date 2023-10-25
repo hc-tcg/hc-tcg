@@ -45,10 +45,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
 
 			// Swap ailments
-			const activeRowAilments = playerActiveRow.ailments
-			const inactiveRowAilments = inactiveHermitCardInfo.row.state.ailments
-			playerActiveRow.ailments = inactiveRowAilments
-			inactiveHermitCardInfo.row.state.ailments = activeRowAilments
+			// I don't believe this needs to be done anymore with the new system
 
 			const inactivePos: SlotPos = {
 				rowIndex: activeRowIndex,

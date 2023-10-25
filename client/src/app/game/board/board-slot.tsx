@@ -9,6 +9,7 @@ import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
+import { AilmentT } from 'common/types/game-state'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -17,8 +18,9 @@ export type SlotProps = {
 	rowState?: RowState
 	active?: boolean
 	cssId?: string
+	ailments: Array<AilmentT>
 }
-const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
+const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProps) => {
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
@@ -31,7 +33,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 		})
 	}
 
-	const ailments = Array.from(new Set(rowState?.ailments.map((a) => a.id) || []))
+	const ailments_cleaned = Array.from(new Set(ailments.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance).map((a) => a.ailmentId) || []))
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	return (
@@ -51,7 +53,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
 					{type === 'health' &&
-						ailments.map((id) => {
+						ailments_cleaned.map((id) => {
 							const cssClass = css[id + 'Ailment']
 							if (!cssClass) return null
 							return <div key={id} className={cssClass} />
