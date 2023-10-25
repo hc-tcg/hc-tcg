@@ -73,7 +73,7 @@ import PythonGBRareHermitCard from './pythongb-rare'
 import OrionSoundRareHermitCard from './orionsound-rare'
 import MonkeyfarmRareHermitCard from './monkeyfarm-rare'
 import HermitCard from '../base/hermit-card'
-import JimmyRareHermitCard from './jimmy-rare'
+import SolidaritygamingRareHermitCard from './solidaritygaming-rare'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new BdoubleO100CommonHermitCard(),
@@ -150,7 +150,7 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new DungeonTangoRareHermitCard(),
 	new PythonGBRareHermitCard(),
 	new OrionSoundRareHermitCard(),
-	new JimmyRareHermitCard(),
+	new SolidaritygamingRareHermitCard(),
 	new MonkeyfarmRareHermitCard(),
 ]
 

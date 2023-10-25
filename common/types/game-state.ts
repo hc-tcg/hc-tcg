@@ -40,8 +40,6 @@ export type AilmentT = {
 	targetInstance: string
 	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
-	/** Whether the ailment is a damage effect or not. */
-	damageEffect: boolean
 }
 
 export type CurrentCoinFlipT = {
@@ -124,13 +122,9 @@ export type PlayerState = {
 		 */
 		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
 
-		/**
-		 * Hook called at the start of the turn
-		 *
-		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
-		 */
+		/** hook called at the start of the turn */
 		onTurnStart: GameHook<(attacks: Array<AttackModel>) => void>
-		/** Hook called at the end of the turn */
+		/** hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
 		/** Hook called when the time runs out*/
 		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>

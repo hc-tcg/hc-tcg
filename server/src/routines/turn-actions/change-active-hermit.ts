@@ -19,6 +19,17 @@ function* changeActiveHermit(
 	// Can't change to existing active row
 	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'
 
+	// Can't change to knocked out if we have other hermits
+	const isKnockedout = !!game.state.ailments.find(
+		(a) =>
+			a.ailmentId === 'knockedout' &&
+			a.targetInstance == currentPlayer.board.rows[rowIndex].hermitCard?.cardInstance
+	)
+	const hasOtherHermits = currentPlayer.board.rows.some((row, index) => {
+		return !!row.hermitCard && index !== rowIndex
+	})
+	if (isKnockedout && hasOtherHermits) return 'FAILURE_CANNOT_COMPLETE'
+
 	const hadActiveHermit = currentPlayer.board.activeRow !== null
 	const oldActiveRow = currentPlayer.board.activeRow
 
