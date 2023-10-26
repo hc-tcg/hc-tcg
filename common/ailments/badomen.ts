@@ -1,7 +1,6 @@
 import Ailment from "./ailment"
 import { GameModel } from "../models/game-model"
-import { HERMIT_CARDS } from "../cards"
-import { CardPosModel } from "../models/card-pos-model"
+import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
 import { removeAilment } from "../utils/board"
 import { AilmentT } from "../types/game-state"
 
@@ -28,6 +27,9 @@ class BadOmenAilment extends Ailment{
 		})
 
 		player.hooks.onCoinFlip.add(ailmentInfo.ailmentInstance, (id, coinFlips) => {
+			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
+			if (player.board.activeRow !== targetPos?.rowIndex) return coinFlips
+
 			for (let i = 0; i < coinFlips.length; i++) {
 				coinFlips[i] = 'tails'
 			}
@@ -35,8 +37,7 @@ class BadOmenAilment extends Ailment{
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.row != pos.row) return
+			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})
 	}

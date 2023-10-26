@@ -1,7 +1,7 @@
 import Ailment from "./ailment"
 import { GameModel } from "../models/game-model"
 import { RowPos } from "../types/cards"
-import { CardPosModel } from "../models/card-pos-model"
+import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
 import { AttackModel } from "../models/attack-model"
 import { removeAilment } from "../utils/board"
 import { AilmentT } from "../types/game-state"
@@ -16,12 +16,10 @@ class FireAilment extends Ailment{
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
-		const {player, card, rowIndex, row} = pos
-
-		if (!card || !rowIndex || !row?.hermitCard) return
+		const {player} = pos
 
 		const damgeEffects = game.state.ailments.filter((a) => 
-			a.targetInstance == card.cardInstance && (a.ailmentId == 'poison' || a.ailmentId == 'fire')
+			a.targetInstance == pos.card?.cardInstance && (a.ailmentId == 'poison' || a.ailmentId == 'fire')
 		)
 
 		if (damgeEffects.length > 0) {
@@ -30,10 +28,13 @@ class FireAilment extends Ailment{
 		}
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, (turnStartAttacks) => {
+			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
+			if (!targetPos || !targetPos.row || !targetPos.rowIndex || !targetPos.row.hermitCard) return
+
 			const targetRow: RowPos = {
-				player: player,
-				rowIndex: rowIndex,
-				row: row
+				player: targetPos.player,
+				rowIndex: targetPos.rowIndex,
+				row: targetPos.row
 			}
 			
 			const ailmentAttack = new AttackModel({
@@ -48,8 +49,7 @@ class FireAilment extends Ailment{
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.row != pos.row) return
+			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})
 	}

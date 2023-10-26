@@ -1,7 +1,7 @@
 import Ailment from "./ailment"
 import { GameModel } from "../models/game-model"
 import { HERMIT_CARDS } from "../cards"
-import { CardPosModel } from "../models/card-pos-model"
+import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
 import { removeAilment } from "../utils/board"
 import { AilmentT } from "../types/game-state"
 
@@ -15,9 +15,8 @@ class SlownessAilment extends Ailment{
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
-		const {player, card, rowIndex, row} = pos
+		const {player} = pos
 
-		if (!card || !rowIndex || !row?.hermitCard) return
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
@@ -28,7 +27,10 @@ class SlownessAilment extends Ailment{
 		})
 
 		player.hooks.blockedActions.add(ailmentInfo.ailmentInstance, (blockedActions) => {
-			if (player.board.activeRow === pos.rowIndex) {
+			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
+			if (!targetPos || !targetPos.rowIndex) return blockedActions
+
+			if (player.board.activeRow === targetPos.rowIndex) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 
@@ -36,8 +38,7 @@ class SlownessAilment extends Ailment{
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.row != pos.row) return
+			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})
 	}

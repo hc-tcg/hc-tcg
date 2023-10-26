@@ -500,25 +500,6 @@ function* turnSaga(game: GameModel) {
 	const result = yield* call(turnActionsSaga, game, turnConfig)
 	if (result === 'GAME_END') return 'GAME_END'
 
-	// Run the ailment attacks just before turn end
-	// runAilmentAttacks(game, opponentPlayer)
-
-	// // ailment logic
-
-	// // row ailments
-	// for (let row of currentPlayer.board.rows) {
-	// 	for (let ailment of row.ailments) {
-	// 		// decrease duration
-	// 		if (ailment.duration) {
-	// 			// ailment is not infinite, reduce duration by 1
-	// 			ailment.duration--
-	// 		}
-	// 	}
-
-	// 	// Get rid of ailments that have expired
-	// 	row.ailments = row.ailments.filter((a) => a.duration === undefined || a.duration > 0)
-	// }
-
 	// Create card draw array
 	const drawCards: Array<CardT | null> = []
 
