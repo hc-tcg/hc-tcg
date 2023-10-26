@@ -11,6 +11,7 @@ class SleepingAilment extends Ailment{
 			id: 'sleeping',
 			name: 'Sleeping',
 			duration: 3,
+			damageEffect: false,
 		})
 	}
 
@@ -18,6 +19,8 @@ class SleepingAilment extends Ailment{
 		const {player, card, row} = pos
 
 		if (!card || !row?.hermitCard) return
+
+		game.state.ailments.push(ailmentInfo)
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		row.health = HERMIT_CARDS[card.cardId].health

@@ -11,10 +11,12 @@ class ProtectedAilment extends Ailment{
 			id: 'protected',
 			name: 'Sheriff\'s Protection',
 			duration: 0,
+			damageEffect: false,
 		})
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+		game.state.ailments.push(ailmentInfo)
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(ailmentInfo.ailmentInstance)
 

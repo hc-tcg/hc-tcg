@@ -10,13 +10,14 @@ class BadOmenAilment extends Ailment{
 			id: 'badomen',
 			name: 'Bad Omen',
 			duration: 3,
+			damageEffect: false,
 		})
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
-		const {player, card, rowIndex, row} = pos
+		game.state.ailments.push(ailmentInfo)
+		const {player} = pos
 
-		if (!card || !rowIndex || !row?.hermitCard) return
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {

@@ -15,10 +15,12 @@ class WeaknessAilment extends Ailment{
 			id: 'weakness',
 			name: 'Weakness',
 			duration: 3,
+			damageEffect: false,
 		})
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+		game.state.ailments.push(ailmentInfo)
 		const {player, opponentPlayer} = pos
 
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration

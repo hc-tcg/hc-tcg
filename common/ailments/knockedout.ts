@@ -11,15 +11,16 @@ class knockedoutAilment extends Ailment{
 			id: 'knockedout',
 			name: 'Knocked Out',
 			duration: 1,
+			damageEffect: false,
 		})
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
-		const {player, card, rowIndex, row} = pos
+		game.state.ailments.push(ailmentInfo)
+		const {player} = pos
 
 		player.board.activeRow = null
 
-		if (!card || !rowIndex || !row?.hermitCard) return
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {

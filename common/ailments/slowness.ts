@@ -11,10 +11,12 @@ class SlownessAilment extends Ailment{
 			id: 'slowness',
 			name: 'Slowness',
 			duration: 1,
+			damageEffect: false,
 		})
 	}
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+		game.state.ailments.push(ailmentInfo)
 		const {player} = pos
 
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration

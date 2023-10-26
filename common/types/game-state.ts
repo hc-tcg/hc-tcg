@@ -33,10 +33,16 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 export type CoinFlipT = 'heads' | 'tails'
 
 export type AilmentT = {
+	/** The ID of the ailment. */
 	ailmentId: string
+	/** The ailment's instance. */
 	ailmentInstance: string
+	/** The target card's instance. */
 	targetInstance: string
+	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
+	/** Whether the ailment is a damage effect or not. */
+	damageEffect: boolean
 }
 
 export type CurrentCoinFlipT = {

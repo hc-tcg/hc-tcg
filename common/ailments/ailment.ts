@@ -6,17 +6,20 @@ type AilmentDefs = {
 	id: string,
 	name: string,
 	duration: number,
+	damageEffect: boolean,
 }
 
 abstract class Ailment {
 	public id: string
     public name: string
 	public duration: number
+	public damageEffect: boolean
 
 	constructor(defs: AilmentDefs) {
 		this.id = defs.id
 		this.name = defs.name
 		this.duration = defs.duration
+		this.damageEffect = defs.damageEffect
 	}
 
 	public getKey(keyName: string) {
