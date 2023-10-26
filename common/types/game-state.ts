@@ -40,6 +40,8 @@ export type AilmentT = {
 	targetInstance: string
 	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
+	/** Whether the ailment is a damage effect or not. */
+	damageEffect: boolean
 }
 
 export type CurrentCoinFlipT = {

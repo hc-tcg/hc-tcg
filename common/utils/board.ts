@@ -149,6 +149,7 @@ export function applyAilment(
 		ailmentId: ailmentId,
 		ailmentInstance: ailmentInstance,
 		targetInstance: targetInstance,
+		damageEffect: ailment.damageEffect
 	}
 
 	ailment.onApply(game, ailmentInfo, pos)
@@ -166,6 +167,8 @@ export function removeAilment(
 	pos: CardPosModel,
 	ailmentInstance: string,
 ): GenericActionResult {
+	console.log(game.state.ailments)
+	console.log(ailmentInstance)
 	const ailments = game.state.ailments.filter((a) => a.ailmentInstance === ailmentInstance)
 
 	const ailmentObject = AILMENTS[ailments[0].ailmentId]
