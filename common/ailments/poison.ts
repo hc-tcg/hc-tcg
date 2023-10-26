@@ -22,11 +22,11 @@ class PoisonAilment extends Ailment {
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		const {player} = pos
 
-		const hasDamageEffect = game.state.ailments.some(
-			(a) => a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
+		const damgeEffects = game.state.ailments.filter((a) => 
+			a.targetInstance == pos.card?.cardInstance && (a.ailmentId == 'poison' || a.ailmentId == 'fire')
 		)
 
-		if (hasDamageEffect) return
+		if (damgeEffects.length > 0) return
 
 		game.state.ailments.push(ailmentInfo)
 
