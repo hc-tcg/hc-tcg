@@ -74,7 +74,7 @@ class TangoTekRareHermitCard extends HermitCard {
 							if (!inactiveHermit) continue
 							const {rowIndex, row} = inactiveHermit
 							const isKnockedOut = game.state.ailments.some((a) => {
-								return a.targetInstance === row.hermitCard.cardInstance || a.ailmentId == "knockedout"
+								return a.targetInstance === row.hermitCard.cardInstance && a.ailmentId == "knockedout"
 							})
 							if (!isKnockedOut) {
 								opponentPlayer.board.activeRow = rowIndex
