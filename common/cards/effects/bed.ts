@@ -39,10 +39,10 @@ class BedEffectCard extends EffectCard {
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(instance, () => {
-			const isSleeping = game.state.ailments.filter((a) => 
+			const isSleeping = game.state.ailments.some((a) => 
 				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
 			)
-			if (isSleeping.length === 0) {
+			if (isSleeping) {
 				discardCard(game, row?.effectCard || null)
 				return
 			}
@@ -64,12 +64,12 @@ class BedEffectCard extends EffectCard {
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
-			const isSleeping = game.state.ailments.filter((a) => 
+			const isSleeping = game.state.ailments.some((a) => 
 				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
 			)
 
 			// if sleeping has worn off, discard the bed
-			if (isSleeping.length === 0) {
+			if (isSleeping) {
 				discardCard(game, row?.effectCard || null)
 				player.hooks.onTurnEnd.remove(instance)
 			}
