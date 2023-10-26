@@ -4,7 +4,7 @@ import { AilmentT } from '../types/game-state'
 
 type AilmentDefs = {
 	id: string,
-    name: string,
+	name: string,
 	duration: number,
 }
 
@@ -15,7 +15,7 @@ abstract class Ailment {
 
 	constructor(defs: AilmentDefs) {
 		this.id = defs.id
-        this.name = defs.name
+		this.name = defs.name
 		this.duration = defs.duration
 	}
 

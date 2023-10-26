@@ -13,7 +13,7 @@ class WeaknessAilment extends Ailment{
     constructor() {
 		super({
 			id: 'weakness',
-            name: 'Weakness',
+			name: 'Weakness',
 			duration: 3,
 		})
 	}

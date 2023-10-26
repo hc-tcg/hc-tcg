@@ -9,7 +9,7 @@ class ProtectedAilment extends Ailment{
     constructor() {
 		super({
 			id: 'protected',
-            name: 'Sheriff\'s Protection',
+			name: 'Sheriff\'s Protection',
 			duration: 0,
 		})
 	}

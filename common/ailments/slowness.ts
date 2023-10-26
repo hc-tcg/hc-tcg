@@ -9,7 +9,7 @@ class SlownessAilment extends Ailment{
     constructor() {
 		super({
 			id: 'slowness',
-            name: 'Slowness',
+			name: 'Slowness',
 			duration: 1,
 		})
 	}

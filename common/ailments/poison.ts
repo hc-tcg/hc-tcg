@@ -10,7 +10,7 @@ class PoisonAilment extends Ailment{
     constructor() {
 		super({
 			id: 'poison',
-            name: 'Poison',
+			name: 'Poison',
 			duration: 0,
 		})
 	}

@@ -8,7 +8,7 @@ class BadOmenAilment extends Ailment{
     constructor() {
 		super({
 			id: 'badomen',
-            name: 'Bad Omen',
+			name: 'Bad Omen',
 			duration: 3,
 		})
 	}
