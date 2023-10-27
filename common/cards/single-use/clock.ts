@@ -23,9 +23,8 @@ class ClockSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, (pickedSlots) => {
-			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and pick actions
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: TurnActions = [
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+				game.addBlockedActions(
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'SINGLE_USE_ATTACK',
@@ -34,16 +33,9 @@ class ClockSingleUseCard extends SingleUseCard {
 					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD',
-				]
-
-				blockedActions.push(...blocked)
-				return blockedActions
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+					'PLAY_EFFECT_CARD'
+				)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 	}
