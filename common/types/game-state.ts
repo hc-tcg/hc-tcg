@@ -130,8 +130,11 @@ export type PlayerState = {
 		/** hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
-		/** hook called when the active Hermit changes */
-		onActiveHermitChange: GameHook<(oldRow: number | null, newRow: number) => void>
+		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
+		/** hook called before the active row is changed. Returns whether or not the change can be completed. */
+		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => boolean>
+		/** hook called when the active row is changed. */
+		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => void>
 	}
 }
 

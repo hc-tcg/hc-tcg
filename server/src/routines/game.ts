@@ -325,7 +325,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	return endTurn ? 'END_TURN' : undefined
 }
 
-function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
+function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game
 
 	const turnActionChannel = yield* actionChannel(
@@ -389,11 +389,6 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 				availableActions.length === 1
 			) {
 				break
-			}
-
-			if (turnConfig.skipTurn) {
-				if (currentPlayer.board.activeRow === null) availableActions = ['CHANGE_ACTIVE_HERMIT']
-				else return
 			}
 
 			game.state.turn.availableActions = availableActions
@@ -477,8 +472,6 @@ function* turnSaga(game: GameModel) {
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	const turnConfig: {skipTurn?: boolean} = {}
-
 	// Call turn start hooks
 
 	const turnStartAttacks: Array<AttackModel> = []
@@ -497,7 +490,7 @@ function* turnSaga(game: GameModel) {
 		}
 	}
 
-	const result = yield* call(turnActionsSaga, game, turnConfig)
+	const result = yield* call(turnActionsSaga, game)
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Create card draw array

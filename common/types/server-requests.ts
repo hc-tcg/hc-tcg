@@ -16,15 +16,21 @@ export type PickResult = {
 
 export type PickRequest = {
 	id: string
-	message: string // The message to display to the player
-	onResult: (pickResult: PickResult) => ActionResult // The function that will be called when we receive the pick result
-	onCancel?: () => void // Called when the pick request is cancelled
-	onTimeout?: () => void // Called when the request times out before being resolved successfully
+	/** The message to display to the player */
+	message: string
+	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
+	onResult: (pickResult: PickResult) => ActionResult //
+	/** Called when the pick request is cancelled. This can only occur with a single use card */
+	onCancel?: () => void
+	/** Called when the pick request times out before being resolved successfully */
+	onTimeout?: () => void
 }
 
 // @TODO this is a quick and dirty way to get modals working
 export type ModalRequest = {
 	id: string
-	onResult: (modalResult: any) => ActionResult // The function that will be called when we receive the modal result
-	onTimeout: () => void // Called when the request times out before being resolved successfully
+	/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
+	onResult: (modalResult: any) => ActionResult
+	/** Called when the modal request times out before being resolved successfully */
+	onTimeout: () => void
 }

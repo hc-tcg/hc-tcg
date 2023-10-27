@@ -66,6 +66,8 @@ class ArmorStandEffectCard extends EffectCard {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
+			row.effectCard = null
+			row.itemCards = []
 		}
 
 		player.hooks.blockedActions.remove(instance)

@@ -243,7 +243,8 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
 			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			onActiveHermitChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
 		},
 	}
 }
