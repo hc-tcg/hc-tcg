@@ -21,6 +21,7 @@ class SleepingAilment extends Ailment{
 		if (!card || !row?.hermitCard) return
 
 		game.state.ailments.push(ailmentInfo)
+		game.addBlockedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		row.health = HERMIT_CARDS[card.cardId].health
@@ -30,22 +31,12 @@ class SleepingAilment extends Ailment{
 			if (!targetPos || !ailmentInfo.duration) return
 			ailmentInfo.duration --
 
-			if (ailmentInfo.duration === 0) removeAilment(game, pos, ailmentInfo.ailmentInstance)
-			if (player.board.activeRow !== targetPos.rowIndex) removeAilment(game, pos, ailmentInfo.ailmentInstance)
-		})
-
-		player.hooks.blockedActions.add(ailmentInfo.ailmentInstance, (blockedActions) => {
-			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.rowIndex) return blockedActions
-
-			if (player.board.activeRow === targetPos.rowIndex) {
-				blockedActions.push('PRIMARY_ATTACK')
-				blockedActions.push('SECONDARY_ATTACK')
-				blockedActions.push('SINGLE_USE_ATTACK')
-				blockedActions.push('CHANGE_ACTIVE_HERMIT')
+			if (ailmentInfo.duration === 0 || player.board.activeRow !== targetPos.rowIndex) {
+				removeAilment(game, pos, ailmentInfo.ailmentInstance)
+				return
 			}
 
-			return blockedActions
+			if (player.board.activeRow === targetPos.rowIndex) game.addBlockedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
@@ -57,7 +48,6 @@ class SleepingAilment extends Ailment{
 	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(ailmentInfo.ailmentInstance)
-		player.hooks.blockedActions.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
 	}
 }

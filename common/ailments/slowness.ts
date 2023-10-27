@@ -10,7 +10,7 @@ class SlownessAilment extends Ailment{
 		super({
 			id: 'slowness',
 			name: 'Slowness',
-			duration: 1,
+			duration: 2,
 			damageEffect: false,
 		})
 	}
@@ -22,21 +22,18 @@ class SlownessAilment extends Ailment{
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
+			if (!targetPos || !targetPos.rowIndex) return
 			if (!ailmentInfo.duration) return
+
 			ailmentInfo.duration --
 
-			if (ailmentInfo.duration === 0) removeAilment(game, pos, ailmentInfo.ailmentInstance)
-		})
-
-		player.hooks.blockedActions.add(ailmentInfo.ailmentInstance, (blockedActions) => {
-			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.rowIndex) return blockedActions
-
-			if (player.board.activeRow === targetPos.rowIndex) {
-				blockedActions.push('SECONDARY_ATTACK')
+			if (ailmentInfo.duration === 0) {
+				removeAilment(game, pos, ailmentInfo.ailmentInstance)
+				return
 			}
 
-			return blockedActions
+			if (player.board.activeRow === targetPos.rowIndex) game.addBlockedActions('SECONDARY_ATTACK')
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
@@ -47,7 +44,6 @@ class SlownessAilment extends Ailment{
 
 	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.blockedActions.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onTurnStart.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
 	}
