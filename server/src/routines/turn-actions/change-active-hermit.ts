@@ -14,20 +14,17 @@ function* changeActiveHermit(
 		return equalCard(row.hermitCard, rowHermitCard)
 	})
 	if (rowIndex === -1) return 'FAILURE_INVALID_DATA'
-	const row = currentPlayer.board.rows[rowIndex]
 
 	// Can't change to existing active row
 	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'
 
-	// Can't change to knocked out if we have other hermits
-	const isKnockedout = !!row.ailments.find((a) => a.id === 'knockedout')
-	const hasOtherHermits = currentPlayer.board.rows.some((row, index) => {
-		return !!row.hermitCard && index !== rowIndex
-	})
-	if (isKnockedout && hasOtherHermits) return 'FAILURE_CANNOT_COMPLETE'
-
 	const hadActiveHermit = currentPlayer.board.activeRow !== null
 	const oldActiveRow = currentPlayer.board.activeRow
+
+	// Call active row change hooks, before we actually change
+	const results = currentPlayer.hooks.beforeActiveRowChange.call(oldActiveRow, rowIndex)
+
+	if (results.includes(false)) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Actually change row
 	currentPlayer.board.activeRow = rowIndex
@@ -46,15 +43,10 @@ function* changeActiveHermit(
 			'PLAY_EFFECT_CARD',
 			'PLAY_SINGLE_USE_CARD'
 		)
-	} else {
-		// We activated a hermit when we had none active before, allow switching to all other hermits again
-		currentPlayer.board.rows.forEach((row) => {
-			row.ailments = row.ailments.filter((a) => a.id !== 'knockedout')
-		})
 	}
 
-	// Run hooks
-	currentPlayer.hooks.onActiveHermitChange.call(oldActiveRow, currentPlayer.board.activeRow)
+	// Call hooks
+	currentPlayer.hooks.onActiveRowChange.call(oldActiveRow, rowIndex)
 
 	return 'SUCCESS'
 }
