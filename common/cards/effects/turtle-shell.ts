@@ -32,9 +32,10 @@ class TurtleShellEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onActiveHermitChange.add(instance, (oldRow, newRow) => {
-			if (newRow !== pos.rowIndex) return
-			player.custom[instanceKey] = true
+		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
+			if (newRow === pos.rowIndex) {
+				player.custom[instanceKey] = true
+			}
 		})
 
 		player.hooks.onDefence.add(instance, (attack) => {
@@ -63,7 +64,7 @@ class TurtleShellEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		pos.player.hooks.onDefence.remove(instance)
-		pos.player.hooks.onActiveHermitChange.remove(instance)
+		pos.player.hooks.onActiveRowChange.remove(instance)
 		pos.opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[instanceKey]
 	}

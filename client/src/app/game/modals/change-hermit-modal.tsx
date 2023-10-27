@@ -20,22 +20,11 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	}
 
 	const hermitName = info.slot.card?.cardId ? CARDS[info.slot.card.cardId].name : ''
-	const row = playerState.board.rows[info.row.index]
-	const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
 	const hasActiveHermit = playerState.board.activeRow !== null
-	const hasOtherHermits = playerState.board.rows.some(
-		(row, index) =>
-			row.hermitCard &&
-			index !== info.row?.index &&
-			!row.ailments.find((a) => a.id === 'knockedout')
-	)
-	const forbidden = isKnockedout && hasOtherHermits
-	const canChange =
-		!hasActiveHermit || (!forbidden && availableActions.includes('CHANGE_ACTIVE_HERMIT'))
+	const canChange = !hasActiveHermit || availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 	let message = `Are you sure you want to activate ${hermitName}?`
-	if (forbidden) message = `You can not activate this hermit.`
-	else if (!canChange) message = `You can not change your active hermit at this moment.`
+	if (!canChange) message = `You can not change your active hermit at this moment.`
 
 	const lastAction = hasActiveHermit && canChange
 
@@ -64,7 +53,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 				</div>
 
 				<div className={css.options}>
-					{canChange && !forbidden ? (
+					{canChange ? (
 						<>
 							<Button onClick={handleNo}>Cancel</Button>
 							<Button onClick={handleYes}>Yes</Button>

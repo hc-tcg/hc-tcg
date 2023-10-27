@@ -1,9 +1,9 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {SlotPos} from '../../types/cards'
-import {canAttachToCard, getNonEmptyRows} from '../../utils/board'
+import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows} from '../../utils/board'
 import {isRemovable} from '../../utils/cards'
-import {swapSlots} from '../../utils/movement'
+import {discardSingleUse, swapSlots} from '../../utils/movement'
 import singleUseCard from '../base/single-use-card'
 
 class MendingSingleUseCard extends singleUseCard {
@@ -14,58 +14,6 @@ class MendingSingleUseCard extends singleUseCard {
 			name: 'Mending',
 			rarity: 'ultra_rare',
 			description: 'Move any attached effect card from your active Hermit to an AFK Hermit.',
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					slot: ['effect'],
-					amount: 1,
-					empty: true,
-					active: false,
-				},
-			],
-		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const pickedCards = pickedSlots[this.id] || []
-
-			if (pickedCards.length !== 1) return
-
-			const targetSlotInfo = pickedCards[0]
-			const {player} = pos
-			if (player.board.activeRow === null || !targetSlotInfo.row) return
-			const playerActiveRow = player.board.rows[player.board.activeRow]
-			if (targetSlotInfo.row.state.effectCard !== null) return
-			if (!playerActiveRow.effectCard) return
-
-			const hermitCard = targetSlotInfo.row.state.hermitCard
-			const effectCard = playerActiveRow.effectCard
-			if (!canAttachToCard(game, hermitCard, effectCard)) return
-
-			// swap slots
-			const sourcePos: SlotPos = {
-				rowIndex: player.board.activeRow,
-				row: playerActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
-
-			const targetPos: SlotPos = {
-				rowIndex: targetSlotInfo.row.index,
-				row: targetSlotInfo.row.state,
-				slot: {
-					index: targetSlotInfo.slot.index,
-					type: 'effect',
-				},
-			}
-
-			swapSlots(game, sourcePos, targetPos)
 		})
 	}
 
@@ -76,7 +24,7 @@ class MendingSingleUseCard extends singleUseCard {
 
 		if (player.board.activeRow === null) return 'NO'
 
-		const effectCard = player.board.rows[player.board.activeRow].effectCard
+		const effectCard = getActiveRow(player)?.effectCard
 		if (!effectCard || !isRemovable(effectCard)) return 'NO'
 
 		// check if there is an empty slot available to move the effect card to
@@ -95,9 +43,71 @@ class MendingSingleUseCard extends singleUseCard {
 		return 'NO'
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+
+		const activeRowIndex = player.board.activeRow
+		if (activeRowIndex === null) {
+			discardSingleUse(game, player)
+			return
+		}
+
+		const activeRow = getActiveRow(player)
+		if (!activeRow) {
+			discardSingleUse(game, player)
+			return
+		}
+		const effectCard = activeRow.effectCard
+		if (!effectCard) {
+			discardSingleUse(game, player)
+			return
+		}
+
+		player.pickRequests.push({
+			id: this.id,
+			message: 'Pick an empty effect slot from one of your afk Hermits',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+				const rowIndex = pickResult.rowIndex
+				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+				if (pickResult.slot.type !== 'effect') return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+				const row = player.board.rows[rowIndex]
+				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+
+				if (!canAttachToCard(game, row.hermitCard, effectCard)) return 'FAILURE_CANNOT_COMPLETE'
+
+				// Apply the mending card
+				applySingleUse(game)
+
+				// Move the effect card
+				const sourcePos: SlotPos = {
+					rowIndex: activeRowIndex,
+					row: activeRow,
+					slot: {
+						type: 'effect',
+						index: 0,
+					},
+				}
+
+				const targetPos: SlotPos = {
+					rowIndex,
+					row: player.board.rows[rowIndex],
+					slot: {
+						type: 'effect',
+						index: 0,
+					},
+				}
+
+				swapSlots(game, sourcePos, targetPos)
+
+				return 'SUCCESS'
+			},
+		})
 	}
 }
 
