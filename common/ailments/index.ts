@@ -5,7 +5,6 @@ import SleepingAilment from "./sleeping"
 import BadOmenAilment from "./badomen"
 import SlownessAilment from "./slowness"
 import WeaknessAilment from "./weakness"
-import knockedoutAilment from "./knockedout"
 import ProtectedAilment from "./protected"
 
 const cardClasses: Array<Ailment> = [
@@ -15,7 +14,6 @@ const cardClasses: Array<Ailment> = [
     new BadOmenAilment(),
     new SlownessAilment(),
     new WeaknessAilment(),
-    new knockedoutAilment(),
     new ProtectedAilment()
 ]
 
