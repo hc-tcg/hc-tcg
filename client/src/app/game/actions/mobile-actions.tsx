@@ -138,7 +138,6 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 		const waitingForOpponentPick =
 			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
 		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick request' : "Opponent's Turn"
-		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const changeHermit =
 			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
 
@@ -151,7 +150,6 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 			<>
 				<p className={css.turn}>{turnMsg}</p>
 				<p>
-					{knockedOut && 'Activate an AFK Hermit'}
 					{changeHermit && 'Select a new active Hermit'}
 					{waitingForOpponentPick && "Waiting for opponent's action..."}
 					{pickMessage}
