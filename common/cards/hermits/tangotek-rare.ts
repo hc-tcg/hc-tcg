@@ -44,11 +44,10 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
+			// Curse of Binding
+			const canChange = isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT')
 
 			if (opponentInactiveRows.length !== 0) {
-				const lastActiveRow = opponentPlayer.board.activeRow
-				opponentPlayer.board.activeRow = null
-
 				// Add a new pick request to the opponent player
 				opponentPlayer.pickRequests.push({
 					id: this.id,
@@ -59,9 +58,47 @@ class TangoTekRareHermitCard extends HermitCard {
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === lastActiveRow) return 'FAILURE_WRONG_PICK'
+						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 
 						opponentPlayer.board.activeRow = pickResult.rowIndex
+
+						// Now add a pick request for us, if it is appropriate
+						if (
+							playerInactiveRows.length !== 0 &&
+							attack.attacker &&
+							attack.attacker.row.health > 0 &&
+							canChange
+						) {
+							player.pickRequests.push({
+								id: this.id,
+								message: 'Pick a new active Hermit from your afk hermits',
+								onResult(pickResult) {
+									// Validation
+									if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+									if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+									if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+									if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
+									if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
+
+									player.board.activeRow = pickResult.rowIndex
+
+									return 'SUCCESS'
+								},
+								onTimeout() {
+									const inactiveRows = getNonEmptyRows(player, false)
+
+									// Choose the first afk row
+									for (const inactiveRow of inactiveRows) {
+										const {rowIndex} = inactiveRow
+										const canBeActive = rowIndex !== player.board.activeRow
+										if (canBeActive) {
+											player.board.activeRow = rowIndex
+											break
+										}
+									}
+								},
+							})
+						}
 
 						return 'SUCCESS'
 					},
@@ -71,7 +108,7 @@ class TangoTekRareHermitCard extends HermitCard {
 						// Choose the first afk row
 						for (const inactiveRow of opponentInactiveRows) {
 							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== lastActiveRow
+							const canBeActive = rowIndex !== opponentPlayer.board.activeRow
 							if (canBeActive) {
 								opponentPlayer.board.activeRow = rowIndex
 								break
@@ -79,19 +116,6 @@ class TangoTekRareHermitCard extends HermitCard {
 						}
 					},
 				})
-			}
-
-			if (
-				playerInactiveRows.length !== 0 &&
-				attack.attacker &&
-				attack.attacker.row.health > 0 &&
-				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
-			) {
-				attack.attacker.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
-				})
-				player.board.activeRow = null
 			}
 		})
 	}

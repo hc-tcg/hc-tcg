@@ -332,8 +332,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	// remove sleep on knock out
 	game.opponentPlayer.board.rows.forEach((row, index) => {
 		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
-		const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
-		if (isSleeping && isKnockedout) {
+		if (isSleeping) {
 			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 		}
 	})
