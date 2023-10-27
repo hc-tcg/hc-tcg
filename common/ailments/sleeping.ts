@@ -24,6 +24,7 @@ class SleepingAilment extends Ailment {
 		if (!card || !row?.hermitCard) return
 
 		game.state.ailments.push(ailmentInfo)
+		game.addBlockedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
 		row.health = HERMIT_CARDS[card.cardId].health
