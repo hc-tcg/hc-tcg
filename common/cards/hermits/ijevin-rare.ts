@@ -38,7 +38,6 @@ class IJevinRareHermitCard extends HermitCard {
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
 				const lastActiveRow = opponentPlayer.board.activeRow
-				opponentPlayer.board.activeRow = null
 
 				opponentPlayer.pickRequests.push({
 					id: this.id,

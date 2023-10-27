@@ -43,7 +43,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 
 			if (activeRow && activeRow.health) {
 				const lastActiveRow = opponentPlayer.board.activeRow
-				opponentPlayer.board.activeRow = null
 
 				opponentPlayer.pickRequests.push({
 					id: this.id,
