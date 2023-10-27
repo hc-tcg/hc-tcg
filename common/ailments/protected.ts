@@ -20,7 +20,7 @@ class ProtectedAilment extends Ailment{
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(ailmentInfo.ailmentInstance)
 
-		player.hooks.onActiveHermitChange.add(ailmentInfo.ailmentInstance, (oldRow, newRow) => {
+		player.hooks.onActiveRowChange.add(ailmentInfo.ailmentInstance, (oldRow, newRow) => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
 			if (!targetPos) return
 
@@ -63,7 +63,7 @@ class ProtectedAilment extends Ailment{
 		const instanceKey = this.getInstanceKey(ailmentInfo.ailmentInstance)
 
 		pos.player.hooks.onDefence.remove(ailmentInfo.ailmentInstance)
-		pos.player.hooks.onActiveHermitChange.remove(ailmentInfo.ailmentInstance)
+		pos.player.hooks.onActiveRowChange.remove(ailmentInfo.ailmentInstance)
 		pos.opponentPlayer.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
 		delete player.custom[instanceKey]
 		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
