@@ -2,7 +2,7 @@ import {all, take, fork, cancel, race, delay, call, actionChannel} from 'typed-r
 import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import {getPickedSlots} from '../utils/picked-cards'
-import attackSaga, {runAilmentAttacks, runAllAttacks} from './turn-actions/attack'
+import attackSaga, {executeAllAttacks, runAllAttacks} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
@@ -98,10 +98,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Actions that require us to have an active row
 	if (activeRow !== null) {
-		const isSleeping = rows[activeRow]?.ailments.find((a) => a.id === 'sleeping')
-
 		// Change active hermit
-		if (hasOtherHermit && !isSleeping && !pickRequestActive) {
+		if (hasOtherHermit && !pickRequestActive) {
 			actions.push('CHANGE_ACTIVE_HERMIT')
 		}
 
@@ -119,7 +117,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] : null
 
 			// only add attack options if not sleeping
-			if (hermitInfo && !isSleeping) {
+			if (hermitInfo) {
 				if (hasEnoughEnergy(availableEnergy, hermitInfo.primary.cost)) {
 					actions.push('PRIMARY_ATTACK')
 				}
@@ -180,14 +178,6 @@ function getBlockedActions(game: GameModel): TurnActions {
 	const actions: TurnActions = []
 
 	const {activeRow, rows} = currentPlayer.board
-
-	const isSlow = activeRow !== null && rows[activeRow]?.ailments.find((a) => a.id === 'slowness')
-
-	// @TODO slowness ailment can just turn into blocked action
-
-	if (isSlow) {
-		actions.push('SECONDARY_ATTACK')
-	}
 
 	return actions
 }
@@ -328,14 +318,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 
 	// Set action result to be sent back to client
 	game.setLastActionResult(actionType, result)
-
-	// remove sleep on knock out
-	game.opponentPlayer.board.rows.forEach((row, index) => {
-		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
-		if (isSleeping) {
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-		}
-	})
 
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) endTurn = true
@@ -491,29 +473,25 @@ function* turnSaga(game: GameModel) {
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
 	// Call turn start hooks
-	currentPlayer.hooks.onTurnStart.call()
+
+	const turnStartAttacks: Array<AttackModel> = []
+	currentPlayer.hooks.onTurnStart.call(turnStartAttacks)
+
+	if (game.state.turn.turnNumber > 2) {
+		if (turnStartAttacks.length > 0) {
+			executeAllAttacks(turnStartAttacks)
+		}
+	
+		const turnStartDeadPlayerIds = yield* call(checkHermitHealth, game)
+		if (turnStartDeadPlayerIds.length) {
+			game.endInfo.reason = game.state.players[turnStartDeadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
+			game.endInfo.deadPlayerIds = turnStartDeadPlayerIds
+			return 'GAME_END'
+		}
+	}
 
 	const result = yield* call(turnActionsSaga, game)
 	if (result === 'GAME_END') return 'GAME_END'
-
-	// Run the ailment attacks just before turn end
-	runAilmentAttacks(game, opponentPlayer)
-
-	// ailment logic
-
-	// row ailments
-	for (let row of currentPlayer.board.rows) {
-		for (let ailment of row.ailments) {
-			// decrease duration
-			if (ailment.duration) {
-				// ailment is not infinite, reduce duration by 1
-				ailment.duration--
-			}
-		}
-
-		// Get rid of ailments that have expired
-		row.ailments = row.ailments.filter((a) => a.duration === undefined || a.duration > 0)
-	}
 
 	// Create card draw array
 	const drawCards: Array<CardT | null> = []

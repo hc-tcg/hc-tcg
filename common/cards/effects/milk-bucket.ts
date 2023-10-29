@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
+import { removeAilment } from '../../utils/board'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -27,19 +28,32 @@ class MilkBucketEffectCard extends EffectCard {
 				const targetSlot = pickedCards[0]
 				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
 
-				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
-					(a) => a.id !== 'poison' && a.id !== 'badomen'
-				)
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+				})
+				ailmentsToRemove.map((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 			})
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
 				if (!row) return
-				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return ail.targetInstance === row.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+				})
+				ailmentsToRemove.map((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 			})
 
 			opponentPlayer.hooks.afterApply.add(instance, (attack) => {
 				if (!row) return
-				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return ail.targetInstance === row.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+				})
+				ailmentsToRemove.map((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 			})
 		}
 	}

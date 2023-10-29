@@ -5,6 +5,7 @@ import {PickResult} from '../../types/server-requests'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'
+import { applyAilment } from '../../utils/board'
 
 class TangoTekRareHermitCard extends HermitCard {
 	constructor() {

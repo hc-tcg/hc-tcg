@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
+import { applyAilment } from '../../utils/board'
 
 class IJevinRareHermitCard extends HermitCard {
 	constructor() {

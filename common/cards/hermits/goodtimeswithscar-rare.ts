@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import HermitCard from '../base/hermit-card'
+import { removeAilment } from '../../utils/board'
 
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
@@ -42,7 +43,13 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				if (!row || row.health === null || row.health > 0) return
 
 				row.health = 50
-				row.ailments = []
+
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return ail.targetInstance === pos.card?.cardInstance
+				})
+				ailmentsToRemove.map((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 
 				opponentPlayer.hooks.afterAttack.remove(instance)
 			}

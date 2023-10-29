@@ -5,6 +5,7 @@ import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {PickProcessT, PickedSlots} from './pick-process'
 import {ModalRequest, PickRequest} from './server-requests'
+import Ailment from '../ailments/ailment'
 
 export type PlayerId = string
 
@@ -13,17 +14,11 @@ export type CardT = {
 	cardInstance: string
 }
 
-export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'slowness' | 'badomen' | 'weakness'
-	duration?: number
-}
-
 export type RowStateWithHermit = {
 	hermitCard: CardT
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
 	health: number
-	ailments: Array<Ailment>
 }
 
 export type RowStateWithoutHermit = {
@@ -31,12 +26,24 @@ export type RowStateWithoutHermit = {
 	effectCard: null
 	itemCards: Array<null>
 	health: null
-	ailments: Array<Ailment>
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type CoinFlipT = 'heads' | 'tails'
+
+export type AilmentT = {
+	/** The ID of the ailment. */
+	ailmentId: string
+	/** The ailment's instance. */
+	ailmentInstance: string
+	/** The target card's instance. */
+	targetInstance: string
+	/** The duration of the effect. If undefined, the effect is infinite. */
+	duration?: number
+	/** Whether the ailment is a damage effect or not. */
+	damageEffect: boolean
+}
 
 export type CurrentCoinFlipT = {
 	name: string
@@ -114,7 +121,7 @@ export type PlayerState = {
 		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
 
 		/** hook called at the start of the turn */
-		onTurnStart: GameHook<() => void>
+		onTurnStart: GameHook<(attacks: Array<AttackModel>) => void>
 		/** hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
 		/** hook called when the time runs out*/
@@ -167,6 +174,7 @@ export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
+	ailments: Array<AilmentT>
 
 	lastActionResult: {
 		action: TurnAction
@@ -242,6 +250,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
+	ailments: Array<AilmentT>
 
 	// personal data
 	hand: Array<CardT>
