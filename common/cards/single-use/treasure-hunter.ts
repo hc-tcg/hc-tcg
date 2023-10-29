@@ -35,6 +35,10 @@ class TreasureHunterSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply.remove(instance)
 	}
+
+	override getExpansion() {
+		return 'advent_of_tcg'
+	}
 }
 
 export default TreasureHunterSingleUseCard
