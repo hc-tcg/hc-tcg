@@ -184,8 +184,8 @@ $grid-size: 25px;
 	top: 25px;
 	left: 8px;
 	display: grid;
-	grid-auto-flow: column;
-	grid-gap: 0px 11px;
+	grid-template-columns: repeat(3,31px);
+	grid-template-rows: repeat(2,45px);
 }
 
 .damageAilmentContainer {
