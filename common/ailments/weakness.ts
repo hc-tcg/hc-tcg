@@ -14,6 +14,7 @@ class WeaknessAilment extends Ailment{
 		super({
 			id: 'weakness',
 			name: 'Weakness',
+			description: 'This Hermit is weak to the opponent\'s active Hermit\'s type.',
 			duration: 3,
 			damageEffect: false,
 		})

@@ -1,0 +1,26 @@
+.cardTooltip {
+	overflow: hidden;
+}
+
+.topLine {
+	display: flex;
+	gap: 10px;
+	font-size: 20px;
+	flex-flow: row nowrap;
+	line-height: 1;
+	white-space: nowrap;
+}
+
+.name {
+	color: white;
+	text-decoration: underline;
+	font-family: MinecraftBold;
+}
+
+.description {
+	margin-top: 4px;
+	color: rgb(158, 14, 158);
+	font-size: 18px;
+	font-family: MinecraftItalic;
+	line-height: 1.1;
+}

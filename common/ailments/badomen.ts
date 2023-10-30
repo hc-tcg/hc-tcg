@@ -9,6 +9,7 @@ class BadOmenAilment extends Ailment{
 		super({
 			id: 'badomen',
 			name: 'Bad Omen',
+			description: 'All coinflips are tails.',
 			duration: 3,
 			damageEffect: false,
 		})

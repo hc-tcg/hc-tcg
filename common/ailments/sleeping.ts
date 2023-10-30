@@ -10,6 +10,7 @@ class SleepingAilment extends Ailment{
 		super({
 			id: 'sleeping',
 			name: 'Sleeping',
+			description: 'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
 			duration: 3,
 			damageEffect: false,
 		})
