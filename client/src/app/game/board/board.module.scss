@@ -184,15 +184,14 @@ $grid-size: 25px;
 	top: 25px;
 	left: 8px;
 	display: grid;
-	grid-column: 5;
-	grid-row: 3;
 	grid-auto-flow: column;
+	grid-gap: 0px 11px;
 }
 
 .damageAilmentContainer {
 	position: absolute;
-	bottom: -5px;
-	right: 2px;
+	bottom: -40px;
+	right: -20px;
 }
 
 // UTILITIES

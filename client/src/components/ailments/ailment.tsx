@@ -23,7 +23,7 @@ const Ailment = (props: AilmentProps) => {
 		<Tooltip tooltip={<AilmentTooltip ailment={props.ailment} duration={props.duration}/>}>
             <div>
                 <img className={ailmentClass} src={"/images/status/" + id + extension}></img>
-                {props.duration && <p className={css.durationIndicator}>{props.duration}</p>}
+                <p className={css.durationIndicator}>{props.duration ? props.duration : "∞"}</p>
             </div>
 		</Tooltip>
 	)
