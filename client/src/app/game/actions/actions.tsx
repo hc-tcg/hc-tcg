@@ -128,8 +128,8 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
-		const waitingForOpponentPick =
-			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
+		const waitingForOpponent =
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
 		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick Request' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const endTurn = availableActions.includes('END_TURN')
@@ -148,7 +148,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		if (pickMessage) {
 			message = pickMessage
-		} else if (waitingForOpponentPick) {
+		} else if (waitingForOpponent) {
 			message = "Waiting for opponent's action..."
 		} else if (knockedOut) {
 			message = 'Activate an AFK Hermit'

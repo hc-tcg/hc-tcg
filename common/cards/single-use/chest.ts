@@ -28,7 +28,8 @@ class ChestSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.modalRequests.push({
+		game.addModalRequest({
+			playerId: player.id,
 			id: this.id,
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'

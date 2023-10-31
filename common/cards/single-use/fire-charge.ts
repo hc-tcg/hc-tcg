@@ -45,7 +45,8 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.pickRequests.push({
+		game.addPickRequest({
+			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			onResult(pickResult) {

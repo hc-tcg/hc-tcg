@@ -187,8 +187,6 @@ export function runAllAttacks(
 
 	// Main attack loop
 	while (attacks.length > 0) {
-		// Process all current attacks one at a time
-
 		// STEP 1 - Call before attack and defence for all attacks
 		runBeforeAttackHooks(attacks, pickedSlots)
 		runBeforeDefenceHooks(attacks, pickedSlots)

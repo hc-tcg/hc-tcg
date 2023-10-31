@@ -101,13 +101,13 @@ function Game() {
 	}
 
 	const selectCard = (card: CardT) => {
-		if (availableActions.includes('PICK_CARD')) {
+		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
 
 			// Send pick card action with the hand info
 			const actionData: PickCardActionData = {
-				type: 'PICK_CARD',
+				type: 'PICK_REQUEST',
 				payload: {
 					pickResult: {
 						playerId: gameState.playerId,
@@ -126,7 +126,7 @@ function Game() {
 		}
 	}
 
-	if (availableActions.includes('PICK_CARD')) {
+	if (availableActions.includes('PICK_REQUEST')) {
 		dispatch(setSelectedCard(null))
 	}
 
@@ -185,11 +185,11 @@ function Game() {
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
-		const someCustom = gameState.currentPickMessage || gameState.currentCustomModal
+		const someCustom = gameState.currentPickMessage || gameState.currentModalId
 		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.currentPickMessage, gameState.currentCustomModal])
+	}, [gameState.currentPickMessage, gameState.currentModalId])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {

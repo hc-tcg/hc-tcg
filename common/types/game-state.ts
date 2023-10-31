@@ -62,10 +62,6 @@ export type PlayerState = {
 		rows: Array<RowState>
 	}
 
-	pickRequests: Array<PickRequest>
-	//@TODO the code also needs to check for the opponents modal requests
-	modalRequests: Array<ModalRequest>
-
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
 		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
@@ -113,20 +109,24 @@ export type PlayerState = {
 		 */
 		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
 
-		/** hook called at the start of the turn */
+		/**
+		 * Hook called at the start of the turn
+		 *
+		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
+		 */
 		onTurnStart: GameHook<() => void>
-		/** hook called at the end of the turn */
+		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
-		/** hook called when the time runs out*/
+		/** Hook called when the time runs out*/
 		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>
 
-		/** hook called the player flips a coin */
+		/** Hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
-		/** hook called before the active row is changed. Returns whether or not the change can be completed. */
+		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => boolean>
-		/** hook called when the active row is changed. */
+		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => void>
 	}
 }
@@ -168,6 +168,9 @@ export type GameState = {
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
 
+	pickRequests: Array<PickRequest>
+	modalRequests: Array<ModalRequest>
+
 	lastActionResult: {
 		action: TurnAction
 		result: ActionResult
@@ -188,18 +191,17 @@ export type PlayCardAction =
 
 export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
 
-export type PickCardAction = 'PICK_CARD' | 'WAIT_FOR_OPPONENT_PICK'
-
 export type TurnAction =
 	| PlayCardAction
 	| AttackAction
-	| PickCardAction
 	| 'END_TURN'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'
+	| 'PICK_REQUEST'
+	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
-	| 'CUSTOM_MODAL'
+	| 'WAIT_FOR_OPPONENT_ACTION'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -258,7 +260,7 @@ export type LocalGameState = {
 	} | null
 
 	currentPickMessage: string | null
-	currentCustomModal: string | null
+	currentModalId: string | null
 
 	players: Record<string, LocalPlayerState>
 

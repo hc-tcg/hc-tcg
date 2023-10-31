@@ -25,6 +25,9 @@ export function getGameState(game: GameModel): GameState {
 			{}
 		),
 
+		pickRequests: [],
+		modalRequests: [],
+
 		timer: {
 			turnStartTime: 0,
 			turnRemaining: 0,

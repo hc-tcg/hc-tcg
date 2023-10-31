@@ -29,7 +29,7 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	// If it's the single use or health slot do nothing, you can't request those slots
 	if (action.payload.slot.type !== 'single_use' && action.payload.slot.type !== 'health') {
 		const actionData: PickCardActionData = {
-			type: 'PICK_CARD',
+			type: 'PICK_REQUEST',
 			payload: {
 				pickResult: {
 					playerId: action.payload.playerId,
@@ -109,7 +109,7 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 		}
 	}
 
-	if (availableActions.includes('PICK_CARD')) {
+	if (availableActions.includes('PICK_REQUEST')) {
 		// Run a seperate saga for the pick request
 		yield call(pickForPickRequestSaga, action)
 		return

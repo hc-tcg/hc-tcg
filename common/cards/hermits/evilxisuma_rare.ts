@@ -44,7 +44,8 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 			if (!opponentActiveRow) return
 
-			player.modalRequests.push({
+			game.addModalRequest({
+				playerId: player.id,
 				id: this.id,
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.disable) return 'FAILURE_INVALID_DATA'

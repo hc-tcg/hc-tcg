@@ -6,18 +6,18 @@ import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {setOpenedModal, applyEffect, customModal} from 'logic/game/game-actions'
+import {setOpenedModal, applyEffect, modalRequest} from 'logic/game/game-actions'
 import SingleUseCard from 'common/cards/base/single-use-card'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
-		yield put(customModal({modalResult: {attach: false}}))
+		yield put(modalRequest({modalResult: {attach: false}}))
 		return
 	}
 
-	yield put(customModal({modalResult: {attach: true}}))
+	yield put(modalRequest({modalResult: {attach: true}}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
@@ -42,8 +42,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	const lastActionResult = gameState.lastActionResult
 
-	if (gameState.currentCustomModal !== null) {
-		const id = gameState.currentCustomModal
+	if (gameState.currentModalId !== null) {
+		const id = gameState.currentModalId
 		if (id === 'grian_rare') {
 			yield fork(borrowSaga)
 		} else if (id === 'evilxisuma_rare') {

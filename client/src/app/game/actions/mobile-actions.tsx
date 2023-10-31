@@ -136,7 +136,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	const Status = () => {
 		const turn = localGameState.turn.currentPlayerId === playerId
 		const waitingForOpponentPick =
-			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
 		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick request' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const changeHermit =

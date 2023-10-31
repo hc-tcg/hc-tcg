@@ -38,8 +38,9 @@ class JinglerRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'tails') return
 
-			// Add a new pick request to the opponent player
-			opponentPlayer.pickRequests.push({
+			// Add a new pick request for the opponent player
+			game.addPickRequest({
+				playerId: opponentPlayer.id,
 				id: this.id,
 				message: 'Pick 1 card from your hand to discard',
 				onResult(pickResult) {

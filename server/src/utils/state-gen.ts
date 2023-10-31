@@ -220,9 +220,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
 
-		pickRequests: [],
-		modalRequests: [],
-
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
@@ -280,15 +277,22 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
-	// Generate pick message, adding in card name if id exists
-	const currentPickRequest = playerState.pickRequests[0]
-	let currentPickMessage = currentPickRequest?.message || null
+	// Pick message or modal id
+	let currentPickMessage = null
+	let currentModalId = null
 
-	if (currentPickRequest && currentPickRequest.id) {
+	const currentPickRequest = game.state.pickRequests[0]
+	const currentModalRequest = game.state.modalRequests[0]
+	if (currentPickRequest?.playerId === player.playerId) {
+		currentPickMessage = currentPickRequest.message
+		// Add the card name before the request
 		const cardInfo = CARDS[currentPickRequest.id]
 		if (cardInfo) {
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
+	} else if (currentModalRequest?.playerId === player.playerId) {
+		// Only if there is no pick request will we send a modal request
+		currentModalId = currentModalRequest.id
 	}
 
 	const localGameState: LocalGameState = {
@@ -313,7 +317,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		lastActionResult: game.state.lastActionResult,
 
 		currentPickMessage,
-		currentCustomModal: playerState.modalRequests[0]?.id || null,
+		currentModalId,
 
 		players,
 

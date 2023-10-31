@@ -2,7 +2,7 @@ import Modal from 'components/modal'
 import {useDispatch} from 'react-redux'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
-import {customModal} from 'logic/game/game-actions'
+import {modalRequest} from 'logic/game/game-actions'
 
 type Props = {
 	closeModal: () => void
@@ -11,12 +11,12 @@ function EvilXModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const handlePrimary = () => {
-		dispatch(customModal({modalResult: {disable: 'primary'}}))
+		dispatch(modalRequest({modalResult: {disable: 'primary'}}))
 		closeModal()
 	}
 
 	const handleSecondary = () => {
-		dispatch(customModal({modalResult: {disable: 'secondary'}}))
+		dispatch(modalRequest({modalResult: {disable: 'secondary'}}))
 		closeModal()
 	}
 

@@ -41,7 +41,7 @@ export type AttackActionData = {
 }
 
 export type PickCardActionData = {
-	type: 'PICK_CARD'
+	type: 'PICK_REQUEST'
 	payload: {
 		pickResult: PickResult
 	}

@@ -5,7 +5,7 @@ import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './game-modals.module.scss'
 import {getPlayerState} from 'logic/game/game-selectors'
-import {customModal} from 'logic/game/game-actions'
+import {modalRequest} from 'logic/game/game-actions'
 import Button from 'components/button'
 
 type Props = {
@@ -35,13 +35,13 @@ function SpyglassModal({closeModal}: Props) {
 	}
 
 	const handleClose = () => {
-		dispatch(customModal({modalResult: {card: null}}))
+		dispatch(modalRequest({modalResult: {card: null}}))
 		closeModal()
 	}
 
 	const handleConfirm = () => {
 		if (selected.length === 1) {
-			dispatch(customModal({modalResult: {card: selected[0]}}))
+			dispatch(modalRequest({modalResult: {card: selected[0]}}))
 			closeModal()
 		}
 	}
