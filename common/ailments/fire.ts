@@ -10,7 +10,8 @@ class FireAilment extends Ailment{
     constructor() {
 		super({
 			id: 'fire',
-			name: 'Fire',
+			name: 'On Fire',
+			description: 'This Hermit takes an additional 20hp damage every turn.',
 			duration: 0,
 			damageEffect: true,
 		})

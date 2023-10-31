@@ -10,6 +10,7 @@ class SlownessAilment extends Ailment{
 		super({
 			id: 'slowness',
 			name: 'Slowness',
+			description: 'This Hermit can only use their primary attack.',
 			duration: 2,
 			damageEffect: false,
 		})

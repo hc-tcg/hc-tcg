@@ -1,0 +1,20 @@
+.ailment {
+    pointer-events: all;
+}
+
+.ailmentImage {
+	width: 22px;
+    height: 22px;
+}
+
+.damageAilmentImage {
+    width: 50px;
+    height: 75px;
+}
+
+.durationIndicator {
+    color: white;
+	font-family: MinecraftBold; 
+    transform: translate(10px,-18px);
+    filter: drop-shadow(1px 1px 0 rgb(0,0,0));
+}
