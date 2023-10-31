@@ -48,12 +48,10 @@ class TangoTekRareHermitCard extends HermitCard {
 			// Curse of Binding
 			const canChange = isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT')
 
-			const pickRequests: Array<PickRequest> = []
-
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (opponentInactiveRows.length !== 0) {
 				// Add a new pick request to the opponent player
-				pickRequests.push({
+				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
@@ -92,7 +90,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				attack.attacker.row.health > 0 &&
 				canChange
 			) {
-				pickRequests.push({
+				game.addPickRequest({
 					playerId: player.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
