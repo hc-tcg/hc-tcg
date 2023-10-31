@@ -10,18 +10,16 @@ type Props = {
 
 const AilmentTooltip = ({ailment, duration}: Props) => {
 	return (
-		<div className={css.cardTooltip}>
+		<div className={css.ailmentTooltip}>
 			<div className={css.topLine}>
-				{ailment.name}
+				<div className={css.name}>{ailment.name}</div>
 			</div>
 			<div className={css.description}>
 				{ailment.description}
-                {duration && 
-                    <div>
-                        Turns remaining: {duration}
-                    </div>
-                }
 			</div>
+			{duration && 
+				<div className={css.turnsRemaining}>Turns remaining: <span className={css.duration}>{duration}</span></div>
+			}
 		</div>
 	)
 }

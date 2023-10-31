@@ -1,4 +1,4 @@
-.cardTooltip {
+.ailmentTooltip {
 	overflow: hidden;
 }
 
@@ -23,4 +23,15 @@
 	font-size: 18px;
 	font-family: MinecraftItalic;
 	line-height: 1.1;
+}
+
+.turnsRemaining {
+	margin-top: 4px;
+	font-family: Minecraft;
+	font-size: 18px;
+	line-height: 1.1;
+}
+
+.duration {
+	font-family: MinecraftBold;
 }

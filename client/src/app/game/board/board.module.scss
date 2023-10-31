@@ -186,6 +186,7 @@ $grid-size: 25px;
 	display: grid;
 	grid-template-columns: repeat(3,31px);
 	grid-template-rows: repeat(2,45px);
+	pointer-events: none;
 }
 
 .damageAilmentContainer {

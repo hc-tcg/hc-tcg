@@ -54,15 +54,18 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 			{cardInfo ? (
 				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
-					<div className={css.ailmentContainer}>
 					{type === 'health' &&
-						ailments_cleaned.map((a) => {
-							const ailment = AILMENTS[a.ailmentId]
-							if (!ailment) return null
-							if (ailment.damageEffect == true) return null
-							return <Ailment ailment={ailment} duration={a.duration} />
-						})}
-					</div>
+						<div className={css.ailmentContainer}>
+							{
+								ailments_cleaned.map((a) => {
+									const ailment = AILMENTS[a.ailmentId]
+									if (!ailment) return null
+									if (ailment.damageEffect == true) return null
+									return <Ailment ailment={ailment} duration={a.duration} />
+								})
+							}
+						</div>	
+					}
 					<div className={css.damageAilmentContainer}>
 					{type === 'health' &&
 						ailments_cleaned.map((a) => {
@@ -70,7 +73,8 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 							if (!ailment) return null
 							if (ailment.damageEffect == false) return null
 							return <Ailment ailment={ailment} />
-						})}
+						})
+					}
 					</div>
 				</div>
 			) : type === 'health' ? null : (
