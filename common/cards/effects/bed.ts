@@ -42,7 +42,7 @@ class BedEffectCard extends EffectCard {
 			const isSleeping = game.state.ailments.some((a) => 
 				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
 			)
-			if (isSleeping) {
+			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
 				return
 			}
@@ -69,7 +69,7 @@ class BedEffectCard extends EffectCard {
 			)
 
 			// if sleeping has worn off, discard the bed
-			if (isSleeping) {
+			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
 				player.hooks.onTurnEnd.remove(instance)
 			}
