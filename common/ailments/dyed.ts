@@ -11,6 +11,7 @@ class DyedAilment extends Ailment{
 			name: 'Dyed',
 			description: 'Items attached to this Hermit become any type.',
 			duration: 0,
+			counter: false,
 			damageEffect: false,
 		})
 	}

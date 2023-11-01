@@ -12,6 +12,7 @@ class ProtectedAilment extends Ailment{
 			name: 'Sheriff\'s Protection',
 			description: 'This Hermit does not take damage on their first active turn.',
 			duration: 0,
+			counter: false,
 			damageEffect: false,
 		})
 	}
