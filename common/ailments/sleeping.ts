@@ -12,6 +12,7 @@ class SleepingAilment extends Ailment{
 			name: 'Sleeping',
 			description: 'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
 			duration: 3,
+			counter: false,
 			damageEffect: false,
 		})
 	}

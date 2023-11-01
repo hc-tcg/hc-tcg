@@ -11,6 +11,7 @@ class BadOmenAilment extends Ailment{
 			name: 'Bad Omen',
 			description: 'All coinflips are tails.',
 			duration: 3,
+			counter: false,
 			damageEffect: false,
 		})
 	}

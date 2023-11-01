@@ -13,6 +13,7 @@ class FireAilment extends Ailment{
 			name: 'On Fire',
 			description: 'This Hermit takes an additional 20hp damage every turn.',
 			duration: 0,
+			counter: false,
 			damageEffect: true,
 		})
 	}

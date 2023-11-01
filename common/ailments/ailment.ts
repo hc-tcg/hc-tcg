@@ -7,6 +7,7 @@ type AilmentDefs = {
 	name: string,
 	description: string,
 	duration: number,
+	counter: boolean,
 	damageEffect: boolean,
 }
 
@@ -15,6 +16,7 @@ abstract class Ailment {
     public name: string
 	public description: string
 	public duration: number
+	public counter: boolean
 	public damageEffect: boolean
 
 	constructor(defs: AilmentDefs) {
@@ -22,6 +24,7 @@ abstract class Ailment {
 		this.name = defs.name
 		this.description = defs.description
 		this.duration = defs.duration
+		this.counter = defs.counter
 		this.damageEffect = defs.damageEffect
 	}
 
@@ -30,6 +33,10 @@ abstract class Ailment {
 	}
 	public getInstanceKey(instance: string, keyName: string = '') {
 		return this.id + ':' + instance + ':' + keyName
+	}
+
+	public getTargetInstanceKey(targetId: string, instance: string, keyName: string = '') {
+		return targetId + ':' + instance + ':' + keyName
 	}
 
     public onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {

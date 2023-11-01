@@ -158,7 +158,7 @@ export function applyAilment(
 
 	ailment.onApply(game, ailmentInfo, pos)
 
-	if (ailment.duration > 0) ailmentInfo.duration = ailment.duration
+	if (ailment.duration > 0 || ailment.counter) ailmentInfo.duration = ailment.duration
 
 	return 'SUCCESS'
 }

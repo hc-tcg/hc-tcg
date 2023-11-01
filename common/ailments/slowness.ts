@@ -12,6 +12,7 @@ class SlownessAilment extends Ailment{
 			name: 'Slowness',
 			description: 'This Hermit can only use their primary attack.',
 			duration: 2,
+			counter: false,
 			damageEffect: false,
 		})
 	}

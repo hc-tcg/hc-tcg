@@ -17,7 +17,10 @@ const AilmentTooltip = ({ailment, duration}: Props) => {
 			<div className={css.description}>
 				{ailment.description}
 			</div>
-			{duration && 
+			{(duration !== undefined && ailment.counter) && 
+				<div className={css.turnsRemaining}>Number: <span className={css.duration}>{duration}</span></div>
+			}
+			{(duration !== undefined && !ailment.counter) && 
 				<div className={css.turnsRemaining}>Turns remaining: <span className={css.duration}>{duration}</span></div>
 			}
 		</div>
