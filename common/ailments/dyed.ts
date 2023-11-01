@@ -3,13 +3,13 @@ import { GameModel } from "../models/game-model"
 import { CardPosModel, getBasicCardPos, getCardPos } from "../models/card-pos-model"
 import { removeAilment } from "../utils/board"
 import { AilmentT } from "../types/game-state"
-import { isTargetingPos } from "../utils/attacks"
 
 class DyedAilment extends Ailment{
     constructor() {
 		super({
 			id: 'dyed',
 			name: 'Dyed',
+			description: 'Items attached to this Hermit become any type.',
 			duration: 0,
 			damageEffect: false,
 		})
