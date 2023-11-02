@@ -11,7 +11,7 @@ class KatherineelizRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'katherineeliz_rare',
-			numericId: 160,
+			numericId: 159,
 			name: 'Katherine',
 			rarity: 'rare',
 			hermitType: 'builder',

@@ -7,7 +7,7 @@ class Biffa2001RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'biffa2001_rare',
-			numericId: 134,
+			numericId: 158,
 			name: 'Biffa',
 			rarity: 'rare',
 			hermitType: 'miner',
