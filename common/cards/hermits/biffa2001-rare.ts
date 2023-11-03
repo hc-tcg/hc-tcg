@@ -13,7 +13,7 @@ class Biffa2001RareHermitCard extends HermitCard {
 			hermitType: 'miner',
 			health: 290,
 			primary: {
-				name: 'OHO',
+				name: 'O.H.O',
 				cost: ['miner'],
 				damage: 40,
 				power: null,
