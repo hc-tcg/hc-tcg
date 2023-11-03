@@ -13,6 +13,7 @@ class PoisonAilment extends Ailment{
 			name: 'Poison',
 			description: 'This Hermit takes an additional 20hp damage every turn until down to 10hp. Ignores armour. Continues to poison if health is recovered. Poison does not knock out Hermits.',
 			duration: 0,
+			counter: false,
 			damageEffect: true,
 		})
 	}

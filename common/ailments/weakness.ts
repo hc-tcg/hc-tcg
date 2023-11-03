@@ -16,6 +16,7 @@ class WeaknessAilment extends Ailment{
 			name: 'Weakness',
 			description: 'This Hermit is weak to the opponent\'s active Hermit\'s type.',
 			duration: 3,
+			counter: false,
 			damageEffect: false,
 		})
 	}
