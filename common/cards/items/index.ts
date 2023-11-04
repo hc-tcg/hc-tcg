@@ -42,5 +42,7 @@ export const ITEM_CARD_CLASSES: Array<ItemCard> = [
 	new TerraformRareItemCard(),
 	new MinerCommonItemCard(),
 	new MinerRareItemCard(),
-	new ClankCommonItemCard(),
+
+	// Advent of TCG cards
+	//new ClankCommonItemCard(),
 ]

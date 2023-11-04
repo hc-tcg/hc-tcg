@@ -46,5 +46,5 @@ export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	new TurtleShellEffectCard(),
 
 	// Advent of TCG cards
-	new BrewingStandEffectCard(),
+	//new BrewingStandEffectCard(),
 ]
