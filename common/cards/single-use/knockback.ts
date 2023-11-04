@@ -2,7 +2,6 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../utils/board'
 import SingleUseCard from '../base/single-use-card'
-import { applyAilment } from '../../utils/board'
 
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
