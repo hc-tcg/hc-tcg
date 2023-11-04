@@ -11,7 +11,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'smajor1995_rare',
-			numericId: 156,
+			numericId: 161,
 			name: 'Scott',
 			rarity: 'rare',
 			hermitType: 'builder',
