@@ -12,7 +12,7 @@
 	"availableActions": [],
 	"showHooksState": {
 		"enabled": false,
-		"clearConsole": false
+		"clearConsole": true
 	},
 	"autoEndTurn": false
 }
