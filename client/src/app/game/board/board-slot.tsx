@@ -9,9 +9,9 @@ import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
-import { AilmentT } from 'common/types/game-state'
+import {AilmentT} from 'common/types/game-state'
 import Ailment from 'components/ailments/ailment'
-import { AILMENTS } from 'common/ailments'
+import {AILMENTS} from 'common/ailments'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -35,7 +35,47 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 		})
 	}
 
-	const ailments_cleaned = Array.from(new Set(ailments.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance).map((a) => a) || []))
+	const renderAilments = (cleanedAilments: AilmentT[]) => {
+		return (
+			<div className={css.ailmentContainer}>
+				{cleanedAilments.map((a) => {
+					const ailment = AILMENTS[a.ailmentId]
+					if (!ailment) return null
+					if (ailment.damageEffect == true) return null
+					return <Ailment ailment={ailment} duration={a.duration} />
+				})}
+			</div>
+		)
+	}
+	const renderDamageAilments = (cleanedAilments: AilmentT[] | null) => {
+		return (
+			<div className={css.damageAilmentContainer}>
+				{cleanedAilments
+					? cleanedAilments.map((a) => {
+							const ailment = AILMENTS[a.ailmentId]
+							if (!ailment) return null
+							if (ailment.damageEffect == false) return null
+							return <Ailment ailment={ailment} />
+					  })
+					: null}
+			</div>
+		)
+	}
+
+	const hermitAilments = Array.from(
+		new Set(
+			ailments
+				.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance)
+				.map((a) => a) || []
+		)
+	)
+	const effectAilments = Array.from(
+		new Set(
+			ailments.filter(
+				(a) => rowState?.effectCard && a.targetInstance == rowState.effectCard.cardInstance
+			) || []
+		)
+	)
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	return (
@@ -54,28 +94,16 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 			{cardInfo ? (
 				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
-					{type === 'health' &&
-						<div className={css.ailmentContainer}>
-							{
-								ailments_cleaned.map((a) => {
-									const ailment = AILMENTS[a.ailmentId]
-									if (!ailment) return null
-									if (ailment.damageEffect == true) return null
-									return <Ailment ailment={ailment} duration={a.duration} />
-								})
-							}
-						</div>	
-					}
-					<div className={css.damageAilmentContainer}>
-					{type === 'health' &&
-						ailments_cleaned.map((a) => {
-							const ailment = AILMENTS[a.ailmentId]
-							if (!ailment) return null
-							if (ailment.damageEffect == false) return null
-							return <Ailment ailment={ailment} />
-						})
-					}
-					</div>
+					{type === 'health'
+						? renderAilments(hermitAilments)
+						: type === 'effect'
+						? renderAilments(effectAilments)
+						: null}
+					{type === 'health'
+						? renderDamageAilments(hermitAilments)
+						: type === 'effect'
+						? renderDamageAilments(effectAilments)
+						: renderDamageAilments(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />
