@@ -4,7 +4,7 @@ import Slot from './board-slot'
 import {SlotTypeT} from 'common/types/pick-process'
 import css from './board.module.scss'
 import cn from 'classnames'
-import { AilmentT } from 'common/types/game-state'
+import {AilmentT} from 'common/types/game-state'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,

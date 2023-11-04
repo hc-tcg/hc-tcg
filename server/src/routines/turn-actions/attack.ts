@@ -228,9 +228,7 @@ export function runAllAttacks(
 	runAfterDefenceHooks(allAttacks)
 }
 
-export function executeAllAttacks(
-	attacks: Array<AttackModel>,
-) {
+export function executeAllAttacks(attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		executeAttack(attacks[i])
 	}

@@ -481,10 +481,11 @@ function* turnSaga(game: GameModel) {
 		if (turnStartAttacks.length > 0) {
 			executeAllAttacks(turnStartAttacks)
 		}
-	
+
 		const turnStartDeadPlayerIds = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayerIds.length) {
-			game.endInfo.reason = game.state.players[turnStartDeadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
+			game.endInfo.reason =
+				game.state.players[turnStartDeadPlayerIds[0]].lives <= 0 ? 'lives' : 'hermits'
 			game.endInfo.deadPlayerIds = turnStartDeadPlayerIds
 			return 'GAME_END'
 		}

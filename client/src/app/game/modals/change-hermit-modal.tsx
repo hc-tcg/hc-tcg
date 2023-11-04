@@ -5,7 +5,7 @@ import {PickedSlotT} from 'common/types/pick-process'
 import {CARDS} from 'common/cards'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
-import { getGameState } from 'logic/game/game-selectors'
+import {getGameState} from 'logic/game/game-selectors'
 import game from '..'
 
 type Props = {

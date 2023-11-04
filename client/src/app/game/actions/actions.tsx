@@ -190,7 +190,12 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		return (
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
-				<Slot card={singleUseCard} type={'single_use'} onClick={handleClick} ailments={gameState.ailments}/>
+				<Slot
+					card={singleUseCard}
+					type={'single_use'}
+					onClick={handleClick}
+					ailments={gameState.ailments}
+				/>
 			</div>
 		)
 	}

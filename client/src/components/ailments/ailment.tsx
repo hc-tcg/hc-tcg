@@ -10,21 +10,21 @@ interface AilmentProps
 		HTMLButtonElement
 	> {
 	ailment: AilmentClass
-    duration?: number | undefined
+	duration?: number | undefined
 }
 
 const Ailment = (props: AilmentProps) => {
 	const {id, damageEffect} = props.ailment
 
-    const extension = ["sleeping", "poison", "fire"].includes(id) ? ".gif" : ".png"
-    const ailmentClass = damageEffect == true ? css.damageAilmentImage : css.ailmentImage
+	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
+	const ailmentClass = damageEffect == true ? css.damageAilmentImage : css.ailmentImage
 
 	return (
-		<Tooltip tooltip={<AilmentTooltip ailment={props.ailment} duration={props.duration}/>}>
-            <div className={css.ailment}>
-                <img className={ailmentClass} src={"/images/status/" + id + extension}></img>
-                {props.duration !== undefined && <p className={css.durationIndicator}>{props.duration}</p>}
-            </div>
+		<Tooltip tooltip={<AilmentTooltip ailment={props.ailment} duration={props.duration} />}>
+			<div className={css.ailment}>
+				<img className={ailmentClass} src={'/images/status/' + id + extension}></img>
+				{props.duration !== undefined && <p className={css.durationIndicator}>{props.duration}</p>}
+			</div>
 		</Tooltip>
 	)
 }
