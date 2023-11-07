@@ -163,6 +163,10 @@ export class GameModel {
 			}
 		}
 	}
+
+	public hasActiveRequests(): boolean {
+		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+	}
 }
 
 // thoughts going on now

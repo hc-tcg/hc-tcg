@@ -1,5 +1,6 @@
 import {AttackModel} from '../models/attack-model'
 import {CardPosModel} from '../models/card-pos-model'
+import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
@@ -81,6 +82,15 @@ export type PlayerState = {
 		/** Hook called after a single use card is applied */
 		afterApply: GameHook<(pickedSlots: PickedSlots) => void>
 
+		/**
+		 * Hook called once before each attack loop.
+		 *
+		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
+		 */
+		getAttackRequests: GameHook<
+			(activeInstance: string, hermitAttackType: HermitAttackType) => void
+		>
+
 		/** Hook that returns attacks to execute */
 		getAttacks: GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>
 		/** Hook called before the main attack loop, for every attack from our side of the board */
@@ -155,6 +165,8 @@ export type TurnState = {
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
 	blockedActions: TurnActions
+
+	currentAttack: HermitAttackType | null
 }
 
 export type LocalTurnState = {

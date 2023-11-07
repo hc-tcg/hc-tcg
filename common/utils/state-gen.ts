@@ -14,6 +14,7 @@ export function getGameState(game: GameModel): GameState {
 			opponentAvailableActions: [],
 			completedActions: [],
 			blockedActions: [],
+			currentAttack: null,
 		},
 		order: playerIds,
 		lastActionResult: null,

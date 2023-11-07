@@ -4,6 +4,7 @@ import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {HermitAttackType} from '../../types/attack'
 import {PickedSlots} from '../../types/pick-process'
+import {CardT} from '../../types/game-state'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
@@ -26,8 +27,6 @@ class RendogRareHermitCard extends HermitCard {
 				damage: 0,
 				power: "Use any secondary move of your opponent's Hermits.",
 			},
-			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], type: ['hermit'], amount: 1}],
 		})
 	}
 
@@ -38,57 +37,88 @@ class RendogRareHermitCard extends HermitCard {
 		hermitAttackType: HermitAttackType,
 		pickedSlots: PickedSlots
 	) {
+		const {player} = pos
+		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
-		const pickedHermit = pickedSlots[this.id]?.[0]
-		if (!pickedHermit || !pickedHermit.row) return []
-		const rowState = pickedHermit.row.state
-		const card = rowState.hermitCard
-		if (!card) return []
+		const pickedCard: CardT = player.custom[pickedCardKey]
+		if (pickedCard === undefined) return []
 
 		// No loops please
-		if (card.cardId === this.id) return []
+		if (pickedCard.cardId === this.id) return []
 
-		const hermitInfo = HERMIT_CARDS[card.cardId]
+		const hermitInfo = HERMIT_CARDS[pickedCard.cardId]
 		if (!hermitInfo) return []
 
 		// "Attach" that card to our side of the board
 		hermitInfo.onAttach(game, instance, pos)
 
 		// Store which card we are imitating, to delete the hooks next turn
-		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
-		pos.player.custom[imitatingCard] = card.cardId
+		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
+		player.custom[imitatingCardKey] = pickedCard.cardId
+
+		delete pos.player.custom[pickedCardKey]
 
 		// Return that cards secondary attack
 		return hermitInfo.getAttacks(game, instance, pos, hermitAttackType, {})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
+		const {player, opponentPlayer} = pos
+		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
+		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
+
+		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+			// Make sure we are attacking
+			if (activeInstance !== instance) return
+
+			// Only secondary attack
+			if (hermitAttackType !== 'secondary') return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: "Pick one of your opponent's Hermits",
+				onResult(pickResult) {
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Store the card id to use when getting attacks
+					player.custom[pickedCardKey] = pickResult.card
+
+					return 'SUCCESS'
+				},
+			})
+		})
 
 		// At the start of every turn, remove the hooks of the imitated hermit from our player
 		player.hooks.onTurnStart.add(instance, () => {
-			if (player.custom[imitatingCard] === undefined) return
+			if (player.custom[imitatingCardKey] === undefined) return
 
 			// Find the hermit info of the card we were imitating, and "detach" it
-			const hermitInfo = HERMIT_CARDS[player.custom[imitatingCard]]
+			const hermitInfo = HERMIT_CARDS[player.custom[imitatingCardKey]]
 			if (hermitInfo) {
 				hermitInfo.onDetach(game, instance, pos)
 			}
 
-			delete player.custom[imitatingCard]
+			delete player.custom[imitatingCardKey]
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const imitatingCard = this.getInstanceKey(instance, 'imitatingCard')
+		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 
+		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[imitatingCard]
+		delete player.custom[imitatingCardKey]
 	}
 }
 

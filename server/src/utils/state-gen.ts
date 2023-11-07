@@ -25,6 +25,7 @@ import ItemCard from 'common/cards/base/item-card'
 import EffectCard from 'common/cards/base/effect-card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
+import {HermitAttackType} from 'common/types/attack'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -229,6 +230,9 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
 			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
 			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			getAttackRequests: new GameHook<
+				(activeInstance: string, hermitAttackType: HermitAttackType) => void
+			>(),
 			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
 			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),

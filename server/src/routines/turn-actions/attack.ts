@@ -7,6 +7,7 @@ import {PickedSlots} from 'common/types/pick-process'
 import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
+import {getActiveRow} from 'common/utils/board'
 
 function getAttacks(
 	game: GameModel,
@@ -229,16 +230,35 @@ export function runAllAttacks(
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
-	pickedSlots: PickedSlots
+	checkForRequests = true
 ): Generator<any, GenericActionResult> {
 	if (!turnAction?.type) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
-	const hermitAttackType = attackActionToAttack[turnAction.type]
-	const {currentPlayer, opponentPlayer} = game
+	//@NOWTODO we do need just one request from client and server can only send back the following:
+	// unchanged state with pick requests. Once the last pick/modal request is successful,/
+	//we need to instantly run the attack loop and send the new state back.
+	// this keeps it consistent for the client.
+	// and in order for this to work I believe we simply need a "game.state.turn.currentAttack"
 
-	// TODO - send hermitCard from frontend for validation?
+	const hermitAttackType = attackActionToAttack[turnAction.type]
+	const {currentPlayer, opponentPlayer, state} = game
+	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.cardInstance
+	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
+
+	if (checkForRequests) {
+		// First allow cards to add attack requests
+		currentPlayer.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
+
+		if (game.hasActiveRequests()) {
+			// We have some pick/modal requests that we want to execute before the attack
+			// The code for picking new actions will automatically send the right action back to client
+			state.turn.currentAttack = hermitAttackType
+
+			return 'SUCCESS'
+		}
+	}
 
 	// Attacker
 	const playerBoard = currentPlayer.board
@@ -259,10 +279,10 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
+	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, {})
 
 	// Run all the code stuff
-	runAllAttacks(game, attacks, pickedSlots)
+	runAllAttacks(game, attacks, {})
 
 	return 'SUCCESS'
 }

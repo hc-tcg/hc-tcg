@@ -59,7 +59,7 @@ function getAvailableEnergy(game: GameModel) {
 
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
-	const {currentPlayer, opponentPlayer} = game
+	const {currentPlayer} = game
 	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
 	const actions: TurnActions = []
 
@@ -299,7 +299,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'SINGLE_USE_ATTACK':
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
-			result = yield* call(attackSaga, game, turnAction, pickedSlots)
+			result = yield* call(attackSaga, game, turnAction)
 			break
 		case 'CHANGE_ACTIVE_HERMIT':
 			result = yield* call(changeActiveHermitSaga, game, turnAction)

@@ -21,6 +21,11 @@ function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResul
 		game.state.pickRequests = []
 	}
 
+	// Remove current attack
+	if (game.state.turn.currentAttack) {
+		game.state.turn.currentAttack = null
+	}
+
 	discardSingleUse(game, currentPlayer)
 
 	return 'SUCCESS'

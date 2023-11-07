@@ -1,7 +1,5 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import {GenericActionResult} from '../../types/game-state'
-import {PickRequest, PickResult} from '../../types/server-requests'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'

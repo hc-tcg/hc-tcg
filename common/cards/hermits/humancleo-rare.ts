@@ -45,6 +45,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
+			// @NOWTODO this is currently not functioning, replace with new attack requests hook.
 			player.custom['opponent-attack'] = {
 				cardId: this.id,
 				name: this.name,

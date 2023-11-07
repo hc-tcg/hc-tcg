@@ -47,7 +47,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits.',
+					message: 'Choose a new active Hermit from your afk Hermits',
 					onResult(pickResult) {
 						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 

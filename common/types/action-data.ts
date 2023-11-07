@@ -35,7 +35,6 @@ export type PlayCardActionData = {
 export type AttackActionData = {
 	type: AttackAction
 	payload: {
-		pickResults: Record<string, Array<PickResultT>>
 		playerId: string
 	}
 }
