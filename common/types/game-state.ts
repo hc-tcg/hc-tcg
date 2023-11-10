@@ -92,15 +92,15 @@ export type PlayerState = {
 		>
 
 		/** Hook that returns attacks to execute */
-		getAttacks: GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>
+		getAttacks: GameHook<() => Array<AttackModel>>
 		/** Hook called before the main attack loop, for every attack from our side of the board */
-		beforeAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		beforeAttack: GameHook<(attack: AttackModel) => void>
 		/** Hook called before the main attack loop, for every attack targeting our side of the board */
-		beforeDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		beforeDefence: GameHook<(attack: AttackModel) => void>
 		/** Hook called for every attack from our side of the board */
-		onAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		onAttack: GameHook<(attack: AttackModel) => void>
 		/** Hook called for every attack that targets our side of the board */
-		onDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
+		onDefence: GameHook<(attack: AttackModel) => void>
 		/**
 		 * Hook called after the main attack loop, for every attack from our side of the board.
 		 *

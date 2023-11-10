@@ -3,7 +3,6 @@ import {HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {HermitAttackType} from '../../types/attack'
-import {PickedSlots} from '../../types/pick-process'
 import {CardT} from '../../types/game-state'
 
 class RendogRareHermitCard extends HermitCard {
@@ -34,12 +33,11 @@ class RendogRareHermitCard extends HermitCard {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
@@ -62,7 +60,7 @@ class RendogRareHermitCard extends HermitCard {
 		delete pos.player.custom[pickedCardKey]
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, instance, pos, hermitAttackType, {})
+		return hermitInfo.getAttacks(game, instance, pos, hermitAttackType)
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

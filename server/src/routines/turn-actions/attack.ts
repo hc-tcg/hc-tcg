@@ -27,13 +27,12 @@ function getAttacks(
 			game,
 			attackPos.row.hermitCard.cardInstance,
 			attackPos,
-			hermitAttackType,
-			pickedSlots
+			hermitAttackType
 		)
 	)
 
 	// all other attacks
-	const otherAttacks = currentPlayer.hooks.getAttacks.call(pickedSlots)
+	const otherAttacks = currentPlayer.hooks.getAttacks.call()
 	for (let i = 0; i < otherAttacks.length; i++) {
 		attacks.push(...otherAttacks[i])
 	}
@@ -81,7 +80,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 		}
 
 		// Call before attack hooks
-		player.hooks.beforeAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -99,7 +98,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedS
 		const player = attack.target.player
 
 		// Call before defence hooks
-		player.hooks.beforeDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -117,7 +116,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots 
 		const player = attack.attacker.player
 
 		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -135,7 +134,7 @@ function runOnDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots
 		const player = attack.target.player
 
 		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}

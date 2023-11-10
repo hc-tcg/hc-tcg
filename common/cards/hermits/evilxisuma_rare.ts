@@ -33,7 +33,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const disableKey = this.getInstanceKey(instance, 'disable')
 
-		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 

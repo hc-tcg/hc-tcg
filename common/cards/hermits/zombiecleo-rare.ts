@@ -3,7 +3,6 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
 import {CardT} from '../../types/game-state'
-import {PickedSlots} from '../../types/pick-process'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
 
@@ -35,11 +34,10 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
@@ -56,7 +54,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		delete pos.player.custom[imitatingCardKey]
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, card.cardInstance, pos, hermitAttackType, {})
+		return hermitInfo.getAttacks(game, card.cardInstance, pos, hermitAttackType)
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

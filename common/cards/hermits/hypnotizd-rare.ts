@@ -1,13 +1,12 @@
+import {ITEM_CARDS} from '..'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
-import {PickedSlots} from '../../types/pick-process'
-import {createWeaknessAttack} from '../../utils/attacks'
-import {discardCard} from '../../utils/movement'
-import {getActiveRow} from '../../utils/board'
-import HermitCard from '../base/hermit-card'
 import {PickRequest} from '../../types/server-requests'
-import {ITEM_CARDS} from '..'
+import {createWeaknessAttack} from '../../utils/attacks'
+import {getActiveRow, getNonEmptyRows} from '../../utils/board'
+import {discardCard} from '../../utils/movement'
+import HermitCard from '../base/hermit-card'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -39,88 +38,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 		})
 	}
 
-	// @NOWTODO - the switch needed is simple in essence - the client needs to send an attack request to the server, and the server must have the freedom to send whatever back
-	// in this case I see it as the server returning success for the attack message and then the state sent back is a pick request
-	// the thing is once the picks are all complete the attack loop needs to actually run.
-
-	//override getPickRequests(
-	//	game: GameModel,
-	//	instance: string,
-	//	pos: CardPosModel,
-	//	hermitAttackType: HermitAttackType
-	//): Array<PickRequest> {
-	//	if (hermitAttackType !== 'secondary') return []
-	//
-	//	const {player, opponentPlayer} = pos
-	//
-	//	const targetKey = this.getInstanceKey(instance, 'target')
-	//
-	//	// Requests an item that will be removed from the active Hermit. Should never be called if there are no items.
-	//	const itemRequest: PickRequest = {
-	//		id: this.getKey('itemRequest'),
-	//		message: 'Choose an item to discard from your active Hermit.',
-	//		onResult(pickResult) {
-	//			if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
-	//
-	//			const rowIndex = pickResult.rowIndex
-	//			if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-	//			if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
-	//
-	//			if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-	//			if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-	//
-	//			const itemCard = ITEM_CARDS[pickResult.card.cardId]
-	//			if (!itemCard) return 'FAILURE_INVALID_SLOT'
-	//
-	//			discardCard(game, pickResult.card)
-	//
-	//			return 'SUCCESS'
-	//		},
-	//	}
-	//
-	//	return [
-	//		{
-	//			playerId: player.id,
-	//			id: this.getKey('targetRequest'),
-	//			message: 'Choose an opposing Hermit to attack.',
-	//			onResult(pickResult) {
-	//				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
-	//
-	//				const rowIndex = pickResult.rowIndex
-	//				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-	//
-	//				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-	//				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-	//
-	//				player.custom[targetKey] = rowIndex
-	//
-	//				const isItemToDiscard = getActiveRow(player)?.itemCards.some((card) => {
-	//					if (!card) return false
-	//					if (!ITEM_CARDS[card.cardId]) return false
-	//					return true
-	//				})
-	//				const targetingAfk = rowIndex !== opponentPlayer.board.activeRow
-	//
-	//				if (isItemToDiscard && targetingAfk) {
-	//					// Add a second pick request to remove an item
-	//					player.pickRequests.push(itemRequest)
-	//				}
-	//
-	//				return 'SUCCESS'
-	//			},
-	//		},
-	//	]
-	//}
-
 	override getAttacks(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
 		const {player, opponentPlayer} = pos
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
@@ -146,7 +71,77 @@ class HypnotizdRareHermitCard extends HermitCard {
 		const weaknessAttack = createWeaknessAttack(hermitAttack)
 		if (weaknessAttack) newAttacks.push(weaknessAttack)
 
+		// Delete the target info now
+		delete player.custom[targetKey]
+
 		return newAttacks
+	}
+
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+		const {player, opponentPlayer} = pos
+		const targetKey = this.getInstanceKey(instance, 'target')
+
+		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
+
+			const inactiveRows = getNonEmptyRows(opponentPlayer, false)
+			if (inactiveRows.length === 0) return
+
+			const itemRequest: PickRequest = {
+				playerId: player.id,
+				id: this.id,
+				message: 'Choose an item to discard from your active Hermit.',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					const itemCard = ITEM_CARDS[pickResult.card.cardId]
+					if (!itemCard) return 'FAILURE_INVALID_SLOT'
+
+					discardCard(game, pickResult.card)
+
+					return 'SUCCESS'
+				},
+			}
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: "Pick one of your opponent's Hermits",
+				onResult(pickResult) {
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Store the row index to use later
+					player.custom[targetKey] = rowIndex
+
+					const isItemToDiscard = getActiveRow(player)?.itemCards.some((card) => {
+						if (!card) return false
+						if (!ITEM_CARDS[card.cardId]) return false
+						return true
+					})
+					const targetingAfk = rowIndex !== opponentPlayer.board.activeRow
+
+					if (isItemToDiscard && targetingAfk) {
+						// Add a second pick request to remove an item
+						game.addPickRequest(itemRequest)
+					}
+
+					return 'SUCCESS'
+				},
+			})
+		})
 	}
 }
 
