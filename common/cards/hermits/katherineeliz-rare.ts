@@ -75,10 +75,7 @@ class KatherineelizRareHermitCard extends HermitCard {
 					pickedPlayer.board.rows[rowIndex].effectCard = cardInfo
 
 					return 'SUCCESS'
-				},
-				onTimeout() {
-					return
-				},
+				}
 			})
 		})
 	}
