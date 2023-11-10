@@ -81,6 +81,7 @@ import PixlriffsRareHermitCard from './pixlriffs-rare'
 import LDShadowLadyRareHermitCard from './ldshadowlady-rare'
 import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
 import ShubbleYTRareHermitCard from './shubbleyt-rare'
+import SmallishbeansRareHermitCard from './smallishbeans-rare'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new BdoubleO100CommonHermitCard(),
@@ -154,18 +155,19 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new RenbobRareHermitCard(),
 
 	//Advent calendar cards
-	new DungeonTangoRareHermitCard(),
-	new PythonGBRareHermitCard(),
-	new OrionSoundRareHermitCard(),
-	new SolidaritygamingRareHermitCard(),
-	new MonkeyfarmRareHermitCard(),
-	new Smajor1995RareHermitCard(),
-	new Biffa2001RareHermitCard(),
-	new KatherineelizRareHermitCard(),
-	new PixlriffsRareHermitCard(),
-	new LDShadowLadyRareHermitCard(),
-	new BigBSt4tzRareHermitCard(),
-	new ShubbleYTRareHermitCard(),
+	// new DungeonTangoRareHermitCard(),
+	// new PythonGBRareHermitCard(),
+	// new OrionSoundRareHermitCard(),
+	// new SolidaritygamingRareHermitCard(),
+	// new MonkeyfarmRareHermitCard(),
+	// new Smajor1995RareHermitCard(),
+	// new Biffa2001RareHermitCard(),
+	// new KatherineelizRareHermitCard(),
+	// new PixlriffsRareHermitCard(),
+	// new LDShadowLadyRareHermitCard(),
+	// new BigBSt4tzRareHermitCard(),
+	// new ShubbleYTRareHermitCard(),
+	// new SmallishbeansRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES
