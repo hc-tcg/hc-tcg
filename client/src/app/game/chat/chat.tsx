@@ -19,12 +19,18 @@ function Chat() {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.disableChat === 'off' ? useSelector(getChatMessages) : []
+<<<<<<< HEAD
 	const playerId = useSelector(getPlayerId)
 	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
 
+=======
+	const playerStates = useSelector(getPlayerStates)
+	const playerId = useSelector(getPlayerId)
+	const opponent = useSelector(getOpponentName)
+>>>>>>> 37d4104b (Add option to disable chat)
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
 	const bindChatPos = useDrag((params: any) => {
