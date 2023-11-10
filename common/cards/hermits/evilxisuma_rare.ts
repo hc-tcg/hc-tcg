@@ -47,6 +47,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			game.addModalRequest({
 				playerId: player.id,
 				id: this.id,
+				pick: null,
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.disable) return 'FAILURE_INVALID_DATA'
 

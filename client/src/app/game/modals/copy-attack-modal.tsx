@@ -1,42 +1,40 @@
 import Modal from 'components/modal'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import css from './game-modals.module.scss'
-import Button from 'components/button'
 import {modalRequest} from 'logic/game/game-actions'
-import {useSelector} from 'react-redux'
-import {getOpponentActiveRow} from '../game-selectors'
 import {HERMIT_CARDS} from 'common/cards'
 import Attack from './attack-modal/attack'
+import {getGameState} from 'logic/game/game-selectors'
+import {PickResult} from 'common/types/server-requests'
 
 type Props = {
 	closeModal: () => void
 }
-function EvilXModal({closeModal}: Props) {
+function CopyAttackModal({closeModal}: Props) {
 	const dispatch = useDispatch()
-	const opponentRow = useSelector(getOpponentActiveRow)
 
-	if (!opponentRow || !opponentRow.hermitCard) return null
+	const pickedSlot: PickResult | null | undefined = useSelector(getGameState)?.currentModalPick
 
-	const opponentHermitInfo = HERMIT_CARDS[opponentRow.hermitCard.cardId]
+	if (!pickedSlot?.rowIndex || !pickedSlot.card) return null
 
-	const hermitFullName = opponentRow.hermitCard.cardId.split('_')[0]
+	const opponentHermitInfo = HERMIT_CARDS[pickedSlot.card.cardId]
+
+	const hermitFullName = pickedSlot.card.cardId.split('_')[0]
 
 	const handlePrimary = () => {
-		dispatch(modalRequest({modalResult: {disable: 'primary'}}))
+		dispatch(modalRequest({modalResult: {pick: 'primary'}}))
 		closeModal()
 	}
 
 	const handleSecondary = () => {
-		dispatch(modalRequest({modalResult: {disable: 'secondary'}}))
+		dispatch(modalRequest({modalResult: {pick: 'secondary'}}))
 		closeModal()
 	}
 
 	return (
-		<Modal closeModal={handleSecondary} title="Evil X: Disable an attack for 1 turn">
+		<Modal closeModal={handleSecondary} title="Choose an attack to copy">
 			<div className={css.confirmModal}>
-				<div className={css.description}>
-					Which of the opponent's attacks do you want to disable?
-				</div>
+				<div className={css.description}>Which of the Hermit's attacks do you want to copy?</div>
 				<div className={css.description}>
 					<Attack
 						key="primary"
@@ -58,4 +56,4 @@ function EvilXModal({closeModal}: Props) {
 	)
 }
 
-export default EvilXModal
+export default CopyAttackModal

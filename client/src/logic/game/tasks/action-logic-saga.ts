@@ -54,6 +54,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield put(setOpenedModal('looting'))
 		} else if (id === 'chest') {
 			yield put(setOpenedModal('chest'))
+		} else if (id === 'rendog_rare' || id === 'zombiecleo_rare') {
+			yield put(setOpenedModal('copyAttack'))
 		}
 	} else if (
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&

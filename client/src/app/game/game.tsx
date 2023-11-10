@@ -35,6 +35,7 @@ import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actio
 import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
+import CopyAttackModal from './modals/copy-attack-modal'
 // import {getSettings} from 'logic/local-settings/local-settings-selectors'
 // import {setSetting} from 'logic/local-settings/local-settings-actions'
 
@@ -52,6 +53,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	chest: ChestModal,
 	evilX: EvilXModal,
 	spyglass: SpyglassModal,
+	copyAttack: CopyAttackModal,
 }
 
 const renderModal = (

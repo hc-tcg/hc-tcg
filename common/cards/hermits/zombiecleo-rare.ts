@@ -25,7 +25,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				name: 'Puppetry',
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 0,
-				power: 'Use a secondary attack from any of your AFK Hermits.',
+				power: 'Use an attack from any of your AFK Hermits.',
 			},
 		})
 	}
@@ -36,29 +36,36 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
-		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
+		const {player} = pos
+		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
 
-		const card: CardT = pos.player.custom[imitatingCardKey]
-		if (card === undefined) return []
+		const pickedCard: CardT = player.custom[pickedCardKey].card
+		if (pickedCard === undefined) return []
 
 		// No loops please
-		if (card.cardId === this.id) return []
+		if (pickedCard.cardId === this.id) return []
 
-		const hermitInfo = HERMIT_CARDS[card.cardId]
+		const hermitInfo = HERMIT_CARDS[pickedCard.cardId]
 		if (!hermitInfo) return []
 
-		// We used the card, delete the data
-		delete pos.player.custom[imitatingCardKey]
+		// Store which card we are imitating, to delete the hooks next turn
+		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
+		player.custom[imitatingCardKey] = pickedCard.cardId
+
+		const attackType = player.custom[pickedCardKey].attack
+
+		delete pos.player.custom[pickedCardKey]
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, card.cardInstance, pos, hermitAttackType)
+		return hermitInfo.getAttacks(game, instance, pos, attackType)
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
+		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
@@ -68,14 +75,10 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			// Make sure there is something to choose
-			const playerHasAfk = getNonEmptyRows(player, false).length > 0
-			if (!playerHasAfk) return
-
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
-				message: 'Pick one of your AFK Hermits',
+				message: "Pick one of your AFK Hermits",
 				onResult(pickResult) {
 					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
@@ -86,8 +89,44 @@ class ZombieCleoRareHermitCard extends HermitCard {
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					// Store the card to use
-					player.custom[imitatingCardKey] = pickResult.card
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Delete the hooks of the card we're imitating if it changes
+					if (pickResult.card.cardId !== player.custom[imitatingCardKey]) {
+						const hermitInfo = HERMIT_CARDS[player.custom[imitatingCardKey]]
+						if (hermitInfo) {
+							hermitInfo.onDetach(game, instance, pos)
+						}
+						delete player.custom[imitatingCardKey]
+
+						//Attack new card
+						const NewHermitInfo = HERMIT_CARDS[pickResult.card.cardId]
+						if (NewHermitInfo) NewHermitInfo.onAttach(game, instance, pos)
+					}
+
+					game.addModalRequest({
+						playerId: player.id,
+						id: this.id,
+						pick: pickResult,
+						onResult(modalResult) {
+							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+		
+							// Store the card id to use when getting attacks
+							player.custom[pickedCardKey] = {
+								card: pickResult.card,
+								attack: modalResult.pick
+							}
+		
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							player.custom[pickedCardKey] = {
+								card: pickResult.card,
+								attack: 'primary'
+							}
+						},
+					})
 
 					return 'SUCCESS'
 				},

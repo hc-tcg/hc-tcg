@@ -31,6 +31,7 @@ class ChestSingleUseCard extends SingleUseCard {
 		game.addModalRequest({
 			playerId: player.id,
 			id: this.id,
+			pick: null,
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
 
