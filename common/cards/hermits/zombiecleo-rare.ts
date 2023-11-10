@@ -78,7 +78,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
-				message: 'Pick one of your AFK Hermits',
+				message: "Pick one of your AFK Hermits",
 				onResult(pickResult) {
 					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
