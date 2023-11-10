@@ -26,7 +26,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 				name: 'To Dye For',
 				cost: ['any', 'any', 'any'],
 				damage: 70,
-				power: 'Select one of your Hermits. Items attached to this Hermit become any type.',
+				power: 'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
 			},
 		})
 	}
@@ -55,9 +55,6 @@ class Smajor1995RareHermitCard extends HermitCard {
 					applyAilment(game, 'dyed', pickResult.card.cardInstance)
 
 					return 'SUCCESS'
-				},
-				onTimeout() {
-					return
 				},
 			})
 		})

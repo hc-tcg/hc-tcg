@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import HermitCard from '../base/hermit-card'
-import { removeAilment } from '../../utils/board'
+import {removeAilment} from '../../utils/board'
 
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
@@ -47,7 +47,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return ail.targetInstance === pos.card?.cardInstance
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 

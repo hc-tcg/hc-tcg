@@ -21,8 +21,8 @@ class OrionSoundRareHermitCard extends HermitCard {
 			secondary: {
 				name: 'Melody',
 				cost: ['explorer', 'explorer'],
-				damage: 0,
-				power: 'Heal all allied afk hermits 30hp. Heal all opposing afk hermits 10hp',
+				damage: 70,
+				power: 'Heal all AFK Hermits 30hp',
 			},
 		})
 	}
