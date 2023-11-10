@@ -268,6 +268,7 @@ export type LocalGameState = {
 	// personal data
 	hand: Array<CardT>
 	pileCount: number
+	topCard: CardT | null
 	discarded: Array<CardT>
 
 	// ids
