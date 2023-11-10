@@ -12,10 +12,10 @@ import {useDrag} from '@use-gesture/react'
 
 function Chat() {
 	const dispatch = useDispatch()
-	const chatMessages = useSelector(getChatMessages)
+	const settings = useSelector(getSettings)
+	const chatMessages = settings.disableChat === 'off' ? useSelector(getChatMessages) : []
 	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
-	const settings = useSelector(getSettings)
 	const opponent = useSelector(getOpponentName)
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
