@@ -14,6 +14,7 @@ import {
 	DiscardedModal,
 	EndTurnModal,
 	EvilXModal,
+	ShelbyModal,
 	ForfeitModal,
 	SpyglassModal,
 	UnmetConditionModal,
@@ -51,6 +52,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	borrow: BorrowModal,
 	chest: ChestModal,
 	evilX: EvilXModal,
+	shubble: ShelbyModal,
 	spyglass: SpyglassModal,
 }
 

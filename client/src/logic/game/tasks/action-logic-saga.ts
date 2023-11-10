@@ -48,6 +48,8 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 			yield fork(borrowSaga)
 		} else if (id === 'evilxisuma_rare') {
 			yield put(setOpenedModal('evilX'))
+		} else if (id === 'shubbleyt_rare') {
+			yield put(setOpenedModal('shubble'))
 		} else if (id === 'spyglass') {
 			yield put(setOpenedModal('spyglass'))
 		} else if (id === 'looting') {
