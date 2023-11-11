@@ -42,6 +42,8 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		if (attacks[0].type !== 'secondary') return attacks
 
+		if (!player.custom[pickedCardKey] || !player.custom[pickedCardKey].card) return []
+
 		const pickedCard: CardT = player.custom[pickedCardKey].card
 		if (pickedCard === undefined) return []
 
