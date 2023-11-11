@@ -158,6 +158,11 @@ export type PickCardActionResult =
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
+export type ModalData = {
+	modalId: string,
+	payload?: any
+}
+
 export type TurnState = {
 	turnNumber: number
 	currentPlayerId: string
@@ -272,8 +277,7 @@ export type LocalGameState = {
 	} | null
 
 	currentPickMessage: string | null
-	currentModalId: string | null
-	currentModalPick: PickResult | null
+	currentModalData: ModalData | null
 
 	players: Record<string, LocalPlayerState>
 

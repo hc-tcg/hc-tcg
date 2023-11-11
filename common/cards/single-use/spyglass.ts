@@ -36,8 +36,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 			game.addModalRequest({
 				playerId: player.id,
-				id: this.id,
-				pick: null,
+				data: {modalId: this.id},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 

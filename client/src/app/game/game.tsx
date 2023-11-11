@@ -13,7 +13,6 @@ import {
 	ConfirmModal,
 	DiscardedModal,
 	EndTurnModal,
-	EvilXModal,
 	ForfeitModal,
 	SpyglassModal,
 	UnmetConditionModal,
@@ -51,7 +50,6 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	// Custom modals
 	borrow: BorrowModal,
 	chest: ChestModal,
-	evilX: EvilXModal,
 	spyglass: SpyglassModal,
 	copyAttack: CopyAttackModal,
 }
@@ -187,11 +185,11 @@ function Game() {
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
-		const someCustom = gameState.currentPickMessage || gameState.currentModalId
+		const someCustom = gameState.currentPickMessage || gameState.currentModalData
 		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.currentPickMessage, gameState.currentModalId])
+	}, [gameState.currentPickMessage, gameState.currentModalData])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {

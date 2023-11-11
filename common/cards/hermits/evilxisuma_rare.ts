@@ -1,4 +1,4 @@
-import {CardPosModel} from '../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getActiveRowPos} from '../../utils/board'
 import {flipCoin} from '../../utils/coinFlips'
@@ -46,12 +46,15 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 			game.addModalRequest({
 				playerId: player.id,
-				id: this.id,
-				pick: null,
+				data: {modalId: 'copyAttack', payload: {
+					modalName: "Evil X: Disable an attack for 1 turn",
+					modalDescription: "Which of the opponent's attacks do you want to disable?",
+					cardPos: getBasicCardPos(game, opponentActiveRow.row.hermitCard.cardInstance)
+				}},
 				onResult(modalResult) {
-					if (!modalResult || !modalResult.disable) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
-					player.custom[disableKey] = modalResult.disable
+					player.custom[disableKey] = modalResult.pick
 
 					return 'SUCCESS'
 				},
@@ -62,7 +65,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			})
 
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				const disable = player.custom[this.getInstanceKey(instance, 'disable')]
+				const disable = player.custom[disableKey]
 				if (!disable) return
 
 				const activeRow = opponentPlayer.board.activeRow
@@ -73,7 +76,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				game.addBlockedActions(actionToBlock)
 
 				opponentPlayer.hooks.onTurnStart.remove(instance)
-				delete player.custom[this.getInstanceKey(instance, 'disable')]
+				delete player.custom[disableKey]
 			})
 		})
 	}

@@ -1,5 +1,5 @@
 import {HERMIT_CARDS} from '..'
-import {CardPosModel} from '../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
 import {CardT} from '../../types/game-state'
@@ -41,6 +41,8 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
+
+		if (!player.custom[pickedCardKey] || !player.custom[pickedCardKey].card) return []
 
 		const pickedCard: CardT = player.custom[pickedCardKey].card
 		if (pickedCard === undefined) return []
@@ -107,8 +109,11 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 					game.addModalRequest({
 						playerId: player.id,
-						id: this.id,
-						pick: pickResult,
+						data: {modalId: 'copyAttack', payload: {
+							modalName: "Cleo: Choose an attack to copy",
+							modalDescription: "Which of the Hermit's attacks do you want to copy?",
+							cardPos: getBasicCardPos(game, pickResult.card.cardInstance)
+						}},
 						onResult(modalResult) {
 							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 		

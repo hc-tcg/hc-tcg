@@ -283,8 +283,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 	// Pick message or modal id
 	let currentPickMessage = null
-	let currentModalId = null
-	let currentModalPick = null
+	let currentModalData = null
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
@@ -297,8 +296,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		}
 	} else if (currentModalRequest?.playerId === player.playerId) {
 		// Only if there is no pick request will we send a modal request
-		currentModalId = currentModalRequest.id
-		currentModalPick = currentModalRequest.pick
+		currentModalData = currentModalRequest.data
 	}
 
 	const localGameState: LocalGameState = {
@@ -323,8 +321,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		lastActionResult: game.state.lastActionResult,
 
 		currentPickMessage,
-		currentModalId,
-		currentModalPick,
+		currentModalData,
 
 		players,
 

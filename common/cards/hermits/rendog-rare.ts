@@ -1,7 +1,7 @@
 import HermitCard from '../base/hermit-card'
 import {HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos} from '../../models/card-pos-model'
 import {HermitAttackType} from '../../types/attack'
 import {CardT} from '../../types/game-state'
 
@@ -37,9 +37,12 @@ class RendogRareHermitCard extends HermitCard {
 	) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
+		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
+
+		if (!player.custom[pickedCardKey] || !player.custom[pickedCardKey].card) return []
 
 		const pickedCard: CardT = player.custom[pickedCardKey].card
 		if (pickedCard === undefined) return []
@@ -51,12 +54,11 @@ class RendogRareHermitCard extends HermitCard {
 		if (!hermitInfo) return []
 
 		// Store which card we are imitating, to delete the hooks next turn
-		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		player.custom[imitatingCardKey] = pickedCard.cardId
 
 		const attackType = player.custom[pickedCardKey].attack
 
-		delete pos.player.custom[pickedCardKey]
+		delete player.custom[pickedCardKey]
 
 		// Return that cards secondary attack
 		return hermitInfo.getAttacks(game, instance, pos, attackType)
@@ -102,8 +104,11 @@ class RendogRareHermitCard extends HermitCard {
 
 					game.addModalRequest({
 						playerId: player.id,
-						id: this.id,
-						pick: pickResult,
+						data: {modalId: 'copyAttack', payload: {
+							modalName: "Rendog: Choose an attack to copy",
+							modalDescription: "Which of the Hermit's attacks do you want to copy?",
+							cardPos: getBasicCardPos(game, pickResult.card.cardInstance)
+						}},
 						onResult(modalResult) {
 							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 		
