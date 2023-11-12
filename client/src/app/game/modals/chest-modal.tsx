@@ -5,7 +5,7 @@ import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './game-modals.module.scss'
 import {getGameState} from 'logic/game/game-selectors'
-import {applyEffect, customModal, removeEffect} from 'logic/game/game-actions'
+import {applyEffect, modalRequest, removeEffect} from 'logic/game/game-actions'
 import Button from 'components/button'
 import {equalCard} from 'common/utils/cards'
 
@@ -24,15 +24,15 @@ function ChestModal({closeModal}: Props) {
 	}
 
 	const handleClose = () => {
-		dispatch(customModal({modalResult: {card: null}}))
+		dispatch(modalRequest({modalResult: {card: null}}))
 		closeModal()
 	}
 
 	const handleConfirm = () => {
 		if (!selected) {
-			dispatch(customModal({modalResult: {card: null}}))
+			dispatch(modalRequest({modalResult: {card: null}}))
 		} else {
-			dispatch(customModal({modalResult: {card: selected}}))
+			dispatch(modalRequest({modalResult: {card: selected}}))
 		}
 		closeModal()
 	}

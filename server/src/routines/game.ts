@@ -10,8 +10,8 @@ import removeEffectSaga from './turn-actions/remove-effect'
 import chatSaga from './background/chat'
 import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
-import pickCardSaga from './turn-actions/pick-card'
-import customModalSaga from './turn-actions/custom-modal'
+import pickRequestSaga from './turn-actions/pick-request'
+import modalRequestSaga from './turn-actions/modal-request'
 import {TurnActions, CardT, PlayerState, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
@@ -58,40 +58,47 @@ function getAvailableEnergy(game: GameModel) {
 }
 
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
-	const {turn: turnState} = game.state
-	const {currentPlayer, opponentPlayer} = game
+	const {turn: turnState, pickRequests, modalRequests} = game.state
+	const {currentPlayer} = game
+	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
 	const actions: TurnActions = []
 
 	// Custom modals
-	if (currentPlayer.modalRequests.length > 0) {
-		return ['CUSTOM_MODAL']
+	if (modalRequests.length > 0) {
+		const request = modalRequests[0]
+		if (request.playerId === currentPlayer.id) {
+			return ['MODAL_REQUEST']
+		} else {
+			// Activate opponent action timer
+			if (game.state.timer.opponentActionStartTime === null) {
+				game.state.timer.turnStartTime = Date.now()
+				game.state.timer.opponentActionStartTime = Date.now()
+			}
+			return ['WAIT_FOR_OPPONENT_ACTION']
+		}
 	}
 
 	// Pick requests
-	let pickRequestActive = false
-
-	// Check current player first
-	if (currentPlayer.pickRequests.length > 0) {
-		pickRequestActive = true
-
-		actions.push('PICK_CARD')
-	}
-
-	// Check opponent player only if current player has no requests
-	if (!pickRequestActive && opponentPlayer.pickRequests.length > 0) {
-		// If we are waiting for opponent only ever allow waiting
-
-		if (game.state.timer.opponentActionStartTime === null) {
-			game.state.timer.turnStartTime = Date.now()
-			game.state.timer.opponentActionStartTime = Date.now()
+	if (pickRequests.length > 0) {
+		const request = pickRequests[0]
+		if (request.playerId === currentPlayer.id) {
+			let pickActions: TurnActions = ['PICK_REQUEST']
+			if (su && !suUsed) {
+				pickActions.push('REMOVE_EFFECT')
+			}
+			return pickActions
+		} else {
+			// Activate opponent action timer
+			if (game.state.timer.opponentActionStartTime === null) {
+				game.state.timer.turnStartTime = Date.now()
+				game.state.timer.opponentActionStartTime = Date.now()
+			}
+			return ['WAIT_FOR_OPPONENT_ACTION']
 		}
-		return ['WAIT_FOR_OPPONENT_PICK']
 	}
 
-	// No pick request for opponent
+	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
-
-	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
 	const hasOtherHermit = rows.some((row, index) => {
 		return !!row.hermitCard && index !== activeRow
 	})
@@ -99,20 +106,18 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Actions that require us to have an active row
 	if (activeRow !== null) {
 		// Change active hermit
-		if (hasOtherHermit && !pickRequestActive) {
+		if (hasOtherHermit) {
 			actions.push('CHANGE_ACTIVE_HERMIT')
 		}
 
 		// Su actions
 		if (su && !suUsed) {
 			actions.push('REMOVE_EFFECT')
-			if (!pickRequestActive) {
-				actions.push('APPLY_EFFECT')
-			}
+			actions.push('APPLY_EFFECT')
 		}
 
 		// Attack actions
-		if (activeRow !== null && turnState.turnNumber > 1 && !pickRequestActive) {
+		if (activeRow !== null && turnState.turnNumber > 1) {
 			const hermitId = rows[activeRow]?.hermitCard?.cardId
 			const hermitInfo = hermitId ? HERMIT_CARDS[hermitId] : null
 
@@ -134,13 +139,11 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		}
 
 		// End turn action
-		if (!pickRequestActive) {
-			actions.push('END_TURN')
-		}
+		actions.push('END_TURN')
 	}
 
 	// Play card actions require an active row unless it's the players first turn
-	if (activeRow !== null || (turnState.turnNumber <= 2 && !pickRequestActive)) {
+	if (activeRow !== null || turnState.turnNumber <= 2) {
 		const handCards = currentPlayer.hand.map((card) => CARDS[card.cardId])
 		const allDesiredActions: TurnActions = []
 		for (let x = 0; x < handCards.length; x++) {
@@ -164,8 +167,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		)
 	})
 
-	// Force add change active hermit if the active row is null and we are not running a pick request
-	if (activeRow === null && hasOtherHermit && !pickRequestActive) {
+	// Force add change active hermit if the active row is null
+	if (activeRow === null && hasOtherHermit) {
 		filteredActions.push('CHANGE_ACTIVE_HERMIT')
 	}
 
@@ -286,7 +289,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'SINGLE_USE_ATTACK':
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
-			result = yield* call(attackSaga, game, turnAction, pickedSlots)
+			result = yield* call(attackSaga, game, turnAction)
 			break
 		case 'CHANGE_ACTIVE_HERMIT':
 			result = yield* call(changeActiveHermitSaga, game, turnAction)
@@ -297,15 +300,15 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
 			break
-		case 'PICK_CARD':
+		case 'PICK_REQUEST':
 			result = yield* call(
-				pickCardSaga,
+				pickRequestSaga,
 				game,
 				(turnAction as PickCardActionData)?.payload?.pickResult
 			)
 			break
-		case 'CUSTOM_MODAL':
-			result = yield* call(customModalSaga, game, turnAction?.payload?.modalResult)
+		case 'MODAL_REQUEST':
+			result = yield* call(modalRequestSaga, game, turnAction?.payload?.modalResult)
 			break
 		case 'END_TURN':
 			endTurn = true
@@ -330,14 +333,14 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_CARD'].map((type) => playerAction(type, opponentPlayerId)),
+			...['PICK_REQUEST'].map((type) => playerAction(type, opponentPlayerId)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
 				'PLAY_EFFECT_CARD',
 				'PLAY_SINGLE_USE_CARD',
-				'PICK_CARD',
-				'CUSTOM_MODAL',
+				'PICK_REQUEST',
+				'MODAL_REQUEST',
 				'CHANGE_ACTIVE_HERMIT',
 				'APPLY_EFFECT',
 				'REMOVE_EFFECT',
@@ -361,6 +364,7 @@ function* turnActionsSaga(game: GameModel) {
 
 			// Get blocked actions from hooks
 			// @TODO this should also not really be a hook anymore
+			// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
 			blockedActions.push(...DEBUG_CONFIG.blockedActions)
@@ -379,8 +383,16 @@ function* turnActionsSaga(game: GameModel) {
 
 			availableActions.push(...DEBUG_CONFIG.availableActions)
 
-			game.state.turn.opponentAvailableActions =
-				opponentPlayer.pickRequests.length > 0 ? ['PICK_CARD'] : ['WAIT_FOR_TURN']
+			// @NOWTODO also modal request is an option, but need to make sure client too supports this.
+
+			// Set final actions in state
+			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
+			if (game.state.pickRequests[0]?.playerId === opponentPlayerId) {
+				opponentAction = 'PICK_REQUEST'
+			} else if (game.state.modalRequests[0]?.playerId === opponentPlayerId) {
+				opponentAction = 'MODAL_REQUEST'
+			}
+			game.state.turn.opponentAvailableActions = [opponentAction]
 			game.state.turn.availableActions = availableActions
 
 			if (
@@ -400,7 +412,7 @@ function* turnActionsSaga(game: GameModel) {
 			let maxTime = CONFIG.limits.maxTurnTime * 1000
 			let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
 
-			if (availableActions.includes('WAIT_FOR_OPPONENT_PICK')) {
+			if (availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) {
 				game.state.timer.opponentActionStartTime =
 					game.state.timer.opponentActionStartTime || Date.now()
 				maxTime = CONFIG.limits.extraActionTime * 1000
@@ -423,10 +435,20 @@ function* turnActionsSaga(game: GameModel) {
 
 			// Handle timeout
 			if (raceResult.timeout) {
-				// First check to see if the opponent had a pick request active
-				if (opponentPlayer.pickRequests[0]) {
-					// If yes, timout that pick request and remove it
-					opponentPlayer.pickRequests.shift()?.onTimeout?.()
+				// First check to see if the opponent had a pick or modal request active
+				const currentPickRequest = game.state.pickRequests[0]
+				if (currentPickRequest?.playerId === opponentPlayerId) {
+					// If yes, timeout that pick request and remove it
+					game.removePickRequest()
+					// Reset timer to max time
+					game.state.timer.turnStartTime = Date.now()
+					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+					continue
+				}
+				const currentModalRequest = game.state.modalRequests[0]
+				if (currentModalRequest?.playerId === opponentPlayerId) {
+					// If yes, timeout that pick request and remove it
+					game.removeModalRequest()
 					// Reset timer to max time
 					game.state.timer.turnStartTime = Date.now()
 					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
@@ -501,19 +523,18 @@ function* turnSaga(game: GameModel) {
 	currentPlayer.hooks.onTurnEnd.call(drawCards)
 
 	// Timeout and clear pick requests
-	const allPickRequests = [...currentPlayer.pickRequests, ...opponentPlayer.pickRequests]
-	for (let i = 0; i < allPickRequests.length; i++) {
-		allPickRequests[i].onTimeout?.()
+	const pickRequests = game.state.pickRequests
+	for (let i = 0; i < pickRequests.length; i++) {
+		pickRequests[i].onTimeout?.()
 	}
-	currentPlayer.pickRequests = []
-	opponentPlayer.pickRequests = []
+	game.state.pickRequests = []
 
 	// Timeout and clear modal requests
-	// @TODO again modal requests don't handle opponents now
-	for (let i = 0; i < currentPlayer.modalRequests.length; i++) {
-		currentPlayer.modalRequests[i].onTimeout()
+	const modalRequests = game.state.modalRequests
+	for (let i = 0; i < modalRequests.length; i++) {
+		modalRequests[i].onTimeout()
 	}
-	currentPlayer.modalRequests = []
+	game.state.modalRequests = []
 
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) {

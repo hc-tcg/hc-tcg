@@ -17,7 +17,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.beforeDefence.add(instance, (attack, pickedSlots) => {
+		player.hooks.beforeDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || attack.type !== 'effect') return
 
 			attack.multiplyDamage(this.id, 0).lockDamage()

@@ -45,6 +45,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
+			// @NOWTODO this is currently not functioning, replace with new attack requests hook.
 			player.custom['opponent-attack'] = {
 				cardId: this.id,
 				name: this.name,
@@ -52,19 +53,11 @@ class HumanCleoRareHermitCard extends HermitCard {
 			}
 			player.custom[instanceKey] = true
 
-			opponentPlayer.hooks.beforeAttack.add(instance, (attack, pickedSlots) => {
+			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 
 				if (opponentInactiveRows.length === 0) return
 				if (!attack.isType('primary', 'secondary')) return
-
-				const slot = pickedSlots[this.id][0]
-				if (!slot || !slot.row || !slot.row.state.hermitCard) return
-				attack.target = {
-					player: opponentPlayer,
-					row: slot.row.state,
-					rowIndex: slot.row.index,
-				}
 
 				const weaknessAttack = createWeaknessAttack(attack)
 				if (weaknessAttack) attack.addNewAttack(weaknessAttack)

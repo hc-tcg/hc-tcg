@@ -36,7 +36,7 @@ class MilkBucketEffectCard extends EffectCard {
 				})
 			})
 		} else if (slot.type === 'effect') {
-			player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
+			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return ail.targetInstance === row.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
