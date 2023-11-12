@@ -42,7 +42,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	const lastActionResult = gameState.lastActionResult
 
-	if (gameState.currentModalData?.modalId !== null) {
+	if (gameState.currentModalData && gameState.currentModalData.modalId) {
 		const id = gameState.currentModalData?.modalId
 		if (id === 'grian_rare') {
 			yield fork(borrowSaga)
