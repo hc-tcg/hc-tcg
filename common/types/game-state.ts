@@ -5,7 +5,7 @@ import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {PickProcessT, PickedSlots} from './pick-process'
-import {ModalRequest, PickRequest} from './server-requests'
+import {ModalRequest, PickRequest, PickResult} from './server-requests'
 
 export type PlayerId = string
 
@@ -158,6 +158,11 @@ export type PickCardActionResult =
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
+export type ModalData = {
+	modalId: string,
+	payload?: any
+}
+
 export type TurnState = {
 	turnNumber: number
 	currentPlayerId: string
@@ -272,7 +277,7 @@ export type LocalGameState = {
 	} | null
 
 	currentPickMessage: string | null
-	currentModalId: string | null
+	currentModalData: ModalData | null
 
 	players: Record<string, LocalPlayerState>
 

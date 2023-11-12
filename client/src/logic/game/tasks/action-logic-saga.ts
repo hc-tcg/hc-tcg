@@ -42,18 +42,12 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	const lastActionResult = gameState.lastActionResult
 
-	if (gameState.currentModalId !== null) {
-		const id = gameState.currentModalId
+	if (gameState.currentModalData && gameState.currentModalData.modalId) {
+		const id = gameState.currentModalData?.modalId
 		if (id === 'grian_rare') {
 			yield fork(borrowSaga)
-		} else if (id === 'evilxisuma_rare') {
-			yield put(setOpenedModal('evilX'))
-		} else if (id === 'spyglass') {
-			yield put(setOpenedModal('spyglass'))
-		} else if (id === 'looting') {
-			yield put(setOpenedModal('looting'))
-		} else if (id === 'chest') {
-			yield put(setOpenedModal('chest'))
+		} else {
+			yield put(setOpenedModal(id))
 		}
 	} else if (
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&

@@ -13,7 +13,6 @@ import {
 	ConfirmModal,
 	DiscardedModal,
 	EndTurnModal,
-	EvilXModal,
 	ForfeitModal,
 	SpyglassModal,
 	UnmetConditionModal,
@@ -35,6 +34,7 @@ import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actio
 import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
+import CopyAttackModal from './modals/copy-attack-modal'
 // import {getSettings} from 'logic/local-settings/local-settings-selectors'
 // import {setSetting} from 'logic/local-settings/local-settings-actions'
 
@@ -50,8 +50,8 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	// Custom modals
 	borrow: BorrowModal,
 	chest: ChestModal,
-	evilX: EvilXModal,
 	spyglass: SpyglassModal,
+	copyAttack: CopyAttackModal,
 }
 
 const renderModal = (
@@ -185,11 +185,11 @@ function Game() {
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
-		const someCustom = gameState.currentPickMessage || gameState.currentModalId
+		const someCustom = gameState.currentPickMessage || gameState.currentModalData
 		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.currentPickMessage, gameState.currentModalId])
+	}, [gameState.currentPickMessage, gameState.currentModalData])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {

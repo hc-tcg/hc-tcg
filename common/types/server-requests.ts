@@ -1,4 +1,4 @@
-import {ActionResult, CardT} from './game-state'
+import {ActionResult, CardT, ModalData} from './game-state'
 
 export type PickedSlotType = 'item' | 'effect' | 'hermit' | 'hand'
 
@@ -33,7 +33,7 @@ export type ModalRequest = {
 	/** The id of the player to request the pick from */
 	playerId: string
 	/** The id of the custom modal, used to reference it at a later date */
-	id: string
+	data: ModalData
 	/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
 	onResult: (modalResult: any) => ActionResult
 	/** Called when the modal request times out before being resolved successfully */

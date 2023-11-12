@@ -27,6 +27,9 @@ function* modalRequestSaga(game: GameModel, modalResult: any): Generator<any, Ac
 				},
 			}
 			const attackResult = yield* call(attackSaga, game, turnAction, false)
+
+			game.state.turn.currentAttack = null
+
 			return attackResult
 		}
 	}
