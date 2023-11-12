@@ -308,7 +308,6 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// personal info
 		hand: playerState.hand,
 		pileCount: playerState.pile.length,
-		topCard: playerState.pile.length > 0 ? playerState.pile[0] : null,
 		discarded: playerState.discarded,
 
 		// ids
