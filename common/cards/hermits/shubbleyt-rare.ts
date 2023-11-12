@@ -38,8 +38,11 @@ class ShubbleYTRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
-			player.modalRequests.push({
-				id: this.id,
+			game.addModalRequest({
+				playerId: player.id,
+				data: {modalId: 'copyAttack', payload: {
+					topCard: player.pile[0]
+				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.scry) return 'SUCCESS'
