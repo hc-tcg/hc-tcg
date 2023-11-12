@@ -68,15 +68,7 @@ import EvilXisumaRareHermitCard from './evilxisuma_rare'
 import HelsknightRareHermitCard from './helsknight-rare'
 import RenbobRareHermitCard from './renbob-rare'
 import HumanCleoRareHermitCard from './humancleo-rare'
-import DungeonTangoRareHermitCard from './dungeontango-rare'
-import PythonGBRareHermitCard from './pythongb-rare'
-import OrionSoundRareHermitCard from './orionsound-rare'
-import MonkeyfarmRareHermitCard from './monkeyfarm-rare'
 import HermitCard from '../base/hermit-card'
-import SolidaritygamingRareHermitCard from './solidaritygaming-rare'
-import Smajor1995RareHermitCard from './smajor1995'
-import Biffa2001RareHermitCard from './biffa2001-rare'
-import KatherineelizRareHermitCard from './katherineeliz-rare'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new BdoubleO100CommonHermitCard(),
@@ -148,16 +140,6 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new PotatoBoyRareHermitCard(),
 	new PoultrymanCommonHermitCard(),
 	new RenbobRareHermitCard(),
-
-	//Advent calendar cards
-	//new DungeonTangoRareHermitCard(),
-	//new PythonGBRareHermitCard(),
-	//new OrionSoundRareHermitCard(),
-	//new SolidaritygamingRareHermitCard(),
-	//new MonkeyfarmRareHermitCard(),
-	//new Smajor1995RareHermitCard(),
-	//new Biffa2001RareHermitCard(),
-	//new KatherineelizRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES
