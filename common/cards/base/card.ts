@@ -3,6 +3,8 @@ import {GameModel} from '../../models/game-model'
 import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {HermitAttackType} from '../../types/attack'
+import {PickRequest} from '../../types/server-requests'
 
 type CardDefs = {
 	type: CardTypeT
@@ -93,6 +95,20 @@ abstract class Card {
 	 */
 	public showSingleUseTooltip(): boolean {
 		return false
+	}
+
+	//@TODO implement
+	/**
+	 * Returns pick requests to be executed before the attack loop
+	 */
+	public getPickRequests(
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel,
+		hermitAttackType: HermitAttackType
+	): Array<PickRequest> {
+		// Default is nothing
+		return []
 	}
 
 	/**

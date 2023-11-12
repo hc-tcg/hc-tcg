@@ -35,13 +35,12 @@ export type PlayCardActionData = {
 export type AttackActionData = {
 	type: AttackAction
 	payload: {
-		pickResults: Record<string, Array<PickResultT>>
 		playerId: string
 	}
 }
 
 export type PickCardActionData = {
-	type: 'PICK_CARD'
+	type: 'PICK_REQUEST'
 	payload: {
 		pickResult: PickResult
 	}

@@ -6,18 +6,18 @@ import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {setOpenedModal, applyEffect, customModal} from 'logic/game/game-actions'
+import {setOpenedModal, applyEffect, modalRequest} from 'logic/game/game-actions'
 import SingleUseCard from 'common/cards/base/single-use-card'
 
 function* borrowSaga(): SagaIterator {
 	yield put(setOpenedModal('borrow'))
 	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
 	if (result.type === 'BORROW_DISCARD') {
-		yield put(customModal({modalResult: {attach: false}}))
+		yield put(modalRequest({modalResult: {attach: false}}))
 		return
 	}
 
-	yield put(customModal({modalResult: {attach: true}}))
+	yield put(modalRequest({modalResult: {attach: true}}))
 }
 
 function* singleUseSaga(card: CardT): SagaIterator {
@@ -42,20 +42,20 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 	const pState = gameState.players[playerId]
 	const lastActionResult = gameState.lastActionResult
 
-	if (gameState.currentCustomModal !== null) {
-		const id = gameState.currentCustomModal
+	if (gameState.currentModalData && gameState.currentModalData.modalId) {
+		const id = gameState.currentModalData?.modalId
 		if (id === 'grian_rare') {
 			yield fork(borrowSaga)
-		} else if (id === 'evilxisuma_rare') {
-			yield put(setOpenedModal('evilX'))
-		} else if (id === 'shubbleyt_rare') {
-			yield put(setOpenedModal('shubble'))
 		} else if (id === 'spyglass') {
 			yield put(setOpenedModal('spyglass'))
 		} else if (id === 'looting') {
 			yield put(setOpenedModal('looting'))
 		} else if (id === 'chest') {
 			yield put(setOpenedModal('chest'))
+		} else if (id === 'copyAttack') {
+			yield put(setOpenedModal('copyAttack'))
+		} else if (id === 'shubbleyt_rare') {
+			yield put(setOpenedModal('shubble'))
 		}
 	} else if (
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&

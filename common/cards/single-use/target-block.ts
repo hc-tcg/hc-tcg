@@ -31,7 +31,8 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
-		player.pickRequests.push({
+		game.addPickRequest({
+			playerId: player.id,
 			id: this.id,
 			message: "Pick one of your opponent's AFK Hermits",
 			onResult(pickResult) {

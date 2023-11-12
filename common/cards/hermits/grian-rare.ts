@@ -72,8 +72,9 @@ class GrianRareHermitCard extends HermitCard {
 				return
 			}
 
-			player.modalRequests.push({
-				id: this.id,
+			game.addModalRequest({
+				playerId: player.id,
+				data: {modalId: this.id},
 				onResult(modalResult) {
 					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
 

@@ -14,6 +14,7 @@ export function getGameState(game: GameModel): GameState {
 			opponentAvailableActions: [],
 			completedActions: [],
 			blockedActions: [],
+			currentAttack: null,
 		},
 		order: playerIds,
 		ailments: [],
@@ -25,6 +26,9 @@ export function getGameState(game: GameModel): GameState {
 			}),
 			{}
 		),
+
+		pickRequests: [],
+		modalRequests: [],
 
 		timer: {
 			turnStartTime: 0,
