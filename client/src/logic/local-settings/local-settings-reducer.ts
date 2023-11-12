@@ -19,6 +19,7 @@ const defaultState: LocalSettings = {
 	soundVolume: '100',
 	musicVolume: '75',
 	profanityFilter: 'on',
+	disableChat: 'off',
 	confirmationDialogs: 'on',
 	showChat: 'off',
 	panoramaEnabled: true,
