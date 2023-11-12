@@ -41,8 +41,7 @@ class RendogRareHermitCard extends HermitCard {
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type !== 'secondary') return attacks
-
-		if (!player.custom[pickedCardKey] || !player.custom[pickedCardKey].card) return []
+		if (attacks[0].id !== this.getInstanceKey(instance)) return attacks
 
 		const pickedCard: CardT = player.custom[pickedCardKey].card
 		if (pickedCard === undefined) return []

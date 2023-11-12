@@ -33,7 +33,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const disableKey = this.getInstanceKey(instance, 'disable')
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
@@ -83,7 +83,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 	}
 
 	override getExpansion() {
