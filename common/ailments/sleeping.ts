@@ -1,16 +1,17 @@
-import Ailment from "./ailment"
-import { GameModel } from "../models/game-model"
-import { HERMIT_CARDS } from "../cards"
-import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
-import { removeAilment } from "../utils/board"
-import { AilmentT } from "../types/game-state"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {HERMIT_CARDS} from '../cards'
+import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
 
-class SleepingAilment extends Ailment{
-    constructor() {
+class SleepingAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'sleeping',
 			name: 'Sleeping',
-			description: 'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
+			description:
+				'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
 			duration: 3,
 			counter: false,
 			damageEffect: false,
@@ -31,14 +32,15 @@ class SleepingAilment extends Ailment{
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
 			if (!targetPos || !ailmentInfo.duration) return
-			ailmentInfo.duration --
+			ailmentInfo.duration--
 
 			if (ailmentInfo.duration === 0 || player.board.activeRow !== targetPos.rowIndex) {
 				removeAilment(game, pos, ailmentInfo.ailmentInstance)
 				return
 			}
 
-			if (player.board.activeRow === targetPos.rowIndex) game.addBlockedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
+			if (player.board.activeRow === targetPos.rowIndex)
+				game.addBlockedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {

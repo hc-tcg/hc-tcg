@@ -15,7 +15,7 @@ const cardClasses: Array<Ailment> = [
 	new WeaknessAilment(),
 ]
 
-export const AILMENTS: Record<string, Ailment> = cardClasses.reduce(
+export const AILMENT_CLASSES: Record<string, Ailment> = cardClasses.reduce(
 	(result: Record<string, Ailment>, card) => {
 		result[card.id] = card
 		return result

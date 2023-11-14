@@ -1,11 +1,11 @@
-import Ailment from "./ailment"
-import { GameModel } from "../models/game-model"
-import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
-import { removeAilment } from "../utils/board"
-import { AilmentT } from "../types/game-state"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
 
-class BadOmenAilment extends Ailment{
-    constructor() {
+class BadOmenAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'badomen',
 			name: 'Bad Omen',
@@ -24,7 +24,7 @@ class BadOmenAilment extends Ailment{
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			if (!ailmentInfo.duration) return
-			ailmentInfo.duration --
+			ailmentInfo.duration--
 
 			if (ailmentInfo.duration === 0) removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})

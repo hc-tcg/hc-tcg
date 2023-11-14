@@ -4,7 +4,7 @@ import {TurnActions} from '../../types/game-state'
 import {discardCard} from '../../utils/movement'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
-import { removeAilment } from '../../utils/board'
+import {removeAilment} from '../../utils/board'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -29,9 +29,12 @@ class WaterBucketEffectCard extends EffectCard {
 				const targetSlot = pickedCards[0]
 				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance && ail.ailmentId == 'fire'
+					return (
+						ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance &&
+						ail.ailmentId == 'fire'
+					)
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 
@@ -50,7 +53,7 @@ class WaterBucketEffectCard extends EffectCard {
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return ail.targetInstance === row.hermitCard?.cardInstance && ail.ailmentId == 'fire'
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})
@@ -60,7 +63,7 @@ class WaterBucketEffectCard extends EffectCard {
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return ail.targetInstance === row.hermitCard?.cardInstance && ail.ailmentId == 'fire'
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})
