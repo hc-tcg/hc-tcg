@@ -94,7 +94,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				if (itemIndex === undefined || !opponentActivePos) {
 					// Something went wrong, just return success
 					// To clarify, the problem here is that if itemIndex is null this pick request will never be able to succeed if we don't do this
-					// @TODO is a better failsafe mechanism needed?
+					// @TODO is a better failsafe mechanism needed for 2 picks in a row?
 					return 'SUCCESS'
 				}
 
