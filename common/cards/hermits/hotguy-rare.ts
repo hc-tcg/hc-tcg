@@ -2,14 +2,13 @@ import {SINGLE_USE_CARDS} from '..'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
-import {PickedSlots} from '../../types/pick-process'
 import HermitCard from '../base/hermit-card'
 
 class HotguyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'hotguy_rare',
-			numericId: 130,
+			numericId: 131,
 			name: 'Hotguy',
 			rarity: 'rare',
 			hermitType: 'explorer',
@@ -34,10 +33,9 @@ class HotguyRareHermitCard extends HermitCard {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 		// Used for the Bow, we need to know the attack type
 		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
 

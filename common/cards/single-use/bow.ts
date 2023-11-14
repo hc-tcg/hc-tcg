@@ -12,8 +12,6 @@ class BowSingleUseCard extends SingleUseCard {
 			name: 'Bow',
 			rarity: 'common',
 			description: 'Do 40hp damage to an AFK Hermit of your choice.',
-			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
@@ -32,13 +30,36 @@ class BowSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
+		const targetKey = this.getInstanceKey(instance, 'target')
 
-		player.hooks.getAttacks.add(instance, (pickedSlots) => {
+		player.hooks.getAttackRequests.add(instance, () => {
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: "Pick one of your opponent's AFK Hermits",
+				onResult(pickResult) {
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Store the row index to use later
+					player.custom[targetKey] = rowIndex
+
+					return 'SUCCESS'
+				},
+			})
+		})
+
+		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
-			const pickedSlot = pickedSlots[this.id]
-			const opponentIndex = pickedSlot[0]?.row?.index
+			const opponentIndex = player.custom[targetKey]
 			if (opponentIndex === null || opponentIndex === undefined) return []
 			const opponentRow = opponentPlayer.board.rows[opponentIndex]
 			if (!opponentRow || !opponentRow.hermitCard) return []
@@ -67,8 +88,12 @@ class BowSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+
+		const targetKey = this.getInstanceKey(instance, 'target')
+		delete player.custom[targetKey]
 	}
 
 	override canAttack() {

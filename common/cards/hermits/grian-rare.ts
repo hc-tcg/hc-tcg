@@ -6,7 +6,7 @@ import {CardT} from '../../types/game-state'
 import {getActiveRowPos} from '../../utils/board'
 import {equalCard, isRemovable} from '../../utils/cards'
 import {flipCoin} from '../../utils/coinFlips'
-import {discardCard, swapSlots} from '../../utils/movement'
+import {discardCard} from '../../utils/movement'
 import HermitCard from '../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -72,8 +72,9 @@ class GrianRareHermitCard extends HermitCard {
 				return
 			}
 
-			player.modalRequests.push({
-				id: this.id,
+			game.addModalRequest({
+				playerId: player.id,
+				data: {modalId: this.id},
 				onResult(modalResult) {
 					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
 

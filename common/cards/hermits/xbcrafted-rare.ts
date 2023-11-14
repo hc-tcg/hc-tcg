@@ -1,7 +1,6 @@
 import {CardPosModel, getCardPos} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
-import {PickedSlots} from '../../types/pick-process'
 import HermitCard from '../base/hermit-card'
 import {createWeaknessAttack, isTargetingPos} from '../../utils/attacks'
 import {getActiveRowPos} from '../../utils/board'
@@ -33,10 +32,9 @@ class XBCraftedRareHermitCard extends HermitCard {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		if (attacks[0].type === 'secondary') {
 			// Noice attack, set flag to ignore target effect card

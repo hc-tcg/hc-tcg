@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {applySingleUse, getActiveRow} from '../../utils/board'
 import SingleUseCard from '../base/single-use-card'
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -11,17 +12,6 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.',
-
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					slot: ['hermit'],
-					amount: 1,
-					empty: true,
-					emptyRow: true,
-				},
-			],
 		})
 	}
 
@@ -30,6 +20,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		if (canAttach !== 'YES') return canAttach
 
 		const {player} = pos
+		if (!player.board.activeRow) return 'NO'
 		for (const row of player.board.rows) {
 			if (row.hermitCard === null) return 'YES'
 		}
@@ -39,25 +30,35 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const slots = pickedSlots[this.id] || []
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick an empty Hermit slot',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
-			if (slots.length !== 1) return
+				const rowIndex = pickResult.rowIndex
+				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-			const pickedSlot = slots[0]
-			if (player.board.activeRow === null || !pickedSlot.row) return
+				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+				// We need to have no card there
+				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-			const activeRow = player.board.rows[player.board.activeRow]
-			if (activeRow.health) activeRow.health -= 10
-			player.board.rows[pickedSlot.row.index] = activeRow
-			player.board.rows[player.board.activeRow] = pickedSlot.row.state
-			player.board.activeRow = pickedSlot.row.index
+				// Apply
+				applySingleUse(game)
+
+				// Move us
+				if (player.board.activeRow) {
+					const activeRow = player.board.rows[player.board.activeRow]
+					if (activeRow.health) activeRow.health -= 10
+					player.board.rows[player.board.activeRow] = player.board.rows[rowIndex]
+					player.board.rows[rowIndex] = activeRow
+					player.board.activeRow = rowIndex
+				}
+
+				return 'SUCCESS'
+			},
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 
 	override getExpansion() {

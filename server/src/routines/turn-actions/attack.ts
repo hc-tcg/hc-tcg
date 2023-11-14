@@ -7,6 +7,7 @@ import {PickedSlots} from 'common/types/pick-process'
 import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
+import {getActiveRow} from 'common/utils/board'
 
 function getAttacks(
 	game: GameModel,
@@ -26,13 +27,12 @@ function getAttacks(
 			game,
 			attackPos.row.hermitCard.cardInstance,
 			attackPos,
-			hermitAttackType,
-			pickedSlots
+			hermitAttackType
 		)
 	)
 
 	// all other attacks
-	const otherAttacks = currentPlayer.hooks.getAttacks.call(pickedSlots)
+	const otherAttacks = currentPlayer.hooks.getAttacks.call()
 	for (let i = 0; i < otherAttacks.length; i++) {
 		attacks.push(...otherAttacks[i])
 	}
@@ -80,7 +80,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 		}
 
 		// Call before attack hooks
-		player.hooks.beforeAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -98,7 +98,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedS
 		const player = attack.target.player
 
 		// Call before defence hooks
-		player.hooks.beforeDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -116,7 +116,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots 
 		const player = attack.attacker.player
 
 		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -134,7 +134,7 @@ function runOnDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots
 		const player = attack.target.player
 
 		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -187,8 +187,6 @@ export function runAllAttacks(
 
 	// Main attack loop
 	while (attacks.length > 0) {
-		// Process all current attacks one at a time
-
 		// STEP 1 - Call before attack and defence for all attacks
 		runBeforeAttackHooks(attacks, pickedSlots)
 		runBeforeDefenceHooks(attacks, pickedSlots)
@@ -237,16 +235,29 @@ export function executeAllAttacks(attacks: Array<AttackModel>) {
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
-	pickedSlots: PickedSlots
+	checkForRequests = true
 ): Generator<any, GenericActionResult> {
 	if (!turnAction?.type) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
-	const {currentPlayer, opponentPlayer} = game
+	const {currentPlayer, opponentPlayer, state} = game
+	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.cardInstance
+	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
-	// TODO - send hermitCard from frontend for validation?
+	if (checkForRequests) {
+		// First allow cards to add attack requests
+		currentPlayer.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
+
+		if (game.hasActiveRequests()) {
+			// We have some pick/modal requests that we want to execute before the attack
+			// The code for picking new actions will automatically send the right action back to client
+			state.turn.currentAttack = hermitAttackType
+
+			return 'SUCCESS'
+		}
+	}
 
 	// Attacker
 	const playerBoard = currentPlayer.board
@@ -267,10 +278,10 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
+	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, {})
 
 	// Run all the code stuff
-	runAllAttacks(game, attacks, pickedSlots)
+	runAllAttacks(game, attacks, {})
 
 	return 'SUCCESS'
 }

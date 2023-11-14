@@ -128,9 +128,10 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
-		const waitingForOpponentPick =
-			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
-		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick Request' : "Opponent's Turn"
+		const waitingForOpponent =
+			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
+		let turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
+		if (pickMessage) turnMsg = 'Pick a card'
 		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
@@ -147,7 +148,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		if (pickMessage) {
 			message = pickMessage
-		} else if (waitingForOpponentPick) {
+		} else if (waitingForOpponent) {
 			message = "Waiting for opponent's action..."
 		} else if (endTurn && availableActions.length === 1) {
 			message = 'End your turn when ready'
