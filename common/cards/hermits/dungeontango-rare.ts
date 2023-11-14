@@ -44,7 +44,8 @@ class DungeonTangoRareHermitCard extends HermitCard {
 			} while (i < player.pile.length)
 			if (i == player.pile.length) return
 
-			player.pickRequests.push({
+			game.addPickRequest({
+				playerId: player.id,
 				id: this.id,
 				message: 'Choose an item card to discard',
 				onResult(pickResult) {

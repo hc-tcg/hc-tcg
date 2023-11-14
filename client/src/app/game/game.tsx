@@ -13,6 +13,7 @@ import {
 	DiscardedModal,
 	EndTurnModal,
 	ForfeitModal,
+	SelectCardsModal,
 	SpyglassModal,
 	UnmetConditionModal,
 } from './modals'
@@ -49,6 +50,7 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	chest: ChestModal,
 	spyglass: SpyglassModal,
 	copyAttack: CopyAttackModal,
+	selectCards: SelectCardsModal,
 }
 
 const renderModal = (

@@ -40,7 +40,8 @@ class Smajor1995RareHermitCard extends HermitCard {
 			const playerInactiveRows = getNonEmptyRows(player, false)
 			if (playerInactiveRows.length === 0) return
 
-			player.pickRequests.push({
+			game.addPickRequest({
+				playerId: player.id,
 				id: instance,
 				message: 'Choose an AFK Hermit to dye.',
 				onResult(pickResult) {

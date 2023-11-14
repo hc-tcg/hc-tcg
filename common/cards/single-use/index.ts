@@ -43,6 +43,9 @@ import TargetBlockSingleUseCard from './target-block'
 import LootingSingleUseCard from './looting'
 import TreasureHunterSingleUseCard from './treasure-hunter'
 import SingleUseCard from '../base/single-use-card'
+import BrushSingleUseCard from './brush'
+import GlowstoneSingleUseCard from './glowstone'
+import LanternSingleUseCard from './lantern'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new InstantHealthSingleUseCard(),
@@ -93,4 +96,7 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 
 	// Advent calendar cards
 	//new TreasureHunterSingleUseCard(),
+	new BrushSingleUseCard(),
+	new GlowstoneSingleUseCard(),
+	new LanternSingleUseCard(),
 ]
