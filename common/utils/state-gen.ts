@@ -17,6 +17,7 @@ export function getGameState(game: GameModel): GameState {
 			currentAttack: null,
 		},
 		order: playerIds,
+		ailments: [],
 		lastActionResult: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({

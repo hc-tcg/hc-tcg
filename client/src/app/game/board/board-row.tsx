@@ -4,6 +4,7 @@ import Slot from './board-slot'
 import {SlotTypeT} from 'common/types/pick-process'
 import css from './board.module.scss'
 import cn from 'classnames'
+import {AilmentT} from 'common/types/game-state'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
@@ -22,8 +23,9 @@ type BoardRowProps = {
 	onClick: (meta: any) => void
 	rowState: RowState
 	active: boolean
+	ailments: Array<AilmentT>
 }
-const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
+const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) => {
 	const handleSlotClick = (slotType: SlotTypeT, slotIndex: number, card: CardT | null) => {
 		onClick({slotType, slotIndex: slotType === 'item' ? slotIndex : 0, card})
 	}
@@ -40,6 +42,7 @@ const BoardRow = ({type, onClick, rowState, active}: BoardRowProps) => {
 				active={active}
 				key={slotType + '-' + index}
 				type={slotType}
+				ailments={ailments}
 			/>
 		)
 	})

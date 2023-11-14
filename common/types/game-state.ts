@@ -14,17 +14,11 @@ export type CardT = {
 	cardInstance: string
 }
 
-export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'slowness' | 'badomen' | 'weakness'
-	duration?: number
-}
-
 export type RowStateWithHermit = {
 	hermitCard: CardT
 	effectCard: CardT | null
 	itemCards: Array<CardT | null>
 	health: number
-	ailments: Array<Ailment>
 }
 
 export type RowStateWithoutHermit = {
@@ -32,12 +26,24 @@ export type RowStateWithoutHermit = {
 	effectCard: null
 	itemCards: Array<null>
 	health: null
-	ailments: Array<Ailment>
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type CoinFlipT = 'heads' | 'tails'
+
+export type AilmentT = {
+	/** The ID of the ailment. */
+	ailmentId: string
+	/** The ailment's instance. */
+	ailmentInstance: string
+	/** The target card's instance. */
+	targetInstance: string
+	/** The duration of the effect. If undefined, the effect is infinite. */
+	duration?: number
+	/** Whether the ailment is a damage effect or not. */
+	damageEffect: boolean
+}
 
 export type CurrentCoinFlipT = {
 	name: string
@@ -124,7 +130,7 @@ export type PlayerState = {
 		 *
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
 		 */
-		onTurnStart: GameHook<() => void>
+		onTurnStart: GameHook<(attacks: Array<AttackModel>) => void>
 		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
 		/** Hook called when the time runs out*/
@@ -184,6 +190,7 @@ export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
+	ailments: Array<AilmentT>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -261,6 +268,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
+	ailments: Array<AilmentT>
 
 	// personal data
 	hand: Array<CardT>

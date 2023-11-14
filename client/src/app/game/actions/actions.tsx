@@ -132,7 +132,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			availableActions.includes('WAIT_FOR_OPPONENT_ACTION') && availableActions.length === 1
 		let turnMsg = turn ? 'Your Turn' : "Opponent's Turn"
 		if (pickMessage) turnMsg = 'Pick a card'
-		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
 		const endTurn = availableActions.includes('END_TURN')
 		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
@@ -151,8 +150,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			message = pickMessage
 		} else if (waitingForOpponent) {
 			message = "Waiting for opponent's action..."
-		} else if (knockedOut) {
-			message = 'Activate an AFK Hermit'
 		} else if (endTurn && availableActions.length === 1) {
 			message = 'End your turn when ready'
 		} else if (changeHermit && availableActions.length === 1) {
@@ -194,7 +191,12 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		return (
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
-				<Slot card={singleUseCard} type={'single_use'} onClick={handleClick} />
+				<Slot
+					card={singleUseCard}
+					type={'single_use'}
+					onClick={handleClick}
+					ailments={gameState.ailments}
+				/>
 			</div>
 		)
 	}

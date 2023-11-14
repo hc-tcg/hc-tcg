@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {HERMIT_CARDS} from '..'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
+import { applyAilment, removeAilment } from '../../utils/board'
 
 class BedEffectCard extends EffectCard {
 	constructor() {
@@ -33,18 +34,14 @@ class BedEffectCard extends EffectCard {
 		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
 
 		if (row && row.hermitCard) {
-			row.health = HERMIT_CARDS[row.hermitCard.cardId].health
-
-			// Clear any previous sleeping
-			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-
-			// Set new sleeping for 3 turns (2 + the current turn)
-			row.ailments.push({id: 'sleeping', duration: 3})
+			applyAilment(game, 'sleeping', row.hermitCard.cardInstance)
 		}
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(instance, () => {
-			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
+			const isSleeping = game.state.ailments.some((a) => 
+				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+			)
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
 				return
@@ -60,17 +57,16 @@ class BedEffectCard extends EffectCard {
 			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
 				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
-				// Clear any previous sleeping
-				row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
-
-				// Set new sleeping for 3 turns (2 + the current turn)
-				row.ailments.push({id: 'sleeping', duration: 3})
+				// Add new sleeping ailment
+				applyAilment(game, 'sleeping', row.hermitCard.cardInstance)
 			}
 			delete player.custom[hermitSlot]
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
-			const isSleeping = row?.ailments.some((a) => a.id === 'sleeping')
+			const isSleeping = game.state.ailments.some((a) => 
+				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+			)
 
 			// if sleeping has worn off, discard the bed
 			if (!isSleeping) {

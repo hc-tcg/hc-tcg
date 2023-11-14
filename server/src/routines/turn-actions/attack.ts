@@ -226,6 +226,12 @@ export function runAllAttacks(
 	runAfterDefenceHooks(allAttacks)
 }
 
+export function executeAllAttacks(attacks: Array<AttackModel>) {
+	for (let i = 0; i < attacks.length; i++) {
+		executeAttack(attacks[i])
+	}
+}
+
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
@@ -278,41 +284,6 @@ function* attackSaga(
 	runAllAttacks(game, attacks, {})
 
 	return 'SUCCESS'
-}
-
-export function runAilmentAttacks(game: GameModel, player: PlayerState) {
-	let attacks: Array<AttackModel> = []
-
-	// Get ailment attacks
-	for (let i = 0; i < player.board.rows.length; i++) {
-		const row = player.board.rows[i]
-		if (!row.health) continue
-
-		const hasFire = !!row.ailments.find((a) => a.id === 'fire')
-		const hasPoison = !!row.ailments.find((a) => a.id === 'poison')
-
-		// NOTE - only ailment attacks have no attacker, all others do
-		const attack = new AttackModel({
-			id: hasFire ? 'fire' : hasPoison ? 'poison' : undefined,
-			target: {
-				player,
-				rowIndex: i,
-				row,
-			},
-			type: 'ailment',
-		})
-
-		if (hasFire) {
-			attacks.push(attack.addDamage('ailment', 20))
-		} else if (hasPoison) {
-			// Calculate max poison damage
-			const poisonDamage = Math.max(Math.min(row.health - 10, 20), 0)
-			attacks.push(attack.addDamage('ailment', poisonDamage))
-		}
-	}
-
-	// Run the code for the attacks
-	runAllAttacks(game, attacks)
 }
 
 export default attackSaga

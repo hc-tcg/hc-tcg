@@ -5,6 +5,8 @@ import {PickedSlotT} from 'common/types/pick-process'
 import {CARDS} from 'common/cards'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
+import {getGameState} from 'logic/game/game-selectors'
+import game from '..'
 
 type Props = {
 	closeModal: () => void
@@ -14,8 +16,9 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
 	const availableActions = useSelector(getAvailableActions)
 	const playerState = useSelector(getPlayerState)
+	const gameState = useSelector(getGameState)
 
-	if (info.slot.type !== 'hermit' || !playerState || !info.row) {
+	if (info.slot.type !== 'hermit' || !playerState || !gameState || !info.row) {
 		throw new Error('This should never happen')
 	}
 

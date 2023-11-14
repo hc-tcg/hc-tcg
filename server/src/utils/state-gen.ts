@@ -149,7 +149,6 @@ export function getEmptyRow(): RowState {
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
-		ailments: [],
 	}
 	return rowState
 }
@@ -308,6 +307,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
+		ailments: game.state.ailments,
 
 		// personal info
 		hand: playerState.hand,

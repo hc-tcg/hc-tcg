@@ -150,8 +150,8 @@ class HumanCleoRareHermitCard extends HermitCard {
 				if (!opponentActiveRow?.row?.hermitCard) return blockedActions
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
-				const isSleeping = opponentActiveRow.row.ailments.some((a) => a.id === 'sleeping')
-				if (isSleeping) return blockedActions
+				if (blockedActions.includes("PRIMARY_ATTACK") || blockedActions.includes("SECONDARY_ATTACK"))
+					return blockedActions
 
 				if (
 					!hasEnoughEnergy(energyTypes, activeHermitInfo.primary.cost) &&
