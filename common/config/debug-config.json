@@ -6,7 +6,7 @@
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,
-	"startWithAllCards": false,
+	"startWithAllCards": true,
 	"unlimitedCards": false,
 	"blockedActions": [],
 	"availableActions": [],
