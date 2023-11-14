@@ -494,7 +494,7 @@ function* turnSaga(game: GameModel) {
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	// Call turn start 
+	// Call turn start
 	const turnStartAttacks: Array<AttackModel> = []
 	currentPlayer.hooks.onTurnStart.call(turnStartAttacks)
 
