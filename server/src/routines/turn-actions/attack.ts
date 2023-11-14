@@ -235,12 +235,6 @@ function* attackSaga(
 		return 'FAILURE_INVALID_DATA'
 	}
 
-	//@NOWTODO we do need just one request from client and server can only send back the following:
-	// unchanged state with pick requests. Once the last pick/modal request is successful,/
-	//we need to instantly run the attack loop and send the new state back.
-	// this keeps it consistent for the client.
-	// and in order for this to work I believe we simply need a "game.state.turn.currentAttack"
-
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, opponentPlayer, state} = game
 	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.cardInstance
