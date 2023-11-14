@@ -10,7 +10,7 @@ import { STRENGTHS } from "../const/strengths"
 import { WEAKNESS_DAMAGE } from "../const/damage"
 
 class WeaknessAilment extends Ailment{
-    constructor() {
+	constructor() {
 		super({
 			id: 'weakness',
 			name: 'Weakness',

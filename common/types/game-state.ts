@@ -5,8 +5,7 @@ import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {PickProcessT, PickedSlots} from './pick-process'
-import {ModalRequest, PickRequest, PickResult} from './server-requests'
-import Ailment from '../ailments/ailment'
+import {ModalRequest, PickRequest} from './server-requests'
 
 export type PlayerId = string
 

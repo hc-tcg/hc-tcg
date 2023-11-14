@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
-import { removeAilment } from '../../utils/board'
+import {removeAilment} from '../../utils/board'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -29,9 +29,12 @@ class MilkBucketEffectCard extends EffectCard {
 				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
 
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					return (
+						ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance &&
+						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					)
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})
@@ -39,9 +42,12 @@ class MilkBucketEffectCard extends EffectCard {
 			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return ail.targetInstance === row.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					return (
+						ail.targetInstance === row.hermitCard?.cardInstance &&
+						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					)
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})
@@ -49,9 +55,12 @@ class MilkBucketEffectCard extends EffectCard {
 			opponentPlayer.hooks.afterApply.add(instance, (attack) => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return ail.targetInstance === row.hermitCard?.cardInstance && (ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					return (
+						ail.targetInstance === row.hermitCard?.cardInstance &&
+						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					)
 				})
-				ailmentsToRemove.map((ail) => {
+				ailmentsToRemove.forEach((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})

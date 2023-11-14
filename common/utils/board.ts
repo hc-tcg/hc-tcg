@@ -1,5 +1,5 @@
 import {CARDS, ITEM_CARDS} from '../cards'
-import { AILMENTS } from '../ailments'
+import {AILMENT_CLASSES} from '../ailments'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
@@ -138,22 +138,22 @@ export function applySingleUse(
 export function applyAilment(
 	game: GameModel,
 	ailmentId: string,
-	targetInstance: string | undefined,
+	targetInstance: string | undefined
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 
 	const pos = getCardPos(game, targetInstance)
 
 	if (!pos) return 'FAILURE_INVALID_DATA'
-	
-	const ailment = AILMENTS[ailmentId]
+
+	const ailment = AILMENT_CLASSES[ailmentId]
 	const ailmentInstance = Math.random().toString()
 
 	const ailmentInfo: AilmentT = {
 		ailmentId: ailmentId,
 		ailmentInstance: ailmentInstance,
 		targetInstance: targetInstance,
-		damageEffect: ailment.damageEffect
+		damageEffect: ailment.damageEffect,
 	}
 
 	ailment.onApply(game, ailmentInfo, pos)
@@ -169,11 +169,11 @@ export function applyAilment(
 export function removeAilment(
 	game: GameModel,
 	pos: CardPosModel,
-	ailmentInstance: string,
+	ailmentInstance: string
 ): GenericActionResult {
 	const ailments = game.state.ailments.filter((a) => a.ailmentInstance === ailmentInstance)
 
-	const ailmentObject = AILMENTS[ailments[0].ailmentId]
+	const ailmentObject = AILMENT_CLASSES[ailments[0].ailmentId]
 	ailmentObject.onRemoval(game, ailments[0], pos)
 	game.state.ailments = game.state.ailments.filter((a) => !ailments.includes(a))
 
