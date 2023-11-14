@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {SlotPos} from '../../types/cards'
+import {applySingleUse} from '../../utils/board'
 import {isCardType} from '../../utils/cards'
 import {swapSlots} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
@@ -14,56 +15,6 @@ class LadderSingleUseCard extends SingleUseCard {
 			rarity: 'ultra_rare',
 			description:
 				'Swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
-
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					slot: ['hermit'],
-					type: ['hermit'],
-					amount: 1,
-					adjacent: 'active',
-				},
-			],
-		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const slots = pickedSlots[this.id] || []
-			const activeRowIndex = player.board.activeRow
-
-			if (slots.length !== 1 || activeRowIndex === null) return
-
-			const playerActiveRow = player.board.rows[activeRowIndex]
-
-			const inactiveHermitCardInfo = slots[0]
-			const inactiveHermitCard = inactiveHermitCardInfo.slot.card
-
-			if (inactiveHermitCard === null || !inactiveHermitCardInfo.row) return
-
-			const inactivePos: SlotPos = {
-				rowIndex: activeRowIndex,
-				row: playerActiveRow,
-				slot: {
-					index: 0,
-					type: 'hermit',
-				},
-			}
-			const activePos: SlotPos = {
-				rowIndex: inactiveHermitCardInfo.row.index,
-				row: inactiveHermitCardInfo.row.state,
-				slot: {
-					index: 0,
-					type: 'hermit',
-				},
-			}
-
-			swapSlots(game, activePos, inactivePos, true)
-
-			player.board.activeRow = inactiveHermitCardInfo.row.index
 		})
 	}
 
@@ -87,9 +38,61 @@ class LadderSingleUseCard extends SingleUseCard {
 		return 'NO'
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick an AFK Hermit adjacent to your active Hermit',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (!isCardType(pickResult.card, 'hermit')) return 'FAILURE_CANNOT_COMPLETE'
+
+				// Row picked must be an adjacent one
+				const pickedIndex = pickResult.rowIndex
+				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				const activeRowIndex = player.board.activeRow
+				if (pickedIndex === activeRowIndex || activeRowIndex === null) return 'FAILURE_INVALID_SLOT'
+				const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
+					(index) => index >= 0 && index < player.board.rows.length
+				)
+				if (!adjacentRowsIndex.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
+
+				const activeRow = player.board.rows[activeRowIndex]
+				const row = player.board.rows[pickedIndex]
+				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
+
+				// Apply
+				applySingleUse(game)
+
+				// Swap slots
+				const activePos: SlotPos = {
+					rowIndex: activeRowIndex,
+					row: activeRow,
+					slot: {
+						index: 0,
+						type: 'hermit',
+					},
+				}
+				const inactivePos: SlotPos = {
+					rowIndex: pickedIndex,
+					row,
+					slot: {
+						index: 0,
+						type: 'hermit',
+					},
+				}
+
+				swapSlots(game, activePos, inactivePos, true)
+				player.board.activeRow = pickedIndex
+
+				return 'SUCCESS'
+			},
+		})
 	}
 
 	override getExpansion() {

@@ -3,47 +3,16 @@ import {HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {isActive} from '../../utils/game'
-import {getNonEmptyRows} from '../../utils/board'
+import {applySingleUse, getNonEmptyRows} from '../../utils/board'
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'golden_apple',
-			numericId: 29,
+			numericId: 30,
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description: 'Heal AFK Hermit 100hp.',
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					slot: ['hermit'],
-					type: ['hermit', 'effect'],
-					amount: 1,
-					active: false,
-				},
-			],
-		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const pickedCards = pickedSlots[this.id] || []
-			if (pickedCards.length !== 1) return
-
-			const row = pickedCards[0].row?.state
-			if (!row || !row.health) return
-			const card = row.hermitCard
-			if (!card) return
-			const hermitInfo = HERMIT_CARDS[card.cardId]
-			if (hermitInfo) {
-				row.health = Math.min(row.health + 100, hermitInfo.health)
-			} else {
-				// Armor Stand
-				row.health += 100
-			}
 		})
 	}
 
@@ -57,15 +26,44 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		if (!isActive(player)) return 'NO'
 
 		// Can't attach it there are not any inactive hermits
-		const inactiveHermits = getNonEmptyRows(player, false)
-		if (inactiveHermits.length === 0) return 'NO'
+		const playerHasAfk = getNonEmptyRows(player, false).some(
+			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
+		)
+		if (!playerHasAfk) return 'NO'
 
 		return 'YES'
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick one of your AFK Hermits',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+				const rowIndex = pickResult.rowIndex
+				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+				const row = player.board.rows[rowIndex]
+				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
+
+				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+				const hermitInfo = HERMIT_CARDS[pickResult.card.cardId]
+				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
+
+				// Apply
+				applySingleUse(game)
+
+				row.health = Math.min(row.health + 100, hermitInfo.health)
+
+				return 'SUCCESS'
+			},
+		})
 	}
 }
 

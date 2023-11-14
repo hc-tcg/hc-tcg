@@ -26,6 +26,9 @@ function GameSettings({setMenuSection}: Props) {
 		if (value !== 'off') return 'Enabled'
 		return 'Disabled'
 	}
+	const handleChatChange = () => {
+		dispatch(setSetting('disableChat', settings.disableChat !== 'off' ? 'off' : 'on'))
+	}
 	const handleProfanityChange = () => {
 		dispatch(setSetting('profanityFilter', settings.profanityFilter !== 'off' ? 'off' : 'on'))
 	}
@@ -56,6 +59,9 @@ function GameSettings({setMenuSection}: Props) {
 				</Button>
 				<Button variant="stone" onClick={handleDialogsChange}>
 					Confirmation Dialogs: {getDescriptor(settings.confirmationDialogs)}
+				</Button>
+				<Button variant="stone" onClick={handleChatChange}>
+					Hide Chat: {getDescriptor(settings.disableChat)}
 				</Button>
 				<Button variant="stone" onClick={handleProfanityChange}>
 					Profanity Filter: {getDescriptor(settings.profanityFilter)}
