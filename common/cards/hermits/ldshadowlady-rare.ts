@@ -45,7 +45,8 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			if (opponentInactiveRows.length === 4) return
 			if (opponentPlayer.board.activeRow === null) return
 			// Add a new pick request to the opponent player
-			opponentPlayer.pickRequests.push({
+			game.addPickRequest({
+				playerId: player.id,
 				id: this.id,
 				message: 'Move your active Hermit to a new slot.',
 				onResult(pickResult) {

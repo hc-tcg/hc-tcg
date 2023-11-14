@@ -52,9 +52,10 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				})
 			})
 
-			player.pickRequests.push({
-				id: instance,
-				message: 'Choose an AFK Hermit to protect',
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: "Choose an AFK Hermit to protect",
 				onResult(pickResult) {
 					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 

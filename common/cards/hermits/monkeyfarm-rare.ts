@@ -43,7 +43,8 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			if (opponentItemCards == 0)
 				return
 
-			player.pickRequests.push({
+			game.addPickRequest({
+				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				onResult(pickResult) {

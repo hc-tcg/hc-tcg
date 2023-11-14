@@ -51,7 +51,8 @@ class KatherineelizRareHermitCard extends HermitCard {
 			console.log(hasValidRows)
 			if (!hasValidRows) return
 
-			player.pickRequests.push({
+			game.addPickRequest({
+				playerId: player.id,
 				id: instance,
 				message: 'Choose a Hermit\'s effect slot',
 				onResult(pickResult) {
