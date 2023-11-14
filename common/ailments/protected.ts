@@ -33,7 +33,6 @@ class ProtectedAilment extends Ailment {
 		player.hooks.onDefence.add(ailmentInfo.ailmentInstance, (attack) => {
 			const targetPos = getCardPos(game, ailmentInfo.targetInstance)
 			if (!targetPos) return
-
 			// Only block if just became active
 			if (!player.custom[instanceKey]) return
 			// Only block damage when we are active
