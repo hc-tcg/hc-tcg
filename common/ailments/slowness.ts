@@ -1,12 +1,12 @@
-import Ailment from "./ailment"
-import { GameModel } from "../models/game-model"
-import { HERMIT_CARDS } from "../cards"
-import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
-import { removeAilment } from "../utils/board"
-import { AilmentT } from "../types/game-state"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {HERMIT_CARDS} from '../cards'
+import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
 
-class SlownessAilment extends Ailment{
-    constructor() {
+class SlownessAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'slowness',
 			name: 'Slowness',
@@ -28,7 +28,7 @@ class SlownessAilment extends Ailment{
 			if (!targetPos || !targetPos.rowIndex) return
 			if (!ailmentInfo.duration) return
 
-			ailmentInfo.duration --
+			ailmentInfo.duration--
 
 			if (ailmentInfo.duration === 0) {
 				removeAilment(game, pos, ailmentInfo.ailmentInstance)

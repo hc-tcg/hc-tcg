@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {isTargetingPos} from '../../utils/attacks'
 import {discardCard} from '../../utils/movement'
 import EffectCard from '../base/effect-card'
-import { removeAilment } from '../../utils/board'
+import {removeAilment} from '../../utils/board'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -31,7 +31,7 @@ class TotemEffectCard extends EffectCard {
 			const ailmentsToRemove = game.state.ailments.filter((ail) => {
 				return ail.targetInstance === pos.card?.cardInstance
 			})
-			ailmentsToRemove.map((ail) => {
+			ailmentsToRemove.forEach((ail) => {
 				removeAilment(game, pos, ail.ailmentInstance)
 			})
 

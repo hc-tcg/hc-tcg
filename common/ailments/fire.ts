@@ -1,13 +1,13 @@
-import Ailment from "./ailment"
-import { GameModel } from "../models/game-model"
-import { RowPos } from "../types/cards"
-import { CardPosModel, getBasicCardPos } from "../models/card-pos-model"
-import { AttackModel } from "../models/attack-model"
-import { removeAilment } from "../utils/board"
-import { AilmentT } from "../types/game-state"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {RowPos} from '../types/cards'
+import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {AttackModel} from '../models/attack-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
 
-class FireAilment extends Ailment{
-    constructor() {
+class FireAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'fire',
 			name: 'On Fire',
@@ -21,8 +21,8 @@ class FireAilment extends Ailment{
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		const {player} = pos
 
-		const hasDamageEffect = game.state.ailments.some((a) => 
-			a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
+		const hasDamageEffect = game.state.ailments.some(
+			(a) => a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
 		)
 
 		if (hasDamageEffect) return
@@ -36,9 +36,9 @@ class FireAilment extends Ailment{
 			const targetRow: RowPos = {
 				player: targetPos.player,
 				rowIndex: targetPos.rowIndex,
-				row: targetPos.row
+				row: targetPos.row,
 			}
-			
+
 			const ailmentAttack = new AttackModel({
 				id: this.getInstanceKey(ailmentInfo.ailmentInstance, 'ailmentAttack'),
 				attacker: null,
