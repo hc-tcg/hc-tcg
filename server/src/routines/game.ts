@@ -257,6 +257,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
+
 	if (!availableActions.includes(actionType)) {
 		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
