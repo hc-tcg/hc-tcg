@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import { CardT } from '../../types/game-state'
+import {CardT} from '../../types/game-state'
 import SingleUseCard from '../base/single-use-card'
 
 class LanternSingleUseCard extends SingleUseCard {
@@ -11,7 +11,7 @@ class LanternSingleUseCard extends SingleUseCard {
 			name: 'Lantern',
 			rarity: 'rare',
 			description:
-				"Look at the top 5 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.",
+				'Look at the top 5 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
 		})
 	}
 
@@ -25,16 +25,19 @@ class LanternSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: 'selectCards', payload: {
-					modalName: "Lantern: Choose up to 2 cards to draw.",
-					modalDescription: "",
-					cards: player.pile.slice(0,5),
-					selectionSize: 2,
-					primaryButton: {
-						text: "Confirm Selection",
-						variant: "default"
+				data: {
+					modalId: 'selectCards',
+					payload: {
+						modalName: 'Lantern: Choose up to 2 cards to draw.',
+						modalDescription: '',
+						cards: player.pile.slice(0, 5),
+						selectionSize: 2,
+						primaryButton: {
+							text: 'Confirm Selection',
+							variant: 'default',
+						},
 					},
-				}},
+				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
@@ -43,16 +46,19 @@ class LanternSingleUseCard extends SingleUseCard {
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
-						data: {modalId: 'selectCards', payload: {
-							modalName: "Lantern: Cards Opponent drew.",
-							modalDescription: "",
-							cards: modalResult.cards,
-							selectionSize: 0,
-							primaryButton: {
-								text: "Close",
-								variant: "default"
+						data: {
+							modalId: 'selectCards',
+							payload: {
+								modalName: 'Lantern: Cards Opponent drew.',
+								modalDescription: '',
+								cards: modalResult.cards,
+								selectionSize: 0,
+								primaryButton: {
+									text: 'Close',
+									variant: 'default',
+								},
 							},
-						}},
+						},
 						onResult() {
 							return 'SUCCESS'
 						},

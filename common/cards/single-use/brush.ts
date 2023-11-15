@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import { CardT } from '../../types/game-state'
+import {CardT} from '../../types/game-state'
 import SingleUseCard from '../base/single-use-card'
 
 class BrushSingleUseCard extends SingleUseCard {
@@ -11,7 +11,7 @@ class BrushSingleUseCard extends SingleUseCard {
 			name: 'Brush',
 			rarity: 'rare',
 			description:
-				"Look at the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.",
+				'Look at the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
 		})
 	}
 
@@ -25,16 +25,19 @@ class BrushSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: 'selectCards', payload: {
-					modalName: "Choose cards to place on the top of your deck.",
-					modalDescription: "Select cards you would like to draw sooner first.",
-					cards: player.pile.slice(0,3),
-					selectionSize: 3,
-					primaryButton: {
-						text: "Confirm Selection",
-						variant: "default"
+				data: {
+					modalId: 'selectCards',
+					payload: {
+						modalName: 'Choose cards to place on the top of your deck.',
+						modalDescription: 'Select cards you would like to draw sooner first.',
+						cards: player.pile.slice(0, 3),
+						selectionSize: 3,
+						primaryButton: {
+							text: 'Confirm Selection',
+							variant: 'default',
+						},
 					},
-				}},
+				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
