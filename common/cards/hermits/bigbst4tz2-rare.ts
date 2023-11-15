@@ -39,9 +39,9 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 			player.custom[reviveNextTurn] = true
 		})
 
-		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (!player.custom[reviveNextTurn]) return
-			if (!row || row.health === null || row.health > attack.getDamage()) return
+			if (!row || row.health === null || row.health > attack.calculateDamage()) return
 
 			const opponentRowIndex = opponentPlayer.board.activeRow
 			if (!opponentRowIndex) return
