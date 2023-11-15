@@ -20,41 +20,53 @@ class LanternSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {modalId: 'selectCards', payload: {
-					modalName: "Choose cards to draw.",
+					modalName: "Lantern: Choose up to 2 cards to draw.",
 					modalDescription: "",
 					cards: player.pile.slice(0,5),
-					selectionSize: 2
+					selectionSize: 2,
+					primaryButton: {
+						text: "Confirm Selection",
+						variant: "default"
+					},
 				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
-					const cards: Array<CardT> = modalResult.cards
+					player.pile.filter((c) => !modalResult.cards.includes(c))
+					modalResult.cards.reverse().map((c: CardT) => player.hand.push(c))
 
-					player.pile.filter((c) => !cards.includes(c))
-					cards.reverse().map((c) => player.hand.push(c))
+					game.addModalRequest({
+						playerId: opponentPlayer.id,
+						data: {modalId: 'selectCards', payload: {
+							modalName: "Lantern: Cards Opponent drew.",
+							modalDescription: "",
+							cards: modalResult.cards,
+							selectionSize: 0,
+							primaryButton: {
+								text: "Close",
+								variant: "default"
+							},
+						}},
+						onResult() {
+							console.log("result")
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							return
+						},
+					})
 
 					return 'SUCCESS'
 				},
 				onTimeout() {},
 			})
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-		const {player} = pos
-
-		// Cannot use if you have 3 or less cards
-		if (player.playerDeck.length < 5) return 'NO'
-
-		return 'YES'
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

@@ -29,7 +29,11 @@ class BrushSingleUseCard extends SingleUseCard {
 					modalName: "Choose cards to place on the top of your deck.",
 					modalDescription: "Select cards you would like to draw sooner first.",
 					cards: player.pile.slice(0,3),
-					selectionSize: 3
+					selectionSize: 3,
+					primaryButton: {
+						text: "Confirm Selection",
+						variant: "default"
+					},
 				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
@@ -52,7 +56,7 @@ class BrushSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		// Cannot use if you have 3 or less cards
-		if (player.playerDeck.length <= 3) return 'NO'
+		if (player.pile.length <= 3) return 'NO'
 
 		return 'YES'
 	}
