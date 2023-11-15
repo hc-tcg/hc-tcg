@@ -75,9 +75,6 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					console.log(emptyRows)
-					console.log(pickedRowIndex)
-
 					const activeRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 					opponentPlayer.board.rows[opponentPlayer.board.activeRow] = opponentPlayer.board.rows[pickedRowIndex]
 					opponentPlayer.board.rows[pickedRowIndex] = activeRow

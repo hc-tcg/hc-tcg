@@ -54,7 +54,6 @@ class LanternSingleUseCard extends SingleUseCard {
 							},
 						}},
 						onResult() {
-							console.log("result")
 							return 'SUCCESS'
 						},
 						onTimeout() {
