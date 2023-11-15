@@ -10,19 +10,19 @@ class OrionSoundRareHermitCard extends HermitCard {
 			numericId: 155,
 			name: 'Ollie',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			hermitType: 'explorer',
 			health: 260,
 			primary: {
 				name: 'Concert',
-				cost: ['speedrunner'],
+				cost: ['any'],
 				damage: 60,
 				power: null,
 			},
 			secondary: {
 				name: 'Melody',
-				cost: ['speedrunner', 'speedrunner'],
-				damage: 0,
-				power: 'Heal all allied afk hermits 30hp. Heal all opposing afk hermits 10hp',
+				cost: ['explorer', 'explorer'],
+				damage: 70,
+				power: 'Heal all AFK Hermits 30hp',
 			},
 		})
 	}
