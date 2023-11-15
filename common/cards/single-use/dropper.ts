@@ -1,16 +1,16 @@
-import {ITEM_CARDS} from '..'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import SingleUseCard from '../base/single-use-card'
 
-class TreasureHunterSingleUseCard extends SingleUseCard {
+class DropperSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
-			id: 'treasure_hunter',
+			id: 'dropper',
 			numericId: 152,
-			name: 'Treasure Hunter',
+			name: 'Dropper',
 			rarity: 'rare',
-			description: 'Shuffle 3 "Snow Block" coins into your deck',
+			description:
+				"Shuffle 3 useless blocks that will at some point have functionality into your opponent's deck",
 		})
 	}
 
@@ -21,9 +21,9 @@ class TreasureHunterSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const cardInfo = {
-				cardId: 'item_coin_common',
+				cardId: '',
 				cardInstance: Math.random().toString(),
 			}
 			player.pile.unshift(cardInfo)
@@ -41,4 +41,4 @@ class TreasureHunterSingleUseCard extends SingleUseCard {
 	}
 }
 
-export default TreasureHunterSingleUseCard
+export default DropperSingleUseCard
