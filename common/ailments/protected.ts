@@ -1,15 +1,15 @@
-import Ailment from './ailment'
-import {GameModel} from '../models/game-model'
-import {CardPosModel, getBasicCardPos, getCardPos} from '../models/card-pos-model'
-import {removeAilment} from '../utils/board'
-import {AilmentT} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
+import Ailment from "./ailment"
+import {GameModel} from "../models/game-model"
+import {CardPosModel, getBasicCardPos, getCardPos} from "../models/card-pos-model"
+import {removeAilment} from "../utils/board"
+import {AilmentT} from "../types/game-state"
+import {isTargetingPos} from "../utils/attacks"
 
-class ProtectedAilment extends Ailment {
-	constructor() {
+class ProtectedAilment extends Ailment{
+    constructor() {
 		super({
 			id: 'protected',
-			name: "Sheriff's Protection",
+			name: 'Sheriff\'s Protection',
 			description: 'This Hermit does not take damage on their first active turn.',
 			duration: 0,
 			counter: false,
@@ -33,7 +33,7 @@ class ProtectedAilment extends Ailment {
 		player.hooks.onDefence.add(ailmentInfo.ailmentInstance, (attack) => {
 			const targetPos = getCardPos(game, ailmentInfo.targetInstance)
 			if (!targetPos) return
-
+			
 			// Only block if just became active
 			if (!player.custom[instanceKey]) return
 			// Only block damage when we are active
@@ -52,6 +52,7 @@ class ProtectedAilment extends Ailment {
 			if (!player.custom[instanceKey]) return
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})
+
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
 			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return

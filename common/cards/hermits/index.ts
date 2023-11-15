@@ -158,6 +158,10 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	//new Smajor1995RareHermitCard(),
 	//new Biffa2001RareHermitCard(),
 	//new KatherineelizRareHermitCard(),
+	//new PixlriffsRareHermitCard(),
+	//new LDShadowLadyRareHermitCard(),
+	//new SmallishbeansRareHermitCard(),
+	//new BigBSt4tzRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES

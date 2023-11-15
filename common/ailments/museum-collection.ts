@@ -1,16 +1,15 @@
-import Ailment from './ailment'
-import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeAilment} from '../utils/board'
-import {AilmentT} from '../types/game-state'
+import Ailment from "./ailment"
+import {GameModel} from "../models/game-model"
+import {CardPosModel} from "../models/card-pos-model"
+import {removeAilment} from "../utils/board"
+import {AilmentT} from "../types/game-state"
 
-class MuseumCollectionAilment extends Ailment {
-	constructor() {
+class MuseumCollectionAilment extends Ailment{
+    constructor() {
 		super({
 			id: 'museum-collection',
 			name: 'Museum Collection Size',
-			description:
-				"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
+			description: 'Number of cards you\'ve played this turn. Each card adds 20 damage to Biffa\'s secondary attack.',
 			duration: 0,
 			counter: true,
 			damageEffect: false,
@@ -36,11 +35,7 @@ class MuseumCollectionAilment extends Ailment {
 			if (!activeRow) return
 			const targetHermit = player.board.rows[activeRow].hermitCard
 			if (!targetHermit?.cardId) return
-			if (
-				attack.id !== this.getTargetInstanceKey(targetHermit?.cardId, ailmentInfo.targetInstance) ||
-				attack.type !== 'secondary'
-			)
-				return
+			if (attack.id !== this.getTargetInstanceKey(targetHermit?.cardId, ailmentInfo.targetInstance) || attack.type !== 'secondary') return
 			if (!ailmentInfo.duration) return
 
 			attack.addDamage(this.id, 20 * ailmentInfo.duration)

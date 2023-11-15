@@ -24,7 +24,7 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm'],
 				damage: 80,
 				power:
-					"Discard an item card from an opponent's AFK Hermit.",
+					'Discard an item card from an AFK Hermit.',
 			},
 		})
 	}

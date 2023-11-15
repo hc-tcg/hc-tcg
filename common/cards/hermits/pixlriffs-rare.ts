@@ -7,26 +7,26 @@ import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
 import { applyAilment, removeAilment } from '../../utils/board'
 
-class Smajor1995RareHermitCard extends HermitCard {
+class PixlriffsRareHermitCard extends HermitCard {
 	constructor() {
 		super({
-			id: 'smajor1995_rare',
-			numericId: 161,
-			name: 'Scott',
+			id: 'pixlriffs_rare',
+			numericId: 162,
+			name: 'Pixl',
 			rarity: 'rare',
-			hermitType: 'builder',
-			health: 270,
+			hermitType: 'explorer',
+			health: 290,
 			primary: {
-				name: 'Color Splash',
-				cost: ['any'],
-				damage: 30,
+				name: 'Lore Keeper',
+				cost: ['explorer'],
+				damage: 60,
 				power: null,
 			},
 			secondary: {
-				name: 'To Dye For',
-				cost: ['any', 'any', 'any'],
-				damage: 70,
-				power: 'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
+				name: 'Worldbuild',
+				cost: ['explorer', 'explorer', 'any'],
+				damage: 90,
+				power: 'If this Hermit moved during your turn, Worldbuild deals 40hp more damage.',
 			},
 		})
 	}
@@ -34,33 +34,17 @@ class Smajor1995RareHermitCard extends HermitCard {
 	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
+		player.custom[instanceKey] = pos.player.board.activeRow
+
+		player.hooks.onTurnStart.add(instance, () => {
+			player.custom[instance] = player.board.activeRow
+		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			const playerInactiveRows = getNonEmptyRows(player, false)
-			if (playerInactiveRows.length === 0) return
 
-			game.addPickRequest({
-				playerId: player.id,
-				id: instance,
-				message: 'Choose an AFK Hermit to dye.',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined || rowIndex === player.board.activeRow)
-						return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					applyAilment(game, 'dyed', pickResult.card.cardInstance)
-
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					return
-				},
-			})
+			if (player.custom[instance] !== player.board.activeRow) attack.addDamage(this.id, 40)
+			delete player.custom[instance]
 		})
 	}
 
@@ -85,4 +69,4 @@ class Smajor1995RareHermitCard extends HermitCard {
 	}
 }
 
-export default Smajor1995RareHermitCard
+export default PixlriffsRareHermitCard
