@@ -5,7 +5,7 @@ import {RowPos} from '../../types/cards'
 import {RowStateWithHermit} from '../../types/game-state'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
-import {applyAilment, removeAilment} from '../../utils/board'
+import { applyAilment, removeAilment } from '../../utils/board'
 
 class SolidaritygamingRareHermitCard extends HermitCard {
 	constructor() {
@@ -20,8 +20,7 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				name: 'The Law',
 				cost: ['prankster', 'any'],
 				damage: 30,
-				power:
-					'After your attack, choose one of your AFK Hermits to protect. This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
+				power: 'Choose one of your AFK Hermits to protect. This Hermit does not take damage on their first active turn. Only one Hermit can be protected.',
 			},
 			secondary: {
 				name: 'Not a toy',
@@ -40,17 +39,15 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
 			const playerInactiveRows = getNonEmptyRows(player, false)
 			if (playerInactiveRows.length === 0) return
-
+			
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return (
-						ail.targetInstance === row.hermitCard.cardInstance && ail.ailmentId === 'protection'
-					)
+					return ail.targetInstance === row.hermitCard.cardInstance && ail.ailmentId === "protection"
 				})
-
-				ailmentsToRemove.forEach((ail) => {
+				
+				ailmentsToRemove.map((ail) => {
 					removeAilment(game, pos, ail.ailmentInstance)
 				})
 			})
