@@ -22,32 +22,34 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
 		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const coinFlip = flipCoin(player, this.id)
-			player.custom[coinResult] = coinFlip[0]
-
-			// Client uses the id instead of the instance for the modal
-			player.custom[this.id] = {
-				canDiscard: coinFlip[0] === 'heads',
-				cards: opponentPlayer.hand,
-			}
+			const canDiscard = coinFlip[0] === 'heads'
 
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: this.id},
+				data: {modalId: 'selectCards', payload: {
+					modalName: `Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`,
+					modalDescription: "",
+					cards: opponentPlayer.hand,
+					selectionSize: canDiscard ? 1 : 0,
+					primaryButton: {
+						text: canDiscard ? "Confirm Selection" : "Close",
+						variant: "default"
+					},
+				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
-					if (player.custom[coinResult] === 'heads') {
+					if (canDiscard) {
 						discardFromHand(opponentPlayer, modalResult.card || null)
 					}
 
 					return 'SUCCESS'
 				},
 				onTimeout() {
-					if (player.custom[coinResult] === 'heads') {
+					if (canDiscard) {
 						// Discard a random card from the opponent's hand
 						const slotIndex = Math.floor(Math.random() * opponentPlayer.hand.length)
 						discardFromHand(opponentPlayer, opponentPlayer.hand[slotIndex])
@@ -74,8 +76,6 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'coinResult')]
-		delete player.custom[this.id]
 	}
 }
 
