@@ -1,11 +1,13 @@
-import Ailment from "./ailment"
-import { GameModel } from "../models/game-model"
-import { CardPosModel, getBasicCardPos, getCardPos } from "../models/card-pos-model"
-import { removeAilment } from "../utils/board"
-import { AilmentT } from "../types/game-state"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {CardPosModel} from '../models/card-pos-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
+import {HERMIT_CARDS} from '../cards'
+import {EnergyT} from '../types/cards'
 
-class DyedAilment extends Ailment{
-    constructor() {
+class DyedAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'dyed',
 			name: 'Dyed',
@@ -26,10 +28,10 @@ class DyedAilment extends Ailment{
 			const activeRow = player.board.rows[player.board.activeRow]
 
 			if (ailmentInfo.targetInstance !== activeRow.hermitCard?.cardInstance) return availableEnergy
+			if (!activeRow.hermitCard) return availableEnergy
 
-			return availableEnergy.map(() => 'any')
+			return availableEnergy.map(() => HERMIT_CARDS[activeRow.hermitCard.cardId].hermitType)
 		})
-
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
 			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return
