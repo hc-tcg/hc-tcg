@@ -42,9 +42,6 @@ import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
 import TargetBlockSingleUseCard from './target-block'
 import LootingSingleUseCard from './looting'
 import SingleUseCard from '../base/single-use-card'
-import BrushSingleUseCard from './brush'
-import GlowstoneSingleUseCard from './glowstone'
-import LanternSingleUseCard from './lantern'
 import SplashPotionOfHarmingSingleUseCard from './splash-potion-of-harming'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
@@ -95,9 +92,6 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new TridentSingleUseCard(),
 
 	// Advent calendar cards
-	// new TreasureHunterSingleUseCard(),
-	// new BrushSingleUseCard(),
-	// new GlowstoneSingleUseCard(),
-	// new LanternSingleUseCard(),
-	// new SplashPotionOfHarmingSingleUseCard(),
+	//new TreasureHunterSingleUseCard(),
+	//new SplashPotionOfHarmingSingleUseCard(),
 ]

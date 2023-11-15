@@ -32,30 +32,21 @@ class ChestSingleUseCard extends SingleUseCard {
 
 		game.addModalRequest({
 			playerId: player.id,
-			data: {modalId: 'selectCards', payload: {
-				modalName: "Chest: Choose a card to retrieve from your discard pile.",
-				modalDescription: "",
-				cards: player.discarded,
-				selectionSize: 1,
-				primaryButton: {
-					text: "Confirm Selection",
-					variant: "default"
-				},
-			}},
+			data: {modalId: this.id},
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
 
-				if (!modalResult.cards) {
+				if (!modalResult.card) {
 					discardSingleUse(game, player)
 					return 'SUCCESS'
 				}
 
-				if (modalResult.cards[0].cardId === 'clock') {
+				if (modalResult.card.cardId === 'clock') {
 					return 'FAILURE_CANNOT_COMPLETE'
 				}
 
 				applySingleUse(game)
-				retrieveCard(game, modalResult.cards[0])
+				retrieveCard(game, modalResult.card)
 
 				return 'SUCCESS'
 			},

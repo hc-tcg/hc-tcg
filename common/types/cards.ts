@@ -18,6 +18,7 @@ export type HermitTypeT =
 	| 'prankster'
 	| 'miner'
 	| 'explorer'
+	| 'coin'
 
 export type EnergyT = HermitTypeT | 'any'
 
