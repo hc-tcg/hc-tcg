@@ -20,7 +20,7 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				name: 'The Law',
 				cost: ['prankster', 'any'],
 				damage: 30,
-				power: 'Choose one of your AFK Hermits to protect. This Hermit does not take damage on their first active turn. Only one Hermit can be protected.',
+				power: 'After your attack, choose one of your AFK Hermits to protect. This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
 			},
 			secondary: {
 				name: 'Not a toy',
