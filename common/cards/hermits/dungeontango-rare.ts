@@ -17,7 +17,8 @@ class DungeonTangoRareHermitCard extends HermitCard {
 				name: 'Lackey',
 				cost: ['any'],
 				damage: 40,
-				power: 'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
+				power:
+					'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
 			},
 			secondary: {
 				name: 'Ravager',
