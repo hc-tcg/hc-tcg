@@ -18,6 +18,7 @@ import TerraformCommonItemCard from './terraform-common'
 import TerraformRareItemCard from './terraform-rare'
 import MinerCommonItemCard from './miner-common'
 import MinerRareItemCard from './miner-rare'
+import ClankCommonItemCard from './clank-common'
 import ItemCard from '../base/item-card'
 
 export const ITEM_CARD_CLASSES: Array<ItemCard> = [
@@ -41,4 +42,7 @@ export const ITEM_CARD_CLASSES: Array<ItemCard> = [
 	new TerraformRareItemCard(),
 	new MinerCommonItemCard(),
 	new MinerRareItemCard(),
+
+	// Advent of TCG cards
+	//new ClankCommonItemCard(),
 ]

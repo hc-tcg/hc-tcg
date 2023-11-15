@@ -24,8 +24,8 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 			},
 			secondary: {
 				name: 'Not a toy',
-				cost: ['prankster', 'prankster', 'any'],
-				damage: 90,
+				cost: ['prankster', 'prankster', 'prankster'],
+				damage: 70,
 				power: null,
 			},
 		})
