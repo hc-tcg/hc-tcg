@@ -75,9 +75,6 @@ class KatherineelizRareHermitCard extends HermitCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {
-					return
-				},
 			})
 		})
 	}

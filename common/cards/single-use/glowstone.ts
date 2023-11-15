@@ -47,7 +47,9 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {},
+				onTimeout() {
+					// Do nothing
+				},
 			})
 		})
 	}

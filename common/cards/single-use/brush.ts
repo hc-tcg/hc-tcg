@@ -45,7 +45,9 @@ class BrushSingleUseCard extends SingleUseCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {},
+				onTimeout() {
+					// Do nothing
+				},
 			})
 		})
 	}
