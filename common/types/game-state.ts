@@ -124,7 +124,6 @@ export type PlayerState = {
 		 * Hook called when a hermit is about to die.
 		 */
 		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
-
 		/**
 		 * Hook called at the start of the turn
 		 *
@@ -191,7 +190,6 @@ export type GameState = {
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
 	ailments: Array<AilmentT>
-
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
 

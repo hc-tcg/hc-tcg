@@ -17,6 +17,18 @@ class EggSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+
+		const {opponentPlayer} = pos
+
+		const inactiveHermits = getNonEmptyRows(opponentPlayer, false)
+		if (inactiveHermits.length === 0) return 'NO'
+
+		return 'YES'
+	}
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const targetKey = this.getInstanceKey(instance, 'target')
@@ -85,18 +97,6 @@ class EggSingleUseCard extends SingleUseCard {
 				player.hooks.afterAttack.remove(instance)
 			})
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
-		const {opponentPlayer} = pos
-
-		const inactiveHermits = getNonEmptyRows(opponentPlayer, false)
-		if (inactiveHermits.length === 0) return 'NO'
-
-		return 'YES'
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

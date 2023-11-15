@@ -383,7 +383,7 @@ function* turnActionsSaga(game: GameModel) {
 
 			availableActions.push(...DEBUG_CONFIG.availableActions)
 
-			// @NOWTODO also modal request is an option, but need to make sure client too supports this.
+			// @NOWTODO need to make sure client supports modal request to opponent.
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
@@ -494,8 +494,7 @@ function* turnSaga(game: GameModel) {
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 
-	// Call turn start hooks
-
+	// Call turn start
 	const turnStartAttacks: Array<AttackModel> = []
 	currentPlayer.hooks.onTurnStart.call(turnStartAttacks)
 

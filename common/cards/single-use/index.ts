@@ -46,6 +46,7 @@ import SingleUseCard from '../base/single-use-card'
 import BrushSingleUseCard from './brush'
 import GlowstoneSingleUseCard from './glowstone'
 import LanternSingleUseCard from './lantern'
+import SplashPotionOfHarmingSingleUseCard from './splash-potion-of-harming'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new InstantHealthSingleUseCard(),
@@ -95,8 +96,9 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new TridentSingleUseCard(),
 
 	// Advent calendar cards
-	//new TreasureHunterSingleUseCard(),
+	new TreasureHunterSingleUseCard(),
 	new BrushSingleUseCard(),
 	new GlowstoneSingleUseCard(),
 	new LanternSingleUseCard(),
+	new SplashPotionOfHarmingSingleUseCard(),
 ]
