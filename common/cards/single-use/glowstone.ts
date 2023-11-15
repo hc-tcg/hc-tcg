@@ -29,7 +29,11 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 					modalName: "Choose the card for your opponent to draw.",
 					modalDescription: "The other two cards will be placed on the bottom of their deck.",
 					cards: opponentPlayer.pile.slice(0,3),
-					selectionSize: 3
+					selectionSize: 3,
+					primaryButton: {
+						text: "Confirm Selection",
+						variant: "default"
+					},
 				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'

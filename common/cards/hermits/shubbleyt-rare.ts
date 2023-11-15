@@ -41,11 +41,22 @@ class ShubbleYTRareHermitCard extends HermitCard {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {modalId: 'copyAttack', payload: {
-					topCard: player.pile[0]
+					modalName: "Shelby: Place your top card on bottom of deck?",
+					modalDescription: "",
+					cards: player.pile[0],
+					selectionSize: 0,
+					primaryButton: {
+						text: "Place on Bottom",
+						variant: "primary"
+					},
+					secondaryButton: {
+						text: "Do Nothing",
+						variant: "secondary"
+					}
 				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'SUCCESS'
-					if (!modalResult.scry) return 'SUCCESS'
+					if (!modalResult.result) return 'SUCCESS'
 
 					const topCard = player.pile.shift()
 					if (!topCard) return 'SUCCESS'

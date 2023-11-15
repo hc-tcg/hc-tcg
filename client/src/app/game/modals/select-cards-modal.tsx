@@ -20,10 +20,13 @@ function SelectCardsModal({closeModal}: Props) {
 	const [selected, setSelected] = useState<Array<CardT>>([])
 	const cards: Array<CardT> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
+	const secondaryButton = modalData.payload.secondaryButton
+	const canSelect = selectionSize.length > 0
 
 	const handleSelection = (newSelected: CardT) => {
+		if (selectionSize === 0) return
 		setSelected((current) => {
-			// If a second card is selected then remove the first one
+			// If a new card is selected then remove the first one
 			const newSelection = [...current]
 			if (newSelection.length >= selectionSize) {
 				newSelection.shift()
@@ -34,16 +37,21 @@ function SelectCardsModal({closeModal}: Props) {
 		})
 	}
 
-	const handleClose = () => {
-		dispatch(modalRequest({modalResult: {cards: null}}))
-		closeModal()
-	}
-
-	const handleConfirm = () => {
-		if (selected.length <= 3) {
-			dispatch(modalRequest({modalResult: {cards: selected}}))
+	const handlePrimary = () => {
+		if (selectionSize === 0) {
+			dispatch(modalRequest({modalResult: {result: true, cards: null}}))
+			closeModal()
+			return
+		}
+		if (selected.length <= selectionSize) {
+			dispatch(modalRequest({modalResult: {result: true, cards: selected}}))
 			closeModal()
 		}
+	}
+
+	const handleClose = () => {
+		dispatch(modalRequest({modalResult: {result: false, cards: null}}))
+		closeModal()
 	}
 
 	return (
@@ -61,7 +69,18 @@ function SelectCardsModal({closeModal}: Props) {
 				</div>
 			</div>
 			<div className={css.options}>
-				<Button onClick={handleConfirm}>Confirm Selection</Button>
+				<Button
+					variant={modalData.payload.primaryButton.variant}
+					size="medium"
+					onClick={handlePrimary}
+				>
+					{modalData.payload.primaryButton.text}
+				</Button>
+				{secondaryButton && (
+					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
+						{secondaryButton.text}
+					</Button>
+				)}
 			</div>
 		</Modal>
 	)
