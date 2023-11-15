@@ -43,6 +43,7 @@ import TargetBlockSingleUseCard from './target-block'
 import LootingSingleUseCard from './looting'
 import TreasureHunterSingleUseCard from './treasure-hunter'
 import SingleUseCard from '../base/single-use-card'
+import SplashPotionOfHarmingSingleUseCard from './splash-potion-of-harming'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new InstantHealthSingleUseCard(),
@@ -93,4 +94,5 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 
 	// Advent calendar cards
 	//new TreasureHunterSingleUseCard(),
+	//new SplashPotionOfHarmingSingleUseCard(),
 ]
