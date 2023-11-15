@@ -73,11 +73,14 @@ import SolidaritygamingRareHermitCard from './solidaritygaming-rare'
 import Smajor1995RareHermitCard from './smajor1995'
 import Biffa2001RareHermitCard from './biffa2001-rare'
 import KatherineelizRareHermitCard from './katherineeliz-rare'
+import MonkeyfarmRareHermitCard from './monkeyfarm-rare'
+import OrionSoundRareHermitCard from './orionsound-rare'
+import PythonGBRareHermitCard from './pythongb-rare'
+import DungeonTangoRareHermitCard from './dungeontango-rare'
 import PixlriffsRareHermitCard from './pixlriffs-rare'
 import LDShadowLadyRareHermitCard from './ldshadowlady-rare'
-import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
-import ShubbleYTRareHermitCard from './shubbleyt-rare'
 import SmallishbeansRareHermitCard from './smallishbeans-rare'
+import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new BdoubleO100CommonHermitCard(),
