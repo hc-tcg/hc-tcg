@@ -95,9 +95,9 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new TridentSingleUseCard(),
 
 	// Advent calendar cards
-	//new TreasureHunterSingleUseCard(),
-	///new BrushSingleUseCard(),
-	///new GlowstoneSingleUseCard(),
-	///new LanternSingleUseCard(),
-	//new SplashPotionOfHarmingSingleUseCard(),
+	// new TreasureHunterSingleUseCard(),
+	// new BrushSingleUseCard(),
+	// new GlowstoneSingleUseCard(),
+	// new LanternSingleUseCard(),
+	// new SplashPotionOfHarmingSingleUseCard(),
 ]
