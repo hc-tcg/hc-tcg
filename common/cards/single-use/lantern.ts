@@ -57,13 +57,15 @@ class LanternSingleUseCard extends SingleUseCard {
 							return 'SUCCESS'
 						},
 						onTimeout() {
-							return
+							// Do nothing
 						},
 					})
 
 					return 'SUCCESS'
 				},
-				onTimeout() {},
+				onTimeout() {
+					// Do nothing
+				},
 			})
 		})
 	}
