@@ -24,28 +24,36 @@ class WaterBucketEffectCard extends EffectCard {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
 			player.hooks.onApply.add(instance, (pickedSlots) => {
-				const pickedCards = pickedSlots[this.id] || []
-				if (pickedCards.length !== 1) return
-				const targetSlot = pickedCards[0]
-				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
-				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return (
-						ail.targetInstance === targetSlot.row?.state.hermitCard?.cardInstance &&
-						ail.ailmentId == 'fire'
-					)
-				})
-				ailmentsToRemove.forEach((ail) => {
-					removeAilment(game, pos, ail.ailmentInstance)
-				})
+				game.addPickRequest({
+					playerId: player.id,
+					id: instance,
+					message: 'Pick one of your Hermits',
+					onResult(pickResult) {
+						if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-				if (targetSlot.row.state.effectCard?.cardId === 'string') {
-					discardCard(game, targetSlot.row.state.effectCard)
-				}
-				for (let i = 0; i < targetSlot.row.state.itemCards.length; i++) {
-					if (targetSlot.row.state.itemCards[i]?.cardId === 'string') {
-						discardCard(game, targetSlot.row.state.itemCards[i])
-					}
-				}
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+						const ailmentsToRemove = game.state.ailments.filter((ail) => {
+							return ail.targetInstance === pickResult.card?.cardInstance && ail.ailmentId == 'fire'
+						})
+						ailmentsToRemove.forEach((ail) => {
+							removeAilment(game, pos, ail.ailmentInstance)
+						})
+
+						if (player.board.rows[pickResult.rowIndex].effectCard?.cardId === 'string') {
+							discardCard(game, player.board.rows[pickResult.rowIndex].effectCard)
+						}
+						for (let i = 0; i < player.board.rows[pickResult.rowIndex].itemCards.length; i++) {
+							if (player.board.rows[pickResult.rowIndex].itemCards[i]?.cardId === 'string') {
+								discardCard(game, player.board.rows[pickResult.rowIndex].itemCards[i])
+							}
+						}
+
+						return 'SUCCESS'
+					},
+				})
 			})
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence.add(instance, (attack) => {
