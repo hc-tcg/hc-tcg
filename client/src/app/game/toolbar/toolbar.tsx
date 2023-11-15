@@ -1,33 +1,20 @@
 import css from './toolbar.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
-import {getGameState} from 'logic/game/game-selectors'
+import {getAvailableActions, getGameState} from 'logic/game/game-selectors'
 import {setOpenedModal} from 'logic/game/game-actions'
 import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
+	const availableActions = useSelector(getAvailableActions)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
 	const handleDiscarded = () => {
-		if (!gameState) return
-		const data = {
-			modalId: 'selectCards',
-			payload: {
-				modalName: 'Discarded',
-				modalDescription:
-					gameState.discarded.length === 0 ? 'There are no cards in your discard pile.' : '',
-				cards: gameState.discarded,
-				selectionSize: 0,
-				primaryButton: {
-					text: 'Close',
-					variant: 'default',
-				},
-			},
-		}
-		gameState.currentModalData = data
-		dispatch(setOpenedModal(gameState.currentModalData.modalId))
+		dispatch(setOpenedModal('discarded'))
 	}
 
 	if (!gameState) return null
@@ -46,7 +33,7 @@ function Toolbar() {
 			</button>
 
 			{/* Toggle Chat */}
-			<ChatItem />
+			{settings.disableChat === 'off' && <ChatItem />}
 
 			{/* Toggle Sounds */}
 			<SoundItem />

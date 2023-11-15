@@ -11,4 +11,5 @@ export const STRENGTHS: Record<HermitTypeT, Array<HermitTypeT>> = {
 	redstone: ['pvp'],
 	speedrunner: ['miner', 'prankster'],
 	terraform: ['redstone'],
+	coin: [],
 }

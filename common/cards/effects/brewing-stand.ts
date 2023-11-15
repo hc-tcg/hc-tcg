@@ -11,7 +11,7 @@ class BrewingStandEffectCard extends EffectCard {
 			name: 'Brewing stand',
 			rarity: 'rare',
 			description:
-				'Attach to a hermit, every 2 turns, consume 1 item card and heal the hermit it is attached to 50hp',
+				'Attach to a Hermit, every 2 turns consumes 1 item card and heals the Hermit it is attached to 50hp',
 		})
 	}
 
