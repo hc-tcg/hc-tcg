@@ -29,7 +29,6 @@ function Toolbar() {
 			},
 		}
 		gameState.currentModalData = data
-		console.log(gameState.currentModalData)
 		dispatch(setOpenedModal(gameState.currentModalData.modalId))
 	}
 

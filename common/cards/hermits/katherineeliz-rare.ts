@@ -47,8 +47,7 @@ class KatherineelizRareHermitCard extends HermitCard {
 			const hasValidRows = nonEmptyRows.some((r) => {
 				return !r.row.effectCard || Object.keys(upgrades).includes(r.row.effectCard?.cardId)
 			})
-			console.log(nonEmptyRows)
-			console.log(hasValidRows)
+
 			if (!hasValidRows) return
 
 			game.addPickRequest({
