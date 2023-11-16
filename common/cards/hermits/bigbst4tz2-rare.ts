@@ -1,8 +1,8 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import HermitCard from '../base/hermit-card'
-import { flipCoin } from '../../utils/coinFlips'
-import { AttackModel } from '../../models/attack-model'
+import {flipCoin} from '../../utils/coinFlips'
+import {AttackModel} from '../../models/attack-model'
 
 class BigBSt4tzRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,7 +24,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 				cost: ['speedrunner', 'speedrunner'],
 				damage: 80,
 				power:
-					'If this Hermit is knocked out next turn, flip a coin.\n\nIf heads, the opponent\'s active Hermit is knocked out.',
+					"If this Hermit is knocked out next turn, flip a coin.\n\nIf heads, the opponent's active Hermit is knocked out.",
 			},
 		})
 	}
@@ -39,33 +39,36 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 			player.custom[reviveNextTurn] = true
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			if (!player.custom[reviveNextTurn]) return
-			if (!row || row.health === null || row.health > attack.calculateDamage()) return
+		opponentPlayer.hooks.beforeAttack.add(instance, () => {
+			opponentPlayer.hooks.onAttack.add(instance, (attack) => {
+				if (!player.custom[reviveNextTurn]) return
+				if (!row || row.health === null || row.health > attack.calculateDamage()) return
 
-			const opponentRowIndex = opponentPlayer.board.activeRow
-			if (!opponentRowIndex) return
+				const opponentRowIndex = opponentPlayer.board.activeRow
+				if (!opponentRowIndex) return
 
-			const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
-			if (!opponentActiveRow || opponentActiveRow.health === null) return
+				const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
+				if (!opponentActiveRow || opponentActiveRow.health === null) return
 
-			const coinFlip = flipCoin(opponentPlayer, this.id)
-			if (coinFlip[0] === 'tails') return
+				const coinFlip = flipCoin(opponentPlayer, this.id)
+				if (coinFlip[0] === 'tails') return
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: attack.target,
-				target: attack.attacker,
-				type: 'secondary',
-				isBacklash: true,
-			}).addDamage(this.id, opponentActiveRow.health)
+				const backlashAttack = new AttackModel({
+					id: this.getInstanceKey(instance, 'backlash'),
+					attacker: attack.target,
+					target: attack.attacker,
+					type: 'secondary',
+					isBacklash: true,
+				}).addDamage(this.id, opponentActiveRow.health)
 
-			attack.addNewAttack(backlashAttack)
+				attack.addNewAttack(backlashAttack)
 
-			return attack
+				return attack
+			})
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+			opponentPlayer.hooks.onAttack.remove(instance)
 			delete player.custom[reviveNextTurn]
 		})
 	}

@@ -51,7 +51,7 @@ class LanternSingleUseCard extends SingleUseCard {
 						return true
 					})
 
-					cards.map((c) => player.hand.push(c))
+					cards.forEach((c) => player.hand.push(c))
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,

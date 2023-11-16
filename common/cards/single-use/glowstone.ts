@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import { CardT } from '../../types/game-state'
-import { drawCards } from '../../utils/movement'
+import {CardT} from '../../types/game-state'
 import SingleUseCard from '../base/single-use-card'
 
 class GlowstoneSingleUseCard extends SingleUseCard {
@@ -47,9 +46,9 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 					})
 
 					opponentPlayer.pile = opponentPlayer.pile.slice(3)
-					bottomCards.map((c) => opponentPlayer.pile.push(c))
+					bottomCards.forEach((c) => opponentPlayer.pile.push(c))
 
-					cards.map((c) => opponentPlayer.hand.push(c))
+					cards.forEach((c) => opponentPlayer.hand.push(c))
 
 					return 'SUCCESS'
 				},
