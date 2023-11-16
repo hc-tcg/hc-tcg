@@ -89,9 +89,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
 					// Delete the hooks of the card we're imitating if it changes
 					if (pickResult.card.cardId !== player.custom[imitatingCardKey]) {
 						const hermitInfo = HERMIT_CARDS[player.custom[imitatingCardKey]]
