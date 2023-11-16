@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {CardT} from '../../types/game-state'
+import { drawCards } from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
 class LanternSingleUseCard extends SingleUseCard {
@@ -40,9 +41,17 @@ class LanternSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!modalResult.cards) return 'SUCCESS'
+					if (modalResult.cards.length !== 2) return 'FAILURE_INVALID_DATA'
 
-					player.pile.filter((c) => !modalResult.cards.includes(c))
-					modalResult.cards.reverse().map((c: CardT) => player.hand.push(c))
+					const cards: Array<CardT> = modalResult.cards
+
+					player.pile = player.pile.filter((c) => {
+						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
+						return true
+					})
+
+					cards.map((c) => player.hand.push(c))
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,

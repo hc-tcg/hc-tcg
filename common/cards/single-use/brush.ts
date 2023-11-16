@@ -28,7 +28,7 @@ class BrushSingleUseCard extends SingleUseCard {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Choose cards to place on the top of your deck.',
+						modalName: 'Brush: Choose cards to place on the top of your deck.',
 						modalDescription: 'Select cards you would like to draw sooner first.',
 						cards: player.pile.slice(0, 3),
 						selectionSize: 3,
@@ -40,11 +40,17 @@ class BrushSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!modalResult.cards) return 'SUCCESS'
 
 					const cards: Array<CardT> = modalResult.cards
+					const bottomCards: Array<CardT> = player.pile.slice(0, 3).filter((c) => {
+						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
+						return true
+					})
 
-					player.pile.filter((c) => !cards.includes(c))
+					player.pile = player.pile.slice(3)
 					cards.reverse().map((c) => player.pile.unshift(c))
+					bottomCards.map((c) => player.pile.push(c))
 
 					return 'SUCCESS'
 				},
