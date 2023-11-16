@@ -2,7 +2,6 @@ import {select, take} from 'typed-redux-saga'
 import {call, put, fork} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
-import {runPickProcessSaga} from './pick-process-saga'
 import {CardT} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -27,13 +26,6 @@ function* singleUseSaga(card: CardT): SagaIterator {
 
 	if (cardInfo instanceof SingleUseCard && cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
-	} else if (cardInfo.pickOn === 'apply') {
-		const result = yield call(runPickProcessSaga, cardInfo.name, cardInfo.pickReqs)
-		if (result && result.length && result[0].pickedSlots?.length) {
-			yield put(applyEffect({pickResults: {[card.cardId]: result}}))
-		} else {
-			yield put(setOpenedModal('unmet-condition', {removeSuAfter: true}))
-		}
 	}
 }
 

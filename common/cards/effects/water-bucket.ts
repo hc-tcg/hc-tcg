@@ -64,7 +64,7 @@ class WaterBucketEffectCard extends EffectCard {
 				})
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, (pickedSlots) => {
+			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return ail.targetInstance === row.hermitCard?.cardInstance && ail.ailmentId == 'fire'

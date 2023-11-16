@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import SingleUseCard from '../base/single-use-card'
-import { applyAilment } from '../../utils/board'
+import {applyAilment} from '../../utils/board'
 
 class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -22,10 +22,14 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
-			applyAilment(game, 'poison', opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance)
+			applyAilment(
+				game,
+				'poison',
+				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance
+			)
 		})
 	}
 

@@ -5,18 +5,14 @@ import {
 	TurnActions,
 	CardT,
 	CoinFlipT,
-	GameState,
 	LocalGameState,
 	LocalPlayerState,
 	PlayerState,
 	RowState,
-	ActionResult,
-	GenericActionResult,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {EnergyT} from 'common/types/cards'
-import {PickedSlots} from 'common/types/pick-process'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card from 'common/cards/base/card'
@@ -226,17 +222,17 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
-			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
-			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			beforeApply: new GameHook<() => void>(),
+			onApply: new GameHook<() => void>(),
+			afterApply: new GameHook<() => void>(),
 			getAttackRequests: new GameHook<
 				(activeInstance: string, hermitAttackType: HermitAttackType) => void
 			>(),
-			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
-			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			onAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			onDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
+			getAttacks: new GameHook<() => Array<AttackModel>>(),
+			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
+			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
+			onAttack: new GameHook<(attack: AttackModel) => void>(),
+			onDefence: new GameHook<(attack: AttackModel) => void>(),
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),

@@ -1,16 +1,15 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getPlayerState} from 'logic/game/game-selectors'
-import {PickedSlotT} from 'common/types/pick-process'
 import {CARDS} from 'common/cards'
 import css from './game-modals.module.scss'
 import Button from 'components/button'
 import {getGameState} from 'logic/game/game-selectors'
-import game from '..'
+import {PickInfo} from 'common/types/server-requests'
 
 type Props = {
 	closeModal: () => void
-	info: PickedSlotT
+	info: PickInfo
 }
 function ChangeHermitModal({closeModal, info}: Props) {
 	const dispatch = useDispatch()
@@ -18,11 +17,11 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const playerState = useSelector(getPlayerState)
 	const gameState = useSelector(getGameState)
 
-	if (info.slot.type !== 'hermit' || !playerState || !gameState || !info.row) {
+	if (info.slot.type !== 'hermit' || !playerState || !gameState || info.rowIndex === undefined) {
 		throw new Error('This should never happen')
 	}
 
-	const hermitName = info.slot.card?.cardId ? CARDS[info.slot.card.cardId].name : ''
+	const hermitName = info.card?.cardId ? CARDS[info.card.cardId].name : ''
 	const hasActiveHermit = playerState.board.activeRow !== null
 	const canChange = !hasActiveHermit || availableActions.includes('CHANGE_ACTIVE_HERMIT')
 

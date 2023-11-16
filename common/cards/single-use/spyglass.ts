@@ -24,7 +24,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, this.id)
 			player.custom[coinResult] = coinFlip[0]
 

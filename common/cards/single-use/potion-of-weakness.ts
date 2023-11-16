@@ -2,7 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getActiveRow} from '../../utils/board'
 import SingleUseCard from '../base/single-use-card'
-import { applyAilment } from '../../utils/board'
+import {applyAilment} from '../../utils/board'
 
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -31,7 +31,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
 			applyAilment(game, 'weakness', opponentActiveRow.hermitCard?.cardInstance)

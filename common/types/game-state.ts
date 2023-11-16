@@ -4,8 +4,7 @@ import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
-import {PickProcessT, PickedSlots} from './pick-process'
-import {ModalRequest, PickRequest, PickResult} from './server-requests'
+import {ModalRequest, PickRequest, PickInfo} from './server-requests'
 
 export type PlayerId = string
 
@@ -82,11 +81,11 @@ export type PlayerState = {
 		onDetach: GameHook<(instance: string) => void>
 
 		/** Hook called before a single use card is applied */
-		beforeApply: GameHook<(pickedSlots: PickedSlots) => void>
+		beforeApply: GameHook<() => void>
 		/** Hook called when a single use card is applied */
-		onApply: GameHook<(pickedSlots: PickedSlots) => void>
+		onApply: GameHook<() => void>
 		/** Hook called after a single use card is applied */
-		afterApply: GameHook<(pickedSlots: PickedSlots) => void>
+		afterApply: GameHook<() => void>
 
 		/**
 		 * Hook called once before each attack loop.
@@ -165,7 +164,7 @@ export type PickCardActionResult =
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
 export type ModalData = {
-	modalId: string,
+	modalId: string
 	payload?: any
 }
 
@@ -305,7 +304,6 @@ export type LocalGameRoot = {
 		id: string
 		info: null
 	} | null
-	pickProcess: PickProcessT | null
 	endGameOverlay: {
 		reason: GameEndReasonT
 		outcome: GameEndOutcomeT

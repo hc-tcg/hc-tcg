@@ -1,7 +1,6 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
 import Card from 'components/card'
-import {SlotTypeT} from 'common/types/pick-process'
 import {CardT, RowState} from 'common/types/game-state'
 import css from './board.module.scss'
 import HermitCard from 'common/cards/base/hermit-card'
@@ -12,6 +11,7 @@ import HealthCard from 'common/cards/base/health-card'
 import {AilmentT} from 'common/types/game-state'
 import Ailment from 'components/ailments/ailment'
 import {AILMENT_CLASSES} from 'common/ailments'
+import {SlotTypeT} from 'common/types/cards'
 
 export type SlotProps = {
 	type: SlotTypeT

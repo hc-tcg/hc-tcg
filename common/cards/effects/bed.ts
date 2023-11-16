@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {HERMIT_CARDS} from '..'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
-import { applyAilment, removeAilment } from '../../utils/board'
+import {applyAilment, removeAilment} from '../../utils/board'
 
 class BedEffectCard extends EffectCard {
 	constructor() {
@@ -39,8 +39,8 @@ class BedEffectCard extends EffectCard {
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(instance, () => {
-			const isSleeping = game.state.ailments.some((a) => 
-				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+			const isSleeping = game.state.ailments.some(
+				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
 			)
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
@@ -48,12 +48,12 @@ class BedEffectCard extends EffectCard {
 			}
 		})
 
-		player.hooks.beforeApply.add(instance, (pickedSlots) => {
+		player.hooks.beforeApply.add(instance, () => {
 			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
 		})
 
 		//Ladder
-		player.hooks.afterApply.add(instance, (pickedSlots) => {
+		player.hooks.afterApply.add(instance, () => {
 			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
 				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
@@ -64,8 +64,8 @@ class BedEffectCard extends EffectCard {
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
-			const isSleeping = game.state.ailments.some((a) => 
-				a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+			const isSleeping = game.state.ailments.some(
+				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
 			)
 
 			// if sleeping has worn off, discard the bed

@@ -1,42 +1,37 @@
 import {RowState} from 'common/types/game-state'
 import {CardT} from 'common/types/game-state'
 import Slot from './board-slot'
-import {SlotTypeT} from 'common/types/pick-process'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {AilmentT} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import {BoardSlotTypeT} from 'common/types/cards'
 
-const getCardBySlot = (
-	slotType: SlotTypeT,
-	index: number,
-	rowState: RowState | null
-): CardT | null => {
-	if (!rowState) return null
-	if (slotType === 'hermit') return rowState.hermitCard || null
-	if (slotType === 'effect') return rowState.effectCard || null
-	if (slotType === 'item') return rowState.itemCards[index] || null
+const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
+	if (!row) return null
+	if (slot.type === 'hermit') return row.hermitCard || null
+	if (slot.type === 'effect') return row.effectCard || null
+	if (slot.type === 'item') return row.itemCards[slot.index] || null
 	return null
 }
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	onClick: (meta: any) => void
+	onClick: (card: CardT | null, slot: SlotInfo) => void
 	rowState: RowState
 	active: boolean
 	ailments: Array<AilmentT>
 }
 const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) => {
-	const handleSlotClick = (slotType: SlotTypeT, slotIndex: number, card: CardT | null) => {
-		onClick({slotType, slotIndex: slotType === 'item' ? slotIndex : 0, card})
-	}
-	const slotTypes: Array<SlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
+	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
-		const card = getCardBySlot(slotType, index, rowState)
+		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
+		const card = getCardBySlot(slotInfo, rowState)
 		const cssId = slotType === 'item' ? slotType + (index + 1) : slotType
 		return (
 			<Slot
 				cssId={cssId}
-				onClick={() => handleSlotClick(slotType, index, card)}
+				onClick={() => onClick(card, slotInfo)}
 				card={card}
 				rowState={rowState}
 				active={active}

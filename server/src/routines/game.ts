@@ -1,7 +1,6 @@
 import {all, take, fork, cancel, race, delay, call, actionChannel} from 'typed-redux-saga'
 import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
-import {getPickedSlots} from '../utils/picked-cards'
 import attackSaga, {executeAllAttacks, runAllAttacks} from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
@@ -263,13 +262,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		return
 	}
 
-	const pickedSlots = getPickedSlots(game, turnAction)
-	// Validation failed
-	if (!pickedSlots) {
-		game.setLastActionResult(actionType, 'FAILURE_INVALID_DATA')
-		return
-	}
-
 	let modalResult = null
 	if (turnAction.payload && turnAction.payload.modalResult) {
 		modalResult = turnAction.payload.modalResult
@@ -295,7 +287,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(changeActiveHermitSaga, game, turnAction)
 			break
 		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, pickedSlots)
+			result = yield* call(applyEffectSaga, game)
 			break
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
@@ -333,7 +325,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST'].map((type) => playerAction(type, opponentPlayerId)),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayerId)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',

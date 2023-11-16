@@ -60,7 +60,7 @@ class MilkBucketEffectCard extends EffectCard {
 				})
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, (attack) => {
+			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
 					return (

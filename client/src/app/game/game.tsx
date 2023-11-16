@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
@@ -24,7 +23,6 @@ import {playSound} from 'logic/sound/sound-actions'
 import {
 	getGameState,
 	getSelectedCard,
-	getPickProcess,
 	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
@@ -35,8 +33,7 @@ import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
-// import {getSettings} from 'logic/local-settings/local-settings-selectors'
-// import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {PickInfo} from 'common/types/server-requests'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -69,7 +66,6 @@ function Game() {
 	const gameState = useSelector(getGameState)
 	const availableActions = useSelector(getAvailableActions)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
@@ -84,10 +80,6 @@ function Game() {
 		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
 		: gameState.hand
 
-	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.slot.card)
-		.filter(Boolean) as Array<CardT>
-
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
 
@@ -95,9 +87,9 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedSlot: PickedSlotT) => {
-		console.log('Slot selected: ', pickedSlot)
-		dispatch(slotPicked(pickedSlot))
+	const handleBoardClick = (pickInfo: PickInfo) => {
+		console.log('Slot selected: ', pickInfo)
+		dispatch(slotPicked(pickInfo))
 	}
 
 	const selectCard = (card: CardT) => {
@@ -236,11 +228,9 @@ function Game() {
 					{Filter()}
 					<CardList
 						wrap={false}
-						// cards={gameState.hand}
 						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
-						picked={pickedSlotsInstances}
 					/>
 				</div>
 			</div>

@@ -11,7 +11,6 @@ import {
 	RowState,
 	RowStateWithHermit,
 } from '../types/game-state'
-import {PickedSlots} from '../types/pick-process'
 
 export function getActiveRow(playerState: PlayerState) {
 	if (playerState.board.activeRow === null) return null
@@ -104,10 +103,7 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 	return suCard?.cardId === id && suUsed === isUsed
 }
 
-export function applySingleUse(
-	game: GameModel,
-	pickedSlots: PickedSlots = {}
-): GenericActionResult {
+export function applySingleUse(game: GameModel): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -118,16 +114,16 @@ export function applySingleUse(
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
-	currentPlayer.hooks.beforeApply.call(pickedSlots)
+	currentPlayer.hooks.beforeApply.call()
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	currentPlayer.hooks.onApply.call(pickedSlots)
+	currentPlayer.hooks.onApply.call()
 
 	// This can only be done once per turn
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
-	currentPlayer.hooks.afterApply.call(pickedSlots)
+	currentPlayer.hooks.afterApply.call()
 
 	return 'SUCCESS'
 }

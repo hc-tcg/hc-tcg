@@ -1,17 +1,18 @@
+import {SlotTypeT} from './cards'
 import {ActionResult, CardT, ModalData} from './game-state'
 
-export type PickedSlotType = 'item' | 'effect' | 'hermit' | 'hand'
+export type PickedSlotType = SlotTypeT | 'hand'
 
-export type PickedSlot = {
+export type SlotInfo = {
 	type: PickedSlotType
 	index: number
 }
 
-export type PickResult = {
+export type PickInfo = {
 	playerId: string
 	rowIndex?: number // This will be undefined for the hand
 	card: CardT | null
-	slot: PickedSlot
+	slot: SlotInfo
 }
 
 export type PickRequest = {
@@ -22,7 +23,7 @@ export type PickRequest = {
 	/** The message to display to the player */
 	message: string
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
-	onResult: (pickResult: PickResult) => ActionResult //
+	onResult: (pickResult: PickInfo) => ActionResult //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
 	onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */

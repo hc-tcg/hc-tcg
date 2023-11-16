@@ -3,7 +3,6 @@ import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
-import {PickedSlots} from 'common/types/pick-process'
 import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
@@ -12,8 +11,7 @@ import {getActiveRow} from 'common/utils/board'
 function getAttacks(
 	game: GameModel,
 	attackPos: CardPosModel,
-	hermitAttackType: HermitAttackType,
-	pickedSlots: PickedSlots
+	hermitAttackType: HermitAttackType
 ): Array<AttackModel> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
@@ -67,7 +65,7 @@ function executeAttack(attack: AttackModel) {
 /**
  * Call before attack hooks for each attack that has an attacker
  */
-function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.attacker) continue
@@ -89,7 +87,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 /**
  * Call before defence hooks, based on each attack's target
  */
-function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.target) continue
@@ -107,7 +105,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedS
 /**
  * Call attack hooks for each attack that has an attacker
  */
-function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runOnAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.attacker) continue
@@ -125,7 +123,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots 
 /**
  * Call defence hooks, based on each attack's target
  */
-function runOnDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runOnDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.target) continue
@@ -178,22 +176,18 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 	return false
 }
 
-export function runAllAttacks(
-	game: GameModel,
-	attacks: Array<AttackModel>,
-	pickedSlots: PickedSlots = {}
-) {
+export function runAllAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	const allAttacks: Array<AttackModel> = []
 
 	// Main attack loop
 	while (attacks.length > 0) {
 		// STEP 1 - Call before attack and defence for all attacks
-		runBeforeAttackHooks(attacks, pickedSlots)
-		runBeforeDefenceHooks(attacks, pickedSlots)
+		runBeforeAttackHooks(attacks)
+		runBeforeDefenceHooks(attacks)
 
 		// STEP 2 - Call on attack and defence for all attacks
-		runOnAttackHooks(attacks, pickedSlots)
-		runOnDefenceHooks(attacks, pickedSlots)
+		runOnAttackHooks(attacks)
+		runOnDefenceHooks(attacks)
 
 		// STEP 3 - Execute all attacks
 		for (let i = 0; i < attacks.length; i++) {
@@ -278,10 +272,10 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, {})
+	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
 	// Run all the code stuff
-	runAllAttacks(game, attacks, {})
+	runAllAttacks(game, attacks)
 
 	return 'SUCCESS'
 }
