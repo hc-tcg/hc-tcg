@@ -18,17 +18,24 @@ class MuseumCollectionAilment extends Ailment{
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		game.state.ailments.push(ailmentInfo)
+		const oldHandSize = this.getInstanceKey(ailmentInfo.ailmentInstance)
 		const {player} = pos
 
+		player.custom[oldHandSize] = player.hand.length
+
 		player.hooks.onAttach.add(ailmentInfo.ailmentInstance, (instance) => {
+			console.log("Old: " + player.custom[oldHandSize] + " | New: " + player.hand.length)
+			if (player.hand.length === player.custom[oldHandSize]) return
 			const instanceLocation = getBasicCardPos(game, instance)
-			if (instanceLocation?.slot.type === "single_use") return
 			if (ailmentInfo.duration === undefined) return
+			player.custom[oldHandSize] = player.hand.length
+			if (instanceLocation?.slot.type === "single_use") return
 			ailmentInfo.duration++
 		})
 
 		player.hooks.onApply.add(ailmentInfo.ailmentInstance, (instance) => {
 			if (ailmentInfo.duration === undefined) return
+			player.custom[oldHandSize] = player.hand.length
 			ailmentInfo.duration++
 		})
 
@@ -44,6 +51,7 @@ class MuseumCollectionAilment extends Ailment{
 		})
 
 		player.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
+			delete player.custom[oldHandSize]
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
 		})
 	}

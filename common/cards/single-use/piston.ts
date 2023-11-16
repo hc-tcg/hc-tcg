@@ -132,7 +132,7 @@ class PistonSingleUseCard extends SingleUseCard {
 					},
 				}
 
-				swapSlots(game, itemPos, targetPos, true)
+				swapSlots(game, itemPos, targetPos)
 
 				applySingleUse(game)
 				delete player.custom[itemIndexKey]
