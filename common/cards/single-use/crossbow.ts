@@ -57,6 +57,9 @@ class CrossbowSingleUseCard extends SingleUseCard {
 
 					return 'SUCCESS'
 				},
+				onTimeout() {
+					// We didn't pick a target so do nothing
+				},
 			}
 
 			function addPickRequest(newRemaining: number) {

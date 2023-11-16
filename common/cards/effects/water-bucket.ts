@@ -4,7 +4,7 @@ import {TurnActions} from '../../types/game-state'
 import {discardCard} from '../../utils/movement'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
-import {removeAilment} from '../../utils/board'
+import {applySingleUse, removeAilment} from '../../utils/board'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -15,45 +15,43 @@ class WaterBucketEffectCard extends EffectCard {
 			rarity: 'common',
 			description:
 				'Remove burn and String on active or AFK Hermit.\n\nOR can be attached to prevent burn.',
-			pickOn: 'apply',
-			pickReqs: [{target: 'player', slot: ['hermit'], amount: 1}],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply.add(instance, (pickedSlots) => {
-				game.addPickRequest({
-					playerId: player.id,
-					id: instance,
-					message: 'Pick one of your Hermits',
-					onResult(pickResult) {
-						if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+			game.addPickRequest({
+				playerId: player.id,
+				id: instance,
+				message: 'Pick one of your Hermits',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-						const ailmentsToRemove = game.state.ailments.filter((ail) => {
-							return ail.targetInstance === pickResult.card?.cardInstance && ail.ailmentId == 'fire'
-						})
-						ailmentsToRemove.forEach((ail) => {
-							removeAilment(game, pos, ail.ailmentInstance)
-						})
+					const ailmentsToRemove = game.state.ailments.filter((ail) => {
+						return ail.targetInstance === pickResult.card?.cardInstance && ail.ailmentId == 'fire'
+					})
+					ailmentsToRemove.forEach((ail) => {
+						removeAilment(game, pos, ail.ailmentInstance)
+					})
 
-						if (player.board.rows[pickResult.rowIndex].effectCard?.cardId === 'string') {
-							discardCard(game, player.board.rows[pickResult.rowIndex].effectCard)
+					if (player.board.rows[pickResult.rowIndex].effectCard?.cardId === 'string') {
+						discardCard(game, player.board.rows[pickResult.rowIndex].effectCard)
+					}
+					for (let i = 0; i < player.board.rows[pickResult.rowIndex].itemCards.length; i++) {
+						if (player.board.rows[pickResult.rowIndex].itemCards[i]?.cardId === 'string') {
+							discardCard(game, player.board.rows[pickResult.rowIndex].itemCards[i])
 						}
-						for (let i = 0; i < player.board.rows[pickResult.rowIndex].itemCards.length; i++) {
-							if (player.board.rows[pickResult.rowIndex].itemCards[i]?.cardId === 'string') {
-								discardCard(game, player.board.rows[pickResult.rowIndex].itemCards[i])
-							}
-						}
+					}
 
-						return 'SUCCESS'
-					},
-				})
+					applySingleUse(game)
+
+					return 'SUCCESS'
+				},
 			})
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence.add(instance, (attack) => {
@@ -80,7 +78,6 @@ class WaterBucketEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onApply.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
 	}

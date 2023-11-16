@@ -78,7 +78,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
-				message: "Pick one of your AFK Hermits",
+				message: 'Pick one of your AFK Hermits',
 				onResult(pickResult) {
 					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
@@ -104,31 +104,37 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 					game.addModalRequest({
 						playerId: player.id,
-						data: {modalId: 'copyAttack', payload: {
-							modalName: "Cleo: Choose an attack to copy",
-							modalDescription: "Which of the Hermit's attacks do you want to copy?",
-							cardPos: getBasicCardPos(game, pickResult.card.cardInstance)
-						}},
+						data: {
+							modalId: 'copyAttack',
+							payload: {
+								modalName: 'Cleo: Choose an attack to copy',
+								modalDescription: "Which of the Hermit's attacks do you want to copy?",
+								cardPos: getBasicCardPos(game, pickResult.card.cardInstance),
+							},
+						},
 						onResult(modalResult) {
 							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
-		
+
 							// Store the card id to use when getting attacks
 							player.custom[pickedCardKey] = {
 								card: pickResult.card,
-								attack: modalResult.pick
+								attack: modalResult.pick,
 							}
-		
+
 							return 'SUCCESS'
 						},
 						onTimeout() {
 							player.custom[pickedCardKey] = {
 								card: pickResult.card,
-								attack: 'primary'
+								attack: 'primary',
 							}
 						},
 					})
 
 					return 'SUCCESS'
+				},
+				onTimeout() {
+					// We didn't pick someone so do nothing
 				},
 			})
 		})

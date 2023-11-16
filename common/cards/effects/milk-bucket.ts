@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
-import {removeAilment} from '../../utils/board'
+import {applySingleUse, removeAilment} from '../../utils/board'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -14,39 +14,37 @@ class MilkBucketEffectCard extends EffectCard {
 			rarity: 'common',
 			description:
 				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
-			pickOn: 'apply',
-			pickReqs: [{target: 'player', slot: ['hermit'], amount: 1}],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply.add(instance, () => {
-				game.addPickRequest({
-					playerId: player.id,
-					id: instance,
-					message: 'Pick one of your Hermits',
-					onResult(pickResult) {
-						if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+			game.addPickRequest({
+				playerId: player.id,
+				id: instance,
+				message: 'Pick one of your Hermits',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-						const ailmentsToRemove = game.state.ailments.filter((ail) => {
-							return (
-								ail.targetInstance === pickResult.card?.cardInstance &&
-								(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
-							)
-						})
-						ailmentsToRemove.forEach((ail) => {
-							removeAilment(game, pos, ail.ailmentInstance)
-						})
+					const ailmentsToRemove = game.state.ailments.filter((ail) => {
+						return (
+							ail.targetInstance === pickResult.card?.cardInstance &&
+							(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+						)
+					})
+					ailmentsToRemove.forEach((ail) => {
+						removeAilment(game, pos, ail.ailmentInstance)
+					})
 
-						return 'SUCCESS'
-					},
-				})
+					applySingleUse(game)
+
+					return 'SUCCESS'
+				},
 			})
 		} else if (slot.type === 'effect') {
 			player.hooks.onDefence.add(instance, (attack) => {
@@ -79,7 +77,6 @@ class MilkBucketEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)
 	}

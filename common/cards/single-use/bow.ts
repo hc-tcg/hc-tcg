@@ -52,6 +52,9 @@ class BowSingleUseCard extends SingleUseCard {
 
 					return 'SUCCESS'
 				},
+				onTimeout() {
+					// We didn't pick a target so do nothing
+				},
 			})
 		})
 

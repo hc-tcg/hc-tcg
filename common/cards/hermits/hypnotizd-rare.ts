@@ -108,6 +108,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 					return 'SUCCESS'
 				},
+				onTimeout() {
+					// Discard the first available item card
+					const activeRow = getActiveRow(player)
+					if (!activeRow) return
+					const itemCard = activeRow.itemCards.find((card) => !!card)
+					if (!itemCard) return
+					discardCard(game, itemCard)
+				},
 			}
 
 			game.addPickRequest({
@@ -139,6 +147,9 @@ class HypnotizdRareHermitCard extends HermitCard {
 					}
 
 					return 'SUCCESS'
+				},
+				onTimeout() {
+					// We didn't choose anyone so we will just attack as normal
 				},
 			})
 		})

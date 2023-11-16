@@ -73,6 +73,9 @@ class KeralisRareHermitCard extends HermitCard {
 
 					return 'SUCCESS'
 				},
+				onTimeout() {
+					// We didn't pick anyone to heal, so heal no one
+				},
 			})
 		})
 
