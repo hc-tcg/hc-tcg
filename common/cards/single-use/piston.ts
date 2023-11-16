@@ -126,7 +126,7 @@ class PistonSingleUseCard extends SingleUseCard {
 					},
 				}
 
-				swapSlots(game, itemPos, targetPos)
+				swapSlots(game, itemPos, targetPos, true)
 
 				// Only add the after apply hook here
 				player.hooks.afterApply.add(instance, () => {

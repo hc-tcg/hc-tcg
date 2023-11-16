@@ -104,7 +104,7 @@ class MendingSingleUseCard extends singleUseCard {
 					},
 				}
 
-				swapSlots(game, sourcePos, targetPos)
+				swapSlots(game, sourcePos, targetPos, true)
 
 				return 'SUCCESS'
 			},

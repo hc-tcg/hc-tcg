@@ -1,6 +1,6 @@
 import Ailment from "./ailment"
 import {GameModel} from "../models/game-model"
-import {CardPosModel} from "../models/card-pos-model"
+import {CardPosModel, getBasicCardPos} from "../models/card-pos-model"
 import {removeAilment} from "../utils/board"
 import {AilmentT} from "../types/game-state"
 
@@ -20,12 +20,14 @@ class MuseumCollectionAilment extends Ailment{
 		game.state.ailments.push(ailmentInfo)
 		const {player} = pos
 
-		player.hooks.onAttach.add(ailmentInfo.ailmentInstance, () => {
+		player.hooks.onAttach.add(ailmentInfo.ailmentInstance, (instance) => {
+			const instanceLocation = getBasicCardPos(game, instance)
+			if (instanceLocation?.slot.type === "single_use") return
 			if (ailmentInfo.duration === undefined) return
 			ailmentInfo.duration++
 		})
 
-		player.hooks.onApply.add(ailmentInfo.ailmentInstance, () => {
+		player.hooks.onApply.add(ailmentInfo.ailmentInstance, (instance) => {
 			if (ailmentInfo.duration === undefined) return
 			ailmentInfo.duration++
 		})
