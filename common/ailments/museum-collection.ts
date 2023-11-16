@@ -24,7 +24,6 @@ class MuseumCollectionAilment extends Ailment{
 		player.custom[oldHandSize] = player.hand.length
 
 		player.hooks.onAttach.add(ailmentInfo.ailmentInstance, (instance) => {
-			console.log("Old: " + player.custom[oldHandSize] + " | New: " + player.hand.length)
 			if (player.hand.length === player.custom[oldHandSize]) return
 			const instanceLocation = getBasicCardPos(game, instance)
 			if (ailmentInfo.duration === undefined) return

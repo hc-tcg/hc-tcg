@@ -49,8 +49,8 @@ class BrushSingleUseCard extends SingleUseCard {
 					})
 
 					player.pile = player.pile.slice(3)
-					cards.reverse().map((c) => player.pile.unshift(c))
-					bottomCards.map((c) => player.pile.push(c))
+					cards.reverse().forEach((c) => player.pile.unshift(c))
+					bottomCards.forEach((c) => player.pile.push(c))
 
 					return 'SUCCESS'
 				},
