@@ -7,7 +7,7 @@ class FurnaceEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'furnace',
-			numericId: 166,
+			numericId: 170,
 			name: 'Furnace',
 			rarity: 'rare',
 			description:
