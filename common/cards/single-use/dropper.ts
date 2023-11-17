@@ -9,8 +9,7 @@ class DropperSingleUseCard extends SingleUseCard {
 			numericId: 152,
 			name: 'Dropper',
 			rarity: 'rare',
-			description:
-				"Shuffle 3 useless blocks that will at some point have functionality into your opponent's deck",
+			description: "Shuffle 3 fletching tables into your opponent's deck",
 		})
 	}
 
@@ -22,11 +21,13 @@ class DropperSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const cardInfo = {
-				cardId: '',
-				cardInstance: Math.random().toString(),
+			for (let i = 0; i < 3; i++) {
+				const cardInfo = {
+					cardId: 'fletching_table',
+					cardInstance: Math.random().toString(),
+				}
+				player.pile.splice(Math.round(Math.random()*player.pile.length), 0, cardInfo)
 			}
-			player.pile.unshift(cardInfo)
 		})
 	}
 

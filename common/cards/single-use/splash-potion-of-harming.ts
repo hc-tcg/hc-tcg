@@ -6,7 +6,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'splash_potion_of_harming',
-			numericId: 165,
+			numericId: 171,
 			name: 'Splash potion of harming',
 			rarity: 'common',
 			description: "Deal 40hp damage to the opponent's active hermit and 20hp damage to all others",
