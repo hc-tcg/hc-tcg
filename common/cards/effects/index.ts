@@ -21,7 +21,6 @@ import ArmorStandEffectCard from './armor-stand'
 import EffectCard from '../base/effect-card'
 import BrewingStandEffectCard from './brewing-stand'
 import FurnaceEffectCard from './furnace'
-import SlimeballEffectCard from './slimeball'
 
 export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	new BedEffectCard(),
@@ -50,5 +49,4 @@ export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	// Advent of TCG cards
 	// new BrewingStandEffectCard(),
 	// new FurnaceEffectCard(),
-	// new SlimeballEffectCard(),
 ]
