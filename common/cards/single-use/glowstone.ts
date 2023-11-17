@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import { CardT } from '../../types/game-state'
+import {CardT} from '../../types/game-state'
 import SingleUseCard from '../base/single-use-card'
 
 class GlowstoneSingleUseCard extends SingleUseCard {
@@ -26,7 +26,7 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {modalId: 'selectCards', payload: {
-					modalName: "Choose the card for your opponent to draw.",
+					modalName: "Glowstone: Choose the card for your opponent to draw.",
 					modalDescription: "The other two cards will be placed on the bottom of their deck.",
 					cards: opponentPlayer.pile.slice(0,3),
 					selectionSize: 1,
@@ -37,13 +37,18 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 				}},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!modalResult.cards) return 'SUCCESS'
 
 					const cards: Array<CardT> = modalResult.cards
+					const bottomCards: Array<CardT> = opponentPlayer.pile.slice(0, 3).filter((c) => {
+						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
+						return true
+					})
 
-					const selectedCards = opponentPlayer.pile.slice(0,3).filter((c) => c !== cards[0])
-					opponentPlayer.pile.filter((c) => !selectedCards.includes(c))
-					selectedCards.map((c) => opponentPlayer.pile.unshift(c))
-					opponentPlayer.hand.push(cards[0])
+					opponentPlayer.pile = opponentPlayer.pile.slice(3)
+					bottomCards.forEach((c) => opponentPlayer.pile.push(c))
+
+					cards.forEach((c) => opponentPlayer.hand.push(c))
 
 					return 'SUCCESS'
 				},
