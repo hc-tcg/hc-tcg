@@ -12,7 +12,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT} from 'common/types/cards'
+import {EnergyT, SlotPos} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card from 'common/cards/base/card'
@@ -242,6 +242,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
 			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			onCardPositionChange: new GameHook<(slot: SlotPos) => boolean>(),
 		},
 	}
 }
