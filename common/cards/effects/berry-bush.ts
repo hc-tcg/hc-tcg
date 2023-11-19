@@ -9,7 +9,7 @@ class BerryBushEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'berry_bush',
-			numericId: 173,
+			numericId: 176,
 			name: 'Sweet Berry Bush',
 			rarity: 'ultra_rare',
 			description:
