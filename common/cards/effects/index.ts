@@ -23,6 +23,7 @@ import BrewingStandEffectCard from './brewing-stand'
 import FurnaceEffectCard from './furnace'
 import SlimeballEffectCard from './slimeball'
 import CatEffectCard from './cat'
+import BerryBushEffectCard from './berry-bush'
 
 export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	new BedEffectCard(),
@@ -53,4 +54,5 @@ export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	// new FurnaceEffectCard(),
 	// new SlimeballEffectCard(),
 	//new CatEffectCard(),
+	//new BerryBushEffectCard(),
 ]
