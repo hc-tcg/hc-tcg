@@ -8,7 +8,7 @@ class SlimeballEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'slimeball',
-			numericId: 170,
+			numericId: 173,
 			name: 'Slimeball',
 			rarity: 'ultra_rare',
 			description:
