@@ -5,7 +5,7 @@
 	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,
-	"disableDeckOut": true,
+	"disableDeckOut": false,
 	"startWithAllCards": false,
 	"unlimitedCards": false,
 	"blockedActions": [],
