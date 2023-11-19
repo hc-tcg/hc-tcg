@@ -24,9 +24,6 @@ class BerryBushEffectCard extends EffectCard {
 		if (!row) return
 
 		row.health = 30
-		if (player.board.activeRow === null) {
-			player.board.activeRow = pos.rowIndex
-		}
 
 		// Make this card unable to be switched to
 		player.hooks.beforeActiveRowChange.add(instance, (oldRow, newRow) => {
