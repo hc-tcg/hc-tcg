@@ -1,7 +1,7 @@
 import EffectCard from '../base/effect-card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {applyAilment, removeAilment} from '../../utils/board'
+import {applyAilment} from '../../utils/board'
 
 class BrewingStandEffectCard extends EffectCard {
 	constructor() {
@@ -11,16 +11,28 @@ class BrewingStandEffectCard extends EffectCard {
 			name: 'Brewing stand',
 			rarity: 'rare',
 			description:
-				'Attach to a Hermit, every 2 turns consumes 1 item card and heals the Hermit it is attached to 50hp',
+				'Attach to an Active or AFK Hermit. Every other turn, choose an item to discard from the Hermit Brewing Stand is attached to and heal this Hermit 50hp.',
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		applyAilment(game, 'brewing', instance)
+		const {player} = pos
+		const brewingInstanceKey = this.getInstanceKey(instance, 'brewed_last_turn')
+
+		player.hooks.onTurnEnd.add(instance, () => {
+			if (!player.custom[brewingInstanceKey]) {
+				applyAilment(game, 'brewing', instance)
+			}
+			player.custom[brewingInstanceKey] = !player.custom[brewingInstanceKey]
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		removeAilment(game, pos, instance)
+		const {player} = pos
+		const brewingInstanceKey = this.getInstanceKey(instance, 'brewed_last_turn')
+
+		player.hooks.onTurnStart.remove(instance)
+		delete player.custom[brewingInstanceKey]
 	}
 }
 
