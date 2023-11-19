@@ -229,13 +229,7 @@ export function swapSlots(
 }
 
 /**Swaps the positions of two rows on the board. */
-export function swapRows(
-	game: GameModel,
-	player: PlayerState,
-	oldRow: number,
-	newRow: number,
-	checkNewRow: boolean = true
-) {
+export function swapRows(player: PlayerState, oldRow: number, newRow: number) {
 	const oldRowState = player.board.rows[oldRow]
 
 	const oldSlotPos: SlotPos = {
