@@ -9,7 +9,7 @@ class PharaohRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'pharaoh_rare',
-			numericId: 173,
+			numericId: 175,
 			name: 'Pharaoh',
 			rarity: 'rare',
 			hermitType: 'balanced',
