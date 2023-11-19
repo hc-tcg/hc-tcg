@@ -2,6 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
+import {swapRows} from '../../utils/movement'
 import HermitCard from '../base/hermit-card'
 
 class LDShadowLadyRareHermitCard extends HermitCard {
@@ -23,8 +24,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				name: 'Evict',
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 90,
-				power:
-					'Opposing active hermit must move to a free slot if one is available.',
+				power: 'Opposing active hermit must move to a free slot if one is available.',
 			},
 		})
 	}
@@ -58,10 +58,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 
-					const activeRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-					opponentPlayer.board.rows[opponentPlayer.board.activeRow] = opponentPlayer.board.rows[pickResult.rowIndex]
-					opponentPlayer.board.rows[pickResult.rowIndex] = activeRow
-					opponentPlayer.board.activeRow = pickResult.rowIndex			
+					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
 
 					return 'SUCCESS'
 				},
@@ -69,16 +66,13 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (opponentPlayer.board.activeRow === null) return
 
 					const filledRowNumbers = getNonEmptyRows(opponentPlayer, true).map((r) => r.rowIndex)
-					const emptyRows = [0,1,2,3,4].filter((n) => !filledRowNumbers.includes(n))
+					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
 
 					if (emptyRows.length === 0) return
 
 					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					const activeRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-					opponentPlayer.board.rows[opponentPlayer.board.activeRow] = opponentPlayer.board.rows[pickedRowIndex]
-					opponentPlayer.board.rows[pickedRowIndex] = activeRow
-					opponentPlayer.board.activeRow = pickedRowIndex	
+					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},
 			})
 		})
