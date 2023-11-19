@@ -17,7 +17,6 @@ class SlimeballEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		// attach to effect or item slot
 		if (pos.slot.type !== 'effect') return 'INVALID'
 
 		if (!pos.row?.hermitCard) return 'INVALID'

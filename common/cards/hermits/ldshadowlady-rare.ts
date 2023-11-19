@@ -58,7 +58,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 
-					swapRows(game, opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
+					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
 
 					return 'SUCCESS'
 				},
@@ -72,7 +72,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					swapRows(game, opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
+					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},
 			})
 		})
