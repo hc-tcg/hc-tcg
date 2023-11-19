@@ -4,15 +4,16 @@ import {CardPosModel} from '../models/card-pos-model'
 import {AilmentT} from '../types/game-state'
 import {discardCard} from '../utils/movement'
 import {HERMIT_CARDS} from '../cards'
+import { removeAilment } from '../utils/board'
 
 class BrewingAilment extends Ailment {
 	constructor() {
 		super({
 			id: 'brewing',
 			name: 'Brewing',
-			description: 'Converts 1 item card to 50hp every 2 turns',
-			duration: 1,
-			counter: true,
+			description: 'At the start of your next turn, pick an item card to discard and heal 50hp',
+			duration: 0,
+			counter: false,
 			damageEffect: false,
 		})
 	}
@@ -21,35 +22,46 @@ class BrewingAilment extends Ailment {
 		game.state.ailments.push(ailmentInfo)
 		const {player} = pos
 
-		player.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
-			if (ailmentInfo.duration === 0) {
-				ailmentInfo.duration = 1
-				if (!pos.row?.itemCards) return
-				const itemCards = pos.row.itemCards.filter((value) => value !== null)
-				if (itemCards.length === 0) return
-				var randomPos = Math.floor(Math.random() * (itemCards.length - 1))
-				discardCard(game, itemCards[randomPos])
-				const card = pos.row.hermitCard
-				if (!card || !pos.row.health) return
-				const hermitInfo = HERMIT_CARDS[card.cardId]
-				if (hermitInfo) {
-					pos.row.health = Math.min(pos.row.health + 50, hermitInfo.health)
-				} else {
-					// Armor Stand
-					pos.row.health += 50
-				}
-			} else {
-				ailmentInfo.duration = 0
-			}
+		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+			removeAilment(game, pos, ailmentInfo.ailmentInstance)
+			if (!pos.row) return
+			const itemCards = pos.row.itemCards.filter((value) => value !== null)
+			if (itemCards.length === 0) return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: 'Choose an item card to discard',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+					if (!pos.row) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.rowIndex !== pos.rowIndex) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					discardCard(game, pickResult.card)
+
+					const hermitCard = pos.row.hermitCard
+					if (!hermitCard || !pos.row.health) return 'SUCCESS'
+					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
+					if (hermitInfo) {
+						pos.row.health = Math.min(pos.row.health + 50, hermitInfo.health)
+					} else {
+						// Armor Stand
+						pos.row.health += 50
+					}
+
+					return 'SUCCESS'
+				},
+			})
 		})
 	}
 
 	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 
-		player.hooks.availableEnergy.remove(ailmentInfo.ailmentInstance)
-		opponentPlayer.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
-		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
+		player.hooks.onTurnStart.remove(ailmentInfo.ailmentInstance)
 	}
 }
 
