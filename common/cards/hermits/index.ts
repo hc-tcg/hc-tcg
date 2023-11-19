@@ -82,6 +82,8 @@ import SmallishbeansRareHermitCard from './smallishbeans-rare'
 import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
 import ShubbleYTRareHermitCard from './shubbleyt-rare'
 import HermitCard from '../base/hermit-card'
+import PharaohRareHermitCard from './pharaoh-rare'
+import GrianchRareHermitCard from './grianch_rare'
 
 export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	new BdoubleO100CommonHermitCard(),
@@ -168,6 +170,8 @@ export const HERMIT_CARD_CLASSES: Array<HermitCard> = [
 	//new LDShadowLadyRareHermitCard(),
 	//new SmallishbeansRareHermitCard(),
 	//new BigBSt4tzRareHermitCard(),
+	//new PharaohRareHermitCard(),
+	//new GrianchRareHermitCard(),
 ]
 
 export default HERMIT_CARD_CLASSES
