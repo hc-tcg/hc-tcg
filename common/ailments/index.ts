@@ -9,6 +9,7 @@ import ProtectedAilment from './protected'
 import DyedAilment from './dyed'
 import MuseumCollectionAilment from './museum-collection'
 import BrewingAilment from './brewing'
+import SmeltingAilment from './smelting'
 
 const cardClasses: Array<Ailment> = [
 	new FireAilment(),
@@ -21,6 +22,7 @@ const cardClasses: Array<Ailment> = [
 	new DyedAilment(),
 	new MuseumCollectionAilment(),
 	new BrewingAilment(),
+	new SmeltingAilment(),
 ]
 
 export const AILMENT_CLASSES: Record<string, Ailment> = cardClasses.reduce(
