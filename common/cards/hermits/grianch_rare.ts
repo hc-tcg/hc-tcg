@@ -62,11 +62,9 @@ class GrianchRareHermitCard extends HermitCard {
 					// Make sure it's an actual hermit card
 					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
 					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
-					//C annot heal other pharaohs
-					if (hermitCard.id === 'pharaoh_rare') return 'FAILURE_INVALID_SLOT'
-
 					const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
 					const hermitHealth = pickedPlayer.board.rows[rowIndex].health
+
 					if (!hermitHealth || !hermitId) return 'FAILURE_INVALID_SLOT'
 					const hermitInfo = HERMIT_CARDS[hermitId]
 					if (hermitInfo) {
