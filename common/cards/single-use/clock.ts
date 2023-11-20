@@ -7,6 +7,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'clock',
+			numericId: 6,
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
@@ -21,28 +22,20 @@ class ClockSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			// Block all actions except for "CHANGE_ACTIVE_HERMIT" and all the wait and followup actions
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: TurnActions = [
+		player.hooks.onApply.add(instance, (pickedSlots) => {
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+				game.addBlockedActions(
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
-					'ZERO_ATTACK',
+					'SINGLE_USE_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD',
-				]
-
-				blockedActions.push(...blocked)
-				return blockedActions
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+					'PLAY_EFFECT_CARD'
+				)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 	}
@@ -50,7 +43,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		// The other player wouldn't be able to attach anything
 		if (game.state.turn.turnNumber === 1) return 'NO'
 		return 'YES'

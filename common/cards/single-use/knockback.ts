@@ -7,6 +7,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'knockback',
+			numericId: 73,
 			name: 'Knockback',
 			rarity: 'rare',
 			description:
@@ -17,7 +18,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
@@ -27,11 +28,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
@@ -42,12 +38,46 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			player.hooks.afterAttack.remove(instance)
 		})
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
-				activeRow.ailments.push({id: 'knockedout', duration: 1})
-				opponentPlayer.board.activeRow = null
+				const lastActiveRow = opponentPlayer.board.activeRow
+
+				opponentPlayer.pickRequests.push({
+					id: this.id,
+					message: 'Choose a new active Hermit from your afk Hermits.',
+					onResult(pickResult) {
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+						const rowIndex = pickResult.rowIndex
+						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
+
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+						const row = opponentPlayer.board.rows[rowIndex]
+						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+
+						opponentPlayer.board.activeRow = rowIndex
+
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+
+						// Choose the first afk row
+						for (const inactiveRow of opponentInactiveRows) {
+							const {rowIndex} = inactiveRow
+							const canBeActive = rowIndex !== lastActiveRow
+							if (canBeActive) {
+								opponentPlayer.board.activeRow = rowIndex
+								break
+							}
+						}
+					},
+				})
 			}
 		})
 	}

@@ -7,6 +7,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'xisumavoid_rare',
+			numericId: 112,
 			name: 'Xisuma',
 			rarity: 'rare',
 			hermitType: 'redstone',
@@ -22,7 +23,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a coin. If heads, opponent is now poisoned.\n\nPoison does an additional 20hp damage on your turns.\n\nGoing AFK does not eliminate the poison.',
+					'Flip a coin. If heads, opponent is now poisoned.\n\nPoison does an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
 			},
 		})
 	}

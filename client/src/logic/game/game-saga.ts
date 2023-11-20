@@ -1,4 +1,15 @@
-import {all, take, takeEvery, fork, call, put, race, takeLatest, cancel} from 'redux-saga/effects'
+import {
+	all,
+	take,
+	takeEvery,
+	fork,
+	call,
+	put,
+	race,
+	takeLatest,
+	cancel,
+	putResolve,
+} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {SagaIterator} from 'redux-saga'
@@ -15,9 +26,11 @@ import {
 	gameEnd,
 	showEndGameOverlay,
 	setOpponentConnection,
+	gameStateReceived,
 } from './game-actions'
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
+import actionModalsSaga from './tasks/action-modals-saga'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({
@@ -29,8 +42,9 @@ function* actionSaga(): SagaIterator {
 		]),
 		applyEffect: take('APPLY_EFFECT'),
 		removeEffect: take('REMOVE_EFFECT'),
-		followUp: take('FOLLOW_UP'),
-		attack: take(['ZERO_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
+		pickCard: take('PICK_CARD'),
+		customModal: take('CUSTOM_MODAL'),
+		attack: take(['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
 		endTurn: take('END_TURN'),
 		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
 	})
@@ -41,8 +55,10 @@ function* actionSaga(): SagaIterator {
 		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
 	} else if (turnAction.removeEffect) {
 		yield call(sendMsg, 'REMOVE_EFFECT')
-	} else if (turnAction.followUp) {
-		yield call(sendMsg, 'FOLLOW_UP', turnAction.followUp.payload)
+	} else if (turnAction.pickCard) {
+		yield call(sendMsg, 'PICK_CARD', turnAction.pickCard.payload)
+	} else if (turnAction.customModal) {
+		yield call(sendMsg, 'CUSTOM_MODAL', turnAction.customModal.payload)
 	} else if (turnAction.attack) {
 		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
@@ -55,17 +71,35 @@ function* actionSaga(): SagaIterator {
 function* gameStateSaga(action: AnyAction): SagaIterator {
 	const gameState: LocalGameState = action.payload.localGameState
 
-	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')) return
+	// First show coin flips, if any
+	yield call(coinFlipSaga, gameState)
 
-	// handle user clicking on board
-	yield fork(slotSaga)
-	// some cards have special logic bound to them
-	yield fork(actionLogicSaga, gameState)
-	// attack logic
-	yield takeEvery('START_ATTACK', attackSaga)
-	// handles core funcionality
-	yield fork(actionSaga)
+	// Actually update the local state
+	yield put(localGameState(gameState))
+
+	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
+	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_PICK')) return
+
+	const logic = yield all([
+		fork(actionModalsSaga),
+		fork(slotSaga),
+		fork(actionLogicSaga, gameState),
+		takeEvery('START_ATTACK', attackSaga),
+	])
+
+	// Handle core funcionality
+	yield call(actionSaga)
+
+	// After we send an action, disable logic till the next game state is received
+	yield cancel(logic)
+}
+
+function* gameStateReceiver(): SagaIterator {
+	// constantly forward GAME_STATE messages from the server to the store
+	while (true) {
+		const {payload} = yield call(receiveMsg, 'GAME_STATE')
+		yield put(gameStateReceived(payload.localGameState))
+	}
 }
 
 function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
@@ -73,17 +107,13 @@ function* gameActionsSaga(initialGameState?: LocalGameState): SagaIterator {
 		yield call(sendMsg, 'FORFEIT')
 	})
 
-	yield takeLatest('LOCAL_GAME_STATE', gameStateSaga)
+	yield fork(gameStateReceiver)
+
+	yield takeLatest('GAME_STATE_RECEIVED', gameStateSaga)
 
 	console.log('Game started')
 	if (initialGameState) {
-		yield put(localGameState(initialGameState))
-	}
-
-	while (true) {
-		const {payload} = yield call(receiveMsg, 'GAME_STATE')
-		yield call(coinFlipSaga, payload.localGameState)
-		yield put(localGameState(payload.localGameState))
+		yield put(gameStateReceived(initialGameState))
 	}
 }
 
@@ -116,7 +146,8 @@ function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
 		} else if (Object.hasOwn(result, 'gameEnd')) {
 			const {gameState: newGameState, outcome, reason} = result.gameEnd.payload
 			if (newGameState) {
-				yield put(
+				yield call(coinFlipSaga, newGameState)
+				yield putResolve(
 					localGameState({
 						...newGameState,
 						availableActions: [],

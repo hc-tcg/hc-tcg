@@ -1,9 +1,10 @@
 import {AttackModel} from '../models/attack-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {EnergyT} from './cards'
+import {EnergyT, Slot, SlotPos} from './cards'
 import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {PickProcessT, PickedSlots} from './pick-process'
+import {ModalRequest, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
@@ -13,7 +14,7 @@ export type CardT = {
 }
 
 export type Ailment = {
-	id: 'poison' | 'fire' | 'sleeping' | 'knockedout' | 'slowness' | 'badomen' | 'weakness'
+	id: 'poison' | 'fire' | 'sleeping' | 'slowness' | 'badomen' | 'weakness'
 	duration?: number
 }
 
@@ -63,7 +64,6 @@ export type BattleLogDescriptionT = {
 
 export type PlayerState = {
 	id: PlayerId
-	followUp: Record<string, string>
 	playerName: string
 	minecraftName: string
 	playerDeck: Array<CardT>
@@ -81,14 +81,16 @@ export type PlayerState = {
 		rows: Array<RowState>
 	}
 
+	pickRequests: Array<PickRequest>
+	//@TODO the code also needs to check for the opponents modal requests
+	modalRequests: Array<ModalRequest>
+
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
 		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
 
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
-		/** Hook that modifies and returns availableActions */
-		availableActions: WaterfallHook<(availableActions: TurnActions) => TurnActions>
 
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
@@ -96,11 +98,11 @@ export type PlayerState = {
 		onDetach: GameHook<(instance: string) => void>
 
 		/** Hook called before a single use card is applied */
-		beforeApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		beforeApply: GameHook<(pickedSlots: PickedSlots) => void>
 		/** Hook called when a single use card is applied */
-		onApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		onApply: GameHook<(pickedSlots: PickedSlots) => void>
 		/** Hook called after a single use card is applied */
-		afterApply: GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>
+		afterApply: GameHook<(pickedSlots: PickedSlots) => void>
 
 		/** Hook that returns attacks to execute */
 		getAttacks: GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>
@@ -112,15 +114,18 @@ export type PlayerState = {
 		onAttack: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
 		/** Hook called for every attack that targets our side of the board */
 		onDefence: GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>
-		/** Hook called after the main attack loop, for every attack from our side of the board */
+		/**
+		 * Hook called after the main attack loop, for every attack from our side of the board.
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
 		afterAttack: GameHook<(attack: AttackModel) => void>
-		/** Hook called after the main attack loop, for every attack targeting our side of the board */
+		/**
+		 * Hook called after the main attack loop, for every attack targeting our side of the board
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
 		afterDefence: GameHook<(attack: AttackModel) => void>
-
-		/** Hook called on follow up */
-		onFollowUp: GameHook<(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void>
-		/** Hook called when follow up times out */
-		onFollowUpTimeout: GameHook<(followUp: string) => void>
 
 		/**
 		 * Hook called when a hermit is about to die.
@@ -137,8 +142,11 @@ export type PlayerState = {
 		/** hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
-		/** hook called when the active Hermit changes */
-		onActiveHermitChange: GameHook<(oldRow: number | null, newRow: number) => void>
+		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
+		/** hook called before the active row is changed. Returns whether or not the change can be completed. */
+		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => boolean>
+		/** hook called when the active row is changed. */
+		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => void>
 	}
 }
 
@@ -152,7 +160,12 @@ export type GenericActionResult =
 
 export type PlayCardActionResult = 'FAILURE_INVALID_SLOT' | 'FAILURE_CANNOT_ATTACH'
 
-export type ActionResult = GenericActionResult | PlayCardActionResult
+export type PickCardActionResult =
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_WRONG_PLAYER'
+	| 'FAILURE_WRONG_PICK'
+
+export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
 export type TurnState = {
 	turnNumber: number
@@ -180,8 +193,9 @@ export type GameState = {
 	} | null
 
 	timer: {
-		turnTime: number
+		turnStartTime: number
 		turnRemaining: number
+		opponentActionStartTime: number | null
 	}
 }
 
@@ -191,18 +205,20 @@ export type PlayCardAction =
 	| 'PLAY_SINGLE_USE_CARD'
 	| 'PLAY_EFFECT_CARD'
 
-export type AttackAction = 'ZERO_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+export type AttackAction = 'SINGLE_USE_ATTACK' | 'PRIMARY_ATTACK' | 'SECONDARY_ATTACK'
+
+export type PickCardAction = 'PICK_CARD' | 'WAIT_FOR_OPPONENT_PICK'
 
 export type TurnAction =
 	| PlayCardAction
 	| AttackAction
+	| PickCardAction
 	| 'END_TURN'
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
-	| 'FOLLOW_UP'
-	| 'WAIT_FOR_OPPONENT_FOLLOWUP'
 	| 'CHANGE_ACTIVE_HERMIT'
 	| 'WAIT_FOR_TURN'
+	| 'CUSTOM_MODAL'
 
 export type GameRules = {
 	disableTimer: boolean
@@ -228,7 +244,6 @@ export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
 	id: PlayerId
-	followUp: Record<string, string>
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -261,10 +276,13 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
+	currentPickMessage: string | null
+	currentCustomModal: string | null
+
 	players: Record<string, LocalPlayerState>
 
 	timer: {
-		turnTime: number
+		turnStartTime: number
 		turnRemaining: number
 	}
 }

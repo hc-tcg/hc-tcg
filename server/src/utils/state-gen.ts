@@ -10,6 +10,8 @@ import {
 	LocalPlayerState,
 	PlayerState,
 	RowState,
+	ActionResult,
+	GenericActionResult,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
@@ -32,16 +34,13 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-/** @type {(cardInfo: Card) => cardInfo is HermitCard | ItemCard} */
 const isHermitOrItem: (cardInfo: Card) => cardInfo is HermitCard | ItemCard = (
 	cardInfo
 ): cardInfo is HermitCard | ItemCard => ['hermit', 'item'].includes(cardInfo.type)
 
-/** @type {(cardInfo: Card) => cardInfo is HermitCard} */
 const isHermit: (cardInfo: Card) => cardInfo is HermitCard = (cardInfo): cardInfo is HermitCard =>
 	cardInfo.type === 'hermit'
 
-/** @type {(cardInfo: Card) => cardInfo is EffectCard} */
 const isEffect: (cardInfo: Card) => cardInfo is EffectCard = (cardInfo): cardInfo is EffectCard =>
 	['effect', 'single_use'].includes(cardInfo.type)
 
@@ -144,7 +143,6 @@ export function getStarterPack() {
 export function getEmptyRow(): RowState {
 	const MAX_ITEMS = 3
 
-	/** @type {RowState} */
 	const rowState: RowState = {
 		hermitCard: null,
 		effectCard: null,
@@ -156,10 +154,16 @@ export function getEmptyRow(): RowState {
 }
 
 export function getPlayerState(player: PlayerModel): PlayerState {
-	let pack = player.playerDeck.cards
+	const allCards = Object.values(CARDS).map(
+		(card: Card): CardT => ({
+			cardId: card.id,
+			cardInstance: card.id,
+		})
+	)
+	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.playerDeck.cards
 
 	// shuffle cards
-	pack.sort(() => 0.5 - Math.random())
+	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
 
 	// randomize instances
 	pack = pack.map((card) => {
@@ -177,13 +181,16 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
 	}
 
-	const amountOfStartingCards = DEBUG_CONFIG.startWithAllCards ? pack.length : 7
+	const amountOfStartingCards =
+		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 	const hand = pack.slice(0, amountOfStartingCards)
 
 	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
 		const id = DEBUG_CONFIG.extraStartingCards[i]
 		const card = CARDS[id]
-		if (!card) continue
+		if (!card) {
+			console.log('Invalid extra starting card in debug config:', id)
+		}
 
 		const cardInfo = {
 			cardId: id,
@@ -201,11 +208,10 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
 		coinFlips: [],
-		followUp: {},
 		lives: 3,
 		hand,
 		discarded: [],
-		pile: DEBUG_CONFIG.startWithAllCards ? [] : pack.slice(7),
+		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
 		custom: {},
 		board: {
 			activeRow: null,
@@ -214,16 +220,18 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
 
+		pickRequests: [],
+		modalRequests: [],
+
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-			availableActions: new WaterfallHook<(availableActions: TurnActions) => TurnActions>(),
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			onApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
-			afterApply: new GameHook<(pickedSlots: PickedSlots, modalResult: any) => void>(),
+			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
+			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
 			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
 			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
@@ -231,16 +239,13 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onFollowUp: new GameHook<
-				(followUp: string, pickedSlots: PickedSlots, modalResult: any) => void
-			>(),
-			onFollowUpTimeout: new GameHook<(followUp: string) => void>(),
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
 			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			onActiveHermitChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
 		},
 	}
 }
@@ -248,7 +253,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
-		followUp: playerState.followUp,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -276,6 +280,17 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
+	// Generate pick message, adding in card name if id exists
+	const currentPickRequest = playerState.pickRequests[0]
+	let currentPickMessage = currentPickRequest?.message || null
+
+	if (currentPickRequest && currentPickRequest.id) {
+		const cardInfo = CARDS[currentPickRequest.id]
+		if (cardInfo) {
+			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
+		}
+	}
+
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
@@ -296,6 +311,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		opponentPlayerId: opponentPlayerId,
 
 		lastActionResult: game.state.lastActionResult,
+
+		currentPickMessage,
+		currentCustomModal: playerState.modalRequests[0]?.id || null,
 
 		players,
 

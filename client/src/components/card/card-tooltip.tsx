@@ -10,6 +10,7 @@ import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
+import {EXPANSIONS} from 'common/config'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -125,6 +126,16 @@ const getRank = (card: Card): React.ReactNode => {
 	)
 }
 
+const getExpansion = (card: Card): React.ReactNode => {
+	if (card.getExpansion() !== 'default') {
+		return (
+			<div className={classnames(css.expansion)}>
+				■ {EXPANSIONS.expansions[card.getExpansion() as 'default' | 'alter_egos']} Card ■
+			</div>
+		)
+	}
+}
+
 const getAttach = (card: Card): React.ReactNode => {
 	if (!card.showAttachTooltip()) return null
 	return <div className={css.attach}>Attach</div>
@@ -158,6 +169,7 @@ const CardTooltip = ({card}: Props) => {
 				{getSingleUse(card)}
 			</div>
 			<div className={css.description}>
+				{getExpansion(card)}
 				{getRank(card)}
 				{getStrengthsAndWeaknesses(card)}
 				{getDescription(card)}

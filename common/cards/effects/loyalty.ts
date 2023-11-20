@@ -7,6 +7,7 @@ class LoyaltyEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'loyalty',
+			numericId: 77,
 			name: 'Loyalty',
 			rarity: 'rare',
 			description:

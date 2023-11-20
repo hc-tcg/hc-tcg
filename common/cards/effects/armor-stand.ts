@@ -9,6 +9,7 @@ class ArmorStandEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'armor_stand',
+			numericId: 118,
 			name: 'Armour Stand',
 			rarity: 'ultra_rare',
 			description:
@@ -30,32 +31,48 @@ class ArmorStandEffectCard extends EffectCard {
 			if (player.board.activeRow === pos.rowIndex) {
 				blockedActions.push('PRIMARY_ATTACK')
 				blockedActions.push('SECONDARY_ATTACK')
-				blockedActions.push('ZERO_ATTACK')
+				blockedActions.push('SINGLE_USE_ATTACK')
 			}
 
 			return blockedActions
+		})
+
+		player.hooks.afterAttack.add(instance, (attack) => {
+			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
+				// Discard to prevent losing a life
+				discardCard(game, row.hermitCard)
+
+				if (attack.attacker.player.id !== pos.player.id) {
+					// Reset the active row so the player can switch
+					player.board.activeRow = null
+				}
+			}
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
-				// Reset the active row so the player can switch
-				player.board.activeRow = null
+
+				if (attack.attacker.player.id !== pos.player.id) {
+					// Reset the active row so the player can switch
+					player.board.activeRow = null
+				}
 			}
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
-		// Just in case we decide that Fire Charge/Mending/etc work on an Armor Stand that
-		// is attached to a Hermit slot
 		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
 			row.ailments = []
+			row.effectCard = null
+			row.itemCards = []
 		}
 
 		player.hooks.blockedActions.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}

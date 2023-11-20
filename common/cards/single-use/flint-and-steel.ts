@@ -7,6 +7,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'flint_&_steel',
+			numericId: 25,
 			name: 'Flint & Steel',
 			rarity: 'common',
 			description:
@@ -31,8 +32,9 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			for (const card of player.hand) {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
+			const hand = player.hand
+			for (const card of hand) {
 				discardFromHand(player, card)
 			}
 

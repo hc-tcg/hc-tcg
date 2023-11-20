@@ -15,7 +15,6 @@ import {
 	EndTurnModal,
 	EvilXModal,
 	ForfeitModal,
-	LootingModal,
 	SpyglassModal,
 	UnmetConditionModal,
 } from './modals'
@@ -30,24 +29,29 @@ import {
 	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
+	getAvailableActions,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {DEBUG_CONFIG} from 'common/config'
+import {PickCardActionData} from 'common/types/action-data'
+import {equalCard} from 'common/utils/cards'
 // import {getSettings} from 'logic/local-settings/local-settings-selectors'
 // import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
-	borrow: BorrowModal,
 	confirm: ConfirmModal,
-	chest: ChestModal,
 	discarded: DiscardedModal,
-	evilX: EvilXModal,
 	forfeit: ForfeitModal,
-	looting: LootingModal,
-	spyglass: SpyglassModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
 	'unmet-condition': UnmetConditionModal,
+
+	// Custom modals
+	borrow: BorrowModal,
+	chest: ChestModal,
+	evilX: EvilXModal,
+	spyglass: SpyglassModal,
 }
 
 const renderModal = (
@@ -63,6 +67,7 @@ const renderModal = (
 
 function Game() {
 	const gameState = useSelector(getGameState)
+	const availableActions = useSelector(getAvailableActions)
 	const selectedCard = useSelector(getSelectedCard)
 	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
@@ -71,9 +76,13 @@ function Game() {
 	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
+	const [filter, setFilter] = useState<string>('')
 
 	if (!gameState || !playerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
+	const filteredCards = DEBUG_CONFIG.unlimitedCards
+		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
+		: gameState.hand
 
 	const pickedSlotsInstances = pickedSlots
 		.map((pickedSlot) => pickedSlot.slot.card)
@@ -92,8 +101,33 @@ function Game() {
 	}
 
 	const selectCard = (card: CardT) => {
-		console.log('Card selected: ', card.cardId)
-		dispatch(setSelectedCard(card))
+		if (availableActions.includes('PICK_CARD')) {
+			const index = gameState.hand.findIndex((c) => equalCard(c, card))
+			if (index === -1) return
+
+			// Send pick card action with the hand info
+			const actionData: PickCardActionData = {
+				type: 'PICK_CARD',
+				payload: {
+					pickResult: {
+						playerId: gameState.playerId,
+						card: card,
+						slot: {
+							type: 'hand',
+							index,
+						},
+					},
+				},
+			}
+
+			dispatch(actionData)
+		} else {
+			dispatch(setSelectedCard(card))
+		}
+	}
+
+	if (availableActions.includes('PICK_CARD')) {
+		dispatch(setSelectedCard(null))
 	}
 
 	// TODO: handleKeys is disabled due to eventListeners not able to use state
@@ -149,6 +183,14 @@ function Game() {
 		}
 	}, [gameState.turn.currentPlayerId])
 
+	// Play sound on custom modal or pick request activation
+	useEffect(() => {
+		const someCustom = gameState.currentPickMessage || gameState.currentCustomModal
+		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
+		}
+	}, [gameState.currentPickMessage, gameState.currentCustomModal])
+
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()
@@ -164,6 +206,21 @@ function Game() {
 		}
 	}, [])
 
+	// Search for cards when debug.unlimitedCards is enabled
+	const Filter = () => {
+		if (DEBUG_CONFIG.unlimitedCards) {
+			return (
+				<input
+					type="text"
+					placeholder="Search for cards..."
+					value={filter}
+					onChange={(e) => setFilter(e.target.value)}
+				/>
+			)
+		}
+		return null
+	}
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -176,9 +233,11 @@ function Game() {
 			<div className={css.bottom}>
 				<Toolbar />
 				<div className={css.hand} ref={handRef}>
+					{Filter()}
 					<CardList
 						wrap={false}
-						cards={gameState.hand}
+						// cards={gameState.hand}
+						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
 						picked={pickedSlotsInstances}

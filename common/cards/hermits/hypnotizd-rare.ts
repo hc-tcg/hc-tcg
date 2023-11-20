@@ -16,6 +16,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'hypnotizd_rare',
+			numericId: 37,
 			name: 'Hypno',
 			rarity: 'rare',
 			hermitType: 'miner',
@@ -60,8 +61,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 	) {
 		const {opponentPlayer} = pos
 		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
-
-		console.log(pickedSlots)
 
 		if (attacks[0].type !== 'secondary') return attacks
 

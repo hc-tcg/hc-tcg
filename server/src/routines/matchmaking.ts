@@ -1,4 +1,4 @@
-import {all, take, takeEvery, join, cancel, spawn, fork, race, delay} from 'typed-redux-saga'
+import {all, take, takeEvery, cancel, spawn, fork, race, delay, join} from 'typed-redux-saga'
 import {broadcast} from '../utils/comm'
 import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
@@ -6,7 +6,7 @@ import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-cond
 import {getLocalGameState} from '../utils/state-gen'
 import {gameEndWebhook} from '../api'
 import {PlayerModel} from 'common/models/player-model'
-import root from 'serverRoot'
+import root from '../serverRoot'
 
 export type ClientMessage = {
 	type: string
@@ -36,7 +36,7 @@ function* gameManager(game: GameModel) {
 		// Kill game on timeout or when user leaves for long time + cleanup after game
 		const result = yield* race({
 			// game ended (or crashed -> catch)
-			gameEnd: join(/** @type {Task} */ game.task),
+			gameEnd: join(game.task),
 			// kill a game after two hours
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
@@ -53,7 +53,7 @@ function* gameManager(game: GameModel) {
 			const gameState = getLocalGameState(game, player)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(0)
 			}
 			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
@@ -73,7 +73,7 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
-		gameEndWebhook(game)
+		//gameEndWebhook(game)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)

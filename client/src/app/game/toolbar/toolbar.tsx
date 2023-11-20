@@ -1,11 +1,10 @@
 import css from './toolbar.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import {getAvailableActions, getGameState} from 'logic/game/game-selectors'
-import {setOpenedModal, endTurn} from 'logic/game/game-actions'
+import {setOpenedModal} from 'logic/game/game-actions'
 import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
-import Button from 'components/button'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 function Toolbar() {
@@ -16,14 +15,6 @@ function Toolbar() {
 
 	const handleDiscarded = () => {
 		dispatch(setOpenedModal('discarded'))
-	}
-
-	function handleEndTurn() {
-		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
-			dispatch(endTurn())
-		} else {
-			dispatch(setOpenedModal('end-turn'))
-		}
 	}
 
 	if (!gameState) return null
@@ -42,24 +33,13 @@ function Toolbar() {
 			</button>
 
 			{/* Toggle Chat */}
-			<ChatItem />
+			{settings.disableChat === 'off' && <ChatItem />}
 
 			{/* Toggle Sounds */}
 			<SoundItem />
 
 			{/* Forfeit Game */}
 			<ForfeitItem />
-
-			{/* End Turn */}
-			<Button
-				variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
-				size="small"
-				style={{height: '4vh', padding: '0 2vh', borderRadius: '1vh'}}
-				onClick={handleEndTurn}
-				disabled={!availableActions.includes('END_TURN')}
-			>
-				End Turn
-			</Button>
 		</div>
 	)
 }

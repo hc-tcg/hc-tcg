@@ -2,7 +2,7 @@ import css from './actions.module.scss'
 import cn from 'classnames'
 import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
-import {setOpenedModal} from 'logic/game/game-actions'
+import {attackAction, endTurn, endTurnAction} from 'logic/game/game-actions'
 import {
 	getPlayerStateById,
 	getAvailableActions,
@@ -10,6 +10,7 @@ import {
 	getPickProcess,
 	getGameState,
 	getPlayerState,
+	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
 import {PickProcessT, PickedSlotT, SlotTypeT} from 'common/types/pick-process'
 import {LocalGameState} from 'common/types/game-state'
@@ -18,6 +19,7 @@ import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
 import {CardTypeT} from 'common/types/cards'
 import {SINGLE_USE_CARDS} from 'common/cards'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 const formattingMap: Record<string, string> = {
 	hermit: 'Hermit',
@@ -116,36 +118,58 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickProcess = useSelector(getPickProcess)
+	const pickMessage = useSelector(getCurrentPickMessage)
 	const player = useSelector(getPlayerState)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
+
+	const turn = localGameState.turn.currentPlayerId === playerId
 
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	const Status = () => {
-		const turn = localGameState.turn.currentPlayerId === playerId
-		const followup = availableActions.includes('FOLLOW_UP') && availableActions.length === 1
-		const opponentFollowup = availableActions.includes('WAIT_FOR_OPPONENT_FOLLOWUP')
-		const turnMsg = turn ? 'Your Turn' : followup ? 'Follow Up' : "Opponent's Turn"
+		const waitingForOpponentPick =
+			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
+		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick Request' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
-		const changeHermit =
-			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
+		const endTurn = availableActions.includes('END_TURN')
+		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
-			return <CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
+			return (
+				<div id={css.status}>
+					<CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
+				</div>
+			)
+		}
+
+		let message = ''
+
+		if (pickMessage) {
+			message = pickMessage
+		} else if (waitingForOpponentPick) {
+			message = "Waiting for opponent's action..."
+		} else if (knockedOut) {
+			message = 'Activate an AFK Hermit'
+		} else if (endTurn && availableActions.length === 1) {
+			message = 'End your turn when ready'
+		} else if (changeHermit && availableActions.length === 1) {
+			message = 'Select a new active Hermit'
+		} else if (endTurn && changeHermit && availableActions.length === 2) {
+			message = 'Switch to a new Hermit or end your turn'
+		}
+
+		// @TODO will be removed once all picks are pick requests
+		if (pickProcess) {
+			message = getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)
 		}
 
 		return (
-			<>
+			<div id={css.status}>
 				<p className={css.turn}>{turnMsg}</p>
-				<p>
-					{knockedOut && 'Activate an AFK Hermit'}
-					{changeHermit && 'Select a new active Hermit'}
-					{opponentFollowup && "Waiting for opponent's action..."}
-					{pickProcess &&
-						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
-				</p>
-			</>
+				<p className={css.message}>{message}</p>
+			</div>
 		)
 	}
 
@@ -176,11 +200,18 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 	const ActionButtons = () => {
 		function handleAttack() {
-			dispatch(setOpenedModal('attack'))
+			dispatch(attackAction())
+		}
+		function handleEndTurn() {
+			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+				dispatch(endTurn())
+			} else {
+				dispatch(endTurnAction())
+			}
 		}
 
 		const attackOptions =
-			availableActions.includes('ZERO_ATTACK') ||
+			availableActions.includes('SINGLE_USE_ATTACK') ||
 			availableActions.includes('PRIMARY_ATTACK') ||
 			availableActions.includes('SECONDARY_ATTACK')
 
@@ -189,36 +220,33 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 				<Button
 					variant="default"
 					size="small"
-					style={{height: '32px'}}
+					style={{height: '34px'}}
 					onClick={handleAttack}
 					disabled={!attackOptions}
 				>
 					Attack
+				</Button>
+				<Button
+					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
+					size="small"
+					style={{height: '34px'}}
+					onClick={handleEndTurn}
+					disabled={!availableActions.includes('END_TURN')}
+				>
+					End Turn
 				</Button>
 			</div>
 		)
 	}
 
 	return (
-		<div
-			id={id}
-			className={cn(css.actions, {
-				[css.mobile]: mobile,
-				[css.desktop]: !mobile,
-			})}
-		>
-			<div className={css.actionSection} id={css.singleUse}>
-				<h2>Single Use Card</h2>
-				{SingleUseSlot()}
-			</div>
-			<div className={css.actionSection} id={css.status}>
-				<h2>Game State</h2>
-				{Status()}
-			</div>
-			<div className={css.actionSection} id={css.buttons}>
+		<div id={id} className={cn(css.actions, css.desktop)}>
+			{Status()}
+			<div className={cn(css.actionSection, !turn && css.fade)}>
 				<h2>Actions</h2>
 				{ActionButtons()}
 			</div>
+			{SingleUseSlot()}
 		</div>
 	)
 }

@@ -6,6 +6,7 @@ import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
 import {addPlayCardEntry} from 'utils/battle-log'
+import {DEBUG_CONFIG} from 'common/config'
 
 function* playCardSaga(
 	game: GameModel,
@@ -17,7 +18,6 @@ function* playCardSaga(
 	}
 
 	const {currentPlayer} = game
-	const {availableActions} = game.state.turn
 
 	const card = turnAction.payload.card
 	const pickedSlot = turnAction.payload.pickedSlot
@@ -109,7 +109,8 @@ function* playCardSaga(
 	}
 
 	// Remove the card from the hand
-	currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
+	if (!DEBUG_CONFIG.unlimitedCards)
+		currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
 
 	// Now it's actually been attached, remove the fake mark on the card pos
 	pos.fake = false

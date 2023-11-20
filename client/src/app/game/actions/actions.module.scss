@@ -20,7 +20,7 @@
 	border-image-slice: 30;
 	border-image-width: 20px;
 	border-image-repeat: stretch stretch;
-	border-image-source: url('images/game/border_frame.png');
+	border-image-source: url('/images/game/border_frame.png');
 	border-style: solid;
 
 	> h2 {
@@ -68,4 +68,63 @@
 
 #buttons {
 	width: 300px;
+}
+
+.desktop {
+	display: flex;
+	gap: 20px;
+	color: var(--text-light);
+	width: 100%;
+	justify-content: space-between;
+	flex-direction: column;
+	margin: 5px 0;
+	align-items: center;
+	flex-shrink: 1;
+
+	.slot {
+		$slot-size: 100px;
+
+		height: $slot-size;
+		width: $slot-size;
+	}
+
+	.message {
+		text-align: center;
+	}
+
+	#status {
+		height: 130px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 30px;
+	}
+
+	.actionSection {
+		padding: 0;
+
+		&.fade {
+			filter: brightness(0.8);
+		}
+	}
+
+	.buttons {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		width: 160px;
+		margin: 20px;
+	}
+}
+
+@media (orientation: landscape) {
+	.mobile {
+		display: none;
+	}
+}
+
+@media (orientation: portrait) {
+	.desktop {
+		display: none;
+	}
 }

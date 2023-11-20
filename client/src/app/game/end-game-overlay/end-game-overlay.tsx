@@ -46,16 +46,20 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 		case 'you_won':
 		case 'leave_win':
 		case 'forfeit_win':
-			animation = 'images/animations/victory.gif'
+			animation = '/images/animations/victory.gif'
 			winCondition = true
 			break
 		case 'you_lost':
 		case 'leave_loss':
 		case 'forfeit_loss':
-			animation = 'images/animations/defeat.gif'
+			animation = '/images/animations/defeat.gif'
 			break
 		default:
-			animation = 'images/animations/draw.gif'
+			animation = '/images/animations/draw.gif'
+	}
+
+	function pointerDownHandler(event: any) {
+		event.preventDefault()
 	}
 
 	return (
@@ -66,7 +70,7 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 						[css.win]: winCondition,
 					})}
 				/>
-				<Dialog.Content className={css.content}>
+				<Dialog.Content className={css.content} onPointerDownOutside={pointerDownHandler}>
 					<Dialog.Title className={css.title}>
 						<img src={animation} alt="defeat" draggable={false} className={css.animation} />
 					</Dialog.Title>

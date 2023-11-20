@@ -7,6 +7,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'potion_of_weakness',
+			numericId: 146,
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:
@@ -18,10 +19,18 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		return true
 	}
 
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		if (pos.slot.type !== 'single_use') return 'INVALID'
+
+		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+
+		return 'YES'
+	}
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
 			opponentActiveRow.ailments.push({id: 'weakness', duration: 3})

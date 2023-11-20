@@ -7,10 +7,11 @@ import {TurnActions} from '../../types/game-state'
 
 export type SingleUseDefs = {
 	id: string
+	numericId: number
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply' | 'followup'
+	pickOn?: 'attack' | 'apply'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -21,6 +22,7 @@ class SingleUseCard extends Card {
 		super({
 			type: 'single_use',
 			id: defs.id,
+			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
 			pickOn: defs.pickOn,
@@ -53,6 +55,14 @@ class SingleUseCard extends Card {
 	 * Returns whether this card has apply functionality or not
 	 */
 	public canApply(): boolean {
+		// default is no
+		return false
+	}
+
+	/**
+	 * Returns whether you can attack with this card alone or not
+	 */
+	public canAttack(): boolean {
 		// default is no
 		return false
 	}

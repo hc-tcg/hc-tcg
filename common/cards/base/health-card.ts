@@ -8,8 +8,6 @@ type HealthDefs = {
 	id: string
 	name: string
 	rarity: CardRarityT
-	pickOn?: 'attack' | 'apply' | 'followup'
-	pickReqs?: Array<PickRequirmentT>
 	health: number
 }
 
@@ -21,10 +19,9 @@ class HealthCard extends Card {
 		super({
 			type: 'health',
 			id: defs.id,
+			numericId: -1,
 			name: defs.name,
 			rarity: defs.rarity,
-			pickOn: defs.pickOn,
-			pickReqs: defs.pickReqs,
 		})
 
 		this.health = defs.health

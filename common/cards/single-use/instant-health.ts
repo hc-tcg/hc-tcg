@@ -7,6 +7,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'instant_health',
+			numericId: 42,
 			name: 'Instant Health',
 			rarity: 'common',
 			description: 'Heal active or AFK Hermit 30hp.',
@@ -18,7 +19,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedCards = pickedSlots[this.id] || []
 			if (pickedCards.length !== 1) return
 

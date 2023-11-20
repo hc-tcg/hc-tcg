@@ -14,6 +14,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'lead',
+			numericId: 75,
 			name: 'Lead',
 			rarity: 'common',
 			description:
@@ -41,7 +42,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const slots = pickedSlots[this.id] || []
 			if (slots.length !== 2) return
 
@@ -53,7 +54,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			const itemCard = itemCardInfo.slot.card
 			if (!canAttachToCard(game, hermitCard, itemCard)) return
 
-			/** @type {SlotPos} */ const itemPos: SlotPos = {
+			const itemPos: SlotPos = {
 				rowIndex: itemCardInfo.row.index,
 				row: itemCardInfo.row.state,
 				slot: {
@@ -62,7 +63,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				},
 			}
 
-			/** @type {SlotPos} */ const targetPos: SlotPos = {
+			const targetPos: SlotPos = {
 				rowIndex: targetSlotInfo.row.index,
 				row: targetSlotInfo.row.state,
 				slot: {

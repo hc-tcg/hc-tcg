@@ -8,6 +8,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'joehills_rare',
+			numericId: 70,
 			name: 'Joe',
 			rarity: 'rare',
 			hermitType: 'farm',
@@ -23,88 +24,64 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn. "Time Skip" can not be used statusly.',
+					'Flip a coin. If heads, opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\n"Time Skip" can not be used consecutively.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
-		player.custom[status] = 'normal'
+		// null | card instance
+		const skippedKey = this.getInstanceKey(instance, 'skipped')
+		player.custom[skippedKey] = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (player.custom[status] != 'normal') {
-				player.custom[status] = 'normal'
-				return
-			}
-			if (attack.type !== 'secondary') return
-			player.custom[status] = 'block'
+			if (!attack.attacker || attack.type !== 'secondary') return
+
+			// This will tell us to block actions at the start of our next turn
+			// Storing the cardInstance of the card that attacked
+			player.custom[skippedKey] = attack.attacker.row.hermitCard.cardInstance
 
 			const coinFlip = flipCoin(player, this.id, 1)
 			if (coinFlip[0] !== 'heads') return
 
-			// Block all the actions of the opponent
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				const blocked: TurnActions = [
+			// Block all actions of opponent for one turn
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+				game.addBlockedActions(
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
-					'ZERO_ATTACK',
+					'SINGLE_USE_ATTACK',
 					'PRIMARY_ATTACK',
 					'SECONDARY_ATTACK',
 					'PLAY_HERMIT_CARD',
 					'PLAY_ITEM_CARD',
 					'PLAY_SINGLE_USE_CARD',
-					'PLAY_EFFECT_CARD',
-				]
-
-				if (opponentPlayer.board.activeRow !== null) {
-					blocked.push('CHANGE_ACTIVE_HERMIT')
-				}
-				blockedActions.push(...blocked)
-				return blockedActions
-			})
-
-			// Stop blocking the actions of the opponent when their turn ends
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+					'PLAY_EFFECT_CARD'
+				)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 
-		// Block the secondary attack of Joe
-		player.hooks.blockedActions.add(instance, (blockedActions) => {
-			if (player.custom[status] === 'normal') return blockedActions
-			/** @type {TurnActions}*/
-			const blocked: TurnActions = ['SECONDARY_ATTACK']
-			blockedActions.push(...blocked)
-
-			return blockedActions
-		})
-
-		// Advance the status flag at the start of your turn after time skip
+		// Block secondary attack if we skipped
 		player.hooks.onTurnStart.add(instance, () => {
-			if (player.custom[status] !== 'block') return
-			player.custom[status] = 'blocked'
-		})
+			const sameActive = game.activeRow?.hermitCard?.cardInstance === player.custom[skippedKey]
+			if (player.custom[skippedKey] && sameActive) {
+				// We skipped last turn and we are still the active hermit, block secondary attacks
+				game.addBlockedActions('SECONDARY_ATTACK')
+			}
 
-		// If you didn't attack or switched your active hermit, reset the status flag
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (player.custom[status] !== 'blocked') return
-			player.custom[status] = 'normal'
+			player.custom[skippedKey] = null
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
+		const {player} = pos
+		const skippedKey = this.getInstanceKey(instance, 'skipped')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
-		player.hooks.blockedActions.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[status]
+		delete player.custom[skippedKey]
 	}
 }
 

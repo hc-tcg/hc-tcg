@@ -16,6 +16,7 @@ interface CardProps
 	card: CardClass
 	selected?: boolean
 	picked?: boolean
+	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
@@ -30,7 +31,7 @@ const Card = (props: CardProps) => {
 	else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
 	else throw new Error('Unsupported card type: ' + type)
 	return (
-		<Tooltip tooltip={<CardTooltip card={props.card} />}>
+		<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
 			<button
 				{...props}
 				className={cn(props.className, css.card, {

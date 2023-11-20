@@ -46,14 +46,29 @@ const ItemCardModule = ({card}: ItemCardProps) => {
 					rx="15"
 					ry="15"
 				/>
-				<text x="200" y="33" className={css.type}>
+				<text
+					x="200"
+					y="33"
+					className={css.type}
+					textAnchor="middle"
+					dominantBaseline="hanging"
+					key={Math.random()}
+				>
 					ITEM
 				</text>
 			</g>
 			{card.rarity === 'rare' ? (
 				<g>
 					<rect className={css.rarity} x="302" y="302" width="100" height="100" rx="50" ry="50" />
-					<text x="351" y="331" className={css.x2} fill="black">
+					<text
+						x="351"
+						y="331"
+						className={css.x2}
+						fill="black"
+						textAnchor="middle"
+						dominantBaseline="hanging"
+						key={Math.random()}
+					>
 						x2
 					</text>
 				</g>

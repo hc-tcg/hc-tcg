@@ -18,7 +18,7 @@ export function getActiveRow(playerState: PlayerState) {
 	return row
 }
 
-export function getActiveRowPos(playerState: PlayerState) {
+export function getActiveRowPos(playerState: PlayerState): RowPos | null {
 	const rowIndex = playerState.board.activeRow
 	if (rowIndex === null) return null
 	const row = playerState.board.rows[rowIndex]
@@ -104,8 +104,7 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 
 export function applySingleUse(
 	game: GameModel,
-	pickedSlots: PickedSlots = {},
-	modalResult: any = null
+	pickedSlots: PickedSlots = {}
 ): GenericActionResult {
 	const {currentPlayer} = game
 
@@ -117,15 +116,16 @@ export function applySingleUse(
 	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
-	currentPlayer.hooks.beforeApply.call(pickedSlots, modalResult)
+	currentPlayer.hooks.beforeApply.call(pickedSlots)
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	currentPlayer.hooks.onApply.call(pickedSlots, modalResult)
-	currentPlayer.hooks.afterApply.call(pickedSlots, modalResult)
+	currentPlayer.hooks.onApply.call(pickedSlots)
 
 	// This can only be done once per turn
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
+
+	currentPlayer.hooks.afterApply.call(pickedSlots)
 
 	return 'SUCCESS'
 }

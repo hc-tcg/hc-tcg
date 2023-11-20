@@ -8,6 +8,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'netherite_sword',
+			numericId: 83,
 			name: 'Netherite Sword',
 			rarity: 'ultra_rare',
 			description: 'Do an additional 60hp damage.',
@@ -46,6 +47,10 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

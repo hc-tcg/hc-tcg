@@ -5,7 +5,7 @@ import CardList from 'components/card-list'
 import {CardT} from 'common/types/game-state'
 import css from './game-modals.module.scss'
 import {getPlayerState} from 'logic/game/game-selectors'
-import {followUp} from 'logic/game/game-actions'
+import {customModal} from 'logic/game/game-actions'
 import Button from 'components/button'
 
 type Props = {
@@ -35,33 +35,37 @@ function SpyglassModal({closeModal}: Props) {
 	}
 
 	const handleClose = () => {
-		dispatch(followUp({modalResult: {card: null}}))
+		dispatch(customModal({modalResult: {card: null}}))
 		closeModal()
 	}
 
 	const handleConfirm = () => {
 		if (selected.length === 1) {
-			dispatch(followUp({modalResult: {card: selected[0]}}))
+			dispatch(customModal({modalResult: {card: selected[0]}}))
 			closeModal()
 		}
 	}
-
-	console.log('Spyglass:', useSelector(getPlayerState))
 
 	return (
 		<Modal
 			title={`Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`}
 			closeModal={handleClose}
 		>
-			<div className={css.wrapper}>
+			<div className={css.description}>
 				<div className={css.cards}>
-					<CardList onClick={handleSelection} cards={cards} selected={selected} />
+					<CardList
+						onClick={handleSelection}
+						cards={cards}
+						selected={selected}
+						wrap
+						tooltipAboveModal
+					/>
 				</div>
-				<div className={css.options}>
-					<Button variant="primary" size="small" onClick={canDiscard ? handleConfirm : handleClose}>
-						{canDiscard ? 'Confirm Selection' : 'Close'}
-					</Button>
-				</div>
+			</div>
+			<div className={css.options}>
+				<Button onClick={canDiscard ? handleConfirm : handleClose}>
+					{canDiscard ? 'Confirm Selection' : 'Close'}
+				</Button>
 			</div>
 		</Modal>
 	)

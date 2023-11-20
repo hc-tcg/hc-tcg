@@ -8,12 +8,13 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'crossbow',
+			numericId: 8,
 			name: 'Crossbow',
 			rarity: 'rare',
 			description:
 				'Do an additional 20hp damage to up to 3 Hermits of your choice.\n\nCan not apply the damage to the same Hermit more than once.',
 			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 3}],
+			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 3, canPickLess: true}],
 		})
 	}
 
@@ -60,6 +61,10 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

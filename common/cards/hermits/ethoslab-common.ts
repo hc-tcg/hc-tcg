@@ -4,6 +4,7 @@ class EthosLabCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ethoslab_common',
+			numericId: 19,
 			name: 'Etho',
 			rarity: 'common',
 			hermitType: 'balanced',

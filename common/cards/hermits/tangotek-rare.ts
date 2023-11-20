@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {GenericActionResult} from '../../types/game-state'
+import {PickResult} from '../../types/server-requests'
 import {getNonEmptyRows} from '../../utils/board'
 import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'
@@ -8,6 +10,7 @@ class TangoTekRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'tangotek_rare',
+			numericId: 95,
 			name: 'Tango',
 			rarity: 'rare',
 			hermitType: 'farm',
@@ -25,14 +28,11 @@ class TangoTekRareHermitCard extends HermitCard {
 				power:
 					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
 			},
-			pickOn: 'followup',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (
@@ -44,66 +44,78 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			const playerInactiveRows = getNonEmptyRows(player, false)
+			// Curse of Binding
+			const canChange = isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT')
 
 			if (opponentInactiveRows.length !== 0) {
-				attack.target.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
-				})
-				opponentPlayer.board.activeRow = null
-				opponentPlayer.followUp[instanceKey] = this.id
+				// Add a new pick request to the opponent player
+				opponentPlayer.pickRequests.push({
+					id: this.id,
+					message: 'Pick a new active Hermit from your afk hermits',
+					onResult(pickResult) {
+						// Validation
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 
-				// We need to hook here because the follow up is called after onDetach
-				// and I can't delete it from there because Tango could die from backlash
-				opponentPlayer.hooks.onFollowUp.add(instance, (followUp, pickedSlots) => {
-					if (followUp !== instanceKey) return
-					if (!pickedSlots[this.id] || pickedSlots[this.id].length !== 1) return // Pick again
+						opponentPlayer.board.activeRow = pickResult.rowIndex
 
-					opponentPlayer.hooks.onFollowUp.remove(instance)
-					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-					delete opponentPlayer.followUp[instanceKey]
+						// Now add a pick request for us, if it is appropriate
+						if (
+							playerInactiveRows.length !== 0 &&
+							attack.attacker &&
+							attack.attacker.row.health > 0 &&
+							canChange
+						) {
+							player.pickRequests.push({
+								id: this.id,
+								message: 'Pick a new active Hermit from your afk hermits',
+								onResult(pickResult) {
+									// Validation
+									if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+									if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+									if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+									if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
+									if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
 
-					const pickedSlot = pickedSlots[this.id]?.[0]
-					if (!pickedSlot) return
-					const {row} = pickedSlot
-					if (!row) return
+									player.board.activeRow = pickResult.rowIndex
 
-					const canBeActive = row.state.ailments.every((a) => a.id !== 'knockedout')
-					if (!canBeActive) return
-					opponentPlayer.board.activeRow = row.index
-				})
+									return 'SUCCESS'
+								},
+								onTimeout() {
+									const inactiveRows = getNonEmptyRows(player, false)
 
-				opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-					if (followUp !== instanceKey) return
-					opponentPlayer.hooks.onFollowUp.remove(instance)
-					opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-					delete opponentPlayer.followUp[instanceKey]
-
-					const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-
-					// Choose the first row that doesn't have a knockedout ailment
-					for (const inactiveHermit of opponentInactiveRows) {
-						if (!inactiveHermit) continue
-						const {rowIndex, row} = inactiveHermit
-						const canBeActive = row.ailments.every((a) => a.id !== 'knockedout')
-						if (canBeActive) {
-							opponentPlayer.board.activeRow = rowIndex
+									// Choose the first afk row
+									for (const inactiveRow of inactiveRows) {
+										const {rowIndex} = inactiveRow
+										const canBeActive = rowIndex !== player.board.activeRow
+										if (canBeActive) {
+											player.board.activeRow = rowIndex
+											break
+										}
+									}
+								},
+							})
 						}
-					}
-				})
-			}
 
-			if (
-				playerInactiveRows.length !== 0 &&
-				attack.attacker &&
-				attack.attacker.row.health > 0 &&
-				isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT') // Curse of Binding
-			) {
-				attack.attacker.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+
+						// Choose the first afk row
+						for (const inactiveRow of opponentInactiveRows) {
+							const {rowIndex} = inactiveRow
+							const canBeActive = rowIndex !== opponentPlayer.board.activeRow
+							if (canBeActive) {
+								opponentPlayer.board.activeRow = rowIndex
+								break
+							}
+						}
+					},
 				})
-				player.board.activeRow = null
 			}
 		})
 	}

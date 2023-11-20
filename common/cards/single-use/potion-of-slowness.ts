@@ -7,6 +7,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'potion_of_slowness',
+			numericId: 145,
 			name: 'Potion of Slowness',
 			rarity: 'common',
 			description: "Opponent's active Hermit can only use their primary attack on their next turn.",
@@ -20,7 +21,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
 			opponentActiveRow.ailments.push({id: 'slowness', duration: 1})

@@ -5,16 +5,10 @@ import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
 import {PickedSlots} from 'common/types/pick-process'
-import {TurnAction, PlayerState, GenericActionResult} from 'common/types/game-state'
+import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {addAttackEntry} from 'utils/battle-log'
-
-export const ATTACK_TO_ACTION: Record<string, TurnAction> = {
-	primary: 'PRIMARY_ATTACK',
-	secondary: 'SECONDARY_ATTACK',
-	zero: 'ZERO_ATTACK',
-}
 
 function getAttacks(
 	game: GameModel,
@@ -186,7 +180,11 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 	return false
 }
 
-export function runAllAttacks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+export function runAllAttacks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+	pickedSlots: PickedSlots = {}
+) {
 	const allAttacks: Array<AttackModel> = []
 
 	// Main attack loop
@@ -217,7 +215,17 @@ export function runAllAttacks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 		attacks = newAttacks
 	}
 
-	// STEP 5 - Finally, after all attacks have been executed, call after attack and defence hooks
+	// STEP 5 - All attacks have been completed, mark actions appropriately
+	game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+	game.addBlockedActions(
+		'PLAY_HERMIT_CARD',
+		'PLAY_ITEM_CARD',
+		'PLAY_EFFECT_CARD',
+		'PLAY_SINGLE_USE_CARD',
+		'CHANGE_ACTIVE_HERMIT'
+	)
+
+	// STEP 6 - Finally, after all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(allAttacks)
 	runAfterDefenceHooks(allAttacks)
 }
@@ -258,18 +266,7 @@ function* attackSaga(
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
 
 	// Run all the code stuff
-	runAllAttacks(attacks, pickedSlots)
-
-	game.addCompletedActions('ZERO_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-
-	// Attack phase complete, mark most actions as blocked now
-	game.addBlockedActions(
-		'PLAY_HERMIT_CARD',
-		'PLAY_ITEM_CARD',
-		'PLAY_EFFECT_CARD',
-		'PLAY_SINGLE_USE_CARD',
-		'CHANGE_ACTIVE_HERMIT'
-	)
+	runAllAttacks(game, attacks, pickedSlots)
 
 	//Add entry to battle log
 	yield* call(addAttackEntry, game, turnAction)
@@ -278,7 +275,6 @@ function* attackSaga(
 }
 
 export function runAilmentAttacks(game: GameModel, player: PlayerState) {
-	/** @type {Array<AttackModel>} */
 	let attacks: Array<AttackModel> = []
 
 	// Get ailment attacks
@@ -310,7 +306,7 @@ export function runAilmentAttacks(game: GameModel, player: PlayerState) {
 	}
 
 	// Run the code for the attacks
-	runAllAttacks(attacks)
+	runAllAttacks(game, attacks)
 }
 
 export default attackSaga

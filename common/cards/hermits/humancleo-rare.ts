@@ -12,6 +12,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'humancleo_rare',
+			numericId: 132,
 			name: 'Human Cleo',
 			rarity: 'rare',
 			hermitType: 'pvp',
@@ -92,9 +93,10 @@ class HumanCleoRareHermitCard extends HermitCard {
 				})
 
 				const opponentActiveRow = getActiveRowPos(opponentPlayer)
-				if (!opponentActiveRow?.row.hermitCard) return
+				if (!opponentActiveRow?.row?.hermitCard) return
 
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
+				if (!activeHermitInfo) return
 
 				const itemCards = opponentActiveRow.row.itemCards
 				const energyTypes: Array<HermitTypeT> = []
@@ -152,6 +154,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					energyTypes.push(ITEM_CARDS[item.cardId].hermitType)
 				})
 
+				if (!opponentActiveRow?.row?.hermitCard) return blockedActions
 				const activeHermitInfo = HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]
 
 				const isSleeping = opponentActiveRow.row.ailments.some((a) => a.id === 'sleeping')
@@ -168,15 +171,15 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 				return blockedActions
 			})
-		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			opponentPlayer.hooks.blockedActions.remove(instance)
-			opponentPlayer.hooks.beforeAttack.remove(instance)
-			opponentPlayer.hooks.onTurnEnd.remove(instance)
-			opponentPlayer.hooks.onTurnTimeout.remove(instance)
-			delete player.custom['opponent-attack']
-			delete player.custom[this.getInstanceKey(instance)]
+			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+				opponentPlayer.hooks.blockedActions.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
+				opponentPlayer.hooks.onTurnTimeout.remove(instance)
+				delete player.custom['opponent-attack']
+				delete player.custom[this.getInstanceKey(instance)]
+			})
 		})
 	}
 
@@ -184,10 +187,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.onAttack.remove(instance)
 		opponentPlayer.hooks.blockedActions.remove(instance)
 		opponentPlayer.hooks.beforeAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		opponentPlayer.hooks.onTurnTimeout.remove(instance)
 		delete player.custom['opponent-attack']
 		delete player.custom[this.getInstanceKey(instance)]

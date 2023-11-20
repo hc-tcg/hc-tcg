@@ -48,7 +48,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 			})}
 		>
 			{cardInfo ? (
-				<>
+				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
 					{type === 'health' &&
 						ailments.map((id) => {
@@ -56,7 +56,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId}: SlotProps) => {
 							if (!cssClass) return null
 							return <div key={id} className={cssClass} />
 						})}
-				</>
+				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}

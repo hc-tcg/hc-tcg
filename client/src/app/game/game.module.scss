@@ -57,6 +57,13 @@
 	overflow-y: hidden;
 	text-align: center;
 	z-index: 1;
+
+	> div {
+		margin-left: auto;
+		margin-right: auto;
+		width: min-content;
+		justify-content: unset;
+	}
 }
 
 @media (orientation: landscape) {
@@ -64,7 +71,7 @@
 		// Play area must be sized so all child elements fit
 		// within container for scaling to work properly.
 		// Desktop (Landscape) settings:
-		height: 760px;
-		width: 1050px;
+		height: 720px;
+		width: 1600px;
 	}
 }

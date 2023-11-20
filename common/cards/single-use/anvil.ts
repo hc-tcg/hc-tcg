@@ -8,6 +8,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'anvil',
+			numericId: 138,
 			name: 'Anvil',
 			rarity: 'rare',
 			description:
@@ -48,27 +49,21 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance, 'active')
-			if (attack.id !== attackId) return
+			const inactiveAttackId = this.getInstanceKey(instance, 'active')
+			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
 			applySingleUse(game)
+
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 */
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
@@ -82,6 +77,10 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override getExpansion() {
 		return 'alter_egos'
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

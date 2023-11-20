@@ -2,20 +2,50 @@ import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
-import {PlayCardActionData, slotToPlayCardAction} from 'common/types/action-data'
+import {
+	PickCardActionData,
+	PlayCardActionData,
+	slotToPlayCardAction,
+} from 'common/types/action-data'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
-	getPickProcess,
 	getPlayerState,
+	getPickProcess,
+	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
 import {setSelectedCard, setOpenedModal, removeEffect} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {changeActiveHermit, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
+
+function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
+	const currentPickRequest = yield* select(getCurrentPickMessage)
+	if (!currentPickRequest) return
+
+	// If it's the single use or health slot do nothing, you can't request those slots
+	if (action.payload.slot.type !== 'single_use' && action.payload.slot.type !== 'health') {
+		const actionData: PickCardActionData = {
+			type: 'PICK_CARD',
+			payload: {
+				pickResult: {
+					playerId: action.payload.playerId,
+					rowIndex: action.payload.row?.index,
+					card: action.payload.slot.card,
+					slot: {
+						type: action.payload.slot.type,
+						index: action.payload.slot.index,
+					},
+				},
+			},
+		}
+
+		yield put(actionData)
+	}
+}
 
 function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
 	const selectedCardInfo = CARDS[selectedCard.cardId]
@@ -77,6 +107,12 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 			yield put(removeEffect())
 			return
 		}
+	}
+
+	if (availableActions.includes('PICK_CARD')) {
+		// Run a seperate saga for the pick request
+		yield call(pickForPickRequestSaga, action)
+		return
 	}
 
 	if (pickProcess) {

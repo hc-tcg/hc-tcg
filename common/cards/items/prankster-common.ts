@@ -6,6 +6,7 @@ class PranksterCommonItemCard extends ItemCard {
 	constructor() {
 		super({
 			id: 'item_prankster_common',
+			numericId: 59,
 			name: 'Prankster',
 			rarity: 'common',
 			hermitType: 'prankster',

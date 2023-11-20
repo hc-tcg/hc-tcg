@@ -9,6 +9,7 @@ class EggSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'egg',
+			numericId: 140,
 			name: 'Egg',
 			rarity: 'rare',
 			description:
@@ -56,13 +57,15 @@ class EggSingleUseCard extends SingleUseCard {
 			player.hooks.onAttack.remove(instance)
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const eggIndex = player.custom[this.getInstanceKey(instance)]
-			opponentPlayer.board.activeRow = eggIndex
+		player.hooks.onApply.add(instance, () => {
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const eggIndex = player.custom[this.getInstanceKey(instance)]
+				opponentPlayer.board.activeRow = eggIndex
 
-			delete player.custom[this.getInstanceKey(instance)]
+				delete player.custom[this.getInstanceKey(instance)]
 
-			player.hooks.afterAttack.remove(instance)
+				player.hooks.afterAttack.remove(instance)
+			})
 		})
 	}
 
@@ -76,6 +79,14 @@ class EggSingleUseCard extends SingleUseCard {
 		if (inactiveHermits.length === 0) return 'NO'
 
 		return 'YES'
+	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		player.hooks.onAttack.remove(instance)
+		player.hooks.onApply.remove(instance)
+		delete player.custom[this.getInstanceKey(instance)]
 	}
 
 	override getExpansion() {

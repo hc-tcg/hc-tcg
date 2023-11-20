@@ -9,6 +9,14 @@ import {
 import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
 import {MessageInfoT} from 'common/types/chat'
 
+export const gameStateReceived = (localGameState: LocalGameState) => ({
+	type: 'GAME_STATE_RECEIVED' as const,
+	payload: {
+		localGameState,
+		time: Date.now(),
+	},
+})
+
 export const localGameState = (localGameState: LocalGameState) => ({
 	type: 'LOCAL_GAME_STATE' as const,
 	payload: {
@@ -61,7 +69,7 @@ export const forfeit = () => ({
 type ExtraItemT = {hermitId: string; type: 'primary' | 'secondary'}
 
 export const startAttack = (
-	type: 'zero' | 'primary' | 'secondary',
+	type: 'single-use' | 'primary' | 'secondary',
 	extra?: Record<string, ExtraItemT>
 ) => ({
 	type: 'START_ATTACK' as const,
@@ -93,8 +101,8 @@ export const setOpponentConnection = (payload: boolean) => ({
 
 // ---
 
-export const followUp = (payload: any) => ({
-	type: 'FOLLOW_UP' as const,
+export const customModal = (payload: any) => ({
+	type: 'CUSTOM_MODAL' as const,
 	payload,
 })
 
@@ -124,4 +132,12 @@ export const chatMessage = (message: string) => ({
 export const chatUpdate = (messages: Array<MessageInfoT>) => ({
 	type: 'CHAT_UPDATE',
 	payload: messages,
+})
+
+export const attackAction = () => ({
+	type: 'ATTACK_ACTION',
+})
+
+export const endTurnAction = () => ({
+	type: 'END_TURN_ACTION',
 })

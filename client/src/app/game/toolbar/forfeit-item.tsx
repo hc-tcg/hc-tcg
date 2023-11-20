@@ -7,12 +7,12 @@ function ForfeitItem() {
 	const dispatch = useDispatch()
 	const openedModal = useSelector(getOpenedModal)
 
-	const handleSoundChange = () => {
+	const handleForfeit = () => {
 		if (!openedModal) dispatch(setOpenedModal('forfeit'))
 	}
 
 	return (
-		<button className={css.item} title="Forfeit" onClick={handleSoundChange}>
+		<button className={css.item} title="Forfeit" onClick={handleForfeit}>
 			<img src="/images/toolbar/banner.png" height="30" />
 		</button>
 	)

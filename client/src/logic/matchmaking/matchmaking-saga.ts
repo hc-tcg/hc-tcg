@@ -1,8 +1,8 @@
-import {call, cancelled, fork, put, race, take, takeEvery} from 'typed-redux-saga'
+import {call, cancelled, fork, put, putResolve, race, take, takeEvery} from 'typed-redux-saga'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
-import {codeReceived, leaveMatchmaking, invalidCode, waitingForPlayer} from './matchmaking-actions'
+import {codeReceived, invalidCode, waitingForPlayer, clearMatchmaking} from './matchmaking-actions'
 
 function* createPrivateGameSaga() {
 	function* matchmaking() {
@@ -21,7 +21,7 @@ function* createPrivateGameSaga() {
 				yield* put(codeReceived(gameCode))
 			} else {
 				// Something went wrong, go back to menu
-				yield* put(leaveMatchmaking())
+				yield* put(clearMatchmaking())
 				return
 			}
 
@@ -37,7 +37,10 @@ function* createPrivateGameSaga() {
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
-			if (yield* cancelled()) yield* put(gameEnd())
+			if (yield* cancelled()) {
+				yield* put(clearMatchmaking())
+				yield* put(gameEnd())
+			}
 		}
 	}
 
@@ -45,6 +48,8 @@ function* createPrivateGameSaga() {
 		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
+
+	yield* put(clearMatchmaking())
 
 	if (result.cancel) {
 		// Tell the server the private game is cancelled
@@ -74,7 +79,7 @@ function* joinPrivateGameSaga() {
 
 				if (result.failure) {
 					// Something went wrong, go back to menu
-					yield* put(leaveMatchmaking())
+					yield* put(clearMatchmaking())
 				} else if (result.success || result.waitingForPlayer) {
 					if (result.waitingForPlayer) {
 						yield put(waitingForPlayer())
@@ -99,7 +104,10 @@ function* joinPrivateGameSaga() {
 		} catch (err) {
 			console.error('Game crashed: ', err)
 		} finally {
-			if (yield* cancelled()) yield put(gameEnd())
+			if (yield* cancelled()) {
+				yield put(gameEnd())
+				yield* put(clearMatchmaking())
+			}
 		}
 	}
 
@@ -107,6 +115,8 @@ function* joinPrivateGameSaga() {
 		cancel: take('LEAVE_MATCHMAKING'), // We pressed the leave button
 		matchmaking: call(matchmaking),
 	})
+
+	yield* put(clearMatchmaking())
 
 	if (result.cancel) {
 		// If we are waiting for a game here - i.e. we are in the private queue - Then cancel it
@@ -128,7 +138,7 @@ function* joinQueueSaga() {
 
 			if (joinResponse.failure) {
 				// Something went wrong, go back to menu
-				yield* put(leaveMatchmaking())
+				yield* put(clearMatchmaking())
 				return
 			}
 
@@ -140,10 +150,9 @@ function* joinQueueSaga() {
 			console.error('Game crashed: ', err)
 		} finally {
 			if (yield* cancelled()) {
-				console.log('cancelled')
 				// Clear state and back to menu
+				yield* put(clearMatchmaking())
 				yield* put(gameEnd())
-				yield* put(leaveMatchmaking())
 			}
 		}
 	}
@@ -153,18 +162,21 @@ function* joinQueueSaga() {
 		matchmaking: call(matchmaking),
 	})
 
+	yield* put(clearMatchmaking())
+
 	if (result.leave) {
 		// Tell the server we left the queue
 		yield* call(sendMsg, 'LEAVE_QUEUE')
 	} else {
-		yield* put(leaveMatchmaking())
+		yield* put(clearMatchmaking())
 	}
 }
 
 function* reconnectSaga() {
 	const reconnectState = yield* call(receiveMsg, 'GAME_STATE_ON_RECONNECT')
-	yield* put(leaveMatchmaking())
+	yield* put(clearMatchmaking())
 	yield* call(gameSaga, reconnectState.payload.localGameState)
+	yield* put(clearMatchmaking())
 }
 
 function* matchmakingSaga() {

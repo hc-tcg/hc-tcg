@@ -8,6 +8,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'iron_sword',
+			numericId: 46,
 			name: 'Iron Sword',
 			rarity: 'common',
 			description: 'Do an additional 20hp damage.',
@@ -46,6 +47,10 @@ class IronSwordSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

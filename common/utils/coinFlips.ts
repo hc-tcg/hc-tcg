@@ -18,7 +18,6 @@ export function flipCoin(
 		(a) => a.id === 'badomen'
 	)
 
-	/** @type {Array<CoinFlipT>} */
 	let coinFlips: Array<CoinFlipT> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
@@ -26,7 +25,6 @@ export function flipCoin(
 		} else if (forceTails) {
 			coinFlips.push('tails')
 		} else {
-			/** @type {CoinFlipT} */
 			const coinFlip: CoinFlipT = Math.random() > 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}

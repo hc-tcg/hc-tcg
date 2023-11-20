@@ -8,6 +8,7 @@ class WolfEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'wolf',
+			numericId: 108,
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
@@ -30,6 +31,8 @@ class WolfEffectCard extends EffectCard {
 
 			// Make sure they are targeting this player
 			if (!attack.target || attack.target.player.id !== player.id) return
+			// Make sure the attack is doing some damage
+			if (attack.calculateDamage() <= 0) return
 
 			// Make sure our row is active
 			const activeRow = getActiveRowPos(player)

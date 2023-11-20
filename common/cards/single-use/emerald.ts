@@ -10,16 +10,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'emerald',
+			numericId: 18,
 			name: 'Emerald',
 			rarity: 'rare',
 			description: "Steal or swap the attached effect card of your opponent's active Hermit.",
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {CardPos} pos
-	 */
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
@@ -56,7 +53,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
 			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]

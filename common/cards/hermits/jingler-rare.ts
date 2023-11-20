@@ -8,6 +8,7 @@ class JinglerRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'jingler_rare',
+			numericId: 133,
 			name: 'Jingler',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
@@ -24,15 +25,6 @@ class JinglerRareHermitCard extends HermitCard {
 				damage: 80,
 				power: 'Flip a coin. If heads, opponent must discard a card from their hand.',
 			},
-
-			pickOn: 'followup',
-			pickReqs: [
-				{
-					target: 'opponent',
-					slot: ['hand'],
-					amount: 1,
-				},
-			],
 		})
 	}
 
@@ -46,30 +38,23 @@ class JinglerRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'tails') return
 
-			opponentPlayer.followUp[followUpKey] = this.id
+			// Add a new pick request to the opponent player
+			opponentPlayer.pickRequests.push({
+				id: this.id,
+				message: 'Pick 1 card from your hand to discard',
+				onResult(pickResult) {
+					// Validation
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 
-			opponentPlayer.hooks.onFollowUp.add(instance, (followUp, pickedSlots) => {
-				if (followUp !== followUpKey) return
-				// We can't delete on onDetach because the hermit can die from
-				// a backlash attack and the followUp will trigger after onDetach
-				opponentPlayer.hooks.onFollowUp.remove(instance)
-				opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-				delete opponentPlayer.followUp[followUpKey]
+					discardFromHand(opponentPlayer, pickResult.card)
 
-				const slots = pickedSlots[this.id]
-				if (!slots || slots.length !== 1) return
-
-				discardFromHand(opponentPlayer, slots[0].slot.card)
-			})
-
-			opponentPlayer.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-				if (followUp !== followUpKey) return
-				opponentPlayer.hooks.onFollowUp.remove(instance)
-				opponentPlayer.hooks.onFollowUpTimeout.remove(instance)
-				delete opponentPlayer.followUp[followUpKey]
-
-				// Discard the first card in the opponent's hand
-				discardFromHand(opponentPlayer, opponentPlayer.hand[0])
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					// Discard the first card in the opponent's hand
+					discardFromHand(opponentPlayer, opponentPlayer.hand[0])
+				},
 			})
 		})
 	}

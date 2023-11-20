@@ -188,35 +188,6 @@
 	}
 }
 
-.packDropdown {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-shrink: 0;
-
-	background-color: var(--gray-700);
-	border-radius: 6px;
-	margin-bottom: 0.5rem;
-	padding: 0.5rem;
-	width: min-content;
-	white-space: nowrap;
-	cursor: pointer;
-
-	font-family: Minecraft;
-	color: var(--gray-100);
-
-	> img {
-		height: 1.5rem;
-		filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 25%));
-		margin-right: 5px;
-	}
-
-	&:hover {
-		background: var(--gray-700);
-		filter: brightness(1.2);
-	}
-}
-
 .button {
 	margin: 0 1rem;
 }

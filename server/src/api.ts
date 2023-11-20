@@ -1,7 +1,7 @@
 import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {createRequire} from 'module'
-import root from 'serverRoot'
+import root from './serverRoot'
 const require = createRequire(import.meta.url)
 
 export function registerApis(app: import('express').Express) {
@@ -67,14 +67,14 @@ export function registerApis(app: import('express').Express) {
 	}
 }
 
-export function gameEndWebhook(game: GameModel) {
+export async function gameEndWebhook(game: GameModel) {
 	let apiKeys = null
 	try {
 		apiKeys = require('./apiKeys.json')
-		const botKey = apiKeys
+		const botKey = apiKeys?.botKey
 
 		if (botKey) {
-			fetch(`${CONFIG.botUrl}/admin/game_end`, {
+			await fetch(`${CONFIG.botUrl}/admin/game_end`, {
 				method: 'POST',
 				headers: [
 					['Content-type', 'application/json'],

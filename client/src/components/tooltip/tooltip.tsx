@@ -13,13 +13,15 @@ import {
 	useInteractions,
 	FloatingPortal,
 } from '@floating-ui/react'
+import classNames from 'classnames'
 
 type Props = {
 	children: React.ReactElement
 	tooltip: React.ReactNode
+	showAboveModal?: boolean
 }
 
-function Tooltip({children, tooltip}: Props) {
+function Tooltip({children, tooltip, showAboveModal}: Props) {
 	const [open, setOpen] = useState(false)
 
 	const {x, y, refs, strategy, context} = useFloating({
@@ -57,7 +59,7 @@ function Tooltip({children, tooltip}: Props) {
 			<FloatingPortal>
 				{open && (
 					<div
-						className={css.tooltip}
+						className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
 						ref={refs.setFloating}
 						style={{
 							position: strategy,

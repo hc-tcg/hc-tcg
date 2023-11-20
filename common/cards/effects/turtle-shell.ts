@@ -8,6 +8,7 @@ class TurtleShellEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'turtle_shell',
+			numericId: 125,
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
@@ -31,9 +32,10 @@ class TurtleShellEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onActiveHermitChange.add(instance, (oldROw, newRow) => {
-			if (newRow !== pos.rowIndex) return
-			player.custom[instanceKey] = true
+		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
+			if (newRow === pos.rowIndex) {
+				player.custom[instanceKey] = true
+			}
 		})
 
 		player.hooks.onDefence.add(instance, (attack) => {
@@ -52,8 +54,7 @@ class TurtleShellEffectCard extends EffectCard {
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !player.custom[instanceKey]) return
+			if (!player.custom[instanceKey]) return
 			discardCard(game, {cardId: this.id, cardInstance: instance})
 		})
 	}
@@ -63,7 +64,7 @@ class TurtleShellEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		pos.player.hooks.onDefence.remove(instance)
-		pos.player.hooks.onActiveHermitChange.remove(instance)
+		pos.player.hooks.onActiveRowChange.remove(instance)
 		pos.opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[instanceKey]
 	}

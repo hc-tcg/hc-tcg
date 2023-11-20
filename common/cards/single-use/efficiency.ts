@@ -6,6 +6,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'efficiency',
+			numericId: 17,
 			name: 'Efficiency',
 			rarity: 'rare',
 			description:
@@ -19,7 +20,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			player.hooks.availableEnergy.add(instance, (availableEnergy) => {
 				// Unliimited powwa
 				return ['any', 'any', 'any']

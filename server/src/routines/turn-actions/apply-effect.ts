@@ -7,10 +7,9 @@ import {addApplyEffectEntry} from 'utils/battle-log'
 
 function* applyEffectSaga(
 	game: GameModel,
-	pickedSlots: PickedSlots,
-	modalResult: any
+	pickedSlots: PickedSlots
 ): Generator<any, GenericActionResult> {
-	const result = applySingleUse(game, pickedSlots, modalResult)
+	const result = applySingleUse(game, pickedSlots)
 
 	// Add entry to battle log
 	yield* call(addApplyEffectEntry, game)

@@ -6,6 +6,7 @@ class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'looting',
+			numericId: 76,
 			name: 'Looting',
 			rarity: 'rare',
 			description:
@@ -20,7 +21,7 @@ class LootingSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			player.hooks.onTurnEnd.add(instance, (drawCards) => {
 				const drawCard = opponentPlayer.pile.shift()
 				if (drawCard) drawCards.push(drawCard)
@@ -30,11 +31,6 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)

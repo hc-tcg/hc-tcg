@@ -4,6 +4,7 @@ class WelsknightCommonHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'welsknight_common',
+			numericId: 106,
 			name: 'Wels',
 			rarity: 'common',
 			hermitType: 'builder',

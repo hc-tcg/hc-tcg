@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'
@@ -17,6 +17,7 @@ function Settings({setMenuSection}: Props) {
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
+	const [resetStatsConfim, setResetStatsConfirm] = useState<boolean>(false)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('soundVolume', ev.currentTarget.value))
@@ -25,7 +26,12 @@ function Settings({setMenuSection}: Props) {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
 	const handleResetStats = () => {
-		dispatch(resetStats())
+		if (resetStatsConfim) {
+			setResetStatsConfirm(false)
+			dispatch(resetStats())
+		} else {
+			setResetStatsConfirm(true)
+		}
 	}
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
@@ -48,7 +54,6 @@ function Settings({setMenuSection}: Props) {
 			returnText="Main Menu"
 			className={css.settingsMenu}
 		>
-			<h2>Settings</h2>
 			<div className={css.settings}>
 				<Slider value={settings.musicVolume} onInput={handleMusicChange}>
 					Music: {getPercDescriptor(settings.musicVolume)}
@@ -62,44 +67,42 @@ function Settings({setMenuSection}: Props) {
 				<Button variant="stone" onClick={handleGameSettings}>
 					Game Settings
 				</Button>
-				<Button variant="stone" onClick={handleResetStats}>
-					Reset Stats
-				</Button>
-			</div>
-
-			<h2>Credits</h2>
-			<div className={css.settings}>
 				<Button variant="stone" onClick={handleCredits}>
 					Credits
 				</Button>
 			</div>
 
 			<h2>Statistics</h2>
-			<div className={css.stats}>
-				<div className={css.stat}>
-					<span>Games Played</span>
-					<span>{totalGames}</span>
+			<div className={css.settings}>
+				<div className={css.stats}>
+					<div className={css.stat}>
+						<span>Games Played</span>
+						<span>{totalGames}</span>
+					</div>
+					<div className={css.stat}>
+						<span>Wins</span>
+						<span>{stats.w}</span>
+					</div>
+					<div className={css.stat}>
+						<span>Losses</span>
+						<span>{stats.l}</span>
+					</div>
+					<div className={css.stat}>
+						<span>Ties</span>
+						<span>{stats.t}</span>
+					</div>
+					<div className={css.stat}>
+						<span>Forfeit Wins</span>
+						<span>{stats.fw}</span>
+					</div>
+					<div className={css.stat}>
+						<span>Forfeit Losses</span>
+						<span>{stats.fl}</span>
+					</div>
 				</div>
-				<div className={css.stat}>
-					<span>Wins</span>
-					<span>{stats.w}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Losses</span>
-					<span>{stats.l}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Ties</span>
-					<span>{stats.t}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Forfeit Wins</span>
-					<span>{stats.fw}</span>
-				</div>
-				<div className={css.stat}>
-					<span>Forfeit Losses</span>
-					<span>{stats.fl}</span>
-				</div>
+				<Button variant="stone" onClick={handleResetStats}>
+					{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
+				</Button>
 			</div>
 		</MenuLayout>
 	)

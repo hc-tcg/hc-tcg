@@ -1,12 +1,14 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
-import {retrieveCard} from '../../utils/movement'
+import {applySingleUse} from '../../utils/board'
+import {discardSingleUse, retrieveCard} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
 class ChestSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'chest',
+			numericId: 4,
 			name: 'Chest',
 			rarity: 'rare',
 			description:
@@ -14,15 +16,40 @@ class ChestSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		const {player} = pos
+
+		// Cannot play chest with no items in discard
+		if (player.discarded.length <= 0) return 'NO'
+
+		return 'YES'
+	}
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
-			/** @type {import('../../types/game-state').CardT | undefined} */
-			const card: import('../../types/game-state').CardT | undefined = modalResult.card
-			if (!card || card.cardId === 'clock') return
+		player.modalRequests.push({
+			id: this.id,
+			onResult(modalResult) {
+				if (!modalResult) return 'FAILURE_INVALID_DATA'
 
-			retrieveCard(game, card)
+				if (!modalResult.card) {
+					discardSingleUse(game, player)
+					return 'SUCCESS'
+				}
+
+				if (modalResult.card.cardId === 'clock') {
+					return 'FAILURE_CANNOT_COMPLETE'
+				}
+
+				applySingleUse(game)
+				retrieveCard(game, modalResult.card)
+
+				return 'SUCCESS'
+			},
+			onTimeout() {
+				// Do nothing
+			},
 		})
 	}
 

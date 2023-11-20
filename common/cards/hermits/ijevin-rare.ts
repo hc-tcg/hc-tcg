@@ -7,6 +7,7 @@ class IJevinRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'ijevin_rare',
+			numericId: 39,
 			name: 'Jevin',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
@@ -36,11 +37,42 @@ class IJevinRareHermitCard extends HermitCard {
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
 			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
-				attack.target.row.ailments.push({
-					id: 'knockedout',
-					duration: 1,
+				const lastActiveRow = opponentPlayer.board.activeRow
+
+				opponentPlayer.pickRequests.push({
+					id: this.id,
+					message: 'Choose a new active Hermit from your afk Hermits.',
+					onResult(pickResult) {
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+						const rowIndex = pickResult.rowIndex
+						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
+
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+						const row = opponentPlayer.board.rows[rowIndex]
+						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+
+						opponentPlayer.board.activeRow = rowIndex
+
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+
+						// Choose the first afk row
+						for (const inactiveRow of opponentInactiveRows) {
+							const {rowIndex} = inactiveRow
+							const canBeActive = rowIndex !== lastActiveRow
+							if (canBeActive) {
+								opponentPlayer.board.activeRow = rowIndex
+								break
+							}
+						}
+					},
 				})
-				opponentPlayer.board.activeRow = null
 			}
 		})
 	}

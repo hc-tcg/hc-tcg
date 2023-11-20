@@ -8,12 +8,13 @@ class HelsknightRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'helsknight_rare',
+			numericId: 129,
 			name: 'Helsknight',
 			rarity: 'rare',
 			hermitType: 'pvp',
 			health: 270,
 			primary: {
-				name: 'Pitfall',
+				name: 'Pitiful',
 				cost: ['any'],
 				damage: 40,
 				power: null,

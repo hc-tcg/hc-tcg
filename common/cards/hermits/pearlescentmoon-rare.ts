@@ -3,11 +3,11 @@ import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
 
-// TODO - Prevent consecutive use
 class PearlescentMoonRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'pearlescentmoon_rare',
+			numericId: 85,
 			name: 'Pearl',
 			rarity: 'rare',
 			hermitType: 'terraform',

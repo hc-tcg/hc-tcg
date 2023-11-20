@@ -35,7 +35,7 @@ function BorrowModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title="Borrow" closeModal={handleDiscard}>
+		<Modal title="Grian - Borrow" closeModal={handleDiscard}>
 			<div className={css.description}>
 				Would you like to attach or discard your opponents' {getBorrowedCard()} card?
 			</div>

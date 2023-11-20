@@ -8,17 +8,13 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'diamond_sword',
+			numericId: 14,
 			name: 'Diamond Sword',
 			rarity: 'rare',
 			description: 'Do an additional 40hp damage.',
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('types/cards').BasicCardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
@@ -54,15 +50,14 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {import('types/cards').BasicCardPos} pos
-	 */
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override canAttack() {
+		return true
 	}
 }
 

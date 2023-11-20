@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {getActiveRowPos} from '../../utils/board'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
 
@@ -7,6 +8,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'evilxisuma_rare',
+			numericId: 128,
 			name: 'Evil X',
 			rarity: 'rare',
 			hermitType: 'balanced',
@@ -27,71 +29,49 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		})
 	}
 
-	/**
-	 * @param {GameModel} game
-	 * @param {string} instance
-	 * @param {CardPos} pos
-	 */
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const disableKey = this.getInstanceKey(instance, 'disable')
 
 		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary' || !attack.target) return
+			if (attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
 
 			if (coinFlip[0] !== 'heads') return
 
-			player.followUp[instanceKey] = this.id
+			const opponentActiveRow = getActiveRowPos(opponentPlayer)
+			if (!opponentActiveRow) return
 
-			// He only disables the attack of the target, that means that
-			// lightning rod counters him and using knockback/target block
-			// is a really bad idea
-			player.custom[this.getInstanceKey(instance, 'target')] = attack.target.rowIndex
+			player.modalRequests.push({
+				id: this.id,
+				onResult(modalResult) {
+					if (!modalResult || !modalResult.disable) return 'FAILURE_INVALID_DATA'
 
-			// It's easier to not duplicate the code if I use the hooks here
-			player.hooks.onFollowUp.add(instance, (followUp, pickedSlots, modalResult) => {
-				if (followUp !== instanceKey) return
-				player.hooks.onFollowUp.remove(instance)
-				player.hooks.onFollowUpTimeout.remove(instance)
-				delete player.followUp[instanceKey]
+					player.custom[disableKey] = modalResult.disable
 
-				if (!modalResult || !modalResult.disable) return
-
-				player.custom[this.getInstanceKey(instance, 'disable')] = modalResult.disable
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					// Disable the secondary attack if we didn't choose one
+					player.custom[disableKey] = 'secondary'
+				},
 			})
 
-			player.hooks.onFollowUpTimeout.add(instance, (followUp) => {
-				if (followUp !== instanceKey) return
-				player.hooks.onFollowUpTimeout.remove(instance)
-				player.hooks.onFollowUpTimeout.remove(instance)
-				delete player.followUp[instanceKey]
-
-				// Disable the secondary attack if the player didn't choose one
-				player.custom[this.getInstanceKey(instance, 'disable')] = 'secondary'
-			})
-
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				const disable = player.custom[this.getInstanceKey(instance, 'disable')]
-				const targetRow = player.custom[this.getInstanceKey(instance, 'target')]
-				if (!disable) return blockedActions
+				if (!disable) return
 
 				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null || targetRow === null) return blockedActions
-				if (activeRow !== targetRow) return blockedActions
+				if (activeRow === null) return
 
-				blockedActions.push(disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK')
+				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
+				// This will add a blocked action for the duration of their turn
+				game.addBlockedActions(actionToBlock)
 
-				return blockedActions
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 				delete player.custom[this.getInstanceKey(instance, 'disable')]
-				delete player.custom[this.getInstanceKey(instance, 'target')]
 			})
 		})
 	}

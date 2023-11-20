@@ -39,10 +39,8 @@ export function getPickedSlots(game: GameModel, turnAction: any): PickedSlots | 
 	if (!turnAction.payload || !turnAction.payload.pickResults) return {}
 	const pickResults = turnAction.payload.pickResults
 
-	/** @type {PickedSlots} */
 	const pickedSlots: PickedSlots = {}
 	for (const cardId in pickResults) {
-		/** @type {PickResultT[]} */
 		const resultsForId: PickResultT[] = pickResults[cardId]
 		if (!validPicks(game.state, resultsForId)) return null
 		for (let result of resultsForId) {

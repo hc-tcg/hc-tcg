@@ -16,6 +16,7 @@ type CardListProps = {
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
 	wrap?: boolean
+	tooltipAboveModal?: boolean
 }
 
 const CardList = (props: CardListProps) => {
@@ -53,6 +54,7 @@ const CardList = (props: CardListProps) => {
 					disabled={isDisabled}
 					selected={isSelected}
 					picked={!!isPicked}
+					tooltipAboveModal={props.tooltipAboveModal}
 				/>
 			</CSSTransition>
 		)

@@ -1,6 +1,6 @@
 import {RowPos} from './cards'
 
-export type HermitAttackType = 'primary' | 'secondary' | 'zero'
+export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
 export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'ailment'
 

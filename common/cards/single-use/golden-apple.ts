@@ -9,6 +9,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'golden_apple',
+			numericId: 29,
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description: 'Heal AFK Hermit 100hp.',
@@ -28,7 +29,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const pickedCards = pickedSlots[this.id] || []
 			if (pickedCards.length !== 1) return
 
@@ -49,7 +50,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 
 		// Need active hermit to play

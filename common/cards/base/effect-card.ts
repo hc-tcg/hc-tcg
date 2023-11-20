@@ -8,10 +8,11 @@ import {TurnActions} from '../../types/game-state'
 
 type EffectDefs = {
 	id: string
+	numericId: number
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply' | 'followup'
+	pickOn?: 'attack' | 'apply'
 	pickReqs?: Array<PickRequirmentT>
 }
 
@@ -22,6 +23,7 @@ abstract class EffectCard extends Card {
 		super({
 			type: 'effect',
 			id: defs.id,
+			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
 			pickOn: defs.pickOn,

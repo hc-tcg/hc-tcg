@@ -14,13 +14,12 @@ export class FirebaseLogs {
 
 	constructor() {
 		try {
-			const serviceAccount: ServiceAccount = require('../adminKey.json')
+			const serviceAccount: ServiceAccount = require('./adminKey.json')
 			const admin = require('firebase-admin')
 			admin.initializeApp({
 				credential: admin.credential.cert(serviceAccount),
 				databaseURL: 'https://hc-tcg-leaderboard-default-rtdb.firebaseio.com',
 			})
-			/** @type {Database} */
 			this.db = admin.database()
 		} catch (err) {
 			console.log('No valid firebase key. Statistics will not be stored.')
@@ -77,7 +76,6 @@ export class FirebaseLogs {
 				if (gameLog.type === 'private') {
 					ref = `/private-logs/${game.code}`
 				}
-
 				let pid0 = playerStates[0].id
 				root.players[pid0]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,

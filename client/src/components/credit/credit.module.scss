@@ -8,21 +8,27 @@
 	text-shadow: 0.1vh 0.1vh 0.2vh black, -0.1vh -0.1vh 0.2vh black;
 	text-decoration: none;
 	margin-bottom: 10px;
+	background: hsla(0deg, 0%, 0%, 55%);
+	padding: 0.5vh;
+	border-radius: 1vh;
 }
 
 .avatar {
 	box-shadow: 0 0 2px black;
-	width: 7vh;
-	height: 7vh;
+	width: 6vh;
+	height: 6vh;
+	margin: 0.5vh;
 	border-radius: 3.5vh;
 }
 
 .handle {
-	color: #aaaaaa;
+	display: flex;
+	align-items: center;
+	color: #aaa;
 
 	.handleImage {
 		height: 1em;
-		filter: invert(1) contrast(33.3%) drop-shadow(0px 0px 4px #000);
+		filter: invert(1) contrast(33.3%) drop-shadow(0 0 4px #000);
 		padding-right: 5px;
 	}
 }
@@ -41,7 +47,6 @@ a.credit:hover {
 		right: 0;
 		left: 0;
 		width: 100%;
-		justify-content: center;
 	}
 }
 

@@ -8,6 +8,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
 			id: 'composter',
+			numericId: 7,
 			name: 'Composter',
 			rarity: 'common',
 			description:
@@ -27,7 +28,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
-		
+
 		const {player} = pos
 		if (player.hand.length < 2) return 'NO'
 
@@ -37,7 +38,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots, modalResult) => {
+		player.hooks.onApply.add(instance, (pickedSlots) => {
 			const slots = pickedSlots[this.id] || []
 
 			if (slots.length !== 2) return
