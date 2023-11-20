@@ -23,6 +23,7 @@ import FurnaceEffectCard from './furnace'
 import SlimeballEffectCard from './slimeball'
 import CatEffectCard from './cat'
 import BerryBushEffectCard from './berry-bush'
+import TrapdoorEffectCard from './trapdoor'
 import EffectCard from '../base/effect-card'
 
 export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
@@ -55,4 +56,5 @@ export const EFFECT_CARD_CLASSES: Array<EffectCard> = [
 	// new SlimeballEffectCard(),
 	//new CatEffectCard(),
 	//new BerryBushEffectCard(),
+	//new TrapdoorEffectCard(),
 ]
