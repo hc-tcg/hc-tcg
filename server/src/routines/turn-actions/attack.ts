@@ -4,17 +4,16 @@ import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
-import {PickedSlots} from 'common/types/pick-process'
 import {PlayerState, GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {addAttackEntry} from 'utils/battle-log'
+import {getActiveRow} from 'common/utils/board'
 
 function getAttacks(
 	game: GameModel,
 	attackPos: CardPosModel,
-	hermitAttackType: HermitAttackType,
-	pickedSlots: PickedSlots
+	hermitAttackType: HermitAttackType
 ): Array<AttackModel> {
 	const {currentPlayer} = game
 	const attacks: Array<AttackModel> = []
@@ -28,13 +27,12 @@ function getAttacks(
 			game,
 			attackPos.row.hermitCard.cardInstance,
 			attackPos,
-			hermitAttackType,
-			pickedSlots
+			hermitAttackType
 		)
 	)
 
 	// all other attacks
-	const otherAttacks = currentPlayer.hooks.getAttacks.call(pickedSlots)
+	const otherAttacks = currentPlayer.hooks.getAttacks.call()
 	for (let i = 0; i < otherAttacks.length; i++) {
 		attacks.push(...otherAttacks[i])
 	}
@@ -69,7 +67,7 @@ function executeAttack(attack: AttackModel) {
 /**
  * Call before attack hooks for each attack that has an attacker
  */
-function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.attacker) continue
@@ -82,7 +80,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 		}
 
 		// Call before attack hooks
-		player.hooks.beforeAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -91,7 +89,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSl
 /**
  * Call before defence hooks, based on each attack's target
  */
-function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.target) continue
@@ -100,7 +98,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedS
 		const player = attack.target.player
 
 		// Call before defence hooks
-		player.hooks.beforeDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.beforeDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -109,7 +107,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedS
 /**
  * Call attack hooks for each attack that has an attacker
  */
-function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runOnAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.attacker) continue
@@ -118,7 +116,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots 
 		const player = attack.attacker.player
 
 		// Call on attack hooks
-		player.hooks.onAttack.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onAttack.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -127,7 +125,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots 
 /**
  * Call defence hooks, based on each attack's target
  */
-function runOnDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots = {}) {
+function runOnDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		if (!attack.target) continue
@@ -136,7 +134,7 @@ function runOnDefenceHooks(attacks: Array<AttackModel>, pickedSlots: PickedSlots
 		const player = attack.target.player
 
 		// Call on defence hooks
-		player.hooks.onDefence.callSome([attack, pickedSlots], (instance) => {
+		player.hooks.onDefence.callSome([attack], (instance) => {
 			return shouldIgnoreCard(attack, instance)
 		})
 	}
@@ -180,24 +178,18 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 	return false
 }
 
-export function runAllAttacks(
-	game: GameModel,
-	attacks: Array<AttackModel>,
-	pickedSlots: PickedSlots = {}
-) {
+export function runAllAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	const allAttacks: Array<AttackModel> = []
 
 	// Main attack loop
 	while (attacks.length > 0) {
-		// Process all current attacks one at a time
-
 		// STEP 1 - Call before attack and defence for all attacks
-		runBeforeAttackHooks(attacks, pickedSlots)
-		runBeforeDefenceHooks(attacks, pickedSlots)
+		runBeforeAttackHooks(attacks)
+		runBeforeDefenceHooks(attacks)
 
 		// STEP 2 - Call on attack and defence for all attacks
-		runOnAttackHooks(attacks, pickedSlots)
-		runOnDefenceHooks(attacks, pickedSlots)
+		runOnAttackHooks(attacks)
+		runOnDefenceHooks(attacks)
 
 		// STEP 3 - Execute all attacks
 		for (let i = 0; i < attacks.length; i++) {
@@ -230,19 +222,38 @@ export function runAllAttacks(
 	runAfterDefenceHooks(allAttacks)
 }
 
+export function executeAllAttacks(attacks: Array<AttackModel>) {
+	for (let i = 0; i < attacks.length; i++) {
+		executeAttack(attacks[i])
+	}
+}
+
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
-	pickedSlots: PickedSlots
+	checkForRequests = true
 ): Generator<any, GenericActionResult> {
 	if (!turnAction?.type) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
-	const {currentPlayer, opponentPlayer} = game
+	const {currentPlayer, opponentPlayer, state} = game
+	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.cardInstance
+	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
-	// TODO - send hermitCard from frontend for validation?
+	if (checkForRequests) {
+		// First allow cards to add attack requests
+		currentPlayer.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
+
+		if (game.hasActiveRequests()) {
+			// We have some pick/modal requests that we want to execute before the attack
+			// The code for picking new actions will automatically send the right action back to client
+			state.turn.currentAttack = hermitAttackType
+
+			return 'SUCCESS'
+		}
+	}
 
 	// Attacker
 	const playerBoard = currentPlayer.board
@@ -263,50 +274,15 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType, pickedSlots)
+	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
 	// Run all the code stuff
-	runAllAttacks(game, attacks, pickedSlots)
+	runAllAttacks(game, attacks)
 
 	//Add entry to battle log
 	yield* call(addAttackEntry, game, turnAction)
 
 	return 'SUCCESS'
-}
-
-export function runAilmentAttacks(game: GameModel, player: PlayerState) {
-	let attacks: Array<AttackModel> = []
-
-	// Get ailment attacks
-	for (let i = 0; i < player.board.rows.length; i++) {
-		const row = player.board.rows[i]
-		if (!row.health) continue
-
-		const hasFire = !!row.ailments.find((a) => a.id === 'fire')
-		const hasPoison = !!row.ailments.find((a) => a.id === 'poison')
-
-		// NOTE - only ailment attacks have no attacker, all others do
-		const attack = new AttackModel({
-			id: hasFire ? 'fire' : hasPoison ? 'poison' : undefined,
-			target: {
-				player,
-				rowIndex: i,
-				row,
-			},
-			type: 'ailment',
-		})
-
-		if (hasFire) {
-			attacks.push(attack.addDamage('ailment', 20))
-		} else if (hasPoison) {
-			// Calculate max poison damage
-			const poisonDamage = Math.max(Math.min(row.health - 10, 20), 0)
-			attacks.push(attack.addDamage('ailment', poisonDamage))
-		}
-	}
-
-	// Run the code for the attacks
-	runAllAttacks(game, attacks)
 }
 
 export default attackSaga

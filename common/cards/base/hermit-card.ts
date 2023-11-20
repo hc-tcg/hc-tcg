@@ -2,7 +2,6 @@ import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import Card from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
-import {PickRequirmentT, PickedSlots} from '../../types/pick-process'
 import {HermitAttackType} from '../../types/attack'
 import {createWeaknessAttack} from '../../utils/attacks'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -17,8 +16,6 @@ type HermitDefs = {
 	health: number
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	pickOn?: 'attack' | 'apply'
-	pickReqs?: Array<PickRequirmentT>
 }
 
 abstract class HermitCard extends Card {
@@ -34,8 +31,6 @@ abstract class HermitCard extends Card {
 			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
-			pickOn: defs.pickOn,
-			pickReqs: defs.pickReqs,
 		})
 
 		this.hermitType = defs.hermitType
@@ -58,8 +53,7 @@ abstract class HermitCard extends Card {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	): Array<AttackModel> {
 		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
 

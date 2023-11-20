@@ -46,7 +46,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			applySingleUse(game)
 		})
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			// Return to hand
 			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise

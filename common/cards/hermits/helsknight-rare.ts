@@ -8,7 +8,7 @@ class HelsknightRareHermitCard extends HermitCard {
 	constructor() {
 		super({
 			id: 'helsknight_rare',
-			numericId: 129,
+			numericId: 130,
 			name: 'Helsknight',
 			rarity: 'rare',
 			hermitType: 'pvp',

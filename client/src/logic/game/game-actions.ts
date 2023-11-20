@@ -1,13 +1,7 @@
-import {LocalGameState} from 'common/types/game-state'
-import {
-	CardT,
-	GameEndOutcomeT,
-	GameEndReasonT,
-	CurrentCoinFlipT,
-	BattleLogT,
-} from 'common/types/game-state'
-import {PickProcessT, PickResultT, PickedSlotT} from 'common/types/pick-process'
+import {BattleLogT, LocalGameState} from 'common/types/game-state'
+import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
 import {MessageInfoT} from 'common/types/chat'
+import {PickInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -43,23 +37,9 @@ export const setOpenedModal = (id: string | null, info: any = null) => ({
 	payload: id === null ? null : {id, info},
 })
 
-export const setPickProcess = (pickProcess: PickProcessT | null) => ({
-	type: 'SET_PICK_PROCESS' as const,
-	payload: pickProcess,
-})
-
-export const updatePickProcess = (payload: {
-	currentReq?: number
-	amount?: number
-	pickedSlots?: Array<PickedSlotT>
-}) => ({
-	type: 'UPDATE_PICK_PROCESS' as const,
-	payload,
-})
-
-export const slotPicked = (pickInfo: PickedSlotT) => ({
+export const slotPicked = (pickInfo: PickInfo) => ({
 	type: 'SLOT_PICKED' as const,
-	payload: pickInfo,
+	payload: {pickInfo},
 })
 
 export const forfeit = () => ({
@@ -101,8 +81,8 @@ export const setOpponentConnection = (payload: boolean) => ({
 
 // ---
 
-export const customModal = (payload: any) => ({
-	type: 'CUSTOM_MODAL' as const,
+export const modalRequest = (payload: any) => ({
+	type: 'MODAL_REQUEST' as const,
 	payload,
 })
 
@@ -113,11 +93,6 @@ export const applyEffect = (payload: any) => ({
 
 export const removeEffect = () => ({
 	type: 'REMOVE_EFFECT' as const,
-})
-
-export const changeActiveHermit = (payload: any) => ({
-	type: 'CHANGE_ACTIVE_HERMIT' as const,
-	payload,
 })
 
 export const endTurn = () => ({

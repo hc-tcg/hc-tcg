@@ -1,4 +1,5 @@
 import {GameModel} from 'common/models/game-model'
+import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
 import {equalCard} from 'common/utils/cards'
 import {call} from 'typed-redux-saga'
@@ -6,16 +7,16 @@ import {addChangeHermitEntry} from 'utils/battle-log'
 
 function* changeActiveHermit(
 	game: GameModel,
-	turnAction: any
+	turnAction: ChangeActiveHermitActionData
 ): Generator<any, GenericActionResult> {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
-	const rowHermitCard = turnAction?.payload?.row?.state?.hermitCard
-	const rowIndex = currentPlayer.board.rows.findIndex((row) => {
-		return equalCard(row.hermitCard, rowHermitCard)
-	})
-	if (rowIndex === -1) return 'FAILURE_INVALID_DATA'
+	const rowIndex = turnAction?.payload?.pickInfo?.rowIndex
+	if (rowIndex === undefined) return 'FAILURE_INVALID_DATA'
+	if (turnAction.payload.pickInfo.playerId !== currentPlayer.id) {
+		return 'FAILURE_CANNOT_COMPLETE'
+	}
 
 	// Can't change to existing active row
 	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'

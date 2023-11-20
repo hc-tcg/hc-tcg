@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {TurnActions} from '../../types/game-state'
 import EffectCard from '../base/effect-card'
 import {CARDS} from '..'
+import {applySingleUse, removeAilment} from '../../utils/board'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -13,40 +14,69 @@ class MilkBucketEffectCard extends EffectCard {
 			rarity: 'common',
 			description:
 				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
-			pickOn: 'apply',
-			pickReqs: [{target: 'player', slot: ['hermit'], amount: 1}],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
 		if (slot.type === 'single_use') {
-			player.hooks.onApply.add(instance, (pickedSlots) => {
-				const pickedCards = pickedSlots[this.id] || []
-				if (pickedCards.length !== 1) return
-				const targetSlot = pickedCards[0]
-				if (!targetSlot.row || !targetSlot.row.state.hermitCard) return
+			game.addPickRequest({
+				playerId: player.id,
+				id: instance,
+				message: 'Pick one of your Hermits',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-				targetSlot.row.state.ailments = targetSlot.row.state.ailments.filter(
-					(a) => a.id !== 'poison' && a.id !== 'badomen'
-				)
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					const ailmentsToRemove = game.state.ailments.filter((ail) => {
+						return (
+							ail.targetInstance === pickResult.card?.cardInstance &&
+							(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+						)
+					})
+					ailmentsToRemove.forEach((ail) => {
+						removeAilment(game, pos, ail.ailmentInstance)
+					})
+
+					applySingleUse(game)
+
+					return 'SUCCESS'
+				},
 			})
 		} else if (slot.type === 'effect') {
-			player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
+			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
-				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return (
+						ail.targetInstance === row.hermitCard?.cardInstance &&
+						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					)
+				})
+				ailmentsToRemove.forEach((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, (attack) => {
+			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
-				row.ailments = row.ailments.filter((a) => a.id !== 'poison')
+				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					return (
+						ail.targetInstance === row.hermitCard?.cardInstance &&
+						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+					)
+				})
+				ailmentsToRemove.forEach((ail) => {
+					removeAilment(game, pos, ail.ailmentInstance)
+				})
 			})
 		}
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)
 	}

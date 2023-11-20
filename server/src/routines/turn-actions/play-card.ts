@@ -7,48 +7,49 @@ import {ActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
 import {addPlayCardEntry} from 'utils/battle-log'
 import {DEBUG_CONFIG} from 'common/config'
+import SingleUseCard from 'common/cards/base/single-use-card'
+import {applySingleUse} from 'common/utils/board'
 
 function* playCardSaga(
 	game: GameModel,
 	turnAction: PlayCardActionData
 ): Generator<any, ActionResult> {
 	// Make sure data sent from client is correct
-	if (!turnAction?.payload?.card || !turnAction?.payload?.pickedSlot) {
+	const pickInfo = turnAction?.payload?.pickInfo
+	const card = turnAction?.payload?.card
+	if (!pickInfo || !card || !pickInfo.playerId || !pickInfo.slot) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
 	const {currentPlayer} = game
 
-	const card = turnAction.payload.card
-	const pickedSlot = turnAction.payload.pickedSlot
+	const {playerId, rowIndex: pickedIndex, slot: pickedSlot} = pickInfo
 
 	const cardInfo = CARDS[card.cardId]
-	const opponentPlayerId = game.opponentPlayerId
+	const {opponentPlayerId} = game
 
 	// Card must be in hand to play it
 	if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
-	const player = game.state.players[pickedSlot.playerId]
+	const player = game.state.players[playerId]
 	if (!player) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
 	// Can't attach to hand or health slot
-	if (pickedSlot.slot.type === 'health' || pickedSlot.slot.type === 'hand') {
+	if (pickedSlot.type === 'health' || pickedSlot.type === 'hand') {
 		return 'FAILURE_INVALID_SLOT'
 	}
 
 	// We can't automatically get the card pos, as the card is not on the board yet
 	const basicPos: BasicCardPos = {
-		player: game.state.players[pickedSlot.playerId],
+		player: game.state.players[playerId],
 		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex: pickedSlot.row ? pickedSlot.row.index : null,
-		row: pickedSlot.row
-			? game.state.players[pickedSlot.playerId].board.rows[pickedSlot.row.index]
-			: null,
-		slot: {type: pickedSlot.slot.type, index: pickedSlot.slot.index},
+		rowIndex: pickedIndex || null,
+		row: pickedIndex ? game.state.players[playerId].board.rows[pickedIndex] : null,
+		slot: {type: pickedSlot.type, index: pickedSlot.index},
 	}
 
 	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
@@ -69,7 +70,7 @@ function* playCardSaga(
 	// And set the action result to be sent to the client
 
 	// Single use slot
-	if (pickedSlot.slot.type === 'single_use') {
+	if (pickedSlot.type === 'single_use') {
 		player.board.singleUseCard = card
 	} else {
 		// All other positions requires us to have selected a valid row

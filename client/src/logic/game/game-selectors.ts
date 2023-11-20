@@ -76,11 +76,6 @@ export const getOpenedModal = (state: RootState) => {
 	return getGame(state).openedModal
 }
 
-//@TODO intergrate with pick request system
-export const getPickProcess = (state: RootState) => {
-	return getGame(state).pickProcess
-}
-
 export const getCurrentPickMessage = (state: RootState) => {
 	return getGameState(state)?.currentPickMessage || null
 }

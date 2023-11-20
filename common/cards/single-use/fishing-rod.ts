@@ -31,7 +31,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			drawCards(player, 2)
 			player.hooks.onApply.remove(instance)
 		})

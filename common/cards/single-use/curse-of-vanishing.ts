@@ -18,7 +18,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			if (opponentPlayer.board.activeRow === null) return
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
 			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {

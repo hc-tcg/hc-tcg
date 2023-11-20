@@ -3,6 +3,7 @@ import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {CardT} from 'common/types/game-state'
 import {
+	ChangeActiveHermitActionData,
 	PickCardActionData,
 	PlayCardActionData,
 	slotToPlayCardAction,
@@ -13,12 +14,10 @@ import {
 	getAvailableActions,
 	getSelectedCard,
 	getPlayerState,
-	getPickProcess,
 	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
-import {setSelectedCard, setOpenedModal, removeEffect} from 'logic/game/game-actions'
+import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {changeActiveHermit, slotPicked} from 'logic/game/game-actions'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
@@ -26,43 +25,38 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	const currentPickRequest = yield* select(getCurrentPickMessage)
 	if (!currentPickRequest) return
 
-	// If it's the single use or health slot do nothing, you can't request those slots
-	if (action.payload.slot.type !== 'single_use' && action.payload.slot.type !== 'health') {
-		const actionData: PickCardActionData = {
-			type: 'PICK_CARD',
-			payload: {
-				pickResult: {
-					playerId: action.payload.playerId,
-					rowIndex: action.payload.row?.index,
-					card: action.payload.slot.card,
-					slot: {
-						type: action.payload.slot.type,
-						index: action.payload.slot.index,
-					},
-				},
-			},
-		}
+	const pickInfo = action.payload.pickInfo
 
-		yield put(actionData)
+	const actionData: PickCardActionData = {
+		type: 'PICK_REQUEST',
+		payload: {
+			pickResult: pickInfo,
+		},
 	}
+
+	yield put(actionData)
 }
 
 function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
 	const selectedCardInfo = CARDS[selectedCard.cardId]
+	const pickInfo = action.payload.pickInfo
 
 	yield putResolve(setSelectedCard(null))
 
-	// If it's the hand or health slot don't even bother sending
-	if (action.payload.slot.type !== 'hand' && action.payload.slot.type !== 'health') {
+	// If the hand is clicked don't send data
+	if (pickInfo.slot.type !== 'hand') {
 		if (!selectedCardInfo) {
 			// Validations
 			console.log('Unknown card id: ', selectedCard)
 			return
 		}
 
+		const actionType = slotToPlayCardAction[pickInfo.slot.type]
+		if (!actionType) return
+
 		const actionData: PlayCardActionData = {
-			type: slotToPlayCardAction[action.payload.slot.type],
-			payload: {pickedSlot: action.payload, card: selectedCard, playerId: action.payload.playerId},
+			type: actionType,
+			payload: {pickInfo, card: selectedCard},
 		}
 
 		yield put(actionData)
@@ -70,38 +64,45 @@ function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): S
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
-	if (action.payload.slot.type !== 'hermit') return
-	const {slot, row} = action.payload
-	const playerId = yield* select(getPlayerId)
-	const playerState = yield* select(getPlayerState)
-	const rowHermitCard = row ? playerState?.board.rows[row?.index]?.hermitCard : null
-	const settings = yield* select(getSettings)
-	const clickedOnHermit = slot.type === 'hermit' && rowHermitCard
-	if (!playerState || !clickedOnHermit) return
-	if (playerId !== action.payload.playerId) return
+	const {playerId, rowIndex, slot} = action.payload.pickInfo
 
-	if (playerState.board.activeRow === row?.index) {
+	if (slot.type !== 'hermit') return
+
+	const currentPlayerId = yield* select(getPlayerId)
+	const playerState = yield* select(getPlayerState)
+	const settings = yield* select(getSettings)
+
+	if (!playerState || !rowIndex) return
+	const row = playerState.board.rows[rowIndex]
+	if (!row.hermitCard) return
+
+	if (playerId !== currentPlayerId) return
+
+	if (playerState.board.activeRow === rowIndex) {
 		yield put(setOpenedModal('attack'))
 	} else {
 		if (settings.confirmationDialogs !== 'off') {
-			yield put(setOpenedModal('change-hermit-modal', action.payload))
+			yield put(setOpenedModal('change-hermit-modal', action.payload.pickInfo))
 			const result = yield take('CONFIRM_HERMIT_CHANGE')
-			if (result.payload) {
-				yield put(changeActiveHermit(action.payload))
-			}
-		} else {
-			yield put(changeActiveHermit(action.payload))
+			if (!result.payload) return
 		}
+
+		const data: ChangeActiveHermitActionData = {
+			type: 'CHANGE_ACTIVE_HERMIT',
+			payload: {
+				pickInfo: action.payload.pickInfo,
+			},
+		}
+		yield put(data)
 	}
 }
 
 function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	const availableActions = yield* select(getAvailableActions)
 	const selectedCard = yield* select(getSelectedCard)
-	const pickProcess = yield* select(getPickProcess)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
 
-	if (action.payload.slot.type === 'single_use') {
+	if (action.payload.pickInfo.slot.type === 'single_use') {
 		const playerState = yield* select(getPlayerState)
 		if (playerState?.board.singleUseCard && !playerState?.board.singleUseCardUsed) {
 			yield put(removeEffect())
@@ -109,15 +110,13 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 		}
 	}
 
-	if (availableActions.includes('PICK_CARD')) {
+	if (availableActions.includes('PICK_REQUEST')) {
 		// Run a seperate saga for the pick request
 		yield call(pickForPickRequestSaga, action)
 		return
 	}
 
-	if (pickProcess) {
-		return
-	} else if (selectedCard) {
+	if (selectedCard) {
 		yield call(pickWithSelectedSaga, action, selectedCard)
 	} else {
 		yield call(pickWithoutSelectedSaga, action)

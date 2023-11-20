@@ -1,8 +1,9 @@
 import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
-import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {HermitAttackType} from '../../types/attack'
+import {PickRequest} from '../../types/server-requests'
 
 type CardDefs = {
 	type: CardTypeT
@@ -10,8 +11,6 @@ type CardDefs = {
 	numericId: number
 	name: string
 	rarity: CardRarityT
-	pickOn?: 'attack' | 'apply'
-	pickReqs?: Array<PickRequirmentT>
 }
 
 abstract class Card {
@@ -20,8 +19,6 @@ abstract class Card {
 	public numericId: number
 	public name: string
 	public rarity: CardRarityT
-	public pickOn: string | undefined
-	public pickReqs: Array<PickRequirmentT> | undefined
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -29,8 +26,6 @@ abstract class Card {
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.pickOn = defs.pickOn
-		this.pickReqs = defs.pickReqs
 	}
 
 	public getKey(keyName: string) {
@@ -93,6 +88,20 @@ abstract class Card {
 	 */
 	public showSingleUseTooltip(): boolean {
 		return false
+	}
+
+	//@TODO implement
+	/**
+	 * Returns pick requests to be executed before the attack loop
+	 */
+	public getPickRequests(
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel,
+		hermitAttackType: HermitAttackType
+	): Array<PickRequest> {
+		// Default is nothing
+		return []
 	}
 
 	/**

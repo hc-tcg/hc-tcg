@@ -53,7 +53,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
 			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]

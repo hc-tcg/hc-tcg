@@ -14,16 +14,11 @@ export function flipCoin(
 		console.log(`${cardId} attempted to flip coin with no active row!, that shouldn't be possible`)
 		return []
 	}
-	const forceTails = !!playerTossingCoin.board.rows[activeRowIndex].ailments.find(
-		(a) => a.id === 'badomen'
-	)
 
 	let coinFlips: Array<CoinFlipT> = []
 	for (let i = 0; i < times; i++) {
 		if (forceHeads) {
 			coinFlips.push('heads')
-		} else if (forceTails) {
-			coinFlips.push('tails')
 		} else {
 			const coinFlip: CoinFlipT = Math.random() > 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)

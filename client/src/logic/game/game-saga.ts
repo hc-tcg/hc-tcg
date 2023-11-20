@@ -42,8 +42,8 @@ function* actionSaga(): SagaIterator {
 		]),
 		applyEffect: take('APPLY_EFFECT'),
 		removeEffect: take('REMOVE_EFFECT'),
-		pickCard: take('PICK_CARD'),
-		customModal: take('CUSTOM_MODAL'),
+		pickCard: take('PICK_REQUEST'),
+		customModal: take('MODAL_REQUEST'),
 		attack: take(['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
 		endTurn: take('END_TURN'),
 		changeActiveHermit: take('CHANGE_ACTIVE_HERMIT'),
@@ -56,9 +56,9 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.removeEffect) {
 		yield call(sendMsg, 'REMOVE_EFFECT')
 	} else if (turnAction.pickCard) {
-		yield call(sendMsg, 'PICK_CARD', turnAction.pickCard.payload)
+		yield call(sendMsg, 'PICK_REQUEST', turnAction.pickCard.payload)
 	} else if (turnAction.customModal) {
-		yield call(sendMsg, 'CUSTOM_MODAL', turnAction.customModal.payload)
+		yield call(sendMsg, 'MODAL_REQUEST', turnAction.customModal.payload)
 	} else if (turnAction.attack) {
 		yield call(sendMsg, turnAction.attack.type, turnAction.attack.payload)
 	} else if (turnAction.endTurn) {
@@ -78,7 +78,7 @@ function* gameStateSaga(action: AnyAction): SagaIterator {
 	yield put(localGameState(gameState))
 
 	if (gameState.turn.availableActions.includes('WAIT_FOR_TURN')) return
-	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_PICK')) return
+	if (gameState.turn.availableActions.includes('WAIT_FOR_OPPONENT_ACTION')) return
 
 	const logic = yield all([
 		fork(actionModalsSaga),

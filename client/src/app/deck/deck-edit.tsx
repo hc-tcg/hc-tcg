@@ -36,17 +36,26 @@ const DECK_ICONS = [
 	'speedrunner',
 	'terraform',
 ]
-const EXPANSION_NAMES = ['any', ...Object.keys(EXPANSIONS.expansions)]
+
+const EXPANSION_NAMES = [
+	'any',
+	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
+		return Object.values(CARDS).some((card) => card.getExpansion() === expansion)
+	}),
+]
+
 const iconDropdownOptions = DECK_ICONS.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/types/type-${option}.png`,
 }))
+
 const rarityDropdownOptions = RANK_NAMES.map((option) => ({
 	name: option,
 	key: option,
 	icon: `/images/ranks/${option}.png`,
 }))
+
 interface ExpansionMap {
 	[key: string]: string
 }

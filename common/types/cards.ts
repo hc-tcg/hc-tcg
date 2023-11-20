@@ -22,7 +22,7 @@ export type HermitTypeT =
 export type EnergyT = HermitTypeT | 'any'
 
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
-export type BoardSlotTypeT = 'item' | 'effect' | 'hermit'
+export type BoardSlotTypeT = 'item' | 'effect' | 'hermit' | 'health'
 export type SlotTypeT = BoardSlotTypeT | 'single_use'
 
 export type DamageT = {

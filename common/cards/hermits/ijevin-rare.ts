@@ -39,7 +39,8 @@ class IJevinRareHermitCard extends HermitCard {
 			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
 				const lastActiveRow = opponentPlayer.board.activeRow
 
-				opponentPlayer.pickRequests.push({
+				game.addPickRequest({
+					playerId: opponentPlayer.id, // For opponent player to pick
 					id: this.id,
 					message: 'Choose a new active Hermit from your afk Hermits.',
 					onResult(pickResult) {

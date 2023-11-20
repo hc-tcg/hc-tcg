@@ -8,7 +8,6 @@ const defaultState: LocalGameRoot = {
 
 	selectedCard: null,
 	openedModal: null,
-	pickProcess: null,
 	endGameOverlay: null,
 	chat: [],
 	battleLog: [],
@@ -24,7 +23,6 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				localGameState: action.payload.localGameState,
 				time: action.payload.time,
 				openedModal: null,
-				pickProcess: null,
 			}
 			if (
 				state.localGameState?.turn.currentPlayerId ===
@@ -40,7 +38,6 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				time: 0,
 				selectedCard: null,
 				openedModal: null,
-				pickProcess: null,
 				endGameOverlay: null,
 				currentCoinFlip: null,
 				chat: [],
@@ -49,7 +46,6 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 			}
 
 		case 'SET_SELECTED_CARD':
-			if (state.pickProcess) return state
 			return {
 				...state,
 				selectedCard: equalCard(action.payload, state.selectedCard) ? null : action.payload,
@@ -59,22 +55,6 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				...state,
 				openedModal: action.payload,
 			}
-		case 'SET_PICK_PROCESS':
-			return {
-				...state,
-				selectedCard: null,
-				pickProcess: action.payload,
-			}
-		case 'UPDATE_PICK_PROCESS': {
-			if (!state.pickProcess) return state
-			return {
-				...state,
-				pickProcess: {
-					...state.pickProcess,
-					...action.payload,
-				},
-			}
-		}
 		case 'SHOW_END_GAME_OVERLAY':
 			return {
 				...state,

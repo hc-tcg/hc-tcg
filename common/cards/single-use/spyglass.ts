@@ -24,7 +24,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const coinResult = this.getInstanceKey(instance, 'coinResult')
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, this.id)
 			player.custom[coinResult] = coinFlip[0]
 
@@ -34,8 +34,9 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				cards: opponentPlayer.hand,
 			}
 
-			player.modalRequests.push({
-				id: this.id,
+			game.addModalRequest({
+				playerId: player.id,
+				data: {modalId: this.id},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
