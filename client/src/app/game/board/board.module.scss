@@ -17,6 +17,11 @@ $grid-size: 25px;
 	gap: 10px;
 }
 
+.boardContainer {
+	display: flex;
+	gap: 10px;
+}
+
 .actualBoard {
 	display: flex;
 	gap: $grid-size * 2;

@@ -7,7 +7,11 @@ import {
 	RowStateWithHermit,
 } from '../../../common/types/game-state'
 import {CARDS, HERMIT_CARDS} from 'common/cards'
-import {PlayCardActionData, AttackActionData} from 'common/types/action-data'
+import {
+	PlayCardActionData,
+	AttackActionData,
+	ChangeActiveHermitActionData,
+} from 'common/types/action-data'
 import {CurrentCoinFlipT} from '../../../common/types/game-state'
 
 function format(
@@ -64,7 +68,7 @@ export function* addPlayCardEntry(game: GameModel, turnAction: PlayCardActionDat
 		game.battleLog.push(entry)
 	} else if (cardType === 'item') {
 		const item_name = card.cardId.split('_')[1]
-		const attachedHermit = turnAction.payload.pickedSlot.row?.state.hermitCard
+		const attachedHermit = turnAction.payload.pickInfo.card
 		if (!attachedHermit) return
 
 		const attachedHermitName = CARDS[attachedHermit.cardId].name
@@ -85,7 +89,7 @@ export function* addPlayCardEntry(game: GameModel, turnAction: PlayCardActionDat
 		}
 		game.battleLog.push(entry)
 	} else if (cardType === 'effect') {
-		const attachedHermit = turnAction.payload.pickedSlot.row?.state.hermitCard
+		const attachedHermit = turnAction.payload.pickInfo.card
 		if (!attachedHermit) return
 
 		const attachedHermitName = CARDS[attachedHermit.cardId].name
@@ -132,10 +136,10 @@ export function* addApplyEffectEntry(game: GameModel) {
 	game.battleLog.push(entry)
 }
 
-export function* addChangeHermitEntry(game: GameModel, turnAction: any) {
+export function* addChangeHermitEntry(game: GameModel, turnAction: ChangeActiveHermitActionData) {
 	const currentPlayer = game.currentPlayer.playerName
 
-	const pickedHermit = turnAction?.payload?.row?.state?.hermitCard?.cardId
+	const pickedHermit = turnAction?.payload?.pickInfo.card?.cardId
 	if (!pickedHermit) return
 	const pickedHermitFullName = pickedHermit.split('_')[0]
 	const pickedHermitName = CARDS[pickedHermit].name
@@ -283,48 +287,18 @@ export function* addCoinFlipEntry(game: GameModel, coinFlips: Array<CurrentCoinF
 export function* addAilmentEntry(game: GameModel, player: PlayerState) {
 	const otherPlayer = game.opponentPlayer.playerName
 
-	for (let i = 0; i < player.board.rows.length; i++) {
-		const row = player.board.rows[i]
-		if (!row.health) continue
-
-		const hasFire = !!row.ailments.find((a) => a.id === 'fire')
-		const hasPoison = !!row.ailments.find((a) => a.id === 'poison')
-
-		const hermitId = row.hermitCard.cardId
-		const hermitFullName = hermitId.split('_')[0]
-		const hermitName = CARDS[hermitId].name
-
-		if (hasFire) {
-			const entry: BattleLogT = {
-				player: game.opponentPlayer.id,
-				icon: `images/effects/lava_bucket.png`,
-				secondIcon: `images/hermits-emoji/${hermitFullName}.png`,
-				description: [
-					format(`${otherPlayer}'s `, 'plain', 'opponent'),
-					format(`Your `, 'plain', 'player'),
-					format(`${hermitName} `, 'player'),
-					format(`took fire damage`, 'plain'),
-				],
-			}
-			game.battleLog.push(entry)
-		} else if (hasPoison) {
-			// Calculate max poison damage
-			const poisonDamage = Math.max(Math.min(row.health - 10, 20), 0)
-			if (poisonDamage === 0) break
-			const entry: BattleLogT = {
-				player: game.opponentPlayer.id,
-				icon: `images/effects/splash_potion_of_poison.png`,
-				secondIcon: `images/hermits-emoji/${hermitFullName}.png`,
-				description: [
-					format(`${otherPlayer}'s `, 'plain', 'opponent'),
-					format(`Your `, 'plain', 'player'),
-					format(`${hermitName} `, 'player'),
-					format(`took poison damage`, 'plain'),
-				],
-			}
-			game.battleLog.push(entry)
-		}
+	const entry: BattleLogT = {
+		player: game.opponentPlayer.id,
+		icon: `images/effects/splash_potion_of_poison.png`,
+		secondIcon: `images/hermits-emoji/XXXX.png`,
+		description: [
+			format(`XXXX's `, 'plain', 'opponent'),
+			format(`Your `, 'plain', 'player'),
+			format(`XXXXX `, 'player'),
+			format(`took poison damage`, 'plain'),
+		],
 	}
+	game.battleLog.push(entry)
 
 	yield* call(sendBattleLogEntry, game)
 }

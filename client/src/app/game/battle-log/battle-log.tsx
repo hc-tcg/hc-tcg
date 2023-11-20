@@ -98,7 +98,6 @@ const Entry = ({
 
 function BattleLog({player}: BattleLogProps) {
 	const entries = useSelector(getBattleLog)
-	console.log('Entries', entries)
 	return (
 		<div className={css.log}>
 			<div className={css.topElement}></div>

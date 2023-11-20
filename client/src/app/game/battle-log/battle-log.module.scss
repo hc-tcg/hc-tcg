@@ -1,16 +1,15 @@
 .log {
-	border: 2px solid lightblue;
+	border: 2px solid #75ddde;
 	background: var(--gray-900);
 	color: white;
 	height: 455px;
 	width: 51px;
 	display: flex;
 	flex-direction: column;
-	position: absolute;
-	transform: translate(-555px, -8px);
 	padding: 5px;
 	gap: 5px;
 	overflow: hidden;
+	min-width: 48px;
 }
 
 .topElement {

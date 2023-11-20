@@ -73,11 +73,13 @@ function Board({onClick, localGameState}: Props) {
 				<PlayerInfo player={rightPlayer} direction="right" />
 			</div>
 
-			<div className={css.actualBoard}>
+			<div className={css.boardContainer}>
 				<BattleLog player={player.id} />
-				{PlayerBoard(leftPlayer, 'left')}
-				<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
-				{PlayerBoard(rightPlayer, 'right')}
+				<div className={css.actualBoard}>
+					{PlayerBoard(leftPlayer, 'left')}
+					<Actions localGameState={localGameState} onClick={onClick} id={css.actions} />
+					{PlayerBoard(rightPlayer, 'right')}
+				</div>
 			</div>
 
 			<MobileActions localGameState={localGameState} onClick={onClick} id={css.actions} />
