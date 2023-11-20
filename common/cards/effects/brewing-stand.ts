@@ -34,6 +34,10 @@ class BrewingStandEffectCard extends EffectCard {
 		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[brewingInstanceKey]
 	}
+
+	public override getExpansion(): string {
+		return 'advent_of_tcg'
+	}
 }
 
 export default BrewingStandEffectCard

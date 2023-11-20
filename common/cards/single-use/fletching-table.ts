@@ -9,13 +9,16 @@ class FletchingTableSingleUseCard extends SingleUseCard {
 			numericId: 153,
 			name: 'Fletching table',
 			rarity: 'common',
-			description:
-				'Completely useless!',
+			description: 'Completely useless! Worth -2 tokens.',
 		})
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
 		return 'NO'
+	}
+
+	public override getExpansion(): string {
+		return 'advent_of_tcg'
 	}
 }
 
