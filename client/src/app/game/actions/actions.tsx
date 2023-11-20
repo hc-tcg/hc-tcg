@@ -130,10 +130,10 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const Status = () => {
 		const waitingForOpponentPick =
 			availableActions.includes('WAIT_FOR_OPPONENT_PICK') && availableActions.length === 1
-		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick request' : "Opponent's Turn"
+		const turnMsg = turn ? 'Your Turn' : pickMessage ? 'Pick Request' : "Opponent's Turn"
 		const knockedOut = player?.board.activeRow === null && player.lives !== 3 && turn
-		const changeHermit =
-			availableActions.includes('CHANGE_ACTIVE_HERMIT') && availableActions.length === 1
+		const endTurn = availableActions.includes('END_TURN')
+		const changeHermit = availableActions.includes('CHANGE_ACTIVE_HERMIT')
 
 		// TODO: Show coin flip results for longer amount of time
 		if (currentCoinFlip) {
@@ -144,17 +144,31 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			)
 		}
 
+		let message = ''
+
+		if (pickMessage) {
+			message = pickMessage
+		} else if (waitingForOpponentPick) {
+			message = "Waiting for opponent's action..."
+		} else if (knockedOut) {
+			message = 'Activate an AFK Hermit'
+		} else if (endTurn && availableActions.length === 1) {
+			message = 'End your turn when ready'
+		} else if (changeHermit && availableActions.length === 1) {
+			message = 'Select a new active Hermit'
+		} else if (endTurn && changeHermit && availableActions.length === 2) {
+			message = 'Switch to a new Hermit or end your turn'
+		}
+
+		// @TODO will be removed once all picks are pick requests
+		if (pickProcess) {
+			message = getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)
+		}
+
 		return (
 			<div id={css.status}>
 				<p className={css.turn}>{turnMsg}</p>
-				<p className={css.message}>
-					{knockedOut && 'Activate an AFK Hermit'}
-					{!knockedOut && changeHermit && 'Select a new active Hermit'}
-					{waitingForOpponentPick && "Waiting for opponent's action..."}
-					{pickMessage}
-					{pickProcess &&
-						getPickProcessMessage(pickProcess, gameState.turn.currentPlayerId, playerId)}
-				</p>
+				<p className={css.message}>{message}</p>
 			</div>
 		)
 	}

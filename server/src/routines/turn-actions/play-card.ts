@@ -16,7 +16,6 @@ function* playCardSaga(
 	}
 
 	const {currentPlayer} = game
-	const {availableActions} = game.state.turn
 
 	const card = turnAction.payload.card
 	const pickedSlot = turnAction.payload.pickedSlot

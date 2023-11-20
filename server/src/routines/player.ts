@@ -2,7 +2,7 @@ import {takeEvery, put, take, race, delay} from 'typed-redux-saga'
 import {PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
 
-const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 60
+const KEEP_PLAYER_AFTER_DISCONNECT_MS = 1000 * 30
 
 function* playerConnectedSaga(action: any) {
 	const {playerName, minecraftName, deck, socket} = action.payload
@@ -47,6 +47,9 @@ function* playerDisconnectedSaga(action: any) {
 	if (!player) return
 	const {playerId: playerId} = player
 
+	// Remove player from queues straight away
+	root.hooks.playerLeft.call(player)
+
 	yield* put({type: 'PLAYER_DISCONNECTED', payload: player})
 
 	const result = yield* race({
@@ -57,7 +60,6 @@ function* playerDisconnectedSaga(action: any) {
 	})
 
 	if (result.timeout) {
-		root.hooks.playerLeft.call(player)
 		yield* put({type: 'PLAYER_REMOVED', payload: player}) // @TODO will we try to get playerId here after instance is deleted?
 		delete root.players[playerId]
 	}

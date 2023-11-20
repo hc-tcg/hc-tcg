@@ -244,7 +244,8 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
 			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			onActiveHermitChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
 		},
 	}
 }
@@ -279,6 +280,17 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
+	// Generate pick message, adding in card name if id exists
+	const currentPickRequest = playerState.pickRequests[0]
+	let currentPickMessage = currentPickRequest?.message || null
+
+	if (currentPickRequest && currentPickRequest.id) {
+		const cardInfo = CARDS[currentPickRequest.id]
+		if (cardInfo) {
+			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
+		}
+	}
+
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
@@ -300,7 +312,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		lastActionResult: game.state.lastActionResult,
 
-		currentPickMessage: playerState.pickRequests[0]?.message || null,
+		currentPickMessage,
 		currentCustomModal: playerState.modalRequests[0]?.id || null,
 
 		players,

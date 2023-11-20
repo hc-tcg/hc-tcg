@@ -183,6 +183,14 @@ function Game() {
 		}
 	}, [gameState.turn.currentPlayerId])
 
+	// Play sound on custom modal or pick request activation
+	useEffect(() => {
+		const someCustom = gameState.currentPickMessage || gameState.currentCustomModal
+		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
+			dispatch(playSound('/sfx/Click.ogg'))
+		}
+	}, [gameState.currentPickMessage, gameState.currentCustomModal])
+
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
 		handleResize()

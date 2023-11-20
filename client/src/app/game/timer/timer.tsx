@@ -14,16 +14,13 @@ function Timer() {
 		Math.min(__LIMITS__.maxTurnTime, gameState.timer.turnRemaining)
 	)
 
-	const graceTime = 1
-
 	// Count down timer
 	useEffect(() => {
 		setRemainingTime(Math.min(__LIMITS__.maxTurnTime, gameState.timer.turnRemaining))
 		const interval = setInterval(() => {
-			const remaining =
-				gameState.timer.turnRemaining - graceTime - Math.floor((Date.now() - time) / 1000)
+			const remaining = gameState.timer.turnRemaining - Math.ceil((Date.now() - time) / 1000)
 			setRemainingTime(Math.min(__LIMITS__.maxTurnTime, Math.max(0, remaining)))
-		}, 200)
+		}, 50)
 
 		return () => clearInterval(interval)
 	}, [time, gameState.timer.turnRemaining])

@@ -81,10 +81,15 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	if (!pickRequestActive && opponentPlayer.pickRequests.length > 0) {
 		// If we are waiting for opponent only ever allow waiting
 
-		game.state.timer.turnTime = Date.now()
-		game.state.timer.turnRemaining = CONFIG.limits.extraActionTime
+		if (game.state.timer.opponentActionStartTime === null) {
+			game.state.timer.turnStartTime = Date.now()
+			game.state.timer.opponentActionStartTime = Date.now()
+		}
 		return ['WAIT_FOR_OPPONENT_PICK']
 	}
+
+	// No pick request for opponent
+	game.state.timer.opponentActionStartTime = null
 
 	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
 	const hasOtherHermit = rows.some((row, index) => {
@@ -294,10 +299,10 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(attackSaga, game, turnAction, pickedSlots)
 			break
 		case 'CHANGE_ACTIVE_HERMIT':
-			result = yield* call(changeActiveHermitSaga, game, turnAction, pickedSlots, modalResult)
+			result = yield* call(changeActiveHermitSaga, game, turnAction)
 			break
 		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game, pickedSlots, modalResult)
+			result = yield* call(applyEffectSaga, game, pickedSlots)
 			break
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
@@ -327,8 +332,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	// remove sleep on knock out
 	game.opponentPlayer.board.rows.forEach((row, index) => {
 		const isSleeping = row.ailments.some((a) => a.id === 'sleeping')
-		const isKnockedout = row.ailments.some((a) => a.id === 'knockedout')
-		if (isSleeping && isKnockedout) {
+		if (isSleeping) {
 			row.ailments = row.ailments.filter((a) => a.id !== 'sleeping')
 		}
 	})
@@ -339,7 +343,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	return endTurn ? 'END_TURN' : undefined
 }
 
-function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
+function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game
 
 	const turnActionChannel = yield* actionChannel(
@@ -405,23 +409,22 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 				break
 			}
 
-			if (turnConfig.skipTurn) {
-				if (currentPlayer.board.activeRow === null) availableActions = ['CHANGE_ACTIVE_HERMIT']
-				else return
-			}
-
 			game.state.turn.availableActions = availableActions
 
 			// End of available actions code
 
 			// Timer calculation
-			game.state.timer.turnTime = game.state.timer.turnTime || Date.now()
+			game.state.timer.turnStartTime = game.state.timer.turnStartTime || Date.now()
 			let maxTime = CONFIG.limits.maxTurnTime * 1000
+			let remainingTime = game.state.timer.turnStartTime + maxTime - Date.now()
+
 			if (availableActions.includes('WAIT_FOR_OPPONENT_PICK')) {
-				game.state.timer.turnTime = Date.now()
+				game.state.timer.opponentActionStartTime =
+					game.state.timer.opponentActionStartTime || Date.now()
 				maxTime = CONFIG.limits.extraActionTime * 1000
+				remainingTime = game.state.timer.opponentActionStartTime + maxTime - Date.now()
 			}
-			const remainingTime = game.state.timer.turnTime + maxTime - Date.now()
+
 			const graceTime = 1000
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
@@ -441,9 +444,9 @@ function* turnActionsSaga(game: GameModel, turnConfig: {skipTurn?: boolean}) {
 				// First check to see if the opponent had a pick request active
 				if (opponentPlayer.pickRequests[0]) {
 					// If yes, timout that pick request and remove it
-					opponentPlayer.pickRequests.shift()?.onTimeout()
+					opponentPlayer.pickRequests.shift()?.onTimeout?.()
 					// Reset timer to max time
-					game.state.timer.turnTime = Date.now()
+					game.state.timer.turnStartTime = Date.now()
 					game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
 					continue
 				}
@@ -484,15 +487,13 @@ function* turnSaga(game: GameModel) {
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = []
 
-	game.state.timer.turnTime = Date.now()
+	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
-
-	const turnConfig: {skipTurn?: boolean} = {}
 
 	// Call turn start hooks
 	currentPlayer.hooks.onTurnStart.call()
 
-	const result = yield* call(turnActionsSaga, game, turnConfig)
+	const result = yield* call(turnActionsSaga, game)
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Run the ailment attacks just before turn end
@@ -523,7 +524,7 @@ function* turnSaga(game: GameModel) {
 	// Timeout and clear pick requests
 	const allPickRequests = [...currentPlayer.pickRequests, ...opponentPlayer.pickRequests]
 	for (let i = 0; i < allPickRequests.length; i++) {
-		allPickRequests[i].onTimeout()
+		allPickRequests[i].onTimeout?.()
 	}
 	currentPlayer.pickRequests = []
 	opponentPlayer.pickRequests = []

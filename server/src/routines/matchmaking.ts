@@ -53,7 +53,7 @@ function* gameManager(game: GameModel) {
 			const gameState = getLocalGameState(game, player)
 			if (gameState) {
 				gameState.timer.turnRemaining = 0
-				gameState.timer.turnTime = getTimerForSeconds(0)
+				gameState.timer.turnStartTime = getTimerForSeconds(0)
 			}
 			const outcome = getGamePlayerOutcome(game, result, player.playerId)
 			broadcast([player], 'GAME_END', {
@@ -73,7 +73,7 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
-		gameEndWebhook(game)
+		//gameEndWebhook(game)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)

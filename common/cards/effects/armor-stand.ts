@@ -64,11 +64,11 @@ class ArmorStandEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
-		// Just in case we decide that Fire Charge/Mending/etc work on an Armor Stand that
-		// is attached to a Hermit slot
 		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
 			row.ailments = []
+			row.effectCard = null
+			row.itemCards = []
 		}
 
 		player.hooks.blockedActions.remove(instance)
