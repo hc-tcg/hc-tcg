@@ -8,7 +8,7 @@ class TrapdoorEffectCard extends EffectCard {
 	constructor() {
 		super({
 			id: 'trapdoor',
-			numericId: 172,
+			numericId: 177,
 			name: 'Trapdoor',
 			rarity: 'rare',
 			description: 'Attach to a Hermit, redirect up to 40hp damage',
