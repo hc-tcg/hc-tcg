@@ -43,6 +43,10 @@ class SlimeballEffectCard extends EffectCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.onCardPositionChange.remove(instance)
 	}
+
+	public override getExpansion(): string {
+		return 'advent_of_tcg'
+	}
 }
 
 export default SlimeballEffectCard

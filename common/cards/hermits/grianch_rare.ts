@@ -12,7 +12,7 @@ class GrianchRareHermitCard extends HermitCard {
 			numericId: 174,
 			name: 'The Grianch',
 			rarity: 'rare',
-			hermitType: 'terraform',
+			hermitType: 'prankster',
 			health: 250,
 			primary: {
 				name: 'Nice',
