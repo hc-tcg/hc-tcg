@@ -55,11 +55,6 @@ class ChestSingleUseCard extends SingleUseCard {
 			},
 		})
 	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
-	}
 }
 
 export default ChestSingleUseCard

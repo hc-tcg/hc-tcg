@@ -50,7 +50,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}
 }
