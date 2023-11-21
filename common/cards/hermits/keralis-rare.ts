@@ -97,9 +97,6 @@ class KeralisRareHermitCard extends HermitCard {
 					pickedRow.health + 100,
 					hermitInfo.health // Max health
 				)
-			} else {
-				// Armor Stand
-				pickedRow.health += 100
 			}
 
 			delete player.custom[playerKey]
