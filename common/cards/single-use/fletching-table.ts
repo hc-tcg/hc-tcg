@@ -9,7 +9,7 @@ class FletchingTableSingleUseCard extends SingleUseCard {
 			numericId: 153,
 			name: 'Fletching table',
 			rarity: 'common',
-			description: 'Completely useless! Worth -2 tokens.',
+			description: 'Completely useless! Worth -1 tokens.',
 		})
 	}
 

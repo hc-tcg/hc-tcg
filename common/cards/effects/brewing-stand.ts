@@ -11,7 +11,7 @@ class BrewingStandEffectCard extends EffectCard {
 			name: 'Brewing stand',
 			rarity: 'rare',
 			description:
-				'Attach to an Active or AFK Hermit. Every other turn, choose an item to discard from the Hermit Brewing Stand is attached to and heal this Hermit 50hp.',
+				'Attach to any active or AFK Hermit.\n\nEvery other turn, choose an item to discard from the Hermit Brewing Stand is attached to and heal this Hermit 50hp.',
 		})
 	}
 

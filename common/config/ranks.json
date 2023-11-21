@@ -221,14 +221,14 @@
 	" - ADVENT OF TCG EFFECTS - ": "",
 
 	"brewing_stand": 1,
-	"furance": 2,
+	"furnace": 1,
 	"cat": 1,
 	"berry_bush": 2,
 	"slimeball": 0,
 	"trapdoor": 2,
 
 	"dropper": 1,
-	"fletching_table": -2,
+	"fletching_table": -1,
 	"brush": 0,
 	"glowstone": 2,
 	"lantern": 3,

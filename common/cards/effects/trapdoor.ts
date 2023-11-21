@@ -11,7 +11,8 @@ class TrapdoorEffectCard extends EffectCard {
 			numericId: 177,
 			name: 'Trapdoor',
 			rarity: 'rare',
-			description: 'Attach to a Hermit, redirect up to 40hp damage',
+			description:
+				'Attach to any active or AFK Hermit.\n\n When an adjacent Hermit takes damage, up to 40hp damage is taken by this Hermit instead.',
 		})
 	}
 

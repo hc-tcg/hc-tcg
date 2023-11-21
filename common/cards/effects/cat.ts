@@ -11,7 +11,7 @@ class CatEffectCard extends EffectCard {
 			name: 'Cat',
 			rarity: 'rare',
 			description:
-				'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to discard it and draw the bottom card of your deck at the end of your turn instead.',
+				'Attach to any active or AFK Hermit.\n\nAfter the Hermit this card is attached to attacks, view the top card of your deck. You may choose to discard it and draw the bottom card of your deck at the end of your turn instead.',
 		})
 	}
 
@@ -52,7 +52,7 @@ class CatEffectCard extends EffectCard {
 
 					const topCard = player.pile.shift()
 					player.hooks.onTurnEnd.add(instance, (drawCards) => {
-                        player.hooks.onTurnEnd.remove(instance)
+						player.hooks.onTurnEnd.remove(instance)
 						return [player.pile[-1]]
 					})
 					if (!topCard) return 'SUCCESS'
@@ -67,13 +67,13 @@ class CatEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-        const {player} = pos
-        player.hooks.afterAttack.remove(instance)
-    }
+		const {player} = pos
+		player.hooks.afterAttack.remove(instance)
+	}
 
-    public override getExpansion(): string {
-        return 'advent_of_tcg'
-    }
+	public override getExpansion(): string {
+		return 'advent_of_tcg'
+	}
 }
 
 export default CatEffectCard
