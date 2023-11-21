@@ -134,27 +134,22 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				swapSlots(game, itemPos, targetPos)
 
+				// Only add the after apply hook here
+				player.hooks.afterApply.add(instance, () => {
+					discardSingleUse(game, player)
+
+					// Remove playing a single use from completed actions so it can be done again
+					game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+
+					player.hooks.afterApply.remove(instance)
+				})
+
 				applySingleUse(game)
 				delete player.custom[itemIndexKey]
 
 				return 'SUCCESS'
 			},
 		})
-
-		player.hooks.afterApply.add(instance, () => {
-			discardSingleUse(game, player)
-
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
-			player.hooks.afterApply.remove(instance)
-		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.afterApply.remove(instance)
 	}
 
 	override getExpansion() {
