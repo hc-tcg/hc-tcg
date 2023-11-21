@@ -24,7 +24,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				name: 'Evict',
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 90,
-				power: 'Opposing active hermit must move to a free slot if one is available.',
+				power: 'Opposing active Hermit must move to a free slot if one is available.',
 			},
 		})
 	}
