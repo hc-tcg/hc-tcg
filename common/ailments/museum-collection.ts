@@ -32,7 +32,7 @@ class MuseumCollectionAilment extends Ailment{
 			ailmentInfo.duration++
 		})
 
-		player.hooks.onApply.add(ailmentInfo.ailmentInstance, (instance) => {
+		player.hooks.onApply.add(ailmentInfo.ailmentInstance, () => {
 			if (ailmentInfo.duration === undefined) return
 			player.custom[oldHandSize] = player.hand.length
 			ailmentInfo.duration++
