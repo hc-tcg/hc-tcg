@@ -29,21 +29,22 @@ class PistonSingleUseCard extends SingleUseCard {
 		if (canAttach !== 'YES') return canAttach
 
 		const playerBoard = pos.player.board
-		const activeRowIndex = playerBoard.activeRow
-		if (activeRowIndex === null) return 'NO'
-		const activeRow = playerBoard.rows[activeRowIndex]
-		if (!activeRow || !activeRow.hermitCard) return 'NO'
 
-		const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
-			(index) => index >= 0 && index < playerBoard.rows.length
-		)
-		for (const index of adjacentRowsIndex) {
-			const row = playerBoard.rows[index]
-			if (!row.hermitCard) continue
-			if (!isCardType(row.hermitCard, 'hermit')) continue
-			if (!rowHasEmptyItemSlot(activeRow)) continue
-			if (isRowEmpty(activeRow)) continue
-			return 'YES'
+		for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
+			const row = playerBoard.rows[rowIndex]
+			if (!row || !row.hermitCard) continue
+			if (isRowEmpty(row)) continue
+
+			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
+				(index) => index >= 0 && index < playerBoard.rows.length
+			)
+			for (const index of adjacentRowsIndex) {
+				const newRow = playerBoard.rows[index]
+				if (!newRow.hermitCard) continue
+				if (!isCardType(newRow.hermitCard, 'hermit')) continue
+				if (!rowHasEmptyItemSlot(newRow)) continue
+				return 'YES'
+			}
 		}
 
 		return 'NO'
@@ -51,23 +52,24 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		const rowIndexKey = this.getInstanceKey(instance, 'rowIndex')
 		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
 
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
-			message: 'Pick an item card from your active Hermit',
+			message: 'Pick an item card from one of your active or AFK Hermits',
 			onResult(pickResult) {
 				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
 
 				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-				// Store the index of the chosen item
+				// Store the row and index of the chosen item
+				player.custom[rowIndexKey] = rowIndex
 				player.custom[itemIndexKey] = pickResult.slot.index
 
 				return 'SUCCESS'
@@ -76,47 +78,39 @@ class PistonSingleUseCard extends SingleUseCard {
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
-			message: 'Pick an empty item slot on one of your adjacent AFK Hermits',
+			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			onResult(pickResult) {
 				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
 				const pickedIndex = pickResult.rowIndex
 				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (pickedIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
 
-				const row = player.board.rows[pickedIndex]
-				if (!row) return 'FAILURE_INVALID_SLOT'
+				// Get the index of the row we chose
+				const firstRowIndex: number = player.custom[rowIndexKey]
+				const adjacentRows = [firstRowIndex - 1, firstRowIndex + 1]
+				// Must be adjacent
+				if (!adjacentRows.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
+
+				const pickedRow = player.board.rows[pickedIndex]
+				if (!pickedRow) return 'FAILURE_INVALID_SLOT'
+				const firstRow = player.board.rows[firstRowIndex]
+				if (!firstRow) return 'FAILURE_INVALID_SLOT'
 
 				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
 				// Slot must be empty
 				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 				// Get the index of the chosen item
-				const itemIndex: number | undefined = player.custom[itemIndexKey]
-
-				const activePos = getActiveRowPos(player)
-
-				if (itemIndex === undefined || !activePos) {
-					// Something went wrong, just return success
-					// To clarify, the problem here is that if itemIndex is null this pick request will never be able to succeed if we don't do this
-					// @TODO is a better failsafe mechanism needed for 2 picks in a row? Same as lead
-					return 'SUCCESS'
-				}
-
-				// Make sure we are adjacent
-				const adjacentRowsIndex = [activePos.rowIndex - 1, activePos.rowIndex + 1].filter(
-					(index) => index >= 0 && index < player.board.rows.length
-				)
-				if (!adjacentRowsIndex.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
+				const itemIndex: number = player.custom[itemIndexKey]
 
 				// Make sure we can attach the item
-				const itemCard = activePos.row.itemCards[itemIndex]
-				if (!canAttachToCard(game, row.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
+				const itemCard = firstRow.itemCards[itemIndex]
+				if (!canAttachToCard(game, pickedRow.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
 
 				// Move the item
 				const itemPos: SlotPos = {
-					rowIndex: activePos.rowIndex,
-					row: activePos.row,
+					rowIndex: firstRowIndex,
+					row: firstRow,
 					slot: {
 						index: itemIndex,
 						type: 'item',
@@ -125,7 +119,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				const targetPos: SlotPos = {
 					rowIndex: pickedIndex,
-					row,
+					row: pickedRow,
 					slot: {
 						index: pickResult.slot.index,
 						type: 'item',
@@ -145,9 +139,18 @@ class PistonSingleUseCard extends SingleUseCard {
 				})
 
 				applySingleUse(game)
+				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 
 				return 'SUCCESS'
+			},
+			onCancel() {
+				delete player.custom[rowIndexKey]
+				delete player.custom[itemIndexKey]
+			},
+			onTimeout() {
+				delete player.custom[rowIndexKey]
+				delete player.custom[itemIndexKey]
 			},
 		})
 	}

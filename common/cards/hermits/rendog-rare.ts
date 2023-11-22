@@ -96,9 +96,9 @@ class RendogRareHermitCard extends HermitCard {
 						}
 						delete player.custom[imitatingCardKey]
 
-						//Attack new card
-						const NewHermitInfo = HERMIT_CARDS[pickResult.card.cardId]
-						if (NewHermitInfo) NewHermitInfo.onAttach(game, instance, pos)
+						//Attach new card
+						const newHermitInfo = HERMIT_CARDS[pickResult.card.cardId]
+						if (newHermitInfo) newHermitInfo.onAttach(game, instance, pos)
 					}
 
 					game.addModalRequest({
