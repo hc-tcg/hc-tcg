@@ -2,7 +2,6 @@ import Card from './card'
 import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
-import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 
@@ -12,8 +11,6 @@ type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply'
-	pickReqs?: Array<PickRequirmentT>
 }
 
 abstract class EffectCard extends Card {
@@ -26,8 +23,6 @@ abstract class EffectCard extends Card {
 			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
-			pickOn: defs.pickOn,
-			pickReqs: defs.pickReqs,
 		})
 
 		this.description = defs.description

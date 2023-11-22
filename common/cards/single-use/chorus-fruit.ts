@@ -17,14 +17,12 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			applySingleUse(game)
-			player.hooks.onAttack.remove(instance)
-		})
-
 		player.hooks.afterAttack.add(instance, (attack) => {
 			// Remove change active hermit from the blocked actions so it can be done once more
 			game.removeBlockedActions('CHANGE_ACTIVE_HERMIT')
+
+			// Apply the card
+			applySingleUse(game)
 
 			player.hooks.afterAttack.remove(instance)
 		})
@@ -37,7 +35,9 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
-		const isSleeping = activeRow?.ailments.some((a) => a.id === 'sleeping')
+		const isSleeping = game.state.ailments.some(
+			(a) => a.targetInstance == activeRow?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+		)
 		if (isSleeping) return 'NO'
 
 		return 'YES'
@@ -45,7 +45,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 	}
 }

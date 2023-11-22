@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {applyAilment} from '../../utils/board'
+import Fire from '../../ailments/fire'
 import SingleUseCard from '../base/single-use-card'
 
 class LavaBucketSingleUseCard extends SingleUseCard {
@@ -19,22 +21,16 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const opponentActiveRow = pos.opponentPlayer.board.activeRow
+		player.hooks.onApply.add(instance, () => {
+			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
-
-			const hasDamageEffect = pos.opponentPlayer.board.rows[opponentActiveRow].ailments.some(
-				(ailment) => {
-					return ailment.id === 'fire' || ailment.id === 'poison'
-				}
+			applyAilment(
+				game,
+				'fire',
+				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance
 			)
-			if (!hasDamageEffect) {
-				pos.opponentPlayer.board.rows[opponentActiveRow].ailments.push({
-					id: 'fire',
-				})
-			}
 		})
 	}
 

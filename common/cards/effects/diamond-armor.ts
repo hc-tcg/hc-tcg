@@ -18,7 +18,7 @@ class DiamondArmorEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onDefence.add(instance, (attack, pickedSlots) => {
+		player.hooks.onDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || attack.isType('ailment')) return
 
 			if (player.custom[instanceKey] === undefined) {

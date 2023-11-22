@@ -1,7 +1,6 @@
 import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
 import Card from './card'
-import {PickRequirmentT} from '../../types/pick-process'
 import {CardPosModel} from '../../models/card-pos-model'
 
 type HealthDefs = {

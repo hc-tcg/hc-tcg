@@ -5,18 +5,14 @@ import {
 	TurnActions,
 	CardT,
 	CoinFlipT,
-	GameState,
 	LocalGameState,
 	LocalPlayerState,
 	PlayerState,
 	RowState,
-	ActionResult,
-	GenericActionResult,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {EnergyT} from 'common/types/cards'
-import {PickedSlots} from 'common/types/pick-process'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card from 'common/cards/base/card'
@@ -25,6 +21,7 @@ import ItemCard from 'common/cards/base/item-card'
 import EffectCard from 'common/cards/base/effect-card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
+import {HermitAttackType} from 'common/types/attack'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -148,7 +145,6 @@ export function getEmptyRow(): RowState {
 		effectCard: null,
 		itemCards: new Array(MAX_ITEMS).fill(null),
 		health: null,
-		ailments: [],
 	}
 	return rowState
 }
@@ -220,23 +216,23 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
 
-		pickRequests: [],
-		modalRequests: [],
-
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
-			onApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
-			afterApply: new GameHook<(pickedSlots: PickedSlots) => void>(),
-			getAttacks: new GameHook<(pickedSlots: PickedSlots) => Array<AttackModel>>(),
-			beforeAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			onAttack: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
-			onDefence: new GameHook<(attack: AttackModel, pickedSlots: PickedSlots) => void>(),
+			beforeApply: new GameHook<() => void>(),
+			onApply: new GameHook<() => void>(),
+			afterApply: new GameHook<() => void>(),
+			getAttackRequests: new GameHook<
+				(activeInstance: string, hermitAttackType: HermitAttackType) => void
+			>(),
+			getAttacks: new GameHook<() => Array<AttackModel>>(),
+			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
+			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
+			onAttack: new GameHook<(attack: AttackModel) => void>(),
+			onDefence: new GameHook<(attack: AttackModel) => void>(),
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
@@ -280,15 +276,22 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	players[player.playerId] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
-	// Generate pick message, adding in card name if id exists
-	const currentPickRequest = playerState.pickRequests[0]
-	let currentPickMessage = currentPickRequest?.message || null
+	// Pick message or modal id
+	let currentPickMessage = null
+	let currentModalData = null
 
-	if (currentPickRequest && currentPickRequest.id) {
+	const currentPickRequest = game.state.pickRequests[0]
+	const currentModalRequest = game.state.modalRequests[0]
+	if (currentPickRequest?.playerId === player.playerId) {
+		currentPickMessage = currentPickRequest.message
+		// Add the card name before the request
 		const cardInfo = CARDS[currentPickRequest.id]
 		if (cardInfo) {
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
+	} else if (currentModalRequest?.playerId === player.playerId) {
+		// Only if there is no pick request will we send a modal request
+		currentModalData = currentModalRequest.data
 	}
 
 	const localGameState: LocalGameState = {
@@ -300,6 +303,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
+		ailments: game.state.ailments,
 
 		// personal info
 		hand: playerState.hand,
@@ -313,7 +317,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		lastActionResult: game.state.lastActionResult,
 
 		currentPickMessage,
-		currentCustomModal: playerState.modalRequests[0]?.id || null,
+		currentModalData,
 
 		players,
 

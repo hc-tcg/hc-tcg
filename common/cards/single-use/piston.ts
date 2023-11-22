@@ -1,7 +1,14 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {SlotPos} from '../../types/cards'
-import {canAttachToCard, getAdjacentRows, rowHasEmptyItemSlot, rowHasItem} from '../../utils/board'
+import {
+	applySingleUse,
+	canAttachToCard,
+	getActiveRowPos,
+	isRowEmpty,
+	rowHasEmptyItemSlot,
+} from '../../utils/board'
+import {isCardType} from '../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
@@ -14,17 +21,6 @@ class PistonSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Move 1 of your attached item cards to an adjacent active or AFK Hermit. You can use another single use effect card this turn.',
-			pickOn: 'apply',
-			pickReqs: [
-				{target: 'player', slot: ['item'], type: ['item'], amount: 1},
-				{
-					target: 'player',
-					slot: ['item'],
-					amount: 1,
-					empty: true,
-					adjacent: 'req',
-				},
-			],
 		})
 	}
 
@@ -32,87 +28,131 @@ class PistonSingleUseCard extends SingleUseCard {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
 
-		const adjacents = getAdjacentRows(pos.player)
-		let validPairs = 0
-		for (const rows of adjacents) {
-			let valid = false
-			if (rowHasItem(rows[0]) && rowHasEmptyItemSlot(rows[1])) {
-				for (const item of rows[0].itemCards) {
-					if (canAttachToCard(game, rows[1].hermitCard, item)) {
-						valid = true
-						break
-					}
-				}
-			}
-			if (rowHasItem(rows[1]) && rowHasEmptyItemSlot(rows[0]) && !valid) {
-				for (const item of rows[1].itemCards) {
-					if (canAttachToCard(game, rows[0].hermitCard, item)) {
-						valid = true
-						break
-					}
-				}
-			}
+		const playerBoard = pos.player.board
 
-			if (valid) validPairs++
+		for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
+			const row = playerBoard.rows[rowIndex]
+			if (!row || !row.hermitCard) continue
+			if (isRowEmpty(row)) continue
+
+			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
+				(index) => index >= 0 && index < playerBoard.rows.length
+			)
+			for (const index of adjacentRowsIndex) {
+				const newRow = playerBoard.rows[index]
+				if (!newRow.hermitCard) continue
+				if (!isCardType(newRow.hermitCard, 'hermit')) continue
+				if (!rowHasEmptyItemSlot(newRow)) continue
+				return 'YES'
+			}
 		}
-		if (validPairs) return 'YES'
 
 		return 'NO'
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const slots = pickedSlots[this.id] || []
+		const rowIndexKey = this.getInstanceKey(instance, 'rowIndex')
+		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
 
-			if (slots.length !== 2) return
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick an item card from one of your active or AFK Hermits',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
-			const itemCardInfo = slots[0]
-			const targetSlotInfo = slots[1]
+				const rowIndex = pickResult.rowIndex
+				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-			if (targetSlotInfo.slot.card !== null || !itemCardInfo.row || !targetSlotInfo.row) return
+				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-			const hermitCard = targetSlotInfo.row.state.hermitCard
-			const itemCard = itemCardInfo.slot.card
-			if (!canAttachToCard(game, hermitCard, itemCard)) return
+				// Store the row and index of the chosen item
+				player.custom[rowIndexKey] = rowIndex
+				player.custom[itemIndexKey] = pickResult.slot.index
 
-			const itemPos: SlotPos = {
-				rowIndex: itemCardInfo.row.index,
-				row: itemCardInfo.row.state,
-				slot: {
-					index: itemCardInfo.slot.index,
-					type: 'item',
-				},
-			}
-
-			const targetPos: SlotPos = {
-				rowIndex: targetSlotInfo.row.index,
-				row: targetSlotInfo.row.state,
-				slot: {
-					index: targetSlotInfo.slot.index,
-					type: 'item',
-				},
-			}
-
-			swapSlots(game, itemPos, targetPos)
+				return 'SUCCESS'
+			},
 		})
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
-		player.hooks.afterApply.add(instance, (pickedSlots) => {
-			discardSingleUse(game, player)
+				const pickedIndex = pickResult.rowIndex
+				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-			// Remove playing a single use from completed actions so it can be done again
-			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+				// Get the index of the row we chose
+				const firstRowIndex: number = player.custom[rowIndexKey]
+				const adjacentRows = [firstRowIndex - 1, firstRowIndex + 1]
+				// Must be adjacent
+				if (!adjacentRows.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
 
-			player.hooks.onApply.remove(instance)
-			player.hooks.afterApply.remove(instance)
+				const pickedRow = player.board.rows[pickedIndex]
+				if (!pickedRow) return 'FAILURE_INVALID_SLOT'
+				const firstRow = player.board.rows[firstRowIndex]
+				if (!firstRow) return 'FAILURE_INVALID_SLOT'
+
+				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+				// Slot must be empty
+				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+				// Get the index of the chosen item
+				const itemIndex: number = player.custom[itemIndexKey]
+
+				// Make sure we can attach the item
+				const itemCard = firstRow.itemCards[itemIndex]
+				if (!canAttachToCard(game, pickedRow.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
+
+				// Move the item
+				const itemPos: SlotPos = {
+					rowIndex: firstRowIndex,
+					row: firstRow,
+					slot: {
+						index: itemIndex,
+						type: 'item',
+					},
+				}
+
+				const targetPos: SlotPos = {
+					rowIndex: pickedIndex,
+					row: pickedRow,
+					slot: {
+						index: pickResult.slot.index,
+						type: 'item',
+					},
+				}
+
+				swapSlots(game, itemPos, targetPos)
+
+				// Only add the after apply hook here
+				player.hooks.afterApply.add(instance, () => {
+					discardSingleUse(game, player)
+
+					// Remove playing a single use from completed actions so it can be done again
+					game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+
+					player.hooks.afterApply.remove(instance)
+				})
+
+				applySingleUse(game)
+				delete player.custom[rowIndexKey]
+				delete player.custom[itemIndexKey]
+
+				return 'SUCCESS'
+			},
+			onCancel() {
+				delete player.custom[rowIndexKey]
+				delete player.custom[itemIndexKey]
+			},
+			onTimeout() {
+				delete player.custom[rowIndexKey]
+				delete player.custom[itemIndexKey]
+			},
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.onApply.remove(instance)
-		player.hooks.afterApply.remove(instance)
 	}
 
 	override getExpansion() {

@@ -32,7 +32,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const hand = player.hand
 			for (const card of hand) {
 				discardFromHand(player, card)

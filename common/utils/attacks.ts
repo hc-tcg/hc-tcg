@@ -52,8 +52,7 @@ export function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
 
 	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	const hasWeakness = target.row.ailments.find((a) => a.id === 'weakness')
-	if (!strength.includes(targetCardInfo.hermitType) && !hasWeakness) return null
+	if (!strength.includes(targetCardInfo.hermitType)) return null
 
 	const weaknessAttack = new AttackModel({
 		id: attackId,

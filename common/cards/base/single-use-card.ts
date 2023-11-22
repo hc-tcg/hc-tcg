@@ -1,6 +1,5 @@
 import {CardRarityT} from '../../types/cards'
 import Card from './card'
-import {PickRequirmentT} from '../../types/pick-process'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -11,8 +10,6 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	pickOn?: 'attack' | 'apply'
-	pickReqs?: Array<PickRequirmentT>
 }
 
 class SingleUseCard extends Card {
@@ -25,8 +22,6 @@ class SingleUseCard extends Card {
 			numericId: defs.numericId,
 			name: defs.name,
 			rarity: defs.rarity,
-			pickOn: defs.pickOn,
-			pickReqs: defs.pickReqs,
 		})
 
 		this.description = defs.description

@@ -14,8 +14,10 @@ export function getGameState(game: GameModel): GameState {
 			opponentAvailableActions: [],
 			completedActions: [],
 			blockedActions: [],
+			currentAttack: null,
 		},
 		order: playerIds,
+		ailments: [],
 		lastActionResult: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
@@ -24,6 +26,9 @@ export function getGameState(game: GameModel): GameState {
 			}),
 			{}
 		),
+
+		pickRequests: [],
+		modalRequests: [],
 
 		timer: {
 			turnStartTime: 0,

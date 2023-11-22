@@ -5,10 +5,12 @@ import {setOpenedModal} from 'logic/game/game-actions'
 import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
 	const availableActions = useSelector(getAvailableActions)
+	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
 	const handleDiscarded = () => {
@@ -31,7 +33,7 @@ function Toolbar() {
 			</button>
 
 			{/* Toggle Chat */}
-			<ChatItem />
+			{settings.disableChat === 'off' && <ChatItem />}
 
 			{/* Toggle Sounds */}
 			<SoundItem />

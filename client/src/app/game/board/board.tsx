@@ -1,6 +1,5 @@
 import {useSelector} from 'react-redux'
-import {LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
-import {PickedSlotT} from 'common/types/pick-process'
+import {CardT, LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import css from './board.module.scss'
 import BoardRow from './board-row'
@@ -10,9 +9,10 @@ import Actions from '../actions/actions'
 import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
+import {PickInfo, SlotInfo} from 'common/types/server-requests'
 
 type Props = {
-	onClick: (meta: PickedSlotT) => void
+	onClick: (pickInfo: PickInfo) => void
 	localGameState: LocalGameState
 }
 
@@ -27,19 +27,17 @@ function Board({onClick, localGameState}: Props) {
 	const leftPlayer = side === 'Left' ? player : opponent
 	const rightPlayer = side === 'Right' ? player : opponent
 
-	const handleRowClick = (playerId: string, rowIndex: number, rowState: RowState, meta: any) => {
+	const handleRowClick = (
+		playerId: string,
+		rowIndex: number,
+		card: CardT | null,
+		slot: SlotInfo
+	) => {
 		onClick({
 			playerId,
-			slot: {
-				type: meta.slotType,
-				index: meta.slotIndex,
-				card: meta.card,
-				info: meta.card ? CARDS[meta.card.cardId] : null,
-			},
-			row: {
-				index: rowIndex,
-				state: rowState,
-			},
+			rowIndex,
+			card,
+			slot,
 		})
 	}
 
@@ -56,8 +54,9 @@ function Board({onClick, localGameState}: Props) {
 							key={index}
 							rowState={rows[index]}
 							active={index === player.board.activeRow}
-							onClick={handleRowClick.bind(null, player.id, index, rows[index])}
+							onClick={handleRowClick.bind(null, player.id, index)}
 							type={direction}
+							ailments={localGameState.ailments}
 						/>
 					)
 				})}

@@ -2,6 +2,7 @@ import {HERMIT_CARDS} from '..'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import HermitCard from '../base/hermit-card'
+import { applyAilment, removeAilment } from '../../utils/board'
 
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
@@ -29,23 +30,17 @@ class BdoubleO100RareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, row} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.attacker
 			if (!attacker) return
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (!row || !row.hermitCard) return
 
-			// restore health
-			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			attacker.row.health = hermitInfo.health
-
-			// remove old sleeping
-			attacker.row.ailments = attacker.row.ailments.filter((a) => a.id !== 'sleeping')
-
-			// sleep for 3 turns (2 + the current turn)
-			attacker.row.ailments.push({id: 'sleeping', duration: 3})
+			// Add new sleeping ailment
+			applyAilment(game, 'sleeping', row.hermitCard.cardInstance)
 		})
 	}
 
