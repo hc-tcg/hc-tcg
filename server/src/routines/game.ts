@@ -517,6 +517,7 @@ function* turnSaga(game: GameModel) {
 	game.state.turn.currentPlayerId = currentPlayerId
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = []
+	game.state.turn.currentAttack = null
 
 	game.state.timer.turnStartTime = Date.now()
 	game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
