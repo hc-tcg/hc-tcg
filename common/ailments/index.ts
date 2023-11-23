@@ -8,7 +8,6 @@ import WeaknessAilment from './weakness'
 import ProtectedAilment from './protected'
 import DyedAilment from './dyed'
 import MuseumCollectionAilment from './museum-collection'
-import BrewingAilment from './brewing'
 import SmeltingAilment from './smelting'
 
 const cardClasses: Array<Ailment> = [
@@ -21,7 +20,6 @@ const cardClasses: Array<Ailment> = [
 	new ProtectedAilment(),
 	new DyedAilment(),
 	new MuseumCollectionAilment(),
-	new BrewingAilment(),
 	new SmeltingAilment(),
 ]
 
