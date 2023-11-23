@@ -45,8 +45,8 @@ function* playCardSaga(
 	const basicPos: BasicCardPos = {
 		player: game.state.players[playerId],
 		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex: pickedIndex || null,
-		row: pickedIndex ? game.state.players[playerId].board.rows[pickedIndex] : null,
+		rowIndex: pickedIndex === undefined ? null : pickedIndex,
+		row: pickedIndex !== undefined ? game.state.players[playerId].board.rows[pickedIndex] : null,
 		slot: {type: pickedSlot.type, index: pickedSlot.index},
 	}
 

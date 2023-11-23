@@ -72,7 +72,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const playerState = yield* select(getPlayerState)
 	const settings = yield* select(getSettings)
 
-	if (!playerState || !rowIndex) return
+	if (!playerState || rowIndex === undefined) return
 	const row = playerState.board.rows[rowIndex]
 	if (!row.hermitCard) return
 
