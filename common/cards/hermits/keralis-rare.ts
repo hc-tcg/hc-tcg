@@ -106,7 +106,7 @@ class KeralisRareHermitCard extends HermitCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)
 
 		delete player.custom[this.getInstanceKey(instance, 'player')]

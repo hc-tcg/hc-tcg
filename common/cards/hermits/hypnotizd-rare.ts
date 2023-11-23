@@ -154,6 +154,11 @@ class HypnotizdRareHermitCard extends HermitCard {
 			})
 		})
 	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+		const {player} = pos
+		player.hooks.getAttackRequests.remove(instance)
+	}
 }
 
 export default HypnotizdRareHermitCard
