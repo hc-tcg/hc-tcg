@@ -35,6 +35,9 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 				},
 			}
 			const attackResult = yield* call(attackSaga, game, turnAction, false)
+
+			game.state.turn.currentAttack = null
+
 			return attackResult
 		}
 	}
