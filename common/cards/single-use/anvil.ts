@@ -19,7 +19,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks.add(instance, (pickedSlots) => {
+		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 			const activeIndex = activePos.rowIndex

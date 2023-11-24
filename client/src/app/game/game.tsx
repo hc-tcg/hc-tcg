@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
 import {CardT} from 'common/types/game-state'
-import {PickedSlotT} from 'common/types/pick-process'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
@@ -13,7 +12,6 @@ import {
 	ConfirmModal,
 	DiscardedModal,
 	EndTurnModal,
-	EvilXModal,
 	ForfeitModal,
 	SpyglassModal,
 	UnmetConditionModal,
@@ -25,7 +23,6 @@ import {playSound} from 'logic/sound/sound-actions'
 import {
 	getGameState,
 	getSelectedCard,
-	getPickProcess,
 	getOpenedModal,
 	getPlayerState,
 	getEndGameOverlay,
@@ -35,8 +32,8 @@ import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actio
 import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
-// import {getSettings} from 'logic/local-settings/local-settings-selectors'
-// import {setSetting} from 'logic/local-settings/local-settings-actions'
+import CopyAttackModal from './modals/copy-attack-modal'
+import {PickInfo} from 'common/types/server-requests'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -50,8 +47,8 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	// Custom modals
 	borrow: BorrowModal,
 	chest: ChestModal,
-	evilX: EvilXModal,
 	spyglass: SpyglassModal,
+	copyAttack: CopyAttackModal,
 }
 
 const renderModal = (
@@ -69,7 +66,6 @@ function Game() {
 	const gameState = useSelector(getGameState)
 	const availableActions = useSelector(getAvailableActions)
 	const selectedCard = useSelector(getSelectedCard)
-	const pickedSlots = useSelector(getPickProcess)?.pickedSlots || []
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
@@ -84,10 +80,6 @@ function Game() {
 		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
 		: gameState.hand
 
-	const pickedSlotsInstances = pickedSlots
-		.map((pickedSlot) => pickedSlot.slot.card)
-		.filter(Boolean) as Array<CardT>
-
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
 	const gameRef = useRef<HTMLDivElement>(null)
 
@@ -95,19 +87,19 @@ function Game() {
 		dispatch(setOpenedModal(id))
 	}
 
-	const handleBoardClick = (pickedSlot: PickedSlotT) => {
-		console.log('Slot selected: ', pickedSlot)
-		dispatch(slotPicked(pickedSlot))
+	const handleBoardClick = (pickInfo: PickInfo) => {
+		console.log('Slot selected: ', pickInfo)
+		dispatch(slotPicked(pickInfo))
 	}
 
 	const selectCard = (card: CardT) => {
-		if (availableActions.includes('PICK_CARD')) {
+		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
 
 			// Send pick card action with the hand info
 			const actionData: PickCardActionData = {
-				type: 'PICK_CARD',
+				type: 'PICK_REQUEST',
 				payload: {
 					pickResult: {
 						playerId: gameState.playerId,
@@ -126,7 +118,7 @@ function Game() {
 		}
 	}
 
-	if (availableActions.includes('PICK_CARD')) {
+	if (availableActions.includes('PICK_REQUEST')) {
 		dispatch(setSelectedCard(null))
 	}
 
@@ -185,11 +177,11 @@ function Game() {
 
 	// Play sound on custom modal or pick request activation
 	useEffect(() => {
-		const someCustom = gameState.currentPickMessage || gameState.currentCustomModal
+		const someCustom = gameState.currentPickMessage || gameState.currentModalData
 		if (someCustom && gameState.turn.currentPlayerId !== gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
-	}, [gameState.currentPickMessage, gameState.currentCustomModal])
+	}, [gameState.currentPickMessage, gameState.currentModalData])
 
 	// Initialize Game Screen Resizing and Event Listeners
 	useEffect(() => {
@@ -236,11 +228,9 @@ function Game() {
 					{Filter()}
 					<CardList
 						wrap={false}
-						// cards={gameState.hand}
 						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
-						picked={pickedSlotsInstances}
 					/>
 				</div>
 			</div>

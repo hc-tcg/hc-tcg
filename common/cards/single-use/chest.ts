@@ -17,8 +17,10 @@ class ChestSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {player} = pos
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 
+		const {player} = pos
 		// Cannot play chest with no items in discard
 		if (player.discarded.length <= 0) return 'NO'
 
@@ -28,8 +30,9 @@ class ChestSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.modalRequests.push({
-			id: this.id,
+		game.addModalRequest({
+			playerId: player.id,
+			data: {modalId: this.id},
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
 
@@ -51,11 +54,6 @@ class ChestSingleUseCard extends SingleUseCard {
 				// Do nothing
 			},
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
 	}
 }
 

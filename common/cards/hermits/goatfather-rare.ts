@@ -2,7 +2,6 @@ import {AttackModel} from '../../models/attack-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {HermitAttackType} from '../../types/attack'
-import {PickedSlots} from '../../types/pick-process'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
 
@@ -35,10 +34,9 @@ class GoatfatherRareHermitCard extends HermitCard {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
-		hermitAttackType: HermitAttackType,
-		pickedSlots: PickedSlots
+		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType, pickedSlots)
+		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
 
 		const {player, opponentPlayer, row, rowIndex} = pos
 

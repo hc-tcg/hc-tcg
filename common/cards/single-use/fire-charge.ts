@@ -45,7 +45,8 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.pickRequests.push({
+		game.addPickRequest({
+			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			onResult(pickResult) {
@@ -69,7 +70,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			},
 		})
 
-		player.hooks.afterApply.add(instance, (pickedSlots) => {
+		player.hooks.afterApply.add(instance, () => {
 			discardSingleUse(game, player)
 
 			// Remove playing a single use from completed actions so it can be done again

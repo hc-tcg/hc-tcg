@@ -2,6 +2,7 @@ import HermitCard from '../base/hermit-card'
 import {HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
+import {getNonEmptyRows} from '../../utils/board'
 
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,49 +25,92 @@ class KeralisRareHermitCard extends HermitCard {
 				damage: 0,
 				power: 'Heal any AFK Hermit for 100hp.',
 			},
-			pickOn: 'attack',
-			pickReqs: [
-				{
-					target: 'board',
-					slot: ['hermit'],
-					type: ['hermit'],
-					amount: 1,
-					active: false,
-				},
-			],
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
+		const playerKey = this.getInstanceKey(instance, 'player')
+		const rowKey = this.getInstanceKey(instance, 'row')
+
+		// Pick the hermit to heal
+		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+			// Make sure we are attacking
+			if (activeInstance !== instance) return
+
+			// Only secondary attack
+			if (hermitAttackType !== 'secondary') return
+
+			// Make sure there is something to select
+			const playerHasAfk = getNonEmptyRows(player, false).some(
+				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
+			)
+			const opponentHasAfk = getNonEmptyRows(opponentPlayer, false).some(
+				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
+			)
+			if (!playerHasAfk && !opponentHasAfk) return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: 'Pick an AFK Hermit from either side of the board',
+				onResult(pickResult) {
+					const pickedPlayer = game.state.players[pickResult.playerId]
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Make sure it's an actual hermit card
+					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
+					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+
+					// Store the info to use later
+					player.custom[playerKey] = pickResult.playerId
+					player.custom[rowKey] = rowIndex
+
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					// We didn't pick anyone to heal, so heal no one
+				},
+			})
+		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const pickedHermit = pickedSlots[this.id]?.[0]
-			if (!pickedHermit || !pickedHermit.row) return
+			const pickedPlayer = game.state.players[player.custom[playerKey]]
+			if (!pickedPlayer) return
+			const pickedRowIndex = player.custom[rowKey]
+			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
+			if (!pickedRow || !pickedRow.hermitCard) return
 
-			const rowState = pickedHermit.row.state
-			if (!rowState.hermitCard) return
-
-			const hermitInfo = HERMIT_CARDS[rowState.hermitCard.cardId]
+			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
 				// Heal
-				rowState.health = Math.min(
-					rowState.health + 100,
+				pickedRow.health = Math.min(
+					pickedRow.health + 100,
 					hermitInfo.health // Max health
 				)
-			} else {
-				// Armor Stand
-				rowState.health += 100
 			}
+
+			delete player.custom[playerKey]
+			delete player.custom[rowKey]
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.onAttack.remove(instance)
+		const {player} = pos
+		player.hooks.getAttackRequests.remove(instance)
+		player.hooks.onAttack.remove(instance)
+
+		delete player.custom[this.getInstanceKey(instance, 'player')]
+		delete player.custom[this.getInstanceKey(instance, 'row')]
 	}
 }
 

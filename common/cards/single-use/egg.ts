@@ -13,59 +13,7 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				'After your attack, choose one of your opponent AFK Hermits to make active.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
-
-			pickOn: 'attack',
-			pickReqs: [{target: 'opponent', slot: ['hermit'], amount: 1, active: false}],
-		})
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-
-		player.hooks.onAttack.add(instance, (attack, pickedSlots) => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
-
-			const pickedSlot = pickedSlots[this.id]
-			if (!pickedSlot || pickedSlot.length !== 1) return
-			const pickedHermit = pickedSlot[0]
-			if (!pickedHermit.row || !pickedHermit.row.state.hermitCard) return
-			const pickedPlayer = game.state.players[pickedHermit.playerId]
-
-			applySingleUse(game)
-
-			const coinFlip = flipCoin(player, this.id)
-			if (coinFlip[0] === 'heads') {
-				const eggAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
-					attacker: activePos,
-					target: {
-						player: pickedPlayer,
-						rowIndex: pickedHermit.row.index,
-						row: pickedHermit.row.state,
-					},
-					type: 'effect',
-				}).addDamage(this.id, 10)
-
-				attack.addNewAttack(eggAttack)
-			}
-
-			player.custom[this.getInstanceKey(instance)] = pickedHermit.row.index
-
-			// Only do this once if there are multiple attacks
-			player.hooks.onAttack.remove(instance)
-		})
-
-		player.hooks.onApply.add(instance, () => {
-			player.hooks.afterAttack.add(instance, (attack) => {
-				const eggIndex = player.custom[this.getInstanceKey(instance)]
-				opponentPlayer.board.activeRow = eggIndex
-
-				delete player.custom[this.getInstanceKey(instance)]
-
-				player.hooks.afterAttack.remove(instance)
-			})
+				'Choose one of your opponent AFK Hermits to make active after your attack.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
 		})
 	}
 
@@ -81,12 +29,87 @@ class EggSingleUseCard extends SingleUseCard {
 		return 'YES'
 	}
 
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player, opponentPlayer} = pos
+		const targetKey = this.getInstanceKey(instance, 'target')
+
+		player.hooks.getAttackRequests.add(instance, () => {
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: "Pick one of your opponent's AFK Hermits",
+				onResult(pickResult) {
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					// Store the row index to use later
+					player.custom[targetKey] = rowIndex
+
+					return 'SUCCESS'
+				},
+				onTimeout() {
+					// We didn't pick a target so do nothing
+				},
+			})
+		})
+
+		player.hooks.onAttack.add(instance, (attack) => {
+			const activePos = getActiveRowPos(player)
+			if (!activePos) return []
+
+			const targetIndex: number = player.custom[targetKey]
+			if (!targetIndex) return
+			const targetRow = opponentPlayer.board.rows[targetIndex]
+			if (!targetRow || !targetRow.hermitCard) return
+
+			applySingleUse(game)
+
+			const coinFlip = flipCoin(player, this.id)
+			if (coinFlip[0] === 'heads') {
+				const eggAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: targetIndex,
+						row: targetRow,
+					},
+					type: 'effect',
+				}).addDamage(this.id, 10)
+
+				attack.addNewAttack(eggAttack)
+			}
+
+			// Only do this once if there are multiple attacks
+			player.hooks.onAttack.remove(instance)
+		})
+
+		player.hooks.onApply.add(instance, () => {
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const targetIndex = player.custom[targetKey]
+				opponentPlayer.board.activeRow = targetIndex
+
+				delete player.custom[targetKey]
+
+				player.hooks.afterAttack.remove(instance)
+			})
+		})
+	}
+
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		const targetKey = this.getInstanceKey(instance, 'target')
 
+		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onApply.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
+		delete player.custom[targetKey]
 	}
 
 	override getExpansion() {

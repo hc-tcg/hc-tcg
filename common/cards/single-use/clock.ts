@@ -22,7 +22,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				game.addBlockedActions(
 					'APPLY_EFFECT',
@@ -50,7 +50,7 @@ class ClockSingleUseCard extends SingleUseCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}
 }

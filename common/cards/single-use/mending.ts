@@ -63,7 +63,8 @@ class MendingSingleUseCard extends singleUseCard {
 			return
 		}
 
-		player.pickRequests.push({
+		game.addPickRequest({
+			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty effect slot from one of your afk Hermits',
 			onResult(pickResult) {

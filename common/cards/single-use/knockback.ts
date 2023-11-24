@@ -38,15 +38,16 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			player.hooks.afterAttack.remove(instance)
 		})
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
 				const lastActiveRow = opponentPlayer.board.activeRow
 
-				opponentPlayer.pickRequests.push({
+				game.addPickRequest({
+					playerId: opponentPlayer.id,
 					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits.',
+					message: 'Choose a new active Hermit from your afk Hermits',
 					onResult(pickResult) {
 						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 

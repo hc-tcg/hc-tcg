@@ -21,15 +21,12 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
+		player.hooks.onApply.add(instance, () => {
 			for (let row of player.board.rows) {
 				if (!row.hermitCard) continue
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
 					row.health = Math.min(row.health + 20, hermitInfo.health)
-				} else {
-					// Armor Stand
-					row.health += 20
 				}
 			}
 		})

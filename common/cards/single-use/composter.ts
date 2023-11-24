@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
+import {PickRequest} from '../../types/server-requests'
+import {applySingleUse} from '../../utils/board'
 import {equalCard} from '../../utils/cards'
 import {discardFromHand, drawCards} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
@@ -13,15 +15,6 @@ class ComposterSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.',
-
-			pickOn: 'apply',
-			pickReqs: [
-				{
-					target: 'player',
-					slot: ['hand'],
-					amount: 2,
-				},
-			],
 		})
 	}
 
@@ -38,31 +31,47 @@ class ComposterSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, (pickedSlots) => {
-			const slots = pickedSlots[this.id] || []
+		// Literally just pick requests are needed
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick 2 cards from your hand',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
-			if (slots.length !== 2) return
+				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-			const pickedCard1 = slots[0]
-			const pickedCard2 = slots[1]
+				// @TODO right now if one card is discarded then the card won't yet be applied
+				//we need a way on the server to highlight certain cards in the hand
+				// that way we can not discard until both are selected
 
-			if (pickedCard1.slot.card === null || pickedCard2.slot.card === null) return
+				// Discard the card straight away
+				discardFromHand(player, pickResult.card)
 
-			// @TODO Check on ValidPicks instead
-			if (equalCard(pickedCard1.slot.card, pickedCard2.slot.card)) return
-
-			const player = game.state.players[pickedCard1.playerId]
-
-			discardFromHand(player, pickedCard1.slot.card)
-			discardFromHand(player, pickedCard2.slot.card)
-
-			drawCards(player, 2)
+				return 'SUCCESS'
+			},
 		})
-	}
+		game.addPickRequest({
+			playerId: player.id,
+			id: this.id,
+			message: 'Pick 1 more card from your hand',
+			onResult(pickResult) {
+				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onApply.remove(instance)
+				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+				discardFromHand(player, pickResult.card)
+
+				// Apply
+				applySingleUse(game)
+
+				drawCards(player, 2)
+
+				return 'SUCCESS'
+			},
+		})
 	}
 }
 
