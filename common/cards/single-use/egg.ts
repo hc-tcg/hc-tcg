@@ -64,7 +64,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (!activePos) return []
 
 			const targetIndex: number = player.custom[targetKey]
-			if (!targetIndex) return
+			if (targetIndex === null || targetIndex === undefined) return
 			const targetRow = opponentPlayer.board.rows[targetIndex]
 			if (!targetRow || !targetRow.hermitCard) return
 
