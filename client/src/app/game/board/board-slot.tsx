@@ -10,7 +10,7 @@ import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
 import {AilmentT} from 'common/types/game-state'
 import Ailment from 'components/ailments/ailment'
-import {AILMENTS} from 'common/ailments'
+import {AILMENT_CLASSES} from 'common/ailments'
 import {SlotTypeT} from 'common/types/cards'
 
 export type SlotProps = {
@@ -39,7 +39,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 		return (
 			<div className={css.ailmentContainer}>
 				{cleanedAilments.map((a) => {
-					const ailment = AILMENTS[a.ailmentId]
+					const ailment = AILMENT_CLASSES[a.ailmentId]
 					if (!ailment) return null
 					if (ailment.damageEffect == true) return null
 					return <Ailment ailment={ailment} duration={a.duration} />
@@ -52,7 +52,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 			<div className={css.damageAilmentContainer}>
 				{cleanedAilments
 					? cleanedAilments.map((a) => {
-							const ailment = AILMENTS[a.ailmentId]
+							const ailment = AILMENT_CLASSES[a.ailmentId]
 							if (!ailment) return null
 							if (ailment.damageEffect == false) return null
 							return <Ailment ailment={ailment} />
