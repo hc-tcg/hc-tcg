@@ -142,7 +142,7 @@ export type PlayerState = {
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => boolean>
 		/** Hook called when the active row is changed. */
-		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => void>
+		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
 	}
 }
 
