@@ -220,12 +220,6 @@ export function runAllAttacks(game: GameModel, attacks: Array<AttackModel>) {
 	runAfterDefenceHooks(allAttacks)
 }
 
-export function executeAllAttacks(attacks: Array<AttackModel>) {
-	for (let i = 0; i < attacks.length; i++) {
-		executeAttack(attacks[i])
-	}
-}
-
 function* attackSaga(
 	game: GameModel,
 	turnAction: AttackActionData,
