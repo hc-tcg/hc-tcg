@@ -104,6 +104,7 @@ class EggSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	override getExpansion() {
