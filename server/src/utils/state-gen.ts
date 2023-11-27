@@ -186,6 +186,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		const card = CARDS[id]
 		if (!card) {
 			console.log('Invalid extra starting card in debug config:', id)
+			continue
 		}
 
 		const cardInfo = {
