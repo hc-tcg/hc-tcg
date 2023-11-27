@@ -41,8 +41,9 @@ class XisumavoidRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard)
-				applyAilment(game, 'poison', opponentActiveRow?.hermitCard.cardInstance)
+			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
+
+			applyAilment(game, 'poison', opponentActiveRow?.hermitCard.cardInstance)
 		})
 	}
 

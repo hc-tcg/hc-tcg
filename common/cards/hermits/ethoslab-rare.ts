@@ -41,8 +41,9 @@ class EthosLabRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard)
-				applyAilment(game, 'fire', opponentActiveRow?.hermitCard.cardInstance)
+			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
+
+			applyAilment(game, 'fire', opponentActiveRow?.hermitCard.cardInstance)
 		})
 	}
 
