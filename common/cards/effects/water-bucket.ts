@@ -54,6 +54,14 @@ class WaterBucketEffectCard extends EffectCard {
 				},
 			})
 		} else if (slot.type === 'effect') {
+			// Straight away remove fire
+			const fireAilment = game.state.ailments.find((ail) => {
+				return ail.targetInstance === row?.hermitCard?.cardInstance && ail.ailmentId == 'fire'
+			})
+			if (fireAilment) {
+				removeAilment(game, pos, fireAilment.ailmentInstance)
+			}
+
 			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
