@@ -45,9 +45,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		const pickedCard: CardT = player.custom[pickedCardKey]?.card
 		const attackType = player.custom[pickedCardKey]?.attack
 
-		console.log(pickedCard)
-		console.log(attackType)
-
 		// Delete the stored data straight away
 		delete pos.player.custom[pickedCardKey]
 
@@ -60,14 +57,12 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		if (!hermitInfo) return []
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, instance, pos, attackType)
+		return hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
-
-		console.log('Cleo attached')
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -119,8 +114,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 							// Add the attack requests of the chosen card as they would not be called otherwise
 							player.hooks.getAttackRequests.call(pickedCard.cardInstance, modalResult.pick)
-
-							console.log('Saved info successfully')
 
 							return 'SUCCESS'
 						},
