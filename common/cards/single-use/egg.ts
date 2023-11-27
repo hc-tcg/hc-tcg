@@ -86,11 +86,6 @@ class EggSingleUseCard extends SingleUseCard {
 				attack.addNewAttack(eggAttack)
 			}
 
-			// Only do this once if there are multiple attacks
-			player.hooks.onAttack.remove(instance)
-		})
-
-		player.hooks.onApply.add(instance, () => {
 			player.hooks.afterAttack.add(instance, (attack) => {
 				const targetIndex = player.custom[targetKey]
 				opponentPlayer.board.activeRow = targetIndex
@@ -99,17 +94,16 @@ class EggSingleUseCard extends SingleUseCard {
 
 				player.hooks.afterAttack.remove(instance)
 			})
+
+			// Only do this once if there are multiple attacks
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const targetKey = this.getInstanceKey(instance, 'target')
 
 		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
-		player.hooks.onApply.remove(instance)
-		delete player.custom[targetKey]
 	}
 
 	override getExpansion() {
