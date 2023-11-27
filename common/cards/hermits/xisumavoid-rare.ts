@@ -2,7 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
-import { applyAilment } from '../../utils/board'
+import {applyAilment, getActiveRow} from '../../utils/board'
 
 class XisumavoidRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,22 +24,25 @@ class XisumavoidRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a coin. If heads, opponent is now poisoned.\n\nPoison does an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
+					'Flip a coin. If heads, the opposing active Hermit is now poisoned.\n\nPoison does an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
 
 			const coinFlip = flipCoin(player, this.id)
+
 			if (coinFlip[0] !== 'heads') return
 
-			applyAilment(game, 'poison', attack.target.row.hermitCard.cardInstance)
+			const opponentActiveRow = getActiveRow(opponentPlayer)
+			if (!opponentActiveRow || !opponentActiveRow.hermitCard)
+				applyAilment(game, 'poison', opponentActiveRow?.hermitCard.cardInstance)
 		})
 	}
 
