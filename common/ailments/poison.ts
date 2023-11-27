@@ -32,7 +32,8 @@ class PoisonAilment extends Ailment {
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, (turnStartAttacks) => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.row || !targetPos.rowIndex || !targetPos.row.hermitCard) return
+			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
+			if (!targetPos.row.hermitCard) return
 
 			const targetRow: RowPos = {
 				player: targetPos.player,

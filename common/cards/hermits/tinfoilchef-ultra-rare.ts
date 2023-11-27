@@ -16,7 +16,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			health: 300,
 			primary: {
 				name: 'Phone Call',
-				cost: ['miner', 'miner'],
+				cost: ['miner'],
 				damage: 60,
 				power: null,
 			},
