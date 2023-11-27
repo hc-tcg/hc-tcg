@@ -37,20 +37,24 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
+			const opponentActiveRow = getActiveRowPos(opponentPlayer)
+			if (!opponentActiveRow) return
+			if (opponentActiveRow.row.health <= 0) return
+
 			const coinFlip = flipCoin(player, this.id)
 
 			if (coinFlip[0] !== 'heads') return
 
-			const opponentActiveRow = getActiveRowPos(opponentPlayer)
-			if (!opponentActiveRow) return
-
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: 'copyAttack', payload: {
-					modalName: "Evil X: Disable an attack for 1 turn",
-					modalDescription: "Which of the opponent's attacks do you want to disable?",
-					cardPos: getBasicCardPos(game, opponentActiveRow.row.hermitCard.cardInstance)
-				}},
+				data: {
+					modalId: 'copyAttack',
+					payload: {
+						modalName: 'Evil X: Disable an attack for 1 turn',
+						modalDescription: "Which of the opponent's attacks do you want to disable?",
+						cardPos: getBasicCardPos(game, opponentActiveRow.row.hermitCard.cardInstance),
+					},
+				},
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 

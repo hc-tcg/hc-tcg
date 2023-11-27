@@ -25,7 +25,7 @@ class SlownessAilment extends Ailment {
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.rowIndex) return
+			if (!targetPos || targetPos.rowIndex === null) return
 			if (!ailmentInfo.duration) return
 
 			ailmentInfo.duration--
