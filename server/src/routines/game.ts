@@ -376,8 +376,6 @@ function* turnActionsSaga(game: GameModel) {
 
 			availableActions.push(...DEBUG_CONFIG.availableActions)
 
-			// @NOWTODO need to make sure client supports modal request to opponent.
-
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
 			if (game.state.pickRequests[0]?.playerId === opponentPlayerId) {
