@@ -5,7 +5,7 @@ import {RowPos} from '../../types/cards'
 import {RowStateWithHermit} from '../../types/game-state'
 import {getNonEmptyRows} from '../../utils/board'
 import HermitCard from '../base/hermit-card'
-import { applyAilment, removeAilment } from '../../utils/board'
+import {applyAilment, removeAilment} from '../../utils/board'
 
 class Smajor1995RareHermitCard extends HermitCard {
 	constructor() {
@@ -26,7 +26,8 @@ class Smajor1995RareHermitCard extends HermitCard {
 				name: 'To Dye For',
 				cost: ['any', 'any', 'any'],
 				damage: 70,
-				power: 'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
+				power:
+					'After your attack, select one of your Hermits. Items attached to this Hermit become any type.',
 			},
 		})
 	}
@@ -56,9 +57,6 @@ class Smajor1995RareHermitCard extends HermitCard {
 					applyAilment(game, 'dyed', pickResult.card.cardInstance)
 
 					return 'SUCCESS'
-				},
-				onTimeout() {
-					return
 				},
 			})
 		})

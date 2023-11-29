@@ -72,9 +72,6 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {
-					return
-				},
 			})
 		})
 	}

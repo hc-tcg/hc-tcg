@@ -16,31 +16,42 @@ class GrianchRareHermitCard extends HermitCard {
 			health: 250,
 			primary: {
 				name: 'Nice',
-				cost: ['terraform', 'terraform'],
+				cost: ['prankster', 'any'],
 				damage: 70,
 				power: 'Heal any AFK Hermit for 40hp.',
 			},
 			secondary: {
 				name: 'Naughty',
-				cost: ['terraform', 'terraform', 'any'],
-				damage: 90,
-				power: 'Flip a coin. If heads, deal 40 extra damage.',
+				cost: ['prankster', 'prankster'],
+				damage: 80,
+				power:
+					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, your opponent may attack twice next round.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
+		const canAttackTwice = this.getInstanceKey(instance, 'reviveNextTurn')
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
 
-			if (coinFlip[0] === 'tails') return
+			if (coinFlip[0] === 'tails') {
+				player.custom[canAttackTwice] = true
+				return
+			}
 
-			attack.addDamage(this.id, 40)
+			attack.addDamage(this.id, this.secondary.damage)
+		})
+
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+			if (!player.custom[canAttackTwice]) return
+			game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+			delete player.custom[canAttackTwice]
 		})
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -84,9 +95,12 @@ class GrianchRareHermitCard extends HermitCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
+		const canAttackTwice = this.getInstanceKey(instance, 'reviveNextTurn')
 		player.hooks.onAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
+		delete player.custom[canAttackTwice]
 	}
 
 	override getExpansion() {

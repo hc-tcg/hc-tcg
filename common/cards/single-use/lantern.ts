@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {CardT} from '../../types/game-state'
-import { drawCards } from '../../utils/movement'
+import {drawCards} from '../../utils/movement'
 import SingleUseCard from '../base/single-use-card'
 
 class LanternSingleUseCard extends SingleUseCard {
@@ -12,7 +12,7 @@ class LanternSingleUseCard extends SingleUseCard {
 			name: 'Lantern',
 			rarity: 'rare',
 			description:
-				'Look at the top 5 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
+				'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
 		})
 	}
 
@@ -31,7 +31,7 @@ class LanternSingleUseCard extends SingleUseCard {
 					payload: {
 						modalName: 'Lantern: Choose up to 2 cards to draw.',
 						modalDescription: '',
-						cards: player.pile.slice(0, 5),
+						cards: player.pile.slice(0, 4),
 						selectionSize: 2,
 						primaryButton: {
 							text: 'Confirm Selection',

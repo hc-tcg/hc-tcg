@@ -23,35 +23,29 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 				name: 'Soulmate',
 				cost: ['speedrunner', 'speedrunner'],
 				damage: 80,
-				power:
-					"If this Hermit is knocked out next turn, flip a coin.\n\nIf heads, the opponent's active Hermit is knocked out.",
+				power: "When BigB is knocked out, deal 140 damage to the opponent's active Hermit.",
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
-		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
+		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			player.custom[reviveNextTurn] = true
+			player.custom[dealDamageNextTurn] = true
 		})
 
 		opponentPlayer.hooks.beforeAttack.add(instance, () => {
 			opponentPlayer.hooks.onAttack.add(instance, (attack) => {
-				if (!player.custom[reviveNextTurn]) return
+				if (!player.custom[dealDamageNextTurn]) return
 				if (!row || row.health === null || row.health > attack.calculateDamage()) return
+				if (attack.isBacklash === true) return
 
 				const opponentRowIndex = opponentPlayer.board.activeRow
 				if (!opponentRowIndex) return
-
-				const opponentActiveRow = opponentPlayer.board.rows[opponentRowIndex]
-				if (!opponentActiveRow || opponentActiveRow.health === null) return
-
-				const coinFlip = flipCoin(opponentPlayer, this.id)
-				if (coinFlip[0] === 'tails') return
 
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
@@ -59,7 +53,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 					target: attack.attacker,
 					type: 'secondary',
 					isBacklash: true,
-				}).addDamage(this.id, opponentActiveRow.health)
+				}).addDamage(this.id, 140)
 
 				attack.addNewAttack(backlashAttack)
 
@@ -69,7 +63,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			opponentPlayer.hooks.onAttack.remove(instance)
-			delete player.custom[reviveNextTurn]
+			delete player.custom[dealDamageNextTurn]
 		})
 	}
 
@@ -78,7 +72,8 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.beforeAttack.remove(instance)
+		opponentPlayer.hooks.onAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[reviveNextTurn]
 	}
