@@ -186,6 +186,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		const card = CARDS[id]
 		if (!card) {
 			console.log('Invalid extra starting card in debug config:', id)
+			continue
 		}
 
 		const cardInfo = {
@@ -238,7 +239,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
 			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
@@ -283,16 +283,17 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
-	if (currentPickRequest?.playerId === player.playerId) {
+	if (currentModalRequest?.playerId === player.playerId) {
+		// We must send modal requests first, to stop pick requests from overwriting them.
+		currentModalData = currentModalRequest.data
+	} else if (currentPickRequest?.playerId === player.playerId) {
+		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
 		const cardInfo = CARDS[currentPickRequest.id]
 		if (cardInfo) {
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
-	} else if (currentModalRequest?.playerId === player.playerId) {
-		// Only if there is no pick request will we send a modal request
-		currentModalData = currentModalRequest.data
 	}
 
 	const localGameState: LocalGameState = {

@@ -96,20 +96,21 @@ class HumanCleoRareHermitCard extends HermitCard {
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 
 				const opponentTarget: number = player.custom[opponentTargetKey]
-				if (opponentTarget === undefined) return
-				delete player.custom[opponentTargetKey]
+				if (opponentTarget !== undefined) {
+					delete player.custom[opponentTargetKey]
 
-				const targetRow = opponentPlayer.board.rows[opponentTarget]
-				if (!targetRow || !targetRow.hermitCard) return
+					const targetRow = opponentPlayer.board.rows[opponentTarget]
+					if (targetRow && targetRow.hermitCard) {
+						attack.target = {
+							player: opponentPlayer,
+							rowIndex: opponentTarget,
+							row: targetRow,
+						}
 
-				attack.target = {
-					player: opponentPlayer,
-					rowIndex: opponentTarget,
-					row: targetRow,
+						const weaknessAttack = createWeaknessAttack(attack)
+						if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+					}
 				}
-
-				const weaknessAttack = createWeaknessAttack(attack)
-				if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
 				// They attacked now, they can end turn
 				game.removeBlockedActions('END_TURN')
