@@ -55,7 +55,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+		player.hooks.onTurnStart.add(instance, () => {
 			delete player.custom[reviveNextTurn]
 		})
 	}
@@ -65,8 +65,8 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[reviveNextTurn]
 	}
 }

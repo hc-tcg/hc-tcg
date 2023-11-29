@@ -239,7 +239,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
 			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
