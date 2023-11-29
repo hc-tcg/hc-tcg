@@ -1,7 +1,7 @@
 import {all, take, fork, cancel, race, delay, call, actionChannel} from 'typed-redux-saga'
 import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
-import attackSaga, {executeAllAttacks, runAllAttacks} from './turn-actions/attack'
+import attackSaga from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
@@ -189,6 +189,7 @@ function playerAction(actionType: string, playerId: string) {
 }
 
 // return false in case one player is dead
+// @TODO completely redo how we calculate if a hermit is dead etc
 function* checkHermitHealth(game: GameModel) {
 	const playerStates: Array<PlayerState> = Object.values(game.state.players)
 	const deadPlayerIds: Array<string> = []
@@ -482,20 +483,13 @@ function* turnActionsSaga(game: GameModel) {
 				}
 
 				const hasActiveHermit = currentPlayer.board.activeRow !== null
-				if (!hasActiveHermit) {
-					game.endInfo.reason = 'time'
-					game.endInfo.deadPlayerIds = [currentPlayer.id]
-					return 'GAME_END'
-				} else {
-					const newAttacks: Array<AttackModel> = []
-					for (const player of [currentPlayer, opponentPlayer]) {
-						player.hooks.onTurnTimeout.call(newAttacks)
-					}
-					if (newAttacks.length > 0) {
-						runAllAttacks(game, newAttacks)
-					}
+				if (hasActiveHermit) {
 					break
 				}
+
+				game.endInfo.reason = 'time'
+				game.endInfo.deadPlayerIds = [currentPlayer.id]
+				return 'GAME_END'
 			}
 
 			// Run action logic
@@ -523,14 +517,10 @@ function* turnSaga(game: GameModel) {
 
 	// Call turn start hooks
 
-	const turnStartAttacks: Array<AttackModel> = []
-	currentPlayer.hooks.onTurnStart.call(turnStartAttacks)
+	currentPlayer.hooks.onTurnStart.call()
 
+	// Check for dead hermits on turn start
 	if (game.state.turn.turnNumber > 2) {
-		if (turnStartAttacks.length > 0) {
-			executeAllAttacks(turnStartAttacks)
-		}
-
 		const turnStartDeadPlayerIds = yield* call(checkHermitHealth, game)
 		if (turnStartDeadPlayerIds.length) {
 			game.endInfo.reason =
