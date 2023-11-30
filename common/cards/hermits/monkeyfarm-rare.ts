@@ -20,10 +20,10 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 				power: null,
 			},
 			secondary: {
-				name: 'Monkesystep',
+				name: 'Monkeystep',
 				cost: ['farm', 'farm'],
 				damage: 80,
-				power: "Discard an item card from an opponent's AFK Hermit.",
+				power: "Discard 1 attached item card from an opponent's AFK Hermit.",
 			},
 		})
 	}
