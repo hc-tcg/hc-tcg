@@ -240,8 +240,10 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			beforeActiveRowChange: new GameHook<
+				(oldRow: number | null, newRow: number | null) => boolean
+			>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
 			onCardPositionChange: new GameHook<(slot: SlotPos) => boolean>(),
 		},
 	}
