@@ -3,6 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 import {getNonEmptyRows} from '../../../utils/board'
+import {flipCoin} from '../../../utils/coinFlips'
 
 class MonkeyfarmRareHermitCard extends HermitCard {
 	constructor() {
@@ -16,14 +17,14 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			primary: {
 				name: 'Skull',
 				cost: ['farm'],
-				damage: 50,
+				damage: 40,
 				power: null,
 			},
 			secondary: {
 				name: 'Monkeystep',
 				cost: ['farm', 'farm'],
 				damage: 80,
-				power: "Discard 1 attached item card from an opponent's AFK Hermit.",
+				power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
 			},
 		})
 	}
@@ -31,8 +32,11 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+
+			const coinFlip = flipCoin(player, this.id)
+			if (coinFlip[0] !== 'heads') return
 
 			const emptyRows = getNonEmptyRows(opponentPlayer, false)
 			const opponentItemCards = emptyRows.reduce(
@@ -71,7 +75,7 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 	}
 
 	override getExpansion() {
