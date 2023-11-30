@@ -2,7 +2,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {flipCoin} from '../../utils/coinFlips'
 import HermitCard from '../base/hermit-card'
-import { applyAilment } from '../../utils/board'
+import {applyAilment, getActiveRow} from '../../utils/board'
 
 class EthosLabRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,13 +24,13 @@ class EthosLabRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a coin. If heads, the opposing Hermit is now burned.\n\nBurn does an additional 20hp damage at the end of your turns.\n\nGoing AFK does not eliminate the burn.',
+					'Flip a coin. If heads, the opposing active Hermit is now burned.\n\nBurn does an additional 20hp damage at the end of your turns.\n\nGoing AFK does not eliminate the burn.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
@@ -40,7 +40,10 @@ class EthosLabRareHermitCard extends HermitCard {
 
 			if (coinFlip[0] !== 'heads') return
 
-			applyAilment(game, 'fire', attack.target.row.hermitCard.cardInstance)
+			const opponentActiveRow = getActiveRow(opponentPlayer)
+			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
+
+			applyAilment(game, 'fire', opponentActiveRow?.hermitCard.cardInstance)
 		})
 	}
 

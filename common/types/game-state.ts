@@ -124,12 +124,14 @@ export type PlayerState = {
 		 */
 		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
 
-		/** hook called at the start of the turn */
-		onTurnStart: GameHook<(attacks: Array<AttackModel>) => void>
-		/** hook called at the end of the turn */
+		/**
+		 * Hook called at the start of the turn
+		 *
+		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
+		 */
+		onTurnStart: GameHook<() => void>
+		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
-		/** Hook called when the time runs out*/
-		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>
 
 		/** Hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
