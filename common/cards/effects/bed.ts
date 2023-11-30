@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {HERMIT_CARDS} from '..'
 import {discardCard} from '../../utils/movement'
 import {CardPosModel} from '../../models/card-pos-model'
-import {applyAilment, removeAilment} from '../../utils/board'
+import {applyAilment} from '../../utils/board'
 
 class BedEffectCard extends EffectCard {
 	constructor() {

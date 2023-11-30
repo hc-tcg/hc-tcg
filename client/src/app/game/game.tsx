@@ -8,12 +8,10 @@ import {
 	AttackModal,
 	BorrowModal,
 	ChangeHermitModal,
-	ChestModal,
 	ConfirmModal,
-	DiscardedModal,
 	EndTurnModal,
 	ForfeitModal,
-	SpyglassModal,
+	SelectCardsModal,
 	UnmetConditionModal,
 } from './modals'
 import EndGameOverlay from './end-game-overlay'
@@ -38,7 +36,6 @@ import {PickInfo} from 'common/types/server-requests'
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
 	confirm: ConfirmModal,
-	discarded: DiscardedModal,
 	forfeit: ForfeitModal,
 	'change-hermit-modal': ChangeHermitModal,
 	'end-turn': EndTurnModal,
@@ -46,9 +43,8 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 
 	// Custom modals
 	borrow: BorrowModal,
-	chest: ChestModal,
-	spyglass: SpyglassModal,
 	copyAttack: CopyAttackModal,
+	selectCards: SelectCardsModal,
 }
 
 const renderModal = (

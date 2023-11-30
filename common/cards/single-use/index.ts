@@ -41,6 +41,12 @@ import PistonSingleUseCard from './piston'
 import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
 import TargetBlockSingleUseCard from './target-block'
 import LootingSingleUseCard from './looting'
+import DropperSingleUseCard from './dropper'
+import SplashPotionOfHarmingSingleUseCard from './splash-potion-of-harming'
+import BrushSingleUseCard from './brush'
+import GlowstoneSingleUseCard from './glowstone'
+import LanternSingleUseCard from './lantern'
+import FletchingTableSingleUseCard from './fletching-table'
 import SingleUseCard from '../base/single-use-card'
 
 export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
@@ -89,4 +95,12 @@ export const SINGLE_USE_CARD_CLASSES: Array<SingleUseCard> = [
 	new SweepingEdgeSingleUseCard(),
 	new TargetBlockSingleUseCard(),
 	new TridentSingleUseCard(),
+
+	// Advent calendar cards
+	// new DropperSingleUseCard(),
+	// new FletchingTableSingleUseCard(),
+	// new BrushSingleUseCard(),
+	// new GlowstoneSingleUseCard(),
+	// new LanternSingleUseCard(),
+	// new SplashPotionOfHarmingSingleUseCard(),
 ]

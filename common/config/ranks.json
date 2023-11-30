@@ -198,5 +198,41 @@
 
 	"thorns_ii": 3,
 
-	"thorns_iii": 4
+	"thorns_iii": 4,
+
+	" - ADVENT OF TCG HERMITS - ": "",
+
+	"dungeontango_rare": 2,
+	"pythongb_rare": 3,
+	"orionsound_rare": 1,
+	"solidaritygaming_rare": 2,
+	"monkeyfarm_rare": 2,
+	"biffa2001_rare": 2,
+	"katherineeliz_rare": 1,
+	"smajor1995_rare": 0,
+	"pixlriffs_rare": 1,
+	"bigbst4tz2_rare": 2,
+	"ldshadowlady_rare": 1,
+	"shubbleyt_rare": 1,
+	"smallishbeans_rare": 3,
+	"grianch_rare": 3,
+	"pharaoh_rare": 2,
+
+	" - ADVENT OF TCG EFFECTS - ": "",
+
+	"brewing_stand": 1,
+	"furnace": 1,
+	"cat": 1,
+	"berry_bush": 2,
+	"slimeball": 0,
+	"trapdoor": 2,
+
+	"dropper": 1,
+	"fletching_table": -1,
+	"brush": 0,
+	"glowstone": 2,
+	"lantern": 3,
+	"splash_potion_of_harming": 3,
+
+	" - ADVENT OF TCG ITEMS - ": ""
 }

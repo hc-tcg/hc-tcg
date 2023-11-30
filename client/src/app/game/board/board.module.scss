@@ -195,6 +195,16 @@ $grid-size: 25px;
 	left: -20px;
 }
 
+.protectedAilment {
+	position: absolute;
+	right: 66px;
+	top: 20px;
+	width: 22px;
+	background: url('/images/status/protected.png') no-repeat;
+	height: 22px;
+	background-size: contain;
+}
+
 // UTILITIES
 
 .dynamicSpace {
