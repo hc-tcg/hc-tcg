@@ -11,7 +11,7 @@ class BrushSingleUseCard extends SingleUseCard {
 			name: 'Brush',
 			rarity: 'rare',
 			description:
-				'Look at the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+				'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
 		})
 	}
 
