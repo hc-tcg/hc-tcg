@@ -26,7 +26,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		if (!isActive(player)) return 'NO'
 
 		// Can't attach it there are not any inactive hermits
-		const playerHasAfk = getNonEmptyRows(player, false).some(
+		const playerHasAfk = getNonEmptyRows(player, true).some(
 			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 		)
 		if (!playerHasAfk) return 'NO'

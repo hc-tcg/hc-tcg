@@ -160,10 +160,9 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Filter out actions that have already been completed - once an action is completed it cannot be used again for the turn
 	// Also filter out blocked actions
+	const blockedActions = game.getAllBlockedActions()
 	let filteredActions = actions.filter((action) => {
-		return (
-			!turnState.completedActions.includes(action) && !turnState.blockedActions.includes(action)
-		)
+		return !turnState.completedActions.includes(action) && !blockedActions.includes(action)
 	})
 
 	// Force add change active hermit if the active row is null
@@ -172,16 +171,6 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	}
 
 	return filteredActions
-}
-
-function getBlockedActions(game: GameModel): TurnActions {
-	const {currentPlayer} = game
-
-	const actions: TurnActions = []
-
-	const {activeRow, rows} = currentPlayer.board
-
-	return actions
 }
 
 function playerAction(actionType: string, playerId: string) {
@@ -353,7 +342,7 @@ function* turnActionsSaga(game: GameModel) {
 
 			// Available actions code
 			const availableEnergy = getAvailableEnergy(game)
-			let blockedActions = getBlockedActions(game)
+			let blockedActions: Array<TurnAction> = []
 			let availableActions = getAvailableActions(game, availableEnergy)
 
 			// Get blocked actions from hooks
@@ -394,8 +383,6 @@ function* turnActionsSaga(game: GameModel) {
 			) {
 				break
 			}
-
-			game.state.turn.availableActions = availableActions
 
 			// End of available actions code
 
@@ -509,7 +496,7 @@ function* turnSaga(game: GameModel) {
 	game.state.turn.availableActions = []
 	game.state.turn.currentPlayerId = currentPlayerId
 	game.state.turn.completedActions = []
-	game.state.turn.blockedActions = []
+	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
 
 	game.state.timer.turnStartTime = Date.now()

@@ -49,6 +49,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				game.addBlockedActions(
+					this.id,
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'SINGLE_USE_ATTACK',
@@ -68,7 +69,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			const sameActive = game.activeRow?.hermitCard?.cardInstance === player.custom[skippedKey]
 			if (player.custom[skippedKey] && sameActive) {
 				// We skipped last turn and we are still the active hermit, block secondary attacks
-				game.addBlockedActions('SECONDARY_ATTACK')
+				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 			}
 
 			player.custom[skippedKey] = null

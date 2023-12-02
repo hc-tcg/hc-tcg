@@ -42,10 +42,10 @@ class KeralisRareHermitCard extends HermitCard {
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure there is something to select
-			const playerHasAfk = getNonEmptyRows(player, false).some(
+			const playerHasAfk = getNonEmptyRows(player, true).some(
 				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 			)
-			const opponentHasAfk = getNonEmptyRows(opponentPlayer, false).some(
+			const opponentHasAfk = getNonEmptyRows(opponentPlayer, true).some(
 				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 			)
 			if (!playerHasAfk && !opponentHasAfk) return

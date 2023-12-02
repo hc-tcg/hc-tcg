@@ -22,7 +22,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		const {opponentPlayer} = pos
 
 		// Inactive Hermits
-		if (getNonEmptyRows(opponentPlayer, false).length === 0) return 'NO'
+		if (getNonEmptyRows(opponentPlayer, true).length === 0) return 'NO'
 
 		return 'YES'
 	}

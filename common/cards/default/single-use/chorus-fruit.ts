@@ -19,7 +19,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			// Remove change active hermit from the blocked actions so it can be done once more
-			game.removeBlockedActions('CHANGE_ACTIVE_HERMIT')
+			game.removeBlockedActions(null, 'CHANGE_ACTIVE_HERMIT')
 
 			// Apply the card
 			applySingleUse(game)

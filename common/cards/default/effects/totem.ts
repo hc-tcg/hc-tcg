@@ -18,10 +18,31 @@ class TotemEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		// If we are attacked from any source
-		player.hooks.afterDefence.add(instance, (attack) => {
+		// Add before any other hook so they can know a hermits health reliably
+		player.hooks.afterDefence.addBefore(instance, (attack) => {
+			if (!isTargetingPos(attack, pos) || !attack.target) return
+			const {row} = attack.target
+			if (row.health) return
+
+			row.health = 10
+
+			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+				return ail.targetInstance === pos.card?.cardInstance
+			})
+			ailmentsToRemove.forEach((ail) => {
+				removeAilment(game, pos, ail.ailmentInstance)
+			})
+
+			// This will remove this hook, so it'll only be called once
+			discardCard(game, row.effectCard)
+		})
+
+		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
+		// @TODO this is slightly more hacky than I'd like
+		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || !attack.target) return
 			const {row} = attack.target
 			if (row.health) return
@@ -42,6 +63,7 @@ class TotemEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
+		pos.opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 

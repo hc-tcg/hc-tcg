@@ -22,7 +22,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
-		const inactiveRows = getNonEmptyRows(opponentPlayer, false)
+		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
 		if (inactiveRows.length === 0) return 'NO'
 
 		return 'YES'
@@ -66,7 +66,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 						return 'SUCCESS'
 					},
 					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)
 
 						// Choose the first afk row
 						for (const inactiveRow of opponentInactiveRows) {

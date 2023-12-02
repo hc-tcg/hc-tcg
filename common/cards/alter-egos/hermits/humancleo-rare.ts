@@ -45,7 +45,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				// The opponent needs to attack, so prevent them switching or ending turn
-				game.addBlockedActions('CHANGE_ACTIVE_HERMIT', 'END_TURN')
+				game.addBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
@@ -53,7 +53,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			// Add a pick request for opponent to pick an afk hermit to attack
 			opponentPlayer.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 				// Only pick if there is afk to pick
-				const afk = getNonEmptyRows(opponentPlayer, false).length
+				const afk = getNonEmptyRows(opponentPlayer, true).length
 				if (afk < 1) return
 
 				game.addPickRequest({
@@ -77,7 +77,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					},
 					onTimeout() {
 						// Pick the first afk hermit to attack
-						const firstAfk = getNonEmptyRows(opponentPlayer, false)[0]
+						const firstAfk = getNonEmptyRows(opponentPlayer, true)[0]
 						if (!firstAfk) return
 
 						// Save the target index for opponent to attack
@@ -113,7 +113,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				}
 
 				// They attacked now, they can end turn
-				game.removeBlockedActions('END_TURN')
+				game.removeBlockedActions(this.id, 'END_TURN')
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {

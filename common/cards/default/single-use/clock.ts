@@ -25,6 +25,7 @@ class ClockSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				game.addBlockedActions(
+					this.id,
 					'APPLY_EFFECT',
 					'REMOVE_EFFECT',
 					'SINGLE_USE_ATTACK',

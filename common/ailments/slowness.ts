@@ -35,7 +35,8 @@ class SlownessAilment extends Ailment {
 				return
 			}
 
-			if (player.board.activeRow === targetPos.rowIndex) game.addBlockedActions('SECONDARY_ATTACK')
+			if (player.board.activeRow === targetPos.rowIndex)
+				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {

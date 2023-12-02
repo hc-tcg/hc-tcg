@@ -175,7 +175,8 @@ export type TurnState = {
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
-	blockedActions: TurnActions
+	/** Map of source id of the block, to the actual blocked action */
+	blockedActions: Record<string, TurnActions>
 
 	currentAttack: HermitAttackType | null
 }

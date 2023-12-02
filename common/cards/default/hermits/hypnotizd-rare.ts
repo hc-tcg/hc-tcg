@@ -84,7 +84,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
 
-			const inactiveRows = getNonEmptyRows(opponentPlayer, false)
+			const inactiveRows = getNonEmptyRows(opponentPlayer, true)
 			if (inactiveRows.length === 0) return
 
 			const itemRequest: PickRequest = {

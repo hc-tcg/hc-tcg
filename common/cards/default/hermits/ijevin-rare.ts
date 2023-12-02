@@ -35,8 +35,8 @@ class IJevinRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+			if (opponentInactiveRows.length !== 0) {
 				const lastActiveRow = opponentPlayer.board.activeRow
 
 				game.addPickRequest({
@@ -61,7 +61,7 @@ class IJevinRareHermitCard extends HermitCard {
 						return 'SUCCESS'
 					},
 					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 
 						// Choose the first afk row
 						for (const inactiveRow of opponentInactiveRows) {

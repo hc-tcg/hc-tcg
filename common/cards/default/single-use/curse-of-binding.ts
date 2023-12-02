@@ -21,23 +21,10 @@ class CurseOfBindingSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			opponentPlayer.hooks.blockedActions.add(instance, (blockedActions) => {
-				if (blockedActions.includes('CHANGE_ACTIVE_HERMIT')) {
-					return blockedActions
-				}
+			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+				game.addBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT')
 
-				// Make sure the other player has an active row
-				if (opponentPlayer.board.activeRow !== null) {
-					blockedActions.push('CHANGE_ACTIVE_HERMIT')
-				}
-
-				return blockedActions
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				// Remove effects of card and clean up
-				opponentPlayer.hooks.blockedActions.remove(instance)
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 		})
 	}
