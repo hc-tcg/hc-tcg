@@ -23,7 +23,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 		const {opponentPlayer} = pos
 
-		const inactiveHermits = getNonEmptyRows(opponentPlayer, false)
+		const inactiveHermits = getNonEmptyRows(opponentPlayer, true)
 		if (inactiveHermits.length === 0) return 'NO'
 
 		return 'YES'

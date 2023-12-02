@@ -38,7 +38,8 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			player.custom[reviveNextTurn] = true
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, () => {
+		// Add before so health can be checked reliably
+		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
 			if (player.custom[reviveNextTurn]) {
 				if (!row || row.health === null || row.health > 0) return
 
