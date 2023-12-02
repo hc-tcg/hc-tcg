@@ -4,7 +4,6 @@ import {GameModel} from '../../models/game-model'
 import {CardPosModel, getBasicCardPos} from '../../models/card-pos-model'
 import {HermitAttackType} from '../../types/attack'
 import {CardT} from '../../types/game-state'
-import {getNonEmptyRows} from '../../utils/board'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {

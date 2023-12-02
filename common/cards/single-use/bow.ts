@@ -22,7 +22,7 @@ class BowSingleUseCard extends SingleUseCard {
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
-		const inactiveRows = getNonEmptyRows(opponentPlayer, false)
+		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
 		if (inactiveRows.length === 0) return 'NO'
 
 		return 'YES'

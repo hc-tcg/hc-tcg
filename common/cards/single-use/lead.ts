@@ -32,7 +32,7 @@ class LeadSingleUseCard extends SingleUseCard {
 
 		const activeRow = getActiveRow(opponentPlayer)
 		if (!activeRow || !rowHasItem(activeRow)) return 'NO'
-		const rowsWithEmptySlots = getRowsWithEmptyItemsSlots(opponentPlayer, false)
+		const rowsWithEmptySlots = getRowsWithEmptyItemsSlots(opponentPlayer, true)
 		if (rowsWithEmptySlots.length === 0) return 'NO'
 
 		// check if the card can be attached to any of the inactive hermits

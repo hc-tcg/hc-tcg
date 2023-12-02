@@ -53,7 +53,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			// Add a pick request for opponent to pick an afk hermit to attack
 			opponentPlayer.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 				// Only pick if there is afk to pick
-				const afk = getNonEmptyRows(opponentPlayer, false).length
+				const afk = getNonEmptyRows(opponentPlayer, true).length
 				if (afk < 1) return
 
 				game.addPickRequest({
@@ -77,7 +77,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 					},
 					onTimeout() {
 						// Pick the first afk hermit to attack
-						const firstAfk = getNonEmptyRows(opponentPlayer, false)[0]
+						const firstAfk = getNonEmptyRows(opponentPlayer, true)[0]
 						if (!firstAfk) return
 
 						// Save the target index for opponent to attack

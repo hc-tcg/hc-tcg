@@ -72,7 +72,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure we have an afk hermit to pick
-			const afk = getNonEmptyRows(player, false)
+			const afk = getNonEmptyRows(player, true)
 			if (afk.length === 0) return
 
 			game.addPickRequest({
@@ -134,7 +134,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		})
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
-			const afkHermits = getNonEmptyRows(player, false).length
+			const afkHermits = getNonEmptyRows(player, true).length
 			if (
 				player.board.activeRow === pos.rowIndex &&
 				afkHermits <= 0 &&
