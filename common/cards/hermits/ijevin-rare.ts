@@ -36,7 +36,7 @@ class IJevinRareHermitCard extends HermitCard {
 			if (attack.type !== 'secondary' || !attack.target) return
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
-			if (opponentInactiveRows.length !== 0 && attack.target.row.health) {
+			if (opponentInactiveRows.length !== 0) {
 				const lastActiveRow = opponentPlayer.board.activeRow
 
 				game.addPickRequest({
