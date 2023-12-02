@@ -23,7 +23,7 @@ const hermitCardClasses: Array<HermitCard> = [
 	// new OrionSoundRareHermitCard(),
 	// new SolidaritygamingRareHermitCard(),
 	// new Smajor1995RareHermitCard(),
-	// new Biffa2001RareHermitCard(),
+	new Biffa2001RareHermitCard(),
 	// new KatherineelizRareHermitCard(),
 	// new PixlriffsRareHermitCard(),
 	// new ShubbleYTRareHermitCard(),
