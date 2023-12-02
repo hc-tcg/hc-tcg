@@ -77,7 +77,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
 				// This will add a blocked action for the duration of their turn
-				game.addBlockedActions(actionToBlock)
+				game.addBlockedActions(this.id, actionToBlock)
 
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 				delete player.custom[disableKey]

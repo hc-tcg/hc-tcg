@@ -133,6 +133,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			})
 		})
 
+		// @TODO requires getActions to be able to remove
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			const afkHermits = getNonEmptyRows(player, true).length
 			if (

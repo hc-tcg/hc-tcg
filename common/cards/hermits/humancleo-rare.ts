@@ -45,7 +45,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
 				// The opponent needs to attack, so prevent them switching or ending turn
-				game.addBlockedActions('CHANGE_ACTIVE_HERMIT', 'END_TURN')
+				game.addBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
@@ -113,7 +113,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				}
 
 				// They attacked now, they can end turn
-				game.removeBlockedActions('END_TURN')
+				game.removeBlockedActions(this.id, 'END_TURN')
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {

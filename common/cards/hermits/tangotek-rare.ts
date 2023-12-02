@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../models/card-pos-model'
 import {GameModel} from '../../models/game-model'
 import {getNonEmptyRows} from '../../utils/board'
-import {isActionAvailable} from '../../utils/game'
 import HermitCard from '../base/hermit-card'
 
 class TangoTekRareHermitCard extends HermitCard {
@@ -44,7 +43,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			const playerInactiveRows = getNonEmptyRows(player, true, true)
 
 			// Curse of Binding
-			const canChange = isActionAvailable(game, 'CHANGE_ACTIVE_HERMIT')
+			const canChange = game.isActionBlocked('CHANGE_ACTIVE_HERMIT', [null])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (opponentInactiveRows.length > 0) {

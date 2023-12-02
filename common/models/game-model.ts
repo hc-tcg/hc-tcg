@@ -111,21 +111,65 @@ export class GameModel {
 	}
 
 	/** Set actions as blocked so they cannot be done this turn */
-	public addBlockedActions(...actions: TurnActions) {
+	public addBlockedActions(sourceId: string | null, ...actions: TurnActions) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		if (!turnState.blockedActions[key]) {
+			turnState.blockedActions[key] = []
+		}
+
 		for (let i = 0; i < actions.length; i++) {
 			const action = actions[i]
-			if (!this.state.turn.blockedActions.includes(action)) {
-				this.state.turn.blockedActions.push(action)
+			if (!turnState.blockedActions[key].includes(action)) {
+				turnState.blockedActions[key].push(action)
 			}
 		}
 	}
 	/** Remove action from the completed list so they can be done again this turn */
-	public removeBlockedActions(...actions: TurnActions) {
+	public removeBlockedActions(sourceId: string | null, ...actions: TurnActions) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		if (!turnState.blockedActions[key]) return
+
 		for (let i = 0; i < actions.length; i++) {
-			this.state.turn.blockedActions = this.state.turn.blockedActions.filter(
+			turnState.blockedActions[key] = turnState.blockedActions[key].filter(
 				(action) => !actions.includes(action)
 			)
 		}
+
+		if (turnState.blockedActions[key].length <= 0) {
+			delete turnState.blockedActions[key]
+		}
+	}
+
+	public isActionBlocked(action: TurnAction, excludeIds?: Array<string | null>) {
+		const turnState = this.state.turn
+		const allBlockedActions: TurnActions = []
+		Object.keys(turnState.blockedActions).forEach((sourceId) => {
+			if (excludeIds?.includes(sourceId)) return
+
+			const actions = turnState.blockedActions[sourceId]
+			allBlockedActions.push(...actions)
+		})
+		return allBlockedActions.includes(action)
+	}
+
+	/** Get all actions blocked with the source id. */
+	public getBlockedActions(sourceId: string | null) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		const blockedActions = turnState.blockedActions[key]
+		if (!blockedActions) return []
+
+		return blockedActions
+	}
+	public getAllBlockedActions() {
+		const turnState = this.state.turn
+		const allBlockedActions: TurnActions = []
+		Object.values(turnState.blockedActions).forEach((actions) => {
+			allBlockedActions.push(...actions)
+		})
+		return allBlockedActions
 	}
 
 	public setLastActionResult(action: TurnAction, result: ActionResult) {
