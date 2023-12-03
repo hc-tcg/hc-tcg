@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardT} from '../../../types/game-state'
-import {drawCards} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LanternSingleUseCard extends SingleUseCard {
@@ -14,6 +13,16 @@ class LanternSingleUseCard extends SingleUseCard {
 			description:
 				'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
 		})
+	}
+
+	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+
+		const {player} = pos
+		if (player.pile.length < 4) return 'NO'
+
+		return 'YES'
 	}
 
 	override canApply() {
@@ -29,7 +38,7 @@ class LanternSingleUseCard extends SingleUseCard {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Lantern: Choose up to 2 cards to draw.',
+						modalName: 'Lantern: Choose 2 cards to draw immediately.',
 						modalDescription: '',
 						cards: player.pile.slice(0, 4),
 						selectionSize: 2,
@@ -58,7 +67,7 @@ class LanternSingleUseCard extends SingleUseCard {
 						data: {
 							modalId: 'selectCards',
 							payload: {
-								modalName: 'Lantern: Cards Opponent drew.',
+								modalName: 'Lantern: Cards your opponent drew.',
 								modalDescription: '',
 								cards: modalResult.cards,
 								selectionSize: 0,
