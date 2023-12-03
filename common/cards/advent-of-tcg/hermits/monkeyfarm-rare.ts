@@ -38,7 +38,7 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] !== 'heads') return
 
-			const emptyRows = getNonEmptyRows(opponentPlayer, false)
+			const emptyRows = getNonEmptyRows(opponentPlayer, true, true)
 			const opponentItemCards = emptyRows.reduce(
 				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length,
 				0

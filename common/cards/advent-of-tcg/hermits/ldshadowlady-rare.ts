@@ -39,7 +39,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, false)
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)
 
 			if (opponentInactiveRows.length === 4) return
 			if (opponentPlayer.board.activeRow === null) return
@@ -64,7 +64,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer, true).map((r) => r.rowIndex)
+					const filledRowNumbers = getNonEmptyRows(opponentPlayer, false).map((r) => r.rowIndex)
 					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
 
 					if (emptyRows.length === 0) return

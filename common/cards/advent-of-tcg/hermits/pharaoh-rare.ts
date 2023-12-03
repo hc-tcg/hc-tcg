@@ -37,7 +37,7 @@ class PharaohRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
-			const nonEmptyRows = getNonEmptyRows(player, false)
+			const nonEmptyRows = getNonEmptyRows(player, true, true)
 			if (
 				nonEmptyRows.length === 0 ||
 				nonEmptyRows.every((c) => c.row.hermitCard.cardId === 'pharaoh_rare')

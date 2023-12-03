@@ -38,7 +38,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			const playerInactiveRows = getNonEmptyRows(player, false)
+			const playerInactiveRows = getNonEmptyRows(player, true)
 			if (playerInactiveRows.length === 0) return
 
 			game.addPickRequest({

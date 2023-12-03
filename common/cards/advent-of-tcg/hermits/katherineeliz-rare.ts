@@ -37,7 +37,7 @@ class KatherineelizRareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			const nonEmptyRows = getNonEmptyRows(player, true)
+			const nonEmptyRows = getNonEmptyRows(player, false)
 
 			const upgrades: Record<string, string> = {
 				gold_armor: 'iron_armor',
