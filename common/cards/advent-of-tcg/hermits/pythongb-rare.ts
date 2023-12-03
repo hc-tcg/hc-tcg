@@ -33,12 +33,12 @@ class PythonGBRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const activeRow = player.board.activeRow
-			if (!activeRow) return
+			if (activeRow === null) return
 
 			const logfellaAmount = player.board.rows.filter(
 				(row, index) =>
 					row.hermitCard &&
-					(index == activeRow - 1 || index == activeRow + 1) &&
+					(index === activeRow - 1 || index === activeRow + 1) &&
 					['xisumavoid_common', 'xisumavoid_rare', 'rendog_common', 'rendog_rare'].includes(
 						row.hermitCard.cardId
 					)
