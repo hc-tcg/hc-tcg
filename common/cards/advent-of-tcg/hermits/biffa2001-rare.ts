@@ -29,16 +29,8 @@ class Biffa2001RareHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-
-		player.hooks.onAttach.add(instance, (attachedInstance) => {
-			if (instance !== attachedInstance) return
-			const pos = getBasicCardPos(game, attachedInstance)
-
-			// Only if it's on the board
-			if (pos?.rowIndex !== undefined) {
-				applyAilment(game, 'museum-collection', instance)
-			}
-		})
+		
+		applyAilment(game, 'museum-collection', instance)
 
 		player.hooks.onTurnStart.add(instance, () => {
 			applyAilment(game, 'museum-collection', instance)
@@ -49,7 +41,6 @@ class Biffa2001RareHermitCard extends HermitCard {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onTurnStart.remove(instance)
-		player.hooks.onAttach.remove(instance)
 	}
 
 	override getExpansion() {
