@@ -22,14 +22,14 @@ class Biffa2001RareHermitCard extends HermitCard {
 				name: "Biffa's Museum",
 				cost: ['miner', 'any'],
 				damage: 70,
-				power: 'For each card you played on the board this turn, this attack does 20 more damage.',
+				power: 'For each card you played or used this turn, this attack does 20 more damage.',
 			},
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		
+
 		applyAilment(game, 'museum-collection', instance)
 
 		player.hooks.onTurnStart.add(instance, () => {
