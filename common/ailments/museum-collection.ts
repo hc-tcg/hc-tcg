@@ -32,6 +32,12 @@ class MuseumCollectionAilment extends Ailment{
 			ailmentInfo.duration++
 		})
 
+		player.hooks.onApply.add(ailmentInfo.ailmentInstance, () => {
+			if (ailmentInfo.duration === undefined) return
+			player.custom[oldHandSize] = player.hand.length
+			ailmentInfo.duration++
+		})
+
 		player.hooks.onAttack.add(ailmentInfo.ailmentInstance, (attack) => {
 			const activeRow = player.board.activeRow
 			if (!activeRow) return
@@ -52,6 +58,7 @@ class MuseumCollectionAilment extends Ailment{
 	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
+		player.hooks.onApply.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onAttach.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onAttack.remove(ailmentInfo.ailmentInstance)
 		player.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
