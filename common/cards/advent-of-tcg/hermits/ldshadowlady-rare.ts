@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getNonEmptyRows} from '../../../utils/board'
-import {isActionAvailable} from '../../../utils/game'
 import {swapRows} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
