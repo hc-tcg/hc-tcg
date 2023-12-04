@@ -19,7 +19,7 @@ const hermitCardClasses: Array<HermitCard> = [
 	new MonkeyfarmRareHermitCard(),
 	//Advent calendar cards
 	// new DungeonTangoRareHermitCard(),
-	// new PythonGBRareHermitCard(),
+	new PythonGBRareHermitCard(),
 	// new OrionSoundRareHermitCard(),
 	// new SolidaritygamingRareHermitCard(),
 	// new Smajor1995RareHermitCard(),
