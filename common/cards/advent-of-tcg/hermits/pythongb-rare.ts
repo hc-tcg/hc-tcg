@@ -21,7 +21,7 @@ class PythonGBRareHermitCard extends HermitCard {
 				name: 'The Logfellas',
 				cost: ['redstone', 'redstone'],
 				damage: 40,
-				power: 'For each of your adjacent Rendogs or Xisumas, multiply damage by 2.',
+				power: 'For each of your adjacent Rendogs or Xisumas, attack damage doubles.',
 			},
 		})
 	}
