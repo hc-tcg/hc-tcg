@@ -244,7 +244,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 				(oldRow: number | null, newRow: number | null) => boolean
 			>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			onCardPositionChange: new GameHook<(slot: SlotPos) => boolean>(),
+			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
 		},
 	}
 }
