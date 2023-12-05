@@ -8,7 +8,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		super({
 			id: 'orionsound_rare',
 			numericId: 213,
-			name: 'Ollie',
+			name: 'Oli',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
 			health: 260,
@@ -17,7 +17,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 				cost: ['speedrunner'],
 				damage: 60,
 				power:
-					'Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Ollie is knocked out.',
+					'Select an Active or AFK Hermit. This Hermit is healed by 10hp every turn until Oli is knocked out.',
 			},
 			secondary: {
 				name: 'Concert',
