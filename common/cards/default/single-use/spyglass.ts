@@ -25,7 +25,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, this.id)
-			const canDiscard = coinFlip[0] === 'heads'
+			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.hand.length > 0
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -46,7 +46,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 
 					if (canDiscard) {
-						discardFromHand(opponentPlayer, modalResult.card || null)
+						if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
+						discardFromHand(opponentPlayer, modalResult.cards[0] || null)
 					}
 
 					return 'SUCCESS'
