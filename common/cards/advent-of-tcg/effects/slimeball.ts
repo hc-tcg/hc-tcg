@@ -12,7 +12,7 @@ class SlimeballEffectCard extends EffectCard {
 			name: 'Slimeball',
 			rarity: 'ultra_rare',
 			description:
-				"Attach to any Hermit, including your opponent's. That Hermit and it's attached items and effects cannot be moved. After either player attempts to move any of these cards, Slimeball will be discarded.",
+				"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. After either player attempts to remove any of these cards, Slimeball will be discarded.",
 		})
 	}
 
@@ -31,8 +31,9 @@ class SlimeballEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onCardPositionChange.add(instance, (slot) => {
+		player.hooks.onSlotChange.add(instance, (slot) => {
 			if (!isSlotEmpty(slot) && slot.rowIndex === pos.rowIndex) {
+				pos.player.hooks.onSlotChange.remove(instance)
 				discardCard(game, pos.card)
 				return false
 			}
@@ -41,7 +42,8 @@ class SlimeballEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.onCardPositionChange.remove(instance)
+		pos.player.hooks.onSlotChange.remove(instance)
+		pos.player.hooks.onDetach.remove(instance)
 	}
 
 	public override getExpansion(): string {
