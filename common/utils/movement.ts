@@ -37,7 +37,21 @@ export function discardCard(game: GameModel, card: CardT | null, steal = false) 
 		return
 	}
 
-	// Call onDetach
+	if (pos.row && pos.rowIndex && pos.slot.type !== 'single_use') {
+		const slotPos: SlotPos = {
+			rowIndex: pos.rowIndex,
+			row: pos.row,
+			slot: {
+				index: pos.slot.index,
+				type: pos.slot.type,
+			},
+		}
+
+		const results = pos.player.hooks.onSlotChange.call(slotPos)
+		if (results.includes(false)) return
+	}
+
+	// Call `onDetach`
 	const cardInfo = CARDS[card.cardId]
 	cardInfo.onDetach(game, card.cardInstance, pos)
 	pos.player.hooks.onDetach.call(card.cardInstance)
@@ -185,7 +199,7 @@ export function swapSlots(
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
 
-		const results = cardPos.player.hooks.onCardPositionChange.call(slot)
+		const results = cardPos.player.hooks.onSlotChange.call(slot)
 		if (results.includes(false)) return
 
 		const cardInfo = CARDS[card.cardId]
@@ -241,7 +255,7 @@ export function swapRows(player: PlayerState, oldRow: number, newRow: number) {
 		},
 	}
 
-	const results = player.hooks.onCardPositionChange.call(oldSlotPos)
+	const results = player.hooks.onSlotChange.call(oldSlotPos)
 	if (results.includes(false)) return
 
 	player.board.rows[oldRow] = player.board.rows[newRow]

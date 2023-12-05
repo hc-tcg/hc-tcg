@@ -242,7 +242,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
 			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
-			onCardPositionChange: new GameHook<(slot: SlotPos) => boolean>(),
+			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
 		},
 	}
 }
