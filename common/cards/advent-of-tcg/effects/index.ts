@@ -10,7 +10,7 @@ const effectCardClasses: Array<EffectCard> = [
 	// Advent of TCG cards
 	// new BrewingStandEffectCard(),
 	// new FurnaceEffectCard(),
-	// new SlimeballEffectCard(),
+	new SlimeballEffectCard(),
 	//new CatEffectCard(),
 	//new BerryBushEffectCard(),
 	//new TrapdoorEffectCard(),
