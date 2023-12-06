@@ -1,11 +1,6 @@
-import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {RowPos} from '../../../types/cards'
-import {RowStateWithHermit} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
-import {applyAilment, removeAilment} from '../../../utils/board'
 
 class PixlriffsRareHermitCard extends HermitCard {
 	constructor() {
@@ -23,10 +18,11 @@ class PixlriffsRareHermitCard extends HermitCard {
 				power: null,
 			},
 			secondary: {
-				name: 'Worldbuild',
+				name: 'World Build',
 				cost: ['explorer', 'explorer', 'any'],
 				damage: 90,
-				power: 'If this Hermit moved during your turn, Worldbuild deals 40hp more damage.',
+				power:
+					'If this Hermit has moved since the start of your turn, World Build deals 40hp more damage.',
 			},
 		})
 	}
