@@ -20,10 +20,10 @@ class TrapdoorEffectCard extends EffectCard {
 		const {opponentPlayer, player} = pos
 
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.target?.player !== player) return
+			if (attack.target?.player.id !== player.id) return
 			if (attack.isType('ailment') || attack.isBacklash) return
-			if (!pos.rowIndex) return
-			if (Math.abs(attack.target?.rowIndex - pos.rowIndex) !== 1) return
+			if (pos.rowIndex === null) return
+			if (Math.abs(attack.target.rowIndex - pos.rowIndex) !== 1) return
 
 			const damageToReduce = Math.min(attack.getDamage(), 40)
 			if (damageToReduce === 0) return
