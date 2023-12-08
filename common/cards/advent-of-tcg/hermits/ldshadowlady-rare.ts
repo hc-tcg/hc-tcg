@@ -39,10 +39,11 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)
+			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 
 			if (opponentInactiveRows.length === 4) return
 			if (opponentPlayer.board.activeRow === null) return
+
 			// Add a new pick request to the opponent player
 			game.addPickRequest({
 				playerId: player.id,
@@ -64,7 +65,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer, false).map((r) => r.rowIndex)
+					const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
 					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
 
 					if (emptyRows.length === 0) return
