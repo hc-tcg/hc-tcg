@@ -23,7 +23,8 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				name: 'Evict',
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 90,
-				power: 'Opposing active Hermit must move to a free slot if one is available.',
+				power:
+					"If one is available, move your opponent's active Hermit and any attached cards to an open slot on their board.",
 			},
 		})
 	}
@@ -48,7 +49,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
-				message: 'Move your active Hermit to a new slot.',
+				message: "Move your opponent's active Hermit to a new slot.",
 				onResult(pickResult) {
 					// Validation
 					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
