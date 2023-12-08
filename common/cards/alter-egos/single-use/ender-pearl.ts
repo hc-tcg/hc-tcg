@@ -21,7 +21,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		if (canAttach !== 'YES') return canAttach
 
 		const {player} = pos
-		if (!player.board.activeRow) return 'NO'
+		if (player.board.activeRow === undefined) return 'NO'
 		for (const row of player.board.rows) {
 			if (row.hermitCard === null) return 'YES'
 		}
