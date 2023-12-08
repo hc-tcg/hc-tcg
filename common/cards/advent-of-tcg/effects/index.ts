@@ -13,7 +13,7 @@ const effectCardClasses: Array<EffectCard> = [
 	new SlimeballEffectCard(),
 	//new CatEffectCard(),
 	//new BerryBushEffectCard(),
-	//new TrapdoorEffectCard(),
+	new TrapdoorEffectCard(),
 ]
 
 export default effectCardClasses
