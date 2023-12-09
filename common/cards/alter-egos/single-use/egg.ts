@@ -88,7 +88,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 			player.hooks.afterAttack.add(instance, (attack) => {
 				const targetIndex = player.custom[targetKey]
-				opponentPlayer.board.activeRow = targetIndex
+				game.changeActiveRow(opponentPlayer, targetIndex)
 
 				delete player.custom[targetKey]
 

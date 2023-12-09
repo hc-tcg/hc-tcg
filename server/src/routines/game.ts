@@ -199,7 +199,7 @@ function* checkHermitHealth(game: GameModel) {
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
-					playerState.board.activeRow = null
+					game.changeActiveRow(playerState, null)
 					playerState.hooks.onActiveRowChange.call(activeRow, null)
 				}
 				playerState.lives -= 1

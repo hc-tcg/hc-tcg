@@ -60,7 +60,7 @@ class TangoTekRareHermitCard extends HermitCard {
 						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
 						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 
-						opponentPlayer.board.activeRow = pickResult.rowIndex
+						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
 						return 'SUCCESS'
 					},
@@ -72,7 +72,7 @@ class TangoTekRareHermitCard extends HermitCard {
 							const {rowIndex} = inactiveRow
 							const canBeActive = rowIndex !== opponentPlayer.board.activeRow
 							if (canBeActive) {
-								opponentPlayer.board.activeRow = rowIndex
+								game.changeActiveRow(opponentPlayer, rowIndex)
 								break
 							}
 						}
@@ -99,7 +99,7 @@ class TangoTekRareHermitCard extends HermitCard {
 						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
 						if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
 
-						player.board.activeRow = pickResult.rowIndex
+						game.changeActiveRow(player, pickResult.rowIndex)
 
 						return 'SUCCESS'
 					},
@@ -111,7 +111,7 @@ class TangoTekRareHermitCard extends HermitCard {
 							const {rowIndex} = inactiveRow
 							const canBeActive = rowIndex !== player.board.activeRow
 							if (canBeActive) {
-								player.board.activeRow = rowIndex
+								game.changeActiveRow(player, rowIndex)
 								break
 							}
 						}

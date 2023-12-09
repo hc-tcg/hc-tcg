@@ -53,6 +53,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				const activeRow = getActiveRowPos(player)
 				if (activeRow?.row.health) activeRow.row.health -= 10
 				swapRows(player, player.board.activeRow, rowIndex)
+				game.changeActiveRow(player, rowIndex)
 
 				return 'SUCCESS'
 			},

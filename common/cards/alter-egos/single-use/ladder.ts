@@ -88,7 +88,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				}
 
 				swapSlots(game, activePos, inactivePos, true)
-				player.board.activeRow = pickedIndex
+				game.changeActiveRow(player, pickedIndex)
 
 				return 'SUCCESS'
 			},

@@ -61,7 +61,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 						const row = opponentPlayer.board.rows[rowIndex]
 						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
-						opponentPlayer.board.activeRow = rowIndex
+						game.changeActiveRow(opponentPlayer, rowIndex)
 
 						return 'SUCCESS'
 					},
@@ -73,7 +73,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 							const {rowIndex} = inactiveRow
 							const canBeActive = rowIndex !== lastActiveRow
 							if (canBeActive) {
-								opponentPlayer.board.activeRow = rowIndex
+								game.changeActiveRow(opponentPlayer, rowIndex)
 								break
 							}
 						}

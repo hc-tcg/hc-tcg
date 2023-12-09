@@ -23,7 +23,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 		row.health = 50
 		if (player.board.activeRow === null) {
-			player.board.activeRow = pos.rowIndex
+			game.changeActiveRow(player, pos.rowIndex)
 		}
 
 		// The menu won't show up but just in case someone tries to cheat
@@ -44,7 +44,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 				if (attack.attacker.player.id !== pos.player.id) {
 					// Reset the active row so the player can switch
-					player.board.activeRow = null
+					game.changeActiveRow(player, null)
 				}
 			}
 		})
@@ -56,7 +56,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 				if (attack.attacker.player.id !== pos.player.id) {
 					// Reset the active row so the player can switch
-					player.board.activeRow = null
+					game.changeActiveRow(player, null)
 				}
 			}
 		})

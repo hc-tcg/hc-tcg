@@ -260,5 +260,4 @@ export function swapRows(player: PlayerState, oldRow: number, newRow: number) {
 
 	player.board.rows[oldRow] = player.board.rows[newRow]
 	player.board.rows[newRow] = oldRowState
-	player.board.activeRow = newRow
 }
