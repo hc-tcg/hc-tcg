@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {swapRows} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
@@ -43,6 +43,9 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 			if (opponentInactiveRows.length === 4) return
 			if (opponentPlayer.board.activeRow === null) return
+
+			// Make sure opponent Hermit isn't dead
+			if (getActiveRow(opponentPlayer)?.health === 0) return
 
 			// Add a new pick request to the opponent player
 			game.addPickRequest({

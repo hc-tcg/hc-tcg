@@ -49,8 +49,10 @@ class TotemEffectCard extends EffectCard {
 
 			row.health = 10
 
+			const thisHermitId = pos.row?.hermitCard?.cardInstance
+
 			const ailmentsToRemove = game.state.ailments.filter((ail) => {
-				return ail.targetInstance === pos.card?.cardInstance
+				return ail.targetInstance === thisHermitId
 			})
 			ailmentsToRemove.forEach((ail) => {
 				removeAilment(game, pos, ail.ailmentInstance)

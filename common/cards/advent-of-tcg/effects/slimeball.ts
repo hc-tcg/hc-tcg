@@ -1,6 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {TurnActions} from '../../../types/game-state'
 import {discardCard, isSlotEmpty} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 
@@ -44,6 +45,18 @@ class SlimeballEffectCard extends EffectCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.onSlotChange.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
+	}
+
+	public override getActions(game: GameModel): TurnActions {
+		const {currentPlayer, opponentPlayer} = game
+
+		const rows = [...currentPlayer.board.rows, ...opponentPlayer.board.rows]
+
+		const spaceForEffect = rows.some((row) => {
+			return !!row.hermitCard && !row.effectCard
+		})
+
+		return spaceForEffect ? ['PLAY_EFFECT_CARD'] : []
 	}
 
 	public override getExpansion(): string {
