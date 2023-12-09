@@ -45,7 +45,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 				if (attack.isBacklash === true) return
 
 				const opponentRowIndex = opponentPlayer.board.activeRow
-				if (!opponentRowIndex) return
+				if (opponentRowIndex === null) return
 
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),

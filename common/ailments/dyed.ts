@@ -28,7 +28,7 @@ class DyedAilment extends Ailment {
 		game.state.ailments.push(ailmentInfo)
 
 		player.hooks.availableEnergy.add(ailmentInfo.ailmentInstance, (availableEnergy) => {
-			if (!player.board.activeRow) return availableEnergy
+			if (player.board.activeRow === null) return availableEnergy
 
 			const activeRow = player.board.rows[player.board.activeRow]
 

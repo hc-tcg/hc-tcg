@@ -81,7 +81,7 @@ class BerryBushEffectCard extends EffectCard {
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
-		if (!opponentPlayer.board.activeRow) return 'INVALID'
+		if (opponentPlayer.board.activeRow === null) return 'INVALID'
 
 		return 'YES'
 	}

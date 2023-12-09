@@ -30,7 +30,8 @@ class MelodyAilment extends Ailment {
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.row || !targetPos.rowIndex || !targetPos.row.hermitCard) return
+			if (!targetPos || !targetPos.row || !targetPos.row.hermitCard) return
+			if (targetPos.rowIndex === null) return
 
 			const hermitInfo = HERMIT_CARDS[targetPos.row.hermitCard.cardId]
 			if (hermitInfo) {
