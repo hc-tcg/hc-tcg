@@ -17,29 +17,45 @@ class TrapdoorEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+		const {player} = pos
+		const instanceKey = this.getInstanceKey(instance)
 
-		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
+		player.hooks.onDefence.add(instance, (attack) => {
 			if (attack.target?.player.id !== player.id) return
 			if (attack.isType('ailment') || attack.isBacklash) return
 			if (pos.rowIndex === null) return
 			if (Math.abs(attack.target.rowIndex - pos.rowIndex) !== 1) return
 
-			const damageToReduce = Math.min(attack.getDamage(), 40)
-			if (damageToReduce === 0) return
-			attack.reduceDamage(this.id, damageToReduce)
+			if (player.custom[instanceKey] === undefined) {
+				player.custom[instanceKey] = 0
+			}
 
-			const newAttack: AttackModel = new AttackModel({
-				id: this.getInstanceKey(instance),
-				attacker: attack.attacker,
-				target: {
-					player: player,
-					rowIndex: pos.rowIndex,
-					row: pos.row as RowStateWithHermit,
-				},
-				type: attack.type,
-			}).addDamage(this.id, damageToReduce)
-			attack.addNewAttack(newAttack)
+			const totalReduction = player.custom[instanceKey]
+
+			if (totalReduction < 40) {
+				const damageReduction = Math.min(attack.getDamage(), 40 - totalReduction)
+				player.custom[instanceKey] += damageReduction
+				attack.reduceDamage(this.id, damageReduction)
+
+				const newAttack: AttackModel = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: attack.attacker,
+					target: {
+						player: player,
+						rowIndex: pos.rowIndex,
+						row: pos.row as RowStateWithHermit,
+					},
+					type: attack.type,
+				}).addDamage(this.id, damageReduction)
+				attack.addNewAttack(newAttack)
+			}
+		})
+
+		player.hooks.afterDefence.add(instance, (attack) => {
+			const {player} = pos
+
+			// Delete the stored damage
+			delete player.custom[instanceKey]
 		})
 	}
 
