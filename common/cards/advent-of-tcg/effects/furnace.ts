@@ -1,7 +1,6 @@
 import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {retrieveCard} from '../../../utils/movement'
 import {applyAilment, removeAilment} from '../../../utils/board'
 
 class FurnaceEffectCard extends EffectCard {
