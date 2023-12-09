@@ -24,7 +24,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 90,
 				power:
-					"If one is available, move your opponent's active Hermit and any attached cards to an open slot on their board.",
+					"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
 			},
 		})
 	}
