@@ -199,7 +199,7 @@ function* checkHermitHealth(game: GameModel) {
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
-					playerState.board.activeRow = null
+					game.changeActiveRow(playerState, null)
 					playerState.hooks.onActiveRowChange.call(activeRow, null)
 				}
 				playerState.lives -= 1
@@ -418,7 +418,7 @@ function* turnActionsSaga(game: GameModel) {
 				const currentAttack = game.state.turn.currentAttack
 				let reset = false
 
-				// First check to see if the opponent had a pick or modal request active
+				// First check to see if the opponent had a pick request active
 				const currentPickRequest = game.state.pickRequests[0]
 				if (currentPickRequest) {
 					if (currentPickRequest.playerId === currentPlayerId) {
@@ -430,8 +430,8 @@ function* turnActionsSaga(game: GameModel) {
 					}
 				}
 
-				// First check to see if the opponent had a pick or modal request active
-				const currentModalRequest = game.state.pickRequests[0]
+				// Check to see if the opponent had a modal request active
+				const currentModalRequest = game.state.modalRequests[0]
 				if (currentModalRequest) {
 					if (currentModalRequest.playerId === currentPlayerId) {
 						if (!!currentAttack) {

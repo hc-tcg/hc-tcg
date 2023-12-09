@@ -5,8 +5,6 @@ import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
-import SingleUseCard from 'common/cards/base/single-use-card'
-import {applySingleUse} from 'common/utils/board'
 
 function* playCardSaga(
 	game: GameModel,
@@ -85,7 +83,7 @@ function* playCardSaga(
 				}
 
 				if (player.board.activeRow === null) {
-					player.board.activeRow = rowIndex
+					game.changeActiveRow(player, rowIndex)
 				}
 
 				break

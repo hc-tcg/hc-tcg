@@ -1,5 +1,5 @@
 import {PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions} from '../types/game-state'
+import {TurnAction, GameState, ActionResult, TurnActions, PlayerState} from '../types/game-state'
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
@@ -210,5 +210,25 @@ export class GameModel {
 
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+	}
+
+	/** Helper method to change the active row. Returns whether or not the change was successful. */
+	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
+		const currentActiveRow = player.board.activeRow
+
+		// Can't change to existing active row
+		if (newRow === currentActiveRow) return false
+
+		// Call before active row change hooks - if any of the results are false do not change
+		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
+		if (results.includes(false)) return false
+
+		// Change the active row
+		player.board.activeRow = newRow
+
+		// Call on active row change hooks
+		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
+
+		return true
 	}
 }
