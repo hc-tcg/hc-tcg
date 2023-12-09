@@ -47,15 +47,9 @@ class ChestSingleUseCard extends SingleUseCard {
 			},
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
-
-				if (!modalResult.cards) {
-					discardSingleUse(game, player)
-					return 'SUCCESS'
-				}
-
-				if (modalResult.cards[0].cardId === 'clock') {
-					return 'FAILURE_CANNOT_COMPLETE'
-				}
+				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
+				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
+				if (modalResult.cards[0].cardId === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)
 				retrieveCard(game, modalResult.cards[0])
