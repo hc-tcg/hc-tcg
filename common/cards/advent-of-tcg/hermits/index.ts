@@ -5,7 +5,6 @@ import MonkeyfarmRareHermitCard from './monkeyfarm-rare'
 import SolidaritygamingRareHermitCard from './solidaritygaming-rare'
 import Smajor1995RareHermitCard from './smajor1995'
 import Biffa2001RareHermitCard from './biffa2001-rare'
-import KatherineelizRareHermitCard from './katherineeliz-rare'
 import PixlriffsRareHermitCard from './pixlriffs-rare'
 import LDShadowLadyRareHermitCard from './ldshadowlady-rare'
 import SmallishbeansRareHermitCard from './smallishbeans-rare'
@@ -24,7 +23,6 @@ const hermitCardClasses: Array<HermitCard> = [
 	// new SolidaritygamingRareHermitCard(),
 	// new Smajor1995RareHermitCard(),
 	new Biffa2001RareHermitCard(),
-	// new KatherineelizRareHermitCard(),
 	new PixlriffsRareHermitCard(),
 	// new ShubbleYTRareHermitCard(),
 	new LDShadowLadyRareHermitCard(),
