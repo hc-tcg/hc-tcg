@@ -21,7 +21,7 @@ const hermitCardClasses: Array<HermitCard> = [
 	new PythonGBRareHermitCard(),
 	// new OrionSoundRareHermitCard(),
 	// new SolidaritygamingRareHermitCard(),
-	// new Smajor1995RareHermitCard(),
+	new Smajor1995RareHermitCard(),
 	new Biffa2001RareHermitCard(),
 	new PixlriffsRareHermitCard(),
 	// new ShubbleYTRareHermitCard(),
