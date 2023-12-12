@@ -1,5 +1,5 @@
 import {PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions} from '../types/game-state'
+import {TurnAction, GameState, ActionResult, TurnActions, PlayerState} from '../types/game-state'
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
@@ -111,21 +111,65 @@ export class GameModel {
 	}
 
 	/** Set actions as blocked so they cannot be done this turn */
-	public addBlockedActions(...actions: TurnActions) {
+	public addBlockedActions(sourceId: string | null, ...actions: TurnActions) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		if (!turnState.blockedActions[key]) {
+			turnState.blockedActions[key] = []
+		}
+
 		for (let i = 0; i < actions.length; i++) {
 			const action = actions[i]
-			if (!this.state.turn.blockedActions.includes(action)) {
-				this.state.turn.blockedActions.push(action)
+			if (!turnState.blockedActions[key].includes(action)) {
+				turnState.blockedActions[key].push(action)
 			}
 		}
 	}
 	/** Remove action from the completed list so they can be done again this turn */
-	public removeBlockedActions(...actions: TurnActions) {
+	public removeBlockedActions(sourceId: string | null, ...actions: TurnActions) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		if (!turnState.blockedActions[key]) return
+
 		for (let i = 0; i < actions.length; i++) {
-			this.state.turn.blockedActions = this.state.turn.blockedActions.filter(
+			turnState.blockedActions[key] = turnState.blockedActions[key].filter(
 				(action) => !actions.includes(action)
 			)
 		}
+
+		if (turnState.blockedActions[key].length <= 0) {
+			delete turnState.blockedActions[key]
+		}
+	}
+
+	public isActionBlocked(action: TurnAction, excludeIds?: Array<string | null>) {
+		const turnState = this.state.turn
+		const allBlockedActions: TurnActions = []
+		Object.keys(turnState.blockedActions).forEach((sourceId) => {
+			if (excludeIds?.includes(sourceId)) return
+
+			const actions = turnState.blockedActions[sourceId]
+			allBlockedActions.push(...actions)
+		})
+		return allBlockedActions.includes(action)
+	}
+
+	/** Get all actions blocked with the source id. */
+	public getBlockedActions(sourceId: string | null) {
+		const key = sourceId || ''
+		const turnState = this.state.turn
+		const blockedActions = turnState.blockedActions[key]
+		if (!blockedActions) return []
+
+		return blockedActions
+	}
+	public getAllBlockedActions() {
+		const turnState = this.state.turn
+		const allBlockedActions: TurnActions = []
+		Object.values(turnState.blockedActions).forEach((actions) => {
+			allBlockedActions.push(...actions)
+		})
+		return allBlockedActions
 	}
 
 	public setLastActionResult(action: TurnAction, result: ActionResult) {
@@ -166,5 +210,25 @@ export class GameModel {
 
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
+	}
+
+	/** Helper method to change the active row. Returns whether or not the change was successful. */
+	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
+		const currentActiveRow = player.board.activeRow
+
+		// Can't change to existing active row
+		if (newRow === currentActiveRow) return false
+
+		// Call before active row change hooks - if any of the results are false do not change
+		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
+		if (results.includes(false)) return false
+
+		// Change the active row
+		player.board.activeRow = newRow
+
+		// Call on active row change hooks
+		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
+
+		return true
 	}
 }

@@ -13,7 +13,7 @@
 
 		"maxDeckCost": 42
 	},
-	"logoSubText": "Alter egos!",
+	"logoSubText": "Advent of TCG!",
 	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.26"
+	"version": "0.6.31"
 }

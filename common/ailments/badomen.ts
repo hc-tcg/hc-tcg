@@ -33,8 +33,12 @@ class BadOmenAilment extends Ailment {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
 			if (player.board.activeRow !== targetPos?.rowIndex) return coinFlips
 
+			// If they are not flipping on their turn, don't modify
+			const {currentPlayer} = game
+			if (currentPlayer.id !== player.id) return coinFlips
+
 			for (let i = 0; i < coinFlips.length; i++) {
-				coinFlips[i] = 'tails'
+				if (coinFlips[i]) coinFlips[i] = 'tails'
 			}
 			return coinFlips
 		})

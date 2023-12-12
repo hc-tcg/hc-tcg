@@ -90,20 +90,6 @@ abstract class Card {
 		return false
 	}
 
-	//@TODO implement
-	/**
-	 * Returns pick requests to be executed before the attack loop
-	 */
-	public getPickRequests(
-		game: GameModel,
-		instance: string,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	): Array<PickRequest> {
-		// Default is nothing
-		return []
-	}
-
 	/**
 	 * Returns the actions this card makes available when in the hand
 	 */

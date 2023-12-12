@@ -18,7 +18,7 @@ function CopyAttackModal({closeModal}: Props) {
 	if (!modalData) return null
 	const rowPos: RowPos = modalData.payload.cardPos
 
-	if (!rowPos.rowIndex || !rowPos.row.hermitCard) return null
+	if (rowPos.rowIndex === null || !rowPos.row.hermitCard) return null
 
 	const opponentHermitInfo = HERMIT_CARDS[rowPos.row.hermitCard.cardId]
 

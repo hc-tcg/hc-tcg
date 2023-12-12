@@ -129,20 +129,21 @@ export type PlayerState = {
 		 *
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
 		 */
-		onTurnStart: GameHook<(attacks: Array<AttackModel>) => void>
+		onTurnStart: GameHook<() => void>
 		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
-		/** Hook called when the time runs out*/
-		onTurnTimeout: GameHook<(newAttacks: Array<AttackModel>) => void>
 
 		/** Hook called the player flips a coin */
 		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
-		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => boolean>
+		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
-		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number) => void>
+		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
+		// @TODO this is currently not complete, it needs to be called in a lot more places, if it is needed
+		/** Hook called when a card attemps to move or rows are swapped. Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to. */
+		onSlotChange: GameHook<(slot: SlotPos) => boolean>
 	}
 }
 
@@ -174,7 +175,8 @@ export type TurnState = {
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
-	blockedActions: TurnActions
+	/** Map of source id of the block, to the actual blocked action */
+	blockedActions: Record<string, TurnActions>
 
 	currentAttack: HermitAttackType | null
 }

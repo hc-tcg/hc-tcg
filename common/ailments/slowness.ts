@@ -25,7 +25,7 @@ class SlownessAilment extends Ailment {
 
 		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos || !targetPos.rowIndex) return
+			if (!targetPos || targetPos.rowIndex === null) return
 			if (!ailmentInfo.duration) return
 
 			ailmentInfo.duration--
@@ -35,7 +35,8 @@ class SlownessAilment extends Ailment {
 				return
 			}
 
-			if (player.board.activeRow === targetPos.rowIndex) game.addBlockedActions('SECONDARY_ATTACK')
+			if (player.board.activeRow === targetPos.rowIndex)
+				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
