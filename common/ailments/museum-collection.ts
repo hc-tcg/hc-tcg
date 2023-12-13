@@ -49,7 +49,14 @@ class MuseumCollectionAilment extends Ailment {
 				attack.type !== 'secondary'
 			)
 				return
-			if (!ailmentInfo.duration) return
+			if (ailmentInfo.duration === undefined) return
+
+			player.hooks.onApply.remove(ailmentInfo.ailmentInstance)
+			player.hooks.onApply.add(ailmentInfo.ailmentInstance, () => {
+				if (ailmentInfo.duration === undefined) return
+				ailmentInfo.duration++
+				attack.addDamage(this.id, 20)
+			})
 
 			attack.addDamage(this.id, 20 * ailmentInfo.duration)
 		})
