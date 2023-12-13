@@ -40,7 +40,8 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.cards) return 'SUCCESS'
+					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
+					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 
 					const cards: Array<CardT> = modalResult.cards
 					const bottomCards: Array<CardT> = opponentPlayer.pile.slice(0, 3).filter((c) => {
