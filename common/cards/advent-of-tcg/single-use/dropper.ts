@@ -18,9 +18,9 @@ class DropperSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {opponentPlayer} = pos
+		const {player, opponentPlayer} = pos
 
-		opponentPlayer.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(instance, () => {
 			for (let i = 0; i < 3; i++) {
 				const cardInfo = {
 					cardId: 'fletching_table',
