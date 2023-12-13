@@ -13,7 +13,7 @@ const singleUseCardClasses: Array<SingleUseCard> = [
 	new BrushSingleUseCard(),
 	//new GlowstoneSingleUseCard(),
 	new LanternSingleUseCard(),
-	//new SplashPotionOfHarmingSingleUseCard(),
+	new SplashPotionOfHarmingSingleUseCard(),
 ]
 
 export default singleUseCardClasses
