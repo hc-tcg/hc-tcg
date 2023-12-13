@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {getActiveRowPos} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class SmallishbeansRareHermitCard extends HermitCard {
@@ -33,11 +34,12 @@ class SmallishbeansRareHermitCard extends HermitCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			if (!row) return
+			const activeRow = getActiveRowPos(player)
+			if (!activeRow) return
 
 			let partialSum = 0
 
-			row.itemCards.forEach((item) => {
+			activeRow.row.itemCards.forEach((item) => {
 				if (!item) return
 				if (item.cardId.includes('rare')) partialSum += 1
 				partialSum += 1
