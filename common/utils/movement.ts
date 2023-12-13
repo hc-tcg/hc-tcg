@@ -1,5 +1,5 @@
 import {GameModel} from '../models/game-model'
-import {CardT, PlayerState} from '../types/game-state'
+import {CardT, GameState, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
@@ -240,24 +240,4 @@ export function swapSlots(
 			cardPos.player.hooks.onAttach.call(card.cardInstance)
 		}
 	}
-}
-
-/**Swaps the positions of two rows on the board. */
-export function swapRows(player: PlayerState, oldRow: number, newRow: number) {
-	const oldRowState = player.board.rows[oldRow]
-
-	const oldSlotPos: SlotPos = {
-		rowIndex: oldRow,
-		row: oldRowState,
-		slot: {
-			index: 0,
-			type: 'hermit',
-		},
-	}
-
-	const results = player.hooks.onSlotChange.call(oldSlotPos)
-	if (results.includes(false)) return
-
-	player.board.rows[oldRow] = player.board.rows[newRow]
-	player.board.rows[newRow] = oldRowState
 }
