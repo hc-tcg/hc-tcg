@@ -11,7 +11,8 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 			numericId: 226,
 			name: 'Splash potion of harming',
 			rarity: 'common',
-			description: "Deal 40hp damage to the opponent's active hermit and 20hp damage to all others",
+			description:
+				"Deal 40hp damage to the opponent's active hermit and 20hp damage to all other opponent Hermits.",
 		})
 	}
 
