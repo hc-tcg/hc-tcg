@@ -40,7 +40,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 					attacker: activePos,
 					target: row,
 					type: 'effect',
-				}).addDamage(this.id, 20)
+				}).addDamage(this.id, damage)
 
 				attacks.push(attack)
 			}
