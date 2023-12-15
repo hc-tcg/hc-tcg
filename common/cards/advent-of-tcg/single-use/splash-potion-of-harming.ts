@@ -68,6 +68,10 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 		player.hooks.onAttack.remove(instance)
 	}
 
+	override canAttack() {
+		return true
+	}
+
 	override getExpansion() {
 		return 'advent_of_tcg'
 	}
