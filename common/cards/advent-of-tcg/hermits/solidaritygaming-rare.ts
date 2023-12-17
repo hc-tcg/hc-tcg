@@ -19,14 +19,14 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 			primary: {
 				name: 'The Law',
 				cost: ['prankster', 'any'],
-				damage: 30,
+				damage: 70,
 				power:
 					'After your attack, choose one of your AFK Hermits to protect. This Hermit does not take damage on their first active turn.\nOnly one Hermit can be protected at a time.',
 			},
 			secondary: {
 				name: 'Not a toy',
 				cost: ['prankster', 'prankster', 'prankster'],
-				damage: 70,
+				damage: 100,
 				power: null,
 			},
 		})
@@ -45,9 +45,7 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return
 
 				const ailmentsToRemove = game.state.ailments.filter((ail) => {
-					return (
-						ail.targetInstance === row.hermitCard.cardInstance && ail.ailmentId === 'protection'
-					)
+					return ail.targetInstance === row.hermitCard.cardInstance && ail.ailmentId === 'protected'
 				})
 
 				ailmentsToRemove.forEach((ail) => {

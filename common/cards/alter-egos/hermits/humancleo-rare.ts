@@ -63,7 +63,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 				const opponentActiveHermit = HERMIT_CARDS[opponentActiveRow.hermitCard.cardId]
 
-				// Retun if no energy
+				// Return if no energy
 				if (
 					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost) &&
 					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost)
@@ -151,6 +151,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 				opponentPlayer.hooks.onAttach.remove(instance)
 				opponentPlayer.hooks.onDetach.remove(instance)
+				opponentPlayer.hooks.getAttackRequests.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
+				opponentPlayer.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}
@@ -161,6 +164,8 @@ class HumanCleoRareHermitCard extends HermitCard {
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
 		opponentPlayer.hooks.onTurnStart.remove(instance)
+		opponentPlayer.hooks.onAttach.remove(instance)
+		opponentPlayer.hooks.onDetach.remove(instance)
 		opponentPlayer.hooks.getAttackRequests.remove(instance)
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
