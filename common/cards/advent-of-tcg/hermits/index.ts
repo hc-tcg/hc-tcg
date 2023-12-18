@@ -17,14 +17,14 @@ import HermitCard from '../../base/hermit-card'
 const hermitCardClasses: Array<HermitCard> = [
 	new MonkeyfarmRareHermitCard(),
 	//Advent calendar cards
-	// new DungeonTangoRareHermitCard(),
+	new DungeonTangoRareHermitCard(),
 	new PythonGBRareHermitCard(),
 	// new OrionSoundRareHermitCard(),
-	// new SolidaritygamingRareHermitCard(),
+	new SolidaritygamingRareHermitCard(),
 	new Smajor1995RareHermitCard(),
 	new Biffa2001RareHermitCard(),
 	new PixlriffsRareHermitCard(),
-	// new ShubbleYTRareHermitCard(),
+	new ShubbleYTRareHermitCard(),
 	new LDShadowLadyRareHermitCard(),
 	new SmallishbeansRareHermitCard(),
 	// new BigBSt4tzRareHermitCard(),
