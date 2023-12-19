@@ -17,7 +17,8 @@ class DungeonTangoRareHermitCard extends HermitCard {
 				name: 'Lackey',
 				cost: ['any'],
 				damage: 40,
-				power: 'If you have one, draw a random hermit card from your deck.',
+				power:
+					'Discard 1 attached item card. If you have one, draw a random hermit card from your deck.',
 			},
 			secondary: {
 				name: 'Ravager',
@@ -43,6 +44,26 @@ class DungeonTangoRareHermitCard extends HermitCard {
 				i++
 			} while (i < player.pile.length)
 			if (i == player.pile.length) return
+
+			game.addPickRequest({
+				playerId: player.id,
+				id: this.id,
+				message: 'Choose an item card to discard',
+				onResult(pickResult) {
+					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+
+					const rowIndex = pickResult.rowIndex
+					if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+					discardCard(game, pickResult.card)
+
+					player.hand.push(player.pile.splice(i, 1)[0])
+
+					return 'SUCCESS'
+				},
+			})
 		})
 	}
 
