@@ -13,7 +13,7 @@ import cn from 'classnames'
 type Props = {
 	children: React.ReactNode
 	description?: string
-	closeModal: () => void
+	closeModal?: () => void
 	title?: string
 	centered?: boolean
 }
@@ -33,9 +33,11 @@ function Modal({children, description, closeModal, title, centered}: Props) {
 					onEscapeKeyDown={closeModal}
 				>
 					{title && <DialogTitle className={css.title}>{title}</DialogTitle>}
-					<DialogClose className={css.close}>
-						<img src="/images/CloseX.svg" alt="close" />
-					</DialogClose>
+					{closeModal && (
+						<DialogClose className={css.close}>
+							<img src="/images/CloseX.svg" alt="close" />
+						</DialogClose>
+					)}
 					{children}
 				</DialogContent>
 			</DialogPortal>

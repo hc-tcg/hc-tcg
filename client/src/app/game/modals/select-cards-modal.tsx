@@ -21,10 +21,20 @@ function SelectCardsModal({closeModal}: Props) {
 	const cards: Array<CardT> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
 	const secondaryButton = modalData.payload.secondaryButton
+	const closeButton = modalData.payload.closeButton
 	const canSelect = selectionSize.length > 0
 
 	const handleSelection = (newSelected: CardT) => {
 		if (selectionSize === 0) return
+
+		if (selected.includes(newSelected)) {
+			setSelected((current) => {
+				const newSelection = [...current]
+				return newSelection.filter((card) => card !== newSelected)
+			})
+			return
+		}
+
 		setSelected((current) => {
 			// If a new card is selected then remove the first one
 			const newSelection = [...current]
@@ -55,7 +65,10 @@ function SelectCardsModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
+		<Modal
+			title={modalData.payload.modalName}
+			closeModal={closeButton.visible ? handleClose : undefined}
+		>
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				<div className={css.cards}>
@@ -69,6 +82,11 @@ function SelectCardsModal({closeModal}: Props) {
 				</div>
 			</div>
 			<div className={css.options}>
+				{secondaryButton && (
+					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
+						{secondaryButton.text}
+					</Button>
+				)}
 				<Button
 					variant={modalData.payload.primaryButton.variant}
 					size="medium"
@@ -76,11 +94,6 @@ function SelectCardsModal({closeModal}: Props) {
 				>
 					{modalData.payload.primaryButton.text}
 				</Button>
-				{secondaryButton && (
-					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
-						{secondaryButton.text}
-					</Button>
-				)}
 			</div>
 		</Modal>
 	)
