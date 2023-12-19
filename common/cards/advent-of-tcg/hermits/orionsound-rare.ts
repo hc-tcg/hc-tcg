@@ -11,7 +11,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 			name: 'Oli',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
-			health: 260,
+			health: 280,
 			primary: {
 				name: 'Melody',
 				cost: ['speedrunner'],
