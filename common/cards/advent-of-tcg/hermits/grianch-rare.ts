@@ -12,17 +12,17 @@ class GrianchRareHermitCard extends HermitCard {
 			numericId: 209,
 			name: 'The Grianch',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			hermitType: 'builder',
 			health: 250,
 			primary: {
 				name: 'Nice',
-				cost: ['prankster', 'any'],
+				cost: ['builder', 'any'],
 				damage: 70,
 				power: 'Heal any AFK Hermit for 40hp.',
 			},
 			secondary: {
 				name: 'Naughty',
-				cost: ['prankster', 'prankster'],
+				cost: ['builder', 'builder'],
 				damage: 80,
 				power:
 					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, your opponent may attack twice next round.',

@@ -8,10 +8,10 @@ import EffectCard from '../../base/effect-card'
 
 const effectCardClasses: Array<EffectCard> = [
 	// Advent of TCG cards
-	// new BrewingStandEffectCard(),
+	new BrewingStandEffectCard(),
 	new FurnaceEffectCard(),
 	new SlimeballEffectCard(),
-	//new CatEffectCard(),
+	new CatEffectCard(),
 	//new BerryBushEffectCard(),
 	new TrapdoorEffectCard(),
 ]

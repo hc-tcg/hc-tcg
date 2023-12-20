@@ -46,7 +46,7 @@ class ShubbleYTRareHermitCard extends HermitCard {
 					payload: {
 						modalName: 'Shelby: Place your top card on bottom of deck?',
 						modalDescription: '',
-						cards: player.pile[0],
+						cards: [player.pile[0]],
 						selectionSize: 0,
 						primaryButton: {
 							text: 'Place on Bottom',
