@@ -42,6 +42,7 @@ class LanternSingleUseCard extends SingleUseCard {
 						modalDescription: '',
 						cards: player.pile.slice(0, 4),
 						selectionSize: 2,
+						mustSelectMaximum: true,
 						primaryButton: {
 							text: 'Confirm Selection',
 							variant: 'default',

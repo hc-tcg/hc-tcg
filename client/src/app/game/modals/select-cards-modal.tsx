@@ -22,22 +22,18 @@ function SelectCardsModal({closeModal}: Props) {
 	const selectionSize = modalData.payload.selectionSize
 	const secondaryButton = modalData.payload.secondaryButton
 	const closeButton = modalData.payload.closeButton
-	const canSelect = selectionSize.length > 0
+	const mustSelectMaximum = modalData.payload.mustSelectMaximum
 
 	const handleSelection = (newSelected: CardT) => {
 		if (selectionSize === 0) return
 
-		if (selected.includes(newSelected)) {
-			setSelected((current) => {
-				const newSelection = [...current]
-				return newSelection.filter((card) => card !== newSelected)
-			})
-			return
-		}
-
 		setSelected((current) => {
-			// If a new card is selected then remove the first one
 			const newSelection = [...current]
+			// Remove a card if it is clicked on when selected
+			if (selected.includes(newSelected)) {
+				return newSelection.filter((card) => card !== newSelected)
+			}
+			// If a new card is selected then remove the first one
 			if (newSelection.length >= selectionSize) {
 				newSelection.shift()
 			}
@@ -65,10 +61,7 @@ function SelectCardsModal({closeModal}: Props) {
 	}
 
 	return (
-		<Modal
-			title={modalData.payload.modalName}
-			closeModal={closeButton.visible ? handleClose : undefined}
-		>
+		<Modal title={modalData.payload.modalName} closeModal={handleClose}>
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				<div className={css.cards}>
@@ -91,6 +84,13 @@ function SelectCardsModal({closeModal}: Props) {
 					variant={modalData.payload.primaryButton.variant}
 					size="medium"
 					onClick={handlePrimary}
+					disabled={
+						mustSelectMaximum === false ||
+						selectionSize === 0 ||
+						selected.length === selectionSize.length
+							? false
+							: true
+					}
 				>
 					{modalData.payload.primaryButton.text}
 				</Button>
