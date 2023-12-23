@@ -53,7 +53,7 @@ class BerryBushEffectCard extends EffectCard {
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			if (!row.health) {
+			if (!row.health || row.health <= 10) {
 				discardCard(game, row.hermitCard)
 				return
 			}
@@ -77,11 +77,12 @@ class BerryBushEffectCard extends EffectCard {
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {slot} = pos
-		const {opponentPlayer} = game
+		const {currentPlayer, opponentPlayer} = game
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
 		if (opponentPlayer.board.activeRow === null) return 'INVALID'
+		if (currentPlayer.board.activeRow === null) return 'INVALID'
 
 		return 'YES'
 	}
