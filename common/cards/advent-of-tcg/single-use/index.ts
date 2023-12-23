@@ -11,7 +11,7 @@ const singleUseCardClasses: Array<SingleUseCard> = [
 	new DropperSingleUseCard(),
 	new FletchingTableSingleUseCard(),
 	new BrushSingleUseCard(),
-	//new GlowstoneSingleUseCard(),
+	new GlowstoneSingleUseCard(),
 	new LanternSingleUseCard(),
 	new SplashPotionOfHarmingSingleUseCard(),
 ]
