@@ -57,6 +57,9 @@ class GrianchRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
+			const nonEmptyRows = getNonEmptyRows(player, true, true)
+			if (nonEmptyRows.length === 0) return
+
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
