@@ -13,7 +13,7 @@ class BerryBushEffectCard extends EffectCard {
 			name: 'Sweet Berry Bush',
 			rarity: 'ultra_rare',
 			description:
-				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not become active. Can not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 		})
 	}
 
@@ -24,12 +24,6 @@ class BerryBushEffectCard extends EffectCard {
 		if (!row) return
 
 		row.health = 30
-
-		// Make this card unable to be switched to
-		player.hooks.beforeActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (oldRow === rowIndex || newRow === pos.rowIndex) return false
-			return true
-		})
 
 		player.hooks.afterAttack.add(instance, () => {
 			if (!row.health) {
@@ -69,7 +63,6 @@ class BerryBushEffectCard extends EffectCard {
 			row.itemCards = []
 		}
 
-		player.hooks.beforeActiveRowChange.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
