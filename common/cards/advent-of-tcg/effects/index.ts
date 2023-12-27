@@ -12,7 +12,7 @@ const effectCardClasses: Array<EffectCard> = [
 	new FurnaceEffectCard(),
 	new SlimeballEffectCard(),
 	new CatEffectCard(),
-	//new BerryBushEffectCard(),
+	new BerryBushEffectCard(),
 	new TrapdoorEffectCard(),
 ]
 
