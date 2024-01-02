@@ -99,7 +99,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
 	const hasOtherHermit = rows.some((row, index) => {
-		return !!row.hermitCard && index !== activeRow
+		return !!row.hermitCard && CARDS[row.hermitCard.cardId].type === 'hermit' && index !== activeRow
 	})
 
 	// Actions that require us to have an active row
@@ -217,7 +217,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard)
+		const noHermitsLeft = !firstPlayerTurn && playerState.board.rows.every((row) => !row.hermitCard || CARDS[row.hermitCard.cardId].type !== 'hermit')
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
