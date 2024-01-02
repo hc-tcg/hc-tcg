@@ -172,6 +172,7 @@ export function removeAilment(
 	ailmentInstance: string
 ): GenericActionResult {
 	const ailments = game.state.ailments.filter((a) => a.ailmentInstance === ailmentInstance)
+	if (ailments.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
 	const ailmentObject = AILMENT_CLASSES[ailments[0].ailmentId]
 	ailmentObject.onRemoval(game, ailments[0], pos)
