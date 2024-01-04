@@ -1,7 +1,8 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
+import {RowStateWithHermit} from '../../../types/game-state'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
@@ -16,49 +17,39 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canApply() {
-		return true
-	}
-
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
-			const opponentRows = getNonEmptyRows(opponentPlayer)
 
 			const attacks: Array<AttackModel> = []
-
-			for (let i = 0; i < opponentRows.length; i++) {
-				const row = opponentRows[i]
+			for (let i = 0; i < opponentPlayer.board.rows.length; i++) {
+				if (!opponentPlayer.board.rows[i].hermitCard) continue
 				let damage = 20
-				if (opponentPlayer.board.activeRow === row.rowIndex) {
-					damage = 40
-				}
-				const attack = new AttackModel({
-					id: this.getInstanceKey(instance, 'attack'),
-					attacker: activePos,
-					target: row,
-					type: 'effect',
-				}).addDamage(this.id, damage)
-
-				attacks.push(attack)
+				if (i === opponentPlayer.board.activeRow) damage = 40
+				attacks.push(
+					new AttackModel({
+						id: this.getInstanceKey(instance),
+						attacker: activePos,
+						target: {
+							player: opponentPlayer,
+							rowIndex: i,
+							row: opponentPlayer.board.rows[i] as RowStateWithHermit,
+						},
+						type: 'effect',
+					}).addDamage(this.id, damage)
+				)
 			}
 
 			return attacks
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
+			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			// We've executed our attack, apply effect
 			applySingleUse(game)
-
-			// Only apply once
-
-			player.hooks.onAttack.remove(instance)
 		})
 	}
 
