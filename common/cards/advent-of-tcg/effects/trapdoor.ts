@@ -60,9 +60,10 @@ class TrapdoorEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer} = pos
+		const {player} = pos
 
-		opponentPlayer.hooks.onAttack.remove(instance)
+		player.hooks.onDefence.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 
 	public override getExpansion(): string {

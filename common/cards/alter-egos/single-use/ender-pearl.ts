@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getActiveRow, getActiveRowPos} from '../../../utils/board'
-import {swapRows} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -52,8 +51,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				if (player.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 				const activeRow = getActiveRowPos(player)
 				if (activeRow?.row.health) activeRow.row.health -= 10
-				swapRows(player, player.board.activeRow, rowIndex)
-				game.changeActiveRow(player, rowIndex)
+				game.swapRows(player, player.board.activeRow, rowIndex)
 
 				return 'SUCCESS'
 			},

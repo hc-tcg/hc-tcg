@@ -72,7 +72,6 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
-		//gameEndWebhook(game)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)

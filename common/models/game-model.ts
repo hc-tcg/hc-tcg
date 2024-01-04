@@ -3,6 +3,7 @@ import {TurnAction, GameState, ActionResult, TurnActions, PlayerState} from '../
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
+import {SlotPos} from '../types/cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -228,6 +229,31 @@ export class GameModel {
 
 		// Call on active row change hooks
 		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
+
+		return true
+	}
+
+	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
+	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
+		const oldRowState = player.board.rows[oldRow]
+
+		const oldSlotPos: SlotPos = {
+			rowIndex: oldRow,
+			row: oldRowState,
+			slot: {
+				index: 0,
+				type: 'hermit',
+			},
+		}
+
+		const results = player.hooks.onSlotChange.call(oldSlotPos)
+		if (results.includes(false)) return false
+
+		const activeRowChanged = this.changeActiveRow(player, newRow)
+		if (!activeRowChanged) return false
+
+		player.board.rows[oldRow] = player.board.rows[newRow]
+		player.board.rows[newRow] = oldRowState
 
 		return true
 	}

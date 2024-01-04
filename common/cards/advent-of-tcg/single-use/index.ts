@@ -8,12 +8,12 @@ import SingleUseCard from '../../base/single-use-card'
 
 const singleUseCardClasses: Array<SingleUseCard> = [
 	// Advent calendar cards
-	//new DropperSingleUseCard(),
-	//new FletchingTableSingleUseCard(),
+	new DropperSingleUseCard(),
+	new FletchingTableSingleUseCard(),
 	new BrushSingleUseCard(),
-	//new GlowstoneSingleUseCard(),
+	new GlowstoneSingleUseCard(),
 	new LanternSingleUseCard(),
-	//new SplashPotionOfHarmingSingleUseCard(),
+	new SplashPotionOfHarmingSingleUseCard(),
 ]
 
 export default singleUseCardClasses

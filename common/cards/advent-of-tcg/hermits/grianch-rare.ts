@@ -12,17 +12,17 @@ class GrianchRareHermitCard extends HermitCard {
 			numericId: 209,
 			name: 'The Grianch',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			hermitType: 'builder',
 			health: 250,
 			primary: {
 				name: 'Nice',
-				cost: ['prankster', 'any'],
+				cost: ['builder', 'any'],
 				damage: 70,
 				power: 'Heal any AFK Hermit for 40hp.',
 			},
 			secondary: {
 				name: 'Naughty',
-				cost: ['prankster', 'prankster'],
+				cost: ['builder', 'builder'],
 				damage: 80,
 				power:
 					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, your opponent may attack twice next round.',
@@ -33,7 +33,6 @@ class GrianchRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const canAttackTwice = this.getInstanceKey(instance, 'reviveNextTurn')
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
@@ -41,21 +40,21 @@ class GrianchRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, this.id)
 
 			if (coinFlip[0] === 'tails') {
-				player.custom[canAttackTwice] = true
+				opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+					opponentPlayer.hooks.afterAttack.remove(instance)
+				})
 				return
 			}
 
 			attack.addDamage(this.id, this.secondary.damage)
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			if (!player.custom[canAttackTwice]) return
-			game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-			delete player.custom[canAttackTwice]
-		})
-
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
+
+			const nonEmptyRows = getNonEmptyRows(player, true, true)
+			if (nonEmptyRows.length === 0) return
 
 			game.addPickRequest({
 				playerId: player.id,
@@ -95,12 +94,9 @@ class GrianchRareHermitCard extends HermitCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const canAttackTwice = this.getInstanceKey(instance, 'reviveNextTurn')
+		const {player} = pos
 		player.hooks.onAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		delete player.custom[canAttackTwice]
 	}
 
 	override getExpansion() {

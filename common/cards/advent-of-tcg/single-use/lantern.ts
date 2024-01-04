@@ -50,7 +50,7 @@ class LanternSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
-					if (!modalResult.cards) return 'SUCCESS'
+					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 2) return 'FAILURE_INVALID_DATA'
 
 					const cards: Array<CardT> = modalResult.cards

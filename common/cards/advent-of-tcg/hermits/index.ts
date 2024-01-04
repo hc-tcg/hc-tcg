@@ -15,21 +15,21 @@ import GrianchRareHermitCard from './grianch-rare'
 import HermitCard from '../../base/hermit-card'
 
 const hermitCardClasses: Array<HermitCard> = [
-	new MonkeyfarmRareHermitCard(),
 	//Advent calendar cards
-	// new DungeonTangoRareHermitCard(),
+	new MonkeyfarmRareHermitCard(),
+	new DungeonTangoRareHermitCard(),
 	new PythonGBRareHermitCard(),
-	// new OrionSoundRareHermitCard(),
-	// new SolidaritygamingRareHermitCard(),
-	// new Smajor1995RareHermitCard(),
+	new OrionSoundRareHermitCard(),
+	new SolidaritygamingRareHermitCard(),
+	new Smajor1995RareHermitCard(),
 	new Biffa2001RareHermitCard(),
 	new PixlriffsRareHermitCard(),
-	// new ShubbleYTRareHermitCard(),
+	new ShubbleYTRareHermitCard(),
 	new LDShadowLadyRareHermitCard(),
-	// new SmallishbeansRareHermitCard(),
-	// new BigBSt4tzRareHermitCard(),
-	// new PharaohRareHermitCard(),
-	// new GrianchRareHermitCard(),
+	new SmallishbeansRareHermitCard(),
+	new BigBSt4tzRareHermitCard(),
+	new PharaohRareHermitCard(),
+	new GrianchRareHermitCard(),
 ]
 
 export default hermitCardClasses
