@@ -4,5 +4,5 @@
 		"alter_egos": "Alter Egos",
 		"advent_of_tcg": "Advent of TCG"
 	},
-	"disabled": []
+	"disabled": [""]
 }
