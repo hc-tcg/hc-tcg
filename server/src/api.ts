@@ -1,6 +1,6 @@
-import { CONFIG } from 'common/config'
-import { GameModel } from 'common/models/game-model'
-import { createRequire } from 'module'
+import {CONFIG} from 'common/config'
+import {GameModel} from 'common/models/game-model'
+import {createRequire} from 'module'
 import root from './serverRoot'
 import fetch from 'node-fetch'
 const require = createRequire(import.meta.url)
