@@ -11,7 +11,7 @@ class SmeltingAilment extends Ailment {
 			name: 'Smelting',
 			description:
 				'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
-			duration: 3,
+			duration: 4,
 			counter: true,
 			damageEffect: false,
 		})
