@@ -67,8 +67,18 @@ class HumanCleoRareHermitCard extends HermitCard {
 				if (
 					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost) &&
 					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost)
-				)
+				) {
 					return
+				}
+
+				// Return if opponent can't attack anyways for some reason
+				const availableActions = game.state.turn.availableActions
+				if (
+					!availableActions.includes('PRIMARY_ATTACK') &&
+					!availableActions.includes('SECONDARY_ATTACK')
+				) {
+					return
+				}
 
 				// The opponent needs to attack in this case, so prevent them switching or ending turn
 				game.addBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
