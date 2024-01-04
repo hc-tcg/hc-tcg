@@ -1,8 +1,25 @@
-const soundConfig: Record<string, any> = {
-	background: {
-		menu: 'menu.m4a',
-		matchmaking: 'menu.m4a',
-	},
+type track = {
+	name: string
+	artist: string
+	file: string
 }
 
-export default soundConfig
+export const trackList: Record<string, Array<track>> = {
+	game: [
+		{
+			name: 'Collector',
+			artist: 'L1qu1fy',
+			file: 'collector.ogg',
+		},
+		{
+			name: 'Tabletop',
+			artist: 'L1qu1fy',
+			file: 'tabletop.ogg',
+		},
+		{
+			name: 'Recontre',
+			artist: 'Ben Haussman',
+			file: 'recontre.ogg',
+		},
+	],
+}
