@@ -21,5 +21,10 @@ export const trackList: Record<string, Array<track>> = {
 			artist: 'Ben Haussman',
 			file: 'recontre.ogg',
 		},
+		{
+			name: 'One',
+			artist: 'Ben Haussman',
+			file: 'one.ogg',
+		},
 	],
 }
