@@ -91,10 +91,10 @@ class BerryBushEffectCard extends EffectCard {
 	}
 
 	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
+		const {opponentPlayer} = game
 
 		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
+		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
 
 		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
