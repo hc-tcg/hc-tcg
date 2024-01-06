@@ -26,5 +26,10 @@ export const trackList: Record<string, Array<track>> = {
 			artist: 'Ben Haussman',
 			file: 'one.ogg',
 		},
+		{
+			name: "Minerva's Muse",
+			artist: 'ImagineFyre',
+			file: 'minervas_muse.ogg',
+		},
 	],
 }
