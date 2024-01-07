@@ -8,20 +8,16 @@ import css from './toolbar.module.scss'
 function SoundItem() {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
-	const [originalSoundVolume] = useState<string>(settings.soundVolume)
-	const [originalMusicVolume] = useState<string>(settings.musicVolume)
+	const [originalVolume] = useState<string>(settings.soundVolume)
 
 	const handleSoundChange = () => {
 		// if volume is on, turn it off.
 		// if originalVolume is 0, turn it to 100.
 		// if volume is off, turn it back to originalVolume.
-		const newSoundVolume =
-			settings.soundVolume !== '0' ? '0' : originalSoundVolume === '0' ? '100' : originalSoundVolume
-		const newMusicVolume =
-			settings.musicVolume !== '0' ? '0' : originalMusicVolume === '0' ? '100' : originalMusicVolume
+		const newVolume =
+			settings.soundVolume !== '0' ? '0' : originalVolume === '0' ? '100' : originalVolume
 
-		dispatch(setSetting('soundVolume', newSoundVolume))
-		dispatch(setSetting('musicVolume', newMusicVolume))
+		dispatch(setSetting('soundVolume', newVolume))
 	}
 
 	return (
