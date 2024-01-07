@@ -99,7 +99,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
 	const hasOtherHermit = rows.some((row, index) => {
-		return !!row.hermitCard && CARDS[row.hermitCard.cardId].type === 'hermit' && index !== activeRow
+		return !!row.hermitCard && index !== activeRow
 	})
 
 	// Actions that require us to have an active row
