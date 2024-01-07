@@ -1,15 +1,15 @@
-import Ailment from "./ailment"
-import {GameModel} from "../models/game-model"
-import {CardPosModel, getBasicCardPos, getCardPos} from "../models/card-pos-model"
-import {removeAilment} from "../utils/board"
-import {AilmentT} from "../types/game-state"
-import {isTargetingPos} from "../utils/attacks"
+import Ailment from './ailment'
+import {GameModel} from '../models/game-model'
+import {CardPosModel, getBasicCardPos, getCardPos} from '../models/card-pos-model'
+import {removeAilment} from '../utils/board'
+import {AilmentT} from '../types/game-state'
+import {isTargetingPos} from '../utils/attacks'
 
-class ProtectedAilment extends Ailment{
-    constructor() {
+class ProtectedAilment extends Ailment {
+	constructor() {
 		super({
 			id: 'protected',
-			name: 'Sheriff\'s Protection',
+			name: "Sheriff's Protection",
 			description: 'This Hermit does not take damage on their first active turn.',
 			duration: 0,
 			counter: false,
@@ -22,12 +22,16 @@ class ProtectedAilment extends Ailment{
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(ailmentInfo.ailmentInstance)
 
-		player.hooks.onActiveRowChange.add(ailmentInfo.ailmentInstance, (oldRow, newRow) => {
-			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
-			if (!targetPos) return
+		player.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
+			if (player.board.activeRow === pos.rowIndex) {
+				player.custom[instanceKey] = true
+			}
+		})
 
-			if (newRow !== targetPos.rowIndex) return
-			player.custom[instanceKey] = true
+		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+			if (player.custom[instanceKey]) {
+				removeAilment(game, pos, ailmentInfo.ailmentInstance)
+			}
 		})
 
 		player.hooks.onDefence.add(ailmentInfo.ailmentInstance, (attack) => {
@@ -47,12 +51,6 @@ class ProtectedAilment extends Ailment{
 			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
-			if (!player.custom[instanceKey]) return
-			removeAilment(game, pos, ailmentInfo.ailmentInstance)
-		})
-
-
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
 			if (hermitPos.row?.hermitCard?.cardInstance != ailmentInfo.targetInstance) return
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
@@ -63,9 +61,9 @@ class ProtectedAilment extends Ailment{
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(ailmentInfo.ailmentInstance)
 
-		pos.player.hooks.onDefence.remove(ailmentInfo.ailmentInstance)
-		pos.player.hooks.onActiveRowChange.remove(ailmentInfo.ailmentInstance)
-		pos.opponentPlayer.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
+		player.hooks.onDefence.remove(ailmentInfo.ailmentInstance)
+		player.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
+		player.hooks.onTurnStart.remove(ailmentInfo.ailmentInstance)
 		delete player.custom[instanceKey]
 		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
 	}

@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, DEBUG_CONFIG} from 'common/config'
+import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
 	CardT,
@@ -53,7 +53,9 @@ export function getStarterPack() {
 		.slice(0, hermitTypesCount)
 
 	const cards = Object.values(CARDS).filter(
-		(cardInfo) => !isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
+		(cardInfo) =>
+			(!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)) &&
+			!EXPANSIONS.disabled.includes(cardInfo.getExpansion())
 	)
 
 	const effectCards = cards.filter(isEffect)

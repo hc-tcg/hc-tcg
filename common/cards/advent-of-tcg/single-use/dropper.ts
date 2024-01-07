@@ -9,7 +9,7 @@ class DropperSingleUseCard extends SingleUseCard {
 			numericId: 222,
 			name: 'Dropper',
 			rarity: 'rare',
-			description: "Shuffle 3 fletching tables into your opponent's deck",
+			description: "Shuffle 2 fletching tables into your opponent's deck",
 		})
 	}
 
@@ -21,7 +21,7 @@ class DropperSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			for (let i = 0; i < 3; i++) {
+			for (let i = 0; i < 2; i++) {
 				const cardInfo = {
 					cardId: 'fletching_table',
 					cardInstance: Math.random().toString(),

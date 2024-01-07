@@ -11,7 +11,7 @@ class CatEffectCard extends EffectCard {
 			name: 'Cat',
 			rarity: 'rare',
 			description:
-				'Attach to any active or AFK Hermit.\n\nAfter the Hermit this card is attached to attacks, view the top card of your deck. You may choose to discard it and draw the bottom card of your deck at the end of your turn instead.',
+				'Attach to any active or AFK Hermit.\n\nAfter the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 		})
 	}
 
@@ -32,7 +32,7 @@ class CatEffectCard extends EffectCard {
 				data: {
 					modalId: 'selectCards',
 					payload: {
-						modalName: 'Cat: Discard card and draw from bottom?',
+						modalName: 'Cat: Draw a card from the bottom of your deck?',
 						modalDescription: '',
 						cards: [player.pile[0]],
 						selectionSize: 0,
@@ -50,12 +50,10 @@ class CatEffectCard extends EffectCard {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					const topCard = player.pile.shift()
 					player.hooks.onTurnEnd.add(instance, (drawCards) => {
 						player.hooks.onTurnEnd.remove(instance)
 						return [player.pile[-1]]
 					})
-					if (!topCard) return 'SUCCESS'
 
 					return 'SUCCESS'
 				},

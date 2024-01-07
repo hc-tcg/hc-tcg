@@ -40,7 +40,9 @@ const DECK_ICONS = [
 const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
-		return Object.values(CARDS).some((card) => card.getExpansion() === expansion)
+		return Object.values(CARDS).some(
+			(card) => card.getExpansion() === expansion && !EXPANSIONS.disabled.includes(expansion)
+		)
 	}),
 ]
 
@@ -147,7 +149,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			// Card Rarity Filter
 			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
 			// Card Expansion Filter
-			(expansionQuery === '' || getCardExpansion(card.cardId) === expansionQuery)
+			(expansionQuery === '' || getCardExpansion(card.cardId) === expansionQuery) &&
+			// Don't show disabled cards
+			!EXPANSIONS.disabled.includes(getCardExpansion(card.cardId))
 	)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'hermit'),

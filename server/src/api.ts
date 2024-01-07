@@ -2,6 +2,7 @@ import {CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {createRequire} from 'module'
 import root from './serverRoot'
+import fetch from 'node-fetch'
 const require = createRequire(import.meta.url)
 
 export function registerApis(app: import('express').Express) {
@@ -61,24 +62,30 @@ export function registerApis(app: import('express').Express) {
 			}
 		})
 
-		console.log('apis registered')
-	} catch (err) {
-		console.log('no api keys found')
-	}
-}
-
-export async function gameEndWebhook(game: GameModel) {
-	let apiKeys = null
-	try {
-		apiKeys = require('./apiKeys.json')
-		const botKey = apiKeys?.botKey
-
-		if (botKey) {
-			await fetch(`${CONFIG.botUrl}/admin/game_end`, {
+		root.hooks.newGame.add('api', (game: GameModel) => {
+			fetch(`${CONFIG.botUrl}/admin/game_start`, {
 				method: 'POST',
 				headers: [
 					['Content-type', 'application/json'],
-					['api-key', botKey],
+					['api-key', apiKeys?.botKey],
+				],
+				body: JSON.stringify({
+					createdTime: game.createdTime,
+					id: game.id,
+					code: game.code,
+					playerIds: game.getPlayerIds(),
+					playerNames: game.getPlayers().map((p) => p.playerName),
+					state: game.state,
+				}),
+			})
+		})
+
+		root.hooks.gameRemoved.add('api', (game: GameModel) => {
+			fetch(`${CONFIG.botUrl}/admin/game_end`, {
+				method: 'POST',
+				headers: [
+					['Content-type', 'application/json'],
+					['api-key', apiKeys?.botKey],
 				],
 				body: JSON.stringify({
 					createdTime: game.createdTime,
@@ -90,8 +97,10 @@ export async function gameEndWebhook(game: GameModel) {
 					endInfo: game.endInfo,
 				}),
 			})
-		}
+		})
+
+		console.log('apis registered')
 	} catch (err) {
-		// do nothing, we couldn't send info to bot
+		console.log('no api keys found')
 	}
 }

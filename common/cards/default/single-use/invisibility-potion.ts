@@ -33,6 +33,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 
 			opponentPlayer.hooks.afterAttack.add(instance, () => {
 				opponentPlayer.hooks.beforeAttack.remove(instance)
+				opponentPlayer.hooks.afterAttack.remove(instance)
 			})
 		})
 	}
