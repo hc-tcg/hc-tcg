@@ -12,7 +12,7 @@ class TrapdoorEffectCard extends EffectCard {
 			name: 'Trapdoor',
 			rarity: 'rare',
 			description:
-				'Attach to any active or AFK Hermit.\n\n When an adjacent Hermit takes damage, up to 40hp damage is taken by this Hermit instead.',
+				"Attach to any active or AFK Hermit.\n\nWhen an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 		})
 	}
 
