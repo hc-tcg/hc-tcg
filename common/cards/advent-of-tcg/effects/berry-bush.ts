@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
+import {getActiveRow} from '../../../utils/board'
 
 class BerryBushEffectCard extends EffectCard {
 	constructor() {
@@ -57,6 +58,11 @@ class BerryBushEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
+
+		if (getActiveRow(player) === row) {
+			game.changeActiveRow(player, null)
+		}
+
 		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
@@ -85,10 +91,10 @@ class BerryBushEffectCard extends EffectCard {
 	}
 
 	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
+		const {opponentPlayer} = game
 
 		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
+		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
 
 		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}

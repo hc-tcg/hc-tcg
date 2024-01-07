@@ -37,11 +37,11 @@ class CatEffectCard extends EffectCard {
 						cards: [player.pile[0]],
 						selectionSize: 0,
 						primaryButton: {
-							text: 'Yes',
+							text: 'Draw from Bottom',
 							variant: 'primary',
 						},
 						secondaryButton: {
-							text: 'No',
+							text: 'Do Nothing',
 							variant: 'secondary',
 						},
 					},

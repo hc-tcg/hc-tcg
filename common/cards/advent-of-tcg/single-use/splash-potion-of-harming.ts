@@ -50,6 +50,8 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
+
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 

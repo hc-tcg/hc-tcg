@@ -21,13 +21,17 @@ function SelectCardsModal({closeModal}: Props) {
 	const cards: Array<CardT> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
 	const secondaryButton = modalData.payload.secondaryButton
-	const canSelect = selectionSize.length > 0
 
 	const handleSelection = (newSelected: CardT) => {
 		if (selectionSize === 0) return
+
 		setSelected((current) => {
-			// If a new card is selected then remove the first one
 			const newSelection = [...current]
+			// Remove a card if it is clicked on when selected
+			if (selected.includes(newSelected)) {
+				return newSelection.filter((card) => card !== newSelected)
+			}
+			// If a new card is selected then remove the first one
 			if (newSelection.length >= selectionSize) {
 				newSelection.shift()
 			}
@@ -69,6 +73,11 @@ function SelectCardsModal({closeModal}: Props) {
 				</div>
 			</div>
 			<div className={css.options}>
+				{secondaryButton && (
+					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
+						{secondaryButton.text}
+					</Button>
+				)}
 				<Button
 					variant={modalData.payload.primaryButton.variant}
 					size="medium"
@@ -76,11 +85,6 @@ function SelectCardsModal({closeModal}: Props) {
 				>
 					{modalData.payload.primaryButton.text}
 				</Button>
-				{secondaryButton && (
-					<Button variant={secondaryButton.variant} size="medium" onClick={handleClose}>
-						{secondaryButton.text}
-					</Button>
-				)}
 			</div>
 		</Modal>
 	)
