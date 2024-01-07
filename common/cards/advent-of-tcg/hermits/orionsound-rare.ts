@@ -74,6 +74,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack.remove(instance)
+		player.hooks.onHermitDeath.remove(instance)
 		delete player.custom[instanceKey]
 	}
 
