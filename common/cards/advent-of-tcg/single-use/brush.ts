@@ -32,6 +32,7 @@ class BrushSingleUseCard extends SingleUseCard {
 						modalDescription: 'Select cards you would like to draw sooner first.',
 						cards: player.pile.slice(0, 3),
 						selectionSize: 3,
+						mustSelectMaximum: true,
 						primaryButton: {
 							text: 'Confirm Selection',
 							variant: 'default',

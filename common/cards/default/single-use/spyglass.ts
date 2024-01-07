@@ -36,6 +36,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 						modalDescription: '',
 						cards: opponentPlayer.hand,
 						selectionSize: canDiscard ? 1 : 0,
+						mustSelectMaximum: true,
 						primaryButton: {
 							text: canDiscard ? 'Confirm Selection' : 'Close',
 							variant: 'default',
