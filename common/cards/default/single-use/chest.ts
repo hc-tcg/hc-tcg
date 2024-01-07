@@ -39,7 +39,6 @@ class ChestSingleUseCard extends SingleUseCard {
 					modalDescription: '',
 					cards: player.discarded,
 					selectionSize: 1,
-					mustSelectMaximum: true,
 					primaryButton: {
 						text: 'Confirm Selection',
 						variant: 'default',

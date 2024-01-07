@@ -21,8 +21,6 @@ function SelectCardsModal({closeModal}: Props) {
 	const cards: Array<CardT> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
 	const secondaryButton = modalData.payload.secondaryButton
-	const closeButton = modalData.payload.closeButton
-	const mustSelectMaximum = modalData.payload.mustSelectMaximum
 
 	const handleSelection = (newSelected: CardT) => {
 		if (selectionSize === 0) return
@@ -84,13 +82,6 @@ function SelectCardsModal({closeModal}: Props) {
 					variant={modalData.payload.primaryButton.variant}
 					size="medium"
 					onClick={handlePrimary}
-					disabled={
-						mustSelectMaximum === false ||
-						selectionSize === 0 ||
-						selected.length === selectionSize.length
-							? false
-							: true
-					}
 				>
 					{modalData.payload.primaryButton.text}
 				</Button>

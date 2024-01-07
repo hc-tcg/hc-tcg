@@ -32,7 +32,6 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
 						cards: opponentPlayer.pile.slice(0, 3),
 						selectionSize: 1,
-						mustSelectMaximum: true,
 						primaryButton: {
 							text: 'Confirm Selection',
 							variant: 'default',
