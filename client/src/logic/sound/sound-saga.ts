@@ -1,9 +1,12 @@
 import {SagaIterator} from 'redux-saga'
 import {call, takeLatest, takeEvery} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
-import soundConfig from './sound-config'
+import {trackList} from './sound-config'
 import {SectionChangeT, PlaySoundT} from './sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {ToastT} from 'common/types/app'
+import {useDispatch} from 'react-redux'
+import {sendMsg} from 'logic/socket/socket-saga'
 
 const audioCtx = new AudioContext()
 const bgMusic = new Audio()
@@ -26,15 +29,19 @@ window.audioCtx = audioCtx
 function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	const section = action.payload
 
-	const musicFile = soundConfig.background[section] || null
-	if (!musicFile) {
+	const settings = yield* select(getSettings)
+	if (settings.musicVolume === '0') return
+
+	const musicFile = trackList.game[Math.floor(Math.random() * trackList.game.length)]
+
+	if (section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
 		bgMusic.src = ''
 		return
 	}
 
-	const newPath = `/sfx/${musicFile}`
+	const newPath = `/music/${musicFile.file}`
 	if (newPath !== bgMusic.getAttribute('src')) {
 		bgMusic.src = newPath
 		if (interacted) {

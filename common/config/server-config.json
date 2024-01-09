@@ -2,7 +2,12 @@
 	"port": 9000,
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
-	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev", "https://hc-tcg-beta.fly.dev"],
+	"cors": [
+		"http://localhost:3002",
+		"https://hc-tcg.fly.dev",
+		"https://hc-tcg-beta.fly.dev",
+		"https://hc-tcg.online"
+	],
 	"world": "LTF42",
 	"limits": {
 		"maxTurnTime": 90,
@@ -14,5 +19,5 @@
 	},
 	"logoSubText": "Advent of TCG!",
 	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.34"
+	"version": "0.6.35"
 }
