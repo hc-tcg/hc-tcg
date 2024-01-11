@@ -1,6 +1,10 @@
 .card {
 	position: relative;
 	background: rgb(226, 202, 139);
+
+	&.disabled {
+		filter: grayscale(1) brightness(0.9);
+	}
 }
 
 .card text {
