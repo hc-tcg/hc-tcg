@@ -30,6 +30,7 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import HermitCard from '../../../../common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
+import {playSound} from 'logic/sound/sound-actions'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -262,8 +263,7 @@ const Deck = ({setMenuSection}: Props) => {
 	const playSwitchDeckSFX = () => {
 		if (settings.soundOn !== 'off') {
 			const pageTurn = ['/sfx/Page_turn1.ogg', '/sfx/Page_turn2.ogg', '/sfx/Page_turn3.ogg']
-			const audio = new Audio(pageTurn[Math.floor(Math.random() * pageTurn.length)])
-			audio.play()
+			dispatch(playSound(pageTurn[Math.floor(Math.random() * pageTurn.length)]))
 		}
 	}
 
