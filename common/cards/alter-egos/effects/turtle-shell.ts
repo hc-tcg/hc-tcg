@@ -29,12 +29,18 @@ class TurtleShellEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (newRow === pos.rowIndex) {
+		player.hooks.onTurnEnd.add(instance, () => {
+			if (player.board.activeRow === pos.rowIndex) {
 				player.custom[instanceKey] = true
+			}
+		})
+
+		player.hooks.onTurnStart.add(instance, () => {
+			if (player.custom[instanceKey]) {
+				discardCard(game, pos.card)
 			}
 		})
 
@@ -52,20 +58,16 @@ class TurtleShellEffectCard extends EffectCard {
 				attack.multiplyDamage(this.id, 0).lockDamage()
 			}
 		})
-
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			if (!player.custom[instanceKey]) return
-			discardCard(game, {cardId: this.id, cardInstance: instance})
-		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		pos.player.hooks.onDefence.remove(instance)
-		pos.player.hooks.onActiveRowChange.remove(instance)
-		pos.opponentPlayer.hooks.onTurnEnd.remove(instance)
+		player.hooks.onDefence.remove(instance)
+		player.hooks.onActiveRowChange.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[instanceKey]
 	}
 

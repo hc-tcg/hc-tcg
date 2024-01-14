@@ -12,16 +12,20 @@ class TrapdoorEffectCard extends EffectCard {
 			name: 'Trapdoor',
 			rarity: 'rare',
 			description:
-				'Attach to any active or AFK Hermit.\n\n When an adjacent Hermit takes damage, up to 40hp damage is taken by this Hermit instead.',
+				"Attach to any active or AFK Hermit.\n\nWhen an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			if (attack.target?.player.id !== player.id) return
+			if (
+				attack.target?.player.id !== player.id ||
+				attack.attacker?.player.id !== opponentPlayer.id
+			)
+				return
 			if (attack.isType('ailment') || attack.isBacklash) return
 			if (pos.rowIndex === null) return
 			if (Math.abs(attack.target.rowIndex - pos.rowIndex) !== 1) return
@@ -33,12 +37,12 @@ class TrapdoorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 40) {
-				const damageReduction = Math.min(attack.getDamage(), 40 - totalReduction)
+				const damageReduction = Math.min(attack.calculateDamage(), 40 - totalReduction)
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(this.id, damageReduction)
 
 				const newAttack: AttackModel = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: instanceKey,
 					attacker: attack.attacker,
 					target: {
 						player: player,
@@ -60,9 +64,10 @@ class TrapdoorEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer} = pos
+		const {player} = pos
 
-		opponentPlayer.hooks.onAttack.remove(instance)
+		player.hooks.onDefence.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 
 	public override getExpansion(): string {

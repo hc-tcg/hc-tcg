@@ -26,6 +26,9 @@ function Toolbar() {
 					text: 'Close',
 					variant: 'default',
 				},
+				closeButton: {
+					visible: true,
+				},
 			},
 		}
 		gameState.currentModalData = data

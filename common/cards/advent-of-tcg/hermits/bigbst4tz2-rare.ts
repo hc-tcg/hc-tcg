@@ -3,6 +3,9 @@ import {GameModel} from '../../../models/game-model'
 import HermitCard from '../../base/hermit-card'
 import {flipCoin} from '../../../utils/coinFlips'
 import {AttackModel} from '../../../models/attack-model'
+import {executeAttacks} from '../../../utils/attacks'
+import {getActiveRow} from '../../../utils/board'
+import {RowPos} from '../../../types/cards'
 
 class BigBSt4tzRareHermitCard extends HermitCard {
 	constructor() {
@@ -38,44 +41,57 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 			player.custom[dealDamageNextTurn] = true
 		})
 
-		opponentPlayer.hooks.beforeAttack.add(instance, () => {
-			opponentPlayer.hooks.onAttack.add(instance, (attack) => {
-				if (!player.custom[dealDamageNextTurn]) return
-				if (!row || row.health === null || row.health > attack.calculateDamage()) return
-				if (attack.isBacklash === true) return
+		// Add before so health can be checked reliably
+		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
+			if (player.custom[dealDamageNextTurn]) {
+				if (!row || row.health === null || row.health > 0) return
 
-				const opponentRowIndex = opponentPlayer.board.activeRow
-				if (opponentRowIndex === null) return
+				const activeRowIndex = player.board.activeRow
+				const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-				const backlashAttack = new AttackModel({
-					id: this.getInstanceKey(instance, 'backlash'),
-					attacker: attack.target,
-					target: attack.attacker,
-					type: 'secondary',
-					isBacklash: true,
-				}).addDamage(this.id, 140)
+				const activeRow = getActiveRow(player)
+				const opponentActiveRow = getActiveRow(opponentPlayer)
+				if (activeRowIndex === null || opponentActiveRowIndex === null) return
+				if (!activeRow || !opponentActiveRow) return
 
-				attack.addNewAttack(backlashAttack)
+				const sourceRow: RowPos = {
+					player: player,
+					rowIndex: activeRowIndex,
+					row: activeRow,
+				}
 
-				return attack
-			})
+				const targetRow: RowPos = {
+					player: opponentPlayer,
+					rowIndex: opponentActiveRowIndex,
+					row: opponentActiveRow,
+				}
+
+				const ailmentAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: sourceRow,
+					target: targetRow,
+					type: 'ailment',
+				})
+				ailmentAttack.addDamage(this.id, 140)
+
+				opponentPlayer.hooks.afterAttack.remove(instance)
+				executeAttacks(game, [ailmentAttack], true)
+			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			opponentPlayer.hooks.onAttack.remove(instance)
+		player.hooks.onTurnStart.add(instance, () => {
 			delete player.custom[dealDamageNextTurn]
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const reviveNextTurn = this.getInstanceKey(instance, 'reviveNextTurn')
-		// Remove hooks
+		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
+
 		player.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.onAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[reviveNextTurn]
+		delete player.custom[dealDamageNextTurn]
 	}
 
 	override getExpansion() {

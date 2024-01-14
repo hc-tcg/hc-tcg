@@ -3,6 +3,8 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
 import {removeAilment} from '../utils/board'
 import {AilmentT} from '../types/game-state'
+import {executeAttacks} from '../utils/attacks'
+import {AttackModel} from '../models/attack-model'
 
 class MuseumCollectionAilment extends Ailment {
 	constructor() {
@@ -49,7 +51,25 @@ class MuseumCollectionAilment extends Ailment {
 				attack.type !== 'secondary'
 			)
 				return
-			if (!ailmentInfo.duration) return
+			if (ailmentInfo.duration === undefined) return
+
+			player.hooks.onApply.remove(ailmentInfo.ailmentInstance)
+			player.hooks.onApply.add(ailmentInfo.ailmentInstance, () => {
+				if (ailmentInfo.duration === undefined) return
+				ailmentInfo.duration++
+
+				const additionalAttack = new AttackModel({
+					id: this.getInstanceKey(ailmentInfo.ailmentInstance, 'additionalAttack'),
+					attacker: attack.attacker,
+					target: attack.target,
+					type: 'secondary',
+				})
+				additionalAttack.addDamage(this.id, 20)
+
+				player.hooks.onApply.remove(ailmentInfo.ailmentInstance)
+
+				executeAttacks(game, [additionalAttack], true)
+			})
 
 			attack.addDamage(this.id, 20 * ailmentInfo.duration)
 		})

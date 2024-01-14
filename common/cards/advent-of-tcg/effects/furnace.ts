@@ -11,7 +11,7 @@ class FurnaceEffectCard extends EffectCard {
 			name: 'Furnace',
 			rarity: 'rare',
 			description:
-				'Attach to any of your active or AFK Hermits.\n\nAfter 5 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
+				'Attach to any of your active or AFK Hermits.\n\nAfter 4 turns, all single item cards attached to that Hermit are converted to double item cards. This card is then discarded.',
 		})
 	}
 

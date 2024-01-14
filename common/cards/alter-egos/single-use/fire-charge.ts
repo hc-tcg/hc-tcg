@@ -55,6 +55,8 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
 					return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.slot.type === 'effect' && !isRemovable(pickResult.card))
+					return 'FAILURE_CANNOT_COMPLETE'
 
 				const row = player.board.rows[pickResult.rowIndex]
 				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'

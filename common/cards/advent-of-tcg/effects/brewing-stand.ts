@@ -24,6 +24,8 @@ class BrewingStandEffectCard extends EffectCard {
 			if (!pos.row?.itemCards || pos.row.itemCards.filter((card) => card !== null).length === 0)
 				return
 
+			if (pos.rowIndex !== player.board.activeRow) return
+
 			const flip = flipCoin(player, this.id)[0]
 			if (flip !== 'heads') return
 

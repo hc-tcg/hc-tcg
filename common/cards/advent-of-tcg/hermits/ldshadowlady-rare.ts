@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
-import {swapRows} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 class LDShadowLadyRareHermitCard extends HermitCard {
@@ -62,8 +61,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 
-					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
-					game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
 
 					return 'SUCCESS'
 				},
@@ -77,8 +75,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
-					game.changeActiveRow(opponentPlayer, pickedRowIndex)
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},
 			})
 		})

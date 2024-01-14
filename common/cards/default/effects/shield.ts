@@ -31,7 +31,7 @@ class ShieldEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 60) {
-				const damageReduction = Math.min(attack.getDamage(), 60 - totalReduction)
+				const damageReduction = Math.min(attack.calculateDamage(), 60 - totalReduction)
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(this.id, damageReduction)
 			}
@@ -43,12 +43,6 @@ class ShieldEffectCard extends EffectCard {
 			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
 				discardCard(game, row.effectCard)
 			}
-
-			// Delete the stored damage
-			delete player.custom[instanceKey]
-
-			// We only need to check once
-			player.hooks.afterDefence.remove(instance)
 		})
 	}
 

@@ -11,7 +11,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 			name: 'Oli',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
-			health: 260,
+			health: 280,
 			primary: {
 				name: 'Melody',
 				cost: ['speedrunner'],
@@ -74,6 +74,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack.remove(instance)
+		player.hooks.onHermitDeath.remove(instance)
 		delete player.custom[instanceKey]
 	}
 

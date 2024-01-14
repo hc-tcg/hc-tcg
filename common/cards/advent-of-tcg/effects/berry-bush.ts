@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
+import {getActiveRow} from '../../../utils/board'
 
 class BerryBushEffectCard extends EffectCard {
 	constructor() {
@@ -13,7 +14,7 @@ class BerryBushEffectCard extends EffectCard {
 			name: 'Sweet Berry Bush',
 			rarity: 'ultra_rare',
 			description:
-				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not become active. Can not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 		})
 	}
 
@@ -24,12 +25,6 @@ class BerryBushEffectCard extends EffectCard {
 		if (!row) return
 
 		row.health = 30
-
-		// Make this card unable to be switched to
-		player.hooks.beforeActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (oldRow === rowIndex || newRow === pos.rowIndex) return false
-			return true
-		})
 
 		player.hooks.afterAttack.add(instance, () => {
 			if (!row.health) {
@@ -53,7 +48,7 @@ class BerryBushEffectCard extends EffectCard {
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			if (!row.health) {
+			if (!row.health || row.health <= 10) {
 				discardCard(game, row.hermitCard)
 				return
 			}
@@ -63,13 +58,17 @@ class BerryBushEffectCard extends EffectCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, slot, row} = pos
+
+		if (getActiveRow(player) === row) {
+			game.changeActiveRow(player, null)
+		}
+
 		if (slot && slot.type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
 			row.itemCards = []
 		}
 
-		player.hooks.beforeActiveRowChange.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
@@ -77,11 +76,12 @@ class BerryBushEffectCard extends EffectCard {
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {slot} = pos
-		const {opponentPlayer} = game
+		const {currentPlayer, opponentPlayer} = game
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
 		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
 		if (opponentPlayer.board.activeRow === null) return 'INVALID'
+		if (currentPlayer.board.activeRow === null) return 'INVALID'
 
 		return 'YES'
 	}
@@ -91,10 +91,10 @@ class BerryBushEffectCard extends EffectCard {
 	}
 
 	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
+		const {opponentPlayer} = game
 
 		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
+		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
 
 		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
