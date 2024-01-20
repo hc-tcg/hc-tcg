@@ -17,22 +17,21 @@ type Props = {
 
 export function MassExportModal({setOpen, onClose}: Props) {
 	const getExportDecks = () => {
-		const decks:string[] = []
+		const decks: string[] = []
 		getSavedDecks().forEach((deck) => {
 			const deckJson = JSON.parse(deck)
 			decks.push(`${deckJson.name}:${deckJson.icon}:${getHashFromDeck(deckJson.cards)}\n`)
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
-		
-		const downloadLink = document.createElement("a")
+
+		const downloadLink = document.createElement('a')
 		downloadLink.href = URL.createObjectURL(deckFile)
-		downloadLink.download = "decks.txt"
+		downloadLink.download = 'decks.txt'
 
 		document.body.appendChild(downloadLink)
 		downloadLink.click()
 		document.body.removeChild(downloadLink)
 	}
-	
 
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => !e && onClose()}>

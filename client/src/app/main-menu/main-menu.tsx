@@ -7,9 +7,9 @@ import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
-import { useState } from 'react'
-import { MassImportModal } from 'components/import-export/mass-import-modal'
-import { MassExportModal } from 'components/import-export/mass-export-modal'
+import {useState} from 'react'
+import {MassImportModal} from 'components/import-export/mass-import-modal'
+import {MassExportModal} from 'components/import-export/mass-export-modal'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -30,14 +30,8 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<>
-			<MassImportModal
-				setOpen={showImportModal}
-				onClose={() => setShowImportModal(false)}
-			/>
-			<MassExportModal 
-				setOpen={showExportModal}
-				onClose={() => setShowExportModal(false)}
-			/>
+			<MassImportModal setOpen={showImportModal} onClose={() => setShowImportModal(false)} />
+			<MassExportModal setOpen={showExportModal} onClose={() => setShowExportModal(false)} />
 			<div className={css.mainmenu}>
 				<div className={css.playerInfo}>
 					<p id={css.infoName}>

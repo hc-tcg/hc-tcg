@@ -6,7 +6,7 @@ import css from './import-export.module.scss'
 import {useState} from 'react'
 import {EnergyT} from 'common/types/cards'
 import {getDeckFromHash} from './import-export-utils'
-import { saveDeck } from 'logic/saved-decks/saved-decks'
+import {saveDeck} from 'logic/saved-decks/saved-decks'
 
 type Props = {
 	setOpen: boolean
@@ -38,7 +38,7 @@ export function MassImportModal({setOpen, onClose}: Props) {
 			const decks: PlayerDeckT[] = []
 			newFileContent.split('\n').forEach((line: string) => {
 				const lineComponents: string[] = line.split(':')
-				const deck = getDeckFromHash(lineComponents[2].replace("\r", ""))
+				const deck = getDeckFromHash(lineComponents[2].replace('\r', ''))
 				if (deck.length === 0) return
 
 				saveDeck({
