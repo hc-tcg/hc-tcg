@@ -66,8 +66,6 @@ nav {
 		'private-create'
 		'private-join'
 		'deck'
-		'import'
-		'export'
 		'settings'
 		'logout';
 	animation: fadeIn 250ms ease-in-out forwards;
@@ -95,14 +93,6 @@ nav {
 
 #logout {
 	grid-area: logout;
-}
-
-#import {
-	grid-area: import;
-}
-
-#export {
-	grid-area: export;
 }
 
 /* Settings Page */
@@ -257,7 +247,6 @@ nav {
 			'public public'
 			'private-create private-join'
 			'deck deck'
-			'import export'
 			'logout settings';
 	}
 }

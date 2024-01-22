@@ -39,7 +39,7 @@ export function MassExportModal({setOpen, onClose}: Props) {
 				<AlertDialog.Overlay className={ModalCSS.AlertDialogOverlay} />
 				<AlertDialog.Content className={ModalCSS.AlertDialogContent}>
 					<AlertDialog.Title className={ModalCSS.AlertDialogTitle}>
-						Export Deck
+						Mass Export
 						<AlertDialog.Close asChild>
 							<button className={ModalCSS.xClose}>
 								<img src="/images/CloseX.svg" alt="close" />
@@ -50,8 +50,8 @@ export function MassExportModal({setOpen, onClose}: Props) {
 						<div>
 							{/* EXPORT SECTION */}
 							<div className={css.importControls}>
-								<Button onClick={getExportDecks}>Export decks</Button>
 								<p className={css.instructions}>Press the export button to export all decks</p>
+								<Button onClick={getExportDecks}>Export decks</Button>
 							</div>
 						</div>
 					</AlertDialog.Description>

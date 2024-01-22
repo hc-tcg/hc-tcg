@@ -31,6 +31,7 @@ import {
 import HermitCard from '../../../../common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
+import {MassExportModal} from 'components/import-export/mass-export-modal'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -120,6 +121,7 @@ const Deck = ({setMenuSection}: Props) => {
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] = useState<boolean>(false)
 	const [showImportModal, setShowImportModal] = useState<boolean>(false)
 	const [showExportModal, setShowExportModal] = useState<boolean>(false)
+	const [showMassExportModal, setShowMassExportModal] = useState<boolean>(false)
 	const [showValidateDeckModal, setShowValidateDeckModal] = useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
@@ -168,6 +170,10 @@ const Deck = ({setMenuSection}: Props) => {
 	const handleImportDeck = (deck: PlayerDeckT) => {
 		setImportedDeck(deck)
 		importDeck(deck)
+		setShowImportModal(false)
+	}
+	const handleMassImportDecks = () => {
+		setSavedDecks(getSavedDecks())
 		setShowImportModal(false)
 	}
 
@@ -275,11 +281,16 @@ const Deck = ({setMenuSection}: Props) => {
 					setOpen={showImportModal}
 					onClose={() => setShowImportModal(!showImportModal)}
 					importDeck={(deck) => handleImportDeck(deck)}
+					handleMassImport={handleMassImportDecks}
 				/>
 				<ExportModal
 					setOpen={showExportModal}
 					onClose={() => setShowExportModal(!showExportModal)}
 					loadedDeck={loadedDeck}
+				/>
+				<MassExportModal
+					setOpen={showMassExportModal}
+					onClose={() => setShowMassExportModal(!showMassExportModal)}
 				/>
 				<AlertModal
 					setOpen={showValidateDeckModal}
@@ -460,7 +471,14 @@ const Deck = ({setMenuSection}: Props) => {
 									</Button>
 									<Button variant="primary" onClick={() => setShowImportModal(!showImportModal)}>
 										<ExportIcon reversed />
-										<span>Import Deck</span>
+										<span>Import Decks</span>
+									</Button>
+									<Button
+										variant="default"
+										onClick={() => setShowMassExportModal(!showMassExportModal)}
+									>
+										<ExportIcon />
+										<span>Mass Export</span>
 									</Button>
 								</div>
 							</>
