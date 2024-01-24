@@ -4,6 +4,7 @@ import css from './hermit-card-svg.module.scss'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
+import {EXPANSIONS} from 'common/config'
 
 export type HermitCardProps = {
 	card: HermitCard
@@ -22,12 +23,19 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 
 	const rank = getCardRank(card.id)
 	const palette = card.getPalette()
+	const expansion = card.getExpansion()
 	const backgroundName = card.getBackground()
 	const showCost = !useSelector(getGameState)
 	const nameLength = card.name.length
+	const disabled = EXPANSIONS.disabled.includes(card.getExpansion()) ? 'disabled' : 'enabled'
 
 	return (
-		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
+		<svg
+			className={classnames(css.card, css[disabled])}
+			width="100%"
+			height="100%"
+			viewBox="0 0 400 400"
+		>
 			<defs>
 				<clipPath id="myClip">
 					<rect x="55" y="70" width="290" height="178" />

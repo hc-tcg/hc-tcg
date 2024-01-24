@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, DEBUG_CONFIG} from 'common/config'
+import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
 	CardT,
@@ -12,7 +12,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT} from 'common/types/cards'
+import {EnergyT, SlotPos} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card from 'common/cards/base/card'
@@ -53,7 +53,9 @@ export function getStarterPack() {
 		.slice(0, hermitTypesCount)
 
 	const cards = Object.values(CARDS).filter(
-		(cardInfo) => !isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)
+		(cardInfo) =>
+			(!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)) &&
+			!EXPANSIONS.disabled.includes(cardInfo.getExpansion())
 	)
 
 	const effectCards = cards.filter(isEffect)
@@ -186,6 +188,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		const card = CARDS[id]
 		if (!card) {
 			console.log('Invalid extra starting card in debug config:', id)
+			continue
 		}
 
 		const cardInfo = {
@@ -238,10 +241,12 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onTurnTimeout: new GameHook<(newAttacks: Array<AttackModel>) => void>(),
 			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			beforeActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => boolean>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number) => void>(),
+			beforeActiveRowChange: new GameHook<
+				(oldRow: number | null, newRow: number | null) => boolean
+			>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
+			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
 		},
 	}
 }
@@ -282,16 +287,17 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
-	if (currentPickRequest?.playerId === player.playerId) {
+	if (currentModalRequest?.playerId === player.playerId) {
+		// We must send modal requests first, to stop pick requests from overwriting them.
+		currentModalData = currentModalRequest.data
+	} else if (currentPickRequest?.playerId === player.playerId) {
+		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
 		const cardInfo = CARDS[currentPickRequest.id]
 		if (cardInfo) {
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
-	} else if (currentModalRequest?.playerId === player.playerId) {
-		// Only if there is no pick request will we send a modal request
-		currentModalData = currentModalRequest.data
 	}
 
 	const localGameState: LocalGameState = {

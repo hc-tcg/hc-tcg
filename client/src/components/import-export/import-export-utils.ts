@@ -3,9 +3,13 @@ import {CARDS} from 'common/cards'
 import {encode, decode} from 'js-base64'
 
 export const getDeckFromHash = (hash: string): Array<CardT> => {
-	const b64 = decode(hash)
-		.split('')
-		.map((char) => char.charCodeAt(0))
+	try {
+		var b64 = decode(hash)
+			.split('')
+			.map((char) => char.charCodeAt(0))
+	} catch (err) {
+		return []
+	}
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
 		const cardId = Object.values(CARDS).find((value) => value.numericId === b64[i])?.id

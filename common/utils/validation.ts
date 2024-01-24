@@ -1,4 +1,4 @@
-import {CONFIG, DEBUG_CONFIG} from '../config'
+import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from '../config'
 import {CARDS} from '../cards'
 import {getDeckCost} from './ranks'
 
@@ -9,6 +9,12 @@ export function validateDeck(deckCards: Array<string>) {
 	deckCards = deckCards.filter((cardId) => CARDS[cardId])
 
 	// order validation by simplest problem first, so that a player can easily identify why their deck isn't valid
+
+	// Contains disabled cards
+	const hasDisabledCards = deckCards.some((cardId) =>
+		EXPANSIONS.disabled.includes(CARDS[cardId].getExpansion())
+	)
+	if (hasDisabledCards) return 'Deck must not include removed cards.'
 
 	// less than one hermit
 	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')

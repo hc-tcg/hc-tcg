@@ -1,7 +1,6 @@
 import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
-import {equalCard} from 'common/utils/cards'
 import {call} from 'typed-redux-saga'
 import {addChangeHermitEntry} from 'utils/battle-log'
 
@@ -18,19 +17,11 @@ function* changeActiveHermit(
 		return 'FAILURE_CANNOT_COMPLETE'
 	}
 
-	// Can't change to existing active row
-	if (rowIndex === currentPlayer.board.activeRow) return 'FAILURE_CANNOT_COMPLETE'
-
 	const hadActiveHermit = currentPlayer.board.activeRow !== null
-	const oldActiveRow = currentPlayer.board.activeRow
 
-	// Call active row change hooks, before we actually change
-	const results = currentPlayer.hooks.beforeActiveRowChange.call(oldActiveRow, rowIndex)
-
-	if (results.includes(false)) return 'FAILURE_CANNOT_COMPLETE'
-
-	// Actually change row
-	currentPlayer.board.activeRow = rowIndex
+	// Change row
+	const result = game.changeActiveRow(currentPlayer, rowIndex)
+	if (!result) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Create battle log entry
 	yield* call(addChangeHermitEntry, game, turnAction)
@@ -41,6 +32,7 @@ function* changeActiveHermit(
 
 		// Attack phase complete, mark most actions as blocked now
 		game.addBlockedActions(
+			null,
 			'SINGLE_USE_ATTACK',
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',
@@ -50,9 +42,6 @@ function* changeActiveHermit(
 			'PLAY_SINGLE_USE_CARD'
 		)
 	}
-
-	// Call hooks
-	currentPlayer.hooks.onActiveRowChange.call(oldActiveRow, rowIndex)
 
 	return 'SUCCESS'
 }

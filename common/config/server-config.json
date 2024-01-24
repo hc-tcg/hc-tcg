@@ -2,7 +2,12 @@
 	"port": 9000,
 	"clientDevPort": 3002,
 	"clientPath": "client/dist",
-	"cors": ["http://localhost:3002", "https://hc-tcg.fly.dev", "https://hc-tcg-beta.fly.dev"],
+	"cors": [
+		"http://localhost:3002",
+		"https://hc-tcg.fly.dev",
+		"https://hc-tcg-beta.fly.dev",
+		"https://hc-tcg.online"
+	],
 	"world": "LTF42",
 	"limits": {
 		"maxTurnTime": 90,
@@ -10,10 +15,9 @@
 		"minCards": 42,
 		"maxCards": 42,
 		"maxDuplicates": 3,
-
 		"maxDeckCost": 42
 	},
-	"logoSubText": "Alter egos!",
+	"logoSubText": "Unification!",
 	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.23"
+	"version": "0.6.36"
 }

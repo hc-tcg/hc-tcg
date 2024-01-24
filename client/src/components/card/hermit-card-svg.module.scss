@@ -6,6 +6,10 @@
 	background: white;
 	letter-spacing: 0.065em;
 	font-family: BangersRegular !important;
+
+	&.disabled {
+		filter: grayscale(1) brightness(0.9);
+	}
 }
 
 .hermitImage {
@@ -21,6 +25,10 @@
 
 	&.pharaoh {
 		fill: rgb(239, 228, 103);
+	}
+
+	&.advent_of_tcg {
+		fill: rgb(206, 211, 206);
 	}
 }
 

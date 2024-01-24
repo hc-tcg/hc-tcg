@@ -4,7 +4,6 @@ import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
-import {gameEndWebhook} from '../api'
 import {PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
 
@@ -73,7 +72,6 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
-		//gameEndWebhook(game)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
@@ -258,6 +256,9 @@ function* joinPrivateGame(msg: ClientMessage) {
 
 		const newGame = new GameModel(player, existingPlayer, code)
 		root.addGame(newGame)
+
+		// Remove this game from the queue, it's started
+		delete root.privateQueue[code]
 
 		console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
 

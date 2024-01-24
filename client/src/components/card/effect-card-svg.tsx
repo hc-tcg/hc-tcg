@@ -4,6 +4,8 @@ import {getGameState} from 'logic/game/game-selectors'
 import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
 import {getCardRank} from 'common/utils/ranks'
+import {EXPANSIONS} from 'common/config'
+import classNames from 'classnames'
 
 export type EffectCardProps = {
 	card: EffectCard | SingleUseCard
@@ -12,8 +14,15 @@ export type EffectCardProps = {
 const EffectCardModule = ({card}: EffectCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
+	const disabled = EXPANSIONS.disabled.includes(card.getExpansion()) ? 'disabled' : 'enabled'
+
 	return (
-		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
+		<svg
+			className={classNames(css.card, css[disabled])}
+			width="100%"
+			height="100%"
+			viewBox="0 0 400 400"
+		>
 			<rect className={css.cardBackground} x="10" y="10" width="380" height="380" rx="15" ry="15" />
 			<g>
 				<image className={css.star} href={`/images/star_color.svg`} x="-15" y="65" width="390" />

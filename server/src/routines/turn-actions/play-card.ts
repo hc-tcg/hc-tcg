@@ -7,8 +7,6 @@ import {ActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
 import {addPlayCardEntry} from 'utils/battle-log'
 import {DEBUG_CONFIG} from 'common/config'
-import SingleUseCard from 'common/cards/base/single-use-card'
-import {applySingleUse} from 'common/utils/board'
 
 function* playCardSaga(
 	game: GameModel,
@@ -47,8 +45,8 @@ function* playCardSaga(
 	const basicPos: BasicCardPos = {
 		player: game.state.players[playerId],
 		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex: pickedIndex || null,
-		row: pickedIndex ? game.state.players[playerId].board.rows[pickedIndex] : null,
+		rowIndex: pickedIndex === undefined ? null : pickedIndex,
+		row: pickedIndex !== undefined ? game.state.players[playerId].board.rows[pickedIndex] : null,
 		slot: {type: pickedSlot.type, index: pickedSlot.index},
 	}
 
@@ -87,7 +85,7 @@ function* playCardSaga(
 				}
 
 				if (player.board.activeRow === null) {
-					player.board.activeRow = rowIndex
+					game.changeActiveRow(player, rowIndex)
 				}
 
 				break
