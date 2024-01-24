@@ -27,7 +27,8 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 	const backgroundName = card.getBackground()
 	const showCost = !useSelector(getGameState)
 	const nameLength = card.name.length
-	const disabled = EXPANSIONS.disabled.includes(card.getExpansion()) ? 'disabled' : 'enabled'
+	const disabled =
+		EXPANSIONS.disabled.includes(expansion) && expansion !== 'boss' ? 'disabled' : 'enabled'
 
 	return (
 		<svg

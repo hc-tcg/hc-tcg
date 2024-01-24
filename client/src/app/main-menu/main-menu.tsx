@@ -1,5 +1,5 @@
 import {useDispatch, useSelector} from 'react-redux'
-import {joinQueue, createPrivateGame, joinPrivateGame} from 'logic/matchmaking/matchmaking-actions'
+import {joinQueue, createPrivateGame, joinPrivateGame, createBossGame} from 'logic/matchmaking/matchmaking-actions'
 import {logout} from 'logic/session/session-actions'
 import {getSession} from 'logic/session/session-selectors'
 import css from './main-menu.module.scss'
@@ -17,6 +17,7 @@ function MainMenu({setMenuSection}: Props) {
 	const handleJoinQueue = () => dispatch(joinQueue())
 	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
+	const handleCreateBossGame = () => dispatch(createBossGame())
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
@@ -39,6 +40,9 @@ function MainMenu({setMenuSection}: Props) {
 				<nav>
 					<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 						Public Game
+					</Button>
+					<Button variant="stone" id={css.boss} onClick={handleCreateBossGame}>
+						Challenge Evil X
 					</Button>
 					<Button variant="stone" id={css.privateCreate} onClick={handleCreatePrivateGame}>
 						Create Private Game

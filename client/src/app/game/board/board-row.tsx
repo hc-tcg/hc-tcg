@@ -6,6 +6,7 @@ import cn from 'classnames'
 import {AilmentT} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import {BoardSlotTypeT} from 'common/types/cards'
+import classnames from 'classnames'
 
 const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
 	if (!row) return null
@@ -23,11 +24,21 @@ type BoardRowProps = {
 	ailments: Array<AilmentT>
 }
 const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) => {
+	const itemSlots = rowState.itemCards.length
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
 		const card = getCardBySlot(slotInfo, rowState)
 		const cssId = slotType === 'item' ? slotType + (index + 1) : slotType
+
+		if (slotType === 'item' && itemSlots <= index)
+			return (
+				<div
+					id={css[cssId]}
+					className={classnames(css.slot, css[slotType], css.empty, {[css.afk]: !active})}
+				/>
+			)
+
 		return (
 			<Slot
 				cssId={cssId}

@@ -2,7 +2,8 @@
 	"expansions": {
 		"default": "Base set",
 		"alter_egos": "Alter Egos",
-		"advent_of_tcg": "Advent of TCG"
+		"advent_of_tcg": "Advent of TCG",
+		"boss": "Boss"
 	},
-	"disabled": ["advent_of_tcg"]
+	"disabled": ["advent_of_tcg", "boss"]
 }
