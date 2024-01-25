@@ -1,5 +1,5 @@
 import {takeEvery, delay} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
+import {broadcast} from '../../../../common/utils/comm'
 import {getOpponentId} from '../../utils'
 import {CONFIG} from 'common/config'
 import {getLocalGameState} from '../../utils/state-gen'

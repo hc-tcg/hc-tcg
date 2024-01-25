@@ -5,7 +5,6 @@ import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
-import {addPlayCardEntry} from 'utils/battle-log'
 import {DEBUG_CONFIG} from 'common/config'
 
 function* playCardSaga(
@@ -120,7 +119,7 @@ function* playCardSaga(
 	currentPlayer.hooks.onAttach.call(card.cardInstance)
 
 	// Add entry to battle log
-	yield* call(addPlayCardEntry, game, turnAction)
+	game.battleLog.addPlayCardEntry(turnAction)
 
 	return 'SUCCESS'
 }

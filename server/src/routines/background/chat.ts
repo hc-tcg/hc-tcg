@@ -1,5 +1,5 @@
 import {takeEvery} from 'typed-redux-saga'
-import {broadcast} from '../../utils/comm'
+import {broadcast} from '../../../../common/utils/comm'
 import profanityFilter from '../../../../common/utils/profanity'
 import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
@@ -20,6 +20,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 		message,
 		censoredMessage: profanityFilter(message),
 		playerId,
+		systemMessage: false,
 	})
 	broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 }

@@ -1,5 +1,5 @@
 import {all, take, takeEvery, cancel, spawn, fork, race, delay, join} from 'typed-redux-saga'
-import {broadcast} from '../utils/comm'
+import {broadcast} from '../../../common/utils/comm'
 import gameSaga, {getTimerForSeconds} from './game'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'

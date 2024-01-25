@@ -2,7 +2,6 @@ import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
 import {call} from 'typed-redux-saga'
-import {addChangeHermitEntry} from 'utils/battle-log'
 
 function* changeActiveHermit(
 	game: GameModel,
@@ -24,7 +23,7 @@ function* changeActiveHermit(
 	if (!result) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Create battle log entry
-	yield* call(addChangeHermitEntry, game, turnAction)
+	game.battleLog.addChangeHermitEntry(turnAction)
 
 	if (hadActiveHermit) {
 		// We switched from one hermit to another, mark this action as completed

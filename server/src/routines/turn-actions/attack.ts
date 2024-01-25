@@ -7,7 +7,6 @@ import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
-import {addAttackEntry} from 'utils/battle-log'
 import {getActiveRow} from 'common/utils/board'
 import {executeAttacks} from 'common/utils/attacks'
 
@@ -95,11 +94,11 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
+	//Add entry to battle log
+	game.battleLog.addAttackEntry(turnAction)
+
 	// Run all the code stuff
 	executeAttacks(game, attacks)
-
-	//Add entry to battle log
-	yield* call(addAttackEntry, game, turnAction)
 
 	return 'SUCCESS'
 }

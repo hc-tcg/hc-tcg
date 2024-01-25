@@ -6,6 +6,7 @@ import {CardPosModel} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
+import {broadcast} from './comm'
 
 function executeAttack(attack: AttackModel) {
 	const {target} = attack
@@ -190,6 +191,19 @@ export function executeAttacks(
 	// STEP 6 - Finally, after all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(allAttacks)
 	runAfterDefenceHooks(allAttacks)
+}
+
+export function executeExtraAttacks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+	type: string,
+	withoutBlockingActions = false
+) {
+	executeAttacks(game, attacks, withoutBlockingActions)
+
+	attacks.map((attack) => {
+		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
+	})
 }
 
 // Things not directly related to the attack loop

@@ -10,7 +10,7 @@ const defaultState: LocalGameRoot = {
 	openedModal: null,
 	endGameOverlay: null,
 	chat: [],
-	battleLog: [],
+	battleLog: null,
 	currentCoinFlip: null,
 	opponentConnected: true,
 }
@@ -41,7 +41,7 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				endGameOverlay: null,
 				currentCoinFlip: null,
 				chat: [],
-				battleLog: [],
+				battleLog: null,
 				opponentConnected: true,
 			}
 

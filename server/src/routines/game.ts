@@ -21,7 +21,6 @@ import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
 import {AttackModel} from 'common/models/attack-model'
-import {addCoinFlipEntry, addAilmentEntry, addDeathEntry, addTimeoutEntry} from 'utils/battle-log'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -196,7 +195,7 @@ function* checkHermitHealth(game: GameModel) {
 				}
 
 				// Add battle log entry
-				yield* call(addDeathEntry, game, playerState, row)
+				game.battleLog.addDeathEntry(playerState, row)
 
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
@@ -409,7 +408,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
-			yield* call(addCoinFlipEntry, game, currentPlayer.coinFlips)
+			game.battleLog.addCoinFlipEntry(currentPlayer.coinFlips)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),

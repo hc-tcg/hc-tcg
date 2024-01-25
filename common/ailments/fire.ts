@@ -5,7 +5,7 @@ import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeAilment} from '../utils/board'
 import {AilmentT} from '../types/game-state'
-import {executeAttacks} from '../utils/attacks'
+import {executeExtraAttacks} from '../utils/attacks'
 
 class FireAilment extends Ailment {
 	constructor() {
@@ -58,7 +58,7 @@ class FireAilment extends Ailment {
 			})
 			ailmentAttack.addDamage(this.id, 20)
 
-			executeAttacks(game, [ailmentAttack], true)
+			executeExtraAttacks(game, [ailmentAttack], 'Burn', true)
 		})
 
 		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {

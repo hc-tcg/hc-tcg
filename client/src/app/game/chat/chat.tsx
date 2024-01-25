@@ -9,6 +9,7 @@ import css from './chat.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
+import {BattleLogDescriptionT} from 'common/types/game-state'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -58,34 +59,61 @@ function Chat() {
 
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
-					{chatMessages
-						.slice()
-						.reverse()
-						.map((msg) => {
-							const time = new Date(msg.createdAt).toLocaleString()
-							const hmTime = new Date(msg.createdAt).toLocaleTimeString([], {
-								hour: '2-digit',
-								minute: '2-digit',
-							})
-							const name = playerStates?.[msg.playerId]?.playerName || 'unknown'
-							const isPlayer = playerId === msg.playerId
+					{chatMessages.slice().map((msg) => {
+						const time = new Date(msg.createdAt).toLocaleString()
+						const hmTime = new Date(msg.createdAt).toLocaleTimeString([], {
+							hour: '2-digit',
+							minute: '2-digit',
+						})
+						const isPlayer = playerId === msg.playerId
+
+						if (msg.systemMessage === true) {
 							return (
-								<p
-									key={msg.createdAt}
-									className={classnames(css.message, {
-										[css.player]: isPlayer,
-										[css.opponent]: !isPlayer,
-									})}
-									title={time}
-								>
+								<p>
 									<span className={css.time}>{hmTime}</span>
-									<span className={css.playerName}>{name}</span>
-									<span className={css.text}>
-										{settings.profanityFilter !== 'off' ? msg.censoredMessage : msg.message}
-									</span>
+									{(msg.message as Array<BattleLogDescriptionT>).map((segment) => {
+										return (
+											<span
+												className={classnames(css.entryTooltip, {
+													[css.highlight]: segment.format === 'highlight',
+													[css.player]:
+														(segment.format === 'player' && isPlayer) ||
+														(segment.format === 'opponent' && !isPlayer),
+													[css.opponent]:
+														(segment.format === 'opponent' && isPlayer) ||
+														(segment.format === 'player' && !isPlayer),
+												})}
+											>
+												{segment.condition === undefined && segment.text}
+												{segment.condition === 'player' && isPlayer && segment.text}
+												{segment.condition === 'opponent' && !isPlayer && segment.text}
+											</span>
+										)
+									})}
 								</p>
 							)
-						})}
+						}
+
+						const name = playerStates?.[msg.playerId]?.playerName || 'unknown'
+						return (
+							<p
+								key={msg.createdAt}
+								className={classnames(css.message, {
+									[css.player]: isPlayer,
+									[css.opponent]: !isPlayer,
+								})}
+								title={time}
+							>
+								<span className={css.time}>{hmTime}</span>
+								<span className={css.playerName}>{name}</span>
+								<span className={css.text}>
+									{settings.profanityFilter !== 'off'
+										? (msg.censoredMessage as string)
+										: (msg.message as string)}
+								</span>
+							</p>
+						)
+					})}
 				</div>
 			</div>
 
