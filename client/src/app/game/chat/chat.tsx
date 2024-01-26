@@ -19,6 +19,7 @@ function Chat() {
 	const playerId = useSelector(getPlayerId)
 	const opponent = useSelector(getOpponentName)
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
+	const [showLog, setShowLog] = useState(true)
 
 	const bindChatPos = useDrag((params: any) => {
 		setChatPos({
@@ -52,7 +53,10 @@ function Chat() {
 		>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponent}</p>
-				<button onClick={closeChat}>
+				<Button onClick={() => setShowLog(!showLog)} size="small">
+					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
+				</Button>
+				<button onClick={closeChat} className={css.close}>
 					<img src="/images/CloseX.svg" alt="close" />
 				</button>
 			</div>
@@ -68,6 +72,7 @@ function Chat() {
 						const isPlayer = playerId === msg.playerId
 
 						if (msg.systemMessage === true) {
+							if (!showLog) return
 							return (
 								<p>
 									<span className={css.time}>{hmTime}</span>

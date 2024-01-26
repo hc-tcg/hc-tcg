@@ -38,8 +38,14 @@
 	font-size: 1.2rem;
 	touch-action: none;
 	cursor: grab;
+	align-items: center;
+	gap: inherit;
 
-	img {
+	p {
+		flex-grow: 1;
+	}
+
+	.close {
 		filter: brightness(0.1);
 		cursor: pointer;
 
@@ -137,17 +143,17 @@
 	color: var(--gray-300);
 
 	&.highlight {
-		color: var(--gray-200);
+		color: var(--gray-300);
 		font-family: MinecraftBold;
 	}
 
 	&.player {
-		color: #6fabd0;
+		color: var(--gray-300);
 		font-family: MinecraftBold;
 	}
 
 	&.opponent {
-		color: #5ea758;
+		color: var(--gray-300);
 		font-family: MinecraftBold;
 	}
 }
