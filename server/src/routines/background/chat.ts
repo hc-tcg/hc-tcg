@@ -7,6 +7,11 @@ import {AnyAction} from 'redux'
 import {MessageTextT} from 'common/types/game-state'
 import {HERMIT_CARDS} from 'common/cards'
 
+type MessageChunk = {
+	message: string
+	type: 'emoji' | 'text'
+}
+
 const gameAction =
 	(type: string, game: {players: Record<string, PlayerModel>}) => (action: any) => {
 		return action.type === type && !!game.players[action.playerId]
@@ -22,29 +27,39 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 		return {shortName: card.name.toLowerCase().replace(' ', '_'), longName: card.id.split('_')[0]}
 	})
 
-	var splitMessage = [message]
+	var splitMessage: Array<MessageChunk> = [
+		{
+			message: message,
+			type: 'text',
+		},
+	]
 
 	hermitNames.forEach((name) => {
 		splitMessage = splitMessage.flatMap((chunk) => {
-			return chunk.split(new RegExp('(:' + name.shortName + ':)', 'g'))
+			if (chunk.type === 'emoji') return chunk
+			const splitString = chunk.message.split(new RegExp('(:' + name.shortName + ':)', 'g'))
+			const formattedSplitString: Array<MessageChunk> = []
+			splitString.forEach((chunk) => {
+				if (chunk === '') return
+				const colonlessChunk = chunk.substring(1, chunk.length - 1)
+				formattedSplitString.push({
+					message: colonlessChunk === name.shortName ? name.longName : chunk,
+					type: colonlessChunk === name.shortName ? 'emoji' : 'text',
+				})
+			})
+			return formattedSplitString
 		})
 	})
 
-	const filteredSplitMessage = splitMessage.filter((chunk) => chunk !== '')
-
-	const messageArray = filteredSplitMessage.map((chunk) => {
-		if (chunk[0] === ':' && chunk[chunk.length - 1] === ':') {
-			var fullEmojiName = ''
-			hermitNames.forEach((name) => {
-				if (chunk.substring(1, chunk.length - 1) === name.shortName) fullEmojiName = name.longName
-			})
+	const messageArray = splitMessage.map((chunk) => {
+		if (chunk.type === 'emoji') {
 			return {
-				text: `images/hermits-emoji/${fullEmojiName}.png`,
+				text: `images/hermits-emoji/${chunk.message}.png`,
 				format: 'image',
 			}
 		}
 		return {
-			text: chunk,
+			text: chunk.message,
 			format: 'plain',
 		}
 	})

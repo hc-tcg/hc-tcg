@@ -114,8 +114,6 @@
 	word-break: break-word;
 	margin-bottom: 0.25rem;
 	font-size: 1rem;
-	display: flex;
-	align-items: baseline;
 }
 
 .player {
@@ -129,7 +127,6 @@
 .time {
 	color: var(--gray-400);
 	font-size: 0.75rem;
-	padding-right: 0.25rem;
 }
 
 .playerName {
