@@ -127,6 +127,7 @@
 .time {
 	color: var(--gray-400);
 	font-size: 0.75rem;
+	padding-right: 0.25rem;
 }
 
 .playerName {
@@ -144,7 +145,6 @@
 
 .entryTooltip {
 	color: var(--gray-300);
-	padding-right: 0.42rem;
 
 	&.highlight {
 		color: var(--gray-300);

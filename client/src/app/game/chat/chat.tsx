@@ -101,7 +101,7 @@ function Chat() {
 								{!msg.systemMessage && <span className={css.playerName}>{name}</span>}
 								{msg.message.map((segment) => {
 									if (segment.format === 'image') {
-										return <img className={css.emoji} src={segment.text}></img>
+										return <img className={css.emoji} src={segment.text} alt={segment.alt}></img>
 									}
 									if (
 										segment.condition === undefined ||
@@ -122,7 +122,7 @@ function Chat() {
 														(segment.format === 'player' && !isPlayer),
 												})}
 											>
-												{segment.text}
+												{settings.profanityFilter ? segment.censoredText : segment.text}
 											</span>
 										)
 								})}

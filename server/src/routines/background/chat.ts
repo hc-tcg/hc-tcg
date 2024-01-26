@@ -55,11 +55,14 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 		if (chunk.type === 'emoji') {
 			return {
 				text: `images/hermits-emoji/${chunk.message}.png`,
+				censoredText: '',
+				alt: chunk.message,
 				format: 'image',
 			}
 		}
 		return {
 			text: chunk.message,
+			censoredText: profanityFilter(chunk.message),
 			format: 'plain',
 		}
 	})
@@ -67,7 +70,6 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	game.chat.push({
 		createdAt: Date.now(),
 		message: messageArray,
-		censoredMessage: messageArray.map((msg) => (msg.text = profanityFilter(msg.text))),
 		playerId,
 		systemMessage: false,
 	})

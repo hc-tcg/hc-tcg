@@ -33,6 +33,7 @@ export class BattleLog {
 	): MessageTextT {
 		const output: MessageTextT = {
 			text: text,
+			censoredText: text,
 			format: format,
 		}
 		if (condition) output.condition = condition
@@ -54,7 +55,6 @@ export class BattleLog {
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: lastEntry.description,
-				censoredMessage: lastEntry.description,
 				playerId: lastEntry.player,
 				systemMessage: true,
 			})
