@@ -54,10 +54,10 @@ export type CurrentCoinFlipT = {
 
 export type BattleLogT = {
 	player: PlayerId
-	description: BattleLogDescriptionT[]
+	description: MessageTextT[]
 }
 
-export type BattleLogDescriptionT = {
+export type MessageTextT = {
 	text: string
 	format: string
 	condition?: 'player' | 'opponent'

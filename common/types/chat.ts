@@ -1,9 +1,9 @@
-import {BattleLogDescriptionT} from './game-state'
+import {MessageTextT} from './game-state'
 
 export type MessageInfoT = {
 	createdAt: number
-	message: string | Array<BattleLogDescriptionT>
-	censoredMessage: string | Array<BattleLogDescriptionT>
+	message: Array<MessageTextT>
+	censoredMessage: Array<MessageTextT>
 	playerId: string
 	systemMessage: boolean
 }

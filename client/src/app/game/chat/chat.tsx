@@ -9,7 +9,6 @@ import css from './chat.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
-import {BattleLogDescriptionT} from 'common/types/game-state'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -18,14 +17,17 @@ function Chat() {
 	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
 	const opponent = useSelector(getOpponentName)
-	const [chatPos, setChatPos] = useState({x: 0, y: 0})
-	const [showLog, setShowLog] = useState(true)
+	const chatPos = settings.chatPosition
+	const chatSize = settings.chatSize
+	const showLog = settings.showBattleLogs
 
 	const bindChatPos = useDrag((params: any) => {
-		setChatPos({
-			x: params.offset[0],
-			y: params.offset[1],
-		})
+		dispatch(
+			setSetting('chatPosition', {
+				x: params.offset[0],
+				y: params.offset[1],
+			})
+		)
 	})
 
 	if (settings.showChat !== 'on') return null
@@ -49,11 +51,25 @@ function Chat() {
 	return (
 		<div
 			className={css.chat}
-			style={{top: chatPos.y, left: chatPos.x, width: '94vw', height: '50vh'}}
+			style={{
+				top: chatPos.y,
+				left: chatPos.x,
+				width: chatSize.w !== 0 ? chatSize.w : '94vw',
+				height: chatSize.h !== 0 ? chatSize.h : '50vh',
+			}}
+			onClick={(e) => {
+				console.log(e)
+				dispatch(
+					setSetting('chatSize', {
+						w: e.currentTarget.clientWidth + 5,
+						h: e.currentTarget.clientHeight + 5,
+					})
+				)
+			}}
 		>
 			<div className={css.header} {...bindChatPos()}>
 				<p>Chatting with {opponent}</p>
-				<Button onClick={() => setShowLog(!showLog)} size="small">
+				<Button onClick={() => dispatch(setSetting('showBattleLogs', !showLog))} size="small">
 					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
 				</Button>
 				<button onClick={closeChat} className={css.close}>
@@ -64,41 +80,13 @@ function Chat() {
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
 					{chatMessages.slice().map((msg) => {
+						if (msg.systemMessage && !showLog) return
 						const time = new Date(msg.createdAt).toLocaleString()
 						const hmTime = new Date(msg.createdAt).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})
 						const isPlayer = playerId === msg.playerId
-
-						if (msg.systemMessage === true) {
-							if (!showLog) return
-							return (
-								<p>
-									<span className={css.time}>{hmTime}</span>
-									{(msg.message as Array<BattleLogDescriptionT>).map((segment) => {
-										return (
-											<span
-												className={classnames(css.entryTooltip, {
-													[css.highlight]: segment.format === 'highlight',
-													[css.player]:
-														(segment.format === 'player' && isPlayer) ||
-														(segment.format === 'opponent' && !isPlayer),
-													[css.opponent]:
-														(segment.format === 'opponent' && isPlayer) ||
-														(segment.format === 'player' && !isPlayer),
-												})}
-											>
-												{segment.condition === undefined && segment.text}
-												{segment.condition === 'player' && isPlayer && segment.text}
-												{segment.condition === 'opponent' && !isPlayer && segment.text}
-											</span>
-										)
-									})}
-								</p>
-							)
-						}
-
 						const name = playerStates?.[msg.playerId]?.playerName || 'unknown'
 						return (
 							<p
@@ -110,12 +98,34 @@ function Chat() {
 								title={time}
 							>
 								<span className={css.time}>{hmTime}</span>
-								<span className={css.playerName}>{name}</span>
-								<span className={css.text}>
-									{settings.profanityFilter !== 'off'
-										? (msg.censoredMessage as string)
-										: (msg.message as string)}
-								</span>
+								{!msg.systemMessage && <span className={css.playerName}>{name}</span>}
+								{msg.message.map((segment) => {
+									if (segment.format === 'image') {
+										return <img className={css.emoji} src={segment.text}></img>
+									}
+									if (
+										segment.condition === undefined ||
+										(segment.condition !== 'player' && isPlayer) ||
+										(segment.condition !== 'opponent' && !isPlayer)
+									)
+										return (
+											<span
+												className={classnames({
+													[css.text]: !msg.systemMessage,
+													[css.entryTooltip]: msg.systemMessage,
+													[css.highlight]: segment.format === 'highlight',
+													[css.player]:
+														(segment.format === 'player' && isPlayer) ||
+														(segment.format === 'opponent' && !isPlayer),
+													[css.opponent]:
+														(segment.format === 'opponent' && isPlayer) ||
+														(segment.format === 'player' && !isPlayer),
+												})}
+											>
+												{segment.text}
+											</span>
+										)
+								})}
 							</p>
 						)
 					})}

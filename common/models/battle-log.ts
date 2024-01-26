@@ -5,7 +5,7 @@ import {
 	PlayCardActionData,
 } from '../types/action-data'
 import {
-	BattleLogDescriptionT,
+	MessageTextT,
 	BattleLogT,
 	CurrentCoinFlipT,
 	PlayerState,
@@ -30,8 +30,8 @@ export class BattleLog {
 		text: string,
 		format: 'plain' | 'highlight' | 'player' | 'opponent',
 		condition: 'player' | 'opponent' | undefined = undefined
-	): BattleLogDescriptionT {
-		const output: BattleLogDescriptionT = {
+	): MessageTextT {
+		const output: MessageTextT = {
 			text: text,
 			format: format,
 		}
