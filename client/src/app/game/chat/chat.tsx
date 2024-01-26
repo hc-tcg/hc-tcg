@@ -61,8 +61,8 @@ function Chat() {
 				console.log(e)
 				dispatch(
 					setSetting('chatSize', {
-						w: e.currentTarget.clientWidth + 5,
-						h: e.currentTarget.clientHeight + 5,
+						w: e.currentTarget.offsetWidth,
+						h: e.currentTarget.offsetHeight,
 					})
 				)
 			}}
