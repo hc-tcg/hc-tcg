@@ -35,6 +35,7 @@ class JinglerRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
+			if (!opponentPlayer.hand.length) return // Do not roll if player has no more cards in hand
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'tails') return
 

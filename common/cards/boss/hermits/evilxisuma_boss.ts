@@ -160,7 +160,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 			let attackDef: any = {}
 			const damage: number = [50, 70, 90][attackDefs.damageIndex]
-			if (attackDefs.secondary) {
+			if (attackDefs.secondary !== undefined) {
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 
 				switch (attackDefs.tertiary) {
