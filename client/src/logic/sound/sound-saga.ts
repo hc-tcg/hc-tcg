@@ -30,16 +30,16 @@ function* backgroundMusic(action: SectionChangeT): SagaIterator {
 	const section = action.payload
 
 	const settings = yield* select(getSettings)
-	if (settings.musicVolume === '0') return
 
-	const musicFile = trackList.game[Math.floor(Math.random() * trackList.game.length)]
-
-	if (section !== 'game') {
+	if (settings.musicVolume === '0' || section !== 'game') {
 		bgMusic.pause()
 		bgMusic.currentTime = 0
 		bgMusic.src = ''
+		audioCtx.resume()
 		return
 	}
+
+	const musicFile = trackList.game[Math.floor(Math.random() * trackList.game.length)]
 
 	const newPath = `/music/${musicFile.file}`
 	if (newPath !== bgMusic.getAttribute('src')) {
