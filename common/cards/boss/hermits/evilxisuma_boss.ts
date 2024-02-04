@@ -172,7 +172,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 					case 1:
 						// Deal 20 DMG to each AFK Hermit
 						attackDef.tertiary = 'AFK 20DMG'
-						if (!isAttackingDisabled) break
+						if (isAttackingDisabled) break
 						const opponentRows = opponentPlayer.board.rows
 						for (let i = 0; i < opponentRows.length; i++) {
 							const opponentRow = opponentRows[i]

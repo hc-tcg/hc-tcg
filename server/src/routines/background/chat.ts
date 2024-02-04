@@ -4,9 +4,11 @@ import profanityFilter from '../../../../common/utils/profanity'
 import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
+import {VirtualPlayerModel} from 'common/models/virtual-player-model'
 
 const gameAction =
-	(type: string, game: {players: Record<string, PlayerModel>}) => (action: any) => {
+	(type: string, game: {players: Record<string, PlayerModel | VirtualPlayerModel>}) =>
+	(action: any) => {
 		return action.type === type && !!game.players[action.playerId]
 	}
 

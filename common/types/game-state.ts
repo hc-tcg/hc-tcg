@@ -52,6 +52,7 @@ export type CurrentCoinFlipT = {
 export type PlayerState = {
 	id: PlayerId
 	playerName: string
+	playerType: 'real' | 'virtual'
 	minecraftName: string
 	playerDeck: Array<CardT>
 	censoredPlayerName: string

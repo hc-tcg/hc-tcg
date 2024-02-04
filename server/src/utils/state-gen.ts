@@ -22,6 +22,7 @@ import EffectCard from 'common/cards/base/effect-card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
+import {VirtualPlayerModel} from 'common/models/virtual-player-model'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -151,7 +152,7 @@ export function getEmptyRow(): RowState {
 	return rowState
 }
 
-export function getPlayerState(player: PlayerModel): PlayerState {
+export function getPlayerState(player: PlayerModel | VirtualPlayerModel): PlayerState {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): CardT => ({
 			cardId: card.id,
@@ -203,6 +204,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	return {
 		id: player.playerId,
 		playerName: player.playerName,
+		playerType: player.socket ? 'real' : 'virtual',
 		minecraftName: player.minecraftName,
 		playerDeck: pack,
 		censoredPlayerName: player.censoredPlayerName,
@@ -251,70 +253,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	}
 }
 
-export function getEXBossState(player: PlayerModel): PlayerState {
-	const rowState: RowState = {
-		hermitCard: null,
-		effectCard: null,
-		itemCards: [], // Evil Xisuma as a boss does not use any item cards
-		health: null,
-	}
-	const hand: CardT[] = player.playerDeck.cards.map((card) => {
-		return {
-			cardId: card.cardId,
-			cardInstance: Math.random().toString(),
-		}
-	})
-	return {
-		id: player.playerId,
-		playerName: player.playerName,
-		minecraftName: player.minecraftName,
-		playerDeck: [],
-		censoredPlayerName: player.censoredPlayerName,
-		coinFlips: [],
-		lives: 3,
-		hand,
-		discarded: [],
-		pile: [],
-		custom: {},
-		board: {
-			activeRow: null,
-			singleUseCard: null,
-			singleUseCardUsed: false,
-			rows: [rowState],
-		},
-
-		hooks: {
-			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
-			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-
-			onAttach: new GameHook<(instance: string) => void>(),
-			onDetach: new GameHook<(instance: string) => void>(),
-			beforeApply: new GameHook<() => void>(),
-			onApply: new GameHook<() => void>(),
-			afterApply: new GameHook<() => void>(),
-			getAttackRequests: new GameHook<
-				(activeInstance: string, hermitAttackType: HermitAttackType) => void
-			>(),
-			getAttacks: new GameHook<() => Array<AttackModel>>(),
-			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
-			onAttack: new GameHook<(attack: AttackModel) => void>(),
-			onDefence: new GameHook<(attack: AttackModel) => void>(),
-			afterAttack: new GameHook<(attack: AttackModel) => void>(),
-			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
-			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onCoinFlip: new GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
-			beforeActiveRowChange: new GameHook<
-				(oldRow: number | null, newRow: number | null) => boolean
-			>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
-		},
-	}
-}
-
 export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
@@ -329,7 +267,10 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 	return localPlayerState
 }
 
-export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
+export function getLocalGameState(
+	game: GameModel,
+	player: PlayerModel | VirtualPlayerModel
+): LocalGameState | null {
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.playerId)
 	if (!opponentPlayerId) {
 		return null

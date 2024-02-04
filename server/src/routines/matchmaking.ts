@@ -1,13 +1,12 @@
 import {all, take, takeEvery, cancel, spawn, fork, race, delay, join} from 'typed-redux-saga'
 import {broadcast} from '../utils/comm'
 import gameSaga, {getTimerForSeconds} from './game'
-import bossSaga from './boss'
 import {GameModel} from 'common/models/game-model'
 import {getGamePlayerOutcome, getWinner, getGameOutcome} from '../utils/win-conditions'
 import {getLocalGameState} from '../utils/state-gen'
 import {PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
-import {BossModel} from 'common/models/boss-model'
+import {VirtualPlayerModel} from 'common/models/virtual-player-model'
 
 export type ClientMessage = {
 	type: string
@@ -22,7 +21,7 @@ function* gameManager(game: GameModel) {
 		const playerIds = game.getPlayerIds()
 		const players = game.getPlayers()
 
-		const gameType = game.code ? 'Private' : 'Public'
+		const gameType = players.every((p) => p.socket) ? (game.code ? 'Private' : 'Public') : 'PvE'
 		console.log(
 			`${gameType} game started.`,
 			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
@@ -74,69 +73,6 @@ function* gameManager(game: GameModel) {
 
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(`${gameType} game ended. Total games:`, root.getGameIds().length - 1)
-
-		delete root.games[game.id]
-		root.hooks.gameRemoved.call(game)
-	}
-}
-
-function* bossManager(game: BossModel) {
-	// @TODO this one method needs cleanup still
-	try {
-		const playerIds = game.getPlayerIds()
-		const players = game.getPlayers()
-
-		const challenger = players[0]
-
-		console.log(
-			`Boss game started.`,
-			`Challenger: ${challenger.playerName}.`,
-			'Total games:',
-			root.getGameIds().length
-		)
-
-		broadcast([challenger], 'GAME_START')
-		root.hooks.newGame.call(game)
-		game.task = yield* spawn(bossSaga, game)
-
-		// Kill game on timeout or when user leaves for long time + cleanup after game
-		const result = yield* race({
-			// game ended (or crashed -> catch)
-			gameEnd: join(game.task),
-			// kill a game after two hours
-			timeout: delay(1000 * 60 * 60),
-			// kill game when a player is disconnected for too long
-			playerRemoved: take(
-				(action: any) =>
-					action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.playerId)
-			),
-			forfeit: take(
-				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
-			),
-		})
-
-		const gameState = getLocalGameState(game, challenger)
-		if (gameState) {
-			gameState.timer.turnRemaining = 0
-			gameState.timer.turnStartTime = getTimerForSeconds(0)
-		}
-		const outcome = getGamePlayerOutcome(game, result, challenger.playerId)
-		broadcast([challenger], 'GAME_END', {
-			gameState,
-			outcome,
-			reason: game.endInfo.reason,
-		})
-
-		game.endInfo.outcome = getGameOutcome(game, result)
-		game.endInfo.winner = getWinner(game, result)
-	} catch (err) {
-		console.log('Error: ', err)
-		game.endInfo.outcome = 'error'
-		broadcast(game.getPlayers().slice(0, 1), 'GAME_CRASH')
-	} finally {
-		if (game.task) yield* cancel(game.task)
-
-		console.log(`Boss game ended. Total games:`, root.getGameIds().length - 1)
 
 		delete root.games[game.id]
 		root.hooks.gameRemoved.call(game)
@@ -275,10 +211,31 @@ function* createBossGame(msg: ClientMessage) {
 
 	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
 
-	const newBossGame = new BossModel(player)
+	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma')
+	EX_BOSS_PLAYER.playerDeck.cards = [
+		{cardId: 'evilxisuma_boss', cardInstance: Math.random().toString()},
+	]
+
+	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
+	if (newBossGame.state.order[0] !== playerId) {
+		newBossGame.state.order.reverse()
+		newBossGame.state.turn.currentPlayerId = playerId
+	}
+
+	const {[playerId]: challengerState, [EX_BOSS_PLAYER.playerId]: bossState} =
+		newBossGame.state.players
+	challengerState.board.rows = challengerState.board.rows.splice(0, 3)
+	const bossRowState = bossState.board.rows[0]
+	bossRowState.itemCards = []
+	bossState.board.rows = [bossRowState]
+	newBossGame.config = {
+		disableRewardCards: true,
+		disableVirtualDeckOut: true,
+	}
+
 	root.addGame(newBossGame)
 
-	yield* fork(bossManager, newBossGame)
+	yield* fork(gameManager, newBossGame)
 }
 
 function* createPrivateGame(msg: ClientMessage) {
