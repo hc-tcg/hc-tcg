@@ -6,7 +6,6 @@ import cn from 'classnames'
 import {AilmentT} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import {BoardSlotTypeT} from 'common/types/cards'
-import classnames from 'classnames'
 
 const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
 	if (!row) return null
@@ -35,7 +34,7 @@ const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) =>
 			return (
 				<div
 					id={css[cssId]}
-					className={classnames(css.slot, css[slotType], css.empty, {[css.afk]: !active})}
+					className={cn(css.slot, css[slotType], css.empty, {[css.afk]: !active})}
 				/>
 			)
 
