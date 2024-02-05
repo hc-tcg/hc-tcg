@@ -3,9 +3,11 @@ import {GameModel} from 'common/models/game-model'
 import {
 	AttackActionData,
 	ChangeActiveHermitActionData,
+	PickCardActionData,
 	PlayCardActionData,
+	attackToAttackAction,
 } from 'common/types/action-data'
-import {CardT, PlayerState} from 'common/types/game-state'
+import {CardT, PlayerState, TurnAction} from 'common/types/game-state'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {getActiveRow, getNonEmptyRows} from 'common/utils/board'
 import {getCardCost} from 'common/utils/ranks'
@@ -13,12 +15,15 @@ import {checkHermitHealth, sendGameState} from '../game'
 import {PickInfo} from 'common/types/server-requests'
 import attackSaga from '../turn-actions/attack'
 import pickRequestSaga from '../turn-actions/pick-request'
+import modalRequestSaga from '../turn-actions/modal-request'
 import changeActiveHermitSaga from '../turn-actions/change-active-hermit'
 import playCardSaga from '../turn-actions/play-card'
-import {all, call, delay, put} from 'typed-redux-saga'
+import {all, call, delay, put, race, take} from 'typed-redux-saga'
 import {EnergyT, RowPos} from 'common/types/cards'
 import {getItemCardsEnergy} from '../../utils'
 import {applySingleUse} from 'common/utils/board'
+import {HermitAttackType} from 'common/types/attack'
+import {CONFIG} from 'common/config'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
@@ -53,22 +58,28 @@ function getSomewhatPoweredUpAFKHermits(game: GameModel, player: PlayerState): A
 	})
 }
 
-function availableAttacks(player: PlayerState, rowIndex: number | null): Array<string> {
+function availableAttacks(player: PlayerState, rowIndex: number | null): Array<HermitAttackType> {
 	if (rowIndex === null) return []
 	const row = player.board.rows[rowIndex]
-
-	const energy = row.itemCards.flatMap((item) => {
-		const output = []
-		if (item && item.cardId.includes('rare')) output.push(ITEM_CARDS[item.cardId].hermitType)
-		if (item) output.push(ITEM_CARDS[item.cardId].hermitType)
-		return output as EnergyT[]
-	})
 
 	if (!row.hermitCard) return []
 
 	const hermit = HERMIT_CARDS[row.hermitCard.cardId]
 
-	const output = []
+	// Temporarily change active row to accurately get available energy
+	;[rowIndex, player.board.activeRow] = [player.board.activeRow, rowIndex]
+	const energy = player.hooks.availableEnergy.call(
+		row.itemCards.flatMap((item) => {
+			const output = []
+			if (item && item.cardId.includes('rare')) output.push(ITEM_CARDS[item.cardId].hermitType)
+			if (item) output.push(ITEM_CARDS[item.cardId].hermitType)
+			return output as EnergyT[]
+		})
+	)
+	// Revert changing active row after calling hook
+	;[rowIndex, player.board.activeRow] = [player.board.activeRow, rowIndex]
+
+	const output: HermitAttackType[] = []
 
 	if (hasEnoughEnergy(energy, hermit.primary.cost)) output.push('primary')
 	if (hasEnoughEnergy(energy, hermit.secondary.cost)) output.push('secondary')
@@ -177,15 +188,96 @@ function* playItemCards(game: GameModel, card: CardT) {
 	yield call(sendGameState, game)
 }
 
+function* handleOpponentRequest(game: GameModel) {
+	const {opponentPlayerId} = game
+	let opponentAction: TurnAction = 'WAIT_FOR_TURN'
+	if (game.state.pickRequests[0]?.playerId === opponentPlayerId) {
+		opponentAction = 'PICK_REQUEST'
+	} else if (game.state.modalRequests[0]?.playerId === opponentPlayerId) {
+		opponentAction = 'MODAL_REQUEST'
+	}
+	if (opponentAction === 'WAIT_FOR_TURN') return
+
+	game.state.turn.opponentAvailableActions = [opponentAction]
+
+	while (true) {
+		// Timer calculation
+		game.state.timer.opponentActionStartTime =
+			game.state.timer.opponentActionStartTime || Date.now()
+		const maxTime = CONFIG.limits.extraActionTime * 1000
+		const remainingTime = game.state.timer.opponentActionStartTime + maxTime - Date.now()
+
+		const graceTime = 1000
+		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
+
+		yield call(sendGameState, game)
+
+		const raceResult = yield* race({
+			turnAction: take(
+				(action: any) => action.type === opponentAction && action.playerId === opponentPlayerId
+			),
+			timeout: delay(remainingTime + graceTime),
+		}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
+
+		// Handle timeout
+		if (raceResult.timeout) {
+			const currentAttack = game.state.turn.currentAttack
+
+			// Timeout current request and remove it
+			if (opponentAction === 'PICK_REQUEST') game.removePickRequest()
+			else game.removeModalRequest()
+
+			// Reset timer to max time
+			game.state.timer.turnStartTime = Date.now()
+			game.state.timer.turnRemaining = CONFIG.limits.maxTurnTime
+
+			// Execute attack now if there's a current attack
+			if (!game.hasActiveRequests() && !!currentAttack) {
+				// There are no active requests left, and we're in the middle of an attack. Execute it now.
+				const turnAction = {
+					type: attackToAttackAction[currentAttack],
+					payload: {
+						playerId: game.currentPlayerId,
+					},
+				}
+				yield* call(attackSaga, game, turnAction, false)
+			}
+
+			break
+		} else {
+			if (raceResult.turnAction.type === 'PICK_REQUEST') {
+				const pickResult = (raceResult.turnAction as PickCardActionData)?.payload?.pickResult
+				const result = yield* call(pickRequestSaga, game, pickResult)
+
+				game.setLastActionResult('PICK_REQUEST', result)
+
+				if (result === 'SUCCESS') break
+			} else if (raceResult.turnAction.type === 'MODAL_REQUEST') {
+				const modalResult = raceResult.turnAction?.payload?.modalResult
+				const result = yield* call(modalRequestSaga, game, modalResult)
+
+				game.setLastActionResult('MODAL_REQUEST', result)
+
+				if (result === 'SUCCESS') break
+			}
+		}
+	}
+
+	game.state.turn.opponentAvailableActions = ['WAIT_FOR_TURN']
+}
+
 function* attack(game: GameModel) {
-	yield delay(getRandomDelay())
+	yield* delay(getRandomDelay())
 	const activeRowIndex = game.currentPlayer.board.activeRow
 	if (activeRowIndex === null) return
+	const disallowedActions = [...game.getAllBlockedActions(), ...game.state.turn.completedActions]
 	const allowedMoves = availableAttacks(game.currentPlayer, activeRowIndex)
+		.map((move) => attackToAttackAction[move])
+		.filter((attackAction) => !disallowedActions.includes(attackAction))
 	const activeHermit = getActiveRow(game.currentPlayer)?.hermitCard
 	if (activeHermit === undefined || allowedMoves.length === 0) return
 	const turnAction: AttackActionData = {
-		type: allowedMoves.includes('secondary') ? 'SECONDARY_ATTACK' : 'PRIMARY_ATTACK',
+		type: allowedMoves.includes('SECONDARY_ATTACK') ? 'SECONDARY_ATTACK' : 'PRIMARY_ATTACK',
 		payload: {
 			playerId: game.currentPlayer.id,
 		},
@@ -205,6 +297,12 @@ function* attack(game: GameModel) {
 				},
 			}
 			yield* call(pickRequestSaga, game, pickResult)
+			return
+		case 'evilxisuma_boss':
+			if (game.state.pickRequests.length) {
+				yield* call(handleOpponentRequest, game)
+			}
+			return
 		default:
 			return
 	}
