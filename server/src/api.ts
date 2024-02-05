@@ -62,42 +62,42 @@ export function registerApis(app: import('express').Express) {
 			}
 		})
 
-		root.hooks.newGame.add('api', (game: GameModel) => {
-			fetch(`${CONFIG.botUrl}/admin/game_start`, {
-				method: 'POST',
-				headers: [
-					['Content-type', 'application/json'],
-					['api-key', apiKeys?.botKey],
-				],
-				body: JSON.stringify({
-					createdTime: game.createdTime,
-					id: game.id,
-					code: game.code,
-					playerIds: game.getPlayerIds(),
-					playerNames: game.getPlayers().map((p) => p.playerName),
-					state: game.state,
-				}),
-			})
-		})
-
-		root.hooks.gameRemoved.add('api', (game: GameModel) => {
-			fetch(`${CONFIG.botUrl}/admin/game_end`, {
-				method: 'POST',
-				headers: [
-					['Content-type', 'application/json'],
-					['api-key', apiKeys?.botKey],
-				],
-				body: JSON.stringify({
-					createdTime: game.createdTime,
-					endTime: Date.now(),
-					id: game.id,
-					code: game.code,
-					playerIds: game.getPlayerIds(),
-					playerNames: game.getPlayers().map((p) => p.playerName),
-					endInfo: game.endInfo,
-				}),
-			})
-		})
+		//root.hooks.newGame.add('api', (game: GameModel) => {
+		//	fetch(`${CONFIG.botUrl}/admin/game_start`, {
+		//		method: 'POST',
+		//		headers: [
+		//			['Content-type', 'application/json'],
+		//			['api-key', apiKeys?.botKey],
+		//		],
+		//		body: JSON.stringify({
+		//			createdTime: game.createdTime,
+		//			id: game.id,
+		//			code: game.code,
+		//			playerIds: game.getPlayerIds(),
+		//			playerNames: game.getPlayers().map((p) => p.playerName),
+		//			state: game.state,
+		//		}),
+		//	})
+		//})
+		//
+		//root.hooks.gameRemoved.add('api', (game: GameModel) => {
+		//	fetch(`${CONFIG.botUrl}/admin/game_end`, {
+		//		method: 'POST',
+		//		headers: [
+		//			['Content-type', 'application/json'],
+		//			['api-key', apiKeys?.botKey],
+		//		],
+		//		body: JSON.stringify({
+		//			createdTime: game.createdTime,
+		//			endTime: Date.now(),
+		//			id: game.id,
+		//			code: game.code,
+		//			playerIds: game.getPlayerIds(),
+		//			playerNames: game.getPlayers().map((p) => p.playerName),
+		//			endInfo: game.endInfo,
+		//		}),
+		//	})
+		//})
 
 		console.log('apis registered')
 	} catch (err) {
