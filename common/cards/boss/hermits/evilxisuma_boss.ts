@@ -57,7 +57,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
 
-		const {opponentPlayer: opponentPlayer} = game
+		const {player, row, rowIndex, opponentPlayer} = pos
 		const targetIndex = opponentPlayer.board.activeRow
 		if (targetIndex === null) return []
 
@@ -68,9 +68,9 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		const attack = new AttackModel({
 			id: this.getInstanceKey(instance),
 			attacker: {
-				player: pos.player,
-				rowIndex: pos.rowIndex,
-				row: pos.row,
+				player,
+				rowIndex,
+				row,
 			},
 			target: {
 				player: opponentPlayer,
@@ -82,44 +82,72 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 		const attacks = [attack]
 
-		if (attack.isType('primary', 'secondary')) {
-			const weaknessAttack = createWeaknessAttack(attack)
-			if (weaknessAttack) attacks.push(weaknessAttack)
-		}
-
 		const rngKey = this.getInstanceKey(instance, 'rng')
 
 		const attackDefs: {
-			damageIndex: number
+			damage: number
 			secondary?: number
 			tertiary?: number
-		} = {damageIndex: this.fireDropper()}
+			disabled: boolean
+		} = {
+			damage: this.fireDropper(),
+			disabled: game.getAllBlockedActions().some((blockedAction) => {
+				return blockedAction == 'PRIMARY_ATTACK' || blockedAction == 'SECONDARY_ATTACK'
+			}),
+		}
 
 		const lives = pos.player.lives
 
 		if (lives == 3) {
-			attackDefs.damageIndex = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackDefs.damageIndex]
+			attackDefs.damage = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackDefs.damage]
 		} else {
 			let secondaryIndex = this.fireDropper()
 			if (lives == 2) {
-				attackDefs.damageIndex = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackDefs.damageIndex]
-				secondaryIndex = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondaryIndex]
+				attackDefs.damage = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackDefs.damage]
+				attackDefs.secondary = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondaryIndex]
 			} else {
-				attackDefs.damageIndex = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackDefs.damageIndex]
-				secondaryIndex = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondaryIndex]
-				const tertiaryIndex = [0, 0, 0, 0, 1, 1, 1, 2, 2][this.fireDropper()]
-				attackDefs.tertiary = tertiaryIndex
+				attackDefs.damage = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackDefs.damage]
+				attackDefs.secondary = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondaryIndex]
+				attackDefs.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][this.fireDropper()]
 
-				if (tertiaryIndex == 0) {
+				if (attackDefs.tertiary === 0) {
 					// Remove effect card before attack is executed to mimic Curse of Vanishing
 					if (targetRow.effectCard && isRemovable(targetRow.effectCard))
 						discardCard(game, targetRow.effectCard)
 				}
 			}
-
-			attackDefs.secondary = secondaryIndex
 		}
-		attackDefs.damageIndex = attackDefs.damageIndex
+		attackDefs.damage = [50, 70, 90][attackDefs.damage]
+
+		// If the opponent blocks EX's "attack", then EX can not deal damage or set opponent on fire
+		if (!attackDefs.disabled) {
+			attack.addDamage(this.id, attackDefs.damage)
+
+			if (attack.isType('primary', 'secondary')) {
+				const weaknessAttack = createWeaknessAttack(attack)
+				if (weaknessAttack) attacks.push(weaknessAttack)
+			}
+
+			if (attackDefs.tertiary === 1) {
+				const opponentRows = opponentPlayer.board.rows
+				for (let i = 0; i < opponentRows.length; i++) {
+					const opponentRow = opponentRows[i]
+					if (!opponentRow || !opponentRow.hermitCard || i == opponentPlayer.board.activeRow)
+						continue
+					const newAttack = new AttackModel({
+						id: this.getInstanceKey(instance, 'inactive'),
+						attacker: {player, rowIndex, row},
+						target: {
+							player: opponentPlayer,
+							rowIndex: i,
+							row: opponentRow,
+						},
+						type: hermitAttackType,
+					}).addDamage(this.id, 20)
+					attacks.push(newAttack)
+				}
+			}
+		}
 
 		pos.player.custom[rngKey] = attackDefs
 
@@ -148,18 +176,14 @@ class EvilXisumaBossHermitCard extends HermitCard {
 			if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
 			const attackDefs: {
-				damageIndex: number
+				damage: number
 				secondary?: number
 				tertiary?: number
+				disabled: boolean
 			} = player.custom[rngKey]
 
-			// If the opponent blocks EX's "attack", then EX can not deal damage or set opponent on fire
-			const isAttackingDisabled = game.getAllBlockedActions().find((blockedAction) => {
-				return blockedAction == 'PRIMARY_ATTACK' || blockedAction == 'SECONDARY_ATTACK'
-			})
-
 			let attackDef: any = {}
-			const damage: number = [50, 70, 90][attackDefs.damageIndex]
+
 			if (attackDefs.secondary !== undefined) {
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 
@@ -172,24 +196,6 @@ class EvilXisumaBossHermitCard extends HermitCard {
 					case 1:
 						// Deal 20 DMG to each AFK Hermit
 						attackDef.tertiary = 'AFK 20DMG'
-						if (isAttackingDisabled) break
-						const opponentRows = opponentPlayer.board.rows
-						for (let i = 0; i < opponentRows.length; i++) {
-							const opponentRow = opponentRows[i]
-							if (!opponentRow || !opponentRow.hermitCard || i == opponentPlayer.board.activeRow)
-								continue
-							const newAttack = new AttackModel({
-								id: this.getInstanceKey(instance, 'inactive'),
-								attacker: getActiveRowPos(player),
-								target: {
-									player: opponentPlayer,
-									rowIndex: i,
-									row: opponentRow,
-								},
-								type: attack.type,
-							}).addDamage(this.id, 20)
-							attack.addNewAttack(newAttack)
-						}
 						break
 					case 2:
 						// Remove an item card attached to the opponent's active Hermit
@@ -254,7 +260,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 					case 1:
 						// Set opponent ablaze
 						attackDef.secondary = 'SET ABLAZE'
-						if (opponentActiveRow && opponentActiveRow.hermitCard && !isAttackingDisabled)
+						if (opponentActiveRow && opponentActiveRow.hermitCard && !attackDefs.disabled)
 							applyAilment(game, 'fire', opponentActiveRow.hermitCard.cardInstance)
 						break
 					case 2:
@@ -264,9 +270,9 @@ class EvilXisumaBossHermitCard extends HermitCard {
 						break
 				}
 			}
-			attackDef.primary = damage
+			attackDef.primary = attackDefs.damage
 			delete player.custom[rngKey]
-			if (!isAttackingDisabled) attack.addDamage(this.id, damage)
+
 			console.log('EX attack:', attackDef)
 		})
 
