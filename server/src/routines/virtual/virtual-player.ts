@@ -113,7 +113,7 @@ function* playHermitCards(game: GameModel, card: CardT) {
 function* changeActiveHermit(game: GameModel) {
 	const otherPlayerHermit = game.opponentActiveRow?.hermitCard?.cardId
 	if (!otherPlayerHermit) return
-	const otherPlayerAttack = HERMIT_CARDS[otherPlayerHermit].secondary.damage
+	const otherPlayerAttack = HERMIT_CARDS[otherPlayerHermit]?.secondary.damage
 
 	if (
 		game.activeRow &&
