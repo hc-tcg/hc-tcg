@@ -16,7 +16,7 @@ interface AilmentProps
 const Ailment = (props: AilmentProps) => {
 	const {id, damageEffect} = props.ailment
 
-	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
+	const extension = ['sleeping', 'poison', 'fire', 'exboss-nine'].includes(id) ? '.gif' : '.png'
 	const ailmentClass = damageEffect == true ? css.damageAilmentImage : css.ailmentImage
 
 	return (
