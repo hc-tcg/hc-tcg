@@ -18,11 +18,11 @@ class BadOmenAilment extends Ailment {
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		game.state.ailments.push(ailmentInfo)
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
-		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+		opponentPlayer.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			if (!ailmentInfo.duration) return
 			ailmentInfo.duration--
 
@@ -35,7 +35,9 @@ class BadOmenAilment extends Ailment {
 
 			// If they are not flipping on their turn, don't modify
 			const {currentPlayer} = game
-			if (currentPlayer.id !== player.id) return coinFlips
+			if (currentPlayer.id !== player.id && id !== targetPos.row?.hermitCard?.cardId) {
+				return coinFlips
+			}
 
 			for (let i = 0; i < coinFlips.length; i++) {
 				if (coinFlips[i]) coinFlips[i] = 'tails'
