@@ -5,7 +5,6 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {createWeaknessAttack, hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
-import {CardTypeT} from '../../../types/cards'
 
 class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
@@ -66,17 +65,13 @@ class HumanCleoRareHermitCard extends HermitCard {
 				// Return if no energy
 				if (
 					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost) &&
-					!hasEnoughEnergy(energy, opponentActiveHermit.primary.cost)
+					!hasEnoughEnergy(energy, opponentActiveHermit.secondary.cost)
 				) {
 					return
 				}
 
-				// Return if opponent can't attack anyways for some reason
-				const availableActions = game.state.turn.availableActions
-				if (
-					!availableActions.includes('PRIMARY_ATTACK') &&
-					!availableActions.includes('SECONDARY_ATTACK')
-				) {
+				// Don't prevent change hermit if opponent is blocked from attacking for other reason
+				if (game.isActionBlocked('PRIMARY_ATTACK') && game.isActionBlocked('SECONDARY_ATTACK')) {
 					return
 				}
 
