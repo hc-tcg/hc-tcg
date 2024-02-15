@@ -11,7 +11,7 @@ class SlownessAilment extends Ailment {
 			id: 'slowness',
 			name: 'Slowness',
 			description: 'This Hermit can only use their primary attack.',
-			duration: 2,
+			duration: 1,
 			counter: false,
 			damageEffect: false,
 		})
@@ -19,11 +19,11 @@ class SlownessAilment extends Ailment {
 
 	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
 		game.state.ailments.push(ailmentInfo)
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
 		if (!ailmentInfo.duration) ailmentInfo.duration = this.duration
 
-		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+		opponentPlayer.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
 			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
 			if (!ailmentInfo.duration) return

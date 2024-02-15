@@ -23,6 +23,15 @@ startSocketIO(server)
 app.use(express.json())
 app.use(cors({origin: CONFIG.cors}))
 
+// @TODO Hardcoded redirect to the new site, for now
+app.use((req, res, next) => {
+	if (req.hostname === 'hc-tcg.fly.dev') {
+		res.redirect(301, `https://hc-tcg.online`)
+	} else {
+		next()
+	}
+})
+
 app.use(
 	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
 		maxAge: 1000 * 60 * 60,
