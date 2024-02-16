@@ -2,7 +2,11 @@ import {SagaIterator} from 'redux-saga'
 import {call, takeLatest, takeEvery} from 'redux-saga/effects'
 import {select} from 'typed-redux-saga'
 import {trackList} from './sound-config'
-import {SectionChangeT, PlaySoundT} from './sound-actions'
+import {
+	SectionChangeT,
+	PlaySoundT,
+	VoiceTestControlT,
+} from './sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {ToastT} from 'common/types/app'
 import {useDispatch} from 'react-redux'
@@ -13,8 +17,10 @@ const bgMusic = new Audio()
 const sourceNode = audioCtx.createMediaElementSource(bgMusic)
 const musicGainNode = audioCtx.createGain()
 const soundGainNode = audioCtx.createGain()
+const voiceGainNode = audioCtx.createGain()
 sourceNode.connect(musicGainNode).connect(audioCtx.destination)
 soundGainNode.connect(audioCtx.destination)
+voiceGainNode.connect(audioCtx.destination)
 
 bgMusic.loop = true
 musicGainNode.gain.value = 0.75
@@ -66,11 +72,30 @@ function* playSoundSaga(action: PlaySoundT): SagaIterator {
 	}
 }
 
+const voiceAudio = new Audio()
+const voiceSourceNode = audioCtx.createMediaElementSource(voiceAudio)
+
+function* playVoiceTest(action: VoiceTestControlT) {
+	if (action.payload === 'PLAY') {
+		if (!voiceAudio.paused) return
+		voiceAudio.src = '/voice/TEST.ogg'
+		voiceAudio.onended = () => voiceSourceNode.disconnect(voiceGainNode)
+		voiceSourceNode.connect(voiceGainNode)
+		voiceAudio.play()
+	} else {
+		if (voiceAudio.paused) return
+		voiceAudio.pause()
+		voiceAudio.currentTime = 0
+		voiceSourceNode.disconnect(voiceGainNode)
+	}
+}
+
 function* settingSaga(): SagaIterator {
 	try {
 		const settings = yield* select(getSettings)
 		musicGainNode.gain.value = Number(settings.musicVolume) / 100
 		soundGainNode.gain.value = Number(settings.soundVolume) / 100
+		voiceGainNode.gain.value = Number(settings.voiceVolume) / 100
 	} catch (err) {
 		console.error(err)
 	}
@@ -82,6 +107,7 @@ function* soundSaga(): SagaIterator {
 	yield takeEvery('SET_SETTING', settingSaga)
 	yield takeLatest('@sound/SECTION_CHANGE', backgroundMusic)
 	yield takeEvery('@sound/PLAY_SOUND', playSoundSaga)
+	yield takeLatest('VOICE_TEST', playVoiceTest)
 	document.addEventListener(
 		'click',
 		() => {

@@ -3,6 +3,7 @@ import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {controlVoiceTest} from 'logic/sound/sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {resetStats} from 'logic/fbdb/fbdb-actions'
@@ -25,6 +26,10 @@ function Settings({setMenuSection}: Props) {
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
+	const handleVoiceChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
+		dispatch(setSetting('voiceVolume', ev.currentTarget.value))
+		dispatch(controlVoiceTest('PLAY'))
+	}
 	const handleResetStats = () => {
 		if (resetStatsConfim) {
 			setResetStatsConfirm(false)
@@ -43,13 +48,14 @@ function Settings({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
-	const handleGameSettings = () => setMenuSection('game-settings')
+	const handleGameSettings = () =>
+		dispatch(controlVoiceTest('STOP')) && setMenuSection('game-settings')
 
-	const handleCredits = () => setMenuSection('credits')
+	const handleCredits = () => dispatch(controlVoiceTest('STOP')) && setMenuSection('credits')
 
 	return (
 		<MenuLayout
-			back={() => setMenuSection('mainmenu')}
+			back={() => dispatch(controlVoiceTest('STOP')) && setMenuSection('mainmenu')}
 			title="More"
 			returnText="Main Menu"
 			className={css.settingsMenu}
@@ -60,6 +66,9 @@ function Settings({setMenuSection}: Props) {
 				</Slider>
 				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
 					Sounds: {getPercDescriptor(settings.soundVolume)}
+				</Slider>
+				<Slider value={settings.voiceVolume} onInput={handleVoiceChange}>
+					Voice: {getPercDescriptor(settings.voiceVolume)}
 				</Slider>
 				<Button variant="stone" onClick={handlePanoramaToggle}>
 					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
