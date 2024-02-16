@@ -7,7 +7,7 @@ import {
 	PlayCardActionData,
 	attackToAttackAction,
 } from 'common/types/action-data'
-import {CardT, PlayerState, TurnAction} from 'common/types/game-state'
+import {ActionResult, CardT, PlayerState, TurnAction} from 'common/types/game-state'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {getActiveRow, getNonEmptyRows} from 'common/utils/board'
 import {getCardCost} from 'common/utils/ranks'
@@ -87,6 +87,15 @@ function availableAttacks(player: PlayerState, rowIndex: number | null): Array<H
 	return output
 }
 
+function* setLastActionResult<T extends {type: TurnAction}>(
+	actionSaga: (game: GameModel, turnAction: T) => Generator<any, ActionResult>,
+	game: GameModel,
+	turnAction: T
+) {
+	const result = yield* call(actionSaga, game, turnAction)
+	game.setLastActionResult(turnAction.type, result)
+}
+
 function* playHermitCards(game: GameModel, card: CardT) {
 	const freeRows = getEmptyIndexes(game.currentPlayer)
 	const chosenRow = freeRows[Math.floor(Math.random() * freeRows.length)]
@@ -105,7 +114,7 @@ function* playHermitCards(game: GameModel, card: CardT) {
 			card: card,
 		},
 	}
-	yield* call(playCardSaga, game, turnAction)
+	yield* call(setLastActionResult, playCardSaga, game, turnAction)
 	yield delay(getRandomDelay())
 	yield call(sendGameState, game)
 }
@@ -140,7 +149,7 @@ function* changeActiveHermit(game: GameModel) {
 			},
 		},
 	}
-	yield* call(changeActiveHermitSaga, game, turnAction)
+	yield* call(setLastActionResult, changeActiveHermitSaga, game, turnAction)
 	yield delay(getRandomDelay())
 	yield call(sendGameState, game)
 }
@@ -183,7 +192,7 @@ function* playItemCards(game: GameModel, card: CardT) {
 			card: card,
 		},
 	}
-	yield* call(playCardSaga, game, turnAction)
+	yield* call(setLastActionResult, playCardSaga, game, turnAction)
 	yield delay(getRandomDelay())
 	yield call(sendGameState, game)
 }
@@ -282,7 +291,7 @@ function* attack(game: GameModel) {
 			playerId: game.currentPlayer.id,
 		},
 	}
-	yield* call(attackSaga, game, turnAction)
+	yield* call(setLastActionResult, attackSaga, game, turnAction)
 
 	switch (activeHermit.cardId) {
 		case 'zombiecleo_rare':
@@ -326,12 +335,16 @@ function* playSingleUseCard(game: GameModel, card: CardT) {
 		},
 	}
 
+	const logApplySingleUse = () => {
+		game.setLastActionResult('APPLY_EFFECT', applySingleUse(game))
+	}
+
 	switch (card.cardId) {
 		case 'fishing_rod':
-			yield* call(playCardSaga, game, turnAction)
+			yield* call(setLastActionResult, playCardSaga, game, turnAction)
 			yield* call(sendGameState, game)
 			yield* delay(getRandomDelay())
-			applySingleUse(game)
+			logApplySingleUse()
 			return
 		case 'composter':
 			return
@@ -339,13 +352,13 @@ function* playSingleUseCard(game: GameModel, card: CardT) {
 			return
 		case 'fortune':
 			if (game.opponentActiveRow === null) return
-			yield* call(playCardSaga, game, turnAction)
+			yield* call(setLastActionResult, playCardSaga, game, turnAction)
 			yield* call(sendGameState, game)
 			yield* delay(getRandomDelay())
-			applySingleUse(game)
+			logApplySingleUse()
 		default:
 			if (game.opponentActiveRow === null) return
-			yield* call(playCardSaga, game, turnAction)
+			yield* call(setLastActionResult, playCardSaga, game, turnAction)
 	}
 
 	yield* call(sendGameState, game)
@@ -387,13 +400,6 @@ export function* virtualTurnActionsSaga(game: GameModel): Generator<any> {
 
 	// ATTACK!!!!!
 	yield* call(attack, game)
-	yield* call(sendGameState, game)
-
-	if (game.currentPlayer.coinFlips.length !== 0) {
-		yield* delay(2600 * game.currentPlayer.coinFlips.length)
-	}
-
-	game.currentPlayer.coinFlips = []
 
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) {
@@ -402,7 +408,13 @@ export function* virtualTurnActionsSaga(game: GameModel): Generator<any> {
 		return 'GAME_END'
 	}
 
+	if (game.currentPlayer.coinFlips.length !== 0) {
+		yield* delay(2600 * game.currentPlayer.coinFlips.length)
+	}
+
+	game.currentPlayer.coinFlips = []
 	yield* call(sendGameState, game)
 
+	game.setLastActionResult('END_TURN', 'FAILURE_UNKNOWN_ERROR')
 	yield delay(getRandomDelay())
 }
