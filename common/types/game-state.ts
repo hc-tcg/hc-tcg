@@ -207,6 +207,8 @@ export type GameState = {
 		turnRemaining: number
 		opponentActionStartTime: number | null
 	}
+
+	isBossGame: boolean
 }
 
 export type PlayCardAction =
@@ -295,6 +297,8 @@ export type LocalGameState = {
 		turnStartTime: number
 		turnRemaining: number
 	}
+
+	isBossGame: boolean
 }
 
 // state sent to client

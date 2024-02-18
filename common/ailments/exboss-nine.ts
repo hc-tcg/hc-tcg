@@ -5,6 +5,7 @@ import {getActiveRow, removeAilment} from '../utils/board'
 import {isRemovable} from '../utils/cards'
 import {discardCard, discardFromHand} from '../utils/movement'
 import Ailment from './ailment'
+import {broadcast} from '../../server/src/utils/comm'
 
 class ExBossNineAilment extends Ailment {
 	constructor() {
@@ -22,21 +23,24 @@ class ExBossNineAilment extends Ailment {
 		game.state.ailments.push(ailmentInfo)
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onTurnStart.add(ailmentInfo.ailmentInstance, () => {
+		player.hooks.onTurnStart.add(ailmentInfo.ailmentId, () => {
 			if (ailmentInfo.duration === undefined) ailmentInfo.duration = 1
 			ailmentInfo.duration += 1
 		})
 
-		player.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
+		player.hooks.onTurnEnd.add(ailmentInfo.ailmentId, () => {
 			if (ailmentInfo.duration !== 9) return
 
+			let voiceLine: string
 			if (Math.random() > 0.5) {
 				// Discard the opponent's hand and have them draw one new card
+				voiceLine = 'NINEDISCARD'
 				opponentPlayer.hand.forEach((card) => discardFromHand(opponentPlayer, card))
 				const newCard = opponentPlayer.pile.shift()
 				if (newCard) opponentPlayer.hand.push(newCard)
 			} else {
 				// Discard all cards attached to the opponent's active hermit
+				voiceLine = 'NINEATTACHED'
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (opponentActiveRow) {
 					if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard))
@@ -47,14 +51,15 @@ class ExBossNineAilment extends Ailment {
 			}
 
 			removeAilment(game, pos, ailmentInfo.ailmentInstance)
+			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: [voiceLine]})
 		})
 	}
 
 	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(ailmentInfo.ailmentInstance)
-		player.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
+		player.hooks.onTurnStart.remove(ailmentInfo.ailmentId)
+		player.hooks.onTurnEnd.remove(ailmentInfo.ailmentId)
 	}
 }
 

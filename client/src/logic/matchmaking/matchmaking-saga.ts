@@ -3,6 +3,7 @@ import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import gameSaga from 'logic/game/game-saga'
 import {gameEnd} from 'logic/game/game-actions'
 import {codeReceived, invalidCode, waitingForPlayer, clearMatchmaking} from './matchmaking-actions'
+import {queueVoice} from 'logic/sound/sound-actions'
 
 function* createBossGameSaga() {
 	function* matchmaking() {
@@ -21,6 +22,7 @@ function* createBossGameSaga() {
 			}
 
 			yield* call(receiveMsg, 'GAME_START')
+			yield* put(queueVoice(['EXSTART']))
 			yield* call(gameSaga)
 		} catch (err) {
 			console.error('Game crashed: ', err)

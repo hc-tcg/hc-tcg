@@ -217,6 +217,7 @@ function* createBossGame(msg: ClientMessage) {
 	]
 
 	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
+	newBossGame.state.isBossGame = true
 	if (newBossGame.state.order[0] !== playerId) {
 		newBossGame.state.order.reverse()
 		newBossGame.state.turn.currentPlayerId = playerId

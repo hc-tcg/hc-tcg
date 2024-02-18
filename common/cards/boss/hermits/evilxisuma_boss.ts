@@ -165,6 +165,10 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 		const {player, opponentPlayer, row} = pos
 
+		// If opponent gave EX any extra cards on turn 1, remove all of them
+		player.hand = []
+		player.pile = []
+
 		// Let EX use secondary attack in case opponent blocks primary
 		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
 			return availableEnergy.length ? availableEnergy : ['balanced', 'balanced']
@@ -182,7 +186,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 				disabled: boolean
 			} = player.custom[rngKey]
 
-			let attackDef: any = {}
+			const voiceLines: string[] = []
 
 			if (attackDefs.secondary !== undefined) {
 				const opponentActiveRow = getActiveRow(opponentPlayer)
@@ -191,15 +195,15 @@ class EvilXisumaBossHermitCard extends HermitCard {
 					case 0:
 						// Remove the effect attached to opponent's active Hermit
 						// This is done in getAttacks() to imitate playing Curse of Vanishing
-						attackDef.tertiary = 'Remove effect'
+						voiceLines.push('EFFECTCARD')
 						break
 					case 1:
 						// Deal 20 DMG to each AFK Hermit
-						attackDef.tertiary = 'AFK 20DMG'
+						voiceLines.push('AFK20')
 						break
 					case 2:
 						// Remove an item card attached to the opponent's active Hermit
-						attackDef.tertiary = 'Remove item'
+						voiceLines.push('ITEMCARD')
 						if (
 							opponentActiveRow &&
 							opponentActiveRow.itemCards.find((card) => card && CARDS[card.cardId]?.type == 'item')
@@ -236,7 +240,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 							}
 
 							// If opponent is knocked out by this attack, the pickRequest should not be added
-							const rowPos = attack.target
+							const rowPos = getActiveRowPos(opponentPlayer)
 							if (rowPos)
 								player.hooks.afterAttack.add(instance, (attack) => {
 									if (!isTargetingPos(attack, rowPos) || !attack.target) return
@@ -251,7 +255,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 				switch (attackDefs.secondary) {
 					case 0:
 						// Heal for 150 damage
-						attackDef.secondary = 'HEAL 150'
+						voiceLines.unshift('HEAL150')
 						if (pos.row && pos.row.health) {
 							const row = pos.row
 							row.health = Math.min(row.health + 150, 300)
@@ -259,21 +263,21 @@ class EvilXisumaBossHermitCard extends HermitCard {
 						break
 					case 1:
 						// Set opponent ablaze
-						attackDef.secondary = 'SET ABLAZE'
+						voiceLines.unshift('ABLAZE')
 						if (opponentActiveRow && opponentActiveRow.hermitCard && !attackDefs.disabled)
 							applyAilment(game, 'fire', opponentActiveRow.hermitCard.cardInstance)
 						break
 					case 2:
 						// Deal double damage
-						attackDef.secondary = 'DOUBLE DMG'
+						voiceLines.unshift('DOUBLE')
 						attack.multiplyDamage(this.id, 2)
 						break
 				}
 			}
-			attackDef.primary = attackDefs.damage
-			delete player.custom[rngKey]
+			voiceLines.unshift(`${attackDefs.damage}DMG`)
 
-			console.log('EX attack:', attackDef)
+			delete player.custom[rngKey]
+			player.custom['VOICE_ANNOUNCE'] = voiceLines
 		})
 
 		// EX is immune to poison, fire, and slowness
@@ -306,9 +310,9 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
 		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
-			if (player.lives > 1) {
-				if (!row || row.health === null || row.health > 0) return
+			if (!row || row.health === null || row.health > 0) return
 
+			if (player.lives > 1) {
 				row.health = 300
 				player.lives -= 1
 

@@ -24,6 +24,7 @@ import {getItemCardsEnergy} from '../../utils'
 import {applySingleUse} from 'common/utils/board'
 import {HermitAttackType} from 'common/types/attack'
 import {CONFIG} from 'common/config'
+import {broadcast} from '../../utils/comm'
 
 function getRandomDelay() {
 	return Math.random() * 500 + 500
@@ -308,6 +309,10 @@ function* attack(game: GameModel) {
 			yield* call(pickRequestSaga, game, pickResult)
 			return
 		case 'evilxisuma_boss':
+			const voiceLines: string[] = game.currentPlayer.custom['VOICE_ANNOUNCE']
+			delete game.currentPlayer.custom['VOICE_ANNOUNCE']
+			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: voiceLines})
+			yield* delay(voiceLines.length * 3000)
 			if (game.state.pickRequests.length) {
 				yield* call(handleOpponentRequest, game)
 			}
@@ -408,13 +413,22 @@ export function* virtualTurnActionsSaga(game: GameModel): Generator<any> {
 		return 'GAME_END'
 	}
 
+	yield* call(sendGameState, game)
+
 	if (game.currentPlayer.coinFlips.length !== 0) {
 		yield* delay(2600 * game.currentPlayer.coinFlips.length)
 	}
-
 	game.currentPlayer.coinFlips = []
-	yield* call(sendGameState, game)
 
 	game.setLastActionResult('END_TURN', 'FAILURE_UNKNOWN_ERROR')
+
+	if (game.state.isBossGame && game.state.turn.turnNumber === 18) {
+		currentPlayer.hooks.onTurnEnd.callSome(
+			[[]],
+			(ignoreInstance) => ignoreInstance !== 'exboss-nine'
+		)
+		yield delay(10600)
+	}
+
 	yield delay(getRandomDelay())
 }
