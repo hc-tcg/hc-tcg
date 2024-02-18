@@ -4,8 +4,8 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {createWeaknessAttack, isTargetingPos} from '../../../utils/attacks'
-import {applyAilment, getActiveRow, getActiveRowPos, removeAilment} from '../../../utils/board'
+import {createWeaknessAttack} from '../../../utils/attacks'
+import {applyAilment, getActiveRow, removeAilment} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -240,14 +240,10 @@ class EvilXisumaBossHermitCard extends HermitCard {
 							}
 
 							// If opponent is knocked out by this attack, the pickRequest should not be added
-							const rowPos = getActiveRowPos(opponentPlayer)
-							if (rowPos)
-								player.hooks.afterAttack.add(instance, (attack) => {
-									if (!isTargetingPos(attack, rowPos) || !attack.target) return
-									const {row} = attack.target
-									if (row.health) game.addPickRequest(pickRequest)
-									player.hooks.afterAttack.remove(instance)
-								})
+							player.hooks.afterAttack.add(instance, (attack) => {
+								if (opponentActiveRow.health) game.addPickRequest(pickRequest)
+								player.hooks.afterAttack.remove(instance)
+							})
 						}
 						break
 				}
@@ -309,7 +305,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		})
 
 		// EX manually updates lives so it doesn't leave the board and trigger an early end
-		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
+		player.hooks.afterDefence.addBefore(instance, () => {
 			if (!row || row.health === null || row.health > 0) return
 
 			if (player.lives > 1) {
@@ -321,7 +317,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 				const rewardCard = opponentPlayer.pile.shift()
 				if (rewardCard) opponentPlayer.hand.push(rewardCard)
 			} else {
-				opponentPlayer.hooks.afterAttack.remove(instance)
+				player.hooks.afterDefence.remove(instance)
 			}
 		})
 	}

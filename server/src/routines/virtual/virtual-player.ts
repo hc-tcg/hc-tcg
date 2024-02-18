@@ -199,6 +199,9 @@ function* playItemCards(game: GameModel, card: CardT) {
 }
 
 function* handleOpponentRequest(game: GameModel) {
+	const deadPlayerIds = yield* call(checkHermitHealth, game)
+	if (deadPlayerIds.length) return
+
 	const {opponentPlayerId} = game
 	let opponentAction: TurnAction = 'WAIT_FOR_TURN'
 	if (game.state.pickRequests[0]?.playerId === opponentPlayerId) {
@@ -228,6 +231,10 @@ function* handleOpponentRequest(game: GameModel) {
 			),
 			timeout: delay(remainingTime + graceTime),
 		}) as any // @NOTE - need to type as any due to typed-redux-saga inferring the wrong return type for action channel
+
+		// Reset coin flips
+		game.currentPlayer.coinFlips = []
+		game.opponentPlayer.coinFlips = []
 
 		// Handle timeout
 		if (raceResult.timeout) {
