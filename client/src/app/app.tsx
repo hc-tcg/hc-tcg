@@ -14,6 +14,7 @@ import Toast from 'components/toast'
 import Settings from './main-menu/settings'
 import GameSettings from './main-menu/game-settings'
 import Credits from './main-menu/credits'
+import BossLanding from './main-menu/boss-landing'
 import LostConnection from 'components/lost-connection'
 import Background from 'components/background'
 
@@ -47,6 +48,8 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
+				case 'boss-landing':
+					return <BossLanding setMenuSection={setMenuSection} />
 				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />
