@@ -171,7 +171,6 @@ export class BattleLog {
 		const activeHermitId = activeRow.hermitCard?.cardId
 		if (activeHermitId === undefined) return
 		const activeHermit = HERMIT_CARDS[activeHermitId]
-		const hermit_full_name = activeHermitId.split('_')[0]
 
 		const opponentActiveRow = this.game.opponentActiveRow
 		if (opponentActiveRow === null) return
@@ -179,23 +178,7 @@ export class BattleLog {
 		if (opponentActiveHermitId === undefined) return
 		const opponentActiveHermit = HERMIT_CARDS[opponentActiveHermitId]
 
-		const attackName =
-			type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
-
-		const entry: BattleLogT = {
-			player: this.game.currentPlayer.id,
-			description: [
-				this.format(`Your `, 'plain', 'player'),
-				this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-				this.format(`${activeHermit.name} `, 'player'),
-				this.format(`attacked `, 'plain'),
-				this.format(`${opponentActiveHermit.name} `, 'opponent'),
-				this.format(`with `, 'plain'),
-				this.format(`${attackName} `, 'highlight'),
-			],
-		}
-		this.log.push(entry)
-
+		// Single use first
 		const singleUse = this.game.currentPlayer.board.singleUseCard
 		const singleUseUsed = this.game.currentPlayer.board.singleUseCardUsed
 		if (singleUse !== null && !singleUseUsed) {
@@ -214,6 +197,25 @@ export class BattleLog {
 				],
 			}
 			this.log.push(singleUseEntry)
+		}
+
+		if (type !== 'SINGLE_USE_ATTACK') {
+			const attackName =
+				type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
+
+			const entry: BattleLogT = {
+				player: this.game.currentPlayer.id,
+				description: [
+					this.format(`Your `, 'plain', 'player'),
+					this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
+					this.format(`${activeHermit.name} `, 'player'),
+					this.format(`attacked `, 'plain'),
+					this.format(`${opponentActiveHermit.name} `, 'opponent'),
+					this.format(`with `, 'plain'),
+					this.format(`${attackName} `, 'highlight'),
+				],
+			}
+			this.log.push(entry)
 		}
 
 		this.sendBattleLogEntry()
