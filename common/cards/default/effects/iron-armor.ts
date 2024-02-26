@@ -1,6 +1,6 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
+import { CardPosModel } from '../../../models/card-pos-model'
+import { GameModel } from '../../../models/game-model'
+import { isTargetingPos } from '../../../utils/attacks'
 import EffectCard from '../../base/effect-card'
 
 class IronArmorEffectCard extends EffectCard {
@@ -15,7 +15,7 @@ class IronArmorEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence.add(instance, (attack) => {
@@ -28,7 +28,7 @@ class IronArmorEffectCard extends EffectCard {
 			const totalReduction = player.custom[instanceKey]
 
 			if (totalReduction < 20) {
-				const damageReduction = Math.min(attack.getDamage(), 20 - totalReduction)
+				const damageReduction = Math.min(attack.calculateDamage(), 20 - totalReduction)
 				player.custom[instanceKey] += damageReduction
 				attack.reduceDamage(this.id, damageReduction)
 			}
@@ -46,7 +46,7 @@ class IronArmorEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
 		player.hooks.onDefence.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
 		opponentPlayer.hooks.onTurnStart.remove(instance)
