@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
-import {applyAilment} from '../../../utils/board'
+import {applyStatusEffect} from '../../../utils/board'
 
 class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -25,7 +25,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
-			applyAilment(
+			applyStatusEffect(
 				game,
 				'poison',
 				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance

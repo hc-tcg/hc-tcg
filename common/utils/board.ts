@@ -1,11 +1,11 @@
 import {CARDS, ITEM_CARDS} from '../cards'
-import {AILMENT_CLASSES} from '../ailments'
+import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
 import {
 	CardT,
-	AilmentT,
+	StatusEffectT,
 	GenericActionResult,
 	PlayerState,
 	RowState,
@@ -133,11 +133,11 @@ export function applySingleUse(game: GameModel): GenericActionResult {
 }
 
 /**
- * Apply an ailment to a card instance. ailmentId and targetInstance must be card instances.
+ * Apply an statusEffect to a card instance. statusEffectId and targetInstance must be card instances.
  */
-export function applyAilment(
+export function applyStatusEffect(
 	game: GameModel,
-	ailmentId: string,
+	statusEffectId: string,
 	targetInstance: string | undefined
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
@@ -146,37 +146,40 @@ export function applyAilment(
 
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
-	const ailment = AILMENT_CLASSES[ailmentId]
-	const ailmentInstance = Math.random().toString()
+	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
+	const statusEffectInstance = Math.random().toString()
 
-	const ailmentInfo: AilmentT = {
-		ailmentId: ailmentId,
-		ailmentInstance: ailmentInstance,
+	const statusEffectInfo: StatusEffectT = {
+		statusEffectId: statusEffectId,
+		statusEffectInstance: statusEffectInstance,
 		targetInstance: targetInstance,
-		damageEffect: ailment.damageEffect,
+		damageEffect: statusEffect.damageEffect,
 	}
 
-	ailment.onApply(game, ailmentInfo, pos)
+	statusEffect.onApply(game, statusEffectInfo, pos)
 
-	if (ailment.duration > 0 || ailment.counter) ailmentInfo.duration = ailment.duration
+	if (statusEffect.duration > 0 || statusEffect.counter)
+		statusEffectInfo.duration = statusEffect.duration
 
 	return 'SUCCESS'
 }
 
 /**
- * Remove an ailment from the game.
+ * Remove an statusEffect from the game.
  */
-export function removeAilment(
+export function removeStatusEffect(
 	game: GameModel,
 	pos: CardPosModel,
-	ailmentInstance: string
+	statusEffectInstance: string
 ): GenericActionResult {
-	const ailments = game.state.ailments.filter((a) => a.ailmentInstance === ailmentInstance)
-	if (ailments.length === 0) return 'FAILURE_NOT_APPLICABLE'
+	const statusEffects = game.state.statusEffects.filter(
+		(a) => a.statusEffectInstance === statusEffectInstance
+	)
+	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
-	const ailmentObject = AILMENT_CLASSES[ailments[0].ailmentId]
-	ailmentObject.onRemoval(game, ailments[0], pos)
-	game.state.ailments = game.state.ailments.filter((a) => !ailments.includes(a))
+	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
+	statusEffectObject.onRemoval(game, statusEffects[0], pos)
+	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
 }

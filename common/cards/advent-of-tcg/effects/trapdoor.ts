@@ -26,7 +26,7 @@ class TrapdoorEffectCard extends EffectCard {
 				attack.attacker?.player.id !== opponentPlayer.id
 			)
 				return
-			if (attack.isType('ailment') || attack.isBacklash) return
+			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (pos.rowIndex === null) return
 			if (Math.abs(attack.target.rowIndex - pos.rowIndex) !== 1) return
 

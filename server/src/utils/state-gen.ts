@@ -309,7 +309,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		ailments: game.state.ailments,
+		statusEffects: game.state.statusEffects,
 
 		// personal info
 		hand: playerState.hand,

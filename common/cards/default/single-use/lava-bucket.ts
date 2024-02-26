@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyAilment} from '../../../utils/board'
-import Fire from '../../../ailments/fire'
+import {applyStatusEffect} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class LavaBucketSingleUseCard extends SingleUseCard {
@@ -26,7 +25,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
-			applyAilment(
+			applyStatusEffect(
 				game,
 				'fire',
 				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance

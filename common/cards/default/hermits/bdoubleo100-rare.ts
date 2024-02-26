@@ -2,7 +2,7 @@ import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import HermitCard from '../../base/hermit-card'
-import {applyAilment, removeAilment} from '../../../utils/board'
+import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 
 class BdoubleO100RareHermitCard extends HermitCard {
 	constructor() {
@@ -39,8 +39,8 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 			if (!row || !row.hermitCard) return
 
-			// Add new sleeping ailment
-			applyAilment(game, 'sleeping', row.hermitCard.cardInstance)
+			// Add new sleeping statusEffect
+			applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
 		})
 	}
 

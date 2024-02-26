@@ -1,8 +1,8 @@
 import css from './actions.module.scss'
 import cn from 'classnames'
 import Slot from '../board/board-slot'
-import {useSelector, useDispatch} from 'react-redux'
-import {endTurn, setOpenedModal} from 'logic/game/game-actions'
+import { useSelector, useDispatch } from 'react-redux'
+import { endTurn, setOpenedModal } from 'logic/game/game-actions'
 import {
 	getPlayerStateById,
 	getAvailableActions,
@@ -11,13 +11,13 @@ import {
 	getPlayerState,
 	getCurrentPickMessage,
 } from 'logic/game/game-selectors'
-import {LocalGameState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
+import { LocalGameState } from 'common/types/game-state'
+import { getPlayerId } from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
-import {SINGLE_USE_CARDS} from 'common/cards'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import {PickInfo} from 'common/types/server-requests'
+import { SINGLE_USE_CARDS } from 'common/cards'
+import { getSettings } from 'logic/local-settings/local-settings-selectors'
+import { PickInfo } from 'common/types/server-requests'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
@@ -26,7 +26,7 @@ type Props = {
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
+const MobileActions = ({ onClick, localGameState, mobile, id }: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
@@ -104,12 +104,12 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 		}
 
 		return (
-			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
+			<div className={cn(css.slot, { [css.used]: singleUseCardUsed })}>
 				<Slot
 					card={singleUseCard}
 					type={'single_use'}
 					onClick={handleClick}
-					ailments={localGameState.ailments}
+					statusEffects={localGameState.statusEffects}
 				/>
 			</div>
 		)
@@ -130,7 +130,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 				<Button
 					variant="default"
 					size="small"
-					style={{height: '32px'}}
+					style={{ height: '32px' }}
 					onClick={handleAttack}
 					disabled={!attackOptions}
 				>
@@ -139,7 +139,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 				<Button
 					variant={!availableActions.includes('END_TURN') ? 'default' : 'error'}
 					size="small"
-					style={{height: '32px'}}
+					style={{ height: '32px' }}
 					onClick={handleEndTurn}
 					disabled={!availableActions.includes('END_TURN')}
 				>

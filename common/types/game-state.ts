@@ -32,16 +32,16 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type CoinFlipT = 'heads' | 'tails'
 
-export type AilmentT = {
-	/** The ID of the ailment. */
-	ailmentId: string
-	/** The ailment's instance. */
-	ailmentInstance: string
+export type StatusEffectT = {
+	/** The ID of the statusEffect. */
+	statusEffectId: string
+	/** The statusEffect's instance. */
+	statusEffectInstance: string
 	/** The target card's instance. */
 	targetInstance: string
 	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
-	/** Whether the ailment is a damage effect or not. */
+	/** Whether the statusEffect is a damage effect or not. */
 	damageEffect: boolean
 }
 
@@ -207,7 +207,7 @@ export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -285,7 +285,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 
 	// personal data
 	hand: Array<CardT>

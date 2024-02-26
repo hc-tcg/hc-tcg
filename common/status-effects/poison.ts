@@ -1,13 +1,13 @@
-import Ailment from './ailment'
+import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
 import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
-import {getActiveRowPos, removeAilment} from '../utils/board'
-import {AilmentT} from '../types/game-state'
+import {getActiveRowPos, removeStatusEffect} from '../utils/board'
+import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 
-class PoisonAilment extends Ailment {
+class PoisonStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'poison',
@@ -20,19 +20,19 @@ class PoisonAilment extends Ailment {
 		})
 	}
 
-	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		const hasDamageEffect = game.state.ailments.some(
+		const hasDamageEffect = game.state.statusEffects.some(
 			(a) => a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
 		)
 
 		if (hasDamageEffect) return
 
-		game.state.ailments.push(ailmentInfo)
+		game.state.statusEffects.push(statusEffectInfo)
 
-		opponentPlayer.hooks.onTurnEnd.add(ailmentInfo.ailmentInstance, () => {
-			const targetPos = getBasicCardPos(game, ailmentInfo.targetInstance)
+		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
 			if (!targetPos.row.hermitCard) return
 
@@ -51,34 +51,34 @@ class PoisonAilment extends Ailment {
 				row: targetPos.row,
 			}
 
-			const ailmentAttack = new AttackModel({
-				id: this.getInstanceKey(ailmentInfo.ailmentInstance, 'ailmentAttack'),
+			const statusEffectAttack = new AttackModel({
+				id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'statusEffectAttack'),
 				attacker: sourceRow,
 				target: targetRow,
-				type: 'ailment',
+				type: 'status-effect',
 			})
 
 			if (targetPos.row.health >= 30) {
-				ailmentAttack.addDamage(this.id, 20)
+				statusEffectAttack.addDamage(this.id, 20)
 			} else if (targetPos.row.health == 20) {
-				ailmentAttack.addDamage(this.id, 10)
+				statusEffectAttack.addDamage(this.id, 10)
 			}
 
-			executeExtraAttacks(game, [ailmentAttack], 'Poison', true)
+			executeExtraAttacks(game, [statusEffectAttack], 'Poison', true)
 		})
 
-		player.hooks.onHermitDeath.add(ailmentInfo.ailmentInstance, (hermitPos) => {
+		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
 			if (hermitPos.rowIndex === null || !hermitPos.row) return
 			if (hermitPos.row != pos.row) return
-			removeAilment(game, pos, ailmentInfo.ailmentInstance)
+			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
 
-	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onTurnEnd.remove(ailmentInfo.ailmentInstance)
-		player.hooks.onHermitDeath.remove(ailmentInfo.ailmentInstance)
+		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 
-export default PoisonAilment
+export default PoisonStatusEffect

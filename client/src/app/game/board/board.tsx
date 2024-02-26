@@ -1,14 +1,15 @@
-import {useSelector} from 'react-redux'
-import {CardT, LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
-import {getPlayerId} from 'logic/session/session-selectors'
+import { useSelector } from 'react-redux'
+import { CardT, LocalGameState, LocalPlayerState, RowState } from 'common/types/game-state'
+import { getPlayerId } from 'logic/session/session-selectors'
 import css from './board.module.scss'
 import BoardRow from './board-row'
 import PlayerInfo from '../player-info'
 import Timer from '../timer'
 import Actions from '../actions/actions'
-import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import { CARDS } from 'common/cards'
+import { getSettings } from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {PickInfo, SlotInfo} from 'common/types/server-requests'
+import { PickInfo, SlotInfo } from 'common/types/server-requests'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
@@ -17,7 +18,7 @@ type Props = {
 
 // TODO - Don't allow clicking on slots on the other side
 // TODO - Use selectors instead of passing gameState
-function Board({onClick, localGameState}: Props) {
+function Board({ onClick, localGameState }: Props) {
 	const settings = useSelector(getSettings)
 	const playerId = useSelector(getPlayerId)
 	const player = localGameState.players[playerId]
@@ -55,7 +56,7 @@ function Board({onClick, localGameState}: Props) {
 							active={index === player.board.activeRow}
 							onClick={handleRowClick.bind(null, player.id, index)}
 							type={direction}
-							ailments={localGameState.ailments}
+							statusEffects={localGameState.statusEffects}
 						/>
 					)
 				})}
