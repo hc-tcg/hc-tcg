@@ -1,5 +1,5 @@
 import {takeEvery} from 'typed-redux-saga'
-import {broadcast} from '../../../../common/utils/comm'
+import {broadcast} from '../../utils/comm'
 import profanityFilter from '../../../../common/utils/profanity'
 import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'

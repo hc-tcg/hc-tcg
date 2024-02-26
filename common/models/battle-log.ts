@@ -11,7 +11,7 @@ import {
 	PlayerState,
 	RowStateWithHermit,
 } from '../types/game-state'
-import {broadcast} from '../utils/comm'
+import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
