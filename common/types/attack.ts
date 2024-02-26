@@ -2,7 +2,7 @@ import {RowPos} from './cards'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
-export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'ailment'
+export type AttackType = HermitAttackType | 'effect' | 'weakness' | 'status-effect'
 
 export type AttackDefence = {
 	damageReduction: number

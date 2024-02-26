@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {TurnActions} from '../../../types/game-state'
 import EffectCard from '../../base/effect-card'
 import {CARDS} from '../..'
-import {applySingleUse, removeAilment} from '../../../utils/board'
+import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -31,14 +31,14 @@ class MilkBucketEffectCard extends EffectCard {
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					const ailmentsToRemove = game.state.ailments.filter((ail) => {
+					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
 							ail.targetInstance === pickResult.card?.cardInstance &&
-							(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+							(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
 						)
 					})
-					ailmentsToRemove.forEach((ail) => {
-						removeAilment(game, pos, ail.ailmentInstance)
+					statusEffectsToRemove.forEach((ail) => {
+						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
 					applySingleUse(game)
@@ -48,36 +48,38 @@ class MilkBucketEffectCard extends EffectCard {
 			})
 		} else if (slot.type === 'effect') {
 			// Straight away remove poison
-			const poisonAilment = game.state.ailments.find((ail) => {
-				return ail.targetInstance === row?.hermitCard?.cardInstance && ail.ailmentId == 'poison'
+			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
+				return (
+					ail.targetInstance === row?.hermitCard?.cardInstance && ail.statusEffectId == 'poison'
+				)
 			})
-			if (poisonAilment) {
-				removeAilment(game, pos, poisonAilment.ailmentInstance)
+			if (poisonStatusEffect) {
+				removeStatusEffect(game, pos, poisonStatusEffect.statusEffectInstance)
 			}
 
 			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
-				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 					return (
 						ail.targetInstance === row.hermitCard?.cardInstance &&
-						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+						(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
 					)
 				})
-				ailmentsToRemove.forEach((ail) => {
-					removeAilment(game, pos, ail.ailmentInstance)
+				statusEffectsToRemove.forEach((ail) => {
+					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				})
 			})
 
 			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
-				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 					return (
 						ail.targetInstance === row.hermitCard?.cardInstance &&
-						(ail.ailmentId == 'poison' || ail.ailmentId == 'badomen')
+						(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
 					)
 				})
-				ailmentsToRemove.forEach((ail) => {
-					removeAilment(game, pos, ail.ailmentInstance)
+				statusEffectsToRemove.forEach((ail) => {
+					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				})
 			})
 		}

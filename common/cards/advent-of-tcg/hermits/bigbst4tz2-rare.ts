@@ -66,16 +66,16 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 					row: opponentActiveRow,
 				}
 
-				const ailmentAttack = new AttackModel({
+				const statusEffectAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
 					attacker: sourceRow,
 					target: targetRow,
-					type: 'ailment',
+					type: 'status-effect',
 				})
-				ailmentAttack.addDamage(this.id, 140)
+				statusEffectAttack.addDamage(this.id, 140)
 
 				opponentPlayer.hooks.afterAttack.remove(instance)
-				executeAttacks(game, [ailmentAttack], true)
+				executeAttacks(game, [statusEffectAttack], true)
 			}
 		})
 

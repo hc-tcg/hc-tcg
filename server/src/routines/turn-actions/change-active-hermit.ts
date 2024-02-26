@@ -1,11 +1,12 @@
 import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
+import {call} from 'typed-redux-saga'
 
 function* changeActiveHermit(
 	game: GameModel,
 	turnAction: ChangeActiveHermitActionData
-): Generator<never, GenericActionResult> {
+): Generator<any, GenericActionResult> {
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
@@ -20,6 +21,9 @@ function* changeActiveHermit(
 	// Change row
 	const result = game.changeActiveRow(currentPlayer, rowIndex)
 	if (!result) return 'FAILURE_CANNOT_COMPLETE'
+
+	// Create battle log entry
+	game.battleLog.addChangeHermitEntry(turnAction)
 
 	if (hadActiveHermit) {
 		// We switched from one hermit to another, mark this action as completed

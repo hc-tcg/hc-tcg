@@ -56,7 +56,7 @@ function Board({onClick, localGameState}: Props) {
 							active={index === player.board.activeRow}
 							onClick={handleRowClick.bind(null, player.id, index)}
 							type={direction}
-							ailments={localGameState.ailments}
+							statusEffects={localGameState.statusEffects}
 						/>
 					)
 				})}

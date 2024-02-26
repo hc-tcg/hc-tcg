@@ -1,9 +1,17 @@
 import {PlayerModel} from './player-model'
-import {TurnAction, GameState, ActionResult, TurnActions, PlayerState} from '../types/game-state'
+import {
+	TurnAction,
+	GameState,
+	ActionResult,
+	TurnActions,
+	BattleLogT,
+	PlayerState,
+} from '../types/game-state'
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {SlotPos} from '../types/cards'
+import {BattleLog} from './battle-log'
 import {VirtualPlayerModel} from './virtual-player-model'
 
 type GameConfigOptions = {
@@ -19,6 +27,7 @@ export class GameModel {
 	private internalCode: string | null
 
 	public chat: Array<MessageInfoT>
+	public battleLog: BattleLog
 	public players: Record<string, PlayerModel | VirtualPlayerModel>
 	public task: any
 	public state: GameState
@@ -41,6 +50,7 @@ export class GameModel {
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
 		this.chat = []
+		this.battleLog = new BattleLog(this)
 
 		this.task = null
 

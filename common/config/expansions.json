@@ -3,7 +3,8 @@
 		"default": "Base set",
 		"alter_egos": "Alter Egos",
 		"advent_of_tcg": "Advent of TCG",
+		"dream": "Dream",
 		"boss": "Boss"
 	},
-	"disabled": ["advent_of_tcg", "boss"]
+	"disabled": ["advent_of_tcg", "dream", "boss"]
 }

@@ -34,7 +34,7 @@ class LightningRodEffectCard extends EffectCard {
 
 		// Only on opponents turn
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.isType('ailment') || attack.isBacklash) return
+			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (!row || rowIndex === null || !row.hermitCard) return
 
 			// Attack already has to be targeting us

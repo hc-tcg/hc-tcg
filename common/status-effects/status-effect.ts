@@ -1,8 +1,8 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {AilmentT} from '../types/game-state'
+import {StatusEffectT} from '../types/game-state'
 
-type AilmentDefs = {
+type StatusEffectDefs = {
 	id: string
 	name: string
 	description: string
@@ -11,7 +11,7 @@ type AilmentDefs = {
 	damageEffect: boolean
 }
 
-abstract class Ailment {
+abstract class StatusEffect {
 	public id: string
 	public name: string
 	public description: string
@@ -19,7 +19,7 @@ abstract class Ailment {
 	public counter: boolean
 	public damageEffect: boolean
 
-	constructor(defs: AilmentDefs) {
+	constructor(defs: StatusEffectDefs) {
 		this.id = defs.id
 		this.name = defs.name
 		this.description = defs.description
@@ -36,25 +36,25 @@ abstract class Ailment {
 	}
 
 	/**
-	 * Same as `getInstanceKey` but for the ailment's target
+	 * Same as `getInstanceKey` but for the statusEffect's target
 	 */
 	public getTargetInstanceKey(targetId: string, instance: string, keyName: string = '') {
 		return targetId + ':' + instance + ':' + keyName
 	}
 
 	/**
-	 * Called when this ailment is applied
+	 * Called when this statusEffect is applied
 	 */
-	public onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+	public onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		// default is do nothing
 	}
 
 	/**
-	 * Called when the ailment is removed, from either timeout or other means
+	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
-	public onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel) {
+	public onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		// default is do nothing
 	}
 }
 
-export default Ailment
+export default StatusEffect

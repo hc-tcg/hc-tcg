@@ -20,7 +20,9 @@ export function MassExportModal({setOpen, onClose}: Props) {
 		const decks: string[] = []
 		getSavedDecks().forEach((deck) => {
 			const deckJson = JSON.parse(deck)
-			decks.push(`${deckJson.name}:${deckJson.icon}:${getHashFromDeck(deckJson.cards)}\n`)
+			if (deckJson) {
+				decks.push(`${deckJson.name}:${deckJson.icon}:${getHashFromDeck(deckJson.cards)}\n`)
+			}
 		})
 		const deckFile = new Blob(decks, {type: 'text/plain'})
 

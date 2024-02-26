@@ -1,3 +1,4 @@
+import {HERMIT_CARDS} from '../..'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRowPos} from '../../../utils/board'
@@ -40,6 +41,8 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 			if (!opponentActiveRow) return
 			if (opponentActiveRow.row.health <= 0) return
+
+			if (!HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]) return
 
 			const coinFlip = flipCoin(player, this.id)
 

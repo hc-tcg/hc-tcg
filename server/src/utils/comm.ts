@@ -1,5 +1,5 @@
-import {PlayerModel} from 'common/models/player-model'
-import {VirtualPlayerModel} from 'common/models/virtual-player-model'
+import {PlayerModel} from '../../../common/models/player-model'
+import {VirtualPlayerModel} from '../../../common/models/virtual-player-model'
 
 export function broadcast(
 	players: Array<PlayerModel | VirtualPlayerModel>,

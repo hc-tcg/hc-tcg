@@ -23,6 +23,10 @@ class DreamRareHermitCard extends HermitCard {
 			},
 		})
 	}
+
+	public override getExpansion(): string {
+		return 'dream'
+	}
 }
 
 export default DreamRareHermitCard

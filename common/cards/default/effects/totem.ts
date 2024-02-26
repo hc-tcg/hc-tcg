@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
-import {removeAilment} from '../../../utils/board'
+import {removeStatusEffect} from '../../../utils/board'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -29,11 +29,11 @@ class TotemEffectCard extends EffectCard {
 
 			row.health = 10
 
-			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 				return ail.targetInstance === pos.card?.cardInstance
 			})
-			ailmentsToRemove.forEach((ail) => {
-				removeAilment(game, pos, ail.ailmentInstance)
+			statusEffectsToRemove.forEach((ail) => {
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 
 			// This will remove this hook, so it'll only be called once
@@ -51,11 +51,11 @@ class TotemEffectCard extends EffectCard {
 
 			const thisHermitId = pos.row?.hermitCard?.cardInstance
 
-			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 				return ail.targetInstance === thisHermitId
 			})
-			ailmentsToRemove.forEach((ail) => {
-				removeAilment(game, pos, ail.ailmentInstance)
+			statusEffectsToRemove.forEach((ail) => {
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 
 			// This will remove this hook, so it'll only be called once

@@ -21,19 +21,25 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
+		const usedKey = this.getInstanceKey(instance, 'used')
 
 		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, this.id)
 			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('ailment') || attack.isBacklash) return
+				if (attack.isType('weakness', 'effect', 'status-effect') || attack.isBacklash) return
+
+				player.custom[usedKey] = true
 				attack.multiplyDamage(this.id, multiplier)
 			})
 
-			opponentPlayer.hooks.afterAttack.add(instance, () => {
-				opponentPlayer.hooks.beforeAttack.remove(instance)
+			opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+				if (!player.custom[usedKey]) return
+				delete player.custom[usedKey]
+
 				opponentPlayer.hooks.afterAttack.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
 			})
 		})
 	}

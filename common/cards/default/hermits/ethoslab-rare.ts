@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
-import {applyAilment, getActiveRow} from '../../../utils/board'
+import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 
 class EthosLabRareHermitCard extends HermitCard {
 	constructor() {
@@ -43,7 +43,7 @@ class EthosLabRareHermitCard extends HermitCard {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
 
-			applyAilment(game, 'fire', opponentActiveRow?.hermitCard.cardInstance)
+			applyStatusEffect(game, 'fire', opponentActiveRow?.hermitCard.cardInstance)
 		})
 	}
 

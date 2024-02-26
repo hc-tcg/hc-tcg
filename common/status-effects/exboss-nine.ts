@@ -1,13 +1,13 @@
 import {CardPosModel} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {AilmentT} from '../types/game-state'
-import {getActiveRow, removeAilment} from '../utils/board'
+import {StatusEffectT} from '../types/game-state'
+import {getActiveRow, removeStatusEffect} from '../utils/board'
 import {isRemovable} from '../utils/cards'
 import {discardCard, discardFromHand} from '../utils/movement'
-import Ailment from './ailment'
+import StatusEffect from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
 
-class ExBossNineAilment extends Ailment {
+class ExBossNineAilment extends StatusEffect {
 	constructor() {
 		super({
 			id: 'exboss-nine',
@@ -19,17 +19,17 @@ class ExBossNineAilment extends Ailment {
 		})
 	}
 
-	override onApply(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel): void {
-		game.state.ailments.push(ailmentInfo)
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel): void {
+		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onTurnStart.add(ailmentInfo.ailmentId, () => {
-			if (ailmentInfo.duration === undefined) ailmentInfo.duration = 1
-			ailmentInfo.duration += 1
+		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectId, () => {
+			if (statusEffectInfo.duration === undefined) statusEffectInfo.duration = 1
+			statusEffectInfo.duration += 1
 		})
 
-		player.hooks.onTurnEnd.add(ailmentInfo.ailmentId, () => {
-			if (ailmentInfo.duration !== 9) return
+		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectId, () => {
+			if (statusEffectInfo.duration !== 9) return
 
 			let voiceLine: string
 			if (Math.random() > 0.5) {
@@ -50,16 +50,16 @@ class ExBossNineAilment extends Ailment {
 				}
 			}
 
-			removeAilment(game, pos, ailmentInfo.ailmentInstance)
+			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: [voiceLine]})
 		})
 	}
 
-	override onRemoval(game: GameModel, ailmentInfo: AilmentT, pos: CardPosModel): void {
+	override onRemoval(game: GameModel, ailmentInfo: StatusEffectT, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(ailmentInfo.ailmentId)
-		player.hooks.onTurnEnd.remove(ailmentInfo.ailmentId)
+		player.hooks.onTurnStart.remove(ailmentInfo.statusEffectId)
+		player.hooks.onTurnEnd.remove(ailmentInfo.statusEffectId)
 	}
 }
 

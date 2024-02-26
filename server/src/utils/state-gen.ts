@@ -314,7 +314,7 @@ export function getLocalGameState(
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		ailments: game.state.ailments,
+		statusEffects: game.state.statusEffects,
 
 		// personal info
 		hand: playerState.hand,

@@ -1,4 +1,5 @@
 import {AttackModel} from '../models/attack-model'
+import {BattleLog} from '../models/battle-log'
 import {CardPosModel} from '../models/card-pos-model'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
@@ -31,22 +32,37 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type CoinFlipT = 'heads' | 'tails'
 
-export type AilmentT = {
-	/** The ID of the ailment. */
-	ailmentId: string
-	/** The ailment's instance. */
-	ailmentInstance: string
+export type StatusEffectT = {
+	/** The ID of the statusEffect. */
+	statusEffectId: string
+	/** The statusEffect's instance. */
+	statusEffectInstance: string
 	/** The target card's instance. */
 	targetInstance: string
 	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
-	/** Whether the ailment is a damage effect or not. */
+	/** Whether the statusEffect is a damage effect or not. */
 	damageEffect: boolean
 }
 
 export type CurrentCoinFlipT = {
+	cardId: string
+	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>
+}
+
+export type BattleLogT = {
+	player: PlayerId
+	description: MessageTextT[]
+}
+
+export type MessageTextT = {
+	text: string
+	censoredText: string
+	alt?: string
+	format: string
+	condition?: 'player' | 'opponent'
 }
 
 export type PlayerState = {
@@ -192,7 +208,7 @@ export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -272,7 +288,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 
 	// personal data
 	hand: Array<CardT>
@@ -316,6 +332,7 @@ export type LocalGameRoot = {
 		outcome: GameEndOutcomeT
 	} | null
 	chat: Array<MessageInfoT>
+	battleLog: BattleLog | null
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }
