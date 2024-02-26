@@ -1,6 +1,6 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {flipCoin} from '../../../utils/coinFlips'
+import { CardPosModel } from '../../../models/card-pos-model'
+import { GameModel } from '../../../models/game-model'
+import { flipCoin } from '../../../utils/coinFlips'
 import SingleUseCard from '../../base/single-use-card'
 
 class InvisibilityPotionSingleUseCard extends SingleUseCard {
@@ -20,26 +20,32 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
+		const usedKey = this.getInstanceKey(instance, "used")
 
 		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, this.id)
 			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('ailment') || attack.isBacklash) return
+				if (attack.isType('weakness', 'effect', 'ailment') || attack.isBacklash) return
+
+				player.custom[usedKey] = true
 				attack.multiplyDamage(this.id, multiplier)
 			})
 
-			opponentPlayer.hooks.afterAttack.add(instance, () => {
-				opponentPlayer.hooks.beforeAttack.remove(instance)
+			opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+				if (!player.custom[usedKey]) return
+				delete player.custom[usedKey]
+
 				opponentPlayer.hooks.afterAttack.remove(instance)
+				opponentPlayer.hooks.beforeAttack.remove(instance)
 			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const { player } = pos
 		player.hooks.onApply.remove(instance)
 	}
 }
