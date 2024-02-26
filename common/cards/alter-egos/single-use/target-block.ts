@@ -53,7 +53,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {
-					if (attack.isType('ailment') || attack.isBacklash) return
+					if (attack.isType('status-effect') || attack.isBacklash) return
 
 					attack.target = {
 						player: opponentPlayer,

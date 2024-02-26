@@ -1,7 +1,7 @@
 import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {applyAilment, removeAilment} from '../../../utils/board'
+import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 
 class FurnaceEffectCard extends EffectCard {
 	constructor() {
@@ -16,13 +16,13 @@ class FurnaceEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		applyAilment(game, 'smelting', instance)
+		applyStatusEffect(game, 'smelting', instance)
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		game.state.ailments.forEach((ail) => {
+		game.state.statusEffects.forEach((ail) => {
 			if (ail.targetInstance === instance) {
-				removeAilment(game, pos, ail.ailmentInstance)
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			}
 		})
 	}

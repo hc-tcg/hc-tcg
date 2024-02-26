@@ -129,6 +129,7 @@ $grid-size: 25px;
 #left .slot.hermit.afk {
 	transform: rotate(90deg);
 }
+
 #right .slot.hermit.afk {
 	transform: rotate(-90deg);
 }
@@ -178,8 +179,8 @@ $grid-size: 25px;
 	font-size: 12px;
 }
 
-// AILMENTS
-.ailmentContainer {
+// STATUS EFFECTS
+.statusEffectContainer {
 	position: absolute;
 	top: 25px;
 	left: 8px;
@@ -189,13 +190,13 @@ $grid-size: 25px;
 	pointer-events: none;
 }
 
-.damageAilmentContainer {
+.damageStatusEffectContainer {
 	position: absolute;
 	bottom: -40px;
 	left: -20px;
 }
 
-.protectedAilment {
+.protectedStatusEffect {
 	position: absolute;
 	right: 66px;
 	top: 20px;

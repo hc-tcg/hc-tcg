@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyAilment, getNonEmptyRows, removeAilment} from '../../../utils/board'
+import {applyStatusEffect, getNonEmptyRows, removeStatusEffect} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class OrionSoundRareHermitCard extends HermitCard {
@@ -48,7 +48,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					applyAilment(game, 'melody', pickResult.card.cardInstance)
+					applyStatusEffect(game, 'melody', pickResult.card.cardInstance)
 					player.custom[instanceKey].push(pickResult.card.cardInstance)
 
 					return 'SUCCESS'
@@ -60,11 +60,13 @@ class OrionSoundRareHermitCard extends HermitCard {
 			if (hermitPos.rowIndex === null || !hermitPos.row) return
 			if (hermitPos.rowIndex !== pos.rowIndex) return
 
-			const ailmentsToRemove = game.state.ailments.filter((ail) => {
-				return player.custom[instanceKey].includes(ail.targetInstance) && ail.ailmentId == 'melody'
+			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+				return (
+					player.custom[instanceKey].includes(ail.targetInstance) && ail.statusEffectId == 'melody'
+				)
 			})
-			ailmentsToRemove.forEach((ail) => {
-				removeAilment(game, pos, ail.ailmentInstance)
+			statusEffectsToRemove.forEach((ail) => {
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 		})
 	}

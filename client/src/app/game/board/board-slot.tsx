@@ -8,9 +8,9 @@ import EffectCard from 'common/cards/base/effect-card'
 import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
-import {AilmentT} from 'common/types/game-state'
-import Ailment from 'components/ailments/ailment'
-import {AILMENT_CLASSES} from 'common/ailments'
+import {StatusEffectT} from 'common/types/game-state'
+import StatusEffect from 'components/status-effects/status-effect'
+import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
 
 export type SlotProps = {
@@ -20,9 +20,9 @@ export type SlotProps = {
 	rowState?: RowState
 	active?: boolean
 	cssId?: string
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 }
-const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProps) => {
+const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: SlotProps) => {
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
@@ -35,43 +35,43 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 		})
 	}
 
-	const renderAilments = (cleanedAilments: AilmentT[]) => {
+	const renderStatusEffects = (cleanedStatusEffects: StatusEffectT[]) => {
 		return (
-			<div className={css.ailmentContainer}>
-				{cleanedAilments.map((a) => {
-					const ailment = AILMENT_CLASSES[a.ailmentId]
-					if (!ailment) return null
-					if (ailment.damageEffect == true) return null
-					return <Ailment ailment={ailment} duration={a.duration} />
+			<div className={css.statusEffectContainer}>
+				{cleanedStatusEffects.map((a) => {
+					const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
+					if (!statusEffect) return null
+					if (statusEffect.damageEffect == true) return null
+					return <StatusEffect statusEffect={statusEffect} duration={a.duration} />
 				})}
 			</div>
 		)
 	}
-	const renderDamageAilments = (cleanedAilments: AilmentT[] | null) => {
+	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectT[] | null) => {
 		return (
-			<div className={css.damageAilmentContainer}>
-				{cleanedAilments
-					? cleanedAilments.map((a) => {
-							const ailment = AILMENT_CLASSES[a.ailmentId]
-							if (!ailment) return null
-							if (ailment.damageEffect == false) return null
-							return <Ailment ailment={ailment} />
+			<div className={css.damageStatusEffectContainer}>
+				{cleanedStatusEffects
+					? cleanedStatusEffects.map((a) => {
+							const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
+							if (!statusEffect) return null
+							if (statusEffect.damageEffect == false) return null
+							return <StatusEffect statusEffect={statusEffect} />
 					  })
 					: null}
 			</div>
 		)
 	}
 
-	const hermitAilments = Array.from(
+	const hermitStatusEffects = Array.from(
 		new Set(
-			ailments
+			statusEffects
 				.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance)
 				.map((a) => a) || []
 		)
 	)
-	const effectAilments = Array.from(
+	const effectStatusEffects = Array.from(
 		new Set(
-			ailments.filter(
+			statusEffects.filter(
 				(a) => rowState?.effectCard && a.targetInstance == rowState.effectCard.cardInstance
 			) || []
 		)
@@ -95,15 +95,15 @@ const Slot = ({type, onClick, card, rowState, active, cssId, ailments}: SlotProp
 				<div className={css.cardWrapper}>
 					<Card card={cardInfo} />
 					{type === 'health'
-						? renderAilments(hermitAilments)
+						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderAilments(effectAilments)
+						? renderStatusEffects(effectStatusEffects)
 						: null}
 					{type === 'health'
-						? renderDamageAilments(hermitAilments)
+						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageAilments(effectAilments)
-						: renderDamageAilments(null)}
+						? renderDamageStatusEffects(effectStatusEffects)
+						: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

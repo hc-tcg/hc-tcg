@@ -106,7 +106,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 					card={singleUseCard}
 					type={'single_use'}
 					onClick={handleClick}
-					ailments={gameState.ailments}
+					statusEffects={gameState.statusEffects}
 				/>
 			</div>
 		)

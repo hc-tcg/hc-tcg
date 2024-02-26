@@ -1,6 +1,6 @@
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyAilment} from '../../../utils/board'
+import {applyStatusEffect} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class Biffa2001RareHermitCard extends HermitCard {
@@ -30,10 +30,10 @@ class Biffa2001RareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		applyAilment(game, 'museum-collection', instance)
+		applyStatusEffect(game, 'museum-collection', instance)
 
 		player.hooks.onTurnStart.add(instance, () => {
-			applyAilment(game, 'museum-collection', instance)
+			applyStatusEffect(game, 'museum-collection', instance)
 		})
 	}
 

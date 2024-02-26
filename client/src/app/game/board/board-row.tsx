@@ -3,7 +3,7 @@ import {CardT} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
-import {AilmentT} from 'common/types/game-state'
+import {StatusEffectT} from 'common/types/game-state'
 import {SlotInfo} from 'common/types/server-requests'
 import {BoardSlotTypeT} from 'common/types/cards'
 
@@ -20,9 +20,9 @@ type BoardRowProps = {
 	onClick: (card: CardT | null, slot: SlotInfo) => void
 	rowState: RowState
 	active: boolean
-	ailments: Array<AilmentT>
+	statusEffects: Array<StatusEffectT>
 }
-const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) => {
+const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProps) => {
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
@@ -37,7 +37,7 @@ const BoardRow = ({type, onClick, rowState, active, ailments}: BoardRowProps) =>
 				active={active}
 				key={slotType + '-' + index}
 				type={slotType}
-				ailments={ailments}
+				statusEffects={statusEffects}
 			/>
 		)
 	})

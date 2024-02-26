@@ -42,7 +42,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			}
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('ailment', 'effect') || attack.isBacklash) return
+				if (attack.isType('status-effect', 'effect') || attack.isBacklash) return
 
 				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
 

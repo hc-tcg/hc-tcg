@@ -27,7 +27,7 @@ class WolfEffectCard extends EffectCard {
 
 		// Only on opponents turn
 		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
-			if (attack.isType('ailment') || attack.isBacklash) return
+			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Make sure they are targeting this player
 			if (!attack.target || attack.target.player.id !== player.id) return

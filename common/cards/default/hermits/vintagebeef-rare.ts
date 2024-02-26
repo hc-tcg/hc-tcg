@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
-import {removeAilment} from '../../../utils/board'
+import {removeStatusEffect} from '../../../utils/board'
 
 class VintageBeefRareHermitCard extends HermitCard {
 	constructor() {
@@ -40,12 +40,12 @@ class VintageBeefRareHermitCard extends HermitCard {
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
-				const ailmentsToRemove = game.state.ailments.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 					return ail.targetInstance === row.hermitCard.cardInstance
 				})
 
-				ailmentsToRemove.forEach((ail) => {
-					removeAilment(game, pos, ail.ailmentInstance)
+				statusEffectsToRemove.forEach((ail) => {
+					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				})
 			})
 		})

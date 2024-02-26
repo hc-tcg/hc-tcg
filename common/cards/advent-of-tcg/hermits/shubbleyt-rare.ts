@@ -5,7 +5,7 @@ import {RowPos} from '../../../types/cards'
 import {RowStateWithHermit} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
-import {applyAilment, removeAilment} from '../../../utils/board'
+import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 
 class ShubbleYTRareHermitCard extends HermitCard {
 	constructor() {

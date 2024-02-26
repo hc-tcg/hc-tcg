@@ -35,8 +35,9 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 
-		const isSleeping = game.state.ailments.some(
-			(a) => a.targetInstance == activeRow?.hermitCard?.cardInstance && a.ailmentId == 'sleeping'
+		const isSleeping = game.state.statusEffects.some(
+			(a) =>
+				a.targetInstance == activeRow?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
 		)
 		if (isSleeping) return 'NO'
 

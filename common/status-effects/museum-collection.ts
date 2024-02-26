@@ -1,0 +1,94 @@
+import StatusEffect from './status-effect'
+import {GameModel} from '../models/game-model'
+import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {removeStatusEffect} from '../utils/board'
+import {StatusEffectT} from '../types/game-state'
+import {executeAttacks} from '../utils/attacks'
+import {AttackModel} from '../models/attack-model'
+
+class MuseumCollectionStatusEffect extends StatusEffect {
+	constructor() {
+		super({
+			id: 'museum-collection',
+			name: 'Museum Collection Size',
+			description:
+				"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
+			duration: 0,
+			counter: true,
+			damageEffect: false,
+		})
+	}
+
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+		game.state.statusEffects.push(statusEffectInfo)
+		const oldHandSize = this.getInstanceKey(statusEffectInfo.statusEffectInstance)
+		const {player} = pos
+
+		player.custom[oldHandSize] = player.hand.length
+
+		player.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
+			if (player.hand.length === player.custom[oldHandSize]) return
+			const instanceLocation = getBasicCardPos(game, instance)
+			if (statusEffectInfo.duration === undefined) return
+			player.custom[oldHandSize] = player.hand.length
+			if (instanceLocation?.slot.type === 'single_use') return
+			statusEffectInfo.duration++
+		})
+
+		player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
+			if (statusEffectInfo.duration === undefined) return
+			player.custom[oldHandSize] = player.hand.length
+			statusEffectInfo.duration++
+		})
+
+		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const activeRow = player.board.activeRow
+			if (activeRow === null) return
+			const targetHermit = player.board.rows[activeRow].hermitCard
+			if (!targetHermit?.cardId) return
+			if (
+				attack.id !==
+					this.getTargetInstanceKey(targetHermit?.cardId, statusEffectInfo.targetInstance) ||
+				attack.type !== 'secondary'
+			)
+				return
+			if (statusEffectInfo.duration === undefined) return
+
+			player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
+			player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
+				if (statusEffectInfo.duration === undefined) return
+				statusEffectInfo.duration++
+
+				const additionalAttack = new AttackModel({
+					id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'additionalAttack'),
+					attacker: attack.attacker,
+					target: attack.target,
+					type: 'secondary',
+				})
+				additionalAttack.addDamage(this.id, 20)
+
+				player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
+
+				executeAttacks(game, [additionalAttack], true)
+			})
+
+			attack.addDamage(this.id, 20 * statusEffectInfo.duration)
+		})
+
+		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+			delete player.custom[oldHandSize]
+			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+		})
+	}
+
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+		const {player} = pos
+		// Remove hooks
+		player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onAttach.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
+	}
+}
+
+export default MuseumCollectionStatusEffect

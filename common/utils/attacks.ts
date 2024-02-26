@@ -192,6 +192,19 @@ export function executeAttacks(
 	runAfterDefenceHooks(allAttacks)
 }
 
+export function executeExtraAttacks(
+	game: GameModel,
+	attacks: Array<AttackModel>,
+	type: string,
+	withoutBlockingActions = false
+) {
+	executeAttacks(game, attacks, withoutBlockingActions)
+
+	attacks.map((attack) => {
+		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
+	})
+}
+
 // Things not directly related to the attack loop
 
 export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {

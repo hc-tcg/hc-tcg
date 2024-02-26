@@ -19,6 +19,7 @@ import actionLogicSaga from './tasks/action-logic-saga'
 import attackSaga from './tasks/attack-saga'
 import chatSaga from './tasks/chat-saga'
 import coinFlipSaga from './tasks/coin-flips-saga'
+import battleLogSaga from './tasks/battle-log-saga'
 import {
 	localGameState,
 	gameStart,
@@ -124,7 +125,11 @@ function* opponentConnectionSaga(): SagaIterator {
 }
 
 function* gameSaga(initialGameState?: LocalGameState): SagaIterator {
-	const backgroundTasks = yield all([fork(opponentConnectionSaga), fork(chatSaga)])
+	const backgroundTasks = yield all([
+		fork(opponentConnectionSaga),
+		fork(chatSaga),
+		fork(battleLogSaga),
+	])
 	try {
 		yield put(gameStart())
 		const result = yield race({
