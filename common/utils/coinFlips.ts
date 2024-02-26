@@ -30,6 +30,8 @@ export function flipCoin(
 	const name = CARDS[cardId].name
 	const player = currentPlayer || playerTossingCoin
 	player.coinFlips.push({
+		cardId: cardId,
+		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,
 	})

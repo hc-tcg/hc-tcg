@@ -1,3 +1,4 @@
+import {call} from 'typed-redux-saga'
 import {HERMIT_CARDS} from 'common/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
@@ -92,6 +93,9 @@ function* attackSaga(
 
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
+
+	//Add entry to battle log
+	game.battleLog.addAttackEntry(turnAction)
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

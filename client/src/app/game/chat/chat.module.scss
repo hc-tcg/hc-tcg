@@ -38,8 +38,14 @@
 	font-size: 1.2rem;
 	touch-action: none;
 	cursor: grab;
+	align-items: center;
+	gap: inherit;
 
-	img {
+	p {
+		flex-grow: 1;
+	}
+
+	.close {
 		filter: brightness(0.1);
 		cursor: pointer;
 
@@ -100,6 +106,8 @@
 	overflow-y: auto;
 	flex: 1 0 auto;
 	z-index: 1;
+	display: flex;
+	flex-direction: column-reverse;
 }
 
 .message {
@@ -129,4 +137,29 @@
 
 .text {
 	color: var(--text-light);
+}
+
+.emoji {
+	height: 1.4rem;
+	transform: translateY(0.3rem);
+	margin-top: -0.4rem;
+}
+
+.entryTooltip {
+	color: var(--gray-300);
+
+	&.highlight {
+		color: var(--gray-300);
+		font-family: MinecraftBold;
+	}
+
+	&.player {
+		color: var(--gray-300);
+		font-family: MinecraftBold;
+	}
+
+	&.opponent {
+		color: var(--gray-300);
+		font-family: MinecraftBold;
+	}
 }

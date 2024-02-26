@@ -1,4 +1,5 @@
 import {AttackModel} from '../models/attack-model'
+import {BattleLog} from '../models/battle-log'
 import {CardPosModel} from '../models/card-pos-model'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
@@ -45,8 +46,23 @@ export type AilmentT = {
 }
 
 export type CurrentCoinFlipT = {
+	cardId: string
+	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>
+}
+
+export type BattleLogT = {
+	player: PlayerId
+	description: MessageTextT[]
+}
+
+export type MessageTextT = {
+	text: string
+	censoredText: string
+	alt?: string
+	format: string
+	condition?: 'player' | 'opponent'
 }
 
 export type PlayerState = {
@@ -311,6 +327,7 @@ export type LocalGameRoot = {
 		outcome: GameEndOutcomeT
 	} | null
 	chat: Array<MessageInfoT>
+	battleLog: BattleLog | null
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }

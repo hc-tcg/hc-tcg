@@ -1,4 +1,4 @@
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerModel} from '../../../common/models/player-model'
 
 export function broadcast(players: Array<PlayerModel>, type: string, payload: any = {}) {
 	players.forEach((player) => {

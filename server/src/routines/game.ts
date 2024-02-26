@@ -194,6 +194,9 @@ function* checkHermitHealth(game: GameModel) {
 					playerState.hooks.onHermitDeath.call(hermitPos)
 				}
 
+				// Add battle log entry
+				game.battleLog.addDeathEntry(playerState, row)
+
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
@@ -268,7 +271,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'PLAY_SINGLE_USE_CARD':
 			result = yield* call(playCardSaga, game, turnAction)
 			break
-
 		case 'SINGLE_USE_ATTACK':
 		case 'PRIMARY_ATTACK':
 		case 'SECONDARY_ATTACK':
@@ -278,7 +280,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(changeActiveHermitSaga, game, turnAction)
 			break
 		case 'APPLY_EFFECT':
-			result = yield* call(applyEffectSaga, game)
+			result = yield* call(applyEffectSaga, game, turnAction)
 			break
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
@@ -402,6 +404,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
+			game.battleLog.addCoinFlipEntry(currentPlayer.coinFlips)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
