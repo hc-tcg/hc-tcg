@@ -6,7 +6,7 @@ type Props = {
 	duration?: number | undefined
 }
 
-const StatusEffectTooltip = ({ statusEffect, duration }: Props) => {
+const StatusEffectTooltip = ({statusEffect, duration}: Props) => {
 	return (
 		<div className={css.statusEffectTooltip}>
 			<div className={css.topLine}>

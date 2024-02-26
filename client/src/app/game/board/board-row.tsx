@@ -1,11 +1,11 @@
-import { RowState } from 'common/types/game-state'
-import { CardT } from 'common/types/game-state'
+import {RowState} from 'common/types/game-state'
+import {CardT} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
-import { StatusEffectT } from 'common/types/game-state'
-import { SlotInfo } from 'common/types/server-requests'
-import { BoardSlotTypeT } from 'common/types/cards'
+import {StatusEffectT} from 'common/types/game-state'
+import {SlotInfo} from 'common/types/server-requests'
+import {BoardSlotTypeT} from 'common/types/cards'
 
 const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
 	if (!row) return null
@@ -22,10 +22,10 @@ type BoardRowProps = {
 	active: boolean
 	statusEffects: Array<StatusEffectT>
 }
-const BoardRow = ({ type, onClick, rowState, active, statusEffects }: BoardRowProps) => {
+const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProps) => {
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
-		const slotInfo: SlotInfo = { type: slotType, index: index < 3 ? index : 0 }
+		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
 		const card = getCardBySlot(slotInfo, rowState)
 		const cssId = slotType === 'item' ? slotType + (index + 1) : slotType
 		return (

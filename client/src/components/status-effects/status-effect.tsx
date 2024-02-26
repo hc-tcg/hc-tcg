@@ -14,13 +14,16 @@ interface StatusEffectProps
 }
 
 const StatusEffect = (props: StatusEffectProps) => {
-	const { id, damageEffect } = props.statusEffect
+	const {id, damageEffect} = props.statusEffect
 
 	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
-	const statusEffectClass = damageEffect == true ? css.damageStatusEffectImage : css.statusEffectImage
+	const statusEffectClass =
+		damageEffect == true ? css.damageStatusEffectImage : css.statusEffectImage
 
 	return (
-		<Tooltip tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} duration={props.duration} />}>
+		<Tooltip
+			tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} duration={props.duration} />}
+		>
 			<div className={css.statusEffect}>
 				<img className={statusEffectClass} src={'/images/status/' + id + extension}></img>
 				{props.duration !== undefined && <p className={css.durationIndicator}>{props.duration}</p>}
