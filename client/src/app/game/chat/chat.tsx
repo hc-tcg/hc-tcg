@@ -105,8 +105,8 @@ function Chat() {
 									}
 									if (
 										segment.condition === undefined ||
-										(segment.condition !== 'player' && isPlayer) ||
-										(segment.condition !== 'opponent' && !isPlayer)
+										(segment.condition === 'player' && isPlayer) ||
+										(segment.condition === 'opponent' && !isPlayer)
 									)
 										return (
 											<span
