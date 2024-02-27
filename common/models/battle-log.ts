@@ -1,15 +1,12 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
-import {
-	AttackActionData,
-	ChangeActiveHermitActionData,
-	PlayCardActionData,
-} from '../types/action-data'
+import {AttackActionData, PlayCardActionData} from '../types/action-data'
 import {
 	MessageTextT,
 	BattleLogT,
 	CurrentCoinFlipT,
 	PlayerState,
 	RowStateWithHermit,
+	CardT,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
@@ -133,28 +130,25 @@ export class BattleLog {
 		this.sendBattleLogEntry()
 	}
 
-	public addChangeHermitEntry(turnAction: ChangeActiveHermitActionData) {
-		const currentPlayer = this.game.currentPlayer.playerName
+	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
+		if (!oldHermit || !newHermit) return
+		const player = getCardPos(this.game, oldHermit.cardInstance)?.player
+		if (!player) return
 
-		const pickedHermit = turnAction?.payload?.pickInfo.card?.cardId
-		if (!pickedHermit) return
-		const pickedHermitName = CARDS[pickedHermit].name
+		const currentPlayer = this.game.currentPlayer === player
 
-		const activeRow = this.game.currentPlayer.board.activeRow
-		if (activeRow === null) return
-		const activeHermitId = this.game.currentPlayer.board.rows[activeRow].hermitCard?.cardId
-		if (activeHermitId === undefined) return
-		const activeHermit = HERMIT_CARDS[activeHermitId]
+		const oldHermitInfo = CARDS[oldHermit.cardId]
+		const newHermitInfo = CARDS[newHermit.cardId]
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
 			description: [
-				this.format(`You `, 'plain', 'player'),
-				this.format(`${currentPlayer} `, 'plain', 'opponent'),
+				this.format(`You `, 'plain', currentPlayer ? 'player' : 'opponent'),
+				this.format(`${player.playerName} `, 'plain', currentPlayer ? 'opponent' : 'player'),
 				this.format(`swapped `, 'plain'),
-				this.format(`${activeHermit.name} `, 'player'),
+				this.format(`${oldHermitInfo.name} `, 'player'),
 				this.format(`for `, 'plain'),
-				this.format(`${pickedHermitName} `, 'player'),
+				this.format(`${newHermitInfo.name} `, 'player'),
 			],
 		}
 		this.log.push(entry)
