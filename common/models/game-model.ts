@@ -12,6 +12,7 @@ import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {SlotPos} from '../types/cards'
 import {BattleLog} from './battle-log'
+import {getActiveRow} from 'common/utils/board'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -233,6 +234,14 @@ export class GameModel {
 		// Call before active row change hooks - if any of the results are false do not change
 		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
 		if (results.includes(false)) return false
+
+		// Create battle log entry
+		if (newRow && currentActiveRow) {
+			const oldHermit = player.board.rows[currentActiveRow]?.hermitCard
+			const newHermit = player.board.rows[newRow].hermitCard
+
+			this.battleLog.addChangeHermitEntry(oldHermit, newHermit)
+		}
 
 		// Change the active row
 		player.board.activeRow = newRow
