@@ -224,6 +224,7 @@ function* handleOpponentRequest(game: GameModel) {
 		game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 		yield call(sendGameState, game)
+		game.battleLog.addCoinFlipEntry(game.currentPlayer.coinFlips)
 
 		const raceResult = yield* race({
 			turnAction: take(
@@ -318,6 +319,7 @@ function* attack(game: GameModel) {
 		case 'evilxisuma_boss':
 			const voiceLines: string[] = game.currentPlayer.custom['VOICE_ANNOUNCE']
 			delete game.currentPlayer.custom['VOICE_ANNOUNCE']
+			game.battleLog.replaceBossAttackEntry(voiceLines)
 			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: voiceLines})
 			yield* delay(voiceLines.length * 3000)
 			if (game.state.pickRequests.length) {
@@ -374,6 +376,7 @@ function* playSingleUseCard(game: GameModel, card: CardT) {
 	}
 
 	yield* call(sendGameState, game)
+	game.battleLog.addCoinFlipEntry(game.currentPlayer.coinFlips)
 }
 
 export function* virtualTurnActionsSaga(game: GameModel): Generator<any> {
@@ -423,6 +426,7 @@ export function* virtualTurnActionsSaga(game: GameModel): Generator<any> {
 	yield* call(sendGameState, game)
 
 	if (game.currentPlayer.coinFlips.length !== 0) {
+		game.battleLog.addCoinFlipEntry(game.currentPlayer.coinFlips)
 		yield* delay(2600 * game.currentPlayer.coinFlips.length)
 	}
 	game.currentPlayer.coinFlips = []

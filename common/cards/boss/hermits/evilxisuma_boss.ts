@@ -5,7 +5,7 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
 import {createWeaknessAttack} from '../../../utils/attacks'
-import {applyAilment, getActiveRow, removeAilment} from '../../../utils/board'
+import {applyStatusEffect, getActiveRow, removeStatusEffect} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -161,7 +161,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		}
 
 		// Apply an ailment to act on EX's ninth turn
-		applyAilment(game, 'exboss-nine', instance)
+		applyStatusEffect(game, 'exboss-nine', instance)
 
 		const {player, opponentPlayer, row} = pos
 
@@ -261,7 +261,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 						// Set opponent ablaze
 						voiceLines.unshift('ABLAZE')
 						if (opponentActiveRow && opponentActiveRow.hermitCard && !attackDefs.disabled)
-							applyAilment(game, 'fire', opponentActiveRow.hermitCard.cardInstance)
+							applyStatusEffect(game, 'fire', opponentActiveRow.hermitCard.cardInstance)
 						break
 					case 2:
 						// Deal double damage
@@ -277,30 +277,32 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		})
 
 		// EX is immune to poison, fire, and slowness
-		const IMMUNE_AILMENTS = new Set(['poison', 'fire', 'slowness'])
+		const IMMUNE_STATUS_EFFECTS = new Set(['poison', 'fire', 'slowness'])
 		opponentPlayer.hooks.afterApply.add(instance, () => {
 			// If opponent plays Dropper, remove the Fletching Tables added to the draw pile
 			if (player.pile.length) player.pile = []
 
 			if (!row) return
-			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+			const ailmentsToRemove = game.state.statusEffects.filter((ail) => {
 				return (
-					ail.targetInstance === row.hermitCard?.cardInstance && IMMUNE_AILMENTS.has(ail.ailmentId)
+					ail.targetInstance === row.hermitCard?.cardInstance &&
+					IMMUNE_STATUS_EFFECTS.has(ail.statusEffectId)
 				)
 			})
 			ailmentsToRemove.forEach((ail) => {
-				removeAilment(game, pos, ail.ailmentInstance)
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 		})
 		player.hooks.onDefence.add(instance, (_) => {
 			if (!row) return
-			const ailmentsToRemove = game.state.ailments.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 				return (
-					ail.targetInstance === row.hermitCard?.cardInstance && IMMUNE_AILMENTS.has(ail.ailmentId)
+					ail.targetInstance === row.hermitCard?.cardInstance &&
+					IMMUNE_STATUS_EFFECTS.has(ail.statusEffectId)
 				)
 			})
-			ailmentsToRemove.forEach((ail) => {
-				removeAilment(game, pos, ail.ailmentInstance)
+			statusEffectsToRemove.forEach((ail) => {
+				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 		})
 
@@ -309,10 +311,12 @@ class EvilXisumaBossHermitCard extends HermitCard {
 			if (!row || row.health === null || row.health > 0) return
 
 			if (player.lives > 1) {
+				player.hooks.onHermitDeath.call(pos)
+
+				game.battleLog.addDeathEntry(player, row)
+
 				row.health = 300
 				player.lives -= 1
-
-				player.hooks.onHermitDeath.call(pos)
 
 				const rewardCard = opponentPlayer.pile.shift()
 				if (rewardCard) opponentPlayer.hand.push(rewardCard)

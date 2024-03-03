@@ -7,7 +7,7 @@ import {discardCard, discardFromHand} from '../utils/movement'
 import StatusEffect from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
 
-class ExBossNineAilment extends StatusEffect {
+class ExBossNineStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'exboss-nine',
@@ -63,4 +63,4 @@ class ExBossNineAilment extends StatusEffect {
 	}
 }
 
-export default ExBossNineAilment
+export default ExBossNineStatusEffect

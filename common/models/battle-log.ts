@@ -42,6 +42,7 @@ export class BattleLog {
 
 	private sendBattleLogEntry() {
 		this.game.getPlayers().forEach((player) => {
+			if (!player.socket) return
 			player.socket.emit('BATTLE_LOG_ENTRY', {
 				type: 'BATTLE_LOG_ENTRY',
 				payload: this.log,
@@ -219,6 +220,65 @@ export class BattleLog {
 		}
 
 		this.sendBattleLogEntry()
+	}
+
+	/** Modifies the last sent attack entry to include details of a boss attack instead of a regular attack's name */
+	public replaceBossAttackEntry(voiceLines: Array<string>) {
+		const lastAttackEntry = this.game.chat.at(this.game.chat.at(-1)?.systemMessage ? -1 : -2)
+		if (!lastAttackEntry) return
+
+		const description = lastAttackEntry.message
+		description.splice(5) // removes "with {attackName} "
+
+		description.push(this.format(`for `, 'plain'))
+
+		if (voiceLines.length == 1) {
+			description.push(this.format(`${voiceLines[0]} `, 'highlight'))
+		} else {
+			switch (voiceLines[1]) {
+				case 'HEAL150':
+					description.push(
+						this.format(`${voiceLines[0]}`, 'highlight'),
+						this.format(voiceLines.length === 2 ? ` and ` : `, `, 'plain'),
+						this.format(`healed for 150hp `, 'highlight')
+					)
+					break
+				case 'ABLAZE':
+					description.push(
+						this.format(`${voiceLines[0]}`, 'highlight'),
+						this.format(voiceLines.length === 2 ? ` and ` : `, `, 'plain'),
+						this.format(`set them ablaze `, 'highlight')
+					)
+					break
+				case 'DOUBLE':
+					description.push(this.format(`${voiceLines[0]} doubled `, 'highlight'))
+					break
+			}
+
+			switch (voiceLines[2]) {
+				case 'ITEMCARD':
+					description.push(
+						this.format(`and forced them to `, 'plain'),
+						this.format(`discard an attached item card `, 'highlight')
+					)
+					break
+				case 'AFK20':
+					description.push(
+						this.format(`and dealt `, 'plain'),
+						this.format(`20 damage to each AFK Hermit `, 'highlight')
+					)
+					break
+				case 'EFFECTCARD':
+					description.push(
+						this.format(`and `, 'plain'),
+						this.format(`discarded their attached effect card `, 'highlight')
+					)
+					break
+			}
+		}
+
+		// Updates battle log retroactively without sending pending coinFlip/death entries
+		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
 	public async addCoinFlipEntry(coinFlips: Array<CurrentCoinFlipT>) {
