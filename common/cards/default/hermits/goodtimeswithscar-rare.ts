@@ -31,9 +31,8 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		const canRevives: {[key: string]: boolean} = (player.custom[
-			this.getInstanceKey('*', 'reviveNextTurn')
-		] ||= {}) // Singleton pattern so a player has one persistent Deathloop record
+		const canRevives: {[key: string]: boolean} = (player.custom[this.getKey('reviveNextTurn')] ||=
+			{}) // Singleton pattern so a player has one persistent Deathloop record
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
@@ -80,7 +79,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const canRevives = player.custom[this.getInstanceKey('*', 'reviveNextTurn')]
+		const canRevives = player.custom[this.getKey('reviveNextTurn')]
 		const canCleanUp = () => !Object.keys(canRevives).length
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
