@@ -67,6 +67,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				// Discard the picked card and apply su card
 				discardCard(game, pickResult.card)
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				return 'SUCCESS'
 			},

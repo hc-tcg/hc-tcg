@@ -1,8 +1,8 @@
-import { AttackModel } from '../../../models/attack-model'
-import { CardPosModel } from '../../../models/card-pos-model'
-import { GameModel } from '../../../models/game-model'
-import { executeAttacks } from '../../../utils/attacks'
-import { applySingleUse, getActiveRowPos } from '../../../utils/board'
+import {AttackModel} from '../../../models/attack-model'
+import {CardPosModel} from '../../../models/card-pos-model'
+import {GameModel} from '../../../models/game-model'
+import {executeAttacks} from '../../../utils/attacks'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -21,7 +21,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		const canAttach = super.canAttach(game, pos)
 		if (canAttach !== 'YES') return canAttach
 
-		const { player } = pos
+		const {player} = pos
 		if (player.board.activeRow === undefined) return 'NO'
 		for (const row of player.board.rows) {
 			if (row.hermitCard === null) return 'YES'
@@ -30,7 +30,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const { player } = pos
+		const {player} = pos
 		const attackId = this.getInstanceKey(instance)
 
 		game.addPickRequest({
@@ -49,6 +49,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				// Move us
 				if (player.board.activeRow === null) return 'FAILURE_INVALID_DATA'
@@ -62,7 +63,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 						attacker: activeRow,
 						target: activeRow,
 						type: 'effect',
-						isBacklash: true
+						isBacklash: true,
 					}).addDamage(this.id, 10)
 					executeAttacks(game, [attack], true)
 				}

@@ -66,6 +66,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				drawCards(player, 2)
 

@@ -54,6 +54,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				row.health = Math.min(row.health + 60, hermitInfo.health)
 

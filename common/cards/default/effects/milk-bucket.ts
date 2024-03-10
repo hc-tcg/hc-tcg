@@ -42,6 +42,7 @@ class MilkBucketEffectCard extends EffectCard {
 					})
 
 					applySingleUse(game)
+					game.battleLog.addApplyEffectEntry()
 
 					return 'SUCCESS'
 				},

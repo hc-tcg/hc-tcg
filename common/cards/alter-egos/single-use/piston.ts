@@ -139,6 +139,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				})
 
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 

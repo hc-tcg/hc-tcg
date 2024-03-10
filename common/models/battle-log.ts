@@ -66,7 +66,9 @@ export class BattleLog {
 		const card = turnAction.payload.card
 		const cardInfo = CARDS[card.cardId]
 
-		if (cardInfo.type === 'hermit') {
+		const slot = turnAction.payload.pickInfo.slot
+
+		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
 				description: [
@@ -77,7 +79,7 @@ export class BattleLog {
 				],
 			}
 			this.log.push(entry)
-		} else if (cardInfo.type === 'item' || cardInfo.type === 'effect') {
+		} else if (slot.type === 'item' || slot.type === 'effect') {
 			const cardPosition = getCardPos(this.game, turnAction.payload.card.cardInstance)
 			const attachedHermit = cardPosition?.row?.hermitCard
 			if (!attachedHermit) return
@@ -101,7 +103,7 @@ export class BattleLog {
 				],
 			}
 			this.log.push(entry)
-		} else if (cardInfo.type === 'single_use') {
+		} else if (slot.type === 'single_use') {
 			return
 		}
 
@@ -170,7 +172,7 @@ export class BattleLog {
 		if (opponentActiveRow === null) return
 		const opponentActiveHermitId = opponentActiveRow.hermitCard?.cardId
 		if (opponentActiveHermitId === undefined) return
-		const opponentActiveHermit = HERMIT_CARDS[opponentActiveHermitId]
+		const opponentActiveHermit = CARDS[opponentActiveHermitId]
 
 		// Single use first
 		const singleUse = this.game.currentPlayer.board.singleUseCard
@@ -270,7 +272,7 @@ export class BattleLog {
 		const targetHermitId = attack.target?.row.hermitCard.cardId
 		const targetPlayer = attack.target?.player
 		if (!targetHermitId || !targetPlayer) return
-		const targetHermitInfo = HERMIT_CARDS[targetHermitId]
+		const targetHermitInfo = CARDS[targetHermitId]
 
 		const isTarget = targetPlayer === this.game.currentPlayer
 

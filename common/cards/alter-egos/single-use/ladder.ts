@@ -68,6 +68,7 @@ class LadderSingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				// Swap slots
 				const activePos: SlotPos = {

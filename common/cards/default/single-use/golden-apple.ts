@@ -58,6 +58,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				row.health = Math.min(row.health + 100, hermitInfo.health)
 

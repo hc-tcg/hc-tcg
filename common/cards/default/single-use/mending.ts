@@ -84,6 +84,7 @@ class MendingSingleUseCard extends singleUseCard {
 
 				// Apply the mending card
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				// Move the effect card
 				const sourcePos: SlotPos = {

@@ -51,6 +51,7 @@ class WaterBucketEffectCard extends EffectCard {
 					}
 
 					applySingleUse(game)
+					game.battleLog.addApplyEffectEntry()
 
 					return 'SUCCESS'
 				},

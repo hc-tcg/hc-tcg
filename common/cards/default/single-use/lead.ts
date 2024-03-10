@@ -124,6 +124,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				swapSlots(game, itemPos, targetPos)
 
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 				delete player.custom[itemIndexKey]
 
 				return 'SUCCESS'

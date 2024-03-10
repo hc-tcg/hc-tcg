@@ -50,6 +50,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 
 				// Apply the card
 				applySingleUse(game)
+				game.battleLog.addApplyEffectEntry()
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {
