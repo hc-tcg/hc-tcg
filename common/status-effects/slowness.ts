@@ -23,7 +23,7 @@ class SlownessStatusEffect extends StatusEffect {
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
-		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
