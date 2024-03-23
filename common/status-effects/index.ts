@@ -10,6 +10,9 @@ import DyedStatusEffect from './dyed'
 import MuseumCollectionStatusEffect from './museum-collection'
 import SmeltingStatusEffect from './smelting'
 import MelodyStatusEffect from './melody'
+//import UsedClockStatusEffect from './used-clock'
+import DodgedStatusEffect from './dodged'
+import DegdodStatusEffect from './degdod'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),
@@ -23,6 +26,9 @@ const effectClasses: Array<StatusEffect> = [
 	new MuseumCollectionStatusEffect(),
 	new SmeltingStatusEffect(),
 	new MelodyStatusEffect(),
+	//new UsedClockStatusEffect,
+	new DodgedStatusEffect(),
+	new DegdodStatusEffect(),
 ]
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(

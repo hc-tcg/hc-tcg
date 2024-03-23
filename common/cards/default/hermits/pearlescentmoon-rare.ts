@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
+import { GameModel } from '../../../models/game-model'
+import { attackActionToAttack } from '../../../types/action-data'
+import { applyStatusEffect, getActiveRow } from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -36,10 +38,13 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			if (player.custom[status] === 'missed') {
-				player.custom[status] = 'none'
-				return
-			}
+			if (
+				game.state.statusEffects.some((effect) => effect.statusEffectId === 'dodged' &&
+					player.id > opponentPlayer.id
+				) || game.state.statusEffects.some((effect) => effect.statusEffectId === 'degdod' &&
+					player.id < opponentPlayer.id
+				)
+			) return
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (attack.isType('status-effect', 'effect') || attack.isBacklash) return
@@ -54,14 +59,18 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 				if (player.custom[status] === 'heads') {
 					attack.multiplyDamage(this.id, 0).lockDamage()
+
+					if (player.id > opponentPlayer.id) {
+						applyStatusEffect(game, 'dodged', getActiveRow(player)?.hermitCard.cardInstance)
+					}
+					else {
+						applyStatusEffect(game, 'degdod', getActiveRow(player)?.hermitCard.cardInstance)
+					}
 				}
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				if (player.custom[status] === 'heads') {
-					player.custom[status] = 'missed'
-				}
-
+				player.custom[status] = 'none'
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 				opponentPlayer.hooks.onTurnEnd.remove(instance)
 			})
