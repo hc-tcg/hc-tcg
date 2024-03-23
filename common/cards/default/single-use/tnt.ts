@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -49,7 +50,11 @@ class TNTSingleUseCard extends SingleUseCard {
 			if (attack.id !== backlashId) return
 
 			// We've executed our final attack, apply effect
-			applySingleUse(game)
+			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
+			])
 		})
 	}
 

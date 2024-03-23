@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -68,7 +69,10 @@ class EggSingleUseCard extends SingleUseCard {
 			const targetRow = opponentPlayer.board.rows[targetIndex]
 			if (!targetRow || !targetRow.hermitCard) return
 
-			applySingleUse(game)
+			applySingleUse(game, [
+				[`on `, 'plain'],
+				[`${CARDS[targetRow.hermitCard.cardId].name} `, 'opponent'],
+			])
 
 			const coinFlip = flipCoin(player, this.id)
 			if (coinFlip[0] === 'heads') {

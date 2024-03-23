@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {SlotPos} from '../../../types/cards'
@@ -138,8 +139,16 @@ class PistonSingleUseCard extends SingleUseCard {
 					player.hooks.afterApply.remove(instance)
 				})
 
-				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry()
+				const cardInfo = CARDS[itemCard!.cardId]
+				applySingleUse(game, [
+					[`to move `, 'plain'],
+					[
+						`${cardInfo.name}${
+							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
+						} `,
+						'player',
+					],
+				])
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 

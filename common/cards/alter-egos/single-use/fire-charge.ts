@@ -66,8 +66,16 @@ class FireChargeSingleUseCard extends SingleUseCard {
 
 				// Discard the picked card and apply su card
 				discardCard(game, pickResult.card)
-				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry()
+				const cardInfo = CARDS[pickResult.card.cardId]
+				applySingleUse(game, [
+					[`to discard `, 'plain'],
+					[
+						`${cardInfo.name}${
+							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
+						} `,
+						'player',
+					],
+				])
 
 				return 'SUCCESS'
 			},

@@ -13,6 +13,8 @@ import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 
+export type BattleLogFormatT = Parameters<BattleLog['format']>
+
 export class BattleLog {
 	private game: GameModel
 	private log: Array<BattleLogT>
@@ -110,7 +112,7 @@ export class BattleLog {
 		this.sendBattleLogEntry()
 	}
 
-	public addApplyEffectEntry() {
+	public addApplyEffectEntry(effectAction: BattleLogFormatT[]) {
 		const currentPlayer = this.game.currentPlayer.playerName
 
 		const card = this.game.currentPlayer.board.singleUseCard
@@ -124,7 +126,8 @@ export class BattleLog {
 				this.format(`You `, 'plain', 'player'),
 				this.format(`${currentPlayer} `, 'plain', 'opponent'),
 				this.format(`used `, 'plain'),
-				this.format(`${cardInfo.name}`, 'highlight'),
+				this.format(`${cardInfo.name} `, 'highlight'),
+				...effectAction.map(([text, format, condition]) => this.format(text, format, condition)),
 			],
 		}
 		this.log.push(entry)
@@ -161,6 +164,7 @@ export class BattleLog {
 	public addAttackEntry(turnAction: AttackActionData) {
 		const currentPlayer = this.game.currentPlayer.playerName
 		const type = turnAction.type
+		if (type === 'SINGLE_USE_ATTACK') return
 
 		const activeRow = this.game.activeRow
 		if (activeRow === null) return
@@ -174,45 +178,22 @@ export class BattleLog {
 		if (opponentActiveHermitId === undefined) return
 		const opponentActiveHermit = CARDS[opponentActiveHermitId]
 
-		// Single use first
-		const singleUse = this.game.currentPlayer.board.singleUseCard
-		const singleUseUsed = this.game.currentPlayer.board.singleUseCardUsed
-		if (singleUse !== null && !singleUseUsed) {
-			const singleUseName = CARDS[singleUse.cardId].name
-			const singleUseEntry = {
-				player: this.game.currentPlayer.id,
-				icon: `images/effects/${singleUse.cardId}.png`,
-				description: [
-					this.format(`Your `, 'plain', 'player'),
-					this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-					this.format(`${activeHermit.name} `, 'player'),
-					this.format(`attacked `, 'plain'),
-					this.format(`${opponentActiveHermit.name} `, 'opponent'),
-					this.format(`with `, 'plain'),
-					this.format(`${singleUseName} `, 'highlight'),
-				],
-			}
-			this.log.push(singleUseEntry)
-		}
+		const attackName =
+			type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
 
-		if (type !== 'SINGLE_USE_ATTACK') {
-			const attackName =
-				type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
-
-			const entry: BattleLogT = {
-				player: this.game.currentPlayer.id,
-				description: [
-					this.format(`Your `, 'plain', 'player'),
-					this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-					this.format(`${activeHermit.name} `, 'player'),
-					this.format(`attacked `, 'plain'),
-					this.format(`${opponentActiveHermit.name} `, 'opponent'),
-					this.format(`with `, 'plain'),
-					this.format(`${attackName} `, 'highlight'),
-				],
-			}
-			this.log.push(entry)
+		const entry: BattleLogT = {
+			player: this.game.currentPlayer.id,
+			description: [
+				this.format(`Your `, 'plain', 'player'),
+				this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
+				this.format(`${activeHermit.name} `, 'player'),
+				this.format(`attacked `, 'plain'),
+				this.format(`${opponentActiveHermit.name} `, 'opponent'),
+				this.format(`with `, 'plain'),
+				this.format(`${attackName} `, 'highlight'),
+			],
 		}
+		this.log.push(entry)
 
 		this.sendBattleLogEntry()
 	}

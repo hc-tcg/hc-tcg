@@ -48,8 +48,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 				// Apply
-				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry()
+				applySingleUse(game, [])
 
 				// Move us
 				if (player.board.activeRow === null) return 'FAILURE_INVALID_DATA'

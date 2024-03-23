@@ -4,10 +4,7 @@ import {applySingleUse} from 'common/utils/board'
 import {call} from 'typed-redux-saga'
 
 function* applyEffectSaga(game: GameModel): Generator<any, GenericActionResult> {
-	const result = applySingleUse(game)
-
-	// Add entry to battle log
-	game.battleLog.addApplyEffectEntry()
+	const result = applySingleUse(game, [])
 
 	return result
 }

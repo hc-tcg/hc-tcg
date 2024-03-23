@@ -41,8 +41,10 @@ class MilkBucketEffectCard extends EffectCard {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					applySingleUse(game)
-					game.battleLog.addApplyEffectEntry()
+					applySingleUse(game, [
+						[`on `, 'plain'],
+						[`${CARDS[pickResult.card.cardId].name} `, 'player'],
+					])
 
 					return 'SUCCESS'
 				},

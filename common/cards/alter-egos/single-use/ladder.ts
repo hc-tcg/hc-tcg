@@ -67,8 +67,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
 
 				// Apply
-				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry()
+				applySingleUse(game, [])
 
 				// Swap slots
 				const activePos: SlotPos = {
