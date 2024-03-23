@@ -67,6 +67,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 							attack.addNewAttack(weaknessAttack)
 							player.custom[ignoreThisWeakness] = true
 						}
+						attack.type = 'effect'
 					} else if (attack.type === 'weakness') {
 						if (!player.custom[ignoreThisWeakness]) {
 							attack.target = null
