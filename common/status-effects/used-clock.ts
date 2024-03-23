@@ -13,11 +13,12 @@ class UsedClockStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'used-clock',
-			name: 'Used Clock',
-			description: 'Clock cannot be used consecutively.',
+			name: 'Turn Skipped',
+			description: 'Turns cannot be skipped consecutively.',
 			duration: 2,
 			counter: false,
 			damageEffect: false,
+			visible: false,
 		})
 	}
 

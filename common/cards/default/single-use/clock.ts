@@ -12,7 +12,7 @@ class ClockSingleUseCard extends SingleUseCard {
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
-				'Your opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\nCannot be used consecutively.',
+				'Your opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\nTurns cannot be skipped consecutively.',
 		})
 	}
 
