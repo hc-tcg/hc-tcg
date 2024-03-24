@@ -14,6 +14,7 @@ class MelodyStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 

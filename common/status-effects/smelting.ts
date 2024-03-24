@@ -14,6 +14,7 @@ class SmeltingStatusEffect extends StatusEffect {
 			duration: 4,
 			counter: true,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 

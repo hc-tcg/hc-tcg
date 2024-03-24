@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -42,7 +43,11 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			if (!opponentActivePos) return
 
 			if (attack.id === attackId) {
-				applySingleUse(game)
+				const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
+				applySingleUse(game, [
+					[`to attack `, 'plain'],
+					[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
+				])
 			}
 
 			// All attacks from our side should ignore opponent attached effect card this turn

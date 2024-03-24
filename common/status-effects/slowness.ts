@@ -14,6 +14,7 @@ class SlownessStatusEffect extends StatusEffect {
 			duration: 1,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
@@ -26,6 +27,14 @@ class SlownessStatusEffect extends StatusEffect {
 		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
+
+			if (player.board.activeRow === targetPos.rowIndex)
+				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
+		})
+
+		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
+			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
 
 			statusEffectInfo.duration--
@@ -34,9 +43,6 @@ class SlownessStatusEffect extends StatusEffect {
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 				return
 			}
-
-			if (player.board.activeRow === targetPos.rowIndex)
-				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 		})
 
 		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {

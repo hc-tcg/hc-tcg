@@ -16,6 +16,7 @@ class FireStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: true,
+			visible: true,
 		})
 	}
 

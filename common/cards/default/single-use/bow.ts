@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -85,7 +86,12 @@ class BowSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game)
+			const targetHermitId = opponentPlayer.board.rows[player.custom[targetKey]].hermitCard?.cardId
+
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${targetHermitId ? CARDS[targetHermitId].name : ''} `, 'opponent'],
+			])
 		})
 	}
 

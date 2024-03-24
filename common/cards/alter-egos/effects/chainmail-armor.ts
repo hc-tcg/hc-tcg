@@ -10,7 +10,7 @@ class ChainmailArmorEffectCard extends EffectCard {
 			numericId: 119,
 			name: 'Chainmail Armor',
 			rarity: 'common',
-			description: 'Prevents damage from all effect cards.',
+			description: 'Prevents damage from all effect cards, including those that redirect damage.',
 		})
 	}
 

@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {SlotPos} from '../../../types/cards'
@@ -83,7 +84,10 @@ class MendingSingleUseCard extends singleUseCard {
 				if (!canAttachToCard(game, row.hermitCard, effectCard)) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply the mending card
-				applySingleUse(game)
+				applySingleUse(game, [
+					[`to move `, 'plain'],
+					[`${CARDS[effectCard.cardId].name} `, 'player'],
+				])
 
 				// Move the effect card
 				const sourcePos: SlotPos = {

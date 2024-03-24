@@ -18,6 +18,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
+		const targetsKey = this.getInstanceKey(instance, 'targets')
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
@@ -44,6 +45,8 @@ class AnvilSingleUseCard extends SingleUseCard {
 				attacks.push(attack)
 			}
 
+			player.custom[targetsKey] = attacks.length
+
 			return attacks
 		})
 
@@ -52,7 +55,12 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const inactiveAttackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
-			applySingleUse(game)
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${player.custom[targetsKey]} hermits `, 'opponent'],
+			])
+
+			delete player.custom[targetsKey]
 
 			player.hooks.onAttack.remove(instance)
 		})
@@ -62,6 +70,9 @@ class AnvilSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+
+		const targetsKey = this.getInstanceKey(instance, 'targets')
+		delete player.custom[targetsKey]
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {

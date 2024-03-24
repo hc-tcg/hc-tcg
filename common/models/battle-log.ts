@@ -1,20 +1,19 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
-import {
-	AttackActionData,
-	ChangeActiveHermitActionData,
-	PlayCardActionData,
-} from '../types/action-data'
+import {AttackActionData, PlayCardActionData} from '../types/action-data'
 import {
 	MessageTextT,
 	BattleLogT,
 	CurrentCoinFlipT,
 	PlayerState,
 	RowStateWithHermit,
+	CardT,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
+
+export type BattleLogFormatT = Parameters<BattleLog['format']>
 
 export class BattleLog {
 	private game: GameModel
@@ -69,7 +68,9 @@ export class BattleLog {
 		const card = turnAction.payload.card
 		const cardInfo = CARDS[card.cardId]
 
-		if (cardInfo.type === 'hermit') {
+		const slot = turnAction.payload.pickInfo.slot
+
+		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
 				description: [
@@ -80,7 +81,7 @@ export class BattleLog {
 				],
 			}
 			this.log.push(entry)
-		} else if (cardInfo.type === 'item' || cardInfo.type === 'effect') {
+		} else if (slot.type === 'item' || slot.type === 'effect') {
 			const cardPosition = getCardPos(this.game, turnAction.payload.card.cardInstance)
 			const attachedHermit = cardPosition?.row?.hermitCard
 			if (!attachedHermit) return
@@ -104,14 +105,14 @@ export class BattleLog {
 				],
 			}
 			this.log.push(entry)
-		} else if (cardInfo.type === 'single_use') {
+		} else if (slot.type === 'single_use') {
 			return
 		}
 
 		this.sendBattleLogEntry()
 	}
 
-	public addApplyEffectEntry() {
+	public addApplyEffectEntry(effectAction: BattleLogFormatT[]) {
 		const currentPlayer = this.game.currentPlayer.playerName
 
 		const card = this.game.currentPlayer.board.singleUseCard
@@ -125,7 +126,8 @@ export class BattleLog {
 				this.format(`You `, 'plain', 'player'),
 				this.format(`${currentPlayer} `, 'plain', 'opponent'),
 				this.format(`used `, 'plain'),
-				this.format(`${cardInfo.name}`, 'highlight'),
+				this.format(`${cardInfo.name} `, 'highlight'),
+				...effectAction.map(([text, format, condition]) => this.format(text, format, condition)),
 			],
 		}
 		this.log.push(entry)
@@ -133,28 +135,25 @@ export class BattleLog {
 		this.sendBattleLogEntry()
 	}
 
-	public addChangeHermitEntry(turnAction: ChangeActiveHermitActionData) {
-		const currentPlayer = this.game.currentPlayer.playerName
+	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
+		if (!oldHermit || !newHermit) return
+		const player = getCardPos(this.game, oldHermit.cardInstance)?.player
+		if (!player) return
 
-		const pickedHermit = turnAction?.payload?.pickInfo.card?.cardId
-		if (!pickedHermit) return
-		const pickedHermitName = CARDS[pickedHermit].name
+		const currentPlayer = this.game.currentPlayer === player
 
-		const activeRow = this.game.currentPlayer.board.activeRow
-		if (activeRow === null) return
-		const activeHermitId = this.game.currentPlayer.board.rows[activeRow].hermitCard?.cardId
-		if (activeHermitId === undefined) return
-		const activeHermit = HERMIT_CARDS[activeHermitId]
+		const oldHermitInfo = CARDS[oldHermit.cardId]
+		const newHermitInfo = CARDS[newHermit.cardId]
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
 			description: [
-				this.format(`You `, 'plain', 'player'),
-				this.format(`${currentPlayer} `, 'plain', 'opponent'),
+				this.format(`You `, 'plain', currentPlayer ? 'player' : 'opponent'),
+				this.format(`${player.playerName} `, 'plain', currentPlayer ? 'opponent' : 'player'),
 				this.format(`swapped `, 'plain'),
-				this.format(`${activeHermit.name} `, 'player'),
+				this.format(`${oldHermitInfo.name} `, 'player'),
 				this.format(`for `, 'plain'),
-				this.format(`${pickedHermitName} `, 'player'),
+				this.format(`${newHermitInfo.name} `, 'player'),
 			],
 		}
 		this.log.push(entry)
@@ -165,6 +164,7 @@ export class BattleLog {
 	public addAttackEntry(turnAction: AttackActionData) {
 		const currentPlayer = this.game.currentPlayer.playerName
 		const type = turnAction.type
+		if (type === 'SINGLE_USE_ATTACK') return
 
 		const activeRow = this.game.activeRow
 		if (activeRow === null) return
@@ -176,47 +176,24 @@ export class BattleLog {
 		if (opponentActiveRow === null) return
 		const opponentActiveHermitId = opponentActiveRow.hermitCard?.cardId
 		if (opponentActiveHermitId === undefined) return
-		const opponentActiveHermit = HERMIT_CARDS[opponentActiveHermitId]
+		const opponentActiveHermit = CARDS[opponentActiveHermitId]
 
-		// Single use first
-		const singleUse = this.game.currentPlayer.board.singleUseCard
-		const singleUseUsed = this.game.currentPlayer.board.singleUseCardUsed
-		if (singleUse !== null && !singleUseUsed) {
-			const singleUseName = CARDS[singleUse.cardId].name
-			const singleUseEntry = {
-				player: this.game.currentPlayer.id,
-				icon: `images/effects/${singleUse.cardId}.png`,
-				description: [
-					this.format(`Your `, 'plain', 'player'),
-					this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-					this.format(`${activeHermit.name} `, 'player'),
-					this.format(`attacked `, 'plain'),
-					this.format(`${opponentActiveHermit.name} `, 'opponent'),
-					this.format(`with `, 'plain'),
-					this.format(`${singleUseName} `, 'highlight'),
-				],
-			}
-			this.log.push(singleUseEntry)
+		const attackName =
+			type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
+
+		const entry: BattleLogT = {
+			player: this.game.currentPlayer.id,
+			description: [
+				this.format(`Your `, 'plain', 'player'),
+				this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
+				this.format(`${activeHermit.name} `, 'player'),
+				this.format(`attacked `, 'plain'),
+				this.format(`${opponentActiveHermit.name} `, 'opponent'),
+				this.format(`with `, 'plain'),
+				this.format(`${attackName} `, 'highlight'),
+			],
 		}
-
-		if (type !== 'SINGLE_USE_ATTACK') {
-			const attackName =
-				type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
-
-			const entry: BattleLogT = {
-				player: this.game.currentPlayer.id,
-				description: [
-					this.format(`Your `, 'plain', 'player'),
-					this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-					this.format(`${activeHermit.name} `, 'player'),
-					this.format(`attacked `, 'plain'),
-					this.format(`${opponentActiveHermit.name} `, 'opponent'),
-					this.format(`with `, 'plain'),
-					this.format(`${attackName} `, 'highlight'),
-				],
-			}
-			this.log.push(entry)
-		}
+		this.log.push(entry)
 
 		this.sendBattleLogEntry()
 	}
@@ -276,7 +253,7 @@ export class BattleLog {
 		const targetHermitId = attack.target?.row.hermitCard.cardId
 		const targetPlayer = attack.target?.player
 		if (!targetHermitId || !targetPlayer) return
-		const targetHermitInfo = HERMIT_CARDS[targetHermitId]
+		const targetHermitInfo = CARDS[targetHermitId]
 
 		const isTarget = targetPlayer === this.game.currentPlayer
 

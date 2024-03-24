@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -43,7 +44,11 @@ class TridentSingleUseCard extends SingleUseCard {
 
 			player.custom[this.getInstanceKey(instance)] = flipCoin(player, this.id)[0]
 
-			applySingleUse(game)
+			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
+			])
 		})
 
 		player.hooks.onApply.add(instance, () => {
