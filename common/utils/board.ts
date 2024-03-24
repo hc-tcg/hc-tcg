@@ -11,6 +11,7 @@ import {
 	RowState,
 	RowStateWithHermit,
 } from '../types/game-state'
+import {BattleLogFormatT} from '../models/battle-log'
 
 export function getActiveRow(playerState: PlayerState) {
 	if (playerState.board.activeRow === null) return null
@@ -107,7 +108,10 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 	return suCard?.cardId === id && suUsed === isUsed
 }
 
-export function applySingleUse(game: GameModel): GenericActionResult {
+export function applySingleUse(
+	game: GameModel,
+	effectAction: BattleLogFormatT[]
+): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -122,6 +126,7 @@ export function applySingleUse(game: GameModel): GenericActionResult {
 
 	currentPlayer.board.singleUseCardUsed = true
 
+	game.battleLog.addApplyEffectEntry(effectAction)
 	currentPlayer.hooks.onApply.call()
 
 	// This can only be done once per turn

@@ -52,7 +52,10 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply
-				applySingleUse(game)
+				applySingleUse(game, [
+					[`on `, 'plain'],
+					[`${hermitInfo.name} `, 'player'],
+				])
 
 				row.health = Math.min(row.health + 30, hermitInfo.health)
 

@@ -198,11 +198,11 @@ export function executeExtraAttacks(
 	type: string,
 	withoutBlockingActions = false
 ) {
-	executeAttacks(game, attacks, withoutBlockingActions)
-
 	attacks.map((attack) => {
 		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
 	})
+
+	executeAttacks(game, attacks, withoutBlockingActions)
 }
 
 // Things not directly related to the attack loop

@@ -50,7 +50,10 @@ class WaterBucketEffectCard extends EffectCard {
 						}
 					}
 
-					applySingleUse(game)
+					applySingleUse(game, [
+						[`on `, 'plain'],
+						[`${CARDS[pickResult.card.cardId].name} `, 'player'],
+					])
 
 					return 'SUCCESS'
 				},
