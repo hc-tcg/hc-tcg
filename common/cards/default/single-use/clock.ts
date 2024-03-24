@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {TurnActions} from '../../../types/game-state'
+import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class ClockSingleUseCard extends SingleUseCard {
@@ -11,7 +12,7 @@ class ClockSingleUseCard extends SingleUseCard {
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
-				'Your opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.',
+				'Your opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\nTurns cannot be skipped consecutively.',
 		})
 	}
 
@@ -38,11 +39,18 @@ class ClockSingleUseCard extends SingleUseCard {
 				)
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
+
+			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.cardInstance)
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
+
+		if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
+			return 'INVALID'
+		}
+
 		if (canAttach !== 'YES') return canAttach
 
 		// The other player wouldn't be able to attach anything

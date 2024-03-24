@@ -14,6 +14,7 @@ class SlownessStatusEffect extends StatusEffect {
 			duration: 1,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 

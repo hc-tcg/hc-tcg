@@ -138,7 +138,8 @@ export function applySingleUse(
 }
 
 /**
- * Apply an statusEffect to a card instance. statusEffectId and targetInstance must be card instances.
+ * Apply an statusEffect to a card instance. statusEffectId must be a status effect id, and targetInstance must be card
+ * instance.
  */
 export function applyStatusEffect(
 	game: GameModel,

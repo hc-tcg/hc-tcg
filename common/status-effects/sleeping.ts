@@ -15,6 +15,7 @@ class SleepingStatusEffect extends StatusEffect {
 			duration: 3,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
