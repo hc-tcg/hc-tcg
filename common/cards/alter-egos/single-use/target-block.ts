@@ -1,5 +1,5 @@
 import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {createWeaknessAttack} from '../../../utils/attacks'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
@@ -71,13 +71,17 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 							attack.addNewAttack(weaknessAttack)
 							player.custom[ignoreThisWeakness] = true
 						}
-						attack.type = 'effect'
 					} else if (attack.type === 'weakness') {
 						if (!player.custom[ignoreThisWeakness]) {
 							attack.target = null
 						}
 						delete player.custom[ignoreThisWeakness]
 					}
+				})
+
+				opponentPlayer.hooks.onDefence.addBefore(instance, (attack) => {
+					if (attack.isType('status-effect') || attack.isBacklash) return
+					attack.type = 'effect'
 				})
 
 				return 'SUCCESS'
@@ -87,6 +91,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		player.hooks.onTurnEnd.add(instance, () => {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
+			opponentPlayer.hooks.onDefence.remove(instance)
 			delete player.custom[ignoreThisWeakness]
 		})
 	}
