@@ -20,11 +20,11 @@ class SlownessStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
-		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
 
@@ -32,7 +32,7 @@ class SlownessStatusEffect extends StatusEffect {
 				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
@@ -54,6 +54,7 @@ class SlownessStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
