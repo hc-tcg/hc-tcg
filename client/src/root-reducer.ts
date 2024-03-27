@@ -5,6 +5,7 @@ import fbdbReducer from 'logic/fbdb/fbdb-reducer'
 import socketReducer from 'logic/socket/socket-reducer'
 import matchmakingReducer from 'logic/matchmaking/matchmaking-reducer'
 import localSettingsReducer from 'logic/local-settings/local-settings-reducer'
+import permitsReducer from 'logic/permits/permits-reducer'
 
 const rootReducer = combineReducers({
 	session: sessionReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
 	matchmaking: matchmakingReducer,
 	fbdb: fbdbReducer,
 	localSettings: localSettingsReducer,
+	permits: permitsReducer,
 })
 
 export default rootReducer

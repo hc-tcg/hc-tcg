@@ -1,14 +1,11 @@
 import {useDispatch, useSelector} from 'react-redux'
-import {joinQueue, createPrivateGame, joinPrivateGame} from 'logic/matchmaking/matchmaking-actions'
-import {logout} from 'logic/session/session-actions'
-import {getSession} from 'logic/session/session-selectors'
 import css from './main-menu.module.scss'
-import TcgLogo from 'components/tcg-logo'
-import Beef from 'components/beef'
 import Button from 'components/button'
-import {VersionLinks} from 'components/link-container'
-import {useState} from 'react'
 import MenuLayout from 'components/menu-layout/menu-layout'
+import { PermitRarityT } from 'common/types/permits'
+import { rollPermit } from 'logic/permits/permits-actions'
+import { PERMIT_RANKS } from 'common/config'
+import { getCredits } from 'logic/permits/permits-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -17,9 +14,13 @@ type Props = {
 export function PermitOffice({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
-	const handleBuyIron = () => {}
-	const handleBuyGold = () => {}
-	const handleBuyDiamond = () => {}
+	const credits = useSelector(getCredits)
+
+	const handleBuyPermit = (permit: PermitRarityT) => {
+		return () => {
+			dispatch(rollPermit(permit))
+		}
+	}
 
 	return (
 		<>
@@ -30,7 +31,7 @@ export function PermitOffice({setMenuSection}: Props) {
 				returnText="Main Menu"
 				className={css.permitMenu}
 			>
-				<div>Permit office - Your balance - 200 Emeralds</div>
+				<div>Permit office - Your balance - {credits} Emeralds</div>
 				<div className={css.permitBoxContainer}>
 					<div className={css.permitBox}>
 						<div className={css.permitArea}>
@@ -38,8 +39,9 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_iron.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyIron}>
-								Buy Iron Permit - 1 <img height="25rem" src="images/effects/emerald.png" />
+							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('iron')}>
+								Buy Iron Permit - {PERMIT_RANKS.prices.iron}{' '}
+								<img height="25rem" src="images/effects/emerald.png" />
 							</Button>
 						</div>
 						<div className={css.permitArea}>
@@ -47,8 +49,9 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_gold.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyGold}>
-								Buy Gold Permit - 2 <img height="25rem" src="images/effects/emerald.png" />
+							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('gold')}>
+								Buy Gold Permit - {PERMIT_RANKS.prices.gold}{' '}
+								<img height="25rem" src="images/effects/emerald.png" />
 							</Button>
 						</div>
 						<div className={css.permitArea}>
@@ -56,8 +59,9 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_diamond.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyDiamond}>
-								Buy Diamond Permit - 3 <img height="25rem" src="images/effects/emerald.png" />
+							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('diamond')}>
+								Buy Diamond Permit - {PERMIT_RANKS.prices.diamond}{' '}
+								<img height="25rem" src="images/effects/emerald.png" />
 							</Button>
 						</div>
 					</div>
