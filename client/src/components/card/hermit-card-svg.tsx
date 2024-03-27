@@ -9,6 +9,7 @@ import {EXPANSIONS, PERMIT_RANKS} from 'common/config'
 export type HermitCardProps = {
 	card: HermitCard
 	canShowAsGray: boolean
+	obtainedPermits: Array<string>
 }
 
 const COST_PAD = 20
@@ -26,18 +27,18 @@ function getRank(cardId: string) {
 	return 'free'
 }
 
-const HermitCardModule = ({card, canShowAsGray}: HermitCardProps) => {
+const HermitCardModule = ({card, canShowAsGray, obtainedPermits}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
-	const rank = getCardRank(card.id)
 	const palette = card.getPalette()
-	const expansion = card.getExpansion()
 	const backgroundName = card.getBackground()
-	const showCost = !useSelector(getGameState)
 	const nameLength = card.name.length
 
 	const thisRank = getRank(card.id)
-	const disabled = thisRank === 'free' || !canShowAsGray ? 'enabled' : 'disabled'
+	const disabled =
+		thisRank === 'free' || obtainedPermits.includes(card.id) || !canShowAsGray
+			? 'enabled'
+			: 'disabled'
 
 	return (
 		<svg className={classnames(css.card)} width="100%" height="100%" viewBox="0 0 400 400">

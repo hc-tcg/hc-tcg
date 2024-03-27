@@ -27,6 +27,8 @@ const HERMIT_TYPES: Record<string, string> = {
 
 type Props = {
 	card: Card
+	canShowAsGray: boolean
+	obtainedPermits: Array<string>
 }
 
 const getOneDescription = (desc: string): React.ReactNode => {
@@ -158,7 +160,7 @@ const getHermitType = (card: Card): React.ReactNode => {
 	return null
 }
 
-const CardTooltip = ({card}: Props) => {
+const CardTooltip = ({card, canShowAsGray, obtainedPermits}: Props) => {
 	if (card instanceof HealthCard) return <div>{card.health} Health</div>
 
 	return (

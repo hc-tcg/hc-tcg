@@ -8,6 +8,7 @@ import {getCardRank} from 'common/utils/ranks'
 export type ItemCardProps = {
 	card: ItemCard
 	canShowAsGray: boolean
+	obtainedPermits: Array<string>
 }
 
 const ItemCardModule = ({card}: ItemCardProps) => {

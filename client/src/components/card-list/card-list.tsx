@@ -18,10 +18,11 @@ type CardListProps = {
 	wrap?: boolean
 	tooltipAboveModal?: boolean
 	canShowAsGray?: boolean | null
+	obtainedPermits?: Array<string>
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, selected, picked, canShowAsGray} = props
+	const {wrap, onClick, cards, disabled, selected, picked, canShowAsGray, obtainedPermits} = props
 
 	const cardsOutput = cards.map((card) => {
 		const info = CARDS[card.cardId] as Card
@@ -57,6 +58,7 @@ const CardList = (props: CardListProps) => {
 					picked={!!isPicked}
 					tooltipAboveModal={props.tooltipAboveModal}
 					canShowAsGray={canShowAsGray ? canShowAsGray : false}
+					obtainedPermits={obtainedPermits ? obtainedPermits : []}
 				/>
 			</CSSTransition>
 		)

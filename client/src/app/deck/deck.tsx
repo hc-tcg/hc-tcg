@@ -32,6 +32,7 @@ import HermitCard from '../../../../common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {getUnlockedPermits} from 'logic/permits/permits-selectors'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -126,6 +127,8 @@ const Deck = ({setMenuSection}: Props) => {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
 
+	const permits = useSelector(getUnlockedPermits)
+
 	// TOASTS
 	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
 	const deleteToast: ToastT = {
@@ -149,7 +152,12 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
+		if (
+			validateDeck(
+				loadedDeck.cards.map((card) => card.cardId),
+				permits
+			)
+		) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -257,7 +265,10 @@ const Deck = ({setMenuSection}: Props) => {
 			</li>
 		)
 	})
-	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
+	const validationMessage = validateDeck(
+		loadedDeck.cards.map((card) => card.cardId),
+		permits
+	)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
 		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
@@ -416,7 +427,12 @@ const Deck = ({setMenuSection}: Props) => {
 						)}
 
 						<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
-							<CardList cards={sortCards(selectedCards.hermits)} wrap={true} canShowAsGray={true} />
+							<CardList
+								cards={sortCards(selectedCards.hermits)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 
 						<Accordion
@@ -426,6 +442,7 @@ const Deck = ({setMenuSection}: Props) => {
 								cards={sortCards(selectedCards.attachableEffects)}
 								wrap={true}
 								canShowAsGray={true}
+								obtainedPermits={permits}
 							/>
 						</Accordion>
 						<Accordion
@@ -435,11 +452,17 @@ const Deck = ({setMenuSection}: Props) => {
 								cards={sortCards(selectedCards.singleUseEffects)}
 								wrap={true}
 								canShowAsGray={true}
+								obtainedPermits={permits}
 							/>
 						</Accordion>
 
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList cards={sortCards(selectedCards.items)} wrap={true} canShowAsGray={true} />
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 					</DeckLayout.Main>
 					<DeckLayout.Sidebar

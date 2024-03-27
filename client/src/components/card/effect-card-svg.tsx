@@ -10,6 +10,7 @@ import classNames from 'classnames'
 export type EffectCardProps = {
 	card: EffectCard | SingleUseCard
 	canShowAsGray: boolean
+	obtainedPermits: Array<string>
 }
 
 function getRank(cardId: string) {
@@ -19,11 +20,14 @@ function getRank(cardId: string) {
 	return 'free'
 }
 
-const EffectCardModule = ({card, canShowAsGray}: EffectCardProps) => {
+const EffectCardModule = ({card, canShowAsGray, obtainedPermits}: EffectCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
 	const thisRank = getRank(card.id)
-	const disabled = thisRank === 'free' || !canShowAsGray ? 'enabled' : 'disabled'
+	const disabled =
+		thisRank === 'free' || obtainedPermits.includes(card.id) || !canShowAsGray
+			? 'enabled'
+			: 'disabled'
 
 	return (
 		<svg
