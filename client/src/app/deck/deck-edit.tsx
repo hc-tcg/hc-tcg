@@ -326,6 +326,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
 						/>
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
@@ -335,6 +336,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
 						/>
 					</Accordion>
 					<Accordion header={'Single Use Effects'}>
@@ -344,6 +346,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
 						/>
 					</Accordion>
 					<Accordion header={'Items'}>
@@ -353,6 +356,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
 						/>
 					</Accordion>
 				</DeckLayout.Main>
@@ -435,6 +439,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									cards={sortCards(selectedCards.hermits)}
 									wrap={true}
 									onClick={removeCard}
+									canShowAsGray={true}
 								/>
 							</Accordion>
 						</div>
@@ -445,6 +450,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								cards={sortCards(selectedCards.attachableEffects)}
 								wrap={true}
 								onClick={removeCard}
+								canShowAsGray={true}
 							/>
 						</Accordion>
 						<Accordion
@@ -454,10 +460,16 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								cards={sortCards(selectedCards.singleUseEffects)}
 								wrap={true}
 								onClick={removeCard}
+								canShowAsGray={true}
 							/>
 						</Accordion>
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList cards={sortCards(selectedCards.items)} wrap={true} onClick={removeCard} />
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								wrap={true}
+								onClick={removeCard}
+								canShowAsGray={true}
+							/>
 						</Accordion>
 					</div>
 				</DeckLayout.Sidebar>

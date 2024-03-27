@@ -18,6 +18,7 @@ interface CardProps
 	picked?: boolean
 	tooltipAboveModal?: boolean
 	onClick?: () => void
+	canShowAsGray: boolean
 }
 
 const Card = (props: CardProps) => {

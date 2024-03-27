@@ -3,6 +3,10 @@
 	background: rgb(226, 202, 139);
 }
 
+.cardDisabled {
+	background: rgb(164, 164, 164);
+}
+
 .disabled {
 	filter: grayscale(1) brightness(0.9);
 }

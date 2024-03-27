@@ -8,6 +8,7 @@ import {EXPANSIONS, PERMIT_RANKS} from 'common/config'
 
 export type HermitCardProps = {
 	card: HermitCard
+	canShowAsGray: boolean
 }
 
 const COST_PAD = 20
@@ -18,7 +19,14 @@ const COST_X = [
 	[COST_PAD, COST_PAD + COST_SIZE, COST_PAD + COST_SIZE * 2],
 ]
 
-const HermitCardModule = ({card}: HermitCardProps) => {
+function getRank(cardId: string) {
+	if (PERMIT_RANKS.diamond.includes(cardId)) return 'diamond'
+	if (PERMIT_RANKS.gold.includes(cardId)) return 'gold'
+	if (PERMIT_RANKS.iron.includes(cardId)) return 'iron'
+	return 'free'
+}
+
+const HermitCardModule = ({card, canShowAsGray}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
@@ -28,8 +36,8 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 	const showCost = !useSelector(getGameState)
 	const nameLength = card.name.length
 
-	const thisRank = (PERMIT_RANKS as Record<string, string>)[card.id]
-	const disabled = thisRank === 'free' ? 'enabled' : 'disabled'
+	const thisRank = getRank(card.id)
+	const disabled = thisRank === 'free' || !canShowAsGray ? 'enabled' : 'disabled'
 
 	return (
 		<svg className={classnames(css.card)} width="100%" height="100%" viewBox="0 0 400 400">
@@ -106,18 +114,6 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 						className={css.hermitType}
 					/>
 				</g>
-				{showCost && rank.name !== 'stone' ? (
-					<g>
-						<image
-							x="68"
-							y="80"
-							width="70"
-							height="70"
-							href={`/images/ranks/${rank.name}.png`}
-							className={css.rank}
-						/>
-					</g>
-				) : null}
 				<g id="hermit-attacks" className={css.hermitAttacks}>
 					<g>
 						{card.primary.cost.map((type: string, i: number) => (
@@ -192,9 +188,18 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 					</text>
 				</g>
 			</g>
-			{disabled && (
-				<image x="100" y="20" width="50%" href={`/images/icons/permit_${thisRank}.png`} />
-			)}
+			{thisRank !== 'free' ? (
+				<g>
+					<image
+						x="68"
+						y="80"
+						width="70"
+						height="140"
+						href={`/images/ranks/${thisRank}_banner.png`}
+						className={css.rank}
+					/>
+				</g>
+			) : null}
 		</svg>
 	)
 }

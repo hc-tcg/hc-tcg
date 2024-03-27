@@ -9,16 +9,29 @@ import classNames from 'classnames'
 
 export type EffectCardProps = {
 	card: EffectCard | SingleUseCard
+	canShowAsGray: boolean
 }
 
-const EffectCardModule = ({card}: EffectCardProps) => {
+function getRank(cardId: string) {
+	if (PERMIT_RANKS.diamond.includes(cardId)) return 'diamond'
+	if (PERMIT_RANKS.gold.includes(cardId)) return 'gold'
+	if (PERMIT_RANKS.iron.includes(cardId)) return 'iron'
+	return 'free'
+}
+
+const EffectCardModule = ({card, canShowAsGray}: EffectCardProps) => {
 	const rank = getCardRank(card.id)
 	const showCost = !useSelector(getGameState)
-	const thisRank = (PERMIT_RANKS as Record<string, string>)[card.id]
-	const disabled = thisRank === 'free' ? 'enabled' : 'disabled'
+	const thisRank = getRank(card.id)
+	const disabled = thisRank === 'free' || !canShowAsGray ? 'enabled' : 'disabled'
 
 	return (
-		<svg className={classNames(css.card)} width="100%" height="100%" viewBox="0 0 400 400">
+		<svg
+			className={classNames(css.card, disabled === 'disabled' ? css.cardDisabled : '')}
+			width="100%"
+			height="100%"
+			viewBox="0 0 400 400"
+		>
 			<g id="real-card" className={classNames(css[disabled])}>
 				<rect
 					className={css.cardBackground}
@@ -61,19 +74,6 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 						EFFECT
 					</text>
 				</g>
-				{showCost && rank.name !== 'stone' ? (
-					<g>
-						<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
-						<image
-							x="15"
-							y="315"
-							width="70"
-							height="70"
-							href={`/images/ranks/${rank.name}.png`}
-							className={css.rank}
-						/>
-					</g>
-				) : null}
 				<defs>
 					<filter
 						id="drop-shadow"
@@ -105,9 +105,18 @@ const EffectCardModule = ({card}: EffectCardProps) => {
 					</filter>
 				</defs>
 			</g>
-			{disabled && (
-				<image x="100" y="20" width="50%" href={`/images/icons/permit_${thisRank}.png`} />
-			)}
+			{thisRank !== 'free' ? (
+				<g>
+					<image
+						x="15"
+						y="240"
+						width="70"
+						height="140"
+						href={`/images/ranks/${thisRank}_banner.png`}
+						className={css.rank}
+					/>
+				</g>
+			) : null}
 		</svg>
 	)
 }

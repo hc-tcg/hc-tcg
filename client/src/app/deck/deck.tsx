@@ -416,22 +416,30 @@ const Deck = ({setMenuSection}: Props) => {
 						)}
 
 						<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
-							<CardList cards={sortCards(selectedCards.hermits)} wrap={true} />
+							<CardList cards={sortCards(selectedCards.hermits)} wrap={true} canShowAsGray={true} />
 						</Accordion>
 
 						<Accordion
 							header={cardGroupHeader('Attachable Effects', selectedCards.attachableEffects)}
 						>
-							<CardList cards={sortCards(selectedCards.attachableEffects)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.attachableEffects)}
+								wrap={true}
+								canShowAsGray={true}
+							/>
 						</Accordion>
 						<Accordion
 							header={cardGroupHeader('Single Use Effects', selectedCards.singleUseEffects)}
 						>
-							<CardList cards={sortCards(selectedCards.singleUseEffects)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.singleUseEffects)}
+								wrap={true}
+								canShowAsGray={true}
+							/>
 						</Accordion>
 
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList cards={sortCards(selectedCards.items)} wrap={true} />
+							<CardList cards={sortCards(selectedCards.items)} wrap={true} canShowAsGray={true} />
 						</Accordion>
 					</DeckLayout.Main>
 					<DeckLayout.Sidebar
