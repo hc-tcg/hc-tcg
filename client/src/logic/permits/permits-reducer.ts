@@ -41,10 +41,13 @@ const permitsReducer = (state = defaultState, action: AnyAction): PermitsState =
 			return {
 				...state,
 				lastPurchase: undefined,
-				lastPurchaseProblem: action.payload,
+				lastPurchaseProblem: '',
 			}
 		case 'SET_PERMITS':
-			return action.payload
+			return {
+				...state,
+				...action.payload
+			}
 		default:
 			return state
 	}

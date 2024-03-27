@@ -11,3 +11,11 @@ export const getCredits = (state: RootState) => {
 export const getUnlockedPermits = (state: RootState) => {
 	return getPermits(state).permits
 }
+
+export const getRollFail = (state: RootState) => {
+	return getPermits(state).lastPurchaseProblem
+}
+
+export const getRollResult = (state: RootState) => {
+	return getPermits(state).lastPurchase
+}
