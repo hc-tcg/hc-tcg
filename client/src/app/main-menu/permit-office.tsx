@@ -2,10 +2,10 @@ import {useDispatch, useSelector} from 'react-redux'
 import css from './main-menu.module.scss'
 import Button from 'components/button'
 import MenuLayout from 'components/menu-layout/menu-layout'
-import { PermitRarityT } from 'common/types/permits'
-import { rollPermit } from 'logic/permits/permits-actions'
-import { PERMIT_RANKS } from 'common/config'
-import { getCredits, getRollFail, getRollResult } from 'logic/permits/permits-selectors'
+import {PermitRarityT} from 'common/types/permits'
+import {rollPermit} from 'logic/permits/permits-actions'
+import {PERMIT_RANKS} from 'common/config'
+import {getCredits, getRollFail, getRollResult} from 'logic/permits/permits-selectors'
 import { CardUnlockModal } from '../game/modals'
 
 type Props = {
@@ -33,11 +33,11 @@ export function PermitOffice({setMenuSection}: Props) {
 			}
 			<MenuLayout
 				back={() => setMenuSection('mainmenu')}
-				title="More"
+				title="Permit Office"
 				returnText="Main Menu"
 				className={css.permitMenu}
 			>
-				<div>Permit office - Your balance - {credits} Emeralds</div>
+				<div className={css.permitBackground}></div>
 				<div className={css.permitBoxContainer}>
 					<div className={css.permitBox}>
 						<div className={css.permitArea}>
@@ -72,6 +72,7 @@ export function PermitOffice({setMenuSection}: Props) {
 						</div>
 					</div>
 				</div>
+				<div>Permit office - Your balance - {credits} Emeralds</div>
 			</MenuLayout>
 		</>
 	)
