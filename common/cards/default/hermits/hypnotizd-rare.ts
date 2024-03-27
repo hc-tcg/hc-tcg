@@ -3,7 +3,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {createWeaknessAttack} from '../../../utils/attacks'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -67,9 +66,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 		}
 
 		const newAttacks = [hermitAttack]
-
-		const weaknessAttack = createWeaknessAttack(hermitAttack)
-		if (weaknessAttack) newAttacks.push(weaknessAttack)
 
 		// Delete the target info now
 		delete player.custom[targetKey]
