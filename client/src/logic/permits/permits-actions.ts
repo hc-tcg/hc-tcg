@@ -1,4 +1,3 @@
-import {CardT} from 'common/types/game-state'
 import {CardUnlock, PermitRarityT} from 'common/types/permits'
 
 export const setPermits = (state: {permits: string[]; credits: number}) => ({
@@ -24,4 +23,8 @@ export const rewardPlayer = (reward: number) => ({
 export const rollPermit = (rarity: PermitRarityT) => ({
 	type: 'ROLL_PERMIT' as const,
 	payload: rarity,
+})
+
+export const clearResult = () => ({
+	type: 'CLEAR_RESULT',
 })

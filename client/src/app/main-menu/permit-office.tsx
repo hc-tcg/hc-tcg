@@ -5,7 +5,8 @@ import MenuLayout from 'components/menu-layout/menu-layout'
 import {PermitRarityT} from 'common/types/permits'
 import {rollPermit} from 'logic/permits/permits-actions'
 import {PERMIT_RANKS} from 'common/config'
-import {getCredits} from 'logic/permits/permits-selectors'
+import {getCredits, getRollFail, getRollResult} from 'logic/permits/permits-selectors'
+import { CardUnlockModal } from '../game/modals'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -15,6 +16,8 @@ export function PermitOffice({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
 	const credits = useSelector(getCredits)
+	const rollFail = useSelector(getRollFail)
+	const rollResult = useSelector(getRollResult)
 
 	const handleBuyPermit = (permit: PermitRarityT) => {
 		return () => {
@@ -24,7 +27,10 @@ export function PermitOffice({setMenuSection}: Props) {
 
 	return (
 		<>
-			{/* <PackModal setOpen={showPackModal} onClose={() => setShowPackModal(!showPackModal)} /> */}
+			{
+				rollFail != '' || rollResult ?
+				<CardUnlockModal /> : <></>
+			}
 			<MenuLayout
 				back={() => setMenuSection('mainmenu')}
 				title="Permit Office"
