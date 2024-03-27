@@ -65,6 +65,7 @@ nav {
 		'public'
 		'private-create'
 		'private-join'
+		'permit-office'
 		'deck'
 		'settings'
 		'logout';
@@ -81,6 +82,10 @@ nav {
 
 #privateJoin {
 	grid-area: private-join;
+}
+
+#permitOffice {
+	grid-area: permit-office;
 }
 
 #deck {
@@ -246,6 +251,7 @@ nav {
 		grid-template-areas:
 			'public public'
 			'private-create private-join'
+			'permit-office permit-office'
 			'deck deck'
 			'logout settings';
 	}
@@ -259,4 +265,50 @@ nav {
 	to {
 		opacity: 1;
 	}
+}
+
+.permitMenu {
+	max-width: 120vh;
+	margin-inline: auto;
+	padding: 1vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: stretch;
+
+	h2 {
+		font-size: 3vh;
+		color: var(--text-light);
+		margin-bottom: 2vh;
+		margin-top: 2vh;
+		filter: drop-shadow(1px 1px 0 var(--text-dark));
+	}
+}
+
+.permitBoxContainer {
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.673);
+	display: flex;
+	align-items: center;
+}
+
+.permitBox {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.permitArea {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 30%;
+}
+
+.permitImage {
+	max-width: 140%;
+	padding-bottom: 3%;
 }

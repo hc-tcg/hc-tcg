@@ -16,6 +16,7 @@ import GameSettings from './main-menu/game-settings'
 import Credits from './main-menu/credits'
 import LostConnection from 'components/lost-connection'
 import Background from 'components/background'
+import {PermitOffice} from './main-menu/permit-office'
 
 function App() {
 	const section = useRouter()
@@ -47,6 +48,8 @@ function App() {
 					return <GameSettings setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
+				case 'permit-office':
+					return <PermitOffice setMenuSection={setMenuSection} />
 				case 'mainmenu':
 				default:
 					return <MainMenu setMenuSection={setMenuSection} />

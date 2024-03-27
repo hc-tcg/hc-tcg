@@ -37,6 +37,17 @@
 	}
 }
 
+.gold {
+	background: #deb241;
+	box-shadow: inset 0 -4px 1px #8d712b, inset 1px 1px 0 1px #d5b35d, inset -1px -5px 0 1px #d5b35d;
+	color: var(--text-light);
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled) {
+		background: #deb241;
+	}
+}
+
 .primary {
 	background: var(--color-primary);
 	box-shadow: inset 0 -4px 1px var(--color-primary-shadow),

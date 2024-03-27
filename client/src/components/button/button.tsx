@@ -5,7 +5,7 @@ import React from 'react'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	ref?: any
-	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+	variant?: 'default' | 'primary' | 'secondary' | 'error' | 'stone' | 'gold'
 	size?: 'small' | 'medium' | 'large'
 	emphasis?: boolean
 	leftSlot?: ReactNode

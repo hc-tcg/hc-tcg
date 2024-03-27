@@ -20,6 +20,7 @@ function MainMenu({setMenuSection}: Props) {
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
+	const handlePermitOffice = () => setMenuSection('permit-office')
 
 	const welcomeMessage = playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
 
@@ -45,6 +46,9 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 					<Button variant="stone" id={css.privateJoin} onClick={handleJoinPrivateGame}>
 						Join Private Game
+					</Button>
+					<Button variant="gold" id={css.permitOffice} onClick={handlePermitOffice}>
+						Permit Office
 					</Button>
 					<Button variant="stone" id={css.deck} onClick={handleDeck}>
 						Customize Deck
