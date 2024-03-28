@@ -1,11 +1,12 @@
-import {CardT} from 'common/types/game-state'
+import {CardT, GameState} from 'common/types/game-state'
 import {failPurchase, makePurchase, rewardPlayer, setPermits} from './permits-actions'
 import {all, fork, put, select, takeEvery, takeLatest} from 'typed-redux-saga'
 import {AnyAction} from 'redux'
 import {PermitRarityT} from 'common/types/permits'
 import {PERMIT_RANKS} from 'common/config'
 import {getCredits, getPermits, getUnlockedPermits} from './permits-selectors'
-import {receiveMsg} from 'logic/socket/socket-saga'
+import {ServerMessage, receiveMsg} from 'logic/socket/socket-saga'
+import { getPlayerId } from 'logic/session/session-selectors'
 
 const loadCredits = () => {
 	const permitsString = localStorage.getItem('permits')
@@ -69,11 +70,36 @@ function* permitPurchase(action: AnyAction) {
 
 function* trackGameResult() {
 	while (true) {
-		const {won} = yield receiveMsg('gameoverstat')
+		const playerId: string = yield select(getPlayerId)
 
-		if (won) yield put(rewardPlayer(300))
-		else yield put(rewardPlayer(300))
+		const message: ServerMessage = yield receiveMsg('GAME_END')
+		const {outcome, gameState}: {outcome: string, gameState: GameState} = message.payload
 
+		var reward = 0
+
+		switch (outcome) {
+			case 'you_won':
+			case 'leave_win':
+			case 'forfeit_win':
+				reward += 30
+				break
+			case 'you_lost':
+			case 'leave_loss':
+			case 'forfeit_loss':
+				reward += 10
+				break
+			default:
+				reward += 20
+		}
+		
+		const opponent = Object.keys(gameState.players)
+			.filter((player) => player != playerId)
+			.shift()
+		if (opponent !== undefined) {
+			reward += 15 - 5 * gameState.players[opponent].lives
+		}
+
+		yield put(rewardPlayer(reward))
 		saveCredits(yield select(getPermits))
 	}
 }
