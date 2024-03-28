@@ -165,8 +165,8 @@
 
 	"prices": {
 		"free": 0,
-		"iron": 100,
-		"gold": 200,
-		"diamond": 300
+		"iron": 10,
+		"gold": 20,
+		"diamond": 30
 	}
 }

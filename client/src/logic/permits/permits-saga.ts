@@ -11,7 +11,7 @@ const loadCredits = () => {
 	const permitsString = localStorage.getItem('permits')
 	const permits: string[] = JSON.parse(permitsString ? permitsString : '[]')
 	const creditsString = localStorage.getItem('credits')
-	const credits: number = parseInt(creditsString ? creditsString : '590')
+	const credits: number = parseInt(creditsString ? creditsString : '64')
 
 	return {permits, credits}
 }
