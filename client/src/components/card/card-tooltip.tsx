@@ -10,7 +10,7 @@ import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
-import {EXPANSIONS} from 'common/config'
+import {EXPANSIONS, PERMIT_RANKS} from 'common/config'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -117,13 +117,27 @@ const getName = (card: Card): React.ReactNode => {
 	return <div className={css.name}>{card.name}</div>
 }
 
+function getPermitTier(cardId: string) {
+	if (PERMIT_RANKS.diamond.includes(cardId)) return 'diamond'
+	if (PERMIT_RANKS.gold.includes(cardId)) return 'gold'
+	if (PERMIT_RANKS.iron.includes(cardId)) return 'iron'
+	return 'stone'
+}
+
+function getPermitRank(cardId: string) {
+	if (PERMIT_RANKS.diamond.includes(cardId)) return 'Diamond Permit'
+	if (PERMIT_RANKS.gold.includes(cardId)) return 'Gold Permit'
+	if (PERMIT_RANKS.iron.includes(cardId)) return 'Iron Permit'
+	return 'No Permit Required'
+}
+
 const getRank = (card: Card): React.ReactNode => {
-	const {name, cost} = getCardRank(card.id)
-	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
+	let tier = getPermitTier(card.id)
+	const permitRank = getPermitRank(card.id)
+	const highlight = tier === 'stone' ? '■' : '★'
 	return (
-		<div className={classnames(css.rank, css[name])}>
-			{highlight} {name.charAt(0).toUpperCase() + name.slice(1)} Rank ({cost}{' '}
-			{cost !== 1 ? 'tokens' : 'token'}) {highlight}
+		<div className={classnames(css.rank, css[tier])}>
+			{highlight} {permitRank} {highlight}
 		</div>
 	)
 }
