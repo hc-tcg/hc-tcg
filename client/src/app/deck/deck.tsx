@@ -309,7 +309,8 @@ const Deck = ({setMenuSection}: Props) => {
 					action={handleInvalidDeck}
 					title="Invalid Deck"
 					description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
-					matches. If you continue, your last valid deck will be used instead.`}
+					matches. If you continue, your last valid deck will be used instead. If you have no
+					valid decks, you will not be able to join matches.`}
 					actionText="Main Menu"
 				/>
 				<AlertModal

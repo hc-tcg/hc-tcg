@@ -1,5 +1,4 @@
 import {PlayerDeckT} from 'common/types/deck'
-import {validateDeck} from 'common/utils/validation'
 
 export const getActiveDeckName = () => {
 	return localStorage.getItem('activeDeck')
@@ -7,15 +6,6 @@ export const getActiveDeckName = () => {
 
 export const setActiveDeck = (name: string) => {
 	localStorage.setItem('activeDeck', name)
-}
-
-export const isActiveDeckValid = () => {
-	const activeDeckName = getActiveDeckName()
-	const activeDeck = activeDeckName
-		? getSavedDeck(activeDeckName)?.cards.map((card) => card.cardId)
-		: null
-	const activeDeckValid = !!activeDeck && !validateDeck(activeDeck)
-	return activeDeckValid
 }
 
 export const getSavedDeck = (name: string) => {
