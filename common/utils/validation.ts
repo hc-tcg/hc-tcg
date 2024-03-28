@@ -22,7 +22,7 @@ export function validateDeck(deckCards: Array<string>, obtainedPermits: Array<st
 			PERMIT_RANKS.free.includes(cardId) ||
 			CARDS[cardId].type === 'item'
 	)
-	if (hasNoPermit) return 'Deck may only include cards you have a permit for. Sorry!'
+	if (hasNoPermit) return 'Deck may only include cards you have a permit for.'
 
 	// less than one hermit
 	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')

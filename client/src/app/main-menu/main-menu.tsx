@@ -23,7 +23,7 @@ function MainMenu({setMenuSection}: Props) {
 
 	const invalidDeckToast: ToastT = {
 		open: true,
-		title: 'Deck Deleted!',
+		title: 'Invalid Deck!',
 		description: `Your selected deck, ${playerDeck.name}, is invalid.`,
 		image: `/images/types/type-${playerDeck.icon}.png`,
 	}
