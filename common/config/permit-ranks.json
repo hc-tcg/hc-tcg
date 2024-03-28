@@ -42,7 +42,16 @@
 		"item_pvp_common",
 		"item_balanced_common",
 		"item_explorer_common",
-		"smajor1995_rare"
+		"item_balanced_rare",
+		"item_builder_rare",
+		"item_explorer_rare",
+		"item_farm_rare",
+		"item_miner_rare",
+		"item_prankster_rare",
+		"item_redstone_rare",
+		"item_terraform_rare",
+		"item_speedrunner_rare",
+		"item_pvp_rare"
 	],
 	"iron": [
 		"bdoubleo100_rare",
@@ -103,7 +112,8 @@
 		"slimeball",
 		"dropper",
 		"fletching_table",
-		"brush"
+		"brush",
+		"smajor1995_rare"
 	],
 	"gold": [
 		"rendog_rare",
@@ -126,16 +136,6 @@
 		"bed",
 		"splash_potion_of_poison",
 		"thorns",
-		"item_balanced_rare",
-		"item_builder_rare",
-		"item_explorer_rare",
-		"item_farm_rare",
-		"item_miner_rare",
-		"item_prankster_rare",
-		"item_redstone_rare",
-		"item_terraform_rare",
-		"item_speedrunner_rare",
-		"item_pvp_rare",
 		"helsknight_rare",
 		"humancleo_rare",
 		"goatfather_rare",
@@ -186,8 +186,8 @@
 
 	"prices": {
 		"free": 0,
-		"iron": 10,
-		"gold": 20,
-		"diamond": 30
+		"iron": 100,
+		"gold": 200,
+		"diamond": 300
 	}
 }

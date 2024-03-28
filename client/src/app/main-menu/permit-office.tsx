@@ -6,7 +6,7 @@ import {PermitRarityT} from 'common/types/permits'
 import {rollPermit} from 'logic/permits/permits-actions'
 import {PERMIT_RANKS} from 'common/config'
 import {getCredits, getRollFail, getRollResult} from 'logic/permits/permits-selectors'
-import { CardUnlockModal } from '../game/modals'
+import {CardUnlockModal} from '../game/modals'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -27,10 +27,7 @@ export function PermitOffice({setMenuSection}: Props) {
 
 	return (
 		<>
-			{
-				rollFail != '' || rollResult ?
-				<CardUnlockModal /> : <></>
-			}
+			{rollFail != '' || rollResult ? <CardUnlockModal /> : <></>}
 			<MenuLayout
 				back={() => setMenuSection('mainmenu')}
 				title="Permit Office"
@@ -46,8 +43,7 @@ export function PermitOffice({setMenuSection}: Props) {
 								src="/images/animations/permits/permit_iron.gif"
 							></img>
 							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('iron')}>
-								Buy Iron Permit - {PERMIT_RANKS.prices.iron}{' '}
-								<img height="25rem" src="images/effects/emerald.png" />
+								Buy Iron Permit - {PERMIT_RANKS.prices.iron}
 							</Button>
 						</div>
 						<div className={css.permitArea}>
@@ -56,8 +52,7 @@ export function PermitOffice({setMenuSection}: Props) {
 								src="/images/animations/permits/permit_gold.gif"
 							></img>
 							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('gold')}>
-								Buy Gold Permit - {PERMIT_RANKS.prices.gold}{' '}
-								<img height="25rem" src="images/effects/emerald.png" />
+								Buy Gold Permit - {PERMIT_RANKS.prices.gold}
 							</Button>
 						</div>
 						<div className={css.permitArea}>
@@ -66,13 +61,20 @@ export function PermitOffice({setMenuSection}: Props) {
 								src="/images/animations/permits/permit_diamond.gif"
 							></img>
 							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('diamond')}>
-								Buy Diamond Permit - {PERMIT_RANKS.prices.diamond}{' '}
-								<img height="25rem" src="images/effects/emerald.png" />
+								Buy Diamond Permit - {PERMIT_RANKS.prices.diamond}
 							</Button>
 						</div>
 					</div>
 				</div>
-				<div>Permit office - Your balance - {credits} Emeralds</div>
+				<div className={css.permitOfficeInstructions}>
+					<p>
+						Welcome to the Permit Office! Your current balance is <b>{credits} diamonds</b>.
+					</p>
+					<br></br>
+					<p>
+						Here, you can spend your diamonds you earn in battle on the permits to play new cards.
+					</p>
+				</div>
 			</MenuLayout>
 		</>
 	)

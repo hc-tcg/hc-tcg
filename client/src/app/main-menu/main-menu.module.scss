@@ -310,7 +310,7 @@ nav {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	padding-bottom: 20%;
+	padding-bottom: 25%;
 }
 
 .permitArea {
@@ -323,5 +323,22 @@ nav {
 
 .permitImage {
 	max-width: 120%;
-	padding-bottom: 30%;
+	padding-bottom: 15%;
+}
+
+.permitOfficeInstructions {
+	color: var(--text-light);
+	background: var(--gray-800);
+	border-radius: 0.5vh;
+	padding: 1rem;
+	position: absolute;
+	top: 70%;
+	left: 23.4%;
+	width: 54%;
+	height: 25%;
+
+	@media (max-width: 100vh) {
+		width: 90%;
+		left: 5%;
+	}
 }
