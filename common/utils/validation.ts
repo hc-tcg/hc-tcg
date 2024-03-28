@@ -28,6 +28,17 @@ export function validateDeck(deckCards: Array<string>, obtainedPermits: Array<st
 	const hasHermit = deckCards.some((cardId) => CARDS[cardId].type === 'hermit')
 	if (!hasHermit) return 'Deck must have at least one Hermit.'
 
+	// Diamond permit duplicates
+	const diamondPermitDuplicates = deckCards.some((cardId) => {
+		const duplicates = deckCards.filter(
+			(filterCardId) => PERMIT_RANKS.diamond.includes(filterCardId) && filterCardId === cardId
+		)
+		return duplicates.length > 1
+	})
+
+	if (diamondPermitDuplicates)
+		return `You cannot have more than 1 copy of each diamond permit card.`
+
 	// more than max duplicates
 	const tooManyDuplicates =
 		limits.maxDuplicates &&
