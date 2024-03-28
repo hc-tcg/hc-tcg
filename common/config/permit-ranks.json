@@ -100,20 +100,7 @@
 		"chainmail_armor",
 		"egg",
 		"splash_potion_of_healing_ii",
-		"turtle_shell",
-		"orionsound_rare",
-		"monkeyfarm_rare",
-		"pixlriffs_rare",
-		"ldshadowlady_rare",
-		"shubbleyt_rare",
-		"brewing_stand",
-		"furnace",
-		"cat",
-		"slimeball",
-		"dropper",
-		"fletching_table",
-		"brush",
-		"smajor1995_rare"
+		"turtle_shell"
 	],
 	"gold": [
 		"rendog_rare",
@@ -148,15 +135,7 @@
 		"potion_of_weakness",
 		"string",
 		"sweeping_edge",
-		"trident",
-		"dungeontango_rare",
-		"solidaritygaming_rare",
-		"bigbst4tz2_rare",
-		"smallishbeans_rare",
-		"pharaoh_rare",
-		"berry_bush",
-		"trapdoor",
-		"glowstone"
+		"trident"
 	],
 	"diamond": [
 		"joehills_rare",
