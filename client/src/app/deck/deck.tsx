@@ -92,9 +92,6 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
-		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.cardId))} tokens
-		</span>
 	</p>
 )
 
@@ -367,12 +364,6 @@ const Deck = ({setMenuSection}: Props) => {
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}{' '}
 										<span className={css.hideOnMobile}>cards</span>
 									</p>
-									<div className={css.cardCount}>
-										<p className={css.tokens}>
-											{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
-											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
-										</p>
-									</div>
 								</div>
 							</>
 						}
