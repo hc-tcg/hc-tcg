@@ -19,3 +19,7 @@ export const getRollFail = (state: RootState) => {
 export const getRollResult = (state: RootState) => {
 	return getPermits(state).lastPurchase
 }
+
+export const getGameResults = (state: RootState) => {
+	return getPermits(state).gameResults
+}

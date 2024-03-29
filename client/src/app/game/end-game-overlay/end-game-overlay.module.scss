@@ -104,3 +104,24 @@
 		transform: translateY(-5px);
 	}
 }
+
+.resultThing {
+	width: 100%;
+	margin-top: 5%;
+	background: var(--gray-800);
+	padding: 1vh;
+	border-radius: 0.5rem;
+}
+
+.result {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 1vh 0;
+	color: var(--text-light);
+
+	> span {
+		font-size: 2vh;
+		user-select: text;
+	}
+}

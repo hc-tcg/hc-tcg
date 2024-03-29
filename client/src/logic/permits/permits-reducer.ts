@@ -1,11 +1,13 @@
 import {AnyAction} from 'redux'
 import {CardUnlock} from 'common/types/permits'
+import {CREDIT_VALUES} from 'common/config'
 
 type PermitsState = {
 	permits: string[]
 	credits: number
 	lastPurchase: CardUnlock | undefined
 	lastPurchaseProblem: string
+	gameResults: Array<string>
 }
 
 const defaultState: PermitsState = {
@@ -13,6 +15,7 @@ const defaultState: PermitsState = {
 	credits: 0,
 	lastPurchase: undefined,
 	lastPurchaseProblem: '',
+	gameResults: [],
 }
 
 const permitsReducer = (state = defaultState, action: AnyAction): PermitsState => {
@@ -35,7 +38,14 @@ const permitsReducer = (state = defaultState, action: AnyAction): PermitsState =
 		case 'REWARD_PLAYER':
 			return {
 				...state,
-				credits: state.credits + action.payload,
+				gameResults: action.payload,
+				credits:
+					state.credits +
+					action.payload.reduce((previous: number, current: string) => {
+						if ((CREDIT_VALUES as Record<string, any>)[current])
+							return previous + (CREDIT_VALUES as Record<string, any>)[current].value
+						return previous
+					}, 0),
 			}
 		case 'CLEAR_RESULT':
 			return {
@@ -46,7 +56,7 @@ const permitsReducer = (state = defaultState, action: AnyAction): PermitsState =
 		case 'SET_PERMITS':
 			return {
 				...state,
-				...action.payload
+				...action.payload,
 			}
 		default:
 			return state

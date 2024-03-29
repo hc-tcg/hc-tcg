@@ -6,7 +6,8 @@ import {PermitRarityT} from 'common/types/permits'
 import {PERMIT_RANKS} from 'common/config'
 import {getCredits, getPermits, getUnlockedPermits} from './permits-selectors'
 import {ServerMessage, receiveMsg} from 'logic/socket/socket-saga'
-import { getPlayerId } from 'logic/session/session-selectors'
+import {getPlayerDeck, getPlayerId} from 'logic/session/session-selectors'
+import {CARDS} from 'common/cards'
 
 const loadCredits = () => {
 	const permitsString = localStorage.getItem('permits')
@@ -73,30 +74,35 @@ function* trackGameResult() {
 		const playerId: string = yield select(getPlayerId)
 
 		const message: ServerMessage = yield receiveMsg('GAME_END')
-		const {outcome, gameState}: {outcome: string, gameState: GameState} = message.payload
+		const {outcome, gameState}: {outcome: string; gameState: GameState} = message.payload
 
-		var reward = 0
+		const opponent = Object.keys(gameState.players)
+			.filter((player) => player != playerId)
+			.shift()
+
+		const reward: Array<string> = []
 
 		switch (outcome) {
 			case 'you_won':
 			case 'leave_win':
 			case 'forfeit_win':
-				reward += 30
+				reward.push('playMatch')
+				reward.push('win')
 				break
 			case 'you_lost':
+				reward.push('playMatch')
+				break
 			case 'leave_loss':
 			case 'forfeit_loss':
-				reward += 10
 				break
 			default:
-				reward += 20
+				reward.push('tie')
 		}
-		
-		const opponent = Object.keys(gameState.players)
-			.filter((player) => player != playerId)
-			.shift()
+
 		if (opponent !== undefined) {
-			reward += 15 - 5 * gameState.players[opponent].lives
+			for (var i = 0; i < 3 - gameState.players[opponent].lives; i++) {
+				reward.push('knockout')
+			}
 		}
 
 		yield put(rewardPlayer(reward))

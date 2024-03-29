@@ -15,7 +15,7 @@ export const failPurchase = (reason: string) => ({
 	payload: reason,
 })
 
-export const rewardPlayer = (reward: number) => ({
+export const rewardPlayer = (reward: Array<string>) => ({
 	type: 'REWARD_PLAYER' as const,
 	payload: reward,
 })
