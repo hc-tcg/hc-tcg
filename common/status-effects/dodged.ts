@@ -13,7 +13,7 @@ class DodgedStatusEffect extends StatusEffect {
 			id: 'dodged',
 			name: 'Opponent Missed',
 			description: 'Opponent missed their attack last turn.',
-			duration: 1,
+			duration: 0,
 			counter: false,
 			damageEffect: false,
 			visible: false,
