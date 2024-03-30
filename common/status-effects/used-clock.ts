@@ -1,13 +1,8 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {AttackModel} from '../models/attack-model'
 import {StatusEffectT} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
-import {STRENGTHS} from '../const/strengths'
-import {WEAKNESS_DAMAGE} from '../const/damage'
 
 class UsedClockStatusEffect extends StatusEffect {
 	constructor() {

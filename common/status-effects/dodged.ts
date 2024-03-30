@@ -1,11 +1,8 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
-import {getActiveRow, removeStatusEffect} from '../utils/board'
-import {AttackModel } from '../models/attack-model'
+import {CardPosModel} from '../models/card-pos-model'
+import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
 
 class DodgedStatusEffect extends StatusEffect {
 	constructor() {
@@ -34,7 +31,7 @@ class DodgedStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const { player, opponentPlayer } = pos
+		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
