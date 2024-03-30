@@ -22,24 +22,14 @@ class DodgedStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const { player } = pos
+		const {player} = pos
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
 		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
-			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
 
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
-
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-
-			
-			if (player.board.activeRow !== targetPos.rowIndex)
-				targetPos.rowIndex = player.board.activeRow
+			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
 
