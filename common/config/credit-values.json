@@ -5,7 +5,7 @@
 	},
 	"win": {
 		"name": "Winning bonus",
-		"value": 20
+		"value": 25
 	},
 	"tie": {
 		"name": "Tie bonus",
@@ -13,11 +13,15 @@
 	},
 	"knockout": {
 		"name": "Knockout",
-		"value": 5
+		"value": 7
 	},
 	"oneHermit": {
-		"name": "Win using a deck with a single Hermit",
+		"name": "Win using a deck with a single Hermit card",
 		"value": 20
+	},
+	"oneNameHermit": {
+		"name": "Win using a deck with only cards of one Hermit",
+		"value": 10
 	},
 	"ironPermit": {
 		"name": "Win using a deck without any iron permit cards",
@@ -29,7 +33,7 @@
 	},
 	"diamondPermit": {
 		"name": "Win using a deck without any diamond permit cards",
-		"value": 20
+		"value": 15
 	},
 	"doubleItems": {
 		"name": "Win using a deck without any double items",

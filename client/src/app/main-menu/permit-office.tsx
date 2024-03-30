@@ -6,7 +6,8 @@ import {PermitRarityT} from 'common/types/permits'
 import {rollPermit} from 'logic/permits/permits-actions'
 import {PERMIT_RANKS} from 'common/config'
 import {getCredits, getRollFail, getRollResult} from 'logic/permits/permits-selectors'
-import {CardUnlockModal} from '../game/modals'
+import {CardUnlockModal, CreditValuesModal} from '../game/modals'
+import {useState} from 'react'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -19,6 +20,8 @@ export function PermitOffice({setMenuSection}: Props) {
 	const rollFail = useSelector(getRollFail)
 	const rollResult = useSelector(getRollResult)
 
+	const [showMethods, setShowMethods] = useState(false)
+
 	const handleBuyPermit = (permit: PermitRarityT) => {
 		return () => {
 			dispatch(rollPermit(permit))
@@ -28,6 +31,7 @@ export function PermitOffice({setMenuSection}: Props) {
 	return (
 		<>
 			{rollFail != '' || rollResult ? <CardUnlockModal /> : <></>}
+			{showMethods ? <CreditValuesModal closeModal={() => setShowMethods(false)} /> : <></>}
 			<MenuLayout
 				back={() => setMenuSection('mainmenu')}
 				title="Permit Office"
@@ -73,7 +77,13 @@ export function PermitOffice({setMenuSection}: Props) {
 					<br></br>
 					<p>
 						Here, you can spend your diamonds you earn in battle on the permits to play new cards.
+						More diamonds are earned by winning, and you can also earn more by completing specific
+						objectives while playing.
 					</p>
+					<br></br>
+					<Button variant="default" onClick={() => setShowMethods(!showMethods)}>
+						Show Objectives
+					</Button>
 				</div>
 			</MenuLayout>
 		</>

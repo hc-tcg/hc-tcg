@@ -8,6 +8,7 @@ import {getCredits, getPermits, getUnlockedPermits} from './permits-selectors'
 import {ServerMessage, receiveMsg} from 'logic/socket/socket-saga'
 import {getPlayerDeck, getPlayerId} from 'logic/session/session-selectors'
 import {CARDS} from 'common/cards'
+import {PlayerDeckT} from 'common/types/deck'
 
 const loadCredits = () => {
 	const permitsString = localStorage.getItem('permits')
@@ -71,10 +72,13 @@ function* permitPurchase(action: AnyAction) {
 
 function* trackGameResult() {
 	while (true) {
+		const playerDeck: PlayerDeckT = yield select(getPlayerDeck)
 		const playerId: string = yield select(getPlayerId)
 
 		const message: ServerMessage = yield receiveMsg('GAME_END')
 		const {outcome, gameState}: {outcome: string; gameState: GameState} = message.payload
+
+		console.log(playerDeck)
 
 		const opponent = Object.keys(gameState.players)
 			.filter((player) => player != playerId)
@@ -88,6 +92,41 @@ function* trackGameResult() {
 			case 'forfeit_win':
 				reward.push('playMatch')
 				reward.push('win')
+
+				const hermitNumber = playerDeck.cards.reduce((previous, current) => {
+					if (CARDS[current.cardId].type === 'hermit') return previous + 1
+					return previous
+				}, 0)
+
+				if (hermitNumber === 1) reward.push('oneHermit')
+
+				const ironPermitNumber = playerDeck.cards.reduce((previous, current) => {
+					if (PERMIT_RANKS.iron.includes(current.cardId)) return previous + 1
+					return previous
+				}, 0)
+
+				const goldPermitNumber = playerDeck.cards.reduce((previous, current) => {
+					if (PERMIT_RANKS.gold.includes(current.cardId)) return previous + 1
+					return previous
+				}, 0)
+
+				const diamondPermitNumber = playerDeck.cards.reduce((previous, current) => {
+					if (PERMIT_RANKS.iron.includes(current.cardId)) return previous + 1
+					return previous
+				}, 0)
+
+				if (ironPermitNumber === 0) reward.push('ironPermit')
+				if (goldPermitNumber === 0) reward.push('goldPermit')
+				if (diamondPermitNumber === 0) reward.push('diamondPermit')
+
+				const doubleItemNumber = playerDeck.cards.reduce((previous, current) => {
+					if (CARDS[current.cardId].type === 'item' && CARDS[current.cardId].rarity === 'rare')
+						return previous + 1
+					return previous
+				}, 0)
+
+				if (doubleItemNumber === 0) reward.push('doubleItems')
+
 				break
 			case 'you_lost':
 				reward.push('playMatch')

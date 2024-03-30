@@ -107,6 +107,16 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 									</div>
 								)
 							})}
+							<br></br>
+							<div className={css.result}>
+								<span>Total</span>
+								<span>
+									{gameResults.reduce((previous, current) => {
+										return previous + (CREDIT_VALUES as Record<string, any>)[current].value
+									}, 0)}{' '}
+									Diamonds
+								</span>
+							</div>
 						</div>
 					)}
 				</Dialog.Content>
