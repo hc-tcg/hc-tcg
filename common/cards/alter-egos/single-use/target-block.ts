@@ -64,17 +64,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 						rowIndex,
 						row,
 					}
-					attack.type = 'effect'
-
-					const dummyAttack = new AttackModel({
-						id: (attack.id += ':dummy'),
-						attacker: attack.target,
-						target: attack.attacker,
-						type: 'secondary',
-						isBacklash: false,
-					})
-
-					attack.addNewAttack(dummyAttack)
+					attack.redirected = true
 				})
 
 				return 'SUCCESS'

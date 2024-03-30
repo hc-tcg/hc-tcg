@@ -38,6 +38,8 @@ export class AttackModel {
 	public shouldIgnoreCards: Array<ShouldIgnoreCard> = []
 	/** Whether or not the attack should create a weakness attack */
 	public createWeakness: WeaknessType
+	/** If the attack has been redirected by an effect card */
+	public redirected: boolean
 
 	constructor(defs: AttackDefs) {
 		this.id = defs.id || null
@@ -48,6 +50,7 @@ export class AttackModel {
 		this.target = defs.target || null
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
+		this.redirected = false
 
 		return this
 	}
