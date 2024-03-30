@@ -17,9 +17,9 @@
 	},
 	"oneHermit": {
 		"name": "Win using a deck with a single Hermit card",
-		"value": 20
+		"value": 15
 	},
-	"oneNameHermit": {
+	"oneHermitName": {
 		"name": "Win using a deck with only cards of one Hermit",
 		"value": 10
 	},

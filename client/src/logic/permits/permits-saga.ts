@@ -115,9 +115,9 @@ function* trackGameResult() {
 					return previous
 				}, 0)
 
-				if (ironPermitNumber === 0) reward.push('ironPermit')
-				if (goldPermitNumber === 0) reward.push('goldPermit')
-				if (diamondPermitNumber === 0) reward.push('diamondPermit')
+				if (playerDeck.cards.length > 0 && ironPermitNumber === 0) reward.push('ironPermit')
+				if (playerDeck.cards.length > 0 && goldPermitNumber === 0) reward.push('goldPermit')
+				if (playerDeck.cards.length > 0 && diamondPermitNumber === 0) reward.push('diamondPermit')
 
 				const doubleItemNumber = playerDeck.cards.reduce((previous, current) => {
 					if (CARDS[current.cardId].type === 'item' && CARDS[current.cardId].rarity === 'rare')
@@ -125,7 +125,20 @@ function* trackGameResult() {
 					return previous
 				}, 0)
 
-				if (doubleItemNumber === 0) reward.push('doubleItems')
+				if (playerDeck.cards.length > 0 && doubleItemNumber === 0) reward.push('doubleItems')
+
+				const uniqueHermitNames: Array<string> = []
+
+				playerDeck.cards.forEach((card) => {
+					const cardInfo = CARDS[card.cardId]
+					if (cardInfo.type === 'hermit' && !uniqueHermitNames.includes(cardInfo.name)) {
+						uniqueHermitNames.push(cardInfo.name)
+					}
+				})
+
+				console.log(uniqueHermitNames)
+
+				if (uniqueHermitNames.length === 1) reward.push('oneHermitName')
 
 				break
 			case 'you_lost':
