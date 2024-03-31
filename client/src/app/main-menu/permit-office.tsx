@@ -81,12 +81,13 @@ export function PermitOffice({setMenuSection}: Props) {
 					<br></br>
 					<p>
 						Here, you can spend your diamonds you earn in battle on the permits to play new cards.
-						More diamonds are earned by winning, and you can also earn more by completing specific
-						objectives while playing.
+						You earn more diamonds by winning, and you can also earn more by completing various
+						tasks while playing. In the deck builder, diamond permit cards are limited to 1 copy of
+						each, but all cards of other permits have no restrictions on how they can be played.
 					</p>
 					<br></br>
 					<Button variant="default" onClick={() => setShowMethods(!showMethods)}>
-						Show Objectives
+						Show Tasks
 					</Button>
 				</div>
 			</MenuLayout>
