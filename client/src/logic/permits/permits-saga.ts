@@ -47,7 +47,7 @@ function* permitPurchase(action: AnyAction) {
 			failPurchase(
 				`You need ${
 					PERMIT_RANKS.prices[rarity] - currentCredits
-				} emeralds to buy a ${rarity} permit!`
+				} diamonds to buy a ${rarity} permit!`
 			)
 		)
 		return
@@ -77,6 +77,8 @@ function* trackGameResult() {
 		const deckString = localStorage.getItem('currentDeck')
 		const playerDeck: string[] = JSON.parse(deckString ? deckString : '[]')
 
+		const deck = playerDeck[0] ? [...playerDeck[0]] : []
+
 		const message: ServerMessage = yield receiveMsg('GAME_END')
 		const {outcome, gameState}: {outcome: string; gameState: GameState} = message.payload
 
@@ -93,43 +95,43 @@ function* trackGameResult() {
 				reward.push('playMatch')
 				reward.push('win')
 
-				const hermitNumber = playerDeck.reduce((previous, current) => {
+				const hermitNumber = deck.reduce((previous, current) => {
 					if (CARDS[current] && CARDS[current].type === 'hermit') return previous + 1
 					return previous
 				}, 0)
 
 				if (hermitNumber === 1) reward.push('oneHermit')
 
-				const ironPermitNumber = playerDeck.reduce((previous, current) => {
+				const ironPermitNumber = deck.reduce((previous, current) => {
 					if (PERMIT_RANKS.iron.includes(current)) return previous + 1
 					return previous
 				}, 0)
 
-				const goldPermitNumber = playerDeck.reduce((previous, current) => {
+				const goldPermitNumber = deck.reduce((previous, current) => {
 					if (PERMIT_RANKS.gold.includes(current)) return previous + 1
 					return previous
 				}, 0)
 
-				const diamondPermitNumber = playerDeck.reduce((previous, current) => {
+				const diamondPermitNumber = deck.reduce((previous, current) => {
 					if (PERMIT_RANKS.diamond.includes(current)) return previous + 1
 					return previous
 				}, 0)
 
-				if (playerDeck.length > 0 && ironPermitNumber === 0) reward.push('ironPermit')
-				if (playerDeck.length > 0 && goldPermitNumber === 0) reward.push('goldPermit')
-				if (playerDeck.length > 0 && diamondPermitNumber === 0) reward.push('diamondPermit')
+				if (deck.length > 0 && ironPermitNumber === 0) reward.push('ironPermit')
+				if (deck.length > 0 && goldPermitNumber === 0) reward.push('goldPermit')
+				if (deck.length > 0 && diamondPermitNumber === 0) reward.push('diamondPermit')
 
-				const doubleItemNumber = playerDeck.reduce((previous, current) => {
+				const doubleItemNumber = deck.reduce((previous, current) => {
 					if (CARDS[current] && CARDS[current].type === 'item' && CARDS[current].rarity === 'rare')
 						return previous + 1
 					return previous
 				}, 0)
 
-				if (playerDeck.length > 0 && doubleItemNumber === 0) reward.push('doubleItems')
+				if (deck.length > 0 && doubleItemNumber === 0) reward.push('doubleItems')
 
 				const uniqueHermitNames: Array<string> = []
 
-				playerDeck.forEach((card) => {
+				deck.forEach((card) => {
 					if (!CARDS[card]) return
 					const cardInfo = CARDS[card]
 					if (cardInfo.type === 'hermit' && !uniqueHermitNames.includes(cardInfo.name)) {
