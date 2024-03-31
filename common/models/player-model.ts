@@ -3,7 +3,8 @@ import profanityFilter from '../utils/profanity'
 import {CardT} from '../../common/types/game-state'
 import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
-import {validateDeck} from '../utils/validation'
+import { CARDS } from '../cards'
+import { validateDeck } from '../utils/validation'
 
 export class PlayerModel {
 	public playerId: string
@@ -52,7 +53,8 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
+		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId), Object.keys(CARDS))
+		console.log(validationMessage)
 		if (validationMessage) return
 		this.playerDeck = newDeck
 	}

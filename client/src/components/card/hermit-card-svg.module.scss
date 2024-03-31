@@ -6,10 +6,10 @@
 	background: white;
 	letter-spacing: 0.065em;
 	font-family: BangersRegular !important;
+}
 
-	&.disabled {
-		filter: grayscale(1) brightness(0.9);
-	}
+.disabled {
+	filter: grayscale(1) brightness(0.9);
 }
 
 .hermitImage {

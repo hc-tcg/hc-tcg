@@ -5,6 +5,8 @@ import classnames from 'classnames'
 
 export type HealthCardProps = {
 	card: HealthCard
+	canShowAsGray: boolean
+	obtainedPermits: Array<string>
 }
 
 function useCountdownAnimation(value: number, duration = 500) {

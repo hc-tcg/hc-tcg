@@ -1,5 +1,5 @@
 import {useDeferredValue, useRef, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
@@ -21,6 +21,7 @@ import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {getCardExpansion} from 'common/utils/cards'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
+import {getUnlockedPermits} from 'logic/permits/permits-selectors'
 
 const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
 const DECK_ICONS = [
@@ -127,6 +128,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [showUnsavedModal, setShowUnsavedModal] = useState<boolean>(false)
 	const deferredTextQuery = useDeferredValue(textQuery)
+
+	const permits = useSelector(getUnlockedPermits)
+
+	console.log(permits)
 
 	//MISC
 	const initialDeckState = deck
@@ -240,7 +245,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 		})
 		back()
 	}
-	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
+	const validationMessage = validateDeck(
+		loadedDeck.cards.map((card) => card.cardId),
+		permits
+	)
 
 	return (
 		<>
@@ -326,6 +334,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
+							obtainedPermits={permits}
 						/>
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
@@ -335,6 +345,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
+							obtainedPermits={permits}
 						/>
 					</Accordion>
 					<Accordion header={'Single Use Effects'}>
@@ -344,6 +356,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
+							obtainedPermits={permits}
 						/>
 					</Accordion>
 					<Accordion header={'Items'}>
@@ -353,6 +367,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							)}
 							wrap={true}
 							onClick={addCard}
+							canShowAsGray={true}
+							obtainedPermits={permits}
 						/>
 					</Accordion>
 				</DeckLayout.Main>
@@ -367,10 +383,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									{loadedDeck.cards.length}/{CONFIG.limits.maxCards}
 									<span className={css.hideOnMobile}>cards</span>
 								</p>
-								<div className={classNames(css.cardCount, css.dark, css.tokens)}>
-									{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
-									{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
-								</div>
 							</div>
 						</>
 					}
@@ -435,6 +447,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 									cards={sortCards(selectedCards.hermits)}
 									wrap={true}
 									onClick={removeCard}
+									canShowAsGray={true}
+									obtainedPermits={permits}
 								/>
 							</Accordion>
 						</div>
@@ -445,6 +459,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								cards={sortCards(selectedCards.attachableEffects)}
 								wrap={true}
 								onClick={removeCard}
+								canShowAsGray={true}
+								obtainedPermits={permits}
 							/>
 						</Accordion>
 						<Accordion
@@ -454,10 +470,18 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								cards={sortCards(selectedCards.singleUseEffects)}
 								wrap={true}
 								onClick={removeCard}
+								canShowAsGray={true}
+								obtainedPermits={permits}
 							/>
 						</Accordion>
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList cards={sortCards(selectedCards.items)} wrap={true} onClick={removeCard} />
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								wrap={true}
+								onClick={removeCard}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 					</div>
 				</DeckLayout.Sidebar>

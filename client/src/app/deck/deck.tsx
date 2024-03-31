@@ -32,6 +32,7 @@ import HermitCard from '../../../../common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {getUnlockedPermits} from 'logic/permits/permits-selectors'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -91,9 +92,6 @@ export const cardGroupHeader = (title: string, cards: CardT[]) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
-		<span className={classNames(css.tokens, css.tokenHeader)}>
-			{getDeckCost(cards.map((card) => card.cardId))} tokens
-		</span>
 	</p>
 )
 
@@ -126,6 +124,8 @@ const Deck = ({setMenuSection}: Props) => {
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
 
+	const permits = useSelector(getUnlockedPermits)
+
 	// TOASTS
 	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
 	const deleteToast: ToastT = {
@@ -149,7 +149,12 @@ const Deck = ({setMenuSection}: Props) => {
 
 	// MENU LOGIC
 	const backToMenu = () => {
-		if (validateDeck(loadedDeck.cards.map((card) => card.cardId))) {
+		if (
+			validateDeck(
+				loadedDeck.cards.map((card) => card.cardId),
+				permits
+			)
+		) {
 			return setShowValidateDeckModal(true)
 		}
 
@@ -257,7 +262,10 @@ const Deck = ({setMenuSection}: Props) => {
 			</li>
 		)
 	})
-	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
+	const validationMessage = validateDeck(
+		loadedDeck.cards.map((card) => card.cardId),
+		permits
+	)
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
 		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
@@ -298,7 +306,8 @@ const Deck = ({setMenuSection}: Props) => {
 					action={handleInvalidDeck}
 					title="Invalid Deck"
 					description={`The "${loadedDeck.name}" deck is invalid and cannot be used in
-					matches. If you continue, your last valid deck will be used instead.`}
+					matches. If you continue, your last valid deck will be used instead. If you have no
+					valid decks, you will not be able to join matches.`}
 					actionText="Main Menu"
 				/>
 				<AlertModal
@@ -355,12 +364,6 @@ const Deck = ({setMenuSection}: Props) => {
 										{loadedDeck.cards.length}/{CONFIG.limits.maxCards}{' '}
 										<span className={css.hideOnMobile}>cards</span>
 									</p>
-									<div className={css.cardCount}>
-										<p className={css.tokens}>
-											{getDeckCost(loadedDeck.cards.map((card) => card.cardId))}/
-											{CONFIG.limits.maxDeckCost} <span className={css.hideOnMobile}>tokens</span>
-										</p>
-									</div>
 								</div>
 							</>
 						}
@@ -416,22 +419,42 @@ const Deck = ({setMenuSection}: Props) => {
 						)}
 
 						<Accordion header={cardGroupHeader('Hermits', selectedCards.hermits)}>
-							<CardList cards={sortCards(selectedCards.hermits)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.hermits)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 
 						<Accordion
 							header={cardGroupHeader('Attachable Effects', selectedCards.attachableEffects)}
 						>
-							<CardList cards={sortCards(selectedCards.attachableEffects)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.attachableEffects)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 						<Accordion
 							header={cardGroupHeader('Single Use Effects', selectedCards.singleUseEffects)}
 						>
-							<CardList cards={sortCards(selectedCards.singleUseEffects)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.singleUseEffects)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 
 						<Accordion header={cardGroupHeader('Items', selectedCards.items)}>
-							<CardList cards={sortCards(selectedCards.items)} wrap={true} />
+							<CardList
+								cards={sortCards(selectedCards.items)}
+								wrap={true}
+								canShowAsGray={true}
+								obtainedPermits={permits}
+							/>
 						</Accordion>
 					</DeckLayout.Main>
 					<DeckLayout.Sidebar

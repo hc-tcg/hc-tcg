@@ -7,6 +7,9 @@ import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
+import {validateDeck} from 'common/utils/validation'
+import {getUnlockedPermits} from 'logic/permits/permits-selectors'
+import {ToastT} from 'common/types/app'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -14,12 +17,58 @@ type Props = {
 function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
-	const handleJoinQueue = () => dispatch(joinQueue())
-	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
-	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
+	const playerPermits = useSelector(getUnlockedPermits)
+
+	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
+
+	const invalidDeckToast: ToastT = {
+		open: true,
+		title: 'Invalid Deck!',
+		description: `Your selected deck, ${playerDeck.name}, is invalid.`,
+		image: `/images/types/type-${playerDeck.icon}.png`,
+	}
+
+	const handleJoinQueue = () => {
+		const validation = validateDeck(
+			playerDeck.cards.map((card) => card.cardId),
+			playerPermits
+		)
+		if (validation) {
+			dispatchToast(invalidDeckToast)
+			return
+		}
+		localStorage.setItem(
+			'currentDeck',
+			JSON.stringify([playerDeck.cards.map((card) => card.cardId)])
+		)
+		dispatch(joinQueue())
+	}
+	const handleCreatePrivateGame = () => {
+		const validation = validateDeck(
+			playerDeck.cards.map((card) => card.cardId),
+			playerPermits
+		)
+		if (validation) {
+			dispatchToast(invalidDeckToast)
+			return
+		}
+		dispatch(createPrivateGame())
+	}
+	const handleJoinPrivateGame = () => {
+		const validation = validateDeck(
+			playerDeck.cards.map((card) => card.cardId),
+			playerPermits
+		)
+		if (validation) {
+			dispatchToast(invalidDeckToast)
+			return
+		}
+		dispatch(joinPrivateGame())
+	}
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
+	const handlePermitOffice = () => setMenuSection('permit-office')
 
 	const welcomeMessage = playerDeck.name === 'Starter Deck' ? 'Welcome' : 'Welcome Back'
 
@@ -45,6 +94,9 @@ function MainMenu({setMenuSection}: Props) {
 					</Button>
 					<Button variant="stone" id={css.privateJoin} onClick={handleJoinPrivateGame}>
 						Join Private Game
+					</Button>
+					<Button variant="gold" id={css.permitOffice} onClick={handlePermitOffice}>
+						Permit Office
 					</Button>
 					<Button variant="stone" id={css.deck} onClick={handleDeck}>
 						Customize Deck

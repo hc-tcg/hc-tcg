@@ -31,6 +31,7 @@ import {
 import {getEndGameOverlay} from './game-selectors'
 import {LocalGameState} from 'common/types/game-state'
 import actionModalsSaga from './tasks/action-modals-saga'
+import { rewardPlayer } from 'logic/permits/permits-actions'
 
 function* actionSaga(): SagaIterator {
 	const turnAction = yield race({

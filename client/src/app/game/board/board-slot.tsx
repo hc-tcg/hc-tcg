@@ -93,7 +93,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 		>
 			{cardInfo ? (
 				<div className={css.cardWrapper}>
-					<Card card={cardInfo} />
+					<Card card={cardInfo} canShowAsGray={false} obtainedPermits={[]} />
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'

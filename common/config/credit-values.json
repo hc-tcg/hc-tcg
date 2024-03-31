@@ -1,0 +1,42 @@
+{
+	"playMatch": {
+		"name": "Complete a game",
+		"value": 10
+	},
+	"win": {
+		"name": "Winning bonus",
+		"value": 25
+	},
+	"tie": {
+		"name": "Tie bonus",
+		"value": 10
+	},
+	"knockout": {
+		"name": "Knockout",
+		"value": 7
+	},
+	"oneHermit": {
+		"name": "Win using a deck with a single Hermit card",
+		"value": 15
+	},
+	"oneHermitName": {
+		"name": "Win using a deck with only cards of one Hermit",
+		"value": 10
+	},
+	"ironPermit": {
+		"name": "Win using a deck without any iron permit cards",
+		"value": 5
+	},
+	"goldPermit": {
+		"name": "Win using a deck without any gold permit cards",
+		"value": 5
+	},
+	"diamondPermit": {
+		"name": "Win using a deck without any diamond permit cards",
+		"value": 10
+	},
+	"doubleItems": {
+		"name": "Win using a deck without any double items",
+		"value": 10
+	}
+}

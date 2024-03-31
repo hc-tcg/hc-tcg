@@ -6,6 +6,8 @@ import {showEndGameOverlay} from 'logic/game/game-actions'
 import {getOpponentName} from 'logic/game/game-selectors'
 import {useDispatch, useSelector} from 'react-redux'
 import css from './end-game-overlay.module.scss'
+import {getGameResults} from 'logic/permits/permits-selectors'
+import {CREDIT_VALUES} from 'common/config'
 
 type Props = {
 	outcome?: GameEndOutcomeT
@@ -20,6 +22,8 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 	const closeModal = () => {
 		dispatch(showEndGameOverlay(null))
 	}
+
+	const gameResults = useSelector(getGameResults)
 
 	const OUTCOME_MSG = {
 		client_crash: `Game client crashed`,
@@ -92,6 +96,29 @@ const EndGameOverlay = ({outcome, reason}: Props) => {
 							<Button>Return to Main Menu</Button>
 						</Dialog.Close>
 					</Dialog.Description>
+					{gameResults.length > 0 && (
+						<div className={css.resultThing}>
+							{gameResults.map((result, i) => {
+								if (!(CREDIT_VALUES as Record<string, any>)[result]) return
+								return (
+									<div key={i} className={css.result}>
+										<span>{(CREDIT_VALUES as Record<string, any>)[result].name}</span>
+										<span>{(CREDIT_VALUES as Record<string, any>)[result].value} Diamonds</span>
+									</div>
+								)
+							})}
+							<br></br>
+							<div className={css.result}>
+								<span>Total</span>
+								<span>
+									{gameResults.reduce((previous, current) => {
+										return previous + (CREDIT_VALUES as Record<string, any>)[current].value
+									}, 0)}{' '}
+									Diamonds
+								</span>
+							</div>
+						</div>
+					)}
 				</Dialog.Content>
 			</Dialog.Portal>
 		</Dialog.Root>
