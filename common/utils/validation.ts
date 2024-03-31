@@ -51,11 +51,6 @@ export function validateDeck(deckCards: Array<string>, obtainedPermits: Array<st
 	if (tooManyDuplicates)
 		return `You cannot have more than ${limits.maxDuplicates} duplicate cards unless they are single item cards.`
 
-	// more than max tokens
-	const deckCost = getDeckCost(deckCards)
-	if (deckCost > limits.maxDeckCost)
-		return `Deck cannot cost more than ${limits.maxDeckCost} tokens.`
-
 	const exactAmount = limits.minCards === limits.maxCards
 	const exactAmountText = `Deck must have exactly ${limits.minCards} cards.`
 
