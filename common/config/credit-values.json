@@ -29,14 +29,14 @@
 	},
 	"goldPermit": {
 		"name": "Win using a deck without any gold permit cards",
-		"value": 10
+		"value": 5
 	},
 	"diamondPermit": {
 		"name": "Win using a deck without any diamond permit cards",
-		"value": 15
+		"value": 10
 	},
 	"doubleItems": {
 		"name": "Win using a deck without any double items",
-		"value": 15
+		"value": 10
 	}
 }

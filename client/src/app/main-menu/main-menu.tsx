@@ -37,6 +37,10 @@ function MainMenu({setMenuSection}: Props) {
 			dispatchToast(invalidDeckToast)
 			return
 		}
+		localStorage.setItem(
+			'currentDeck',
+			JSON.stringify([playerDeck.cards.map((card) => card.cardId)])
+		)
 		dispatch(joinQueue())
 	}
 	const handleCreatePrivateGame = () => {

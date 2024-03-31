@@ -51,7 +51,10 @@
 		"item_redstone_rare",
 		"item_terraform_rare",
 		"item_speedrunner_rare",
-		"item_pvp_rare"
+		"item_pvp_rare",
+		"poultryman_common",
+		"beetlejhost_common",
+		"command_block"
 	],
 	"iron": [
 		"bdoubleo100_rare",
@@ -85,14 +88,11 @@
 		"mending",
 		"spyglass",
 		"looting",
-		"beetlejhost_common",
 		"eviljevin_common",
 		"hotguy_rare",
 		"jingler_rare",
 		"potatoboy_rare",
-		"poultryman_common",
 		"anvil",
-		"command_block",
 		"ender_pearl",
 		"fire_charge",
 		"piston",
@@ -155,12 +155,7 @@
 		"evilxisuma_rare",
 		"target_block",
 		"thorns_ii",
-		"thorns_iii",
-		"pythongb_rare",
-		"biffa2001_rare",
-		"grianch_rare",
-		"lantern",
-		"splash_potion_of_harming"
+		"thorns_iii"
 	],
 
 	"prices": {
