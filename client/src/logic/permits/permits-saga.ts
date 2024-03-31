@@ -47,7 +47,7 @@ function* permitPurchase(action: AnyAction) {
 			failPurchase(
 				`You need ${
 					PERMIT_RANKS.prices[rarity] - currentCredits
-				} diamonds to buy a ${rarity} permit!`
+				} more diamonds to buy a ${rarity} permit!`
 			)
 		)
 		return

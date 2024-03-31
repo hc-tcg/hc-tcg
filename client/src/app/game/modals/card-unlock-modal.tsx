@@ -18,7 +18,7 @@ function CardUnlockModal() {
 	return (
 		<Modal
 			closeModal={onModalClose}
-			title={rollFail === '' ? 'New Permit Unlocked!' : 'Permit Purchase Problem!'}
+			title={rollFail === '' ? 'New Permit Unlocked!' : 'Please hold.'}
 		>
 			<div className={css.description}>
 				<div className={css.card}>
