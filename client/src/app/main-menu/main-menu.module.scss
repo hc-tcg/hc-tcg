@@ -335,11 +335,21 @@ nav {
 	top: 70%;
 	left: 23.4%;
 	width: 54%;
-	height: 25%;
-	overflow-y: scroll;
+	max-height: 25%;
+	overflow-y: auto;
 
 	@media (max-width: 100vh) {
 		width: 90%;
 		left: 5%;
+	}
+}
+
+.buyPermit {
+	margin: 0 3px;
+}
+
+@media (max-width: 100vh) {
+	.buyPermit {
+		font-size: 0.7rem;
 	}
 }

@@ -46,7 +46,7 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_iron.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('iron')}>
+							<Button variant="default" className={css.buyPermit} onClick={handleBuyPermit('iron')}>
 								Buy Iron Permit - {PERMIT_RANKS.prices.iron}
 							</Button>
 						</div>
@@ -55,7 +55,7 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_gold.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('gold')}>
+							<Button variant="default" className={css.buyPermit} onClick={handleBuyPermit('gold')}>
 								Buy Gold Permit - {PERMIT_RANKS.prices.gold}
 							</Button>
 						</div>
@@ -64,7 +64,11 @@ export function PermitOffice({setMenuSection}: Props) {
 								className={css.permitImage}
 								src="/images/animations/permits/permit_diamond.gif"
 							></img>
-							<Button variant="default" id={css.privateCreate} onClick={handleBuyPermit('diamond')}>
+							<Button
+								variant="default"
+								className={css.buyPermit}
+								onClick={handleBuyPermit('diamond')}
+							>
 								Buy Diamond Permit - {PERMIT_RANKS.prices.diamond}
 							</Button>
 						</div>
