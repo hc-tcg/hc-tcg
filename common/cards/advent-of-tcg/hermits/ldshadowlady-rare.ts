@@ -39,44 +39,50 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+			player.hooks.onAttack.add(instance, (attack) => {
+				const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 
-			if (opponentInactiveRows.length === 4) return
-			if (opponentPlayer.board.activeRow === null) return
+				if (opponentInactiveRows.length === 4) return
+				if (opponentPlayer.board.activeRow === null) return
 
-			// Make sure opponent Hermit isn't dead
-			if (getActiveRow(opponentPlayer)?.health === 0) return
+				// Make sure opponent Hermit isn't dead
+				if (getActiveRow(opponentPlayer)?.health === 0) return
 
-			// Add a new pick request to the opponent player
-			game.addPickRequest({
-				playerId: player.id,
-				id: this.id,
-				message: "Move your opponent's active Hermit to a new slot.",
-				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
-					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (pickResult.card !== null) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
-					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
+				// Add a new pick request to the opponent player
+				game.addPickRequest({
+					playerId: player.id,
+					id: this.id,
+					message: "Move your opponent's active Hermit to a new slot.",
+					onResult(pickResult) {
+						// Validation
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (pickResult.card !== null) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
+						if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
+						game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
 
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					if (opponentPlayer.board.activeRow === null) return
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
-					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
+						const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
+						const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
 
-					if (emptyRows.length === 0) return
+						if (emptyRows.length === 0) return
 
-					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
+						const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
-				},
+						game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
+					},
+				})
+			})
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}
@@ -84,7 +90,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	override getExpansion() {

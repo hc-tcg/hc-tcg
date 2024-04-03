@@ -32,7 +32,8 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		//Used to be afterAttack.
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const coinFlip = flipCoin(player, this.id)
@@ -75,7 +76,7 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	override getExpansion() {

@@ -31,72 +31,71 @@ class GrianchRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+			if (attack.id !== instanceKey) return
 
-			const coinFlip = flipCoin(player, this.id)
+			if (attack.type === 'secondary') {
+				const coinFlip = flipCoin(player, this.id)
 
-			if (coinFlip[0] === 'tails') {
-				opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
-					opponentPlayer.hooks.afterAttack.remove(instance)
-				})
-				return
+				if (coinFlip[0] === 'tails') {
+					opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+						game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
+						opponentPlayer.hooks.afterAttack.remove(instance)
+					})
+					return
+				}
+
+				attack.addDamage(this.id, this.secondary.damage)
 			}
 
-			attack.addDamage(this.id, this.secondary.damage)
-		})
+			if (attack.type === 'primary') {
+				const nonEmptyRows = getNonEmptyRows(player, true, true)
+				if (nonEmptyRows.length === 0) return
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'primary') return
+				game.addPickRequest({
+					playerId: player.id,
+					id: this.id,
+					message: 'Pick an AFK Hermit from either side of the board',
+					onResult(pickResult) {
+						const pickedPlayer = game.state.players[pickResult.playerId]
+						const rowIndex = pickResult.rowIndex
+						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
 
-			const nonEmptyRows = getNonEmptyRows(player, true, true)
-			if (nonEmptyRows.length === 0) return
+						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-			game.addPickRequest({
-				playerId: player.id,
-				id: this.id,
-				message: 'Pick an AFK Hermit from either side of the board',
-				onResult(pickResult) {
-					const pickedPlayer = game.state.players[pickResult.playerId]
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+						// Make sure it's an actual hermit card
+						const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
+						if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+						const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
+						const hermitHealth = pickedPlayer.board.rows[rowIndex].health
 
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
-					const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
-					const hermitHealth = pickedPlayer.board.rows[rowIndex].health
-
-					if (!hermitHealth || !hermitId) return 'FAILURE_INVALID_SLOT'
-					const hermitInfo = HERMIT_CARDS[hermitId]
-					if (hermitInfo) {
-						// Heal
-						pickedPlayer.board.rows[rowIndex].health = Math.min(
-							hermitHealth + 40,
-							hermitInfo.health // Max health
-						)
-					} else {
-						// Armor Stand
-						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
-					}
-					return 'SUCCESS'
-				},
-			})
+						if (!hermitHealth || !hermitId) return 'FAILURE_INVALID_SLOT'
+						const hermitInfo = HERMIT_CARDS[hermitId]
+						if (hermitInfo) {
+							// Heal
+							pickedPlayer.board.rows[rowIndex].health = Math.min(
+								hermitHealth + 40,
+								hermitInfo.health // Max health
+							)
+						} else {
+							// Armor Stand
+							pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
+						}
+						return 'SUCCESS'
+					},
+				})
+			}
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
 	}
 
 	override getExpansion() {

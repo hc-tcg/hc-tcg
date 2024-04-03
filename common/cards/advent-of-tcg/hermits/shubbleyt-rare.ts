@@ -35,7 +35,8 @@ class ShubbleYTRareHermitCard extends HermitCard {
 	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		//Used to be afterAttack.
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
@@ -78,7 +79,7 @@ class ShubbleYTRareHermitCard extends HermitCard {
 	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	override getExpansion() {
