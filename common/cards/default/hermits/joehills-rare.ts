@@ -38,13 +38,13 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (!attack.attacker || attack.type !== 'secondary') return
+			if (!attack.attacker || attack.type !== 'secondary' || !attack.attacker) return
 
 			if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
 				return
 			}
 
-			const coinFlip = flipCoin(player, this.id, 1)
+			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard, 1)
 			if (coinFlip[0] !== 'heads') return
 
 			// This will tell us to block actions at the start of our next turn

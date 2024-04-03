@@ -22,7 +22,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			player.hooks.onCoinFlip.add(instance, (id, coinFlips) => {
+			player.hooks.onCoinFlip.add(instance, (card, coinFlips) => {
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i] = 'heads'
 				}
