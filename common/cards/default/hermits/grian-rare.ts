@@ -47,68 +47,74 @@ class GrianRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'primary') return
 
-			const coinFlip = flipCoin(player, this.id)
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const coinFlip = flipCoin(player, this.id)
 
-			if (coinFlip[0] === 'tails') return
+				if (coinFlip[0] === 'tails') return
 
-			const opponentRowPos = getActiveRowPos(opponentPlayer)
-			if (!row || !opponentRowPos) return
+				const opponentRowPos = getActiveRowPos(opponentPlayer)
+				if (!row || !opponentRowPos) return
 
-			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
+				const opponentEffectCard = opponentRowPos.row.effectCard
+				if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
 
-			// Discard straight away
-			discardCard(game, opponentEffectCard, true)
+				// Discard straight away
+				discardCard(game, opponentEffectCard, true)
 
-			if (!row.effectCard) {
-				// But remove it from our discard pile for now
-				player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
-			} else {
-				// We already have an effect card, so we just leave it in our discard
-				return
-			}
+				if (!row.effectCard) {
+					// But remove it from our discard pile for now
+					player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
+				} else {
+					// We already have an effect card, so we just leave it in our discard
+					return
+				}
 
-			game.addModalRequest({
-				playerId: player.id,
-				data: {modalId: this.id},
-				onResult(modalResult) {
-					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
+				game.addModalRequest({
+					playerId: player.id,
+					data: { modalId: this.id },
+					onResult(modalResult) {
+						if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
 
-					if (modalResult.attach) {
-						// Discard our current attached card if there is one
-						if (row?.effectCard) {
-							discardCard(game, row.effectCard)
+						if (modalResult.attach) {
+							// Discard our current attached card if there is one
+							if (row?.effectCard) {
+								discardCard(game, row.effectCard)
+							}
+
+							// Manually attach the new effect card to ourselves
+							row.effectCard = opponentEffectCard
+
+							// Call onAttach
+							const cardInfo = CARDS[opponentEffectCard.cardId]
+							cardInfo.onAttach(game, opponentEffectCard.cardInstance, pos)
+							player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+						} else {
+							// Add it to our discard pile
+							player.discarded.push(opponentEffectCard)
 						}
 
-						// Manually attach the new effect card to ourselves
-						row.effectCard = opponentEffectCard
-
-						// Call onAttach
-						const cardInfo = CARDS[opponentEffectCard.cardId]
-						cardInfo.onAttach(game, opponentEffectCard.cardInstance, pos)
-						player.hooks.onAttach.call(opponentEffectCard.cardInstance)
-					} else {
-						// Add it to our discard pile
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						// Just add the card to our discard pile
 						player.discarded.push(opponentEffectCard)
-					}
-
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					// Just add the card to our discard pile
-					player.discarded.push(opponentEffectCard)
-				},
+					},
+				})
+			})
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

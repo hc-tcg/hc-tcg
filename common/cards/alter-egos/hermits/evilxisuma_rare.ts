@@ -34,63 +34,69 @@ class EvilXisumaRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const disableKey = this.getInstanceKey(instance, 'disable')
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary') return
 
-			const opponentActiveRow = getActiveRowPos(opponentPlayer)
-			if (!opponentActiveRow) return
-			if (opponentActiveRow.row.health <= 0) return
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const opponentActiveRow = getActiveRowPos(opponentPlayer)
+				if (!opponentActiveRow) return
+				if (opponentActiveRow.row.health <= 0) return
 
-			if (!HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]) return
+				if (!HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]) return
 
-			const coinFlip = flipCoin(player, this.id)
+				const coinFlip = flipCoin(player, this.id)
 
-			if (coinFlip[0] !== 'heads') return
+				if (coinFlip[0] !== 'heads') return
 
-			game.addModalRequest({
-				playerId: player.id,
-				data: {
-					modalId: 'copyAttack',
-					payload: {
-						modalName: 'Evil X: Disable an attack for 1 turn',
-						modalDescription: "Which of the opponent's attacks do you want to disable?",
-						cardPos: getBasicCardPos(game, opponentActiveRow.row.hermitCard.cardInstance),
+				game.addModalRequest({
+					playerId: player.id,
+					data: {
+						modalId: 'copyAttack',
+						payload: {
+							modalName: 'Evil X: Disable an attack for 1 turn',
+							modalDescription: "Which of the opponent's attacks do you want to disable?",
+							cardPos: getBasicCardPos(game, opponentActiveRow.row.hermitCard.cardInstance),
+						},
 					},
-				},
-				onResult(modalResult) {
-					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+					onResult(modalResult) {
+						if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
-					player.custom[disableKey] = modalResult.pick
+						player.custom[disableKey] = modalResult.pick
 
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					// Disable the secondary attack if we didn't choose one
-					player.custom[disableKey] = 'secondary'
-				},
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						// Disable the secondary attack if we didn't choose one
+						player.custom[disableKey] = 'secondary'
+					},
+				})
+
+				opponentPlayer.hooks.onTurnStart.add(instance, () => {
+					const disable = player.custom[disableKey]
+					if (!disable) return
+
+					const activeRow = opponentPlayer.board.activeRow
+					if (activeRow === null) return
+
+					const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
+					// This will add a blocked action for the duration of their turn
+					game.addBlockedActions(this.id, actionToBlock)
+
+					opponentPlayer.hooks.onTurnStart.remove(instance)
+					delete player.custom[disableKey]
+				})
 			})
-
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				const disable = player.custom[disableKey]
-				if (!disable) return
-
-				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null) return
-
-				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
-				// This will add a blocked action for the duration of their turn
-				game.addBlockedActions(this.id, actionToBlock)
-
-				opponentPlayer.hooks.onTurnStart.remove(instance)
-				delete player.custom[disableKey]
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 
 	override getExpansion() {

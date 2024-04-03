@@ -30,18 +30,24 @@ class Cubfan135RareHermitCard extends HermitCard {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
 
-			// We used our secondary attack, activate power
-			// AKA remove change active hermit from blocked actions
-			game.removeBlockedActions(null, 'CHANGE_ACTIVE_HERMIT')
+			player.hooks.afterAttack.add(instance, (attack) => {
+				// We used our secondary attack, activate power
+				// AKA remove change active hermit from blocked actions
+				game.removeBlockedActions(null, 'CHANGE_ACTIVE_HERMIT')
+			})
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

@@ -31,57 +31,63 @@ class IJevinRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-			if (opponentInactiveRows.length !== 0) {
-				const lastActiveRow = opponentPlayer.board.activeRow
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+				if (opponentInactiveRows.length !== 0) {
+					const lastActiveRow = opponentPlayer.board.activeRow
 
-				game.addPickRequest({
-					playerId: opponentPlayer.id, // For opponent player to pick
-					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits.',
-					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					game.addPickRequest({
+						playerId: opponentPlayer.id, // For opponent player to pick
+						id: this.id,
+						message: 'Choose a new active Hermit from your afk Hermits.',
+						onResult(pickResult) {
+							if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 
-						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
+							const rowIndex = pickResult.rowIndex
+							if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+							if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
 
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+							if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+							if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-						const row = opponentPlayer.board.rows[rowIndex]
-						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+							const row = opponentPlayer.board.rows[rowIndex]
+							if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
-						game.changeActiveRow(opponentPlayer, rowIndex)
+							game.changeActiveRow(opponentPlayer, rowIndex)
 
-						return 'SUCCESS'
-					},
-					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== lastActiveRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
+							// Choose the first afk row
+							for (const inactiveRow of opponentInactiveRows) {
+								const { rowIndex } = inactiveRow
+								const canBeActive = rowIndex !== lastActiveRow
+								if (canBeActive) {
+									game.changeActiveRow(opponentPlayer, rowIndex)
+									break
+								}
 							}
-						}
-					},
-				})
-			}
+						},
+					})
+				}
+			})
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

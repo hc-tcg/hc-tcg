@@ -32,30 +32,37 @@ class JinglerRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const followUpKey = this.getInstanceKey(instance)
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.target) return
-			const coinFlip = flipCoin(player, this.id)
-			if (coinFlip[0] === 'tails') return
 
-			// Add a new pick request for the opponent player
-			game.addPickRequest({
-				playerId: opponentPlayer.id,
-				id: this.id,
-				message: 'Pick 1 card from your hand to discard',
-				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
-					if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
+			player.hooks.afterAttack.add(instance, (attack) => {
+				const coinFlip = flipCoin(player, this.id)
+				if (coinFlip[0] === 'tails') return
 
-					discardFromHand(opponentPlayer, pickResult.card)
+				// Add a new pick request for the opponent player
+				game.addPickRequest({
+					playerId: opponentPlayer.id,
+					id: this.id,
+					message: 'Pick 1 card from your hand to discard',
+					onResult(pickResult) {
+						// Validation
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 
-					return 'SUCCESS'
-				},
-				onTimeout() {
-					// Discard the first card in the opponent's hand
-					discardFromHand(opponentPlayer, opponentPlayer.hand[0])
-				},
+						discardFromHand(opponentPlayer, pickResult.card)
+
+						return 'SUCCESS'
+					},
+					onTimeout() {
+						// Discard the first card in the opponent's hand
+						discardFromHand(opponentPlayer, opponentPlayer.hand[0])
+					},
+				})
+			})
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}

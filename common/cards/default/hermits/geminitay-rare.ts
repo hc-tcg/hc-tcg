@@ -33,18 +33,25 @@ class GeminiTayRareHermitCard extends HermitCard {
 
 		// @TODO egg confusion, and how can we get rid of follow up
 		// is that even in the scope of this refactor?
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			// To keep this simple gem will discard the single use card, if it's used
-			if (player.board.singleUseCardUsed) {
-				discardSingleUse(game, player)
-			}
+			player.hooks.afterAttack.add(instance, (attack) => {
+				// To keep this simple gem will discard the single use card, if it's used
+				if (player.board.singleUseCardUsed) {
+					discardSingleUse(game, player)
+				}
 
-			// We are hooking into afterAttack, so we just remove the blocks on actions
-			// The beauty of this is that there is no need to replicate any of the existing logic anymore
-			game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
-			game.removeBlockedActions(null, 'PLAY_SINGLE_USE_CARD')
+				// We are hooking into afterAttack, so we just remove the blocks on actions
+				// The beauty of this is that there is no need to replicate any of the existing logic anymore
+				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
+				game.removeBlockedActions(null, 'PLAY_SINGLE_USE_CARD')
+			})
+
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
 		})
 	}
 
@@ -52,7 +59,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// Remove hook
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 
