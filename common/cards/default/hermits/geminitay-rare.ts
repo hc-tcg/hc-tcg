@@ -32,15 +32,15 @@ class GeminiTayRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// @TODO egg confusion, and how can we get rid of follow up
+		// The follow-up is now present for the counterpart.
 		// is that even in the scope of this refactor?
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.hooks.afterAttack.add(instance, (attack) => {
 				// To keep this simple gem will discard the single use card, if it's used
-				if (player.board.singleUseCardUsed) {
-					discardSingleUse(game, player)
-				}
+				// Hopefully, removing it doesn't break anything.
+				discardSingleUse(game, player)
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
