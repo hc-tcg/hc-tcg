@@ -18,17 +18,17 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
+			// Apply the card
+			applySingleUse(game, [
+				[`with `, 'plain'],
+				[`your `, 'plain', 'player'],
+				[`their `, 'plain', 'opponent'],
+				[`attack `, 'plain'],
+			])
+
 			player.hooks.afterAttack.add(instance, (attack) => {
 				// Remove change active hermit from the blocked actions so it can be done once more
 				game.removeBlockedActions(null, 'CHANGE_ACTIVE_HERMIT')
-
-				// Apply the card
-				applySingleUse(game, [
-					[`with `, 'plain'],
-					[`your `, 'plain', 'player'],
-					[`their `, 'plain', 'opponent'],
-					[`attack `, 'plain'],
-				])
 			})
 
 			player.hooks.onTurnEnd.add(instance, (attack) => {

@@ -46,11 +46,8 @@ class GeminiTayRareHermitCard extends HermitCard {
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions(null, 'PLAY_SINGLE_USE_CARD')
-			})
 
-			player.hooks.onTurnEnd.add(instance, (attack) => {
 				player.hooks.afterAttack.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
 			})
 		})
 	}
