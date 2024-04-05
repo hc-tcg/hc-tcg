@@ -17,8 +17,8 @@ class SteampunkTangoCommonHermitCard extends HermitCard {
 			},
 			secondary: {
 				name: 'Automate',
-				cost: ['speedrunner', 'speedrunner'],
-				damage: 80,
+				cost: ['speedrunner', 'any'],
+				damage: 70,
 				power: null,
 			},
 		})

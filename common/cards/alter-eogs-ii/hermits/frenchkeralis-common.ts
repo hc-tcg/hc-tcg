@@ -5,7 +5,7 @@ class FrenchKeralisCommonHermitCard extends HermitCard {
 		super({
 			id: 'frenchkeralis_common',
 			numericId: 231,
-			name: 'French Keralis',
+			name: 'Frenchralis',
 			rarity: 'rare',
 			hermitType: 'explorer',
 			health: 290,

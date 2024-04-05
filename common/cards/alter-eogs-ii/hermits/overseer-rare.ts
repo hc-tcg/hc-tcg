@@ -14,13 +14,13 @@ class OverseerRareHermitCard extends HermitCard {
 			health: 250,
 			primary: {
 				name: 'Testing',
-				cost: ['miner', 'miner'],
+				cost: ['miner'],
 				damage: 50,
 				power: null,
 			},
 			secondary: {
 				name: 'Starched',
-				cost: ['miner'],
+				cost: ['miner', 'miner'],
 				damage: 80,
 				power: 'Does double damage versus Farm types',
 			},

@@ -6,5 +6,5 @@
 		"advent_of_tcg": "Advent of TCG",
 		"dream": "Dream"
 	},
-	"disabled": []
+	"disabled": ["advent_of_tcg", "dream"]
 }

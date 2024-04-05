@@ -12,7 +12,7 @@ class ShadEECommonHermitCard extends HermitCard {
 			primary: {
 				name: 'Free Glass',
 				cost: ['any'],
-				damage: 50,
+				damage: 30,
 				power: null,
 			},
 			secondary: {

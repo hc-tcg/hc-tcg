@@ -8,10 +8,10 @@ class WormManCommonHermitCard extends HermitCard {
 			name: 'Worm Man',
 			rarity: 'rare',
 			hermitType: 'terraform',
-			health: 260,
+			health: 290,
 			primary: {
 				name: 'Justice!',
-				cost: ['terraform', 'terraform'],
+				cost: ['terraform'],
 				damage: 60,
 				power: null,
 			},
