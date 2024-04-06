@@ -24,7 +24,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, this.id)
+			const coinFlip = flipCoin(player, {cardId: this.id, cardInstance: instance})
 			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.hand.length > 0
 
 			game.addModalRequest({

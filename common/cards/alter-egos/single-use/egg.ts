@@ -74,7 +74,7 @@ class EggSingleUseCard extends SingleUseCard {
 				[`${CARDS[targetRow.hermitCard.cardId].name} `, 'opponent'],
 			])
 
-			const coinFlip = flipCoin(player, this.id)
+			const coinFlip = flipCoin(player, {cardId: this.id, cardInstance: instance})
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
