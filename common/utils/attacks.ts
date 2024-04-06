@@ -22,6 +22,9 @@ function executeAttack(attack: AttackModel) {
 		maxHealth = targetHermitInfo.health
 	}
 
+	const weaknessAttack = createWeaknessAttack(attack)
+	if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+
 	// Deduct and clamp health
 	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
 	row.health = Math.min(newHealth, maxHealth)
@@ -242,21 +245,28 @@ export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos):
 	return targetingPlayer && targetingRow
 }
 
-// @TODO check this to se if it's ok
-export function createWeaknessAttack(attack: AttackModel): AttackModel | null {
-	if (!attack.attacker || !attack.target) return null
-	const {target, attacker} = attack
+function createWeaknessAttack(attack: AttackModel): AttackModel | null {
+	if (attack.createWeakness === 'never') return null
+
+	if (attack.calculateDamage() === 0) return null
+	const attacker = attack.attacker
+	const target = attack.target
+	const attackId = attack.id
+
+	if (!attacker || !target || !attackId) return null
+
 	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+
 	if (!attackerCardInfo || !targetCardInfo) return null
 
-	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
-
 	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	if (!strength.includes(targetCardInfo.hermitType)) return null
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.hermitType)) {
+		return null
+	}
 
 	const weaknessAttack = new AttackModel({
-		id: attackId,
+		id: attackId + 'weakness',
 		attacker,
 		target,
 		type: 'weakness',

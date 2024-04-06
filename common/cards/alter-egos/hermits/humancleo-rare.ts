@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
-import {createWeaknessAttack, hasEnoughEnergy} from '../../../utils/attacks'
+import {hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 
 class HumanCleoRareHermitCard extends HermitCard {
@@ -139,9 +139,6 @@ class HumanCleoRareHermitCard extends HermitCard {
 							rowIndex: opponentTarget,
 							row: targetRow,
 						}
-
-						const weaknessAttack = createWeaknessAttack(attack)
-						if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 					}
 				}
 

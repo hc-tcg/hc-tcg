@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
-import {createWeaknessAttack} from '../../../utils/attacks'
 import HermitCard from '../../base/hermit-card'
 
 class RenbobRareHermitCard extends HermitCard {
@@ -51,11 +50,6 @@ class RenbobRareHermitCard extends HermitCard {
 		}
 
 		const attacks = [attack]
-
-		if (attack.isType('primary', 'secondary')) {
-			const weaknessAttack = createWeaknessAttack(attack)
-			if (weaknessAttack) attacks.push(weaknessAttack)
-		}
 
 		return attacks
 	}
