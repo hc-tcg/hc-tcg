@@ -1,6 +1,7 @@
 import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {healRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -43,7 +44,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 
 			// Heal 40hp
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			attacker.row.health = Math.min(attacker.row.health + 40, hermitInfo.health)
+			healRow(attacker.row, 40)
 		})
 	}
 

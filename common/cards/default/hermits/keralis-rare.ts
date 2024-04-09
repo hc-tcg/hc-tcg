@@ -2,7 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {getNonEmptyRows, healRow} from '../../../utils/board'
 
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
@@ -93,10 +93,7 @@ class KeralisRareHermitCard extends HermitCard {
 			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
 				// Heal
-				pickedRow.health = Math.min(
-					pickedRow.health + 100,
-					hermitInfo.health // Max health
-				)
+				healRow(pickedRow, 100)
 			}
 
 			delete player.custom[playerKey]

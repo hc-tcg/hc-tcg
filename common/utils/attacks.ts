@@ -19,7 +19,7 @@ function executeAttack(attack: AttackModel) {
 	const currentHealth = row.health
 	let maxHealth = currentHealth // Armor Stand
 	if (targetHermitInfo) {
-		maxHealth = targetHermitInfo.health
+		maxHealth = Math.max(targetHermitInfo.health, maxHealth)
 	}
 
 	const weaknessAttack = createWeaknessAttack(attack)

@@ -1,4 +1,4 @@
-import {CARDS, ITEM_CARDS} from '../cards'
+import {CARDS, HERMIT_CARDS, ITEM_CARDS} from '../cards'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
@@ -204,4 +204,12 @@ export function canAttachToCard(
 	if (!cardInfo.canAttachToCard(game, cardAttachingPos)) return false
 
 	return true
+}
+
+export function healRow(row: RowStateWithHermit, amount: number) {
+	const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+
+	if (!hermitInfo || amount <= 0) return
+
+	row.health = Math.min(Math.max(row.health, hermitInfo.health), row.health + amount)
 }

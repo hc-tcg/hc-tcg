@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {healRow} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../../index'
 
@@ -26,7 +27,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 				if (!row.hermitCard) continue
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
-					row.health = Math.min(row.health + 20, hermitInfo.health)
+					healRow(row, 20)
 				}
 			}
 		})

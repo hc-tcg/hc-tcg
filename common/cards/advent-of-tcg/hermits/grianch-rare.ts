@@ -2,8 +2,9 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {getNonEmptyRows, healRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {RowStateWithHermit} from '../../../types/game-state'
 
 class GrianchRareHermitCard extends HermitCard {
 	constructor() {
@@ -79,10 +80,7 @@ class GrianchRareHermitCard extends HermitCard {
 					const hermitInfo = HERMIT_CARDS[hermitId]
 					if (hermitInfo) {
 						// Heal
-						pickedPlayer.board.rows[rowIndex].health = Math.min(
-							hermitHealth + 40,
-							hermitInfo.health // Max health
-						)
+						healRow(pickedPlayer.board.rows[rowIndex] as RowStateWithHermit, 40)
 					} else {
 						// Armor Stand
 						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40

@@ -1,6 +1,7 @@
 import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
+import {healRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {HERMIT_CARDS} from '../..'
@@ -45,7 +46,7 @@ class BrewingStandEffectCard extends EffectCard {
 					if (!hermitCard || !playerRow.health) return 'SUCCESS'
 					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
 					if (hermitInfo) {
-						playerRow.health = Math.min(playerRow.health + 50, hermitInfo.health)
+						healRow(playerRow, 50)
 					} else {
 						// Armor Stand
 						playerRow.health += 50

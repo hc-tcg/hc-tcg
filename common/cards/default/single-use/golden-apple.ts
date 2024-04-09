@@ -3,7 +3,7 @@ import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {isActive} from '../../../utils/game'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, getNonEmptyRows, healRow} from '../../../utils/board'
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -62,7 +62,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 					[`${hermitInfo.name} `, 'player'],
 				])
 
-				row.health = Math.min(row.health + 100, hermitInfo.health)
+				healRow(row, 100)
 
 				return 'SUCCESS'
 			},

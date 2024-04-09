@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
+import {healRow, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {HERMIT_CARDS} from '../cards'
 
@@ -36,7 +36,7 @@ class MelodyStatusEffect extends StatusEffect {
 
 			const hermitInfo = HERMIT_CARDS[targetPos.row.hermitCard.cardId]
 			if (hermitInfo) {
-				targetPos.row.health = Math.min(targetPos.row.health + 10, hermitInfo.health)
+				healRow(targetPos.row, 10)
 			}
 		})
 

@@ -1,7 +1,7 @@
 import {CARDS, HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow, getNonEmptyRows, healRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -105,10 +105,7 @@ class PharaohRareHermitCard extends HermitCard {
 			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
 				// Heal
-				pickedRow.health = Math.min(
-					pickedRow.health + attack.calculateDamage(),
-					hermitInfo.health // Max health
-				)
+				healRow(pickedRow, attack.calculateDamage())
 			}
 		})
 

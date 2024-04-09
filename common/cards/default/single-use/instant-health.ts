@@ -2,7 +2,7 @@ import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, getNonEmptyRows, healRow} from '../../../utils/board'
 
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -57,7 +57,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 					[`${hermitInfo.name} `, 'player'],
 				])
 
-				row.health = Math.min(row.health + 30, hermitInfo.health)
+				healRow(row, 30)
 
 				return 'SUCCESS'
 			},

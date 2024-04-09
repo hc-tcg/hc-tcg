@@ -2,6 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
+import {healRow} from '../../../utils/board'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -43,7 +44,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
-					row.health = Math.min(row.health + 40, hermitInfo.health)
+					healRow(row, 40)
 				}
 			})
 		})
