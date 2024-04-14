@@ -88,9 +88,12 @@ class GrianRareHermitCard extends HermitCard {
 						row.effectCard = opponentEffectCard
 
 						// Call onAttach
-						const cardInfo = CARDS[opponentEffectCard.cardId]
-						cardInfo.onAttach(game, opponentEffectCard.cardInstance, pos)
-						player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
+						if (newPos) {
+							const cardInfo = CARDS[opponentEffectCard.cardId]
+							cardInfo.onAttach(game, opponentEffectCard.cardInstance, newPos)
+							player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+						}
 					} else {
 						// Add it to our discard pile
 						player.discarded.push(opponentEffectCard)
