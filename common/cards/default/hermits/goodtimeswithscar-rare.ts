@@ -37,7 +37,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			const attackerInstance = attack.attacker?.row.hermitCard.cardInstance
+			const attackerInstance = attack.getAttacker()?.row.hermitCard.cardInstance
 			if (!attackerInstance) return
 			// If this instance is not blocked from reviving, make possible next turn
 			if (canRevives[attackerInstance] == undefined) canRevives[attackerInstance] = true
@@ -45,9 +45,9 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 		// Add before so health can be checked reliably
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
-			const targetInstance = attack.target?.row.hermitCard.cardInstance
+			const targetInstance = attack.getTarget()?.row.hermitCard.cardInstance
 			if (targetInstance && canRevives[targetInstance]) {
-				const row = attack.target?.row
+				const row = attack.getTarget()?.row
 				if (!row || row.health === null || row.health > 0) return
 
 				row.health = 50

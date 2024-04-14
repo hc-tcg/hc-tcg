@@ -252,8 +252,8 @@ export class BattleLog {
 	}
 
 	public addOutOfPhaseAttackEntry(attack: AttackModel, type: string) {
-		const targetHermitId = attack.target?.row.hermitCard.cardId
-		const targetPlayer = attack.target?.player
+		const targetHermitId = attack.getTarget()?.row.hermitCard.cardId
+		const targetPlayer = attack.getTarget()?.player
 		if (!targetHermitId || !targetPlayer) return
 		const targetHermitInfo = CARDS[targetHermitId]
 

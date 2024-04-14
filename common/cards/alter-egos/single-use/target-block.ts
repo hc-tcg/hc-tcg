@@ -58,12 +58,11 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 				player.hooks.beforeAttack.add(instance, (attack) => {
 					if (attack.isType('status-effect') || attack.isBacklash) return
 
-					attack.target = {
+					attack.setTarget(this.id, {
 						player: opponentPlayer,
 						rowIndex,
 						row,
-					}
-					attack.redirected = true
+					})
 				})
 
 				opponentPlayer.hooks.onDefence.addBefore(instance, (attack) => {

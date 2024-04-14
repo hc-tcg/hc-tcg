@@ -22,8 +22,16 @@ export type AttackDefs = {
 	createWeakness?: WeaknessType
 }
 
-export type AttackDamageChange = {
+export type AttackHistoryType =
+	| 'add_damage'
+	| 'reduce_damage'
+	| 'multiply_damage'
+	| 'lock_damage'
+	| 'set_attacker'
+	| 'set_target'
+
+export type AttackHistory = {
 	sourceId: string
-	type: 'add' | 'reduce' | 'multiply'
-	value: number
+	type: AttackHistoryType
+	value?: any
 }

@@ -49,9 +49,10 @@ class GrianRareHermitCard extends HermitCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'primary' || !attack.attacker) return
+			const attacker = attack.getAttacker()
+			if (attack.type !== 'primary' || !attacker) return
 
-			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') return
 

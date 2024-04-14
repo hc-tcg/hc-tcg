@@ -33,17 +33,14 @@ class HelsknightRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary' ||
-				!attack.attacker
-			)
+			const attacker = attack.getAttacker()
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
 				return
 
-			const attacker = attack.attacker.row.hermitCard
+			const attackerHermit = attacker.row.hermitCard
 			opponentPlayer.hooks.onApply.add(instance, () => {
 				if (!opponentPlayer.board.singleUseCard) return
-				const coinFlip = flipCoin(player, attacker, 1, opponentPlayer)
+				const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
 
 				if (coinFlip[0] == 'heads') {
 					moveCardToHand(game, opponentPlayer.board.singleUseCard, true)

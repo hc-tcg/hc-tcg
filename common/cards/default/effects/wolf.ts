@@ -30,7 +30,8 @@ class WolfEffectCard extends EffectCard {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Make sure they are targeting this player
-			if (!attack.target || attack.target.player.id !== player.id) return
+			const target = attack.getTarget()
+			if (!target || target.player.id !== player.id) return
 			// Make sure the attack is doing some damage
 			if (attack.calculateDamage() <= 0) return
 
@@ -39,8 +40,8 @@ class WolfEffectCard extends EffectCard {
 			if (!activeRow || activeRow.rowIndex !== pos.rowIndex) return
 
 			if (!player.custom[attackedRows]) player.custom[attackedRows] = []
-			if (player.custom[attackedRows].includes(attack.target.rowIndex)) return
-			player.custom[attackedRows].push(attack.target.rowIndex)
+			if (player.custom[attackedRows].includes(target.rowIndex)) return
+			player.custom[attackedRows].push(target.rowIndex)
 
 			// Add a backlash attack, targeting the opponent's active hermit.
 			// Note that the opponent active row could be null, but then the attack will just do nothing.

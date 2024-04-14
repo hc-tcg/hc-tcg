@@ -23,8 +23,9 @@ class TotemEffectCard extends EffectCard {
 		// If we are attacked from any source
 		// Add before any other hook so they can know a hermits health reliably
 		player.hooks.afterDefence.addBefore(instance, (attack) => {
-			if (!isTargetingPos(attack, pos) || !attack.target) return
-			const {row} = attack.target
+			const target = attack.getTarget()
+			if (!isTargetingPos(attack, pos) || !target) return
+			const {row} = target
 			if (row.health) return
 
 			row.health = 10
@@ -43,8 +44,9 @@ class TotemEffectCard extends EffectCard {
 		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
 		// @TODO this is slightly more hacky than I'd like
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
-			if (!isTargetingPos(attack, pos) || !attack.target) return
-			const {row} = attack.target
+			const target = attack.getTarget()
+			if (!isTargetingPos(attack, pos) || !target) return
+			const {row} = target
 			if (row.health) return
 
 			row.health = 10

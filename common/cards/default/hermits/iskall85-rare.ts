@@ -32,11 +32,12 @@ class Iskall85RareHermitCard extends HermitCard {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
+			const target = attack.getTarget()
+			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
 			const isBuilder =
-				attack.target.row.hermitCard &&
-				HERMIT_CARDS[attack.target.row.hermitCard.cardId]?.hermitType === 'builder'
+				target.row.hermitCard &&
+				HERMIT_CARDS[target.row.hermitCard.cardId]?.hermitType === 'builder'
 					? 2
 					: 1
 

@@ -57,7 +57,7 @@ class WeaknessStatusEffect extends StatusEffect {
 				return
 			}
 
-			const attacker = attack.attacker
+			const attacker = attack.getAttacker()
 			const opponentActiveHermit = getActiveRow(opponentPlayer)
 
 			if (!attacker || !opponentActiveHermit) return
