@@ -21,14 +21,12 @@ class TrapdoorEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			if (
-				attack.target?.player.id !== player.id ||
-				attack.attacker?.player.id !== opponentPlayer.id
-			)
+			const target = attack.getTarget()
+			if (target?.player.id !== player.id || attack.getAttacker()?.player.id !== opponentPlayer.id)
 				return
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (pos.rowIndex === null) return
-			if (Math.abs(attack.target.rowIndex - pos.rowIndex) !== 1) return
+			if (Math.abs(target.rowIndex - pos.rowIndex) !== 1) return
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -43,7 +41,7 @@ class TrapdoorEffectCard extends EffectCard {
 
 				const newAttack: AttackModel = new AttackModel({
 					id: instanceKey,
-					attacker: attack.attacker,
+					attacker: attack.getAttacker(),
 					target: {
 						player: player,
 						rowIndex: pos.rowIndex,

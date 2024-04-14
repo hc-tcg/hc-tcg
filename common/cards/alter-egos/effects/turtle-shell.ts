@@ -55,7 +55,7 @@ class TurtleShellEffectCard extends EffectCard {
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.id, 0).lockDamage()
+				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 			}
 		})
 	}

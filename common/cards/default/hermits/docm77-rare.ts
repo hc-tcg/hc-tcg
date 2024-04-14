@@ -33,9 +33,10 @@ class Docm77RareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.attacker) return
+			const attacker = attack.getAttacker()
+			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
 
-			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'heads') {
 				attack.addDamage(this.id, this.secondary.damage)

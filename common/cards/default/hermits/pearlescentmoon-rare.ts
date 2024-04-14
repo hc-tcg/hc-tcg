@@ -34,11 +34,8 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		player.custom[status] = 'none'
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			if (
-				attack.id !== this.getInstanceKey(instance) ||
-				attack.type !== 'secondary' ||
-				!attack.attacker
-			)
+			const attacker = attack.getAttacker()
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
 				return
 
 			if (player.custom[status] === 'missed') {
@@ -46,7 +43,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				return
 			}
 
-			const attacker = attack.attacker.row.hermitCard
+			const attackerHermit = attacker.row.hermitCard
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 
@@ -54,12 +51,12 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 				// Only flip a coin once
 				if (!hasFlipped) {
-					const coinFlip = flipCoin(player, attacker, 1, opponentPlayer)
+					const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
 					player.custom[status] = coinFlip[0]
 				}
 
 				if (player.custom[status] === 'heads') {
-					attack.multiplyDamage(this.id, 0).lockDamage()
+					attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 				}
 			})
 

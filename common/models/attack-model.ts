@@ -1,5 +1,6 @@
 import {
-	AttackDamageChange,
+	AttackHistory,
+	AttackHistoryType,
 	AttackDefs,
 	AttackType,
 	ShouldIgnoreCard,
@@ -16,11 +17,13 @@ export class AttackModel {
 	private damageReduction: number = 0
 	/** Is the damage on this attack changeable? */
 	private damageLocked: boolean = false
-	/** The list of all changes made to this attacks damage */
-	private damageChanges: Array<AttackDamageChange> = []
+	/** The list of all changes made to this attack */
+	private history: Array<AttackHistory> = []
 
-	/** Is this attack a backlash attack*/
-	public isBacklash: boolean = false
+	/** The attacker */
+	private attacker: RowPos | null
+	/** The attack target */
+	private target: RowPos | null
 
 	// Public fields
 
@@ -28,18 +31,14 @@ export class AttackModel {
 	public id: string | null = null
 	/** The attack type */
 	public type: AttackType
-	/** The attacker */
-	public attacker: RowPos | null
-	/** The attack target */
-	public target: RowPos | null
 	/** Attacks to perform after this attack */
 	public nextAttacks: Array<AttackModel> = []
 	/** Array of checks to filter out hooks this attack should not trigger */
 	public shouldIgnoreCards: Array<ShouldIgnoreCard> = []
+	/** Is this attack a backlash attack*/
+	public isBacklash: boolean = false
 	/** Whether or not the attack should create a weakness attack */
 	public createWeakness: WeaknessType
-	/** If the attack has been redirected by an effect card */
-	public redirected: boolean
 
 	constructor(defs: AttackDefs) {
 		this.id = defs.id || null
@@ -50,19 +49,19 @@ export class AttackModel {
 		this.target = defs.target || null
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
-		this.redirected = false
 
 		return this
 	}
 
-	public getDamage() {
-		return this.damage
-	}
-	public getDamageMultiplier() {
-		return this.damageMultiplier
-	}
-	public getDamageChanges() {
-		return this.damageChanges
+	// Helpers
+
+	/** Adds a change to the attack's history */
+	private addHistory(sourceId: string, type: AttackHistoryType, value?: any) {
+		this.history.push({
+			sourceId,
+			type,
+			value,
+		})
 	}
 
 	/** Returns true if one of the passed in types are this attacks type */
@@ -70,51 +69,81 @@ export class AttackModel {
 		return types.includes(this.type)
 	}
 
-	/** Adds damage to the attack */
+	/** Calculates the damage for this attack */
+	public calculateDamage() {
+		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
+	}
+
+	// Getters
+
+	/** Returns the damage this attack will do */
+	public getDamage() {
+		return this.damage
+	}
+	/** Returns the damage multiplier for this attack */
+	public getDamageMultiplier() {
+		return this.damageMultiplier
+	}
+	/** Returns the history of changes to this attack, optionally filtered by type */
+	public getHistory(type?: AttackHistoryType) {
+		if (type) {
+			return this.history.filter((history) => history.type == type)
+		}
+		return this.history
+	}
+	/** Returns the current attacker for this attack */
+	public getAttacker() {
+		return this.attacker
+	}
+	/** Returns the current target for this attack */
+	public getTarget() {
+		return this.target
+	}
+
+	// Setters / modifier methods
+
+	/** Increases the damage the attack does */
 	public addDamage(sourceId: string, amount: number) {
 		if (this.damageLocked) return this
 		this.damage += amount
 
-		this.damageChanges.push({
-			sourceId,
-			type: 'add',
-			value: amount,
-		})
+		this.addHistory(sourceId, 'add_damage', amount)
 
 		return this
 	}
 
-	/** Add damage reduction to the attack*/
+	/** Reduces the damage the attack does */
 	public reduceDamage(sourceId: string, amount: number) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.damageChanges.push({
-			sourceId,
-			type: 'reduce',
-			value: amount,
-		})
+		this.addHistory(sourceId, 'reduce_damage', amount)
 
 		return this
 	}
 
-	/** Multiplies damage for the attack */
+	/** Multiplies the damage the attack does */
 	public multiplyDamage(sourceId: string, multiplier: number) {
 		if (this.damageLocked) return this
 		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
 
-		this.damageChanges.push({
-			sourceId,
-			type: 'multiply',
-			value: multiplier,
-		})
-
+		this.addHistory(sourceId, 'multiply_damage', multiplier)
 		return this
 	}
 
-	/** Calculates the damage for this attack */
-	public calculateDamage() {
-		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
+	/** Sets the attacker for this attack */
+	public setAttacker(sourceId: string, attacker: RowPos | null) {
+		this.attacker = attacker
+
+		this.addHistory(sourceId, 'set_attacker', attacker)
+		return this
+	}
+	/** Sets the target for this attack */
+	public setTarget(sourceId: string, target: RowPos | null) {
+		this.target = target
+
+		this.addHistory(sourceId, 'set_target', target)
+		return this
 	}
 
 	/**
@@ -122,8 +151,10 @@ export class AttackModel {
 	 *
 	 * WARNING: Do not use lightly!
 	 */
-	public lockDamage() {
+	public lockDamage(sourceId: string) {
 		this.damageLocked = true
+
+		this.addHistory(sourceId, 'lock_damage')
 		return this
 	}
 

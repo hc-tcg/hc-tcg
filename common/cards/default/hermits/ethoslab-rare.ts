@@ -33,16 +33,12 @@ class EthosLabRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
+			const attacker = attack.getAttacker()
 			const attackId = this.getInstanceKey(instance)
-			if (
-				attack.id !== attackId ||
-				attack.type !== 'secondary' ||
-				!attack.target ||
-				!attack.attacker
-			)
+			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.getTarget() || !attacker)
 				return
 
-			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] !== 'heads') return
 

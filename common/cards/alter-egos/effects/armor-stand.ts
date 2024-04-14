@@ -38,13 +38,14 @@ class ArmorStandEffectCard extends EffectCard {
 		})
 
 		player.hooks.afterAttack.add(instance, (attack) => {
-			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
+			const attacker = attack.getAttacker()
+			if (!row.health && attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 
 				const activeRow = player.board.activeRow
 				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attack.attacker.player.id !== player.id) {
+				if (isActive && attacker.player.id !== player.id) {
 					// Reset the active row so the player can switch
 					game.changeActiveRow(player, null)
 				}
@@ -52,13 +53,14 @@ class ArmorStandEffectCard extends EffectCard {
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			if (!row.health && attack.attacker && isTargetingPos(attack, pos)) {
+			const attacker = attack.getAttacker()
+			if (!row.health && attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 
 				const activeRow = player.board.activeRow
 				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attack.attacker.player.id !== player.id) {
+				if (isActive && attacker.player.id !== player.id) {
 					// Reset the active row so the player can switch
 					game.changeActiveRow(player, null)
 				}
