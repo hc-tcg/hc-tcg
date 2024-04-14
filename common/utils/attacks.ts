@@ -181,7 +181,7 @@ export function executeAttacks(
 		// STEP 5 - All attacks have been completed, mark actions appropriately
 		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
 		game.addBlockedActions(
-			null,
+			'game',
 			'PLAY_HERMIT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_EFFECT_CARD',
