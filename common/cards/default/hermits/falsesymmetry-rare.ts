@@ -43,7 +43,8 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 
 			// Heal 40hp
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			attacker.row.health = Math.min(attacker.row.health + 40, hermitInfo.health)
+			const maxHealth = Math.max(attacker.row.health, hermitInfo.health)
+			attacker.row.health = Math.min(attacker.row.health + 40, maxHealth)
 		})
 	}
 

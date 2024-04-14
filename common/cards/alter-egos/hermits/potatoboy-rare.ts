@@ -43,7 +43,8 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
-					row.health = Math.min(row.health + 40, hermitInfo.health)
+					const maxHealth = Math.max(row.health, hermitInfo.health)
+					row.health = Math.min(row.health + 40, maxHealth)
 				}
 			})
 		})
