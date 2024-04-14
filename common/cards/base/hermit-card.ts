@@ -3,7 +3,6 @@ import {GameModel} from '../../models/game-model'
 import Card from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
-import {createWeaknessAttack} from '../../utils/attacks'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 
@@ -78,6 +77,7 @@ abstract class HermitCard extends Card {
 				row: targetRow,
 			},
 			type: hermitAttackType,
+			createWeakness: 'ifWeak',
 		})
 
 		if (attack.type === 'primary') {
@@ -87,11 +87,6 @@ abstract class HermitCard extends Card {
 		}
 
 		const attacks = [attack]
-
-		if (attack.isType('primary', 'secondary')) {
-			const weaknessAttack = createWeaknessAttack(attack)
-			if (weaknessAttack) attacks.push(weaknessAttack)
-		}
 
 		return attacks
 	}

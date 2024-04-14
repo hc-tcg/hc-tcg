@@ -35,7 +35,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.attacker) return
 
 			if (opponentPlayer.board.activeRow === null) return 'NO'
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
@@ -45,7 +45,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			const limit = player.custom[this.getInstanceKey(instance)] || {}
 			if (limit[opponentActiveRow.hermitCard.cardInstance]) return
 
-			const coinFlip = flipCoin(player, this.id)
+			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
 			if (coinFlip[0] === 'tails') return
 
 			limit[opponentActiveRow.hermitCard.cardInstance] = true

@@ -50,6 +50,7 @@ class TrapdoorEffectCard extends EffectCard {
 						row: pos.row as RowStateWithHermit,
 					},
 					type: attack.type,
+					createWeakness: ['primary', 'secondary'].includes(attack.type) ? 'ifWeak' : 'never',
 				}).addDamage(this.id, damageReduction)
 				attack.addNewAttack(newAttack)
 			}

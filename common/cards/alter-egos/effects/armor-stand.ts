@@ -42,7 +42,9 @@ class ArmorStandEffectCard extends EffectCard {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 
-				if (attack.attacker.player.id !== pos.player.id) {
+				const activeRow = player.board.activeRow
+				const isActive = activeRow !== null && activeRow == pos.rowIndex
+				if (isActive && attack.attacker.player.id !== player.id) {
 					// Reset the active row so the player can switch
 					game.changeActiveRow(player, null)
 				}
@@ -54,7 +56,9 @@ class ArmorStandEffectCard extends EffectCard {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 
-				if (attack.attacker.player.id !== pos.player.id) {
+				const activeRow = player.board.activeRow
+				const isActive = activeRow !== null && activeRow == pos.rowIndex
+				if (isActive && attack.attacker.player.id !== player.id) {
 					// Reset the active row so the player can switch
 					game.changeActiveRow(player, null)
 				}

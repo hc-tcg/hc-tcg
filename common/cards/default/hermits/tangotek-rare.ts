@@ -42,8 +42,8 @@ class TangoTekRareHermitCard extends HermitCard {
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 			const playerInactiveRows = getNonEmptyRows(player, true, true)
 
-			// Curse of Binding
-			const canChange = game.isActionBlocked('CHANGE_ACTIVE_HERMIT', [null])
+			// Check if we are blocked from changing by anything other than the game
+			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (opponentInactiveRows.length > 0) {

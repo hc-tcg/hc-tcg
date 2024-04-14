@@ -1,7 +1,6 @@
 import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {createWeaknessAttack} from '../../../utils/attacks'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -64,19 +63,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 						rowIndex,
 						row,
 					}
-
-					if (attack.isType('primary', 'secondary')) {
-						const weaknessAttack = createWeaknessAttack(attack)
-						if (weaknessAttack) {
-							attack.addNewAttack(weaknessAttack)
-							player.custom[ignoreThisWeakness] = true
-						}
-					} else if (attack.type === 'weakness') {
-						if (!player.custom[ignoreThisWeakness]) {
-							attack.target = null
-						}
-						delete player.custom[ignoreThisWeakness]
-					}
+					attack.redirected = true
 				})
 
 				opponentPlayer.hooks.onDefence.addBefore(instance, (attack) => {

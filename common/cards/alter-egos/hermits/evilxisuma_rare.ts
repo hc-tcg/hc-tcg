@@ -36,7 +36,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary') return
+			if (attack.type !== 'secondary' || !attack.attacker) return
 
 			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 			if (!opponentActiveRow) return
@@ -44,7 +44,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 
 			if (!HERMIT_CARDS[opponentActiveRow.row.hermitCard.cardId]) return
 
-			const coinFlip = flipCoin(player, this.id)
+			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
 
 			if (coinFlip[0] !== 'heads') return
 

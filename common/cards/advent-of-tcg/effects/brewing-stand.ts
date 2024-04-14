@@ -26,7 +26,7 @@ class BrewingStandEffectCard extends EffectCard {
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, this.id)[0]
+			const flip = flipCoin(player, {cardId: this.id, cardInstance: instance})[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
@@ -45,7 +45,8 @@ class BrewingStandEffectCard extends EffectCard {
 					if (!hermitCard || !playerRow.health) return 'SUCCESS'
 					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
 					if (hermitInfo) {
-						playerRow.health = Math.min(playerRow.health + 50, hermitInfo.health)
+						const maxHealth = Math.max(playerRow.health, hermitInfo.health)
+						playerRow.health = Math.min(playerRow.health + 50, maxHealth)
 					} else {
 						// Armor Stand
 						playerRow.health += 50

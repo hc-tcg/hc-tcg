@@ -45,6 +45,7 @@ class LightningRodEffectCard extends EffectCard {
 				rowIndex: rowIndex,
 				row: row,
 			}
+			attack.redirected = true
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {

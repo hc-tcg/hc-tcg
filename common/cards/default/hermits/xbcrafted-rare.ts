@@ -2,7 +2,7 @@ import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import HermitCard from '../../base/hermit-card'
-import {createWeaknessAttack, isTargetingPos} from '../../../utils/attacks'
+import {isTargetingPos} from '../../../utils/attacks'
 import {getActiveRowPos} from '../../../utils/board'
 class XBCraftedRareHermitCard extends HermitCard {
 	constructor() {
@@ -42,9 +42,6 @@ class XBCraftedRareHermitCard extends HermitCard {
 		}
 
 		const newAttacks = [attacks[0]]
-
-		const weaknessAttack = createWeaknessAttack(attacks[0])
-		if (weaknessAttack) newAttacks.push(weaknessAttack)
 
 		return newAttacks
 	}

@@ -12,7 +12,6 @@ import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {SlotPos} from '../types/cards'
 import {BattleLog} from './battle-log'
-import {getActiveRow} from 'common/utils/board'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -123,8 +122,8 @@ export class GameModel {
 	}
 
 	/** Set actions as blocked so they cannot be done this turn */
-	public addBlockedActions(sourceId: string | null, ...actions: TurnActions) {
-		const key = sourceId || ''
+	public addBlockedActions(sourceId: string, ...actions: TurnActions) {
+		const key = sourceId
 		const turnState = this.state.turn
 		if (!turnState.blockedActions[key]) {
 			turnState.blockedActions[key] = []
@@ -138,8 +137,8 @@ export class GameModel {
 		}
 	}
 	/** Remove action from the completed list so they can be done again this turn */
-	public removeBlockedActions(sourceId: string | null, ...actions: TurnActions) {
-		const key = sourceId || ''
+	public removeBlockedActions(sourceId: string, ...actions: TurnActions) {
+		const key = sourceId
 		const turnState = this.state.turn
 		if (!turnState.blockedActions[key]) return
 
@@ -154,10 +153,12 @@ export class GameModel {
 		}
 	}
 
-	public isActionBlocked(action: TurnAction, excludeIds?: Array<string | null>) {
+	/** Returns true if the current blocked actions list includes the given action */
+	public isActionBlocked(action: TurnAction, excludeIds?: Array<string>) {
 		const turnState = this.state.turn
 		const allBlockedActions: TurnActions = []
 		Object.keys(turnState.blockedActions).forEach((sourceId) => {
+			console.log('soucreId: ' + sourceId)
 			if (excludeIds?.includes(sourceId)) return
 
 			const actions = turnState.blockedActions[sourceId]
@@ -167,7 +168,7 @@ export class GameModel {
 	}
 
 	/** Get all actions blocked with the source id. */
-	public getBlockedActions(sourceId: string | null) {
+	public getBlockedActions(sourceId: string) {
 		const key = sourceId || ''
 		const turnState = this.state.turn
 		const blockedActions = turnState.blockedActions[key]

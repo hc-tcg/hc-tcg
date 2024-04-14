@@ -49,9 +49,9 @@ class GrianRareHermitCard extends HermitCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'primary') return
+			if (attack.type !== 'primary' || !attack.attacker) return
 
-			const coinFlip = flipCoin(player, this.id)
+			const coinFlip = flipCoin(player, attack.attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') return
 
@@ -88,9 +88,12 @@ class GrianRareHermitCard extends HermitCard {
 						row.effectCard = opponentEffectCard
 
 						// Call onAttach
-						const cardInfo = CARDS[opponentEffectCard.cardId]
-						cardInfo.onAttach(game, opponentEffectCard.cardInstance, pos)
-						player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
+						if (newPos) {
+							const cardInfo = CARDS[opponentEffectCard.cardId]
+							cardInfo.onAttach(game, opponentEffectCard.cardInstance, newPos)
+							player.hooks.onAttach.call(opponentEffectCard.cardInstance)
+						}
 					} else {
 						// Add it to our discard pile
 						player.discarded.push(opponentEffectCard)

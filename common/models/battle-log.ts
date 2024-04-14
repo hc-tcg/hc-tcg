@@ -199,11 +199,13 @@ export class BattleLog {
 	}
 
 	public async addCoinFlipEntry(coinFlips: Array<CurrentCoinFlipT>) {
-		const otherPlayer = this.game.currentPlayer.playerName
-
 		if (coinFlips.length === 0) return
 		for (const coinFlip of coinFlips) {
 			const cardName = CARDS[coinFlip.cardId].name
+
+			const otherPlayer = coinFlip.opponentFlip
+				? this.game.opponentPlayer.playerName
+				: this.game.currentPlayer.playerName
 
 			const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
 			const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
@@ -227,8 +229,8 @@ export class BattleLog {
 
 			if (HERMIT_CARDS[coinFlip.cardId]) {
 				entry.description = [
-					this.format(`Your `, 'plain', 'player'),
-					this.format(`${otherPlayer}'s `, 'plain', 'opponent'),
+					this.format(`Your `, 'plain', coinFlip.opponentFlip ? 'opponent' : 'player'),
+					this.format(`${otherPlayer}'s `, 'plain', coinFlip.opponentFlip ? 'player' : 'opponent'),
 					this.format(`${cardName} `, coinFlip.opponentFlip ? 'opponent' : 'player'),
 					this.format(description_body + 'their attack', 'plain'),
 				]
