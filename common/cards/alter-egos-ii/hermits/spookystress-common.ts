@@ -5,7 +5,7 @@ class SpookyStressCommonHermitCard extends HermitCard {
 		super({
 			id: 'spookystress_common',
 			numericId: 238,
-			name: 'S. Stress',
+			name: 'Spooky Stress',
 			rarity: 'rare',
 			hermitType: 'pvp',
 			health: 260,
@@ -34,6 +34,10 @@ class SpookyStressCommonHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'S. Stress'
 	}
 }
 

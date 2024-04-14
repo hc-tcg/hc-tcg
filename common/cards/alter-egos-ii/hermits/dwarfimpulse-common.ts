@@ -5,7 +5,7 @@ class DwarfImpulseCommonHermitCard extends HermitCard {
 		super({
 			id: 'dwarfimpulse_common',
 			numericId: 229,
-			name: 'D. Impulse',
+			name: 'Dwarf Impulse',
 			rarity: 'rare',
 			hermitType: 'farm',
 			health: 250,
@@ -34,6 +34,10 @@ class DwarfImpulseCommonHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'D. Impulse'
 	}
 }
 

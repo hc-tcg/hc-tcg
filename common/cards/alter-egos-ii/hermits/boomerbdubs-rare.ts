@@ -9,7 +9,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 		super({
 			id: 'boomerbdubs_rare',
 			numericId: 228,
-			name: 'Boomer B.',
+			name: 'Boomer Bdubs',
 			rarity: 'rare',
 			hermitType: 'redstone',
 			health: 290,
@@ -127,6 +127,10 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'Boomer B.'
 	}
 }
 

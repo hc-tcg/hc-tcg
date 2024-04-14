@@ -5,7 +5,7 @@ class ArchitectFalseCommonHermitCard extends HermitCard {
 		super({
 			id: 'architectfalse_common',
 			numericId: 227,
-			name: 'G. Architect',
+			name: 'Great Architect',
 			rarity: 'common',
 			hermitType: 'speedrunner',
 			health: 270,
@@ -34,6 +34,10 @@ class ArchitectFalseCommonHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'G. Architect'
 	}
 }
 

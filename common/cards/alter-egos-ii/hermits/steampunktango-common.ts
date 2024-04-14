@@ -5,7 +5,7 @@ class SteampunkTangoCommonHermitCard extends HermitCard {
 		super({
 			id: 'steampunktango_common',
 			numericId: 239,
-			name: 'S. Tango',
+			name: 'Steampunk Tango',
 			rarity: 'rare',
 			hermitType: 'speedrunner',
 			health: 250,
@@ -34,6 +34,10 @@ class SteampunkTangoCommonHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'S. Tango'
 	}
 }
 

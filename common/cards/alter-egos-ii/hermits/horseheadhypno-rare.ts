@@ -5,7 +5,7 @@ class HorseHeadHypnoCommonHermitCard extends HermitCard {
 		super({
 			id: 'horseheadhypno_common',
 			numericId: 232,
-			name: 'H. H. Hypno',
+			name: 'Horse Head Hypno',
 			rarity: 'rare',
 			hermitType: 'farm',
 			health: 260,
@@ -34,6 +34,10 @@ class HorseHeadHypnoCommonHermitCard extends HermitCard {
 
 	override getBackground() {
 		return 'alter_egos_background'
+	}
+
+	override getShortName() {
+		return 'H. H. Hypno'
 	}
 }
 
