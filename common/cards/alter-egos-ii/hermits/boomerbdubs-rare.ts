@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -39,6 +40,10 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
+			const activeHermit = getActiveRow(player)?.hermitCard
+
+			if (!activeHermit) return
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -62,7 +67,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					const flip = flipCoin(player, 'boomerbdubs_rare')[0]
+					const flip = flipCoin(player, activeHermit)[0]
 
 					if (flip === 'tails') {
 						player.custom[instanceKey] = 0
