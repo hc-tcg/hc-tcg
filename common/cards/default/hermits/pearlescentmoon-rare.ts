@@ -23,7 +23,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				cost: ['terraform', 'any'],
 				damage: 70,
 				power:
-					'Opponent flips a coin on their next turn. If heads, their attack misses. Opponent can not miss on consecutive turns.',
+					'Opponent flips a coin on their next turn, before they attack. If heads, their attack misses. Opponent can not miss on consecutive turns.',
 			},
 		})
 	}
@@ -48,7 +48,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 			const attacker = attack.attacker.row.hermitCard
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('status-effect', 'effect') || attack.isBacklash) return
+				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 
 				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
 
