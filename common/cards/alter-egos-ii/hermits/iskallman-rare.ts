@@ -128,12 +128,8 @@ class IskallmanRareHermitCard extends HermitCard {
 
 			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
-				// Heal
-				pickedRow.health = Math.min(
-					pickedRow.health + 50,
-					hermitInfo.health // Max health
-				)
-				activeRow.health -= 50
+				const maxHealth = Math.max(pickedRow.health, hermitInfo.health)
+				pickedRow.health = Math.min(pickedRow.health + 50, maxHealth)
 			}
 
 			delete player.custom[playerKey]
