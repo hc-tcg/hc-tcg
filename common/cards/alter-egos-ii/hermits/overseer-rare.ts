@@ -32,15 +32,15 @@ class OverseerRareHermitCard extends HermitCard {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.target) return
+			const target = attack.getTarget()
+			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
-			const isBuilder =
-				attack.target.row.hermitCard &&
-				HERMIT_CARDS[attack.target.row.hermitCard.cardId]?.hermitType === 'farm'
+			const isFarmer =
+				target.row.hermitCard && HERMIT_CARDS[target.row.hermitCard.cardId]?.hermitType === 'farm'
 					? 2
 					: 1
 
-			attack.multiplyDamage(this.id, isBuilder)
+			attack.multiplyDamage(this.id, isFarmer)
 		})
 	}
 
