@@ -40,15 +40,15 @@ class GoatfatherRareHermitCard extends HermitCard {
 
 		const {player, opponentPlayer, row, rowIndex} = pos
 
-		if (attacks[0].type !== 'secondary') return attacks
+		if (attacks[0].type !== 'secondary' || !row?.hermitCard) return attacks
 
-		const coinFlip = flipCoin(player, this.id)
+		const coinFlip = flipCoin(player, row.hermitCard)
 
 		if (coinFlip[0] === 'tails') return attacks
 
 		const activeRow = opponentPlayer.board.activeRow
 		const rows = opponentPlayer.board.rows
-		if (activeRow === null || rowIndex === null || !row || !row.hermitCard) return attacks
+		if (activeRow === null || rowIndex === null) return attacks
 		for (let i = activeRow; i < rows.length; i++) {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue

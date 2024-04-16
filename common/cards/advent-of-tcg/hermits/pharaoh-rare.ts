@@ -1,7 +1,7 @@
 import {CARDS, HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -53,7 +53,10 @@ class PharaohRareHermitCard extends HermitCard {
 				return
 			}
 
-			const coinFlip = flipCoin(player, this.id)
+			const attacker = getActiveRow(player)?.hermitCard
+			if (!attacker) return
+
+			const coinFlip = flipCoin(player, attacker)
 
 			if (coinFlip[0] === 'tails') return
 

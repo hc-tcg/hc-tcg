@@ -36,7 +36,8 @@ class MelodyStatusEffect extends StatusEffect {
 
 			const hermitInfo = HERMIT_CARDS[targetPos.row.hermitCard.cardId]
 			if (hermitInfo) {
-				targetPos.row.health = Math.min(targetPos.row.health + 10, hermitInfo.health)
+				const maxHealth = Math.max(targetPos.row.health, hermitInfo.health)
+				targetPos.row.health = Math.min(targetPos.row.health + 10, maxHealth)
 			}
 		})
 

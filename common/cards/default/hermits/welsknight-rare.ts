@@ -32,11 +32,11 @@ class WelsknightRareHermitCard extends HermitCard {
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
+			const attacker = attack.getAttacker()
+			if (!attacker) return
 
-			if (!attack.attacker) return
-
-			if (attack.attacker.row.health < 200) attack.addDamage(this.id, 20)
-			if (attack.attacker.row.health < 100) attack.addDamage(this.id, 20)
+			if (attacker.row.health < 200) attack.addDamage(this.id, 20)
+			if (attacker.row.health < 100) attack.addDamage(this.id, 20)
 		})
 	}
 

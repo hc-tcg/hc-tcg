@@ -35,15 +35,15 @@ class TangoTekRareHermitCard extends HermitCard {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary' ||
-				!attack.target
+				!attack.getTarget()
 			)
 				return
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 			const playerInactiveRows = getNonEmptyRows(player, true, true)
 
-			// Curse of Binding
-			const canChange = game.isActionBlocked('CHANGE_ACTIVE_HERMIT', [null])
+			// Check if we are blocked from changing by anything other than the game
+			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (opponentInactiveRows.length > 0) {
@@ -81,12 +81,8 @@ class TangoTekRareHermitCard extends HermitCard {
 			}
 
 			// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
-			if (
-				playerInactiveRows.length !== 0 &&
-				attack.attacker &&
-				attack.attacker.row.health > 0 &&
-				canChange
-			) {
+			const attacker = attack.getAttacker()
+			if (playerInactiveRows.length !== 0 && attacker && attacker.row.health > 0 && canChange) {
 				game.addPickRequest({
 					playerId: player.id,
 					id: this.id,

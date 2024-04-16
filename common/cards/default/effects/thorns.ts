@@ -28,13 +28,13 @@ class ThornsEffectCard extends EffectCard {
 			// Only return a backlash attack if the attack would do damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (attack.attacker && isTargetingPos(attack, pos)) {
+			if (attack.getAttacker() && isTargetingPos(attack, pos)) {
 				player.custom[triggeredKey] = true
 
 				const backlashAttack = new AttackModel({
 					id: this.getInstanceKey(instance, 'backlash'),
-					attacker: attack.target,
-					target: attack.attacker,
+					attacker: attack.getTarget(),
+					target: attack.getAttacker(),
 					type: 'effect',
 					isBacklash: true,
 				}).addDamage(this.id, 20)

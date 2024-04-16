@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
-import {createWeaknessAttack, hasEnoughEnergy} from '../../../utils/attacks'
+import {hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 
 class HumanCleoRareHermitCard extends HermitCard {
@@ -37,9 +37,10 @@ class HumanCleoRareHermitCard extends HermitCard {
 		const opponentTargetKey = this.getInstanceKey(instance, 'opponentTarget')
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+			const attacker = attack.getAttacker()
+			if (attack.id !== instanceKey || attack.type !== 'secondary' || !attacker) return
 
-			const coinFlip = flipCoin(player, this.id, 2)
+			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
@@ -134,14 +135,11 @@ class HumanCleoRareHermitCard extends HermitCard {
 
 					const targetRow = opponentPlayer.board.rows[opponentTarget]
 					if (targetRow && targetRow.hermitCard) {
-						attack.target = {
+						attack.setTarget(this.id, {
 							player: opponentPlayer,
 							rowIndex: opponentTarget,
 							row: targetRow,
-						}
-
-						const weaknessAttack = createWeaknessAttack(attack)
-						if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+						})
 					}
 				}
 

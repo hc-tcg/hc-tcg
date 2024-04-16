@@ -55,7 +55,7 @@ class TurtleShellEffectCard extends EffectCard {
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.id, 0).lockDamage()
+				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 			}
 		})
 	}
@@ -65,7 +65,6 @@ class TurtleShellEffectCard extends EffectCard {
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onDefence.remove(instance)
-		player.hooks.onActiveRowChange.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[instanceKey]

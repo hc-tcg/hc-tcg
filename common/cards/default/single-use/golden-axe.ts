@@ -53,7 +53,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
 				const pos = getCardPos(game, instance)
-				if (!pos || !attack.target) return false
+				if (!pos || !attack.getTarget()) return false
 
 				const isTargeting = isTargetingPos(attack, opponentActivePos)
 				if (isTargeting && pos.slot.type === 'effect') {

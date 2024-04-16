@@ -33,7 +33,7 @@ class IJevinRareHermitCard extends HermitCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (attack.type !== 'secondary' || !attack.target) return
+			if (attack.type !== 'secondary' || !attack.getTarget()) return
 
 			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
 			if (opponentInactiveRows.length !== 0) {
