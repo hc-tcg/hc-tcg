@@ -57,9 +57,13 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply
-				applySingleUse(game)
+				applySingleUse(game, [
+					[`on `, 'plain'],
+					[`${hermitInfo.name} `, 'player'],
+				])
 
-				row.health = Math.min(row.health + 100, hermitInfo.health)
+				const maxHealth = Math.max(row.health, hermitInfo.health)
+				row.health = Math.min(row.health + 100, maxHealth)
 
 				return 'SUCCESS'
 			},

@@ -32,16 +32,17 @@ class StressMonster101RareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			if (!attack.attacker) return
+			const attacker = attack.getAttacker()
+			if (!attacker) return
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'selfAttack'),
-				attacker: attack.target,
-				target: attack.attacker,
+				attacker: attack.getTarget(),
+				target: attacker,
 				type: 'effect',
 				isBacklash: true,
 			})
-			const attackDamage = attack.attacker.row.health
+			const attackDamage = attacker.row.health
 			attack.addDamage(this.id, attackDamage)
 			backlashAttack.addDamage(this.id, attackDamage)
 

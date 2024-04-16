@@ -13,6 +13,7 @@ class BadOmenStatusEffect extends StatusEffect {
 			duration: 3,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
@@ -30,13 +31,15 @@ class BadOmenStatusEffect extends StatusEffect {
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 
-		player.hooks.onCoinFlip.add(statusEffectInfo.statusEffectInstance, (id, coinFlips) => {
+		player.hooks.onCoinFlip.addBefore(statusEffectInfo.statusEffectInstance, (card, coinFlips) => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
-			if (player.board.activeRow !== targetPos?.rowIndex) return coinFlips
 
-			// If they are not flipping on their turn, don't modify
+			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
-			if (currentPlayer.id !== player.id && id !== targetPos.row?.hermitCard?.cardId) {
+			if (
+				statusEffectInfo.targetInstance !== card.cardInstance &&
+				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
+			) {
 				return coinFlips
 			}
 
@@ -53,10 +56,10 @@ class BadOmenStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		player.hooks.onCoinFlip.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

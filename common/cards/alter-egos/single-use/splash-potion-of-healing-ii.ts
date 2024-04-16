@@ -26,7 +26,8 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 				if (!row.hermitCard) continue
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
-					row.health = Math.min(row.health + 30, hermitInfo.health)
+					const maxHealth = Math.max(row.health, hermitInfo.health)
+					row.health = Math.min(row.health + 30, maxHealth)
 				}
 			}
 		})

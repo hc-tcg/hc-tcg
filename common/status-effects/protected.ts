@@ -14,6 +14,7 @@ class ProtectedStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
@@ -47,7 +48,7 @@ class ProtectedStatusEffect extends StatusEffect {
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.id, 0).lockDamage()
+				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 			}
 		})
 

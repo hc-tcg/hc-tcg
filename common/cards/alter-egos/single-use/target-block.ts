@@ -1,6 +1,6 @@
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CARDS} from '../..'
+import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {createWeaknessAttack} from '../../../utils/attacks'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -49,30 +49,25 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
 				// Apply the card
-				applySingleUse(game)
+				applySingleUse(game, [
+					[`to target `, 'plain'],
+					[`${CARDS[row.hermitCard.cardId].name} `, 'opponent'],
+				])
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {
 					if (attack.isType('status-effect') || attack.isBacklash) return
 
-					attack.target = {
+					attack.setTarget(this.id, {
 						player: opponentPlayer,
 						rowIndex,
 						row,
-					}
+					})
+				})
 
-					if (attack.isType('primary', 'secondary')) {
-						const weaknessAttack = createWeaknessAttack(attack)
-						if (weaknessAttack) {
-							attack.addNewAttack(weaknessAttack)
-							player.custom[ignoreThisWeakness] = true
-						}
-					} else if (attack.type === 'weakness') {
-						if (!player.custom[ignoreThisWeakness]) {
-							attack.target = null
-						}
-						delete player.custom[ignoreThisWeakness]
-					}
+				opponentPlayer.hooks.onDefence.addBefore(instance, (attack) => {
+					if (attack.isType('status-effect') || attack.isBacklash) return
+					attack.type = 'effect'
 				})
 
 				return 'SUCCESS'
@@ -82,6 +77,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		player.hooks.onTurnEnd.add(instance, () => {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
+			opponentPlayer.hooks.onDefence.remove(instance)
 			delete player.custom[ignoreThisWeakness]
 		})
 	}

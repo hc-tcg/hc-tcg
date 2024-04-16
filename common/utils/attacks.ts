@@ -8,7 +8,7 @@ import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 
 function executeAttack(attack: AttackModel) {
-	const {target} = attack
+	const target = attack.getTarget()
 	if (!target) return
 
 	const {row} = target
@@ -22,6 +22,9 @@ function executeAttack(attack: AttackModel) {
 		maxHealth = targetHermitInfo.health
 	}
 
+	const weaknessAttack = createWeaknessAttack(attack)
+	if (weaknessAttack) attack.addNewAttack(weaknessAttack)
+
 	// Deduct and clamp health
 	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
 	row.health = Math.min(newHealth, maxHealth)
@@ -33,13 +36,14 @@ function executeAttack(attack: AttackModel) {
 function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		if (!attack.attacker) continue
+		const attacker = attack.getAttacker()
+		if (!attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attacker.player
 
 		if (DEBUG_CONFIG.disableDamage) {
-			attack.multiplyDamage('debug', 0).lockDamage()
+			attack.multiplyDamage('debug', 0).lockDamage('debug')
 		}
 
 		// Call before attack hooks
@@ -55,10 +59,11 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		if (!attack.target) continue
+		const target = attack.getTarget()
+		if (!target) continue
 
 		// The hooks we call are determined by the target of the attack
-		const player = attack.target.player
+		const player = target.player
 
 		// Call before defence hooks
 		player.hooks.beforeDefence.callSome([attack], (instance) => {
@@ -73,10 +78,11 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 function runOnAttackHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		if (!attack.attacker) continue
+		const attacker = attack.getAttacker()
+		if (!attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attacker.player
 
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
@@ -91,10 +97,11 @@ function runOnAttackHooks(attacks: Array<AttackModel>) {
 function runOnDefenceHooks(attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		if (!attack.target) continue
+		const target = attack.getTarget()
+		if (!target) continue
 
 		// The hooks we call are determined by the target of the attack
-		const player = attack.target.player
+		const player = target.player
 
 		// Call on defence hooks
 		player.hooks.onDefence.callSome([attack], (instance) => {
@@ -106,10 +113,11 @@ function runOnDefenceHooks(attacks: Array<AttackModel>) {
 function runAfterAttackHooks(attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
-		if (!attack.attacker) continue
+		const attacker = attack.getAttacker()
+		if (!attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attacker.player
 
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
@@ -121,10 +129,11 @@ function runAfterAttackHooks(attacks: Array<AttackModel>) {
 function runAfterDefenceHooks(attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
-		if (!attack.target) continue
+		const target = attack.getTarget()
+		if (!target) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.target.player
+		const player = target.player
 
 		// Call after attack hooks
 		player.hooks.afterDefence.callSome([attack], (instance) => {
@@ -178,7 +187,7 @@ export function executeAttacks(
 		// STEP 5 - All attacks have been completed, mark actions appropriately
 		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
 		game.addBlockedActions(
-			null,
+			'game',
 			'PLAY_HERMIT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_EFFECT_CARD',
@@ -198,11 +207,11 @@ export function executeExtraAttacks(
 	type: string,
 	withoutBlockingActions = false
 ) {
-	executeAttacks(game, attacks, withoutBlockingActions)
-
 	attacks.map((attack) => {
 		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
 	})
+
+	executeAttacks(game, attacks, withoutBlockingActions)
 }
 
 // Things not directly related to the attack loop
@@ -235,28 +244,36 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
  * Returns true if the attack is targeting the card / row position
  */
 export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos): boolean {
-	if (!attack.target) return false
-	const targetingPlayer = attack.target.player.id === pos.player.id
-	const targetingRow = attack.target.rowIndex === pos.rowIndex
+	const target = attack.getTarget()
+	if (!target) return false
+	const targetingPlayer = target.player.id === pos.player.id
+	const targetingRow = target.rowIndex === pos.rowIndex
 
 	return targetingPlayer && targetingRow
 }
 
-// @TODO check this to se if it's ok
-export function createWeaknessAttack(attack: AttackModel): AttackModel | null {
-	if (!attack.attacker || !attack.target) return null
-	const {target, attacker} = attack
+function createWeaknessAttack(attack: AttackModel): AttackModel | null {
+	if (attack.createWeakness === 'never') return null
+
+	if (attack.calculateDamage() === 0) return null
+	const attacker = attack.getAttacker()
+	const target = attack.getTarget()
+	const attackId = attack.id
+
+	if (!attacker || !target || !attackId) return null
+
 	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+
 	if (!attackerCardInfo || !targetCardInfo) return null
 
-	const attackId = attackerCardInfo.getInstanceKey(attacker.row.hermitCard.cardInstance, 'weakness')
-
 	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	if (!strength.includes(targetCardInfo.hermitType)) return null
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.hermitType)) {
+		return null
+	}
 
 	const weaknessAttack = new AttackModel({
-		id: attackId,
+		id: attackId + 'weakness',
 		attacker,
 		target,
 		type: 'weakness',

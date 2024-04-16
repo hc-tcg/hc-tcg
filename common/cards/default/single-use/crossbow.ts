@@ -100,7 +100,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 					}).addDamage(this.id, 20)
 				)
 			}
-			delete player.custom[targetsKey]
+			player.custom[targetsKey] = attacks.length
 			return attacks
 		})
 
@@ -108,7 +108,11 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game)
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${player.custom[targetsKey]} hermits `, 'opponent'],
+			])
+			delete player.custom[targetsKey]
 
 			// Do not apply single use more than once
 			player.hooks.onAttack.remove(instance)

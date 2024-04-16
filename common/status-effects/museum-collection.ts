@@ -16,6 +16,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: true,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
@@ -61,8 +62,8 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 
 				const additionalAttack = new AttackModel({
 					id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'additionalAttack'),
-					attacker: attack.attacker,
-					target: attack.target,
+					attacker: attack.getAttacker(),
+					target: attack.getTarget(),
 					type: 'secondary',
 				})
 				additionalAttack.addDamage(this.id, 20)

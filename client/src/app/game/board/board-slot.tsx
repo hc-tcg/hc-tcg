@@ -40,7 +40,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 			<div className={css.statusEffectContainer}>
 				{cleanedStatusEffects.map((a) => {
 					const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-					if (!statusEffect) return null
+					if (!statusEffect || !statusEffect.visible) return null
 					if (statusEffect.damageEffect == true) return null
 					return <StatusEffect statusEffect={statusEffect} duration={a.duration} />
 				})}
@@ -53,7 +53,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 				{cleanedStatusEffects
 					? cleanedStatusEffects.map((a) => {
 							const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-							if (!statusEffect) return null
+							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
 					  })

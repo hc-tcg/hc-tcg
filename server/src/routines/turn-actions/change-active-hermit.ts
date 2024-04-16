@@ -22,16 +22,13 @@ function* changeActiveHermit(
 	const result = game.changeActiveRow(currentPlayer, rowIndex)
 	if (!result) return 'FAILURE_CANNOT_COMPLETE'
 
-	// Create battle log entry
-	game.battleLog.addChangeHermitEntry(turnAction)
-
 	if (hadActiveHermit) {
 		// We switched from one hermit to another, mark this action as completed
 		game.addCompletedActions('CHANGE_ACTIVE_HERMIT')
 
 		// Attack phase complete, mark most actions as blocked now
 		game.addBlockedActions(
-			null,
+			'game',
 			'SINGLE_USE_ATTACK',
 			'PRIMARY_ATTACK',
 			'SECONDARY_ATTACK',

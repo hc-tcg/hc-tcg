@@ -9,6 +9,7 @@ type StatusEffectDefs = {
 	duration: number
 	counter: boolean
 	damageEffect: boolean
+	visible: boolean
 }
 
 abstract class StatusEffect {
@@ -18,6 +19,7 @@ abstract class StatusEffect {
 	public duration: number
 	public counter: boolean
 	public damageEffect: boolean
+	public visible: boolean
 
 	constructor(defs: StatusEffectDefs) {
 		this.id = defs.id
@@ -26,6 +28,7 @@ abstract class StatusEffect {
 		this.duration = defs.duration
 		this.counter = defs.counter
 		this.damageEffect = defs.damageEffect
+		this.visible = defs.visible
 	}
 
 	public getKey(keyName: string) {

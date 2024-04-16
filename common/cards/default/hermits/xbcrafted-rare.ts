@@ -2,7 +2,7 @@ import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import HermitCard from '../../base/hermit-card'
-import {createWeaknessAttack, isTargetingPos} from '../../../utils/attacks'
+import {isTargetingPos} from '../../../utils/attacks'
 import {getActiveRowPos} from '../../../utils/board'
 class XBCraftedRareHermitCard extends HermitCard {
 	constructor() {
@@ -43,9 +43,6 @@ class XBCraftedRareHermitCard extends HermitCard {
 
 		const newAttacks = [attacks[0]]
 
-		const weaknessAttack = createWeaknessAttack(attacks[0])
-		if (weaknessAttack) newAttacks.push(weaknessAttack)
-
 		return newAttacks
 	}
 
@@ -61,7 +58,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
 				const pos = getCardPos(game, instance)
-				if (!pos || !attack.target) return false
+				if (!pos || !attack.getTarget()) return false
 
 				const isTargeting = isTargetingPos(attack, opponentActivePos)
 				if (isTargeting && pos.slot.type === 'effect') {

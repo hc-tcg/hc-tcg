@@ -19,6 +19,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
+		const targetsKey = this.getInstanceKey(instance, 'targets')
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
@@ -42,6 +43,8 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 				)
 			}
 
+			player.custom[targetsKey] = attacks.length
+
 			return attacks
 		})
 
@@ -49,7 +52,12 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game)
+			applySingleUse(game, [
+				[`to attack `, 'plain'],
+				[`${player.custom[targetsKey]} hermits `, 'opponent'],
+			])
+
+			delete player.custom[targetsKey]
 
 			player.hooks.onAttack.remove(instance)
 		})
@@ -59,6 +67,9 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
+
+		const targetsKey = this.getInstanceKey(instance, 'targets')
+		delete player.custom[targetsKey]
 	}
 
 	override canAttack() {

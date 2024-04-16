@@ -93,10 +93,8 @@ class KeralisRareHermitCard extends HermitCard {
 			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
 				// Heal
-				pickedRow.health = Math.min(
-					pickedRow.health + 100,
-					hermitInfo.health // Max health
-				)
+				const maxHealth = Math.max(pickedRow.health, hermitInfo.health)
+				pickedRow.health = Math.min(pickedRow.health + 100, maxHealth)
 			}
 
 			delete player.custom[playerKey]

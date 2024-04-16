@@ -14,7 +14,7 @@ interface StatusEffectProps
 }
 
 const StatusEffect = (props: StatusEffectProps) => {
-	const {id, damageEffect} = props.statusEffect
+	const {id, damageEffect, visible} = props.statusEffect
 
 	const extension = ['sleeping', 'poison', 'fire', 'exboss-nine'].includes(id) ? '.gif' : '.png'
 	const statusEffectClass =

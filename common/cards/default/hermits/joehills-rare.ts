@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {TurnActions} from '../../../types/game-state'
+import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -24,7 +25,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\n"Time Skip" can not be used consecutively.',
+					'Flip a coin. If heads, opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\n"Time Skip" cannot be used consecutively if successful.',
 			},
 		})
 	}
@@ -37,14 +38,21 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
-			if (!attack.attacker || attack.type !== 'secondary') return
+			const attacker = attack.getAttacker()
+			if (!attacker || attack.type !== 'secondary') return
+
+			if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
+				return
+			}
+
+			const coinFlip = flipCoin(player, attacker.row.hermitCard, 1)
+			if (coinFlip[0] !== 'heads') return
 
 			// This will tell us to block actions at the start of our next turn
 			// Storing the cardInstance of the card that attacked
-			player.custom[skippedKey] = attack.attacker.row.hermitCard.cardInstance
+			player.custom[skippedKey] = attacker.row.hermitCard.cardInstance
 
-			const coinFlip = flipCoin(player, this.id, 1)
-			if (coinFlip[0] !== 'heads') return
+			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.cardInstance)
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {

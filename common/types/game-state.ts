@@ -150,8 +150,8 @@ export type PlayerState = {
 		/** Hook called at the end of the turn */
 		onTurnEnd: GameHook<(drawCards: Array<CardT | null>) => void>
 
-		/** Hook called the player flips a coin */
-		onCoinFlip: GameHook<(id: string, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+		/** Hook called when the player flips a coin */
+		onCoinFlip: GameHook<(card: CardT, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */

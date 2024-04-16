@@ -35,7 +35,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			if (
 				attack.id !== this.getInstanceKey(instance) ||
 				attack.type !== 'secondary' ||
-				!attack.target
+				!attack.getTarget()
 			)
 				return
 
