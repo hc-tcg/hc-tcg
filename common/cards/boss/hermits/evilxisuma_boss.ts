@@ -1,14 +1,24 @@
-import {CARDS, HERMIT_CARDS, ITEM_CARDS} from '../..'
+import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {createWeaknessAttack} from '../../../utils/attacks'
-import {applyStatusEffect, getActiveRow, removeStatusEffect} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
+import {
+	applyStatusEffect,
+	getActiveRow,
+	getNonEmptyRows,
+	removeStatusEffect,
+} from '../../../utils/board'
+import {isCardType, isRemovable} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
+
+type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
+type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'
+type TERTIARY_ATTACK = 'EFFECTCARD' | 'AFK20' | 'ITEMCARD'
+
+export type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK?, TERTIARY_ATTACK?]
 
 class EvilXisumaBossHermitCard extends HermitCard {
 	constructor() {
@@ -33,10 +43,6 @@ class EvilXisumaBossHermitCard extends HermitCard {
 					"Flip a coin.\n\nIf heads, choose one of the opposing active Hermit's attacks to disable on their next turn.",
 			},
 		})
-	}
-
-	private fireDropper() {
-		return Math.floor(Math.random() * 9)
 	}
 
 	/** Determines whether the player attempting to use this is the boss */
@@ -64,6 +70,8 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return []
 
+		const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
+
 		// Create an attack with 0 damage
 		const attack = new AttackModel({
 			id: this.getInstanceKey(instance),
@@ -82,74 +90,42 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 		const attacks = [attack]
 
-		const rngKey = this.getInstanceKey(instance, 'rng')
-
-		const attackDefs: {
-			damage: number
-			secondary?: number
-			tertiary?: number
-			disabled: boolean
-		} = {
-			damage: this.fireDropper(),
-			disabled: game.getAllBlockedActions().some((blockedAction) => {
-				return blockedAction == 'PRIMARY_ATTACK' || blockedAction == 'SECONDARY_ATTACK'
-			}),
-		}
+		const disabledKey = this.getInstanceKey(instance, 'disabled')
+		const disabled = game.getAllBlockedActions().some((blockedAction) => {
+			return blockedAction == 'PRIMARY_ATTACK' || blockedAction == 'SECONDARY_ATTACK'
+		})
+		player.custom[disabledKey] = disabled
 
 		const lives = pos.player.lives
 
-		if (lives == 3) {
-			attackDefs.damage = [0, 0, 1, 1, 1, 2, 2, 2, 2][attackDefs.damage]
-		} else {
-			let secondaryIndex = this.fireDropper()
-			if (lives == 2) {
-				attackDefs.damage = [0, 0, 0, 1, 1, 1, 2, 2, 2][attackDefs.damage]
-				attackDefs.secondary = [0, 0, 0, 1, 1, 1, 2, 2, 2][secondaryIndex]
-			} else {
-				attackDefs.damage = [0, 0, 0, 0, 1, 1, 1, 2, 2][attackDefs.damage]
-				attackDefs.secondary = [0, 0, 0, 0, 1, 1, 1, 2, 2][secondaryIndex]
-				attackDefs.tertiary = [0, 0, 0, 0, 1, 1, 1, 2, 2][this.fireDropper()]
-
-				if (attackDefs.tertiary === 0) {
-					// Remove effect card before attack is executed to mimic Curse of Vanishing
-					if (targetRow.effectCard && isRemovable(targetRow.effectCard))
-						discardCard(game, targetRow.effectCard)
-				}
-			}
+		if (bossAttack[2] === 'EFFECTCARD') {
+			// Remove effect card before attack is executed to mimic Curse of Vanishing
+			if (targetRow.effectCard && isRemovable(targetRow.effectCard))
+				discardCard(game, targetRow.effectCard)
 		}
-		attackDefs.damage = [50, 70, 90][attackDefs.damage]
 
 		// If the opponent blocks EX's "attack", then EX can not deal damage or set opponent on fire
-		if (!attackDefs.disabled) {
-			attack.addDamage(this.id, attackDefs.damage)
+		if (disabled) {
+			attack.multiplyDamage(this.id, 0).lockDamage(this.id)
+		} else {
+			attack.addDamage(this.id, Number(bossAttack[0].substring(0, 2)))
 
-			if (attack.isType('primary', 'secondary')) {
-				const weaknessAttack = createWeaknessAttack(attack)
-				if (weaknessAttack) attacks.push(weaknessAttack)
-			}
+			if (bossAttack[1] === 'DOUBLE') attack.multiplyDamage(this.id, 2)
 
-			if (attackDefs.tertiary === 1) {
-				const opponentRows = opponentPlayer.board.rows
-				for (let i = 0; i < opponentRows.length; i++) {
-					const opponentRow = opponentRows[i]
-					if (!opponentRow || !opponentRow.hermitCard || i == opponentPlayer.board.activeRow)
-						continue
+			if (bossAttack[2] === 'AFK20') {
+				const opponentRows = getNonEmptyRows(opponentPlayer, true)
+				for (const opponentRow of opponentRows) {
+					if (!opponentRow || opponentRow.rowIndex == opponentPlayer.board.activeRow) continue
 					const newAttack = new AttackModel({
 						id: this.getInstanceKey(instance, 'inactive'),
 						attacker: {player, rowIndex, row},
-						target: {
-							player: opponentPlayer,
-							rowIndex: i,
-							row: opponentRow,
-						},
+						target: opponentRow,
 						type: hermitAttackType,
 					}).addDamage(this.id, 20)
 					attacks.push(newAttack)
 				}
 			}
 		}
-
-		pos.player.custom[rngKey] = attackDefs
 
 		return attacks
 	}
@@ -174,106 +150,80 @@ class EvilXisumaBossHermitCard extends HermitCard {
 			return availableEnergy.length ? availableEnergy : ['balanced', 'balanced']
 		})
 
-		const rngKey = this.getInstanceKey(instance, 'rng')
+		const disabledKey = this.getInstanceKey(instance, 'disabled')
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
-			const attackDefs: {
-				damage: number
-				secondary?: number
-				tertiary?: number
-				disabled: boolean
-			} = player.custom[rngKey]
+			const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
+			game.battleLog.replaceBossAttackEntry(bossAttack)
+			delete player.custom['BOSS_ATTACK']
 
-			const voiceLines: string[] = []
-
-			if (attackDefs.secondary !== undefined) {
+			if (bossAttack[1] !== undefined) {
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 
-				switch (attackDefs.tertiary) {
-					case 0:
-						// Remove the effect attached to opponent's active Hermit
-						// This is done in getAttacks() to imitate playing Curse of Vanishing
-						voiceLines.push('EFFECTCARD')
-						break
-					case 1:
-						// Deal 20 DMG to each AFK Hermit
-						voiceLines.push('AFK20')
-						break
-					case 2:
-						// Remove an item card attached to the opponent's active Hermit
-						voiceLines.push('ITEMCARD')
-						if (
-							opponentActiveRow &&
-							opponentActiveRow.itemCards.find((card) => card && CARDS[card.cardId]?.type == 'item')
-						) {
-							const pickRequest: PickRequest = {
-								playerId: opponentPlayer.id,
-								id: this.id,
-								message: 'Choose an item to discard from your active Hermit.',
-								onResult(pickResult) {
-									if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (bossAttack[2] == 'ITEMCARD') {
+					// Remove an item card attached to the opponent's active Hermit
+					if (
+						opponentActiveRow &&
+						opponentActiveRow.itemCards.find((card) => isCardType(card, 'item'))
+					) {
+						const pickRequest: PickRequest = {
+							playerId: opponentPlayer.id,
+							id: this.id,
+							message: 'Choose an item to discard from your active Hermit.',
+							onResult(pickResult) {
+								if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 
-									const rowIndex = pickResult.rowIndex
-									if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-									if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+								const rowIndex = pickResult.rowIndex
+								if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+								if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
 
-									if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-									if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+								if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+								if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-									const itemCard = ITEM_CARDS[pickResult.card.cardId]
-									if (!itemCard) return 'FAILURE_INVALID_SLOT'
+								const itemCard = ITEM_CARDS[pickResult.card.cardId]
+								if (!itemCard) return 'FAILURE_INVALID_SLOT'
 
-									discardCard(game, pickResult.card)
+								discardCard(game, pickResult.card)
 
-									return 'SUCCESS'
-								},
-								onTimeout() {
-									// Discard the first available item card
-									const activeRow = getActiveRow(opponentPlayer)
-									if (!activeRow) return
-									const itemCard = activeRow.itemCards.find((card) => !!card)
-									if (!itemCard) return
-									discardCard(game, itemCard)
-								},
-							}
-
-							// If opponent is knocked out by this attack, the pickRequest should not be added
-							player.hooks.afterAttack.add(instance, (attack) => {
-								if (opponentActiveRow.health) game.addPickRequest(pickRequest)
-								player.hooks.afterAttack.remove(instance)
-							})
+								return 'SUCCESS'
+							},
+							onTimeout() {
+								// Discard the first available item card
+								const activeRow = getActiveRow(opponentPlayer)
+								if (!activeRow) return
+								const itemCard = activeRow.itemCards.find((card) => isCardType(card, 'item'))
+								if (!itemCard) return
+								discardCard(game, itemCard)
+							},
 						}
-						break
+
+						// If opponent is knocked out by this attack, the pickRequest should not be added
+						player.hooks.afterAttack.add(instance, (attack) => {
+							if (opponentActiveRow.health) game.addPickRequest(pickRequest)
+							player.hooks.afterAttack.remove(instance)
+						})
+					}
 				}
 
-				switch (attackDefs.secondary) {
-					case 0:
+				switch (bossAttack[1]) {
+					case 'HEAL150':
 						// Heal for 150 damage
-						voiceLines.unshift('HEAL150')
 						if (pos.row && pos.row.health) {
 							const row = pos.row
 							row.health = Math.min(row.health + 150, 300)
 						}
 						break
-					case 1:
+					case 'ABLAZE':
 						// Set opponent ablaze
-						voiceLines.unshift('ABLAZE')
-						if (opponentActiveRow && opponentActiveRow.hermitCard && !attackDefs.disabled)
+						if (opponentActiveRow && opponentActiveRow.hermitCard && !player.custom[disabledKey])
 							applyStatusEffect(game, 'fire', opponentActiveRow.hermitCard.cardInstance)
-						break
-					case 2:
-						// Deal double damage
-						voiceLines.unshift('DOUBLE')
-						attack.multiplyDamage(this.id, 2)
 						break
 				}
 			}
-			voiceLines.unshift(`${attackDefs.damage}DMG`)
 
-			delete player.custom[rngKey]
-			player.custom['VOICE_ANNOUNCE'] = voiceLines
+			delete player.custom[disabledKey]
 		})
 
 		// EX is immune to poison, fire, and slowness

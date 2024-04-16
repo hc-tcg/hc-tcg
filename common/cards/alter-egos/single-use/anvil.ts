@@ -28,7 +28,8 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const opponentRows = opponentPlayer.board.rows
 
 			// If opponent only has 1 rowState, Anvil should always attack that row
-			if (opponentRows.length == 1 && opponentRows[0].hermitCard)
+			if (opponentRows.length == 1 && opponentRows[0].hermitCard) {
+				player.custom[targetsKey] = 1
 				return [
 					new AttackModel({
 						id: this.getInstanceKey(instance, 'active'),
@@ -41,6 +42,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 						type: 'effect',
 					}).addDamage(this.id, 30),
 				]
+			}
 
 			const attacks = []
 			for (let i = activeIndex; i < opponentRows.length; i++) {

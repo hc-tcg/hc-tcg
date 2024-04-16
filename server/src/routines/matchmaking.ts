@@ -211,7 +211,7 @@ function* createBossGame(msg: ClientMessage) {
 
 	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
 
-	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma')
+	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma', 'evilxisuma_boss')
 	EX_BOSS_PLAYER.playerDeck.cards = [
 		{cardId: 'evilxisuma_boss', cardInstance: Math.random().toString()},
 	]

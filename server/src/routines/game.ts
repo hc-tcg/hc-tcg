@@ -21,7 +21,7 @@ import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
 import {AttackModel} from 'common/models/attack-model'
-import {virtualTurnActionsSaga} from './virtual/virtual-player'
+import {AI_CLASSES, virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -180,7 +180,7 @@ function playerAction(actionType: string, playerId: string) {
 
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
-export function* checkHermitHealth(game: GameModel) {
+function* checkHermitHealth(game: GameModel) {
 	const playerStates: Array<PlayerState> = Object.values(game.state.players)
 	const deadPlayerIds: Array<string> = []
 	for (let playerState of playerStates) {
@@ -236,7 +236,7 @@ export function* checkHermitHealth(game: GameModel) {
 	return deadPlayerIds
 }
 
-export function* sendGameState(game: GameModel) {
+function* sendGameState(game: GameModel) {
 	game.getPlayers().forEach((player) => {
 		if (!player.socket) return
 		const localGameState = getLocalGameState(game, player)
@@ -319,6 +319,17 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	if (deadPlayerIds.length) endTurn = true
 
 	return endTurn ? 'END_TURN' : undefined
+}
+
+function getPlayerAI(game: GameModel) {
+	const activePlayerId = game.state.turn.opponentAvailableActions.includes('WAIT_FOR_TURN')
+		? game.currentPlayerId
+		: game.opponentPlayerId
+	const activePlayer = game.players[activePlayerId]
+
+	if (activePlayer.socket) return
+
+	return AI_CLASSES[activePlayer.ai]
 }
 
 function* turnActionsSaga(game: GameModel) {
@@ -413,6 +424,9 @@ function* turnActionsSaga(game: GameModel) {
 
 			yield* call(sendGameState, game)
 			game.battleLog.addCoinFlipEntry(currentPlayer.coinFlips)
+
+			const playerAI = getPlayerAI(game)
+			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
@@ -528,13 +542,9 @@ function* turnSaga(game: GameModel) {
 		}
 	}
 
-	if (currentPlayer.playerType === 'real') {
-		const result = yield* call(turnActionsSaga, game)
-		if (result === 'GAME_END') return 'GAME_END'
-	} else {
-		const result = yield* call(virtualTurnActionsSaga, game)
-		if (result === 'GAME_END') return 'GAME_END'
-	}
+	const result = yield* call(turnActionsSaga, game)
+	if (result === 'GAME_END') return 'GAME_END'
+
 	// Create card draw array
 	const drawCards: Array<CardT | null> = []
 

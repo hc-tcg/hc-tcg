@@ -16,6 +16,7 @@ class ExBossNineStatusEffect extends StatusEffect {
 			duration: 1,
 			counter: true,
 			damageEffect: false,
+			visible: true,
 		})
 	}
 
@@ -23,12 +24,12 @@ class ExBossNineStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectId, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			if (statusEffectInfo.duration === undefined) statusEffectInfo.duration = 1
 			statusEffectInfo.duration += 1
 		})
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectId, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			if (statusEffectInfo.duration !== 9) return
 
 			let voiceLine: string
@@ -58,8 +59,8 @@ class ExBossNineStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, ailmentInfo: StatusEffectT, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(ailmentInfo.statusEffectId)
-		player.hooks.onTurnEnd.remove(ailmentInfo.statusEffectId)
+		player.hooks.onTurnStart.remove(ailmentInfo.statusEffectInstance)
+		player.hooks.onTurnEnd.remove(ailmentInfo.statusEffectInstance)
 	}
 }
 

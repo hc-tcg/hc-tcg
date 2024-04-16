@@ -12,6 +12,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
+import {BOSS_ATTACK} from '../cards/boss/hermits/evilxisuma_boss'
 
 export type BattleLogFormatT = Parameters<BattleLog['format']>
 
@@ -200,7 +201,7 @@ export class BattleLog {
 	}
 
 	/** Modifies the last sent attack entry to include details of a boss attack instead of a regular attack's name */
-	public replaceBossAttackEntry(voiceLines: Array<string>) {
+	public replaceBossAttackEntry(voiceLines: BOSS_ATTACK) {
 		const lastAttackEntry = this.game.chat.at(this.game.chat.at(-1)?.systemMessage ? -1 : -2)
 		if (!lastAttackEntry) return
 

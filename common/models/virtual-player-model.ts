@@ -17,8 +17,9 @@ export class VirtualPlayerModel {
 	public minecraftName: string
 	public censoredPlayerName: string
 	public socket: null
+	public ai: string
 
-	constructor(playerName: string, minecraftName: string) {
+	constructor(playerName: string, minecraftName: string, ai: string) {
 		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
 		// need to make sure it's done everywhere tho
 		this.playerId = Math.random().toString()
@@ -38,6 +39,7 @@ export class VirtualPlayerModel {
 		this.censoredPlayerName = profanityFilter(playerName)
 
 		this.socket = null
+		this.ai = ai
 	}
 
 	private possibleDecks = ['woHCgcKBUVFRwojCiMKVwpUODg4YGDw8PDs7Ozs7Ozs7Ozs7Ozs7wogjI8KWGTsaGgca']
