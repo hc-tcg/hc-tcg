@@ -1,8 +1,8 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
+import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
+import {getActiveRow, removeStatusEffect} from '../utils/board'
 import {AttackModel} from '../models/attack-model'
 import {StatusEffectT} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
@@ -36,41 +36,38 @@ class WeaknessStatusEffect extends StatusEffect {
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 
-		opponentPlayer.hooks.beforeAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		opponentPlayer.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
 			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
+
 			if (!targetPos) return
 
-			if (
-				!isTargetingPos(attack, targetPos) ||
-				attack.isType('status-effect', 'weakness', 'effect')
-			) {
+			if (!isTargetingPos(attack, targetPos) || attack.createWeakness === 'never') {
 				return
 			}
 
-			if (!attack.attacker || !attack.target) return
-			const {target, attacker} = attack
-			const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
-			if (!attackerCardInfo || !targetCardInfo) return
+			attack.createWeakness = 'always'
+		})
 
-			const attackId = attackerCardInfo.getInstanceKey(
-				attacker.row.hermitCard.cardInstance,
-				'weakness'
-			)
+		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
 
-			const strength = STRENGTHS[attackerCardInfo.hermitType]
-			if (strength.includes(targetCardInfo.hermitType)) return
+			if (!targetPos) return
 
-			const weaknessAttack = new AttackModel({
-				id: attackId,
-				attacker,
-				target,
-				type: 'weakness',
-			})
+			if (!isTargetingPos(attack, targetPos) || attack.createWeakness === 'never') {
+				return
+			}
 
-			weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
+			const attacker = attack.getAttacker()
+			const opponentActiveHermit = getActiveRow(opponentPlayer)
 
-			attack.addNewAttack(weaknessAttack)
+			if (!attacker || !opponentActiveHermit) return
+
+			const attackerType = CARDS[attacker.row.hermitCard.cardId].type
+			const opponentType = CARDS[opponentActiveHermit.hermitCard.cardId].type
+
+			if (attackerType !== opponentType) return
+
+			attack.createWeakness = 'always'
 		})
 
 		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
@@ -81,7 +78,8 @@ class WeaknessStatusEffect extends StatusEffect {
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}

@@ -58,7 +58,8 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 					[`${hermitInfo.name} `, 'player'],
 				])
 
-				row.health = Math.min(row.health + 60, hermitInfo.health)
+				const maxHealth = Math.max(row.health, hermitInfo.health)
+				row.health = Math.min(row.health + 60, maxHealth)
 
 				return 'SUCCESS'
 			},
