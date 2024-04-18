@@ -173,7 +173,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-export function canAttachAtSlot(game : GameModel, slotPos: SlotPos, card: CardT) {
+export function canAttachToSlot(game : GameModel, slotPos: SlotPos, card: CardT) {
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
 	if (!opponentPlayerId) return 'INVALID'
 
@@ -218,7 +218,7 @@ export function swapSlots(
 		if (!card) continue
 
 		// Make sure this card can be placed in the other slot
-		if (!canAttachAtSlot(game, otherSlot, card)) return false
+		if (!canAttachToSlot(game, otherSlot, card)) return false
 
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
