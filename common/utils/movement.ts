@@ -27,7 +27,7 @@ function discardAtPos(pos: CardPosModel) {
 	}
 }
 
-export function discardCard(game: GameModel, card: CardT | null, steal = false) {
+export function discardCard(game: GameModel, card: CardT | null, player?: PlayerState | null) {
 	if (!card) return
 
 	const pos = getCardPos(game, card.cardInstance)
@@ -59,12 +59,14 @@ export function discardCard(game: GameModel, card: CardT | null, steal = false) 
 	// Remove the card
 	discardAtPos(pos)
 
-	const discardPlayer = steal ? pos.opponentPlayer : pos.player
-
-	discardPlayer.discarded.push({
-		cardId: card.cardId,
-		cardInstance: card.cardInstance,
-	})
+	if (player !== null) {
+		const discardPlayer = player ? player : pos.player
+	
+		discardPlayer.discarded.push({
+			cardId: card.cardId,
+			cardInstance: card.cardInstance,
+		})
+	}
 }
 
 export function retrieveCard(game: GameModel, card: CardT | null) {
@@ -123,7 +125,7 @@ export function drawCards(playerState: PlayerState, amount: number) {
 	}
 }
 
-export function moveCardToHand(game: GameModel, card: CardT, steal = false) {
+export function moveCardToHand(game: GameModel, card: CardT, player?: PlayerState | null) {
 	const cardPos = getCardPos(game, card.cardInstance)
 	if (!cardPos) return
 
@@ -142,8 +144,10 @@ export function moveCardToHand(game: GameModel, card: CardT, steal = false) {
 		cardPos.player.board.singleUseCard = null
 	}
 
-	const player = steal ? cardPos.opponentPlayer : cardPos.player
-	player.hand.push(card)
+	if (player !== null) {
+		const chosenPlayer = player ? player : cardPos.player
+		chosenPlayer.hand.push(card)
+	}
 }
 
 /**Returns whether the slot is empty or not. */
@@ -175,7 +179,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-/**Swaps the positions of two slots on the board. */
+/**Swaps the positions of two cards on the board. */
 export function swapSlots(
 	game: GameModel,
 	slotAPos: SlotPos,
