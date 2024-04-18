@@ -1,7 +1,7 @@
 import {GameModel} from '../models/game-model'
 import {CardT, GameState, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
+import {BasicCardPos, CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotPos} from '../types/cards'
 import {getSlotPos} from './board'
@@ -173,32 +173,58 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-/**Swaps the positions of two cards on the board. */
+export function canAttachAtSlot(game : GameModel, slotPos: SlotPos, card: CardT) {
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
+	if (!opponentPlayerId) return 'INVALID'
+
+	const basicPos: BasicCardPos = {
+		player: slotPos.player,
+		opponentPlayer: game.state.players[opponentPlayerId],
+		rowIndex: slotPos.rowIndex,
+		row: slotPos.row,
+		slot: slotPos.slot,
+	}
+
+	// Create a fake card pos model
+	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
+
+	const cardInfo = CARDS[card.cardId]
+	return cardInfo.canAttach(game, pos)
+}
+
+/** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
 export function swapSlots(
 	game: GameModel,
 	slotAPos: SlotPos,
 	slotBPos: SlotPos,
 	withoutDetach: boolean = false
-) {
+): boolean {
 	const {slot: slotA, row: rowA} = slotAPos
 	const {slot: slotB, row: rowB} = slotBPos
-	if (slotA.type !== slotB.type) return
+	if (slotA.type !== slotB.type) return false
 
 	// Info about non-empty slots
 	let cardsInfo: any = []
 
-	// onDetach and get card info
-	for (const slot of [slotAPos, slotBPos]) {
+	// make checks for each slot and then detach
+	const slots = [slotAPos, slotBPos]
+	for (let i = 0; i < slots.length; i++) {
+		const slot = slots[i]
+		const otherSlot = slots[(i + 1) % 2]
+
 		if (isSlotEmpty(slot)) continue
 
 		const card = getSlotCard(slot)
 		if (!card) continue
 
+		// Make sure this card can be placed in the other slot
+		if (!canAttachAtSlot(game, otherSlot, card)) return false
+
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
 
 		const results = cardPos.player.hooks.onSlotChange.call(slot)
-		if (results.includes(false)) return
+		if (results.includes(false)) return false
 
 		const cardInfo = CARDS[card.cardId]
 
@@ -238,4 +264,6 @@ export function swapSlots(
 			cardPos.player.hooks.onAttach.call(card.cardInstance)
 		}
 	}
+
+	return true
 }
