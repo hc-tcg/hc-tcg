@@ -1,6 +1,5 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
 import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
 import {swapSlots} from '../../../utils/movement'
@@ -72,7 +71,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
 				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
 				swapSlots(game, activePos, inactivePos, true)
-				
+
 				game.changeActiveRow(player, pickedIndex)
 
 				return 'SUCCESS'

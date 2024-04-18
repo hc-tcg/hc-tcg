@@ -4,6 +4,7 @@ import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotPos} from '../types/cards'
+import {getSlotPos} from './board'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -38,14 +39,7 @@ export function discardCard(game: GameModel, card: CardT | null, player?: Player
 	}
 
 	if (pos.row && pos.rowIndex && pos.slot.type !== 'single_use') {
-		const slotPos: SlotPos = {
-			rowIndex: pos.rowIndex,
-			row: pos.row,
-			slot: {
-				index: pos.slot.index,
-				type: pos.slot.type,
-			},
-		}
+		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.slot.type, pos.slot.index)
 
 		const results = pos.player.hooks.onSlotChange.call(slotPos)
 		if (results.includes(false)) return
@@ -61,7 +55,7 @@ export function discardCard(game: GameModel, card: CardT | null, player?: Player
 
 	if (player !== null) {
 		const discardPlayer = player ? player : pos.player
-	
+
 		discardPlayer.discarded.push({
 			cardId: card.cardId,
 			cardInstance: card.cardInstance,

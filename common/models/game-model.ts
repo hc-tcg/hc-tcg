@@ -10,7 +10,6 @@ import {
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
-import {SlotPos} from '../types/cards'
 import {BattleLog} from './battle-log'
 import { getSlotPos } from '../utils/board'
 

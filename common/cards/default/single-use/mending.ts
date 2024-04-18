@@ -1,7 +1,6 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
 import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'

@@ -45,6 +45,7 @@ export function getRowPos(cardPos: CardPosModel): RowPos | null {
 
 export function getSlotPos(player: PlayerState, rowIndex: number, type: BoardSlotTypeT, index = 0): SlotPos {
 	return {
+		player,
 		rowIndex,
 		row: player.board.rows[rowIndex],
 		slot: {

@@ -1,6 +1,5 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
 import {canAttachToCard, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {swapSlots} from '../../../utils/movement'
