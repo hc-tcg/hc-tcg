@@ -2,7 +2,7 @@ import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {SlotPos} from '../../../types/cards'
-import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
@@ -90,24 +90,8 @@ class MendingSingleUseCard extends singleUseCard {
 				])
 
 				// Move the effect card
-				const sourcePos: SlotPos = {
-					rowIndex: activeRowIndex,
-					row: activeRow,
-					slot: {
-						type: 'effect',
-						index: 0,
-					},
-				}
-
-				const targetPos: SlotPos = {
-					rowIndex,
-					row: player.board.rows[rowIndex],
-					slot: {
-						type: 'effect',
-						index: 0,
-					},
-				}
-
+				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
+				const targetPos = getSlotPos(player, rowIndex, 'effect')
 				swapSlots(game, sourcePos, targetPos)
 
 				return 'SUCCESS'

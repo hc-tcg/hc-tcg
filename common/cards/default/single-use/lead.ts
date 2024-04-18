@@ -8,6 +8,7 @@ import {
 	getActiveRow,
 	getActiveRowPos,
 	getRowsWithEmptyItemsSlots,
+	getSlotPos,
 	rowHasItem,
 } from '../../../utils/board'
 import {swapSlots} from '../../../utils/movement'
@@ -104,24 +105,8 @@ class LeadSingleUseCard extends SingleUseCard {
 				if (!canAttachToCard(game, row.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
 
 				// Move the item
-				const itemPos: SlotPos = {
-					rowIndex: opponentActivePos.rowIndex,
-					row: opponentActivePos.row,
-					slot: {
-						index: itemIndex,
-						type: 'item',
-					},
-				}
-
-				const targetPos: SlotPos = {
-					rowIndex,
-					row,
-					slot: {
-						index: pickResult.slot.index,
-						type: 'item',
-					},
-				}
-
+				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
+				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
 				swapSlots(game, itemPos, targetPos)
 
 				const cardInfo = CARDS[itemCard!.cardId]

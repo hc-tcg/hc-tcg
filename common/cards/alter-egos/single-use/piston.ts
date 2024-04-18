@@ -6,6 +6,7 @@ import {
 	applySingleUse,
 	canAttachToCard,
 	getActiveRowPos,
+	getSlotPos,
 	isRowEmpty,
 	rowHasEmptyItemSlot,
 } from '../../../utils/board'
@@ -109,24 +110,8 @@ class PistonSingleUseCard extends SingleUseCard {
 				if (!canAttachToCard(game, pickedRow.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
 
 				// Move the item
-				const itemPos: SlotPos = {
-					rowIndex: firstRowIndex,
-					row: firstRow,
-					slot: {
-						index: itemIndex,
-						type: 'item',
-					},
-				}
-
-				const targetPos: SlotPos = {
-					rowIndex: pickedIndex,
-					row: pickedRow,
-					slot: {
-						index: pickResult.slot.index,
-						type: 'item',
-					},
-				}
-
+				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
+				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
 				swapSlots(game, itemPos, targetPos)
 
 				// Only add the after apply hook here

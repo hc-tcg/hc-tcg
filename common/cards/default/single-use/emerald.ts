@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {SlotPos} from '../../../types/cards'
-import {canAttachToCard} from '../../../utils/board'
+import {canAttachToCard, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -56,25 +56,8 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
-			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-			const playerActiveRow = player.board.rows[playerActiveRowIndex]
-
-			const playerSlot: SlotPos = {
-				rowIndex: playerActiveRowIndex,
-				row: playerActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
-			const opponentSlot: SlotPos = {
-				rowIndex: opponentActiveRowIndex,
-				row: opponentActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
+			const playerSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+			const opponentSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
 			swapSlots(game, playerSlot, opponentSlot)
 		})
