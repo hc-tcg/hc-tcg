@@ -1,12 +1,10 @@
 import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
-import {CardT} from '../../../types/game-state'
-import {getActiveRowPos} from '../../../utils/board'
-import {equalCard, isRemovable} from '../../../utils/cards'
+import {getActiveRowPos, getSlotPos} from '../../../utils/board'
+import {isRemovable} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
-import {discardCard} from '../../../utils/movement'
+import {canAttachToSlot, discardCard, swapSlots} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -45,31 +43,29 @@ class GrianRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer, rowIndex, row} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			const attacker = attack.getAttacker()
 			if (attack.type !== 'primary' || !attacker) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
-
-			if (coinFlip[0] === 'tails') return
-
 			const opponentRowPos = getActiveRowPos(opponentPlayer)
-			if (!row || !opponentRowPos) return
+			if (!rowIndex || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
 
-			// Discard straight away
-			discardCard(game, opponentEffectCard, true)
+			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
-			if (!row.effectCard) {
-				// But remove it from our discard pile for now
-				player.discarded = player.discarded.filter((c) => !equalCard(c, opponentEffectCard))
-			} else {
-				// We already have an effect card, so we just leave it in our discard
+			if (coinFlip[0] === 'tails') return
+
+			const effectSlot = getSlotPos(player, rowIndex, 'effect')
+			const canAttach = canAttachToSlot(game, effectSlot, opponentEffectCard)
+
+			if (canAttach !== 'YES') {
+				// We can't attach the new card, don't bother showing a modal
+				discardCard(game, opponentEffectCard, player)
 				return
 			}
 
@@ -81,30 +77,30 @@ class GrianRareHermitCard extends HermitCard {
 
 					if (modalResult.attach) {
 						// Discard our current attached card if there is one
-						if (row?.effectCard) {
-							discardCard(game, row.effectCard)
-						}
+						discardCard(game, row.effectCard)
 
-						// Manually attach the new effect card to ourselves
-						row.effectCard = opponentEffectCard
+						// Move their effect card over
+						const opponentEffectSlot = getSlotPos(opponentPlayer, opponentRowPos.rowIndex, 'effect')
+						swapSlots(game, effectSlot, opponentEffectSlot)
 
-						// Call onAttach
 						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
+
 						if (newPos) {
+							// Call onAttach
 							const cardInfo = CARDS[opponentEffectCard.cardId]
 							cardInfo.onAttach(game, opponentEffectCard.cardInstance, newPos)
 							player.hooks.onAttach.call(opponentEffectCard.cardInstance)
 						}
 					} else {
-						// Add it to our discard pile
-						player.discarded.push(opponentEffectCard)
+						// Discard
+						discardCard(game, opponentEffectCard, player)
 					}
 
 					return 'SUCCESS'
 				},
 				onTimeout() {
-					// Just add the card to our discard pile
-					player.discarded.push(opponentEffectCard)
+					// Discard
+					discardCard(game, opponentEffectCard, player)
 				},
 			})
 		})
