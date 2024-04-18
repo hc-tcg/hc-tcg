@@ -11,7 +11,7 @@ import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLog} from './battle-log'
-import { getSlotPos } from '../utils/board'
+import {getSlotPos} from '../utils/board'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -158,7 +158,6 @@ export class GameModel {
 		const turnState = this.state.turn
 		const allBlockedActions: TurnActions = []
 		Object.keys(turnState.blockedActions).forEach((sourceId) => {
-			console.log('soucreId: ' + sourceId)
 			if (excludeIds?.includes(sourceId)) return
 
 			const actions = turnState.blockedActions[sourceId]
@@ -255,7 +254,6 @@ export class GameModel {
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
 	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-
 		const oldSlotPos = getSlotPos(player, oldRow, 'hermit')
 
 		const results = player.hooks.onSlotChange.call(oldSlotPos)
