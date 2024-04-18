@@ -19,9 +19,9 @@
 	height: $size;
 	text-align: center;
 	line-height: $size;
-	animation-name: rotation;
-	animation-timing-function: ease-out;
-	animation-duration: 0.7s;
+	animation-name: rotation, oddRotation, finalRotation;
+	animation-timing-function: ease-out, ease-out, ease-out;
+	animation-duration: 0.7s, 0.35s, 1.2s;
 	transform: rotateY(0deg);
 	transform-style: preserve-3d;
 
@@ -74,5 +74,25 @@
 
 	100% {
 		transform: rotate3d(0, 1, 0, 360deg);
+	}
+}
+
+@keyframes oddRotation {
+	0% {
+		transform: rotate3d(0, 1, 0, 0deg);
+	}
+
+	100% {
+		transform: rotate3d(0, 1, 0, 180deg);
+	}
+}
+
+@keyframes finalRotation {
+	0% {
+		transform: rotate3d(0, 1, 0, 180deg);
+	}
+
+	100% {
+		transform: rotate3d(0, 1, 0, 180deg);
 	}
 }

@@ -27,6 +27,8 @@ export function flipCoin(
 		}
 	}
 
+	const coinFlipAmount = Math.floor(Math.random() * 4) + 3
+
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
 	const name = CARDS[card.cardId].name
@@ -36,6 +38,7 @@ export function flipCoin(
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,
+		amount: coinFlipAmount,
 	})
 
 	return coinFlips
