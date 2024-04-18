@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
-import {swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LadderSingleUseCard extends SingleUseCard {
@@ -24,6 +24,8 @@ class LadderSingleUseCard extends SingleUseCard {
 		const playerBoard = pos.player.board
 		const activeRowIndex = playerBoard.activeRow
 		if (activeRowIndex === null) return 'NO'
+		const activeRow = playerBoard.rows[activeRowIndex]
+		if (!activeRow.hermitCard) return 'NO'
 
 		const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
 			(index) => index >= 0 && index < playerBoard.rows.length
@@ -31,7 +33,11 @@ class LadderSingleUseCard extends SingleUseCard {
 		for (const index of adjacentRowsIndex) {
 			const row = playerBoard.rows[index]
 			if (!isCardType(row.hermitCard, 'hermit')) continue
-			if (row.hermitCard !== null) return 'YES'
+			const hermitSlot = getSlotPos(pos.player, index, 'hermit')
+			if (!canAttachToSlot(game, hermitSlot, activeRow.hermitCard)) continue
+			if (!row.hermitCard) continue
+
+			return 'YES'
 		}
 
 		return 'NO'
