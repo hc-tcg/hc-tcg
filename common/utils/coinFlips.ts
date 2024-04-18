@@ -27,7 +27,7 @@ export function flipCoin(
 		}
 	}
 
-	const coinFlipAmount = Math.floor(Math.random() * 4) + 3
+	const coinFlipAmount = Math.floor(Math.random() * 3) + 4
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
