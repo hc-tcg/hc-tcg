@@ -14,20 +14,14 @@ function executeAttack(attack: AttackModel) {
 	const {row} = target
 	if (!row.hermitCard) return
 
-	const targetHermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
-
 	const currentHealth = row.health
-	let maxHealth = currentHealth // Armor Stand
-	if (targetHermitInfo) {
-		maxHealth = targetHermitInfo.health
-	}
 
 	const weaknessAttack = createWeaknessAttack(attack)
 	if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
 	// Deduct and clamp health
 	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
-	row.health = Math.min(newHealth, maxHealth)
+	row.health = Math.min(newHealth, currentHealth)
 }
 
 /**

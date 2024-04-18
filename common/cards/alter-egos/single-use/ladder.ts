@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
-import {applySingleUse} from '../../../utils/board'
+import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
 import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -62,7 +61,6 @@ class LadderSingleUseCard extends SingleUseCard {
 				)
 				if (!adjacentRowsIndex.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
 
-				const activeRow = player.board.rows[activeRowIndex]
 				const row = player.board.rows[pickedIndex]
 				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
 
@@ -70,24 +68,10 @@ class LadderSingleUseCard extends SingleUseCard {
 				applySingleUse(game, [])
 
 				// Swap slots
-				const activePos: SlotPos = {
-					rowIndex: activeRowIndex,
-					row: activeRow,
-					slot: {
-						index: 0,
-						type: 'hermit',
-					},
-				}
-				const inactivePos: SlotPos = {
-					rowIndex: pickedIndex,
-					row,
-					slot: {
-						index: 0,
-						type: 'hermit',
-					},
-				}
-
+				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
+				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
 				swapSlots(game, activePos, inactivePos, true)
+
 				game.changeActiveRow(player, pickedIndex)
 
 				return 'SUCCESS'

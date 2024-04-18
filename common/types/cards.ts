@@ -55,6 +55,7 @@ export type RowPos = {
 }
 
 export type SlotPos = {
+	player: PlayerState
 	rowIndex: number
 	row: RowState
 	slot: BoardSlot

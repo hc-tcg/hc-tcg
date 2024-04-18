@@ -1,9 +1,9 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
-	"noItemRequirements": false,
-	"forceCoinFlip": false,
-	"oneShotMode": false,
+	"extraStartingCards": ["ethoslab_ultra_rare", "target_block", "wolf", "ladder"],
+	"noItemRequirements": true,
+	"forceCoinFlip": true,
+	"oneShotMode": true,
 	"disableDamage": false,
 	"disableDeckOut": false,
 	"startWithAllCards": false,
