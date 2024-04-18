@@ -14,19 +14,23 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 		'/images/tcg1.png',
 	]
 
+	const longestFlipIndex = Math.floor(Math.random() * tosses.length)
+
 	const coins = tosses.map((face, index) => {
 		const coinPics = pics.slice()
-		const reverseIndex = tosses.length - index - 1
-		const evenIterations = Math.floor((amount - reverseIndex + 1) / 2)
-		const oddIterations = (amount - reverseIndex + 1) % 2 === 1 ? 1 : 0
+		const flipOffset =
+			index === longestFlipIndex ? 0 : Math.floor(Math.random() * (tosses.length + 1))
+		const evenIterations = Math.floor((amount - flipOffset) / 2)
+		const extraFlip = (amount - flipOffset) % 2 !== 0
 
-		if ((face === 'tails') !== (oddIterations % 2 === 1)) coinPics.reverse()
+		if ((face === 'tails') !== extraFlip) coinPics.reverse()
+
 		return (
 			<div
 				className={css.coin}
 				key={index}
 				style={
-					oddIterations
+					extraFlip
 						? {
 								animationIterationCount: `${evenIterations}, 1, 1`,
 								animationDelay: `0s, ${evenIterations * 0.7}s, ${evenIterations * 0.7 + 0.35}s`,
