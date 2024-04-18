@@ -14,12 +14,13 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 		'/images/tcg1.png',
 	]
 
-	const evenIterations = Math.floor(amount / 2)
-	const oddIterations = amount % 2 === 1 ? 1 : 0
-
 	const coins = tosses.map((face, index) => {
 		const coinPics = pics.slice()
-		if ((face === 'tails') !== (oddIterations === 1)) coinPics.reverse()
+		const reverseIndex = tosses.length - index - 1
+		const evenIterations = Math.floor((amount - reverseIndex + 1) / 2)
+		const oddIterations = (amount - reverseIndex + 1) % 2 === 1 ? 1 : 0
+
+		if ((face === 'tails') !== (oddIterations % 2 === 1)) coinPics.reverse()
 		return (
 			<div
 				className={css.coin}
