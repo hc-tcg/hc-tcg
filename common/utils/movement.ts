@@ -28,7 +28,11 @@ function discardAtPos(pos: CardPosModel) {
 	}
 }
 
-export function discardCard(game: GameModel, card: CardT | null, player?: PlayerState | null) {
+export function discardCard(
+	game: GameModel,
+	card: CardT | null,
+	playerDiscard?: PlayerState | null
+) {
 	if (!card) return
 
 	const pos = getCardPos(game, card.cardInstance)
@@ -53,8 +57,8 @@ export function discardCard(game: GameModel, card: CardT | null, player?: Player
 	// Remove the card
 	discardAtPos(pos)
 
-	if (player !== null) {
-		const discardPlayer = player ? player : pos.player
+	if (playerDiscard !== null) {
+		const discardPlayer = playerDiscard ? playerDiscard : pos.player
 
 		discardPlayer.discarded.push({
 			cardId: card.cardId,
@@ -119,7 +123,7 @@ export function drawCards(playerState: PlayerState, amount: number) {
 	}
 }
 
-export function moveCardToHand(game: GameModel, card: CardT, player?: PlayerState | null) {
+export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: PlayerState | null) {
 	const cardPos = getCardPos(game, card.cardInstance)
 	if (!cardPos) return
 
@@ -138,8 +142,8 @@ export function moveCardToHand(game: GameModel, card: CardT, player?: PlayerStat
 		cardPos.player.board.singleUseCard = null
 	}
 
-	if (player !== null) {
-		const chosenPlayer = player ? player : cardPos.player
+	if (playerDiscard !== null) {
+		const chosenPlayer = playerDiscard ? playerDiscard : cardPos.player
 		chosenPlayer.hand.push(card)
 	}
 }
@@ -173,7 +177,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-export function canAttachToSlot(game : GameModel, slotPos: SlotPos, card: CardT) {
+export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT) {
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
 	if (!opponentPlayerId) return 'INVALID'
 
