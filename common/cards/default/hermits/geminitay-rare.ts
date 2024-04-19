@@ -41,7 +41,6 @@ class GeminiTayRareHermitCard extends HermitCard {
 				// To keep this simple gem will discard the single use card, if it's used
 				// Hopefully, removing it doesn't break anything.
 				discardSingleUse(game, player)
-				player.board.singleUseCardUsed = false
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
 				// The beauty of this is that there is no need to replicate any of the existing logic anymore
