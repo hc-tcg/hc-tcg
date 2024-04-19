@@ -60,6 +60,8 @@ class LootingSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
 		const {opponentPlayer} = pos
 		const opponentActiveRow = getActiveRow(opponentPlayer)
 		if (!opponentActiveRow) return 'NO'
