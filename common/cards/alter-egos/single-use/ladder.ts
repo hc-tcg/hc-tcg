@@ -34,7 +34,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			const row = playerBoard.rows[index]
 			if (!isCardType(row.hermitCard, 'hermit')) continue
 			const hermitSlot = getSlotPos(pos.player, index, 'hermit')
-			if (!canAttachToSlot(game, hermitSlot, activeRow.hermitCard)) continue
+			if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard) !== 'YES') continue
 			if (!row.hermitCard) continue
 
 			return 'YES'

@@ -33,18 +33,22 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const playerEffect = playerActiveRow.effectCard
 		const opponentHermit = opponentActiveRow.hermitCard
 		const playerHermit = playerActiveRow.hermitCard
-		
+
 		// If either card can't be placed in the other slot, don't attach
 		const playerEffectSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
 		const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
-		if (playerEffect && !canAttachToSlot(game, opponentEffectSlot, playerEffect)) return 'NO'
-		if (opponentEffect && !canAttachToSlot(game, playerEffectSlot, opponentEffect)) return 'NO'
 
-		if (opponentEffect && !canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
-		if (playerEffect && !canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+		if (playerEffect) {
+			if (canAttachToSlot(game, opponentEffectSlot, playerEffect) !== 'YES') return 'NO'
+			if (!canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+			if (!isRemovable(playerEffect)) return 'NO'
+		}
 
-		if (opponentEffect && !isRemovable(opponentEffect)) return 'NO'
-		if (playerEffect && !isRemovable(playerEffect)) return 'NO'
+		if (opponentEffect) {
+			if (canAttachToSlot(game, playerEffectSlot, opponentEffect) !== 'YES') return 'NO'
+			if (!canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
+			if (!isRemovable(opponentEffect)) return 'NO'
+		}
 
 		return 'YES'
 	}

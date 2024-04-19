@@ -222,7 +222,7 @@ export function swapSlots(
 		if (!card) continue
 
 		// Make sure this card can be placed in the other slot
-		if (!canAttachToSlot(game, otherSlot, card)) return false
+		if (canAttachToSlot(game, otherSlot, card) !== 'YES') return false
 
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
