@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRowPos} from '../../../utils/board'
+import {getActiveRowPos, getRowPos} from '../../../utils/board'
 import EffectCard from '../../base/effect-card'
 
 class WolfEffectCard extends EffectCard {
@@ -12,36 +12,41 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"For every Hermit attacked on your opponent's turn, your opponent's active Hermit takes 20hp damage.",
+				"If any of your Hermits are attacked on your opponent's turn, your opponent's active hermit takes 20hp damage. Must be placed on active Hermit, but still activates while on afk.",
 		})
+	}
+
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		const {currentPlayer} = game
+
+		const canAttach = super.canAttach(game, pos)
+		if (canAttach !== 'YES') return canAttach
+
+		// wolf addition - hermit must also be active to attach
+		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'
+
+		return 'YES'
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const attackedRows = this.getInstanceKey(instance, 'attackedRows')
+		const activated = this.getInstanceKey(instance, 'activated')
 
 		opponentPlayer.hooks.onTurnStart.add(instance, () => {
-			// Clear the rows that were attacked
-			player.custom[attackedRows] = []
+			// Allow another activation this turn
+			player.custom[activated] = false
 		})
 
-		// Only on opponents turn
+		// Only on opponent's turn
 		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Make sure they are targeting this player
 			const target = attack.getTarget()
 			if (!target || target.player.id !== player.id) return
-			// Make sure the attack is doing some damage
-			if (attack.calculateDamage() <= 0) return
 
-			// Make sure our row is active
-			const activeRow = getActiveRowPos(player)
-			if (!activeRow || activeRow.rowIndex !== pos.rowIndex) return
-
-			if (!player.custom[attackedRows]) player.custom[attackedRows] = []
-			if (player.custom[attackedRows].includes(target.rowIndex)) return
-			player.custom[attackedRows].push(target.rowIndex)
+			if (player.custom[activated]) return
+			player.custom[activated] = true
 
 			// Add a backlash attack, targeting the opponent's active hermit.
 			// Note that the opponent active row could be null, but then the attack will just do nothing.
@@ -49,7 +54,7 @@ class WolfEffectCard extends EffectCard {
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: activeRow,
+				attacker: getRowPos(pos),
 				target: opponentActiveRow,
 				type: 'effect',
 				isBacklash: true,
@@ -63,7 +68,7 @@ class WolfEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 
 		// Delete hooks and custom
-		delete player.custom[this.getInstanceKey(instance, 'attackedRows')]
+		delete player.custom[this.getInstanceKey(instance, 'activated')]
 		opponentPlayer.hooks.onTurnStart.remove(instance)
 		opponentPlayer.hooks.onAttack.remove(instance)
 	}

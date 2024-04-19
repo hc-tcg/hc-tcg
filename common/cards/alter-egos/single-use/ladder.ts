@@ -1,9 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
-import {applySingleUse} from '../../../utils/board'
+import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
-import {swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LadderSingleUseCard extends SingleUseCard {
@@ -25,6 +24,8 @@ class LadderSingleUseCard extends SingleUseCard {
 		const playerBoard = pos.player.board
 		const activeRowIndex = playerBoard.activeRow
 		if (activeRowIndex === null) return 'NO'
+		const activeRow = playerBoard.rows[activeRowIndex]
+		if (!activeRow.hermitCard) return 'NO'
 
 		const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
 			(index) => index >= 0 && index < playerBoard.rows.length
@@ -32,7 +33,11 @@ class LadderSingleUseCard extends SingleUseCard {
 		for (const index of adjacentRowsIndex) {
 			const row = playerBoard.rows[index]
 			if (!isCardType(row.hermitCard, 'hermit')) continue
-			if (row.hermitCard !== null) return 'YES'
+			const hermitSlot = getSlotPos(pos.player, index, 'hermit')
+			if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard) !== 'YES') continue
+			if (!row.hermitCard) continue
+
+			return 'YES'
 		}
 
 		return 'NO'
@@ -62,7 +67,6 @@ class LadderSingleUseCard extends SingleUseCard {
 				)
 				if (!adjacentRowsIndex.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
 
-				const activeRow = player.board.rows[activeRowIndex]
 				const row = player.board.rows[pickedIndex]
 				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
 
@@ -70,24 +74,10 @@ class LadderSingleUseCard extends SingleUseCard {
 				applySingleUse(game, [])
 
 				// Swap slots
-				const activePos: SlotPos = {
-					rowIndex: activeRowIndex,
-					row: activeRow,
-					slot: {
-						index: 0,
-						type: 'hermit',
-					},
-				}
-				const inactivePos: SlotPos = {
-					rowIndex: pickedIndex,
-					row,
-					slot: {
-						index: 0,
-						type: 'hermit',
-					},
-				}
-
+				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
+				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
 				swapSlots(game, activePos, inactivePos, true)
+
 				game.changeActiveRow(player, pickedIndex)
 
 				return 'SUCCESS'

@@ -7,6 +7,13 @@ const require = createRequire(import.meta.url)
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
+
+	const env = process.env.NODE_ENV || 'development'
+	if (env == 'development') {
+		console.log('running in dev mode, not activating api')
+		return
+	}
+
 	try {
 		apiKeys = require('./apiKeys.json')
 
