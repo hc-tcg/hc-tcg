@@ -1,9 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
-import {canAttachToCard} from '../../../utils/board'
+import {canAttachToCard, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
-import {swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class EmeraldSingleUseCard extends SingleUseCard {
@@ -35,11 +34,21 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const opponentHermit = opponentActiveRow.hermitCard
 		const playerHermit = playerActiveRow.hermitCard
 
-		if (opponentEffect && !canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
-		if (playerEffect && !canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+		// If either card can't be placed in the other slot, don't attach
+		const playerEffectSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+		const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
-		if (opponentEffect) if (!isRemovable(opponentEffect)) return 'NO'
-		if (playerEffect) if (!isRemovable(playerEffect)) return 'NO'
+		if (playerEffect) {
+			if (canAttachToSlot(game, opponentEffectSlot, playerEffect) !== 'YES') return 'NO'
+			if (!canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+			if (!isRemovable(playerEffect)) return 'NO'
+		}
+
+		if (opponentEffect) {
+			if (canAttachToSlot(game, playerEffectSlot, opponentEffect) !== 'YES') return 'NO'
+			if (!canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
+			if (!isRemovable(opponentEffect)) return 'NO'
+		}
 
 		return 'YES'
 	}
@@ -56,25 +65,8 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
-			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-			const playerActiveRow = player.board.rows[playerActiveRowIndex]
-
-			const playerSlot: SlotPos = {
-				rowIndex: playerActiveRowIndex,
-				row: playerActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
-			const opponentSlot: SlotPos = {
-				rowIndex: opponentActiveRowIndex,
-				row: opponentActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
+			const playerSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+			const opponentSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
 			swapSlots(game, playerSlot, opponentSlot)
 		})

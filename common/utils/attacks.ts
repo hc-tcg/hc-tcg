@@ -14,20 +14,14 @@ function executeAttack(attack: AttackModel) {
 	const {row} = target
 	if (!row.hermitCard) return
 
-	const targetHermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
-
 	const currentHealth = row.health
-	let maxHealth = currentHealth // Armor Stand
-	if (targetHermitInfo) {
-		maxHealth = targetHermitInfo.health
-	}
 
 	const weaknessAttack = createWeaknessAttack(attack)
 	if (weaknessAttack) attack.addNewAttack(weaknessAttack)
 
 	// Deduct and clamp health
 	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
-	row.health = Math.min(newHealth, maxHealth)
+	row.health = Math.min(newHealth, currentHealth)
 }
 
 /**
@@ -254,8 +248,8 @@ export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos):
 
 function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
+	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
-	if (attack.calculateDamage() === 0) return null
 	const attacker = attack.getAttacker()
 	const target = attack.getTarget()
 	const attackId = attack.id

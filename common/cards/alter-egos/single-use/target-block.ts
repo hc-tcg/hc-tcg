@@ -65,11 +65,6 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 					})
 				})
 
-				opponentPlayer.hooks.onDefence.addBefore(instance, (attack) => {
-					if (attack.isType('status-effect') || attack.isBacklash) return
-					attack.type = 'effect'
-				})
-
 				return 'SUCCESS'
 			},
 		})

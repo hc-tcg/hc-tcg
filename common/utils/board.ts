@@ -2,7 +2,7 @@ import {CARDS, ITEM_CARDS} from '../cards'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {RowPos} from '../types/cards'
+import {BoardSlotTypeT, RowPos, SlotPos} from '../types/cards'
 import {
 	CardT,
 	StatusEffectT,
@@ -13,22 +13,45 @@ import {
 } from '../types/game-state'
 import {BattleLogFormatT} from '../models/battle-log'
 
-export function getActiveRow(playerState: PlayerState) {
-	if (playerState.board.activeRow === null) return null
-	const row = playerState.board.rows[playerState.board.activeRow]
+export function getActiveRow(player: PlayerState) {
+	if (player.board.activeRow === null) return null
+	const row = player.board.rows[player.board.activeRow]
 	if (!row.hermitCard) return null
 	return row
 }
 
-export function getActiveRowPos(playerState: PlayerState): RowPos | null {
-	const rowIndex = playerState.board.activeRow
+export function getActiveRowPos(player: PlayerState): RowPos | null {
+	const rowIndex = player.board.activeRow
 	if (rowIndex === null) return null
-	const row = playerState.board.rows[rowIndex]
+	const row = player.board.rows[rowIndex]
 	if (!row.hermitCard) return null
 	return {
-		player: playerState,
+		player: player,
 		rowIndex,
 		row,
+	}
+}
+export function getRowPos(cardPos: CardPosModel): RowPos | null {
+	const rowIndex = cardPos.rowIndex
+	if (rowIndex === null) return null
+	const row = cardPos.row
+	if (!row?.hermitCard) return null
+	return {
+		player: cardPos.player,
+		rowIndex,
+		row,
+	}
+}
+
+export function getSlotPos(player: PlayerState, rowIndex: number, type: BoardSlotTypeT, index = 0): SlotPos {
+	return {
+		player,
+		rowIndex,
+		row: player.board.rows[rowIndex],
+		slot: {
+			type,
+			index,
+		},
 	}
 }
 
