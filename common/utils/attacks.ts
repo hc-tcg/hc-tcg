@@ -248,8 +248,8 @@ export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos):
 
 function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
+	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
-	if (attack.calculateDamage() === 0) return null
 	const attacker = attack.getAttacker()
 	const target = attack.getTarget()
 	const attackId = attack.id
