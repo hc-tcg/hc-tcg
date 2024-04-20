@@ -35,7 +35,7 @@ class LootingSingleUseCard extends SingleUseCard {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
-				message: 'Pick an item card to discard',
+				message: 'Pick an item card to add to your hand',
 				onResult(pickResult) {
 					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
 					if (pickResult.rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
