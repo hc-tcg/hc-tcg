@@ -63,7 +63,7 @@ class GrianRareHermitCard extends HermitCard {
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
 			const canAttach = canAttachToSlot(game, effectSlot, opponentEffectCard)
 
-			if (canAttach !== 'YES') {
+			if (canAttach !== 'YES' && canAttach !== 'MOVE_ONLY') {
 				// We can't attach the new card, don't bother showing a modal
 				discardCard(game, opponentEffectCard, player)
 				return

@@ -22,14 +22,14 @@ class StringEffectCard extends EffectCard {
 		// attach to effect or item slot
 		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') return 'INVALID'
 
-		// can only attach to opponent
-		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
-
 		if (!pos.row?.hermitCard) return 'INVALID'
 
 		const cardInfo = CARDS[pos.row.hermitCard.cardId]
 		if (!cardInfo) return 'INVALID'
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+
+		// can only attach to opponent
+		if (pos.player.id !== opponentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

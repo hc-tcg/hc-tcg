@@ -38,11 +38,14 @@ abstract class HermitCard extends Card {
 		this.secondary = defs.secondary
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
+	public override canAttach(
+		game: GameModel,
+		pos: CardPosModel
+	): 'YES' | 'MOVE_ONLY' | 'NO' | 'INVALID' {
 		const {currentPlayer} = game
 
 		if (pos.slot.type !== 'hermit') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

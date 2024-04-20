@@ -87,7 +87,7 @@ class ArmorStandEffectCard extends EffectCard {
 		const {currentPlayer} = game
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (pos.player.id !== currentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

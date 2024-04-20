@@ -79,9 +79,9 @@ class BerryBushEffectCard extends EffectCard {
 		const {currentPlayer, opponentPlayer} = game
 
 		if (!slot || slot.type !== 'hermit') return 'INVALID'
-		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
 		if (opponentPlayer.board.activeRow === null) return 'INVALID'
 		if (currentPlayer.board.activeRow === null) return 'INVALID'
+		if (pos.player.id !== opponentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

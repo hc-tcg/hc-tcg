@@ -99,13 +99,13 @@ class WaterBucketEffectCard extends EffectCard {
 		const {currentPlayer} = game
 
 		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 		if (pos.slot.type === 'effect') {
 			if (!pos.row?.hermitCard) return 'INVALID'
 			const cardInfo = CARDS[pos.row.hermitCard?.cardId]
 			if (!cardInfo) return 'INVALID'
 			if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 		}
+		if (pos.player.id !== currentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

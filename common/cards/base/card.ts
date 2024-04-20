@@ -37,14 +37,19 @@ abstract class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
-	 * 
+	 *
 	 * YES - Card can be attached to the slot
-	 * 
+	 *
+	 * MOVE_ONLY - This card can be attached in the slot only if it is being moved by another card
+	 *
 	 * NO - This card normally can be attached in the slot but something is preventing it (Shows a popup)
-	 * 
+	 *
 	 * INVALID - This card can never be attached in the slot - it's an invalid slot
 	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID'
+	public abstract canAttach(
+		game: GameModel,
+		pos: CardPosModel
+	): 'YES' | 'MOVE_ONLY' | 'NO' | 'INVALID'
 
 	/**
 	 * If this card is attached to a Hermit slot, can another card be attached to the row this card is in

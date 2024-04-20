@@ -18,7 +18,7 @@ class LightningRodEffectCard extends EffectCard {
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		if (canAttach !== 'YES' && canAttach !== 'MOVE_ONLY') return canAttach
 
 		const board = pos.player.board
 		if (board.rows.find((row) => row.effectCard?.cardId === this.id)) {
@@ -26,7 +26,7 @@ class LightningRodEffectCard extends EffectCard {
 			return 'NO'
 		}
 
-		return 'YES'
+		return canAttach
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

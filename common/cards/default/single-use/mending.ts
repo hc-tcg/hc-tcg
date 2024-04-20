@@ -1,7 +1,13 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
+import {
+	applySingleUse,
+	canAttachToCard,
+	getActiveRow,
+	getNonEmptyRows,
+	getSlotPos,
+} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
@@ -32,9 +38,9 @@ class MendingSingleUseCard extends singleUseCard {
 		for (const rowPos of inactiveRows) {
 			if (rowPos.row.effectCard) continue
 
-			const attachToCard = canAttachToCard(game, rowPos.row.hermitCard, effectCard);
+			const attachToCard = canAttachToCard(game, rowPos.row.hermitCard, effectCard)
 			const slotPos = getSlotPos(player, rowPos.rowIndex, 'effect')
-			const attachToSlot = canAttachToSlot(game, slotPos, effectCard)
+			const attachToSlot = ['YES', 'MOVE_ONLY'].includes(canAttachToSlot(game, slotPos, effectCard))
 
 			if (attachToCard && attachToSlot) return 'YES'
 		}

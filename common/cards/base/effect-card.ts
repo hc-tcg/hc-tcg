@@ -28,12 +28,14 @@ abstract class EffectCard extends Card {
 		this.description = defs.description
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
+	public override canAttach(
+		game: GameModel,
+		pos: CardPosModel
+	): 'YES' | 'MOVE_ONLY' | 'NO' | 'INVALID' {
 		const {currentPlayer} = game
 
 		// Wrong slot
 		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit card - this is considered like the wrong slot
 		if (!pos.row?.hermitCard) return 'INVALID'
@@ -42,6 +44,7 @@ abstract class EffectCard extends Card {
 		if (!cardInfo) return 'INVALID'
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 
+		if (pos.player.id !== currentPlayer.id) return 'MOVE_ONLY'
 		return 'YES'
 	}
 

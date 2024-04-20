@@ -59,7 +59,7 @@ function* playCardSaga(
 	const canAttach = cardInfo.canAttach(game, pos)
 
 	// It's the wrong kind of slot
-	if (canAttach === 'INVALID') return 'FAILURE_INVALID_SLOT'
+	if (canAttach === 'INVALID' || canAttach === 'MOVE_ONLY') return 'FAILURE_INVALID_SLOT'
 	// If it's the right kind of slot, but we can't attach
 	if (canAttach === 'NO') return 'FAILURE_CANNOT_ATTACH'
 

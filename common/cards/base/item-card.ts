@@ -32,7 +32,6 @@ abstract class ItemCard extends Card {
 		const {currentPlayer} = game
 
 		if (pos.slot.type !== 'item') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 
 		// Can't attach without hermit - this is treated like invalid slot
 		if (!pos.row?.hermitCard) return 'INVALID'
@@ -40,6 +39,8 @@ abstract class ItemCard extends Card {
 		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
 		if (!cardInfo) return 'INVALID'
 		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+
+		if (pos.player.id !== currentPlayer.id) return 'MOVE_ONLY'
 
 		return 'YES'
 	}

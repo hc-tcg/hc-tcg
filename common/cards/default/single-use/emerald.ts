@@ -39,13 +39,15 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
 		if (playerEffect) {
-			if (canAttachToSlot(game, opponentEffectSlot, playerEffect) !== 'YES') return 'NO'
+			if (!['YES', 'MOVE_ONLY'].includes(canAttachToSlot(game, opponentEffectSlot, playerEffect)))
+				return 'NO'
 			if (!canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
 			if (!isRemovable(playerEffect)) return 'NO'
 		}
 
 		if (opponentEffect) {
-			if (canAttachToSlot(game, playerEffectSlot, opponentEffect) !== 'YES') return 'NO'
+			if (!['YES', 'MOVE_ONLY'].includes(canAttachToSlot(game, playerEffectSlot, opponentEffect)))
+				return 'NO'
 			if (!canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
 			if (!isRemovable(opponentEffect)) return 'NO'
 		}
