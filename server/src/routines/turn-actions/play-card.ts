@@ -57,11 +57,14 @@ function* playCardSaga(
 
 	// Do we meet requirements to place the card
 	const canAttach = cardInfo.canAttach(game, pos)
+	player.hooks.canAttach.call(canAttach, pos)
 
 	// It's the wrong kind of slot
-	if (canAttach === 'INVALID') return 'FAILURE_INVALID_SLOT'
+	if (canAttach.includes('INVALID_PLAYER')) return 'FAILURE_INVALID_PLAYER'
+	if (canAttach.includes('INVALID_SLOT')) return 'FAILURE_INVALID_SLOT'
 	// If it's the right kind of slot, but we can't attach
-	if (canAttach === 'NO') return 'FAILURE_CANNOT_ATTACH'
+	if (canAttach.includes('UNMET_CONDITION_SILENT')) return 'FAILURE_UNMET_CONDITION_SILENT'
+	if (canAttach.includes('UNMET_CONDITION')) return 'FAILURE_UNMET_CONDITION'
 
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client

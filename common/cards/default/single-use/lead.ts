@@ -3,7 +3,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {
 	applySingleUse,
-	canAttachToCard,
 	getActiveRow,
 	getActiveRowPos,
 	getRowsWithEmptyItemsSlots,
@@ -13,6 +12,7 @@ import {
 import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
+// @NOWTODO
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -36,12 +36,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		const rowsWithEmptySlots = getRowsWithEmptyItemsSlots(opponentPlayer, true)
 		if (rowsWithEmptySlots.length === 0) return 'NO'
 
-		// check if the card can be attached to any of the inactive hermits
-		for (const row of rowsWithEmptySlots) {
-			for (const item of activeRow.itemCards) {
-				if (canAttachToCard(game, row.hermitCard, item)) return 'YES'
-			}
-		}
+		//@NOWTODO check canAttachToSlot
 
 		return 'NO'
 	}
@@ -55,7 +50,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -75,7 +70,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -100,8 +95,8 @@ class LeadSingleUseCard extends SingleUseCard {
 				}
 
 				// Make sure we can attach the item
+				// @NOWTODO need to call canAttachToSlot
 				const itemCard = opponentActivePos.row.itemCards[itemIndex]
-				if (!canAttachToCard(game, row.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
 
 				// Move the item
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)

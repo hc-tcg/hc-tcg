@@ -86,10 +86,6 @@ class BerryBushEffectCard extends EffectCard {
 		return 'YES'
 	}
 
-	override canAttachToCard(game: GameModel, pos: CardPosModel) {
-		return false
-	}
-
 	public override getActions(game: GameModel): TurnActions {
 		const {opponentPlayer} = game
 

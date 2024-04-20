@@ -37,7 +37,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 2 cards from your hand',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
@@ -57,7 +57,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 1 more card from your hand',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'

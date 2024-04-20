@@ -27,10 +27,6 @@ class StringEffectCard extends EffectCard {
 
 		if (!pos.row?.hermitCard) return 'INVALID'
 
-		const cardInfo = CARDS[pos.row.hermitCard.cardId]
-		if (!cardInfo) return 'INVALID'
-		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
-
 		return 'YES'
 	}
 

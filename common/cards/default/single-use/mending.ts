@@ -1,11 +1,12 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
+import {applySingleUse, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
+// @NOWTODO
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
 		super({
@@ -31,12 +32,10 @@ class MendingSingleUseCard extends singleUseCard {
 		const inactiveRows = getNonEmptyRows(player, true)
 		for (const rowPos of inactiveRows) {
 			if (rowPos.row.effectCard) continue
-
-			const attachToCard = canAttachToCard(game, rowPos.row.hermitCard, effectCard);
 			const slotPos = getSlotPos(player, rowPos.rowIndex, 'effect')
 			const attachToSlot = canAttachToSlot(game, slotPos, effectCard)
 
-			if (attachToCard && attachToSlot) return 'YES'
+			// @NOWTODO
 		}
 
 		return 'NO'
@@ -67,7 +66,7 @@ class MendingSingleUseCard extends singleUseCard {
 			id: this.id,
 			message: 'Pick an empty effect slot from one of your afk Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -79,7 +78,7 @@ class MendingSingleUseCard extends singleUseCard {
 				const row = player.board.rows[rowIndex]
 				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
-				if (!canAttachToCard(game, row.hermitCard, effectCard)) return 'FAILURE_CANNOT_COMPLETE'
+				// @NOWTODO check canAttachToSlot
 
 				// Apply the mending card
 				applySingleUse(game, [

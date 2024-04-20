@@ -5,6 +5,7 @@ import {isCardType} from '../../../utils/cards'
 import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
+// @NOWTODO
 class LadderSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -51,7 +52,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'

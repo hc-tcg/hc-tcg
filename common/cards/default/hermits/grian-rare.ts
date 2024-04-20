@@ -17,6 +17,7 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
+// @NOWTODO
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({

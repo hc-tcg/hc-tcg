@@ -26,7 +26,7 @@ class WaterBucketEffectCard extends EffectCard {
 				id: instance,
 				message: 'Pick one of your Hermits',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
@@ -102,9 +102,6 @@ class WaterBucketEffectCard extends EffectCard {
 		if (pos.player.id !== currentPlayer.id) return 'INVALID'
 		if (pos.slot.type === 'effect') {
 			if (!pos.row?.hermitCard) return 'INVALID'
-			const cardInfo = CARDS[pos.row.hermitCard?.cardId]
-			if (!cardInfo) return 'INVALID'
-			if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
 		}
 
 		return 'YES'

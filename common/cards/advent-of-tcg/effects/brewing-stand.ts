@@ -34,7 +34,7 @@ class BrewingStandEffectCard extends EffectCard {
 				id: this.id,
 				message: 'Pick an item card to discard',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex !== pos.rowIndex) return 'FAILURE_INVALID_SLOT'
 
 					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'

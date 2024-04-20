@@ -50,7 +50,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 				if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
 					return 'FAILURE_INVALID_SLOT'

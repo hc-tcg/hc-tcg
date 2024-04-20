@@ -1,17 +1,12 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {
-	applySingleUse,
-	canAttachToCard,
-	getSlotPos,
-	isRowEmpty,
-	rowHasEmptyItemSlot,
-} from '../../../utils/board'
+import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
+// @NOWTODO
 class PistonSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -60,7 +55,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -80,7 +75,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const pickedIndex = pickResult.rowIndex
 				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -105,7 +100,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				// Make sure we can attach the item
 				const itemCard = firstRow.itemCards[itemIndex]
-				if (!canAttachToCard(game, pickedRow.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
+				// @NOWTODO call canAttachToSlot
 
 				// Move the item
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
