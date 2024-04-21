@@ -34,12 +34,11 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
-		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+		if (pos.opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

@@ -17,15 +17,13 @@ class BedEffectCard extends EffectCard {
 		})
 	}
 	override canAttach(game: GameModel, pos: CardPosModel) {
+		const result = super.canAttach(game, pos)
 		const {currentPlayer} = game
 
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
 		// bed addition - hermit must also be active to attach
-		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'
+		if (!(currentPlayer.board.activeRow === pos.rowIndex)) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

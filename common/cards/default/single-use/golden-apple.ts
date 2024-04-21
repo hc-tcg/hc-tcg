@@ -17,21 +17,20 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
 
 		// Need active hermit to play
-		if (!isActive(player)) return 'NO'
+		if (!isActive(player)) result.push('UNMET_CONDITION')
 
 		// Can't attach it there are not any inactive hermits
 		const playerHasAfk = getNonEmptyRows(player, true).some(
 			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 		)
-		if (!playerHasAfk) return 'NO'
+		if (!playerHasAfk) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

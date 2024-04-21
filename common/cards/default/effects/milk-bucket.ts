@@ -4,6 +4,7 @@ import {TurnActions} from '../../../types/game-state'
 import EffectCard from '../../base/effect-card'
 import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
+import {CanAttachResult} from '../../base/card'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -96,14 +97,15 @@ class MilkBucketEffectCard extends EffectCard {
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {currentPlayer} = game
+		const result: CanAttachResult = []
 
-		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (!['single_use', 'effect'].includes(pos.slot.type)) result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 		if (pos.slot.type === 'effect') {
-			if (!pos.row?.hermitCard) return 'INVALID'
+			if (!pos.row?.hermitCard) result.push('INVALID_SLOT')
 		}
 
-		return 'YES'
+		return result
 	}
 
 	// Allows placing in effect or single use slot
