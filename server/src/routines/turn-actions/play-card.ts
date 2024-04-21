@@ -66,6 +66,8 @@ function* playCardSaga(
 	if (canAttach.includes('UNMET_CONDITION_SILENT')) return 'FAILURE_UNMET_CONDITION_SILENT'
 	if (canAttach.includes('UNMET_CONDITION')) return 'FAILURE_UNMET_CONDITION'
 
+	if (canAttach.includes('UNKNOWN_ERROR')) return 'FAILURE_UNKNOWN_ERROR'
+
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client
 
