@@ -56,7 +56,11 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 		if (currentCoinFlip) {
 			return (
 				<div id={css.status}>
-					<CoinFlip key={currentCoinFlip.name} {...currentCoinFlip} />
+					<CoinFlip
+						key={currentCoinFlip.name}
+						{...currentCoinFlip}
+						amount={currentCoinFlip.amount}
+					/>
 				</div>
 			)
 		}

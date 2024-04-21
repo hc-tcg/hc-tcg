@@ -50,6 +50,7 @@ export type CurrentCoinFlipT = {
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>
+	amount: number
 }
 
 export type BattleLogT = {
