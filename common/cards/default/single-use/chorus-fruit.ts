@@ -16,6 +16,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		const removedBlockKey = this.getInstanceKey(instance, 'removedBlockedAction')
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			// Apply the card
@@ -27,14 +28,26 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			])
 
 			player.hooks.afterAttack.add(instance, (attack) => {
+				if (player.custom[removedBlockKey]) return
 				// Remove change active hermit from the blocked actions so it can be done once more
 				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
+				player.custom[removedBlockKey] = true
+				// If another attack loop runs let the blocked action be removed again
+				player.hooks.beforeAttack.add(instance, (attack) => {
+					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
+					delete player.custom[removedBlockKey]
+					player.hooks.beforeAttack.remove(instance)
+				})
 			})
 
 			player.hooks.onTurnEnd.add(instance, (attack) => {
+				delete player.custom[removedBlockKey]
+				player.hooks.beforeAttack.remove(instance)
 				player.hooks.afterAttack.remove(instance)
 				player.hooks.onTurnEnd.remove(instance)
 			})
+
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 
