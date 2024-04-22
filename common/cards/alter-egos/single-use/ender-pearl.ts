@@ -3,6 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -18,15 +19,15 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
-		if (player.board.activeRow === undefined) return 'NO'
+		if (!hasActive(player)) result.push('UNMET_CONDITION')
 		for (const row of player.board.rows) {
-			if (row.hermitCard === null) return 'YES'
+			if (row.hermitCard === null) return result
 		}
-		return 'NO'
+		result.push('UNMET_CONDITION')
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

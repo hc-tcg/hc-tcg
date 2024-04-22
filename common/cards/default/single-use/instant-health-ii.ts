@@ -3,7 +3,6 @@ import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
-import {isActive} from '../../../utils/game'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {

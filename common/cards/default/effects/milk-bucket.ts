@@ -102,7 +102,7 @@ class MilkBucketEffectCard extends EffectCard {
 		if (!['single_use', 'effect'].includes(pos.slot.type)) result.push('INVALID_SLOT')
 		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 		if (pos.slot.type === 'effect') {
-			if (!pos.row?.hermitCard) result.push('INVALID_SLOT')
+			if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 		}
 
 		return result
