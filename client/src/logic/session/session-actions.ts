@@ -39,5 +39,5 @@ export const setMinecraftName = (name: string) => ({
 
 export const loadUpdates = (updates: Array<string>) => ({
 	type: 'LOAD_UPDATES',
-	payload: {updates}
+	payload: {updates},
 })
