@@ -34,6 +34,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 				player.custom[removedBlockKey] = true
 				// If another attack loop runs let the blocked action be removed again
 				player.hooks.beforeAttack.add(instance, (attack) => {
+					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
 					delete player.custom[removedBlockKey]
 					player.hooks.beforeAttack.remove(instance)
 				})
