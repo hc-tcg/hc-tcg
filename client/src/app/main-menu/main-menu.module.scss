@@ -236,6 +236,24 @@ nav {
 	gap: 1vh;
 }
 
+.updatesList {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	overflow-y: scroll;
+	color: var(--text-dark);
+	gap: 10px;
+	max-height: 40vh;
+	height: 100%
+}
+
+.updateItem {
+	width: 100%;
+	background-color: var(--gray-200);
+	padding: 1%;
+	text-align: center;
+}
+
 /* DESKTOP */
 @media (min-width: 80vh) {
 	nav {

@@ -10,8 +10,8 @@ export function registerApis(app: import('express').Express) {
 
 	const env = process.env.NODE_ENV || 'development'
 	if (env == 'development') {
-		console.log('running in dev mode, not activating api')
-		return
+		console.log('running in dev mode, not activating api (jk, overriden')
+		//return
 	}
 
 	try {
@@ -112,6 +112,12 @@ export function registerApis(app: import('express').Express) {
 			} catch (e) {
 				console.log('Error notifying discord bot about game end: ' + e)
 			}
+		})
+
+		fetch(`${CONFIG.botUrl}/updates`).then(async (response) => {
+			response.json().then((jsonResponse) => {
+				root.updates = jsonResponse as Record<string, Array<string>>
+			})
 		})
 
 		console.log('apis registered')

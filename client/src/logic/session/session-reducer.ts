@@ -11,6 +11,7 @@ type SessionState = {
 	connecting: boolean
 	errorType?: 'invalid_name' | 'invalid_version' | 'session_expired' | 'timeout' | string
 	toast: ToastT
+	updates: Record<string, Array<string>>
 }
 
 const defaultState: SessionState = {
@@ -21,6 +22,7 @@ const defaultState: SessionState = {
 	playerDeck: {name: '', icon: 'any', cards: []},
 	connecting: false,
 	toast: {open: false, title: '', description: '', image: ''},
+	updates: {},
 }
 
 const loginReducer = (state = defaultState, action: AnyAction): SessionState => {
@@ -43,6 +45,11 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 				...state,
 				connecting: false,
 				errorType: undefined,
+				...action.payload,
+			}
+		case 'LOAD_UPDATES':
+			return {
+				...state,
 				...action.payload,
 			}
 		case 'SET_NEW_DECK':
