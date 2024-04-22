@@ -9,6 +9,8 @@ import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
 import {useState} from 'react'
 import AlertModal from 'components/alert-modal'
+import {toHTML} from 'discord-markdown'
+import DOMPurify from 'dompurify'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -46,13 +48,15 @@ function MainMenu({setMenuSection}: Props) {
 					description={
 						<ul className={css.updatesList}>
 							{updates['updates'] ? (
-								updates['updates'].map((text, i) => (
-									<li className={css.updateItem} key={i}>
-										{text.split('\n').map((line) => (
-											<p>{line}</p>
-										))}
-									</li>
-								))
+								updates['updates'].map((text, i) => {
+									return (
+										<li
+											className={css.updateItem}
+											key={i}
+											dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
+										/>
+									)
+								})
 							) : (
 								<li className={css.updateItem}>Failed to load updates</li>
 							)}
