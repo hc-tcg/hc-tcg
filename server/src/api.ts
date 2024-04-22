@@ -10,8 +10,8 @@ export function registerApis(app: import('express').Express) {
 
 	const env = process.env.NODE_ENV || 'development'
 	if (env == 'development') {
-		console.log('running in dev mode, not activating api (jk, overriden')
-		//return
+		console.log('running in dev mode, not activating api')
+		return
 	}
 
 	try {
