@@ -43,7 +43,11 @@ const getDescription = (card: Card): React.ReactNode => {
 					{card.primary.name}
 				</div>
 			)
-			result.push(<div key="primary-power">{getOneDescription(card.primary.power)}</div>)
+			result.push(
+				<div key="primary-power" className={css.italicized}>
+					{getOneDescription(card.primary.power)}
+				</div>
+			)
 		}
 
 		if (card.secondary.power) {
@@ -52,16 +56,28 @@ const getDescription = (card: Card): React.ReactNode => {
 					{card.secondary.name}
 				</div>
 			)
-			result.push(<div key="primary-power">{getOneDescription(card.secondary.power)}</div>)
+			result.push(
+				<div key="primary-power" className={css.italicized}>
+					{getOneDescription(card.secondary.power)}
+				</div>
+			)
 		}
 	}
 
 	if (card instanceof EffectCard || card instanceof SingleUseCard) {
-		result.push(<div key="desc">{getOneDescription(card.description)}</div>)
+		result.push(
+			<div key="desc" className={css.italicized}>
+				{getOneDescription(card.description)}
+			</div>
+		)
 	}
 
 	if (card instanceof ItemCard && card.rarity === 'rare') {
-		result.push(<div key="desc">Counts as 2 Item cards</div>)
+		result.push(
+			<div key="desc" className={css.italicized}>
+				Counts as 2 Item cards
+			</div>
+		)
 		return 'Counts as 2 Item cards.'
 	}
 
@@ -185,7 +201,7 @@ const getSidebarDescriptions = (card: Card): React.ReactNode => {
 }
 
 const CardTooltip = ({card}: Props) => {
-	if (card instanceof HealthCard) return <div className={css.cardTooltip}>{card.health} Health</div>
+	if (card instanceof HealthCard) return null
 	const [right, setRight] = useState<number | null>(null)
 	const [left, setLeft] = useState<number | null>(null)
 
