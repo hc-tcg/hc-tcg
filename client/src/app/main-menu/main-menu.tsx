@@ -50,11 +50,14 @@ function MainMenu({setMenuSection}: Props) {
 							{updates['updates'] ? (
 								updates['updates'].map((text, i) => {
 									return (
-										<li
-											className={css.updateItem}
-											key={i}
-											dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
-										/>
+										<>
+											<li
+												className={css.updateItem}
+												key={i}
+												dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
+											/>
+											<hr className={css.updateSeperator} />
+										</>
 									)
 								})
 							) : (
