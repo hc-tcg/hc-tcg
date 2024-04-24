@@ -25,7 +25,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\n"Time Skip" cannot be used consecutively if successful.',
+					'Flip a coin.\n\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
 			},
 		})
 	}
@@ -91,6 +91,17 @@ class JoeHillsRareHermitCard extends HermitCard {
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[skippedKey]
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'overt',
+				name: 'Turn Skip',
+				description:
+					"A player who's turn is skipped can only choose to change their active Hermit. They still draw a card at the end of their turn. Turns cannot be skipped consecutively.",
+			},
+		]
 	}
 }
 

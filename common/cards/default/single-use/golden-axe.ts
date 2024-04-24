@@ -14,7 +14,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do an additional 40hp damage.\nThe opponent Hermit's attached effect card is ignored during this attack.",
+				"Do an additional 40hp damage.\n\nAny effect cards attached to your opponent's active and AFK Hermits are ignored during this attack.",
 		})
 	}
 

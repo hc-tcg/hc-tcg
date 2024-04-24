@@ -13,7 +13,7 @@ class MilkBucketEffectCard extends EffectCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
+				'Remove poison and bad omen from one of your active or AFK Hermits.\n\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
 		})
 	}
 

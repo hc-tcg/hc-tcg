@@ -13,7 +13,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			name: 'Ender Pearl',
 			rarity: 'common',
 			description:
-				'Move your active Hermit and any attached cards to an open slot on your board.\n\nSubtract 10 health from this Hermit.',
+				'Before your attack, move your active Hermit and any attached cards to an open row on your board. This Hermit also takes 10hp damage.',
 		})
 	}
 

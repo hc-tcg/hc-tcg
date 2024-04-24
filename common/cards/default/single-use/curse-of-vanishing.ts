@@ -11,7 +11,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 			numericId: 12,
 			name: 'Curse Of Vanishing',
 			rarity: 'common',
-			description: "Your opponent is forced to discard their active Hermit's attached effect card.",
+			description: 'Your opponent must discard any effect card attached to their active Hermit.',
 		})
 	}
 

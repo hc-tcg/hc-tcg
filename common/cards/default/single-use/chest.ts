@@ -11,8 +11,7 @@ class ChestSingleUseCard extends SingleUseCard {
 			numericId: 4,
 			name: 'Chest',
 			rarity: 'rare',
-			description:
-				'Look through your discard pile and select 1 card to return to your hand.\n\nCan not return "Clock" to your hand.',
+			description: 'Choose one card from your discard pile to return to your hand.',
 		})
 	}
 

@@ -23,7 +23,7 @@ class IJevinRareHermitCard extends HermitCard {
 				cost: ['speedrunner', 'speedrunner', 'any'],
 				damage: 90,
 				power:
-					'After attack, your opponent must choose an AFK Hermit to replace their active Hermit, unless they have no AFK Hermits. ',
+					'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
 			},
 		})
 	}

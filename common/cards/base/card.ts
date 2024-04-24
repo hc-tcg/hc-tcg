@@ -37,11 +37,11 @@ abstract class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
-	 * 
+	 *
 	 * YES - Card can be attached to the slot
-	 * 
+	 *
 	 * NO - This card normally can be attached in the slot but something is preventing it (Shows a popup)
-	 * 
+	 *
 	 * INVALID - This card can never be attached in the slot - it's an invalid slot
 	 */
 	public abstract canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID'
@@ -101,6 +101,13 @@ abstract class Card {
 	 */
 	public getActions(game: GameModel): TurnActions {
 		// default is to return nothing
+		return []
+	}
+
+	/**
+	 * Returns the sidebar descriptions for this card
+	 */
+	public sidebarDescriptions(): Array<Record<string, string>> {
 		return []
 	}
 }

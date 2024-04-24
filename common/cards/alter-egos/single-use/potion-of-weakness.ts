@@ -12,7 +12,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:
-				"Opponent's active Hermit type is now weak to your active Hermit's type for 3 turns.",
+				"Your opponent's active Hermit type is weak to your active Hermit's type for 3 turns.",
 		})
 	}
 
@@ -44,6 +44,17 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	}
 	override getExpansion() {
 		return 'alter_egos'
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'overt',
+				name: 'Weak',
+				description:
+					"Hermits take 20hp extra damage if they are weak to the Hermit they were attacked by, provided the attack doesn't miss.",
+			},
+		]
 	}
 }
 

@@ -12,7 +12,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			numericId: 30,
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
-			description: 'Heal AFK Hermit 100hp.',
+			description: 'Heal one of your AFK Hermits 100hp.',
 		})
 	}
 

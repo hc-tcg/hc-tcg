@@ -13,7 +13,7 @@ class PoisonStatusEffect extends StatusEffect {
 			id: 'poison',
 			name: 'Poison',
 			description:
-				'This Hermit takes an additional 20hp damage every turn until down to 10hp. Ignores armour. Continues to poison if health is recovered. Poison does not knock out Hermits.',
+				"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 			duration: 0,
 			counter: false,
 			damageEffect: true,
@@ -43,7 +43,7 @@ class PoisonStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-				  }
+					}
 				: null
 
 			const targetRow: RowPos = {

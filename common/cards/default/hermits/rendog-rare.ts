@@ -24,7 +24,7 @@ class RendogRareHermitCard extends HermitCard {
 				name: 'Role Play',
 				cost: ['builder', 'builder', 'builder'],
 				damage: 0,
-				power: "Use any attack of your opponent's Hermits.",
+				power: "Use an attack from any of your opponent's Hermits.",
 			},
 		})
 	}

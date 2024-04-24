@@ -1,7 +1,13 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, canAttachToCard, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
+import {
+	applySingleUse,
+	canAttachToCard,
+	getActiveRow,
+	getNonEmptyRows,
+	getSlotPos,
+} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
@@ -13,7 +19,7 @@ class MendingSingleUseCard extends singleUseCard {
 			numericId: 78,
 			name: 'Mending',
 			rarity: 'ultra_rare',
-			description: 'Move any attached effect card from your active Hermit to an AFK Hermit.',
+			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
 		})
 	}
 
@@ -32,7 +38,7 @@ class MendingSingleUseCard extends singleUseCard {
 		for (const rowPos of inactiveRows) {
 			if (rowPos.row.effectCard) continue
 
-			const attachToCard = canAttachToCard(game, rowPos.row.hermitCard, effectCard);
+			const attachToCard = canAttachToCard(game, rowPos.row.hermitCard, effectCard)
 			const slotPos = getSlotPos(player, rowPos.rowIndex, 'effect')
 			const attachToSlot = canAttachToSlot(game, slotPos, effectCard)
 

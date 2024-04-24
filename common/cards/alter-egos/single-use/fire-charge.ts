@@ -14,7 +14,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			name: 'Fire Charge',
 			rarity: 'common',
 			description:
-				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
+				'Discard one attached item or effect card from any of your Hermits.\n\nYou can use another single use effect card this turn.',
 		})
 	}
 

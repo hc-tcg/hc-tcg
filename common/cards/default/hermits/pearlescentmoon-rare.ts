@@ -23,7 +23,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				cost: ['terraform', 'any'],
 				damage: 70,
 				power:
-					'Opponent flips a coin on their next turn, before they attack. If heads, their attack misses. Opponent can not miss on consecutive turns.',
+					'If your opponent attacks on their next turn, flip a coin.\n\nIf heads, their attack misses. Your opponent can not miss due to this ability on consecutive turns.',
 			},
 		})
 	}
@@ -84,6 +84,17 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'status')]
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'overt',
+				name: 'Missed',
+				description:
+					"Missed attacks deal 0 damage, but don't prevent any abilities from happening.",
+			},
+		]
 	}
 }
 

@@ -32,7 +32,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				cost: ['miner', 'any'],
 				damage: 70,
 				power:
-					"You can choose to attack an opponent's AFK Hermit.\n\nIf AFK Hermit is attacked, you must discard 1 attached item card.",
+					"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard 1 item card attached to your active Hermit.",
 			},
 		})
 	}

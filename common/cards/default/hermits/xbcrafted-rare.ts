@@ -23,7 +23,8 @@ class XBCraftedRareHermitCard extends HermitCard {
 				name: 'Noice!',
 				cost: ['explorer', 'any'],
 				damage: 70,
-				power: "The opponent Hermit's attached effect card is ignored during this attack.",
+				power:
+					"Any effect card attached to your opponent's active Hermit is ignored during this attack.",
 			},
 		})
 	}

@@ -13,7 +13,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			name: 'Ladder',
 			rarity: 'ultra_rare',
 			description:
-				'Swap your active Hermit card with one of your adjacent AFK Hermits.\n\nAll cards attached to both Hermits, including health, remain in place.\n\nActive and AFK status does not change.',
+				'Before your attack, swap your active Hermit card with one of your adjacent AFK Hermit cards.\n\nAll cards attached to both Hermits, including health, remain in place. Your active Hermit remains active after swapping.',
 		})
 	}
 

@@ -14,7 +14,7 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				'Choose one of your opponent AFK Hermits to make active after your attack.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
+				"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\n\nIf heads, also do 10hp damage to that Hermit.",
 		})
 	}
 

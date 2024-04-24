@@ -9,10 +9,10 @@ class ChainmailArmorEffectCard extends EffectCard {
 		super({
 			id: 'chainmail_armor',
 			numericId: 119,
-			name: 'Chainmail Armor',
+			name: 'Chainmail Armour',
 			rarity: 'common',
 			description:
-				'Blocks damage from all effect cards. Also blocks damage redirected by effect cards.',
+				'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 		})
 	}
 

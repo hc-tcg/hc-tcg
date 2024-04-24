@@ -17,7 +17,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				cost: ['explorer'],
 				damage: 50,
 				power:
-					'Flip a Coin.\n\nIf heads, opponent flips a coin their next turn.\n\nIf heads, opponent damages themselves.',
+					"Flip a coin.\n\nIf heads, on your opponent's next turn, flip a coin.\n\nIf heads, your opponent's active Hermit damages themselves.",
 			},
 			secondary: {
 				name: 'Get Dangled',

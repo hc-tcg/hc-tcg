@@ -11,7 +11,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			name: 'Knockback',
 			rarity: 'rare',
 			description:
-				'After attack, your opponent must choose an AFK Hermit to replace their active Hermit, unless they have no AFK Hermits. ',
+				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
 		})
 	}
 

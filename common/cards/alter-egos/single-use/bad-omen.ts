@@ -10,7 +10,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			numericId: 139,
 			name: 'Bad Omen',
 			rarity: 'rare',
-			description: `Give the opposing active hermit bad omen for the next 3 turns.\n\nWhile they have this effect, all of their coin flips are tails.`,
+			description: `Give the opposing active hermit bad omen for the next 3 turns.`,
 		})
 	}
 
@@ -51,6 +51,15 @@ class BadOmenSingleUseCard extends SingleUseCard {
 
 	override getExpansion() {
 		return 'alter_egos'
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'badomen',
+			},
+		]
 	}
 }
 

@@ -12,7 +12,7 @@ class TNTSingleUseCard extends SingleUseCard {
 			numericId: 100,
 			name: 'TNT',
 			rarity: 'common',
-			description: 'Do an additional 60hp damage. You also take 20hp damage.',
+			description: 'Do an additional 60hp damage. Your active Hermit also takes 20hp damage.',
 		})
 	}
 
