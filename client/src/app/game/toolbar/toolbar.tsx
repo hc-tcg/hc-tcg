@@ -6,6 +6,7 @@ import ChatItem from './chat-item'
 import SoundItem from './sound-item'
 import ForfeitItem from './forfeit-item'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import TooltipsItem from './tooltips-item'
 
 function Toolbar() {
 	const gameState = useSelector(getGameState)
@@ -52,6 +53,9 @@ function Toolbar() {
 
 			{/* Toggle Chat */}
 			{settings.disableChat === 'off' && <ChatItem />}
+
+			{/* Toggle Tooltips */}
+			<TooltipsItem />
 
 			{/* Toggle Sounds */}
 			<SoundItem />
