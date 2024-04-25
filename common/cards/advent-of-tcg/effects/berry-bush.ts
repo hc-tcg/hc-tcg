@@ -6,6 +6,7 @@ import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {CanAttachResult} from '../../base/card'
+import {hasActive} from '../../../utils/game'
 
 class BerryBushEffectCard extends EffectCard {
 	constructor() {
@@ -86,8 +87,7 @@ class BerryBushEffectCard extends EffectCard {
 
 		if (!slot || slot.type !== 'hermit') result.push('INVALID_SLOT')
 		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
-		if (opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
-		if (currentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
+		if (!hasActive(opponentPlayer) || !hasActive(currentPlayer)) result.push('UNMET_CONDITION')
 
 		return result
 	}

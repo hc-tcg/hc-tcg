@@ -23,6 +23,7 @@ function* playCardSaga(
 	const {playerId, rowIndex: pickedIndex, slot: pickedSlot} = pickInfo
 
 	const cardInfo = CARDS[card.cardId]
+	// opponentPlayerId is relative to where the card is being placed
 	const opponentPlayerId = playerId === currentPlayer.id ? game.opponentPlayerId : currentPlayer.id
 
 	// Card must be in hand to play it
@@ -42,7 +43,7 @@ function* playCardSaga(
 
 	// We can't automatically get the card pos, as the card is not on the board yet
 	const basicPos: BasicCardPos = {
-		player: player,
+		player,
 		opponentPlayer: game.state.players[opponentPlayerId],
 		rowIndex: pickedIndex === undefined ? null : pickedIndex,
 		row: pickedIndex !== undefined ? player.board.rows[pickedIndex] : null,
