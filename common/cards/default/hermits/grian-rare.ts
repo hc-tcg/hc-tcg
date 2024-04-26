@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
-import {canAttachToSlot, discardCard, swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, discardCard, exceptInvalidPlayer, swapSlots} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -17,7 +17,6 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-// @NOWTODO
 class GrianRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -62,9 +61,9 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttach = canAttachToSlot(game, effectSlot, opponentEffectCard)
+			const canAttachResult = canAttachToSlot(game, effectSlot, opponentEffectCard)
 
-			if (canAttach !== 'YES') {
+			if (canAttachResult.filter(exceptInvalidPlayer).length > 0) {
 				// We can't attach the new card, don't bother showing a modal
 				discardCard(game, opponentEffectCard, player)
 				return
