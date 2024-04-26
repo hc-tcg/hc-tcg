@@ -2,12 +2,15 @@ import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {HermitAttackType} from '../../types/attack'
-import {PickRequest} from '../../types/server-requests'
 
-export type CanAttachResult = Array<
-	'INVALID_PLAYER' | 'INVALID_SLOT' | 'UNMET_CONDITION' | 'UNMET_CONDITION_SILENT' | 'UNKNOWN_ERROR'
->
+export type CanAttachError =
+	| 'INVALID_PLAYER'
+	| 'INVALID_SLOT'
+	| 'UNMET_CONDITION'
+	| 'UNMET_CONDITION_SILENT'
+	| 'UNKNOWN_ERROR'
+
+export type CanAttachResult = Array<CanAttachError>
 
 type CardDefs = {
 	type: CardTypeT
