@@ -55,7 +55,7 @@ class ArmorStandEffectCard extends EffectCard {
 
 		player.hooks.canAttach.add(instance, (result, pos) => {
 			if (pos.row?.hermitCard?.cardInstance !== instance) return
-			if (['item', 'effect'].includes(pos.slot.type)) result.push('UNMET_CONDITION_SILENT')
+			result.push('UNMET_CONDITION_SILENT')
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
