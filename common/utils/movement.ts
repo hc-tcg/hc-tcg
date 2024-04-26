@@ -202,7 +202,7 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 }
 
 /** Filters a `CanAttachResult` to remove all `'INVALID_PLAYER'` problems for movement checks */
-function exceptInvalidPlayer(
+export function exceptInvalidPlayer(
 	result: CanAttachResult[number]
 ): result is Exclude<typeof result, 'INVALID_PLAYER'> {
 	return result !== 'INVALID_PLAYER'
