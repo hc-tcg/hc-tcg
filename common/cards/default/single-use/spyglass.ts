@@ -44,11 +44,33 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!canDiscard) return 'SUCCESS'
 
-					if (canDiscard) {
-						if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
-						discardFromHand(opponentPlayer, modalResult.cards[0])
-					}
+					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
+					discardFromHand(opponentPlayer, modalResult.cards[0])
+
+					game.addModalRequest({
+						playerId: opponentPlayer.id,
+						data: {
+							modalId: 'selectCards',
+							payload: {
+								modalName: 'Spyglass: Card your opponent discarded.',
+								modalDescription: '',
+								cards: modalResult.cards,
+								selectionSize: 0,
+								primaryButton: {
+									text: 'Close',
+									variant: 'default',
+								},
+							},
+						},
+						onResult() {
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							// Do nothing
+						},
+					})
 
 					return 'SUCCESS'
 				},
