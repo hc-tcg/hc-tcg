@@ -2,11 +2,10 @@ import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
-import {isCardType} from '../../../utils/cards'
-import {discardSingleUse, swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
-// @NOWTODO
 class PistonSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -19,11 +18,12 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const {player} = pos
 
-		const playerBoard = pos.player.board
+		const result = super.canAttach(game, pos)
+
+		const playerBoard = player.board
 
 		for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
 			const row = playerBoard.rows[rowIndex]
@@ -33,16 +33,30 @@ class PistonSingleUseCard extends SingleUseCard {
 			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
 				(index) => index >= 0 && index < playerBoard.rows.length
 			)
+
+			const items = row.itemCards
+			// for each row, check adjacent rows for each item card against all empty slots on that row
 			for (const index of adjacentRowsIndex) {
 				const newRow = playerBoard.rows[index]
 				if (!newRow.hermitCard) continue
-				if (!isCardType(newRow.hermitCard, 'hermit')) continue
 				if (!rowHasEmptyItemSlot(newRow)) continue
-				return 'YES'
+
+				for (const item of items) {
+					if (!item) continue
+
+					for (let i = 0; i < 3; i++) {
+						const targetSlot = getSlotPos(player, index, 'item', i)
+
+						if (canAttachToSlot(game, targetSlot, item).length > 0) continue
+
+						// We're good to place
+						return result
+					}
+				}
 			}
 		}
 
-		return 'NO'
+		return [...result, 'UNMET_CONDITION']
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -99,12 +113,14 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemIndex: number = player.custom[itemIndexKey]
 
 				// Make sure we can attach the item
-				const itemCard = firstRow.itemCards[itemIndex]
-				// @NOWTODO call canAttachToSlot
-
-				// Move the item
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
+				const itemCard = firstRow.itemCards[itemIndex]
+				if (canAttachToSlot(game, targetPos, itemCard!).length > 0) {
+					return 'FAILURE_INVALID_SLOT'
+				}
+
+				// Move the item
 				swapSlots(game, itemPos, targetPos)
 
 				// Only add the after apply hook here

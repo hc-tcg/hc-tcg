@@ -2,10 +2,10 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {isCardType} from '../../../utils/cards'
-import {canAttachToSlot, swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, getSlotCard, swapSlots} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
-// @NOWTODO
 class LadderSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -18,30 +18,33 @@ class LadderSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const result = super.canAttach(game, pos)
 
 		const playerBoard = pos.player.board
 		const activeRowIndex = playerBoard.activeRow
-		if (activeRowIndex === null) return 'NO'
-		const activeRow = playerBoard.rows[activeRowIndex]
-		if (!activeRow.hermitCard) return 'NO'
+		if (activeRowIndex !== null) {
+			const activeRow = playerBoard.rows[activeRowIndex]
+			if (activeRow.hermitCard) {
+				// Check to see if there's a valid adjacent row to switch to
+				const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
+					(index) => index >= 0 && index < playerBoard.rows.length
+				)
 
-		const adjacentRowsIndex = [activeRowIndex - 1, activeRowIndex + 1].filter(
-			(index) => index >= 0 && index < playerBoard.rows.length
-		)
-		for (const index of adjacentRowsIndex) {
-			const row = playerBoard.rows[index]
-			if (!isCardType(row.hermitCard, 'hermit')) continue
-			const hermitSlot = getSlotPos(pos.player, index, 'hermit')
-			if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard) !== 'YES') continue
-			if (!row.hermitCard) continue
+				for (const index of adjacentRowsIndex) {
+					const row = playerBoard.rows[index]
+					if (!row.hermitCard) continue
 
-			return 'YES'
+					const hermitSlot = getSlotPos(pos.player, index, 'hermit')
+					if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard).length > 0) continue
+
+					// We found somewhere to attach
+					return result
+				}
+			}
 		}
 
-		return 'NO'
+		return [...result, 'UNMET_CONDITION']
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -71,12 +74,18 @@ class LadderSingleUseCard extends SingleUseCard {
 				const row = player.board.rows[pickedIndex]
 				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
 
+				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
+				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
+				const card = getSlotCard(activePos)
+
+				if (canAttachToSlot(game, inactivePos, card!).length > 0) {
+					return 'FAILURE_INVALID_SLOT'
+				}
+
 				// Apply
 				applySingleUse(game, [])
 
 				// Swap slots
-				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
-				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
 				swapSlots(game, activePos, inactivePos, true)
 
 				game.changeActiveRow(player, pickedIndex)
