@@ -17,16 +17,15 @@ class LightningRodEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const board = pos.player.board
 		if (board.rows.find((row) => row.effectCard?.cardId === this.id)) {
 			// Can't attach if there's already one attached
-			return 'NO'
+			result.push('UNMET_CONDITION')
 		}
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

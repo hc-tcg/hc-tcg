@@ -2,7 +2,7 @@ import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {isActive} from '../../../utils/game'
+import {hasActive} from '../../../utils/game'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
@@ -22,7 +22,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		// Need active hermit to play
-		if (!isActive(player)) result.push('UNMET_CONDITION')
+		if (!hasActive(player)) result.push('UNMET_CONDITION')
 
 		// Can't attach it there are not any inactive hermits
 		const playerHasAfk = getNonEmptyRows(player, true).some(

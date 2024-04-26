@@ -62,14 +62,13 @@ class BrushSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 		const {player} = pos
 
 		// Cannot use if you have 3 or less cards
-		if (player.pile.length <= 3) return 'NO'
+		if (player.pile.length <= 3) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

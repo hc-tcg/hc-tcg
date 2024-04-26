@@ -17,12 +17,14 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {opponentPlayer} = pos
 		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return 'NO'
+		if (activeRow === null) {
+			result.push('UNMET_CONDITION')
+			return result
+		}
 
 		const rows = opponentPlayer.board.rows
 		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
@@ -31,10 +33,11 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 
 		for (const row of targetIndex) {
 			const effectCard = rows[row].effectCard
-			if (effectCard && isRemovable(effectCard)) return 'YES'
+			if (effectCard && isRemovable(effectCard)) return result
 		}
 
-		return 'NO'
+		result.push('UNMET_CONDITION')
+		return result
 	}
 
 	override canApply() {
