@@ -12,6 +12,7 @@ import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
+import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 
@@ -189,13 +190,14 @@ const getSidebarDescriptions = (card: Card): React.ReactNode => {
 				</div>
 			)
 		}
-		if (description.type === 'overt') {
+		if (description.type === 'glossary') {
+			const glossaryItem = description.name
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{description.name}</u>
+						<u>{GLOSSARY[glossaryItem].name}</u>
 					</b>
-					<p>{description.description}</p>
+					<p>{GLOSSARY[glossaryItem].description}</p>
 				</div>
 			)
 		}

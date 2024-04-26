@@ -49,10 +49,8 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	override sidebarDescriptions() {
 		return [
 			{
-				type: 'overt',
-				name: 'Weak',
-				description:
-					"Hermits take 20hp extra damage if they are weak to the Hermit they were attacked by, provided the attack doesn't miss.",
+				type: 'glossary',
+				name: 'weak',
 			},
 		]
 	}

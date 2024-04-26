@@ -52,10 +52,8 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 	override sidebarDescriptions() {
 		return [
 			{
-				type: 'overt',
-				name: 'Missed',
-				description:
-					"Missed attacks deal 0 damage, but don't prevent any abilities from happening.",
+				type: 'glossary',
+				name: 'missed',
 			},
 		]
 	}

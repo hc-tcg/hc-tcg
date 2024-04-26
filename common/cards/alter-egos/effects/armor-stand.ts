@@ -116,9 +116,8 @@ class ArmorStandEffectCard extends EffectCard {
 	override sidebarDescriptions() {
 		return [
 			{
-				type: 'overt',
-				name: 'Knockout',
-				description: 'When your Hermit card is knocked out, you lose one life.',
+				type: 'glossary',
+				name: 'knockout',
 			},
 		]
 	}

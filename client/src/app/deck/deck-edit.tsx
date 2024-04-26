@@ -135,11 +135,6 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const initialDeckState = deck
 	const TYPED_CARDS = CARDS as Record<string, Card>
 	const HTYPE_CARDS = CARDS as Record<string, HermitCard | ItemCard>
-	const handleTooltips = () => {
-		dispatch(
-			setSetting('showAdvancedTooltips', settings.showAdvancedTooltips === 'on' ? 'off' : 'on')
-		)
-	}
 	const allCards = Object.values(TYPED_CARDS).map(
 		(card: Card): CardT => ({
 			cardId: card.id,
@@ -318,12 +313,15 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<div className={css.dynamicSpace} />
 							<button
 								className={css.dropdownButton}
-								title={
-									settings.showAdvancedTooltips === 'on'
-										? 'Hide advanced tooltips'
-										: 'Show advanced tooltips'
+								title={settings.showAdvancedTooltips === 'on' ? 'Hide Glossary' : 'Show Glossary'}
+								onClick={() =>
+									dispatch(
+										setSetting(
+											'showAdvancedTooltips',
+											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
+										)
+									)
 								}
-								onClick={handleTooltips}
 							>
 								<img
 									src={

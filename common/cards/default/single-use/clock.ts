@@ -66,10 +66,8 @@ class ClockSingleUseCard extends SingleUseCard {
 	override sidebarDescriptions() {
 		return [
 			{
-				type: 'overt',
-				name: 'Turn Skip',
-				description:
-					"A player who's turn is skipped can only choose to change their active Hermit. They still draw a card at the end of their turn. Turns cannot be skipped consecutively.",
+				type: 'glossary',
+				name: 'turnSkip',
 			},
 		]
 	}
