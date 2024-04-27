@@ -58,18 +58,18 @@ function Tooltip({children, tooltip, showAboveModal}: Props) {
 			})}
 			<FloatingPortal>
 				{open && (
-						<div
-							className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
-							ref={refs.setFloating}
-							style={{
-								position: strategy,
-								top: y ?? 0,
-								left: x ?? 0,
-							}}
-							{...getFloatingProps()}
-						>
-							{tooltip}
-						</div>
+					<div
+						className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
+						ref={refs.setFloating}
+						style={{
+							position: strategy,
+							top: y ?? 0,
+							left: x ?? 0,
+						}}
+						{...getFloatingProps()}
+					>
+						{tooltip}
+					</div>
 				)}
 			</FloatingPortal>
 		</>
