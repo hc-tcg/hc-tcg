@@ -212,18 +212,18 @@ const CardTooltip = ({card}: Props) => {
 
 	useEffect(() => {
 		if (settings.showAdvancedTooltips === 'off') return
+		if (card.sidebarDescriptions().length === 0) return
 		setRight(null)
 		setLeft(null)
 	})
 
-	const positionRef = (element: any) => {
+	const positionRef = (element: HTMLDivElement) => {
 		if (settings.showAdvancedTooltips === 'off') return
 		if (card.sidebarDescriptions().length === 0) return
-		if (element) {
-			const boundingRect = element.getBoundingClientRect()
-			setRight(boundingRect.right)
-			setLeft(boundingRect.left)
-		}
+		if (!element) return
+		const boundingRect = element.getBoundingClientRect()
+		setRight(boundingRect.right)
+		setLeft(boundingRect.left)
 	}
 
 	return (
@@ -241,25 +241,30 @@ const CardTooltip = ({card}: Props) => {
 						</div>
 					)}
 			</div>
-			<div>
-				<div className={css.cardTooltip}>
-					<div className={css.topLine}>
-						{getName(card)}
-						{getHermitType(card)}
-						{getAttach(card)}
-						{getSingleUse(card)}
-					</div>
-					<div className={css.description}>
-						{getRank(card)}
-						{getStrengthsAndWeaknesses(card)}
-						{getExpansion(card)}
-						{getDescription(card)}
+			{(card.sidebarDescriptions().length === 0 ||
+				settings.showAdvancedTooltips === 'off' ||
+				(right !== null && left !== null)) && (
+				<div>
+					<div className={css.cardTooltip}>
+						<div className={css.topLine}>
+							{getName(card)}
+							{getHermitType(card)}
+							{getAttach(card)}
+							{getSingleUse(card)}
+						</div>
+						<div className={css.description}>
+							{getRank(card)}
+							{getStrengthsAndWeaknesses(card)}
+							{getExpansion(card)}
+							{getDescription(card)}
+						</div>
 					</div>
 				</div>
-			</div>
-			{card.sidebarDescriptions().length > 0 && (
-				<div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>
 			)}
+			{card.sidebarDescriptions().length > 0 &&
+				settings.showAdvancedTooltips === 'on' &&
+				left !== null &&
+				right !== null && <div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>}
 		</div>
 	)
 }
