@@ -22,7 +22,7 @@ class OverseerRareHermitCard extends HermitCard {
 				name: 'Starched',
 				cost: ['miner', 'miner'],
 				damage: 80,
-				power: 'Does double damage versus Farm types',
+				power: 'Attack damage doubles versus Farm types.',
 			},
 		})
 	}

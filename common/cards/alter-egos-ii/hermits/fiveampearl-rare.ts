@@ -23,7 +23,7 @@ class FiveAMPearlRareHermitCard extends HermitCard {
 				name: 'Dogs of War',
 				cost: ['balanced', 'balanced'],
 				damage: 70,
-				power: 'If Wolf card is attached to this Hermit, deal an additional 30hp damage.',
+				power: 'If Wolf card is attached to this Hermit, do an additional 30hp damage.',
 			},
 		})
 	}
