@@ -48,8 +48,8 @@ export class GameModel {
 		}
 
 		this.players = {
-			[player1.playerId]: player1,
-			[player2.playerId]: player2,
+			[player1.id]: player1,
+			[player2.id]: player2,
 		}
 
 		this.state = getGameState(this)
