@@ -12,7 +12,7 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"If any of your Hermits are attacked on your opponent's turn, your opponent's active hermit takes 20hp damage. Must be placed on active Hermit, but still activates while on afk.",
+				"Attach to your active Hermit.\n\nIf any of your Hermits are attacked on your opponent's turn, your opponent's active Hermit takes 20hp damage. Still activates while attached to an AFK Hermit.",
 		})
 	}
 
