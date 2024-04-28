@@ -13,6 +13,13 @@ export class FirebaseLogs {
 	public db: Database | undefined
 
 	constructor() {
+		const env = process.env.NODE_ENV || 'development'
+		if (env == 'development') {
+			console.log('firebase_logs: logging disabled for dev mode')
+			this.enabled = false
+			return
+		}
+
 		try {
 			const serviceAccount: ServiceAccount = require('./adminKey.json')
 			const admin = require('firebase-admin')
@@ -27,8 +34,8 @@ export class FirebaseLogs {
 		}
 	}
 
-	register(root: RootModel) {
-		if (!this.enabled) return
+	register(root: RootModel): boolean {
+		if (!this.enabled) return false
 
 		root.hooks.newGame.add(this.id, (game) => {
 			if (game.code) {
@@ -104,5 +111,7 @@ export class FirebaseLogs {
 				delete this.gameLogs[game.id]
 			}
 		})
+
+		return true
 	}
 }
