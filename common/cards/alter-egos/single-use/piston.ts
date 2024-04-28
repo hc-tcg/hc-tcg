@@ -47,7 +47,7 @@ class PistonSingleUseCard extends SingleUseCard {
 					for (let i = 0; i < 3; i++) {
 						const targetSlot = getSlotPos(player, index, 'item', i)
 
-						if (canAttachToSlot(game, targetSlot, item).length > 0) continue
+						if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
 
 						// We're good to place
 						return result
@@ -116,7 +116,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
 				const itemCard = firstRow.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!).length > 0) {
+				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
 					return 'FAILURE_INVALID_SLOT'
 				}
 

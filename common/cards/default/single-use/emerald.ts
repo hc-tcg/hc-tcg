@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
-import {canAttachToSlot, exceptInvalidPlayer, swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -38,14 +38,14 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
 			if (playerEffect) {
-				const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect)
-				if (canAttach.filter(exceptInvalidPlayer).length > 0) result.push('UNMET_CONDITION')
+				const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect, true)
+				if (canAttach.length > 0) result.push('UNMET_CONDITION')
 				if (!isRemovable(playerEffect)) result.push('UNMET_CONDITION')
 			}
 
 			if (opponentEffect) {
-				const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect)
-				if (canAttach.filter(exceptInvalidPlayer).length > 0) result.push('UNMET_CONDITION')
+				const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect, true)
+				if (canAttach.length > 0) result.push('UNMET_CONDITION')
 				if (!isRemovable(opponentEffect)) result.push('UNMET_CONDITION')
 			}
 		}

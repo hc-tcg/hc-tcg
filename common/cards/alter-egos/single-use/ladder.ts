@@ -36,7 +36,7 @@ class LadderSingleUseCard extends SingleUseCard {
 					if (!row.hermitCard) continue
 
 					const hermitSlot = getSlotPos(pos.player, index, 'hermit')
-					if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard).length > 0) continue
+					if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard, true).length > 0) continue
 
 					// We found somewhere to attach
 					return result
@@ -78,7 +78,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				const inactivePos = getSlotPos(player, pickedIndex, 'hermit')
 				const card = getSlotCard(activePos)
 
-				if (canAttachToSlot(game, inactivePos, card!).length > 0) {
+				if (canAttachToSlot(game, inactivePos, card!, true).length > 0) {
 					return 'FAILURE_INVALID_SLOT'
 				}
 

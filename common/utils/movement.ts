@@ -178,7 +178,19 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): CanAttachResult {
+/** Filters a `CanAttachResult` to remove all `'INVALID_PLAYER'` problems for movement checks */
+function exceptInvalidPlayer(
+	result: CanAttachResult[number]
+): result is Exclude<typeof result, 'INVALID_PLAYER'> {
+	return result !== 'INVALID_PLAYER'
+}
+
+export function canAttachToSlot(
+	game: GameModel,
+	slotPos: SlotPos,
+	card: CardT,
+	excludeInvalidPlayer = false
+): CanAttachResult {
 	const {player, rowIndex, row, slot} = slotPos
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
 	if (!opponentPlayerId) return ['UNKNOWN_ERROR']
@@ -198,14 +210,10 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 	const canAttach = cardInfo.canAttach(game, pos)
 	player.hooks.canAttach.call(canAttach, pos)
 
+	if (excludeInvalidPlayer) {
+		return canAttach.filter(exceptInvalidPlayer)
+	}
 	return canAttach
-}
-
-/** Filters a `CanAttachResult` to remove all `'INVALID_PLAYER'` problems for movement checks */
-export function exceptInvalidPlayer(
-	result: CanAttachResult[number]
-): result is Exclude<typeof result, 'INVALID_PLAYER'> {
-	return result !== 'INVALID_PLAYER'
 }
 
 /** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
@@ -227,12 +235,12 @@ export function swapSlots(
 	const cardB = getSlotCard(slotBPos)
 	if (cardB) {
 		// Return false if we can't attach for any reason other than wrong player
-		const canAttachResult = canAttachToSlot(game, slotAPos, cardB).filter(exceptInvalidPlayer)
+		const canAttachResult = canAttachToSlot(game, slotAPos, cardB, true)
 		if (canAttachResult.length > 0) return false
 	}
 	if (cardA) {
 		// Return false if we can't attach for any reason other than wrong player
-		const canAttachResult = canAttachToSlot(game, slotBPos, cardA).filter(exceptInvalidPlayer)
+		const canAttachResult = canAttachToSlot(game, slotBPos, cardA, true)
 		if (canAttachResult.length > 0) return false
 	}
 
