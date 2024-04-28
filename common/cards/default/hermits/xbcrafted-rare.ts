@@ -24,7 +24,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				cost: ['explorer', 'any'],
 				damage: 70,
 				power:
-					"Any effect card attached to your opponent's active Hermit is ignored during this attack.",
+					"Any effect card attached to your opponent's Hermits are ignored during this attack.",
 			},
 		})
 	}
