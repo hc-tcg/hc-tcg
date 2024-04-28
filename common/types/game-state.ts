@@ -1,6 +1,6 @@
 import {CanAttachResult} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
-import {BattleLog} from '../models/battle-log'
+import {BattleLogModel} from '../models/battle-log-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
@@ -335,7 +335,7 @@ export type LocalGameRoot = {
 		outcome: GameEndOutcomeT
 	} | null
 	chat: Array<MessageInfoT>
-	battleLog: BattleLog | null
+	battleLog: BattleLogModel | null
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }

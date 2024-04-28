@@ -11,7 +11,7 @@ import {
 	RowState,
 	RowStateWithHermit,
 } from '../types/game-state'
-import {BattleLogFormatT} from '../models/battle-log'
+import {BattleLogFormatT} from '../models/battle-log-model'
 
 export function getActiveRow(player: PlayerState) {
 	if (player.board.activeRow === null) return null
