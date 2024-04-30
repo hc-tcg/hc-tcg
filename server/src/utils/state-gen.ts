@@ -15,7 +15,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {EnergyT, SlotPos} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card from 'common/cards/base/card'
+import Card, {CanAttachResult} from 'common/cards/base/card'
 import HermitCard from 'common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import EffectCard from 'common/cards/base/effect-card'
@@ -223,6 +223,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
+			canAttach: new GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>(),
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
 			beforeApply: new GameHook<() => void>(),

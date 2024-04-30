@@ -43,7 +43,12 @@ export function getRowPos(cardPos: CardPosModel): RowPos | null {
 	}
 }
 
-export function getSlotPos(player: PlayerState, rowIndex: number, type: BoardSlotTypeT, index = 0): SlotPos {
+export function getSlotPos(
+	player: PlayerState,
+	rowIndex: number,
+	type: BoardSlotTypeT,
+	index = 0
+): SlotPos {
 	return {
 		player,
 		rowIndex,
@@ -211,20 +216,4 @@ export function removeStatusEffect(
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
-}
-
-export function canAttachToCard(
-	game: GameModel,
-	card: CardT | null,
-	cardAttaching: CardT | null
-): boolean {
-	if (!card || !cardAttaching) return false
-
-	const cardAttachingPos = getCardPos(game, cardAttaching.cardInstance)
-	const cardInfo = CARDS[card.cardId]
-	if (!cardAttachingPos || !cardInfo) return false
-
-	if (!cardInfo.canAttachToCard(game, cardAttachingPos)) return false
-
-	return true
 }

@@ -34,11 +34,11 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+		const result = super.canAttach(game, pos)
 
-		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+		if (pos.opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

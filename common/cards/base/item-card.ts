@@ -1,4 +1,4 @@
-import Card from './card'
+import Card, {CanAttachResult} from './card'
 import {CARDS} from '..'
 import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
@@ -28,20 +28,18 @@ abstract class ItemCard extends Card {
 		this.hermitType = defs.hermitType
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel) {
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
 		const {currentPlayer} = game
 
-		if (pos.slot.type !== 'item') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		const result: CanAttachResult = []
 
-		// Can't attach without hermit - this is treated like invalid slot
-		if (!pos.row?.hermitCard) return 'INVALID'
+		if (pos.slot.type !== 'item') result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 
-		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
-		if (!cardInfo) return 'INVALID'
-		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+		// Can't attach without hermit - this does not show the unment condition modal
+		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		return 'YES'
+		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {

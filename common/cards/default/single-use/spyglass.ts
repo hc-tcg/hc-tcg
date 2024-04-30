@@ -86,17 +86,13 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
-		// Gem can use 2 spyglasses on the same turn
-		if (opponentPlayer.hand.length === 0) return 'NO'
+		if (opponentPlayer.hand.length === 0) result.push('UNMET_CONDITION')
+		if (game.state.turn.turnNumber === 1) result.push('UNMET_CONDITION')
 
-		// They can discard the only hermit in their hand
-		if (game.state.turn.turnNumber === 1) return 'NO'
-
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

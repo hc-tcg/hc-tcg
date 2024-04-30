@@ -1,8 +1,9 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
+import {getActiveRow, isRowEmpty} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardToHand} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class LootingSingleUseCard extends SingleUseCard {
@@ -13,12 +14,22 @@ class LootingSingleUseCard extends SingleUseCard {
 			name: 'Looting',
 			rarity: 'rare',
 			description:
-				'Flip a coin. If heads, pick 1 item card from your opponent\'s active Hermit and add it to your hand.',
+				"Flip a coin. If heads, pick 1 item card from your opponent's active Hermit and add it to your hand.",
 		})
 	}
 
 	override canApply() {
 		return true
+	}
+
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const result = super.canAttach(game, pos)
+
+		const {opponentPlayer} = pos
+		const opponentActiveRow = getActiveRow(opponentPlayer)
+		if (!opponentActiveRow || isRowEmpty(opponentActiveRow)) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -37,7 +48,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
 
 					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
@@ -57,20 +68,6 @@ class LootingSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-		const {opponentPlayer} = pos
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (!opponentActiveRow) return 'NO'
-
-		const noItems = opponentActiveRow.itemCards.every((card) => card === null)
-
-		if (noItems) return 'NO'
-
-		return 'YES'
 	}
 }
 
