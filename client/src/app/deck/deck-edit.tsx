@@ -313,7 +313,11 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							<div className={css.dynamicSpace} />
 							<button
 								className={css.dropdownButton}
-								title={settings.showAdvancedTooltips === 'on' ? 'Hide Glossary' : 'Show Glossary'}
+								title={
+									settings.showAdvancedTooltips === 'on'
+										? 'Hide detailed descriptions'
+										: 'Show detailed descriptions'
+								}
 								onClick={() =>
 									dispatch(
 										setSetting(
