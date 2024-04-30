@@ -8,8 +8,8 @@ const root = new RootModel()
 
 // initialize plugins
 plugins.forEach((plugin) => {
-	plugin.register(root)
-	console.log('plugin registered: ' + plugin.id)
+	const result = plugin.register(root)
+	if (result) console.log('plugin registered: ' + plugin.id)
 })
 
 export default root

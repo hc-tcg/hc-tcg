@@ -17,16 +17,14 @@ class BowSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
 		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveRows.length === 0) return 'NO'
+		if (inactiveRows.length === 0) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -39,7 +37,7 @@ class BowSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

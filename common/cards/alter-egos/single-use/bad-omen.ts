@@ -2,6 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
+import {hasActive} from '../../../utils/game'
 
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -40,13 +41,11 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {opponentPlayer} = pos
 
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) return 'NO'
+		if (!hasActive(opponentPlayer)) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override getExpansion() {

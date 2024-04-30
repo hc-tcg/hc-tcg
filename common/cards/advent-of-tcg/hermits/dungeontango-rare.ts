@@ -50,7 +50,7 @@ class DungeonTangoRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Choose an item card to discard',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'

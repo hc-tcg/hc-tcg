@@ -1,6 +1,6 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import Card from './card'
+import Card, {CanAttachResult} from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -38,13 +38,15 @@ abstract class HermitCard extends Card {
 		this.secondary = defs.secondary
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
 		const {currentPlayer} = game
 
-		if (pos.slot.type !== 'hermit') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		const result: CanAttachResult = []
 
-		return 'YES'
+		if (pos.slot.type !== 'hermit') result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
+
+		return result
 	}
 
 	// Default is to return

@@ -3,6 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {TurnActions} from '../../../types/game-state'
 import {discardCard, isSlotEmpty} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import EffectCard from '../../base/effect-card'
 
 class SlimeballEffectCard extends EffectCard {
@@ -18,15 +19,12 @@ class SlimeballEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (pos.slot.type !== 'effect') return 'INVALID'
+		const result: CanAttachResult = []
+		if (pos.slot.type !== 'effect') result.push('INVALID_SLOT')
 
-		if (!pos.row?.hermitCard) return 'INVALID'
+		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		const cardInfo = CARDS[pos.row.hermitCard.cardId]
-		if (!cardInfo) return 'INVALID'
-		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
-
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

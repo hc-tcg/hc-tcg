@@ -9,7 +9,7 @@ function* playerConnectedSaga(action: any) {
 
 	if (action.payload.playerId) {
 		const existingPlayer = root.players[action.payload.playerId]
-		const validPlayer = existingPlayer?.playerSecret === action.payload.playerSecret
+		const validPlayer = existingPlayer?.secret === action.payload.playerSecret
 
 		if (validPlayer) {
 			existingPlayer.socket = socket
@@ -17,7 +17,7 @@ function* playerConnectedSaga(action: any) {
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.playerDeck,
+				payload: existingPlayer.deck,
 			})
 		} else {
 			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
@@ -45,7 +45,7 @@ function* playerDisconnectedSaga(action: any) {
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
-	const {playerId: playerId} = player
+	const {id: playerId} = player
 
 	// Remove player from queues straight away
 	root.hooks.playerLeft.call(player)
@@ -74,7 +74,7 @@ function* updateDeckSaga(action: any) {
 
 	player.socket?.emit('NEW_DECK', {
 		type: 'NEW_DECK',
-		payload: player.playerDeck,
+		payload: player.deck,
 	})
 }
 

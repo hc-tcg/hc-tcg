@@ -17,15 +17,13 @@ class WolfEffectCard extends EffectCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {currentPlayer} = game
-
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
+		const {player} = pos
 
 		// wolf addition - hermit must also be active to attach
-		if (!(currentPlayer.board.activeRow === pos.rowIndex)) return 'NO'
+		if (!(player.board.activeRow === pos.rowIndex)) result.push('INVALID_SLOT')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

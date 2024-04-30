@@ -45,17 +45,16 @@ class ClockSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
+		const result = super.canAttach(game, pos)
 
 		if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
-			return 'INVALID'
+			result.push('UNMET_CONDITION')
 		}
 
-		if (canAttach !== 'YES') return canAttach
-
 		// The other player wouldn't be able to attach anything
-		if (game.state.turn.turnNumber === 1) return 'NO'
-		return 'YES'
+		if (game.state.turn.turnNumber === 1) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

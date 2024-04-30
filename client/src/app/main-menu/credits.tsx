@@ -27,7 +27,7 @@ function Credits({setMenuSection}: Props) {
 					handle="@_inkGhoul"
 					social="twitter"
 					link="https://twitter.com/_InkGhoul"
-					avatar="https://pbs.twimg.com/profile_images/1649526891374841856/6nwnDz20_400x400.jpg"
+					avatar="https://pbs.twimg.com/profile_images/1779336099556675584/jXzagXkR_400x400.jpg"
 				/>
 			</div>
 			<h2>Website Developers</h2>
@@ -72,7 +72,7 @@ function Credits({setMenuSection}: Props) {
 					name="Scopop"
 					handle="scopop"
 					social="discord"
-					avatar="https://cdn.discordapp.com/avatars/625061304939446273/6ec5d4462e4d4a0e4833ed908dbd9c2f.webp"
+					avatar="https://cdn.discordapp.com/avatars/625061304939446273/9149b6f7d531c89afc1dbdb9000a494e.webp"
 				/>
 				<Credit
 					name="Sense_101"
