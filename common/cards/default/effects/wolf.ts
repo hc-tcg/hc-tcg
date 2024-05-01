@@ -35,7 +35,7 @@ class WolfEffectCard extends EffectCard {
 			player.custom[activated] = false
 		})
 
-		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Only on opponents turn
@@ -73,7 +73,7 @@ class WolfEffectCard extends EffectCard {
 		// Delete hooks and custom
 		delete player.custom[this.getInstanceKey(instance, 'activated')]
 		opponentPlayer.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 
