@@ -12,8 +12,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			numericId: 8,
 			name: 'Crossbow',
 			rarity: 'rare',
-			description:
-				"Do an additional 20hp damage to up to three of your opponent's active or AFK Hermits.",
+			description: "Do 20hp damage to up to three of your opponent's active or AFK Hermits.",
 		})
 	}
 

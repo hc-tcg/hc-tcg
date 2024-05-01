@@ -15,7 +15,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			name: 'Trident',
 			rarity: 'rare',
 			description:
-				'Do an additional 30hp damage.\n\nFlip a coin.\n\nIf heads, this card is returned to your hand.',
+				"Do 30hp damage to your opponent's active Hermit.\n\nFlip a coin.\n\nIf heads, this card is returned to your hand.",
 		})
 	}
 
