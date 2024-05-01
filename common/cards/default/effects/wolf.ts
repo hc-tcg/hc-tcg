@@ -12,7 +12,7 @@ class WolfEffectCard extends EffectCard {
 			name: 'Wolf',
 			rarity: 'rare',
 			description:
-				"Attach to your active Hermit.\n\nIf any of your Hermits are attacked on your opponent's turn, your opponent's active Hermit takes 20hp damage. Still activates while attached to an AFK Hermit.",
+				"Attach to your active Hermit.\n\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage. Still activates while attached to an AFK Hermit.",
 		})
 	}
 
@@ -44,6 +44,9 @@ class WolfEffectCard extends EffectCard {
 			// Make sure they are targeting this player
 			const target = attack.getTarget()
 			if (!target || target.player.id !== player.id) return
+
+			// Make sure the attack is doing some damage
+			if (attack.calculateDamage() <= 0) return
 
 			if (player.custom[activated]) return
 			player.custom[activated] = true
