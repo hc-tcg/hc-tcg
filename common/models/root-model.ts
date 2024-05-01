@@ -15,6 +15,7 @@ export class RootModel {
 		playerJoined: new Hook<(player: PlayerModel) => void>(),
 		playerLeft: new Hook<(player: PlayerModel) => void>(),
 	}
+	public updates: Record<string, Array<string>> = {}
 
 	public getGameIds() {
 		return Object.keys(this.games)

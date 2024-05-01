@@ -1,7 +1,13 @@
 import {all, take, fork, call, race} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import socketSaga from 'logic/socket/socket-saga'
-import {loginSaga, logoutSaga, newDeckSaga, minecraftNameSaga} from 'logic/session/session-saga'
+import {
+	loginSaga,
+	logoutSaga,
+	newDeckSaga,
+	minecraftNameSaga,
+	updatesSaga,
+} from 'logic/session/session-saga'
 import matchmakingSaga from 'logic/matchmaking/matchmaking-saga'
 import fbdbSaga from 'logic/fbdb/fbdb-saga'
 import localSettingsSaga from 'logic/local-settings/local-settings-saga'
@@ -12,6 +18,7 @@ function* appSaga(): SagaIterator {
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(minecraftNameSaga)
+	yield fork(updatesSaga)
 	yield fork(matchmakingSaga)
 }
 
