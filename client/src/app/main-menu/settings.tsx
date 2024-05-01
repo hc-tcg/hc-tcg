@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'
@@ -8,6 +8,10 @@ import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
+import AlertModal from 'components/alert-modal'
+import { getUpdates } from 'logic/session/session-selectors'
+import DOMPurify from 'dompurify'
+import { toHTML } from 'discord-markdown'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -47,64 +51,118 @@ function Settings({setMenuSection}: Props) {
 
 	const handleCredits = () => setMenuSection('credits')
 
-	return (
-		<MenuLayout
-			back={() => setMenuSection('mainmenu')}
-			title="More"
-			returnText="Main Menu"
-			className={css.settingsMenu}
-		>
-			<div className={css.settings}>
-				<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-					Music: {getPercDescriptor(settings.musicVolume)}
-				</Slider>
-				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-					Sounds: {getPercDescriptor(settings.soundVolume)}
-				</Slider>
-				<Button variant="stone" onClick={handlePanoramaToggle}>
-					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-				</Button>
-				<Button variant="stone" onClick={handleGameSettings}>
-					Game Settings
-				</Button>
-				<Button variant="stone" onClick={handleCredits}>
-					Credits
-				</Button>
-			</div>
+	const updates = useSelector(getUpdates)
+	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
+	const latestUpdateElement = useRef<HTMLLIElement>(null)
+	useEffect(() => {
+		latestUpdateElement.current?.scrollIntoView({
+			behavior: 'instant',
+			block: 'start',
+		})
+	})
+	const handleUpdates = () => {setUpdatesOpen(true)}
 
-			<h2>Statistics</h2>
-			<div className={css.settings}>
-				<div className={css.stats}>
-					<div className={css.stat}>
-						<span>Games Played</span>
-						<span>{totalGames}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Wins</span>
-						<span>{stats.w}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Losses</span>
-						<span>{stats.l}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Ties</span>
-						<span>{stats.t}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Wins</span>
-						<span>{stats.fw}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Losses</span>
-						<span>{stats.fl}</span>
-					</div>
+	return (
+		<>
+			{updatesOpen ? (
+				<AlertModal
+					setOpen={updatesOpen}
+					onClose={() => {
+						setUpdatesOpen(false)
+						localStorage.setItem('latestUpdateView', (new Date().valueOf() / 1000).toFixed())
+					}}
+					cancelText="Close"
+					title="Latest updates"
+					action={() => {}}
+					description={
+						<ul className={css.updatesList}>
+							{updates['updates'] ? (
+								updates['updates'].map((text, i) => {
+									return (
+										<>
+											<li
+												className={css.updateItem}
+												key={i + 1}
+												dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
+												ref={i === 0 ? latestUpdateElement : undefined}
+											/>
+											<hr key={-i} className={css.updateSeperator} />
+										</>
+									)
+								})
+							) : (
+								<li className={css.updateItem}>Failed to load updates</li>
+							)}
+							<li key={20} className={css.updateItem}>
+								For more updates, visit the HC-TCG discord.
+							</li>
+						</ul>
+					}
+				/>
+			) : (
+				<></>
+			)}
+			<MenuLayout
+				back={() => setMenuSection('mainmenu')}
+				title="More"
+				returnText="Main Menu"
+				className={css.settingsMenu}
+			>
+				<div className={css.settings}>
+					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+						Music: {getPercDescriptor(settings.musicVolume)}
+					</Slider>
+					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+						Sounds: {getPercDescriptor(settings.soundVolume)}
+					</Slider>
+					<Button variant="stone" onClick={handlePanoramaToggle}>
+						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+					</Button>
+					<Button variant="stone" onClick={handleGameSettings}>
+						Game Settings
+					</Button>
+					<Button variant="stone" onClick={handleCredits}>
+						Credits
+					</Button>
+					<Button variant="stone" onClick={handleUpdates}>
+						Updates
+					</Button>
 				</div>
-				<Button variant="stone" onClick={handleResetStats}>
-					{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
-				</Button>
-			</div>
-		</MenuLayout>
+
+				<h2>Statistics</h2>
+				<div className={css.settings}>
+					<div className={css.stats}>
+						<div className={css.stat}>
+							<span>Games Played</span>
+							<span>{totalGames}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Wins</span>
+							<span>{stats.w}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Losses</span>
+							<span>{stats.l}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Ties</span>
+							<span>{stats.t}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Forfeit Wins</span>
+							<span>{stats.fw}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Forfeit Losses</span>
+							<span>{stats.fl}</span>
+						</div>
+					</div>
+					<Button variant="stone" onClick={handleResetStats}>
+						{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
+					</Button>
+				</div>
+			</MenuLayout>
+		</>
 	)
 }
 
