@@ -315,8 +315,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								className={css.dropdownButton}
 								title={
 									settings.showAdvancedTooltips === 'on'
-										? 'Hide detailed descriptions'
-										: 'Show detailed descriptions'
+										? 'Hide detailed tooltips'
+										: 'Show detailed tooltips'
 								}
 								onClick={() =>
 									dispatch(

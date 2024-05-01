@@ -18,9 +18,7 @@ function TooltipsItem() {
 		<button
 			className={css.item}
 			title={
-				settings.showAdvancedTooltips === 'on'
-					? 'Hide detailed descriptions'
-					: 'Show detailed descriptions'
+				settings.showAdvancedTooltips === 'on' ? 'Hide detailed tooltips' : 'Show detailed tooltips'
 			}
 			onClick={handleTooltips}
 		>
