@@ -31,10 +31,12 @@ class LightningRodEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row, rowIndex} = pos
 
-		// Only on opponents turn
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (!row || rowIndex === null || !row.hermitCard) return
+
+			// Only on opponents turn
+			if (game.currentPlayerId !== opponentPlayer.id) return
 
 			// Attack already has to be targeting us
 			if (attack.getTarget()?.player.id !== player.id) return
