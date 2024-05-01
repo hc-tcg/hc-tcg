@@ -26,8 +26,8 @@ class HealthCard extends Card {
 		this.health = defs.health
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		return 'YES'
+	public override canAttach(game: GameModel, pos: CardPosModel) {
+		return []
 	}
 }
 

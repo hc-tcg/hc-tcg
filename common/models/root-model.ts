@@ -30,7 +30,7 @@ export class RootModel {
 		return Object.values(this.players)
 	}
 	public addPlayer(player: PlayerModel) {
-		this.players[player.playerId] = player
+		this.players[player.id] = player
 	}
 	public addGame(game: GameModel) {
 		this.games[game.id] = game

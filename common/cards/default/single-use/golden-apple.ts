@@ -2,7 +2,7 @@ import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {isActive} from '../../../utils/game'
+import {hasActive} from '../../../utils/game'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 
 class GoldenAppleSingleUseCard extends SingleUseCard {
@@ -17,21 +17,20 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
 
 		// Need active hermit to play
-		if (!isActive(player)) return 'NO'
+		if (!hasActive(player)) result.push('UNMET_CONDITION')
 
 		// Can't attach it there are not any inactive hermits
 		const playerHasAfk = getNonEmptyRows(player, true).some(
 			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 		)
-		if (!playerHasAfk) return 'NO'
+		if (!playerHasAfk) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -42,7 +41,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick one of your AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

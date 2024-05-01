@@ -23,7 +23,7 @@ function* gameManager(game: GameModel) {
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
+			`Players: ${players[0].name} + ${players[1].name}.`,
 			'Total games:',
 			root.getGameIds().length
 		)
@@ -54,7 +54,7 @@ function* gameManager(game: GameModel) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
 			}
-			const outcome = getGamePlayerOutcome(game, result, player.playerId)
+			const outcome = getGamePlayerOutcome(game, result, player.id)
 			broadcast([player], 'GAME_END', {
 				gameState,
 				outcome,
@@ -162,7 +162,7 @@ function* joinQueue(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join queue] Player is already in game or queue:', player.playerName)
+		console.log('[Join queue] Player is already in game or queue:', player.name)
 		broadcast([player], 'JOIN_QUEUE_FAILURE')
 		return
 	}
@@ -170,7 +170,7 @@ function* joinQueue(msg: ClientMessage) {
 	// Add them to the queue
 	root.queue.push(playerId)
 	broadcast([player], 'JOIN_QUEUE_SUCCESS')
-	console.log(`Joining queue: ${player.playerName}`)
+	console.log(`Joining queue: ${player.name}`)
 }
 
 function* leaveQueue(msg: ClientMessage) {
@@ -187,10 +187,10 @@ function* leaveQueue(msg: ClientMessage) {
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
 		broadcast([player], 'LEAVE_QUEUE_SUCCESS')
-		console.log(`Left queue: ${player.playerName}`)
+		console.log(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], 'LEAVE_QUEUE_FAILURE')
-		console.log('[Leave queue]: Player tried to leave queue when not there:', player.playerName)
+		console.log('[Leave queue]: Player tried to leave queue when not there:', player.name)
 	}
 }
 
@@ -203,7 +203,7 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Create private game] Player is already in game or queue:', player.playerName)
+		console.log('[Create private game] Player is already in game or queue:', player.name)
 		broadcast([player], 'CREATE_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -218,7 +218,7 @@ function* createPrivateGame(msg: ClientMessage) {
 	// Send code to player
 	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', gameCode)
 
-	console.log(`Private game created by ${player.playerName}.`, `Code: ${gameCode}`)
+	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
 }
 
 function* joinPrivateGame(msg: ClientMessage) {
@@ -230,7 +230,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join private game] Player is already in game or queue:', player.playerName)
+		console.log('[Join private game] Player is already in game or queue:', player.name)
 		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -260,7 +260,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 		// Remove this game from the queue, it's started
 		delete root.privateQueue[code]
 
-		console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
+		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
 		broadcast([player], 'JOIN_PRIVATE_GAME_SUCCESS')
 		yield* fork(gameManager, newGame)
@@ -269,7 +269,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 		root.privateQueue[code].playerId = playerId
 		broadcast([player], 'WAITING_FOR_PLAYER')
 
-		console.log(`Joining empty private game: ${player.playerName}.`, `Code: ${code}`)
+		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
 	}
 }
 
@@ -294,18 +294,18 @@ function onPlayerLeft(player: PlayerModel) {
 	// Remove player from all queues
 
 	// Public queue
-	if (root.queue.some((id) => id === player.playerId)) {
-		const queueIndex = root.queue.indexOf(player.playerId)
+	if (root.queue.some((id) => id === player.id)) {
+		const queueIndex = root.queue.indexOf(player.id)
 		if (queueIndex >= 0) {
 			root.queue.splice(queueIndex, 1)
-			console.log(`Left queue: ${player.playerName}`)
+			console.log(`Left queue: ${player.name}`)
 		}
 	}
 
 	// Private queue
 	for (let code in root.privateQueue) {
 		const info = root.privateQueue[code]
-		if (info.playerId && info.playerId === player.playerId) {
+		if (info.playerId && info.playerId === player.id) {
 			delete root.privateQueue[code]
 			console.log(`Private game cancelled. Code: ${code}`)
 		}

@@ -34,8 +34,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
 		const activeRow = getActiveRow(player)
@@ -44,9 +43,9 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			(a) =>
 				a.targetInstance == activeRow?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
 		)
-		if (isSleeping) return 'NO'
+		if (isSleeping) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

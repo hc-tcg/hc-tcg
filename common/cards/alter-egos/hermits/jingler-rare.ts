@@ -46,7 +46,7 @@ class JinglerRareHermitCard extends HermitCard {
 				message: 'Pick 1 card from your hand to discard',
 				onResult(pickResult) {
 					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 
 					discardFromHand(opponentPlayer, pickResult.card)
