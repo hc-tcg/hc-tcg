@@ -14,7 +14,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do 40hp damage to your opponent's active Hermit.\n\nAny effect cards attached to your opponent's active and AFK Hermits are ignored during this attack.",
+				"Do 40hp damage to your opponent's active Hermit.\n\nAny effect cards attached to your opponent's active Hermit are ignored during this turn.",
 		})
 	}
 
@@ -64,24 +64,11 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			})
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id === attackId) {
-				// Clean up
-				player.hooks.getAttacks.remove(instance)
-				player.hooks.beforeAttack.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-			}
+		player.hooks.onTurnEnd.add(instance, () => {
+			player.hooks.getAttacks.remove(instance)
+			player.hooks.beforeAttack.remove(instance)
+			player.hooks.afterAttack.remove(instance)
 		})
-	}
-
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		// Clean up on detach
-		player.hooks.getAttacks.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
 	}
 
 	override canAttack() {
