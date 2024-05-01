@@ -1,0 +1,24 @@
+.updatesList {
+	display: flex;
+	flex-direction: column-reverse;
+	align-items: center;
+	overflow-y: scroll;
+	color: var(--text-light);
+	gap: 10px;
+	max-height: 40vh;
+	height: 100%;
+
+	a {
+		color: cyan;
+	}
+}
+
+.updateItem {
+	width: 100%;
+	padding: 1%;
+	text-align: center;
+}
+
+.updateSeperator {
+	width: 90%;
+}

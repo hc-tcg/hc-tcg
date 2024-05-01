@@ -12,6 +12,7 @@ import AlertModal from 'components/alert-modal'
 import { getUpdates } from 'logic/session/session-selectors'
 import DOMPurify from 'dompurify'
 import { toHTML } from 'discord-markdown'
+import UpdatesModal from 'components/updates'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -51,54 +52,13 @@ function Settings({setMenuSection}: Props) {
 
 	const handleCredits = () => setMenuSection('credits')
 
-	const updates = useSelector(getUpdates)
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
-	const latestUpdateElement = useRef<HTMLLIElement>(null)
-	useEffect(() => {
-		latestUpdateElement.current?.scrollIntoView({
-			behavior: 'instant',
-			block: 'start',
-		})
-	})
 	const handleUpdates = () => {setUpdatesOpen(true)}
 
 	return (
 		<>
 			{updatesOpen ? (
-				<AlertModal
-					setOpen={updatesOpen}
-					onClose={() => {
-						setUpdatesOpen(false)
-						localStorage.setItem('latestUpdateView', (new Date().valueOf() / 1000).toFixed())
-					}}
-					cancelText="Close"
-					title="Latest updates"
-					action={() => {}}
-					description={
-						<ul className={css.updatesList}>
-							{updates['updates'] ? (
-								updates['updates'].map((text, i) => {
-									return (
-										<>
-											<li
-												className={css.updateItem}
-												key={i + 1}
-												dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
-												ref={i === 0 ? latestUpdateElement : undefined}
-											/>
-											<hr key={-i} className={css.updateSeperator} />
-										</>
-									)
-								})
-							) : (
-								<li className={css.updateItem}>Failed to load updates</li>
-							)}
-							<li key={20} className={css.updateItem}>
-								For more updates, visit the HC-TCG discord.
-							</li>
-						</ul>
-					}
-				/>
+				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
 			) : (
 				<></>
 			)}
