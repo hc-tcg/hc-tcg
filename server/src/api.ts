@@ -114,6 +114,12 @@ export function registerApis(app: import('express').Express) {
 			}
 		})
 
+		fetch(`${CONFIG.botUrl}/updates`).then(async (response) => {
+			response.json().then((jsonResponse) => {
+				root.updates = jsonResponse as Record<string, Array<string>>
+			})
+		})
+
 		console.log('apis registered')
 	} catch (err) {
 		console.log('no api keys found')

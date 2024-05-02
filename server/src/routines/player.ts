@@ -91,9 +91,20 @@ function* updateMinecraftNameSaga(action: any) {
 	})
 }
 
+function* loadUpdatesSaga(action: any) {
+	const {playerId} = action
+	const player = root.players[playerId]
+
+	player.socket?.emit('LOAD_UPDATES', {
+		type: 'LOAD_UPDATES',
+		payload: root.updates,
+	})
+}
+
 export function* playerSaga() {
 	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
 	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
 	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
 	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
+	yield* takeEvery('GET_UPDATES', loadUpdatesSaga)
 }

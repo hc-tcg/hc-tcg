@@ -35,13 +35,18 @@ class WolfEffectCard extends EffectCard {
 			player.custom[activated] = false
 		})
 
-		// Only on opponent's turn
-		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
+
+			// Only on opponents turn
+			if (game.currentPlayerId !== opponentPlayer.id) return
 
 			// Make sure they are targeting this player
 			const target = attack.getTarget()
 			if (!target || target.player.id !== player.id) return
+
+			// Make sure the attack is doing some damage
+			if (attack.calculateDamage() <= 0) return
 
 			if (player.custom[activated]) return
 			player.custom[activated] = true
@@ -68,7 +73,7 @@ class WolfEffectCard extends EffectCard {
 		// Delete hooks and custom
 		delete player.custom[this.getInstanceKey(instance, 'activated')]
 		opponentPlayer.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 

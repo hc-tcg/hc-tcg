@@ -4,7 +4,13 @@ import {SagaIterator, eventChannel} from 'redux-saga'
 import socket from 'socket'
 import {sendMsg, receiveMsg} from 'logic/socket/socket-saga'
 import {socketConnecting} from 'logic/socket/socket-actions'
-import {setPlayerInfo, disconnect, setNewDeck, setMinecraftName} from './session-actions'
+import {
+	setPlayerInfo,
+	disconnect,
+	setNewDeck,
+	setMinecraftName,
+	loadUpdates,
+} from './session-actions'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
 import {
 	getActiveDeckName,
@@ -191,4 +197,13 @@ export function* minecraftNameSaga(): SagaIterator {
 		const result = yield call(receiveMsg, 'NEW_MINECRAFT_NAME')
 		yield put(setMinecraftName(result.payload))
 	}
+}
+
+export function* updatesSaga(): SagaIterator {
+	yield sendMsg('GET_UPDATES', {
+		type: 'GET_UPDATES',
+		payload: {},
+	})
+	const result = yield call(receiveMsg, 'LOAD_UPDATES')
+	yield put(loadUpdates(result.payload))
 }
