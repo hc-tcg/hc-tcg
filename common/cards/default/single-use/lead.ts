@@ -37,15 +37,15 @@ class LeadSingleUseCard extends SingleUseCard {
 
 		const items = activeRow.itemCards
 		// Check all afk rows for each item card against all empty slots on that row
-		for (let rowIndex = 0; rowIndex < afkRows.length; rowIndex++) {
-			const rowPos = afkRows[rowIndex]
+		for (let index = 0; index < afkRows.length; index++) {
+			const rowPos = afkRows[index]
 			if (!rowHasEmptyItemSlot(rowPos.row)) continue
 
 			for (const item of items) {
 				if (!item) continue
 
 				for (let i = 0; i < 3; i++) {
-					const targetSlot = getSlotPos(opponentPlayer, rowIndex, 'item', i)
+					const targetSlot = getSlotPos(opponentPlayer, rowPos.rowIndex, 'item', i)
 
 					if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
 

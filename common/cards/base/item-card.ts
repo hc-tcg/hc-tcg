@@ -36,7 +36,7 @@ abstract class ItemCard extends Card {
 		if (pos.slot.type !== 'item') result.push('INVALID_SLOT')
 		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 
-		// Can't attach without hermit - this does not show the unment condition modal
+		// Can't attach without hermit - this does not show the unmet condition modal
 		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
 		return result
