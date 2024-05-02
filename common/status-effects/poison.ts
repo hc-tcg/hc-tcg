@@ -17,6 +17,7 @@ class PoisonStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: true,
+			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -67,18 +68,11 @@ class PoisonStatusEffect extends StatusEffect {
 
 			executeExtraAttacks(game, [statusEffectAttack], 'Poison', true)
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.row != pos.row) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

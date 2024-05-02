@@ -14,6 +14,7 @@ class SlownessStatusEffect extends StatusEffect {
 			duration: 1,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -44,18 +45,12 @@ class SlownessStatusEffect extends StatusEffect {
 				return
 			}
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

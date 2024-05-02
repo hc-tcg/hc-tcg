@@ -1,13 +1,8 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {AttackModel} from '../models/attack-model'
 import {StatusEffectT} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
-import {STRENGTHS} from '../const/strengths'
-import {WEAKNESS_DAMAGE} from '../const/damage'
 
 class UsedClockStatusEffect extends StatusEffect {
 	constructor() {
@@ -18,6 +13,7 @@ class UsedClockStatusEffect extends StatusEffect {
 			duration: 2,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: false,
 			visible: false,
 		})
 	}
@@ -41,7 +37,6 @@ class UsedClockStatusEffect extends StatusEffect {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

@@ -13,6 +13,7 @@ class DyedStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -38,11 +39,6 @@ class DyedStatusEffect extends StatusEffect {
 
 			return availableEnergy.map(() => 'any')
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
@@ -50,7 +46,6 @@ class DyedStatusEffect extends StatusEffect {
 
 		player.hooks.availableEnergy.remove(statusEffectInfo.statusEffectInstance)
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

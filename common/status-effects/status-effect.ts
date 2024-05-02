@@ -9,6 +9,7 @@ type StatusEffectDefs = {
 	duration: number
 	counter: boolean
 	damageEffect: boolean
+	removeOnDeath: boolean
 	visible: boolean
 }
 
@@ -19,6 +20,7 @@ abstract class StatusEffect {
 	public duration: number
 	public counter: boolean
 	public damageEffect: boolean
+	public removeOnDeath: boolean
 	public visible: boolean
 
 	constructor(defs: StatusEffectDefs) {
@@ -28,6 +30,7 @@ abstract class StatusEffect {
 		this.duration = defs.duration
 		this.counter = defs.counter
 		this.damageEffect = defs.damageEffect
+		this.removeOnDeath = defs.removeOnDeath
 		this.visible = defs.visible
 	}
 

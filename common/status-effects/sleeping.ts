@@ -15,6 +15,7 @@ class SleepingStatusEffect extends StatusEffect {
 			duration: 3,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -48,17 +49,11 @@ class SleepingStatusEffect extends StatusEffect {
 					'CHANGE_ACTIVE_HERMIT'
 				)
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

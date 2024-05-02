@@ -14,6 +14,7 @@ class ProtectedStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: false,
 			visible: true,
 		})
 	}
@@ -51,11 +52,6 @@ class ProtectedStatusEffect extends StatusEffect {
 				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 			}
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
@@ -66,7 +62,6 @@ class ProtectedStatusEffect extends StatusEffect {
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		delete player.custom[instanceKey]
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

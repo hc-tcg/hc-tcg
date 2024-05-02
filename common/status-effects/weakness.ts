@@ -18,6 +18,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			duration: 3,
 			counter: false,
 			damageEffect: false,
+			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -69,11 +70,6 @@ class WeaknessStatusEffect extends StatusEffect {
 
 			attack.createWeakness = 'always'
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
@@ -81,7 +77,6 @@ class WeaknessStatusEffect extends StatusEffect {
 		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
 		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

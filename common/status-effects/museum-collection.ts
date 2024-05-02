@@ -16,6 +16,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: true,
 			damageEffect: false,
+			removeOnDeath: false,
 			visible: true,
 		})
 	}
