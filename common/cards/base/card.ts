@@ -2,8 +2,15 @@ import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {HermitAttackType} from '../../types/attack'
-import {PickRequest} from '../../types/server-requests'
+
+export type CanAttachError =
+	| 'INVALID_PLAYER'
+	| 'INVALID_SLOT'
+	| 'UNMET_CONDITION'
+	| 'UNMET_CONDITION_SILENT'
+	| 'UNKNOWN_ERROR'
+
+export type CanAttachResult = Array<CanAttachError>
 
 type CardDefs = {
 	type: CardTypeT
@@ -37,16 +44,10 @@ abstract class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
+	 *
+	 * Returns an array of any of the problems there are with attaching, if any
 	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID'
-
-	/**
-	 * If this card is attached to a Hermit slot, can another card be attached to the row this card is in
-	 */
-	public canAttachToCard(game: GameModel, pos: CardPosModel): boolean {
-		// default is true
-		return true
-	}
+	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
 
 	/**
 	 * Called when an instance of this card is attached to the board

@@ -15,7 +15,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {EnergyT, SlotPos} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card from 'common/cards/base/card'
+import Card, {CanAttachResult} from 'common/cards/base/card'
 import HermitCard from 'common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import EffectCard from 'common/cards/base/effect-card'
@@ -159,7 +159,7 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 			cardInstance: card.id,
 		})
 	)
-	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.playerDeck.cards
+	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.deck.cards
 
 	// shuffle cards
 	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
@@ -202,12 +202,12 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 
 	const TOTAL_ROWS = 5
 	return {
-		id: player.playerId,
-		playerName: player.playerName,
+		id: player.id,
+		playerName: player.name,
 		playerType: player.socket ? 'real' : 'virtual',
 		minecraftName: player.minecraftName,
 		playerDeck: pack,
-		censoredPlayerName: player.censoredPlayerName,
+		censoredPlayerName: player.censoredName,
 		coinFlips: [],
 		lives: 3,
 		hand,
@@ -225,6 +225,7 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
+			canAttach: new GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>(),
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
 			beforeApply: new GameHook<() => void>(),
@@ -271,19 +272,19 @@ export function getLocalGameState(
 	game: GameModel,
 	player: PlayerModel | VirtualPlayerModel
 ): LocalGameState | null {
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.playerId)
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
 	if (!opponentPlayerId) {
 		return null
 	}
 
-	const playerState = game.state.players[player.playerId]
+	const playerState = game.state.players[player.id]
 	const opponentState = game.state.players[opponentPlayerId]
 	const turnState = game.state.turn
-	const isCurrentPlayer = turnState.currentPlayerId === player.playerId
+	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
 	// convert player states
 	const players: Record<string, LocalPlayerState> = {}
-	players[player.playerId] = getLocalPlayerState(playerState)
+	players[player.id] = getLocalPlayerState(playerState)
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	// Pick message or modal id
@@ -292,10 +293,10 @@ export function getLocalGameState(
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
-	if (currentModalRequest?.playerId === player.playerId) {
+	if (currentModalRequest?.playerId === player.id) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
 		currentModalData = currentModalRequest.data
-	} else if (currentPickRequest?.playerId === player.playerId) {
+	} else if (currentPickRequest?.playerId === player.id) {
 		// Once there are no modal requests, send pick requests
 		currentPickMessage = currentPickRequest.message
 		// Add the card name before the request
@@ -322,7 +323,7 @@ export function getLocalGameState(
 		discarded: playerState.discarded,
 
 		// ids
-		playerId: player.playerId,
+		playerId: player.id,
 		opponentPlayerId: opponentPlayerId,
 
 		lastActionResult: game.state.lastActionResult,

@@ -10,7 +10,8 @@ class DiamondArmorEffectCard extends EffectCard {
 			numericId: 13,
 			name: 'Diamond Armor',
 			rarity: 'rare',
-			description: 'Prevent up to 30hp damage each turn.',
+			description:
+				'When the Hermit this card is attached to takes damage, reduce that damage by up to 30hp each turn.',
 		})
 	}
 

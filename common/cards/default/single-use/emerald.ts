@@ -1,9 +1,9 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotPos} from '../../../types/cards'
-import {canAttachToCard} from '../../../utils/board'
+import {getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
-import {swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class EmeraldSingleUseCard extends SingleUseCard {
@@ -17,31 +17,40 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const result = super.canAttach(game, pos)
 
 		const {player, opponentPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return 'NO'
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) {
+			result.push('UNMET_CONDITION')
+		} else {
+			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
+			const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
-		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-		const playerActiveRow = player.board.rows[playerActiveRowIndex]
+			const opponentEffect = opponentActiveRow.effectCard
+			const playerEffect = playerActiveRow.effectCard
 
-		const opponentEffect = opponentActiveRow.effectCard
-		const playerEffect = playerActiveRow.effectCard
-		const opponentHermit = opponentActiveRow.hermitCard
-		const playerHermit = playerActiveRow.hermitCard
+			// If either card can't be placed in the other slot, don't attach
+			const playerEffectSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+			const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
-		if (opponentEffect && !canAttachToCard(game, opponentEffect, playerHermit)) return 'NO'
-		if (playerEffect && !canAttachToCard(game, playerEffect, opponentHermit)) return 'NO'
+			if (playerEffect) {
+				const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect, true)
+				if (canAttach.length > 0) result.push('UNMET_CONDITION')
+				if (!isRemovable(playerEffect)) result.push('UNMET_CONDITION')
+			}
 
-		if (opponentEffect) if (!isRemovable(opponentEffect)) return 'NO'
-		if (playerEffect) if (!isRemovable(playerEffect)) return 'NO'
+			if (opponentEffect) {
+				const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect, true)
+				if (canAttach.length > 0) result.push('UNMET_CONDITION')
+				if (!isRemovable(opponentEffect)) result.push('UNMET_CONDITION')
+			}
+		}
 
-		return 'YES'
+		return result
 	}
 
 	override canApply() {
@@ -56,25 +65,8 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
 
-			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-			const playerActiveRow = player.board.rows[playerActiveRowIndex]
-
-			const playerSlot: SlotPos = {
-				rowIndex: playerActiveRowIndex,
-				row: playerActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
-			const opponentSlot: SlotPos = {
-				rowIndex: opponentActiveRowIndex,
-				row: opponentActiveRow,
-				slot: {
-					index: 0,
-					type: 'effect',
-				},
-			}
+			const playerSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+			const opponentSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
 			swapSlots(game, playerSlot, opponentSlot)
 		})

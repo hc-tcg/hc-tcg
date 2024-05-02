@@ -37,7 +37,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'selfAttack'),
-				attacker: attack.getTarget(),
+				attacker,
 				target: attacker,
 				type: 'effect',
 				isBacklash: true,

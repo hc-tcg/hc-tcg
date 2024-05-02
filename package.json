@@ -29,6 +29,8 @@
 		"body-parser": "^1.20.1",
 		"classnames": "^2.3.2",
 		"cors": "^2.8.5",
+		"discord-markdown": "^2.5.1",
+		"dompurify": "^3.1.0",
 		"esbuild": "^0.19.2",
 		"esbuild-plugin-copy": "^2.1.1",
 		"eslint": "^8.34.0",
@@ -60,6 +62,7 @@
 		"vite-plugin-eslint": "^1.8.1"
 	},
 	"devDependencies": {
+		"@types/dompurify": "^3.0.5",
 		"tsx": "^3.12.7"
 	},
 	"scripts": {
@@ -68,12 +71,10 @@
 		"husky": "husky install",
 		"clean": "rm -rf client/dist && rm -rf server/dist",
 		"build": "npm run client:build && npm run server:build",
-
 		"server": "node server/dist/index.js",
 		"server:build": "npm run server:tsc && node esbuild.js",
 		"server:dev": "tsx watch --tsconfig server/tsconfig.json server/src",
 		"server:tsc": "tsc --p server/tsconfig.json",
-		
 		"client:build": "npm run client:tsc && vite build client/",
 		"client:tsc": "tsc --p client/",
 		"client:dev": "vite client/",

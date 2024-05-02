@@ -14,9 +14,9 @@ import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 import {BOSS_ATTACK} from '../cards/boss/hermits/evilxisuma_boss'
 
-export type BattleLogFormatT = Parameters<BattleLog['format']>
+export type BattleLogFormatT = Parameters<BattleLogModel['format']>
 
-export class BattleLog {
+export class BattleLogModel {
 	private game: GameModel
 	private log: Array<BattleLogT>
 
