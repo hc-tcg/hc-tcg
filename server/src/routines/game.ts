@@ -256,11 +256,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		return
 	}
 
-	let modalResult = null
-	if (turnAction.payload && turnAction.payload.modalResult) {
-		modalResult = turnAction.payload.modalResult
-	}
-
 	let endTurn = false
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
@@ -297,6 +292,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
+			result = 'SUCCESS'
 			break
 		default:
 			// Unknown action type, ignore it completely
@@ -310,7 +306,9 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) endTurn = true
 
-	return endTurn ? 'END_TURN' : undefined
+	if (endTurn) {
+		return 'END_TURN'
+	}
 }
 
 function* turnActionsSaga(game: GameModel) {
