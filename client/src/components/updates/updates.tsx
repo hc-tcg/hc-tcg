@@ -1,18 +1,18 @@
-import AlertModal from "components/alert-modal"
-import { toHTML } from "discord-markdown"
-import DOMPurify from "dompurify"
-import { getUpdates } from "logic/session/session-selectors"
-import { useRef, useEffect } from "react"
-import { useSelector } from "react-redux"
+import AlertModal from 'components/alert-modal'
+import {toHTML} from 'discord-markdown'
+import DOMPurify from 'dompurify'
+import {getUpdates} from 'logic/session/session-selectors'
+import {useRef, useEffect} from 'react'
+import {useSelector} from 'react-redux'
 import css from './updates.module.scss'
 
 type UpdatesModalProps = {
-    updatesOpen: boolean,
-    setUpdatesOpen: (a1: boolean) => void
+	updatesOpen: boolean
+	setUpdatesOpen: (a1: boolean) => void
 }
 
 export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
-    const updates = useSelector(getUpdates)
+	const updates = useSelector(getUpdates)
 	const latestUpdateElement = useRef<HTMLLIElement>(null)
 	useEffect(() => {
 		latestUpdateElement.current?.scrollIntoView({

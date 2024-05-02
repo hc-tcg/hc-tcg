@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useState} from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import Slider from 'components/slider'
@@ -8,10 +8,6 @@ import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
-import AlertModal from 'components/alert-modal'
-import { getUpdates } from 'logic/session/session-selectors'
-import DOMPurify from 'dompurify'
-import { toHTML } from 'discord-markdown'
 import UpdatesModal from 'components/updates'
 
 type Props = {
@@ -53,7 +49,9 @@ function Settings({setMenuSection}: Props) {
 	const handleCredits = () => setMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
-	const handleUpdates = () => {setUpdatesOpen(true)}
+	const handleUpdates = () => {
+		setUpdatesOpen(true)
+	}
 
 	return (
 		<>
