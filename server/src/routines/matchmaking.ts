@@ -204,7 +204,7 @@ function* createBossGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Create Boss game] Player is already in game or queue:', player.playerName)
+		console.log('[Create Boss game] Player is already in game or queue:', player.name)
 		broadcast([player], 'CREATE_BOSS_GAME_FAILURE')
 		return
 	}
@@ -212,9 +212,7 @@ function* createBossGame(msg: ClientMessage) {
 	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
 
 	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma', 'evilxisuma_boss')
-	EX_BOSS_PLAYER.playerDeck.cards = [
-		{cardId: 'evilxisuma_boss', cardInstance: Math.random().toString()},
-	]
+	EX_BOSS_PLAYER.deck.cards = [{cardId: 'evilxisuma_boss', cardInstance: Math.random().toString()}]
 
 	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
 	newBossGame.state.isBossGame = true
@@ -223,13 +221,12 @@ function* createBossGame(msg: ClientMessage) {
 		newBossGame.state.turn.currentPlayerId = playerId
 	}
 
-	const {[playerId]: challengerState, [EX_BOSS_PLAYER.playerId]: bossState} =
-		newBossGame.state.players
+	const {[playerId]: challengerState, [EX_BOSS_PLAYER.id]: bossState} = newBossGame.state.players
 	challengerState.board.rows = challengerState.board.rows.splice(0, 3)
 	const bossRowState = bossState.board.rows[0]
 	bossRowState.itemCards = []
 	bossState.board.rows = [bossRowState]
-	newBossGame.config = {
+	newBossGame.rules = {
 		disableRewardCards: true,
 		disableVirtualDeckOut: true,
 	}

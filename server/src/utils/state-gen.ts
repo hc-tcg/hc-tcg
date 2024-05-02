@@ -140,13 +140,11 @@ export function getStarterPack() {
 	return deckIds
 }
 
-export function getEmptyRow(): RowState {
-	const MAX_ITEMS = 3
-
+export function getEmptyRow(maxItems: number): RowState {
 	const rowState: RowState = {
 		hermitCard: null,
 		effectCard: null,
-		itemCards: new Array(MAX_ITEMS).fill(null),
+		itemCards: new Array(maxItems).fill(null),
 		health: null,
 	}
 	return rowState
@@ -200,7 +198,8 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 		hand.unshift(cardInfo)
 	}
 
-	const TOTAL_ROWS = 5
+	const TOTAL_ROWS = 5,
+		MAX_ITEMS = 3
 	return {
 		id: player.id,
 		playerName: player.name,
@@ -218,7 +217,7 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 			activeRow: null,
 			singleUseCard: null,
 			singleUseCardUsed: false,
-			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
+			rows: new Array(TOTAL_ROWS).fill(null).map(() => getEmptyRow(MAX_ITEMS)),
 		},
 
 		hooks: {

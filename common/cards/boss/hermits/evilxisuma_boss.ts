@@ -96,8 +96,6 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		})
 		player.custom[disabledKey] = disabled
 
-		const lives = pos.player.lives
-
 		if (bossAttack[2] === 'EFFECTCARD') {
 			// Remove effect card before attack is executed to mimic Curse of Vanishing
 			if (targetRow.effectCard && isRemovable(targetRow.effectCard))
@@ -173,7 +171,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 							id: this.id,
 							message: 'Choose an item to discard from your active Hermit.',
 							onResult(pickResult) {
-								if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+								if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 								const rowIndex = pickResult.rowIndex
 								if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

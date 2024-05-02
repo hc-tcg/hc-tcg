@@ -256,7 +256,10 @@ export type TurnAction =
 	| 'WAIT_FOR_OPPONENT_ACTION'
 
 export type GameRules = {
-	disableTimer: boolean
+	/** Prevents game from awarding reward cards when checking Hermit health */
+	disableRewardCards?: boolean
+	/** Prevents virtual players from losing when out of cards to draw */
+	disableVirtualDeckOut?: boolean
 }
 
 export type TurnActions = Array<TurnAction>

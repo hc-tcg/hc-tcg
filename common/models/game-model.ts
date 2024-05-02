@@ -6,6 +6,7 @@ import {
 	TurnActions,
 	BattleLogT,
 	PlayerState,
+	GameRules,
 } from '../types/game-state'
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
@@ -13,13 +14,6 @@ import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
 import {VirtualPlayerModel} from './virtual-player-model'
-
-type GameConfigOptions = {
-	/** Prevents game from awarding reward cards when checking Hermit health */
-	disableRewardCards?: boolean
-	/** Prevents virtual players from losing when out of cards to draw */
-	disableVirtualDeckOut?: boolean
-}
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -39,7 +33,7 @@ export class GameModel {
 		reason: 'hermits' | 'lives' | 'cards' | 'time' | null
 	}
 
-	public config: GameConfigOptions
+	public rules: GameRules
 
 	constructor(
 		player1: PlayerModel | VirtualPlayerModel,
@@ -66,7 +60,7 @@ export class GameModel {
 			[player2.id]: player2,
 		}
 
-		this.config = {}
+		this.rules = {}
 
 		this.state = getGameState(this)
 	}

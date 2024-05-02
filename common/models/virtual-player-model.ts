@@ -6,27 +6,25 @@ import {encode, decode} from 'js-base64'
 import {CARDS} from '../cards'
 
 export class VirtualPlayerModel {
-	public playerId: string
-	public playerSecret: string
-	public playerDeck: {
+	private internalId: string
+	private internalSecret: string
+	private internalDeck: {
 		name: string
 		icon: string
 		cards: Array<CardT>
 	}
-	public playerName: string
+	public name: string
 	public minecraftName: string
-	public censoredPlayerName: string
+	public censoredName: string
 	public socket: null
 	public ai: string
 
 	constructor(playerName: string, minecraftName: string, ai: string) {
-		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
-		// need to make sure it's done everywhere tho
-		this.playerId = Math.random().toString()
-		this.playerSecret = Math.random().toString()
+		this.internalId = Math.random().toString()
+		this.internalSecret = Math.random().toString()
 
 		// always generate a starter deck as the default
-		this.playerDeck = {
+		this.internalDeck = {
 			name: 'virtual',
 			icon: '',
 			cards: this.getHashFromDeck(
@@ -34,9 +32,9 @@ export class VirtualPlayerModel {
 			),
 		}
 
-		this.playerName = playerName
+		this.name = playerName
 		this.minecraftName = minecraftName
-		this.censoredPlayerName = profanityFilter(playerName)
+		this.censoredName = profanityFilter(playerName)
 
 		this.socket = null
 		this.ai = ai
@@ -65,14 +63,24 @@ export class VirtualPlayerModel {
 		return deckCards
 	}
 
+	public get id() {
+		return this.internalId
+	}
+	public get secret() {
+		return this.internalSecret
+	}
+	public get deck() {
+		return this.internalDeck
+	}
+
 	getPlayerInfo() {
 		return {
-			playerId: this.playerId,
-			playerSecret: this.playerSecret,
-			playerDeck: this.playerDeck,
-			playerName: this.playerName,
+			playerId: this.id,
+			playerSecret: this.secret,
+			playerDeck: this.deck,
+			playerName: this.name,
 			minecraftName: this.minecraftName,
-			censoredPlayerName: this.censoredPlayerName,
+			censoredPlayerName: this.censoredName,
 		}
 	}
 
@@ -80,7 +88,7 @@ export class VirtualPlayerModel {
 		if (!newDeck || !newDeck.cards) return
 		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
 		if (validationMessage) return
-		this.playerDeck = newDeck
+		this.internalDeck = newDeck
 	}
 
 	setMinecraftName(name: string) {

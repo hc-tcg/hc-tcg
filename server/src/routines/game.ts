@@ -201,12 +201,7 @@ function* checkHermitHealth(game: GameModel) {
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
-				playerRows[rowIndex] = {
-					hermitCard: null,
-					health: null,
-					itemCards: new Array(row.itemCards.length).fill(null),
-					effectCard: null,
-				}
+				playerRows[rowIndex] = getEmptyRow(row.itemCards.length)
 				if (Number(rowIndex) === activeRow) {
 					game.changeActiveRow(playerState, null)
 					playerState.hooks.onActiveRowChange.call(activeRow, null)
@@ -214,7 +209,7 @@ function* checkHermitHealth(game: GameModel) {
 				playerState.lives -= 1
 
 				// reward card
-				if (game.config.disableRewardCards) continue
+				if (game.rules.disableRewardCards) continue
 				const opponentState = playerStates.find((s) => s.id !== playerState.id)
 				if (!opponentState) continue
 				const rewardCard = playerState.pile.shift()
@@ -588,7 +583,7 @@ function* turnSaga(game: GameModel) {
 			!DEBUG_CONFIG.disableDeckOut &&
 			!DEBUG_CONFIG.startWithAllCards &&
 			!DEBUG_CONFIG.unlimitedCards &&
-			!(game.config.disableVirtualDeckOut && currentPlayer.playerType === 'virtual')
+			!(game.rules.disableVirtualDeckOut && currentPlayer.playerType === 'virtual')
 		) {
 			game.endInfo.reason = 'cards'
 			game.endInfo.deadPlayerIds = [currentPlayerId]
