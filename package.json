@@ -30,7 +30,6 @@
 		"classnames": "^2.3.2",
 		"cors": "^2.8.5",
 		"discord-markdown": "^2.5.1",
-		"dompurify": "^3.1.0",
 		"esbuild": "^0.19.2",
 		"esbuild-plugin-copy": "^2.1.1",
 		"eslint": "^8.34.0",
@@ -50,6 +49,7 @@
 		"react-transition-group": "^4.4.5",
 		"redux": "^4.2.0",
 		"redux-saga": "^1.2.2",
+		"sanitize-html": "^2.13.0",
 		"sass": "^1.58.3",
 		"socket.io": "^4.5.4",
 		"socket.io-client": "^4.5.4",
@@ -63,6 +63,7 @@
 	},
 	"devDependencies": {
 		"@types/dompurify": "^3.0.5",
+		"@types/sanitize-html": "^2.11.0",
 		"tsx": "^3.12.7"
 	},
 	"scripts": {
