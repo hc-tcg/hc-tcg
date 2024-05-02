@@ -13,6 +13,13 @@ export class FirebaseLogs {
 	public db: Database | undefined
 
 	constructor() {
+		const env = process.env.NODE_ENV || 'development'
+		if (env == 'development') {
+			console.log('firebase_logs: logging disabled for dev mode')
+			this.enabled = false
+			return
+		}
+
 		try {
 			const serviceAccount: ServiceAccount = require('./adminKey.json')
 			const admin = require('firebase-admin')
@@ -27,8 +34,8 @@ export class FirebaseLogs {
 		}
 	}
 
-	register(root: RootModel) {
-		if (!this.enabled) return
+	register(root: RootModel): boolean {
+		if (!this.enabled) return false
 
 		root.hooks.newGame.add(this.id, (game) => {
 			if (game.code) {
@@ -81,14 +88,14 @@ export class FirebaseLogs {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid0,
 				})
-				summaryObj.deck1 = root.players[pid0]?.playerDeck
+				summaryObj.deck1 = root.players[pid0]?.deck
 
 				let pid1 = playerStates[1].id
 				root.players[pid1]?.socket.emit('gameoverstat', {
 					outcome: game.endInfo.outcome,
 					won: game.endInfo.winner === pid1,
 				})
-				summaryObj.deck2 = root.players[pid1]?.playerDeck
+				summaryObj.deck2 = root.players[pid1]?.deck
 				if (game.endInfo.winner === pid0) {
 					summaryObj.outcome = 'deck1win'
 				} else if (game.endInfo.winner === pid1) {
@@ -104,5 +111,7 @@ export class FirebaseLogs {
 				delete this.gameLogs[game.id]
 			}
 		})
+
+		return true
 	}
 }

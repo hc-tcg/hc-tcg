@@ -30,7 +30,7 @@ export function registerApis(app: import('express').Express) {
 									id: g.id,
 									code: g.code,
 									playerIds: g.getPlayerIds(),
-									playerNames: g.getPlayers().map((p) => p.playerName),
+									playerNames: g.getPlayers().map((p) => p.name),
 									state: g.state,
 								}
 							})
@@ -82,7 +82,7 @@ export function registerApis(app: import('express').Express) {
 						id: game.id,
 						code: game.code,
 						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.playerName),
+						playerNames: game.getPlayers().map((p) => p.name),
 						state: game.state,
 					}),
 				})
@@ -105,13 +105,19 @@ export function registerApis(app: import('express').Express) {
 						id: game.id,
 						code: game.code,
 						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.playerName),
+						playerNames: game.getPlayers().map((p) => p.name),
 						endInfo: game.endInfo,
 					}),
 				})
 			} catch (e) {
 				console.log('Error notifying discord bot about game end: ' + e)
 			}
+		})
+
+		fetch(`${CONFIG.botUrl}/updates`).then(async (response) => {
+			response.json().then((jsonResponse) => {
+				root.updates = jsonResponse as Record<string, Array<string>>
+			})
 		})
 
 		console.log('apis registered')

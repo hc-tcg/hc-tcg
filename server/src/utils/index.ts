@@ -6,7 +6,7 @@ import {getCardPos} from 'common/models/card-pos-model'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {
 	const players = game.getPlayers()
-	return players.filter((p) => p.playerId !== playerId)[0]?.playerId
+	return players.filter((p) => p.id !== playerId)[0]?.id
 }
 
 export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): number {

@@ -13,9 +13,9 @@ import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 
-export type BattleLogFormatT = Parameters<BattleLog['format']>
+export type BattleLogFormatT = Parameters<BattleLogModel['format']>
 
-export class BattleLog {
+export class BattleLogModel {
 	private game: GameModel
 	private log: Array<BattleLogT>
 

@@ -8,6 +8,7 @@ import {getStats} from 'logic/fbdb/fbdb-selectors'
 import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
+import UpdatesModal from 'components/updates'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -47,64 +48,79 @@ function Settings({setMenuSection}: Props) {
 
 	const handleCredits = () => setMenuSection('credits')
 
-	return (
-		<MenuLayout
-			back={() => setMenuSection('mainmenu')}
-			title="More"
-			returnText="Main Menu"
-			className={css.settingsMenu}
-		>
-			<div className={css.settings}>
-				<Slider value={settings.musicVolume} onInput={handleMusicChange}>
-					Music: {getPercDescriptor(settings.musicVolume)}
-				</Slider>
-				<Slider value={settings.soundVolume} onInput={handleSoundChange}>
-					Sounds: {getPercDescriptor(settings.soundVolume)}
-				</Slider>
-				<Button variant="stone" onClick={handlePanoramaToggle}>
-					Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
-				</Button>
-				<Button variant="stone" onClick={handleGameSettings}>
-					Game Settings
-				</Button>
-				<Button variant="stone" onClick={handleCredits}>
-					Credits
-				</Button>
-			</div>
+	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
+	const handleUpdates = () => {
+		setUpdatesOpen(true)
+	}
 
-			<h2>Statistics</h2>
-			<div className={css.settings}>
-				<div className={css.stats}>
-					<div className={css.stat}>
-						<span>Games Played</span>
-						<span>{totalGames}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Wins</span>
-						<span>{stats.w}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Losses</span>
-						<span>{stats.l}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Ties</span>
-						<span>{stats.t}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Wins</span>
-						<span>{stats.fw}</span>
-					</div>
-					<div className={css.stat}>
-						<span>Forfeit Losses</span>
-						<span>{stats.fl}</span>
-					</div>
+	return (
+		<>
+			{updatesOpen ? (
+				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
+			) : (
+				<></>
+			)}
+			<MenuLayout
+				back={() => setMenuSection('mainmenu')}
+				title="More"
+				returnText="Main Menu"
+				className={css.settingsMenu}
+			>
+				<div className={css.settings}>
+					<Slider value={settings.musicVolume} onInput={handleMusicChange}>
+						Music: {getPercDescriptor(settings.musicVolume)}
+					</Slider>
+					<Slider value={settings.soundVolume} onInput={handleSoundChange}>
+						Sounds: {getPercDescriptor(settings.soundVolume)}
+					</Slider>
+					<Button variant="stone" onClick={handlePanoramaToggle}>
+						Panorama: {getBoolDescriptor(settings.panoramaEnabled)}
+					</Button>
+					<Button variant="stone" onClick={handleGameSettings}>
+						Game Settings
+					</Button>
+					<Button variant="stone" onClick={handleCredits}>
+						Credits
+					</Button>
+					<Button variant="stone" onClick={handleUpdates}>
+						Updates
+					</Button>
 				</div>
-				<Button variant="stone" onClick={handleResetStats}>
-					{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
-				</Button>
-			</div>
-		</MenuLayout>
+
+				<h2>Statistics</h2>
+				<div className={css.settings}>
+					<div className={css.stats}>
+						<div className={css.stat}>
+							<span>Games Played</span>
+							<span>{totalGames}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Wins</span>
+							<span>{stats.w}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Losses</span>
+							<span>{stats.l}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Ties</span>
+							<span>{stats.t}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Forfeit Wins</span>
+							<span>{stats.fw}</span>
+						</div>
+						<div className={css.stat}>
+							<span>Forfeit Losses</span>
+							<span>{stats.fl}</span>
+						</div>
+					</div>
+					<Button variant="stone" onClick={handleResetStats}>
+						{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
+					</Button>
+				</div>
+			</MenuLayout>
+		</>
 	)
 }
 

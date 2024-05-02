@@ -17,14 +17,12 @@ class ChestSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {player} = pos
-		// Cannot play chest with no items in discard
-		if (player.discarded.length <= 0) return 'NO'
 
-		return 'YES'
+		if (player.discarded.length <= 0) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
