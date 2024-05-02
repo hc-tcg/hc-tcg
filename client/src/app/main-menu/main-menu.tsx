@@ -7,10 +7,11 @@ import TcgLogo from 'components/tcg-logo'
 import Beef from 'components/beef'
 import Button from 'components/button'
 import {VersionLinks} from 'components/link-container'
-import {useState} from 'react'
+import {useEffect, useRef, useState} from 'react'
 import AlertModal from 'components/alert-modal'
 import {toHTML} from 'discord-markdown'
 import DOMPurify from 'dompurify'
+import UpdatesModal from 'components/updates'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -33,40 +34,10 @@ function MainMenu({setMenuSection}: Props) {
 
 	return (
 		<>
-			{!updates['timestamps'] ||
-			!latestUpdateView ||
-			parseInt(updates['timestamps'][0]) > parseInt(latestUpdateView) ? (
-				<AlertModal
-					setOpen={updatesOpen}
-					onClose={() => {
-						setUpdatesOpen(false)
-						localStorage.setItem('latestUpdateView', (new Date().valueOf() / 1000).toFixed())
-					}}
-					cancelText="Close"
-					title="Latest updates"
-					action={() => {}}
-					description={
-						<ul className={css.updatesList}>
-							{updates['updates'] ? (
-								updates['updates'].map((text, i) => {
-									return (
-										<>
-											<li
-												className={css.updateItem}
-												key={i}
-												dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
-											/>
-											<hr className={css.updateSeperator} />
-										</>
-									)
-								})
-							) : (
-								<li className={css.updateItem}>Failed to load updates</li>
-							)}
-							<li className={css.updateItem}>For more updates, visit the HC-TCG discord.</li>
-						</ul>
-					}
-				/>
+			{!latestUpdateView ||
+			parseInt(updates['timestamps'] ? updates['timestamps'][0] : '0') >
+				parseInt(latestUpdateView) ? (
+				<UpdatesModal updatesOpen={updatesOpen} setUpdatesOpen={setUpdatesOpen} />
 			) : (
 				<></>
 			)}
