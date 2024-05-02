@@ -1,9 +1,9 @@
 import AlertModal from 'components/alert-modal'
 import {toHTML} from 'discord-markdown'
-import DOMPurify from 'dompurify'
 import {getUpdates} from 'logic/session/session-selectors'
 import {useRef, useEffect} from 'react'
 import {useSelector} from 'react-redux'
+import sanitize from 'sanitize-html'
 import css from './updates.module.scss'
 
 type UpdatesModalProps = {
@@ -40,7 +40,7 @@ export function UpdatesModal({updatesOpen, setUpdatesOpen}: UpdatesModalProps) {
 									<li
 										className={css.updateItem}
 										key={i + 1}
-										dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(toHTML(text))}}
+										dangerouslySetInnerHTML={{__html: sanitize(toHTML(text))}}
 										ref={i === 0 ? latestUpdateElement : undefined}
 									/>
 									<hr key={-i} className={css.updateSeperator} />
