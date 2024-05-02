@@ -62,7 +62,6 @@
 		"vite-plugin-eslint": "^1.8.1"
 	},
 	"devDependencies": {
-		"@types/dompurify": "^3.0.5",
 		"@types/sanitize-html": "^2.11.0",
 		"tsx": "^3.12.7"
 	},
