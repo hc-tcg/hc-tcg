@@ -117,8 +117,9 @@ function* randomMatchmakingSaga() {
 				root.addGame(newGame)
 				yield* fork(gameManager, newGame)
 			} else {
-				// Something went wrong, broadcast to both players to leave matchmaking
-				broadcast([player1, player2], 'LEAVE_MATCHMAKING')
+				// Something went wrong, broadcast to the player that isn't undefined to leave matchmaking
+				if (player1) broadcast([player1], 'LEAVE_MATCHMAKING')
+				if (player2) broadcast([player2], 'LEAVE_MATCHMAKING')
 			}
 		}
 
