@@ -305,6 +305,29 @@ export class BattleLogModel {
 		}
 	}
 
+	public addRevivalEntry(playerState: PlayerState, row: RowStateWithHermit, reason: string) {
+		const cardName = CARDS[row.hermitCard.cardId].name
+
+		const entry: BattleLogT = {
+			player: playerState.id,
+			description: [
+				this.format(`Your `, 'plain', 'player'),
+				this.format(`${playerState.playerName}'s `, 'plain', 'opponent'),
+				this.format(`${cardName} `, 'player'),
+				this.format(`was revived with `, 'plain'),
+				this.format(`${reason} `, 'highlight'),
+				this.format(`after taking fatal damage `, 'plain'),
+			],
+		}
+
+		this.log.push(entry)
+
+		// wait for coinflips to call sendBattleLogEntry if there are any
+		if (this.game.currentPlayer.coinFlips.length === 0) {
+			this.sendBattleLogEntry()
+		}
+	}
+
 	public addTimeoutEntry() {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,

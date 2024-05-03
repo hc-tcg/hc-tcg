@@ -59,6 +59,8 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				})
 
+				game.battleLog.addRevivalEntry(player, row, this.secondary.name)
+
 				// Prevents hermits from being revived more than once by Deathloop
 				canRevives[targetInstance] = false
 			}

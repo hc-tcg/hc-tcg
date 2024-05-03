@@ -60,6 +60,8 @@ class TotemEffectCard extends EffectCard {
 				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 
+			game.battleLog.addRevivalEntry(player, row, this.name)
+
 			// This will remove this hook, so it'll only be called once
 			discardCard(game, row.effectCard)
 		})
