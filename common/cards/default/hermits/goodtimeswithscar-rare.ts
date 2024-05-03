@@ -68,6 +68,15 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				if (wasNotRevived) delete canRevives[cardInstance]
 			})
 		})
+
+		player.hooks.afterDefence.add(instance, (attack) => {
+			const targetRow = attack.getTarget()?.row
+			const targetInstance = targetRow?.hermitCard.cardInstance
+			if (!targetInstance || canRevives[targetInstance] !== false) return
+			if (!targetRow || targetRow.health === null || targetRow.health > 0) return
+			// Remove revived hermits after they died, if a hermit is replayed after being discarded it should be able to revive again
+			delete canRevives[targetInstance]
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -80,6 +89,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 		if (canCleanUp()) {
 			opponentPlayer.hooks.afterAttack.remove(instance)
 			player.hooks.onTurnStart.remove(instance)
+			player.hooks.afterDefence.remove(instance)
 		} else {
 			// Reassign hooks to detach when canRevives is empty
 			player.hooks.onTurnStart.add(instance, () => {
@@ -89,16 +99,16 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 				opponentPlayer.hooks.afterAttack.remove(instance)
 				player.hooks.onTurnStart.remove(instance)
-				if (canCleanUp()) player.hooks.afterAttack.remove(instance)
+				if (canCleanUp()) player.hooks.afterDefence.remove(instance)
 			})
-			player.hooks.afterAttack.add(instance, (attack) => {
+			player.hooks.afterDefence.add(instance, (attack) => {
 				const targetRow = attack.getTarget()?.row
 				const targetInstance = targetRow?.hermitCard.cardInstance
-				if (!targetInstance || !canRevives[targetInstance]) return
+				if (!targetInstance || canRevives[targetInstance] !== false) return
 				if (!targetRow || targetRow.health === null || targetRow.health > 0) return
 				delete canRevives[targetInstance]
 
-				if (canCleanUp()) player.hooks.afterAttack.remove(instance)
+				if (canCleanUp()) player.hooks.afterDefence.remove(instance)
 			})
 		}
 	}
