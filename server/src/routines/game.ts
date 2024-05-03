@@ -195,10 +195,13 @@ function* checkHermitHealth(game: GameModel) {
 
 				// Status effect removal
 				game.state.statusEffects.forEach((effect) => {
-					if (STATUS_EFFECT_CLASSES[effect.statusEffectId].removeOnDeath) {
-						const cardPos = getCardPos(game, effect.targetInstance)
+					if (
+						STATUS_EFFECT_CLASSES[effect.statusEffectId].removeOnDeath &&
+						effect.targetInstance === row.hermitCard.cardInstance
+					) {
+						const cardPos = getCardPos(game, row.hermitCard.cardInstance)
 						if (!cardPos) return
-						removeStatusEffect(game, cardPos, effect.statusEffectId)
+						removeStatusEffect(game, cardPos, effect.statusEffectInstance)
 					}
 				})
 
