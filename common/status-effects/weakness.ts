@@ -14,7 +14,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		super({
 			id: 'weakness',
 			name: 'Weakness',
-			description: "This Hermit is weak to the opponent's active Hermit's type.",
+			description: "[reciever] is currently weak to [sender].",
 			duration: 3,
 			counter: false,
 			damageEffect: false,
@@ -24,7 +24,10 @@ class WeaknessStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
+		const strongType = "0"
+		const weakType = "0"
+		this.description = weakType + " is currently weak to " + strongType
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
