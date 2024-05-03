@@ -40,11 +40,12 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			const attackerInstance = attack.getAttacker()?.row.hermitCard.cardInstance
 			if (!attackerInstance) return
 			// If this instance is not blocked from reviving, make possible next turn
-			if (canRevives[attackerInstance] == undefined) canRevives[attackerInstance] = true
+			if (canRevives[attackerInstance] === undefined) canRevives[attackerInstance] = true
 		})
 
 		// Add before so health can be checked reliably
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
+			console.log(canRevives)
 			const targetInstance = attack.getTarget()?.row.hermitCard.cardInstance
 			if (!targetInstance || !canRevives[targetInstance]) return
 			const row = attack.getTarget()?.row
@@ -52,16 +53,14 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			row.health = 50
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-				return ail.targetInstance === targetInstance
-			})
-			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+			game.state.statusEffects.forEach((ail) => {
+				if (ail.targetInstance === targetInstance) {
+					removeStatusEffect(game, pos, ail.statusEffectInstance)
+				}
 			})
 
 			// Prevents hermits from being revived more than once by Deathloop
 			canRevives[targetInstance] = false
-			delete canRevives[targetInstance]
 		})
 
 		player.hooks.onTurnStart.add(instance, () => {
