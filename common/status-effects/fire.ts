@@ -16,7 +16,6 @@ class FireStatusEffect extends StatusEffect {
 			duration: 0,
 			counter: false,
 			damageEffect: true,
-			removeOnDeath: true,
 			visible: true,
 		})
 	}
@@ -62,11 +61,20 @@ class FireStatusEffect extends StatusEffect {
 
 			executeExtraAttacks(game, [statusEffectAttack], 'Burn', true)
 		})
+
+		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget) return
+			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.health > 0) return
+			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {opponentPlayer} = pos
+		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

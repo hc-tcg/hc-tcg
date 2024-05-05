@@ -20,9 +20,6 @@ import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
-import {AttackModel} from 'common/models/attack-model'
-import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
-import {removeStatusEffect} from 'common/utils/board'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -192,18 +189,6 @@ function* checkHermitHealth(game: GameModel) {
 			if (row.hermitCard && row.health <= 0) {
 				// Add battle log entry
 				game.battleLog.addDeathEntry(playerState, row)
-
-				// Status effect removal
-				game.state.statusEffects.forEach((effect) => {
-					if (
-						STATUS_EFFECT_CLASSES[effect.statusEffectId].removeOnDeath &&
-						effect.targetInstance === row.hermitCard.cardInstance
-					) {
-						const cardPos = getCardPos(game, row.hermitCard.cardInstance)
-						if (!cardPos) return
-						removeStatusEffect(game, cardPos, effect.statusEffectInstance)
-					}
-				})
 
 				if (row.hermitCard) discardCard(game, row.hermitCard)
 				if (row.effectCard) discardCard(game, row.effectCard)

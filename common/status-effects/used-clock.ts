@@ -13,7 +13,6 @@ class UsedClockStatusEffect extends StatusEffect {
 			duration: 2,
 			counter: false,
 			damageEffect: false,
-			removeOnDeath: false,
 			visible: false,
 		})
 	}
