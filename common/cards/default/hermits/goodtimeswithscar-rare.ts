@@ -45,7 +45,6 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 		// Add before so health can be checked reliably
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
-			console.log(canRevives)
 			const targetInstance = attack.getTarget()?.row.hermitCard.cardInstance
 			if (!targetInstance || !canRevives[targetInstance]) return
 			const row = attack.getTarget()?.row
