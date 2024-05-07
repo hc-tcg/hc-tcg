@@ -98,13 +98,9 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				placeholder="Enter Deck Name..."
 				className={css.input}
 				required={true}
-				pattern={`^[a-zA-Z0-9 ]*$`}
 				onBlur={() => handleBlur()}
 				data-focused={inputIsFocused}
 			/>
-			<p className={css.errorMessage}>
-				Deck name should be between 1-32 characters and shouldn't include any special characters.
-			</p>
 		</div>
 	)
 }
