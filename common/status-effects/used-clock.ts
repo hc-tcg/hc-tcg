@@ -14,7 +14,7 @@ class UsedClockStatusEffect extends StatusEffect {
 		super({
 			id: 'used-clock',
 			name: 'Turn Skipped',
-			description: 'Turns cannot be skipped consecutively.',
+			description: 'Turns can not be skipped consecutively.',
 			duration: 2,
 			counter: false,
 			damageEffect: false,

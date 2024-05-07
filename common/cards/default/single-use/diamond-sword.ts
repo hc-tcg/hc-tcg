@@ -12,7 +12,7 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 			numericId: 14,
 			name: 'Diamond Sword',
 			rarity: 'rare',
-			description: 'Do an additional 40hp damage.',
+			description: "Do 40hp damage to your opponent's active Hermit.",
 		})
 	}
 

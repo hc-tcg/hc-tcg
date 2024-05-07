@@ -105,6 +105,13 @@ abstract class Card {
 		// default is to return nothing
 		return []
 	}
+
+	/**
+	 * Returns the sidebar descriptions for this card
+	 */
+	public sidebarDescriptions(): Array<Record<string, string>> {
+		return []
+	}
 }
 
 export default Card

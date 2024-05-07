@@ -13,7 +13,7 @@ class BedEffectCard extends EffectCard {
 			name: 'Bed',
 			rarity: 'ultra_rare',
 			description:
-				"Player sleeps for the rest of this and next 2 turns. Can't attack. Restores full health when bed is attached.\n\nCan still draw and attach cards while sleeping.\n\nMust be placed on active Hermit.\n\nDiscard after player wakes up.\n\n\n\nCan not go AFK while sleeping.\n\nIf made AFK by opponent player, Hermit goes AFK but also wakes up.",
+				'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
 		})
 	}
 	override canAttach(game: GameModel, pos: CardPosModel) {
@@ -81,6 +81,15 @@ class BedEffectCard extends EffectCard {
 		player.hooks.beforeApply.remove(instance)
 		player.hooks.afterApply.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'hermitSlot')]
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'sleeping',
+			},
+		]
 	}
 }
 

@@ -11,8 +11,9 @@ class FireStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'fire',
-			name: 'On Fire',
-			description: 'This Hermit takes an additional 20hp damage every turn.',
+			name: 'Burn',
+			description:
+				"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
 			duration: 0,
 			counter: false,
 			damageEffect: true,
@@ -42,7 +43,7 @@ class FireStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-				  }
+					}
 				: null
 
 			const targetRow: RowPos = {

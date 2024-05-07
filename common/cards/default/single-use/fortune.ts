@@ -10,7 +10,7 @@ class FortuneSingleUseCard extends SingleUseCard {
 			numericId: 26,
 			name: 'Fortune',
 			rarity: 'ultra_rare',
-			description: 'Any coin flips needed on your attack are not needed and "heads" is assumed.',
+			description: 'Any coin flips on this turn are not required, as "heads" is assumed.',
 		})
 	}
 

@@ -14,7 +14,7 @@ class ArmorStandEffectCard extends EffectCard {
 			name: 'Armour Stand',
 			rarity: 'ultra_rare',
 			description:
-				"Use like a Hermit card. Has 50hp.\n\nCan not attack. Can not attach cards to it.\nOpponent does not get a point when it's knocked out.",
+				'Use like a Hermit card with a maximum 50hp.\n\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\n\nIf this card is knocked out, it does not count as a knockout.',
 		})
 	}
 
@@ -115,6 +115,15 @@ class ArmorStandEffectCard extends EffectCard {
 
 	override showAttachTooltip() {
 		return false
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'glossary',
+				name: 'knockout',
+			},
+		]
 	}
 }
 

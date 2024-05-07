@@ -27,7 +27,7 @@ class MumboJumboRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 40,
 				power:
-					'Flip a coin twice. Add 20hp damage for every heads. Total damage doubles if you have at least one other AFK Prankster.',
+					'Flip a coin twice. Do an additional 20hp damage for every heads. Total attack damage doubles if you have at least one other AFK Prankster.',
 			},
 		})
 	}

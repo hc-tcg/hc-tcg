@@ -9,9 +9,9 @@ class SleepingStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'sleeping',
-			name: 'Sleeping',
+			name: 'Sleep',
 			description:
-				'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
+				'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 			duration: 3,
 			counter: false,
 			damageEffect: false,

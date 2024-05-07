@@ -22,7 +22,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			name: 'Lead',
 			rarity: 'common',
 			description:
-				"Move 1 of your opponent's active Hermit item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.",
+				"Move one item card attached to your opponent's active Hermit to any of their AFK Hermits.",
 		})
 	}
 
