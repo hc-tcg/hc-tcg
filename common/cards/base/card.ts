@@ -78,6 +78,13 @@ abstract class Card {
 	}
 
 	/**
+	 * Returns the shortened name to use for this card
+	 */
+	public getShortName(): string {
+		return this.name
+	}
+
+	/**
 	 * Returns whether to show *Attach* on the card tooltip
 	 */
 	public showAttachTooltip(): boolean {

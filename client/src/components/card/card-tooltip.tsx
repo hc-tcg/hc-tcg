@@ -128,7 +128,11 @@ const getRank = (card: Card): React.ReactNode => {
 
 const getExpansion = (card: Card): React.ReactNode => {
 	if (card.getExpansion() !== 'default') {
-		const expansion = card.getExpansion() as 'default' | 'alter_egos' | 'advent_of_tcg'
+		const expansion = card.getExpansion() as
+			| 'default'
+			| 'alter_egos'
+			| 'advent_of_tcg'
+			| 'alter_egos_ii'
 		return (
 			<div className={classnames(css.expansion, css[expansion])}>
 				■ {EXPANSIONS.expansions[expansion]} Card ■
