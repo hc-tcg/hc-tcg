@@ -239,7 +239,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			onDefence: new GameHook<(attack: AttackModel) => void>(),
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onHermitDeath: new GameHook<(hermitPos: CardPosModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
 			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
 			onCoinFlip: new GameHook<(card: CardT, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
