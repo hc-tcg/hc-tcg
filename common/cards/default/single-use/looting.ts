@@ -54,7 +54,7 @@ class LootingSingleUseCard extends SingleUseCard {
 					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					const playerRow = player.board.rows[pickResult.rowIndex]
+					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return 'FAILURE_INVALID_SLOT'
 					moveCardToHand(game, pickResult.card, player)
