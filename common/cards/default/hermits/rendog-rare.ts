@@ -103,7 +103,14 @@ class RendogRareHermitCard extends HermitCard {
 							},
 						},
 						onResult(modalResult) {
-							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+							if (!modalResult) return 'FAILURE_INVALID_DATA'
+							if (modalResult.cancel) {
+								// Cancel this attack so player can choose a different hermit to imitate
+								game.state.turn.currentAttack = null
+								game.cancelPickRequests()
+								return 'SUCCESS'
+							}
+							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 							const attack: HermitAttackType = modalResult.pick
 
 							// Store the chosen attack to copy
@@ -174,7 +181,7 @@ class RendogRareHermitCard extends HermitCard {
 			}).length
 			if (
 				player.board.activeRow === pos.rowIndex &&
-				afkHermits <= 0 &&
+				opposingHermits <= 0 &&
 				!blockedActions.includes('SECONDARY_ATTACK')
 			) {
 				blockedActions.push('SECONDARY_ATTACK')

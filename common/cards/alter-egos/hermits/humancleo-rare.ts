@@ -104,12 +104,16 @@ class HumanCleoRareHermitCard extends HermitCard {
 						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
+						// Remove the hook straight away
+						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Save the target index for opponent to attack
 						player.custom[opponentTargetKey] = rowIndex
 
 						return 'SUCCESS'
 					},
 					onTimeout() {
+						// Remove the hook straight away
+						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Pick the first afk hermit to attack
 						const firstAfk = getNonEmptyRows(opponentPlayer, true)[0]
 						if (!firstAfk) return
@@ -118,9 +122,6 @@ class HumanCleoRareHermitCard extends HermitCard {
 						player.custom[opponentTargetKey] = firstAfk.rowIndex
 					},
 				})
-
-				// Remove the hook straight away
-				opponentPlayer.hooks.getAttackRequests.remove(instance)
 			})
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
@@ -143,8 +144,8 @@ class HumanCleoRareHermitCard extends HermitCard {
 					}
 				}
 
-				// They attacked now, they can end turn
-				game.removeBlockedActions(this.id, 'END_TURN')
+				// They attacked now, they can end turn or change hermits with Chorus Fruit
+				game.removeBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
