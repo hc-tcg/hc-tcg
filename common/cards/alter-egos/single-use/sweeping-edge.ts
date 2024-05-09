@@ -12,7 +12,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 			name: 'Sweeping Edge',
 			rarity: 'ultra_rare',
 			description:
-				'Opponent must discard any effect cards attached to their active Hermit and adjacent Hermits.',
+				'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
 		})
 	}
 

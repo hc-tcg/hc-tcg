@@ -23,7 +23,7 @@ class KeralisRareHermitCard extends HermitCard {
 				name: 'Sweet Face',
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 0,
-				power: 'Heal any AFK Hermit for 100hp.',
+				power: 'Heal one of your AFK Hermits 100hp.',
 			},
 		})
 	}

@@ -23,7 +23,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 				name: 'Geminislay',
 				cost: ['terraform', 'terraform'],
 				damage: 80,
-				power: 'You may play an additional single use effect card at the end of your turn.',
+				power: 'At the end of your turn, you may use an additional single use effect card.',
 			},
 		})
 	}

@@ -8,10 +8,10 @@ class IronArmorEffectCard extends EffectCard {
 		super({
 			id: 'iron_armor',
 			numericId: 45,
-			name: 'Iron Armor',
+			name: 'Iron Armour',
 			rarity: 'common',
 			description:
-				'When the Hermit this card is attached to takes damage, reduce that damage by up to 20hp each turn.',
+				'When the Hermit this card is attached to takes damage, that damage is reduced by up to 20hp each turn.',
 		})
 	}
 

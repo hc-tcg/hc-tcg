@@ -173,7 +173,7 @@ export function executeAttacks(
 
 			const newAttacks: Array<AttackModel> = []
 			for (let i = 0; i < attacks.length; i++) {
-				attacks.push(...attacks[i].nextAttacks)
+				newAttacks.push(...attacks[i].nextAttacks)
 				// Clear the list of next attacks on this attack
 				attacks[i].nextAttacks = []
 			}
