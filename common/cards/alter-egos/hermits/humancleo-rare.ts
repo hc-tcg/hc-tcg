@@ -4,7 +4,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
-import {HERMIT_CARDS, ITEM_CARDS} from '../..'
+import {CARDS, HERMIT_CARDS, ITEM_CARDS} from '../..'
 
 class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
@@ -90,6 +90,23 @@ class HumanCleoRareHermitCard extends HermitCard {
 				const afk = getNonEmptyRows(opponentPlayer, true).length
 				if (afk < 1) return
 
+				// Modify attack entry to include who is betrayed
+				opponentPlayer.hooks.getAttacks.add(instance, () => {
+					const rowIndex: number = player.custom[opponentTargetKey]
+					if (rowIndex !== undefined) {
+						const targetHermitId = opponentPlayer.board.rows[rowIndex].hermitCard?.cardId
+						if (targetHermitId !== undefined)
+							game.battleLog.modifyHermitAttackDescription('after_name', [
+								[`(betraying `, 'plain'],
+								[`${CARDS[targetHermitId].name}`, 'player'],
+								[`) `, 'plain'],
+							])
+					}
+
+					opponentPlayer.hooks.getAttacks.remove(instance)
+					return []
+				})
+
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
@@ -155,6 +172,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				opponentPlayer.hooks.onAttach.remove(instance)
 				opponentPlayer.hooks.onDetach.remove(instance)
 				opponentPlayer.hooks.getAttackRequests.remove(instance)
+				opponentPlayer.hooks.getAttacks.remove(instance)
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 				opponentPlayer.hooks.onTurnEnd.remove(instance)
 			})

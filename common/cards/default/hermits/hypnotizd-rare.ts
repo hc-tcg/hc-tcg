@@ -64,6 +64,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 			rowIndex: targetIndex,
 			row: targetRow,
 		})
+		game.battleLog.modifyHermitAttackTarget(targetRow)
 
 		const newAttacks = [hermitAttack]
 

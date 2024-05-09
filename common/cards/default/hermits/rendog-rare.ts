@@ -59,6 +59,12 @@ class RendogRareHermitCard extends HermitCard {
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
+		const pickedAttackName =
+			attackType === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		game.battleLog.modifyHermitAttackDescription('before_name', [
+			[`${pickedAttackName} `, 'highlight'],
+			[`via `, 'plain'],
+		])
 		return hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
 	}
 

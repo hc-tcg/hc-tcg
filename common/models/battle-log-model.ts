@@ -7,6 +7,7 @@ import {
 	PlayerState,
 	RowStateWithHermit,
 	CardT,
+	RowState,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
@@ -19,9 +20,12 @@ export class BattleLogModel {
 	private game: GameModel
 	private log: Array<BattleLogT>
 
+	private currentHermitAttack: BattleLogT | null
+
 	constructor(game: GameModel) {
 		this.game = game
 		this.log = []
+		this.currentHermitAttack = null
 	}
 
 	// BATTLE LOG STUFF //
@@ -161,7 +165,7 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addAttackEntry(turnAction: AttackActionData) {
+	public createHermitAttackEntry(turnAction: AttackActionData) {
 		const currentPlayer = this.game.currentPlayer.playerName
 		const type = turnAction.type
 		if (type === 'SINGLE_USE_ATTACK') return
@@ -193,7 +197,43 @@ export class BattleLogModel {
 				this.format(`${attackName} `, 'highlight'),
 			],
 		}
-		this.log.push(entry)
+		this.currentHermitAttack = entry
+	}
+
+	/** Alters the current Hermit attack entry to include the intended target during `getAttacks` before it is broadcast */
+	public modifyHermitAttackTarget(newTarget: RowState) {
+		if (this.currentHermitAttack === null) return
+
+		let targetMessage: MessageTextT
+		if (newTarget.hermitCard) {
+			targetMessage = this.format(`${CARDS[newTarget.hermitCard.cardId].name} `, 'opponent')
+		} else {
+			targetMessage = this.format(`an empty row `, 'plain')
+		}
+
+		this.currentHermitAttack.description[4] = targetMessage
+	}
+	/** Alters the current Hermit attack entry to include a more accurate description during `getAttacks` before it is broadcast  */
+	public modifyHermitAttackDescription(
+		mode: 'before_name' | 'after_name',
+		description: BattleLogFormatT[]
+	) {
+		if (this.currentHermitAttack === null) return
+
+		const newDescription = description.map(([text, format, condition]) =>
+			this.format(text, format, condition)
+		)
+
+		const start = mode === 'after_name' ? -1 : 6
+		this.currentHermitAttack.description.splice(start, 0, ...newDescription)
+	}
+
+	/** Sends the current Hermit attack entry after being modified during `getAttacks` */
+	public sendHermitAttackEntry() {
+		if (this.currentHermitAttack === null) return
+
+		this.log.push(this.currentHermitAttack)
+		this.currentHermitAttack = null
 
 		this.sendBattleLogEntry()
 	}

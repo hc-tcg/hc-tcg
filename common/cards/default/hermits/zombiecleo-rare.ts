@@ -57,6 +57,12 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		if (!hermitInfo) return []
 
 		// Return that cards secondary attack
+		const pickedAttackName =
+			attackType === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		game.battleLog.modifyHermitAttackDescription('before_name', [
+			[`${pickedAttackName} `, 'highlight'],
+			[`via `, 'plain'],
+		])
 		return hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
 	}
 

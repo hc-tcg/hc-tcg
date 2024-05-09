@@ -91,11 +91,14 @@ function* attackSaga(
 	const defenceRow = opponentBoard.rows[defenceIndex]
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
+	// Create entry to add to battle log
+	game.battleLog.createHermitAttackEntry(turnAction)
+
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
-	//Add entry to battle log
-	game.battleLog.addAttackEntry(turnAction)
+	// Send attack entry after it has been modified
+	game.battleLog.sendHermitAttackEntry()
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

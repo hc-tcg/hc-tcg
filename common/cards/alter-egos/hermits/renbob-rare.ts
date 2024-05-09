@@ -47,6 +47,7 @@ class RenbobRareHermitCard extends HermitCard {
 			} else {
 				attack.setTarget(this.id, null)
 			}
+			game.battleLog.modifyHermitAttackTarget(opponentPlayerRow)
 		}
 
 		const attacks = [attack]
