@@ -257,9 +257,9 @@ const CardTooltip = ({card}: Props) => {
 							{getSingleUse(card)}
 						</div>
 						<div className={css.description}>
+							{getExpansion(card)}
 							{getRank(card)}
 							{getStrengthsAndWeaknesses(card)}
-							{getExpansion(card)}
 							{getDescription(card)}
 						</div>
 					</div>
