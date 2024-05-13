@@ -1,4 +1,5 @@
 import {HERMIT_CARDS} from '../..'
+import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
@@ -46,13 +47,16 @@ class IskallmanRareHermitCard extends HermitCard {
 			if (!activeRow || activeRow.health < 50) return
 
 			// Make sure there is something to select
-			const playerHasAfk = getNonEmptyRows(player, true).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
-			const opponentHasAfk = getNonEmptyRows(opponentPlayer, true).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
-			if (!playerHasAfk && !opponentHasAfk) return
+			const hasHealableAfk = [
+				...getNonEmptyRows(player, true),
+				...getNonEmptyRows(opponentPlayer, true),
+			].some((rowPos) => {
+				const hermitCard = HERMIT_CARDS[rowPos.row.hermitCard.cardId]
+				if (hermitCard === undefined) return false
+				if (rowPos.row.health === hermitCard.health) return false
+				return true
+			})
+			if (!hasHealableAfk) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -126,6 +130,20 @@ class IskallmanRareHermitCard extends HermitCard {
 			const activeRow = getActiveRow(player)
 
 			if (!activeRow) return
+
+			const attacker = attack.getAttacker()
+			const backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'selfAttack'),
+				attacker,
+				target: attacker,
+				type: 'effect',
+				isBacklash: true,
+			})
+			backlashAttack.addDamage(this.id, 50)
+			backlashAttack.shouldIgnoreCards.push(() => {
+				return true
+			})
+			attack.addNewAttack(backlashAttack)
 
 			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
