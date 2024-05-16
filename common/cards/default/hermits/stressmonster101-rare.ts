@@ -23,7 +23,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster', 'prankster'],
 				damage: 0,
 				power:
-					"You and your opponent's active Hermit take damage equal to your active Hermit's health.\n\nAny damage this Hermit takes due to this ability can not be taken by another Hermit.",
+					"You and your opponent's active Hermit take damage equal to your active Hermit's health.\n\nAny damage this Hermit takes due to this ability can not be redirected.",
 			},
 		})
 	}

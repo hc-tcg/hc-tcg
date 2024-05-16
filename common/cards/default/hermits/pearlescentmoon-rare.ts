@@ -45,7 +45,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 
 			const attackerHermit = attacker.row.hermitCard
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
+				if (!attack.isType('primary', 'secondary')) return
 
 				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
 

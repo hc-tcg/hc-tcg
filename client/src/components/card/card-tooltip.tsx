@@ -210,65 +210,27 @@ const getSidebarDescriptions = (card: Card): React.ReactNode => {
 
 const CardTooltip = ({card}: Props) => {
 	if (card instanceof HealthCard) return null
-	const [right, setRight] = useState<number | null>(null)
-	const [left, setLeft] = useState<number | null>(null)
 	const settings = useSelector(getSettings)
 
-	useEffect(() => {
-		if (settings.showAdvancedTooltips === 'off') return
-		if (card.sidebarDescriptions().length === 0) return
-		setRight(null)
-		setLeft(null)
-	})
-
-	const positionRef = (element: HTMLDivElement) => {
-		if (settings.showAdvancedTooltips === 'off') return
-		if (card.sidebarDescriptions().length === 0) return
-		if (!element) return
-		const boundingRect = element.getBoundingClientRect()
-		setRight(boundingRect.right)
-		setLeft(boundingRect.left)
-	}
-
 	return (
-		<div ref={positionRef} className={css.cardTooltipContainer}>
-			<div>
-				{card.sidebarDescriptions().length > 0 &&
-					settings.showAdvancedTooltips === 'on' &&
-					left !== null &&
-					right !== null && (
-						<div
-							className={css.tooltipSidebar}
-							style={left <= 300 ? {left: `${right - left + 10}px`} : {}}
-						>
-							{getSidebarDescriptions(card)}
-						</div>
-					)}
-			</div>
-			{(card.sidebarDescriptions().length === 0 ||
-				settings.showAdvancedTooltips === 'off' ||
-				(right !== null && left !== null)) && (
-				<div>
-					<div className={css.cardTooltip}>
-						<div className={css.topLine}>
-							{getName(card)}
-							{getHermitType(card)}
-							{getAttach(card)}
-							{getSingleUse(card)}
-						</div>
-						<div className={css.description}>
-							{getExpansion(card)}
-							{getRank(card)}
-							{getStrengthsAndWeaknesses(card)}
-							{getDescription(card)}
-						</div>
-					</div>
-				</div>
+		<div className={css.cardTooltipContainer}>
+			{settings.showAdvancedTooltips === 'on' && (
+				<div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>
 			)}
-			{card.sidebarDescriptions().length > 0 &&
-				settings.showAdvancedTooltips === 'on' &&
-				left !== null &&
-				right !== null && <div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>}
+			<div className={css.cardTooltip}>
+				<div className={css.topLine}>
+					{getName(card)}
+					{getHermitType(card)}
+					{getAttach(card)}
+					{getSingleUse(card)}
+				</div>
+				<div className={css.description}>
+					{getExpansion(card)}
+					{getRank(card)}
+					{getStrengthsAndWeaknesses(card)}
+					{getDescription(card)}
+				</div>
+			</div>
 		</div>
 	)
 }
