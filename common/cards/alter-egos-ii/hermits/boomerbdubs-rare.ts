@@ -97,11 +97,11 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (player.custom[instanceKey] === null) return
 			if (player.custom[instanceKey] === 0) {
 				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 				return
 			}
+			if (!player.custom[instanceKey]) return
 
 			attack.addDamage(this.id, player.custom[instanceKey])
 		})
