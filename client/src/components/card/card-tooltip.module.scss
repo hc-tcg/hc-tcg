@@ -1,14 +1,62 @@
 .cardTooltip {
 	overflow: hidden;
+	background-color: rgba(10, 1, 15, 95%);
+	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
+	color: var(--gray-200);
+	padding: 8px;
+	border-radius: 4px;
+	pointer-events: none;
+
+	&.small {
+		font-size: 14px;
+		display: flex;
+		flex-direction: column;
+
+		> div > p {
+			color: var(--gray-300);
+		}
+	}
+}
+
+.cardTooltipContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.tooltipSidebar {
+	position: absolute;
+	left: -250px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+
+	@media screen and (max-width: 80vh) {
+		visibility: hidden;
+	}
+}
+
+.tooltipBelow {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.smallText {
+	font-size: 14px;
 }
 
 .topLine {
 	display: flex;
 	gap: 10px;
-	font-size: 20px;
+	font-size: 18px;
 	flex-flow: row nowrap;
 	line-height: 1;
 	white-space: nowrap;
+}
+
+.italicized {
+	font-family: MinecraftItalic;
 }
 
 .name {
@@ -21,11 +69,17 @@
 	font-family: MinecraftBold;
 }
 
+.strengthsAndWeaknesses {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	color: var(--gray-300);
+}
+
 .description {
 	margin-top: 4px;
-	color: rgb(158, 14, 158);
+	color: rgb(192, 53, 192);
 	font-size: 18px;
-	font-family: MinecraftItalic;
 	line-height: 1.1;
 }
 
@@ -102,11 +156,6 @@
 
 .coin {
 	color: rgb(196, 207, 207);
-}
-
-.strengthsAndWeaknesses {
-	font-family: Minecraft;
-	margin-top: 3px;
 }
 
 .rank {

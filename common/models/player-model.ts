@@ -6,26 +6,25 @@ import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 
 export class PlayerModel {
-	public playerId: string
-	public playerSecret: string
-	public playerDeck: {
+	private internalId: string
+	private internalSecret: string
+	private internalDeck: {
 		name: string
 		icon: string
 		cards: Array<CardT>
 	}
-	public playerName: string
+
+	public name: string
 	public minecraftName: string
-	public censoredPlayerName: string
+	public censoredName: string
 	public socket: Socket
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
-		// @TODO remove "player" in values everywhere, e.g. player.id and player.secret, rather than player.playerId and player.playerSecret
-		// need to make sure it's done everywhere tho
-		this.playerId = Math.random().toString()
-		this.playerSecret = Math.random().toString()
+		this.internalId = Math.random().toString()
+		this.internalSecret = Math.random().toString()
 
-		// always generate a starter deck as the default
-		this.playerDeck = {
+		// Always generate a starter deck as the default
+		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack().map((id) => {
@@ -33,20 +32,30 @@ export class PlayerModel {
 			}),
 		}
 
-		this.playerName = playerName
+		this.name = playerName
 		this.minecraftName = minecraftName
-		this.censoredPlayerName = profanityFilter(playerName)
+		this.censoredName = profanityFilter(playerName)
 		this.socket = socket
+	}
+
+	public get id() {
+		return this.internalId
+	}
+	public get secret() {
+		return this.internalSecret
+	}
+	public get deck() {
+		return this.internalDeck
 	}
 
 	getPlayerInfo() {
 		return {
-			playerId: this.playerId,
-			playerSecret: this.playerSecret,
-			playerDeck: this.playerDeck,
-			playerName: this.playerName,
+			playerId: this.id,
+			playerSecret: this.secret,
+			playerDeck: this.deck,
+			playerName: this.name,
 			minecraftName: this.minecraftName,
-			censoredPlayerName: this.censoredPlayerName,
+			censoredPlayerName: this.censoredName,
 		}
 	}
 
@@ -54,7 +63,7 @@ export class PlayerModel {
 		if (!newDeck || !newDeck.cards) return
 		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
 		if (validationMessage) return
-		this.playerDeck = newDeck
+		this.internalDeck = newDeck
 	}
 
 	setMinecraftName(name: string) {

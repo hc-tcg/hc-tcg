@@ -11,7 +11,8 @@ class ShieldEffectCard extends EffectCard {
 			numericId: 88,
 			name: 'Shield',
 			rarity: 'common',
-			description: 'Prevent up to 60hp damage.\n\nDiscard following any damage taken.',
+			description:
+				'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
 		})
 	}
 

@@ -10,7 +10,7 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 			numericId: 89,
 			name: 'Splash Potion of Healing',
 			rarity: 'common',
-			description: 'Heal each of your active and AFK Hermits 20hp.',
+			description: 'Heal all of your active and AFK Hermits 20hp.',
 		})
 	}
 

@@ -24,7 +24,7 @@ class HelsknightRareHermitCard extends HermitCard {
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
 				power:
-					'If opponent uses a single use effect card on their next turn, they must flip a coin. If heads, you take the card after its effect is applied and add it to your hand.',
+					'If your opponent uses a single use effect card on their next turn, flip a coin.\n\nIf heads, you take this card after its effect is applied and add it to your hand.',
 			},
 		})
 	}
@@ -43,7 +43,7 @@ class HelsknightRareHermitCard extends HermitCard {
 				const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
 
 				if (coinFlip[0] == 'heads') {
-					moveCardToHand(game, opponentPlayer.board.singleUseCard, true)
+					moveCardToHand(game, opponentPlayer.board.singleUseCard, player)
 					opponentPlayer.board.singleUseCardUsed = false
 				}
 			})

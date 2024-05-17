@@ -1,4 +1,4 @@
-import Card from './card'
+import Card, {CanAttachResult} from './card'
 import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
@@ -28,21 +28,18 @@ abstract class EffectCard extends Card {
 		this.description = defs.description
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
 		const {currentPlayer} = game
 
-		// Wrong slot
-		if (pos.slot.type !== 'effect') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		const result: CanAttachResult = []
 
-		// Can't attach without hermit card - this is considered like the wrong slot
-		if (!pos.row?.hermitCard) return 'INVALID'
+		if (pos.slot.type !== 'effect') result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 
-		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
-		if (!cardInfo) return 'INVALID'
-		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+		// Can't attach without hermit card - this is not going to show the unmet condition modal
+		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		return 'YES'
+		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {
@@ -60,6 +57,8 @@ abstract class EffectCard extends Card {
 		return true
 	}
 
+	// @TODO replace with canDetach hook, need a standardized way to attach and detach things
+	// All cards that check for canAttach now eventually need to check canDetach too.
 	/**
 	 * Returns whether this card is removable from its position
 	 */

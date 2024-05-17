@@ -15,6 +15,7 @@ export class RootModel {
 		playerJoined: new Hook<(player: PlayerModel) => void>(),
 		playerLeft: new Hook<(player: PlayerModel) => void>(),
 	}
+	public updates: Record<string, Array<string>> = {}
 
 	public getGameIds() {
 		return Object.keys(this.games)
@@ -29,7 +30,7 @@ export class RootModel {
 		return Object.values(this.players)
 	}
 	public addPlayer(player: PlayerModel) {
-		this.players[player.playerId] = player
+		this.players[player.id] = player
 	}
 	public addGame(game: GameModel) {
 		this.games[game.id] = game

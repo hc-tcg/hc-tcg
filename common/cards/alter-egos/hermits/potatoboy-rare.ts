@@ -15,7 +15,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				name: 'Peace & Love',
 				cost: ['farm'],
 				damage: 0,
-				power: 'Heals Hermit directly above and below for 40hp.',
+				power: 'Heal all Hermits that are adjacent to your active Hermit 40hp.',
 			},
 			secondary: {
 				name: 'Volcarbo',

@@ -10,8 +10,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			numericId: 90,
 			name: 'Splash Potion of Poison',
 			rarity: 'rare',
-			description:
-				'Deal an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
+			description: "Poison your opponent's active Hermit.",
 		})
 	}
 
@@ -34,17 +33,25 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
-		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+		if (pos.opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'poison',
+			},
+		]
 	}
 }
 

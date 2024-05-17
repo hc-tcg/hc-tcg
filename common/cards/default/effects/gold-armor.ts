@@ -8,9 +8,10 @@ class GoldArmorEffectCard extends EffectCard {
 		super({
 			id: 'gold_armor',
 			numericId: 29,
-			name: 'Gold Armor',
+			name: 'Gold Armour',
 			rarity: 'common',
-			description: 'Prevent up to 10hp damage each turn.',
+			description:
+				'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 		})
 	}
 

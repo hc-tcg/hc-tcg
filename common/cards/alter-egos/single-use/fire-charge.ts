@@ -14,13 +14,12 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			name: 'Fire Charge',
 			rarity: 'common',
 			description:
-				'Discard 1 attached item or effect card from your active or AFK Hermit.\n\nYou can use another single use effect card this turn.',
+				'Discard one attached item or effect card from any of your Hermits.\n\nYou can use another single use effect card this turn.',
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
 
@@ -36,10 +35,11 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				}
 			}
 
-			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0) return 'YES'
+			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0) return result
 		}
 
-		return 'NO'
+		result.push('UNMET_CONDITION')
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -50,7 +50,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 				if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
 					return 'FAILURE_INVALID_SLOT'

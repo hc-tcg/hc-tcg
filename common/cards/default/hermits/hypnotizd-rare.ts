@@ -32,7 +32,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				cost: ['miner', 'any'],
 				damage: 70,
 				power:
-					"You can choose to attack an opponent's AFK Hermit.\n\nIf AFK Hermit is attacked, you must discard 1 attached item card.",
+					"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard 1 item card attached to your active Hermit.",
 			},
 		})
 	}
@@ -88,7 +88,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -119,7 +119,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

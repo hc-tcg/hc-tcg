@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 class AnvilSingleUseCard extends SingleUseCard {
@@ -12,7 +13,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			name: 'Anvil',
 			rarity: 'rare',
 			description:
-				"Do 30hp damage to your opponent's Hermit directly opposite your active Hermit on the board and 10hp damage to each of their Hermits below it.",
+				'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
 		})
 	}
 
@@ -76,14 +77,12 @@ class AnvilSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
-		const activeRow = player.board.activeRow
-		if (activeRow === null) return 'NO'
+		if (!hasActive(player)) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override getExpansion() {

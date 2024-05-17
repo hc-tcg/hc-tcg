@@ -11,21 +11,19 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			name: 'Knockback',
 			rarity: 'rare',
 			description:
-				'After attack, your opponent must choose an AFK Hermit to replace their active Hermit, unless they have no AFK Hermits. ',
+				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
 		// Check if there is an AFK Hermit
 		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveRows.length === 0) return 'NO'
+		if (inactiveRows.length === 0) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -54,7 +52,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 					id: this.id,
 					message: 'Choose a new active Hermit from your afk Hermits',
 					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 						const rowIndex = pickResult.rowIndex
 						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

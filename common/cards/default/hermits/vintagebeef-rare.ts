@@ -23,7 +23,8 @@ class VintageBeefRareHermitCard extends HermitCard {
 				name: 'Beefy Tunes',
 				cost: ['builder', 'builder'],
 				damage: 80,
-				power: 'Flip a coin. If heads, all status effects are removed from your Hermits.',
+				power:
+					'Flip a coin.\n\nIf heads, all status effects are removed from your active and AFK Hermits.',
 			},
 		})
 	}

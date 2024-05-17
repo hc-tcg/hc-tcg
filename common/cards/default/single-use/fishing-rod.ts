@@ -15,13 +15,12 @@ class FishingRodSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {player} = pos
-		if (player.pile.length <= 2) return 'NO'
 
-		return 'YES'
+		if (player.pile.length <= 2) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override canApply() {

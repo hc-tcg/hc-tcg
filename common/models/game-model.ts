@@ -10,8 +10,8 @@ import {
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
-import {SlotPos} from '../types/cards'
-import {BattleLog} from './battle-log'
+import {BattleLogModel} from './battle-log-model'
+import {getSlotPos} from '../utils/board'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -19,7 +19,7 @@ export class GameModel {
 	private internalCode: string | null
 
 	public chat: Array<MessageInfoT>
-	public battleLog: BattleLog
+	public battleLog: BattleLogModel
 	public players: Record<string, PlayerModel>
 	public task: any
 	public state: GameState
@@ -36,7 +36,7 @@ export class GameModel {
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
 		this.chat = []
-		this.battleLog = new BattleLog(this)
+		this.battleLog = new BattleLogModel(this)
 
 		this.task = null
 
@@ -48,8 +48,8 @@ export class GameModel {
 		}
 
 		this.players = {
-			[player1.playerId]: player1,
-			[player2.playerId]: player2,
+			[player1.id]: player1,
+			[player2.id]: player2,
 		}
 
 		this.state = getGameState(this)
@@ -158,7 +158,6 @@ export class GameModel {
 		const turnState = this.state.turn
 		const allBlockedActions: TurnActions = []
 		Object.keys(turnState.blockedActions).forEach((sourceId) => {
-			console.log('soucreId: ' + sourceId)
 			if (excludeIds?.includes(sourceId)) return
 
 			const actions = turnState.blockedActions[sourceId]
@@ -255,16 +254,7 @@ export class GameModel {
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
 	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-		const oldRowState = player.board.rows[oldRow]
-
-		const oldSlotPos: SlotPos = {
-			rowIndex: oldRow,
-			row: oldRowState,
-			slot: {
-				index: 0,
-				type: 'hermit',
-			},
-		}
+		const oldSlotPos = getSlotPos(player, oldRow, 'hermit')
 
 		const results = player.hooks.onSlotChange.call(oldSlotPos)
 		if (results.includes(false)) return false
@@ -272,6 +262,7 @@ export class GameModel {
 		const activeRowChanged = this.changeActiveRow(player, newRow)
 		if (!activeRowChanged) return false
 
+		const oldRowState = player.board.rows[oldRow]
 		player.board.rows[oldRow] = player.board.rows[newRow]
 		player.board.rows[newRow] = oldRowState
 

@@ -10,7 +10,7 @@ function* coinFlipSaga(gameState: LocalGameState): SagaIterator {
 	const coinFlips = gameState.players[gameState.turn.currentPlayerId].coinFlips
 	for (const coinFlip of coinFlips) {
 		yield put(setCoinFlip(coinFlip))
-		yield delay(2600)
+		yield delay(350 * coinFlip.amount + 1000)
 	}
 	yield put(setCoinFlip(null))
 }

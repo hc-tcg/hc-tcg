@@ -13,7 +13,7 @@ class TotemEffectCard extends EffectCard {
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:
-				'Recover 10hp and remain in battle after you are knocked out.\n\nDoes not count as a knockout. Discard after use.',
+				'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\n\nDoes not count as a knockout. Discard after use.',
 		})
 	}
 
@@ -68,6 +68,15 @@ class TotemEffectCard extends EffectCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
 		pos.opponentPlayer.hooks.afterAttack.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'glossary',
+				name: 'knockout',
+			},
+		]
 	}
 }
 

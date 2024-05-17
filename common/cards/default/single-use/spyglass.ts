@@ -12,7 +12,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			name: 'Spyglass',
 			rarity: 'common',
 			description:
-				"Look at opponent's hand.\n\nFlip a coin.\n\nIf heads, choose 1 of those cards to discard.",
+				"Look at your opponent's hand, and then flip a coin.\n\nIf heads, choose one card to discard from your opponent's hand.",
 		})
 	}
 
@@ -44,11 +44,33 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				},
 				onResult(modalResult) {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
+					if (!canDiscard) return 'SUCCESS'
 
-					if (canDiscard) {
-						if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
-						discardFromHand(opponentPlayer, modalResult.cards[0])
-					}
+					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
+					discardFromHand(opponentPlayer, modalResult.cards[0])
+
+					game.addModalRequest({
+						playerId: opponentPlayer.id,
+						data: {
+							modalId: 'selectCards',
+							payload: {
+								modalName: 'Spyglass: Card your opponent discarded.',
+								modalDescription: '',
+								cards: modalResult.cards,
+								selectionSize: 0,
+								primaryButton: {
+									text: 'Close',
+									variant: 'default',
+								},
+							},
+						},
+						onResult() {
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							// Do nothing
+						},
+					})
 
 					return 'SUCCESS'
 				},
@@ -64,17 +86,13 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
-		// Gem can use 2 spyglasses on the same turn
-		if (opponentPlayer.hand.length === 0) return 'NO'
+		if (opponentPlayer.hand.length === 0) result.push('UNMET_CONDITION')
+		if (game.state.turn.turnNumber === 1) result.push('UNMET_CONDITION')
 
-		// They can discard the only hermit in their hand
-		if (game.state.turn.turnNumber === 1) return 'NO'
-
-		return 'YES'
+		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

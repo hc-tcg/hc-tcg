@@ -1,3 +1,4 @@
+import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect, getNonEmptyRows, removeStatusEffect} from '../../../utils/board'
@@ -29,7 +30,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 	}
 
 	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		player.custom[instanceKey] = []
 
@@ -41,7 +42,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 				id: instance,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -56,9 +57,10 @@ class OrionSoundRareHermitCard extends HermitCard {
 			})
 		})
 
-		player.hooks.onHermitDeath.add(instance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.rowIndex !== pos.rowIndex) return
+		const afterAttack = (attack: AttackModel) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget || attackTarget.row.health > 0) return
+			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
 
 			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 				return (
@@ -68,15 +70,19 @@ class OrionSoundRareHermitCard extends HermitCard {
 			statusEffectsToRemove.forEach((ail) => {
 				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
-		})
+		}
+
+		player.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
 	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack.remove(instance)
-		player.hooks.onHermitDeath.remove(instance)
+		player.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
 		delete player.custom[instanceKey]
 	}
 

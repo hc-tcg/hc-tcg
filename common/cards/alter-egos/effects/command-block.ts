@@ -10,7 +10,7 @@ class CommandBlockEffectCard extends EffectCard {
 			name: 'Command Block',
 			rarity: 'rare',
 			description:
-				"Attach to any active or AFK Hermit.\n\nItems attached to this Hermit become any type.\n\nThis card can only be removed once the Hermit it's attached to is knocked out.",
+				'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 		})
 	}
 

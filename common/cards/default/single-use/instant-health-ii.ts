@@ -3,7 +3,6 @@ import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
-import {isActive} from '../../../utils/game'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {
@@ -12,23 +11,21 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			numericId: 43,
 			name: 'Instant Health II',
 			rarity: 'rare',
-			description: 'Heal active or AFK Hermit 60hp.',
+			description: 'Heal one of your active or AFK Hermits 60hp.',
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {player} = pos
 
 		// Can't attach it there are no real hermits
 		const playerHasHermit = getNonEmptyRows(player).some(
 			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
 		)
-		if (!playerHasHermit) return 'NO'
+		if (!playerHasHermit) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -39,7 +36,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an active or AFK Hermit',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

@@ -1,9 +1,11 @@
 import {GameModel} from '../models/game-model'
 import {CardT, GameState, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
+import {BasicCardPos, CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotPos} from '../types/cards'
+import {getSlotPos} from './board'
+import {CanAttachResult} from '../cards/base/card'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -27,7 +29,11 @@ function discardAtPos(pos: CardPosModel) {
 	}
 }
 
-export function discardCard(game: GameModel, card: CardT | null, steal = false) {
+export function discardCard(
+	game: GameModel,
+	card: CardT | null,
+	playerDiscard?: PlayerState | null
+) {
 	if (!card) return
 
 	const pos = getCardPos(game, card.cardInstance)
@@ -38,14 +44,7 @@ export function discardCard(game: GameModel, card: CardT | null, steal = false) 
 	}
 
 	if (pos.row && pos.rowIndex && pos.slot.type !== 'single_use') {
-		const slotPos: SlotPos = {
-			rowIndex: pos.rowIndex,
-			row: pos.row,
-			slot: {
-				index: pos.slot.index,
-				type: pos.slot.type,
-			},
-		}
+		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.slot.type, pos.slot.index)
 
 		const results = pos.player.hooks.onSlotChange.call(slotPos)
 		if (results.includes(false)) return
@@ -59,12 +58,14 @@ export function discardCard(game: GameModel, card: CardT | null, steal = false) 
 	// Remove the card
 	discardAtPos(pos)
 
-	const discardPlayer = steal ? pos.opponentPlayer : pos.player
+	if (playerDiscard !== null) {
+		const discardPlayer = playerDiscard ? playerDiscard : pos.player
 
-	discardPlayer.discarded.push({
-		cardId: card.cardId,
-		cardInstance: card.cardInstance,
-	})
+		discardPlayer.discarded.push({
+			cardId: card.cardId,
+			cardInstance: card.cardInstance,
+		})
+	}
 }
 
 export function retrieveCard(game: GameModel, card: CardT | null) {
@@ -123,7 +124,7 @@ export function drawCards(playerState: PlayerState, amount: number) {
 	}
 }
 
-export function moveCardToHand(game: GameModel, card: CardT, steal = false) {
+export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: PlayerState | null) {
 	const cardPos = getCardPos(game, card.cardInstance)
 	if (!cardPos) return
 
@@ -142,8 +143,10 @@ export function moveCardToHand(game: GameModel, card: CardT, steal = false) {
 		cardPos.player.board.singleUseCard = null
 	}
 
-	const player = steal ? cardPos.opponentPlayer : cardPos.player
-	player.hand.push(card)
+	if (playerDiscard !== null) {
+		const chosenPlayer = playerDiscard ? playerDiscard : cardPos.player
+		chosenPlayer.hand.push(card)
+	}
 }
 
 /**Returns whether the slot is empty or not. */
@@ -175,22 +178,77 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-/**Swaps the positions of two slots on the board. */
+/** Filters a `CanAttachResult` to remove all `'INVALID_PLAYER'` problems for movement checks */
+function exceptInvalidPlayer(
+	result: CanAttachResult[number]
+): result is Exclude<typeof result, 'INVALID_PLAYER'> {
+	return result !== 'INVALID_PLAYER'
+}
+
+export function canAttachToSlot(
+	game: GameModel,
+	slotPos: SlotPos,
+	card: CardT,
+	excludeInvalidPlayer = false
+): CanAttachResult {
+	const {player, rowIndex, row, slot} = slotPos
+	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
+	if (!opponentPlayerId) return ['UNKNOWN_ERROR']
+
+	const basicPos: BasicCardPos = {
+		player,
+		opponentPlayer: game.state.players[opponentPlayerId],
+		rowIndex,
+		row,
+		slot,
+	}
+
+	// Create a fake card pos model
+	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
+
+	const cardInfo = CARDS[card.cardId]
+	const canAttach = cardInfo.canAttach(game, pos)
+	player.hooks.canAttach.call(canAttach, pos)
+
+	if (excludeInvalidPlayer) {
+		return canAttach.filter(exceptInvalidPlayer)
+	}
+	return canAttach
+}
+
+/** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
 export function swapSlots(
 	game: GameModel,
 	slotAPos: SlotPos,
 	slotBPos: SlotPos,
 	withoutDetach: boolean = false
-) {
+): boolean {
 	const {slot: slotA, row: rowA} = slotAPos
 	const {slot: slotB, row: rowB} = slotBPos
-	if (slotA.type !== slotB.type) return
+	if (slotA.type !== slotB.type) return false
 
 	// Info about non-empty slots
 	let cardsInfo: any = []
 
-	// onDetach and get card info
-	for (const slot of [slotAPos, slotBPos]) {
+	// Make sure each card can be placed in the other slot
+	const cardA = getSlotCard(slotAPos)
+	const cardB = getSlotCard(slotBPos)
+	if (cardB) {
+		// Return false if we can't attach for any reason other than wrong player
+		const canAttachResult = canAttachToSlot(game, slotAPos, cardB, true)
+		if (canAttachResult.length > 0) return false
+	}
+	if (cardA) {
+		// Return false if we can't attach for any reason other than wrong player
+		const canAttachResult = canAttachToSlot(game, slotBPos, cardA, true)
+		if (canAttachResult.length > 0) return false
+	}
+
+	// make checks for each slot and then detach
+	const slots = [slotAPos, slotBPos]
+	for (let i = 0; i < slots.length; i++) {
+		const slot = slots[i]
+
 		if (isSlotEmpty(slot)) continue
 
 		const card = getSlotCard(slot)
@@ -200,7 +258,7 @@ export function swapSlots(
 		if (!cardPos) continue
 
 		const results = cardPos.player.hooks.onSlotChange.call(slot)
-		if (results.includes(false)) return
+		if (results.includes(false)) return false
 
 		const cardInfo = CARDS[card.cardId]
 
@@ -240,4 +298,6 @@ export function swapSlots(
 			cardPos.player.hooks.onAttach.call(card.cardInstance)
 		}
 	}
+
+	return true
 }

@@ -1,5 +1,6 @@
+import {CanAttachResult} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
-import {BattleLog} from '../models/battle-log'
+import {BattleLogModel} from '../models/battle-log-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
@@ -50,6 +51,7 @@ export type CurrentCoinFlipT = {
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>
+	amount: number
 }
 
 export type BattleLogT = {
@@ -91,6 +93,8 @@ export type PlayerState = {
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 
+		/** Hook called when checking if a card can be attached. The result can be modified and will be stored */
+		canAttach: GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
 		/** Hook called when a card is detached */
@@ -136,11 +140,6 @@ export type PlayerState = {
 		afterDefence: GameHook<(attack: AttackModel) => void>
 
 		/**
-		 * Hook called when a hermit is about to die.
-		 */
-		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
-
-		/**
 		 * Hook called at the start of the turn
 		 *
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
@@ -157,7 +156,7 @@ export type PlayerState = {
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		// @TODO this is currently not complete, it needs to be called in a lot more places, if it is needed
+		// @TODO replace with canDetach, we already have canAttach
 		/** Hook called when a card attemps to move or rows are swapped. Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to. */
 		onSlotChange: GameHook<(slot: SlotPos) => boolean>
 	}
@@ -171,11 +170,15 @@ export type GenericActionResult =
 	| 'FAILURE_CANNOT_COMPLETE'
 	| 'FAILURE_UNKNOWN_ERROR'
 
-export type PlayCardActionResult = 'FAILURE_INVALID_SLOT' | 'FAILURE_CANNOT_ATTACH'
+export type PlayCardActionResult =
+	| 'FAILURE_INVALID_PLAYER'
+	| 'FAILURE_INVALID_SLOT'
+	| 'FAILURE_UNMET_CONDITION'
+	| 'FAILURE_UNMET_CONDITION_SILENT'
 
 export type PickCardActionResult =
+	| 'FAILURE_INVALID_PLAYER'
 	| 'FAILURE_INVALID_SLOT'
-	| 'FAILURE_WRONG_PLAYER'
 	| 'FAILURE_WRONG_PICK'
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
@@ -327,7 +330,7 @@ export type LocalGameRoot = {
 		outcome: GameEndOutcomeT
 	} | null
 	chat: Array<MessageInfoT>
-	battleLog: BattleLog | null
+	battleLog: BattleLogModel | null
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean
 }

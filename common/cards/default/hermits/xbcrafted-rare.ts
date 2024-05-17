@@ -23,7 +23,8 @@ class XBCraftedRareHermitCard extends HermitCard {
 				name: 'Noice!',
 				cost: ['explorer', 'any'],
 				damage: 70,
-				power: "The opponent Hermit's attached effect card is ignored during this attack.",
+				power:
+					"Any effect cards attached to your opponent's active Hermit are ignored during this turn.",
 			},
 		})
 	}
@@ -58,19 +59,19 @@ class XBCraftedRareHermitCard extends HermitCard {
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
 				const pos = getCardPos(game, instance)
-				if (!pos || !attack.getTarget()) return false
+				if (!pos || !pos.row || !pos.row.effectCard) return false
 
-				const isTargeting = isTargetingPos(attack, opponentActivePos)
-				if (isTargeting && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
+				// It's not the targets effect card, do not ignore it
+				if (pos.slot.type !== 'effect') return false
 
-				return false
+				// Not attached to the opponent's active Hermit, do not ignore it
+				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
+
+				return true
 			})
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
+		player.hooks.onTurnEnd.add(instance, () => {
 			// Remove ignore flag
 			if (player.custom[ignoreKey]) {
 				delete player.custom[ignoreKey]

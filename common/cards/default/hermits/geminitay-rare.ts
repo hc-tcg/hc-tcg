@@ -23,7 +23,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 				name: 'Geminislay',
 				cost: ['terraform', 'terraform'],
 				damage: 80,
-				power: 'You may play an additional single use effect card at the end of your turn.',
+				power: 'At the end of your turn, you may use an additional single use effect card.',
 			},
 		})
 	}
@@ -31,9 +31,6 @@ class GeminiTayRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		// @TODO egg confusion, and how can we get rid of follow up
-		// The follow-up is now present for the counterpart.
-		// is that even in the scope of this refactor?
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 

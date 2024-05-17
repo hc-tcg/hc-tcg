@@ -60,7 +60,7 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				id: instance,
 				message: 'Choose an AFK Hermit to protect',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined || rowIndex === player.board.activeRow)
