@@ -105,6 +105,10 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 			attack.addDamage(this.id, player.custom[instanceKey])
 		})
+
+		player.hooks.onTurnEnd.add(instance, () => {
+			delete player.custom[instanceKey]
+		})
 	}
 
 	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
@@ -114,6 +118,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.beforeAttack.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 	}
 
 	override getExpansion() {

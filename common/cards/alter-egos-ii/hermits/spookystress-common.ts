@@ -6,7 +6,7 @@ class SpookyStressCommonHermitCard extends HermitCard {
 			id: 'spookystress_common',
 			numericId: 238,
 			name: 'Spooky Stress',
-			rarity: 'rare',
+			rarity: 'common',
 			hermitType: 'pvp',
 			health: 260,
 			primary: {

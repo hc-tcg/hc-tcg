@@ -6,7 +6,7 @@ class PrincessGemCommonHermitCard extends HermitCard {
 			id: 'princessgem_common',
 			numericId: 236,
 			name: 'Princess Gem',
-			rarity: 'rare',
+			rarity: 'common',
 			hermitType: 'terraform',
 			health: 280,
 			primary: {

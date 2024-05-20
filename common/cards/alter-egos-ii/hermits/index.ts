@@ -4,7 +4,7 @@ import BoomerBdubsRareHermitCard from '../../alter-egos-ii/hermits/boomerbdubs-r
 import DwarfImpulseCommonHermitCard from '../../alter-egos-ii/hermits/dwarfimpulse-common'
 import FiveAMPearlRareHermitCard from '../../alter-egos-ii/hermits/fiveampearl-rare'
 import FrenchKeralisCommonHermitCard from '../../alter-egos-ii/hermits/frenchkeralis-common'
-import HorseHeadHypnoCommonHermitCard from '../../alter-egos-ii/hermits/horseheadhypno-rare'
+import HorseHeadHypnoCommonHermitCard from '../../alter-egos-ii/hermits/horseheadhypno-common'
 import IskallmanRareHermitCard from '../../alter-egos-ii/hermits/iskallman-rare'
 import OriginalXbCommonHermitCard from '../../alter-egos-ii/hermits/originalxb-common'
 import OverseerRareHermitCard from '../../alter-egos-ii/hermits/overseer-rare'

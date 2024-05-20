@@ -18,8 +18,8 @@ function* appSaga(): SagaIterator {
 	yield fork(logoutSaga)
 	yield fork(newDeckSaga)
 	yield fork(minecraftNameSaga)
-	yield fork(updatesSaga)
 	yield fork(matchmakingSaga)
+	yield fork(updatesSaga)
 }
 
 function* rootSaga(): SagaIterator {
