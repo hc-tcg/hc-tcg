@@ -6,7 +6,7 @@ class ShadEECommonHermitCard extends HermitCard {
 			id: 'shadee_common',
 			numericId: 237,
 			name: 'Shade-E-E',
-			rarity: 'rare',
+			rarity: 'common',
 			hermitType: 'prankster',
 			health: 280,
 			primary: {

@@ -6,7 +6,7 @@ class OriginalXbCommonHermitCard extends HermitCard {
 			id: 'originalxb_common',
 			numericId: 234,
 			name: 'Original XB',
-			rarity: 'rare',
+			rarity: 'common',
 			hermitType: 'miner',
 			health: 280,
 			primary: {
