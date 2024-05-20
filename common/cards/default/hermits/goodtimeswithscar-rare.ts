@@ -23,7 +23,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				cost: ['builder', 'any'],
 				damage: 70,
 				power:
-					'Until the start of your next turn, if this Hermit is knocked out they are revived with 50hp.\n\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
+					'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\n\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
 			},
 		})
 	}
