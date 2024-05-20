@@ -51,7 +51,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (attack.type !== 'primary' || !attacker) return
 
 			const opponentRowPos = getActiveRowPos(opponentPlayer)
-			if (!rowIndex || !row || !opponentRowPos) return
+			if (rowIndex === null || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
 			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
