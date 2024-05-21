@@ -2,7 +2,7 @@ import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {getActiveRow, applyStatusEffect, applyDummyStatusEffect, removeStatusEffect, removeDummyStatusEffect} from '../utils/board'
+import {getActiveRow, applyStatusEffect, applyDummyStatusEffect, removeStatusEffect, removeDummyStatusEffect, getNonEmptyRows} from '../utils/board'
 import {AttackModel} from '../models/attack-model'
 import {StatusEffectT, GenericActionResult} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
@@ -24,29 +24,49 @@ class WeaknessStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const { player, opponentPlayer } = pos
-		const strongType = 'balanced' // @TODO Implement this thing.
-		const weakType = 'farm'
+		const {player, opponentPlayer} = pos
+		const strongType = HERMIT_CARDS[getActiveRow(player)!.hermitCard.cardId].hermitType
+		const weakType = HERMIT_CARDS[getActiveRow(opponentPlayer)!.hermitCard.cardId].hermitType
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
 		STRENGTHS[strongType].push(weakType)
 
-		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
-			if (statusEffectInfo.duration === 0)
+			if (statusEffectInfo.duration === 1)
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 				STRENGTHS[strongType] = STRENGTHS[strongType].filter((a) => a !== weakType)
 		})
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			if (!STRENGTHS[strongType].includes(weakType)) {
 				STRENGTHS[strongType].push(weakType)
 			}
 
-			// @TODO Implement start of turn dummy distribution.
+			// Apply dummies to existing hermits for the turn.
+			for (let i = 0; i < player.board.rows.length; i++) {
+				const row = player.board.rows[i]
+
+				if (row.hermitCard) {
+					const card = row.hermitCard
+					if (HERMIT_CARDS[card.cardId].hermitType == weakType) {
+						applyDummyStatusEffect(game, 'weaknessdummy', Math.random().toString(), card.cardInstance, statusEffectInfo.duration!)
+					}
+				}
+			}
+			for (let i = 0; i < opponentPlayer.board.rows.length; i++) {
+				const row = opponentPlayer.board.rows[i]
+
+				if (row.hermitCard) {
+					const card = row.hermitCard
+					if (HERMIT_CARDS[card.cardId].hermitType == weakType) {
+						applyDummyStatusEffect(game, 'weaknessdummy', Math.random().toString(), card.cardInstance, statusEffectInfo.duration!)
+					}
+				}
+			}
 		})
 
 		// Apply visual indicators for the player.
@@ -54,7 +74,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			const cardType = CARDS[card.cardId].type
 
 			if (cardType == 'hermit') {
-				const hermitType = HERMIT_CARDS[card.cardId]
+				const hermitType = HERMIT_CARDS[card.cardId].hermitType
 				if (hermitType == weakType) {
 					applyDummyStatusEffect(game, 'weaknessdummy', "receiverWeakness", card.cardInstance, statusEffectInfo.duration!)
 				}
@@ -66,7 +86,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			const cardType = CARDS[card.cardId].type
 
 			if (cardType == 'hermit') {
-				const hermitType = HERMIT_CARDS[card.cardId]
+				const hermitType = HERMIT_CARDS[card.cardId].hermitType
 				if (hermitType == weakType) {
 					applyDummyStatusEffect(game, 'weaknessdummy', Math.random().toString(), card.cardInstance, statusEffectInfo.duration!)
 				}
@@ -98,7 +118,7 @@ class WeaknessDummyStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const { player, opponentPlayer } = pos
+		const {player, opponentPlayer} = pos
 
 		if (statusEffectInfo.statusEffectId == "receiverWeakness") {
 			player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
