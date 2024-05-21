@@ -107,10 +107,8 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
+			applySingleUse(game, `to attack $o${player.custom[targetsKey]} hermits$`)
+
 			delete player.custom[targetsKey]
 
 			// Do not apply single use more than once

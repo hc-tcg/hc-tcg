@@ -94,11 +94,11 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
-	//Add entry to battle log
-	game.battleLog.addAttackEntry(turnAction)
-
 	// Run all the code stuff
 	executeAttacks(game, attacks)
+
+	//Add entry to battle log
+	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack))
 
 	return 'SUCCESS'
 }

@@ -22,7 +22,7 @@ const defaultState: LocalSettings = {
 	disableChat: 'off',
 	confirmationDialogs: 'on',
 	showChat: 'off',
-	showBattleLogs: 'on',
+	showBattleLogs: 'off',
 	showAdvancedTooltips: 'on',
 	chatPosition: {x: 0, y: 0},
 	chatSize: {w: 0, h: 0},

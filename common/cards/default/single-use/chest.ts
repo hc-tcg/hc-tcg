@@ -54,7 +54,7 @@ class ChestSingleUseCard extends SingleUseCard {
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
 				if (modalResult.cards[0].cardId === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
-				applySingleUse(game, [])
+				applySingleUse(game)
 				retrieveCard(game, modalResult.cards[0])
 
 				return 'SUCCESS'

@@ -83,7 +83,7 @@ class LadderSingleUseCard extends SingleUseCard {
 				}
 
 				// Apply
-				applySingleUse(game, [])
+				applySingleUse(game)
 
 				// Swap slots
 				swapSlots(game, activePos, inactivePos, true)

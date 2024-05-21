@@ -48,10 +48,10 @@ class TridentSingleUseCard extends SingleUseCard {
 			})[0]
 
 			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
-			])
+			applySingleUse(
+				game,
+				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}$`
+			)
 		})
 
 		player.hooks.onApply.add(instance, () => {

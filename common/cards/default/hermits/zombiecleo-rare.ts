@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
+import {formatLogEntry} from '../../../utils/log'
 import HermitCard from '../../base/hermit-card'
 
 class ZombieCleoRareHermitCard extends HermitCard {
@@ -57,7 +58,14 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		if (!hermitInfo) return []
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		const newAttacks = hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		const attackName =
+			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttacks.forEach(
+			(attack) =>
+				(attack.log = `{Your|%OPPONENT's} $hCleo$ attacked $p%TARGET$ by mimicking $h${attackName}$`)
+		)
+		return newAttacks
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

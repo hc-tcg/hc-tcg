@@ -1,7 +1,7 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
-	"noItemRequirements": false,
+	"extraStartingCards": ["zombiecleo_rare", "diamond_sword"],
+	"noItemRequirements": true,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,

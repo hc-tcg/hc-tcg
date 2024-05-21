@@ -87,10 +87,7 @@ class MendingSingleUseCard extends singleUseCard {
 				}
 
 				// Apply the mending card
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[`${CARDS[effectCard.cardId].name} `, 'player'],
-				])
+				applySingleUse(game, `to move $p${CARDS[effectCard.cardId].name}$`)
 
 				// Move the effect card
 				swapSlots(game, sourcePos, targetPos)

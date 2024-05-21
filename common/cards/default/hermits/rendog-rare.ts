@@ -60,7 +60,14 @@ class RendogRareHermitCard extends HermitCard {
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
-		return hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		const newAttacks = hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		const attackName =
+			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttacks.forEach(
+			(attack) =>
+				(attack.log = `{Your|%OPPONENT's} $hCleo$ attacked $p%TARGET$ by mimicking $h${attackName}$`)
+		)
+		return newAttacks
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

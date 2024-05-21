@@ -2,7 +2,7 @@ import {STRENGTHS} from '../const/strengths'
 import {HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
-import {CardPosModel} from '../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
@@ -204,6 +204,11 @@ export function executeAttacks(
 		for (let i = 0; i < allAttacks.length; i++) {
 			attacks.push(...allAttacks[i].nextAttacks)
 		}
+
+		// STEP 8 - Create the logs for the attacks
+		allAttacks.forEach((attack) => {
+			attack.createLog()
+		})
 	}
 }
 
@@ -214,7 +219,7 @@ export function executeExtraAttacks(
 	withoutBlockingActions = false
 ) {
 	attacks.map((attack) => {
-		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
+		// game.battleLog.addOutOfPhaseAttackEntry(attack, type)
 	})
 
 	executeAttacks(game, attacks, withoutBlockingActions)

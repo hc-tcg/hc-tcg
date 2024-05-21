@@ -86,10 +86,10 @@ class BowSingleUseCard extends SingleUseCard {
 
 			const targetHermitId = opponentPlayer.board.rows[player.custom[targetKey]].hermitCard?.cardId
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${targetHermitId ? CARDS[targetHermitId].name : ''} `, 'opponent'],
-			])
+			applySingleUse(
+				game,
+				applySingleUse(game, `to attack $o${targetHermitId ? CARDS[targetHermitId].name : ''}$`)
+			)
 		})
 	}
 

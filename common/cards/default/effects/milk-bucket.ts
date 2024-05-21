@@ -42,10 +42,7 @@ class MilkBucketEffectCard extends EffectCard {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					applySingleUse(game, [
-						[`on `, 'plain'],
-						[`${CARDS[pickResult.card.cardId].name} `, 'player'],
-					])
+					applySingleUse(game, `on $p${CARDS[pickResult.card.cardId].name}$`)
 
 					return 'SUCCESS'
 				},

@@ -12,8 +12,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
-
-export type BattleLogFormatT = Parameters<BattleLogModel['format']>
+import {formatLogEntry} from '../utils/log'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -24,24 +23,9 @@ export class BattleLogModel {
 		this.log = []
 	}
 
-	// BATTLE LOG STUFF //
-	private format(
-		text: string,
-		format: 'plain' | 'highlight' | 'player' | 'opponent',
-		condition: 'player' | 'opponent' | undefined = undefined
-	): MessageTextT {
-		const output: MessageTextT = {
-			text: text,
-			censoredText: text,
-			format: format,
-		}
-		if (condition) output.condition = condition
-		return output
-	}
-
 	private sendBattleLogEntry() {
 		this.game.getPlayers().forEach((player) => {
-			player.socket.emit('BATTLE_LOG_ENTRY', {
+			player.socket?.emit('BATTLE_LOG_ENTRY', {
 				type: 'BATTLE_LOG_ENTRY',
 				payload: this.log,
 			})
@@ -73,12 +57,7 @@ export class BattleLogModel {
 		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: [
-					this.format(`You `, 'plain', 'player'),
-					this.format(`${currentPlayer} `, 'plain', 'opponent'),
-					this.format(`placed `, 'plain'),
-					this.format(`${cardInfo.name} `, 'player'),
-				],
+				description: formatLogEntry(`{You|${currentPlayer}} placed $p${cardInfo.name}$`),
 			}
 			this.log.push(entry)
 		} else if (slot.type === 'item' || slot.type === 'effect') {
@@ -90,19 +69,13 @@ export class BattleLogModel {
 
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: [
-					this.format(`You `, 'plain', 'player'),
-					this.format(`${currentPlayer} `, 'plain', 'opponent'),
-					this.format(`attached `, 'plain'),
-					this.format(
-						`${cardInfo.name}${cardInfo.type === 'item' ? ' item' : ''}${
-							cardInfo.type === 'item' && cardInfo.rarity === 'rare' ? ' x2' : ''
-						} `,
-						'highlight'
-					),
-					this.format(`to `, 'plain'),
-					this.format(`${attachedHermitName} `, 'player'),
-				],
+				description: formatLogEntry(
+					`{You|${currentPlayer}} attached $p${cardInfo.name}${
+						cardInfo.type === 'item' ? ' item' : ''
+					}${
+						cardInfo.type === 'item' && cardInfo.rarity === 'rare' ? ' x2' : ''
+					}$ to $p${attachedHermitName}`
+				),
 			}
 			this.log.push(entry)
 		} else if (slot.type === 'single_use') {
@@ -112,7 +85,7 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addApplyEffectEntry(effectAction: BattleLogFormatT[]) {
+	public addApplyEffectEntry(effectAction: string) {
 		const currentPlayer = this.game.currentPlayer.playerName
 
 		const card = this.game.currentPlayer.board.singleUseCard
@@ -122,13 +95,9 @@ export class BattleLogModel {
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: [
-				this.format(`You `, 'plain', 'player'),
-				this.format(`${currentPlayer} `, 'plain', 'opponent'),
-				this.format(`used `, 'plain'),
-				this.format(`${cardInfo.name} `, 'highlight'),
-				...effectAction.map(([text, format, condition]) => this.format(text, format, condition)),
-			],
+			description: formatLogEntry(
+				`{You|${currentPlayer}} used $h${cardInfo.name}$ ` + effectAction
+			),
 		}
 		this.log.push(entry)
 
@@ -147,52 +116,18 @@ export class BattleLogModel {
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: [
-				this.format(`You `, 'plain', currentPlayer ? 'player' : 'opponent'),
-				this.format(`${player.playerName} `, 'plain', currentPlayer ? 'opponent' : 'player'),
-				this.format(`swapped `, 'plain'),
-				this.format(`${oldHermitInfo.name} `, 'player'),
-				this.format(`for `, 'plain'),
-				this.format(`${newHermitInfo.name} `, 'player'),
-			],
+			description: formatLogEntry(
+				`{You|${currentPlayer}} swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$`
+			),
 		}
 		this.log.push(entry)
 
 		this.sendBattleLogEntry()
 	}
 
-	public addAttackEntry(turnAction: AttackActionData) {
-		const currentPlayer = this.game.currentPlayer.playerName
-		const type = turnAction.type
-		if (type === 'SINGLE_USE_ATTACK') return
-
-		const activeRow = this.game.activeRow
-		if (activeRow === null) return
-		const activeHermitId = activeRow.hermitCard?.cardId
-		if (activeHermitId === undefined) return
-		const activeHermit = HERMIT_CARDS[activeHermitId]
-
-		const opponentActiveRow = this.game.opponentActiveRow
-		if (opponentActiveRow === null) return
-		const opponentActiveHermitId = opponentActiveRow.hermitCard?.cardId
-		if (opponentActiveHermitId === undefined) return
-		const opponentActiveHermit = CARDS[opponentActiveHermitId]
-
-		const attackName =
-			type === 'PRIMARY_ATTACK' ? activeHermit.primary.name : activeHermit.secondary.name
-
-		const entry: BattleLogT = {
-			player: this.game.currentPlayer.id,
-			description: [
-				this.format(`Your `, 'plain', 'player'),
-				this.format(`${currentPlayer}'s `, 'plain', 'opponent'),
-				this.format(`${activeHermit.name} `, 'player'),
-				this.format(`attacked `, 'plain'),
-				this.format(`${opponentActiveHermit.name} `, 'opponent'),
-				this.format(`with `, 'plain'),
-				this.format(`${attackName} `, 'highlight'),
-			],
-		}
+	public addAttackEntry(attack: AttackModel) {
+		const entry = attack.getLog()
+		if (!entry) return
 		this.log.push(entry)
 
 		this.sendBattleLogEntry()
@@ -228,19 +163,13 @@ export class BattleLogModel {
 			}
 
 			if (HERMIT_CARDS[coinFlip.cardId]) {
-				entry.description = [
-					this.format(`Your `, 'plain', coinFlip.opponentFlip ? 'opponent' : 'player'),
-					this.format(`${otherPlayer}'s `, 'plain', coinFlip.opponentFlip ? 'player' : 'opponent'),
-					this.format(`${cardName} `, coinFlip.opponentFlip ? 'opponent' : 'player'),
-					this.format(description_body + 'their attack', 'plain'),
-				]
+				entry.description = formatLogEntry(
+					`{Your|${otherPlayer}'s} $p${cardName}$ ${description_body} their attack`
+				)
 			} else {
-				entry.description = [
-					this.format(`You `, 'plain', 'player'),
-					this.format(`${otherPlayer} `, 'plain', 'opponent'),
-					this.format(description_body, 'plain'),
-					this.format(`${cardName} `, 'highlight'),
-				]
+				entry.description = formatLogEntry(
+					`{You|${otherPlayer}} ${description_body} $p${cardName}$`
+				)
 			}
 
 			this.log.push(entry)
@@ -251,50 +180,40 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addOutOfPhaseAttackEntry(attack: AttackModel, type: string) {
-		const targetHermitId = attack.getTarget()?.row.hermitCard.cardId
-		const targetPlayer = attack.getTarget()?.player
-		if (!targetHermitId || !targetPlayer) return
-		const targetHermitInfo = CARDS[targetHermitId]
+	// public addOutOfPhaseAttackEntry(attack: AttackModel, type: string) {
+	// 	const targetHermitId = attack.getTarget()?.row.hermitCard.cardId
+	// 	const targetPlayer = attack.getTarget()?.player
+	// 	if (!targetHermitId || !targetPlayer) return
+	// 	const targetHermitInfo = CARDS[targetHermitId]
 
-		const isTarget = targetPlayer === this.game.currentPlayer
+	// 	const isTarget = targetPlayer === this.game.currentPlayer
 
-		const entry: BattleLogT = {
-			player: this.game.opponentPlayer.id,
-			description: [
-				this.format(`${targetPlayer.playerName}'s `, 'plain', isTarget ? 'player' : 'opponent'),
-				this.format(`Your `, 'plain', isTarget ? 'opponent' : 'player'),
-				this.format(`${targetHermitInfo.name} `, 'player'),
-				this.format(`took ${attack.calculateDamage()} damage from `, 'plain'),
-				this.format(`${type}`, 'highlight'),
-			],
-		}
-		this.log.push(entry)
+	// 	const entry: BattleLogT = {
+	// 		player: this.game.opponentPlayer.id,
+	// 		description: [
+	// 			this.format(`${targetPlayer.playerName}'s `, 'plain', isTarget ? 'player' : 'opponent'),
+	// 			this.format(`Your `, 'plain', isTarget ? 'opponent' : 'player'),
+	// 			this.format(`${targetHermitInfo.name} `, 'player'),
+	// 			this.format(`took ${attack.calculateDamage()} damage from `, 'plain'),
+	// 			this.format(`${type}`, 'highlight'),
+	// 		],
+	// 	}
+	// 	this.log.push(entry)
 
-		this.sendBattleLogEntry()
-	}
+	// 	this.sendBattleLogEntry()
+	// }
 
 	public addDeathEntry(playerState: PlayerState, row: RowStateWithHermit) {
 		const card = row.hermitCard
 		const cardName = CARDS[card.cardId].name
 
+		const livesRemaining = 3 ? 'two live' : 'one life'
+
 		const entry: BattleLogT = {
 			player: playerState.id,
-			description: [
-				this.format(`Your `, 'plain', 'player'),
-				this.format(`${playerState.playerName}'s `, 'plain', 'opponent'),
-				this.format(`${cardName} `, 'player'),
-				this.format(`was knocked out, and `, 'plain'),
-				this.format(`you `, 'plain', 'player'),
-				this.format(`${playerState.playerName} `, 'plain', 'opponent'),
-				this.format(`now have `, 'plain', 'player'),
-				this.format(`now has `, 'plain', 'opponent'),
-				this.format(`one life remaining`, 'plain'),
-			],
-		}
-
-		if (playerState.lives === 3) {
-			entry.description[8] = this.format(`two lives remaining`, 'plain')
+			description: formatLogEntry(
+				`{You|${playerState.playerName}} $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} ${livesRemaining} remaining')`
+			),
 		}
 
 		this.log.push(entry)
@@ -308,11 +227,7 @@ export class BattleLogModel {
 	public addTimeoutEntry() {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: [
-				this.format(`You `, 'plain', 'player'),
-				this.format(`${this.game.currentPlayer} `, 'plain', 'opponent'),
-				this.format(`ran out of time `, 'plain'),
-			],
+			description: formatLogEntry(`{You|${this.game.currentPlayer}} ran out of time`),
 		}
 		this.log.push(entry)
 

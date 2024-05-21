@@ -123,15 +123,12 @@ class LeadSingleUseCard extends SingleUseCard {
 				swapSlots(game, itemPos, targetPos)
 
 				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[
-						`${cardInfo.name}${
-							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-						} `,
-						'opponent',
-					],
-				])
+				applySingleUse(
+					game,
+					`to move $o${cardInfo.name}${
+						cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
+					}$`
+				)
 				delete player.custom[itemIndexKey]
 
 				return 'SUCCESS'

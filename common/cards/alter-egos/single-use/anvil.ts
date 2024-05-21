@@ -56,10 +56,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const inactiveAttackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
+			applySingleUse(game, `to attack $o${player.custom[targetsKey]} hermits$`)
 
 			delete player.custom[targetsKey]
 
