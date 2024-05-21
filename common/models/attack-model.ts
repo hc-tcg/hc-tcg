@@ -61,7 +61,8 @@ export class AttackModel {
 		this.createWeakness = defs.createWeakness || 'never'
 
 		this.finalLog = null
-		this.log = "{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $h%ATTACK$"
+		this.log =
+			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $h%ATTACK$ for %DAMAGEhp damage"
 
 		return this
 	}
@@ -197,6 +198,7 @@ export class AttackModel {
 		this.log = this.log.replaceAll('%OPPONENT', opponentPlayer.playerName)
 		this.log = this.log.replaceAll('%TARGET', targetHermitInfo.name)
 		this.log = this.log.replaceAll('%ATTACK', attackName)
+		this.log = this.log.replaceAll('%DAMAGE', `${this.calculateDamage()}`)
 
 		this.finalLog = {
 			player: currentPlayer.id,

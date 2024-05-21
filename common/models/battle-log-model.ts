@@ -180,29 +180,6 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	// public addOutOfPhaseAttackEntry(attack: AttackModel, type: string) {
-	// 	const targetHermitId = attack.getTarget()?.row.hermitCard.cardId
-	// 	const targetPlayer = attack.getTarget()?.player
-	// 	if (!targetHermitId || !targetPlayer) return
-	// 	const targetHermitInfo = CARDS[targetHermitId]
-
-	// 	const isTarget = targetPlayer === this.game.currentPlayer
-
-	// 	const entry: BattleLogT = {
-	// 		player: this.game.opponentPlayer.id,
-	// 		description: [
-	// 			this.format(`${targetPlayer.playerName}'s `, 'plain', isTarget ? 'player' : 'opponent'),
-	// 			this.format(`Your `, 'plain', isTarget ? 'opponent' : 'player'),
-	// 			this.format(`${targetHermitInfo.name} `, 'player'),
-	// 			this.format(`took ${attack.calculateDamage()} damage from `, 'plain'),
-	// 			this.format(`${type}`, 'highlight'),
-	// 		],
-	// 	}
-	// 	this.log.push(entry)
-
-	// 	this.sendBattleLogEntry()
-	// }
-
 	public addDeathEntry(playerState: PlayerState, row: RowStateWithHermit) {
 		const card = row.hermitCard
 		const cardName = CARDS[card.cardId].name

@@ -215,14 +215,16 @@ export function executeAttacks(
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	type: string,
+	source: string,
 	withoutBlockingActions = false
 ) {
 	attacks.map((attack) => {
-		// game.battleLog.addOutOfPhaseAttackEntry(attack, type)
+		attack.log = `{Your|%OPPONENT's} $p%TARGET$ took %DAMAGEhp damage from $h${source}$`
 	})
-
 	executeAttacks(game, attacks, withoutBlockingActions)
+	attacks.map((attack) => {
+		game.battleLog.addAttackEntry(attack)
+	})
 }
 
 // Things not directly related to the attack loop

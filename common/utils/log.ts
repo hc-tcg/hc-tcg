@@ -87,7 +87,5 @@ export function formatLogEntry(text: string): Array<MessageTextT> {
 		}
 	})
 
-	console.log(output)
-
 	return output
 }

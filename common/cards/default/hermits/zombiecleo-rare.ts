@@ -63,7 +63,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
 		newAttacks.forEach(
 			(attack) =>
-				(attack.log = `{Your|%OPPONENT's} $pCleo$ attacked $o%TARGET$ by mimicking $h${attackName}$`)
+				(attack.log = `{Your|%OPPONENT's} $pCleo$ attacked $o%TARGET$ by mimicking $h${attackName}$ for %DAMAGEhp damage`)
 		)
 		return newAttacks
 	}
