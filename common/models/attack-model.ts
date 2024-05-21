@@ -61,7 +61,7 @@ export class AttackModel {
 		this.createWeakness = defs.createWeakness || 'never'
 
 		this.finalLog = null
-		this.log = "{Your|%OPPONENT's} $p%ATTACKER$ attacked $p%TARGET$ with $h%ATTACK$"
+		this.log = "{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $h%ATTACK$"
 
 		return this
 	}
