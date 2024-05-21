@@ -183,6 +183,7 @@ export class AttackModel {
 		if (!this.attacker || !this.target) return
 
 		const currentPlayer = this.attacker.player
+		const opponentPlayer = this.target.player
 
 		const attackingHermitInfo = HERMIT_CARDS[this.attacker.row.hermitCard.cardId]
 		const targetHermitInfo = HERMIT_CARDS[this.target.row.hermitCard.cardId]
@@ -193,6 +194,7 @@ export class AttackModel {
 				: attackingHermitInfo.secondary.name
 
 		this.log = this.log.replaceAll('%ATTACKER', attackingHermitInfo.name)
+		this.log = this.log.replaceAll('%OPPONENT', opponentPlayer.playerName)
 		this.log = this.log.replaceAll('%TARGET', targetHermitInfo.name)
 		this.log = this.log.replaceAll('%ATTACK', attackName)
 
