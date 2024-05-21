@@ -118,6 +118,8 @@ function* playCardSaga(
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card.cardInstance)
 
+	currentPlayer.hooks.onCardPlay.call(card)
+
 	// Add entry to battle log
 	game.battleLog.addPlayCardEntry(turnAction)
 

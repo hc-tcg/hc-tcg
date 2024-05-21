@@ -1,5 +1,5 @@
 import {CARDS, ITEM_CARDS} from '../cards'
-import {STATUS_EFFECT_CLASSES} from '../status-effects'
+import {STATUS_EFFECT_CLASSES, DUMMY_STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {BoardSlotTypeT, RowPos, SlotPos} from '../types/cards'
@@ -193,6 +193,35 @@ export function applyStatusEffect(
 	return 'SUCCESS'
 }
 
+/**Apply a "dummy" StatusEffect that lets you specify its starting duration and instance.*/
+export function applyDummyStatusEffect(
+	game: GameModel,
+	statusEffectId: string,
+	statusEffectInstance: string,
+	targetInstance: string | undefined,
+	duration: number
+): GenericActionResult {
+	if (!targetInstance) return 'FAILURE_INVALID_DATA'
+
+	const pos = getCardPos(game, targetInstance)
+
+	if (!pos) return 'FAILURE_INVALID_DATA'
+
+	const statusEffect = DUMMY_STATUS_EFFECT_CLASSES[statusEffectId]
+
+	const statusEffectInfo: StatusEffectT = {
+		statusEffectId: statusEffectId,
+		statusEffectInstance: statusEffectInstance,
+		targetInstance: targetInstance,
+		duration: duration,
+		damageEffect: statusEffect.damageEffect,
+	}
+
+	statusEffect.onApply(game, statusEffectInfo, pos)
+
+	return 'SUCCESS'
+}
+
 /**
  * Remove an statusEffect from the game.
  */
@@ -207,6 +236,26 @@ export function removeStatusEffect(
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
+	statusEffectObject.onRemoval(game, statusEffects[0], pos)
+	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
+
+	return 'SUCCESS'
+}
+
+/**
+ * Remove an dummyStatusEffect from the game.
+ */
+export function removeDummyStatusEffect(
+	game: GameModel,
+	pos: CardPosModel,
+	statusEffectInstance: string
+): GenericActionResult {
+	const statusEffects = game.state.statusEffects.filter(
+		(a) => a.statusEffectInstance === statusEffectInstance
+	)
+	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
+
+	const statusEffectObject = DUMMY_STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
