@@ -189,7 +189,7 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: playerState.id,
 			description: formatLogEntry(
-				`{You|${playerState.playerName}} $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} ${livesRemaining} remaining')`
+				`{Your|${playerState.playerName}'s} {$p${cardName}$|$o${cardName}} was knocked out, and {you|${playerState.playerName}} now {have|has} ${livesRemaining} remaining')`
 			),
 		}
 

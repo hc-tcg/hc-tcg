@@ -62,7 +62,7 @@ export class AttackModel {
 
 		this.finalLog = null
 		this.log =
-			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $h%ATTACK$ for %DAMAGEhp damage"
+			"{Your|%OPPONENT's} $i%ATTACKERIMG$ $p%ATTACKER$ attacked $i%TARGETIMG$ $o%TARGET$ with $h%ATTACK$ for %DAMAGEhp damage"
 
 		return this
 	}
@@ -193,6 +193,15 @@ export class AttackModel {
 			this.type === 'primary'
 				? attackingHermitInfo.primary.name
 				: attackingHermitInfo.secondary.name
+
+		this.log = this.log.replaceAll(
+			'%ATTACKERIMG',
+			`images/hermits-emoji/${attackingHermitInfo.id.split('_')[0]}.png`
+		)
+		this.log = this.log.replaceAll(
+			'%TARGETIMG',
+			`images/hermits-emoji/${targetHermitInfo.id.split('_')[0]}.png`
+		)
 
 		this.log = this.log.replaceAll('%ATTACKER', attackingHermitInfo.name)
 		this.log = this.log.replaceAll('%OPPONENT', opponentPlayer.playerName)
