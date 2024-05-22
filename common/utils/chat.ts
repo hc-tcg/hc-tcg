@@ -164,6 +164,11 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		return [new CurlyBracketMessageTreeNode(firstNode, secondNode), remaining]
 	},
 	'*': (text: string) => {
+		// There is no bold or italic because the string isn't long enough.
+		if (text.length == 1) {
+			return parseTextNode(text)
+		}
+
 		// Bold is two stars
 		if (text[1] === "*") {
 			// handle bold
