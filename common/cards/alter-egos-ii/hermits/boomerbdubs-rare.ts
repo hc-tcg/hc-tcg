@@ -24,7 +24,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a coin as many times as you want.\n\nAdd 20hp damage for every heads. If tails is flipped, your turn is over and this attack deals 0 damage.',
+					'Flip a coin as many times as you want.\n\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.',
 			},
 		})
 	}
