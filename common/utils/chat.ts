@@ -60,7 +60,7 @@ class FormattedMessageTreeNode {
 	constructor(format: string, text: MessageTreeNode) {
 		this.format = this.formatDict[format]
 		if (this.format == undefined) {
-			console.log(`Format ${format} not found.`)
+			throw new Error(`Format ${format} not found.`)
 		}
 
 		this.text = text
@@ -158,20 +158,30 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 // sequences.
 function parseUntil(text: string, until: Array<string>): [string, string] {
 	// We take characters until we get to something that is probably a parser
-	// TODO: Handle escape sequences
-	var out = ''
-	var i = 0
+	let out = ''
+	let i = 0
 
-	var nextChar = text.at(i)
-	var isEscaped = (nextChar === '\\');
-
-	while (nextChar !== undefined && !(isEscaped && until.includes(nextChar))) {
-		console.log(isEscaped)
+	let isEscaped = false;
+	let nextChar: string | undefined  = text[0];
+	
+	while (true) {
 		if (!isEscaped) {
 			out += nextChar
 		}
-		i++
+		i++;
+
+		if (i >= text.length) {
+			break
+		}
 		nextChar = text.at(i)
+		if (nextChar == undefined) {
+			break;
+		}
+
+		if (!isEscaped && until.includes(nextChar)) {
+			break;
+		}
+
 		isEscaped = (nextChar === '\\');
 	}
 

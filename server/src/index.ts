@@ -47,4 +47,4 @@ const __dirname = path.dirname(__filename)
 // 	console.log(`Server listening on port ${port}`)
 // })
 
-console.log(formatLogEntry("hello\\$z\\"))
+console.log(formatLogEntry("$i test\\$ab$cd"))
