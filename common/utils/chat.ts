@@ -1,6 +1,5 @@
-import { HERMIT_CARDS } from '../cards'
-import HermitCard from '../cards/base/hermit-card'
-import { MessageTextT } from '../types/game-state'
+import {HERMIT_CARDS} from '../cards'
+import {MessageTextT} from '../types/game-state'
 
 /**
  * Guide to symbols
@@ -11,14 +10,6 @@ import { MessageTextT } from '../types/game-state'
  * $o Player B highlight
  * $i Inline image
  */
-
-const hermitNames: Record<string, string> = Object.values(HERMIT_CARDS).reduce(
-	(result: Record<string, string>, card) => {
-		result[card.name.replace(' ', '_')] = card.id
-		return result
-	},
-	{}
-)
 
 function createEntry(
 	text: string,
@@ -148,7 +139,13 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 			throw new Error('Expected : to close expression.')
 		}
 
-		emojiText = `images/hermits-emoji/${hermitNames[emojiText]}.png`
+		const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
+
+		if (!cardInfo) {
+			return [new TextMessageTreeNode(emojiText), remaining.slice(1)]
+		}
+
+		emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
 		return [
 			new FormattedMessageTreeNode('i', new TextMessageTreeNode(emojiText)),
@@ -196,7 +193,7 @@ function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
 
 	while (remaining.length >= 1) {
 		var node
-			;[node, remaining] = parseSingleMessageTreeNode(remaining)
+		;[node, remaining] = parseSingleMessageTreeNode(remaining)
 		nodes.push(node)
 	}
 
