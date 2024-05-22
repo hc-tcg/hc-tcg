@@ -13,7 +13,7 @@
  */
 
 export type Format =
-	'player'
+	| 'player'
 	| 'opponent'
 	| 'effect'
 	| 'item'
@@ -24,14 +24,14 @@ export type Format =
 	| 'italic'
 	| 'bold'
 
-export type Node = ListNode | TextNode | FormatNode | CurlyBracketNode
+export type FormattedTextNode = ListNode | TextNode | FormatNode | CurlyBracketNode
 
 export class ListNode {
 	public TYPE = 'ListNode'
 
-	public nodes: Node[]
+	public nodes: FormattedTextNode[]
 
-	constructor(nodes: Node[]) {
+	constructor(nodes: FormattedTextNode[]) {
 		this.nodes = nodes
 	}
 }
@@ -50,7 +50,7 @@ export class FormatNode {
 	public TYPE = 'FormatNode'
 
 	public format: Format
-	public text: Node
+	public text: FormattedTextNode
 
 	static formatDict: Record<string, Format> = {
 		p: 'player',
@@ -63,14 +63,14 @@ export class FormatNode {
 		b: 'bad',
 	}
 
-	constructor(format: Array<string>, text: Node) {
+	constructor(format: Array<string>, text: FormattedTextNode) {
 		//@TODO Fix type checking
 		//@ts-ignore
 		this.format = format
 		this.text = text
 	}
 
-	static fromShorthand(format: string, text: Node) {
+	static fromShorthand(format: string, text: FormattedTextNode) {
 		format = this.formatDict[format]
 		if (format == undefined) {
 			throw new Error(`Format ${format} not found.`)
@@ -82,10 +82,10 @@ export class FormatNode {
 export class CurlyBracketNode {
 	public TYPE = 'CurlyBracketNode'
 
-	public playerText: Node
-	public opponentText: Node
+	public playerText: FormattedTextNode
+	public opponentText: FormattedTextNode
 
-	constructor(playerText: Node, opponentText: Node) {
+	constructor(playerText: FormattedTextNode, opponentText: FormattedTextNode) {
 		this.playerText = playerText
 		this.opponentText = opponentText
 	}
@@ -94,7 +94,9 @@ export class CurlyBracketNode {
 // The special characters that can end the expression.
 const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 
-const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [Node, string]]> = [
+const messageParseOptions: Array<
+	[(text: string) => boolean, (text: string) => [FormattedTextNode, string]]
+> = [
 	[
 		(text: string) => text.startsWith('$'),
 		(text: string) => {
@@ -120,7 +122,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			let remaining = text.slice(1)
 
 			let firstNode
-				;[firstNode, remaining] = parseSingleNode(remaining)
+			;[firstNode, remaining] = parseSingleNode(remaining)
 
 			if (remaining[0] !== '|') {
 				throw new Error('Expected |')
@@ -129,7 +131,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			remaining = remaining.slice(1)
 
 			let secondNode
-				;[secondNode, remaining] = parseSingleNode(remaining)
+			;[secondNode, remaining] = parseSingleNode(remaining)
 
 			if (remaining[0] !== '}') {
 				throw new Error('Expected } to close expression.')
@@ -188,7 +190,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			let remaining = text.slice(1)
 
 			let emojiText: string
-				;[emojiText, remaining] = parseUntil(remaining, [':'])
+			;[emojiText, remaining] = parseUntil(remaining, [':'])
 
 			if (remaining[0] !== ':') {
 				throw new Error('Expected : to close expression.')
@@ -203,11 +205,9 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 
 			// emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
-			return [
-				FormatNode.fromShorthand('i', new TextNode(emojiText)),
-				remaining.slice(1),
-			]
-		}],
+			return [FormatNode.fromShorthand('i', new TextNode(emojiText)), remaining.slice(1)]
+		},
+	],
 	// [(text: string) => text.startsWith('\n'), (text: string) => {
 
 	// }],
@@ -254,7 +254,7 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 function parseNodesWhile(
 	text: string,
 	matches: (remaining: string) => boolean
-): [Array<Node>, string] {
+): [Array<FormattedTextNode>, string] {
 	let remaining = text
 	let nodes = []
 
@@ -269,7 +269,7 @@ function parseNodesWhile(
 			}
 
 			let node
-				;[node, remaining] = parseSingleNode(remaining)
+			;[node, remaining] = parseSingleNode(remaining)
 			nodes.push(node)
 		}
 	} catch (e) {
@@ -282,12 +282,12 @@ function parseNodesWhile(
 function parseNodesUntil(
 	text: string,
 	matches: (remaining: string) => boolean
-): [Array<Node>, string] {
+): [Array<FormattedTextNode>, string] {
 	return parseNodesWhile(text, (remaining) => !matches(remaining))
 }
 
 // Parse all Nodes until the end of the string.
-function parseNodesUntilEmpty(text: string): Node {
+function parseNodesUntilEmpty(text: string): FormattedTextNode {
 	let [nodes, _] = parseNodesWhile(text, (remaining) => remaining.length >= 1)
 	return new ListNode(nodes)
 }
@@ -295,12 +295,12 @@ function parseNodesUntilEmpty(text: string): Node {
 // Parse a TextNode
 function parseTextNode(text: string): [TextNode, string] {
 	let remaining
-		;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
+	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 	return [new TextNode(text), remaining]
 }
 
 // Parse a single Node
-function parseSingleNode(text: string): [Node, string] {
+function parseSingleNode(text: string): [FormattedTextNode, string] {
 	for (let [condition, parser] of messageParseOptions) {
 		if (condition(text)) {
 			return parser(text)
@@ -309,7 +309,7 @@ function parseSingleNode(text: string): [Node, string] {
 	throw new Error(`No matching parser found for \`${text}\``)
 }
 
-export function formatText(text: string, mode?: 'log' | 'chat'): Node {
+export function formatText(text: string, mode?: 'log' | 'chat'): FormattedTextNode {
 	try {
 		return parseNodesUntilEmpty(text)
 	} catch (e) {

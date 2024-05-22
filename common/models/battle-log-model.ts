@@ -16,14 +16,14 @@ import {formatText} from '../utils/formatting'
 
 export class BattleLogModel {
 	private game: GameModel
-	private incompleteLog: Array<IncompleteLogT>
+	private logMessageQueue: Array<IncompleteLogT>
 	private log: Array<BattleLogT>
 
 	constructor(game: GameModel) {
 		this.game = game
 
 		/** Log entries that still need to be processed */
-		this.incompleteLog = []
+		this.logMessageQueue = []
 
 		//** Completed log entries */
 		this.log = []
@@ -111,9 +111,9 @@ export class BattleLogModel {
 			player: this.game.currentPlayer.id,
 			description: `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ ` + effectAction,
 		}
-		this.incompleteLog.push(entry)
+		this.logMessageQueue.push(entry)
 
-		this.sendBattleLogEntry()
+		// this.sendBattleLogEntry()
 	}
 
 	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
@@ -141,6 +141,8 @@ export class BattleLogModel {
 		const attacker = attack.getAttacker()
 		const target = attack.getTarget()
 
+		console.log(attack)
+
 		if (!attacker || !target) return
 
 		const currentPlayer = attacker.player
@@ -154,28 +156,31 @@ export class BattleLogModel {
 				? attackingHermitInfo.primary.name
 				: attackingHermitInfo.secondary.name
 
-		attack.log = attack.log.replaceAll('%ATTACKERIMG', attackingHermitInfo.id)
-		attack.log = attack.log.replaceAll('%TARGETIMG', targetHermitInfo.id)
+		attack.log = attack.log.replaceAll('%ATTACKERIMG%', attackingHermitInfo.id)
+		attack.log = attack.log.replaceAll('%TARGETIMG%', targetHermitInfo.id)
 
-		attack.log = attack.log.replaceAll('%ATTACKER', attackingHermitInfo.name)
-		attack.log = attack.log.replaceAll('%OPPONENT', opponentPlayer.playerName)
-		attack.log = attack.log.replaceAll('%TARGET', targetHermitInfo.name)
-		attack.log = attack.log.replaceAll('%ATTACK', attackName)
-		attack.log = attack.log.replaceAll('%DAMAGE', `${attack.calculateDamage()}`)
+		attack.log = attack.log.replaceAll('%ATTACKER%', attackingHermitInfo.name)
+		attack.log = attack.log.replaceAll('%OPPONENT%', opponentPlayer.playerName)
+		attack.log = attack.log.replaceAll('%TARGET%', targetHermitInfo.name)
+		attack.log = attack.log.replaceAll('%ATTACK%', attackName)
+		attack.log = attack.log.replaceAll('%DAMAGE%', `${attack.calculateDamage()}`)
 
-		this.incompleteLog.forEach((entry) => {
+		const modifiedEntry = this.logMessageQueue.some((entry) => {
 			if (attack.type === 'effect') {
 				entry.description = entry.description.replace('%EFFECT_ATTACK%', attack.log)
-				return
+				return true
 			}
+			return false
 		})
+
+		if (modifiedEntry) return
 
 		const temporaryLog = {
 			player: currentPlayer.id,
 			description: attack.log,
 		}
 
-		this.incompleteLog.push(temporaryLog)
+		this.logMessageQueue.push(temporaryLog)
 	}
 
 	public addCustomEntry(entry: string, player: string) {
@@ -270,7 +275,7 @@ export class BattleLogModel {
 	}
 
 	public sendLogs() {
-		this.incompleteLog.forEach((entry) => {
+		this.logMessageQueue.forEach((entry) => {
 			this.log.push({
 				player: entry.player,
 				description: formatText(entry.description),

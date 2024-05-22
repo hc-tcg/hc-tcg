@@ -148,7 +148,8 @@ export function executeAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
 	withoutBlockingActions = false
-) {
+): Array<AttackModel> {
+	const completedAttacks = []
 	// Outer attack loop
 	while (attacks.length > 0) {
 		const allAttacks: Array<AttackModel> = []
@@ -200,11 +201,15 @@ export function executeAttacks(
 		runAfterAttackHooks(allAttacks)
 		runAfterDefenceHooks(allAttacks)
 
+		completedAttacks.push(...allAttacks)
+
 		// STEP 7 - If we added any new attacks in afterAttack or afterDefense, loop around
 		for (let i = 0; i < allAttacks.length; i++) {
 			attacks.push(...allAttacks[i].nextAttacks)
 		}
 	}
+
+	return completedAttacks
 }
 
 export function executeExtraAttacks(

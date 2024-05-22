@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["diamond_sword"],
+	"extraStartingCards": ["tnt"],
 	"noItemRequirements": true,
 	"forceCoinFlip": false,
 	"oneShotMode": false,

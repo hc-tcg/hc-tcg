@@ -1,6 +1,5 @@
 import {SyntheticEvent, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import classnames from 'classnames'
 import {getChatMessages, getOpponentName, getPlayerStates} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
@@ -10,6 +9,8 @@ import formattingCss from '../../../components/formatting/formatting.module.scss
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
+import {FormattedText} from 'components/formatting/formatting'
+import classNames from 'classnames'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -80,31 +81,29 @@ function Chat() {
 
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
-					{chatMessages.slice().map((msg) => {
-						if (msg.systemMessage && !showLog) return
-						const time = new Date(msg.createdAt).toLocaleString()
-						const hmTime = new Date(msg.createdAt).toLocaleTimeString([], {
+					{chatMessages.slice().map((line) => {
+						const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})
-						const isPlayer = playerId === msg.playerId
-						const name = playerStates?.[msg.playerId]?.playerName || 'unknown'
-
-						if (msg.message.length === 1 && msg.message[0].format.includes('line')) {
-							return <span className={css.line} />
-						}
+						const name = playerStates?.[line.sender]?.playerName
 
 						return (
-							<p
-								key={msg.createdAt}
-								className={classnames(css.message, {
-									[css.player]: isPlayer,
-									[css.opponent]: !isPlayer,
-								})}
-								title={time}
-							>
+							<p>
 								<span className={css.time}>{hmTime}</span>
-								{!msg.systemMessage && <span className={css.playerName}>{name}</span>}
+								{name && (
+									<span
+										className={classNames(
+											css.playerName,
+											playerId === line.sender ? css.player : css.opponent
+										)}
+									>
+										{name}
+									</span>
+								)}
+								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
+									{FormattedText(line.message)}
+								</span>
 							</p>
 						)
 					})}

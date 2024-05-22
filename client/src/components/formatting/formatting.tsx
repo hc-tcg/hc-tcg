@@ -1,8 +1,14 @@
-import { CurlyBracketNode, FormatNode, ListNode, Node, TextNode } from 'common/utils/formatting'
+import {
+	CurlyBracketNode,
+	FormatNode,
+	ListNode,
+	FormattedTextNode,
+	TextNode,
+} from 'common/utils/formatting'
 import formatCss from './formatting.module.scss'
 import classNames from 'classnames'
 
-function nodeToHtml(node: Node) {
+function nodeToHtml(node: FormattedTextNode) {
 	if (node.TYPE == 'ListNode') {
 		let html = []
 
@@ -28,7 +34,7 @@ function nodeToHtml(node: Node) {
 	}
 }
 
-export const FormattedText = (text: Node | undefined) => {
+export const FormattedText = (text: FormattedTextNode | undefined) => {
 	console.log(text)
 
 	if (!text) return <div></div>
