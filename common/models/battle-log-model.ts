@@ -59,9 +59,7 @@ export class BattleLogModel {
 		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: formatLogEntry(
-					`{$pYou$|$o${currentPlayer}$} placed $i${image}$ $p${cardInfo.name}$`
-				),
+				description: formatLogEntry(`{$pYou$|$o${currentPlayer}$} placed $p${cardInfo.name}$`),
 			}
 			this.log.push(entry)
 		} else if (slot.type === 'item' || slot.type === 'effect') {
@@ -79,7 +77,7 @@ export class BattleLogModel {
 						cardInfo.type === 'item' ? ' item' : ''
 					}${
 						cardInfo.type === 'item' && cardInfo.rarity === 'rare' ? ' x2' : ''
-					}$ to $i${image}$ $p${attachedHermitName}`
+					}$ to $p${attachedHermitName}$`
 				),
 			}
 			this.log.push(entry)
@@ -181,7 +179,7 @@ export class BattleLogModel {
 
 			if (HERMIT_CARDS[coinFlip.cardId]) {
 				entry.description = formatLogEntry(
-					`{$pYour$|$o${otherPlayer}'s$} $i${image}$ $p${cardName}$ ${description_body} their attack`
+					`{$pYour$|$o${otherPlayer}'s$} $p${cardName}$ ${description_body} their attack`
 				)
 			} else {
 				entry.description = formatLogEntry(
@@ -208,7 +206,7 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: playerState.id,
 			description: formatLogEntry(
-				`{$pYour$|$o${playerState.playerName}'s$} $i${image}$ $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $h${livesRemaining}$ remaining`
+				`{$pYour$|$o${playerState.playerName}'s$} $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $h${livesRemaining}$ remaining`
 			),
 		}
 
