@@ -30,11 +30,6 @@ class WeaknessDummyStatusEffect extends StatusEffect {
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 			})
 		}
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
@@ -45,7 +40,6 @@ class WeaknessDummyStatusEffect extends StatusEffect {
 		} else {
 			opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		}
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 
