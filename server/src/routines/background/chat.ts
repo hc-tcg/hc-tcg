@@ -5,7 +5,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
 import {HERMIT_CARDS} from 'common/cards'
-import {formatText} from 'common/utils/chat'
+import {formatText} from 'common/utils/formatting'
 
 type MessageChunk = {
 	message: string

@@ -148,41 +148,6 @@
 
 .entryTooltip {
 	color: var(--gray-300);
-
-	&.player {
-		color: #6fabd0;
-		font-family: MinecraftBold;
-	}
-
-	&.opponent {
-		color: #5ea758;
-		font-family: MinecraftBold;
-	}
-
-	&.effect {
-		color: #5a5bb4;
-		font-family: MinecraftBold;
-	}
-
-	&.attack {
-		color: #ec9898;
-		font-family: MinecraftBold;
-	}
-
-	&.item {
-		color: var(--gray-200);
-		font-family: MinecraftBold;
-	}
-
-	&.good {
-		color: #2bff00;
-		font-family: MinecraftBold;
-	}
-
-	&.bad {
-		color: #810000;
-		font-family: MinecraftBold;
-	}
 }
 
 .line {

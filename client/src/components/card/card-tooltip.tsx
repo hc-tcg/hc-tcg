@@ -1,10 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React from 'react'
 import {HermitTypeT} from 'common/types/cards'
 import Card from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
+import formattingCss from '../formatting/formatting.module.scss'
 import HermitCard from 'common/cards/base/hermit-card'
-import EffectCard from 'common/cards/base/effect-card'
-import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
@@ -35,7 +34,11 @@ type Props = {
 
 const getDescription = (card: Card): React.ReactNode => {
 	return card.getFormattedDescription().map((segment) => {
-		return segment.text
+		return (
+			<span className={classNames(css.italicized, formattingCss[segment.format])}>
+				{segment.text}
+			</span>
+		)
 	})
 }
 

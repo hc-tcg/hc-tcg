@@ -6,12 +6,10 @@ import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.scss'
+import formattingCss from '../formatting/formatting.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
-import Tooltip from 'components/tooltip/tooltip'
-import CardTooltip from 'components/card/card-tooltip'
-import {HERMIT_CARDS} from 'common/cards'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -126,12 +124,12 @@ function Chat() {
 												className={classnames({
 													[css.text]: !msg.systemMessage,
 													[css.entryTooltip]: msg.systemMessage,
-													[css[segment.format]]:
+													[formattingCss[segment.format]]:
 														segment.format !== 'player' && segment.format !== 'opponent',
-													[css.player]:
+													[formattingCss.player]:
 														(segment.format === 'player' && isPlayer) ||
 														(segment.format === 'opponent' && !isPlayer),
-													[css.opponent]:
+													[formattingCss.opponent]:
 														(segment.format === 'opponent' && isPlayer) ||
 														(segment.format === 'player' && !isPlayer),
 												})}
