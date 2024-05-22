@@ -130,13 +130,13 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	':': (text: string) => {
 		var remaining = text.slice(1)
 
-		var [innerNode, remaining] = parseSingleMessageTreeNode(remaining)
+		var [emojiText, remaining] = textParser(remaining);
 
 		if (remaining[0] !== ":") {
 			throw new Error("Expected : to close expression.")
 		}
 
-		return [new FormattedMessageTreeNode("i", innerNode), remaining.slice(1)];
+		return [new FormattedMessageTreeNode("i", emojiText), remaining.slice(1)];
 	}
 }
 
