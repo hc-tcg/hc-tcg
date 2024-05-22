@@ -566,6 +566,8 @@ function* turnSaga(game: GameModel) {
 		}
 	}
 
+	game.battleLog.addTurnEndEntry()
+
 	return 'DONE'
 }
 

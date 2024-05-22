@@ -41,7 +41,7 @@ class TotemEffectCard extends EffectCard {
 			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
 
 			game.battleLog.addCustomEntry(
-				`Using $hTotem$, {Your|${opponentPlayer.playerName}} $p${revivedHermit}$ revived with 10hp.`,
+				`Using $eTotem$, {Your|${opponentPlayer.playerName}} $p${revivedHermit}$ revived with 10hp.`,
 				player.id
 			)
 

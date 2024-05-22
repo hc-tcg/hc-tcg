@@ -149,27 +149,48 @@
 .entryTooltip {
 	color: var(--gray-300);
 
-	&.highlight {
-		color: var(--gray-200);
-		font-family: MinecraftBold;
-	}
-
 	&.player {
-		color: var(--gray-200);
+		color: #6fabd0;
 		font-family: MinecraftBold;
 	}
 
 	&.opponent {
+		color: #5ea758;
+		font-family: MinecraftBold;
+	}
+
+	&.effect {
+		color: #5a5bb4;
+		font-family: MinecraftBold;
+	}
+
+	&.attack {
+		color: #ec9898;
+		font-family: MinecraftBold;
+	}
+
+	&.item {
 		color: var(--gray-200);
+		font-family: MinecraftBold;
+	}
+
+	&.good {
+		color: #2bff00;
+		font-family: MinecraftBold;
+	}
+
+	&.bad {
+		color: #810000;
 		font-family: MinecraftBold;
 	}
 }
 
-.imageTooltip {
-	overflow: hidden;
-	background-color: rgba(10, 1, 15, 95%);
-	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
-	color: var(--gray-200);
-	padding: 8px;
-	border-radius: 4px;
+.line {
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 2px solid var(--gray-300);
+	margin-top: 3px;
+	margin-bottom: 5px;
+	padding: 0;
 }

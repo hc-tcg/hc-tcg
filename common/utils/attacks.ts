@@ -219,7 +219,7 @@ export function executeExtraAttacks(
 	withoutBlockingActions = false
 ) {
 	attacks.map((attack) => {
-		attack.log = `{Your|%OPPONENT's} $p%TARGET$ took %DAMAGEhp damage from $h${source}$`
+		attack.log = `$p{Your|%OPPONENT's}$ $p%TARGET$ took %DAMAGEhp damage from $b${source}$`
 	})
 	executeAttacks(game, attacks, withoutBlockingActions)
 	attacks.map((attack) => {

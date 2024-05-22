@@ -54,12 +54,10 @@ export class BattleLogModel {
 
 		const slot = turnAction.payload.pickInfo.slot
 
-		const image = `images/hermits-emoji/${card.cardId.split('_')[0]}.png`
-
 		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: formatLogEntry(`{$pYou$|$o${currentPlayer}$} placed $p${cardInfo.name}$`),
+				description: formatLogEntry(`$p{You|${currentPlayer}}$ placed $p${cardInfo.name}$`),
 			}
 			this.log.push(entry)
 		} else if (slot.type === 'item' || slot.type === 'effect') {
@@ -68,19 +66,25 @@ export class BattleLogModel {
 			if (!attachedHermit) return
 
 			const attachedHermitName = CARDS[attachedHermit.cardId].name
-			const image = `images/hermits-emoji/${attachedHermit.cardId.split('_')[0]}.png`
 
-			const entry: BattleLogT = {
-				player: this.game.currentPlayer.id,
-				description: formatLogEntry(
-					`{$pYou$|$o${currentPlayer}$} attached $p${cardInfo.name}${
-						cardInfo.type === 'item' ? ' item' : ''
-					}${
-						cardInfo.type === 'item' && cardInfo.rarity === 'rare' ? ' x2' : ''
-					}$ to $p${attachedHermitName}$`
-				),
+			if (cardInfo.type === 'item') {
+				const rare = cardInfo.rarity === 'rare' ? ' x2' : ''
+				const entry: BattleLogT = {
+					player: this.game.currentPlayer.id,
+					description: formatLogEntry(
+						`$p{You|${currentPlayer}}$ attached $m${cardInfo.name} item${rare}$ to $p${attachedHermitName}$`
+					),
+				}
+				this.log.push(entry)
+			} else if (cardInfo.type === 'effect') {
+				const entry: BattleLogT = {
+					player: this.game.currentPlayer.id,
+					description: formatLogEntry(
+						`$p{You|${currentPlayer}}$ attached $e${cardInfo.name}$ to $p${attachedHermitName}$`
+					),
+				}
+				this.log.push(entry)
 			}
-			this.log.push(entry)
 		} else if (slot.type === 'single_use') {
 			return
 		}
@@ -99,7 +103,7 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
 			description: formatLogEntry(
-				`{$pYou$|$o${currentPlayer}$} used $h${cardInfo.name}$ ` + effectAction
+				`$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ ` + effectAction
 			),
 		}
 		this.log.push(entry)
@@ -120,7 +124,7 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
 			description: formatLogEntry(
-				`{$pYou$|$o${currentPlayer}$} swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$`
+				`$p{You|${currentPlayer}}$ swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$`
 			),
 		}
 		this.log.push(entry)
@@ -161,13 +165,13 @@ export class BattleLogModel {
 			let description_body = ''
 
 			if (coinFlip.tosses.length === 1) {
-				description_body = heads > tails ? `flipped heads on ` : `flipped tails on `
+				description_body = heads > tails ? `flipped $gheads$ on ` : `flipped $btails$ on `
 			} else if (tails === 0) {
-				description_body = `flipped all ${heads} heads on `
+				description_body = `flipped all ${heads} $gheads$ on `
 			} else if (heads === 0) {
-				description_body = `flipped all ${tails} tails on `
+				description_body = `flipped all ${tails} $btails$ on `
 			} else {
-				description_body = `flipped ${heads} heads and ${tails} tails on `
+				description_body = `flipped ${heads} $gheads$ and ${tails} $btails$ on `
 			}
 
 			const entry: BattleLogT = {
@@ -175,15 +179,13 @@ export class BattleLogModel {
 				description: [],
 			}
 
-			const image = `images/hermits-emoji/${coinFlip.cardId.split('_')[0]}.png`
-
 			if (HERMIT_CARDS[coinFlip.cardId]) {
 				entry.description = formatLogEntry(
-					`{$pYour$|$o${otherPlayer}'s$} $p${cardName}$ ${description_body} their attack`
+					`$p{Your|${otherPlayer}'s}$ $p${cardName}$ ${description_body} their attack`
 				)
 			} else {
 				entry.description = formatLogEntry(
-					`{$pYou$|$o${otherPlayer}$} ${description_body} $p${cardName}$`
+					`$p{You|${otherPlayer}}$ ${description_body} $p${cardName}$`
 				)
 			}
 
@@ -201,12 +203,10 @@ export class BattleLogModel {
 
 		const livesRemaining = 3 ? 'two lives' : 'one life'
 
-		const image = `images/hermits-emoji/${card.cardId.split('_')[0]}.png`
-
 		const entry: BattleLogT = {
 			player: playerState.id,
 			description: formatLogEntry(
-				`{$pYour$|$o${playerState.playerName}'s$} $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $h${livesRemaining}$ remaining`
+				`$p{Your|${playerState.playerName}'s}$ $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $b${livesRemaining}$ remaining`
 			),
 		}
 
@@ -222,6 +222,22 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
 			description: formatLogEntry(`{You|${this.game.currentPlayer}} ran out of time`),
+		}
+		this.log.push(entry)
+
+		this.sendBattleLogEntry()
+	}
+
+	public addTurnEndEntry() {
+		const entry: BattleLogT = {
+			player: this.game.currentPlayer.id,
+			description: [
+				{
+					text: '',
+					censoredText: '',
+					format: 'line',
+				},
+			],
 		}
 		this.log.push(entry)
 

@@ -62,7 +62,17 @@ export type BattleLogT = {
 export type MessageTextT = {
 	text: string
 	censoredText: string
-	format: 'plain' | 'player' | 'opponent' | 'highlight' | 'image',
+	format:
+		| 'plain'
+		| 'player'
+		| 'opponent'
+		| 'effect'
+		| 'item'
+		| 'attack'
+		| 'good'
+		| 'bad'
+		| 'image'
+		| 'line'
 	condition?: 'player' | 'opponent'
 }
 

@@ -91,6 +91,11 @@ function Chat() {
 						})
 						const isPlayer = playerId === msg.playerId
 						const name = playerStates?.[msg.playerId]?.playerName || 'unknown'
+
+						if (msg.message.length === 1 && msg.message[0].format === 'line') {
+							return <span className={css.line} />
+						}
+
 						return (
 							<p
 								key={msg.createdAt}
@@ -105,19 +110,10 @@ function Chat() {
 								{msg.message.map((segment) => {
 									if (segment.format === 'image') {
 										return (
-											<Tooltip
-												tooltip={
-													<span className={css.imageTooltip}>
-														{HERMIT_CARDS[segment.text] && HERMIT_CARDS[segment.text].name}
-													</span>
-												}
-												showAboveModal={true}
-											>
-												<img
-													className={css.emoji}
-													src={`/images/hermits-emoji/${segment.text.split('_')[0]}.png`}
-												></img>
-											</Tooltip>
+											<img
+												className={css.emoji}
+												src={`/images/hermits-emoji/${segment.text.split('_')[0]}.png`}
+											></img>
 										)
 									}
 									if (
@@ -130,7 +126,8 @@ function Chat() {
 												className={classnames({
 													[css.text]: !msg.systemMessage,
 													[css.entryTooltip]: msg.systemMessage,
-													[css.highlight]: segment.format === 'highlight',
+													[css[segment.format]]:
+														segment.format !== 'player' && segment.format !== 'opponent',
 													[css.player]:
 														(segment.format === 'player' && isPlayer) ||
 														(segment.format === 'opponent' && !isPlayer),
