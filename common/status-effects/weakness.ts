@@ -58,7 +58,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
-			if (statusEffectInfo.duration === 1)
+			if (statusEffectInfo.duration === 0)
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 				STRENGTHS[strongType] = STRENGTHS[strongType].filter((a) => a !== weakType)
 		})
