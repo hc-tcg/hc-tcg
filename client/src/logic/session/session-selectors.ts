@@ -31,3 +31,7 @@ export const getErrorType = (state: RootState) => {
 export const getToast = (state: RootState) => {
 	return getSession(state).toast
 }
+
+export const getUpdates = (state: RootState) => {
+	return getSession(state).updates
+}

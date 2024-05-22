@@ -36,3 +36,8 @@ export const setMinecraftName = (name: string) => ({
 	type: 'SET_MINECRAFT_NAME',
 	payload: name,
 })
+
+export const loadUpdates = (updates: Array<string>) => ({
+	type: 'LOAD_UPDATES',
+	payload: {updates},
+})

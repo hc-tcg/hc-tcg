@@ -48,7 +48,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 		pState.board.singleUseCard
 	) {
 		yield call(singleUseSaga, pState.board.singleUseCard)
-	} else if (lastActionResult?.result === 'FAILURE_CANNOT_ATTACH') {
+	} else if (lastActionResult?.result === 'FAILURE_UNMET_CONDITION') {
 		yield put(setOpenedModal('unmet-condition'))
 	}
 }

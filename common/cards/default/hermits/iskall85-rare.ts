@@ -22,7 +22,7 @@ class Iskall85RareHermitCard extends HermitCard {
 				name: 'Bird Poop',
 				cost: ['farm', 'farm'],
 				damage: 80,
-				power: 'Does double damage versus Builder types.',
+				power: 'Attack damage doubles versus Builder types.',
 			},
 		})
 	}

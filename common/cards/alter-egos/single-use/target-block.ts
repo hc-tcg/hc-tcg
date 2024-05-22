@@ -17,14 +17,13 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
 		// Inactive Hermits
-		if (getNonEmptyRows(opponentPlayer, true).length === 0) return 'NO'
+		if (getNonEmptyRows(opponentPlayer, true).length === 0) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -36,7 +35,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick one of your opponent's AFK Hermits",
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

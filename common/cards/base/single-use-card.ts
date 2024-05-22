@@ -1,5 +1,5 @@
 import {CardRarityT} from '../../types/cards'
-import Card from './card'
+import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -27,10 +27,10 @@ class SingleUseCard extends Card {
 		this.description = defs.description
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		if (pos.slot.type !== 'single_use') return ['INVALID_SLOT']
 
-		return 'YES'
+		return []
 	}
 
 	public override getActions(game: GameModel): TurnActions {

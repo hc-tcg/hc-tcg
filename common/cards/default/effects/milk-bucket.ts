@@ -4,6 +4,7 @@ import {TurnActions} from '../../../types/game-state'
 import EffectCard from '../../base/effect-card'
 import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
+import {CanAttachResult} from '../../base/card'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -13,7 +14,7 @@ class MilkBucketEffectCard extends EffectCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Remove poison and bad omen on active or AFK Hermit.\n\nOR can be attached to prevent poison.',
+				'Remove poison and bad omen from one of your Hermits.\n\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
 		})
 	}
 
@@ -25,7 +26,7 @@ class MilkBucketEffectCard extends EffectCard {
 				id: instance,
 				message: 'Pick one of your Hermits',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
@@ -96,17 +97,15 @@ class MilkBucketEffectCard extends EffectCard {
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {currentPlayer} = game
+		const result: CanAttachResult = []
 
-		if (!['single_use', 'effect'].includes(pos.slot.type)) return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		if (!['single_use', 'effect'].includes(pos.slot.type)) result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 		if (pos.slot.type === 'effect') {
-			if (!pos.row?.hermitCard) return 'INVALID'
-			const cardInfo = CARDS[pos.row.hermitCard?.cardId]
-			if (!cardInfo) return 'INVALID'
-			if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+			if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 		}
 
-		return 'YES'
+		return result
 	}
 
 	// Allows placing in effect or single use slot

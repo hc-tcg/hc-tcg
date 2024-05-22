@@ -23,6 +23,7 @@ const defaultState: LocalSettings = {
 	confirmationDialogs: 'on',
 	showChat: 'off',
 	showBattleLogs: 'on',
+	showAdvancedTooltips: 'on',
 	chatPosition: {x: 0, y: 0},
 	chatSize: {w: 0, h: 0},
 	panoramaEnabled: true,

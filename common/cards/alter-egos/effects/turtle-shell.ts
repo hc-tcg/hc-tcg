@@ -12,20 +12,19 @@ class TurtleShellEffectCard extends EffectCard {
 			name: 'Turtle Shell',
 			rarity: 'rare',
 			description:
-				"Attach to any of your AFK Hermits. When that Hermit becomes active, this card prevents any damage done by your opponent for that Hermit's first turn, and is then discarded.",
+				"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {currentPlayer} = game
+		const {player} = pos
 
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		// turtle shell addition - hermit must be inactive to attach
-		if (!(currentPlayer.board.activeRow !== pos.rowIndex)) return 'NO'
+		if (!(player.board.activeRow !== pos.rowIndex)) result.push('INVALID_SLOT')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

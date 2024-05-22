@@ -48,17 +48,11 @@ class BadOmenStatusEffect extends StatusEffect {
 			}
 			return coinFlips
 		})
-
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onCoinFlip.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
 		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 	}
 }

@@ -12,8 +12,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			numericId: 8,
 			name: 'Crossbow',
 			rarity: 'rare',
-			description:
-				'Do an additional 20hp damage to up to 3 Hermits of your choice.\n\nCan not apply the damage to the same Hermit more than once.',
+			description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
 		})
 	}
 
@@ -33,7 +32,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: "Pick {?} of your opponent's Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

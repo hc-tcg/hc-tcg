@@ -3,14 +3,15 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {
 	applySingleUse,
-	canAttachToCard,
 	getActiveRow,
 	getActiveRowPos,
-	getRowsWithEmptyItemsSlots,
+	getNonEmptyRows,
 	getSlotPos,
+	rowHasEmptyItemSlot,
 	rowHasItem,
 } from '../../../utils/board'
-import {swapSlots} from '../../../utils/movement'
+import {canAttachToSlot, swapSlots} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class LeadSingleUseCard extends SingleUseCard {
@@ -21,29 +22,40 @@ class LeadSingleUseCard extends SingleUseCard {
 			name: 'Lead',
 			rarity: 'common',
 			description:
-				"Move 1 of your opponent's active Hermit item cards to any of their AFK Hermits.\n\nReceiving Hermit must have open item card slot.",
+				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const result = super.canAttach(game, pos)
 		const {opponentPlayer} = pos
 
 		const activeRow = getActiveRow(opponentPlayer)
-		if (!activeRow || !rowHasItem(activeRow)) return 'NO'
-		const rowsWithEmptySlots = getRowsWithEmptyItemsSlots(opponentPlayer, true)
-		if (rowsWithEmptySlots.length === 0) return 'NO'
+		if (!activeRow || !rowHasItem(activeRow)) return [...result, 'UNMET_CONDITION']
 
-		// check if the card can be attached to any of the inactive hermits
-		for (const row of rowsWithEmptySlots) {
-			for (const item of activeRow.itemCards) {
-				if (canAttachToCard(game, row.hermitCard, item)) return 'YES'
+		const afkRows = getNonEmptyRows(opponentPlayer, true)
+
+		const items = activeRow.itemCards
+		// Check all afk rows for each item card against all empty slots on that row
+		for (let index = 0; index < afkRows.length; index++) {
+			const rowPos = afkRows[index]
+			if (!rowHasEmptyItemSlot(rowPos.row)) continue
+
+			for (const item of items) {
+				if (!item) continue
+
+				for (let i = 0; i < 3; i++) {
+					const targetSlot = getSlotPos(opponentPlayer, rowPos.rowIndex, 'item', i)
+
+					if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
+
+					// We're good to place
+					return result
+				}
 			}
 		}
 
-		return 'NO'
+		return [...result, 'UNMET_CONDITION']
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -55,7 +67,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -75,7 +87,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -100,12 +112,14 @@ class LeadSingleUseCard extends SingleUseCard {
 				}
 
 				// Make sure we can attach the item
-				const itemCard = opponentActivePos.row.itemCards[itemIndex]
-				if (!canAttachToCard(game, row.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
-
-				// Move the item
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
+				const itemCard = opponentActivePos.row.itemCards[itemIndex]
+				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
+					return 'FAILURE_INVALID_SLOT'
+				}
+
+				// Move the item
 				swapSlots(game, itemPos, targetPos)
 
 				const cardInfo = CARDS[itemCard!.cardId]

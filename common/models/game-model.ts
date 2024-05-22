@@ -10,7 +10,7 @@ import {
 import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
-import {BattleLog} from './battle-log'
+import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
 
 export class GameModel {
@@ -19,7 +19,7 @@ export class GameModel {
 	private internalCode: string | null
 
 	public chat: Array<MessageInfoT>
-	public battleLog: BattleLog
+	public battleLog: BattleLogModel
 	public players: Record<string, PlayerModel>
 	public task: any
 	public state: GameState
@@ -36,7 +36,7 @@ export class GameModel {
 		this.internalId = 'game_' + Math.random().toString()
 		this.internalCode = code
 		this.chat = []
-		this.battleLog = new BattleLog(this)
+		this.battleLog = new BattleLogModel(this)
 
 		this.task = null
 
@@ -48,8 +48,8 @@ export class GameModel {
 		}
 
 		this.players = {
-			[player1.playerId]: player1,
-			[player2.playerId]: player2,
+			[player1.id]: player1,
+			[player2.id]: player2,
 		}
 
 		this.state = getGameState(this)
@@ -201,6 +201,15 @@ export class GameModel {
 			if (timeout) {
 				request.onTimeout?.()
 			}
+		}
+	}
+	public cancelPickRequests() {
+		if (this.state.pickRequests[0]?.playerId === this.currentPlayerId) {
+			// Cancel and clear pick requests
+			for (let i = 0; i < this.state.pickRequests.length; i++) {
+				this.state.pickRequests[i].onCancel?.()
+			}
+			this.state.pickRequests = []
 		}
 	}
 

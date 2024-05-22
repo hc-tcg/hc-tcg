@@ -14,20 +14,19 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				'Choose one of your opponent AFK Hermits to make active after your attack.\n\nFlip a coin. If heads, also do 10hp damage to that Hermit.',
+				"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\n\nIf heads, also do 10hp damage to that Hermit.",
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {opponentPlayer} = pos
 
 		const inactiveHermits = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveHermits.length === 0) return 'NO'
+		if (inactiveHermits.length === 0) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -40,7 +39,7 @@ class EggSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

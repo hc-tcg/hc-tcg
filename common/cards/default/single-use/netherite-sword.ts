@@ -12,7 +12,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 			numericId: 83,
 			name: 'Netherite Sword',
 			rarity: 'ultra_rare',
-			description: 'Do an additional 60hp damage.',
+			description: "Do 60hp damage to your opponent's active Hermit.",
 		})
 	}
 

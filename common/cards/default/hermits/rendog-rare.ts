@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
+import {getNonEmptyRows} from '../../../utils/board'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
@@ -24,7 +25,7 @@ class RendogRareHermitCard extends HermitCard {
 				name: 'Role Play',
 				cost: ['builder', 'builder', 'builder'],
 				damage: 0,
-				power: "Use any attack of your opponent's Hermits.",
+				power: "Use an attack from any of your opponent's Hermits.",
 			},
 		})
 	}
@@ -79,7 +80,7 @@ class RendogRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -102,7 +103,14 @@ class RendogRareHermitCard extends HermitCard {
 							},
 						},
 						onResult(modalResult) {
-							if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
+							if (!modalResult) return 'FAILURE_INVALID_DATA'
+							if (modalResult.cancel) {
+								// Cancel this attack so player can choose a different hermit to imitate
+								game.state.turn.currentAttack = null
+								game.cancelPickRequests()
+								return 'SUCCESS'
+							}
+							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 							const attack: HermitAttackType = modalResult.pick
 
 							// Store the chosen attack to copy
@@ -164,6 +172,23 @@ class RendogRareHermitCard extends HermitCard {
 				}
 			}
 		})
+
+		player.hooks.blockedActions.add(instance, (blockedActions) => {
+			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
+			const opposingHermits = getNonEmptyRows(opponentPlayer, false).filter((rowPos) => {
+				const hermitId = rowPos.row.hermitCard.cardId
+				return HERMIT_CARDS[hermitId] && hermitId !== this.id
+			}).length
+			if (
+				player.board.activeRow === pos.rowIndex &&
+				opposingHermits <= 0 &&
+				!blockedActions.includes('SECONDARY_ATTACK')
+			) {
+				blockedActions.push('SECONDARY_ATTACK')
+			}
+
+			return blockedActions
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -171,7 +196,7 @@ class RendogRareHermitCard extends HermitCard {
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 
-		// If the card we are imitating is till attached, detach it
+		// If the card we are imitating is still attached, detach it
 		const imitatingCard: CardT | undefined = player.custom[imitatingCardKey]
 		if (imitatingCard) {
 			const hermitInfo = HERMIT_CARDS[player.custom[imitatingCardKey]]
@@ -183,6 +208,7 @@ class RendogRareHermitCard extends HermitCard {
 		// Remove hooks and custom data
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onActiveRowChange.remove(instance)
+		player.hooks.blockedActions.remove(instance)
 		delete player.custom[imitatingCardKey]
 		delete player.custom[pickedAttackKey]
 	}

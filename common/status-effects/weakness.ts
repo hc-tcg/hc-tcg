@@ -1,10 +1,10 @@
 import StatusEffect from './status-effect'
-import {GameModel} from '../models/game-model'
-import {CARDS, HERMIT_CARDS} from '../cards'
-import {CardPosModel} from '../models/card-pos-model'
-import {getActiveRow, applyStatusEffect, removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
-import {STRENGTHS} from '../const/strengths'
+import { GameModel } from '../models/game-model'
+import { CARDS, HERMIT_CARDS } from '../cards'
+import { CardPosModel } from '../models/card-pos-model'
+import { getActiveRow, applyStatusEffect, removeStatusEffect } from '../utils/board'
+import { StatusEffectT } from '../types/game-state'
+import { STRENGTHS } from '../const/strengths'
 
 class WeaknessStatusEffect extends StatusEffect {
 	constructor() {
@@ -21,7 +21,7 @@ class WeaknessStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
 		const strongType = HERMIT_CARDS[getActiveRow(opponentPlayer)!.hermitCard.cardId].hermitType
 		const weakType = HERMIT_CARDS[getActiveRow(player)!.hermitCard.cardId].hermitType
 
@@ -103,7 +103,7 @@ class WeaknessStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const { player, opponentPlayer } = pos
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onCardPlay.remove(statusEffectInfo.statusEffectInstance)

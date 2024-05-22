@@ -149,50 +149,62 @@ export function executeAttacks(
 	attacks: Array<AttackModel>,
 	withoutBlockingActions = false
 ) {
-	const allAttacks: Array<AttackModel> = []
-
-	// Main attack loop
+	// Outer attack loop
 	while (attacks.length > 0) {
-		// STEP 1 - Call before attack and defence for all attacks
-		runBeforeAttackHooks(attacks)
-		runBeforeDefenceHooks(attacks)
+		const allAttacks: Array<AttackModel> = []
 
-		// STEP 2 - Call on attack and defence for all attacks
-		runOnAttackHooks(attacks)
-		runOnDefenceHooks(attacks)
+		// Main attack loop
+		while (attacks.length > 0) {
+			// STEP 1 - Call before attack and defence for all attacks
+			runBeforeAttackHooks(attacks)
+			runBeforeDefenceHooks(attacks)
 
-		// STEP 3 - Execute all attacks
-		for (let i = 0; i < attacks.length; i++) {
-			executeAttack(attacks[i])
+			// STEP 2 - Call on attack and defence for all attacks
+			runOnAttackHooks(attacks)
+			runOnDefenceHooks(attacks)
 
-			// Add this attack to the final list
-			allAttacks.push(attacks[i])
+			// STEP 3 - Execute all attacks
+			for (let i = 0; i < attacks.length; i++) {
+				executeAttack(attacks[i])
+
+				// Add this attack to the final list
+				allAttacks.push(attacks[i])
+			}
+
+			const newAttacks: Array<AttackModel> = []
+			for (let i = 0; i < attacks.length; i++) {
+				newAttacks.push(...attacks[i].nextAttacks)
+				// Clear the list of next attacks on this attack
+				attacks[i].nextAttacks = []
+			}
+			attacks = newAttacks
 		}
 
-		// STEP 4 - Get all the next attacks, and repeat the process
-		const newAttacks: Array<AttackModel> = []
-		for (let i = 0; i < attacks.length; i++) {
-			newAttacks.push(...attacks[i].nextAttacks)
+		if (!withoutBlockingActions) {
+			// STEP 5 - All attacks have been completed, mark actions appropriately
+			game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+			game.addBlockedActions(
+				'game',
+				'PLAY_HERMIT_CARD',
+				'PLAY_ITEM_CARD',
+				'PLAY_EFFECT_CARD',
+				'PLAY_SINGLE_USE_CARD',
+				'CHANGE_ACTIVE_HERMIT'
+			)
+
+			// We might loop around again, don't block actions anymore
+			withoutBlockingActions = true
 		}
-		attacks = newAttacks
-	}
 
-	if (!withoutBlockingActions) {
-		// STEP 5 - All attacks have been completed, mark actions appropriately
-		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-		game.addBlockedActions(
-			'game',
-			'PLAY_HERMIT_CARD',
-			'PLAY_ITEM_CARD',
-			'PLAY_EFFECT_CARD',
-			'PLAY_SINGLE_USE_CARD',
-			'CHANGE_ACTIVE_HERMIT'
-		)
-	}
+		// STEP 6 - Aafter all attacks have been executed, call after attack and defence hooks
+		runAfterAttackHooks(allAttacks)
+		runAfterDefenceHooks(allAttacks)
 
-	// STEP 6 - Finally, after all attacks have been executed, call after attack and defence hooks
-	runAfterAttackHooks(allAttacks)
-	runAfterDefenceHooks(allAttacks)
+		// STEP 7 - If we added any new attacks in afterAttack or afterDefense, loop around
+		for (let i = 0; i < allAttacks.length; i++) {
+			attacks.push(...allAttacks[i].nextAttacks)
+		}
+	}
 }
 
 export function executeExtraAttacks(

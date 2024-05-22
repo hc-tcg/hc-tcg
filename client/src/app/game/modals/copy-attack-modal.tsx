@@ -34,8 +34,13 @@ function CopyAttackModal({closeModal}: Props) {
 		closeModal()
 	}
 
+	const handleClose = () => {
+		dispatch(modalRequest({modalResult: {cancel: true}}))
+		closeModal()
+	}
+
 	return (
-		<Modal closeModal={handleSecondary} title={modalData.payload.modalName}>
+		<Modal closeModal={handleClose} title={modalData.payload.modalName}>
 			<div className={css.confirmModal}>
 				<div className={css.description}>{modalData.payload.modalDescription}</div>
 				<div className={css.description}>

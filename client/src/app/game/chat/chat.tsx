@@ -122,7 +122,7 @@ function Chat() {
 														(segment.format === 'player' && !isPlayer),
 												})}
 											>
-												{settings.profanityFilter ? segment.censoredText : segment.text}
+												{settings.profanityFilter === 'on' ? segment.censoredText : segment.text}
 											</span>
 										)
 								})}

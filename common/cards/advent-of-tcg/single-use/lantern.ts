@@ -15,14 +15,13 @@ class LanternSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel) {
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
-		if (player.pile.length < 4) return 'NO'
+		if (player.pile.length < 4) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override canApply() {
