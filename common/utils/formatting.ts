@@ -146,8 +146,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			// Otherwise lets parse a bold node list
 			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'))
 			remaining = remaining.slice(2)
-			let boldNodes = nodes.map((node) => format(node, ['bold']))
-			return [new ListNode(boldNodes), remaining]
+			return [new FormatNode(['bold'], new ListNode(nodes)), remaining]
 		},
 	],
 	[
@@ -168,8 +167,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			// Otherwise we parse a italic node list.
 			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'))
 			remaining = remaining.slice(1)
-			let italicNodes = nodes.map((node) => format(node, ['italic']))
-			return [new ListNode(italicNodes), remaining]
+			return [new FormatNode(['italic'], new ListNode(nodes)), remaining]
 		},
 	],
 	[
@@ -193,13 +191,18 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 
 			emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
-			return [FormatNode.fromShorthand('i', new TextNode(emojiText)), remaining.slice(1)]
-		},
-	],
-	[(text: string) => text.startsWith('\n'), (text: string) => {}][
-		((text: string) => text.startsWith('\t'), (text: string) => {})
-	],
-	[((_) => true, parseTextNode)],
+		return [
+			FormatNode.fromShorthand('i', new TextNode(emojiText)),
+			remaining.slice(1),
+		]
+	}],
+	// [(text: string) => text.startsWith('\n'), (text: string) => {
+		
+	// }],
+	// [(text: string) => text.startsWith('\t'), (text: string) => {
+		
+	// }],
+	[(_) => true, parseTextNode],
 ]
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
 // sequences.
