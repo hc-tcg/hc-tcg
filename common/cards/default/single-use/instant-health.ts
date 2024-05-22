@@ -11,7 +11,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			numericId: 42,
 			name: 'Instant Health',
 			rarity: 'common',
-			description: 'Heal one of your active or AFK Hermits 30hp.',
+			description: 'Heal one of your Hermits 30hp.',
 		})
 	}
 

@@ -11,7 +11,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			numericId: 139,
 			name: 'Bad Omen',
 			rarity: 'rare',
-			description: `Give the opposing active hermit bad omen for the next 3 turns.`,
+			description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
 		})
 	}
 

@@ -25,7 +25,7 @@ class IskallmanRareHermitCard extends HermitCard {
 				cost: ['explorer', 'explorer'],
 				damage: 50,
 				power:
-					'You can choose to remove 50hp from this Hermit and give it to any AFK Hermit on the board.',
+					'You can choose to remove 50hp from this Hermit and give it to any AFK Hermit on the game board.',
 			},
 		})
 	}
