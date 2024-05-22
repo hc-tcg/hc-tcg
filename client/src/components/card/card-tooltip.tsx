@@ -34,7 +34,6 @@ type Props = {
 }
 
 const getDescription = (card: Card): React.ReactNode => {
-	console.log(card.getFormattedDescription())
 	return FormattedText(card.getFormattedDescription())
 }
 

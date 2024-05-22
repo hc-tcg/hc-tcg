@@ -1,8 +1,17 @@
-import { DifferentTextNode , FormatNode, ListNode, Node, TextNode, ProfanityNode, LineBreakNode, TabNode } from 'common/utils/formatting'
+import {
+	DifferentTextNode,
+	FormatNode,
+	ListNode,
+	FormattedTextNode,
+	TextNode,
+	ProfanityNode,
+	EmojiNode,
+} from 'common/utils/formatting'
+
 import formatCss from './formatting.module.scss'
 import classNames from 'classnames'
 
-function nodeToHtml(node: Node) {
+function nodeToHtml(node: FormattedTextNode) {
 	if (node.TYPE == 'ListNode') {
 		let html = []
 
@@ -22,13 +31,26 @@ function nodeToHtml(node: Node) {
 			</span>
 		)
 	} else if (node.TYPE == 'DifferentTextNode ') {
-		let curlyBracketNode = node as DifferentTextNode 
+		let differentTextNode = node as DifferentTextNode
 
-		return <span> "Curly Bracket Node" </span>
+		return <span> {nodeToHtml(differentTextNode.playerText)}|{nodeToHtml(differentTextNode.opponentText)} </span>
+	} else if (node.TYPE == 'ProfanityNode') {
+		let profanityNode = node as ProfanityNode
+
+		let contents = profanityNode.text;
+
+		return <span> {contents} </span>
+	} else if (node.TYPE == 'EmojiNode') {
+		let emojiNode = node as EmojiNode
+		return <span> {emojiNode.emoji} </span>
+	} else if (node.TYPE == 'LineBreakNode') {
+		return <br />
+	} else if (node.TYPE == 'TabNode') {
+		return "TAB"
 	}
 }
 
-export const FormattedText = (text: Node | undefined) => {
+export const FormattedText = (text: FormattedTextNode | undefined) => {
 	console.log(text)
 
 	if (!text) return <div></div>

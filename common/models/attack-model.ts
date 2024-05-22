@@ -1,4 +1,3 @@
-import {HERMIT_CARDS} from '../cards'
 import {
 	AttackHistory,
 	AttackHistoryType,
@@ -8,8 +7,6 @@ import {
 	WeaknessType,
 } from '../types/attack'
 import {RowPos} from '../types/cards'
-import {BattleLogT, Node} from '../types/game-state'
-import {formatText} from '../utils/formatting'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -57,9 +54,9 @@ export class AttackModel {
 		this.createWeakness = defs.createWeakness || 'never'
 
 		this.log =
-			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $v%ATTACK$ for $b%DAMAGEhp$ damage"
+			"{Your|%OPPONENT%'s} $p%ATTACKER%$ attacked $o%TARGET%$ with $v%ATTACK%$ for $b%DAMAGE%hp$ damage"
 
-		if (this.type === 'effect') this.log = 'for $b%DAMAGEhp$ damage'
+		if (this.type === 'effect') this.log = 'for $b%DAMAGE%hp$ damage'
 
 		return this
 	}

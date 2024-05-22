@@ -1,16 +1,9 @@
 import {takeEvery} from 'typed-redux-saga'
 import {broadcast} from '../../utils/comm'
-import profanityFilter from '../../../../common/utils/profanity'
 import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
-import {HERMIT_CARDS} from 'common/cards'
 import {formatText} from 'common/utils/formatting'
-
-type MessageChunk = {
-	message: string
-	type: 'emoji' | 'text'
-}
 
 const gameAction =
 	(type: string, game: {players: Record<string, PlayerModel>}) => (action: any) => {
@@ -24,10 +17,10 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	if (message.length > 140) return
 
 	game.chat.push({
-		createdAt: Date.now(),
 		message: formatText(message),
-		playerId,
+		createdAt: Date.now(),
 		systemMessage: false,
+		sender: playerId,
 	})
 	broadcast(game.getPlayers(), 'CHAT_UPDATE', game.chat)
 }

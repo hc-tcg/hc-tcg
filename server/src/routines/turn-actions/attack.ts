@@ -95,10 +95,9 @@ function* attackSaga(
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
 	// Run all the code stuff
-	executeAttacks(game, attacks)
+	const completedAttacks = executeAttacks(game, attacks)
 
-	//Add entry to battle log
-	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack))
+	completedAttacks.forEach((attack) => game.battleLog.addAttackEntry(attack))
 
 	game.battleLog.sendLogs()
 
