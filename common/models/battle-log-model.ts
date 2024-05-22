@@ -45,7 +45,7 @@ export class BattleLogModel {
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: lastEntry.description,
-				playerId: lastEntry.player,
+				sender: lastEntry.player,
 				systemMessage: true,
 			})
 		}

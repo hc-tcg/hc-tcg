@@ -28,7 +28,7 @@ abstract class EffectCard extends Card {
 
 		this.description = defs.description
 
-		this.formattedDescription = formatText(this.description)
+		this.formattedDescription = formatText(`*${this.description}*`)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

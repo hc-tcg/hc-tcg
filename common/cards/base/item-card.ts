@@ -28,7 +28,8 @@ abstract class ItemCard extends Card {
 
 		this.hermitType = defs.hermitType
 
-		this.formattedDescription = this.rarity === 'rare' ? formatText('Counts as 2 Item cards.') : []
+		this.formattedDescription =
+			this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
