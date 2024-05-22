@@ -62,7 +62,7 @@ export class AttackModel {
 
 		this.finalLog = null
 		this.log =
-			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $h%ATTACK$ for $h%DAMAGEhp$ damage"
+			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $v%ATTACK$ for $b%DAMAGEhp$ damage"
 
 		return this
 	}

@@ -65,7 +65,7 @@ class RendogRareHermitCard extends HermitCard {
 			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
 		newAttacks.forEach(
 			(attack) =>
-				(attack.log = `{Your|%OPPONENT's} $pRendog$ attacked $o%TARGET$ by mimicking $h${attackName}$ for %DAMAGEhp damage`)
+				(attack.log = `{Your|%OPPONENT's} $pRendog$ attacked $o%TARGET$ by mimicking $v${attackName}$ for %DAMAGEhp damage`)
 		)
 		return newAttacks
 	}

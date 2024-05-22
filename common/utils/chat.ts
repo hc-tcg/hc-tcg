@@ -5,10 +5,14 @@ import { MessageTextT } from '../types/game-state'
  * Guide to symbols
  * Player A - Player that generated the log | Player B - other player
  * {A|B} A shows to player A, B shows to player B
- * $h Highlight
- * $p Player A highlight
- * $o Player B highlight
- * $i Inline image
+ * $p Player
+ * $o Opponent
+ * $e Effect card
+ * $m Item card
+ * $v Hermit attack
+ * $g Good (healing, heads)
+ * $b Bad (damage, tails)
+ * $i Image
  */
 
 function createEntry(
@@ -72,14 +76,19 @@ class FormattedMessageTreeNode {
 	static formatDict: Record<string, MessageTextT['format']> = {
 		p: 'player',
 		o: 'opponent',
-		h: 'highlight',
+		e: 'effect',
+		m: 'item',
 		i: 'image',
+		v: 'attack',
+		g: 'good',
+		b: 'bad',
 	}
 
 	constructor(format: string, text: MessageTreeNode) {
 		this.format = format
 		this.text = text
 	}
+
 	static fromShorthand(format: string, text: MessageTreeNode) {
 		format = this.formatDict[format]
 		if (format == undefined) {
@@ -134,8 +143,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		// expecting the format {MesageTreeNode,|MessageTreeNode,}
 		let remaining = text.slice(1)
 
-		let firstNode;
-		[firstNode, remaining] = parseSingleMessageTreeNode(remaining)
+		let firstNode
+			;[firstNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '|') {
 			throw new Error('Expected |')
@@ -143,8 +152,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 
 		remaining = remaining.slice(1)
 
-		let secondNode;
-		[secondNode, remaining] = parseSingleMessageTreeNode(remaining)
+		let secondNode
+			;[secondNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '}') {
 			throw new Error('Expected } to close expression.')
@@ -189,8 +198,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	':': (text: string) => {
 		let remaining = text.slice(1)
 
-		let emojiText: string;
-		[emojiText, remaining] = parseUntil(remaining, [':'])
+		let emojiText: string
+			;[emojiText, remaining] = parseUntil(remaining, [':'])
 
 		if (remaining[0] !== ':') {
 			throw new Error('Expected : to close expression.')
@@ -218,28 +227,28 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 	let out = ''
 	let i = 0
 
-	let isEscaped = false;
-	let nextChar: string | undefined = text[0];
+	let isEscaped = false
+	let nextChar: string | undefined = text[0]
 
 	while (true) {
 		if (!isEscaped) {
 			out += nextChar
 		}
-		i++;
+		i++
 
 		if (i >= text.length) {
 			break
 		}
 		nextChar = text.at(i)
 		if (nextChar == undefined) {
-			break;
+			break
 		}
 
 		if (!isEscaped && until.includes(nextChar)) {
-			break;
+			break
 		}
 
-		isEscaped = (nextChar === '\\');
+		isEscaped = nextChar === '\\'
 	}
 
 	return [out, text.slice(i)]
@@ -249,8 +258,8 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 function parseTextNode(text: string): [TextMessageTreeNode, string] {
 	let until = Object.keys(messageParseOptions)
 	until.push(...['|', '}'])
-	let remaining;
-	[text, remaining] = parseUntil(text, until)
+	let remaining
+		;[text, remaining] = parseUntil(text, until)
 	return [new TextMessageTreeNode(text), remaining]
 }
 
