@@ -1,3 +1,5 @@
+import { FormattedSegment, Format } from '../types/game-state'
+
 /**
  * Guide to symbols
  * Player A - Player that generated the log | Player B - other player
@@ -12,24 +14,10 @@
  * $i Image
  */
 
-export type Format =
-	| 'player'
-	| 'opponent'
-	| 'effect'
-	| 'item'
-	| 'attack'
-	| 'good'
-	| 'bad'
-	| 'image'
-	| 'line'
-	| 'bold'
-	| 'italic'
-
 export type Node = ListNode | TextNode | FormatNode | CurlyBracketNode
 
 export class ListNode {
-	static TYPE = "ListNode"
-	public nodes: Node[]
+	private nodes: Node[]
 
 	constructor(nodes: Node[]) {
 		this.nodes = nodes
@@ -37,8 +25,7 @@ export class ListNode {
 }
 
 export class TextNode {
-	static TYPE = "TextNode"
-	public text: string
+	private text: string
 
 	constructor(text: string) {
 		this.text = text
@@ -46,9 +33,8 @@ export class TextNode {
 }
 
 export class FormatNode {
-	static TYPE = "FormatNode"
-	public format: Format
-	public text: Node
+	private format: Format
+	private text: Node
 
 	static formatDict: Record<string, Format> = {
 		p: 'player',
@@ -78,9 +64,8 @@ export class FormatNode {
 }
 
 export class CurlyBracketNode {
-	static TYPE = "CurlyBracketNode"
-	public playerText: Node
-	public opponentText: Node
+	private playerText: Node
+	private opponentText: Node
 
 	constructor(playerText: Node, opponentText: Node) {
 		this.playerText = playerText
@@ -147,7 +132,8 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 		// Otherwise lets parse a bold node list
 		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'))
 		remaining = remaining.slice(2)
-		return [new FormatNode(['bold'], new ListNode(nodes)), remaining]
+		let boldNodes = nodes.map((node) => format(node, ['bold']))
+		return [new ListNode(boldNodes), remaining]
 	}],
 	[(text: string) => text.startsWith("*"), (text: string) => {
 		// There is no italic because the string isn't long enough.
@@ -165,7 +151,8 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 		// Otherwise we parse a italic node list.
 		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'))
 		remaining = remaining.slice(1)
-		return [new FormatNode(['italic'], new ListNode(nodes)), remaining]
+		let italicNodes = nodes.map((node) => format(node, ['italic']))
+		return [new ListNode(italicNodes), remaining]
 	}],
 	[(text: string) => text.startsWith(":"), (text: string) => {
 		let remaining = text.slice(1)
@@ -297,6 +284,6 @@ export function formatText(text: string, mode?: 'log' | 'chat'): Node {
 	try {
 		return parseNodesUntilEmpty(text)
 	} catch (e) {
-		return new TextNode("There was a unrecoverable error when parsing")
+		return new TextNode('There was a unrecoverable formatting error')
 	}
 }
