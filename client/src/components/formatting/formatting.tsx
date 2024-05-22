@@ -1,4 +1,4 @@
-import {CurlyBracketNode, FormatNode, ListNode, Node, TextNode} from 'common/utils/formatting'
+import { CurlyBracketNode, FormatNode, ListNode, Node, TextNode } from 'common/utils/formatting'
 import formatCss from './formatting.module.scss'
 import classNames from 'classnames'
 
@@ -22,6 +22,8 @@ function nodeToHtml(node: Node) {
 			</span>
 		)
 	} else if (node.TYPE == 'CurlyBracketNode') {
+		let curlyBracketNode = node as CurlyBracketNode
+
 		return <span> "Curly Bracket Node" </span>
 	}
 }
