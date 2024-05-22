@@ -223,7 +223,7 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 	let out = ''
 	let i = 0
 
-	let isEscaped = false
+	let isEscaped = text[0] == '\\'
 	let nextChar: string | undefined = text[0]
 
 	while (true) {
