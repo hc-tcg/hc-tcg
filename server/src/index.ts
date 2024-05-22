@@ -8,44 +8,41 @@ import startSocketIO from './sockets'
 import {registerApis} from './api'
 import { formatText } from 'common/utils/formatting'
 
-// const port = process.env.PORT || CONFIG.port || 9000
+const port = process.env.PORT || CONFIG.port || 9000
 
-// const app = express()
+const app = express()
 
-// const __filename = fileURLToPath(import.meta.url)
-// const __dirname = path.dirname(__filename)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
-// registerApis(app)
+registerApis(app)
 
-// const server = createServer(app)
+const server = createServer(app)
 
-// startSocketIO(server)
+startSocketIO(server)
 
-// app.use(express.json())
-// app.use(cors({origin: CONFIG.cors}))
+app.use(express.json())
+app.use(cors({origin: CONFIG.cors}))
 
-// // @TODO Hardcoded redirect to the new site, for now
-// app.use((req, res, next) => {
-// 	if (req.hostname === 'hc-tcg.fly.dev') {
-// 		res.redirect(301, `https://hc-tcg.online`)
-// 	} else {
-// 		next()
-// 	}
-// })
+// @TODO Hardcoded redirect to the new site, for now
+app.use((req, res, next) => {
+	if (req.hostname === 'hc-tcg.fly.dev') {
+		res.redirect(301, `https://hc-tcg.online`)
+	} else {
+		next()
+	}
+})
 
-// app.use(
-// 	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
-// 		maxAge: 1000 * 60 * 60,
-// 	})
-// )
+app.use(
+	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
+		maxAge: 1000 * 60 * 60,
+	})
+)
 
-// app.get('/', (req, res) => {
-// 	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
-// })
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
+})
 
-// server.listen(port, () => {
-//  console.log(`Server listening on port ${port}`)
-// })
-
-console.log(formatText("**HE*LL*O**"))
-
+server.listen(port, () => {
+ console.log(`Server listening on port ${port}`)
+})
