@@ -2,6 +2,8 @@
  * Guide to symbols
  * Player A - Player that generated the log | Player B - other player
  * {A|B} A shows to player A, B shows to player B
+ * $p
+ * $o
  * $e Effect card
  * $m Item card
  * $v Hermit attack
@@ -59,6 +61,8 @@ export class FormatNode {
 	public text: FormattedTextNode
 
 	static formatDict: Record<string, Format> = {
+		p: 'player',
+		o: 'opponent',
 		e: 'effect',
 		m: 'item',
 		v: 'attack',
