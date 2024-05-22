@@ -130,18 +130,20 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	':': (text: string) => {
 		var remaining = text.slice(1)
 
-		var [emojiText, remaining] = textParser(remaining);
+		var [emojiText, remaining] = parseText(remaining);
 
 		if (remaining[0] !== ":") {
 			throw new Error("Expected : to close expression.")
 		}
 
-		return [new FormattedMessageTreeNode("i", emojiText), remaining.slice(1)];
+		emojiText = "blah blah blah"
+		
+		return [new FormattedMessageTreeNode("i", new TextMessageTreeNode(emojiText)), remaining.slice(1)];
 	}
 }
 
-// The text parser
-function textParser(text: string): [MessageTreeNode, string] {
+// Parse the raw text that is part of a text mode or emoji node
+function parseText(text: string): [string, string] {
 	// We take text until we get to something that is probably a parser
 	// TODO: Handle escape sequences
 
@@ -161,16 +163,23 @@ function textParser(text: string): [MessageTreeNode, string] {
 		nextChar = text.at(i)
 	}
 
-	return [new TextMessageTreeNode(out), text.slice(i)];
+	return [text, text.slice(i)];
 }
 
+// Parse a TextMessageTreeNode
+function parseTextNode(text: string): [TextMessageTreeNode, string] {
+	var [text, remaining] =parseText(text)
+	return [new TextMessageTreeNode(text), remaining]
+}
 
+// Parse a single MessageTreeNode
 function parseSingleMessageTreeNode(text: string): [MessageTreeNode, string] {
-	let parser = messageParseOptions[text[0]] || textParser;
+	let parser = messageParseOptions[text[0]] || parseTextNode;
 	console.log(parser)
 	return parser(text)
 }
 
+// Parse all MessageTreeNodes until the end of the string.
 function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
 	var remaining = text
 	var nodes = [];
