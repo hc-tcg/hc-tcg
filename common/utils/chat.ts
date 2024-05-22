@@ -1,6 +1,6 @@
-import {HERMIT_CARDS} from '../cards'
+import { HERMIT_CARDS } from '../cards'
 import HermitCard from '../cards/base/hermit-card'
-import {MessageTextT} from '../types/game-state'
+import { MessageTextT } from '../types/game-state'
 
 /**
  * Guide to symbols
@@ -141,7 +141,7 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	':': (text: string) => {
 		var remaining = text.slice(1)
 
-		var [emojiText, remaining] = parseText(remaining)
+		var [emojiText, remaining] = parseUntil(remaining, [':'])
 
 		if (remaining[0] !== ':') {
 			throw new Error('Expected : to close expression.')
@@ -157,20 +157,15 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 }
 
 // Parse the raw text that is part of a text mode or emoji node
-function parseText(text: string): [string, string] {
-	// We take text until we get to something that is probably a parser
+function parseUntil(text: string, until: Array<string>): [string, string] {
+	// We take characters until we get to something that is probably a parser
 	// TODO: Handle escape sequences
-
 	var out = ''
 	var i = 0
 
 	var nextChar = text.at(i)
 
-	// Get the special characters. These would requrie escape sequences in the future to be parsed.
-	var endAt = Object.keys(messageParseOptions)
-	endAt.push(...['|', '}'])
-
-	while (nextChar !== undefined && !endAt.includes(nextChar)) {
+	while (nextChar !== undefined && !until.includes(nextChar)) {
 		out += nextChar
 		i++
 		nextChar = text.at(i)
@@ -181,7 +176,9 @@ function parseText(text: string): [string, string] {
 
 // Parse a TextMessageTreeNode
 function parseTextNode(text: string): [TextMessageTreeNode, string] {
-	var [text, remaining] = parseText(text)
+	var until = Object.keys(messageParseOptions)
+	until.push(...['|', '}'])
+	var [text, remaining] = parseUntil(text, until)
 	return [new TextMessageTreeNode(text), remaining]
 }
 
@@ -198,7 +195,7 @@ function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
 
 	while (remaining.length >= 1) {
 		var node
-		;[node, remaining] = parseSingleMessageTreeNode(remaining)
+			;[node, remaining] = parseSingleMessageTreeNode(remaining)
 		nodes.push(node)
 	}
 
