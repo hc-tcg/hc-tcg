@@ -19,6 +19,7 @@ const hermitNames: Record<string, string> = Object.values(HERMIT_CARDS).reduce(
 	},
 	{}
 )
+
 function createEntry(
 	text: string,
 	format: MessageTextT['format'],
