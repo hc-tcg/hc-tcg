@@ -13,7 +13,7 @@ class StringEffectCard extends EffectCard {
 			name: 'String',
 			rarity: 'rare',
 			description:
-				"Attach to one of your opponent's empty item or effect slots.\n\nYour opponent can no longer place cards in that slot.",
+				"Attach to one of your opponent's empty item or effect slots.\n\nYour opponent can no longer attach cards to that slot.",
 		})
 	}
 

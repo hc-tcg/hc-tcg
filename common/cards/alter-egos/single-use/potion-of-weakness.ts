@@ -14,7 +14,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:
-				"Your opponent's active Hermit type is weak to your active Hermit's type for 3 turns.",
+				"Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
 		})
 	}
 
