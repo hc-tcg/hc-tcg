@@ -133,13 +133,15 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		let format = text[1]
 		text = text.slice(2)
 
-		const [innerNode, remaining] = parseSingleMessageTreeNode(text)
+		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('$'))
 
-		if (remaining[0] !== '$') {
-			throw new Error('Expected $ to close expression.')
+		if (nodes.length == 0) {
+			throw new Error("Expected an expression, not $")
 		}
 
-		return [FormattedMessageTreeNode.fromShorthand(format, innerNode), remaining.slice(1)]
+		let node = new MessageTreeNodeList(nodes);
+
+		return [FormattedMessageTreeNode.fromShorthand(format, node), remaining.slice(1)]
 	},
 	'{': (text: string) => {
 		// expecting the format {MesageTreeNode,|MessageTreeNode,}
