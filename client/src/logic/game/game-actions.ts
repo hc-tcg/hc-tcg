@@ -1,6 +1,6 @@
 import {BattleLogT, LocalGameState} from 'common/types/game-state'
 import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
-import {FormattedSegment} from 'common/types/chat'
+import {FormattedSegment} from 'common/types/game-state'
 import {PickInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({

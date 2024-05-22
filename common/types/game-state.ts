@@ -1,12 +1,12 @@
-import {CanAttachResult} from '../cards/base/card'
-import {AttackModel} from '../models/attack-model'
-import {BattleLogModel} from '../models/battle-log-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {HermitAttackType} from './attack'
-import {EnergyT, Slot, SlotPos} from './cards'
-import {MessageInfoT} from './chat'
-import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickRequest, PickInfo} from './server-requests'
+import { CanAttachResult } from '../cards/base/card'
+import { AttackModel } from '../models/attack-model'
+import { BattleLogModel } from '../models/battle-log-model'
+import { CardPosModel } from '../models/card-pos-model'
+import { HermitAttackType } from './attack'
+import { EnergyT, Slot, SlotPos } from './cards'
+import { MessageInfoT } from './chat'
+import { GameHook, WaterfallHook } from './hooks'
+import { ModalRequest, PickRequest, PickInfo } from './server-requests'
 
 export type PlayerId = string
 
@@ -59,11 +59,7 @@ export type BattleLogT = {
 	description: FormattedSegment[]
 }
 
-export type FormattedSegment = {
-	text: string
-	censoredText: string
-	format:
-		| 'plain'
+export type Format = 
 		| 'player'
 		| 'opponent'
 		| 'effect'
@@ -75,6 +71,11 @@ export type FormattedSegment = {
 		| 'line'
 		| 'bold'
 		| 'italic'
+
+export type FormattedSegment = {
+	text: string
+	censoredText: string
+	format: Array<Format>
 	condition?: 'player' | 'opponent'
 }
 

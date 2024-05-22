@@ -34,8 +34,12 @@ type Props = {
 
 const getDescription = (card: Card): React.ReactNode => {
 	return card.getFormattedDescription().map((segment) => {
+		let classes = []
+		for (let format of segment.format) {
+			classes.push(formattingCss[format])
+		}
 		return (
-			<span className={classNames(css.italicized, formattingCss[segment.format])}>
+			<span className={classNames(css.italicized, ...classes)}>
 				{segment.text}
 			</span>
 		)

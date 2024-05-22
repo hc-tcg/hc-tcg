@@ -7,7 +7,7 @@ import {
 	BattleLogT,
 	PlayerState,
 } from '../types/game-state'
-import {FormattedSegment} from '../types/chat'
+import {FormattedSegment} from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'

@@ -35,6 +35,7 @@ export class BattleLogModel {
 			const lastEntry = this.log.pop()
 			if (!lastEntry) continue
 
+			// @todo This seems to be broken
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: lastEntry.description,
@@ -231,7 +232,7 @@ export class BattleLogModel {
 				{
 					text: '',
 					censoredText: '',
-					format: 'line',
+					format: ['line'],
 				},
 			],
 		}

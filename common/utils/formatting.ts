@@ -1,5 +1,4 @@
-import {HERMIT_CARDS} from '../cards'
-import {FormattedSegment} from '../types/game-state'
+import { FormattedSegment, Format } from '../types/game-state'
 
 /**
  * Guide to symbols
@@ -17,7 +16,7 @@ import {FormattedSegment} from '../types/game-state'
 
 function createEntry(
 	text: string,
-	format: FormattedSegment['format'],
+	format: Array<Format>,
 	condition?: 'player' | 'opponent'
 ): FormattedSegment {
 	return {
@@ -35,11 +34,11 @@ type MessageTreeNode = {
 	) => Array<FormattedSegment>
 }
 
-function format(node: MessageTreeNode, formatting: FormattedSegment['format']) {
+function format(node: MessageTreeNode, formatting: Array<Format>) {
 	return new FormattedMessageTreeNode(formatting, node)
 }
 
-class MessTreeNodeList {
+class MessageTreeNodeList {
 	private nodes: MessageTreeNode[]
 
 	constructor(nodes: MessageTreeNode[]) {
@@ -73,7 +72,7 @@ class FormattedMessageTreeNode {
 	private format: FormattedSegment['format']
 	private text: MessageTreeNode
 
-	static formatDict: Record<string, FormattedSegment['format']> = {
+	static formatDict: Record<string, Format> = {
 		p: 'player',
 		o: 'opponent',
 		e: 'effect',
@@ -84,7 +83,7 @@ class FormattedMessageTreeNode {
 		b: 'bad',
 	}
 
-	constructor(format: string, text: MessageTreeNode) {
+	constructor(format: Array<string>, text: MessageTreeNode) {
 		//@TODO Fix type checking
 		//@ts-ignore
 		this.format = format
@@ -96,14 +95,15 @@ class FormattedMessageTreeNode {
 		if (format == undefined) {
 			throw new Error(`Format ${format} not found.`)
 		}
-		return new FormattedMessageTreeNode(format, text)
+		return new FormattedMessageTreeNode([format], text)
 	}
 
 	public getText(
-		_: FormattedSegment['format'],
+		format: FormattedSegment['format'],
 		condition: FormattedSegment['condition']
 	): Array<FormattedSegment> {
-		return this.text.getText(this.format, condition)
+		format = [...format, ...this.format]
+		return this.text.getText(format, condition)
 	}
 }
 
@@ -146,7 +146,7 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		let remaining = text.slice(1)
 
 		let firstNode
-		;[firstNode, remaining] = parseSingleMessageTreeNode(remaining)
+			;[firstNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '|') {
 			throw new Error('Expected |')
@@ -155,7 +155,7 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		remaining = remaining.slice(1)
 
 		let secondNode
-		;[secondNode, remaining] = parseSingleMessageTreeNode(remaining)
+			;[secondNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '}') {
 			throw new Error('Expected } to close expression.')
@@ -184,8 +184,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 			// Otherwise lets parse a bold node list
 			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'))
 			remaining = remaining.slice(2)
-			let boldNodes = nodes.map((node) => format(node, 'bold'))
-			return [new MessTreeNodeList(boldNodes), remaining]
+			let boldNodes = nodes.map((node) => format(node, ['bold']))
+			return [new MessageTreeNodeList(boldNodes), remaining]
 		} else {
 			// handle italic
 			text = text.slice(1)
@@ -198,20 +198,21 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 			// Otherwise we parse a italic node list.
 			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'))
 			remaining = remaining.slice(1)
-			let italicNodes = nodes.map((node) => format(node, 'italic'))
-			return [new MessTreeNodeList(italicNodes), remaining]
+			let italicNodes = nodes.map((node) => format(node, ['italic']))
+			return [new MessageTreeNodeList(italicNodes), remaining]
 		}
 	},
 	':': (text: string) => {
 		let remaining = text.slice(1)
 
 		let emojiText: string
-		;[emojiText, remaining] = parseUntil(remaining, [':'])
+			;[emojiText, remaining] = parseUntil(remaining, [':'])
 
 		if (remaining[0] !== ':') {
 			throw new Error('Expected : to close expression.')
 		}
 
+		// HERMIT_CARDS required a circular import
 		const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
 
 		if (!cardInfo) {
@@ -221,12 +222,11 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
 		return [
-			new FormattedMessageTreeNode('i', new TextMessageTreeNode(emojiText)),
+			FormattedMessageTreeNode.fromShorthand('i', new TextMessageTreeNode(emojiText)),
 			remaining.slice(1),
 		]
 	},
 }
-
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
 // sequences.
 function parseUntil(text: string, until: Array<string>): [string, string] {
@@ -261,21 +261,6 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 	return [out, text.slice(i)]
 }
 
-// Parse a TextMessageTreeNode
-function parseTextNode(text: string): [TextMessageTreeNode, string] {
-	let until = Object.keys(messageParseOptions)
-	until.push(...['|', '}'])
-	let remaining
-	;[text, remaining] = parseUntil(text, until)
-	return [new TextMessageTreeNode(text), remaining]
-}
-
-// Parse a single MessageTreeNode
-function parseSingleMessageTreeNode(text: string): [MessageTreeNode, string] {
-	let parser = messageParseOptions[text[0]] || parseTextNode
-	return parser(text)
-}
-
 function parseNodesWhile(
 	text: string,
 	matches: (remaining: string) => boolean
@@ -293,7 +278,7 @@ function parseNodesWhile(
 		}
 
 		let node
-		;[node, remaining] = parseSingleMessageTreeNode(remaining)
+			;[node, remaining] = parseSingleMessageTreeNode(remaining)
 		nodes.push(node)
 	}
 
@@ -310,7 +295,22 @@ function parseNodesUntil(
 // Parse all MessageTreeNodes until the end of the string.
 function parseNodesUntilEmpty(text: string): MessageTreeNode {
 	let [nodes, _] = parseNodesWhile(text, (remaining) => remaining.length >= 1)
-	return new MessTreeNodeList(nodes)
+	return new MessageTreeNodeList(nodes)
+}
+
+// Parse a TextMessageTreeNode
+function parseTextNode(text: string): [TextMessageTreeNode, string] {
+	let until = Object.keys(messageParseOptions)
+	until.push(...['|', '}'])
+	let remaining
+		;[text, remaining] = parseUntil(text, until)
+	return [new TextMessageTreeNode(text), remaining]
+}
+
+// Parse a single MessageTreeNode
+function parseSingleMessageTreeNode(text: string): [MessageTreeNode, string] {
+	let parser = messageParseOptions[text[0]] || parseTextNode
+	return parser(text)
 }
 
 export function formatText(text: string, mode?: 'log' | 'chat'): Array<FormattedSegment> {
@@ -318,10 +318,10 @@ export function formatText(text: string, mode?: 'log' | 'chat'): Array<Formatted
 
 	let messageTextParts
 	try {
-		messageTextParts = rootNode.getText('plain', undefined)
+		messageTextParts = rootNode.getText([], undefined)
 	} catch (e) {
 		// TODO: Improve error format
-		return [createEntry('There was a formatting error', 'plain', undefined)]
+		return [createEntry('There was a formatting error', [], undefined)]
 	}
 
 	return messageTextParts
