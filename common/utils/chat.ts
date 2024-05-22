@@ -157,7 +157,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	},
 }
 
-// Parse the raw text that is part of a text mode or emoji node
+// Parse the raw text that is part of a text mode or emoji node. Handles escape
+// sequences.
 function parseUntil(text: string, until: Array<string>): [string, string] {
 	// We take characters until we get to something that is probably a parser
 	// TODO: Handle escape sequences
@@ -165,14 +166,19 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 	var i = 0
 
 	var nextChar = text.at(i)
+	var isEscaped = (nextChar === '\\');
 
-	while (nextChar !== undefined && !until.includes(nextChar)) {
-		out += nextChar
+	while (nextChar !== undefined && !(isEscaped && until.includes(nextChar))) {
+		console.log(isEscaped)
+		if (!isEscaped) {
+			out += nextChar
+		}
 		i++
 		nextChar = text.at(i)
+		isEscaped = (nextChar === '\\');
 	}
 
-	return [text, text.slice(i)]
+	return [out, text.slice(i)]
 }
 
 // Parse a TextMessageTreeNode
