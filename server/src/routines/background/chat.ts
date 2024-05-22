@@ -5,7 +5,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
 import {HERMIT_CARDS} from 'common/cards'
-import {formatLogEntry} from 'common/utils/chat'
+import {formatText} from 'common/utils/chat'
 
 type MessageChunk = {
 	message: string
@@ -25,7 +25,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 
 	game.chat.push({
 		createdAt: Date.now(),
-		message: formatLogEntry(message),
+		message: formatText(message),
 		playerId,
 		systemMessage: false,
 	})

@@ -9,8 +9,8 @@ import {
 	WeaknessType,
 } from '../types/attack'
 import {RowPos} from '../types/cards'
-import {BattleLogT, MessageTextT} from '../types/game-state'
-import {formatLogEntry} from '../utils/chat'
+import {BattleLogT, FormattedSegment} from '../types/game-state'
+import {formatText} from '../utils/chat'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -180,7 +180,7 @@ export class AttackModel {
 
 	//Logging Stuff
 	/**Generate the log entry. This needs to be ran at the end of the attack loop */
-	public createLog(...entries: Array<MessageTextT>): void {
+	public createLog(...entries: Array<FormattedSegment>): void {
 		if (!this.attacker || !this.target) return
 
 		const currentPlayer = this.attacker.player
@@ -205,7 +205,7 @@ export class AttackModel {
 
 		this.finalLog = {
 			player: currentPlayer.id,
-			description: formatLogEntry(this.log),
+			description: formatText(this.log),
 		}
 	}
 

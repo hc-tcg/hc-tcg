@@ -56,10 +56,10 @@ export type CurrentCoinFlipT = {
 
 export type BattleLogT = {
 	player: PlayerId
-	description: MessageTextT[]
+	description: FormattedSegment[]
 }
 
-export type MessageTextT = {
+export type FormattedSegment = {
 	text: string
 	censoredText: string
 	format:

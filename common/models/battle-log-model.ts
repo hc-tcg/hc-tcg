@@ -1,7 +1,7 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
 import {AttackActionData, PlayCardActionData} from '../types/action-data'
 import {
-	MessageTextT,
+	FormattedSegment,
 	BattleLogT,
 	CurrentCoinFlipT,
 	PlayerState,
@@ -12,7 +12,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
-import {formatLogEntry} from '../utils/chat'
+import {formatText} from '../utils/chat'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -57,7 +57,7 @@ export class BattleLogModel {
 		if (slot.type === 'hermit') {
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: formatLogEntry(`$p{You|${currentPlayer}}$ placed $p${cardInfo.name}$`),
+				description: formatText(`$p{You|${currentPlayer}}$ placed $p${cardInfo.name}$`),
 			}
 			this.log.push(entry)
 		} else if (slot.type === 'item' || slot.type === 'effect') {
@@ -71,7 +71,7 @@ export class BattleLogModel {
 				const rare = cardInfo.rarity === 'rare' ? ' x2' : ''
 				const entry: BattleLogT = {
 					player: this.game.currentPlayer.id,
-					description: formatLogEntry(
+					description: formatText(
 						`$p{You|${currentPlayer}}$ attached $m${cardInfo.name} item${rare}$ to $p${attachedHermitName}$`
 					),
 				}
@@ -79,7 +79,7 @@ export class BattleLogModel {
 			} else if (cardInfo.type === 'effect') {
 				const entry: BattleLogT = {
 					player: this.game.currentPlayer.id,
-					description: formatLogEntry(
+					description: formatText(
 						`$p{You|${currentPlayer}}$ attached $e${cardInfo.name}$ to $p${attachedHermitName}$`
 					),
 				}
@@ -102,9 +102,7 @@ export class BattleLogModel {
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: formatLogEntry(
-				`$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ ` + effectAction
-			),
+			description: formatText(`$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ ` + effectAction),
 		}
 		this.log.push(entry)
 
@@ -123,7 +121,7 @@ export class BattleLogModel {
 
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: formatLogEntry(
+			description: formatText(
 				`$p{You|${currentPlayer}}$ swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$`
 			),
 		}
@@ -143,7 +141,7 @@ export class BattleLogModel {
 	public addCustomEntry(entry: string, player: string) {
 		const formattedEntry: BattleLogT = {
 			player: player,
-			description: formatLogEntry(entry),
+			description: formatText(entry),
 		}
 
 		this.log.push(formattedEntry)
@@ -180,13 +178,11 @@ export class BattleLogModel {
 			}
 
 			if (HERMIT_CARDS[coinFlip.cardId]) {
-				entry.description = formatLogEntry(
+				entry.description = formatText(
 					`$p{Your|${otherPlayer}'s}$ $p${cardName}$ ${description_body} their attack`
 				)
 			} else {
-				entry.description = formatLogEntry(
-					`$p{You|${otherPlayer}}$ ${description_body} $p${cardName}$`
-				)
+				entry.description = formatText(`$p{You|${otherPlayer}}$ ${description_body} $p${cardName}$`)
 			}
 
 			this.log.push(entry)
@@ -205,7 +201,7 @@ export class BattleLogModel {
 
 		const entry: BattleLogT = {
 			player: playerState.id,
-			description: formatLogEntry(
+			description: formatText(
 				`$p{Your|${playerState.playerName}'s}$ $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $b${livesRemaining}$ remaining`
 			),
 		}
@@ -221,7 +217,7 @@ export class BattleLogModel {
 	public addTimeoutEntry() {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: formatLogEntry(`{You|${this.game.currentPlayer}} ran out of time`),
+			description: formatText(`{You|${this.game.currentPlayer}} ran out of time`),
 		}
 		this.log.push(entry)
 

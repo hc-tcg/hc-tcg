@@ -1,4 +1,4 @@
-import {PlayerState, RowState, RowStateWithHermit} from './game-state'
+import {FormattedSegment, PlayerState, RowState, RowStateWithHermit} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -36,6 +36,7 @@ export type HermitAttackInfo = {
 	cost: Array<EnergyT>
 	damage: number
 	power: string | null
+	formattedPower?: Array<FormattedSegment>
 }
 
 export type Slot = {
