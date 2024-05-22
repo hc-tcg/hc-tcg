@@ -100,6 +100,8 @@ function* attackSaga(
 	//Add entry to battle log
 	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack))
 
+	game.battleLog.sendLogs()
+
 	return 'SUCCESS'
 }
 

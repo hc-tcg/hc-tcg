@@ -204,11 +204,6 @@ export function executeAttacks(
 		for (let i = 0; i < allAttacks.length; i++) {
 			attacks.push(...allAttacks[i].nextAttacks)
 		}
-
-		// STEP 8 - Create the logs for the attacks
-		allAttacks.forEach((attack) => {
-			attack.createLog()
-		})
 	}
 }
 
@@ -225,6 +220,7 @@ export function executeExtraAttacks(
 	attacks.map((attack) => {
 		game.battleLog.addAttackEntry(attack)
 	})
+	game.battleLog.sendLogs()
 }
 
 // Things not directly related to the attack loop

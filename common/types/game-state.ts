@@ -1,13 +1,12 @@
-import { CanAttachResult } from '../cards/base/card'
-import { AttackModel } from '../models/attack-model'
-import { BattleLogModel } from '../models/battle-log-model'
-import { CardPosModel } from '../models/card-pos-model'
-import { Node } from '../utils/formatting'
-import { HermitAttackType } from './attack'
-import { EnergyT, Slot, SlotPos } from './cards'
-import { MessageInfoT } from './chat'
-import { GameHook, WaterfallHook } from './hooks'
-import { ModalRequest, PickRequest, PickInfo } from './server-requests'
+import {CanAttachResult} from '../cards/base/card'
+import {AttackModel} from '../models/attack-model'
+import {BattleLogModel} from '../models/battle-log-model'
+import {CardPosModel} from '../models/card-pos-model'
+import {HermitAttackType} from './attack'
+import {EnergyT, Slot, SlotPos} from './cards'
+import {MessageInfoT} from './chat'
+import {GameHook, WaterfallHook} from './hooks'
+import {ModalRequest, PickRequest, PickInfo} from './server-requests'
 
 export type PlayerId = string
 
@@ -60,11 +59,10 @@ export type BattleLogT = {
 	description: Node | undefined
 }
 
-export type EmojiSegment = {
-	hermit: string}
-export type LineBreakSegment = 'LineBreakSegment'
-export type TabSegment = 'TabSegment'
-
+export type IncompleteLogT = {
+	player: PlayerId
+	description: string
+}
 
 export type PlayerState = {
 	id: PlayerId

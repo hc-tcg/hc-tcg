@@ -1,4 +1,3 @@
-import e from 'cors'
 import {HERMIT_CARDS} from '../cards'
 import {
 	AttackHistory,
@@ -29,9 +28,6 @@ export class AttackModel {
 	/** The attack target */
 	private target: RowPos | null
 
-	/** The final battle log attached to this attack */
-	private finalLog: BattleLogT | null
-
 	/** The battle log attached to this attack */
 	public log: string
 
@@ -60,9 +56,10 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
 
-		this.finalLog = null
 		this.log =
 			"{Your|%OPPONENT's} $p%ATTACKER$ attacked $o%TARGET$ with $v%ATTACK$ for $b%DAMAGEhp$ damage"
+
+		if (this.type === 'effect') this.log = 'for $b%DAMAGEhp$ damage'
 
 		return this
 	}
@@ -176,41 +173,5 @@ export class AttackModel {
 	public addNewAttack(newAttack: AttackModel) {
 		this.nextAttacks.push(newAttack)
 		return this
-	}
-
-	//Logging Stuff
-	/**Generate the log entry. This needs to be ran at the end of the attack loop */
-	public createLog(...entries: Array<FormattedSegment>): void {
-		if (!this.attacker || !this.target) return
-
-		const currentPlayer = this.attacker.player
-		const opponentPlayer = this.target.player
-
-		const attackingHermitInfo = HERMIT_CARDS[this.attacker.row.hermitCard.cardId]
-		const targetHermitInfo = HERMIT_CARDS[this.target.row.hermitCard.cardId]
-
-		const attackName =
-			this.type === 'primary'
-				? attackingHermitInfo.primary.name
-				: attackingHermitInfo.secondary.name
-
-		this.log = this.log.replaceAll('%ATTACKERIMG', attackingHermitInfo.id)
-		this.log = this.log.replaceAll('%TARGETIMG', targetHermitInfo.id)
-
-		this.log = this.log.replaceAll('%ATTACKER', attackingHermitInfo.name)
-		this.log = this.log.replaceAll('%OPPONENT', opponentPlayer.playerName)
-		this.log = this.log.replaceAll('%TARGET', targetHermitInfo.name)
-		this.log = this.log.replaceAll('%ATTACK', attackName)
-		this.log = this.log.replaceAll('%DAMAGE', `${this.calculateDamage()}`)
-
-		this.finalLog = {
-			player: currentPlayer.id,
-			description: formatText(this.log),
-		}
-	}
-
-	public getLog(): BattleLogT | null {
-		if (this.type === 'effect') return null
-		return this.finalLog
 	}
 }

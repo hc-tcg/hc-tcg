@@ -50,7 +50,9 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
 			applySingleUse(
 				game,
-				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}$`
+				`to attack $o${
+					opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''
+				}$ %EFFECT_ATTACK%`
 			)
 		})
 	}
