@@ -97,7 +97,7 @@ class CurlyBracketMessageTreeNode {
 const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, string]> = {
 	$: (text: string) => {
 		// Expecting the format $fFormat Node$ where f is a format character
-		var format = text[1]
+		let format = text[1]
 		text = text.slice(2)
 
 		const [innerNode, remaining] = parseSingleMessageTreeNode(text)
@@ -110,9 +110,10 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 	},
 	'{': (text: string) => {
 		// expecting the format {MesageTreeNode,|MessageTreeNode,}
-		var remaining = text.slice(1)
+		let remaining = text.slice(1)
 
-		var [firstNode, remaining] = parseSingleMessageTreeNode(remaining)
+		let firstNode;
+		[firstNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '|') {
 			throw new Error('Expected |')
@@ -120,7 +121,8 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 
 		remaining = remaining.slice(1)
 
-		var [secondNode, remaining] = parseSingleMessageTreeNode(remaining)
+		let secondNode;
+		[secondNode, remaining] = parseSingleMessageTreeNode(remaining)
 
 		if (remaining[0] !== '}') {
 			throw new Error('Expected } to close expression.')
@@ -131,9 +133,10 @@ const messageParseOptions: Record<string, (text: string) => [MessageTreeNode, st
 		return [new CurlyBracketMessageTreeNode(firstNode, secondNode), remaining]
 	},
 	':': (text: string) => {
-		var remaining = text.slice(1)
+		let remaining = text.slice(1)
 
-		var [emojiText, remaining] = parseUntil(remaining, [':'])
+		let emojiText: string;
+		[emojiText, remaining] = parseUntil(remaining, [':'])
 
 		if (remaining[0] !== ':') {
 			throw new Error('Expected : to close expression.')
@@ -190,9 +193,10 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 
 // Parse a TextMessageTreeNode
 function parseTextNode(text: string): [TextMessageTreeNode, string] {
-	var until = Object.keys(messageParseOptions)
+	let until = Object.keys(messageParseOptions)
 	until.push(...['|', '}'])
-	var [text, remaining] = parseUntil(text, until)
+	let remaining;
+	[text, remaining] = parseUntil(text, until)
 	return [new TextMessageTreeNode(text), remaining]
 }
 
@@ -204,11 +208,11 @@ function parseSingleMessageTreeNode(text: string): [MessageTreeNode, string] {
 
 // Parse all MessageTreeNodes until the end of the string.
 function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
-	var remaining = text
-	var nodes = []
+	let remaining = text
+	let nodes = []
 
 	while (remaining.length >= 1) {
-		var node
+		let node
 		;[node, remaining] = parseSingleMessageTreeNode(remaining)
 		nodes.push(node)
 	}
@@ -217,9 +221,9 @@ function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
 }
 
 export function formatLogEntry(text: string, mode?: 'log' | 'chat'): Array<MessageTextT> {
-	var nodes = parseNodesUntilEmpty(text)
+	let nodes = parseNodesUntilEmpty(text)
 
-	var messageTextParts
+	let messageTextParts
 	try {
 		messageTextParts = nodes.flatMap((node) => node.getText('plain', undefined))
 	} catch (e) {
