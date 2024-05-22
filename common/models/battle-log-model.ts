@@ -175,7 +175,7 @@ export class BattleLogModel {
 
 			const entry: BattleLogT = {
 				player: this.game.currentPlayer.id,
-				description: [],
+				description: undefined,
 			}
 
 			if (HERMIT_CARDS[coinFlip.cardId]) {

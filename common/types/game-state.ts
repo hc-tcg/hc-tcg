@@ -2,6 +2,7 @@ import { CanAttachResult } from '../cards/base/card'
 import { AttackModel } from '../models/attack-model'
 import { BattleLogModel } from '../models/battle-log-model'
 import { CardPosModel } from '../models/card-pos-model'
+import { Node } from '../utils/formatting'
 import { HermitAttackType } from './attack'
 import { EnergyT, Slot, SlotPos } from './cards'
 import { MessageInfoT } from './chat'
@@ -56,28 +57,14 @@ export type CurrentCoinFlipT = {
 
 export type BattleLogT = {
 	player: PlayerId
-	description: FormattedSegment[]
+	description: Node | undefined
 }
 
-export type Format = 
-		| 'player'
-		| 'opponent'
-		| 'effect'
-		| 'item'
-		| 'attack'
-		| 'good'
-		| 'bad'
-		| 'image'
-		| 'line'
-		| 'bold'
-		| 'italic'
+export type EmojiSegment = {
+	hermit: string}
+export type LineBreakSegment = 'LineBreakSegment'
+export type TabSegment = 'TabSegment'
 
-export type FormattedSegment = {
-	text: string
-	censoredText: string
-	format: Array<Format>
-	condition?: 'player' | 'opponent'
-}
 
 export type PlayerState = {
 	id: PlayerId

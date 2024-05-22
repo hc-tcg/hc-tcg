@@ -8,9 +8,10 @@ import startSocketIO from './sockets'
 import {registerApis} from './api'
 import { formatText } from 'common/utils/formatting'
 
-console.log(formatText("$iH*EL*LO$"))
+const port = process.env.PORT || CONFIG.port || 9000
 
-// const port = process.env.PORT || CONFIG.port || 9000
+
+console.log(formatText("hel*l*o"))
 
 // const app = express()
 
