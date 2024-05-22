@@ -141,8 +141,6 @@ export class BattleLogModel {
 		const attacker = attack.getAttacker()
 		const target = attack.getTarget()
 
-		console.log(attack)
-
 		if (!attacker || !target) return
 
 		const currentPlayer = attacker.player
