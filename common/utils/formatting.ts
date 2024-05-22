@@ -1,5 +1,3 @@
-import { FormattedSegment, Format } from '../types/game-state'
-
 /**
  * Guide to symbols
  * Player A - Player that generated the log | Player B - other player
@@ -17,7 +15,9 @@ import { FormattedSegment, Format } from '../types/game-state'
 export type Node = ListNode | TextNode | FormatNode | CurlyBracketNode
 
 export class ListNode {
-	private nodes: Node[]
+	public TYPE = 'ListNode'
+
+	public nodes: Node[]
 
 	constructor(nodes: Node[]) {
 		this.nodes = nodes
@@ -25,7 +25,9 @@ export class ListNode {
 }
 
 export class TextNode {
-	private text: string
+	public TYPE = 'TextNode'
+
+	public text: string
 
 	constructor(text: string) {
 		this.text = text
@@ -33,8 +35,10 @@ export class TextNode {
 }
 
 export class FormatNode {
-	private format: Format
-	private text: Node
+	public TYPE = 'FormatNode'
+
+	public format: Format
+	public text: Node
 
 	static formatDict: Record<string, Format> = {
 		p: 'player',
@@ -64,8 +68,10 @@ export class FormatNode {
 }
 
 export class CurlyBracketNode {
-	private playerText: Node
-	private opponentText: Node
+	public TYPE = 'CurlyBracketNode'
+
+	public playerText: Node
+	public opponentText: Node
 
 	constructor(playerText: Node, opponentText: Node) {
 		this.playerText = playerText
@@ -74,117 +80,126 @@ export class CurlyBracketNode {
 }
 
 // The special characters that can end the expression.
-const SPECIAL_CHARACTERS = [..."${}|*:\n\t"]
+const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 
 const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [Node, string]]> = [
-	[(text: string) => text.startsWith("$"), (text: string) => {
-		// Expecting the format $fFormat Node$ where f is a format character
-		let format = text[1]
-		text = text.slice(2)
+	[
+		(text: string) => text.startsWith('$'),
+		(text: string) => {
+			// Expecting the format $fFormat Node$ where f is a format character
+			let format = text[1]
+			text = text.slice(2)
 
-		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('$'))
+			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('$'))
 
-		if (nodes.length == 0) {
-			throw new Error("Expected an expression, not $")
-		}
+			if (nodes.length == 0) {
+				throw new Error('Expected an expression, not $')
+			}
 
-		let node = new ListNode(nodes);
+			let node = new ListNode(nodes)
 
-		return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
-	}],
-	[(text: string) => text.startsWith("{"), (text: string) => {
-		// expecting the format {MesageTreeNode,|Node,}
-		let remaining = text.slice(1)
+			return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
+		},
+	],
+	[
+		(text: string) => text.startsWith('{'),
+		(text: string) => {
+			// expecting the format {MesageTreeNode,|Node,}
+			let remaining = text.slice(1)
 
-		let firstNode
+			let firstNode
 			;[firstNode, remaining] = parseSingleNode(remaining)
 
-		if (remaining[0] !== '|') {
-			throw new Error('Expected |')
-		}
+			if (remaining[0] !== '|') {
+				throw new Error('Expected |')
+			}
 
-		remaining = remaining.slice(1)
+			remaining = remaining.slice(1)
 
-		let secondNode
+			let secondNode
 			;[secondNode, remaining] = parseSingleNode(remaining)
 
-		if (remaining[0] !== '}') {
-			throw new Error('Expected } to close expression.')
-		}
+			if (remaining[0] !== '}') {
+				throw new Error('Expected } to close expression.')
+			}
 
-		remaining = remaining.slice(1)
+			remaining = remaining.slice(1)
 
-		return [new CurlyBracketNode(firstNode, secondNode), remaining]
-	}],
-	[(text: string) => text.startsWith("**"), (text: string) => {
-		// There is no bold because the string isn't long enough.
-		if (text.length == 2) {
-			return parseTextNode(text)
-		}
+			return [new CurlyBracketNode(firstNode, secondNode), remaining]
+		},
+	],
+	[
+		(text: string) => text.startsWith('**'),
+		(text: string) => {
+			// There is no bold because the string isn't long enough.
+			if (text.length == 2) {
+				return parseTextNode(text)
+			}
 
-		text = text.slice(2)
+			text = text.slice(2)
 
-		// If there is no set of ** in the rest of the message, continue like this is regular text
-		if (!text.includes('**')) {
-			return parseTextNode(text)
-		}
+			// If there is no set of ** in the rest of the message, continue like this is regular text
+			if (!text.includes('**')) {
+				return parseTextNode(text)
+			}
 
-		// Otherwise lets parse a bold node list
-		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'))
-		remaining = remaining.slice(2)
-		let boldNodes = nodes.map((node) => format(node, ['bold']))
-		return [new ListNode(boldNodes), remaining]
-	}],
-	[(text: string) => text.startsWith("*"), (text: string) => {
-		// There is no italic because the string isn't long enough.
-		if (text.length == 1) {
-			return parseTextNode(text)
-		}
+			// Otherwise lets parse a bold node list
+			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'))
+			remaining = remaining.slice(2)
+			let boldNodes = nodes.map((node) => format(node, ['bold']))
+			return [new ListNode(boldNodes), remaining]
+		},
+	],
+	[
+		(text: string) => text.startsWith('*'),
+		(text: string) => {
+			// There is no italic because the string isn't long enough.
+			if (text.length == 1) {
+				return parseTextNode(text)
+			}
 
-		text = text.slice(1)
-		
-		// If there is no * in the rest of the message, continue like this is regular text
-		if (!text.includes('*')) {
-			return parseTextNode(text)
-		}
+			text = text.slice(1)
 
-		// Otherwise we parse a italic node list.
-		let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'))
-		remaining = remaining.slice(1)
-		let italicNodes = nodes.map((node) => format(node, ['italic']))
-		return [new ListNode(italicNodes), remaining]
-	}],
-	[(text: string) => text.startsWith(":"), (text: string) => {
-		let remaining = text.slice(1)
+			// If there is no * in the rest of the message, continue like this is regular text
+			if (!text.includes('*')) {
+				return parseTextNode(text)
+			}
 
-		let emojiText: string
+			// Otherwise we parse a italic node list.
+			let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'))
+			remaining = remaining.slice(1)
+			let italicNodes = nodes.map((node) => format(node, ['italic']))
+			return [new ListNode(italicNodes), remaining]
+		},
+	],
+	[
+		(text: string) => text.startsWith(':'),
+		(text: string) => {
+			let remaining = text.slice(1)
+
+			let emojiText: string
 			;[emojiText, remaining] = parseUntil(remaining, [':'])
 
-		if (remaining[0] !== ':') {
-			throw new Error('Expected : to close expression.')
-		}
+			if (remaining[0] !== ':') {
+				throw new Error('Expected : to close expression.')
+			}
 
-		// HERMIT_CARDS required a circular import
-		const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
+			// HERMIT_CARDS required a circular import
+			const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
 
-		if (!cardInfo) {
-			return [new TextNode(emojiText), remaining.slice(1)]
-		}
+			if (!cardInfo) {
+				return [new TextNode(emojiText), remaining.slice(1)]
+			}
 
-		emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
+			emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
-		return [
-			FormatNode.fromShorthand('i', new TextNode(emojiText)),
-			remaining.slice(1),
-		]
-	}],
-	[(text: string) => text.startsWith('\n'), (text: string) => {
-		
-	}]
-	[(text: string) => text.startsWith('\t'), (text: string) => {
-		
-	}]
-	[(_) => true, parseTextNode]
+			return [FormatNode.fromShorthand('i', new TextNode(emojiText)), remaining.slice(1)]
+		},
+	],
+	[(text: string) => text.startsWith('\n'), (text: string) => {}][
+		((text: string) => text.startsWith('\t'), (text: string) => {})
+	],
+	[((_) => true, parseTextNode)],
 ]
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
 // sequences.
@@ -239,12 +254,11 @@ function parseNodesWhile(
 			}
 
 			let node
-				;[node, remaining] = parseSingleNode(remaining)
+			;[node, remaining] = parseSingleNode(remaining)
 			nodes.push(node)
 		}
-	}
-	catch (e) {
-		return [[...nodes, new TextNode(remaining)], ""]
+	} catch (e) {
+		return [[...nodes, new TextNode(remaining)], '']
 	}
 
 	return [nodes, remaining]
@@ -266,7 +280,7 @@ function parseNodesUntilEmpty(text: string): Node {
 // Parse a TextNode
 function parseTextNode(text: string): [TextNode, string] {
 	let remaining
-		;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
+	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 	return [new TextNode(text), remaining]
 }
 

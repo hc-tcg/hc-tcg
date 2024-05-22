@@ -1,15 +1,15 @@
-import { SyntheticEvent, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import {SyntheticEvent, useState} from 'react'
+import {useDispatch, useSelector} from 'react-redux'
 import classnames from 'classnames'
-import { getChatMessages, getOpponentName, getPlayerStates } from 'logic/game/game-selectors'
-import { chatMessage } from 'logic/game/game-actions'
-import { getPlayerId } from 'logic/session/session-selectors'
-import { getSettings } from 'logic/local-settings/local-settings-selectors'
+import {getChatMessages, getOpponentName, getPlayerStates} from 'logic/game/game-selectors'
+import {chatMessage} from 'logic/game/game-actions'
+import {getPlayerId} from 'logic/session/session-selectors'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.scss'
-import formattingCss from '../formatting/formatting.module.scss'
+import formattingCss from '../../../components/formatting/formatting.module.scss'
 import Button from 'components/button'
-import { setSetting } from 'logic/local-settings/local-settings-actions'
-import { useDrag } from '@use-gesture/react'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {useDrag} from '@use-gesture/react'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -105,45 +105,6 @@ function Chat() {
 							>
 								<span className={css.time}>{hmTime}</span>
 								{!msg.systemMessage && <span className={css.playerName}>{name}</span>}
-								{msg.message.map((segment) => {
-									if (segment.format.includes('image')) {
-										return (
-											<img
-												className={css.emoji}
-												src={`/images/hermits-emoji/${segment.text.split('_')[0]}.png`}
-											></img>
-										)
-									}
-									if (
-										segment.condition === undefined ||
-										(segment.condition === 'player' && isPlayer) ||
-										(segment.condition === 'opponent' && !isPlayer)
-									) {
-										let classes = []
-										for (let format of segment.format) {
-											let css_class = {
-												[css.text]: !msg.systemMessage,
-												[css.entryTooltip]: msg.systemMessage,
-												[formattingCss[format]]:
-													format !== 'player' && format !== 'opponent',
-												[formattingCss.player]:
-													(format === 'player' && isPlayer) ||
-													(format === 'opponent' && !isPlayer),
-												[formattingCss.opponent]:
-													(format === 'opponent' && isPlayer) ||
-													(format === 'player' && !isPlayer),
-											};
-											classes.push(css_class)
-										}
-										return (
-											<span
-												className={classnames(classes)}
-											>
-												{settings.profanityFilter === 'on' ? segment.censoredText : segment.text}
-											</span>
-										)
-									}
-								})}
 							</p>
 						)
 					})}

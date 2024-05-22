@@ -8,7 +8,7 @@ import {
 	WeaknessType,
 } from '../types/attack'
 import {RowPos} from '../types/cards'
-import {BattleLogT, FormattedSegment} from '../types/game-state'
+import {BattleLogT, Node} from '../types/game-state'
 import {formatText} from '../utils/formatting'
 
 export class AttackModel {

@@ -14,6 +14,7 @@ import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {FormattedText} from 'components/formatting/formatting'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -33,17 +34,8 @@ type Props = {
 }
 
 const getDescription = (card: Card): React.ReactNode => {
-	return card.getFormattedDescription().map((segment) => {
-		let classes = []
-		for (let format of segment.format) {
-			classes.push(formattingCss[format])
-		}
-		return (
-			<span className={classNames(css.italicized, ...classes)}>
-				{segment.text}
-			</span>
-		)
-	})
+	console.log(card.getFormattedDescription())
+	return FormattedText(card.getFormattedDescription())
 }
 
 const joinJsx = (array: Array<React.ReactNode>) => {

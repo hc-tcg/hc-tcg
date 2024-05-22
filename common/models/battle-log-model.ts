@@ -1,7 +1,6 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
 import {AttackActionData, PlayCardActionData} from '../types/action-data'
 import {
-	FormattedSegment,
 	BattleLogT,
 	CurrentCoinFlipT,
 	PlayerState,
@@ -263,13 +262,7 @@ export class BattleLogModel {
 	public addTurnEndEntry() {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: [
-				{
-					text: '',
-					censoredText: '',
-					format: ['line'],
-				},
-			],
+			description: undefined,
 		}
 		this.log.push(entry)
 

@@ -1,30 +1,35 @@
-import { CurlyBracketNode, FormatNode, ListNode, Node, TextNode } from "common/utils/formatting";
+import {CurlyBracketNode, FormatNode, ListNode, Node, TextNode} from 'common/utils/formatting'
+import formatCss from './formatting.module.scss'
+import classNames from 'classnames'
 
 function nodeToHtml(node: Node) {
-  if (node instanceof ListNode) {
-    let html = []
+	if (node.TYPE == 'ListNode') {
+		let html = []
 
-    for (let child of node.nodes) {
-      html.push(nodeToHtml(child))
-    }
+		for (let child of (node as ListNode).nodes) {
+			html.push(nodeToHtml(child))
+		}
 
-    return <span> {html} </span>
-  }
-  else if (node instanceof TextNode) {
-    <span> {node.text} </span>
+		return <span> {html} </span>
+	} else if (node.TYPE == 'TextNode') {
+		return <span> {(node as TextNode).text} </span>
+	} else if (node.TYPE == 'FormatNode') {
+		const formatNode = node as FormatNode
 
-  }
-  else if (node instanceof FormatNode) {
-    return nodeToHtml(node.text)
-  }
-  else if (node instanceof CurlyBracketNode) {
-    <span> "Curly Bracket Node" </span>
-  }
+		return (
+			<span className={classNames(formatCss[formatNode.format])}>
+				{nodeToHtml(formatNode.text)}
+			</span>
+		)
+	} else if (node.TYPE == 'CurlyBracketNode') {
+		return <span> "Curly Bracket Node" </span>
+	}
 }
 
+export const FormattedText = (text: Node | undefined) => {
+	console.log(text)
 
-const FormattedText = (text: Node) => {
-  return nodeToHtml(text)
+	if (!text) return <div></div>
+
+	return nodeToHtml(text)
 }
-
-

@@ -1,7 +1,8 @@
 import {CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {FormattedSegment, TurnActions} from '../../types/game-state'
+import {TurnActions} from '../../types/game-state'
+import {Node} from '../../utils/formatting'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -27,7 +28,7 @@ abstract class Card {
 	public name: string
 	public rarity: CardRarityT
 
-	protected formattedDescription: Array<FormattedSegment>
+	protected formattedDescription: Node | undefined
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -35,7 +36,7 @@ abstract class Card {
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.formattedDescription = []
+		this.formattedDescription = undefined
 	}
 
 	public getKey(keyName: string) {
@@ -112,7 +113,7 @@ abstract class Card {
 	/**
 	 * Returns the description for this card
 	 */
-	public getFormattedDescription(): Array<FormattedSegment> {
+	public getFormattedDescription(): Node | undefined {
 		return this.formattedDescription
 	}
 
