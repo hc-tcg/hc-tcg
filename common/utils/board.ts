@@ -167,7 +167,9 @@ export function applySingleUse(
 export function applyStatusEffect(
 	game: GameModel,
 	statusEffectId: string,
-	targetInstance: string | undefined
+	targetInstance: string | undefined,
+	customStatusEffectInstance?: string,
+	customDuration?: number
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 
@@ -176,48 +178,23 @@ export function applyStatusEffect(
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
 	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
-	const statusEffectInstance = Math.random().toString()
+	let statusEffectInstance = Math.random().toString()
+	if (customStatusEffectInstance) {
+		statusEffectInstance = customStatusEffectInstance
+	}
 
 	const statusEffectInfo: StatusEffectT = {
 		statusEffectId: statusEffectId,
 		statusEffectInstance: statusEffectInstance,
 		targetInstance: targetInstance,
 		damageEffect: statusEffect.damageEffect,
+		duration: customDuration
 	}
 
 	statusEffect.onApply(game, statusEffectInfo, pos)
 
 	if (statusEffect.duration > 0 || statusEffect.counter)
 		statusEffectInfo.duration = statusEffect.duration
-
-	return 'SUCCESS'
-}
-
-/**Apply a "dummy" StatusEffect that lets you specify its starting duration and instance.*/
-export function applyDummyStatusEffect(
-	game: GameModel,
-	statusEffectId: string,
-	statusEffectInstance: string,
-	targetInstance: string | undefined,
-	duration: number
-): GenericActionResult {
-	if (!targetInstance) return 'FAILURE_INVALID_DATA'
-
-	const pos = getCardPos(game, targetInstance)
-
-	if (!pos) return 'FAILURE_INVALID_DATA'
-
-	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
-
-	const statusEffectInfo: StatusEffectT = {
-		statusEffectId: statusEffectId,
-		statusEffectInstance: statusEffectInstance,
-		targetInstance: targetInstance,
-		duration: duration,
-		damageEffect: statusEffect.damageEffect,
-	}
-
-	statusEffect.onApply(game, statusEffectInfo, pos)
 
 	return 'SUCCESS'
 }

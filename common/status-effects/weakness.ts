@@ -2,7 +2,7 @@ import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel} from '../models/card-pos-model'
-import {getActiveRow, applyDummyStatusEffect, removeStatusEffect} from '../utils/board'
+import {getActiveRow, applyStatusEffect, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {STRENGTHS} from '../const/strengths'
 
@@ -15,7 +15,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			duration: 3,
 			counter: false,
 			damageEffect: false,
-			visible: true,
+			visible: false,
 		})
 	}
 
@@ -25,6 +25,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		const strongType = HERMIT_CARDS[getActiveRow(opponentPlayer)!.hermitCard.cardId].hermitType
 		const weakType = HERMIT_CARDS[getActiveRow(player)!.hermitCard.cardId].hermitType
 
+		// Purely asthetic.
 		function applyDummies() {
 			for (let i = 0; i < player.board.rows.length; i++) {
 				const row = opponentPlayer.board.rows[i]
@@ -32,7 +33,7 @@ class WeaknessStatusEffect extends StatusEffect {
 				if (row.hermitCard) {
 					const card = row.hermitCard
 					if (HERMIT_CARDS[card.cardId].hermitType == weakType) {
-						applyDummyStatusEffect(game, 'weaknessdummy', Math.random().toString(), card.cardInstance, statusEffectInfo.duration!)
+						applyStatusEffect(game, 'weaknessdummy', card.cardInstance, Math.random().toString(), statusEffectInfo.duration!)
 					}
 				}
 			}
@@ -42,7 +43,7 @@ class WeaknessStatusEffect extends StatusEffect {
 				if (row.hermitCard) {
 					const card = row.hermitCard
 					if (HERMIT_CARDS[card.cardId].hermitType == weakType) {
-						applyDummyStatusEffect(game, 'weaknessdummy', "receiverWeakness", card.cardInstance, statusEffectInfo.duration!)
+						applyStatusEffect(game, 'weaknessdummy', card.cardInstance, "receiverWeakness", statusEffectInfo.duration!)
 					}
 				}
 			}
@@ -58,9 +59,16 @@ class WeaknessStatusEffect extends StatusEffect {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
-			if (statusEffectInfo.duration === 0)
+			if (statusEffectInfo.duration === 0) {
 				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
-				STRENGTHS[strongType] = STRENGTHS[strongType].filter((a) => a !== weakType)
+
+				for (let i = 0; i < STRENGTHS[strongType].length; i++) {
+					if (STRENGTHS[strongType][i] == weakType) {
+						delete STRENGTHS[strongType][i]
+						break
+					}
+				}
+			}
 		})
 
 		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
@@ -77,7 +85,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			if (cardType == 'hermit') {
 				const hermitType = HERMIT_CARDS[card.cardId].hermitType
 				if (hermitType == weakType) {
-					applyDummyStatusEffect(game, 'weaknessdummy', "receiverWeakness", card.cardInstance, statusEffectInfo.duration!)
+					applyStatusEffect(game, 'weaknessdummy', card.cardInstance, "receiverWeakness", statusEffectInfo.duration!)
 				}
 			}
 		})
@@ -88,7 +96,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			if (cardType == 'hermit') {
 				const hermitType = HERMIT_CARDS[card.cardId].hermitType
 				if (hermitType == weakType) {
-					applyDummyStatusEffect(game, 'weaknessdummy', Math.random().toString(), card.cardInstance, statusEffectInfo.duration!)
+					applyStatusEffect(game, 'weaknessdummy', card.cardInstance, Math.random().toString(), statusEffectInfo.duration!)
 				}
 			}
 		})
