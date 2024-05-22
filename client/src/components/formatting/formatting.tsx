@@ -30,7 +30,7 @@ function nodeToHtml(node: FormattedTextNode) {
 				{nodeToHtml(formatNode.text)}
 			</span>
 		)
-	} else if (node.TYPE == 'DifferentTextNode ') {
+	} else if (node.TYPE == 'DifferentTextNode') {
 		let differentTextNode = node as DifferentTextNode
 
 		return <span> {nodeToHtml(differentTextNode.playerText)}|{nodeToHtml(differentTextNode.opponentText)} </span>

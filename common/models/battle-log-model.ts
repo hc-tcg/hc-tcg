@@ -1,5 +1,5 @@
-import {CARDS, HERMIT_CARDS} from '../cards'
-import {AttackActionData, PlayCardActionData} from '../types/action-data'
+import { CARDS, HERMIT_CARDS } from '../cards'
+import { AttackActionData, PlayCardActionData } from '../types/action-data'
 import {
 	BattleLogT,
 	CurrentCoinFlipT,
@@ -8,11 +8,11 @@ import {
 	CardT,
 	IncompleteLogT,
 } from '../types/game-state'
-import {broadcast} from '../../server/src/utils/comm'
-import {AttackModel} from './attack-model'
-import {getCardPos} from './card-pos-model'
-import {GameModel} from './game-model'
-import {formatText} from '../utils/formatting'
+import { broadcast } from '../../server/src/utils/comm'
+import { AttackModel } from './attack-model'
+import { getCardPos } from './card-pos-model'
+import { GameModel } from './game-model'
+import { formatText } from '../utils/formatting'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -154,31 +154,19 @@ export class BattleLogModel {
 				? attackingHermitInfo.primary.name
 				: attackingHermitInfo.secondary.name
 
-		attack.log = attack.log.replaceAll('%ATTACKERIMG%', attackingHermitInfo.id)
-		attack.log = attack.log.replaceAll('%TARGETIMG%', targetHermitInfo.id)
 
-		attack.log = attack.log.replaceAll('%ATTACKER%', attackingHermitInfo.name)
-		attack.log = attack.log.replaceAll('%OPPONENT%', opponentPlayer.playerName)
-		attack.log = attack.log.replaceAll('%TARGET%', targetHermitInfo.name)
-		attack.log = attack.log.replaceAll('%ATTACK%', attackName)
-		attack.log = attack.log.replaceAll('%DAMAGE%', `${attack.calculateDamage()}`)
+		const logMessage = attack.log({
+			'attacker': attackingHermitInfo.name,
+			'opponent': opponentPlayer.playerName,
+			'target': targetHermitInfo.name,
+			'attackName': attackName,
+			'damage': attack.calculateDamage(),
+		});
 
-		const modifiedEntry = this.logMessageQueue.some((entry) => {
-			if (attack.type === 'effect') {
-				entry.description = entry.description.replace('%EFFECT_ATTACK%', attack.log)
-				return true
-			}
-			return false
-		})
-
-		if (modifiedEntry) return
-
-		const temporaryLog = {
+		this.logMessageQueue.push({
 			player: currentPlayer.id,
-			description: attack.log,
-		}
-
-		this.logMessageQueue.push(temporaryLog)
+			description: logMessage,
+		})
 	}
 
 	public addCustomEntry(entry: string, player: string) {
