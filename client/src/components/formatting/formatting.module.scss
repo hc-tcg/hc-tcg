@@ -1,9 +1,17 @@
 .player {
 	color: #6fabd0;
+
+	&.viewedByOpponent {
+		color: #5ea758;
+	}
 }
 
 .opponent {
 	color: #5ea758;
+
+	&.viewedByOpponent {
+		color: #6fabd0;
+	}
 }
 
 .effect {

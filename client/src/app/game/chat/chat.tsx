@@ -86,23 +86,21 @@ function Chat() {
 							hour: '2-digit',
 							minute: '2-digit',
 						})
+						const opponent = playerId !== line.sender
 						const name = playerStates?.[line.sender]?.playerName
 
 						return (
 							<p>
 								<span className={css.time}>{hmTime}</span>
-								{name && (
+								{name && !line.systemMessage && (
 									<span
-										className={classNames(
-											css.playerName,
-											playerId === line.sender ? css.player : css.opponent
-										)}
+										className={classNames(css.playerName, opponent ? css.player : css.opponent)}
 									>
 										{name}
 									</span>
 								)}
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
-									{FormattedText(line.message)}
+									{FormattedText(line.message, opponent)}
 								</span>
 							</p>
 						)
