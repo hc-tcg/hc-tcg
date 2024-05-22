@@ -13,7 +13,7 @@ import { MessageTextT } from '../types/game-state'
 
 function createEntry(
 	text: string,
-	format: string,
+	format: MessageTextT["format"],
 	condition?: 'player' | 'opponent'
 ): MessageTextT {
 	return {
@@ -26,7 +26,7 @@ function createEntry(
 
 
 type MessageTreeNode = {
-	getText: (format: string, condition: 'player' | 'opponent' | undefined) => Array<MessageTextT>
+	getText: (format: MessageTextT["format"], condition: MessageTextT["condition"]) => Array<MessageTextT>
 }
 
 class TextMessageTreeNode {
@@ -36,7 +36,7 @@ class TextMessageTreeNode {
 		this.text = text;
 	}
 
-	public getText(format: string, condition: 'player' | 'opponent' | undefined): Array<MessageTextT> {
+	public getText(format: MessageTextT["format"], condition: MessageTextT["condition"]): Array<MessageTextT> {
 		return [createEntry(
 			this.text,
 			format,
@@ -46,10 +46,10 @@ class TextMessageTreeNode {
 }
 
 class FormattedMessageTreeNode {
-	private format: string;
+	private format: MessageTextT["format"];
 	private text: MessageTreeNode;
 
-	private formatDict: Record<string, string> = {
+	private formatDict: Record<string, MessageTextT["format"]> = {
 		p: 'player',
 		o: 'opponent',
 		h: 'highlight',
@@ -58,11 +58,14 @@ class FormattedMessageTreeNode {
 
 	constructor(format: string, text: MessageTreeNode) {
 		this.format = this.formatDict[format];
+		if (this.format == undefined) {
+			console.log(`Format ${format} not found.`)
+		}
+
 		this.text = text;
 	}
 
-
-	public getText(_: string, condition: 'player' | 'opponent' | undefined): Array<MessageTextT> {
+	public getText(_: MessageTextT["format"], condition: MessageTextT["condition"]): Array<MessageTextT> {
 		return this.text.getText(this.format, condition);
 	}
 }
@@ -76,7 +79,7 @@ class CurlyBracketMessageTreeNode {
 		this.opponentText = opponentText
 	}
 
-	public getText(format: string, _: 'player' | 'opponent' | undefined): Array<MessageTextT> {
+	public getText(format: MessageTextT["format"], _: MessageTextT["condition"]): Array<MessageTextT> {
 		return [
 			...this.playerText.getText(format, 'player'),
 			...this.opponentText.getText(format, 'opponent'),
@@ -185,11 +188,17 @@ function parseNodesUntilEmpty(text: string): Array<MessageTreeNode> {
 
 export function formatLogEntry(text: string, mode?: 'log' | 'chat'): Array<MessageTextT> {
 	var nodes = parseNodesUntilEmpty(text)
-	console.log(nodes)
 
-	const messageTextParts = nodes.flatMap((node) =>
-		node.getText("plain", undefined)
-	)
+	var messageTextParts;
+	try {
+		messageTextParts = nodes.flatMap((node) =>
+			node.getText("plain", undefined)
+		)
+
+	} catch (e) {
+		// TODO: Improve error format
+		return [createEntry("There was a formatting error", "plain", undefined)]
+	}
 
 	return messageTextParts
 }
