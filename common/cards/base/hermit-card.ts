@@ -5,7 +5,7 @@ import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {formatText} from '../../utils/chat'
+import {formatText} from '../../utils/formatting'
 
 type HermitDefs = {
 	id: string
@@ -38,7 +38,10 @@ abstract class HermitCard extends Card {
 		this.primary = defs.primary
 		this.secondary = defs.secondary
 
-		this.description = formatText(`${this.primary.power} ${this.secondary.power}`)
+		this.description = formatText(
+			(this.primary.power ? `**${this.primary.name}**\n\n${this.primary.power}` : '') +
+				(this.secondary.power ? `**${this.secondary.name}**\n\n${this.secondary.power}` : '')
+		)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

@@ -38,53 +38,9 @@ const getOneDescription = (desc: string): React.ReactNode => {
 }
 
 const getDescription = (card: Card): React.ReactNode => {
-	const result = []
-	if (card instanceof HermitCard) {
-		if (card.primary.power) {
-			result.push(
-				<div key="primary-name" className={css.power}>
-					{card.primary.name}
-				</div>
-			)
-			result.push(
-				<div key="primary-power" className={css.italicized}>
-					{getOneDescription(card.primary.power)}
-				</div>
-			)
-		}
-
-		if (card.secondary.power) {
-			result.push(
-				<div key="secondary-name" className={css.power}>
-					{card.secondary.name}
-				</div>
-			)
-			result.push(
-				<div key="primary-power" className={css.italicized}>
-					{getOneDescription(card.secondary.power)}
-				</div>
-			)
-		}
-	}
-
-	if (card instanceof EffectCard || card instanceof SingleUseCard) {
-		result.push(
-			<div key="desc" className={css.italicized}>
-				{getOneDescription(card.description)}
-			</div>
-		)
-	}
-
-	if (card instanceof ItemCard && card.rarity === 'rare') {
-		result.push(
-			<div key="desc" className={css.italicized}>
-				Counts as 2 Item cards
-			</div>
-		)
-		return 'Counts as 2 Item cards.'
-	}
-
-	return result
+	return card.getFormattedDescription().map((segment) => {
+		return segment.text
+	})
 }
 
 const joinJsx = (array: Array<React.ReactNode>) => {
@@ -230,6 +186,7 @@ const CardTooltip = ({card}: Props) => {
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
+				<div></div>
 			</div>
 		</div>
 	)

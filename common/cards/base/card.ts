@@ -112,7 +112,7 @@ abstract class Card {
 	/**
 	 * Returns the description for this card
 	 */
-	public getFormattedDescription(): Array<Record<string, string>> {
+	public getFormattedDescription(): Array<FormattedSegment> {
 		return this.description
 	}
 
