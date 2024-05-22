@@ -9,6 +9,9 @@ import css from './chat.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
+import Tooltip from 'components/tooltip/tooltip'
+import CardTooltip from 'components/card/card-tooltip'
+import {HERMIT_CARDS} from 'common/cards'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -101,7 +104,21 @@ function Chat() {
 								{!msg.systemMessage && <span className={css.playerName}>{name}</span>}
 								{msg.message.map((segment) => {
 									if (segment.format === 'image') {
-										return <img className={css.emoji} src={segment.text} alt={segment.alt}></img>
+										return (
+											<Tooltip
+												tooltip={
+													<span className={css.imageTooltip}>
+														{HERMIT_CARDS[segment.text] && HERMIT_CARDS[segment.text].name}
+													</span>
+												}
+												showAboveModal={true}
+											>
+												<img
+													className={css.emoji}
+													src={`/images/hermits-emoji/${segment.text.split('_')[0]}.png`}
+												></img>
+											</Tooltip>
+										)
 									}
 									if (
 										segment.condition === undefined ||

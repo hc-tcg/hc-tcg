@@ -4,6 +4,7 @@ import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 import {removeStatusEffect} from '../../../utils/board'
+import {HERMIT_CARDS} from '../..'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -36,6 +37,13 @@ class TotemEffectCard extends EffectCard {
 			statusEffectsToRemove.forEach((ail) => {
 				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
+
+			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
+
+			game.battleLog.addCustomEntry(
+				`Using $hTotem$, {Your|${opponentPlayer.playerName}} $p${revivedHermit}$ revived with 10hp.`,
+				player.id
+			)
 
 			// This will remove this hook, so it'll only be called once
 			discardCard(game, row.effectCard)

@@ -2,6 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import HermitCard from '../../base/hermit-card'
 import {removeStatusEffect} from '../../../utils/board'
+import {HERMIT_CARDS} from '../..'
 
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
@@ -52,11 +53,18 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			row.health = 50
 
+			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
+
 			game.state.statusEffects.forEach((ail) => {
 				if (ail.targetInstance === targetInstance) {
 					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				}
 			})
+
+			game.battleLog.addCustomEntry(
+				`Using $hDeathloop$, {Your|${opponentPlayer.playerName}} $p${revivedHermit}$ revived with 50hp.`,
+				player.id
+			)
 
 			// Prevents hermits from being revived more than once by Deathloop
 			canRevives[targetInstance] = false

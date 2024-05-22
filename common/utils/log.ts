@@ -11,36 +11,15 @@ import {MessageTextT} from '../types/game-state'
  */
 
 function createEntry(
-	output: Array<MessageTextT>,
+	text: string,
 	format: string,
 	condition?: 'player' | 'opponent'
-): void {
-	const previousEntry = output[output.length - 1]
-	if (previousEntry && previousEntry.text === '') {
-		previousEntry.format = format
-		previousEntry.condition = condition ? condition : undefined
-		return
-	}
-
-	output.push({
-		text: '',
-		censoredText: '',
+): MessageTextT {
+	return {
+		text: text,
+		censoredText: text,
 		format: format,
 		condition: condition ? condition : undefined,
-	})
-}
-
-function updateLastEntry(
-	output: Array<MessageTextT>,
-	text: string,
-	format?: string,
-	condition?: 'player' | 'opponent' | 'both'
-): void {
-	output[output.length - 1] = {
-		text: output[output.length - 1].text + text,
-		censoredText: output[output.length - 1].text + text,
-		format: format ? format : output[output.length - 1].format,
-		condition: condition !== 'both' && condition ? condition : output[output.length - 1].condition,
 	}
 }
 
@@ -52,54 +31,24 @@ const formatDict: Record<string, string> = {
 }
 
 export function formatLogEntry(text: string): Array<MessageTextT> {
-	const output: Array<MessageTextT> = []
-
-	var visibility: 'both' | 'player' | 'opponent' = 'both'
-	var passthroughMode = false
-	var highlightMode = false
-
-	if (text.length === 0) return []
-	if (!'{$'.includes(text[0])) createEntry(output, 'plain')
-
-	for (var i = 0; i < text.length; i++) {
-		const char = text[i]
-		const nextChar = text[i + 1]
-
-		if (nextChar === undefined) return output
-
-		passthroughMode = false
-
-		if (visibility !== 'both' && char === '|') {
-			createEntry(output, 'plain', 'opponent')
-			visibility = 'opponent'
-			passthroughMode = true
-		}
-
-		if (visibility !== 'both' && char === '}') {
-			createEntry(output, 'plain')
-			visibility = 'both'
-			passthroughMode = true
-		}
-
-		if (char === '{') {
-			createEntry(output, 'plain', 'player')
-			visibility = 'player'
-			passthroughMode = true
-		}
-
-		if (char === '$') {
-			createEntry(output, 'plain')
-			passthroughMode = true
-			highlightMode = !highlightMode
-
-			if (highlightMode && Object.keys(formatDict).includes(nextChar)) {
-				updateLastEntry(output, '', formatDict[nextChar], visibility)
-				i++
-			}
-		}
-
-		if (!passthroughMode) updateLastEntry(output, char)
+	if (text.length === 0) {
+		return []
 	}
 
-	return output
+	const [token, reaminingText] = parseSingleMessageText(text)
+
+	return [token, ...formatLogEntry(reaminingText)]
 }
+
+const messageParseOptions = {
+	$: (text: string) => {
+		var format = text[1]
+		text = text.slice(2)
+
+		const [a, b] = text.split('$', 1)
+		return createEntry(text, formatDict[format])
+	},
+	'{': (text: string) => {},
+}
+
+function parseSingleMessageText(): [MessageTextT, string] {}
