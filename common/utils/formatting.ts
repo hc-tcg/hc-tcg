@@ -12,6 +12,18 @@
  * $i Image
  */
 
+export type Format =
+	'player'
+	| 'opponent'
+	| 'effect'
+	| 'item'
+	| 'image'
+	| 'attack'
+	| 'good'
+	| 'bad'
+	| 'italic'
+	| 'bold'
+
 export type Node = ListNode | TextNode | FormatNode | CurlyBracketNode
 
 export class ListNode {
@@ -108,7 +120,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			let remaining = text.slice(1)
 
 			let firstNode
-			;[firstNode, remaining] = parseSingleNode(remaining)
+				;[firstNode, remaining] = parseSingleNode(remaining)
 
 			if (remaining[0] !== '|') {
 				throw new Error('Expected |')
@@ -117,7 +129,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			remaining = remaining.slice(1)
 
 			let secondNode
-			;[secondNode, remaining] = parseSingleNode(remaining)
+				;[secondNode, remaining] = parseSingleNode(remaining)
 
 			if (remaining[0] !== '}') {
 				throw new Error('Expected } to close expression.')
@@ -176,31 +188,31 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 			let remaining = text.slice(1)
 
 			let emojiText: string
-			;[emojiText, remaining] = parseUntil(remaining, [':'])
+				;[emojiText, remaining] = parseUntil(remaining, [':'])
 
 			if (remaining[0] !== ':') {
 				throw new Error('Expected : to close expression.')
 			}
 
 			// HERMIT_CARDS required a circular import
-			const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
+			// const cardInfo = Object.values(HERMIT_CARDS).find((card) => card.name === emojiText)
 
-			if (!cardInfo) {
-				return [new TextNode(emojiText), remaining.slice(1)]
-			}
+			// if (!cardInfo) {
+			// 	return [new TextNode(emojiText), remaining.slice(1)]
+			// }
 
-			emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
+			// emojiText = `images/hermits-emoji/${cardInfo.id.split('_')[0]}.png`
 
-		return [
-			FormatNode.fromShorthand('i', new TextNode(emojiText)),
-			remaining.slice(1),
-		]
-	}],
+			return [
+				FormatNode.fromShorthand('i', new TextNode(emojiText)),
+				remaining.slice(1),
+			]
+		}],
 	// [(text: string) => text.startsWith('\n'), (text: string) => {
-		
+
 	// }],
 	// [(text: string) => text.startsWith('\t'), (text: string) => {
-		
+
 	// }],
 	[(_) => true, parseTextNode],
 ]
@@ -257,7 +269,7 @@ function parseNodesWhile(
 			}
 
 			let node
-			;[node, remaining] = parseSingleNode(remaining)
+				;[node, remaining] = parseSingleNode(remaining)
 			nodes.push(node)
 		}
 	} catch (e) {
@@ -283,7 +295,7 @@ function parseNodesUntilEmpty(text: string): Node {
 // Parse a TextNode
 function parseTextNode(text: string): [TextNode, string] {
 	let remaining
-	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
+		;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 	return [new TextNode(text), remaining]
 }
 
