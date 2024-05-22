@@ -1,4 +1,4 @@
-import { CurlyBracketNode, FormatNode, ListNode, Node, TextNode } from 'common/utils/formatting'
+import { DifferentTextNode , FormatNode, ListNode, Node, TextNode, ProfanityNode, LineBreakNode, TabNode } from 'common/utils/formatting'
 import formatCss from './formatting.module.scss'
 import classNames from 'classnames'
 
@@ -21,8 +21,8 @@ function nodeToHtml(node: Node) {
 				{nodeToHtml(formatNode.text)}
 			</span>
 		)
-	} else if (node.TYPE == 'CurlyBracketNode') {
-		let curlyBracketNode = node as CurlyBracketNode
+	} else if (node.TYPE == 'DifferentTextNode ') {
+		let curlyBracketNode = node as DifferentTextNode 
 
 		return <span> "Curly Bracket Node" </span>
 	}

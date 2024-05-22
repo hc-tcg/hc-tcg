@@ -2,8 +2,6 @@
  * Guide to symbols
  * Player A - Player that generated the log | Player B - other player
  * {A|B} A shows to player A, B shows to player B
- * $p Player
- * $o Opponent
  * $e Effect card
  * $m Item card
  * $v Hermit attack
@@ -13,8 +11,6 @@
  */
 
 export type Format =
-	'player'
-	| 'opponent'
 	| 'effect'
 	| 'item'
 	| 'image'
@@ -24,7 +20,14 @@ export type Format =
 	| 'italic'
 	| 'bold'
 
-export type Node = ListNode | TextNode | FormatNode | CurlyBracketNode
+export type Node =
+	| ListNode
+	| TextNode
+	| FormatNode
+	| DifferentTextNode
+	| ProfanityNode
+	| LineBreakNode
+	| TabNode
 
 export class ListNode {
 	public TYPE = 'ListNode'
@@ -53,8 +56,6 @@ export class FormatNode {
 	public text: Node
 
 	static formatDict: Record<string, Format> = {
-		p: 'player',
-		o: 'opponent',
 		e: 'effect',
 		m: 'item',
 		i: 'image',
@@ -79,8 +80,8 @@ export class FormatNode {
 	}
 }
 
-export class CurlyBracketNode {
-	public TYPE = 'CurlyBracketNode'
+export class DifferentTextNode {
+	public TYPE = 'DifferentTextNode'
 
 	public playerText: Node
 	public opponentText: Node
@@ -90,6 +91,25 @@ export class CurlyBracketNode {
 		this.opponentText = opponentText
 	}
 }
+
+export class ProfanityNode {
+	public TYPE = 'ProfanityNode'
+
+	public text: string
+
+	constructor(text: string) {
+		this.text = text
+	}
+}
+
+export class LineBreakNode {
+	public TYPE = 'LineBreakNode'
+}
+
+export class TabNode {
+	public TYPE = 'TabNode'
+}
+
 
 // The special characters that can end the expression.
 const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
@@ -137,7 +157,7 @@ const messageParseOptions: Array<[(text: string) => boolean, (text: string) => [
 
 			remaining = remaining.slice(1)
 
-			return [new CurlyBracketNode(firstNode, secondNode), remaining]
+			return [new DifferentTextNode(firstNode, secondNode), remaining]
 		},
 	],
 	[
