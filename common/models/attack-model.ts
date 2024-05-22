@@ -10,7 +10,7 @@ import {
 } from '../types/attack'
 import {RowPos} from '../types/cards'
 import {BattleLogT, MessageTextT} from '../types/game-state'
-import {formatLogEntry} from '../utils/log'
+import {formatLogEntry} from '../utils/chat'
 
 export class AttackModel {
 	/** The damage this attack does */

@@ -12,7 +12,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
-import {formatLogEntry} from '../utils/log'
+import {formatLogEntry} from '../utils/chat'
 
 export class BattleLogModel {
 	private game: GameModel
