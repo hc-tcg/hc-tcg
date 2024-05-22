@@ -6,7 +6,6 @@ import cors from 'cors'
 import {CONFIG} from 'common/config'
 import startSocketIO from './sockets'
 import {registerApis} from './api'
-import {formatLogEntry} from 'common/utils/log'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
