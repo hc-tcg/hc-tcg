@@ -4,6 +4,7 @@ import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {formatText} from '../../utils/formatting'
 
 type EffectDefs = {
 	id: string
@@ -26,6 +27,8 @@ abstract class EffectCard extends Card {
 		})
 
 		this.description = defs.description
+
+		this.formattedDescription = formatText(this.description)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

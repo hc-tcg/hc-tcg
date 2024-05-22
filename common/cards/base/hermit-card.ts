@@ -38,7 +38,7 @@ abstract class HermitCard extends Card {
 		this.primary = defs.primary
 		this.secondary = defs.secondary
 
-		this.description = formatText(
+		this.formattedDescription = formatText(
 			(this.primary.power ? `**${this.primary.name}**\n\n${this.primary.power}` : '') +
 				(this.secondary.power ? `**${this.secondary.name}**\n\n${this.secondary.power}` : '')
 		)

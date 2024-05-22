@@ -3,6 +3,7 @@ import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {formatText} from '../../utils/formatting'
 
 export type SingleUseDefs = {
 	id: string
@@ -25,6 +26,8 @@ class SingleUseCard extends Card {
 		})
 
 		this.description = defs.description
+
+		this.formattedDescription = formatText(this.description)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

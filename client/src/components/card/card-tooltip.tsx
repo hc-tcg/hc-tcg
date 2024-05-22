@@ -33,10 +33,6 @@ type Props = {
 	card: Card
 }
 
-const getOneDescription = (desc: string): React.ReactNode => {
-	return desc.split('\n\n').map((part, index) => <div key={index}>{part || <>&nbsp;</>}</div>)
-}
-
 const getDescription = (card: Card): React.ReactNode => {
 	return card.getFormattedDescription().map((segment) => {
 		return segment.text

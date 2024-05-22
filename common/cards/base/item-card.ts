@@ -4,6 +4,7 @@ import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {formatText} from '../../utils/formatting'
 
 type ItemDefs = {
 	id: string
@@ -26,6 +27,8 @@ abstract class ItemCard extends Card {
 		})
 
 		this.hermitType = defs.hermitType
+
+		this.formattedDescription = this.rarity === 'rare' ? formatText('Counts as 2 Item cards.') : []
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

@@ -27,7 +27,7 @@ abstract class Card {
 	public name: string
 	public rarity: CardRarityT
 
-	protected description: Array<FormattedSegment>
+	protected formattedDescription: Array<FormattedSegment>
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -35,7 +35,7 @@ abstract class Card {
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.description = []
+		this.formattedDescription = []
 	}
 
 	public getKey(keyName: string) {
@@ -113,7 +113,7 @@ abstract class Card {
 	 * Returns the description for this card
 	 */
 	public getFormattedDescription(): Array<FormattedSegment> {
-		return this.description
+		return this.formattedDescription
 	}
 
 	/**
