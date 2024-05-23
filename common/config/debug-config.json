@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["goatfather_rare", "ethoslab_rare", "ethoslab_rare", "tnt"],
+	"extraStartingCards": ["instant_health_ii", "diamond_sword"],
 	"noItemRequirements": true,
 	"forceCoinFlip": true,
 	"oneShotMode": false,

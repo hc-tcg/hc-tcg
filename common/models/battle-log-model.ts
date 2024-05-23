@@ -53,6 +53,18 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
+	public sendLogs() {
+		this.logMessageQueue.forEach((entry) => {
+			this.log.push({
+				player: entry.player,
+				description: formatText(entry.description),
+			})
+		})
+		this.logMessageQueue = []
+
+		this.sendBattleLogEntry()
+	}
+
 	public addPlayCardEntry(turnAction: PlayCardActionData) {
 		const currentPlayer = this.game.currentPlayer.playerName
 
@@ -111,11 +123,11 @@ export class BattleLogModel {
 	public addApplyEffectEntry(effectAction: string) {
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: this.createEffectEntry() + effectAction,
+			description: `${this.createEffectEntry()} ${effectAction}`,
 		}
 		this.logMessageQueue.push(entry)
 
-		this.sendBattleLogEntry()
+		this.sendLogs()
 	}
 
 	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
@@ -161,9 +173,9 @@ export class BattleLogModel {
 					: attackingHermitInfo.secondary.name
 
 			const logMessage = attack.log({
-				attacker: `${attackingHermitInfo.name} (${target.rowIndex})`,
+				attacker: `${attackingHermitInfo.name} (${target.rowIndex + 1})`,
 				opponent: target.player.playerName,
-				target: `${targetHermitInfo.name} (${target.rowIndex})`,
+				target: `${targetHermitInfo.name} (${target.rowIndex + 1})`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
 			})
@@ -266,18 +278,6 @@ export class BattleLogModel {
 			description: undefined,
 		}
 		this.log.push(entry)
-
-		this.sendBattleLogEntry()
-	}
-
-	public sendLogs() {
-		this.logMessageQueue.forEach((entry) => {
-			this.log.push({
-				player: entry.player,
-				description: formatText(entry.description),
-			})
-		})
-		this.logMessageQueue = []
 
 		this.sendBattleLogEntry()
 	}

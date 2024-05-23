@@ -52,13 +52,8 @@ class TNTSingleUseCard extends SingleUseCard {
 			const backlashId = this.getInstanceKey(instance, 'backlash')
 			if (attack.id !== backlashId) return
 
-			// We've executed our final attack, apply effect
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-
-			applySingleUse(
-				game,
-				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}}`
-			)
+			// We've executed our attack, apply effect
+			applySingleUse(game)
 		})
 	}
 
