@@ -1,3 +1,4 @@
+import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {moveCardToHand} from '../../../utils/movement'
@@ -16,26 +17,30 @@ class LoyaltyEffectCard extends EffectCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
+		const {player, opponentPlayer} = pos
 
-		player.hooks.onHermitDeath.add(instance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.rowIndex !== pos.rowIndex) return
+		const afterAttack = (attack: AttackModel) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget || attackTarget.row.health > 0) return
+			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
 
 			// Return all attached item cards to the hand
-			const row = hermitPos.row
-			for (let i = 0; i < row.itemCards.length; i++) {
-				const card = row.itemCards[i]
+			for (let i = 0; i < attackTarget.row.itemCards.length; i++) {
+				const card = attackTarget.row.itemCards[i]
 				if (card) {
 					moveCardToHand(game, card)
 				}
 			}
-		})
+		}
+
+		player.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.onHermitDeath.remove(instance)
+		const {player, opponentPlayer} = pos
+		player.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
 }
 

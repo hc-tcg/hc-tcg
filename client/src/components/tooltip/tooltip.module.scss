@@ -1,17 +1,16 @@
 .tooltip {
 	position: absolute;
 	font-family: Minecraft;
-	background-color: rgba(10, 1, 15, 95%);
-	box-shadow: inset 0 0 5px 2px rgb(38, 13, 77);
-	color: rgb(161, 161, 161);
-	font-size: 18px;
-	padding: 8px;
-	border-radius: 4px;
+	font-size: 16px;
 	width: max-content;
-	max-width: 470px;
+	max-width: 29rem;
 	z-index: 110;
 
 	&.showAboveModal {
 		z-index: 121;
 	}
+}
+
+.smallTooltip {
+	font-size: 14px;
 }

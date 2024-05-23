@@ -24,7 +24,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 				cost: ['balanced', 'balanced', 'any'],
 				damage: 0,
 				power:
-					'Sleep for the following 2 turns. Restore Full Health. Can not attack. Can not go AFK.\n\nCan still draw and attach cards while sleeping.',
+					'This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up.',
 			},
 		})
 	}
@@ -51,6 +51,15 @@ class BdoubleO100RareHermitCard extends HermitCard {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'sleeping',
+			},
+		]
 	}
 }
 

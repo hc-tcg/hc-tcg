@@ -10,8 +10,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 			numericId: 74,
 			name: 'Lava Bucket',
 			rarity: 'rare',
-			description:
-				'Burn opposing active Hermit. Add 20hp damage every turn at the end of your turn.',
+			description: "Burn your opponent's active Hermit.",
 		})
 	}
 
@@ -44,6 +43,15 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'fire',
+			},
+		]
 	}
 }
 

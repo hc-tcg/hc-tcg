@@ -9,9 +9,9 @@ class SleepingStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'sleeping',
-			name: 'Sleeping',
+			name: 'Sleep',
 			description:
-				'When applied, restore Full Health. Can not attack. Can not go AFK. Can still draw and attach cards while sleeping.',
+				'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 			duration: 3,
 			counter: false,
 			damageEffect: false,
@@ -49,8 +49,11 @@ class SleepingStatusEffect extends StatusEffect {
 				)
 		})
 
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
+		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget) return
+			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
@@ -58,7 +61,7 @@ class SleepingStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

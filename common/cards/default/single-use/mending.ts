@@ -14,7 +14,7 @@ class MendingSingleUseCard extends singleUseCard {
 			numericId: 78,
 			name: 'Mending',
 			rarity: 'ultra_rare',
-			description: 'Move any attached effect card from your active Hermit to an AFK Hermit.',
+			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
 		})
 	}
 

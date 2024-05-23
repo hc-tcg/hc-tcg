@@ -12,7 +12,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			numericId: 46,
 			name: 'Iron Sword',
 			rarity: 'common',
-			description: 'Do an additional 20hp damage.',
+			description: "Do 20hp damage to your opponent's active Hermit.",
 		})
 	}
 

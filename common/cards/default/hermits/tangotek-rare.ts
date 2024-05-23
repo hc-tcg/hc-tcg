@@ -23,7 +23,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'farm'],
 				damage: 100,
 				power:
-					'At the end of your turn, both players must replace active Hermits with AFK Hermits.\n\nOpponent replaces their Hermit first.\n\nIf there are no AFK Hermits, active Hermit remains in battle.',
+					'After your attack, both players must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.\n\nYour opponent chooses their active Hermit first.',
 			},
 		})
 	}

@@ -22,7 +22,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 				cost: ['redstone', 'any'],
 				damage: 70,
 				power:
-					'For each of your AFK Bdubs or Tangos, add an additional 40hp damage up to a maximum of 80hp damage.',
+					'For each of your AFK Bdubs or Tangos on the game board, do an additional 40hp damage, up to a maximum of 80hp additional damage.',
 			},
 		})
 	}
