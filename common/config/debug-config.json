@@ -1,8 +1,8 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["instant_health_ii", "diamond_sword"],
-	"noItemRequirements": true,
-	"forceCoinFlip": true,
+	"extraStartingCards": [],
+	"noItemRequirements": false,
+	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,
@@ -14,5 +14,6 @@
 		"enabled": false,
 		"clearConsole": true
 	},
-	"autoEndTurn": false
+	"autoEndTurn": false,
+	"logAttackHistory": false
 }

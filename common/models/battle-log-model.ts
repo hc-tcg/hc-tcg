@@ -13,6 +13,7 @@ import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 import {TextNode, formatText} from '../utils/formatting'
+import {DEBUG_CONFIG} from '../config'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -185,9 +186,15 @@ export class BattleLogModel {
 			return reducer
 		}, '' as string)
 
+		const debugLog = DEBUG_CONFIG.logAttackHistory
+			? attack.getHistory().reduce((reduce, hist) => {
+					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
+			  }, '')
+			: ''
+
 		this.logMessageQueue.push({
 			player: playerId,
-			description: queuedLog,
+			description: queuedLog + debugLog,
 		})
 	}
 
