@@ -150,7 +150,6 @@ export function applySingleUse(game: GameModel, effectAction?: string): GenericA
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	game.battleLog.addApplyEffectEntry(effectAction ? effectAction : '')
 	currentPlayer.hooks.onApply.call()
 
 	// This can only be done once per turn

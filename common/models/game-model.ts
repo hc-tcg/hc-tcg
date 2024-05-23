@@ -6,8 +6,8 @@ import {
 	TurnActions,
 	BattleLogT,
 	PlayerState,
+	Message,
 } from '../types/game-state'
-import {FormattedSegment} from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
@@ -18,7 +18,7 @@ export class GameModel {
 	private internalId: string
 	private internalCode: string | null
 
-	public chat: Array<FormattedSegment>
+	public chat: Array<Message>
 	public battleLog: BattleLogModel
 	public players: Record<string, PlayerModel>
 	public task: any

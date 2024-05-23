@@ -31,9 +31,8 @@ class TNTSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 			}).addDamage(this.id, 60)
-
-			tntAttack.log = 'for $b%DAMAGE%hp$ damage'
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
@@ -41,9 +40,8 @@ class TNTSingleUseCard extends SingleUseCard {
 				target: activePos,
 				type: 'effect',
 				isBacklash: true,
+				log: (values) => `and took $b${values.damage}hp$ backlash damage`,
 			}).addDamage(this.id, 20)
-
-			backlashAttack.log = 'and took $b%DAMAGE%hp$ backlash damage.'
 
 			tntAttack.addNewAttack(backlashAttack)
 
@@ -56,11 +54,10 @@ class TNTSingleUseCard extends SingleUseCard {
 
 			// We've executed our final attack, apply effect
 			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
+
 			applySingleUse(
 				game,
-				`to attack $o${
-					opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''
-				}$  %EFFECT_ATTACK% %EFFECT_ATTACK%`
+				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}}`
 			)
 		})
 	}

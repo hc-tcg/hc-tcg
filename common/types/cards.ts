@@ -1,4 +1,4 @@
-import {Node, PlayerState, RowState, RowStateWithHermit} from './game-state'
+import {PlayerState, RowState, RowStateWithHermit} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 

@@ -46,10 +46,12 @@ class GoatfatherRareHermitCard extends HermitCard {
 
 		if (coinFlip[0] === 'tails') return attacks
 
+		attacks[0].addDamage(this.id, 30)
+
 		const activeRow = opponentPlayer.board.activeRow
 		const rows = opponentPlayer.board.rows
 		if (activeRow === null || rowIndex === null) return attacks
-		for (let i = activeRow; i < rows.length; i++) {
+		for (let i = activeRow + 1; i < rows.length; i++) {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue
 
@@ -66,8 +68,9 @@ class GoatfatherRareHermitCard extends HermitCard {
 					row: targetRow,
 				},
 				type: hermitAttackType,
-			}).addDamage(this.id, activeRow === i ? 30 : 10)
-			attacks.push(attack)
+				log: (values) => `, attacked $o${values.target}$ for $b${values.damage}hp$ damage`,
+			}).addDamage(this.id, 10)
+			attacks[0].addNewAttack(attack)
 		}
 
 		return attacks

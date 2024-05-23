@@ -1,5 +1,5 @@
-import { CARDS, HERMIT_CARDS } from '../cards'
-import { AttackActionData, PlayCardActionData } from '../types/action-data'
+import {CARDS, HERMIT_CARDS} from '../cards'
+import {AttackActionData, PlayCardActionData} from '../types/action-data'
 import {
 	BattleLogT,
 	CurrentCoinFlipT,
@@ -8,11 +8,11 @@ import {
 	CardT,
 	IncompleteLogT,
 } from '../types/game-state'
-import { broadcast } from '../../server/src/utils/comm'
-import { AttackModel } from './attack-model'
-import { getCardPos } from './card-pos-model'
-import { GameModel } from './game-model'
-import { formatText } from '../utils/formatting'
+import {broadcast} from '../../server/src/utils/comm'
+import {AttackModel} from './attack-model'
+import {getCardPos} from './card-pos-model'
+import {GameModel} from './game-model'
+import {TextNode, formatText} from '../utils/formatting'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -44,7 +44,7 @@ export class BattleLogModel {
 			// @todo This seems to be broken
 			this.game.chat.push({
 				createdAt: Date.now(),
-				message: lastEntry.description,
+				message: lastEntry.description ? lastEntry.description : new TextNode(''),
 				sender: lastEntry.player,
 				systemMessage: true,
 			})
@@ -99,21 +99,23 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addApplyEffectEntry(effectAction: string) {
+	public createEffectEntry(): string {
 		const currentPlayer = this.game.currentPlayer.playerName
-
 		const card = this.game.currentPlayer.board.singleUseCard
-		if (!card) return
-
+		if (!card) return ''
 		const cardInfo = CARDS[card.cardId]
 
+		return `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ `
+	}
+
+	public addApplyEffectEntry(effectAction: string) {
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ ` + effectAction,
+			description: this.createEffectEntry() + effectAction,
 		}
 		this.logMessageQueue.push(entry)
 
-		// this.sendBattleLogEntry()
+		this.sendBattleLogEntry()
 	}
 
 	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
@@ -138,34 +140,42 @@ export class BattleLogModel {
 	}
 
 	public addAttackEntry(attack: AttackModel) {
-		const attacker = attack.getAttacker()
-		const target = attack.getTarget()
+		const playerId = attack.getAttacker()?.player.id
 
-		if (!attacker || !target) return
+		if (!playerId) return
 
-		const currentPlayer = attacker.player
-		const opponentPlayer = target.player
+		const attacks = [attack, ...attack.nextAttacks]
 
-		const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-		const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+		const queuedLog = attacks.reduce((reducer, attack) => {
+			const attacker = attack.getAttacker()
+			const target = attack.getTarget()
 
-		const attackName =
-			attack.type === 'primary'
-				? attackingHermitInfo.primary.name
-				: attackingHermitInfo.secondary.name
+			if (!attacker || !target) return reducer
 
+			const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
+			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
 
-		const logMessage = attack.log({
-			'attacker': attackingHermitInfo.name,
-			'opponent': opponentPlayer.playerName,
-			'target': targetHermitInfo.name,
-			'attackName': attackName,
-			'damage': attack.calculateDamage(),
-		});
+			const attackName =
+				attack.type === 'primary'
+					? attackingHermitInfo.primary.name
+					: attackingHermitInfo.secondary.name
+
+			const logMessage = attack.log({
+				attacker: attackingHermitInfo.name,
+				opponent: target.player.playerName,
+				target: targetHermitInfo.name,
+				attackName: attackName,
+				damage: attack.calculateDamage(),
+			})
+
+			reducer += logMessage
+
+			return reducer
+		}, '' as string)
 
 		this.logMessageQueue.push({
-			player: currentPlayer.id,
-			description: logMessage,
+			player: playerId,
+			description: queuedLog,
 		})
 	}
 
@@ -267,6 +277,7 @@ export class BattleLogModel {
 				description: formatText(entry.description),
 			})
 		})
+		this.logMessageQueue = []
 
 		this.sendBattleLogEntry()
 	}

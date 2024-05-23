@@ -5,8 +5,9 @@ import {
 	AttackType,
 	ShouldIgnoreCard,
 	WeaknessType,
+	AttackLogFactory,
 } from '../types/attack'
-import { RowPos } from '../types/cards'
+import {RowPos} from '../types/cards'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -26,13 +27,7 @@ export class AttackModel {
 	private target: RowPos | null
 
 	/** The battle log attached to this attack */
-	public log: (values: {
-		'attacker': string,
-		'attackName': string,
-		'opponent': string,
-		'target': string,
-		'damage': number,
-	}) => string
+	public log: (values: AttackLogFactory) => string
 
 	// Public fields
 
@@ -59,9 +54,11 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
 
-		this.log = (values) => {
-			return `{Your|${values.opponent}'s} $p${values.attacker}$ attacked $o${values.target}$ with $v${values.attackName}$ for $b${values.damage}hp$ damage`
-		}
+		this.log = defs.log
+			? defs.log
+			: (values) => {
+					return `{Your|${values.opponent}'s} $p${values.attacker}$ attacked $o${values.target}$ with $v${values.attackName}$ for $b${values.damage}hp$ damage`
+			  }
 
 		return this
 	}

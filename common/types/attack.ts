@@ -12,6 +12,14 @@ export type AttackDefence = {
 
 export type ShouldIgnoreCard = (instance: string) => boolean
 
+export type AttackLogFactory = {
+	attacker: string
+	attackName: string
+	opponent: string
+	target: string
+	damage: number
+}
+
 export type AttackDefs = {
 	id?: string
 	attacker?: RowPos | null
@@ -20,6 +28,7 @@ export type AttackDefs = {
 	shouldIgnoreCards?: Array<ShouldIgnoreCard>
 	isBacklash?: boolean
 	createWeakness?: WeaknessType
+	log?: (values: AttackLogFactory) => string
 }
 
 export type AttackHistoryType =
