@@ -114,6 +114,8 @@
 	word-break: break-word;
 	margin-bottom: 0.25rem;
 	font-size: 1rem;
+	display: flex;
+	align-items: baseline;
 }
 
 .time {
@@ -142,12 +144,19 @@
 	margin-top: -0.4rem;
 }
 
+.turnTag {
+	color: var(--gray-300);
+	font-size: 0.75rem;
+	padding-right: 0.25rem;
+}
+
 .line {
-	display: block;
+	flex-grow: 1;
+	height: 100%;
+	display: inline-block;
 	height: 1px;
 	border: 0;
 	border-top: 2px solid var(--gray-300);
-	margin-top: 3px;
-	margin-bottom: 5px;
 	padding: 0;
+	align-self: center;
 }

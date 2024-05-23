@@ -1,6 +1,11 @@
 import {SyntheticEvent, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {getChatMessages, getOpponentName, getPlayerStates} from 'logic/game/game-selectors'
+import {
+	getChatMessages,
+	getOpponentId,
+	getOpponentName,
+	getPlayerStates,
+} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -22,6 +27,7 @@ function Chat() {
 	const chatPos = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
+	const opponentId = useSelector(getOpponentId)
 
 	const bindChatPos = useDrag((params: any) => {
 		dispatch(
@@ -82,16 +88,29 @@ function Chat() {
 			<div className={css.messagesWrapper}>
 				<div className={css.messages}>
 					{chatMessages.slice().map((line) => {
+						if (line.systemMessage === true && showLog === false) return <span></span>
 						const hmTime = new Date(line.createdAt).toLocaleTimeString([], {
 							hour: '2-digit',
 							minute: '2-digit',
 						})
+
 						const opponent = playerId !== line.sender
 						const name = playerStates?.[line.sender]?.playerName
+						const opponentName = opponentId ? playerStates?.[opponentId].playerName : null
+						if (line.message.TYPE === 'LineNode') {
+							return (
+								<div className={css.message}>
+									<span className={css.turnTag}>
+										{opponent ? `${opponentName}'s`.toLocaleUpperCase() : 'YOUR'} TURN
+									</span>
+									<span className={css.line}></span>
+								</div>
+							)
+						}
 
 						return (
-							<p>
-								<span className={css.time}>{hmTime}</span>
+							<div className={css.message}>
+								{line.message.TYPE !== 'LineNode' && <span className={css.time}>{hmTime}</span>}
 								{name && !line.systemMessage && (
 									<span
 										className={classNames(
@@ -105,7 +124,7 @@ function Chat() {
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
 									{FormattedText(line.message, opponent)}
 								</span>
-							</p>
+							</div>
 						)
 					})}
 				</div>

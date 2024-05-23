@@ -123,6 +123,10 @@ export class LineBreakNode {
 	public TYPE = 'LineBreakNode'
 }
 
+export class LineNode {
+	public TYPE = 'LineNode'
+}
+
 export class TabNode {
 	public TYPE = 'TabNode'
 }

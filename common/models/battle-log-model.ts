@@ -1,5 +1,5 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
-import {AttackActionData, PlayCardActionData} from '../types/action-data'
+import {PlayCardActionData} from '../types/action-data'
 import {
 	BattleLogT,
 	CurrentCoinFlipT,
@@ -12,7 +12,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
-import {TextNode, formatText} from '../utils/formatting'
+import {LineNode, TextNode, formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 
 export class BattleLogModel {
@@ -42,7 +42,6 @@ export class BattleLogModel {
 			const lastEntry = this.log.pop()
 			if (!lastEntry) continue
 
-			// @todo This seems to be broken
 			this.game.chat.push({
 				createdAt: Date.now(),
 				message: lastEntry.description ? lastEntry.description : new TextNode(''),
@@ -289,7 +288,7 @@ export class BattleLogModel {
 	public addTurnEndEntry() {
 		const entry: BattleLogT = {
 			player: this.game.currentPlayer.id,
-			description: undefined,
+			description: new LineNode(),
 		}
 		this.log.push(entry)
 

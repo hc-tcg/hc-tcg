@@ -53,6 +53,8 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 		return <br />
 	} else if (node.TYPE == 'TabNode') {
 		return <span className={css.tab}></span>
+	} else if (node.TYPE == 'LineNode') {
+		return <span className={css.line} />
 	}
 }
 
