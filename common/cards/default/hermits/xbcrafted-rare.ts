@@ -67,6 +67,9 @@ class XBCraftedRareHermitCard extends HermitCard {
 				// Not attached to the opponent's active Hermit, do not ignore it
 				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
 
+				// Do not ignore the player's effect.
+				if (pos.player == player) return false
+
 				return true
 			})
 		})
