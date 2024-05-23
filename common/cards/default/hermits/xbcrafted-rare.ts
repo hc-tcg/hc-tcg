@@ -64,7 +64,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				// It's not the targets effect card, do not ignore it
 				if (pos.slot.type !== 'effect') return false
 
-				// Not attached to the opponent's active Hermit, do not ignore it
+				// Not attached to an active Hermit, do not ignore it
 				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
 
 				// Do not ignore the player's effect.
