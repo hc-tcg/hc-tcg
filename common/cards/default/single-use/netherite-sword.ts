@@ -30,7 +30,8 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
+				log: (values) =>
+					`${values.header} to attack $o${values.target}$ for $b${values.damage}hp$ damage`,
 			}).addDamage(this.id, 60)
 
 			return [swordAttack]

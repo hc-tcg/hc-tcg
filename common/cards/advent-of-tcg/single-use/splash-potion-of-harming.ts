@@ -40,7 +40,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 						},
 						type: 'effect',
 						log: (values) =>
-							game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
+							`${values.header} to attack $o${values.target}$ for $b${values.damage}hp$ damage`,
 					}).addDamage(this.id, damage)
 				)
 			}

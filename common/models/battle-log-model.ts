@@ -54,6 +54,15 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
+	private generateEffectEntryHeader(): string {
+		const currentPlayer = this.game.currentPlayer.playerName
+		const card = this.game.currentPlayer.board.singleUseCard
+		if (!card) return ''
+		const cardInfo = CARDS[card.cardId]
+
+		return `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ `
+	}
+
 	public sendLogs() {
 		this.logMessageQueue.forEach((entry) => {
 			this.log.push({
@@ -112,19 +121,10 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public createEffectEntry(): string {
-		const currentPlayer = this.game.currentPlayer.playerName
-		const card = this.game.currentPlayer.board.singleUseCard
-		if (!card) return ''
-		const cardInfo = CARDS[card.cardId]
-
-		return `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ `
-	}
-
 	public addApplySingleUseEntry(effectAction?: string) {
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: `${this.createEffectEntry()} ${effectAction ? effectAction : ''}`,
+			description: `${this.generateEffectEntryHeader()} ${effectAction ? effectAction : ''}`,
 		}
 		this.logMessageQueue.push(entry)
 
@@ -165,6 +165,8 @@ export class BattleLogModel {
 
 			if (!attacker || !target) return reducer
 
+			if (attack.getDamage() === 0) return reducer
+
 			const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
 
@@ -179,12 +181,15 @@ export class BattleLogModel {
 				target: `${targetHermitInfo.name} (${target.rowIndex + 1})`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
+				header: this.generateEffectEntryHeader(),
 			})
 
 			reducer += logMessage
 
 			return reducer
 		}, '' as string)
+
+		if (queuedLog.length === 0) return
 
 		const debugLog = DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {

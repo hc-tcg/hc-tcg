@@ -18,6 +18,7 @@ export type AttackLogFactory = {
 	opponent: string
 	target: string
 	damage: number
+	header: string
 }
 
 export type AttackDefs = {
