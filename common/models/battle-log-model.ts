@@ -187,7 +187,7 @@ export class BattleLogModel {
 				opponent: target.player.playerName,
 				target: `$${targetFormatting}${targetHermitInfo.name} (${target.rowIndex + 1})$`,
 				attackName: attackName,
-				damage: attack.calculateDamage(),
+				damage: `$b${attack.calculateDamage()}hp$`,
 				header: this.generateEffectEntryHeader(singleUse),
 			})
 

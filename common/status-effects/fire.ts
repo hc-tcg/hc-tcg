@@ -57,7 +57,7 @@ class FireStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
-				log: (values) => `$p${values.target}$ took ${values.damage}hp damage from $bBurn$`,
+				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
 			})
 			statusEffectAttack.addDamage(this.id, 20)
 

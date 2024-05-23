@@ -62,7 +62,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		const attackName =
 			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
 		newAttacks[0].log = (values) => {
-			return `${values.attacker} attacked ${values.target} with $v${attackName}$ for $b${values.damage}hp$ damage`
+			return `${values.attacker} attacked ${values.target} with $v${attackName}$ for ${values.damage} damage`
 		}
 		return newAttacks
 	}

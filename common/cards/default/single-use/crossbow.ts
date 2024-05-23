@@ -97,13 +97,13 @@ class CrossbowSingleUseCard extends SingleUseCard {
 						},
 						type: 'effect',
 						log: (values) =>
-							`${values.header} to attack ${values.target} for $b${values.damage}hp$ damage`,
+							`${values.header} to attack ${values.target} for ${values.damage} damage`,
 					}).addDamage(this.id, 20)
 				)
 			}
 
 			while (attacks.length > 1) {
-				attacks[1].log = (values) => `, ${values.target} for $b${values.damage}hp$ damage`
+				attacks[1].log = (values) => `, ${values.target} for ${values.damage} damage`
 				attacks[0].addNewAttack(attacks[1])
 				attacks.splice(1, 1)
 			}

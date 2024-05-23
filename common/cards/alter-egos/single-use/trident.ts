@@ -33,8 +33,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-				log: (values) =>
-					`${values.header} to attack ${values.target} for $b${values.damage}hp$ damage`,
+				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 30)
 
 			return [tridentAttack]
