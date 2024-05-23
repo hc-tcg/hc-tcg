@@ -26,7 +26,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				cost: ['pvp', 'pvp'],
 				damage: 70,
 				power:
-					'Flip a coin twice.\n\nIf both are heads, your opponent must attack one of their own AFK Hermits on their next turn. Your opponent must have the necessary item cards attached to execute an attack.',
+					'Flip a coin twice.\nIf both are heads, your opponent must attack one of their own AFK Hermits on their next turn. Your opponent must have the necessary item cards attached to execute an attack.',
 			},
 		})
 	}

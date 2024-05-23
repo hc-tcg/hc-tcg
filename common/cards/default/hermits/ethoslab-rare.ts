@@ -23,7 +23,7 @@ class EthosLabRareHermitCard extends HermitCard {
 				name: 'Blue Fire',
 				cost: ['redstone', 'redstone'],
 				damage: 80,
-				power: "Flip a coin.\n\nIf heads, burn your opponent's active Hermit.",
+				power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
 			},
 		})
 	}

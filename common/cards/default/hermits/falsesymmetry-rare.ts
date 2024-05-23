@@ -23,7 +23,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 				name: 'Supremacy',
 				cost: ['builder', 'any'],
 				damage: 70,
-				power: 'Flip a coin.\n\nIf heads, heal this Hermit 40hp.',
+				power: 'Flip a coin.\nIf heads, heal this Hermit 40hp.',
 			},
 		})
 	}

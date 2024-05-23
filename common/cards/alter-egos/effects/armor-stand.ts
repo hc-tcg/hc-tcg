@@ -14,7 +14,7 @@ class ArmorStandEffectCard extends EffectCard {
 			name: 'Armour Stand',
 			rarity: 'ultra_rare',
 			description:
-				'Use like a Hermit card with a maximum 50hp.\n\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\n\nIf this card is knocked out, it does not count as a knockout.',
+				'Use like a Hermit card with a maximum 50hp.\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\nIf this card is knocked out, it does not count as a knockout.',
 		})
 	}
 

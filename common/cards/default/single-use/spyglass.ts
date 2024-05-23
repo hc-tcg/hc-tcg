@@ -12,7 +12,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			name: 'Spyglass',
 			rarity: 'common',
 			description:
-				"Look at your opponent's hand, and then flip a coin.\n\nIf heads, choose one card to discard from your opponent's hand.",
+				"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
 		})
 	}
 

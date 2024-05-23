@@ -14,7 +14,7 @@ class TotemEffectCard extends EffectCard {
 			name: 'Totem',
 			rarity: 'ultra_rare',
 			description:
-				'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\n\nDoes not count as a knockout. Discard after use.',
+				'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
 		})
 	}
 

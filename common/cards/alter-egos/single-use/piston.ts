@@ -14,7 +14,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			name: 'Piston',
 			rarity: 'common',
 			description:
-				'Move one of your attached item cards to an adjacent Hermit.\n\nYou can use another single use effect card this turn.',
+				'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
 		})
 	}
 

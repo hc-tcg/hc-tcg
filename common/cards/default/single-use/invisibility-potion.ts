@@ -11,7 +11,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			name: 'Invisibility Potion',
 			rarity: 'rare',
 			description:
-				"Flip a coin.\n\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
+				"Flip a coin.\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
 		})
 	}
 

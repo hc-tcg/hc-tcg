@@ -15,7 +15,7 @@ class WaterBucketEffectCard extends EffectCard {
 			name: 'Water Bucket',
 			rarity: 'common',
 			description:
-				'Remove burn and String from one of your Hermits.\n\nIf attached, prevents the Hermit this card is attached to from being burned.',
+				'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
 		})
 	}
 

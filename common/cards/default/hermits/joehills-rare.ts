@@ -25,7 +25,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin.\n\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
+					'Flip a coin.\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
 			},
 		})
 	}

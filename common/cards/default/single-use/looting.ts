@@ -14,7 +14,7 @@ class LootingSingleUseCard extends SingleUseCard {
 			name: 'Looting',
 			rarity: 'rare',
 			description:
-				"Flip a coin.\n\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
+				"Flip a coin.\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
 		})
 	}
 

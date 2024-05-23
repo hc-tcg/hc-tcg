@@ -22,8 +22,7 @@ class Docm77RareHermitCard extends HermitCard {
 				name: 'World Eater',
 				cost: ['farm', 'farm'],
 				damage: 80,
-				power:
-					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, attack damage is halved.',
+				power: 'Flip a Coin.\nIf heads, attack damage doubles.\nIf tails, attack damage is halved.',
 			},
 		})
 	}

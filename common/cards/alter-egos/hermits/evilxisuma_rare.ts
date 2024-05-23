@@ -25,7 +25,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 				cost: ['balanced', 'balanced'],
 				damage: 80,
 				power:
-					"Flip a coin.\n\nIf heads, choose one *attack* of your opponent's current active Hermit to disable on their next turn.",
+					"Flip a coin.\nIf heads, choose one *attack* of your opponent's current active Hermit to disable on their next turn.",
 			},
 		})
 	}

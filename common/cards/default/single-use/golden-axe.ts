@@ -14,7 +14,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do 40hp damage to your opponent's active Hermit.\n\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+				"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
 		})
 	}
 

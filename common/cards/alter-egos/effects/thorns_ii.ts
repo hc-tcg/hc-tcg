@@ -12,7 +12,7 @@ class ThornsIIEffectCard extends EffectCard {
 			name: 'Thorns II',
 			rarity: 'rare',
 			description:
-				"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 30hp damage.\n\nIgnores armour.",
+				"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 30hp damage.\nIgnores armour.",
 		})
 	}
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

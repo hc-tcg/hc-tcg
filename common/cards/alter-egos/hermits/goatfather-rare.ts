@@ -25,7 +25,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 80,
 				power:
-					"Flip a coin.\n\nIf heads, do an additional 30hp damage to your opponent's active Hermit and 10hp damage to each Hermit below it on the game board.",
+					"Flip a coin.\nIf heads, do an additional 30hp damage to your opponent's active Hermit and 10hp damage to each Hermit below it on the game board.",
 			},
 		})
 	}
