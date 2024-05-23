@@ -141,11 +141,6 @@ export type PlayerState = {
 		afterDefence: GameHook<(attack: AttackModel) => void>
 
 		/**
-		 * Hook called when a hermit is about to die.
-		 */
-		onHermitDeath: GameHook<(hermitPos: CardPosModel) => void>
-
-		/**
 		 * Hook called at the start of the turn
 		 *
 		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated

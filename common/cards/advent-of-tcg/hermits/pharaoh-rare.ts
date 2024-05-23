@@ -25,7 +25,7 @@ class PharaohRareHermitCard extends HermitCard {
 				cost: ['balanced', 'balanced'],
 				damage: 80,
 				power:
-					"Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can't heal other Pharaohs.",
+					'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
 			},
 		})
 	}

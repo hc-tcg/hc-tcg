@@ -11,8 +11,7 @@ class ChestSingleUseCard extends SingleUseCard {
 			numericId: 4,
 			name: 'Chest',
 			rarity: 'rare',
-			description:
-				'Look through your discard pile and select 1 card to return to your hand.\n\nCan not return "Clock" to your hand.',
+			description: 'Choose one card from your discard pile to return to your hand.',
 		})
 	}
 
@@ -20,7 +19,8 @@ class ChestSingleUseCard extends SingleUseCard {
 		const result = super.canAttach(game, pos)
 		const {player} = pos
 
-		if (player.discarded.length <= 0) result.push('UNMET_CONDITION')
+		if (player.discarded.filter((card) => card.cardId !== 'clock').length <= 0)
+			result.push('UNMET_CONDITION')
 
 		return result
 	}
@@ -45,6 +45,11 @@ class ChestSingleUseCard extends SingleUseCard {
 			},
 			onResult(modalResult) {
 				if (!modalResult) return 'FAILURE_INVALID_DATA'
+				if (!modalResult.result) {
+					// Allow player to cancel using Chest
+					discardSingleUse(game, player)
+					return 'SUCCESS'
+				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
 				if (modalResult.cards[0].cardId === 'clock') return 'FAILURE_CANNOT_COMPLETE'

@@ -213,6 +213,15 @@ export class GameModel {
 			}
 		}
 	}
+	public cancelPickRequests() {
+		if (this.state.pickRequests[0]?.playerId === this.currentPlayerId) {
+			// Cancel and clear pick requests
+			for (let i = 0; i < this.state.pickRequests.length; i++) {
+				this.state.pickRequests[i].onCancel?.()
+			}
+			this.state.pickRequests = []
+		}
+	}
 
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {

@@ -20,7 +20,6 @@ import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
-import {AttackModel} from 'common/models/attack-model'
 import {AI_CLASSES, virtualPlayerActionSaga} from './virtual'
 
 ////////////////////////////////////////
@@ -189,12 +188,6 @@ function* checkHermitHealth(game: GameModel) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// Call hermit death hooks
-				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
-				if (hermitPos) {
-					playerState.hooks.onHermitDeath.call(hermitPos)
-				}
-
 				// Add battle log entry
 				game.battleLog.addDeathEntry(playerState, row)
 

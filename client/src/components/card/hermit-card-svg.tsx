@@ -23,10 +23,11 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 
 	const rank = getCardRank(card.id)
 	const palette = card.getPalette()
-	const expansion = card.getExpansion()
 	const backgroundName = card.getBackground()
 	const showCost = !useSelector(getGameState)
-	const nameLength = card.name.length
+	const name = card.getShortName()
+	const nameLength = name.length
+	const expansion = card.getExpansion()
 	const disabled =
 		EXPANSIONS.disabled.includes(expansion) && expansion !== 'boss' ? 'disabled' : 'enabled'
 
@@ -60,7 +61,7 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 				dominantBaseline="hanging"
 				key={Math.random()}
 			>
-				{card.name}
+				{name}
 			</text>
 			<text
 				x="310"

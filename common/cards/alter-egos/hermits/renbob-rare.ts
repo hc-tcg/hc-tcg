@@ -22,8 +22,7 @@ class RenbobRareHermitCard extends HermitCard {
 				name: 'Hyperspace',
 				cost: ['explorer', 'explorer'],
 				damage: 80,
-				power:
-					'Damage is dealt to opponent directly opposite this card on the game board, regardless if AFK or active.',
+				power: 'Attack the Hermit card directly opposite this card on the game board.',
 			},
 		})
 	}

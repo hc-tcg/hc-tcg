@@ -20,7 +20,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 				name: 'N.H.O',
 				cost: ['explorer', 'explorer', 'explorer'],
 				damage: 100,
-				power: 'If you have Doc, Bdubs AND Etho, attack damage doubles.',
+				power: 'If you have AFK Docm77, Bdubs AND Etho on the game board, attack damage doubles.',
 			},
 		})
 	}

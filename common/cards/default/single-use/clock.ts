@@ -12,7 +12,7 @@ class ClockSingleUseCard extends SingleUseCard {
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
-				'Your opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\nTurns cannot be skipped consecutively.',
+				'Your opponent skips their next turn.\n\nThis card can not be returned to your hand from your discard pile.',
 		})
 	}
 
@@ -60,6 +60,15 @@ class ClockSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'glossary',
+				name: 'turnSkip',
+			},
+		]
 	}
 }
 

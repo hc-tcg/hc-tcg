@@ -14,6 +14,7 @@ import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
 import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
+import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
 
 const effectCardClasses: Array<EffectCard> = [
 	...defaultEffectCards,
@@ -26,6 +27,7 @@ const hermitCardClasses: Array<HermitCard> = [
 	...alterEgosHermitCards,
 	...adventOfTcgHermitCards,
 	...bossHermitCards,
+	...alterEgosIIHermitCards,
 ]
 
 const itemCardClasses: Array<ItemCard> = [...defaultItemCards]

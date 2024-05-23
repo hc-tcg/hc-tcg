@@ -23,7 +23,8 @@ class JinglerRareHermitCard extends HermitCard {
 				name: 'Deception',
 				cost: ['speedrunner', 'speedrunner', 'any'],
 				damage: 80,
-				power: 'Flip a coin. If heads, opponent must discard a card from their hand.',
+				power:
+					'Flip a coin.\n\nIf heads, your opponent must choose a card to discard from their hand.',
 			},
 		})
 	}

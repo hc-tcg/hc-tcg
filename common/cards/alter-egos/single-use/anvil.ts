@@ -13,7 +13,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			name: 'Anvil',
 			rarity: 'rare',
 			description:
-				"Do 30hp damage to your opponent's Hermit directly opposite your active Hermit on the board and 10hp damage to each of their Hermits below it.",
+				'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
 		})
 	}
 

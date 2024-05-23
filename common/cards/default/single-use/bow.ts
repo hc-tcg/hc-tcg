@@ -12,7 +12,7 @@ class BowSingleUseCard extends SingleUseCard {
 			numericId: 3,
 			name: 'Bow',
 			rarity: 'common',
-			description: 'Do 40hp damage to an AFK Hermit of your choice.',
+			description: "Do 40hp damage to one of your opponent's AFK Hermits.",
 		})
 	}
 

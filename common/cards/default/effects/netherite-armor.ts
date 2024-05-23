@@ -8,10 +8,10 @@ class NetheriteArmorEffectCard extends EffectCard {
 		super({
 			id: 'netherite_armor',
 			numericId: 82,
-			name: 'Netherite Armor',
+			name: 'Netherite Armour',
 			rarity: 'ultra_rare',
 			description:
-				'When the Hermit this card is attached to takes damage, reduce that damage by up to 40hp each turn.',
+				'When the Hermit this card is attached to takes damage, that damage is reduced by up to 40hp each turn.',
 		})
 	}
 
