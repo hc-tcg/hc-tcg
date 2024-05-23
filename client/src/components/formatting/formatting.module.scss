@@ -1,37 +1,45 @@
+$player: #6fabd0;
+$opponent: #5ea758;
+$effect: #5a5bb4;
+$attack: #ec9898;
+$item: var(--gray-200);
+$good: #2bff00;
+$bad: #810000;
+
 .player {
-	color: #6fabd0;
+	color: $player;
 
 	&.viewedByOpponent {
-		color: #5ea758;
+		color: $opponent;
 	}
 }
 
 .opponent {
-	color: #5ea758;
+	color: $opponent;
 
 	&.viewedByOpponent {
-		color: #6fabd0;
+		color: $player;
 	}
 }
 
 .effect {
-	color: #5a5bb4;
+	color: $effect;
 }
 
 .attack {
-	color: #ec9898;
+	color: $attack;
 }
 
 .item {
-	color: var(--gray-200);
+	color: $item;
 }
 
 .good {
-	color: #2bff00;
+	color: $good;
 }
 
 .bad {
-	color: #810000;
+	color: $bad;
 }
 
 .bold {
