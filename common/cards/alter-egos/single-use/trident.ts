@@ -49,7 +49,6 @@ class TridentSingleUseCard extends SingleUseCard {
 				cardInstance: instance,
 			})[0]
 
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
 			applySingleUse(game)
 		})
 

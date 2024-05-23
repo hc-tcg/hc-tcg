@@ -53,9 +53,8 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
-	private generateEffectEntryHeader(): string {
+	private generateEffectEntryHeader(card: CardT | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
-		const card = this.game.currentPlayer.board.singleUseCard
 		if (!card) return ''
 		const cardInfo = CARDS[card.cardId]
 
@@ -121,9 +120,10 @@ export class BattleLogModel {
 	}
 
 	public addApplySingleUseEntry(effectAction?: string) {
+		const card = this.game.currentPlayer.board.singleUseCard
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: `${this.generateEffectEntryHeader()} ${effectAction ? effectAction : ''}`,
+			description: `${this.generateEffectEntryHeader(card)} ${effectAction ? effectAction : ''}`,
 		}
 		this.logMessageQueue.push(entry)
 
@@ -151,7 +151,11 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addAttackEntry(attack: AttackModel, coinFlips: Array<CurrentCoinFlipT>) {
+	public addAttackEntry(
+		attack: AttackModel,
+		coinFlips: Array<CurrentCoinFlipT>,
+		singleUse: CardT | null
+	) {
 		const attacker = attack.getAttacker()
 		if (!attacker) return
 		const playerId = attacker.player.id
@@ -184,7 +188,7 @@ export class BattleLogModel {
 				target: `$${targetFormatting}${targetHermitInfo.name} (${target.rowIndex + 1})$`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
-				header: this.generateEffectEntryHeader(),
+				header: this.generateEffectEntryHeader(singleUse),
 			})
 
 			reducer += logMessage

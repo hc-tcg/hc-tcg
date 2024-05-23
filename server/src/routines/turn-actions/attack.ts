@@ -94,11 +94,15 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
 
+	const thisAttackSagaSU = game.currentPlayer.board.singleUseCard
+
 	// Run all the code stuff
 	executeAttacks(game, attacks)
 
 	// Create the battle log entries
-	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack, currentPlayer.coinFlips))
+	attacks.forEach((attack) =>
+		game.battleLog.addAttackEntry(attack, currentPlayer.coinFlips, thisAttackSagaSU)
+	)
 
 	if (currentPlayer.coinFlips.length === 0) {
 		game.battleLog.sendLogs()

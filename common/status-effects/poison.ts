@@ -43,7 +43,7 @@ class PoisonStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-					}
+				  }
 				: null
 
 			const targetRow: RowPos = {
@@ -57,6 +57,7 @@ class PoisonStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
+				log: (values) => `$p${values.target}$ took ${values.damage}hp damage from $bBurn$`,
 			})
 
 			if (targetPos.row.health >= 30) {
@@ -65,7 +66,7 @@ class PoisonStatusEffect extends StatusEffect {
 				statusEffectAttack.addDamage(this.id, 10)
 			}
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Poison', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {

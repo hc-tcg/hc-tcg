@@ -208,17 +208,11 @@ export function executeAttacks(
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	source: string,
 	withoutBlockingActions = false
 ) {
-	attacks.map((attack) => {
-		attack.log = (values) => {
-			return `$p${values.target}$ took ${values.damage}hp damage from $b${source}$`
-		}
-	})
 	executeAttacks(game, attacks, withoutBlockingActions)
 	attacks.map((attack) => {
-		game.battleLog.addAttackEntry(attack, [])
+		game.battleLog.addAttackEntry(attack, [], null)
 	})
 	game.battleLog.sendLogs()
 }
