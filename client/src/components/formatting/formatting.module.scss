@@ -51,10 +51,26 @@ $bad: #ce77bd;
 
 .bold {
 	font-family: MinecraftBold;
+
+	> span > .italic {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
 }
 
 .italic {
 	font-family: MinecraftItalic;
+
+	> span > .bold {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
+}
+
+.keyword {
+	font-family: MinecraftItalic;
+	font-weight: 1000;
+	color: rgb(204, 95, 204);
 }
 
 .tab {

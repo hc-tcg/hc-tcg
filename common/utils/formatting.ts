@@ -22,6 +22,7 @@ export type Format =
 	| 'bad'
 	| 'italic'
 	| 'bold'
+	| 'keyword'
 
 export type FormattedTextNode =
 	| ListNode
@@ -67,6 +68,7 @@ export class FormatNode {
 		v: 'attack',
 		g: 'good',
 		b: 'bad',
+		k: 'keyword',
 	}
 
 	constructor(format: Array<string>, text: FormattedTextNode) {
