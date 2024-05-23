@@ -226,7 +226,9 @@ export class BattleLogModel {
 			) {
 				this.logMessageQueue.push({
 					player: playerId,
-					description: `$p{You|${flipper.playerName}}$ ${description_body} $p${cardName}$`,
+					description: `$o${cardName} (${
+						flipperActiveRow + 1
+					})$ ${description_body} on their coinflip`,
 				})
 			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
 				queuedLog += `, and ${description_body}`
