@@ -51,14 +51,16 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			}
 
 			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
 				if (!pos || !pos.row || !pos.row.effectCard) return false
 
 				// It's not the targets effect card, do not ignore it
 				if (pos.slot.type !== 'effect') return false
 
-				// Not attached to the opponent's active Hermit, do not ignore it
+				// Not attached to the same row as the opponent's active Hermit, do not ignore it
 				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
+
+				// Do not ignore the player's effect.
+				if (pos.player == player) return false
 
 				return true
 			})
