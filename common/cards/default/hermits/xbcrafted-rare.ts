@@ -58,7 +58,6 @@ class XBCraftedRareHermitCard extends HermitCard {
 
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
 				if (!pos || !pos.row || !pos.row.effectCard) return false
 
 				// It's not the targets effect card, do not ignore it
