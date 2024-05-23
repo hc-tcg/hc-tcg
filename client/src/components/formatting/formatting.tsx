@@ -52,7 +52,7 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 	} else if (node.TYPE == 'LineBreakNode') {
 		return <br />
 	} else if (node.TYPE == 'TabNode') {
-		return '&emsp'
+		return <span className={css.tab}></span>
 	}
 }
 
