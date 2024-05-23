@@ -161,9 +161,9 @@ export class BattleLogModel {
 					: attackingHermitInfo.secondary.name
 
 			const logMessage = attack.log({
-				attacker: attackingHermitInfo.name,
+				attacker: `${attackingHermitInfo.name} (${target.rowIndex})`,
 				opponent: target.player.playerName,
-				target: targetHermitInfo.name,
+				target: `${targetHermitInfo.name} (${target.rowIndex})`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
 			})

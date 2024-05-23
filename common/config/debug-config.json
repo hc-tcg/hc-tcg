@@ -1,8 +1,8 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["tnt"],
+	"extraStartingCards": ["goatfather_rare", "ethoslab_rare", "ethoslab_rare", "tnt"],
 	"noItemRequirements": true,
-	"forceCoinFlip": false,
+	"forceCoinFlip": true,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,
