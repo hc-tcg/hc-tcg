@@ -18,7 +18,6 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 		for (let child of (node as ListNode).nodes) {
 			html.push(nodeToHtml(child, opponent))
 		}
-
 		return <span>{html}</span>
 	} else if (node.TYPE == 'TextNode') {
 		return <span>{(node as TextNode).text}</span>
@@ -47,8 +46,12 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 
 		return <span>{contents}</span>
 	} else if (node.TYPE == 'EmojiNode') {
-		let emojiNode = node as EmojiNode
-		return <span>{emojiNode.emoji}</span>
+		const emojiNode = node as EmojiNode
+
+		const link = `/images/hermits-emoji/${emojiNode.emoji.toLowerCase()}.png`;
+		const alt = `:${emojiNode.emoji}:`
+
+		return <img className={css.emoji} src={link} alt={alt} />
 	} else if (node.TYPE == 'LineBreakNode') {
 		return <br />
 	} else if (node.TYPE == 'TabNode') {
