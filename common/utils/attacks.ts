@@ -213,12 +213,12 @@ export function executeExtraAttacks(
 ) {
 	attacks.map((attack) => {
 		attack.log = (values) => {
-			return `$p{Your|${values.attacker}'s}$ $p${values.target}$ took ${values.damage}hp damage from $b${source}$`
+			return `$p${values.target}$ took ${values.damage}hp damage from $b${source}$`
 		}
 	})
 	executeAttacks(game, attacks, withoutBlockingActions)
 	attacks.map((attack) => {
-		game.battleLog.addAttackEntry(attack)
+		game.battleLog.addAttackEntry(attack, [])
 	})
 	game.battleLog.sendLogs()
 }

@@ -54,11 +54,7 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
 
-		this.log = defs.log
-			? defs.log
-			: (values) => {
-					return `{Your|${values.opponent}'s} ${values.attacker} attacked ${values.target} with $v${values.attackName}$ for $b${values.damage}hp$ damage`
-			  }
+		this.log = defs.log ? defs.log : (values) => ''
 
 		return this
 	}

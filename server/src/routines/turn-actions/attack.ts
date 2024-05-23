@@ -97,9 +97,12 @@ function* attackSaga(
 	// Run all the code stuff
 	executeAttacks(game, attacks)
 
-	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack))
+	// Create the battle log entries
+	attacks.forEach((attack) => game.battleLog.addAttackEntry(attack, currentPlayer.coinFlips))
 
-	game.battleLog.sendLogs()
+	if (currentPlayer.coinFlips.length === 0) {
+		game.battleLog.sendLogs()
+	}
 
 	return 'SUCCESS'
 }

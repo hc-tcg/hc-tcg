@@ -1,7 +1,7 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["instant_health_ii"],
-	"noItemRequirements": false,
+	"extraStartingCards": ["pearlescentmoon_rare"],
+	"noItemRequirements": true,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,
