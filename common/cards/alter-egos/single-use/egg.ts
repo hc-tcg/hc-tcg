@@ -68,7 +68,8 @@ class EggSingleUseCard extends SingleUseCard {
 			const targetRow = opponentPlayer.board.rows[targetIndex]
 			if (!targetRow || !targetRow.hermitCard) return
 
-			applySingleUse(game, applySingleUse(game, `on $o${CARDS[targetRow.hermitCard.cardId].name}$`))
+			applySingleUse(game)
+			game.battleLog.addApplySingleUseEntry(`on $o${CARDS[targetRow.hermitCard.cardId].name}$`)
 
 			const coinFlip = flipCoin(player, {cardId: this.id, cardInstance: instance})
 			if (coinFlip[0] === 'heads') {

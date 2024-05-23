@@ -39,6 +39,8 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 							row: opponentPlayer.board.rows[i] as RowStateWithHermit,
 						},
 						type: 'effect',
+						log: (values) =>
+							game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 					}).addDamage(this.id, damage)
 				)
 			}
@@ -52,7 +54,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game, `to attack $o${player.custom[targetsKey]} hermits$`)
+			applySingleUse(game)
 
 			delete player.custom[targetsKey]
 

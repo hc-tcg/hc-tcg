@@ -56,7 +56,11 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply
-				applySingleUse(game, `on$p${hermitInfo.name}$`)
+				// Apply
+				applySingleUse(game)
+				game.battleLog.addApplySingleUseEntry(
+					`on$p${hermitInfo.name} (${rowIndex + 1})$ and healed $g100hp$`
+				)
 
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 100, maxHealth)

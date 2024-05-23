@@ -19,7 +19,6 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
@@ -41,12 +40,19 @@ class AnvilSingleUseCard extends SingleUseCard {
 						row: opponentRow,
 					},
 					type: 'effect',
+					log: (values) =>
+						game.battleLog.createEffectEntry() +
+						`to attack ${values.target} for $b${values.damage}hp$ damage`,
 				}).addDamage(this.id, i === activeIndex ? 30 : 10)
 
 				attacks.push(attack)
 			}
 
-			player.custom[targetsKey] = attacks.length
+			while (attacks.length > 1) {
+				attacks[1].log = (values) => `, $o${values.target}$ for $b${values.damage}hp$ damage`
+				attacks[0].addNewAttack(attacks[1])
+				attacks.splice(1, 1)
+			}
 
 			return attacks
 		})
@@ -56,9 +62,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const inactiveAttackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
-			applySingleUse(game, `to attack $o${player.custom[targetsKey]} hermits$`)
-
-			delete player.custom[targetsKey]
+			applySingleUse(game)
 
 			player.hooks.onAttack.remove(instance)
 		})

@@ -30,7 +30,8 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
-			applySingleUse(game, 'with {your|their} attack')
+			applySingleUse(game)
+			game.battleLog.addApplySingleUseEntry('with {your|their} attack')
 
 			// Only Apply this for the first attack
 			player.hooks.afterAttack.remove(instance)

@@ -96,10 +96,19 @@ class CrossbowSingleUseCard extends SingleUseCard {
 							row,
 						},
 						type: 'effect',
+						log: (values) =>
+							game.battleLog.createEffectEntry() +
+							`to attack ${values.target} for $b${values.damage}hp$ damage`,
 					}).addDamage(this.id, 20)
 				)
 			}
-			player.custom[targetsKey] = attacks.length
+
+			while (attacks.length > 1) {
+				attacks[1].log = (values) => `, $o${values.target}$ for $b${values.damage}hp$ damage`
+				attacks[0].addNewAttack(attacks[1])
+				attacks.splice(1, 1)
+			}
+
 			return attacks
 		})
 
@@ -107,7 +116,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game, `to attack $o${player.custom[targetsKey]} hermits$`)
+			applySingleUse(game)
 
 			delete player.custom[targetsKey]
 

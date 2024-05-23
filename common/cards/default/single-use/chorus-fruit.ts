@@ -23,7 +23,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 			// Apply the card
 			applySingleUse(game)
-			game.battleLog.addApplyEffectEntry('with {your|their} attack')
+			game.battleLog.addApplySingleUseEntry('with {your|their} attack')
 
 			player.hooks.afterAttack.remove(instance)
 		})

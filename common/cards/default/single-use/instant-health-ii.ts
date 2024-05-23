@@ -51,7 +51,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry(
+				game.battleLog.addApplySingleUseEntry(
 					`on$p${hermitInfo.name} (${rowIndex + 1})$ and healed $g60hp$`
 				)
 

@@ -75,6 +75,7 @@ class BowSingleUseCard extends SingleUseCard {
 					row: opponentRow,
 				},
 				type: 'effect',
+				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 			}).addDamage(this.id, 40)
 
 			return [bowAttack]
@@ -84,12 +85,7 @@ class BowSingleUseCard extends SingleUseCard {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			const targetHermitId = opponentPlayer.board.rows[player.custom[targetKey]].hermitCard?.cardId
-
-			applySingleUse(
-				game,
-				applySingleUse(game, `to attack $o${targetHermitId ? CARDS[targetHermitId].name : ''}$`)
-			)
+			applySingleUse(game)
 		})
 	}
 

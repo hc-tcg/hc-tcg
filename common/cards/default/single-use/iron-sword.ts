@@ -30,6 +30,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 			}).addDamage(this.id, 20)
 
 			return [swordAttack]
@@ -40,11 +41,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 			if (attack.id !== attackId) return
 
 			// We've executed our attack, apply effect
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(
-				game,
-				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}$`
-			)
+			applySingleUse(game)
 		})
 	}
 

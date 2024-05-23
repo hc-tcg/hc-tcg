@@ -51,9 +51,10 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 
 				// Apply
 				applySingleUse(game)
-				game.battleLog.addApplyEffectEntry(
+				game.battleLog.addApplySingleUseEntry(
 					`on$p${hermitInfo.name} (${rowIndex + 1})$ and healed $g30hp$`
 				)
+
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 30, maxHealth)
 

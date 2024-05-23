@@ -134,12 +134,13 @@ class PistonSingleUseCard extends SingleUseCard {
 				})
 
 				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(
-					game,
+				applySingleUse(game)
+				game.battleLog.addApplySingleUseEntry(
 					`to move $p${cardInfo.name}${
 						cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
 					}$`
 				)
+
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 

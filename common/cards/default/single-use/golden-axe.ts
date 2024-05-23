@@ -32,6 +32,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 			}).addDamage(this.id, 40)
 
 			return [axeAttack]
@@ -43,11 +44,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			if (!opponentActivePos) return
 
 			if (attack.id === attackId) {
-				const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-				applySingleUse(
-					game,
-					`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}$`
-				)
+				applySingleUse(game)
 			}
 
 			attack.shouldIgnoreCards.push((instance) => {

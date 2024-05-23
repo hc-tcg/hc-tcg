@@ -121,10 +121,10 @@ export class BattleLogModel {
 		return `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ `
 	}
 
-	public addApplyEffectEntry(effectAction: string) {
+	public addApplySingleUseEntry(effectAction?: string) {
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: `${this.createEffectEntry()} ${effectAction}`,
+			description: `${this.createEffectEntry()} ${effectAction ? effectAction : ''}`,
 		}
 		this.logMessageQueue.push(entry)
 
@@ -166,7 +166,7 @@ export class BattleLogModel {
 			if (!attacker || !target) return reducer
 
 			const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			const targetHermitInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
 
 			const attackName =
 				attack.type === 'primary'

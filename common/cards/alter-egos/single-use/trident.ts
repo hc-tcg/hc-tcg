@@ -33,6 +33,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) => game.battleLog.createEffectEntry() + `for $b${values.damage}hp$ damage `,
 			}).addDamage(this.id, 30)
 
 			return [tridentAttack]
@@ -48,10 +49,7 @@ class TridentSingleUseCard extends SingleUseCard {
 			})[0]
 
 			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(
-				game,
-				`to attack $o${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''}$`
-			)
+			applySingleUse(game)
 		})
 
 		player.hooks.onApply.add(instance, () => {
