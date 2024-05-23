@@ -60,7 +60,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
 
 				// Do not ignore the player's effect.
-				if (pos.player == player) return false
+				if (pos.player === player) return false
 
 				return true
 			})
