@@ -170,15 +170,17 @@ export class BattleLogModel {
 			const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
 
+			const targetFormatting = target.player.id === playerId ? 'p' : 'o'
+
 			const attackName =
 				attack.type === 'primary'
 					? attackingHermitInfo.primary.name
 					: attackingHermitInfo.secondary.name
 
 			const logMessage = attack.log({
-				attacker: `${attackingHermitInfo.name} (${target.rowIndex + 1})`,
+				attacker: `$p${attackingHermitInfo.name} (${target.rowIndex + 1})$`,
 				opponent: target.player.playerName,
-				target: `${targetHermitInfo.name} (${target.rowIndex + 1})`,
+				target: `${targetHermitInfo.name} $${targetFormatting}(${target.rowIndex + 1}$)`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
 				header: this.generateEffectEntryHeader(),

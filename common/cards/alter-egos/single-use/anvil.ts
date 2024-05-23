@@ -41,14 +41,14 @@ class AnvilSingleUseCard extends SingleUseCard {
 					},
 					type: 'effect',
 					log: (values) =>
-						`${values.header} to attack $o${values.target}$ for $b${values.damage}hp$ damage`,
+						`${values.header} to attack ${values.target} for $b${values.damage}hp$ damage`,
 				}).addDamage(this.id, i === activeIndex ? 30 : 10)
 
 				attacks.push(attack)
 			}
 
 			while (attacks.length > 1) {
-				attacks[1].log = (values) => `, $o${values.target}$ for $b${values.damage}hp$ damage`
+				attacks[1].log = (values) => `, ${values.target} for $b${values.damage}hp$ damage`
 				attacks[0].addNewAttack(attacks[1])
 				attacks.splice(1, 1)
 			}

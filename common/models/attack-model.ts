@@ -57,7 +57,7 @@ export class AttackModel {
 		this.log = defs.log
 			? defs.log
 			: (values) => {
-					return `{Your|${values.opponent}'s} $p${values.attacker}$ attacked $o${values.target}$ with $v${values.attackName}$ for $b${values.damage}hp$ damage`
+					return `{Your|${values.opponent}'s} ${values.attacker} attacked ${values.target} with $v${values.attackName}$ for $b${values.damage}hp$ damage`
 			  }
 
 		return this

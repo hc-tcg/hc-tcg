@@ -31,7 +31,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 				target: opponentActivePos,
 				type: 'effect',
 				log: (values) =>
-					`${values.header} to attack $o${values.target}$ for $b${values.damage}hp$ damage`,
+					`${values.header} to attack ${values.target} for $b${values.damage}hp$ damage`,
 			}).addDamage(this.id, 20)
 
 			return [swordAttack]
