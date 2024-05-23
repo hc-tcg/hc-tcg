@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": [],
+	"extraStartingCards": ["instant_health_ii"],
 	"noItemRequirements": false,
 	"forceCoinFlip": false,
 	"oneShotMode": false,

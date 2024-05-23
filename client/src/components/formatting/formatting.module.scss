@@ -1,13 +1,14 @@
 $player: #6fabd0;
-$opponent: #5ea758;
-$effect: #5a5bb4;
-$attack: #ec9898;
+$opponent: #ce5859;
+$effect: #8077cc;
+$attack: #cca16a;
 $item: var(--gray-200);
-$good: #2bff00;
-$bad: #810000;
+$good: #5ea758;
+$bad: #ce77bd;
 
 .player {
 	color: $player;
+	font-family: MinecraftBold;
 
 	&.viewedByOpponent {
 		color: $opponent;
@@ -16,6 +17,7 @@ $bad: #810000;
 
 .opponent {
 	color: $opponent;
+	font-family: MinecraftBold;
 
 	&.viewedByOpponent {
 		color: $player;
@@ -24,22 +26,27 @@ $bad: #810000;
 
 .effect {
 	color: $effect;
+	font-family: MinecraftBold;
 }
 
 .attack {
 	color: $attack;
+	font-family: MinecraftBold;
 }
 
 .item {
 	color: $item;
+	font-family: MinecraftBold;
 }
 
 .good {
 	color: $good;
+	font-family: MinecraftBold;
 }
 
 .bad {
 	color: $bad;
+	font-family: MinecraftBold;
 }
 
 .bold {

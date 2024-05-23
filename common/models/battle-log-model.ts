@@ -180,7 +180,7 @@ export class BattleLogModel {
 			const logMessage = attack.log({
 				attacker: `$p${attackingHermitInfo.name} (${target.rowIndex + 1})$`,
 				opponent: target.player.playerName,
-				target: `${targetHermitInfo.name} $${targetFormatting}(${target.rowIndex + 1}$)`,
+				target: `$${targetFormatting}${targetHermitInfo.name} (${target.rowIndex + 1})$`,
 				attackName: attackName,
 				damage: attack.calculateDamage(),
 				header: this.generateEffectEntryHeader(),

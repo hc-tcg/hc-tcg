@@ -5,7 +5,7 @@ import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.scss'
-import formattingCss from '../../../components/formatting/formatting.module.scss'
+import formatCss from '../../../components/formatting/formatting.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
@@ -94,7 +94,10 @@ function Chat() {
 								<span className={css.time}>{hmTime}</span>
 								{name && !line.systemMessage && (
 									<span
-										className={classNames(css.playerName, opponent ? css.player : css.opponent)}
+										className={classNames(
+											css.playerName,
+											opponent ? formatCss.player : formatCss.opponent
+										)}
 									>
 										{name}
 									</span>
