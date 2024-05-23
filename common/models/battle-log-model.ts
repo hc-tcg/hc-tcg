@@ -1,4 +1,4 @@
-import {CARDS, HERMIT_CARDS} from '../cards'
+import {CARDS, EFFECT_CARDS, HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {PlayCardActionData} from '../types/action-data'
 import {
 	BattleLogT,
@@ -206,30 +206,30 @@ export class BattleLogModel {
 			let description_body = ''
 
 			if (coinFlip.tosses.length === 1) {
-				description_body = heads > tails ? `flipped $gheads$ on ` : `flipped $btails$ on `
+				description_body = heads > tails ? `flipped $gheads$` : `flipped $btails$`
 			} else if (tails === 0) {
-				description_body = `flipped $gall heads$ on `
+				description_body = `flipped $gall heads$`
 			} else if (heads === 0) {
-				description_body = `flipped $ball tails$ on `
+				description_body = `flipped $ball tails$`
 			} else {
-				description_body = `flipped $g${heads} heads$ and $b${tails} tails$ on `
+				description_body = `flipped $g${heads} heads$ and $b${tails} tails$`
 			}
 
-			let description = ''
-
-			if (HERMIT_CARDS[coinFlip.cardId]) {
-				description = `$p${cardName} (${flipperActiveRow + 1})$ ${description_body} their attack`
-			} else {
-				description = `$p{You|${flipper.playerName}}$ ${description_body} $p${cardName}$`
-			}
-
-			if (coinFlip.cardId === attacker.row.hermitCard.cardId) {
-				queuedLog = description + ', then ' + queuedLog
-			} else {
+			if (HERMIT_CARDS[coinFlip.cardId] && !coinFlip.opponentFlip && attack.type !== 'effect') {
+				queuedLog = `$p${cardName} (${
+					flipperActiveRow + 1
+				})$ ${description_body}, then ${queuedLog}`
+			} else if (
+				HERMIT_CARDS[coinFlip.cardId] &&
+				coinFlip.opponentFlip &&
+				attack.type !== 'effect'
+			) {
 				this.logMessageQueue.push({
-					player: flipper.playerName,
-					description: description,
+					player: playerId,
+					description: `$p{You|${flipper.playerName}}$ ${description_body} $p${cardName}$`,
 				})
+			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
+				queuedLog += `, and ${description_body}`
 			}
 		})
 
