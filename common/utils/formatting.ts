@@ -10,12 +10,13 @@
  * $g Good (healing, heads)
  * $b Bad (damage, tails)
  * $i Image
+ * $k Keyword
  */
 
 import ProfaneWords from '../config/profanity-seed.json'
 
 export type Config = {
-	'censor'?: boolean
+	censor?: boolean
 	'enable-$'?: boolean
 }
 
@@ -272,13 +273,145 @@ const messageParseOptions: Array<
 		],
 		[(_) => true, parseTextNode],
 	]
+> = [
+	[
+		(text: string, config: Config) => {
+			if (config['enable-$'] === undefined || config['enable-$'] === true) {
+				return text.startsWith('$')
+			}
+			return false
+		},
+		(text: string, config: Config) => {
+			// Expecting the format $fFormat Node$ where f is a format character
+			let format = text[1]
+			text = text.slice(2)
+
+			let [node, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('$'),
+				config
+			)
+
+			if (node.TYPE == 'EmptyNode') {
+				throw new Error('Expected an expression, not $')
+			}
+
+			return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('{'),
+		(text: string, config: Config) => {
+			// expecting the format {MesageTreeNode,|Node,}
+			let remaining = text.slice(1)
+
+			let firstNode
+			;[firstNode, remaining] = parseSingleNode(remaining, config)
+
+			if (remaining[0] !== '|') {
+				throw new Error('Expected |')
+			}
+
+			remaining = remaining.slice(1)
+
+			let secondNode
+			;[secondNode, remaining] = parseSingleNode(remaining, config)
+
+			if (remaining[0] !== '}') {
+				throw new Error('Expected } to close expression.')
+			}
+
+			remaining = remaining.slice(1)
+
+			return [new DifferentTextNode(firstNode, secondNode), remaining]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('**'),
+		(text: string, config: Config) => {
+			// There is no bold because the string isn't long enough.
+			if (text.length == 2) {
+				return parseTextNode(text, config)
+			}
+
+			text = text.slice(2)
+
+			// If there is no set of ** in the rest of the message, continue like this is regular text
+			if (!text.includes('**')) {
+				return parseTextNode(text, config)
+			}
+
+			// Otherwise lets parse a bold node list
+			let [nodes, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('**'),
+				config
+			)
+			remaining = remaining.slice(2)
+			return [new FormatNode(['bold'], nodes || new TextNode('')), remaining]
+		},
+	],
+	[
+		(text: string) => text.startsWith('*'),
+		(text: string, config: Config) => {
+			// There is no italic because the string isn't long enough.
+			if (text.length == 1) {
+				return parseTextNode(text, config)
+			}
+
+			text = text.slice(1)
+
+			// If there is no * in the rest of the message, continue like this is regular text
+			if (!text.includes('*')) {
+				return parseTextNode(text, config)
+			}
+
+			// Otherwise we parse a italic node list.
+			let [nodes, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('*'),
+				config
+			)
+			remaining = remaining.slice(1)
+			return [new FormatNode(['italic'], nodes || new TextNode('')), remaining]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith(':'),
+		(text: string, _: Config) => {
+			let remaining = text.slice(1)
+
+			let emojiText: string
+			;[emojiText, remaining] = parseUntil(remaining, [':'])
+
+			if (remaining[0] !== ':') {
+				throw new Error('Expected : to close expression.')
+			}
+
+			return [new EmojiNode(emojiText), remaining.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('\n'),
+		(text: string, _: Config) => {
+			return [new LineBreakNode(), text.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('\t'),
+		(text: string, _: Config) => {
+			return [new TabNode(), text.slice(1)]
+		},
+	],
+	[(_) => true, parseTextNode],
+]
 
 function isAlphanumeric(char: string) {
 	let charCode = char.charCodeAt(0)
 	return (
-		(charCode > 47 && charCode < 58)
-		|| (charCode > 64 && charCode < 91)
-		|| (charCode > 96 && charCode < 123)
+		(charCode > 47 && charCode < 58) ||
+		(charCode > 64 && charCode < 91) ||
+		(charCode > 96 && charCode < 123)
 	)
 }
 
@@ -292,10 +425,10 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 			let startIndex = lowercaseText.indexOf(word)
 
 			if (startIndex == -1) {
-				break;
+				break
 			}
 
-			let isSpaceBefore = true;
+			let isSpaceBefore = true
 			if (startIndex >= 1) {
 				if (isAlphanumeric(text[startIndex - 1])) {
 					isSpaceBefore = false
@@ -341,7 +474,7 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 export function censorString(text: string) {
 	let node = createCensoredTextNodes(text)
 
-	if (node.TYPE == "TextNode") {
+	if (node.TYPE == 'TextNode') {
 		return (node as TextNode).text
 	}
 	else if (node.TYPE == "ProfanityNode") {
@@ -352,16 +485,15 @@ export function censorString(text: string) {
 
 	let listNode = node as ListNode
 	for (let textNode of listNode.nodes) {
-		if (textNode.TYPE === "TextNode") {
+		if (textNode.TYPE === 'TextNode') {
 			outputText.push((textNode as TextNode).text)
-		} else if (textNode.TYPE === "ProfanityNode") {
+		} else if (textNode.TYPE === 'ProfanityNode') {
 			outputText.push((textNode as ProfanityNode).censor())
 		}
 	}
 
 	return outputText.join('')
 }
-
 
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
 // sequences.
@@ -401,7 +533,7 @@ function parseUntil(text: string, until: Array<string>): [string, string] {
 function parseNodesWhile(
 	text: string,
 	matches: (remaining: string) => boolean,
-	config: Config,
+	config: Config
 ): [FormattedTextNode, string] {
 	let remaining = text
 	let nodes = []
@@ -417,21 +549,19 @@ function parseNodesWhile(
 			}
 
 			let node
-				;[node, remaining] = parseSingleNode(remaining, config)
+			;[node, remaining] = parseSingleNode(remaining, config)
 			nodes.push(node)
 		}
 	} catch (e) {
-		nodes.push(new TextNode(remaining));
-		remaining = '';
+		nodes.push(new TextNode(remaining))
+		remaining = ''
 	}
-
 
 	let formatNode
 	if (nodes.length == 0) {
 		formatNode = new EmptyNode()
-	}
-	else if (nodes.length == 1) {
-		formatNode = nodes[0];
+	} else if (nodes.length == 1) {
+		formatNode = nodes[0]
 	} else {
 		formatNode = new ListNode(nodes)
 	}
@@ -442,7 +572,7 @@ function parseNodesWhile(
 function parseNodesUntil(
 	text: string,
 	matches: (remaining: string) => boolean,
-	config: Config,
+	config: Config
 ): [FormattedTextNode, string] {
 	return parseNodesWhile(text, (remaining) => !matches(remaining), config)
 }
@@ -456,7 +586,7 @@ function parseNodesUntilEmpty(text: string, config: Config): FormattedTextNode {
 // Parse a TextNode
 function parseTextNode(text: string, config: Config): [FormattedTextNode, string] {
 	let remaining
-		;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
+	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 
 	let textNodes
 	if (config.censor) {
@@ -479,7 +609,7 @@ function parseSingleNode(text: string, config: Config): [FormattedTextNode, stri
 }
 
 export function formatText(text: string, config?: Config): FormattedTextNode {
-	config = config || {};
+	config = config || {}
 
 	try {
 		return parseNodesUntilEmpty(text, config)

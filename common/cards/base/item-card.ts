@@ -3,7 +3,7 @@ import {CardLogFactory, CardRarityT, EnergyT, HermitTypeT} from '../../types/car
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {formatText} from '../../utils/formatting'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {HERMIT_CARDS} from '..'
 
 type ItemDefs = {
@@ -27,9 +27,6 @@ abstract class ItemCard extends Card {
 		})
 
 		this.hermitType = defs.hermitType
-
-		this.formattedDescription =
-			this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 
 		this.log = (values) =>
 			`$p{You|${values.player}}$ attached $m${this.name} item${
@@ -62,6 +59,10 @@ abstract class ItemCard extends Card {
 		})
 
 		return spaceForItem ? ['PLAY_ITEM_CARD'] : []
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 	}
 
 	public abstract getEnergy(game: GameModel, instance: string, pos: CardPosModel): Array<EnergyT>

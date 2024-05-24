@@ -2,7 +2,7 @@ import {CardLogFactory, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {FormattedTextNode} from '../../utils/formatting'
+import {FormattedTextNode, TextNode} from '../../utils/formatting'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -31,15 +31,12 @@ abstract class Card {
 	/** The battle log attached to this attack */
 	public log: ((values: CardLogFactory) => string) | null
 
-	protected formattedDescription: FormattedTextNode | null
-
 	constructor(defs: CardDefs) {
 		this.type = defs.type
 		this.id = defs.id
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.formattedDescription = null
 		this.log = null
 	}
 
@@ -115,10 +112,10 @@ abstract class Card {
 	}
 
 	/**
-	 * Returns the description for this card
+	 * Returns the description for this card that shows up in the sidebar.
 	 */
-	public getFormattedDescription(): FormattedTextNode | undefined {
-		return this.formattedDescription ? this.formattedDescription : undefined
+	public getFormattedDescription(): FormattedTextNode {
+		return new TextNode('')
 	}
 
 	/**
