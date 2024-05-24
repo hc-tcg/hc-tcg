@@ -5,6 +5,7 @@ $attack: #c585d4;
 $item: var(--gray-200);
 $good: #5ea758;
 $bad: #ce5859;
+$keyword: var(--gray-200);
 
 .player {
 	color: $player;
@@ -70,7 +71,7 @@ $bad: #ce5859;
 .keyword {
 	font-family: MinecraftItalic;
 	font-weight: 1000;
-	color: rgb(204, 95, 204);
+	color: $keyword;
 }
 
 .tab {

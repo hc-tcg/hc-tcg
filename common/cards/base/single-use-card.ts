@@ -3,7 +3,7 @@ import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {formatText} from '../../utils/formatting'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 
 export type SingleUseDefs = {
 	id: string
@@ -27,7 +27,6 @@ class SingleUseCard extends Card {
 		})
 
 		this.description = defs.description
-		this.formattedDescription = formatText(this.description)
 		this.log = defs.log !== undefined ? defs.log : (values) => `${values.header}`
 	}
 
@@ -64,6 +63,10 @@ class SingleUseCard extends Card {
 	public canAttack(): boolean {
 		// default is no
 		return false
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return formatText(`*${this.description}*`)
 	}
 }
 

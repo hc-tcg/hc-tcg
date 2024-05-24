@@ -5,7 +5,7 @@ import {CardLogFactory, CardRarityT, HermitAttackInfo, HermitTypeT} from '../../
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {formatText} from '../../utils/formatting'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 
 type HermitDefs = {
 	id: string
@@ -37,12 +37,6 @@ abstract class HermitCard extends Card {
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
-
-		this.formattedDescription = formatText(
-			(this.primary.power ? `**${this.primary.name}**\n*${this.primary.power}*` : '') +
-				(this.secondary.power ? `**${this.secondary.name}**\n*${this.secondary.power}*` : '')
-		)
-
 		this.log = (values) => `$p{You|${values.player}}$ placed $p${this.name}$`
 	}
 
@@ -115,6 +109,13 @@ abstract class HermitCard extends Card {
 	 */
 	public getBackground(): string {
 		return this.id.split('_')[0]
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return formatText(
+			(this.primary.power ? `**${this.primary.name}**\n*${this.primary.power}*` : '') +
+				(this.secondary.power ? `**${this.secondary.name}**\n*${this.secondary.power}*` : '')
+		)
 	}
 }
 
