@@ -39,13 +39,16 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(Boolean)
 
-			targetRows.forEach((row) => {
+			targetRows.forEach((row, index) => {
 				if (!row.hermitCard) return
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 				if (hermitInfo) {
 					const maxHealth = Math.max(row.health, hermitInfo.health)
 					row.health = Math.min(row.health + 40, maxHealth)
-					game.battleLog.addCustomEntry(`$p${hermitInfo.name}$ healed $g40hp$`, player.id)
+					game.battleLog.addCustomEntry(
+						`$p${hermitInfo.name} (${index + 1})$ healed $g40hp$`,
+						player.id
+					)
 				}
 			})
 		})

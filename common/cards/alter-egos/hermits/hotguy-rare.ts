@@ -34,11 +34,13 @@ class HotguyRareHermitCard extends HermitCard {
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
 		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
+		if (attack && attack.type === 'secondary') {
+			pos.player.custom[this.getInstanceKey(instance)] = true
+		}
 
-		return attacks
+		return attack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

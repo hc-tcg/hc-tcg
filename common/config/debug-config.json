@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["iskallman_rare"],
+	"extraStartingCards": [],
 	"noItemRequirements": true,
 	"forceCoinFlip": true,
 	"oneShotMode": false,

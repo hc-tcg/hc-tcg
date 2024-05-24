@@ -23,9 +23,9 @@ class TNTSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+			if (!opponentActivePos) return
 
 			const tntAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
@@ -46,7 +46,7 @@ class TNTSingleUseCard extends SingleUseCard {
 
 			tntAttack.addNewAttack(backlashAttack)
 
-			return [tntAttack]
+			return tntAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

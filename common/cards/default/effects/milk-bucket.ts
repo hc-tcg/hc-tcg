@@ -15,6 +15,12 @@ class MilkBucketEffectCard extends EffectCard {
 			rarity: 'common',
 			description:
 				'Remove poison and bad omen from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
+			log: (values) =>
+				values.slotType === 'single_use'
+					? `${values.header} on $p${values.pickedCardInfo.name}$`
+					: `$p{You|${values.player}}$ attached $e${this.name}$ to $p${
+							CARDS[values.row.hermitCard.cardId].name
+					  }$`,
 		})
 	}
 

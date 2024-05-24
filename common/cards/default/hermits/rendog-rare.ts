@@ -39,34 +39,35 @@ class RendogRareHermitCard extends HermitCard {
 		const {player} = pos
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
-		if (attacks[0].id !== this.getInstanceKey(instance)) return attacks
+		if (!attack || attack.type !== 'secondary') return attack
+		if (attack.id !== this.getInstanceKey(instance)) return attack
 
 		const imitatingCard: CardT | undefined = player.custom[imitatingCardKey]
 
-		if (!imitatingCard) return []
+		if (!imitatingCard) return
 
 		// No loops please
-		if (imitatingCard.cardId === this.id) return []
+		if (imitatingCard.cardId === this.id) return
 
 		const hermitInfo = HERMIT_CARDS[imitatingCard.cardId]
-		if (!hermitInfo) return []
+		if (!hermitInfo) return
 
 		const attackType = player.custom[pickedAttackKey]
-		if (!attackType) return []
+		if (!attackType) return
 		// Delete the stored data about the attack we chose
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
-		const newAttacks = hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		if (!newAttack) return
 		const attackName =
-			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
-		newAttacks[0].log = (values) => {
+			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttack.log = (values) => {
 			return `${values.attacker} attacked ${values.target} with $v${hermitInfo.name}'s ${attackName}$ for ${values.damage} damage`
 		}
-		return newAttacks
+		return newAttack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

@@ -22,38 +22,34 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 			const activeIndex = activePos.rowIndex
 
 			const opponentRows = opponentPlayer.board.rows
 
-			const attacks = []
-			for (let i = activeIndex; i < opponentRows.length; i++) {
-				const opponentRow = opponentRows[i]
-				if (!opponentRow || !opponentRow.hermitCard) continue
-				const attack = new AttackModel({
+			const attack = opponentRows.reduce((r: undefined | AttackModel, row, i) => {
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
 					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
 						rowIndex: i,
-						row: opponentRow,
+						row: row,
 					},
 					type: 'effect',
 					log: (values) =>
-						`${values.header} to attack ${values.target} for ${values.damage} damage`,
+						i === activeIndex
+							? `${values.header} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
 				}).addDamage(this.id, i === activeIndex ? 30 : 10)
 
-				attacks.push(attack)
-			}
+				if (r) return r.addNewAttack(newAttack)
 
-			while (attacks.length > 1) {
-				attacks[1].log = (values) => `, ${values.target} for ${values.damage} damage`
-				attacks[0].addNewAttack(attacks[1])
-				attacks.splice(1, 1)
-			}
+				return newAttack
+			}, undefined)
 
-			return attacks
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -71,9 +67,6 @@ class AnvilSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		delete player.custom[targetsKey]
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {

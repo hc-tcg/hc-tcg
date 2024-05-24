@@ -71,4 +71,5 @@ export type CardLogFactory = {
 	header: string
 	pickInfo: PickInfo
 	pickedCardInfo: Card
+	slotType: SlotTypeT
 }

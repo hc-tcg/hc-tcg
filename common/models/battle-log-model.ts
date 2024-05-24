@@ -63,6 +63,7 @@ export class BattleLogModel {
 			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$ `,
 			pickInfo: pickInfo!,
 			pickedCardInfo: pickInfo ? CARDS[pickInfo!.card!.cardId] : CARDS['']!,
+			slotType: pos.slot.type,
 		})
 
 		this.logMessageQueue.push({

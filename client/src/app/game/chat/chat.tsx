@@ -24,18 +24,31 @@ function Chat() {
 	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
 	const opponent = useSelector(getOpponentName)
-	const chatPos = settings.chatPosition
+	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
 	const opponentId = useSelector(getOpponentId)
 
+	const [chatPos, setChatPos] = useState({x: 0, y: 0})
+
 	const bindChatPos = useDrag((params: any) => {
-		dispatch(
-			setSetting('chatPosition', {
-				x: params.offset[0],
-				y: params.offset[1],
+		setChatPos({
+			x: params.movement[0],
+			y: params.movement[1],
+		})
+
+		if (!params.pressed) {
+			dispatch(
+				setSetting('chatPosition', {
+					x: chatPosSetting.x + chatPos.x,
+					y: chatPosSetting.y + chatPos.y,
+				})
+			)
+			setChatPos({
+				x: 0,
+				y: 0,
 			})
-		)
+		}
 	})
 
 	if (settings.showChat !== 'on') return null
@@ -60,13 +73,12 @@ function Chat() {
 		<div
 			className={css.chat}
 			style={{
-				top: chatPos.y,
-				left: chatPos.x,
+				top: chatPos.y + chatPosSetting.y,
+				left: chatPos.x + chatPosSetting.x,
 				width: chatSize.w !== 0 ? chatSize.w : '94vw',
 				height: chatSize.h !== 0 ? chatSize.h : '50vh',
 			}}
 			onClick={(e) => {
-				console.log(e)
 				dispatch(
 					setSetting('chatSize', {
 						w: e.currentTarget.offsetWidth,
@@ -123,8 +135,8 @@ function Chat() {
 								)}
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
 									{FormattedText(line.message, {
-										'isOpponent': opponent,
-										'censorProfanity': settings.profanityFilter === "on",
+										isOpponent: opponent,
+										censorProfanity: settings.profanityFilter === 'on',
 									})}
 								</span>
 							</div>
