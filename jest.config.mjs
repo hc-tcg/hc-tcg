@@ -26,7 +26,7 @@ const config = {
     '^.+\\.tsx?$': [
       'ts-jest',
       {
-        tsconfig: "common/tsconfig.json"
+        tsconfig: "tests/tsconfig.json"
       },
     ],
   },
