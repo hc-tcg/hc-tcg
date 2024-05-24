@@ -122,7 +122,10 @@ function Chat() {
 									</span>
 								)}
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
-									{FormattedText(line.message, opponent)}
+									{FormattedText(line.message, {
+										'isOpponent': opponent,
+										'censorProfanity': settings.profanityFilter === "on",
+									})}
 								</span>
 							</div>
 						)

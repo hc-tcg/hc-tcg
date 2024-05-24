@@ -1,47 +1,51 @@
 import express from 'express'
 import path from 'path'
-import {fileURLToPath} from 'url'
-import {createServer} from 'http'
+import { fileURLToPath } from 'url'
+import { createServer } from 'http'
 import cors from 'cors'
-import {CONFIG} from 'common/config'
+import { CONFIG } from 'common/config'
 import startSocketIO from './sockets'
-import {registerApis} from './api'
+import { registerApis } from './api'
+import { censorString, formatText } from 'common/utils/formatting'
 
-const port = process.env.PORT || CONFIG.port || 9000
+console.log(censorString("ffUCKty fuck hello"))
 
-const app = express()
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// const port = process.env.PORT || CONFIG.port || 9000
 
-registerApis(app)
+// const app = express()
 
-const server = createServer(app)
+// const __filename = fileURLToPath(import.meta.url)
+// const __dirname = path.dirname(__filename)
 
-startSocketIO(server)
+// registerApis(app)
 
-app.use(express.json())
-app.use(cors({origin: CONFIG.cors}))
+// const server = createServer(app)
 
-// @TODO Hardcoded redirect to the new site, for now
-app.use((req, res, next) => {
-	if (req.hostname === 'hc-tcg.fly.dev') {
-		res.redirect(301, `https://hc-tcg.online`)
-	} else {
-		next()
-	}
-})
+// startSocketIO(server)
 
-app.use(
-	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
-		maxAge: 1000 * 60 * 60,
-	})
-)
+// app.use(express.json())
+// app.use(cors({origin: CONFIG.cors}))
 
-app.get('/', (req, res) => {
-	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
-})
+// // @TODO Hardcoded redirect to the new site, for now
+// app.use((req, res, next) => {
+// 	if (req.hostname === 'hc-tcg.fly.dev') {
+// 		res.redirect(301, `https://hc-tcg.online`)
+// 	} else {
+// 		next()
+// 	}
+// })
 
-server.listen(port, () => {
-	console.log(`Server listening on port ${port}`)
-})
+// app.use(
+// 	express.static(path.join(__dirname, '../..', CONFIG.clientPath), {
+// 		maxAge: 1000 * 60 * 60,
+// 	})
+// )
+
+// app.get('/', (req, res) => {
+// 	res.sendFile(path.join(__dirname, '../..', CONFIG.clientPath, 'index.html'))
+// })
+
+// server.listen(port, () => {
+// 	console.log(`Server listening on port ${port}`)
+// })

@@ -11,12 +11,17 @@ import {
 import css from './formatting.module.scss'
 import classNames from 'classnames'
 
-function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
+type DisplaySettings = {
+	'isOpponent'?: boolean,
+	'censorProfanity'?: boolean,
+}
+
+function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 	if (node.TYPE == 'ListNode') {
 		let html = []
 
 		for (let child of (node as ListNode).nodes) {
-			html.push(nodeToHtml(child, opponent))
+			html.push(nodeToHtml(child, settings))
 		}
 		return <span>{html}</span>
 	} else if (node.TYPE == 'TextNode') {
@@ -25,8 +30,8 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 		const formatNode = node as FormatNode
 
 		return (
-			<span className={classNames(css[formatNode.format], opponent ? css.viewedByOpponent : '')}>
-				{nodeToHtml(formatNode.text, opponent)}
+			<span className={classNames(css[formatNode.format], settings.isOpponent ? css.viewedByOpponent : '')}>
+				{nodeToHtml(formatNode.text, settings)}
 			</span>
 		)
 	} else if (node.TYPE == 'DifferentTextNode') {
@@ -34,17 +39,18 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 
 		return (
 			<span>
-				{opponent
-					? nodeToHtml(differentTextNode.opponentText, opponent)
-					: nodeToHtml(differentTextNode.playerText, opponent)}
+				{settings.isOpponent
+					? nodeToHtml(differentTextNode.opponentText, settings)
+					: nodeToHtml(differentTextNode.playerText, settings)}
 			</span>
 		)
 	} else if (node.TYPE == 'ProfanityNode') {
 		let profanityNode = node as ProfanityNode
 
-		let contents = profanityNode.text
-
-		return <span>{contents}</span>
+		if (settings.censorProfanity) {
+			return <span> {profanityNode.censor()} </span>
+		}
+		return <span>{profanityNode.text}</span>
 	} else if (node.TYPE == 'EmojiNode') {
 		const emojiNode = node as EmojiNode
 
@@ -61,8 +67,9 @@ function nodeToHtml(node: FormattedTextNode, opponent: boolean) {
 	}
 }
 
-export const FormattedText = (text: FormattedTextNode | undefined, opponent?: boolean) => {
+export const FormattedText = (text: FormattedTextNode | undefined, settings?: DisplaySettings) => {
+	settings = settings || {}
 	if (!text) return <span />
 
-	return nodeToHtml(text, opponent ? opponent : false)
+	return nodeToHtml(text, settings)
 }
