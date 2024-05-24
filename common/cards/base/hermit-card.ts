@@ -83,7 +83,7 @@ abstract class HermitCard extends Card {
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>
-				`${values.attacker} attacked ${values.target} with $v${values.attackName}$ for ${values.damage} damage`,
+				`${values.attacker} ${values.coinFlip} attacked ${values.target} with ${values.attackName} for ${values.damage} damage`,
 		})
 
 		if (attack.type === 'primary') {

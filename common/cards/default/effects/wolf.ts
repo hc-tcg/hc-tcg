@@ -61,6 +61,7 @@ class WolfEffectCard extends EffectCard {
 				target: opponentActiveRow,
 				type: 'effect',
 				isBacklash: true,
+				log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
 			}).addDamage(this.id, 20)
 
 			attack.addNewAttack(backlashAttack)

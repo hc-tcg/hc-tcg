@@ -1,8 +1,8 @@
 {
 	"disableDeckValidation": false,
 	"extraStartingCards": [],
-	"noItemRequirements": true,
-	"forceCoinFlip": true,
+	"noItemRequirements": false,
+	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,

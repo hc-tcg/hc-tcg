@@ -37,6 +37,7 @@ class ThornsIIIEffectCard extends EffectCard {
 					target: attack.getAttacker(),
 					type: 'effect',
 					isBacklash: true,
+					log: (values) => `${values.target} took ${values.damage} damage from $eThorns III$`,
 				}).addDamage(this.id, 40)
 
 				backlashAttack.shouldIgnoreCards.push((instance) => {

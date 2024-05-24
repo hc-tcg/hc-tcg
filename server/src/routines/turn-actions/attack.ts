@@ -105,6 +105,8 @@ function* attackSaga(
 		game.battleLog.addAttackEntry(attack, currentPlayer.coinFlips, thisAttackSagaSU)
 	)
 
+	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
+
 	if (currentPlayer.coinFlips.length === 0) {
 		game.battleLog.sendLogs()
 	}

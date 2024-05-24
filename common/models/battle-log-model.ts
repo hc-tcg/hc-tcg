@@ -34,6 +34,37 @@ export class BattleLogModel {
 		return `$p{You|${currentPlayer}}$ used $e${cardInfo.name}$ `
 	}
 
+	private generateCoinFlipDescription(coinFlip: CurrentCoinFlipT): string {
+		const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
+		const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+
+		if (coinFlip.tosses.length === 1) {
+			return heads > tails ? `flipped $gheads$` : `flipped $btails$`
+		} else if (tails === 0) {
+			return `flipped $gall heads$`
+		} else if (heads === 0) {
+			return `flipped $ball tails$`
+		} else {
+			return `flipped $g${heads} heads$ and $b${tails} tails$`
+		}
+	}
+
+	private generateCoinFlipMessage(attack: AttackModel, coinFlips: Array<CurrentCoinFlipT>): string {
+		let entry = ''
+
+		coinFlips.forEach((coinFlip) => {
+			const description = this.generateCoinFlipDescription(coinFlip)
+
+			if (HERMIT_CARDS[coinFlip.cardId] && !coinFlip.opponentFlip && attack.type !== 'effect') {
+				entry = `${description}, then `
+			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
+				entry = `${description}, then `
+			}
+		})
+
+		return entry
+	}
+
 	public sendLogs() {
 		while (this.logMessageQueue.length > 0) {
 			const firstEntry = this.logMessageQueue.shift()
@@ -87,15 +118,20 @@ export class BattleLogModel {
 
 		const attacks = [attack, ...attack.nextAttacks]
 
-		let queuedLog = attacks.reduce((reducer, attack) => {
-			if (!attack.log) return reducer
+		let log = attacks.reduce((reducer, subAttack) => {
+			if (!subAttack.log) return reducer
 
-			const attacker = attack.getAttacker()
-			const target = attack.getTarget()
+			const attacker = subAttack.getAttacker()
+			const target = subAttack.getTarget()
+
+			if (subAttack.type !== attack.type) {
+				this.addAttackEntry(subAttack, coinFlips, singleUse)
+				return reducer
+			}
 
 			if (!attacker || !target) return reducer
 
-			if (attack.getDamage() === 0) return reducer
+			if (subAttack.getDamage() === 0) return reducer
 
 			const attackingHermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			const targetHermitInfo = CARDS[target.row.hermitCard.cardId]
@@ -103,17 +139,18 @@ export class BattleLogModel {
 			const targetFormatting = target.player.id === playerId ? 'p' : 'o'
 
 			const attackName =
-				attack.type === 'primary'
+				subAttack.type === 'primary'
 					? attackingHermitInfo.primary.name
 					: attackingHermitInfo.secondary.name
 
-			const logMessage = attack.log({
+			const logMessage = subAttack.log({
 				attacker: `$p${attackingHermitInfo.name}$`,
 				opponent: target.player.playerName,
 				target: `$${targetFormatting}${targetHermitInfo.name}$`,
-				attackName: attackName,
-				damage: `$b${attack.calculateDamage()}hp$`,
+				attackName: `$v${attackName}$`,
+				damage: `$b${subAttack.calculateDamage()}hp$`,
 				header: this.generateEffectEntryHeader(singleUse),
+				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
 			})
 
 			reducer += logMessage
@@ -121,48 +158,9 @@ export class BattleLogModel {
 			return reducer
 		}, '' as string)
 
-		coinFlips.forEach((coinFlip) => {
-			const flipper = coinFlip.opponentFlip ? this.game.opponentPlayer : this.game.currentPlayer
+		if (log.length === 0) return
 
-			const cardName = CARDS[coinFlip.cardId].name
-			const flipperActiveRow = flipper.board.activeRow
-
-			if (!flipperActiveRow) return
-
-			const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-			const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
-
-			let description_body = ''
-
-			if (coinFlip.tosses.length === 1) {
-				description_body = heads > tails ? `flipped $gheads$` : `flipped $btails$`
-			} else if (tails === 0) {
-				description_body = `flipped $gall heads$`
-			} else if (heads === 0) {
-				description_body = `flipped $ball tails$`
-			} else {
-				description_body = `flipped $g${heads} heads$ and $b${tails} tails$`
-			}
-
-			if (HERMIT_CARDS[coinFlip.cardId] && !coinFlip.opponentFlip && attack.type !== 'effect') {
-				queuedLog = `$p${cardName}$ ${description_body}, then ${queuedLog}`
-			} else if (
-				HERMIT_CARDS[coinFlip.cardId] &&
-				coinFlip.opponentFlip &&
-				attack.type !== 'effect'
-			) {
-				this.logMessageQueue.push({
-					player: playerId,
-					description: `$o${cardName}$ ${description_body} on their coinflip`,
-				})
-			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
-				queuedLog += `, and ${description_body}`
-			}
-		})
-
-		if (queuedLog.length === 0) return
-
-		queuedLog += DEBUG_CONFIG.logAttackHistory
+		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
 			  }, '')
@@ -170,10 +168,24 @@ export class BattleLogModel {
 
 		this.logMessageQueue.unshift({
 			player: playerId,
-			description: queuedLog,
+			description: log,
 		})
+	}
 
-		this.sendLogs()
+	public opponentCoinFlipEntry(coinFlips: Array<CurrentCoinFlipT>) {
+		const player = this.game.currentPlayer
+		// Opponent coin flips
+		coinFlips.forEach((coinFlip) => {
+			const cardName = CARDS[coinFlip.cardId].name
+			if (!coinFlip.opponentFlip) return
+
+			this.logMessageQueue.push({
+				player: player.id,
+				description: `$o${cardName}$ ${this.generateCoinFlipDescription(
+					coinFlip
+				)} on their coinflip`,
+			})
+		})
 	}
 
 	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
