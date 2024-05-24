@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["iskallman_rare"],
+	"extraStartingCards": ["water_bucket"],
 	"noItemRequirements": true,
 	"forceCoinFlip": true,
 	"oneShotMode": false,

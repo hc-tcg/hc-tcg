@@ -1,5 +1,5 @@
 import Card, {CanAttachResult} from './card'
-import {CARDS, HERMIT_CARDS} from '..'
+import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
 import {CardLogFactory, CardRarityT} from '../../types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -35,7 +35,7 @@ abstract class EffectCard extends Card {
 			? defs.log
 			: (values) =>
 					`$p{You|${values.player}}$ attached $e${this.name}$ to $p${
-						HERMIT_CARDS[values.row.hermitCard.cardId].name
+						CARDS[values.row.hermitCard.cardId].name
 					}$`
 	}
 

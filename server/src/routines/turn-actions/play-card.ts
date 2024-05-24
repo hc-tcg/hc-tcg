@@ -119,8 +119,8 @@ function* playCardSaga(
 	// Now it's actually been attached, remove the fake mark on the card pos
 	pos.fake = false
 
-	// Add entry to battle log, unless it is a single use and needs to apply
-	if (cardInfo.type !== 'single_use') game.battleLog.addPlayCardEntry(cardInfo, pos, undefined)
+	// Add entry to battle log, unless it is played in a single use slot
+	if (pos.slot.type !== 'single_use') game.battleLog.addPlayCardEntry(cardInfo, pos, undefined)
 
 	cardInfo.onAttach(game, card.cardInstance, pos)
 
