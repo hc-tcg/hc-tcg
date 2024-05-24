@@ -83,7 +83,7 @@ export class FormatNode {
 		k: 'keyword',
 	}
 
-	constructor(format: Array<string>, text: FormattedTextNode) {
+	constructor(format: string, text: FormattedTextNode) {
 		//@TODO Fix type checking
 		//@ts-ignore
 		this.format = format
@@ -95,7 +95,7 @@ export class FormatNode {
 		if (format == undefined) {
 			throw new Error(`Format ${format} not found.`)
 		}
-		return new FormatNode([format], text)
+		return new FormatNode(format, text)
 	}
 }
 
@@ -127,10 +127,7 @@ export class ProfanityNode {
 	public text: string
 
 	public censor() {
-		if (this.text.length <= 2) {
-			return "*".repeat(this.text.length)
-		}
-		return this.text[0] + "*".repeat(this.text.length - 2) + this.text[this.text.length - 1]
+		return "*".repeat(this.text.length)
 	}
 
 	constructor(text: string) {
@@ -222,7 +219,7 @@ const messageParseOptions: Array<
 				// Otherwise lets parse a bold node list
 				let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'), config)
 				remaining = remaining.slice(2)
-				return [new FormatNode(['bold'], nodes || new TextNode('')), remaining]
+				return [new FormatNode('bold', nodes || new TextNode('')), remaining]
 			},
 		],
 		[
@@ -243,7 +240,7 @@ const messageParseOptions: Array<
 				// Otherwise we parse a italic node list.
 				let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'), config)
 				remaining = remaining.slice(1)
-				return [new FormatNode(['italic'], nodes || new TextNode('')), remaining]
+				return [new FormatNode('italic', nodes || new TextNode('')), remaining]
 			},
 		],
 		[
@@ -315,7 +312,9 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 			let textBefore = text.slice(0, startIndex)
 
 			if (isSpaceBefore && isSpaceAfter) {
-				nodes.push(new TextNode(textBefore))
+				if (textBefore.length > 0) {
+					nodes.push(new TextNode(textBefore))
+				}
 				nodes.push(new ProfanityNode(text.slice(startIndex, startIndex + word.length)))
 			} else {
 				nodes.push(new TextNode(text.slice(0, startIndex + word.length)))
@@ -327,7 +326,12 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 	}
 
 	if (nodes.length != 0) {
-		nodes.push(new TextNode(text))
+		if (text.length !== 0) {
+			nodes.push(new TextNode(text))
+		}
+		if (nodes.length === 1) {
+			return nodes[0]
+		}
 		return new ListNode(nodes);
 	}
 
@@ -339,6 +343,9 @@ export function censorString(text: string) {
 
 	if (node.TYPE == "TextNode") {
 		return (node as TextNode).text
+	}
+	else if (node.TYPE == "ProfanityNode") {
+		return (node as ProfanityNode).censor()
 	}
 
 	let outputText = []
