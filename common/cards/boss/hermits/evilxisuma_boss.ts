@@ -1,4 +1,4 @@
-import {HERMIT_CARDS, ITEM_CARDS} from '../..'
+import {ITEM_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -12,7 +12,7 @@ import {
 } from '../../../utils/board'
 import {isCardType, isRemovable} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
-import HermitCard from '../../base/hermit-card'
+import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
 
 type PRIMARY_ATTACK = '50DMG' | '70DMG' | '90DMG'
 type SECONDARY_ATTACK = 'HEAL150' | 'ABLAZE' | 'DOUBLE'
@@ -20,29 +20,11 @@ type TERTIARY_ATTACK = 'EFFECTCARD' | 'AFK20' | 'ITEMCARD'
 
 export type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK?, TERTIARY_ATTACK?]
 
-class EvilXisumaBossHermitCard extends HermitCard {
+class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 	constructor() {
-		super({
-			id: 'evilxisuma_boss',
-			numericId: 128,
-			name: 'Evil X',
-			rarity: 'rare',
-			hermitType: 'balanced',
-			health: 300,
-			primary: {
-				name: 'Evil Inside',
-				cost: [],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: 'Derpcoin',
-				cost: ['balanced', 'balanced'],
-				damage: 80,
-				power:
-					"Flip a coin.\n\nIf heads, choose one of the opposing active Hermit's attacks to disable on their next turn.",
-			},
-		})
+		super()
+		this.id = 'evilxisuma_boss'
+		this.health = 300
 	}
 
 	/** Determines whether the player attempting to use this is the boss */
@@ -56,9 +38,9 @@ class EvilXisumaBossHermitCard extends HermitCard {
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	): AttackModel[] {
-		// Players who imitate this card should use "evilxisuma_rare" attacks and not the boss'
+		// Players who imitate this card should use regular attacks and not the boss'
 		if (this.isBeingImitated(pos)) {
-			return HERMIT_CARDS['evilxisuma_rare'].getAttacks(game, instance, pos, hermitAttackType)
+			return super.getAttacks(game, instance, pos, hermitAttackType)
 		}
 
 		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
@@ -130,7 +112,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		if (this.isBeingImitated(pos)) {
-			HERMIT_CARDS['evilxisuma_rare'].onAttach(game, instance, pos)
+			super.onAttach(game, instance, pos)
 			return
 		}
 
@@ -259,8 +241,6 @@ class EvilXisumaBossHermitCard extends HermitCard {
 			if (!row || row.health === null || row.health > 0) return
 
 			if (player.lives > 1) {
-				player.hooks.onHermitDeath.call(pos)
-
 				game.battleLog.addDeathEntry(player, row)
 
 				row.health = 300
@@ -276,7 +256,7 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		if (this.isBeingImitated(pos)) {
-			HERMIT_CARDS['evilxisuma_rare'].onDetach(game, instance, pos)
+			super.onDetach(game, instance, pos)
 			return
 		}
 
@@ -290,14 +270,6 @@ class EvilXisumaBossHermitCard extends HermitCard {
 
 	override getExpansion() {
 		return 'boss'
-	}
-
-	override getPalette() {
-		return 'alter_egos'
-	}
-
-	override getBackground() {
-		return 'alter_egos_background'
 	}
 }
 
