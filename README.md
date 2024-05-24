@@ -8,16 +8,27 @@ Use Node.js 16-18 (19+ is not supported).
 
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
-## How to run the project
+## How to host Hermitcraft TCG
 
-- First, you must install packages using `npm ci` - _use this instead of `npm install` to avoid unneccesary changes in package-lock.json_
-- The client is compiled, so must be built before use with `npm run build`
-- The server can then be run using `npm run start` or `npm run server`
-- Whilst developing, it may be useful so run the client or server such that they reload if you make a change. This can be done by running `npm run client:dev` and `npm run server:dev` respectively.
+
+```sh
+npm ci          # install packages
+npm run build   # build the client
+npm run server  # start the sever
+
+```
+*Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json.*
+
+# Running in your development environment
+```sh
+npm ci          # install packges
+npm run dev     # start both the client and server and update when a change is made to the code. 
+```
+By default, the client is hosted on part 3002.
 
 ## Configuration
 
-You can configure your instance using the `config/server-config.json` file.
+Your instance can be configured using the `config/server-config.json` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
