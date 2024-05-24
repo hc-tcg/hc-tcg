@@ -11,6 +11,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
+			log: (values) => `${values.header} with {your|their} attack`,
 		})
 	}
 
@@ -23,7 +24,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 			// Apply the card
 			applySingleUse(game)
-			game.battleLog.addApplySingleUseEntry('with {your|their} attack')
 
 			player.hooks.afterAttack.remove(instance)
 		})

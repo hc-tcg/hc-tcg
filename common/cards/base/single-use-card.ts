@@ -1,4 +1,4 @@
-import {CardRarityT} from '../../types/cards'
+import {CardLogFactory, CardRarityT} from '../../types/cards'
 import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -11,6 +11,7 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
+	log?: ((values: CardLogFactory) => string) | null
 }
 
 class SingleUseCard extends Card {
@@ -26,8 +27,8 @@ class SingleUseCard extends Card {
 		})
 
 		this.description = defs.description
-
 		this.formattedDescription = formatText(this.description)
+		this.log = defs.log !== undefined ? defs.log : (values) => `${values.header}`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

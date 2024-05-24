@@ -56,11 +56,6 @@ export type CurrentCoinFlipT = {
 
 export type BattleLogT = {
 	player: PlayerId
-	description: FormattedTextNode | undefined
-}
-
-export type IncompleteLogT = {
-	player: PlayerId
 	description: string
 }
 

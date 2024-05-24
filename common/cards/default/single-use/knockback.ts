@@ -12,6 +12,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
+			log: (values) => `${values.header} with {your|their} attack`,
 		})
 	}
 
@@ -31,7 +32,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			applySingleUse(game)
-			game.battleLog.addApplySingleUseEntry('with {your|their} attack')
 
 			// Only Apply this for the first attack
 			player.hooks.afterAttack.remove(instance)

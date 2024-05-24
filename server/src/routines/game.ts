@@ -395,7 +395,6 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
-			yield* delay(game.currentPlayer.coinFlips.reduce((r, flip) => flip.amount * 350, 1000))
 			game.battleLog.sendLogs()
 
 			const raceResult = yield* race({

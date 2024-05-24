@@ -75,11 +75,6 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 				...state,
 				currentCoinFlip: action.payload,
 			}
-		case 'ADD_BATTLE_LOG_ENTRY':
-			return {
-				...state,
-				battleLog: action.payload,
-			}
 		default:
 			return state
 	}

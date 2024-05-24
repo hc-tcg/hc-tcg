@@ -1,8 +1,8 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["diamond_sword", "trident", "mumbojumbo_rare"],
+	"extraStartingCards": ["iskallman_rare"],
 	"noItemRequirements": true,
-	"forceCoinFlip": false,
+	"forceCoinFlip": true,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,

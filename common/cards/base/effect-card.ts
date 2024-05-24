@@ -1,7 +1,7 @@
 import Card, {CanAttachResult} from './card'
-import {CARDS} from '..'
+import {CARDS, HERMIT_CARDS} from '..'
 import {GameModel} from '../../models/game-model'
-import {CardRarityT} from '../../types/cards'
+import {CardLogFactory, CardRarityT} from '../../types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {formatText} from '../../utils/formatting'
@@ -12,6 +12,7 @@ type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
+	log?: ((values: CardLogFactory) => string) | null
 }
 
 abstract class EffectCard extends Card {
@@ -29,6 +30,13 @@ abstract class EffectCard extends Card {
 		this.description = defs.description
 
 		this.formattedDescription = formatText(`*${this.description}*`)
+
+		this.log = defs.log
+			? defs.log
+			: (values) =>
+					`$p{You|${values.player}}$ attached $e${this.name}$ to $p${
+						HERMIT_CARDS[values.row.hermitCard.cardId].name
+					}$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

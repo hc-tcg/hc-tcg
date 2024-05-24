@@ -14,6 +14,7 @@ class TNTSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
+			log: null,
 		})
 	}
 
@@ -31,7 +32,7 @@ class TNTSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
+				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage `,
 			}).addDamage(this.id, 60)
 
 			const backlashAttack = new AttackModel({

@@ -23,6 +23,10 @@ class LeadSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
+			log: (values) => `${values.header} to move $m
+				${values.pickedCardInfo.name}
+				${values.pickedCardInfo.rarity === 'rare' ? ' x2' : ''}$
+				`,
 		})
 	}
 
@@ -123,12 +127,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				swapSlots(game, itemPos, targetPos)
 
 				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game)
-				game.battleLog.addApplySingleUseEntry(
-					`to move $p${cardInfo.name}${
-						cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-					}$`
-				)
+				applySingleUse(game, pickResult)
 
 				delete player.custom[itemIndexKey]
 

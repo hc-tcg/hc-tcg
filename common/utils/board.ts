@@ -11,6 +11,7 @@ import {
 	RowState,
 	RowStateWithHermit,
 } from '../types/game-state'
+import {PickInfo} from '../types/server-requests'
 
 export function getActiveRow(player: PlayerState) {
 	if (player.board.activeRow === null) return null
@@ -135,7 +136,7 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 	return suCard?.cardId === id && suUsed === isUsed
 }
 
-export function applySingleUse(game: GameModel): GenericActionResult {
+export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -154,6 +155,9 @@ export function applySingleUse(game: GameModel): GenericActionResult {
 
 	// This can only be done once per turn
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
+
+	// Send the logs
+	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, pickResult)
 
 	currentPlayer.hooks.afterApply.call()
 

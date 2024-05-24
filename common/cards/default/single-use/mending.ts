@@ -15,6 +15,7 @@ class MendingSingleUseCard extends singleUseCard {
 			name: 'Mending',
 			rarity: 'ultra_rare',
 			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
+			log: (values) => `${values.header} to move $o${values.pickedCardInfo.name}$`,
 		})
 	}
 
@@ -87,8 +88,7 @@ class MendingSingleUseCard extends singleUseCard {
 				}
 
 				// Apply the mending card
-				applySingleUse(game)
-				game.battleLog.addApplySingleUseEntry(`to move $p${CARDS[effectCard.cardId].name}$`)
+				applySingleUse(game, pickResult)
 
 				// Move the effect card
 				swapSlots(game, sourcePos, targetPos)
