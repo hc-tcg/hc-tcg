@@ -19,7 +19,7 @@ export type AttackLogFactory = {
 	target: string
 	damage: string
 	header: string
-	coinFlip: string
+	coinFlip: string | null
 }
 
 export type AttackDefs = {

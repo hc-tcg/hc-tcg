@@ -49,18 +49,19 @@ export class BattleLogModel {
 		}
 	}
 
-	private generateCoinFlipMessage(attack: AttackModel, coinFlips: Array<CurrentCoinFlipT>): string {
-		let entry = ''
-
-		coinFlips.forEach((coinFlip) => {
+	private generateCoinFlipMessage(
+		attack: AttackModel,
+		coinFlips: Array<CurrentCoinFlipT>
+	): string | null {
+		const entry = coinFlips.reduce((r: string | null, coinFlip) => {
 			const description = this.generateCoinFlipDescription(coinFlip)
 
-			if (HERMIT_CARDS[coinFlip.cardId] && !coinFlip.opponentFlip && attack.type !== 'effect') {
-				entry = `${description}, then `
-			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
-				entry = `${description}, then `
-			}
-		})
+			if (coinFlip.opponentFlip) return r
+			if (HERMIT_CARDS[coinFlip.cardId] && attack.type === 'effect') return r
+			if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type !== 'effect') return r
+
+			return description
+		}, null)
 
 		return entry
 	}
