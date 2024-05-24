@@ -147,6 +147,9 @@ export class BattleLogModel {
 
 			const targetFormatting = target.player.id === playerId ? 'p' : 'o'
 
+			const rowNumberString =
+				target.player.board.activeRow !== target.rowIndex ? '' : `(${target.rowIndex})`
+
 			const attackName =
 				subAttack.type === 'primary'
 					? attackingHermitInfo.primary.name
@@ -154,8 +157,9 @@ export class BattleLogModel {
 
 			const logMessage = subAttack.log({
 				attacker: `$p${attackingHermitInfo.name}$`,
+				player: attacker.player.playerName,
 				opponent: target.player.playerName,
-				target: `$${targetFormatting}${targetHermitInfo.name}$`,
+				target: `$${targetFormatting}${targetHermitInfo.name} ${rowNumberString}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage()}hp$`,
 				header: this.generateEffectEntryHeader(singleUse),
@@ -197,19 +201,19 @@ export class BattleLogModel {
 		})
 	}
 
-	public addChangeHermitEntry(oldHermit: CardT | null, newHermit: CardT | null) {
+	public addChangeHermitEntry(
+		player: PlayerState,
+		oldHermit: CardT | null,
+		newHermit: CardT | null
+	) {
 		if (!oldHermit || !newHermit) return
-		const player = getCardPos(this.game, oldHermit.cardInstance)?.player
-		if (!player) return
-
-		const currentPlayer = this.game.currentPlayer === player
 
 		const oldHermitInfo = CARDS[oldHermit.cardId]
 		const newHermitInfo = CARDS[newHermit.cardId]
 
 		this.logMessageQueue.push({
-			player: this.game.currentPlayer.id,
-			description: `$p{You|${currentPlayer}}$ swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$ on row ${player.board.activeRow}`,
+			player: player.id,
+			description: `$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$ on row ${player.board.activeRow}`,
 		})
 		this.sendLogs()
 	}

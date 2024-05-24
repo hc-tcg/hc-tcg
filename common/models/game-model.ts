@@ -249,7 +249,7 @@ export class GameModel {
 			const oldHermit = player.board.rows[currentActiveRow]?.hermitCard
 			const newHermit = player.board.rows[newRow].hermitCard
 
-			this.battleLog.addChangeHermitEntry(oldHermit, newHermit)
+			this.battleLog.addChangeHermitEntry(player, oldHermit, newHermit)
 		}
 
 		// Change the active row

@@ -82,15 +82,19 @@ class EggSingleUseCard extends SingleUseCard {
 						rowIndex: pickInfo.rowIndex,
 						row: opponentRow,
 					},
+					//@TODO Pass in player so we can use the name here
+					log: (values) =>
+						`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
 					type: 'effect',
 				}).addDamage(this.id, 10)
 
 				attack.addNewAttack(eggAttack)
 			}
 
-			player.hooks.afterAttack.add(instance, (attack) => {
-				const targetIndex = player.custom[targetKey]
-				game.changeActiveRow(opponentPlayer, targetIndex)
+			player.hooks.afterAttack.add(instance, () => {
+				const pickInfo: PickInfo = player.custom[targetKey]
+				if (!pickInfo.rowIndex) return
+				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
 
 				delete player.custom[targetKey]
 

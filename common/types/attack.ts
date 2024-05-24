@@ -15,6 +15,7 @@ export type ShouldIgnoreCard = (instance: string) => boolean
 export type AttackLogFactory = {
 	attacker: string
 	attackName: string
+	player: string
 	opponent: string
 	target: string
 	damage: string
