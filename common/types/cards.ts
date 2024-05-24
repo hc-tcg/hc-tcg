@@ -72,4 +72,5 @@ export type CardLogFactory = {
 	pickInfo: PickInfo
 	pickedCardInfo: Card
 	slotType: SlotTypeT
+	coinFlip: string
 }

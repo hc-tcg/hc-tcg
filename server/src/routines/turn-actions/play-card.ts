@@ -120,7 +120,9 @@ function* playCardSaga(
 	pos.fake = false
 
 	// Add entry to battle log, unless it is played in a single use slot
-	if (pos.slot.type !== 'single_use') game.battleLog.addPlayCardEntry(cardInfo, pos, undefined)
+	if (pos.slot.type !== 'single_use') {
+		game.battleLog.addPlayCardEntry(cardInfo, pos, currentPlayer.coinFlips, undefined)
+	}
 
 	cardInfo.onAttach(game, card.cardInstance, pos)
 

@@ -15,6 +15,7 @@ class LootingSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				"Flip a coin.\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
+			log: (values) => `${values.header}, and ${values.coinFlip}`,
 		})
 	}
 

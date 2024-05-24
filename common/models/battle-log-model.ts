@@ -82,8 +82,15 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
-	public addPlayCardEntry(card: Card, pos: CardPosModel, pickInfo?: PickInfo) {
+	public addPlayCardEntry(
+		card: Card,
+		pos: CardPosModel,
+		coinFlips: Array<CurrentCoinFlipT>,
+		pickInfo?: PickInfo
+	) {
 		if (!card.log) return
+
+		const thisFlip = coinFlips.find((flip) => flip.cardId === card.id)
 
 		//@TODO Fix type checking
 		//It possibly will crash if a log is written with data that is not possible to use for that log type
@@ -96,6 +103,7 @@ export class BattleLogModel {
 			pickInfo: pickInfo!,
 			pickedCardInfo: pickInfo ? CARDS[pickInfo!.card!.cardId] : CARDS['']!,
 			slotType: pos.slot.type,
+			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
 		})
 
 		this.logMessageQueue.push({
