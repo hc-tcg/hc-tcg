@@ -67,9 +67,6 @@ class AnvilSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttacks.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		delete player.custom[targetsKey]
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
