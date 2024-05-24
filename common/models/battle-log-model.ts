@@ -88,6 +88,8 @@ export class BattleLogModel {
 		const attacks = [attack, ...attack.nextAttacks]
 
 		let queuedLog = attacks.reduce((reducer, attack) => {
+			if (!attack.log) return reducer
+
 			const attacker = attack.getAttacker()
 			const target = attack.getTarget()
 

@@ -27,7 +27,7 @@ export class AttackModel {
 	private target: RowPos | null
 
 	/** The battle log attached to this attack */
-	public log: (values: AttackLogFactory) => string
+	public log: ((values: AttackLogFactory) => string) | null
 
 	// Public fields
 
@@ -54,7 +54,7 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
 
-		this.log = defs.log ? defs.log : (values) => ''
+		this.log = defs.log ? defs.log : null
 
 		return this
 	}
