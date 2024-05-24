@@ -10,7 +10,6 @@ import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import css from './chat.module.scss'
-import formatCss from '../../../components/formatting/formatting.module.scss'
 import Button from 'components/button'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
@@ -107,7 +106,6 @@ function Chat() {
 						})
 
 						const opponent = playerId !== line.sender
-						const name = playerStates?.[line.sender]?.playerName
 						const opponentName = opponentId ? playerStates?.[opponentId].playerName : null
 						if (line.message.TYPE === 'LineNode') {
 							return (
