@@ -1,5 +1,4 @@
-import {CARDS, EFFECT_CARDS, HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
-import {PlayCardActionData} from '../types/action-data'
+import {CARDS, HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {
 	CurrentCoinFlipT,
 	PlayerState,
@@ -11,7 +10,7 @@ import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {CardPosModel, getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
-import {LineNode, TextNode, formatText} from '../utils/formatting'
+import {LineNode, formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import {PickInfo} from '../types/server-requests'
