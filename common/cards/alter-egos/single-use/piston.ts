@@ -15,6 +15,10 @@ class PistonSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
+			log: (values) => `${values.header} to move $m
+				${values.pickedCardInfo.name}
+				${values.pickedCardInfo.rarity === 'rare' ? ' x2' : ''}$
+				`,
 		})
 	}
 
@@ -134,12 +138,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				})
 
 				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game)
-				game.battleLog.addApplySingleUseEntry(
-					`to move $p${cardInfo.name}${
-						cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-					}$`
-				)
+				applySingleUse(game, pickResult)
 
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]

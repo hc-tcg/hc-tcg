@@ -1,4 +1,4 @@
-import {CardRarityT, CardTypeT} from '../../types/cards'
+import {CardLogFactory, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -28,7 +28,10 @@ abstract class Card {
 	public name: string
 	public rarity: CardRarityT
 
-	protected formattedDescription: FormattedTextNode | undefined
+	/** The battle log attached to this attack */
+	public log: ((values: CardLogFactory) => string) | null
+
+	protected formattedDescription: FormattedTextNode | null
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -36,7 +39,8 @@ abstract class Card {
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.formattedDescription = undefined
+		this.formattedDescription = null
+		this.log = null
 	}
 
 	public getKey(keyName: string) {
@@ -114,7 +118,7 @@ abstract class Card {
 	 * Returns the description for this card
 	 */
 	public getFormattedDescription(): FormattedTextNode | undefined {
-		return this.formattedDescription
+		return this.formattedDescription ? this.formattedDescription : undefined
 	}
 
 	/**

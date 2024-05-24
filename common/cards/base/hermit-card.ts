@@ -1,7 +1,7 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import Card, {CanAttachResult} from './card'
-import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
+import {CardLogFactory, CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -42,6 +42,8 @@ abstract class HermitCard extends Card {
 			(this.primary.power ? `**${this.primary.name}**\n*${this.primary.power}*` : '') +
 				(this.secondary.power ? `**${this.secondary.name}**\n*${this.secondary.power}*` : '')
 		)
+
+		this.log = (values) => `$p{You|${values.player}}$ placed $p${this.name} (${values.rowIndex})$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

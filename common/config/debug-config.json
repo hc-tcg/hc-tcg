@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["diamond_sword", "trident", "mumbojumbo_rare"],
+	"extraStartingCards": ["lava_bucket", "diamond_sword"],
 	"noItemRequirements": true,
 	"forceCoinFlip": false,
 	"oneShotMode": false,

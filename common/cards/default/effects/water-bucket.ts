@@ -51,8 +51,7 @@ class WaterBucketEffectCard extends EffectCard {
 						}
 					}
 
-					applySingleUse(game)
-					game.battleLog.addApplySingleUseEntry(`on $p${CARDS[pickResult.card.cardId].name}$`)
+					applySingleUse(game, pickResult)
 
 					return 'SUCCESS'
 				},

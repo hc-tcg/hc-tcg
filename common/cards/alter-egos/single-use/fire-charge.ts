@@ -15,6 +15,11 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
+			log: (values) => `${values.header} to discard $
+			${values.pickedCardInfo.type === 'item' ? '$m' : '$e'}
+			${values.pickedCardInfo.name}
+			${values.pickedCardInfo.type === 'item' && values.pickedCardInfo.rarity === 'rare' ? ' x2' : ''}$
+			`,
 		})
 	}
 
@@ -66,13 +71,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 
 				// Discard the picked card and apply su card
 				discardCard(game, pickResult.card)
-				const cardInfo = CARDS[pickResult.card.cardId]
-				applySingleUse(game)
-				game.battleLog.addApplySingleUseEntry(
-					`to discard $p${cardInfo.name}${
-						cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-					}$`
-				)
+				applySingleUse(game, pickResult)
 
 				return 'SUCCESS'
 			},

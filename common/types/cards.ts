@@ -1,4 +1,6 @@
+import Card from '../cards/base/card'
 import {PlayerState, RowState, RowStateWithHermit} from './game-state'
+import {PickInfo} from './server-requests'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -60,4 +62,13 @@ export type SlotPos = {
 	rowIndex: number
 	row: RowState
 	slot: BoardSlot
+}
+
+export type CardLogFactory = {
+	player: string
+	row: RowStateWithHermit
+	rowIndex: number
+	header: string
+	pickInfo: PickInfo
+	pickedCardInfo: Card
 }

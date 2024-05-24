@@ -10,10 +10,12 @@ import {
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
-import {getCardPos} from './card-pos-model'
+import {CardPosModel, getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 import {LineNode, TextNode, formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
+import Card from '../cards/base/card'
+import {PickInfo} from '../types/server-requests'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -73,59 +75,25 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addPlayCardEntry(turnAction: PlayCardActionData) {
-		const currentPlayer = this.game.currentPlayer.playerName
+	public addPlayCardEntry(card: Card, pos: CardPosModel, pickInfo?: PickInfo) {
+		if (!card.log) return
 
-		const card = turnAction.payload.card
-		const cardInfo = CARDS[card.cardId]
+		//@TODO Fix type checking
+		//It possibly will crash if a log is written with data that is not possible to use for that log type
 
-		const slot = turnAction.payload.pickInfo.slot
+		const logMessage = card.log({
+			player: pos.player.playerName,
+			rowIndex: pos.rowIndex!,
+			row: pos.row as RowStateWithHermit,
+			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$ `,
+			pickInfo: pickInfo!,
+			pickedCardInfo: pickInfo ? CARDS[pickInfo!.card!.cardId] : CARDS['']!,
+		})
 
-		if (slot.type === 'hermit') {
-			const entry: BattleLogT = {
-				player: this.game.currentPlayer.id,
-				description: formatText(`$p{You|${currentPlayer}}$ placed $p${cardInfo.name}$`),
-			}
-			this.log.push(entry)
-		} else if (slot.type === 'item' || slot.type === 'effect') {
-			const cardPosition = getCardPos(this.game, turnAction.payload.card.cardInstance)
-			const attachedHermit = cardPosition?.row?.hermitCard
-			if (!attachedHermit) return
-
-			const attachedHermitName = CARDS[attachedHermit.cardId].name
-
-			if (cardInfo.type === 'item') {
-				const rare = cardInfo.rarity === 'rare' ? ' x2' : ''
-				const entry: BattleLogT = {
-					player: this.game.currentPlayer.id,
-					description: formatText(
-						`$p{You|${currentPlayer}}$ attached $m${cardInfo.name} item${rare}$ to $p${attachedHermitName}$`
-					),
-				}
-				this.log.push(entry)
-			} else if (cardInfo.type === 'effect') {
-				const entry: BattleLogT = {
-					player: this.game.currentPlayer.id,
-					description: formatText(
-						`$p{You|${currentPlayer}}$ attached $e${cardInfo.name}$ to $p${attachedHermitName}$`
-					),
-				}
-				this.log.push(entry)
-			}
-		} else if (slot.type === 'single_use') {
-			return
-		}
-
-		this.sendBattleLogEntry()
-	}
-
-	public addApplySingleUseEntry(effectAction?: string) {
-		const card = this.game.currentPlayer.board.singleUseCard
-		const entry: IncompleteLogT = {
-			player: this.game.currentPlayer.id,
-			description: `${this.generateEffectEntryHeader(card)} ${effectAction ? effectAction : ''}`,
-		}
-		this.logMessageQueue.push(entry)
+		this.logMessageQueue.push({
+			player: pos.player.id,
+			description: logMessage,
+		})
 
 		this.sendLogs()
 	}

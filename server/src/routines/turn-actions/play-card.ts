@@ -124,8 +124,8 @@ function* playCardSaga(
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card.cardInstance)
 
-	// Add entry to battle log
-	game.battleLog.addPlayCardEntry(turnAction)
+	// Add entry to battle log, unless it is a single use and needs to apply
+	if (cardInfo.type !== 'single_use') game.battleLog.addPlayCardEntry(cardInfo, pos, undefined)
 
 	return 'SUCCESS'
 }

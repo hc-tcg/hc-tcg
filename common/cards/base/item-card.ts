@@ -1,10 +1,10 @@
 import Card, {CanAttachResult} from './card'
-import {CARDS} from '..'
-import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import {CardLogFactory, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {formatText} from '../../utils/formatting'
+import {HERMIT_CARDS} from '..'
 
 type ItemDefs = {
 	id: string
@@ -30,6 +30,11 @@ abstract class ItemCard extends Card {
 
 		this.formattedDescription =
 			this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
+
+		this.log = (values) =>
+			`$p{You|${values.player}}$ attached $m${this.name} item${
+				this.rarity === 'rare' ? 'x2' : ''
+			}$ to $p${HERMIT_CARDS[values.row.hermitCard.cardId].name} (${values.rowIndex})$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

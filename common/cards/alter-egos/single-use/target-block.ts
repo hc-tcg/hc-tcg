@@ -48,8 +48,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
 
 				// Apply the card
-				applySingleUse(game)
-				game.battleLog.addApplySingleUseEntry()
+				applySingleUse(game, pickResult)
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {

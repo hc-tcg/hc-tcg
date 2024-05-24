@@ -14,6 +14,7 @@ class TNTSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Do 60hp damage to your opponent's active Hermit. Your active Hermit also takes 20hp damage.",
+			log: null,
 		})
 	}
 
