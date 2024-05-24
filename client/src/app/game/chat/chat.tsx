@@ -123,16 +123,6 @@ function Chat() {
 						return (
 							<div className={css.message}>
 								<span className={css.time}>{hmTime}</span>
-								{name && !line.systemMessage && (
-									<span
-										className={classNames(
-											css.playerName,
-											opponent ? formatCss.opponent : formatCss.player
-										)}
-									>
-										{name}
-									</span>
-								)}
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
 									{FormattedText(line.message, {
 										isOpponent: opponent,

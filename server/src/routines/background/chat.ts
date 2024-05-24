@@ -17,7 +17,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	if (message.length > 140) return
 
 	game.chat.push({
-		message: formatText(message, {censor: true}),
+		message: formatText(`$p${game.players[playerId].name}$ ${message}`, {censor: true}),
 		createdAt: Date.now(),
 		systemMessage: false,
 		sender: playerId,
