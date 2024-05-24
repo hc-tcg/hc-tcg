@@ -24,6 +24,8 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 			html.push(nodeToHtml(child, settings))
 		}
 		return <span>{html}</span>
+	} else if (node.TYPE == 'EmptyNode') {
+		return <div/>
 	} else if (node.TYPE == 'TextNode') {
 		return <span>{(node as TextNode).text}</span>
 	} else if (node.TYPE == 'FormatNode') {
