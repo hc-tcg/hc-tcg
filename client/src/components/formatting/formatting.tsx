@@ -12,8 +12,8 @@ import css from './formatting.module.scss'
 import classNames from 'classnames'
 
 type DisplaySettings = {
-	'isOpponent'?: boolean,
-	'censorProfanity'?: boolean,
+	isOpponent?: boolean
+	censorProfanity?: boolean
 }
 
 function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
@@ -25,14 +25,19 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 		}
 		return <span>{html}</span>
 	} else if (node.TYPE == 'EmptyNode') {
-		return <div/>
+		return <div />
 	} else if (node.TYPE == 'TextNode') {
 		return <span>{(node as TextNode).text}</span>
 	} else if (node.TYPE == 'FormatNode') {
 		const formatNode = node as FormatNode
 
 		return (
-			<span className={classNames(css[formatNode.format], settings.isOpponent ? css.viewedByOpponent : '')}>
+			<span
+				className={classNames(
+					css[formatNode.format],
+					settings.isOpponent ? css.viewedByOpponent : ''
+				)}
+			>
 				{nodeToHtml(formatNode.text, settings)}
 			</span>
 		)
@@ -56,7 +61,7 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 	} else if (node.TYPE == 'EmojiNode') {
 		const emojiNode = node as EmojiNode
 
-		const link = `/images/hermits-emoji/${emojiNode.emoji.toLowerCase()}.png`;
+		const link = `/images/hermits-emoji/${emojiNode.emoji.toLowerCase()}.png`
 		const alt = `:${emojiNode.emoji}:`
 
 		return <img className={css.emoji} src={link} alt={alt} />

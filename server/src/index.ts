@@ -1,12 +1,11 @@
 import express from 'express'
 import path from 'path'
-import { fileURLToPath } from 'url'
-import { createServer } from 'http'
+import {fileURLToPath} from 'url'
+import {createServer} from 'http'
 import cors from 'cors'
-import { CONFIG } from 'common/config'
+import {CONFIG} from 'common/config'
 import startSocketIO from './sockets'
-import { registerApis } from './api'
-import { censorString, formatText } from 'common/utils/formatting'
+import {registerApis} from './api'
 
 const port = process.env.PORT || CONFIG.port || 9000
 
