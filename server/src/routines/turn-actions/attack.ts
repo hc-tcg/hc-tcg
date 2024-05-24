@@ -22,20 +22,21 @@ function getAttacks(
 
 	// hermit attacks
 	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
-	attacks.push(
-		...hermitCard.getAttacks(
-			game,
-			attackPos.row.hermitCard.cardInstance,
-			attackPos,
-			hermitAttackType
-		)
+
+	const nextAttack = hermitCard.getAttacks(
+		game,
+		attackPos.row.hermitCard.cardInstance,
+		attackPos,
+		hermitAttackType
 	)
+
+	if (nextAttack) attacks.push(nextAttack)
 
 	// all other attacks
 	const otherAttacks = currentPlayer.hooks.getAttacks.call()
-	for (let i = 0; i < otherAttacks.length; i++) {
-		attacks.push(...otherAttacks[i])
-	}
+	otherAttacks.forEach((otherAttack) => {
+		if (otherAttack) attacks.push(otherAttack)
+	})
 
 	if (DEBUG_CONFIG.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {

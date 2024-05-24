@@ -22,12 +22,12 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 
 			const opponentIndex = opponentPlayer.board.activeRow
-			if (opponentIndex === null || opponentIndex === undefined) return []
+			if (opponentIndex === null || opponentIndex === undefined) return
 			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
+			if (!opponentRow || !opponentRow.hermitCard) return
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
@@ -41,7 +41,7 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 40)
 
-			return [swordAttack]
+			return swordAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

@@ -19,35 +19,34 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
+			if (!activePos) return
+			const activeIndex = activePos.rowIndex
+			const opponentRows = opponentPlayer.board.rows
 
-			const attacks: Array<AttackModel> = []
-			for (let i = 0; i < opponentPlayer.board.rows.length; i++) {
-				if (!opponentPlayer.board.rows[i].hermitCard) continue
-				let damage = 20
-				if (i === opponentPlayer.board.activeRow) damage = 40
-				attacks.push(
-					new AttackModel({
-						id: this.getInstanceKey(instance),
-						attacker: activePos,
-						target: {
-							player: opponentPlayer,
-							rowIndex: i,
-							row: opponentPlayer.board.rows[i] as RowStateWithHermit,
-						},
-						type: 'effect',
-						log: (values) =>
-							`${values.header} to attack ${values.target} for ${values.damage} damage`,
-					}).addDamage(this.id, damage)
-				)
-			}
+			const attack = opponentRows.reduce((r: undefined | AttackModel, row, i) => {
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: i,
+						row: row,
+					},
+					type: 'effect',
+					log: (values) =>
+						i === activeIndex
+							? `${values.header} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
+				}).addDamage(this.id, 40)
+				if (r) return r.addNewAttack(newAttack)
+				return newAttack
+			}, undefined)
 
-			player.custom[targetsKey] = attacks.length
-
-			return attacks
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -55,8 +54,6 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
-
-			delete player.custom[targetsKey]
 
 			player.hooks.onAttack.remove(instance)
 		})

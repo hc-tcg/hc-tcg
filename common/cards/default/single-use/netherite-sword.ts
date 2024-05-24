@@ -22,9 +22,9 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+			if (!opponentActivePos) return
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
@@ -34,7 +34,7 @@ class NetheriteSwordSingleUseCard extends SingleUseCard {
 				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 60)
 
-			return [swordAttack]
+			return swordAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

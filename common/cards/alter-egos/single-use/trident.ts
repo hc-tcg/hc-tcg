@@ -25,9 +25,9 @@ class TridentSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+			if (!opponentActivePos) return
 
 			const tridentAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
@@ -37,7 +37,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 30)
 
-			return [tridentAttack]
+			return tridentAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

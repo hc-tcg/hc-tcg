@@ -77,39 +77,35 @@ class CrossbowSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 
-			const attacks = []
 			const targets: Array<number> = player.custom[targetsKey]
-			if (targets === undefined) return []
+			if (targets === undefined) return
 
-			for (const target of targets) {
+			const attack = targets.reduce((r: undefined | AttackModel, target, i) => {
 				const row = opponentPlayer.board.rows[target]
-				if (!row || !row.hermitCard) continue
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: target,
+						row,
+					},
+					type: 'effect',
+					log: (values) =>
+						i === 0
+							? `${values.header} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
+				}).addDamage(this.id, 20)
 
-				attacks.push(
-					new AttackModel({
-						id: this.getInstanceKey(instance),
-						attacker: activePos,
-						target: {
-							player: opponentPlayer,
-							rowIndex: target,
-							row,
-						},
-						type: 'effect',
-						log: (values) =>
-							`${values.header} to attack ${values.target} for ${values.damage} damage`,
-					}).addDamage(this.id, 20)
-				)
-			}
+				if (r) return r.addNewAttack(newAttack)
 
-			while (attacks.length > 1) {
-				attacks[1].log = (values) => `, ${values.target} for ${values.damage} damage`
-				attacks[0].addNewAttack(attacks[1])
-				attacks.splice(1, 1)
-			}
+				return newAttack
+			}, undefined)
 
-			return attacks
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

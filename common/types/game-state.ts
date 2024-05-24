@@ -109,7 +109,7 @@ export type PlayerState = {
 		>
 
 		/** Hook that returns attacks to execute */
-		getAttacks: GameHook<() => Array<AttackModel>>
+		getAttacks: GameHook<() => AttackModel | undefined>
 		/** Hook called before the main attack loop, for every attack from our side of the board */
 		beforeAttack: GameHook<(attack: AttackModel) => void>
 		/** Hook called before the main attack loop, for every attack targeting our side of the board */

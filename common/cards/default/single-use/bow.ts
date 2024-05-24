@@ -60,12 +60,12 @@ class BowSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return
 
 			const opponentIndex = player.custom[targetKey]
-			if (opponentIndex === null || opponentIndex === undefined) return []
+			if (opponentIndex === null || opponentIndex === undefined) return
 			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return []
+			if (!opponentRow || !opponentRow.hermitCard) return
 
 			const bowAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
@@ -79,7 +79,7 @@ class BowSingleUseCard extends SingleUseCard {
 				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 40)
 
-			return [bowAttack]
+			return bowAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

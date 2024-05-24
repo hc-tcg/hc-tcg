@@ -36,21 +36,24 @@ class GoatfatherRareHermitCard extends HermitCard {
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
+
+		if (!attack) return
 
 		const {player, opponentPlayer, row, rowIndex} = pos
 
-		if (attacks[0].type !== 'secondary' || !row?.hermitCard) return attacks
+		if (attack.type !== 'secondary' || !row?.hermitCard) return
 
 		const coinFlip = flipCoin(player, row.hermitCard)
 
-		if (coinFlip[0] === 'tails') return attacks
+		if (coinFlip[0] === 'tails') return
 
-		attacks[0].addDamage(this.id, 30)
+		attack.addDamage(this.id, 30)
 
 		const activeRow = opponentPlayer.board.activeRow
 		const rows = opponentPlayer.board.rows
-		if (activeRow === null || rowIndex === null) return attacks
+
+		if (activeRow === null || rowIndex === null) return
 		for (let i = activeRow + 1; i < rows.length; i++) {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue
@@ -70,10 +73,10 @@ class GoatfatherRareHermitCard extends HermitCard {
 				type: hermitAttackType,
 				log: (values) => `, ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 10)
-			attacks[0].addNewAttack(attack)
+			attack.addNewAttack(attack)
 		}
 
-		return attacks
+		return attack
 	}
 
 	override getExpansion() {

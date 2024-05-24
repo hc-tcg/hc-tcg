@@ -39,9 +39,9 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
+		if (!attack || attack.type !== 'secondary') return attack
 
 		const pickedCard: CardT = player.custom[pickedCardKey]?.card
 		const attackType = player.custom[pickedCardKey]?.attack
@@ -49,22 +49,23 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		// Delete the stored data straight away
 		delete pos.player.custom[pickedCardKey]
 
-		if (!pickedCard || !attackType) return []
+		if (!pickedCard || !attackType) return
 
 		// No loops please
-		if (pickedCard.cardId === this.id) return []
+		if (pickedCard.cardId === this.id) return
 
 		const hermitInfo = HERMIT_CARDS[pickedCard.cardId]
-		if (!hermitInfo) return []
+		if (!hermitInfo) return
 
 		// Return that cards secondary attack
-		const newAttacks = hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		if (!newAttack) return
 		const attackName =
-			newAttacks[0].type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
-		newAttacks[0].log = (values) => {
+			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttack.log = (values) => {
 			return `${values.attacker} attacked ${values.target} with $v${hermitInfo.name}'s ${attackName}$ for ${values.damage} damage`
 		}
-		return newAttacks
+		return newAttack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

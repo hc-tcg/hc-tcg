@@ -1,6 +1,6 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["water_bucket"],
+	"extraStartingCards": [],
 	"noItemRequirements": true,
 	"forceCoinFlip": true,
 	"oneShotMode": false,
