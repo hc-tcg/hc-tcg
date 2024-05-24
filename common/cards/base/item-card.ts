@@ -34,7 +34,7 @@ abstract class ItemCard extends Card {
 		this.log = (values) =>
 			`$p{You|${values.player}}$ attached $m${this.name} item${
 				this.rarity === 'rare' ? 'x2' : ''
-			}$ to $p${HERMIT_CARDS[values.row.hermitCard.cardId].name} (${values.rowIndex})$`
+			}$ to $p${HERMIT_CARDS[values.row.hermitCard.cardId].name}$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

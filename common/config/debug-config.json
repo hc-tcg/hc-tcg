@@ -1,8 +1,8 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["lava_bucket", "diamond_sword"],
+	"extraStartingCards": ["iskallman_rare"],
 	"noItemRequirements": true,
-	"forceCoinFlip": false,
+	"forceCoinFlip": true,
 	"oneShotMode": false,
 	"disableDamage": false,
 	"disableDeckOut": false,

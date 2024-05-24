@@ -16,8 +16,7 @@ class EggSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
-			log: (values) =>
-				`${values.header} on $o${values.pickedCardInfo.name} (${values.pickInfo.rowIndex})$`,
+			log: (values) => `${values.header} on $o${values.pickedCardInfo.name}$`,
 		})
 	}
 

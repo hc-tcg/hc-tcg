@@ -68,11 +68,6 @@ export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
 	payload,
 })
 
-export const addBattleLogEntry = (payload: BattleLogT | null) => ({
-	type: 'ADD_BATTLE_LOG_ENTRY',
-	payload,
-})
-
 export const setOpponentConnection = (payload: boolean) => ({
 	type: 'SET_OPPONENT_CONNECTION',
 	payload,

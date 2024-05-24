@@ -43,7 +43,7 @@ abstract class HermitCard extends Card {
 				(this.secondary.power ? `**${this.secondary.name}**\n*${this.secondary.power}*` : '')
 		)
 
-		this.log = (values) => `$p{You|${values.player}}$ placed $p${this.name} (${values.rowIndex})$`
+		this.log = (values) => `$p{You|${values.player}}$ placed $p${this.name}$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

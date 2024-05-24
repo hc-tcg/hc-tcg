@@ -12,10 +12,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			name: 'Instant Health',
 			rarity: 'common',
 			description: 'Heal one of your Hermits 30hp.',
-			log: (values) =>
-				`${values.header} on $p${values.pickedCardInfo.name} (${
-					values.rowIndex + 1
-				})$ and healed $g30hp$`,
+			log: (values) => `${values.header} on $p${values.pickedCardInfo.name}$ and healed $g30hp$`,
 		})
 	}
 

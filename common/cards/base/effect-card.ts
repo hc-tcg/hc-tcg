@@ -36,7 +36,7 @@ abstract class EffectCard extends Card {
 			: (values) =>
 					`$p{You|${values.player}}$ attached $e${this.name}$ to $p${
 						HERMIT_CARDS[values.row.hermitCard.cardId].name
-					} (${values.rowIndex})$`
+					}$`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
