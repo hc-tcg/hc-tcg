@@ -110,12 +110,12 @@ function Chat() {
 
 						return (
 							<div className={css.message}>
-								{line.message.TYPE !== 'LineNode' && <span className={css.time}>{hmTime}</span>}
+								<span className={css.time}>{hmTime}</span>
 								{name && !line.systemMessage && (
 									<span
 										className={classNames(
 											css.playerName,
-											opponent ? formatCss.player : formatCss.opponent
+											opponent ? formatCss.opponent : formatCss.player
 										)}
 									>
 										{name}

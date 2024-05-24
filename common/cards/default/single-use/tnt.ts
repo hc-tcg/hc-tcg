@@ -31,8 +31,7 @@ class TNTSingleUseCard extends SingleUseCard {
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
-				log: (values) =>
-					`${values.header} to attack ${values.target} for $b${values.damage}hp$ damage`,
+				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 60)
 
 			const backlashAttack = new AttackModel({
@@ -41,7 +40,7 @@ class TNTSingleUseCard extends SingleUseCard {
 				target: activePos,
 				type: 'effect',
 				isBacklash: true,
-				log: (values) => `and took $b${values.damage}hp$ backlash damage`,
+				log: (values) => `and took ${values.damage} backlash damage`,
 			}).addDamage(this.id, 20)
 
 			tntAttack.addNewAttack(backlashAttack)

@@ -43,7 +43,7 @@ class FireStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-					}
+				  }
 				: null
 
 			const targetRow: RowPos = {
@@ -57,10 +57,11 @@ class FireStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
+				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
 			})
 			statusEffectAttack.addDamage(this.id, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Burn', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {

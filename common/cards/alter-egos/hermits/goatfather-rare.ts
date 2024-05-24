@@ -68,7 +68,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 					row: targetRow,
 				},
 				type: hermitAttackType,
-				log: (values) => `, ${values.target} for $b${values.damage}hp$ damage`,
+				log: (values) => `, ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 10)
 			attacks[0].addNewAttack(attack)
 		}

@@ -1,4 +1,4 @@
-import {CARDS, HERMIT_CARDS} from '../cards'
+import {CARDS, EFFECT_CARDS, HERMIT_CARDS, SINGLE_USE_CARDS} from '../cards'
 import {PlayCardActionData} from '../types/action-data'
 import {
 	BattleLogT,
@@ -53,9 +53,8 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
-	private generateEffectEntryHeader(): string {
+	private generateEffectEntryHeader(card: CardT | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
-		const card = this.game.currentPlayer.board.singleUseCard
 		if (!card) return ''
 		const cardInfo = CARDS[card.cardId]
 
@@ -121,9 +120,10 @@ export class BattleLogModel {
 	}
 
 	public addApplySingleUseEntry(effectAction?: string) {
+		const card = this.game.currentPlayer.board.singleUseCard
 		const entry: IncompleteLogT = {
 			player: this.game.currentPlayer.id,
-			description: `${this.generateEffectEntryHeader()} ${effectAction ? effectAction : ''}`,
+			description: `${this.generateEffectEntryHeader(card)} ${effectAction ? effectAction : ''}`,
 		}
 		this.logMessageQueue.push(entry)
 
@@ -151,14 +151,20 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public addAttackEntry(attack: AttackModel) {
-		const playerId = attack.getAttacker()?.player.id
+	public addAttackEntry(
+		attack: AttackModel,
+		coinFlips: Array<CurrentCoinFlipT>,
+		singleUse: CardT | null
+	) {
+		const attacker = attack.getAttacker()
+		if (!attacker) return
+		const playerId = attacker.player.id
 
 		if (!playerId) return
 
 		const attacks = [attack, ...attack.nextAttacks]
 
-		const queuedLog = attacks.reduce((reducer, attack) => {
+		let queuedLog = attacks.reduce((reducer, attack) => {
 			const attacker = attack.getAttacker()
 			const target = attack.getTarget()
 
@@ -181,8 +187,8 @@ export class BattleLogModel {
 				opponent: target.player.playerName,
 				target: `$${targetFormatting}${targetHermitInfo.name} (${target.rowIndex + 1})$`,
 				attackName: attackName,
-				damage: attack.calculateDamage(),
-				header: this.generateEffectEntryHeader(),
+				damage: `$b${attack.calculateDamage()}hp$`,
+				header: this.generateEffectEntryHeader(singleUse),
 			})
 
 			reducer += logMessage
@@ -190,9 +196,52 @@ export class BattleLogModel {
 			return reducer
 		}, '' as string)
 
+		coinFlips.forEach((coinFlip) => {
+			const flipper = coinFlip.opponentFlip ? this.game.opponentPlayer : this.game.currentPlayer
+
+			const cardName = CARDS[coinFlip.cardId].name
+			const flipperActiveRow = flipper.board.activeRow
+
+			if (!flipperActiveRow) return
+
+			const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
+			const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
+
+			let description_body = ''
+
+			if (coinFlip.tosses.length === 1) {
+				description_body = heads > tails ? `flipped $gheads$` : `flipped $btails$`
+			} else if (tails === 0) {
+				description_body = `flipped $gall heads$`
+			} else if (heads === 0) {
+				description_body = `flipped $ball tails$`
+			} else {
+				description_body = `flipped $g${heads} heads$ and $b${tails} tails$`
+			}
+
+			if (HERMIT_CARDS[coinFlip.cardId] && !coinFlip.opponentFlip && attack.type !== 'effect') {
+				queuedLog = `$p${cardName} (${
+					flipperActiveRow + 1
+				})$ ${description_body}, then ${queuedLog}`
+			} else if (
+				HERMIT_CARDS[coinFlip.cardId] &&
+				coinFlip.opponentFlip &&
+				attack.type !== 'effect'
+			) {
+				this.logMessageQueue.push({
+					player: playerId,
+					description: `$o${cardName} (${
+						flipperActiveRow + 1
+					})$ ${description_body} on their coinflip`,
+				})
+			} else if (SINGLE_USE_CARDS[coinFlip.cardId] && attack.type === 'effect') {
+				queuedLog += `, and ${description_body}`
+			}
+		})
+
 		if (queuedLog.length === 0) return
 
-		const debugLog = DEBUG_CONFIG.logAttackHistory
+		queuedLog += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
 			  }, '')
@@ -200,7 +249,7 @@ export class BattleLogModel {
 
 		this.logMessageQueue.push({
 			player: playerId,
-			description: queuedLog + debugLog,
+			description: queuedLog,
 		})
 	}
 
@@ -214,51 +263,6 @@ export class BattleLogModel {
 		this.sendBattleLogEntry()
 	}
 
-	public async addCoinFlipEntry(coinFlips: Array<CurrentCoinFlipT>) {
-		if (coinFlips.length === 0) return
-		for (const coinFlip of coinFlips) {
-			const cardName = CARDS[coinFlip.cardId].name
-
-			const otherPlayer = coinFlip.opponentFlip
-				? this.game.opponentPlayer.playerName
-				: this.game.currentPlayer.playerName
-
-			const heads = coinFlip.tosses.filter((flip) => flip === 'heads').length
-			const tails = coinFlip.tosses.filter((flip) => flip === 'tails').length
-
-			let description_body = ''
-
-			if (coinFlip.tosses.length === 1) {
-				description_body = heads > tails ? `flipped $gheads$ on ` : `flipped $btails$ on `
-			} else if (tails === 0) {
-				description_body = `flipped all ${heads} $gheads$ on `
-			} else if (heads === 0) {
-				description_body = `flipped all ${tails} $btails$ on `
-			} else {
-				description_body = `flipped ${heads} $gheads$ and ${tails} $btails$ on `
-			}
-
-			const entry: BattleLogT = {
-				player: this.game.currentPlayer.id,
-				description: undefined,
-			}
-
-			if (HERMIT_CARDS[coinFlip.cardId]) {
-				entry.description = formatText(
-					`$p{Your|${otherPlayer}'s}$ $p${cardName}$ ${description_body} their attack`
-				)
-			} else {
-				entry.description = formatText(`$p{You|${otherPlayer}}$ ${description_body} $p${cardName}$`)
-			}
-
-			// this.log.push(entry)
-		}
-
-		// await new Promise((r) => setTimeout(r, 2000))
-
-		// this.sendBattleLogEntry()
-	}
-
 	public addDeathEntry(playerState: PlayerState, row: RowStateWithHermit) {
 		const card = row.hermitCard
 		const cardName = CARDS[card.cardId].name
@@ -268,7 +272,7 @@ export class BattleLogModel {
 		const entry: BattleLogT = {
 			player: playerState.id,
 			description: formatText(
-				`$p{Your|${playerState.playerName}'s}$ $p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $b${livesRemaining}$ remaining`
+				`$p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $b${livesRemaining}$ remaining`
 			),
 		}
 

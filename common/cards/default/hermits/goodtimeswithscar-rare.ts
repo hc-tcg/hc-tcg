@@ -62,7 +62,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			})
 
 			game.battleLog.addCustomEntry(
-				`Using $vDeathloop$, {Your|${opponentPlayer.playerName}} $p${revivedHermit}$ revived with 50hp.`,
+				`Using $vDeathloop$, $p${revivedHermit}$ revived with 50hp.`,
 				player.id
 			)
 
