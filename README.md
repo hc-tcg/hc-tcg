@@ -10,19 +10,20 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 
 ## How to host Hermitcraft TCG
 
-
 ```sh
 npm ci          # install packages
 npm run build   # build the client
 npm run server  # start the sever
-
 ```
+
 *Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json.*
 
 # Running in your development environment
 ```sh
-npm ci          # install packges
-npm run dev     # start both the client and server and update when a change is made to the code. 
+npm ci               # install packges
+npm run server:dev   # start the server and update automatically when you make changes
+npm run client:dev   # start the client and update automatically when you make changes
+npm run dev          # start both the client and server
 ```
 By default, the client is hosted on part 3002.
 
