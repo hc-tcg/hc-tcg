@@ -153,7 +153,9 @@ class IskallmanRareHermitCard extends HermitCard {
 				const maxHealth = Math.max(pickedRow.health, hermitInfo.health)
 				pickedRow.health = Math.min(pickedRow.health + 50, maxHealth)
 				game.battleLog.addCustomEntry(
-					`$p${attackerInfo.name}$ took $b50hp$ damage, and healed $p${hermitInfo.name}$ by $g50hp$`,
+					`$p${attackerInfo.name}$ took $b50hp$ damage, and healed $p${hermitInfo.name} (${
+						pickedRowIndex + 1
+					})$ by $g50hp$`,
 					player.id
 				)
 			}
