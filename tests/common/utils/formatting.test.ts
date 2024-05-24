@@ -23,7 +23,7 @@ describe('formatting tests', () => {
   test('format node', () => {
     expect(formatText("$gTEST$")).toStrictEqual(new FormatNode("good", new TextNode("TEST")))
 
-    // Make sure we can disable $ is wanted
+    // Make sure we can disable $ if wanted
     expect(formatText("$gTEST$", { "enable-$": false })).toStrictEqual(new ListNode([new TextNode("$gTEST"), new TextNode("$")]));
   });
 
