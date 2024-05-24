@@ -310,7 +310,7 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 				nodes.push(new TextNode(textBefore))
 				nodes.push(new ProfanityNode(text.slice(startIndex, startIndex + word.length)))
 			} else {
-				nodes.push(new TextNode(text.slice(0, word.length + 1)))
+				nodes.push(new TextNode(text.slice(0, startIndex + word.length)))
 			}
 
 			text = text.slice(startIndex + word.length)
