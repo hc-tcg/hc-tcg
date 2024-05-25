@@ -3,7 +3,7 @@ import {broadcast} from '../../utils/comm'
 import {PlayerModel} from 'common/models/player-model'
 import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
-import {formatText} from 'common/utils/formatting'
+import {ListNode, formatText} from 'common/utils/formatting'
 
 const gameAction =
 	(type: string, game: {players: Record<string, PlayerModel>}) => (action: any) => {
@@ -17,10 +17,13 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 	if (message.length > 140) return
 
 	game.chat.push({
-		message: formatText(`$p${game.players[playerId].name}$ ${message}`, {
-			censor: true,
-			'enable-$': false,
-		}),
+		message: new ListNode([
+			formatText(`$p${game.players[playerId].name}$ `),
+			formatText(message, {
+				censor: true,
+				'enable-$': false,
+			}),
+		]),
 		createdAt: Date.now(),
 		systemMessage: false,
 		sender: playerId,
