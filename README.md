@@ -25,7 +25,7 @@ npm run server:dev   # start the server and update automatically when you make c
 npm run client:dev   # start the client and update automatically when you make changes
 npm run dev          # start both the client and server
 ```
-By default, the client is hosted on part 3002.
+By default, the client is hosted on port 3002.
 
 ## Configuration
 
