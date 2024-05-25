@@ -30,7 +30,7 @@ class StringEffectCard extends EffectCard {
 
 		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		return []
+		return result
 	}
 
 	// This card allows placing on either effect or item slot
