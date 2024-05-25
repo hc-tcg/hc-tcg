@@ -12,6 +12,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				"Flip a coin.\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
+			log: (values) => `${values.header}, and ${values.coinFlip}`,
 		})
 	}
 
@@ -34,12 +35,14 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 				attack.multiplyDamage(this.id, multiplier)
 			})
 
-			opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+			opponentPlayer.hooks.afterAttack.add(instance, () => {
 				if (!player.custom[usedKey]) return
 				delete player.custom[usedKey]
 
 				opponentPlayer.hooks.afterAttack.remove(instance)
 				opponentPlayer.hooks.beforeAttack.remove(instance)
+
+				game.battleLog.addCustomEntry(`$eInvisibility Potion$ wore off`, player.id)
 			})
 		})
 	}
