@@ -17,12 +17,9 @@ class WaterBucketEffectCard extends EffectCard {
 			description:
 				'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
 			log: (values) => {
-				if (values.slotType === 'single_use') {
-					return `${values.header} on $p${values.pickedCardInfo.name}$`
-				}
-				return `$p{You|${values.player}}$ attached $e${this.name}$ to $p${
-					CARDS[values.row.hermitCard.cardId].name
-				}$`
+				if (values.pos.slotType === 'single_use')
+					return `${values.header} on $p${values.pick.name}$`
+				return `$p{You|${values.player}}$ attached $e${this.name}$ to $p${values.pos.hermitCard}$`
 			},
 		})
 	}

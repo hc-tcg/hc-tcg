@@ -13,7 +13,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description: 'Heal one of your AFK Hermits 100hp.',
-			log: (values) => `${values.header} on $p${values.pickedCardInfo.name}$ and healed $g100hp$`,
+			log: (values) => `${values.header} on $p${values.pick.name}$ and healed $g100hp$`,
 		})
 	}
 

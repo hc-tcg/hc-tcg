@@ -4,7 +4,6 @@ import {
 	GameState,
 	ActionResult,
 	TurnActions,
-	BattleLogT,
 	PlayerState,
 	Message,
 } from '../types/game-state'

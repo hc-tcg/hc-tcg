@@ -23,10 +23,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
-			log: (values) => `${values.header} to move $m
-				${values.pickedCardInfo.name}
-				${values.pickedCardInfo.rarity === 'rare' ? ' x2' : ''}$
-				`,
+			log: (values) => `${values.header} to move $m ${values.pick.name}$`,
 		})
 	}
 

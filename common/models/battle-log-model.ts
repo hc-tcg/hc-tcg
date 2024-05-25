@@ -8,7 +8,7 @@ import {
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
-import {CardPosModel, getCardPos} from './card-pos-model'
+import {CardPosModel} from './card-pos-model'
 import {GameModel} from './game-model'
 import {LineNode, formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
@@ -90,20 +90,51 @@ export class BattleLogModel {
 	) {
 		if (!card.log) return
 
-		const thisFlip = coinFlips.find((flip) => flip.cardId === card.id)
+		const getCardName = (
+			player: PlayerState | undefined,
+			cardId: string,
+			rowIndex: number | null | undefined
+		) => {
+			const cardInfo = CARDS[cardId]
+			if (cardInfo.type === 'item') {
+				return `${cardInfo.name} + ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
+			}
 
-		//@TODO Fix type checking
-		//It possibly will crash if a log is written with data that is not possible to use for that log type
+			if (cardInfo.type === 'hermit') {
+				return cardInfo.name + (pos.player.board.activeRow === rowIndex ? '' : ` (${rowIndex})`)
+			}
+
+			return `${cardInfo.name}`
+		}
+
+		const thisFlip = coinFlips.find((flip) => flip.cardId === card.id)
+		const invalid = 'INVALID VALUE'
+
+		const pickInfoPlayer = () => {
+			if (!pickInfo) return undefined
+			if (this.game.currentPlayer.id === pickInfo.playerId) return this.game.currentPlayer
+			return this.game.opponentPlayer
+		}
 
 		const logMessage = card.log({
 			player: pos.player.playerName,
-			rowIndex: pos.rowIndex!,
-			row: pos.row as RowStateWithHermit,
-			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$ `,
-			pickInfo: pickInfo!,
-			pickedCardInfo: pickInfo ? CARDS[pickInfo!.card!.cardId] : CARDS['']!,
-			slotType: pos.slot.type,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
+			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$ `,
+			pos: {
+				rowIndex: pos.rowIndex ? `${pos.rowIndex}` : invalid,
+				name: pos.card ? getCardName(pos.player, pos.card.cardId, pos.rowIndex) : invalid,
+				hermitCard: pos.row?.hermitCard
+					? getCardName(pos.player, pos.row.hermitCard.cardId, pos.rowIndex)
+					: invalid,
+				slotType: pos.slot.type,
+			},
+			pick: {
+				rowIndex: pickInfo ? `${pickInfo.rowIndex}` : invalid,
+				name: pickInfo?.card
+					? getCardName(pickInfoPlayer(), pickInfo.card.cardId, pickInfo.rowIndex)
+					: invalid,
+				slotType: pickInfo ? pickInfo.slot.type : invalid,
+			},
 		})
 
 		this.logMessageQueue.push({

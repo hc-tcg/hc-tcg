@@ -12,7 +12,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			name: 'Instant Health II',
 			rarity: 'rare',
 			description: 'Heal one of your Hermits 60hp.',
-			log: (values) => `${values.header} on $p${values.pickedCardInfo.name}$ and healed $g60hp$`,
+			log: (values) => `${values.header} on $p${values.pick.name}$ and healed $g60hp$`,
 		})
 	}
 

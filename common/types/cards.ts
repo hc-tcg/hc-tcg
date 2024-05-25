@@ -66,11 +66,17 @@ export type SlotPos = {
 
 export type CardLogFactory = {
 	player: string
-	row: RowStateWithHermit
-	rowIndex: number
-	header: string
-	pickInfo: PickInfo
-	pickedCardInfo: Card
-	slotType: SlotTypeT
 	coinFlip: string
+	header: string
+	pos: {
+		rowIndex: string
+		name: string
+		hermitCard: string
+		slotType: string
+	}
+	pick: {
+		rowIndex: string
+		name: string
+		slotType: string
+	}
 }

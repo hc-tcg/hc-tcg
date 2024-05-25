@@ -1,7 +1,7 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import Card, {CanAttachResult} from './card'
-import {CardLogFactory, CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
+import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'

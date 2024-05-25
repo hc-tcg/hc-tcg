@@ -31,9 +31,7 @@ abstract class EffectCard extends Card {
 
 		this.log = (values) => {
 			if (defs.log) return defs.log(values)
-			return `$p{You|${values.player}}$ attached $e${this.name}$ to $p${
-				CARDS[values.row.hermitCard.cardId].name
-			}$`
+			return `$p{You|${values.player}}$ attached $e${values.pos.name}$ to $p${values.pos.hermitCard}$`
 		}
 	}
 
