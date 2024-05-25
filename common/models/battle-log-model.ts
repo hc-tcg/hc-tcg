@@ -148,7 +148,7 @@ export class BattleLogModel {
 			const targetFormatting = target.player.id === playerId ? 'p' : 'o'
 
 			const rowNumberString =
-				target.player.board.activeRow !== target.rowIndex ? '' : `(${target.rowIndex})`
+				target.player.board.activeRow === target.rowIndex ? '' : `(${target.rowIndex})`
 
 			const attackName =
 				subAttack.type === 'primary'
