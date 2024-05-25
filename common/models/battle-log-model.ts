@@ -100,8 +100,8 @@ export class BattleLogModel {
 				return `${cardInfo.name} + ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
 			}
 
-			if (cardInfo.type === 'hermit') {
-				return cardInfo.name + (pos.player.board.activeRow === rowIndex ? '' : ` (${rowIndex})`)
+			if (cardInfo.type === 'hermit' && player) {
+				return cardInfo.name + (player.board.activeRow === rowIndex ? '' : ` (${rowIndex})`)
 			}
 
 			return `${cardInfo.name}`
