@@ -25,7 +25,7 @@ npm run server:dev   # start the server and update automatically when you make c
 npm run client:dev   # start the client and update automatically when you make changes
 npm run dev          # start both the client and server
 ```
-By default, the client is hosted on part 3002.
+By default, the client is hosted on port 3002.
 
 ## Configuration
 
@@ -45,7 +45,7 @@ Your instance can be configured using the `config/server-config.json` file.
 
 ### Formatting & coding style
 
-We run lint/prettier/tsc as part of the PR process. However if you want to avoid back and forth we recommend adding a pre-commit hook that will test this for you locally every time you create a new commit:
+We run lint/prettier/tsc as port of the PR process. However if you want to avoid back and forth we recommend adding a pre-commit hook that will test this for you locally every time you create a new commit:
 
 ```console
 npm run husky
