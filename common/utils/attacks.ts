@@ -197,11 +197,6 @@ export function executeAttacks(
 		// STEP 6 - Aafter all attacks have been executed, call after attack and defence hooks
 		runAfterAttackHooks(allAttacks)
 		runAfterDefenceHooks(allAttacks)
-
-		// STEP 7 - If we added any new attacks in afterAttack or afterDefense, loop around
-		for (let i = 0; i < allAttacks.length; i++) {
-			attacks.push(...allAttacks[i].nextAttacks)
-		}
 	}
 }
 
