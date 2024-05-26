@@ -8,6 +8,9 @@ function getDebugConfig() {
 	try {
 		return require('./debug-config.json')
 	} catch {
+		console.warn(
+			'Warning: `common/config/debug-config.json` is missing. To create it, copy `common/config/debug-config.json.example` and rename it.'
+		)
 		return {}
 	}
 }
