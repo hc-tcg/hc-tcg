@@ -52,6 +52,7 @@ export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
 	amount: number
+	delay: number
 }
 
 export type BattleLogT = {

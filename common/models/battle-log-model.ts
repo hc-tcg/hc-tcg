@@ -66,7 +66,7 @@ export class BattleLogModel {
 		return entry
 	}
 
-	public sendLogs() {
+	public async sendLogs() {
 		while (this.logMessageQueue.length > 0) {
 			const firstEntry = this.logMessageQueue.shift()
 			if (!firstEntry) continue
@@ -78,6 +78,13 @@ export class BattleLogModel {
 				systemMessage: true,
 			})
 		}
+
+		await new Promise((e) =>
+			setTimeout(
+				e,
+				this.game.currentPlayer.coinFlips.reduce((r, flip) => r + flip.delay, 0)
+			)
+		)
 
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
