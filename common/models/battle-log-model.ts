@@ -97,7 +97,7 @@ export class BattleLogModel {
 		) => {
 			const cardInfo = CARDS[cardId]
 			if (cardInfo.type === 'item') {
-				return `${cardInfo.name} + ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
+				return `${cardInfo.name} ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
 			}
 
 			if (cardInfo.type === 'hermit' && player) {
@@ -137,7 +137,7 @@ export class BattleLogModel {
 			},
 		})
 
-		this.logMessageQueue.push({
+		this.logMessageQueue.unshift({
 			player: pos.player.id,
 			description: logMessage,
 		})
@@ -232,23 +232,6 @@ export class BattleLogModel {
 		})
 	}
 
-	public addChangeHermitEntry(
-		player: PlayerState,
-		oldHermit: CardT | null,
-		newHermit: CardT | null
-	) {
-		if (!oldHermit || !newHermit) return
-
-		const oldHermitInfo = CARDS[oldHermit.cardId]
-		const newHermitInfo = CARDS[newHermit.cardId]
-
-		this.logMessageQueue.push({
-			player: player.id,
-			description: `$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${newHermitInfo.name}$ on row ${player.board.activeRow}`,
-		})
-		this.sendLogs()
-	}
-
 	public addCustomEntry(entry: string, player: string) {
 		this.logMessageQueue.push({
 			player: player,
@@ -264,7 +247,7 @@ export class BattleLogModel {
 
 		this.logMessageQueue.push({
 			player: playerState.id,
-			description: `$p${cardName}$ was knocked out, and {you|${playerState.playerName}} now {have|has} $b${livesRemaining}$ remaining`,
+			description: `$p${cardName}$ was knocked out, and $p{you|${playerState.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
 		})
 		this.sendLogs()
 	}

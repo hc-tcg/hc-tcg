@@ -11,6 +11,7 @@ import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
+import {CARDS} from '../cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -244,11 +245,27 @@ export class GameModel {
 		if (results.includes(false)) return false
 
 		// Create battle log entry
-		if (newRow && currentActiveRow) {
-			const oldHermit = player.board.rows[currentActiveRow]?.hermitCard
+		if (newRow) {
 			const newHermit = player.board.rows[newRow].hermitCard
+			if (!newHermit) return false
+			const newHermitInfo = CARDS[newHermit.cardId]
 
-			this.battleLog.addChangeHermitEntry(player, oldHermit, newHermit)
+			if (currentActiveRow) {
+				const oldHermit = player.board.rows[currentActiveRow].hermitCard
+				if (!oldHermit) return false
+				const oldHermitInfo = CARDS[oldHermit.cardId]
+				this.battleLog.addCustomEntry(
+					`$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
+						newHermitInfo.name
+					}$ on row #${newRow + 1}`,
+					player.id
+				)
+			} else {
+				this.battleLog.addCustomEntry(
+					`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`,
+					player.id
+				)
+			}
 		}
 
 		// Change the active row
