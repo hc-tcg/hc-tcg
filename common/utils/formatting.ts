@@ -339,30 +339,6 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 	return new TextNode(text)
 }
 
-export function censorString(text: string) {
-	let node = createCensoredTextNodes(text)
-
-	if (node.TYPE == 'TextNode') {
-		return (node as TextNode).text
-	}
-	else if (node.TYPE == "ProfanityNode") {
-		return (node as ProfanityNode).censor()
-	}
-
-	let outputText = []
-
-	let listNode = node as ListNode
-	for (let textNode of listNode.nodes) {
-		if (textNode.TYPE === 'TextNode') {
-			outputText.push((textNode as TextNode).text)
-		} else if (textNode.TYPE === 'ProfanityNode') {
-			outputText.push((textNode as ProfanityNode).censor())
-		}
-	}
-
-	return outputText.join('')
-}
-
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
 // sequences.
 function parseUntil(text: string, until: Array<string>): [string, string] {
@@ -484,4 +460,32 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 	} catch (e) {
 		return new TextNode('There was a unrecoverable formatting error')
 	}
+}
+
+export function censorString(text: string) {
+	let node = createCensoredTextNodes(text)
+
+	if (node.TYPE == 'TextNode') {
+		return (node as TextNode).text
+	}
+	else if (node.TYPE == "ProfanityNode") {
+		return (node as ProfanityNode).censor()
+	}
+
+	let outputText = []
+
+	let listNode = node as ListNode
+	for (let textNode of listNode.nodes) {
+		if (textNode.TYPE === 'TextNode') {
+			outputText.push((textNode as TextNode).text)
+		} else if (textNode.TYPE === 'ProfanityNode') {
+			outputText.push((textNode as ProfanityNode).censor())
+		}
+	}
+
+	return outputText.join('')
+}
+
+export function concat(...nodes: Array<FormattedTextNode>): ListNode {
+	return new ListNode(nodes)
 }
