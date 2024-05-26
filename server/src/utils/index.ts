@@ -124,7 +124,7 @@ export function printHooksState(game: GameModel) {
 	}
 
 	// Print to console
-	if (DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
+	if (DEBUG_CONFIG.showHooksState && DEBUG_CONFIG.showHooksState.clearConsole) console.clear()
 	const turnInfo = `TURN: ${game.state.turn.turnNumber}, CURRENT PLAYER: ${currentPlayer.playerName}`
 	console.log(colorize(drawBox(turnInfo, 60), 'cyan'))
 

@@ -183,20 +183,22 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 	const hand = pack.slice(0, amountOfStartingCards)
 
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
-		const card = CARDS[id]
-		if (!card) {
-			console.log('Invalid extra starting card in debug config:', id)
-			continue
-		}
+	if (DEBUG_CONFIG) {
+		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+			const id = DEBUG_CONFIG.extraStartingCards[i]
+			const card = CARDS[id]
+			if (!card) {
+				console.log('Invalid extra starting card in debug config:', id)
+				continue
+			}
 
-		const cardInfo = {
-			cardId: id,
-			cardInstance: Math.random().toString(),
+			const cardInfo = {
+				cardId: id,
+				cardInstance: Math.random().toString(),
+			}
+			pack.push(cardInfo)
+			hand.unshift(cardInfo)
 		}
-		pack.push(cardInfo)
-		hand.unshift(cardInfo)
 	}
 
 	const TOTAL_ROWS = 5

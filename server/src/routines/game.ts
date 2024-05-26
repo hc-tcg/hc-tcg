@@ -331,7 +331,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	try {
 		while (true) {
-			if (DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
+			if (DEBUG_CONFIG.showHooksState && DEBUG_CONFIG.showHooksState.enabled) printHooksState(game)
 
 			// Available actions code
 			const availableEnergy = getAvailableEnergy(game)
@@ -343,7 +343,7 @@ function* turnActionsSaga(game: GameModel) {
 			// @TODO not only that but the blocked actions implementation needs improving, another card needs to be unable to remove another's block
 			currentPlayer.hooks.blockedActions.call(blockedActions)
 
-			blockedActions.push(...DEBUG_CONFIG.blockedActions)
+			if (DEBUG_CONFIG.blockedActions) blockedActions.push(...DEBUG_CONFIG.blockedActions)
 
 			// Block SINGLE_USE_ATTACK if PRIMARY_ATTACK or SECONDARY_ATTACK aren't blocked
 			if (
@@ -357,7 +357,7 @@ function* turnActionsSaga(game: GameModel) {
 			// Remove blocked actions from the availableActions
 			availableActions = availableActions.filter((action) => !blockedActions.includes(action))
 
-			availableActions.push(...DEBUG_CONFIG.availableActions)
+			if (DEBUG_CONFIG.availableActions) availableActions.push(...DEBUG_CONFIG.availableActions)
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
