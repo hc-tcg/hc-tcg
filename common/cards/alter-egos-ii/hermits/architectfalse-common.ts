@@ -5,7 +5,7 @@ class ArchitectFalseCommonHermitCard extends HermitCard {
 		super({
 			id: 'architectfalse_common',
 			numericId: 227,
-			name: 'Great Architect',
+			name: 'Grand Architect',
 			rarity: 'common',
 			hermitType: 'speedrunner',
 			health: 270,
