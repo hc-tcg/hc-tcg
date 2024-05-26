@@ -1,7 +1,7 @@
 {
 	"disableDeckValidation": false,
-	"extraStartingCards": ["piston", "water_bucket", "item_redstone_rare"],
-	"noItemRequirements": true,
+	"extraStartingCards": [],
+	"noItemRequirements": false,
 	"forceCoinFlip": false,
 	"oneShotMode": false,
 	"disableDamage": false,
