@@ -9,7 +9,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 		super({
 			id: 'xbcrafted_rare',
 			numericId: 110,
-			name: 'XB',
+			name: 'xB',
 			rarity: 'rare',
 			hermitType: 'explorer',
 			health: 270,
@@ -24,7 +24,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				cost: ['explorer', 'any'],
 				damage: 70,
 				power:
-					"Any effect card attached to your opponent's active Hermit are ignored during this turn.",
+					"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
 			},
 		})
 	}
