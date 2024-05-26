@@ -23,6 +23,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Create debug config
+        run: cp ./common/config/debug-config.json.example ./common/config/debug-config.json
+
       - name: Install dependencies
         run: npm install
 
