@@ -22,7 +22,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 			formatText(message, {
 				censor: true,
 				'enable-$': false,
-			}),
+			})
 		),
 		createdAt: Date.now(),
 		systemMessage: false,
