@@ -49,7 +49,38 @@ class StringEffectCard extends EffectCard {
 		})
 
 		const actions: TurnActions = []
-		if (spaceForItem) actions.push('PLAY_ITEM_CARD')
+		if (spaceForItem) {
+			actions.push('PLAY_ITEM_CARD')
+			// If an item card was already played allow String to be placed in opponent's item slot
+			// TODO: If a future card allows playing multiple items in a turn, this will cause conflicts
+			if (
+				game.state.turn.completedActions.includes('PLAY_ITEM_CARD') &&
+				!game.isActionBlocked('PLAY_ITEM_CARD')
+			) {
+				game.removeCompletedActions('PLAY_ITEM_CARD')
+				const placementKey = this.getKey('allowPlacement')
+				const hooks = game.currentPlayer.hooks
+				// Prevent placing a second item card from hand on the current player's board
+				hooks.canAttach.add(placementKey, (canAttach, pos) => {
+					if (pos.slot.type !== 'item' || pos.player.id !== game.currentPlayer.id) return
+					// 'INVALID_PLAYER' prevents placement from hand but not movement by Piston
+					if (!canAttach.includes('INVALID_PLAYER')) canAttach.push('INVALID_PLAYER')
+				})
+				// Clean up hooks after game state changes
+				hooks.onAttach.add(placementKey, () => {
+					game.addCompletedActions('PLAY_ITEM_CARD')
+					hooks.canAttach.remove(placementKey)
+					hooks.onAttach.remove(placementKey)
+					hooks.onTurnEnd.remove(placementKey)
+				})
+				hooks.onTurnEnd.add(placementKey, () => {
+					// Do not re-add completed actions when turn is ending
+					hooks.canAttach.remove(placementKey)
+					hooks.onAttach.remove(placementKey)
+					hooks.onTurnEnd.remove(placementKey)
+				})
+			}
+		}
 		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
 		return actions
 	}

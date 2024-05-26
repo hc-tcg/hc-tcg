@@ -1,6 +1,6 @@
 import {CARDS, HERMIT_CARDS} from 'common/cards'
 import {GameModel} from 'common/models/game-model'
-import {equalCard} from 'common/utils/cards'
+import {equalCard, isCardType} from 'common/utils/cards'
 import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
@@ -99,7 +99,7 @@ function* playCardSaga(
 				row.itemCards[slot.index] = card
 
 				// This can only be done once per turn
-				game.addCompletedActions('PLAY_ITEM_CARD')
+				if (isCardType(card, 'item')) game.addCompletedActions('PLAY_ITEM_CARD')
 
 				break
 			}
