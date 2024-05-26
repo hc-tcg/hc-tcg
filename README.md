@@ -31,7 +31,7 @@ You can configure your instance using the `common/config/server-config.json` fil
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
 
-You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.json.example` and rename it.
+You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.example.json` and rename it.
 
 | Key                   | Description                                                                 |
 | --------------------- | --------------------------------------------------------------------------- |
