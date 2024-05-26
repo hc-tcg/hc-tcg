@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Create debug config
+        run: cp ./common/config/debug-config.json.example ./common/config/debug-config.json
+
       - name: Run server tsc
         run: npm run server:tsc
 
@@ -42,6 +45,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.json.example ./common/config/debug-config.json
 
       - name: Build
         run: npm run build
