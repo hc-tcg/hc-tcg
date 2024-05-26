@@ -17,7 +17,7 @@ If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh
 
 ## Configuration
 
-You can configure your instance using the `config/server-config.json` file.
+You can configure your instance using the `common/config/server-config.json` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
@@ -30,6 +30,24 @@ You can configure your instance using the `config/server-config.json` file.
 | logoSubText   | Animated text to show next to logo                                                  |
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
+
+You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.json.example` and rename it.
+
+| Key                   | Description                                                                 |
+| --------------------- | --------------------------------------------------------------------------- |
+| disableDeckValidation | Disable deck validation                                                     |
+| extraStartingCards    | Add extra cards into your hand at the start of the game.                    |
+| noItemRequirements    | Remove item requirements for attacks.                                       |
+| forceCoinFlip         | Force coinflips to always roll heads.                                       |
+| oneShotMode           | All attacks will instantly knock out their target.                          |
+| disableDamage         | Disable attacks from dealing damage.                                        |
+| disableDeckOut        | Disable the deck out win condition.                                         |
+| startWithAllCards     | Start the game with every card in your deck. Also disables deck out.        |
+| unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
+| blockedActions        | Block specific actions every turn.                                          |
+| availableActions      | Make specific actions available every turn.                                 |
+| showHooksState        | Show hooks in the console.                                                  |
+| autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
 
 ### Formatting & coding style
 
