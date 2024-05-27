@@ -16,15 +16,17 @@ npm run build   # build the client
 npm run server  # start the sever
 ```
 
-*Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json.*
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 # Running in your development environment
+
 ```sh
 npm ci               # install packges
 npm run server:dev   # start the server and update automatically when you make changes
 npm run client:dev   # start the client and update automatically when you make changes
 npm run dev          # start both the client and server
 ```
+
 By default, the client is hosted on port 3002.
 
 ## Configuration
