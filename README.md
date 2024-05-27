@@ -16,20 +16,22 @@ npm run build   # build the client
 npm run server  # start the sever
 ```
 
-*Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json.*
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
 
 # Running in your development environment
+
 ```sh
 npm ci               # install packges
 npm run server:dev   # start the server and update automatically when you make changes
 npm run client:dev   # start the client and update automatically when you make changes
 npm run dev          # start both the client and server
 ```
+
 By default, the client is hosted on port 3002.
 
 ## Configuration
 
-Your instance can be configured using the `config/server-config.json` file.
+Your instance can be configured using the `common/config/server-config.json` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
@@ -42,6 +44,24 @@ Your instance can be configured using the `config/server-config.json` file.
 | logoSubText   | Animated text to show next to logo                                                  |
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
+
+You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.example.json` and rename it. On linux you can run `cp ./common/config/debug-config.example.json ./common/config/debug-config.json`, and on windows you can run `copy ./common/config/debug-config.example.json ./common/config/debug-config.json` to create the file.
+
+| Key                   | Description                                                                 |
+| --------------------- | --------------------------------------------------------------------------- |
+| disableDeckValidation | Disable deck validation                                                     |
+| extraStartingCards    | Add extra cards into your hand at the start of the game.                    |
+| noItemRequirements    | Remove item requirements for attacks.                                       |
+| forceCoinFlip         | Force coinflips to always roll heads.                                       |
+| oneShotMode           | All attacks will instantly knock out their target.                          |
+| disableDamage         | Disable attacks from dealing damage.                                        |
+| disableDeckOut        | Disable the deck out win condition.                                         |
+| startWithAllCards     | Start the game with every card in your deck. Also disables deck out.        |
+| unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
+| blockedActions        | Block specific actions every turn.                                          |
+| availableActions      | Make specific actions available every turn.                                 |
+| showHooksState        | Show hooks in the console.                                                  |
+| autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
 
 ### Formatting & coding style
 
