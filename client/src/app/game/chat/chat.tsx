@@ -15,6 +15,7 @@ import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
 import {FormattedText} from 'components/formatting/formatting'
 import classNames from 'classnames'
+import {LineNode} from 'common/utils/formatting'
 
 function Chat() {
 	const dispatch = useDispatch()
@@ -107,7 +108,7 @@ function Chat() {
 
 						const opponent = playerId !== line.sender
 						const opponentName = opponentId ? playerStates?.[opponentId].playerName : null
-						if (line.message.TYPE === 'LineNode') {
+						if (line.message instanceof LineNode) {
 							return (
 								<div className={css.message}>
 									<span className={css.turnTag}>
