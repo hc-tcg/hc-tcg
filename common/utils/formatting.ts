@@ -84,15 +84,13 @@ export class FormatNode {
 		k: 'keyword',
 	}
 
-	constructor(format: string, text: FormattedTextNode) {
-		//@TODO Fix type checking
-		//@ts-ignore
+	constructor(format: Format, text: FormattedTextNode) {
 		this.format = format
 		this.text = text
 	}
 
-	static fromShorthand(format: string, text: FormattedTextNode) {
-		format = this.formatDict[format]
+	static fromShorthand(formatShorthand: string, text: FormattedTextNode) {
+		let format = this.formatDict[formatShorthand]
 		if (format == undefined) {
 			throw new Error(`Format ${format} not found.`)
 		}
@@ -486,6 +484,6 @@ export function censorString(text: string) {
 	return outputText.join('')
 }
 
-export function concat(...nodes: Array<FormattedTextNode>): ListNode {
+export function concatFormattedTextNodes(...nodes: Array<FormattedTextNode>): ListNode {
 	return new ListNode(nodes)
 }
