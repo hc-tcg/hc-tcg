@@ -43,7 +43,6 @@
     "lint-staged": "^13.1.2",
     "node-fetch": "^3.3.2",
     "prettier": "^2.8.4",
-    "profanity-filter": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
