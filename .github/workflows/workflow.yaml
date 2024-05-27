@@ -35,6 +35,19 @@ jobs:
       - name: Run prettier
         run: npx prettier --check .
 
+  unittest:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
   build:
     name: Test build
     runs-on: ubuntu-latest
