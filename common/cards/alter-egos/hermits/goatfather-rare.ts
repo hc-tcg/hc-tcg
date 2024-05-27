@@ -38,22 +38,22 @@ class GoatfatherRareHermitCard extends HermitCard {
 	) {
 		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
 
-		if (!attack) return
+		if (!attack) return attack
 
 		const {player, opponentPlayer, row, rowIndex} = pos
 
-		if (attack.type !== 'secondary' || !row?.hermitCard) return
+		if (attack.type !== 'secondary' || !row?.hermitCard) return attack
 
 		const coinFlip = flipCoin(player, row.hermitCard)
 
-		if (coinFlip[0] === 'tails') return
+		if (coinFlip[0] === 'tails') return attack
 
 		attack.addDamage(this.id, 30)
 
 		const activeRow = opponentPlayer.board.activeRow
 		const rows = opponentPlayer.board.rows
 
-		if (activeRow === null || rowIndex === null) return
+		if (activeRow === null || rowIndex === null) return attack
 		for (let i = activeRow + 1; i < rows.length; i++) {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue
