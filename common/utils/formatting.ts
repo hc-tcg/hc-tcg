@@ -42,10 +42,9 @@ export type FormattedTextNode =
 	| EmojiNode
 	| LineBreakNode
 	| TabNode
+	| LineNode
 
 export class ListNode {
-	public TYPE = 'ListNode'
-
 	public nodes: FormattedTextNode[]
 
 	constructor(nodes: FormattedTextNode[]) {
@@ -53,13 +52,9 @@ export class ListNode {
 	}
 }
 
-export class EmptyNode {
-	public TYPE = 'EmptyNode'
-}
+export class EmptyNode {}
 
 export class TextNode {
-	public TYPE = 'TextNode'
-
 	public text: string
 
 	constructor(text: string) {
@@ -68,8 +63,6 @@ export class TextNode {
 }
 
 export class FormatNode {
-	public TYPE = 'FormatNode'
-
 	public format: Format
 	public text: FormattedTextNode
 
@@ -101,8 +94,6 @@ export class FormatNode {
 }
 
 export class DifferentTextNode {
-	public TYPE = 'DifferentTextNode'
-
 	public playerText: FormattedTextNode
 	public opponentText: FormattedTextNode
 
@@ -113,8 +104,6 @@ export class DifferentTextNode {
 }
 
 export class EmojiNode {
-	public TYPE = 'EmojiNode'
-
 	public emoji: string
 
 	constructor(emoji: string) {
@@ -128,7 +117,7 @@ export class ProfanityNode {
 	public text: string
 
 	public censor() {
-		return "*".repeat(this.text.length)
+		return '*'.repeat(this.text.length)
 	}
 
 	constructor(text: string) {
@@ -152,127 +141,142 @@ export class TabNode {
 const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 
 const messageParseOptions: Array<
-	[(text: string, config: Config) => boolean, (text: string, config: Config) => [FormattedTextNode, string]]
-> = [
-		[
-			(text: string, config: Config) => {
-				if (config["enable-$"] === undefined || config["enable-$"] === true) {
-					return text.startsWith('$')
-				}
-				return false
-			},
-			(text: string, config: Config) => {
-				// Expecting the format $fFormat Node$ where f is a format character
-				let format = text[1]
-				text = text.slice(2)
-
-				let [node, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('$'), config)
-
-				if (node.TYPE == "EmptyNode") {
-					throw new Error('Expected an expression, not $')
-				}
-
-				return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
-			},
-		],
-		[
-			(text: string, _: Config) => text.startsWith('{'),
-			(text: string, config: Config) => {
-				// expecting the format {MesageTreeNode,|Node,}
-				let remaining = text.slice(1)
-
-				let firstNode
-					;[firstNode, remaining] = parseSingleNode(remaining, config)
-
-				if (remaining[0] !== '|') {
-					throw new Error('Expected |')
-				}
-
-				remaining = remaining.slice(1)
-
-				let secondNode
-					;[secondNode, remaining] = parseSingleNode(remaining, config)
-
-				if (remaining[0] !== '}') {
-					throw new Error('Expected } to close expression.')
-				}
-
-				remaining = remaining.slice(1)
-
-				return [new DifferentTextNode(firstNode, secondNode), remaining]
-			},
-		],
-		[
-			(text: string, _: Config) => text.startsWith('**'),
-			(text: string, config: Config) => {
-				// There is no bold because the string isn't long enough.
-				if (text.length == 2) {
-					return parseTextNode(text, config)
-				}
-
-				text = text.slice(2)
-
-				// If there is no set of ** in the rest of the message, continue like this is regular text
-				if (!text.includes('**')) {
-					return parseTextNode(text, config)
-				}
-
-				// Otherwise lets parse a bold node list
-				let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('**'), config)
-				remaining = remaining.slice(2)
-				return [new FormatNode('bold', nodes || new TextNode('')), remaining]
-			},
-		],
-		[
-			(text: string) => text.startsWith('*'),
-			(text: string, config: Config) => {
-				// There is no italic because the string isn't long enough.
-				if (text.length == 1) {
-					return parseTextNode(text, config)
-				}
-
-				text = text.slice(1)
-
-				// If there is no * in the rest of the message, continue like this is regular text
-				if (!text.includes('*')) {
-					return parseTextNode(text, config)
-				}
-
-				// Otherwise we parse a italic node list.
-				let [nodes, remaining] = parseNodesUntil(text, (remaining) => remaining.startsWith('*'), config)
-				remaining = remaining.slice(1)
-				return [new FormatNode('italic', nodes || new TextNode('')), remaining]
-			},
-		],
-		[
-			(text: string, _: Config) => text.startsWith(':'),
-			(text: string, _: Config) => {
-				let remaining = text.slice(1)
-
-				let emojiText: string
-					;[emojiText, remaining] = parseUntil(remaining, [':'])
-
-				if (remaining[0] !== ':') {
-					throw new Error('Expected : to close expression.')
-				}
-
-				return [new EmojiNode(emojiText), remaining.slice(1)]
-			},
-		],
-		[
-			(text: string, _: Config) => text.startsWith('\n'),
-			(text: string, _: Config) => {
-				return [new LineBreakNode(), text.slice(1)]
-			},
-		],
-		[
-			(text: string, _: Config) => text.startsWith('\t'),
-			(text: string, _: Config) => {
-				return [new TabNode(), text.slice(1)]
-			},
-		],
-		[(_) => true, parseTextNode],
+	[
+		(text: string, config: Config) => boolean,
+		(text: string, config: Config) => [FormattedTextNode, string]
 	]
+> = [
+	[
+		(text: string, config: Config) => {
+			if (config['enable-$'] === undefined || config['enable-$'] === true) {
+				return text.startsWith('$')
+			}
+			return false
+		},
+		(text: string, config: Config) => {
+			// Expecting the format $fFormat Node$ where f is a format character
+			let format = text[1]
+			text = text.slice(2)
+
+			let [node, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('$'),
+				config
+			)
+
+			if (node instanceof EmptyNode) {
+				throw new Error('Expected an expression, not $')
+			}
+
+			return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('{'),
+		(text: string, config: Config) => {
+			// expecting the format {MesageTreeNode,|Node,}
+			let remaining = text.slice(1)
+
+			let firstNode
+			;[firstNode, remaining] = parseSingleNode(remaining, config)
+
+			if (remaining[0] !== '|') {
+				throw new Error('Expected |')
+			}
+
+			remaining = remaining.slice(1)
+
+			let secondNode
+			;[secondNode, remaining] = parseSingleNode(remaining, config)
+
+			if (remaining[0] !== '}') {
+				throw new Error('Expected } to close expression.')
+			}
+
+			remaining = remaining.slice(1)
+
+			return [new DifferentTextNode(firstNode, secondNode), remaining]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('**'),
+		(text: string, config: Config) => {
+			// There is no bold because the string isn't long enough.
+			if (text.length == 2) {
+				return parseTextNode(text, config)
+			}
+
+			text = text.slice(2)
+
+			// If there is no set of ** in the rest of the message, continue like this is regular text
+			if (!text.includes('**')) {
+				return parseTextNode(text, config)
+			}
+
+			// Otherwise lets parse a bold node list
+			let [nodes, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('**'),
+				config
+			)
+			remaining = remaining.slice(2)
+			return [new FormatNode('bold', nodes || new TextNode('')), remaining]
+		},
+	],
+	[
+		(text: string) => text.startsWith('*'),
+		(text: string, config: Config) => {
+			// There is no italic because the string isn't long enough.
+			if (text.length == 1) {
+				return parseTextNode(text, config)
+			}
+
+			text = text.slice(1)
+
+			// If there is no * in the rest of the message, continue like this is regular text
+			if (!text.includes('*')) {
+				return parseTextNode(text, config)
+			}
+
+			// Otherwise we parse a italic node list.
+			let [nodes, remaining] = parseNodesUntil(
+				text,
+				(remaining) => remaining.startsWith('*'),
+				config
+			)
+			remaining = remaining.slice(1)
+			return [new FormatNode('italic', nodes || new TextNode('')), remaining]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith(':'),
+		(text: string, _: Config) => {
+			let remaining = text.slice(1)
+
+			let emojiText: string
+			;[emojiText, remaining] = parseUntil(remaining, [':'])
+
+			if (remaining[0] !== ':') {
+				throw new Error('Expected : to close expression.')
+			}
+
+			return [new EmojiNode(emojiText), remaining.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('\n'),
+		(text: string, _: Config) => {
+			return [new LineBreakNode(), text.slice(1)]
+		},
+	],
+	[
+		(text: string, _: Config) => text.startsWith('\t'),
+		(text: string, _: Config) => {
+			return [new TabNode(), text.slice(1)]
+		},
+	],
+	[(_) => true, parseTextNode],
+]
 
 function isAlphanumeric(char: string) {
 	let charCode = char.charCodeAt(0)
@@ -333,7 +337,7 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 		if (nodes.length === 1) {
 			return nodes[0]
 		}
-		return new ListNode(nodes);
+		return new ListNode(nodes)
 	}
 
 	return new TextNode(text)
@@ -465,10 +469,9 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 export function censorString(text: string) {
 	let node = createCensoredTextNodes(text)
 
-	if (node.TYPE == 'TextNode') {
-		return (node as TextNode).text
-	}
-	else if (node.TYPE == "ProfanityNode") {
+	if (node instanceof TextNode) {
+		return node.text
+	} else if (node instanceof ProfanityNode) {
 		return (node as ProfanityNode).censor()
 	}
 
@@ -476,10 +479,10 @@ export function censorString(text: string) {
 
 	let listNode = node as ListNode
 	for (let textNode of listNode.nodes) {
-		if (textNode.TYPE === 'TextNode') {
-			outputText.push((textNode as TextNode).text)
-		} else if (textNode.TYPE === 'ProfanityNode') {
-			outputText.push((textNode as ProfanityNode).censor())
+		if (textNode instanceof TextNode) {
+			outputText.push(textNode.text)
+		} else if (textNode instanceof ProfanityNode) {
+			outputText.push(textNode.censor())
 		}
 	}
 

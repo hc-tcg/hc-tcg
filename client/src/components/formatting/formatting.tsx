@@ -6,6 +6,10 @@ import {
 	TextNode,
 	ProfanityNode,
 	EmojiNode,
+	EmptyNode,
+	LineBreakNode,
+	TabNode,
+	LineNode,
 } from 'common/utils/formatting'
 
 import css from './formatting.module.scss'
@@ -17,59 +21,48 @@ type DisplaySettings = {
 }
 
 function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
-	if (node.TYPE == 'ListNode') {
+	if (node instanceof ListNode) {
 		let html = []
 
-		for (let child of (node as ListNode).nodes) {
+		for (let child of node.nodes) {
 			html.push(nodeToHtml(child, settings))
 		}
 		return <span>{html}</span>
-	} else if (node.TYPE == 'EmptyNode') {
+	} else if (node instanceof EmptyNode) {
 		return <div />
-	} else if (node.TYPE == 'TextNode') {
-		return <span>{(node as TextNode).text}</span>
-	} else if (node.TYPE == 'FormatNode') {
-		const formatNode = node as FormatNode
-
+	} else if (node instanceof TextNode) {
+		return <span>{node.text}</span>
+	} else if (node instanceof FormatNode) {
 		return (
 			<span
-				className={classNames(
-					css[formatNode.format],
-					settings.isOpponent ? css.viewedByOpponent : ''
-				)}
+				className={classNames(css[node.format], settings.isOpponent ? css.viewedByOpponent : '')}
 			>
-				{nodeToHtml(formatNode.text, settings)}
+				{nodeToHtml(node.text, settings)}
 			</span>
 		)
-	} else if (node.TYPE == 'DifferentTextNode') {
-		let differentTextNode = node as DifferentTextNode
-
+	} else if (node instanceof DifferentTextNode) {
 		return (
 			<span>
 				{settings.isOpponent
-					? nodeToHtml(differentTextNode.opponentText, settings)
-					: nodeToHtml(differentTextNode.playerText, settings)}
+					? nodeToHtml(node.opponentText, settings)
+					: nodeToHtml(node.playerText, settings)}
 			</span>
 		)
-	} else if (node.TYPE == 'ProfanityNode') {
-		let profanityNode = node as ProfanityNode
-
+	} else if (node instanceof ProfanityNode) {
 		if (settings.censorProfanity) {
-			return <span> {profanityNode.censor()} </span>
+			return <span> {node.censor()} </span>
 		}
-		return <span>{profanityNode.text}</span>
-	} else if (node.TYPE == 'EmojiNode') {
-		const emojiNode = node as EmojiNode
-
-		const link = `/images/hermits-emoji/${emojiNode.emoji.toLowerCase()}.png`
-		const alt = `:${emojiNode.emoji}:`
+		return <span>{node.text}</span>
+	} else if (node instanceof EmojiNode) {
+		const link = `/images/hermits-emoji/${node.emoji.toLowerCase()}.png`
+		const alt = `:${node.emoji}:`
 
 		return <img className={css.emoji} src={link} alt={alt} />
-	} else if (node.TYPE == 'LineBreakNode') {
+	} else if (node instanceof LineBreakNode) {
 		return <br />
-	} else if (node.TYPE == 'TabNode') {
+	} else if (node instanceof TabNode) {
 		return <span className={css.tab}></span>
-	} else if (node.TYPE == 'LineNode') {
+	} else if (node instanceof LineNode) {
 		return <span className={css.line} />
 	}
 }
