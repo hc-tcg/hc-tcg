@@ -34,11 +34,11 @@ const CoinFlip = ({name, tosses, amount}: Props) => {
 						? {
 								animationIterationCount: `${evenIterations}, 1, 1`,
 								animationDelay: `0s, ${evenIterations * 0.7}s, ${evenIterations * 0.7 + 0.35}s`,
-							}
+						  }
 						: {
 								animationIterationCount: `${evenIterations}, 0, 0`,
 								animationDelay: `0s`,
-							}
+						  }
 				}
 			>
 				<div className={classnames(css.face, css.front)}>
