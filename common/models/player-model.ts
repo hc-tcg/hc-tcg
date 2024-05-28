@@ -1,9 +1,9 @@
-import { getStarterPack } from '../../server/src/utils/state-gen'
-import { CardT } from '../../common/types/game-state'
-import { PlayerDeckT } from '../../common/types/deck'
-import { Socket } from 'socket.io'
-import { validateDeck } from '../utils/validation'
-import { censorString } from '../utils/formatting'
+import {getStarterPack} from '../../server/src/utils/state-gen'
+import {CardT} from '../../common/types/game-state'
+import {PlayerDeckT} from '../../common/types/deck'
+import {Socket} from 'socket.io'
+import {validateDeck} from '../utils/validation'
+import {censorString} from '../utils/formatting'
 
 export class PlayerModel {
 	private internalId: string
@@ -28,7 +28,7 @@ export class PlayerModel {
 			name: 'Starter Deck',
 			icon: 'any',
 			cards: getStarterPack().map((id) => {
-				return { cardId: id, cardInstance: Math.random().toString() }
+				return {cardId: id, cardInstance: Math.random().toString()}
 			}),
 		}
 
