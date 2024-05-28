@@ -147,7 +147,8 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 export function executeAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	withoutBlockingActions = false
+	withoutBlockingActions = false,
+	createLogs = true
 ) {
 	// We need to store the SU card for battle log stuff.
 	const thisAttackSagaSU = game.currentPlayer.board.singleUseCard
@@ -161,13 +162,19 @@ export function executeAttacks(
 	runOnDefenceHooks(attacks)
 
 	// STEP 3 - Execute all attacks
-	for (let i = 0; i < attacks.length; i++) {
-		executeAttack(attacks[i])
+	attacks.forEach((attack) => {
+		executeAttack(attack)
 
-		if (attacks[i].nextAttacks.length > 0) {
-			executeAttacks(game, attacks[i].nextAttacks, withoutBlockingActions)
+		if (attack.nextAttacks.length > 0) {
+			executeAttacks(game, attack.nextAttacks, withoutBlockingActions, false)
 		}
-	}
+
+		if (createLogs) {
+			game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSagaSU)
+		}
+
+		attack.nextAttacks = []
+	})
 
 	if (!withoutBlockingActions) {
 		// STEP 5 - All attacks have been completed, mark actions appropriately
@@ -180,19 +187,17 @@ export function executeAttacks(
 			'PLAY_SINGLE_USE_CARD',
 			'CHANGE_ACTIVE_HERMIT'
 		)
-
-		// We might loop around again, don't block actions anymore
-		withoutBlockingActions = true
 	}
-
-	// Create the battle log entries
-	attacks.forEach((attack) =>
-		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSagaSU)
-	)
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(attacks)
 	runAfterDefenceHooks(attacks)
+
+	// STEP 7 - Execute new attacks created in afterAttack hooks
+	attacks.forEach((attack) => {
+		if (attack.nextAttacks.length === 0) return
+		executeAttacks(game, attack.nextAttacks, true, false)
+	})
 }
 
 export function executeExtraAttacks(
