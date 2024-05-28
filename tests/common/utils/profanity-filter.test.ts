@@ -4,6 +4,7 @@ import {censorString} from '../../../common/utils/formatting'
 
 describe('censorship tests', () => {
 	test('simple censorship', () => {
+		expect(censorString('')).toBe('')
 		expect(censorString('fuck')).toBe('****')
 		// Do not censor sub words, ie ass
 		expect(censorString('pass')).toBe('pass')
