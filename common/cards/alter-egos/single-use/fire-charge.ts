@@ -5,6 +5,7 @@ import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {isRemovable} from '../../../utils/cards'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
+import {getFormattedName} from '../../../utils/game'
 
 class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -15,7 +16,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
-			log: (values) => `${values.header} to discard $m${values.pick.name}$`,
+			log: (values) => `${values.header} to discard ${getFormattedName(values.pick.id, false)}`,
 		})
 	}
 

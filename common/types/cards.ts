@@ -70,12 +70,14 @@ export type CardLogFactory = {
 	header: string
 	pos: {
 		rowIndex: string
+		id: string
 		name: string
 		hermitCard: string
 		slotType: string
 	}
 	pick: {
 		rowIndex: string
+		id: string
 		name: string
 		slotType: string
 	}
