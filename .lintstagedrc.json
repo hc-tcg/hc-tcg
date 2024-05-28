@@ -1,6 +1,0 @@
-{
-	"client/src/**/*.ts": ["eslint --max-warnings=0", "prettier --write"],
-	"client/src/**/*.tsx": ["eslint --max-warnings=0", "prettier --write"],
-	"server/**/*.js": ["prettier --write"],
-	"client/src/**/*.scss": ["stylelint --fix"]
-}
