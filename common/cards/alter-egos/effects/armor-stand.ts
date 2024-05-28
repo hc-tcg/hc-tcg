@@ -64,6 +64,7 @@ class ArmorStandEffectCard extends EffectCard {
 			if (!row.health && attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
+				game.battleLog.addCustomEntry(player.id, `$p${this.name}$ was knocked out`)
 
 				const activeRow = player.board.activeRow
 				const isActive = activeRow !== null && activeRow == pos.rowIndex

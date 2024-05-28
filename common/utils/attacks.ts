@@ -149,55 +149,50 @@ export function executeAttacks(
 	attacks: Array<AttackModel>,
 	withoutBlockingActions = false
 ) {
-	// Outer attack loop
-	while (attacks.length > 0) {
-		const allAttacks: Array<AttackModel> = []
+	// We need to store the SU card for battle log stuff.
+	const thisAttackSagaSU = game.currentPlayer.board.singleUseCard
 
-		// Main attack loop
-		while (attacks.length > 0) {
-			// STEP 1 - Call before attack and defence for all attacks
-			runBeforeAttackHooks(attacks)
-			runBeforeDefenceHooks(attacks)
+	// STEP 1 - Call before attack and defence for all attacks
+	runBeforeAttackHooks(attacks)
+	runBeforeDefenceHooks(attacks)
 
-			// STEP 2 - Call on attack and defence for all attacks
-			runOnAttackHooks(attacks)
-			runOnDefenceHooks(attacks)
+	// STEP 2 - Call on attack and defence for all attacks
+	runOnAttackHooks(attacks)
+	runOnDefenceHooks(attacks)
 
-			// STEP 3 - Execute all attacks
-			for (let i = 0; i < attacks.length; i++) {
-				executeAttack(attacks[i])
+	// STEP 3 - Execute all attacks
+	for (let i = 0; i < attacks.length; i++) {
+		executeAttack(attacks[i])
 
-				// Add this attack to the final list
-				allAttacks.push(attacks[i])
-			}
-
-			const newAttacks: Array<AttackModel> = []
-			for (let i = 0; i < attacks.length; i++) {
-				newAttacks.push(...attacks[i].nextAttacks)
-			}
-			attacks = newAttacks
+		if (attacks[i].nextAttacks.length > 0) {
+			executeAttacks(game, attacks[i].nextAttacks, withoutBlockingActions)
 		}
-
-		if (!withoutBlockingActions) {
-			// STEP 5 - All attacks have been completed, mark actions appropriately
-			game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-			game.addBlockedActions(
-				'game',
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'CHANGE_ACTIVE_HERMIT'
-			)
-
-			// We might loop around again, don't block actions anymore
-			withoutBlockingActions = true
-		}
-
-		// STEP 6 - Aafter all attacks have been executed, call after attack and defence hooks
-		runAfterAttackHooks(allAttacks)
-		runAfterDefenceHooks(allAttacks)
 	}
+
+	if (!withoutBlockingActions) {
+		// STEP 5 - All attacks have been completed, mark actions appropriately
+		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+		game.addBlockedActions(
+			'game',
+			'PLAY_HERMIT_CARD',
+			'PLAY_ITEM_CARD',
+			'PLAY_EFFECT_CARD',
+			'PLAY_SINGLE_USE_CARD',
+			'CHANGE_ACTIVE_HERMIT'
+		)
+
+		// We might loop around again, don't block actions anymore
+		withoutBlockingActions = true
+	}
+
+	// Create the battle log entries
+	attacks.forEach((attack) =>
+		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSagaSU)
+	)
+
+	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
+	runAfterAttackHooks(attacks)
+	runAfterDefenceHooks(attacks)
 }
 
 export function executeExtraAttacks(

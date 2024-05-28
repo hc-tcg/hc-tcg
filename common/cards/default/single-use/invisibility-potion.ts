@@ -42,7 +42,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 				opponentPlayer.hooks.afterAttack.remove(instance)
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 
-				game.battleLog.addCustomEntry(`$eInvisibility Potion$ wore off`, player.id)
+				game.battleLog.addCustomEntry(player.id, `$eInvisibility Potion$ wore off`)
 			})
 		})
 	}

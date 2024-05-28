@@ -255,15 +255,15 @@ export class GameModel {
 				if (!oldHermit) return false
 				const oldHermitInfo = CARDS[oldHermit.cardId]
 				this.battleLog.addCustomEntry(
+					player.id,
 					`$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
 						newHermitInfo.name
-					}$ on row #${newRow + 1}`,
-					player.id
+					}$ on row #${newRow + 1}`
 				)
 			} else {
 				this.battleLog.addCustomEntry(
-					`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`,
-					player.id
+					player.id,
+					`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`
 				)
 			}
 		}

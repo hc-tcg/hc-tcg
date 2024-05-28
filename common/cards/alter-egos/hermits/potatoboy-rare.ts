@@ -46,8 +46,8 @@ class PotatoBoyRareHermitCard extends HermitCard {
 					const maxHealth = Math.max(row.health, hermitInfo.health)
 					row.health = Math.min(row.health + 40, maxHealth)
 					game.battleLog.addCustomEntry(
-						`$p${hermitInfo.name} (${index + 1})$ healed $g40hp$`,
-						player.id
+						player.id,
+						`$p${hermitInfo.name} (${index + 1})$ healed $g40hp$`
 					)
 				}
 			})

@@ -239,22 +239,22 @@ export class BattleLogModel {
 		})
 	}
 
-	public addCustomEntry(entry: string, player: string) {
+	public addCustomEntry(player: string, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,
 		})
 	}
 
-	public addDeathEntry(playerState: PlayerState, row: RowStateWithHermit) {
+	public addDeathEntry(player: PlayerState, row: RowStateWithHermit) {
 		const card = row.hermitCard
 		const cardName = CARDS[card.cardId].name
 
-		const livesRemaining = 3 ? 'two lives' : 'one life'
+		const livesRemaining = player.lives === 3 ? 'two lives' : 'one life'
 
 		this.logMessageQueue.push({
-			player: playerState.id,
-			description: `$p${cardName}$ was knocked out, and $p{you|${playerState.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
+			player: player.id,
+			description: `$p${cardName}$ was knocked out, and $p{you|${player.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
 		})
 		this.sendLogs()
 	}

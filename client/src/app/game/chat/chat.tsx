@@ -108,7 +108,7 @@ function Chat() {
 
 						const opponent = playerId !== line.sender
 						const opponentName = opponentId ? playerStates?.[opponentId].playerName : null
-						if (line.message instanceof LineNode) {
+						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>
 									<span className={css.turnTag}>
