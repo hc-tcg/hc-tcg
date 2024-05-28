@@ -65,13 +65,7 @@ You can also configure debug settings using `common/config/debug-config.json`. T
 
 ### Formatting & coding style
 
-We run lint/prettier/tsc as part of the PR process. However if you want to avoid back and forth we recommend adding a pre-commit hook that will test this for you locally every time you create a new commit:
-
-```console
-npm run husky
-```
-
-We also recommend to run prettier on save in your editor, this is an example configuration using the prettier extension for VSCode:
+We run lint/prettier/tsc as part of the PR process. We also recommend to run prettier on save in your editor, this is an example configuration using the prettier extension for VSCode:
 
 ```jsonc
 // .vscode/settings.json
