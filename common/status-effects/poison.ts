@@ -57,7 +57,7 @@ class PoisonStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
-				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
+				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
 			if (targetPos.row.health >= 30) {

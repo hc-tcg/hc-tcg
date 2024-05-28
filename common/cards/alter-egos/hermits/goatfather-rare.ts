@@ -58,7 +58,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 			const targetRow = rows[i]
 			if (!targetRow.hermitCard) continue
 
-			const attack = new AttackModel({
+			const newAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: {
 					player,
@@ -73,7 +73,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 				type: hermitAttackType,
 				log: (values) => `, ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 10)
-			attack.addNewAttack(attack)
+			attack.addNewAttack(newAttack)
 		}
 
 		return attack
