@@ -247,25 +247,8 @@ export class GameModel {
 		// Create battle log entry
 		if (newRow) {
 			const newHermit = player.board.rows[newRow].hermitCard
-			if (!newHermit) return false
-			const newHermitInfo = CARDS[newHermit.cardId]
-
-			if (currentActiveRow) {
-				const oldHermit = player.board.rows[currentActiveRow].hermitCard
-				if (!oldHermit) return false
-				const oldHermitInfo = CARDS[oldHermit.cardId]
-				this.battleLog.addCustomEntry(
-					player.id,
-					`$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
-						newHermitInfo.name
-					}$ on row #${newRow + 1}`
-				)
-			} else {
-				this.battleLog.addCustomEntry(
-					player.id,
-					`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`
-				)
-			}
+			const oldHermit = currentActiveRow ? player.board.rows[currentActiveRow].hermitCard : null
+			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
 		// Change the active row

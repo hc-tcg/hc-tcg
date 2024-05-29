@@ -49,7 +49,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			attack.log = (values) =>
-				`${values.attacker} ${values.coinFlip}, attacked ${values.target} with ${values.attackName} for ${values.damage} damage, then skipped  $o{${values.opponent}'s|your}$ turn`
+				`${values.attacker} ${values.coinFlip}, attacked ${values.target} with ${values.attackName} for ${values.damage} damage, then skipped  {$o${values.opponent}'s$|your} turn`
 
 			// This will tell us to block actions at the start of our next turn
 			// Storing the cardInstance of the card that attacked

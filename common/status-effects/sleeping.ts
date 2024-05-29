@@ -32,7 +32,7 @@ class SleepingStatusEffect extends StatusEffect {
 
 		game.battleLog.addCustomEntry(
 			player.id,
-			`$p${HERMIT_CARDS[card.cardId].name}$ went to sleep and restored $gfull health$`
+			`$p${HERMIT_CARDS[card.cardId].name}$ went to $gSleep$ and restored $gfull health$`
 		)
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {

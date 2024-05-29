@@ -34,7 +34,7 @@ class PoisonStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 
 		if (pos.card) {
-			game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was poisoned`)
+			game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $bPoisoned$`)
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {

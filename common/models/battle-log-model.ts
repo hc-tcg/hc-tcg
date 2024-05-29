@@ -266,6 +266,32 @@ export class BattleLogModel {
 		})
 	}
 
+	public addChangeRowEntry(
+		player: PlayerState,
+		newRow: number,
+		oldHermit: CardT | null,
+		newHermit: CardT | null
+	) {
+		if (!newHermit) return
+		const newHermitInfo = CARDS[newHermit.cardId]
+
+		if (oldHermit) {
+			const oldHermitInfo = CARDS[oldHermit.cardId]
+
+			this.addCustomEntry(
+				player.id,
+				`$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
+					newHermitInfo.name
+				}$ on row #${newRow + 1}`
+			)
+		} else {
+			this.addCustomEntry(
+				player.id,
+				`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`
+			)
+		}
+	}
+
 	public addDeathEntry(player: PlayerState, row: RowStateWithHermit) {
 		const card = row.hermitCard
 		const cardName = CARDS[card.cardId].name

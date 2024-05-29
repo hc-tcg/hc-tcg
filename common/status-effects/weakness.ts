@@ -25,6 +25,13 @@ class WeaknessStatusEffect extends StatusEffect {
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
+		if (pos.card) {
+			game.battleLog.addCustomEntry(
+				player.id,
+				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $bWeakness$`
+			)
+		}
+
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
