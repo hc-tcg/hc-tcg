@@ -25,9 +25,6 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		if (activeRow === null) return
 
 		player.hooks.onApply.add(instance, () => {
-			if (pos.card) {
-				game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was burned`)
-			}
 			applyStatusEffect(
 				game,
 				'badomen',
