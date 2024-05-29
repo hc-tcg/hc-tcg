@@ -1,4 +1,4 @@
-import {CardLogFactory, CardRarityT, CardTypeT} from '../../types/cards'
+import {PlayCardLog, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -29,7 +29,7 @@ abstract class Card {
 	public rarity: CardRarityT
 
 	/** The battle log attached to this attack */
-	public log: ((values: CardLogFactory) => string) | null
+	public log: ((values: PlayCardLog) => string) | null
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type

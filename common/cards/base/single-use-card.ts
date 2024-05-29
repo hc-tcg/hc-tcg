@@ -1,4 +1,4 @@
-import {CardLogFactory, CardRarityT} from '../../types/cards'
+import {PlayCardLog, CardRarityT} from '../../types/cards'
 import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -11,7 +11,7 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	log?: ((values: CardLogFactory) => string) | null
+	log?: ((values: PlayCardLog) => string) | null
 }
 
 class SingleUseCard extends Card {

@@ -5,7 +5,7 @@ import {
 	AttackType,
 	ShouldIgnoreCard,
 	WeaknessType,
-	AttackLogFactory,
+	AttackLog,
 } from '../types/attack'
 import {RowPos} from '../types/cards'
 
@@ -27,7 +27,7 @@ export class AttackModel {
 	private target: RowPos | null
 
 	/** The battle log attached to this attack */
-	public log: ((values: AttackLogFactory) => string) | null
+	public log: ((values: AttackLog) => string) | null
 
 	// Public fields
 

@@ -64,7 +64,7 @@ export type SlotPos = {
 	slot: BoardSlot
 }
 
-export type CardLogFactory = {
+export type PlayCardLog = {
 	player: string
 	coinFlip: string
 	header: string

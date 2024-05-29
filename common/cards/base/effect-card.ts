@@ -1,7 +1,7 @@
 import Card, {CanAttachResult} from './card'
 import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
-import {CardLogFactory, CardRarityT} from '../../types/cards'
+import {PlayCardLog, CardRarityT} from '../../types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
@@ -12,7 +12,7 @@ type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
-	log?: ((values: CardLogFactory) => string) | null
+	log?: ((values: PlayCardLog) => string) | null
 }
 
 abstract class EffectCard extends Card {

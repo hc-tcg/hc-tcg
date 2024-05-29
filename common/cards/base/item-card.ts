@@ -1,5 +1,5 @@
 import Card, {CanAttachResult} from './card'
-import {CardLogFactory, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import {PlayCardLog, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
