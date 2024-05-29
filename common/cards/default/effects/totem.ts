@@ -42,7 +42,7 @@ class TotemEffectCard extends EffectCard {
 
 			game.battleLog.addCustomEntry(
 				player.id,
-				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp.$`
+				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`
 			)
 
 			// This will remove this hook, so it'll only be called once

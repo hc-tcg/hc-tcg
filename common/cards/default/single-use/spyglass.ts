@@ -57,7 +57,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 						`$p{You|${opponentPlayer.playerName}}$ took ${getFormattedName(
 							modalResult.cards[0].cardId,
 							true
-						)} from {your opponent's|your} hand`
+						)} from $o{${game.opponentPlayer.playerName}'s|your}$ hand`
 					)
 
 					return 'SUCCESS'

@@ -99,23 +99,30 @@ export class BattleLogModel {
 
 		const getCardName = (
 			player: PlayerState | undefined,
-			cardId: string,
+			cardId: string | undefined,
 			rowIndex: number | null | undefined
 		) => {
+			if (!cardId) return invalid
 			const cardInfo = CARDS[cardId]
 			if (cardInfo.type === 'item') {
 				return `${cardInfo.name} ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
 			}
 
-			if (cardInfo.type === 'hermit' && player) {
-				return cardInfo.name + (player.board.activeRow === rowIndex ? '' : ` (${rowIndex})`)
+			if (
+				cardInfo.type === 'hermit' &&
+				player &&
+				player.board.activeRow === rowIndex &&
+				rowIndex !== null &&
+				rowIndex !== undefined
+			) {
+				return `${cardInfo.name} (${rowIndex + 1})`
 			}
 
 			return `${cardInfo.name}`
 		}
 
 		const thisFlip = coinFlips.find((flip) => flip.cardId === card.id)
-		const invalid = 'INVALID VALUE'
+		const invalid = '$bINVALID VALUE$'
 
 		const pickInfoPlayer = () => {
 			if (!pickInfo) return undefined
@@ -123,10 +130,13 @@ export class BattleLogModel {
 			return this.game.opponentPlayer
 		}
 
+		const pickedPlayer = pickInfoPlayer()
+
 		const logMessage = card.log({
 			player: pos.player.playerName,
+			opponent: pos.opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
-			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$ `,
+			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex ? `${pos.rowIndex}` : invalid,
 				id: pos.card ? pos.card.cardId : invalid,
@@ -140,8 +150,16 @@ export class BattleLogModel {
 				rowIndex: pickInfo ? `${pickInfo.rowIndex}` : invalid,
 				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
 				name: pickInfo?.card
-					? getCardName(pickInfoPlayer(), pickInfo.card.cardId, pickInfo.rowIndex)
+					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)
 					: invalid,
+				hermitCard:
+					pickInfo && pickInfo.rowIndex !== null && pickInfo.rowIndex !== undefined && pickedPlayer
+						? getCardName(
+								pickedPlayer,
+								pickedPlayer.board.rows[pickInfo.rowIndex].hermitCard?.cardId,
+								pickInfo.rowIndex
+						  )
+						: invalid,
 				slotType: pickInfo ? pickInfo.slot.type : invalid,
 			},
 		})

@@ -23,7 +23,8 @@ class LeadSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
-			log: (values) => `${values.header} to move $m${values.pick.name}$`,
+			log: (values) =>
+				`${values.header} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
 		})
 	}
 
@@ -120,11 +121,13 @@ class LeadSingleUseCard extends SingleUseCard {
 					return 'FAILURE_INVALID_SLOT'
 				}
 
+				const logInfo = pickResult
+				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+
+				applySingleUse(game, logInfo)
+
 				// Move the item
 				swapSlots(game, itemPos, targetPos)
-
-				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game, pickResult)
 
 				delete player.custom[itemIndexKey]
 

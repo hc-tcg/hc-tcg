@@ -63,7 +63,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			game.battleLog.addCustomEntry(
 				player.id,
-				`Using $vDeathloop$, $p${revivedHermit}$ revived with $g50hp.$`
+				`Using $vDeathloop$, $p${revivedHermit}$ revived with $g50hp$`
 			)
 
 			// Prevents hermits from being revived more than once by Deathloop

@@ -121,6 +121,11 @@ class PistonSingleUseCard extends SingleUseCard {
 					return 'FAILURE_INVALID_SLOT'
 				}
 
+				const logInfo = pickResult
+				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+
+				applySingleUse(game, logInfo)
+
 				// Move the item
 				swapSlots(game, itemPos, targetPos)
 
@@ -133,9 +138,6 @@ class PistonSingleUseCard extends SingleUseCard {
 
 					player.hooks.afterApply.remove(instance)
 				})
-
-				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game, pickResult)
 
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
