@@ -22,9 +22,9 @@ class IronSwordSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return
+			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return
+			if (!opponentActivePos) return null
 
 			const swordAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'attack'),
@@ -39,7 +39,7 @@ class IronSwordSingleUseCard extends SingleUseCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance, 'attack')
-			if (attack.id !== attackId) return
+			if (attack.id !== attackId) return null
 
 			// We've executed our attack, apply effect
 			applySingleUse(game)

@@ -49,17 +49,17 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		// Delete the stored data straight away
 		delete pos.player.custom[pickedCardKey]
 
-		if (!pickedCard || !attackType) return
+		if (!pickedCard || !attackType) return null
 
 		// No loops please
-		if (pickedCard.cardId === this.id) return
+		if (pickedCard.cardId === this.id) return null
 
 		const hermitInfo = HERMIT_CARDS[pickedCard.cardId]
-		if (!hermitInfo) return
+		if (!hermitInfo) return null
 
 		// Return that cards secondary attack
 		const newAttack = hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
-		if (!newAttack) return
+		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
 		newAttack.log = (values) => {

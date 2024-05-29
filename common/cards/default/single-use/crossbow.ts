@@ -77,12 +77,12 @@ class CrossbowSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return
+			if (!activePos) return null
 
 			const targets: Array<number> = player.custom[targetsKey]
-			if (targets === undefined) return
+			if (targets === undefined) return null
 
-			const attack = targets.reduce((r: undefined | AttackModel, target, i) => {
+			const attack = targets.reduce((r: null | AttackModel, target, i) => {
 				const row = opponentPlayer.board.rows[target]
 				if (!row || !row.hermitCard) return r
 				const newAttack = new AttackModel({
@@ -103,7 +103,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				if (r) return r.addNewAttack(newAttack)
 
 				return newAttack
-			}, undefined)
+			}, null)
 
 			return attack
 		})

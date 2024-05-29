@@ -23,9 +23,9 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return
+			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return
+			if (!opponentActivePos) return null
 
 			const axeAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
@@ -41,7 +41,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.beforeAttack.addBefore(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return
+			if (!opponentActivePos) return null
 
 			if (attack.id === attackId) {
 				applySingleUse(game)

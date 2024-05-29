@@ -22,11 +22,11 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 
 		player.hooks.getAttacks.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return
+			if (!activePos) return null
 			const activeIndex = activePos.rowIndex
 			const opponentRows = opponentPlayer.board.rows
 
-			const attack = opponentRows.reduce((r: undefined | AttackModel, row, i) => {
+			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
 				if (!row || !row.hermitCard) return r
 				const newAttack = new AttackModel({
 					id: this.getInstanceKey(instance),
@@ -44,7 +44,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 				}).addDamage(this.id, 40)
 				if (r) return r.addNewAttack(newAttack)
 				return newAttack
-			}, undefined)
+			}, null)
 
 			return attack
 		})

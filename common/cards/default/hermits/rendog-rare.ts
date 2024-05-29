@@ -46,22 +46,22 @@ class RendogRareHermitCard extends HermitCard {
 
 		const imitatingCard: CardT | undefined = player.custom[imitatingCardKey]
 
-		if (!imitatingCard) return
+		if (!imitatingCard) return null
 
 		// No loops please
-		if (imitatingCard.cardId === this.id) return
+		if (imitatingCard.cardId === this.id) return null
 
 		const hermitInfo = HERMIT_CARDS[imitatingCard.cardId]
-		if (!hermitInfo) return
+		if (!hermitInfo) return null
 
 		const attackType = player.custom[pickedAttackKey]
-		if (!attackType) return
+		if (!attackType) return null
 		// Delete the stored data about the attack we chose
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
 		const newAttack = hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
-		if (!newAttack) return
+		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
 		newAttack.log = (values) => {

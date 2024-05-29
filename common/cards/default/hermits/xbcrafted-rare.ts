@@ -36,7 +36,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 		hermitAttackType: HermitAttackType
 	) {
 		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
-		if (!attack) return
+		if (!attack) return null
 
 		if (attack.type === 'secondary') {
 			// Noice attack, set flag to ignore target effect card

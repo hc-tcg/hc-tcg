@@ -57,15 +57,15 @@ abstract class HermitCard extends Card {
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
-	): AttackModel | undefined {
-		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return
+	): AttackModel | null {
+		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
 
 		const {opponentPlayer: opponentPlayer} = game
 		const targetIndex = opponentPlayer.board.activeRow
-		if (targetIndex === null) return
+		if (targetIndex === null) return null
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return
+		if (!targetRow.hermitCard) return null
 
 		// Create an attack with default damage
 		const attack = new AttackModel({
