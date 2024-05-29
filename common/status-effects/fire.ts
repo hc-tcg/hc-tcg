@@ -6,6 +6,7 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CARDS} from '../cards'
 
 class FireStatusEffect extends StatusEffect {
 	constructor() {
@@ -31,6 +32,10 @@ class FireStatusEffect extends StatusEffect {
 		if (hasDamageEffect) return
 
 		game.state.statusEffects.push(statusEffectInfo)
+
+		if (pos.card) {
+			game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was burned`)
+		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)

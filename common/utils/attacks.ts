@@ -206,9 +206,6 @@ export function executeExtraAttacks(
 	withoutBlockingActions = false
 ) {
 	executeAttacks(game, attacks, withoutBlockingActions)
-	attacks.map((attack) => {
-		game.battleLog.addAttackEntry(attack, [], null)
-	})
 	game.battleLog.sendLogs()
 }
 

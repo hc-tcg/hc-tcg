@@ -41,9 +41,9 @@ export class BattleLogModel {
 		if (coinFlip.tosses.length === 1) {
 			return heads > tails ? `flipped $gheads$` : `flipped $btails$`
 		} else if (tails === 0) {
-			return `flipped $gall heads$`
+			return `flipped $g${heads} heads$`
 		} else if (heads === 0) {
-			return `flipped $ball tails$`
+			return `flipped $b${tails} tails$`
 		} else {
 			return `flipped $g${heads} heads$ and $b${tails} tails$`
 		}
