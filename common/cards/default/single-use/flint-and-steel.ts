@@ -12,7 +12,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
-			log: (values) => `${values.header} to discard {your|their} hand and draw 3 cards`,
+			log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		})
 	}
 

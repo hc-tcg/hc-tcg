@@ -11,7 +11,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
-			log: (values) => `${values.header} with {your|their} attack`,
+			log: (values) => `${values.defaultLog} with {your|their} attack`,
 		})
 	}
 

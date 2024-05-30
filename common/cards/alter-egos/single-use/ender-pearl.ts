@@ -16,7 +16,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			description:
 				'Before your attack, move your active Hermit and any attached cards to an open row on your board. This Hermit also takes 10hp damage.',
 			log: (values) =>
-				`${values.header} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
+				`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 		})
 	}
 

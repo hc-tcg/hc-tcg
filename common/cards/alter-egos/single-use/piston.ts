@@ -15,7 +15,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
-			log: (values) => `${values.header} to move $m${values.pick.name}$`,
+			log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 		})
 	}
 

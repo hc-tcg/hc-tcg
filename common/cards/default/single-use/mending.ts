@@ -16,7 +16,7 @@ class MendingSingleUseCard extends singleUseCard {
 			rarity: 'ultra_rare',
 			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
 			log: (values) =>
-				`${values.header} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
+				`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 		})
 	}
 

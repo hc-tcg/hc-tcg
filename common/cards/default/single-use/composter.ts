@@ -15,7 +15,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
-			log: (values) => `${values.header} to discard 2 cards and draw 2 cards`,
+			log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		})
 	}
 

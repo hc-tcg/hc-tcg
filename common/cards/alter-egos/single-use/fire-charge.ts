@@ -16,7 +16,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
-			log: (values) => `${values.header} to discard ${getFormattedName(values.pick.id, false)}`,
+			log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 		})
 	}
 

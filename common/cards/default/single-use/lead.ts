@@ -24,7 +24,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			description:
 				"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
 			log: (values) =>
-				`${values.header} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
+				`${values.defaultLog} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
 		})
 	}
 

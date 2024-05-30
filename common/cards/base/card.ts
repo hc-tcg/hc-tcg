@@ -55,6 +55,11 @@ abstract class Card {
 	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
 
 	/**
+	 * Returns the description for this card that shows up in the sidebar.
+	 */
+	public abstract getFormattedDescription(): FormattedTextNode
+
+	/**
 	 * Called when an instance of this card is attached to the board
 	 */
 	public onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -109,13 +114,6 @@ abstract class Card {
 	public getActions(game: GameModel): TurnActions {
 		// default is to return nothing
 		return []
-	}
-
-	/**
-	 * Returns the description for this card that shows up in the sidebar.
-	 */
-	public getFormattedDescription(): FormattedTextNode {
-		return new TextNode('')
 	}
 
 	/**

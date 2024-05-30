@@ -13,13 +13,13 @@ export type AttackDefence = {
 export type ShouldIgnoreCard = (instance: string) => boolean
 
 export type AttackLog = {
+	defaultLog: string
 	attacker: string
 	attackName: string
 	player: string
 	opponent: string
 	target: string
 	damage: string
-	header: string
 	coinFlip: string | null
 }
 

@@ -137,7 +137,7 @@ export class BattleLogModel {
 			player: pos.player.playerName,
 			opponent: pos.opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
-			header: `$p{You|${pos.player.playerName}}$ used $e${card.name}$`,
+			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex ? `${pos.rowIndex}` : invalid,
 				id: pos.card ? pos.card.cardId : invalid,
@@ -221,7 +221,7 @@ export class BattleLogModel {
 				target: `$${targetFormatting}${targetHermitInfo.name} ${rowNumberString}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage()}hp$`,
-				header: this.generateEffectEntryHeader(singleUse),
+				defaultLog: this.generateEffectEntryHeader(singleUse),
 				coinFlip: this.generateCoinFlipMessage(attack, coinFlips),
 			})
 

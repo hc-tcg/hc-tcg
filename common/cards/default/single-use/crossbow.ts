@@ -96,7 +96,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 					type: 'effect',
 					log: (values) =>
 						i === 0
-							? `${values.header} to attack ${values.target} for ${values.damage} damage`
+							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
 							: `, ${values.target} for ${values.damage} damage`,
 				}).addDamage(this.id, 20)
 

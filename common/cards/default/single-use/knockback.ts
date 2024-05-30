@@ -12,7 +12,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
-			log: (values) => `${values.header} with {your|their} attack`,
+			log: (values) => `${values.defaultLog} with {your|their} attack`,
 		})
 	}
 

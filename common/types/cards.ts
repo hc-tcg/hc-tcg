@@ -65,10 +65,10 @@ export type SlotPos = {
 }
 
 export type PlayCardLog = {
+	defaultLog: string
 	player: string
 	opponent: string
 	coinFlip: string
-	header: string
 	pos: {
 		rowIndex: string
 		id: string

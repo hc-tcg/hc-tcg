@@ -12,7 +12,7 @@ class InvisibilityPotionSingleUseCard extends SingleUseCard {
 			rarity: 'rare',
 			description:
 				"Flip a coin.\nIf heads, your opponent's next attack misses. If tails, their attack damage doubles.",
-			log: (values) => `${values.header}, and ${values.coinFlip}`,
+			log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 		})
 	}
 

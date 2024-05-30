@@ -38,7 +38,8 @@ class DiamondSwordSingleUseCard extends SingleUseCard {
 					row: opponentRow,
 				},
 				type: 'effect',
-				log: (values) => `${values.header} to attack ${values.target} for ${values.damage} damage`,
+				log: (values) =>
+					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 40)
 
 			return swordAttack
