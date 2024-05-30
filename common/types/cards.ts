@@ -65,22 +65,34 @@ export type SlotPos = {
 }
 
 export type PlayCardLog = {
+	/**The default log for single use cards.*/
 	defaultLog: string
+	/**The name of the player this card was attached to.*/
 	player: string
+	/**The name of the player this card was not attached to.*/
 	opponent: string
+	/**Result of the coinflip tied to this card.*/
 	coinFlip: string
+	/**Information about where this card was placed.*/
 	pos: {
+		/**Row index this card was placed on.*/
 		rowIndex: string
-		id: string
+		/**The name of this card.*/
 		name: string
+		/**The name of the Hermit Card on the row the card was placed.*/
 		hermitCard: string
+		/**The slot type the card was placed on.*/
 		slotType: string
 	}
+	/**Information about the pick for the card.*/
 	pick: {
+		/**The picked row index.*/
 		rowIndex: string
-		id: string
+		/**Name of the card in the slot that was picked.*/
 		name: string
+		/**The name of the Hermit Card on the row that was picked.*/
 		hermitCard: string
+		/**The slot type that was picked.*/
 		slotType: string
 	}
 }

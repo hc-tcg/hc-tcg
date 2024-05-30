@@ -140,7 +140,6 @@ export class BattleLogModel {
 			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex ? `${pos.rowIndex}` : invalid,
-				id: pos.card ? pos.card.cardId : invalid,
 				name: pos.card ? getCardName(pos.player, pos.card.cardId, pos.rowIndex) : invalid,
 				hermitCard: pos.row?.hermitCard
 					? getCardName(pos.player, pos.row.hermitCard.cardId, pos.rowIndex)
@@ -149,7 +148,6 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: pickInfo ? `${pickInfo.rowIndex}` : invalid,
-				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
 				name: pickInfo?.card
 					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)
 					: invalid,
