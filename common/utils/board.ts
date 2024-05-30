@@ -212,6 +212,7 @@ export function removeStatusEffect(
 
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
+	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'

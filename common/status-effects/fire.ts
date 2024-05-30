@@ -34,7 +34,7 @@ class FireStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 
 		if (pos.card) {
-			game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $bBurned$`)
+			game.battleLog.addCustomEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $eBurned$`)
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {

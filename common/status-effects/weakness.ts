@@ -28,7 +28,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		if (pos.card) {
 			game.battleLog.addCustomEntry(
 				player.id,
-				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $bWeakness$`
+				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $eWeakness$`
 			)
 		}
 

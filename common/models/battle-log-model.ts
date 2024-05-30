@@ -14,6 +14,7 @@ import {LineNode, formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import {PickInfo} from '../types/server-requests'
+import StatusEffect from '../status-effects/status-effect'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -278,17 +279,19 @@ export class BattleLogModel {
 		if (oldHermit) {
 			const oldHermitInfo = CARDS[oldHermit.cardId]
 
-			this.addCustomEntry(
-				player.id,
-				`$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
+			this.logMessageQueue.push({
+				player: player.id,
+				description: `$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
 					newHermitInfo.name
-				}$ on row #${newRow + 1}`
-			)
+				}$ on row #${newRow + 1}`,
+			})
 		} else {
-			this.addCustomEntry(
-				player.id,
-				`$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${newRow + 1}`
-			)
+			this.logMessageQueue.push({
+				player: player.id,
+				description: `$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${
+					newRow + 1
+				}`,
+			})
 		}
 	}
 
@@ -314,5 +317,13 @@ export class BattleLogModel {
 		})
 
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
+	}
+
+	public addRemoveStatusEffectEntry(statusEffect: StatusEffect) {
+		this.logMessageQueue.push({
+			player: this.game.currentPlayer.id,
+			description: `$e${statusEffect.name}$ wore off`,
+		})
+		this.sendLogs()
 	}
 }
