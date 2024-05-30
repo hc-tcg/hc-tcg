@@ -14,6 +14,8 @@ class StringEffectCard extends EffectCard {
 			rarity: 'rare',
 			description:
 				"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
+			log: (values) =>
+				`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
 		})
 	}
 
