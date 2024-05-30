@@ -6,7 +6,8 @@ type GlossaryEntry = {
 export const GLOSSARY: Record<string, GlossaryEntry> = {
 	missed: {
 		name: 'Missed',
-		description: "Missed attacks deal 0 damage, but don't prevent any abilities from happening.",
+		description:
+			'A missed attack does not deal any damage, including damage from its ability. Effects and status effects can not miss.',
 	},
 	turnSkip: {
 		name: 'Turn Skip',

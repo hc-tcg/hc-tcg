@@ -23,7 +23,7 @@ class HotguyRareHermitCard extends HermitCard {
 				name: 'Hawkeye',
 				cost: ['explorer', 'explorer'],
 				damage: 80,
-				power: 'When used with a bow effect card, bow damage is doubled.',
+				power: 'When used with a bow effect card, bow damage doubles.',
 			},
 		})
 	}

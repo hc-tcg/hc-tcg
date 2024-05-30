@@ -50,13 +50,13 @@
 	"MINER": "",
 	"tinfoilchef_common": 0,
 	"tinfoilchef_rare": 2,
-	"hypnotizd_rare": 2,
+	"hypnotizd_rare": 3,
 	"tinfoilchef_ultra_rare": 2,
 
 	"PRANKSTER": "",
 	"grian_rare": 2,
 	"mumbojumbo_rare": 3,
-	"stressmonster101_rare": 4,
+	"stressmonster101_rare": 3,
 
 	"PVP": "",
 	"falsesymmetry_common": 0,
@@ -72,7 +72,7 @@
 	"zedaphplays_common": 0,
 	"xisumavoid_rare": 2,
 	"ethoslab_rare": 3,
-	"impulsesv_rare": 3,
+	"impulsesv_rare": 4,
 
 	"SPEEDRUNNER": "",
 	"cubfan135_rare": 1,
@@ -238,15 +238,15 @@
 	"architectfalse_common": 0,
 	"boomerbdubs_rare": 1,
 	"dwarfimpulse_common": 0,
-	"fivempearl_rare": 1,
+	"fiveampearl_rare": 1,
 	"frenchkeralis_common": 0,
-	"horseheadhypno_rare": 1,
+	"horseheadhypno_common": 1,
 	"iskallman_rare": 1,
 	"originalxb_common": 1,
 	"overseer_rare": 0,
 	"princessgem_common": 1,
 	"shadee_common": 0,
 	"spookystress_common": 0,
-	"steampunktango_common": 1,
+	"steampunktango_common": 0,
 	"wormman_common": 0
 }

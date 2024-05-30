@@ -91,6 +91,10 @@ text.attackName {
 
 .attackDamage.specialMove {
 	fill: rgb(23, 66, 234);
+
+	&.alter_egos {
+		fill: rgb(74, 128, 255);
+	}
 }
 
 .attackItems.alter_egos.prankster {

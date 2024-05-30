@@ -9,26 +9,19 @@
 
 	&.small {
 		font-size: 14px;
-		width: 15rem;
 		display: flex;
 		flex-direction: column;
 
 		> div > p {
 			color: var(--gray-300);
 		}
-
-		@media screen and (max-width: 80vh) {
-			width: 380px;
-		}
 	}
 }
 
 .cardTooltipContainer {
-	@media screen and (max-width: 80vh) {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .tooltipSidebar {
@@ -44,15 +37,9 @@
 }
 
 .tooltipBelow {
-	visibility: hidden;
-	display: none;
-
-	@media screen and (max-width: 80vh) {
-		visibility: visible;
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
 }
 
 .smallText {

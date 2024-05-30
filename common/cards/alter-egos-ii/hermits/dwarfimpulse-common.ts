@@ -6,7 +6,7 @@ class DwarfImpulseCommonHermitCard extends HermitCard {
 			id: 'dwarfimpulse_common',
 			numericId: 229,
 			name: 'Dwarf Impulse',
-			rarity: 'rare',
+			rarity: 'common',
 			hermitType: 'farm',
 			health: 250,
 			primary: {

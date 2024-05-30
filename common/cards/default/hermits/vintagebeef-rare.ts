@@ -14,7 +14,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			hermitType: 'builder',
 			health: 290,
 			primary: {
-				name: 'Poik',
+				name: 'Pojk',
 				cost: ['any'],
 				damage: 40,
 				power: null,

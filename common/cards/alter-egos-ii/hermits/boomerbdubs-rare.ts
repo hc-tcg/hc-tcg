@@ -24,7 +24,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 				cost: ['redstone', 'redstone'],
 				damage: 80,
 				power:
-					'Flip a coin as many times as you want.\n\nAdd 20hp damage for every heads. If tails is flipped, your turn is over and this attack deals 0 damage.',
+					'Flip a coin as many times as you want.\n\nDo an additional 20hp damage for every heads, but if tails is flipped, this attack deals 0hp total damage.',
 			},
 		})
 	}
@@ -97,13 +97,17 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (player.custom[instanceKey] === null) return
 			if (player.custom[instanceKey] === 0) {
 				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
 				return
 			}
+			if (!player.custom[instanceKey]) return
 
 			attack.addDamage(this.id, player.custom[instanceKey])
+		})
+
+		player.hooks.onTurnEnd.add(instance, () => {
+			delete player.custom[instanceKey]
 		})
 	}
 
@@ -114,6 +118,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.beforeAttack.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 	}
 
 	override getExpansion() {

@@ -14,7 +14,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do 40hp damage to your opponent's active Hermit.\n\nAny effect cards attached to your opponent's active Hermit are ignored during this turn.",
+				"Do 40hp damage to your opponent's active Hermit.\n\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
 		})
 	}
 
@@ -51,16 +51,18 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			}
 
 			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !attack.getTarget()) return false
+				if (!pos || !pos.row || !pos.row.effectCard) return false
 
-				const isTargeting = isTargetingPos(attack, opponentActivePos)
-				if (isTargeting && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
+				// It's not the targets effect card, do not ignore it
+				if (pos.slot.type !== 'effect') return false
 
-				return false
+				// Not attached to the same row as the opponent's active Hermit, do not ignore it
+				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
+
+				// Do not ignore the player's effect.
+				if (pos.player === player) return false
+
+				return true
 			})
 		})
 

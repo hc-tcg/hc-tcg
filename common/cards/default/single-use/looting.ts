@@ -14,7 +14,7 @@ class LootingSingleUseCard extends SingleUseCard {
 			name: 'Looting',
 			rarity: 'rare',
 			description:
-				"Flip a coin. If heads, pick 1 item card from your opponent's active Hermit and add it to your hand.",
+				"Flip a coin.\n\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
 		})
 	}
 
@@ -54,9 +54,9 @@ class LootingSingleUseCard extends SingleUseCard {
 					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
-					const playerRow = player.board.rows[pickResult.rowIndex]
+					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'SUCCESS'
+					if (!hermitCard || !playerRow.health) return 'FAILURE_INVALID_SLOT'
 					moveCardToHand(game, pickResult.card, player)
 
 					return 'SUCCESS'

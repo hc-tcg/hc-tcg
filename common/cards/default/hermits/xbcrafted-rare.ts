@@ -9,7 +9,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 		super({
 			id: 'xbcrafted_rare',
 			numericId: 110,
-			name: 'XB',
+			name: 'xB',
 			rarity: 'rare',
 			hermitType: 'explorer',
 			health: 270,
@@ -24,7 +24,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 				cost: ['explorer', 'any'],
 				damage: 70,
 				power:
-					"Any effect cards attached to your opponent's active Hermit are ignored during this turn.",
+					"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
 			},
 		})
 	}
@@ -58,16 +58,18 @@ class XBCraftedRareHermitCard extends HermitCard {
 
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !attack.getTarget()) return false
+				if (!pos || !pos.row || !pos.row.effectCard) return false
 
-				const isTargeting = isTargetingPos(attack, opponentActivePos)
-				if (isTargeting && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
+				// It's not the targets effect card, do not ignore it
+				if (pos.slot.type !== 'effect') return false
 
-				return false
+				// Not attached to the same row as the opponent's active Hermit, do not ignore it
+				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
+
+				// Do not ignore the player's effect.
+				if (pos.player === player) return false
+
+				return true
 			})
 		})
 
