@@ -2,6 +2,7 @@ import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
 import Card from './card'
 import {CardPosModel} from '../../models/card-pos-model'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 
 type HealthDefs = {
 	id: string
@@ -28,6 +29,10 @@ class HealthCard extends Card {
 
 	public override canAttach(game: GameModel, pos: CardPosModel) {
 		return []
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return formatText(`${this.health}`)
 	}
 }
 
