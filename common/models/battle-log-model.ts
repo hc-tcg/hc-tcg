@@ -112,7 +112,7 @@ export class BattleLogModel {
 			if (
 				cardInfo.type === 'hermit' &&
 				player &&
-				player.board.activeRow === rowIndex &&
+				player.board.activeRow !== rowIndex &&
 				rowIndex !== null &&
 				rowIndex !== undefined
 			) {
@@ -238,7 +238,7 @@ export class BattleLogModel {
 			  }, '')
 			: ''
 
-		this.logMessageQueue.unshift({
+		this.logMessageQueue.push({
 			player: playerId,
 			description: log,
 		})
