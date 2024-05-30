@@ -98,7 +98,6 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				placeholder="Enter Deck Name..."
 				className={css.input}
 				required={true}
-				pattern={`^[a-zA-Z0-9 ]*$`}
 				onBlur={() => handleBlur()}
 				data-focused={inputIsFocused}
 			/>
