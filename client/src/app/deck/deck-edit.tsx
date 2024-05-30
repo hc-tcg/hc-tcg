@@ -101,6 +101,9 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				onBlur={() => handleBlur()}
 				data-focused={inputIsFocused}
 			/>
+			<p className={css.errorMessage}>
+				Deck name should be between 1-32 characters and shouldn't include any special characters.
+			</p>
 		</div>
 	)
 }
