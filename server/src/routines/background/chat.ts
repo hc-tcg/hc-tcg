@@ -18,7 +18,7 @@ function* chatMessageSaga(game: GameModel, action: AnyAction) {
 
 	game.chat.push({
 		message: concatFormattedTextNodes(
-			formatText(`$p${game.players[playerId].name}$ `),
+			formatText(`$p${game.players[playerId].name}$ `, {censor: true}),
 			formatText(message, {
 				censor: true,
 				'enable-$': false,

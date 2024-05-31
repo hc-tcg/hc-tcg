@@ -15,19 +15,16 @@ import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {useDrag} from '@use-gesture/react'
 import {FormattedText} from 'components/formatting/formatting'
 import classNames from 'classnames'
-import {LineNode} from 'common/utils/formatting'
 
 function Chat() {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.disableChat === 'off' ? useSelector(getChatMessages) : []
-	const playerStates = useSelector(getPlayerStates)
 	const playerId = useSelector(getPlayerId)
 	const opponent = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
-	const opponentId = useSelector(getOpponentId)
 
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
@@ -106,13 +103,12 @@ function Chat() {
 							minute: '2-digit',
 						})
 
-						const opponent = playerId !== line.sender
-						const opponentName = opponentId ? playerStates?.[opponentId].playerName : null
+						const isOpponent = playerId !== line.sender
 						if (line.message.TYPE === 'LineNode') {
 							return (
 								<div className={css.message}>
 									<span className={css.turnTag}>
-										{opponent ? `${opponentName}'s`.toLocaleUpperCase() : 'YOUR'} TURN
+										{isOpponent ? `${opponent}'s`.toLocaleUpperCase() : 'YOUR'} TURN
 									</span>
 									<span className={css.line}></span>
 								</div>
@@ -124,7 +120,7 @@ function Chat() {
 								<span className={css.time}>{hmTime}</span>
 								<span className={classNames(line.systemMessage ? css.systemMessage : css.text)}>
 									{FormattedText(line.message, {
-										isOpponent: opponent,
+										isOpponent,
 										censorProfanity: settings.profanityFilter === 'on',
 									})}
 								</span>

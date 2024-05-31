@@ -41,109 +41,80 @@ export type FormattedTextNode =
 	| ProfanityNode
 	| EmojiNode
 	| LineBreakNode
+	| LineNode
 	| TabNode
 
-export class ListNode {
-	public TYPE = 'ListNode'
+export type ListNode = {
+	TYPE: 'ListNode'
 
-	public nodes: FormattedTextNode[]
-
-	constructor(nodes: FormattedTextNode[]) {
-		this.nodes = nodes
-	}
+	nodes: FormattedTextNode[]
 }
 
-export class EmptyNode {
-	public TYPE = 'EmptyNode'
+export type EmptyNode = {
+	TYPE: 'EmptyNode'
 }
 
-export class TextNode {
-	public TYPE = 'TextNode'
+export type TextNode = {
+	TYPE: 'TextNode'
 
-	public text: string
-
-	constructor(text: string) {
-		this.text = text
-	}
+	text: string
 }
 
-export class FormatNode {
-	public TYPE = 'FormatNode'
+export type FormatNode = {
+	TYPE: 'FormatNode'
 
-	public format: Format
-	public text: FormattedTextNode
-
-	static formatDict: Record<string, Format> = {
-		p: 'player',
-		o: 'opponent',
-		e: 'effect',
-		m: 'item',
-		v: 'attack',
-		g: 'good',
-		b: 'bad',
-		k: 'keyword',
+	format: Format
+	text: FormattedTextNode
+}
+const formatDict: Record<string, Format> = {
+	p: 'player',
+	o: 'opponent',
+	e: 'effect',
+	m: 'item',
+	v: 'attack',
+	g: 'good',
+	b: 'bad',
+	k: 'keyword',
+}
+function fromShorthand(formatShorthand: string, text: FormattedTextNode): FormatNode {
+	let format = formatDict[formatShorthand]
+	if (format == undefined) {
+		throw new Error(`Format ${format} not found.`)
 	}
+	return {TYPE: 'FormatNode', format, text}
+}
+export type DifferentTextNode = {
+	TYPE: 'DifferentTextNode'
 
-	constructor(format: Format, text: FormattedTextNode) {
-		this.format = format
-		this.text = text
-	}
-
-	static fromShorthand(formatShorthand: string, text: FormattedTextNode) {
-		let format = this.formatDict[formatShorthand]
-		if (format == undefined) {
-			throw new Error(`Format ${format} not found.`)
-		}
-		return new FormatNode(format, text)
-	}
+	playerText: FormattedTextNode
+	opponentText: FormattedTextNode
 }
 
-export class DifferentTextNode {
-	public TYPE = 'DifferentTextNode'
+export type EmojiNode = {
+	TYPE: 'EmojiNode'
 
-	public playerText: FormattedTextNode
-	public opponentText: FormattedTextNode
-
-	constructor(playerText: FormattedTextNode, opponentText: FormattedTextNode) {
-		this.playerText = playerText
-		this.opponentText = opponentText
-	}
+	emoji: string
 }
 
-export class EmojiNode {
-	public TYPE = 'EmojiNode'
+export type ProfanityNode = {
+	TYPE: 'ProfanityNode'
 
-	public emoji: string
-
-	constructor(emoji: string) {
-		this.emoji = emoji
-	}
+	text: string
+}
+export function censor(node: ProfanityNode) {
+	return '*'.repeat(node.text.length)
 }
 
-export class ProfanityNode {
-	public TYPE = 'ProfanityNode'
-
-	public text: string
-
-	public censor() {
-		return '*'.repeat(this.text.length)
-	}
-
-	constructor(text: string) {
-		this.text = text
-	}
+export type LineBreakNode = {
+	TYPE: 'LineBreakNode'
 }
 
-export class LineBreakNode {
-	public TYPE = 'LineBreakNode'
+export type LineNode = {
+	TYPE: 'LineNode'
 }
 
-export class LineNode {
-	public TYPE = 'LineNode'
-}
-
-export class TabNode {
-	public TYPE = 'TabNode'
+export type TabNode = {
+	TYPE: 'TabNode'
 }
 
 // The special characters that can end the expression.
@@ -173,7 +144,7 @@ const messageParseOptions: Array<
 				config
 			)
 
-			if (node.TYPE == 'EmptyNode') {
+			if (node.TYPE === 'EmptyNode') {
 				throw new Error('Expected an expression, not $')
 			}
 
@@ -181,7 +152,7 @@ const messageParseOptions: Array<
 				throw new Error('Expected $')
 			}
 
-			return [FormatNode.fromShorthand(format, node), remaining.slice(1)]
+			return [fromShorthand(format, node), remaining.slice(1)]
 		},
 	],
 	[
@@ -208,7 +179,10 @@ const messageParseOptions: Array<
 
 			remaining = remaining.slice(1)
 
-			return [new DifferentTextNode(firstNode, secondNode), remaining]
+			return [
+				{TYPE: 'DifferentTextNode', playerText: firstNode, opponentText: secondNode},
+				remaining,
+			]
 		},
 	],
 	[
@@ -231,7 +205,10 @@ const messageParseOptions: Array<
 				config
 			)
 			remaining = remaining.slice(2)
-			return [new FormatNode('bold', nodes || new TextNode('')), remaining]
+			return [
+				{TYPE: 'FormatNode', format: 'bold', text: nodes || {TYPE: 'TextNode', text: ''}},
+				remaining,
+			]
 		},
 	],
 	[
@@ -254,7 +231,10 @@ const messageParseOptions: Array<
 				config
 			)
 			remaining = remaining.slice(1)
-			return [new FormatNode('italic', nodes || new TextNode('')), remaining]
+			return [
+				{TYPE: 'FormatNode', format: 'italic', text: nodes || {TYPE: 'TextNode', text: ''}},
+				remaining,
+			]
 		},
 	],
 	[
@@ -269,19 +249,19 @@ const messageParseOptions: Array<
 				throw new Error('Expected : to close expression.')
 			}
 
-			return [new EmojiNode(emojiText), remaining.slice(1)]
+			return [{TYPE: 'EmojiNode', emoji: emojiText}, remaining.slice(1)]
 		},
 	],
 	[
 		(text: string, _: Config) => text.startsWith('\n'),
 		(text: string, _: Config) => {
-			return [new LineBreakNode(), text.slice(1)]
+			return [{TYPE: 'LineBreakNode'}, text.slice(1)]
 		},
 	],
 	[
 		(text: string, _: Config) => text.startsWith('\t'),
 		(text: string, _: Config) => {
-			return [new TabNode(), text.slice(1)]
+			return [{TYPE: 'TabNode'}, text.slice(1)]
 		},
 	],
 	[(_) => true, parseTextNode],
@@ -313,7 +293,7 @@ function isAlphanumeric(char: string) {
 	)
 }
 
-function createCensoredTextNodes(text: string): FormattedTextNode {
+function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListNode {
 	let nodes = []
 
 	let lowercaseText = text.toLowerCase()
@@ -344,11 +324,14 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 
 			if (isSpaceBefore && isSpaceAfter) {
 				if (textBefore.length > 0) {
-					nodes.push(new TextNode(textBefore))
+					nodes.push({TYPE: 'TextNode' as const, text: textBefore})
 				}
-				nodes.push(new ProfanityNode(text.slice(startIndex, startIndex + word.length)))
+				nodes.push({
+					TYPE: 'ProfanityNode' as const,
+					text: text.slice(startIndex, startIndex + word.length),
+				})
 			} else {
-				nodes.push(new TextNode(text.slice(0, startIndex + word.length)))
+				nodes.push({TYPE: 'TextNode' as const, text: text.slice(0, startIndex + word.length)})
 			}
 
 			text = text.slice(startIndex + word.length)
@@ -358,15 +341,15 @@ function createCensoredTextNodes(text: string): FormattedTextNode {
 
 	if (nodes.length != 0) {
 		if (text.length !== 0) {
-			nodes.push(new TextNode(text))
+			nodes.push({TYPE: 'TextNode' as const, text})
 		}
 		if (nodes.length === 1) {
 			return nodes[0]
 		}
-		return new ListNode(nodes)
+		return {TYPE: 'ListNode', nodes}
 	}
 
-	return new TextNode(text)
+	return {TYPE: 'TextNode', text}
 }
 
 // Parse the raw text that is part of a text mode or emoji node. Handles escape
@@ -414,7 +397,7 @@ function parseNodesWhile(
 	config: Config
 ): [FormattedTextNode, string] {
 	let remaining = text
-	let nodes = []
+	let nodes: FormattedTextNode[] = []
 
 	try {
 		while (true) {
@@ -432,18 +415,18 @@ function parseNodesWhile(
 		}
 	} catch (e) {
 		if (remaining.length != 0) {
-			nodes.push(new TextNode(remaining))
+			nodes.push({TYPE: 'TextNode', text: remaining})
 			remaining = ''
 		}
 	}
 
-	let formatNode
+	let formatNode: FormattedTextNode
 	if (nodes.length == 0) {
-		formatNode = new EmptyNode()
+		formatNode = {TYPE: 'EmptyNode'}
 	} else if (nodes.length == 1) {
 		formatNode = nodes[0]
 	} else {
-		formatNode = new ListNode(nodes)
+		formatNode = {TYPE: 'ListNode', nodes}
 	}
 
 	return [formatNode, remaining]
@@ -468,11 +451,11 @@ function parseTextNode(text: string, config: Config): [FormattedTextNode, string
 	let remaining
 	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
 
-	let textNodes
+	let textNodes: FormattedTextNode
 	if (config.censor) {
 		textNodes = createCensoredTextNodes(text)
 	} else {
-		textNodes = new TextNode(text)
+		textNodes = {TYPE: 'TextNode', text}
 	}
 
 	return [textNodes, remaining]
@@ -494,17 +477,17 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 	try {
 		return parseNodesUntilEmpty(text, config)
 	} catch (e) {
-		return new TextNode('There was a unrecoverable formatting error')
+		return {TYPE: 'TextNode', text: 'There was a unrecoverable formatting error'}
 	}
 }
 
 export function censorString(text: string) {
 	let node = createCensoredTextNodes(text)
 
-	if (node.TYPE == 'TextNode') {
-		return (node as TextNode).text
-	} else if (node.TYPE == 'ProfanityNode') {
-		return (node as ProfanityNode).censor()
+	if (node.TYPE === 'TextNode') {
+		return node.text
+	} else if (node.TYPE === 'ProfanityNode') {
+		return censor(node)
 	}
 
 	let outputText = []
@@ -512,9 +495,9 @@ export function censorString(text: string) {
 	let listNode = node as ListNode
 	for (let textNode of listNode.nodes) {
 		if (textNode.TYPE === 'TextNode') {
-			outputText.push((textNode as TextNode).text)
+			outputText.push(textNode.text)
 		} else if (textNode.TYPE === 'ProfanityNode') {
-			outputText.push((textNode as ProfanityNode).censor())
+			outputText.push(censor(textNode))
 		}
 	}
 
@@ -522,5 +505,5 @@ export function censorString(text: string) {
 }
 
 export function concatFormattedTextNodes(...nodes: Array<FormattedTextNode>): ListNode {
-	return new ListNode(nodes)
+	return {TYPE: 'ListNode', nodes}
 }

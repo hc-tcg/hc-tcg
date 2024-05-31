@@ -74,7 +74,7 @@ export class BattleLogModel {
 
 			this.game.chat.push({
 				createdAt: Date.now(),
-				message: formatText(firstEntry.description),
+				message: formatText(firstEntry.description, {censor: true}),
 				sender: firstEntry.player,
 				systemMessage: true,
 			})
@@ -311,7 +311,7 @@ export class BattleLogModel {
 	public addTurnEndEntry() {
 		this.game.chat.push({
 			createdAt: Date.now(),
-			message: new LineNode(),
+			message: {TYPE: 'LineNode'},
 			sender: this.game.opponentPlayer.id,
 			systemMessage: true,
 		})
