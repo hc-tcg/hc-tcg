@@ -1,11 +1,6 @@
 import {SyntheticEvent, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {
-	getChatMessages,
-	getOpponentId,
-	getOpponentName,
-	getPlayerStates,
-} from 'logic/game/game-selectors'
+import {getChatMessages, getOpponentName} from 'logic/game/game-selectors'
 import {chatMessage} from 'logic/game/game-actions'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -21,7 +16,7 @@ function Chat() {
 	const settings = useSelector(getSettings)
 	const chatMessages = settings.disableChat === 'off' ? useSelector(getChatMessages) : []
 	const playerId = useSelector(getPlayerId)
-	const opponent = useSelector(getOpponentName)
+	const opponentName = useSelector(getOpponentName)
 	const chatPosSetting = settings.chatPosition
 	const chatSize = settings.chatSize
 	const showLog = settings.showBattleLogs
@@ -85,7 +80,7 @@ function Chat() {
 			}}
 		>
 			<div className={css.header} {...bindChatPos()}>
-				<p>Chatting with {opponent}</p>
+				<p>Chatting with {opponentName}</p>
 				<Button onClick={() => dispatch(setSetting('showBattleLogs', !showLog))} size="small">
 					{showLog ? 'Hide Battle Log' : 'Show Battle Log'}
 				</Button>
@@ -108,7 +103,7 @@ function Chat() {
 							return (
 								<div className={css.message}>
 									<span className={css.turnTag}>
-										{isOpponent ? `${opponent}'s`.toLocaleUpperCase() : 'YOUR'} TURN
+										{isOpponent ? `${opponentName}'s`.toLocaleUpperCase() : 'YOUR'} TURN
 									</span>
 									<span className={css.line}></span>
 								</div>
