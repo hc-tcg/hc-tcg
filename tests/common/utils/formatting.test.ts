@@ -18,9 +18,7 @@ describe('formatting tests', () => {
 	})
 
 	test('different text node', () => {
-		expect(formatText('{a|b}')).toStrictEqual(
-			DifferentTextNode(TextNode('a'), TextNode('b'))
-		)
+		expect(formatText('{a|b}')).toStrictEqual(DifferentTextNode(TextNode('a'), TextNode('b')))
 		expect(formatText('left{a|b}right')).toStrictEqual(
 			ListNode([
 				TextNode('left'),
@@ -48,9 +46,7 @@ describe('formatting tests', () => {
 		)
 
 		expect(formatText('*hello')).toStrictEqual(TextNode('*hello'))
-		expect(formatText('**hello')).toStrictEqual(
-			ListNode([TextNode('*'), TextNode('*hello')])
-		)
+		expect(formatText('**hello')).toStrictEqual(ListNode([TextNode('*'), TextNode('*hello')]))
 	})
 
 	test('profanity node', () => {
@@ -73,18 +69,13 @@ describe('formatting tests', () => {
 			TextNode('こんにちは、ずんだもんだよ')
 		)
 		expect(formatText('こんにちは、**ずんだもんだよ**')).toStrictEqual(
-			ListNode([
-				TextNode('こんにちは、'),
-				FormatNode('bold', TextNode('ずんだもんだよ')),
-			])
+			ListNode([TextNode('こんにちは、'), FormatNode('bold', TextNode('ずんだもんだよ'))])
 		)
 	})
 
 	test('escape formatting sequences', () => {
 		expect(formatText('\\')).toStrictEqual(TextNode('\\'))
-		expect(formatText('\\*HELLO*')).toStrictEqual(
-			ListNode([TextNode('*HELLO'), TextNode('*')])
-		)
+		expect(formatText('\\*HELLO*')).toStrictEqual(ListNode([TextNode('*HELLO'), TextNode('*')]))
 		expect(formatText('\\*HELLO\\*')).toStrictEqual(TextNode('*HELLO*'))
 		expect(formatText('\\*HELLO\\*\\')).toStrictEqual(TextNode('*HELLO*\\'))
 		expect(formatText('*HELLO\\*')).toStrictEqual(TextNode('*HELLO*'))
