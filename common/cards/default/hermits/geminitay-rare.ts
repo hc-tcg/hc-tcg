@@ -35,8 +35,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			player.hooks.afterAttack.add(instance, (attack) => {
-				// To keep this simple gem will discard the single use card, if it's used
-				// Hopefully, removing it doesn't break anything.
+				// Discard the single-use card.
 				discardSingleUse(game, player)
 
 				// We are hooking into afterAttack, so we just remove the blocks on actions
