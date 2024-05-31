@@ -1,4 +1,4 @@
-import {FormattedTextNode, censor} from 'common/utils/formatting'
+import {FormattedTextNode, censorProfanityNode} from 'common/utils/formatting'
 
 import css from './formatting.module.scss'
 import classNames from 'classnames'
@@ -38,7 +38,7 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 		)
 	} else if (node.TYPE == 'ProfanityNode') {
 		if (settings.censorProfanity) {
-			return <span> {censor(node)} </span>
+			return <span> {censorProfanityNode(node)} </span>
 		}
 		return <span>{node.text}</span>
 	} else if (node.TYPE == 'EmojiNode') {
