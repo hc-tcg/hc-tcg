@@ -30,7 +30,7 @@ class RendogRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
@@ -39,7 +39,7 @@ class RendogRareHermitCard extends HermitCard {
 		const {player} = pos
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 		if (attack.id !== this.getInstanceKey(instance)) return attack
@@ -60,7 +60,7 @@ class RendogRareHermitCard extends HermitCard {
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
-		const newAttack = hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttack(game, imitatingCard.cardInstance, pos, attackType)
 		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name

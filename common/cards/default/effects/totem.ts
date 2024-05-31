@@ -40,10 +40,7 @@ class TotemEffectCard extends EffectCard {
 
 			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
 
-			game.battleLog.addCustomEntry(
-				player.id,
-				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`
-			)
+			game.battleLog.addEntry(player.id, `Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`)
 
 			// This will remove this hook, so it'll only be called once
 			discardCard(game, row.effectCard)

@@ -58,7 +58,7 @@ class BowSingleUseCard extends SingleUseCard {
 			})
 		})
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 
@@ -94,7 +94,7 @@ class BowSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
 
 		const targetKey = this.getInstanceKey(instance, 'target')

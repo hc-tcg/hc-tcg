@@ -37,14 +37,14 @@ class HypnotizdRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player, opponentPlayer} = pos
-		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 

@@ -28,7 +28,8 @@ abstract class Card {
 	public name: string
 	public rarity: CardRarityT
 
-	/** The battle log attached to this attack */
+	/** The battle log attached to this card */
+	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	public log: ((values: PlayCardLog) => string) | null
 
 	constructor(defs: CardDefs) {

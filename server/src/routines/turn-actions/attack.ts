@@ -10,7 +10,7 @@ import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {getActiveRow} from 'common/utils/board'
 import {executeAttacks} from 'common/utils/attacks'
 
-function getAttacks(
+function getAttack(
 	game: GameModel,
 	attackPos: CardPosModel,
 	hermitAttackType: HermitAttackType
@@ -23,7 +23,7 @@ function getAttacks(
 	// hermit attacks
 	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
 
-	const nextAttack = hermitCard.getAttacks(
+	const nextAttack = hermitCard.getAttack(
 		game,
 		attackPos.row.hermitCard.cardInstance,
 		attackPos,
@@ -33,7 +33,7 @@ function getAttacks(
 	if (nextAttack) attacks.push(nextAttack)
 
 	// all other attacks
-	const otherAttacks = currentPlayer.hooks.getAttacks.call()
+	const otherAttacks = currentPlayer.hooks.getAttack.call()
 	otherAttacks.forEach((otherAttack) => {
 		if (otherAttack) attacks.push(otherAttack)
 	})
@@ -93,7 +93,7 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
+	let attacks: Array<AttackModel> = getAttack(game, attackPos, hermitAttackType)
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

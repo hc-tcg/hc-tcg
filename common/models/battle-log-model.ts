@@ -260,7 +260,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public addCustomEntry(player: string, entry: string) {
+	public addEntry(player: string, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,

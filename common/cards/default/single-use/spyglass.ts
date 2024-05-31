@@ -52,7 +52,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 					discardFromHand(opponentPlayer, modalResult.cards[0])
 
-					game.battleLog.addCustomEntry(
+					game.battleLog.addEntry(
 						player.id,
 						`$p{You|${opponentPlayer.playerName}}$ took ${getFormattedName(
 							modalResult.cards[0].cardId,

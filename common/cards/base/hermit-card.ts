@@ -52,7 +52,7 @@ abstract class HermitCard extends Card {
 	}
 
 	// Default is to return
-	public getAttacks(
+	public getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,

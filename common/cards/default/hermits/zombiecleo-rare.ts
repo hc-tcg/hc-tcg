@@ -31,7 +31,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
@@ -39,7 +39,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
-		const attack = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 
@@ -58,7 +58,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		if (!hermitInfo) return null
 
 		// Return that cards secondary attack
-		const newAttack = hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttack(game, pickedCard.cardInstance, pos, attackType)
 		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name

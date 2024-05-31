@@ -156,7 +156,7 @@ export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericA
 	// This can only be done once per turn
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
-	// Send the logs
+	// Create the logs
 	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, currentPlayer.coinFlips, pickResult)
 
 	currentPlayer.hooks.afterApply.call()

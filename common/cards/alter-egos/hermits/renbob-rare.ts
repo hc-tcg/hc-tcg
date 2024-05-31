@@ -27,7 +27,7 @@ class RenbobRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
@@ -35,7 +35,7 @@ class RenbobRareHermitCard extends HermitCard {
 	) {
 		const {opponentPlayer} = pos
 
-		let attack = super.getAttacks(game, instance, pos, hermitAttackType)
+		let attack = super.getAttack(game, instance, pos, hermitAttackType)
 		if (!attack) return null
 		if (attack.type === 'secondary' && pos.rowIndex !== null) {
 			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
