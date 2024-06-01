@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import { GameModel } from '../models/game-model'
 import { CARDS, HERMIT_CARDS } from '../cards'
-import { CardPosModel } from '../models/card-pos-model'
+import { getBasicCardPos, getCardAtPos, CardPosModel } from '../models/card-pos-model'
 import { getActiveRow, applyStatusEffect, removeStatusEffect } from '../utils/board'
 import { StatusEffectT } from '../types/game-state'
 import { STRENGTHS } from '../const/strengths'
@@ -79,8 +79,10 @@ class WeaknessStatusEffect extends StatusEffect {
 			applyDummies()
 		})
 
-		player.hooks.onCardPlay.add(statusEffectInfo.statusEffectInstance, (card) => {
-			const cardType = CARDS[card.cardId].type
+		player.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
+			const card = getCardAtPos(game, getBasicCardPos(game, instance))
+
+   const cardType = CARDS[card.cardId].type
 
 			if (cardType == 'hermit') {
 				const hermitType = HERMIT_CARDS[card.cardId].hermitType
@@ -90,8 +92,10 @@ class WeaknessStatusEffect extends StatusEffect {
 			}
 		})
 
-		opponentPlayer.hooks.onCardPlay.add(statusEffectInfo.statusEffectInstance, (card) => {
-			const cardType = CARDS[card.cardId].type
+		opponentPlayer.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
+			const card = getCardAtPos(game, getBasicCardPos(game, instance))
+
+   const cardType = CARDS[card.cardId].type
 
 			if (cardType == 'hermit') {
 				const hermitType = HERMIT_CARDS[card.cardId].hermitType
