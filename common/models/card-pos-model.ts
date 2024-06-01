@@ -86,7 +86,7 @@ export function getCardPos(game: GameModel, instance: string) {
 	return null
 }
 
-export function getCardAtPos(game: GameModel, pos: BasicCardPos) {
+function getCardAtPos(game: GameModel, pos: BasicCardPos) {
 	const {player, rowIndex, slot} = pos
 
 	const suCard = player.board.singleUseCard
