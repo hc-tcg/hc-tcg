@@ -14,26 +14,26 @@ import MelodyStatusEffect from './melody'
 import UsedClockStatusEffect from './used-clock'
 
 const effectClasses: Array<StatusEffect> = [
-	new FireStatusEffect(),
-	new PoisonStatusEffect(),
-	new SleepingStatusEffect(),
-	new BadOmenStatusEffect(),
-	new SlownessStatusEffect(),
-	new WeaknessStatusEffect(),
-	new WeaknessDummyStatusEffect(),
-	new ProtectedStatusEffect(),
-	new DyedStatusEffect(),
-	new MuseumCollectionStatusEffect(),
-	new SmeltingStatusEffect(),
-	new MelodyStatusEffect(),
-	new UsedClockStatusEffect(),
+    new FireStatusEffect(),
+    new PoisonStatusEffect(),
+    new SleepingStatusEffect(),
+    new BadOmenStatusEffect(),
+    new SlownessStatusEffect(),
+    new WeaknessStatusEffect(),
+    new WeaknessDummyStatusEffect(),
+    new ProtectedStatusEffect(),
+    new DyedStatusEffect(),
+    new MuseumCollectionStatusEffect(),
+    new SmeltingStatusEffect(),
+    new MelodyStatusEffect(),
+    new UsedClockStatusEffect(),
 ]
-	
+
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, card) => {
-		result[card.id] = card
-		return result
-	},
-	{}
+    (result: Record<string, StatusEffect>, card) => {
+        result[card.id] = card
+        return result
+    },
+    {}
 )
