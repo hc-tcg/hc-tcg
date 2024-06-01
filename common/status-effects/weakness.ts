@@ -110,8 +110,8 @@ class WeaknessStatusEffect extends StatusEffect {
 		const { player, opponentPlayer } = pos
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onCardPlay.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onCardPlay.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onAttach.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onAttach.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 
