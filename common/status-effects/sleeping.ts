@@ -22,7 +22,7 @@ class SleepingStatusEffect extends StatusEffect {
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, card, row, rowIndex} = pos
 
-		if (!card || !row?.hermitCard || !rowIndex) return
+		if (!card || !row?.hermitCard || rowIndex === null) return
 
 		game.state.statusEffects.push(statusEffectInfo)
 		game.addBlockedActions(this.id, 'PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
