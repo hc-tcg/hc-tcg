@@ -66,7 +66,7 @@ class EggSingleUseCard extends SingleUseCard {
 			if (!activePos) return []
 
 			const pickInfo: PickInfo = player.custom[targetKey]
-			if (!pickInfo || pickInfo.rowIndex === null) return
+			if (!pickInfo || pickInfo.rowIndex === null || pickInfo.rowIndex == undefined) return
 			const opponentRow = opponentPlayer.board.rows[pickInfo.rowIndex]
 			if (!opponentRow.hermitCard) return
 
