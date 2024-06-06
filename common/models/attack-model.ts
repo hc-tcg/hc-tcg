@@ -177,14 +177,13 @@ export class AttackModel {
 
 	private consolidateLogs(values: AttackLog, logIndex: number) {
 		if (logIndex > 0) {
-			values.previousLog = this.consolidateLogs(values, logIndex-1)
+			values.previousLog = this.consolidateLogs(values, logIndex - 1)
 		}
 		return this.log[logIndex](values)
-		
 	}
 
 	/** Gets the log entry for this attack*/
 	public getLog(values: AttackLog) {
-		return this.consolidateLogs(values, this.log.length-1)
+		return this.consolidateLogs(values, this.log.length - 1)
 	}
 }
