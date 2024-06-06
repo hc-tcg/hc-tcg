@@ -37,7 +37,8 @@ abstract class HermitCard extends Card {
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
-		this.log = (values) => `$p{You|${values.player}}$ placed $p${this.name}$`
+		this.log = (values) =>
+			`$p{You|${values.player}}$ placed $p${this.name}$ on row #${values.pos.rowIndex}`
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
