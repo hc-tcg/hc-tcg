@@ -29,6 +29,8 @@ export type AttackLog = {
 	damage: string
 	/**The coinflip for this attack.*/
 	coinFlip: string | null
+	/**The previously defined log entry.*/
+	previousLog?: string
 }
 
 export type AttackDefs = {

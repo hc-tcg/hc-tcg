@@ -27,7 +27,7 @@ export class AttackModel {
 	private target: RowPos | null
 
 	/** The battle log attached to this attack */
-	public log: ((values: AttackLog) => string) | null
+	private log: Array<(values: AttackLog) => string> = []
 
 	// Public fields
 
@@ -54,7 +54,7 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
 		this.createWeakness = defs.createWeakness || 'never'
 
-		this.log = defs.log ? defs.log : null
+		if (defs.log) this.log.push(defs.log)
 
 		return this
 	}
@@ -168,5 +168,23 @@ export class AttackModel {
 	public addNewAttack(newAttack: AttackModel) {
 		this.nextAttacks.push(newAttack)
 		return this
+	}
+
+	/** Updates the log entry*/
+	public updateLog(logEntry: (values: AttackLog) => string) {
+		this.log.push(logEntry)
+	}
+
+	private consolidateLogs(values: AttackLog, logIndex: number) {
+		if (logIndex > 0) {
+			values.previousLog = this.consolidateLogs(values, logIndex-1)
+		}
+		return this.log[logIndex](values)
+		
+	}
+
+	/** Gets the log entry for this attack*/
+	public getLog(values: AttackLog) {
+		return this.consolidateLogs(values, this.log.length-1)
 	}
 }

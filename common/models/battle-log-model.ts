@@ -187,8 +187,6 @@ export class BattleLogModel {
 		const attacks = [attack, ...attack.nextAttacks]
 
 		let log = attacks.reduce((reducer, subAttack) => {
-			if (!subAttack.log) return reducer
-
 			const attacker = subAttack.getAttacker()
 			const target = subAttack.getTarget()
 
@@ -214,7 +212,7 @@ export class BattleLogModel {
 					? attackingHermitInfo.primary.name
 					: attackingHermitInfo.secondary.name
 
-			const logMessage = subAttack.log({
+			const logMessage = subAttack.getLog({
 				attacker: `$p${attackingHermitInfo.name}$`,
 				player: attacker.player.playerName,
 				opponent: target.player.playerName,
