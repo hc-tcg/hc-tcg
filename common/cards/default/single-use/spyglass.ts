@@ -15,7 +15,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
-			log: (values) => `${values.defaultLog}`,
+			log: (values) => `${values.defaultLog} and ${values.coinFlip}`,
 		})
 	}
 
