@@ -247,7 +247,8 @@ export class GameModel {
 		// Create battle log entry
 		if (newRow !== null) {
 			const newHermit = player.board.rows[newRow].hermitCard
-			const oldHermit = currentActiveRow !== null ? player.board.rows[currentActiveRow].hermitCard : null
+			const oldHermit =
+				currentActiveRow !== null ? player.board.rows[currentActiveRow].hermitCard : null
 			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
