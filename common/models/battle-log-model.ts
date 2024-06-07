@@ -281,14 +281,14 @@ export class BattleLogModel {
 				player: player.id,
 				description: `$p{You|${player.playerName}}$ swapped $p${oldHermitInfo.name}$ for $p${
 					newHermitInfo.name
-				}$ on row #${newRow + 1}`,
+				} (${newRow + 1})$`,
 			})
 		} else {
 			this.logMessageQueue.push({
 				player: player.id,
-				description: `$p{You|${player.playerName}}$ activated $p${newHermitInfo.name}$ on row #${
+				description: `$p{You|${player.playerName}}$ activated $p${newHermitInfo.name} (${
 					newRow + 1
-				}`,
+				})$`,
 			})
 		}
 	}
