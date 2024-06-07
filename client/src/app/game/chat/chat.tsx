@@ -11,6 +11,10 @@ import {useDrag} from '@use-gesture/react'
 import {FormattedText} from 'components/formatting/formatting'
 import classNames from 'classnames'
 
+function clamp(n: number, min: number, max: number): number {
+	return Math.max(Math.min(n, max), min)
+}
+
 function Chat() {
 	const dispatch = useDispatch()
 	const settings = useSelector(getSettings)
@@ -24,9 +28,15 @@ function Chat() {
 	const [chatPos, setChatPos] = useState({x: 0, y: 0})
 
 	const bindChatPos = useDrag((params: any) => {
+		const {innerWidth: width, innerHeight: height} = window
+		let [x, y] = params.movement
+
+		x = clamp(x, -chatPosSetting.x, width - chatPosSetting.x - chatSize.w)
+		y = clamp(y, -chatPosSetting.y, height - chatPosSetting.y - chatSize.h)
+
 		setChatPos({
-			x: params.movement[0],
-			y: params.movement[1],
+			x,
+			y,
 		})
 
 		if (!params.pressed) {
