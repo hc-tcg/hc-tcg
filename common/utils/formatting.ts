@@ -1,22 +1,10 @@
-/**
- * Guide to symbols
- * Player A - Player that generated the log | Player B - other player
- * {A|B} A shows to player A, B shows to player B
- * $p
- * $o
- * $e Effect card
- * $m Item card
- * $v Hermit attack
- * $g Good (healing, heads)
- * $b Bad (damage, tails)
- * $i Image
- * $k Keyword
- */
-
 import ProfaneWords from '../config/profanity-seed.json'
 
+/* Config object used by `formatedText`. */
 export type Config = {
+	/* If true, censor the text using the list common/config/profanity-seed.json. */
 	censor?: boolean
+	/* If true, allow $$ formatting to be used. */
 	'enable-$'?: boolean
 }
 
@@ -173,13 +161,13 @@ export function TabNode(): TabNode {
 	return {TYPE: 'TabNode'}
 }
 
-// The special characters that can end the expression.
+// The special characters that can end an expression.
 const SPECIAL_CHARACTERS = [...'${}|*:\n\t']
 
 const messageParseOptions: Array<
 	[
 		(text: string, config: Config) => boolean,
-		(text: string, config: Config) => [FormattedTextNode, string]
+		(text: string, config: Config) => [FormattedTextNode, string],
 	]
 > = [
 	[
@@ -396,8 +384,7 @@ function createCensoredTextNodes(text: string): TextNode | ProfanityNode | ListN
 	return TextNode(text)
 }
 
-// Parse the raw text that is part of a text mode or emoji node. Handles escape
-// sequences.
+/* Parse the raw text that is part of a text mode or emoji node, handling escape sequences. */
 function parseUntil(text: string, until: Array<string>): [string, string] {
 	// We take characters until we get to something that is probably a parser
 	let out = ''
@@ -484,13 +471,13 @@ function parseNodesUntil(
 	return parseNodesWhile(text, (remaining) => !matches(remaining), config)
 }
 
-// Parse all Nodes until the end of the string.
+/* Parse all Nodes until the end of the string. */
 function parseNodesUntilEmpty(text: string, config: Config): FormattedTextNode {
 	let [nodes, _] = parseNodesWhile(text, (remaining) => remaining.length >= 1, config)
 	return nodes
 }
 
-// Parse a TextNode
+/* Parse a TextNode */
 function parseTextNode(text: string, config: Config): [FormattedTextNode, string] {
 	let remaining
 	;[text, remaining] = parseUntil(text, SPECIAL_CHARACTERS)
@@ -505,7 +492,7 @@ function parseTextNode(text: string, config: Config): [FormattedTextNode, string
 	return [textNodes, remaining]
 }
 
-// Parse a single Node
+/* Parse text into a single node */
 function parseSingleNode(text: string, config: Config): [FormattedTextNode, string] {
 	for (let [condition, parser] of messageParseOptions) {
 		if (condition(text, config)) {
@@ -515,6 +502,28 @@ function parseSingleNode(text: string, config: Config): [FormattedTextNode, stri
 	throw new Error(`No matching parser found for \`${text}\``)
 }
 
+/**
+ * Format a text
+ *
+ * Guide to symbols
+ * Player A - Player that generated the log | Player B - other player
+ * {A|B} A shows to player A, B shows to player B
+ * $p Player
+ * $o Opponent
+ * $e Effect card
+ * $m Item card
+ * $v Hermit attack
+ * $g Good (healing, heads)
+ * $b Bad (damage, tails)
+ * $i Image
+ * $k Keyword
+ *
+ * All symbols can be escaped with \.
+ *
+ * @param text - The text to format
+ * @param config - The config as a dict.
+ * @return The formatted text.
+ */
 export function formatText(text: string, config?: Config): FormattedTextNode {
 	config = config || {}
 
@@ -525,6 +534,7 @@ export function formatText(text: string, config?: Config): FormattedTextNode {
 	}
 }
 
+/* Censor a string using `common/config/profanity-seed.json`. */
 export function censorString(text: string) {
 	let node = createCensoredTextNodes(text)
 
@@ -548,6 +558,7 @@ export function censorString(text: string) {
 	return outputText.join('')
 }
 
+/* Concat a list of formatted `FormattedTextNode` into a single `FormattedTextNode */
 export function concatFormattedTextNodes(...nodes: Array<FormattedTextNode>): ListNode {
 	return ListNode(nodes)
 }
