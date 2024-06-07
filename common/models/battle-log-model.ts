@@ -139,7 +139,7 @@ export class BattleLogModel {
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
 			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.name}$`,
 			pos: {
-				rowIndex: pos.rowIndex === null ? `${pos.rowIndex}` : invalid,
+				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
 				id: pos.card ? pos.card.cardId : invalid,
 				name: pos.card ? getCardName(pos.player, pos.card.cardId, pos.rowIndex) : invalid,
 				hermitCard: pos.row?.hermitCard
@@ -148,7 +148,7 @@ export class BattleLogModel {
 				slotType: pos.slot.type,
 			},
 			pick: {
-				rowIndex: pickInfo ? `${pickInfo.rowIndex}` : invalid,
+				rowIndex: pickInfo && pickInfo.rowIndex !== undefined ? `${pickInfo.rowIndex + 1}` : invalid,
 				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
 				name: pickInfo?.card
 					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)
