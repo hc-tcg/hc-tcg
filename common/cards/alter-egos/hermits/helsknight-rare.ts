@@ -1,3 +1,4 @@
+import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -21,7 +22,8 @@ class HelsknightRareHermitCard extends HermitCard {
 			},
 			secondary: {
 				name: 'Trap Hole',
-				cost: ['pvp', 'pvp', 'pvp'],
+				// cost: ['pvp', 'pvp', 'pvp'],
+				cost: [],
 				damage: 100,
 				power:
 					'If your opponent uses a single use effect card on their next turn, flip a coin.\nIf heads, you take that card after its effect is applied and add it to your hand.',
@@ -43,8 +45,20 @@ class HelsknightRareHermitCard extends HermitCard {
 				const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
 
 				if (coinFlip[0] == 'heads') {
+					const cardInfo = CARDS[opponentPlayer.board.singleUseCard.cardId]
 					moveCardToHand(game, opponentPlayer.board.singleUseCard, player)
+
 					opponentPlayer.board.singleUseCardUsed = false
+
+					game.battleLog.addEntry(
+						player.id,
+						`$p{You|${pos.player.playerName}}$ flipped heads and took $e${cardInfo.name}$`
+					)
+				} else {
+					game.battleLog.addEntry(
+						player.id,
+						`$p{You|${pos.player.playerName}}$ flipped tails and then did nothing.`
+					)
 				}
 			})
 
