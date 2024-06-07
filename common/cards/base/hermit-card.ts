@@ -1,7 +1,7 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
 import Card, {CanAttachResult} from './card'
-import {CardRarityT, HermitAttackInfo, HermitTypeT} from '../../types/cards'
+import {CardRarityT, HermitAttackInfo, HermitTypeT, PlayCardLog} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
@@ -16,6 +16,12 @@ type HermitDefs = {
 	health: number
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
+}
+
+// To ensure Armor Stand has the same log as HermitCards, this is exportable.
+export function hermitCardBattleLog(name: string) {
+	return (values: PlayCardLog) =>
+		`$p{You|${values.player}}$ placed $p${name}$ on row #${values.pos.rowIndex}`
 }
 
 abstract class HermitCard extends Card {
@@ -37,8 +43,7 @@ abstract class HermitCard extends Card {
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
-		this.log = (values) =>
-			`$p{You|${values.player}}$ placed $p${this.name}$ on row #${values.pos.rowIndex}`
+		this.log = hermitCardBattleLog(this.name)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

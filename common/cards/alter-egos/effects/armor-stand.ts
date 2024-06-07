@@ -5,6 +5,7 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {CanAttachResult} from '../../base/card'
+import {hermitCardBattleLog} from '../../base/hermit-card'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -15,7 +16,7 @@ class ArmorStandEffectCard extends EffectCard {
 			rarity: 'ultra_rare',
 			description:
 				'Use like a Hermit card with a maximum 50hp.\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\nIf this card is knocked out, it does not count as a knockout.',
-			log: (values) => `$p{You|${values.player}}$ placed $p${this.name}$`,
+			log: hermitCardBattleLog('Armour Stand'),
 		})
 	}
 

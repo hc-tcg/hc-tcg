@@ -54,7 +54,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 
 					game.battleLog.addEntry(
 						player.id,
-						`$p{You|${opponentPlayer.playerName}}$ took ${getFormattedName(
+						`$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
 							modalResult.cards[0].cardId,
 							true
 						)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
