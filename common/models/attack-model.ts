@@ -184,6 +184,9 @@ export class AttackModel {
 
 	/** Gets the log entry for this attack*/
 	public getLog(values: AttackLog) {
+		if (this.log.length === 0) {
+			return ''
+		}
 		return this.consolidateLogs(values, this.log.length - 1)
 	}
 }
