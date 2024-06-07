@@ -1,6 +1,5 @@
 import {FormattedTextNode, censorProfanityNode} from 'common/utils/formatting'
-
-import css from './formating.module.scss'
+import css from './formatting.module.scss'
 import classNames from 'classnames'
 
 type DisplaySettings = {
