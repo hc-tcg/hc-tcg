@@ -518,7 +518,7 @@ function parseSingleNode(text: string, config: Config): [FormattedTextNode, stri
  * $i Image
  * $k Keyword
  *
- * All symbols can be escaped with \.
+ * All symbols can be escaped with backslash.
  *
  * @param text - The text to format
  * @param config - The config as a dict.
