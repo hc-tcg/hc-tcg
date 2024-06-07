@@ -72,16 +72,16 @@ We run lint/prettier/tsc as part of the PR process. We also recommend to run pre
 {
 	"[json][jsonc]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": true
 	},
 	"[javascript][typescript][typescriptreact]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": true
 	},
 	"[css][scss]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true,
+		"editor.formatOnSave": true
 	},
-	"typescript.tsdk": "node_modules/typescript/lib",
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
 ```

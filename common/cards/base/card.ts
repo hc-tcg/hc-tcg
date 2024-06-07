@@ -126,6 +126,7 @@ abstract class Card {
 
 	/** Updates the log entry*/
 	public updateLog(logEntry: (values: PlayCardLog) => string) {
+		if (logEntry === null) return
 		this.log.push(logEntry)
 	}
 

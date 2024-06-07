@@ -52,13 +52,10 @@ class HelsknightRareHermitCard extends HermitCard {
 
 					game.battleLog.addEntry(
 						player.id,
-						`$p{You|${pos.player.playerName}}$ flipped heads and took $e${cardInfo.name}$`
+						`$p{Helsknight}$ flipped $pheads$ and took $e${cardInfo.name}$`
 					)
 				} else {
-					game.battleLog.addEntry(
-						player.id,
-						`$p{You|${pos.player.playerName}}$ flipped tails and then did nothing.`
-					)
+					game.battleLog.addEntry(player.id, `$p{Helsknight}$ flipped $btails$b`)
 				}
 			})
 
