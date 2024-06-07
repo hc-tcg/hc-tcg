@@ -2,7 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import { getActiveRow } from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -37,7 +37,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 			if (activeRow === null) return
 
 			const rows = player.board.rows
-			
+
 			const activeHermit = getActiveRow(player)?.hermitCard
 			if (!activeHermit) return
 			const activeHermitName = HERMIT_CARDS[activeHermit.cardId].name
@@ -50,7 +50,10 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				if (hermitInfo) {
 					const maxHealth = Math.max(row.health, hermitInfo.health)
 					row.health = Math.min(row.health + 40, maxHealth)
-					game.battleLog.addEntry(player.id, `$p${hermitInfo.name} (${index + 1})$ was healed $g40hp$ by $p${activeHermitName}$`)
+					game.battleLog.addEntry(
+						player.id,
+						`$p${hermitInfo.name} (${index + 1})$ was healed $g40hp$ by $p${activeHermitName}$`
+					)
 				}
 			})
 		})
