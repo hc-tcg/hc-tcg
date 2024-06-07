@@ -7,6 +7,10 @@ $good: #63b45c;
 $bad: #da5558;
 $keyword: var(--gray-200);
 
+.selectable {
+	user-select: all;
+}
+
 .player {
 	color: $player;
 	font-family: MinecraftBold;

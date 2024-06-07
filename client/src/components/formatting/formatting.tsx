@@ -1,14 +1,21 @@
 import {FormattedTextNode, censorProfanityNode} from 'common/utils/formatting'
 
-import css from './formatting.module.scss'
+import css from './formating.module.scss'
 import classNames from 'classnames'
 
 type DisplaySettings = {
+	isSelectable?: boolean
 	isOpponent?: boolean
 	censorProfanity?: boolean
 }
 
 function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
+	let textCssClasses = []
+
+	if (settings.isSelectable != false) {
+		textCssClasses.push(css['selectable'])
+	}
+
 	if (node.TYPE == 'ListNode') {
 		let html = []
 
@@ -19,18 +26,22 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 	} else if (node.TYPE == 'EmptyNode') {
 		return <div />
 	} else if (node.TYPE == 'TextNode') {
-		return <span>{node.text}</span>
+		return <span className={classNames(...textCssClasses)}>{node.text}</span>
 	} else if (node.TYPE == 'FormatNode') {
 		return (
 			<span
-				className={classNames(css[node.format], settings.isOpponent ? css.viewedByOpponent : '')}
+				className={classNames(
+					css[node.format],
+					settings.isOpponent ? css.viewedByOpponent : '',
+					...textCssClasses
+				)}
 			>
 				{nodeToHtml(node.text, settings)}
 			</span>
 		)
 	} else if (node.TYPE == 'DifferentTextNode') {
 		return (
-			<span>
+			<span className={classNames(...textCssClasses)}>
 				{settings.isOpponent
 					? nodeToHtml(node.opponentText, settings)
 					: nodeToHtml(node.playerText, settings)}
@@ -38,14 +49,14 @@ function nodeToHtml(node: FormattedTextNode, settings: DisplaySettings) {
 		)
 	} else if (node.TYPE == 'ProfanityNode') {
 		if (settings.censorProfanity) {
-			return <span> {censorProfanityNode(node)} </span>
+			return <span className={classNames(...textCssClasses)}> {censorProfanityNode(node)} </span>
 		}
-		return <span>{node.text}</span>
+		return <span className={classNames(...textCssClasses)}>{node.text}</span>
 	} else if (node.TYPE == 'EmojiNode') {
 		const link = `/images/hermits-emoji/${node.emoji.toLowerCase()}.png`
 		const alt = `:${node.emoji}:`
 
-		return <img className={css.emoji} src={link} alt={alt} />
+		return <img className={classNames(css.emoji, ...textCssClasses)} src={link} alt={alt} />
 	} else if (node.TYPE == 'LineBreakNode') {
 		return <br />
 	} else if (node.TYPE == 'TabNode') {
