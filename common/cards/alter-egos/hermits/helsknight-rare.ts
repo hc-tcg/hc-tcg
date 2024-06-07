@@ -22,8 +22,7 @@ class HelsknightRareHermitCard extends HermitCard {
 			},
 			secondary: {
 				name: 'Trap Hole',
-				// cost: ['pvp', 'pvp', 'pvp'],
-				cost: [],
+				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
 				power:
 					'If your opponent uses a single use effect card on their next turn, flip a coin.\nIf heads, you take that card after its effect is applied and add it to your hand.',
