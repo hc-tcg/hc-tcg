@@ -5,7 +5,7 @@ import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 import {removeStatusEffect} from '../../../utils/board'
 import {HERMIT_CARDS} from '../..'
-import { AttackModel } from '../../../models/attack-model'
+import {AttackModel} from '../../../models/attack-model'
 
 class TotemEffectCard extends EffectCard {
 	constructor() {
@@ -46,11 +46,11 @@ class TotemEffectCard extends EffectCard {
 
 		// If we are attacked from any source
 		// Add before any other hook so they can know a hermits health reliably
-		player.hooks.afterDefence.addBefore(instance, (attack) =>	reviveHook(attack))
-		
+		player.hooks.afterDefence.addBefore(instance, (attack) => reviveHook(attack))
+
 		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
 		// @TODO this is slightly more hacky than I'd like
-		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => 	reviveHook(attack))
+		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => reviveHook(attack))
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
