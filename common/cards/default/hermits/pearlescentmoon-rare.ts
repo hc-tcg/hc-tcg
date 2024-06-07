@@ -23,7 +23,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 				cost: ['terraform', 'any'],
 				damage: 70,
 				power:
-					'If your opponent attacks on their next turn, flip a coin.\n\nIf heads, their attack misses. Your opponent can not miss due to this ability on consecutive turns.',
+					'If your opponent attacks on their next turn, flip a coin.\nIf heads, their attack $kmisses$. Your opponent can not miss due to this ability on consecutive turns.',
 			},
 		})
 	}

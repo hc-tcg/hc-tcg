@@ -5,6 +5,7 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {CanAttachResult} from '../../base/card'
+import {hermitCardBattleLog} from '../../base/hermit-card'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -14,7 +15,8 @@ class ArmorStandEffectCard extends EffectCard {
 			name: 'Armour Stand',
 			rarity: 'ultra_rare',
 			description:
-				'Use like a Hermit card with a maximum 50hp.\n\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\n\nIf this card is knocked out, it does not count as a knockout.',
+				'Use like a Hermit card with a maximum 50hp.\nYou can not attach any cards to this card. While this card is active, you can not attack, or use damaging effect cards.\nIf this card is knocked out, it does not count as a knockout.',
+			log: hermitCardBattleLog('Armour Stand'),
 		})
 	}
 
@@ -63,6 +65,7 @@ class ArmorStandEffectCard extends EffectCard {
 			if (!row.health && attacker && isTargetingPos(attack, pos)) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
+				game.battleLog.addEntry(player.id, `$p${this.name}$ was knocked out`)
 
 				const activeRow = player.board.activeRow
 				const isActive = activeRow !== null && activeRow == pos.rowIndex

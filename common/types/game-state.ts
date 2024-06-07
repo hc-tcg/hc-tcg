@@ -2,9 +2,9 @@ import {CanAttachResult} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {CardPosModel} from '../models/card-pos-model'
+import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
-import {MessageInfoT} from './chat'
 import {GameHook, WaterfallHook} from './hooks'
 import {ModalRequest, PickRequest, PickInfo} from './server-requests'
 
@@ -52,19 +52,12 @@ export type CurrentCoinFlipT = {
 	name: string
 	tosses: Array<CoinFlipT>
 	amount: number
+	delay: number
 }
 
 export type BattleLogT = {
 	player: PlayerId
-	description: MessageTextT[]
-}
-
-export type MessageTextT = {
-	text: string
-	censoredText: string
-	alt?: string
-	format: string
-	condition?: 'player' | 'opponent'
+	description: string
 }
 
 export type PlayerState = {
@@ -117,7 +110,7 @@ export type PlayerState = {
 		>
 
 		/** Hook that returns attacks to execute */
-		getAttacks: GameHook<() => Array<AttackModel>>
+		getAttack: GameHook<() => AttackModel | null>
 		/** Hook called before the main attack loop, for every attack from our side of the board */
 		beforeAttack: GameHook<(attack: AttackModel) => void>
 		/** Hook called before the main attack loop, for every attack targeting our side of the board */
@@ -315,6 +308,13 @@ export type LocalGameState = {
 	}
 }
 
+export type Message = {
+	sender: PlayerId
+	systemMessage: boolean
+	message: FormattedTextNode
+	createdAt: number
+}
+
 // state sent to client
 export type LocalGameRoot = {
 	localGameState: LocalGameState | null
@@ -329,7 +329,7 @@ export type LocalGameRoot = {
 		reason: GameEndReasonT
 		outcome: GameEndOutcomeT
 	} | null
-	chat: Array<MessageInfoT>
+	chat: Array<Message>
 	battleLog: BattleLogModel | null
 	currentCoinFlip: CurrentCoinFlipT | null
 	opponentConnected: boolean

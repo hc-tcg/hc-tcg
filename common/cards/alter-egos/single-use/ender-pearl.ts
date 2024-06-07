@@ -15,6 +15,8 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			rarity: 'common',
 			description:
 				'Before your attack, move your active Hermit and any attached cards to an open row on your board. This Hermit also takes 10hp damage.',
+			log: (values) =>
+				`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 		})
 	}
 
@@ -48,25 +50,27 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				// We need to have no card there
 				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
 
+				const activeRow = getActiveRowPos(player)
+				if (player.board.activeRow === null || !activeRow) return 'FAILURE_INVALID_DATA'
+
+				const logInfo = pickResult
+				logInfo.card = activeRow.row.hermitCard
+
 				// Apply
-				applySingleUse(game, [])
+				applySingleUse(game, logInfo)
 
 				// Move us
-				if (player.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 				game.swapRows(player, player.board.activeRow, rowIndex)
 
-				const activeRow = getActiveRowPos(player)
-				if (activeRow) {
-					// Do 10 damage
-					const attack = new AttackModel({
-						id: attackId,
-						attacker: activeRow,
-						target: activeRow,
-						type: 'effect',
-						isBacklash: true,
-					}).addDamage(this.id, 10)
-					executeAttacks(game, [attack], true)
-				}
+				// Do 10 damage
+				const attack = new AttackModel({
+					id: attackId,
+					attacker: activeRow,
+					target: activeRow,
+					type: 'effect',
+					isBacklash: true,
+				}).addDamage(this.id, 10)
+				executeAttacks(game, [attack], true)
 
 				return 'SUCCESS'
 			},

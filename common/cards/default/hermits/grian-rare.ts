@@ -31,7 +31,7 @@ class GrianRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 50,
 				power:
-					"After your attack, flip a coin.\n\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
+					"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
 			},
 			secondary: {
 				name: 'Start a War',

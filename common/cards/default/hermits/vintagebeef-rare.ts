@@ -24,7 +24,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 				cost: ['builder', 'builder'],
 				damage: 80,
 				power:
-					'Flip a coin.\n\nIf heads, all status effects are removed from your active and AFK Hermits.',
+					'Flip a coin.\nIf heads, all status effects are removed from your active and AFK Hermits.',
 			},
 		})
 	}

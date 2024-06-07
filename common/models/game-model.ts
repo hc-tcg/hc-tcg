@@ -4,21 +4,21 @@ import {
 	GameState,
 	ActionResult,
 	TurnActions,
-	BattleLogT,
 	PlayerState,
+	Message,
 } from '../types/game-state'
-import {MessageInfoT} from '../types/chat'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickRequest} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
+import {CARDS} from '../cards'
 
 export class GameModel {
 	private internalCreatedTime: number
 	private internalId: string
 	private internalCode: string | null
 
-	public chat: Array<MessageInfoT>
+	public chat: Array<Message>
 	public battleLog: BattleLogModel
 	public players: Record<string, PlayerModel>
 	public task: any
@@ -245,11 +245,11 @@ export class GameModel {
 		if (results.includes(false)) return false
 
 		// Create battle log entry
-		if (newRow && currentActiveRow) {
-			const oldHermit = player.board.rows[currentActiveRow]?.hermitCard
+		if (newRow !== null) {
 			const newHermit = player.board.rows[newRow].hermitCard
-
-			this.battleLog.addChangeHermitEntry(oldHermit, newHermit)
+			const oldHermit =
+				currentActiveRow !== null ? player.board.rows[currentActiveRow].hermitCard : null
+			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
 		// Change the active row

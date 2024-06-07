@@ -12,7 +12,7 @@ class ThornsIIIEffectCard extends EffectCard {
 			name: 'Thorns III',
 			rarity: 'ultra_rare',
 			description:
-				"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 40hp damage.\n\nIgnores armour.",
+				"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 40hp damage.\nIgnores armour.",
 		})
 	}
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -37,6 +37,7 @@ class ThornsIIIEffectCard extends EffectCard {
 					target: attack.getAttacker(),
 					type: 'effect',
 					isBacklash: true,
+					log: (values) => `${values.target} took ${values.damage} damage from $eThorns III$`,
 				}).addDamage(this.id, 40)
 
 				backlashAttack.shouldIgnoreCards.push((instance) => {

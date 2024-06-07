@@ -1,7 +1,8 @@
 import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {getActiveRow} from '../../../utils/board'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -37,14 +38,24 @@ class PotatoBoyRareHermitCard extends HermitCard {
 
 			const rows = player.board.rows
 
+			const activeHermit = getActiveRow(player)?.hermitCard
+			if (!activeHermit) return
+			const activeHermitName = HERMIT_CARDS[activeHermit.cardId].name
+
 			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(Boolean)
 
 			targetRows.forEach((row) => {
 				if (!row.hermitCard) return
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+				const rowIndex = getBasicCardPos(game, row.hermitCard.cardInstance)?.rowIndex
+				if (!rowIndex) return
 				if (hermitInfo) {
 					const maxHealth = Math.max(row.health, hermitInfo.health)
 					row.health = Math.min(row.health + 40, maxHealth)
+					game.battleLog.addEntry(
+						player.id,
+						`$p${hermitInfo.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${activeHermitName}$`
+					)
 				}
 			})
 		})

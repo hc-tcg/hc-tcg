@@ -14,5 +14,6 @@
 		"enabled": false,
 		"clearConsole": true
 	},
-	"autoEndTurn": false
+	"autoEndTurn": false,
+	"logAttackHistory": false
 }

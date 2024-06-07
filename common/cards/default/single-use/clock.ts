@@ -12,7 +12,8 @@ class ClockSingleUseCard extends SingleUseCard {
 			name: 'Clock',
 			rarity: 'ultra_rare',
 			description:
-				'Your opponent skips their next turn.\n\nThis card can not be returned to your hand from your discard pile.',
+				'Your opponent skips their next turn.\nThis card can not be returned to your hand from your discard pile.',
+			log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 		})
 	}
 

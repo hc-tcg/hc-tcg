@@ -2,6 +2,7 @@ import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {PickInfo} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import SingleUseCard from '../../base/single-use-card'
@@ -14,7 +15,8 @@ class EggSingleUseCard extends SingleUseCard {
 			name: 'Egg',
 			rarity: 'rare',
 			description:
-				"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\n\nIf heads, also do 10hp damage to that Hermit.",
+				"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
+			log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 		})
 	}
 
@@ -49,7 +51,7 @@ class EggSingleUseCard extends SingleUseCard {
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 					// Store the row index to use later
-					player.custom[targetKey] = rowIndex
+					player.custom[targetKey] = pickResult
 
 					return 'SUCCESS'
 				},
@@ -63,15 +65,12 @@ class EggSingleUseCard extends SingleUseCard {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
-			const targetIndex: number = player.custom[targetKey]
-			if (targetIndex === null || targetIndex === undefined) return
-			const targetRow = opponentPlayer.board.rows[targetIndex]
-			if (!targetRow || !targetRow.hermitCard) return
+			const pickInfo: PickInfo = player.custom[targetKey]
+			if (!pickInfo || pickInfo.rowIndex === null || pickInfo.rowIndex == undefined) return
+			const opponentRow = opponentPlayer.board.rows[pickInfo.rowIndex]
+			if (!opponentRow.hermitCard) return
 
-			applySingleUse(game, [
-				[`on `, 'plain'],
-				[`${CARDS[targetRow.hermitCard.cardId].name} `, 'opponent'],
-			])
+			applySingleUse(game, pickInfo)
 
 			const coinFlip = flipCoin(player, {cardId: this.id, cardInstance: instance})
 			if (coinFlip[0] === 'heads') {
@@ -80,18 +79,21 @@ class EggSingleUseCard extends SingleUseCard {
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
-						rowIndex: targetIndex,
-						row: targetRow,
+						rowIndex: pickInfo.rowIndex,
+						row: opponentRow,
 					},
+					log: (values) =>
+						`$p{You|${values.player}}$ flipped $gheads$ on $eEgg$ and did an additional ${values.damage} to ${values.target}`,
 					type: 'effect',
 				}).addDamage(this.id, 10)
 
 				attack.addNewAttack(eggAttack)
 			}
 
-			player.hooks.afterAttack.add(instance, (attack) => {
-				const targetIndex = player.custom[targetKey]
-				game.changeActiveRow(opponentPlayer, targetIndex)
+			player.hooks.afterAttack.add(instance, () => {
+				const pickInfo: PickInfo = player.custom[targetKey]
+				if (!pickInfo.rowIndex) return
+				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
 
 				delete player.custom[targetKey]
 

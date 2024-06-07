@@ -19,36 +19,37 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return null
 			const activeIndex = activePos.rowIndex
 
 			const opponentRows = opponentPlayer.board.rows
 
-			const attacks = []
-			for (let i = activeIndex; i < opponentRows.length; i++) {
-				const opponentRow = opponentRows[i]
-				if (!opponentRow || !opponentRow.hermitCard) continue
-				const attack = new AttackModel({
+			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
 					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
 						rowIndex: i,
-						row: opponentRow,
+						row: row,
 					},
 					type: 'effect',
+					log: (values) =>
+						i === activeIndex
+							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
 				}).addDamage(this.id, i === activeIndex ? 30 : 10)
 
-				attacks.push(attack)
-			}
+				if (r) return r.addNewAttack(newAttack)
 
-			player.custom[targetsKey] = attacks.length
+				return newAttack
+			}, null)
 
-			return attacks
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -56,12 +57,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const inactiveAttackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
-
-			delete player.custom[targetsKey]
+			applySingleUse(game)
 
 			player.hooks.onAttack.remove(instance)
 		})
@@ -69,11 +65,8 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		delete player.custom[targetsKey]
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {

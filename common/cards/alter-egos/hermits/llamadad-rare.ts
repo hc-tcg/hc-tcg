@@ -22,7 +22,7 @@ class LlamadadRareHermitCard extends HermitCard {
 				name: 'Matilda',
 				cost: ['balanced', 'balanced'],
 				damage: 80,
-				power: 'Flip a coin.\n\nIf heads, do an additional 40hp damage.',
+				power: 'Flip a coin.\nIf heads, do an additional 40hp damage.',
 			},
 		})
 	}

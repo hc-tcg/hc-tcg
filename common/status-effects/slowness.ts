@@ -1,6 +1,6 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
+import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
@@ -23,6 +23,13 @@ class SlownessStatusEffect extends StatusEffect {
 		const {player} = pos
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+
+		if (pos.card) {
+			game.battleLog.addEntry(
+				player.id,
+				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $eSlowness$`
+			)
+		}
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)

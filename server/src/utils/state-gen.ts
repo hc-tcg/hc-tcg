@@ -232,7 +232,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			getAttackRequests: new GameHook<
 				(activeInstance: string, hermitAttackType: HermitAttackType) => void
 			>(),
-			getAttacks: new GameHook<() => Array<AttackModel>>(),
+			getAttack: new GameHook<() => AttackModel | null>(),
 			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
 			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
 			onAttack: new GameHook<(attack: AttackModel) => void>(),

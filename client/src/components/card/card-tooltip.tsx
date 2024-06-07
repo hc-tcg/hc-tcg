@@ -1,10 +1,9 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React from 'react'
 import {HermitTypeT} from 'common/types/cards'
 import Card from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
+import formattingCss from '../formatting/formatting.module.scss'
 import HermitCard from 'common/cards/base/hermit-card'
-import EffectCard from 'common/cards/base/effect-card'
-import SingleUseCard from 'common/cards/base/single-use-card'
 import ItemCard from 'common/cards/base/item-card'
 import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
@@ -15,6 +14,7 @@ import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {FormattedText} from 'components/formatting/formatting'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -33,58 +33,8 @@ type Props = {
 	card: Card
 }
 
-const getOneDescription = (desc: string): React.ReactNode => {
-	return desc.split('\n\n').map((part, index) => <div key={index}>{part || <>&nbsp;</>}</div>)
-}
-
 const getDescription = (card: Card): React.ReactNode => {
-	const result = []
-	if (card instanceof HermitCard) {
-		if (card.primary.power) {
-			result.push(
-				<div key="primary-name" className={css.power}>
-					{card.primary.name}
-				</div>
-			)
-			result.push(
-				<div key="primary-power" className={css.italicized}>
-					{getOneDescription(card.primary.power)}
-				</div>
-			)
-		}
-
-		if (card.secondary.power) {
-			result.push(
-				<div key="secondary-name" className={css.power}>
-					{card.secondary.name}
-				</div>
-			)
-			result.push(
-				<div key="primary-power" className={css.italicized}>
-					{getOneDescription(card.secondary.power)}
-				</div>
-			)
-		}
-	}
-
-	if (card instanceof EffectCard || card instanceof SingleUseCard) {
-		result.push(
-			<div key="desc" className={css.italicized}>
-				{getOneDescription(card.description)}
-			</div>
-		)
-	}
-
-	if (card instanceof ItemCard && card.rarity === 'rare') {
-		result.push(
-			<div key="desc" className={css.italicized}>
-				Counts as 2 Item cards
-			</div>
-		)
-		return 'Counts as 2 Item cards.'
-	}
-
-	return result
+	return FormattedText(card.getFormattedDescription())
 }
 
 const joinJsx = (array: Array<React.ReactNode>) => {
@@ -230,6 +180,7 @@ const CardTooltip = ({card}: Props) => {
 					{getStrengthsAndWeaknesses(card)}
 					{getDescription(card)}
 				</div>
+				<div></div>
 			</div>
 		</div>
 	)

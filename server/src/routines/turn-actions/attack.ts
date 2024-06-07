@@ -10,7 +10,7 @@ import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {getActiveRow} from 'common/utils/board'
 import {executeAttacks} from 'common/utils/attacks'
 
-function getAttacks(
+function getAttack(
 	game: GameModel,
 	attackPos: CardPosModel,
 	hermitAttackType: HermitAttackType
@@ -22,20 +22,21 @@ function getAttacks(
 
 	// hermit attacks
 	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
-	attacks.push(
-		...hermitCard.getAttacks(
-			game,
-			attackPos.row.hermitCard.cardInstance,
-			attackPos,
-			hermitAttackType
-		)
+
+	const nextAttack = hermitCard.getAttack(
+		game,
+		attackPos.row.hermitCard.cardInstance,
+		attackPos,
+		hermitAttackType
 	)
 
+	if (nextAttack) attacks.push(nextAttack)
+
 	// all other attacks
-	const otherAttacks = currentPlayer.hooks.getAttacks.call()
-	for (let i = 0; i < otherAttacks.length; i++) {
-		attacks.push(...otherAttacks[i])
-	}
+	const otherAttacks = currentPlayer.hooks.getAttack.call()
+	otherAttacks.forEach((otherAttack) => {
+		if (otherAttack) attacks.push(otherAttack)
+	})
 
 	if (DEBUG_CONFIG.oneShotMode) {
 		for (let i = 0; i < attacks.length; i++) {
@@ -92,13 +93,16 @@ function* attackSaga(
 	if (!defenceRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
 
 	// Get initial attacks
-	let attacks: Array<AttackModel> = getAttacks(game, attackPos, hermitAttackType)
-
-	//Add entry to battle log
-	game.battleLog.addAttackEntry(turnAction)
+	let attacks: Array<AttackModel> = getAttack(game, attackPos, hermitAttackType)
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)
+
+	game.battleLog.opponentCoinFlipEntry(currentPlayer.coinFlips)
+
+	if (currentPlayer.coinFlips.length === 0) {
+		game.battleLog.sendLogs()
+	}
 
 	return 'SUCCESS'
 }

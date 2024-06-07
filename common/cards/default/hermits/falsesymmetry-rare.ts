@@ -23,7 +23,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 				name: 'Supremacy',
 				cost: ['builder', 'any'],
 				damage: 70,
-				power: 'Flip a coin.\n\nIf heads, heal this Hermit 40hp.',
+				power: 'Flip a coin.\nIf heads, heal this Hermit 40hp.',
 			},
 		})
 	}
@@ -44,6 +44,8 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
 			const maxHealth = Math.max(attacker.row.health, hermitInfo.health)
 			attacker.row.health = Math.min(attacker.row.health + 40, maxHealth)
+
+			game.battleLog.addEntry(player.id, `$p${hermitInfo.name}$ healed $g40hp$`)
 		})
 	}
 

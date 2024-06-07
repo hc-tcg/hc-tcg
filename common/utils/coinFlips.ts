@@ -39,6 +39,7 @@ export function flipCoin(
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,
 		amount: coinFlipAmount,
+		delay: coinFlipAmount * 350 + 1000,
 	})
 
 	return coinFlips

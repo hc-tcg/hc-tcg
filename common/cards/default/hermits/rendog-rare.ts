@@ -30,7 +30,7 @@ class RendogRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
@@ -39,28 +39,38 @@ class RendogRareHermitCard extends HermitCard {
 		const {player} = pos
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
-		if (attacks[0].id !== this.getInstanceKey(instance)) return attacks
+		if (!attack || attack.type !== 'secondary') return attack
+		if (attack.id !== this.getInstanceKey(instance)) return attack
 
 		const imitatingCard: CardT | undefined = player.custom[imitatingCardKey]
 
-		if (!imitatingCard) return []
+		if (!imitatingCard) return null
 
 		// No loops please
-		if (imitatingCard.cardId === this.id) return []
+		if (imitatingCard.cardId === this.id) return null
 
 		const hermitInfo = HERMIT_CARDS[imitatingCard.cardId]
-		if (!hermitInfo) return []
+		if (!hermitInfo) return null
 
 		const attackType = player.custom[pickedAttackKey]
-		if (!attackType) return []
+		if (!attackType) return null
 		// Delete the stored data about the attack we chose
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
-		return hermitInfo.getAttacks(game, imitatingCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttack(game, imitatingCard.cardInstance, pos, attackType)
+		if (!newAttack) return null
+		const attackName =
+			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttack.updateLog(
+			(values) =>
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+					values.target
+				} with $v${hermitInfo.name}'s ${attackName}$ for ${values.damage} damage`
+		)
+		return newAttack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
