@@ -43,7 +43,7 @@ abstract class HermitCard extends Card {
 		this.health = defs.health
 		this.primary = defs.primary
 		this.secondary = defs.secondary
-		this.log = hermitCardBattleLog(this.name)
+		this.updateLog(hermitCardBattleLog(this.name))
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

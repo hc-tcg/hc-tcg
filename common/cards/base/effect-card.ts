@@ -29,10 +29,10 @@ abstract class EffectCard extends Card {
 
 		this.description = defs.description
 
-		this.log = (values) => {
+		this.updateLog((values) => {
 			if (defs.log) return defs.log(values)
 			return `$p{You|${values.player}}$ attached $e${values.pos.name}$ to $p${values.pos.hermitCard}$`
-		}
+		})
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

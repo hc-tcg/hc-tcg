@@ -27,7 +27,9 @@ class SingleUseCard extends Card {
 		})
 
 		this.description = defs.description
-		this.log = defs.log !== undefined ? defs.log : (values) => `${values.defaultLog}`
+		this.updateLog(
+			defs.log !== undefined && defs.log !== null ? defs.log : (values) => `${values.defaultLog}`
+		)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {

@@ -96,8 +96,6 @@ export class BattleLogModel {
 		coinFlips: Array<CurrentCoinFlipT>,
 		pickInfo?: PickInfo
 	) {
-		if (!card.log) return
-
 		const getCardName = (
 			player: PlayerState | undefined,
 			cardId: string | undefined,
@@ -133,7 +131,7 @@ export class BattleLogModel {
 
 		const pickedPlayer = pickInfoPlayer()
 
-		const logMessage = card.log({
+		const logMessage = card.getLog({
 			player: pos.player.playerName,
 			opponent: pos.opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',

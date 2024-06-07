@@ -30,7 +30,7 @@ abstract class Card {
 
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
-	public log: ((values: PlayCardLog) => string) | null
+	private log: Array<(values: PlayCardLog) => string>
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -38,7 +38,7 @@ abstract class Card {
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
-		this.log = null
+		this.log = []
 	}
 
 	public getKey(keyName: string) {
@@ -122,6 +122,26 @@ abstract class Card {
 	 */
 	public sidebarDescriptions(): Array<Record<string, string>> {
 		return []
+	}
+
+	/** Updates the log entry*/
+	public updateLog(logEntry: (values: PlayCardLog) => string) {
+		this.log.push(logEntry)
+	}
+
+	private consolidateLogs(values: PlayCardLog, logIndex: number) {
+		if (logIndex > 0) {
+			values.previousLog = this.consolidateLogs(values, logIndex - 1)
+		}
+		return this.log[logIndex](values)
+	}
+
+	/** Gets the log entry for this attack*/
+	public getLog(values: PlayCardLog) {
+		if (this.log.length === 0) {
+			return ''
+		}
+		return this.consolidateLogs(values, this.log.length - 1)
 	}
 }
 
