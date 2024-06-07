@@ -158,7 +158,7 @@ export class BattleLogModel {
 								pickedPlayer,
 								pickedPlayer.board.rows[pickInfo.rowIndex].hermitCard?.cardId,
 								pickInfo.rowIndex
-						  )
+							)
 						: invalid,
 				slotType: pickInfo ? pickInfo.slot.type : invalid,
 			},
@@ -232,7 +232,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
