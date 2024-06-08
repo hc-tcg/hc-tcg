@@ -8,7 +8,6 @@ import {AnyAction} from 'redux'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
 	const playerId = action.payload.internalId
-	console.log(playerId)
 	const player = game.players[playerId]
 	const opponentId = getOpponentId(game, playerId)
 	const opponent = game.players[opponentId]
