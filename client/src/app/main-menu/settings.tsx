@@ -72,7 +72,7 @@ function Settings({setMenuSection}: Props) {
 						Game Settings
 					</Button>
 					<Button variant="stone" onClick={handleDataSettings}>
-						Cookie Settings
+						Data Management
 					</Button>
 					<Button variant="stone" onClick={handleCredits}>
 						Credits
