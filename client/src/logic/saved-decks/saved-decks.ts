@@ -58,12 +58,6 @@ export const getSavedDeckNames = () => {
 	return getSavedDecks().map((name) => JSON.parse(name || '')?.name || '')
 }
 
-export const deleteSavedDecks = () => {
-	for (const deck of getSavedDeckNames()) {
-		deleteDeck(deck)
-	}
-}
-
 export const getLegacyDecks = () => {
 	for (let i = 0; i < localStorage.length; i++) {
 		const lsKey = localStorage.key(i)
