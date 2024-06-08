@@ -13,6 +13,7 @@ import MatchMaking from './match-making'
 import Toast from 'components/toast'
 import Settings from './main-menu/settings'
 import GameSettings from './main-menu/game-settings'
+import DataSettings from './main-menu/data-settings'
 import Credits from './main-menu/credits'
 import LostConnection from 'components/lost-connection'
 import Background from 'components/background'
@@ -45,6 +46,8 @@ function App() {
 					return <Settings setMenuSection={setMenuSection} />
 				case 'game-settings':
 					return <GameSettings setMenuSection={setMenuSection} />
+				case 'data-settings':
+					return <DataSettings setMenuSection={setMenuSection} />
 				case 'credits':
 					return <Credits setMenuSection={setMenuSection} />
 				case 'mainmenu':

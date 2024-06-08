@@ -1,4 +1,4 @@
-import React, {SyntheticEvent} from 'react'
+import React from 'react'
 import css from './main-menu.module.scss'
 import {useSelector, useDispatch} from 'react-redux'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
