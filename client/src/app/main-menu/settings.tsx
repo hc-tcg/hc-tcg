@@ -5,7 +5,6 @@ import Slider from 'components/slider'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
 import UpdatesModal from 'components/updates'
@@ -18,7 +17,6 @@ function Settings({setMenuSection}: Props) {
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
-	const [resetStatsConfim, setResetStatsConfirm] = useState<boolean>(false)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('soundVolume', ev.currentTarget.value))
@@ -26,14 +24,7 @@ function Settings({setMenuSection}: Props) {
 	const handleMusicChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('musicVolume', ev.currentTarget.value))
 	}
-	const handleResetStats = () => {
-		if (resetStatsConfim) {
-			setResetStatsConfirm(false)
-			dispatch(resetStats())
-		} else {
-			setResetStatsConfirm(true)
-		}
-	}
+
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
 	}
@@ -45,6 +36,7 @@ function Settings({setMenuSection}: Props) {
 		return 'Disabled'
 	}
 	const handleGameSettings = () => setMenuSection('game-settings')
+	const handleDataSettings = () => setMenuSection('data-settings')
 
 	const handleCredits = () => setMenuSection('credits')
 
@@ -78,6 +70,9 @@ function Settings({setMenuSection}: Props) {
 					</Button>
 					<Button variant="stone" onClick={handleGameSettings}>
 						Game Settings
+					</Button>
+					<Button variant="stone" onClick={handleDataSettings}>
+						Data Management
 					</Button>
 					<Button variant="stone" onClick={handleCredits}>
 						Credits
@@ -115,9 +110,6 @@ function Settings({setMenuSection}: Props) {
 							<span>{stats.fl}</span>
 						</div>
 					</div>
-					<Button variant="stone" onClick={handleResetStats}>
-						{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
-					</Button>
 				</div>
 			</MenuLayout>
 		</>
