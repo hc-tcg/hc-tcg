@@ -77,4 +77,4 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build
-        run: docker buildx .
+        run: docker buildx build .
