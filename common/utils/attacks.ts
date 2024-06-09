@@ -2,7 +2,7 @@ import {STRENGTHS} from '../const/strengths'
 import {HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
-import {CardPosModel} from '../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
@@ -147,77 +147,66 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 export function executeAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	withoutBlockingActions = false
+	withoutBlockingActions = false,
+	createLogs = true
 ) {
-	// Outer attack loop
-	while (attacks.length > 0) {
-		const allAttacks: Array<AttackModel> = []
+	// We need to store the SU card for battle log stuff.
+	const thisAttackSagaSU = game.currentPlayer.board.singleUseCard
 
-		// Main attack loop
-		while (attacks.length > 0) {
-			// STEP 1 - Call before attack and defence for all attacks
-			runBeforeAttackHooks(attacks)
-			runBeforeDefenceHooks(attacks)
+	// STEP 1 - Call before attack and defence for all attacks
+	runBeforeAttackHooks(attacks)
+	runBeforeDefenceHooks(attacks)
 
-			// STEP 2 - Call on attack and defence for all attacks
-			runOnAttackHooks(attacks)
-			runOnDefenceHooks(attacks)
+	// STEP 2 - Call on attack and defence for all attacks
+	runOnAttackHooks(attacks)
+	runOnDefenceHooks(attacks)
 
-			// STEP 3 - Execute all attacks
-			for (let i = 0; i < attacks.length; i++) {
-				executeAttack(attacks[i])
+	// STEP 3 - Execute all attacks
+	attacks.forEach((attack) => {
+		executeAttack(attack)
 
-				// Add this attack to the final list
-				allAttacks.push(attacks[i])
-			}
-
-			const newAttacks: Array<AttackModel> = []
-			for (let i = 0; i < attacks.length; i++) {
-				newAttacks.push(...attacks[i].nextAttacks)
-				// Clear the list of next attacks on this attack
-				attacks[i].nextAttacks = []
-			}
-			attacks = newAttacks
+		if (attack.nextAttacks.length > 0) {
+			executeAttacks(game, attack.nextAttacks, withoutBlockingActions, false)
 		}
 
-		if (!withoutBlockingActions) {
-			// STEP 5 - All attacks have been completed, mark actions appropriately
-			game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
-			game.addBlockedActions(
-				'game',
-				'PLAY_HERMIT_CARD',
-				'PLAY_ITEM_CARD',
-				'PLAY_EFFECT_CARD',
-				'PLAY_SINGLE_USE_CARD',
-				'CHANGE_ACTIVE_HERMIT'
-			)
-
-			// We might loop around again, don't block actions anymore
-			withoutBlockingActions = true
+		if (createLogs) {
+			game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSagaSU)
 		}
 
-		// STEP 6 - Aafter all attacks have been executed, call after attack and defence hooks
-		runAfterAttackHooks(allAttacks)
-		runAfterDefenceHooks(allAttacks)
+		attack.nextAttacks = []
+	})
 
-		// STEP 7 - If we added any new attacks in afterAttack or afterDefense, loop around
-		for (let i = 0; i < allAttacks.length; i++) {
-			attacks.push(...allAttacks[i].nextAttacks)
-		}
+	if (!withoutBlockingActions) {
+		// STEP 5 - All attacks have been completed, mark actions appropriately
+		game.addCompletedActions('SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK')
+		game.addBlockedActions(
+			'game',
+			'PLAY_HERMIT_CARD',
+			'PLAY_ITEM_CARD',
+			'PLAY_EFFECT_CARD',
+			'PLAY_SINGLE_USE_CARD',
+			'CHANGE_ACTIVE_HERMIT'
+		)
 	}
+
+	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
+	runAfterAttackHooks(attacks)
+	runAfterDefenceHooks(attacks)
+
+	// STEP 7 - Execute new attacks created in afterAttack hooks
+	attacks.forEach((attack) => {
+		if (attack.nextAttacks.length === 0) return
+		executeAttacks(game, attack.nextAttacks, true, true)
+	})
 }
 
 export function executeExtraAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	type: string,
 	withoutBlockingActions = false
 ) {
-	attacks.map((attack) => {
-		game.battleLog.addOutOfPhaseAttackEntry(attack, type)
-	})
-
 	executeAttacks(game, attacks, withoutBlockingActions)
+	game.battleLog.sendLogs()
 }
 
 // Things not directly related to the attack loop

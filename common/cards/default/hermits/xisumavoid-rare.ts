@@ -23,7 +23,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 				name: 'Cup of Tea',
 				cost: ['redstone', 'redstone'],
 				damage: 80,
-				power: "Flip a coin.\n\nIf heads, poison your opponent's active Hermit.",
+				power: "Flip a coin.\nIf heads, poison your opponent's active Hermit.",
 			},
 		})
 	}

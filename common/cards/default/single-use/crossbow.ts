@@ -13,6 +13,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			name: 'Crossbow',
 			rarity: 'rare',
 			description: "Do 20hp damage to up to 3 of your opponent's active or AFK Hermits.",
+			log: null,
 		})
 	}
 
@@ -74,43 +75,45 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			addPickRequest(pickAmount)
 		})
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return null
 
-			const attacks = []
 			const targets: Array<number> = player.custom[targetsKey]
-			if (targets === undefined) return []
+			if (targets === undefined) return null
 
-			for (const target of targets) {
+			const attack = targets.reduce((r: null | AttackModel, target, i) => {
 				const row = opponentPlayer.board.rows[target]
-				if (!row || !row.hermitCard) continue
+				if (!row || !row.hermitCard) return r
+				const newAttack = new AttackModel({
+					id: this.getInstanceKey(instance),
+					attacker: activePos,
+					target: {
+						player: opponentPlayer,
+						rowIndex: target,
+						row,
+					},
+					type: 'effect',
+					log: (values) =>
+						i === 0
+							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
+				}).addDamage(this.id, 20)
 
-				attacks.push(
-					new AttackModel({
-						id: this.getInstanceKey(instance),
-						attacker: activePos,
-						target: {
-							player: opponentPlayer,
-							rowIndex: target,
-							row,
-						},
-						type: 'effect',
-					}).addDamage(this.id, 20)
-				)
-			}
-			player.custom[targetsKey] = attacks.length
-			return attacks
+				if (r) return r.addNewAttack(newAttack)
+
+				return newAttack
+			}, null)
+
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
+			applySingleUse(game)
+
 			delete player.custom[targetsKey]
 
 			// Do not apply single use more than once
@@ -121,7 +124,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
 
 		const targetsKey = this.getInstanceKey(instance, 'targets')

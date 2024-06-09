@@ -31,7 +31,7 @@ class GrianRareHermitCard extends HermitCard {
 				cost: ['prankster', 'prankster'],
 				damage: 50,
 				power:
-					"After your attack, flip a coin.\n\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
+					"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
 			},
 			secondary: {
 				name: 'Start a War',
@@ -71,11 +71,29 @@ class GrianRareHermitCard extends HermitCard {
 
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: this.id},
+				data: {
+					modalId: 'selectCards',
+					payload: {
+						modalName: 'Grian - Borrow',
+						modalDescription: `Would you like to attach or discard your opponent's ${
+							CARDS[opponentEffectCard.cardId].name
+						} card?`,
+						cards: [opponentEffectCard],
+						selectionSize: 0,
+						primaryButton: {
+							text: 'Attach',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'Discard',
+							variant: 'default',
+						},
+					},
+				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || modalResult.result === undefined) return 'FAILURE_INVALID_DATA'
 
-					if (modalResult.attach) {
+					if (modalResult.result) {
 						// Discard our current attached card if there is one
 						discardCard(game, row.effectCard)
 

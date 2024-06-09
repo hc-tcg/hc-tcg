@@ -6,7 +6,6 @@ import {setSetting} from 'logic/local-settings/local-settings-actions'
 import {controlVoiceTest} from 'logic/sound/sound-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {getStats} from 'logic/fbdb/fbdb-selectors'
-import {resetStats} from 'logic/fbdb/fbdb-actions'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
 import UpdatesModal from 'components/updates'
@@ -19,7 +18,6 @@ function Settings({setMenuSection}: Props) {
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
-	const [resetStatsConfim, setResetStatsConfirm] = useState<boolean>(false)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
 		dispatch(setSetting('soundVolume', ev.currentTarget.value))
@@ -31,14 +29,11 @@ function Settings({setMenuSection}: Props) {
 		dispatch(setSetting('voiceVolume', ev.currentTarget.value))
 		dispatch(controlVoiceTest('PLAY'))
 	}
-	const handleResetStats = () => {
-		if (resetStatsConfim) {
-			setResetStatsConfirm(false)
-			dispatch(resetStats())
-		} else {
-			setResetStatsConfirm(true)
-		}
+	const changeMenuSection = (section: string) => {
+		dispatch(controlVoiceTest('STOP'))
+		setMenuSection(section)
 	}
+
 	const handlePanoramaToggle = () => {
 		dispatch(setSetting('panoramaEnabled', !settings.panoramaEnabled))
 	}
@@ -49,10 +44,10 @@ function Settings({setMenuSection}: Props) {
 		if (value !== '0') return `${value}%`
 		return 'Disabled'
 	}
-	const handleGameSettings = () =>
-		dispatch(controlVoiceTest('STOP')) && setMenuSection('game-settings')
+	const handleGameSettings = () => changeMenuSection('game-settings')
+	const handleDataSettings = () => changeMenuSection('data-settings')
 
-	const handleCredits = () => dispatch(controlVoiceTest('STOP')) && setMenuSection('credits')
+	const handleCredits = () => changeMenuSection('credits')
 
 	const [updatesOpen, setUpdatesOpen] = useState<boolean>(false)
 	const handleUpdates = () => {
@@ -67,7 +62,7 @@ function Settings({setMenuSection}: Props) {
 				<></>
 			)}
 			<MenuLayout
-				back={() => dispatch(controlVoiceTest('STOP')) && setMenuSection('mainmenu')}
+				back={() => changeMenuSection('mainmenu')}
 				title="More"
 				returnText="Main Menu"
 				className={css.settingsMenu}
@@ -87,6 +82,9 @@ function Settings({setMenuSection}: Props) {
 					</Button>
 					<Button variant="stone" onClick={handleGameSettings}>
 						Game Settings
+					</Button>
+					<Button variant="stone" onClick={handleDataSettings}>
+						Data Management
 					</Button>
 					<Button variant="stone" onClick={handleCredits}>
 						Credits
@@ -124,9 +122,6 @@ function Settings({setMenuSection}: Props) {
 							<span>{stats.fl}</span>
 						</div>
 					</div>
-					<Button variant="stone" onClick={handleResetStats}>
-						{!resetStatsConfim ? 'Reset Stats' : 'Reset Stats - Are you sure?'}
-					</Button>
 				</div>
 			</MenuLayout>
 		</>

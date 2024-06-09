@@ -1,9 +1,10 @@
 import Card, {CanAttachResult} from './card'
 import {CARDS} from '..'
 import {GameModel} from '../../models/game-model'
-import {CardRarityT} from '../../types/cards'
+import {PlayCardLog, CardRarityT} from '../../types/cards'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 
 type EffectDefs = {
 	id: string
@@ -11,6 +12,7 @@ type EffectDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
+	log?: ((values: PlayCardLog) => string) | null
 }
 
 abstract class EffectCard extends Card {
@@ -26,6 +28,11 @@ abstract class EffectCard extends Card {
 		})
 
 		this.description = defs.description
+
+		this.updateLog((values) => {
+			if (defs.log) return defs.log(values)
+			return `$p{You|${values.player}}$ attached $e${values.pos.name}$ to $p${values.pos.hermitCard}$`
+		})
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
@@ -65,6 +72,10 @@ abstract class EffectCard extends Card {
 	public getIsRemovable(): boolean {
 		// default
 		return true
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return formatText(`*${this.description}*`)
 	}
 }
 

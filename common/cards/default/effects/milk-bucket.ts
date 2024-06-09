@@ -14,7 +14,12 @@ class MilkBucketEffectCard extends EffectCard {
 			name: 'Milk Bucket',
 			rarity: 'common',
 			description:
-				'Remove poison and bad omen from one of your Hermits.\n\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
+				'Remove poison and bad omen from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
+			log: (values) => {
+				if (values.pos.slotType === 'single_use')
+					return `${values.defaultLog} on $p${values.pick.name}$`
+				return `$p{You|${values.player}}$ attached $e${this.name}$ to $p${values.pos.hermitCard}$`
+			},
 		})
 	}
 
@@ -42,10 +47,7 @@ class MilkBucketEffectCard extends EffectCard {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					applySingleUse(game, [
-						[`on `, 'plain'],
-						[`${CARDS[pickResult.card.cardId].name} `, 'player'],
-					])
+					applySingleUse(game, pickResult)
 
 					return 'SUCCESS'
 				},

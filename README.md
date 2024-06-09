@@ -8,16 +8,30 @@ Use Node.js 16-18 (19+ is not supported).
 
 If you don't have Node.js yet we recommend using [nvm](https://github.com/nvm-sh/nvm).
 
-## How to run the project
+## How to host Hermitcraft TCG
 
-- First, you must install packages using `npm ci` - _use this instead of `npm install` to avoid unneccesary changes in package-lock.json_
-- The client is compiled, so must be built before use with `npm run build`
-- The server can then be run using `npm run start` or `npm run server`
-- Whilst developing, it may be useful so run the client or server such that they reload if you make a change. This can be done by running `npm run client:dev` and `npm run server:dev` respectively.
+```sh
+npm ci          # install packages
+npm run build   # build the client
+npm run server  # start the sever
+```
+
+_Please use `npm ci` instead of instead of `npm install` to avoid unneccesary changes in package-lock.json._
+
+# Running in your development environment
+
+```sh
+npm ci               # install packges
+npm run server:dev   # start the server and update automatically when you make changes
+npm run client:dev   # start the client and update automatically when you make changes
+npm run dev          # start both the client and server
+```
+
+By default, the client is hosted on port 3002.
 
 ## Configuration
 
-You can configure your instance using the `config/server-config.json` file.
+Your instance can be configured using the `common/config/server-config.json` file.
 
 | Key           | Description                                                                         |
 | ------------- | ----------------------------------------------------------------------------------- |
@@ -31,15 +45,27 @@ You can configure your instance using the `config/server-config.json` file.
 | botUrl        | Url to report game results to                                                       |
 | version       | Version displayed on the client                                                     |
 
+You can also configure debug settings using `common/config/debug-config.json`. To create it, copy `common/config/debug-config.example.json` and rename it. On linux you can run `cp ./common/config/debug-config.example.json ./common/config/debug-config.json`, and on windows you can run `copy ./common/config/debug-config.example.json ./common/config/debug-config.json` to create the file.
+
+| Key                   | Description                                                                 |
+| --------------------- | --------------------------------------------------------------------------- |
+| disableDeckValidation | Disable deck validation                                                     |
+| extraStartingCards    | Add extra cards into your hand at the start of the game.                    |
+| noItemRequirements    | Remove item requirements for attacks.                                       |
+| forceCoinFlip         | Force coinflips to always roll heads.                                       |
+| oneShotMode           | All attacks will instantly knock out their target.                          |
+| disableDamage         | Disable attacks from dealing damage.                                        |
+| disableDeckOut        | Disable the deck out win condition.                                         |
+| startWithAllCards     | Start the game with every card in your deck. Also disables deck out.        |
+| unlimitedCards        | Start the game with every card in the game. Also disables deck out.         |
+| blockedActions        | Block specific actions every turn.                                          |
+| availableActions      | Make specific actions available every turn.                                 |
+| showHooksState        | Show hooks in the console.                                                  |
+| autoEndTurn           | When you have no actions left, automatically switch to the opponent's turn. |
+
 ### Formatting & coding style
 
-We run lint/prettier/tsc as part of the PR process. However if you want to avoid back and forth we recommend adding a pre-commit hook that will test this for you locally every time you create a new commit:
-
-```console
-npm run husky
-```
-
-We also recommend to run prettier on save in your editor, this is an example configuration using the prettier extension for VSCode:
+We run lint/prettier/tsc as part of the PR process. We also recommend to run prettier on save in your editor, this is an example configuration using the prettier extension for VSCode:
 
 ```jsonc
 // .vscode/settings.json

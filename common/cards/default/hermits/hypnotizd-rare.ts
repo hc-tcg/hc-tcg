@@ -37,35 +37,33 @@ class HypnotizdRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player, opponentPlayer} = pos
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
-
-		const hermitAttack = attacks[0]
+		if (!attack || attack.type !== 'secondary') return attack
 
 		const targetKey = this.getInstanceKey(instance, 'target')
 		const targetIndex: number | undefined = player.custom[targetKey]
-		if (targetIndex === undefined) return attacks
-		if (targetIndex === opponentPlayer.board.activeRow) return attacks
+		if (targetIndex === undefined) return attack
+		if (targetIndex === opponentPlayer.board.activeRow) return attack
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return attacks
+		if (!targetRow.hermitCard) return attack
 
 		// Change attack target
-		hermitAttack.setTarget(this.id, {
+		attack.setTarget(this.id, {
 			player: opponentPlayer,
 			rowIndex: targetIndex,
 			row: targetRow,
 		})
 
-		const newAttacks = [hermitAttack]
+		const newAttacks = attack
 
 		// Delete the target info now
 		delete player.custom[targetKey]

@@ -20,15 +20,20 @@ class SleepingStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		const {player, card, row} = pos
+		const {player, card, row, rowIndex} = pos
 
-		if (!card || !row?.hermitCard) return
+		if (!card || !row?.hermitCard || rowIndex === null) return
 
 		game.state.statusEffects.push(statusEffectInfo)
 		game.addBlockedActions(this.id, 'PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'CHANGE_ACTIVE_HERMIT')
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
 		row.health = HERMIT_CARDS[card.cardId].health
+
+		game.battleLog.addEntry(
+			player.id,
+			`$p${HERMIT_CARDS[card.cardId].name}$ went to $eSleep$ and restored $gfull health$`
+		)
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)

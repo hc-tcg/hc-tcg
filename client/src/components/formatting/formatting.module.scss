@@ -1,0 +1,90 @@
+$player: #6fabd0;
+$opponent: #e5955c;
+$effect: #9880df;
+$attack: #e1cd95;
+$item: #c4c4c4;
+$good: #63b45c;
+$bad: #da5558;
+$keyword: var(--gray-200);
+
+.selectable {
+	user-select: all;
+}
+
+.player {
+	color: $player;
+	font-family: MinecraftBold;
+
+	&.viewedByOpponent {
+		color: $opponent;
+	}
+}
+
+.opponent {
+	color: $opponent;
+	font-family: MinecraftBold;
+
+	&.viewedByOpponent {
+		color: $player;
+	}
+}
+
+.effect {
+	color: $effect;
+	font-family: MinecraftBold;
+}
+
+.attack {
+	color: $attack;
+	font-family: MinecraftBold;
+}
+
+.item {
+	color: $item;
+	font-family: MinecraftBold;
+}
+
+.good {
+	color: $good;
+	font-family: MinecraftBold;
+}
+
+.bad {
+	color: $bad;
+	font-family: MinecraftBold;
+}
+
+.bold {
+	font-family: MinecraftBold;
+
+	> span > .italic {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
+}
+
+.italic {
+	font-family: MinecraftItalic;
+
+	> span > .bold {
+		font-family: MinecraftItalic;
+		font-weight: 1000;
+	}
+}
+
+.keyword {
+	font-family: MinecraftItalic;
+	font-weight: 1000;
+	color: $keyword;
+}
+
+.tab {
+	margin-right: 5em;
+}
+
+.emoji {
+	height: 1.4rem;
+	transform: translateY(0.3rem);
+	pointer-events: none;
+	margin-top: -0.4rem;
+}

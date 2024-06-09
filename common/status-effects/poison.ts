@@ -6,6 +6,7 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CARDS} from '../cards'
 
 class PoisonStatusEffect extends StatusEffect {
 	constructor() {
@@ -32,6 +33,10 @@ class PoisonStatusEffect extends StatusEffect {
 
 		game.state.statusEffects.push(statusEffectInfo)
 
+		if (pos.card) {
+			game.battleLog.addEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $ePoisoned$`)
+		}
+
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
@@ -43,7 +48,7 @@ class PoisonStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-					}
+				  }
 				: null
 
 			const targetRow: RowPos = {
@@ -57,6 +62,7 @@ class PoisonStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
+				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
 			if (targetPos.row.health >= 30) {
@@ -65,7 +71,7 @@ class PoisonStatusEffect extends StatusEffect {
 				statusEffectAttack.addDamage(this.id, 10)
 			}
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Poison', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {

@@ -14,7 +14,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 			name: 'Composter',
 			rarity: 'common',
 			description:
-				'Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.',
+				'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
+			log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		})
 	}
 
@@ -65,7 +66,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 				discardFromHand(player, pickResult.card)
 
 				// Apply
-				applySingleUse(game, [])
+				applySingleUse(game)
 
 				drawCards(player, 2)
 

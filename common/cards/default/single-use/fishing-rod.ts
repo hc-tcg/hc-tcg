@@ -11,6 +11,7 @@ class FishingRodSingleUseCard extends SingleUseCard {
 			name: 'Fishing Rod',
 			rarity: 'ultra_rare',
 			description: 'Draw 2 cards.',
+			log: (values) => `${values.defaultLog} to draw 2 cards`,
 		})
 	}
 

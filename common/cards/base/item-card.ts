@@ -1,9 +1,10 @@
 import Card, {CanAttachResult} from './card'
-import {CARDS} from '..'
-import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import {PlayCardLog, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {HERMIT_CARDS} from '..'
 
 type ItemDefs = {
 	id: string
@@ -26,6 +27,11 @@ abstract class ItemCard extends Card {
 		})
 
 		this.hermitType = defs.hermitType
+
+		this.updateLog(
+			(values) =>
+				`$p{You|${values.player}}$ attached $m${values.pos.name}$ to $p${values.pos.hermitCard}$`
+		)
 	}
 
 	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
@@ -53,6 +59,10 @@ abstract class ItemCard extends Card {
 		})
 
 		return spaceForItem ? ['PLAY_ITEM_CARD'] : []
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 	}
 
 	public abstract getEnergy(game: GameModel, instance: string, pos: CardPosModel): Array<EnergyT>

@@ -1,7 +1,6 @@
 .chat {
 	position: fixed;
 	inset: 0;
-	margin: 2vh;
 	padding: 2vh;
 	gap: 2vh;
 	background: var(--gray-600);
@@ -108,26 +107,22 @@
 	z-index: 1;
 	display: flex;
 	flex-direction: column-reverse;
+	scrollbar-width: thin;
 }
 
 .message {
 	word-break: break-word;
 	margin-bottom: 0.25rem;
 	font-size: 1rem;
-}
-
-.player {
-	color: #6fabd0;
-}
-
-.opponent {
-	color: #5ea758;
+	display: flex;
+	align-items: baseline;
 }
 
 .time {
 	color: var(--gray-400);
 	font-size: 0.75rem;
 	padding-right: 0.25rem;
+	width: 4rem;
 }
 
 .playerName {
@@ -139,27 +134,23 @@
 	color: var(--text-light);
 }
 
-.emoji {
-	height: 1.4rem;
-	transform: translateY(0.3rem);
-	margin-top: -0.4rem;
+.systemMessage {
+	color: var(--gray-300);
 }
 
-.entryTooltip {
+.turnTag {
 	color: var(--gray-300);
+	font-size: 0.75rem;
+	padding-right: 0.25rem;
+}
 
-	&.highlight {
-		color: var(--gray-300);
-		font-family: MinecraftBold;
-	}
-
-	&.player {
-		color: var(--gray-300);
-		font-family: MinecraftBold;
-	}
-
-	&.opponent {
-		color: var(--gray-300);
-		font-family: MinecraftBold;
-	}
+.line {
+	flex-grow: 1;
+	height: 100%;
+	display: inline-block;
+	height: 1px;
+	border: 0;
+	border-top: 2px solid var(--gray-300);
+	padding: 0;
+	align-self: center;
 }

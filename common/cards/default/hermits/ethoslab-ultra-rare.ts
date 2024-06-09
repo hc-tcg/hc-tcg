@@ -22,7 +22,7 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 				name: 'Slab',
 				cost: ['any', 'any'],
 				damage: 70,
-				power: 'Flip a coin 3 times.\n\nDo an additional 20hp damage for every heads.',
+				power: 'Flip a coin 3 times.\nDo an additional 20hp damage for every heads.',
 			},
 		})
 	}

@@ -6,7 +6,6 @@ import Board from './board'
 import css from './game.module.scss'
 import {
 	AttackModal,
-	BorrowModal,
 	ChangeHermitModal,
 	ConfirmModal,
 	EndTurnModal,
@@ -42,7 +41,6 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	'unmet-condition': UnmetConditionModal,
 
 	// Custom modals
-	borrow: BorrowModal,
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
 }

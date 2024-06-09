@@ -7,7 +7,7 @@ import {GameModel} from 'common/models/game-model'
 import {AnyAction} from 'redux'
 
 function* sendGameStateOnReconnect(game: GameModel, action: AnyAction) {
-	const {playerId} = action.payload
+	const playerId = action.payload.internalId
 	const player = game.players[playerId]
 	const opponentId = getOpponentId(game, playerId)
 	const opponent = game.players[opponentId]
@@ -38,8 +38,7 @@ function* statusChangedSaga(game: GameModel, action: AnyAction) {
 
 function* connectionStatusSaga(game: GameModel) {
 	yield* takeEvery(
-		(action: any) =>
-			action.type === 'PLAYER_RECONNECTED' && !!game.players[action.payload.playerId],
+		(action: any) => action.type === 'PLAYER_RECONNECTED' && !!game.players[action.payload.id],
 		sendGameStateOnReconnect,
 		game
 	)

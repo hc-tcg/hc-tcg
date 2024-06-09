@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
+import {formatText} from '../../../utils/formatting'
 import HermitCard from '../../base/hermit-card'
 
 class ZombieCleoRareHermitCard extends HermitCard {
@@ -30,7 +31,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
@@ -38,9 +39,9 @@ class ZombieCleoRareHermitCard extends HermitCard {
 	) {
 		const {player} = pos
 		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
+		if (!attack || attack.type !== 'secondary') return attack
 
 		const pickedCard: CardT = player.custom[pickedCardKey]?.card
 		const attackType = player.custom[pickedCardKey]?.attack
@@ -48,16 +49,26 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		// Delete the stored data straight away
 		delete pos.player.custom[pickedCardKey]
 
-		if (!pickedCard || !attackType) return []
+		if (!pickedCard || !attackType) return null
 
 		// No loops please
-		if (pickedCard.cardId === this.id) return []
+		if (pickedCard.cardId === this.id) return null
 
 		const hermitInfo = HERMIT_CARDS[pickedCard.cardId]
-		if (!hermitInfo) return []
+		if (!hermitInfo) return null
 
 		// Return that cards secondary attack
-		return hermitInfo.getAttacks(game, pickedCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttack(game, pickedCard.cardInstance, pos, attackType)
+		if (!newAttack) return null
+		const attackName =
+			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
+		newAttack.updateLog(
+			(values) =>
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+					values.target
+				} with $v${hermitInfo.name}'s ${attackName}$ for ${values.damage} damage`
+		)
+		return newAttack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

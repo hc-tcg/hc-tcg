@@ -2,7 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
@@ -23,7 +23,7 @@ class KeralisRareHermitCard extends HermitCard {
 				name: 'Sweet Face',
 				cost: ['terraform', 'terraform', 'any'],
 				damage: 0,
-				power: 'Heal one of your AFK Hermits 100hp.',
+				power: 'Heal any AFK Hermit 100hp.',
 			},
 		})
 	}
@@ -90,11 +90,22 @@ class KeralisRareHermitCard extends HermitCard {
 			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
 			if (!pickedRow || !pickedRow.hermitCard) return
 
-			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
-			if (hermitInfo) {
+			const pickedHermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
+			const activeHermit = getActiveRow(player)?.hermitCard
+			if (!activeHermit) return
+			const activeHermitName = HERMIT_CARDS[activeHermit.cardId].name
+
+			if (pickedHermitInfo && activeHermitName) {
 				// Heal
-				const maxHealth = Math.max(pickedRow.health, hermitInfo.health)
+				const maxHealth = Math.max(pickedRow.health, pickedHermitInfo.health)
 				pickedRow.health = Math.min(pickedRow.health + 100, maxHealth)
+
+				game.battleLog.addEntry(
+					player.id,
+					`$p${pickedHermitInfo.name} (${
+						pickedRowIndex + 1
+					})$ was healed $g100hp$ by $p${activeHermitName}$`
+				)
 			}
 
 			delete player.custom[playerKey]

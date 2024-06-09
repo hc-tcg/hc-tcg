@@ -1,6 +1,8 @@
+import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
+import {getFormattedName} from '../../../utils/game'
 import {discardFromHand} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -12,7 +14,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 			name: 'Spyglass',
 			rarity: 'common',
 			description:
-				"Look at your opponent's hand, and then flip a coin.\n\nIf heads, choose one card to discard from your opponent's hand.",
+				"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
+			log: (values) => `${values.defaultLog} and ${values.coinFlip}`,
 		})
 	}
 
@@ -49,28 +52,13 @@ class SpyglassSingleUseCard extends SingleUseCard {
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 					discardFromHand(opponentPlayer, modalResult.cards[0])
 
-					game.addModalRequest({
-						playerId: opponentPlayer.id,
-						data: {
-							modalId: 'selectCards',
-							payload: {
-								modalName: 'Spyglass: Card your opponent discarded.',
-								modalDescription: '',
-								cards: modalResult.cards,
-								selectionSize: 0,
-								primaryButton: {
-									text: 'Close',
-									variant: 'default',
-								},
-							},
-						},
-						onResult() {
-							return 'SUCCESS'
-						},
-						onTimeout() {
-							// Do nothing
-						},
-					})
+					game.battleLog.addEntry(
+						player.id,
+						`$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
+							modalResult.cards[0].cardId,
+							true
+						)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
+					)
 
 					return 'SUCCESS'
 				},

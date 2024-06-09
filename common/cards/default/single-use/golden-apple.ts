@@ -13,6 +13,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			name: 'Golden Apple',
 			rarity: 'ultra_rare',
 			description: 'Heal one of your AFK Hermits 100hp.',
+			log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
 		})
 	}
 
@@ -56,10 +57,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply
-				applySingleUse(game, [
-					[`on `, 'plain'],
-					[`${hermitInfo.name} `, 'player'],
-				])
+				applySingleUse(game, pickResult)
 
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 100, maxHealth)

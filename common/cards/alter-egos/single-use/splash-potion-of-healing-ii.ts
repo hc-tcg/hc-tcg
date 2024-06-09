@@ -11,6 +11,7 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 			name: 'Splash Potion of Healing II',
 			rarity: 'rare',
 			description: 'Heal all of your Hermits 30hp.',
+			log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g30hp$`,
 		})
 	}
 

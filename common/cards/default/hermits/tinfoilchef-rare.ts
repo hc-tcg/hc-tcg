@@ -22,7 +22,7 @@ class TinFoilChefRareHermitCard extends HermitCard {
 				name: 'Branch Mine',
 				cost: ['miner', 'miner'],
 				damage: 80,
-				power: 'Flip a coin.\n\nIf heads, you draw an extra card at the end of your turn.',
+				power: 'Flip a coin.\nIf heads, you draw an extra card at the end of your turn.',
 			},
 		})
 	}

@@ -1,9 +1,9 @@
 import {getStarterPack} from '../../server/src/utils/state-gen'
-import profanityFilter from '../utils/profanity'
 import {CardT} from '../../common/types/game-state'
 import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
+import {censorString} from '../utils/formatting'
 
 export class PlayerModel {
 	private internalId: string
@@ -34,7 +34,7 @@ export class PlayerModel {
 
 		this.name = playerName
 		this.minecraftName = minecraftName
-		this.censoredName = profanityFilter(playerName)
+		this.censoredName = censorString(playerName)
 		this.socket = socket
 	}
 

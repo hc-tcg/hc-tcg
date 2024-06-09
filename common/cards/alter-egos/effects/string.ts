@@ -13,7 +13,9 @@ class StringEffectCard extends EffectCard {
 			name: 'String',
 			rarity: 'rare',
 			description:
-				"Attach to one of your opponent's empty item or effect slots.\n\nYour opponent can no longer attach cards to that slot.",
+				"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
+			log: (values) =>
+				`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
 		})
 	}
 
@@ -30,7 +32,7 @@ class StringEffectCard extends EffectCard {
 
 		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		return []
+		return result
 	}
 
 	// This card allows placing on either effect or item slot

@@ -13,6 +13,6 @@
 		"maxDeckCost": 42
 	},
 	"logoSubText": "New Stuff!",
-	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.7.0"
+	"botUrl": "http://51.68.21.110:8085",
+	"version": "0.7.2"
 }

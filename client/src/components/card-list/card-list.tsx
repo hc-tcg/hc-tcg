@@ -7,7 +7,6 @@ import css from './card-list.module.scss'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import Card from 'common/cards/base/card'
 import {equalCard} from 'common/utils/cards'
-import {forwardRef, useRef} from 'react'
 
 type CardListProps = {
 	cards: Array<CardT>

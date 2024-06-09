@@ -1,3 +1,4 @@
+import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
@@ -38,11 +39,14 @@ class ShieldEffectCard extends EffectCard {
 			}
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
+		player.hooks.afterDefence.add(instance, () => {
 			const {player, row} = pos
 
 			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
 				discardCard(game, row.effectCard)
+				if (!row.hermitCard) return
+				const hermitName = HERMIT_CARDS[row.hermitCard?.cardId].name
+				game.battleLog.addEntry(player.id, `$p${hermitName}'s$ $eShield$ was broken`)
 			}
 		})
 	}

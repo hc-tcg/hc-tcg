@@ -5,12 +5,12 @@ class OriginalXbCommonHermitCard extends HermitCard {
 		super({
 			id: 'originalxb_common',
 			numericId: 234,
-			name: 'Original XB',
+			name: 'Original xB',
 			rarity: 'common',
 			hermitType: 'miner',
 			health: 280,
 			primary: {
-				name: 'Hellooo!',
+				name: 'Hellooo?',
 				cost: ['miner'],
 				damage: 50,
 				power: null,

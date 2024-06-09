@@ -15,6 +15,8 @@ class MendingSingleUseCard extends singleUseCard {
 			name: 'Mending',
 			rarity: 'ultra_rare',
 			description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
+			log: (values) =>
+				`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 		})
 	}
 
@@ -86,11 +88,11 @@ class MendingSingleUseCard extends singleUseCard {
 					return 'FAILURE_INVALID_SLOT'
 				}
 
+				const logInfo = pickResult
+				logInfo.card = sourcePos.row.effectCard
+
 				// Apply the mending card
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[`${CARDS[effectCard.cardId].name} `, 'player'],
-				])
+				applySingleUse(game, logInfo)
 
 				// Move the effect card
 				swapSlots(game, sourcePos, targetPos)

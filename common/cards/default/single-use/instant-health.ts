@@ -12,6 +12,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			name: 'Instant Health',
 			rarity: 'common',
 			description: 'Heal one of your Hermits 30hp.',
+			log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g30hp$`,
 		})
 	}
 
@@ -50,10 +51,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Apply
-				applySingleUse(game, [
-					[`on `, 'plain'],
-					[`${hermitInfo.name} `, 'player'],
-				])
+				applySingleUse(game, pickResult)
 
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 30, maxHealth)

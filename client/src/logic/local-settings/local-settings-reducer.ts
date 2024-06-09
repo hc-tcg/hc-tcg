@@ -23,7 +23,7 @@ const defaultState: LocalSettings = {
 	disableChat: 'off',
 	confirmationDialogs: 'on',
 	showChat: 'off',
-	showBattleLogs: 'on',
+	showBattleLogs: 'off',
 	showAdvancedTooltips: 'on',
 	chatPosition: {x: 0, y: 0},
 	chatSize: {w: 0, h: 0},
@@ -38,6 +38,8 @@ const localSettingsReducer = (state = defaultState, action: AnyAction): LocalSet
 	switch (action.type) {
 		case 'SET_SETTING':
 			return {...state, [action.payload.key]: action.payload.value}
+		case 'RESET_SETTING':
+			return {...state, [action.payload]: defaultState[action.payload]}
 		default:
 			return state
 	}

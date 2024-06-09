@@ -2,6 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import HermitCard from '../../base/hermit-card'
 import {removeStatusEffect} from '../../../utils/board'
+import {HERMIT_CARDS} from '../..'
 
 class GoodTimesWithScarRareHermitCard extends HermitCard {
 	constructor() {
@@ -23,7 +24,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 				cost: ['builder', 'any'],
 				damage: 70,
 				power:
-					'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\n\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
+					'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
 			},
 		})
 	}
@@ -52,11 +53,18 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			row.health = 50
 
+			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
+
 			game.state.statusEffects.forEach((ail) => {
 				if (ail.targetInstance === targetInstance) {
 					removeStatusEffect(game, pos, ail.statusEffectInstance)
 				}
 			})
+
+			game.battleLog.addEntry(
+				player.id,
+				`Using $vDeathloop$, $p${revivedHermit}$ revived with $g50hp$`
+			)
 
 			// Prevents hermits from being revived more than once by Deathloop
 			canRevives[targetInstance] = false

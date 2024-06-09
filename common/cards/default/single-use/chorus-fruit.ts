@@ -11,25 +11,39 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			name: 'Chorus Fruit',
 			rarity: 'common',
 			description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
+			log: (values) => `${values.defaultLog} with {your|their} attack`,
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		const removedBlockKey = this.getInstanceKey(instance, 'removedBlockedAction')
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			// Remove change active hermit from the blocked actions so it can be done once more
-			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
-
+		player.hooks.onAttack.add(instance, (attack) => {
 			// Apply the card
-			applySingleUse(game, [
-				[`with `, 'plain'],
-				[`your `, 'plain', 'player'],
-				[`their `, 'plain', 'opponent'],
-				[`attack `, 'plain'],
-			])
+			applySingleUse(game)
 
-			player.hooks.afterAttack.remove(instance)
+			player.hooks.afterAttack.add(instance, (attack) => {
+				if (player.custom[removedBlockKey]) return
+				// Remove change active hermit from the blocked actions so it can be done once more
+				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
+				player.custom[removedBlockKey] = true
+				// If another attack loop runs let the blocked action be removed again
+				player.hooks.beforeAttack.add(instance, (attack) => {
+					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
+					delete player.custom[removedBlockKey]
+					player.hooks.beforeAttack.remove(instance)
+				})
+			})
+
+			player.hooks.onTurnEnd.add(instance, (attack) => {
+				delete player.custom[removedBlockKey]
+				player.hooks.beforeAttack.remove(instance)
+				player.hooks.afterAttack.remove(instance)
+				player.hooks.onTurnEnd.remove(instance)
+			})
+
+			player.hooks.onAttack.remove(instance)
 		})
 	}
 
@@ -50,7 +64,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

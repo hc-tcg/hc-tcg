@@ -409,7 +409,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
-			game.battleLog.addCoinFlipEntry(currentPlayer.coinFlips)
+			game.battleLog.sendLogs()
 
 			const playerAI = getPlayerAI(game)
 			if (playerAI) yield* fork(virtualPlayerActionSaga, game, playerAI)
@@ -583,6 +583,8 @@ function* turnSaga(game: GameModel) {
 			return 'GAME_END'
 		}
 	}
+
+	game.battleLog.addTurnEndEntry()
 
 	return 'DONE'
 }

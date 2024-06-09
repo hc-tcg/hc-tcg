@@ -12,7 +12,7 @@ class LightningRodEffectCard extends EffectCard {
 			name: 'Lightning Rod',
 			rarity: 'rare',
 			description:
-				"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\n\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
+				"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
 		})
 	}
 

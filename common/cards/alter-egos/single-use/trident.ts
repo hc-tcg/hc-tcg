@@ -15,27 +15,30 @@ class TridentSingleUseCard extends SingleUseCard {
 			name: 'Trident',
 			rarity: 'rare',
 			description:
-				"Do 30hp damage to your opponent's active Hermit.\n\nFlip a coin.\n\nIf heads, this card is returned to your hand.",
+				"Do 30hp damage to your opponent's active Hermit.\nFlip a coin.\nIf heads, this card is returned to your hand.",
+			log: null,
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+			if (!opponentActivePos) return null
 
 			const tridentAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) =>
+					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage, then ${values.coinFlip}`,
 			}).addDamage(this.id, 30)
 
-			return [tridentAttack]
+			return tridentAttack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -47,11 +50,7 @@ class TridentSingleUseCard extends SingleUseCard {
 				cardInstance: instance,
 			})[0]
 
-			const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
-			])
+			applySingleUse(game)
 		})
 
 		player.hooks.onApply.add(instance, () => {
@@ -67,7 +66,7 @@ class TridentSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.onApply.remove(instance)
 		player.hooks.onAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]

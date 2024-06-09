@@ -16,7 +16,7 @@ class BerryBushEffectCard extends EffectCard {
 			name: 'Sweet Berry Bush',
 			rarity: 'ultra_rare',
 			description:
-				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 		})
 	}
 
