@@ -4,7 +4,6 @@ import {CardT} from 'common/types/game-state'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
-import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import Card from 'common/cards/base/card'
 import {equalCard} from 'common/utils/cards'
 
