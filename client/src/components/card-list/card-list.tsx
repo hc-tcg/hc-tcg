@@ -31,20 +31,26 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 
-		const cssClasses = [true, undefined].includes(enableAnimations)
-			? {
-					enter: css.enter,
-					enterActive: css.enterActive,
-					enterDone: css.enterDone,
-					exit: css.exit,
-					exitActive: css.exitActive,
-			  }
-			: {}
+		const cssClasses =
+			enableAnimations !== false
+				? {
+						enter: css.enter,
+						enterActive: css.enterActive,
+						enterDone: css.enterDone,
+						exit: css.exit,
+						exitActive: css.exitActive,
+					}
+				: {}
 
 		return (
-			<CSSTransition timeout={250} unmountOnExit={true} classNames={cssClasses}>
+			<CSSTransition
+				key={card.cardInstance}
+				timeout={250}
+				unmountOnExit={true}
+				classNames={cssClasses}
+			>
 				<CardComponent
-					key={card.cardId}
+					key={card.cardInstance}
 					className={cn(css.card, {
 						[css.clickable]: !!onClick && !isDisabled,
 					})}
@@ -52,7 +58,7 @@ const CardList = (props: CardListProps) => {
 					card={info}
 					disabled={isDisabled}
 					selected={isSelected}
-					picked={!!isPicked}
+					picked={isPicked}
 					tooltipAboveModal={props.tooltipAboveModal}
 				/>
 			</CSSTransition>

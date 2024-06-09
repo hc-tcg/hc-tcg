@@ -7,7 +7,6 @@ import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
 import HealthCardModule, {HealthCardProps} from './health-card-svg'
 import CardClass from 'common/cards/base/card'
-import {memo, useEffect, useMemo, useRef, useState} from 'react'
 
 interface CardProps
 	extends React.DetailedHTMLProps<
@@ -35,7 +34,6 @@ const Card = (props: CardProps) => {
 	return (
 		<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
 			<button
-				{...props}
 				className={cn(props.className, css.card, {
 					[css.selected]: selected,
 					[css.picked]: picked,

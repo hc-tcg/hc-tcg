@@ -67,8 +67,6 @@ function SelectCardsModal({closeModal}: Props) {
 						onClick={handleSelection}
 						cards={cards}
 						selected={selected}
-						wrap
-						tooltipAboveModal
 					/>
 				</div>
 			</div>
