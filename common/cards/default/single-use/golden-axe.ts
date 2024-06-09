@@ -1,6 +1,6 @@
 import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
@@ -50,17 +50,11 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			}
 
 			attack.shouldIgnoreCards.push((instance) => {
-				if (!pos || !pos.row || !pos.row.effectCard) return false
-
-				// It's not the targets effect card, do not ignore it
-				if (pos.slot.type !== 'effect') return false
-
-				// Not attached to the same row as the opponent's active Hermit, do not ignore it
-				if (pos.rowIndex !== opponentActivePos.rowIndex) return false
-
-				// Do not ignore the player's effect.
-				if (pos.player === player) return false
-
+				const ignorePos = getBasicCardPos(game, instance)
+				if (!ignorePos || !ignorePos.row || !ignorePos.row.effectCard) return false
+				if (ignorePos.slot.type !== 'effect') return false
+				if (ignorePos.rowIndex !== opponentActivePos.rowIndex) return false
+				if (ignorePos.player === player) return false
 				return true
 			})
 		})
