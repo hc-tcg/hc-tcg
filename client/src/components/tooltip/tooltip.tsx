@@ -73,7 +73,7 @@ function Tooltip({children, tooltip, showAboveModal}: Props) {
 
 	return (
 		<>
-			<div ref={refs.setReference} {...getReferenceProps}>
+			<div ref={refs.setReference} {...getReferenceProps()}>
 				{children}
 			</div>
 			{floatingPortal}
