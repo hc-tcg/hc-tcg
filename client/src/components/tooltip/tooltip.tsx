@@ -73,9 +73,10 @@ function Tooltip({children, tooltip, showAboveModal}: Props) {
 
 	return (
 		<>
-			<div ref={refs.setReference} {...getReferenceProps()}>
-				{children}
-			</div>
+			{React.cloneElement(children, {
+				ref: refs.setReference,
+				...getReferenceProps(),
+			})}
 			{floatingPortal}
 		</>
 	)
