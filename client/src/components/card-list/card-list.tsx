@@ -48,11 +48,7 @@ const CardList = (props: CardListProps) => {
 		)
 	})
 
-	return (
-		<ul className={cn(css.cardList, {[css.wrap]: wrap})}>
-			{cardsOutput}
-		</ul>
-	)
+	return <ul className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</ul>
 }
 
 export default CardList

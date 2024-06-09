@@ -49,12 +49,11 @@ const Card = memo(
 	},
 	(prevProps: Readonly<CardProps>, nextProps: Readonly<CardProps>) => {
 		return (
-			prevProps.selected == nextProps.selected
-			&& prevProps.picked == nextProps.picked
-			&& prevProps.tooltipAboveModal == nextProps.tooltipAboveModal
-			&& prevProps.card.id == nextProps.card.id
+			prevProps.selected == nextProps.selected &&
+			prevProps.picked == nextProps.picked &&
+			prevProps.tooltipAboveModal == nextProps.tooltipAboveModal &&
+			prevProps.card.id == nextProps.card.id
 		)
-	
 	}
 )
 
