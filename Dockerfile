@@ -30,4 +30,4 @@ RUN npm install
 
 LABEL fly_launch_runtime="nodejs"
 
-CMD [ "npm", "run", "docker-start" ]
+CMD [ "npm", "run", "start" ]
