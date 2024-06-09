@@ -7,6 +7,7 @@ import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
 import HealthCardModule, {HealthCardProps} from './health-card-svg'
 import CardClass from 'common/cards/base/card'
+import {memo} from 'react'
 
 interface CardProps
 	extends React.DetailedHTMLProps<
@@ -20,30 +21,41 @@ interface CardProps
 	onClick?: () => void
 }
 
-const Card = (props: CardProps) => {
-	const {type} = props.card
-	const {onClick, selected, picked, ...otherProps} = props
-	let card = null
-	if (type === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
-	else if (type === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
-	else if (['effect', 'single_use'].includes(type))
-		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
-	else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
-	else throw new Error('Unsupported card type: ' + type)
-	return (
-		<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
-			<button
-				{...props}
-				className={cn(props.className, css.card, {
-					[css.selected]: selected,
-					[css.picked]: picked,
-				})}
-				onClick={onClick}
-			>
-				{card}
-			</button>
-		</Tooltip>
-	)
-}
+const Card = memo(
+	(props: CardProps) => {
+		const {type} = props.card
+		const {onClick, selected, picked, ...otherProps} = props
+		let card = null
+		if (type === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
+		else if (type === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
+		else if (['effect', 'single_use'].includes(type))
+			card = <EffectCardModule {...(otherProps as EffectCardProps)} />
+		else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
+		else throw new Error('Unsupported card type: ' + type)
+		return (
+			<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
+				<button
+					{...props}
+					className={cn(props.className, css.card, {
+						[css.selected]: selected,
+						[css.picked]: picked,
+					})}
+					onClick={onClick}
+				>
+					{card}
+				</button>
+			</Tooltip>
+		)
+	},
+	(prevProps: Readonly<CardProps>, nextProps: Readonly<CardProps>) => {
+		return (
+			prevProps.selected == nextProps.selected
+			&& prevProps.picked == nextProps.picked
+			&& prevProps.tooltipAboveModal == nextProps.tooltipAboveModal
+			&& prevProps.card.id == nextProps.card.id
+		)
+	
+	}
+)
 
 export default Card

@@ -31,20 +31,9 @@ const CardList = (props: CardListProps) => {
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 
 		return (
-			<CSSTransition
-				timeout={250}
-				key={card.cardInstance}
-				unmountOnExit={true}
-				classNames={{
-					enter: css.enter,
-					enterActive: css.enterActive,
-					enterDone: css.enterDone,
-					exit: css.exit,
-					exitActive: css.exitActive,
-				}}
-			>
+			<li>
 				<CardComponent
-					key={card.cardInstance}
+					key={card.cardId}
 					className={cn(css.card, {
 						[css.clickable]: !!onClick && !isDisabled,
 					})}
@@ -55,14 +44,14 @@ const CardList = (props: CardListProps) => {
 					picked={!!isPicked}
 					tooltipAboveModal={props.tooltipAboveModal}
 				/>
-			</CSSTransition>
+			</li>
 		)
 	})
 
 	return (
-		<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
+		<ul className={cn(css.cardList, {[css.wrap]: wrap})}>
 			{cardsOutput}
-		</TransitionGroup>
+		</ul>
 	)
 }
 
