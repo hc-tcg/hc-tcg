@@ -6,7 +6,7 @@ import SingleUseCard from 'common/cards/base/single-use-card'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
-import { memo } from 'react'
+import {memo} from 'react'
 
 export type EffectCardProps = {
 	card: EffectCard | SingleUseCard

@@ -164,10 +164,9 @@ const CardTooltip = ({card}: Props) => {
 
 	return (
 		<div className={css.cardTooltipContainer}>
-			{settings.showAdvancedTooltips === 'on' && (
+			{settings.showAdvancedTooltips === 'on' &&
 				// <div className={css.tooltipBelow}>{getSidebarDescriptions(card)}</div>
-				true
-			)}
+				true}
 			<div className={css.cardTooltip}>
 				<div className={css.topLine}>
 					{getName(card)}
