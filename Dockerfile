@@ -24,7 +24,6 @@ COPY . .
 COPY common/config/debug-config.example.json common/config/debug-config.json
 
 RUN npm ci && npm run build
-FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
 
@@ -33,10 +32,8 @@ COPY --from=builder /app /app
 
 WORKDIR /app
 ENV NODE_ENV production
+
 # Remove the build-time dependencies to keep the image small
 RUN npm install
-FROM debian:bullseye
-
-ENV PATH /root/.volta/bin:$PATH
 
 CMD [ "npm", "run", "docker-start" ]
