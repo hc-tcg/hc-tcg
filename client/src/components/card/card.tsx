@@ -7,7 +7,7 @@ import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
 import HealthCardModule, {HealthCardProps} from './health-card-svg'
 import CardClass from 'common/cards/base/card'
-import {memo} from 'react'
+import {memo, useEffect, useMemo, useRef, useState} from 'react'
 
 interface CardProps
 	extends React.DetailedHTMLProps<
@@ -32,6 +32,7 @@ const Card = memo(
 			card = <EffectCardModule {...(otherProps as EffectCardProps)} />
 		else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
 		else throw new Error('Unsupported card type: ' + type)
+
 		return (
 			<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
 				<button
