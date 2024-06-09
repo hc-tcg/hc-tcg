@@ -1,5 +1,5 @@
 import css from './tooltip.module.scss'
-import React, {useState} from 'react'
+import React, {memo, useState} from 'react'
 import {
 	useFloating,
 	autoUpdate,
@@ -21,7 +21,7 @@ type Props = {
 	showAboveModal?: boolean
 }
 
-function Tooltip({children, tooltip, showAboveModal}: Props) {
+const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const [open, setOpen] = useState(false)
 
 	const {x, y, refs, strategy, context} = useFloating({
@@ -80,6 +80,6 @@ function Tooltip({children, tooltip, showAboveModal}: Props) {
 			{floatingPortal}
 		</>
 	)
-}
+})
 
 export default Tooltip
