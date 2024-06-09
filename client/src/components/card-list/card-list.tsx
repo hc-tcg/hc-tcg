@@ -4,6 +4,7 @@ import {CardT} from 'common/types/game-state'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
+import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import Card from 'common/cards/base/card'
 import {equalCard} from 'common/utils/cards'
 
@@ -15,10 +16,11 @@ type CardListProps = {
 	onClick?: (card: CardT) => void
 	wrap?: boolean
 	tooltipAboveModal?: boolean
+	enableAnimations?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, selected, picked} = props
+	const {wrap, onClick, cards, disabled, selected, picked, enableAnimations} = props
 
 	const cardsOutput = cards.map((card) => {
 		const info = CARDS[card.cardId] as Card
@@ -29,8 +31,18 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 
+		const cssClasses = [true, undefined].includes(enableAnimations)
+			? {
+					enter: css.enter,
+					enterActive: css.enterActive,
+					enterDone: css.enterDone,
+					exit: css.exit,
+					exitActive: css.exitActive,
+				}
+			: {}
+
 		return (
-			<li>
+			<CSSTransition timeout={250} unmountOnExit={true} classNames={cssClasses}>
 				<CardComponent
 					key={card.cardId}
 					className={cn(css.card, {
@@ -43,11 +55,15 @@ const CardList = (props: CardListProps) => {
 					picked={!!isPicked}
 					tooltipAboveModal={props.tooltipAboveModal}
 				/>
-			</li>
+			</CSSTransition>
 		)
 	})
 
-	return <ul className={cn(css.cardList, {[css.wrap]: wrap})}>{cardsOutput}</ul>
+	return (
+		<TransitionGroup className={cn(css.cardList, {[css.wrap]: wrap})}>
+			{cardsOutput}
+		</TransitionGroup>
+	)
 }
 
 export default CardList
