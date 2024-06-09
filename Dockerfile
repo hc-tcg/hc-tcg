@@ -21,7 +21,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN npm ci && npm run build
+RUN npm install && npm run build
 FROM debian:bullseye
 
 LABEL fly_launch_runtime="nodejs"
