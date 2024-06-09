@@ -1,4 +1,4 @@
-FROM debian:bullseye as builder
+FROM debian:bullseye
 
 ARG NODE_VERSION=16.16.0
 
@@ -24,16 +24,10 @@ COPY . .
 COPY common/config/debug-config.example.json common/config/debug-config.json
 
 RUN npm ci && npm run build
+# Remove the build-time dependencies to keep the image small and enable node optimizations.
+ENV NODE_ENV production
+RUN npm install
 
 LABEL fly_launch_runtime="nodejs"
-
-COPY --from=builder /root/.volta /root/.volta
-COPY --from=builder /app /app
-
-WORKDIR /app
-ENV NODE_ENV production
-
-# Remove the build-time dependencies to keep the image small
-RUN npm install
 
 CMD [ "npm", "run", "docker-start" ]
