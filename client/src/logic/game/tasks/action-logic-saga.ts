@@ -8,17 +8,6 @@ import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal, applyEffect, modalRequest} from 'logic/game/game-actions'
 import SingleUseCard from 'common/cards/base/single-use-card'
 
-function* borrowSaga(): SagaIterator {
-	yield put(setOpenedModal('borrow'))
-	const result = yield* take(['BORROW_ATTACH', 'BORROW_DISCARD'])
-	if (result.type === 'BORROW_DISCARD') {
-		yield put(modalRequest({modalResult: {attach: false}}))
-		return
-	}
-
-	yield put(modalRequest({modalResult: {attach: true}}))
-}
-
 function* singleUseSaga(card: CardT): SagaIterator {
 	// We use CARDS instead of SINGLE_USE_CARDS because of Water and Milk Buckets
 	const cardInfo = CARDS[card.cardId]
@@ -36,11 +25,7 @@ function* actionLogicSaga(gameState: LocalGameState): SagaIterator {
 
 	if (gameState.currentModalData && gameState.currentModalData.modalId) {
 		const id = gameState.currentModalData?.modalId
-		if (id === 'grian_rare') {
-			yield fork(borrowSaga)
-		} else {
-			yield put(setOpenedModal(id))
-		}
+		yield put(setOpenedModal(id))
 	} else if (
 		lastActionResult?.action === 'PLAY_SINGLE_USE_CARD' &&
 		lastActionResult?.result === 'SUCCESS' &&

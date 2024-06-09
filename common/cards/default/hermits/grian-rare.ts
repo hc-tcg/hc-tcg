@@ -71,11 +71,29 @@ class GrianRareHermitCard extends HermitCard {
 
 			game.addModalRequest({
 				playerId: player.id,
-				data: {modalId: this.id},
+				data: {
+					modalId: 'selectCards',
+					payload: {
+						modalName: 'Grian - Borrow',
+						modalDescription: `Would you like to attach or discard your opponent's ${
+							CARDS[opponentEffectCard.cardId].name
+						} card?`,
+						cards: [opponentEffectCard],
+						selectionSize: 0,
+						primaryButton: {
+							text: 'Attach',
+							variant: 'default',
+						},
+						secondaryButton: {
+							text: 'Discard',
+							variant: 'default',
+						},
+					},
+				},
 				onResult(modalResult) {
-					if (!modalResult || modalResult.attach === undefined) return 'FAILURE_INVALID_DATA'
+					if (!modalResult || modalResult.result === undefined) return 'FAILURE_INVALID_DATA'
 
-					if (modalResult.attach) {
+					if (modalResult.result) {
 						// Discard our current attached card if there is one
 						discardCard(game, row.effectCard)
 
