@@ -75,7 +75,9 @@ class GrianRareHermitCard extends HermitCard {
 					modalId: 'selectCards',
 					payload: {
 						modalName: 'Grian - Borrow',
-						modalDescription: `Would you like to attach or discard your opponent's ${CARDS[opponentEffectCard.cardId].name} card?`,
+						modalDescription: `Would you like to attach or discard your opponent's ${
+							CARDS[opponentEffectCard.cardId].name
+						} card?`,
 						cards: [opponentEffectCard],
 						selectionSize: 0,
 						primaryButton: {
