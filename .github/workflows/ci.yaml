@@ -1,0 +1,80 @@
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - dev
+      - master
+      - beta
+      - christmas
+
+permissions:
+  checks: write
+  contents: write
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+
+      - name: Run server tsc
+        run: npm run server:tsc
+
+      - name: Run prettier
+        run: npx prettier --check .
+
+  unittest:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test
+
+  build:
+    name: Test build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create debug config
+        run: cp ./common/config/debug-config.example.json ./common/config/debug-config.json
+
+      - name: Build
+        run: npm run build
+
+  build-docker:
+    name: Test build docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build
+        run: docker buildx build .
