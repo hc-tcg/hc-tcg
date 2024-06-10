@@ -20,7 +20,7 @@ await build({
 		}),
 	],
 	define: {
-		__VERSION__: `'${getVersion()}'`,
+		__APP_VERSION__: `'${getVersion()}'`,
 	},
 })
 

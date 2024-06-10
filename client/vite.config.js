@@ -11,7 +11,7 @@ export default defineConfig({
 		__PORT__: JSON.stringify(CONFIG.port),
 		__LIMITS__: JSON.stringify(CONFIG.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
-		__VERSION__: `'${getVersion()}'`,
+		__APP_VERSION__: `'${getVersion()}'`,
 	},
 	resolve: {
 		alias: {
