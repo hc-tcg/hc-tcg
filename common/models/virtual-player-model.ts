@@ -1,7 +1,7 @@
-import profanityFilter from '../utils/profanity'
 import {CardT} from '../types/game-state'
 import {PlayerDeckT} from '../types/deck'
 import {validateDeck} from '../utils/validation'
+import {censorString} from '../utils/formatting'
 import {encode, decode} from 'js-base64'
 import {CARDS} from '../cards'
 
@@ -34,7 +34,7 @@ export class VirtualPlayerModel {
 
 		this.name = playerName
 		this.minecraftName = minecraftName
-		this.censoredName = profanityFilter(playerName)
+		this.censoredName = censorString(playerName)
 
 		this.socket = null
 		this.ai = ai

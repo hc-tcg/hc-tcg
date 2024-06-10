@@ -11,7 +11,7 @@ class ExBossNineStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'exboss-nine',
-			name: 'My Rules',
+			name: 'Boss Rules',
 			description: "At the end of EX's ninth turn, an additional move will be performed.",
 			duration: 1,
 			counter: true,
@@ -36,12 +36,20 @@ class ExBossNineStatusEffect extends StatusEffect {
 			if (Math.random() > 0.5) {
 				// Discard the opponent's hand and have them draw one new card
 				voiceLine = 'NINEDISCARD'
+				game.battleLog.addEntry(
+					player.id,
+					`{$pYour$|$o${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|$pyou$} must discard {their|your} hand and draw a new card`
+				)
 				opponentPlayer.hand.forEach((card) => discardFromHand(opponentPlayer, card))
 				const newCard = opponentPlayer.pile.shift()
 				if (newCard) opponentPlayer.hand.push(newCard)
 			} else {
 				// Discard all cards attached to the opponent's active hermit
 				voiceLine = 'NINEATTACHED'
+				game.battleLog.addEntry(
+					player.id,
+					`{$pYour$|$o${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|$pyou$} must discard everything from {their|your} active Hermit`
+				)
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (opponentActiveRow) {
 					if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard))

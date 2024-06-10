@@ -2,7 +2,7 @@ import {ITEM_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
+import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
 import {
 	applyStatusEffect,
@@ -20,6 +20,45 @@ type TERTIARY_ATTACK = 'EFFECTCARD' | 'AFK20' | 'ITEMCARD'
 
 export type BOSS_ATTACK = [PRIMARY_ATTACK, SECONDARY_ATTACK?, TERTIARY_ATTACK?]
 
+const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | undefined => {
+	let attackName: string
+	if (bossAttack.length === 1) attackName = `$v${bossAttack[0]}$`
+	else {
+		const items = bossAttack.map((attack) => `$v${attack}$`)
+		const last = items.pop()
+		attackName = items.join(', ') + ' and ' + last
+	}
+
+	const baseLog = (values: AttackLog) =>
+		`${values.attacker} attacked ${values.target} with ${attackName} for ${values.damage} damage`
+	let footer: string
+	switch (bossAttack[2]) {
+		case 'ITEMCARD':
+			footer = ' and forced {them|you} to discard an attached item card'
+			break
+		case 'EFFECTCARD':
+			footer = " and discarded {their|your} active's attached effect card"
+			break
+		case 'AFK20':
+			footer = ' and attacked all {their|your} AFK hermits'
+			break
+		default:
+			footer = ''
+	}
+
+	switch (bossAttack[1]) {
+		case 'HEAL150':
+			return (values) => baseLog(values) + `${footer ? ',' : ' and'} healed for $g150hp$${footer}`
+		case 'ABLAZE':
+			return (values) =>
+				baseLog(values) +
+				`${footer ? ',' : ' and'} set {${values.opponent}'s|your} active hermit $bablaze$${footer}`
+		case 'DOUBLE':
+			return (values) => baseLog(values) + footer
+	}
+	return baseLog
+}
+
 class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 	constructor() {
 		super()
@@ -32,25 +71,25 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		return pos.player.board.rows.length !== 1
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
-	): AttackModel[] {
+	) {
 		// Players who imitate this card should use regular attacks and not the boss'
 		if (this.isBeingImitated(pos)) {
-			return super.getAttacks(game, instance, pos, hermitAttackType)
+			return super.getAttack(game, instance, pos, hermitAttackType)
 		}
 
-		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return []
+		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
 
 		const {player, row, rowIndex, opponentPlayer} = pos
 		const targetIndex = opponentPlayer.board.activeRow
-		if (targetIndex === null) return []
+		if (targetIndex === null) return null
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return []
+		if (!targetRow.hermitCard) return null
 
 		const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
 
@@ -68,9 +107,8 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 				row: targetRow,
 			},
 			type: hermitAttackType,
+			log: attackLog(bossAttack),
 		})
-
-		const attacks = [attack]
 
 		const disabledKey = this.getInstanceKey(instance, 'disabled')
 		const disabled = game.getAllBlockedActions().some((blockedAction) => {
@@ -101,13 +139,14 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 						attacker: {player, rowIndex, row},
 						target: opponentRow,
 						type: hermitAttackType,
+						log: (values) => `, ${values.damage} damage to ${values.target}`,
 					}).addDamage(this.id, 20)
-					attacks.push(newAttack)
+					attack.addNewAttack(newAttack)
 				}
 			}
 		}
 
-		return attacks
+		return attack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -136,56 +175,9 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			if (attack.type !== 'primary' && attack.type !== 'secondary') return
 
 			const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
-			game.battleLog.replaceBossAttackEntry(bossAttack)
-			delete player.custom['BOSS_ATTACK']
 
 			if (bossAttack[1] !== undefined) {
 				const opponentActiveRow = getActiveRow(opponentPlayer)
-
-				if (bossAttack[2] == 'ITEMCARD') {
-					// Remove an item card attached to the opponent's active Hermit
-					if (
-						opponentActiveRow &&
-						opponentActiveRow.itemCards.find((card) => isCardType(card, 'item'))
-					) {
-						const pickRequest: PickRequest = {
-							playerId: opponentPlayer.id,
-							id: this.id,
-							message: 'Choose an item to discard from your active Hermit.',
-							onResult(pickResult) {
-								if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-								const rowIndex = pickResult.rowIndex
-								if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-								if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-								if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-								if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-								const itemCard = ITEM_CARDS[pickResult.card.cardId]
-								if (!itemCard) return 'FAILURE_INVALID_SLOT'
-
-								discardCard(game, pickResult.card)
-
-								return 'SUCCESS'
-							},
-							onTimeout() {
-								// Discard the first available item card
-								const activeRow = getActiveRow(opponentPlayer)
-								if (!activeRow) return
-								const itemCard = activeRow.itemCards.find((card) => isCardType(card, 'item'))
-								if (!itemCard) return
-								discardCard(game, itemCard)
-							},
-						}
-
-						// If opponent is knocked out by this attack, the pickRequest should not be added
-						player.hooks.afterAttack.add(instance, (attack) => {
-							if (opponentActiveRow.health) game.addPickRequest(pickRequest)
-							player.hooks.afterAttack.remove(instance)
-						})
-					}
-				}
 
 				switch (bossAttack[1]) {
 					case 'HEAL150':
@@ -204,6 +196,54 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			}
 
 			delete player.custom[disabledKey]
+		})
+
+		player.hooks.afterAttack.add(instance, (attack) => {
+			if (attack.id !== this.getInstanceKey(instance)) return
+			if (attack.type !== 'primary' && attack.type !== 'secondary') return
+
+			const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
+			if (bossAttack[2] === 'ITEMCARD') {
+				// Remove an item card attached to the opponent's active Hermit
+				const opponentActiveRow = getActiveRow(opponentPlayer)
+				if (
+					opponentActiveRow &&
+					opponentActiveRow.health &&
+					opponentActiveRow.itemCards.find((card) => isCardType(card, 'item'))
+				) {
+					game.addPickRequest({
+						playerId: opponentPlayer.id,
+						id: this.id,
+						message: 'Choose an item to discard from your active Hermit.',
+						onResult(pickResult) {
+							if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+
+							const rowIndex = pickResult.rowIndex
+							if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+							if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+
+							if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
+							if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+
+							const itemCard = ITEM_CARDS[pickResult.card.cardId]
+							if (!itemCard) return 'FAILURE_INVALID_SLOT'
+
+							discardCard(game, pickResult.card)
+
+							return 'SUCCESS'
+						},
+						onTimeout() {
+							// Discard the first available item card
+							const activeRow = getActiveRow(opponentPlayer)
+							if (!activeRow) return
+							const itemCard = activeRow.itemCards.find((card) => isCardType(card, 'item'))
+							if (!itemCard) return
+							discardCard(game, itemCard)
+						},
+					})
+				}
+			}
+			delete player.custom['BOSS_ATTACK']
 		})
 
 		// EX is immune to poison, fire, and slowness
@@ -263,6 +303,7 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		const {player, opponentPlayer} = pos
 		player.hooks.availableEnergy.remove(instance)
 		player.hooks.onAttack.remove(instance)
+		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
