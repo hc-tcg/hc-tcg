@@ -1,6 +1,6 @@
-import { build } from 'esbuild'
-import { copy } from 'esbuild-plugin-copy'
-import { getVersion} from "./version"
+import {build} from 'esbuild'
+import {copy} from 'esbuild-plugin-copy'
+import {getVersion} from './version'
 
 await build({
 	entryPoints: ['./server/src'],
@@ -14,14 +14,14 @@ await build({
 		copy({
 			assets: [
 				// This is kinda hardcoded for apiKeys and adminKeys but it works
-				{ from: './server/src/*.json', to: '.' },
-				{ from: './server/src/plugins/*.json', to: '.' },
+				{from: './server/src/*.json', to: '.'},
+				{from: './server/src/plugins/*.json', to: '.'},
 			],
 		}),
 	],
 	define: {
 		__VERSION__: `'${getVersion()}'`,
-	}
+	},
 })
 
 console.log('Build complete')

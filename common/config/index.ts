@@ -5,7 +5,7 @@ import expansions from './expansions.json'
 
 // __VERSION__ is defined in vite.config.js and esbuild.config.js
 declare const __VERSION__: string
-export let VERSION: string = "Unknown Version"
+export let VERSION: string = 'Unknown Version'
 try {
 	VERSION = __VERSION__
 } catch {

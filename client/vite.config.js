@@ -1,8 +1,8 @@
 import path from 'path'
-import { defineConfig } from 'vite'
+import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
-import { CONFIG } from '../common/config'
-import { getVersion } from '../version';
+import {CONFIG} from '../common/config'
+import {getVersion} from '../version'
 
 export default defineConfig({
 	plugins: [react()],
