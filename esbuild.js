@@ -1,6 +1,6 @@
 import {build} from 'esbuild'
 import {copy} from 'esbuild-plugin-copy'
-import {getVersion} from './version'
+import {getVersion} from './version.js'
 
 await build({
 	entryPoints: ['./server/src'],
