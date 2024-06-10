@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
+import {memo} from 'react'
 
 export type HermitCardProps = {
 	card: HermitCard
@@ -18,7 +19,7 @@ const COST_X = [
 	[COST_PAD, COST_PAD + COST_SIZE, COST_PAD + COST_SIZE * 2],
 ]
 
-const HermitCardModule = ({card}: HermitCardProps) => {
+const HermitCardModule = memo(({card}: HermitCardProps) => {
 	const hermitFullName = card.id.split('_')[0]
 
 	const rank = getCardRank(card.id)
@@ -195,6 +196,6 @@ const HermitCardModule = ({card}: HermitCardProps) => {
 			</g>
 		</svg>
 	)
-}
+})
 
 export default HermitCardModule

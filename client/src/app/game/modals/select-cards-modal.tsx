@@ -70,6 +70,7 @@ function SelectCardsModal({closeModal}: Props) {
 							selected={selected}
 							wrap
 							tooltipAboveModal
+							enableAnimations
 						/>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
 import HealthCard from 'common/cards/base/health-card'
-import {useState, useRef, useMemo, useEffect} from 'react'
+import {useState, useRef, useMemo, useEffect, memo} from 'react'
 import css from './health-card-svg.module.scss'
 import classnames from 'classnames'
 
@@ -43,7 +43,7 @@ function useCountdownAnimation(value: number, duration = 500) {
 	return Math.round(displayValue)
 }
 
-const HealthCardModule = ({card}: HealthCardProps) => {
+const HealthCardModule = memo(({card}: HealthCardProps) => {
 	const displayHealth = useCountdownAnimation(card.health)
 
 	return (
@@ -94,6 +94,6 @@ const HealthCardModule = ({card}: HealthCardProps) => {
 			</g>
 		</svg>
 	)
-}
+})
 
 export default HealthCardModule
