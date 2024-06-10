@@ -30,12 +30,13 @@
 }
 
 .cards {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	padding: 5px;
 	max-height: 400px;
 	overflow-y: auto;
 	overflow-x: hidden;
-	display: flex;
-	align-self: center;
 }
 
 .card {
