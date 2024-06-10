@@ -92,7 +92,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 			player.hooks.afterAttack.add(instance, () => {
 				const pickInfo: PickInfo = player.custom[targetKey]
-				if (!pickInfo.rowIndex) return
+				if (pickInfo.rowIndex === null || pickInfo.rowIndex === undefined) return
 				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
 
 				delete player.custom[targetKey]
