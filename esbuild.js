@@ -1,8 +1,8 @@
 import {build} from 'esbuild'
 import {copy} from 'esbuild-plugin-copy'
-import {getVersion} from './version.js'
+import {getAppVersion} from './version.js'
 
-await build({
+let ctx = await build({
 	entryPoints: ['./server/src'],
 	tsconfig: './server/tsconfig.json',
 	platform: 'node',
@@ -20,7 +20,7 @@ await build({
 		}),
 	],
 	define: {
-		__APP_VERSION__: `'${getVersion()}'`,
+		__APP_VERSION__: `'${getAppVersion()}'`,
 	},
 })
 

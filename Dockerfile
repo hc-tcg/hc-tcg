@@ -1,8 +1,8 @@
 FROM debian:bullseye
 
 ARG NODE_VERSION=16.16.0
-ARG VERSION_TAG
-ENV VERSION=$VERSION_TAG
+ARG APP_VERSION
+ENV APP_VERSION=$APP_VERSION
 
 RUN apt-get update
 RUN apt-get install -y \

@@ -2,7 +2,7 @@ import path from 'path'
 import {defineConfig} from 'vite'
 import react from '@vitejs/plugin-react'
 import CONFIG from '../common/config/server-config.json'
-import {getVersion} from '../version'
+import {getAppVersion} from '../version'
 
 export default defineConfig({
 	plugins: [react()],
@@ -11,7 +11,7 @@ export default defineConfig({
 		__PORT__: JSON.stringify(CONFIG.port),
 		__LIMITS__: JSON.stringify(CONFIG.limits),
 		__LOGO_SUBTEXT__: JSON.stringify(CONFIG.logoSubText),
-		__APP_VERSION__: `'${getVersion()}'`,
+		__APP_VERSION__: `'${getAppVersion()}'`,
 	},
 	resolve: {
 		alias: {
