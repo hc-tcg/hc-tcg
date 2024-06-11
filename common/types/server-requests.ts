@@ -1,3 +1,4 @@
+import {SlotCondition} from '../slot'
 import {SlotTypeT} from './cards'
 import {ActionResult, CardT, ModalData} from './game-state'
 
@@ -22,6 +23,8 @@ export type PickRequest = {
 	id: string
 	/** The message to display to the player */
 	message: string
+	/** A function that returns if the card can be attached to a specific slot */
+	canPick: SlotCondition
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
 	onResult: (pickResult: PickInfo) => ActionResult //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */

@@ -5,6 +5,7 @@ import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
@@ -89,19 +90,14 @@ class RendogRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
+				canPick: slot.every(
+					slot.player,
+					slot.hermitSlot,
+					slot.not(slot.empty),
+					slot.not(slot.has(this.id))
+				),
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					const pickedCard = pickResult.card
-					if (!pickedCard) return 'FAILURE_INVALID_SLOT'
-
-					// No picking the same card as us
-					if (pickedCard.cardId === this.id) return 'FAILURE_WRONG_PICK'
-
+					if (!pickResult.card) return 'FAILURE_INVALID_DATA'
 					game.addModalRequest({
 						playerId: player.id,
 						data: {
@@ -109,7 +105,7 @@ class RendogRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
+								cardPos: getBasicCardPos(game, pickResult.card.cardInstance),
 							},
 						},
 						onResult(modalResult) {
