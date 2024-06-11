@@ -1,10 +1,10 @@
 import css from './link-container.module.scss'
-import {CONFIG} from '../../../../common/config'
+import {VERSION} from '../../../../common/config'
 
 export function VersionLinks() {
 	return (
 		<p className={css.version}>
-			<span>v{CONFIG.version} - </span>
+			<span>v{VERSION} - </span>
 			<a
 				href="https://www.reddit.com/r/HermitCraft/comments/10wksaw/hctcg_online/"
 				target="_blank"

@@ -30,10 +30,10 @@ const Card = (props: CardProps) => {
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
 	else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
 	else throw new Error('Unsupported card type: ' + type)
+
 	return (
 		<Tooltip tooltip={<CardTooltip card={props.card} />} showAboveModal={props.tooltipAboveModal}>
 			<button
-				{...props}
 				className={cn(props.className, css.card, {
 					[css.selected]: selected,
 					[css.picked]: picked,

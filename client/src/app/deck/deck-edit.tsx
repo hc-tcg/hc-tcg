@@ -351,6 +351,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'hermit'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -360,6 +361,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'effect'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -369,6 +371,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'single_use'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -378,6 +381,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'item'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>

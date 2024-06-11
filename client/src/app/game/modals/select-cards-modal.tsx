@@ -63,13 +63,16 @@ function SelectCardsModal({closeModal}: Props) {
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				<div className={css.cards}>
-					<CardList
-						onClick={handleSelection}
-						cards={cards}
-						selected={selected}
-						wrap
-						tooltipAboveModal
-					/>
+					<div>
+						<CardList
+							onClick={handleSelection}
+							cards={cards}
+							selected={selected}
+							wrap
+							tooltipAboveModal
+							enableAnimations
+						/>
+					</div>
 				</div>
 			</div>
 			<div className={css.options}>

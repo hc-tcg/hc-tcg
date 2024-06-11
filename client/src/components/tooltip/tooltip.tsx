@@ -1,5 +1,5 @@
 import css from './tooltip.module.scss'
-import React, {useState} from 'react'
+import React, {memo, useState} from 'react'
 import {
 	useFloating,
 	autoUpdate,
@@ -21,7 +21,7 @@ type Props = {
 	showAboveModal?: boolean
 }
 
-function Tooltip({children, tooltip, showAboveModal}: Props) {
+const Tooltip = memo(({children, tooltip, showAboveModal}: Props) => {
 	const [open, setOpen] = useState(false)
 
 	const {x, y, refs, strategy, context} = useFloating({
@@ -50,30 +50,36 @@ function Tooltip({children, tooltip, showAboveModal}: Props) {
 	// Merge all the interactions into prop getters
 	const {getReferenceProps, getFloatingProps} = useInteractions([hover, focus, dismiss, role])
 
+	let floatingPortal = null
+
+	if (open) {
+		floatingPortal = (
+			<FloatingPortal>
+				<div
+					className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
+					ref={refs.setFloating}
+					style={{
+						position: strategy,
+						top: y ?? 0,
+						left: x ?? 0,
+					}}
+					{...getFloatingProps()}
+				>
+					{tooltip}
+				</div>
+			</FloatingPortal>
+		)
+	}
+
 	return (
 		<>
 			{React.cloneElement(children, {
 				ref: refs.setReference,
 				...getReferenceProps(),
 			})}
-			<FloatingPortal>
-				{open && (
-					<div
-						className={classNames(css.tooltip, showAboveModal && css.showAboveModal)}
-						ref={refs.setFloating}
-						style={{
-							position: strategy,
-							top: y ?? 0,
-							left: x ?? 0,
-						}}
-						{...getFloatingProps()}
-					>
-						{tooltip}
-					</div>
-				)}
-			</FloatingPortal>
+			{floatingPortal}
 		</>
 	)
-}
+})
 
 export default Tooltip

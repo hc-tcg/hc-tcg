@@ -43,22 +43,23 @@ class AnvilSingleUseCard extends SingleUseCard {
 				}).addDamage(this.id, 30)
 			}
 
-			const attack = opponentRows.reduce((r: null | AttackModel, row, i) => {
+			const attack = opponentRows.reduce((r: null | AttackModel, row, rowIndex) => {
 				if (!row || !row.hermitCard) return r
+				if (rowIndex < activeIndex) return r
 				const newAttack = new AttackModel({
-					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
+					id: this.getInstanceKey(instance, activeIndex === rowIndex ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
-						rowIndex: i,
+						rowIndex: rowIndex,
 						row: row,
 					},
 					type: 'effect',
 					log: (values) =>
-						i === activeIndex
+						rowIndex === activeIndex
 							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
 							: `, ${values.target} for ${values.damage} damage`,
-				}).addDamage(this.id, i === activeIndex ? 30 : 10)
+				}).addDamage(this.id, rowIndex === activeIndex ? 30 : 10)
 
 				if (r) return r.addNewAttack(newAttack)
 
