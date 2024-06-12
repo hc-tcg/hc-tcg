@@ -12,12 +12,6 @@ type Props = {
 }
 
 export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
-	// EXPORT DECK FUNCTION
-	const handleExportDeck = () => {
-		return getHashFromDeck(loadedDeck.cards)
-	}
-
-	//JSX
 	return (
 		<AlertDialog.Root open={setOpen} onOpenChange={(e) => onClose(e)}>
 			<AlertDialog.Portal container={document.getElementById('modal')}>
@@ -39,11 +33,11 @@ export const ExportModal = ({setOpen, onClose, loadedDeck}: Props) => {
 									Export the "{loadedDeck.name}" deck to share with your friends!
 								</p>
 								<div className={css.exportControls}>
-									<input type="text" readOnly value={handleExportDeck()} />
+									<input type="text" readOnly value={loadedDeck.code} />
 									<button
 										className={css.copy}
 										onClick={() => {
-											navigator.clipboard.writeText(handleExportDeck())
+											navigator.clipboard.writeText(loadedDeck.code)
 										}}
 									>
 										{CopyIcon()}

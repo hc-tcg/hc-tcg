@@ -31,6 +31,7 @@ import HermitCard from '../../../../common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
+import {setClientSavedDecks} from 'logic/session/session-actions'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -104,16 +105,14 @@ const Deck = ({setMenuSection}: Props) => {
 	// REDUX
 	const dispatch = useDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
-	const storedDecks = useSelector(getPlayerSavedDecks)
 	const settings = useSelector(getSettings)
 
-	console.log(storedDecks)
+	console.log(useSelector(getPlayerSavedDecks))
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
-	const [savedDecks, setSavedDecks] = useState<Array<PlayerDeckT>>(storedDecks)
 
-	const savedDeckNames = savedDecks.map((deck) => deck.name)
+	const [storedDecks, setStoredDecks] = useState<Array<PlayerDeckT>>([])
 	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
 		name: 'undefined',
 		icon: 'any',
@@ -128,6 +127,11 @@ const Deck = ({setMenuSection}: Props) => {
 	const [showValidateDeckModal, setShowValidateDeckModal] = useState<boolean>(false)
 	const [showOverwriteModal, setShowOverwriteModal] = useState<boolean>(false)
 	const [loadedDeck, setLoadedDeck] = useState<PlayerDeckT>({...playerDeck})
+
+	const newDecks = useSelector(getPlayerSavedDecks)
+	if (newDecks.length !== storedDecks.length) {
+		setStoredDecks(newDecks)
+	}
 
 	// TOASTS
 	const dispatchToast = (toast: ToastT) => dispatch({type: 'SET_TOAST', payload: toast})
@@ -197,33 +201,44 @@ const Deck = ({setMenuSection}: Props) => {
 		})
 	}
 	const importDeck = (deck: PlayerDeckT) => {
-		let deckExists = false
-		savedDeckNames.map((name) => {
-			if (name === deck.name) {
-				console.log(`Name: ${name} | Import: ${deck.name}`)
-				deckExists = true
-			}
-		})
-		deckExists && setShowOverwriteModal(true)
-		!deckExists && saveDeckInternal(deck)
+		// let deckExists = false
+		// savedDeckNames.map((name) => {
+		// 	if (name === deck.name) {
+		// 		console.log(`Name: ${name} | Import: ${deck.name}`)
+		// 		deckExists = true
+		// 	}
+		// })
+		// deckExists && setShowOverwriteModal(true)
+		// !deckExists && saveDeckInternal(deck, false)
 	}
-	const saveDeckInternal = (deck: PlayerDeckT) => {
-		//Save new deck to Local Storage
+	const saveDeckInternal = (deck: PlayerDeckT, editing: boolean) => {
+		if (editing) {
+			dispatch({
+				type: 'DISASSOCIATE_DECK',
+				payload: loadedDeck,
+			})
+		}
+
+		//Save new deck to the database
 		dispatch({
 			type: 'SAVE_DECK',
 			payload: deck,
 		})
 
 		//Refresh saved deck list and load new deck
-		// setSavedDecks(getSavedDecks())
+		setStoredDecks([...storedDecks])
 		loadDeck(deck.code)
 	}
 	const deleteDeckInternal = () => {
-		// dispatchToast(deleteToast)
-		// deleteDeck(loadedDeck.name)
-		// const decks = getSavedDecks()
-		// // setSavedDecks(decks)
-		// loadDeck(JSON.parse(decks[0]).name)
+		dispatch({
+			type: 'DISASSOCIATE_DECK',
+			payload: loadedDeck,
+		})
+
+		//Filter the list to remove it. It will be gone on next load but this function does not fetch new decks
+		setStoredDecks([...storedDecks.filter((deck) => deck.code !== loadedDeck.code)])
+
+		loadDeck(storedDecks[0].code)
 	}
 	const canDuplicateDeck = () => {
 		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
@@ -246,11 +261,11 @@ const Deck = ({setMenuSection}: Props) => {
 		//Refresh saved deck list and load new deck
 		// setSavedDecks(getSavedDecks())
 	}
-	const sortedDecks = savedDecks.sort((a, b) => a.name.localeCompare(b.name))
+	const sortedDecks = storedDecks.sort((a, b) => a.name.localeCompare(b.name))
 	const deckList: ReactNode = sortedDecks.map((deck: PlayerDeckT, i: number) => {
 		return (
 			<li
-				className={classNames(css.myDecksItem, loadedDeck.name === deck.name && css.selectedDeck)}
+				className={classNames(css.myDecksItem, loadedDeck.code === deck.code && css.selectedDeck)}
 				key={i}
 				onClick={() => {
 					playSwitchDeckSFX()
@@ -332,7 +347,7 @@ const Deck = ({setMenuSection}: Props) => {
 				<AlertModal
 					setOpen={showOverwriteModal}
 					onClose={() => setShowOverwriteModal(!showOverwriteModal)}
-					action={() => saveDeckInternal(importedDeck)}
+					action={() => saveDeckInternal(importedDeck, false)}
 					title="Overwrite Deck"
 					description={`The "${loadedDeck.name}" deck already exists! Would you like to overwrite it?`}
 					actionText="Overwrite"
@@ -403,7 +418,7 @@ const Deck = ({setMenuSection}: Props) => {
 									Duplicate<span className={css.hideOnMobile}> Deck</span>
 								</span>
 							</Button>
-							{savedDecks.length > 1 && (
+							{storedDecks.length > 1 && (
 								<Button
 									variant="error"
 									size="small"
@@ -509,7 +524,7 @@ const Deck = ({setMenuSection}: Props) => {
 					<EditDeck
 						back={() => setMode('select')}
 						title={'Deck Editor'}
-						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
+						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck, true)}
 						deck={loadedDeck}
 					/>
 				)
@@ -519,7 +534,7 @@ const Deck = ({setMenuSection}: Props) => {
 					<EditDeck
 						back={() => setMode('select')}
 						title={'Deck Creation'}
-						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck)}
+						saveDeck={(returnedDeck) => saveDeckInternal(returnedDeck, false)}
 						deck={{
 							name: '',
 							icon: 'any',

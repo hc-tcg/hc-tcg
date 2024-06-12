@@ -23,11 +23,10 @@ function* playerConnectedSaga(action: any) {
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.deck,
-			})
-			socket.emit('GET_DECKS', {
-				type: 'PLAYER_INFO',
-				payload: playerDecks,
+				payload: {
+					selectedDeck: existingPlayer.deck,
+					savedDecks: playerDecks,
+				},
 			})
 		} else {
 			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
@@ -51,7 +50,7 @@ function* playerConnectedSaga(action: any) {
 	})
 
 	socket.emit('GET_DECKS', {
-		type: 'PLAYER_INFO',
+		type: 'GET_DECKS',
 		payload: playerDecks,
 	})
 }
@@ -95,7 +94,6 @@ function* updateDeckSaga(action: any) {
 }
 
 function* saveDeckSaga(action: any) {
-	console.log('saving deck')
 	const {playerId} = action
 	const deck = action.payload as PlayerDeckT
 
@@ -110,6 +108,12 @@ function* saveDeckSaga(action: any) {
 		type: 'GET_DECKS',
 		payload: playerDecks,
 	})
+}
+
+function* disassociateDeckSaga(action: any) {
+	const deck = action.payload as PlayerDeckT
+
+	Pg.disassociateDeck(deck.code)
 }
 
 function* updateMinecraftNameSaga(action: any) {
@@ -140,6 +144,7 @@ export function* playerSaga() {
 	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
 	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
 	yield* takeEvery('SAVE_DECK', saveDeckSaga)
+	yield* takeEvery('DISASSOCIATE_DECK', disassociateDeckSaga)
 	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
 	yield* takeEvery('GET_UPDATES', loadUpdatesSaga)
 }

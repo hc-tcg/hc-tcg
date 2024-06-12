@@ -136,7 +136,10 @@ export function* loginSaga(): SagaIterator {
 	if (result.playerReconnected) {
 		if (!session) return
 		console.log('User reconnected')
-		yield put(setPlayerInfo({...session, playerDeck: result.playerReconnected.payload}))
+		yield put(
+			setPlayerInfo({...session, playerDeck: result.playerReconnected.payload.selectedDeck})
+		)
+		yield put(setClientSavedDecks(result.playerReconnected.payload.savedDecks))
 	}
 
 	if (result.playerInfo) {
@@ -185,6 +188,9 @@ export function* logoutSaga(): SagaIterator {
 	})
 	yield takeEvery('SAVE_DECK', function* (action: AnyAction) {
 		yield call(sendMsg, 'SAVE_DECK', action.payload)
+	})
+	yield takeEvery('DISASSOCIATE_DECK', function* (action: AnyAction) {
+		yield call(sendMsg, 'DISASSOCIATE_DECK', action.payload)
 	})
 	yield takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', action.payload)
