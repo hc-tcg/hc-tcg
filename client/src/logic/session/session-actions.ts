@@ -1,8 +1,8 @@
 import {PlayerDeckT} from 'common/types/deck'
 
-export const login = (playerName: string) => ({
+export const login = (playerName: string, postgresId: string | null) => ({
 	type: 'LOGIN',
-	payload: playerName,
+	payload: {name: playerName, postgresId: postgresId},
 })
 
 type PlayerInfoT = {
@@ -11,6 +11,7 @@ type PlayerInfoT = {
 	minecraftName: string
 	playerSecret: string
 	playerDeck: PlayerDeckT
+	postgresId: string | null
 }
 
 export const setPlayerInfo = (playerInfo: PlayerInfoT) => ({
@@ -35,6 +36,11 @@ export const setNewDeck = (newDeck: PlayerDeckT) => ({
 export const setMinecraftName = (name: string) => ({
 	type: 'SET_MINECRAFT_NAME',
 	payload: name,
+})
+
+export const setClientSavedDecks = (decks: Array<PlayerDeckT>) => ({
+	type: 'SET_SAVED_DECKS',
+	payload: decks,
 })
 
 export const loadUpdates = (updates: Array<string>) => ({

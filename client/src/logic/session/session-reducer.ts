@@ -7,7 +7,9 @@ type SessionState = {
 	minecraftName: string
 	playerId: string
 	playerSecret: string
+	postgresId: string
 	playerDeck: PlayerDeckT
+	playerSavedDecks: Array<PlayerDeckT>
 	connecting: boolean
 	errorType?: 'invalid_name' | 'invalid_version' | 'session_expired' | 'timeout' | string
 	toast: ToastT
@@ -19,7 +21,9 @@ const defaultState: SessionState = {
 	minecraftName: '',
 	playerId: '',
 	playerSecret: '',
-	playerDeck: {name: '', icon: 'any', cards: []},
+	postgresId: '',
+	playerDeck: {name: '', icon: 'any', cards: [], code: ''},
+	playerSavedDecks: [],
 	connecting: false,
 	toast: {open: false, title: '', description: '', image: ''},
 	updates: {},
@@ -56,6 +60,11 @@ const loginReducer = (state = defaultState, action: AnyAction): SessionState => 
 			return {
 				...state,
 				playerDeck: action.payload,
+			}
+		case 'SET_SAVED_DECKS':
+			return {
+				...state,
+				playerSavedDecks: action.payload,
 			}
 		case 'SET_TOAST':
 			return {

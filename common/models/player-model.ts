@@ -18,8 +18,9 @@ export class PlayerModel {
 	public minecraftName: string
 	public censoredName: string
 	public socket: Socket
+	public readonly postgresId: string
 
-	constructor(playerName: string, minecraftName: string, socket: Socket) {
+	constructor(playerName: string, minecraftName: string, socket: Socket, postgresId: string) {
 		this.internalId = Math.random().toString()
 		this.internalSecret = Math.random().toString()
 
@@ -36,6 +37,7 @@ export class PlayerModel {
 		this.minecraftName = minecraftName
 		this.censoredName = censorString(playerName)
 		this.socket = socket
+		this.postgresId = postgresId
 	}
 
 	public get id() {
@@ -56,6 +58,7 @@ export class PlayerModel {
 			playerName: this.name,
 			minecraftName: this.minecraftName,
 			censoredPlayerName: this.censoredName,
+			postgresId: this.postgresId,
 		}
 	}
 

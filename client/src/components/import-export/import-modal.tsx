@@ -9,7 +9,6 @@ import css from './import-export.module.scss'
 import {getDeckFromHash} from './import-export-utils'
 import {CardT} from '../../../../common/types/game-state'
 import {EnergyT} from 'common/types/cards'
-import {saveDeck} from 'logic/saved-decks/saved-decks'
 
 type Props = {
 	setOpen: boolean
@@ -71,11 +70,11 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 				}
 
 				importedSomething = true
-				saveDeck({
-					name: filteredName,
-					icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as EnergyT) : 'any',
-					cards: deck,
-				})
+				// saveDeck({
+				// 	name: filteredName,
+				// 	icon: DECK_ICONS.includes(lineComponents[1]) ? (lineComponents[1] as EnergyT) : 'any',
+				// 	cards: deck,
+				// })
 			})
 
 			if (importedSomething) {

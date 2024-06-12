@@ -10,14 +10,10 @@ import {
 	setNewDeck,
 	setMinecraftName,
 	loadUpdates,
+	setClientSavedDecks,
 } from './session-actions'
 import {getDeckFromHash} from 'components/import-export/import-export-utils'
-import {
-	getActiveDeckName,
-	getSavedDeck,
-	saveDeck,
-	setActiveDeck,
-} from 'logic/saved-decks/saved-decks'
+import {getActiveDeckName, getSavedDeck, setActiveDeck} from 'logic/saved-decks/saved-decks'
 import {validateDeck} from 'common/utils/validation'
 import {PlayerDeckT} from '../../../../common/types/deck'
 
@@ -26,6 +22,7 @@ type PlayerInfoT = {
 	minecraftName: string
 	playerId: string
 	playerSecret: string
+	postgresId: string | null
 }
 
 const loadSession = (): PlayerInfoT | null => {
@@ -33,8 +30,9 @@ const loadSession = (): PlayerInfoT | null => {
 	const minecraftName = sessionStorage.getItem('minecraftName')
 	const playerId = sessionStorage.getItem('playerId')
 	const playerSecret = sessionStorage.getItem('playerSecret')
+	const postgresId = localStorage.getItem('postgresId')
 	if (!playerName || !minecraftName || !playerId || !playerSecret) return null
-	return {playerName, minecraftName, playerId, playerSecret}
+	return {playerName, minecraftName, playerId, playerSecret, postgresId}
 }
 
 const saveSession = (playerInfo: PlayerInfoT) => {
@@ -75,8 +73,8 @@ const getDeck: () => PlayerDeckT | null = function () {
 	)
 		return null
 	console.log('Valid deck')
-	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any'}
-	return {cards: deckCards, name: name, icon: 'any'}
+	if (!name) return {cards: deckCards, name: 'Imported deck', icon: 'any', code: ''}
+	return {cards: deckCards, name: name, icon: 'any', code: ''}
 }
 
 const createConnectErrorChannel = () =>
@@ -94,8 +92,12 @@ export function* loginSaga(): SagaIterator {
 	const session = loadSession()
 	console.log('session saga: ', session)
 	if (!session) {
-		const {payload: playerName} = yield take('LOGIN')
-		socket.auth = {playerName, version: getClientVersion()}
+		const payload = yield take('LOGIN')
+
+		const playerName = payload.payload.name
+		const postgresId = payload.payload.postgresId
+
+		socket.auth = {playerName, postgresId, version: getClientVersion()}
 	} else {
 		socket.auth = {...session, version: getClientVersion()}
 	}
@@ -112,6 +114,11 @@ export function* loginSaga(): SagaIterator {
 		connectError: take(connectErrorChan),
 		timeout: delay(8000),
 	})
+
+	if (result.playerInfo) {
+		localStorage.setItem('postgresId', result.playerInfo.payload.postgresId)
+		console.log(result.playerInfo.payload.postgresId)
+	}
 
 	if (result.invalidPlayer || result.connectError || Object.hasOwn(result, 'timeout')) {
 		clearSession()
@@ -152,7 +159,7 @@ export function* loginSaga(): SagaIterator {
 		// if active deck is not valid, generate and save a starter deck
 		if (urlDeck) {
 			console.log('Selected deck found in url: ' + urlDeck.name)
-			saveDeck(urlDeck)
+			//saveDeck(urlDeck)
 			setActiveDeck(urlDeck.name)
 			yield call(sendMsg, 'UPDATE_DECK', urlDeck)
 		} else if (activeDeckValid) {
@@ -161,7 +168,7 @@ export function* loginSaga(): SagaIterator {
 			yield call(sendMsg, 'UPDATE_DECK', activeDeck)
 		} else {
 			// use and save the generated starter deck
-			saveDeck(payload.playerDeck)
+			//saveDeck(payload.playerDeck)
 			setActiveDeck(payload.playerDeck.name)
 			console.log('Generated new starter deck')
 		}
@@ -176,6 +183,9 @@ export function* logoutSaga(): SagaIterator {
 	yield takeEvery('UPDATE_DECK', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_DECK', action.payload)
 	})
+	yield takeEvery('SAVE_DECK', function* (action: AnyAction) {
+		yield call(sendMsg, 'SAVE_DECK', action.payload)
+	})
 	yield takeEvery('UPDATE_MINECRAFT_NAME', function* (action: AnyAction) {
 		yield call(sendMsg, 'UPDATE_MINECRAFT_NAME', action.payload)
 	})
@@ -189,6 +199,13 @@ export function* newDeckSaga(): SagaIterator {
 	while (true) {
 		const result = yield call(receiveMsg, 'NEW_DECK')
 		yield put(setNewDeck(result.payload))
+	}
+}
+
+export function* savedDecksSaga(): SagaIterator {
+	while (true) {
+		const result = yield call(receiveMsg, 'GET_DECKS')
+		yield put(setClientSavedDecks(result.payload))
 	}
 }
 

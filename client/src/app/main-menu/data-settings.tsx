@@ -84,6 +84,12 @@ function DataSettings({setMenuSection}: Props) {
 				>
 					Reset Stats
 				</Button>
+				<div className={css.stats}>
+					<div className={css.stat}>
+						<span>Postgres UUID</span>
+						<span>{localStorage.getItem('postgresId')}</span>
+					</div>
+				</div>
 			</div>
 		</MenuLayout>
 	)

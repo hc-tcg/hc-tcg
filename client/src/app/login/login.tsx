@@ -29,7 +29,8 @@ const Login = () => {
 	const handlePlayerName = (ev: React.SyntheticEvent<HTMLFormElement>) => {
 		ev.preventDefault()
 		const name = ev.currentTarget.playerName.value.trim()
-		if (name.length > 0) dispatch(login(name))
+		const postgresId = localStorage.getItem('postgresId')
+		if (name.length > 0) dispatch(login(name, postgresId))
 	}
 
 	return (

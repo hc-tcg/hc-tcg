@@ -2,6 +2,7 @@ import {CardT} from './game-state'
 
 export type PlayerDeckT = {
 	name: string
+	code: string
 	icon:
 		| 'any'
 		| 'balanced'

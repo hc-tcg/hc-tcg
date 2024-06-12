@@ -29,11 +29,6 @@ export const getSavedDeck = (name: string) => {
 	return deck
 }
 
-export const saveDeck = (deck: PlayerDeckT) => {
-	const hash = 'Deck_' + deck.name
-	localStorage.setItem(hash, JSON.stringify(deck))
-}
-
 export const deleteDeck = (name: string) => {
 	const hash = 'Deck_' + name
 	localStorage.removeItem(hash)

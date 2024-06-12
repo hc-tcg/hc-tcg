@@ -8,7 +8,7 @@ import {validateDeck} from 'common/utils/validation'
 import css from './deck.module.scss'
 import Accordion from 'components/accordion'
 import DeckLayout from './layout'
-import {getPlayerDeck} from 'logic/session/session-selectors'
+import {getPlayerDeck, getPlayerSavedDecks} from 'logic/session/session-selectors'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PlayerDeckT} from 'common/types/deck'
 import EditDeck from './deck-edit'
@@ -25,7 +25,6 @@ import {
 	getLegacyDecks,
 	getSavedDeck,
 	getSavedDecks,
-	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
 import HermitCard from '../../../../common/cards/base/hermit-card'
@@ -105,17 +104,21 @@ const Deck = ({setMenuSection}: Props) => {
 	// REDUX
 	const dispatch = useDispatch()
 	const playerDeck = useSelector(getPlayerDeck)
+	const storedDecks = useSelector(getPlayerSavedDecks)
 	const settings = useSelector(getSettings)
+
+	console.log(storedDecks)
 
 	// STATE
 	const [mode, setMode] = useState<'select' | 'edit' | 'create'>('select')
-	const [savedDecks, setSavedDecks] = useState<Array<string>>(getSavedDecks)
+	const [savedDecks, setSavedDecks] = useState<Array<PlayerDeckT>>(storedDecks)
 
-	const savedDeckNames = savedDecks.map((deck) => (deck ? getSavedDeck(deck)?.name : null))
+	const savedDeckNames = savedDecks.map((deck) => deck.name)
 	const [importedDeck, setImportedDeck] = useState<PlayerDeckT>({
 		name: 'undefined',
 		icon: 'any',
 		cards: [],
+		code: '',
 	})
 	const [showDeleteDeckModal, setShowDeleteDeckModal] = useState<boolean>(false)
 	const [showDuplicateDeckModal, setShowDuplicateDeckModal] = useState<boolean>(false)
@@ -163,7 +166,10 @@ const Deck = ({setMenuSection}: Props) => {
 		setMenuSection('mainmenu')
 	}
 	const handleInvalidDeck = () => {
-		saveDeck(playerDeck)
+		dispatch({
+			type: 'SAVE_DECK',
+			payload: playerDeck,
+		})
 		setMenuSection('mainmenu')
 		dispatchToast(lastValidDeckToast)
 	}
@@ -173,15 +179,15 @@ const Deck = ({setMenuSection}: Props) => {
 		setShowImportModal(false)
 	}
 	const handleMassImportDecks = () => {
-		setSavedDecks(getSavedDecks())
-		setShowImportModal(false)
+		// setSavedDecks(getSavedDecks())
+		// setShowImportModal(false)
 	}
 
 	//DECK LOGIC
-	const loadDeck = (deckName: string) => {
-		if (!deckName) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
-		const deck = getSavedDeck(deckName)
-		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
+	const loadDeck = (deckCode: string) => {
+		if (!deckCode) return console.log(`[LoadDeck]: Could not load the ${deckCode} deck.`)
+		const deck = storedDecks.find((deck) => deck.code === deckCode)
+		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckCode} deck.`)
 
 		const deckIds = deck.cards?.filter((card: CardT) => CARDS[card.cardId])
 
@@ -203,18 +209,21 @@ const Deck = ({setMenuSection}: Props) => {
 	}
 	const saveDeckInternal = (deck: PlayerDeckT) => {
 		//Save new deck to Local Storage
-		saveDeck(deck)
+		dispatch({
+			type: 'SAVE_DECK',
+			payload: deck,
+		})
 
 		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
-		loadDeck(deck.name)
+		// setSavedDecks(getSavedDecks())
+		loadDeck(deck.code)
 	}
 	const deleteDeckInternal = () => {
-		dispatchToast(deleteToast)
-		deleteDeck(loadedDeck.name)
-		const decks = getSavedDecks()
-		setSavedDecks(decks)
-		loadDeck(JSON.parse(decks[0]).name)
+		// dispatchToast(deleteToast)
+		// deleteDeck(loadedDeck.name)
+		// const decks = getSavedDecks()
+		// // setSavedDecks(decks)
+		// loadDeck(JSON.parse(decks[0]).name)
 	}
 	const canDuplicateDeck = () => {
 		return !getSavedDeck(`${loadedDeck.name} Copy 9`)
@@ -229,17 +238,15 @@ const Deck = ({setMenuSection}: Props) => {
 			newName = `${deck.name} Copy ${number}`
 			number++
 		}
-		saveDeck({...deck, name: newName})
+		// dispatch({
+		// 	type: 'SAVE_DECK',
+		// 	payload: {...deck, name: newName},
+		// })
 
 		//Refresh saved deck list and load new deck
-		setSavedDecks(getSavedDecks())
+		// setSavedDecks(getSavedDecks())
 	}
-	const sortedDecks = savedDecks
-		.map((d: any) => {
-			const deck: PlayerDeckT = JSON.parse(d)
-			return deck
-		})
-		.sort((a, b) => a.name.localeCompare(b.name))
+	const sortedDecks = savedDecks.sort((a, b) => a.name.localeCompare(b.name))
 	const deckList: ReactNode = sortedDecks.map((deck: PlayerDeckT, i: number) => {
 		return (
 			<li
@@ -247,7 +254,7 @@ const Deck = ({setMenuSection}: Props) => {
 				key={i}
 				onClick={() => {
 					playSwitchDeckSFX()
-					loadDeck(deck.name)
+					loadDeck(deck.code)
 				}}
 			>
 				<div className={css.deckImage}>
@@ -448,7 +455,7 @@ const Deck = ({setMenuSection}: Props) => {
 										<Button
 											onClick={() => {
 												const conversionCount = convertLegacyDecks()
-												setSavedDecks(getSavedDecks())
+												// setSavedDecks(getSavedDecks())
 
 												dispatch({
 													type: 'SET_TOAST',
@@ -517,6 +524,7 @@ const Deck = ({setMenuSection}: Props) => {
 							name: '',
 							icon: 'any',
 							cards: [],
+							code: '',
 						}}
 					/>
 				)

@@ -20,6 +20,11 @@ export const getPlayerDeck = (state: RootState) => {
 	return getSession(state).playerDeck
 }
 
+export const getPlayerSavedDecks = (state: RootState) => {
+	console.log(state)
+	return getSession(state).playerSavedDecks
+}
+
 export const getConnecting = (state: RootState) => {
 	return getSession(state).connecting
 }

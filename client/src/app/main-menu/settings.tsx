@@ -8,6 +8,8 @@ import {getStats} from 'logic/fbdb/fbdb-selectors'
 import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
 import UpdatesModal from 'components/updates'
+import {getLocalPlayerState} from 'server/src/utils/state-gen'
+import {getPlayerName} from 'logic/session/session-selectors'
 
 type Props = {
 	setMenuSection: (section: string) => void
@@ -16,6 +18,7 @@ function Settings({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const stats = useSelector(getStats)
 	const settings = useSelector(getSettings)
+	const player = useSelector(getPlayerName)
 	const totalGames = Object.values(stats).reduce((a, b) => a + b, 0)
 
 	const handleSoundChange = (ev: React.SyntheticEvent<HTMLInputElement>) => {
