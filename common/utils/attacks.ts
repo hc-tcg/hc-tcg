@@ -140,7 +140,7 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: string): boolean {
 	const cardPos = getCardPos(game, instance)
 	if (!cardPos) return false
-	if (callSlotConditionWithCardPosModel(slot.every(...attack.shouldIgnoreSlots), game, cardPos)) {
+	if (callSlotConditionWithCardPosModel(slot.some(...attack.shouldIgnoreSlots), game, cardPos)) {
 		return true
 	}
 
