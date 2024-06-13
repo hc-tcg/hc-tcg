@@ -1,7 +1,5 @@
 import EffectCard from '../../base/effect-card'
-import {isTargetingPos} from '../../../utils/attacks'
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {CanAttachResult} from '../../base/card'
@@ -40,40 +38,9 @@ class ArmorStandEffectCard extends EffectCard {
 			return blockedActions
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!row.health && attacker && isTargetingPos(attack, pos)) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
-
-				const activeRow = player.board.activeRow
-				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attacker.player.id !== player.id) {
-					// Reset the active row so the player can switch
-					game.changeActiveRow(player, null)
-				}
-			}
-		})
-
 		player.hooks.canAttach.add(instance, (result, pos) => {
 			if (pos.row?.hermitCard?.cardInstance !== instance) return
 			result.push('UNMET_CONDITION_SILENT')
-		})
-
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!row.health && attacker && isTargetingPos(attack, pos)) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
-				game.battleLog.addEntry(player.id, `$p${this.name}$ was knocked out`)
-
-				const activeRow = player.board.activeRow
-				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attacker.player.id !== player.id) {
-					// Reset the active row so the player can switch
-					game.changeActiveRow(player, null)
-				}
-			}
 		})
 	}
 
