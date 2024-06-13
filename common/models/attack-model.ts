@@ -38,7 +38,7 @@ export class AttackModel {
 	/** Attacks to perform after this attack */
 	public nextAttacks: Array<AttackModel> = []
 	/** Array of checks to filter out hooks this attack should not trigger */
-	public shouldIgnoreCards: Array<ShouldIgnoreCard> = []
+	public shouldIgnoreSlots: Array<ShouldIgnoreCard> = []
 	/** Is this attack a backlash attack*/
 	public isBacklash: boolean = false
 	/** Whether or not the attack should create a weakness attack */
@@ -51,7 +51,7 @@ export class AttackModel {
 
 		this.attacker = defs.attacker || null
 		this.target = defs.target || null
-		this.shouldIgnoreCards = defs.shouldIgnoreCards || []
+		this.shouldIgnoreSlots = defs.shouldIgnoreSlots || []
 		this.createWeakness = defs.createWeakness || 'never'
 
 		if (defs.log) this.log.push(defs.log)
