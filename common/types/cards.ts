@@ -1,6 +1,6 @@
 import Card from '../cards/base/card'
 import {PlayerState, RowState, RowStateWithHermit} from './game-state'
-import {PickInfo} from './server-requests'
+import {PickInfo, SlotInfo} from './server-requests'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -61,7 +61,7 @@ export type SlotPos = {
 	player: PlayerState
 	rowIndex: number
 	row: RowState
-	slot: BoardSlot
+	slot: SlotInfo
 }
 
 export type PlayCardLog = {

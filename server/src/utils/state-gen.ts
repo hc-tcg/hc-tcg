@@ -223,7 +223,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
-			canAttach: new GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>(),
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
 			beforeApply: new GameHook<() => void>(),

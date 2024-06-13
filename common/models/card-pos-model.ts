@@ -1,4 +1,4 @@
-import {Slot} from '../types/cards'
+import {Slot, SlotPos} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
 
@@ -86,7 +86,7 @@ export function getCardPos(game: GameModel, instance: string) {
 	return null
 }
 
-function getCardAtPos(game: GameModel, pos: BasicCardPos) {
+export function getCardAtPos(game: GameModel, pos: BasicCardPos) {
 	const {player, rowIndex, slot} = pos
 
 	const suCard = player.board.singleUseCard

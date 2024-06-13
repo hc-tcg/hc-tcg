@@ -5,7 +5,7 @@ import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
-import {slot} from 'common/slot'
+import {callSlotConditionWithCardPosModel, slot} from 'common/slot'
 
 function* playCardSaga(
 	game: GameModel,
@@ -57,7 +57,11 @@ function* playCardSaga(
 	const {row, rowIndex} = pos
 
 	// Do we meet requirements to place the card
-	const canAttach = slot.every(cardInfo.canBeAttachedTo, slot.empty)(game, pos)
+	const canAttach = callSlotConditionWithCardPosModel(
+		slot.every(cardInfo.canBeAttachedTo, slot.empty),
+		game,
+		pos
+	)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'
