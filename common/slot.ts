@@ -122,10 +122,12 @@ export namespace slot {
 		return pos.card === null
 	}
 
-	/** Return true if the spot contains a card instance. */
-	export const has = (cardId: string): SlotCondition => {
+	/** Return true if the spot contains any of the card IDs. */
+	export const has = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
-			return pos.card !== null && pos.card.cardId === cardId
+			return cardIds.some((cardId) => {
+				return pos.card !== null && pos.card.cardId === cardId
+			})
 		}
 	}
 

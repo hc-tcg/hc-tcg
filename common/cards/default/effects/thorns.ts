@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {isTargetingPos} from '../../../utils/attacks'
 import EffectCard from '../../base/effect-card'
 
@@ -40,21 +41,9 @@ class ThornsEffectCard extends EffectCard {
 					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
 				}).addDamage(this.id, 20)
 
-				backlashAttack.shouldIgnoreCards.push((instance) => {
-					const pos = getCardPos(game, instance)
-					if (!pos || !pos.row || !pos.row.effectCard) return false
-
-					if (
-						['gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor'].includes(
-							pos.row.effectCard.cardId
-						)
-					) {
-						// It's an armor card, ignore it
-						return true
-					}
-
-					return false
-				})
+				backlashAttack.shouldIgnoreSlots.push(
+					slot.has('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
+				)
 
 				attack.addNewAttack(backlashAttack)
 			}

@@ -2,6 +2,7 @@ import {HERMIT_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
@@ -84,14 +85,10 @@ class IskallmanRareHermitCard extends HermitCard {
 						playerId: player.id,
 						id: 'iskallman_rare',
 						message: 'Pick an AFK Hermit from either side of the board',
+						canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 						onResult(pickResult) {
-							const pickedPlayer = game.state.players[pickResult.playerId]
-							const rowIndex = pickResult.rowIndex
-							if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-							if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-							if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-							if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+							if (!pickResult.card) return 'FAILURE_INVALID_DATA'
+							if (!pickResult.rowIndex) return 'FAILURE_INVALID_DATA'
 
 							// Make sure it's an actual hermit card
 							const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
@@ -99,7 +96,7 @@ class IskallmanRareHermitCard extends HermitCard {
 
 							// Store the info to use later
 							player.custom[playerKey] = pickResult.playerId
-							player.custom[rowKey] = rowIndex
+							player.custom[rowKey] = pickResult.rowIndex
 
 							return 'SUCCESS'
 						},
@@ -142,9 +139,7 @@ class IskallmanRareHermitCard extends HermitCard {
 				isBacklash: true,
 			})
 			backlashAttack.addDamage(this.id, 50)
-			backlashAttack.shouldIgnoreCards.push(() => {
-				return true
-			})
+			backlashAttack.shouldIgnoreSlots.push(slot.anything)
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
