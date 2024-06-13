@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
+import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
 import EffectCard from '../../base/effect-card'
 
 class ThornsIIIEffectCard extends EffectCard {
@@ -28,38 +28,36 @@ class ThornsIIIEffectCard extends EffectCard {
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (attack.getAttacker() && isTargetingPos(attack, pos)) {
-				player.custom[triggeredKey] = true
+			if (!attack.getAttacker() || !isTargetingPos(attack, pos)) return
 
-				const backlashAttack = new AttackModel({
-					id: this.getInstanceKey(instance, 'backlash'),
-					attacker: attack.getTarget(),
-					target: attack.getAttacker(),
-					type: 'effect',
-					isBacklash: true,
-					log: (values) => `${values.target} took ${values.damage} damage from $eThorns III$`,
-				}).addDamage(this.id, 40)
+			player.custom[triggeredKey] = true
 
-				backlashAttack.shouldIgnoreCards.push((instance) => {
-					const pos = getCardPos(game, instance)
-					if (!pos || !pos.row || !pos.row.effectCard) return false
+			const backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'backlash'),
+				attacker: attack.getTarget(),
+				target: attack.getAttacker(),
+				type: 'effect',
+				isBacklash: true,
+				log: (values) => `${values.target} took ${values.damage} damage from $eThorns III$`,
+			}).addDamage(this.id, 40)
 
-					if (
-						['gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor'].includes(
-							pos.row.effectCard.cardId
-						)
-					) {
-						// It's an armor card, ignore it
-						return true
-					}
+			backlashAttack.shouldIgnoreCards.push((instance) => {
+				const pos = getCardPos(game, instance)
+				if (!pos || !pos.row || !pos.row.effectCard) return false
 
-					return false
-				})
+				if (
+					['gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor'].includes(
+						pos.row.effectCard.cardId
+					)
+				) {
+					// It's an armor card, ignore it
+					return true
+				}
 
-				attack.addNewAttack(backlashAttack)
-			}
+				return false
+			})
 
-			return attack
+			executeExtraAttacks(game, [backlashAttack])
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
