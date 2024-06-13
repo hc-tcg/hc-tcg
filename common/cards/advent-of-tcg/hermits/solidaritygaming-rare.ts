@@ -6,6 +6,7 @@ import {RowStateWithHermit} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class SolidaritygamingRareHermitCard extends HermitCard {
 	constructor() {
@@ -59,14 +60,15 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: instance,
 				message: 'Choose an AFK Hermit to protect',
+				canPick: slot.every(
+					slot.player,
+					slot.not(slot.activeRow),
+					slot.not(slot.empty),
+					slot.hermitSlot
+				),
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined || rowIndex === player.board.activeRow)
-						return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					applyStatusEffect(game, 'protected', pickResult.card.cardInstance)
 

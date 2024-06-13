@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
@@ -52,13 +53,9 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Move your opponent's active Hermit to a new slot.",
+				canPick: slot.every(slot.empty, slot.hermitSlot, slot.opponent),
 				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (pickResult.card !== null) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
+					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_DATA'
 					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
