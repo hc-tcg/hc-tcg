@@ -1,7 +1,5 @@
-import {BasicCardPos, CardPosModel, getCardAtPos} from './models/card-pos-model'
+import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
-import {PlayerModel} from './models/player-model'
-import {SlotPos} from './types/cards'
 import {CardT, PlayerState, RowState} from './types/game-state'
 import {PickInfo, SlotInfo} from './types/server-requests'
 
