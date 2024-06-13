@@ -1,3 +1,4 @@
+import {SlotCondition} from '../slot'
 import {RowPos} from './cards'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
@@ -10,7 +11,7 @@ export type AttackDefence = {
 	damageReduction: number
 }
 
-export type ShouldIgnoreCard = (instance: string) => boolean
+export type ShouldIgnoreCard = SlotCondition
 
 export type AttackLog = {
 	/**The default log for attacks.*/
@@ -38,7 +39,7 @@ export type AttackDefs = {
 	attacker?: RowPos | null
 	target?: RowPos | null
 	type: AttackType
-	shouldIgnoreCards?: Array<ShouldIgnoreCard>
+	shouldIgnoreSlots?: Array<ShouldIgnoreCard>
 	isBacklash?: boolean
 	createWeakness?: WeaknessType
 	log?: (values: AttackLog) => string
