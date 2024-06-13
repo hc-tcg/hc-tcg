@@ -6,6 +6,7 @@ import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {SlotCondition, slot} from '../../slot'
 
 type HermitDefs = {
 	id: string
@@ -30,6 +31,8 @@ abstract class HermitCard extends Card {
 	public primary: HermitAttackInfo
 	public secondary: HermitAttackInfo
 
+	public override canBeAttachedTo = slot.every(slot.hermitSlot, slot.player)
+
 	constructor(defs: HermitDefs) {
 		super({
 			type: 'hermit',
@@ -44,17 +47,6 @@ abstract class HermitCard extends Card {
 		this.primary = defs.primary
 		this.secondary = defs.secondary
 		this.updateLog(hermitCardBattleLog(this.name))
-	}
-
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {currentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		if (pos.slot.type !== 'hermit') result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-
-		return result
 	}
 
 	// Default is to return

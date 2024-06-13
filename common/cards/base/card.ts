@@ -3,6 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, TextNode} from '../../utils/formatting'
+import { SlotCondition } from '../../slot'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -32,6 +33,11 @@ abstract class Card {
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	private log: Array<(values: PlayCardLog) => string>
 
+	/**
+	 * A combinator expression that returns if the card can be attached to a specified slot.
+	 */
+	public abstract canBeAttachedTo: SlotCondition
+
 	constructor(defs: CardDefs) {
 		this.type = defs.type
 		this.id = defs.id
@@ -47,13 +53,6 @@ abstract class Card {
 	public getInstanceKey(instance: string, keyName: string = '') {
 		return this.id + ':' + instance + ':' + keyName
 	}
-
-	/**
-	 * If the specified slot is empty, can this card be attached there
-	 *
-	 * Returns an array of any of the problems there are with attaching, if any
-	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
 
 	/**
 	 * Returns the description for this card that shows up in the sidebar.

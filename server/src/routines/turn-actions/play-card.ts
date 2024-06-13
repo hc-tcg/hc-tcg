@@ -4,8 +4,8 @@ import {equalCard} from 'common/utils/cards'
 import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
-import {call} from 'typed-redux-saga'
 import {DEBUG_CONFIG} from 'common/config'
+import {slot} from 'common/slot'
 
 function* playCardSaga(
 	game: GameModel,
@@ -54,32 +54,25 @@ function* playCardSaga(
 
 	// Can't attach if card is already there
 	if (pos.card !== null) return 'FAILURE_CANNOT_COMPLETE'
-	const {row, rowIndex, slot} = pos
+	const {row, rowIndex} = pos
 
 	// Do we meet requirements to place the card
-	const canAttach = cardInfo.canAttach(game, pos)
-	player.hooks.canAttach.call(canAttach, pos)
+	const canAttach = slot.every(cardInfo.canBeAttachedTo, slot.empty)(game, pos)
 
-	// It's the wrong kind of slot
-	if (canAttach.includes('INVALID_PLAYER')) return 'FAILURE_INVALID_PLAYER'
-	if (canAttach.includes('INVALID_SLOT')) return 'FAILURE_INVALID_SLOT'
-	// If it's the right kind of slot, but we can't attach
-	if (canAttach.includes('UNMET_CONDITION_SILENT')) return 'FAILURE_UNMET_CONDITION_SILENT'
-	if (canAttach.includes('UNMET_CONDITION')) return 'FAILURE_UNMET_CONDITION'
-
-	if (canAttach.includes('UNKNOWN_ERROR')) return 'FAILURE_UNKNOWN_ERROR'
+	// It's the wrong kind of slot or does not satisfy the condition
+	if (!canAttach) return 'FAILURE_INVALID_SLOT'
 
 	// Finally, execute depending on where we tried to place
 	// And set the action result to be sent to the client
 
 	// Single use slot
-	if (pickedSlot.type === 'single_use') {
+	if (pos.slot.type === 'single_use') {
 		player.board.singleUseCard = card
 	} else {
 		// All other positions requires us to have selected a valid row
 		if (!row || rowIndex === null) return 'FAILURE_CANNOT_COMPLETE'
 
-		switch (slot.type) {
+		switch (pos.slot.type) {
 			case 'hermit': {
 				row.hermitCard = card
 
@@ -96,7 +89,7 @@ function* playCardSaga(
 				break
 			}
 			case 'item': {
-				row.itemCards[slot.index] = card
+				row.itemCards[pos.slot.index] = card
 
 				// This can only be done once per turn
 				game.addCompletedActions('PLAY_ITEM_CARD')
@@ -108,7 +101,7 @@ function* playCardSaga(
 				break
 			}
 			default:
-				throw new Error('Unknown slot type when trying to play a card: ' + slot.type)
+				throw new Error('Unknown slot type when trying to play a card: ' + pos.slot.type)
 		}
 	}
 

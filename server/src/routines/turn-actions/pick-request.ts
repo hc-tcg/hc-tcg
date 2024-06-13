@@ -4,6 +4,7 @@ import {PickInfo} from 'common/types/server-requests'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {getCardPos} from 'common/models/card-pos-model'
 
 function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
 	// First validate data sent from client
@@ -20,6 +21,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 	}
 
 	// Call the bound function with the pick result
+	const canPick = pickRequest.canPick(game, getCardPos(game, pickResult.card?.cardInstance))
 	const result = pickRequest.onResult(pickResult)
 
 	if (result === 'SUCCESS') {

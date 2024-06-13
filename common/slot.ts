@@ -84,10 +84,15 @@ export namespace slot {
 	export const empty: SlotCondition = (game, pos) => {
 		return pos.card === null
 	}
+
 	/** Return true if the spot contains a card instance. */
 	export const has = (cardId: string): SlotCondition => {
 		return (game, pos) => {
 			return pos.card !== null && pos.card.cardId === cardId
 		}
+	}
+
+	export const rowHasHermit: SlotCondition = (game, pos) => {
+		return pos.row != null && pos.row.hermitCard != null
 	}
 }

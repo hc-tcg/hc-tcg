@@ -4,6 +4,7 @@ import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
+import { SlotCondition, slot } from '../../slot'
 
 export type SingleUseDefs = {
 	id: string
@@ -16,6 +17,7 @@ export type SingleUseDefs = {
 
 class SingleUseCard extends Card {
 	public description: string
+	public override canBeAttachedTo = slot.singleUseSlot
 
 	constructor(defs: SingleUseDefs) {
 		super({
@@ -33,12 +35,6 @@ class SingleUseCard extends Card {
 				if (defs.log === null) return ''
 				return defs.log(values)
 			})
-	}
-
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		if (pos.slot.type !== 'single_use') return ['INVALID_SLOT']
-
-		return []
 	}
 
 	public override getActions(game: GameModel): TurnActions {

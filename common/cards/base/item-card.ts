@@ -5,6 +5,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {HERMIT_CARDS} from '..'
+import { slot } from '../../slot'
 
 type ItemDefs = {
 	id: string
@@ -16,6 +17,7 @@ type ItemDefs = {
 
 abstract class ItemCard extends Card {
 	public hermitType: HermitTypeT
+	public override canBeAttachedTo = slot.every(slot.player, slot.itemSlot, slot.rowHasHermit)
 
 	constructor(defs: ItemDefs) {
 		super({
@@ -32,20 +34,6 @@ abstract class ItemCard extends Card {
 			(values) =>
 				`$p{You|${values.player}}$ attached $m${values.pos.name}$ to $p${values.pos.hermitCard}$`
 		)
-	}
-
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {currentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		if (pos.slot.type !== 'item') result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-
-		// Can't attach without hermit - this does not show the unmet condition modal
-		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-
-		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {

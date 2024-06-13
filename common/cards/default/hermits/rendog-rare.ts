@@ -98,6 +98,8 @@ class RendogRareHermitCard extends HermitCard {
 				),
 				onResult(pickResult) {
 					if (!pickResult.card) return 'FAILURE_INVALID_DATA'
+					let pickedCard = pickResult.card
+					
 					game.addModalRequest({
 						playerId: player.id,
 						data: {
@@ -105,7 +107,7 @@ class RendogRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickResult.card.cardInstance),
+								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
 							},
 						},
 						onResult(modalResult) {

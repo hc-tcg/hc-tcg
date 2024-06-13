@@ -86,8 +86,6 @@ export type PlayerState = {
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 
-		/** Hook called when checking if a card can be attached. The result can be modified and will be stored */
-		canAttach: GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
 		/** Hook called when a card is detached */
