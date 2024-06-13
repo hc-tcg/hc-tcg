@@ -86,16 +86,18 @@ export namespace slot {
 	/** Return the opposite of the condition*/
 	export const not = (condition: SlotCondition): SlotCondition => {
 		return (game, pos) => {
-			return condition(game, pos)
+			return !condition(game, pos)
 		}
 	}
 	/** Return true if the card is attached to the player's side. */
 	export const player: SlotCondition = (game, pos) => {
-		return pos.player === game.currentPlayer
+		return pos.player.id === game.currentPlayer.id
 	}
 	/** Return true if the card is attached to the opponents side. */
 	export const opponent: SlotCondition = (game, pos) => {
-		return pos.player === game.opponentPlayer
+		console.log(pos.player.id)
+		console.log(game.opponentPlayer.id)
+		return pos.player.id === game.opponentPlayer.id
 	}
 	/** Return true if the card is attached to a hermit slot. */
 	export const hermitSlot: SlotCondition = (game, pos) => {

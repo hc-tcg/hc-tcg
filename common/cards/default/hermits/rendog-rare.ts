@@ -91,7 +91,7 @@ class RendogRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				canPick: slot.every(
-					slot.player,
+					slot.opponent,
 					slot.hermitSlot,
 					slot.not(slot.empty),
 					slot.not(slot.has(this.id))
