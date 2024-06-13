@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {slot} from '../../../slot'
 
 class GrianchRareHermitCard extends HermitCard {
 	constructor() {
@@ -61,14 +62,11 @@ class GrianchRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
+				canPick: slot.every(slot.not(slot.activeRow), slot.hermitSlot),
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					// Make sure it's an actual hermit card
 					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]

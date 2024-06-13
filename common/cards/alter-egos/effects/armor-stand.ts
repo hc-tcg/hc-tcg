@@ -4,8 +4,8 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
-import {CanAttachResult} from '../../base/card'
 import {hermitCardBattleLog} from '../../base/hermit-card'
+import {slot} from '../../../slot'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -19,6 +19,8 @@ class ArmorStandEffectCard extends EffectCard {
 			log: hermitCardBattleLog('Armour Stand'),
 		})
 	}
+
+	override canBeAttachedTo = slot.every(slot.player, slot.hermitSlot)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
@@ -55,11 +57,6 @@ class ArmorStandEffectCard extends EffectCard {
 			}
 		})
 
-		player.hooks.canAttach.add(instance, (result, pos) => {
-			if (pos.row?.hermitCard?.cardInstance !== instance) return
-			result.push('UNMET_CONDITION_SILENT')
-		})
-
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
 			if (!row.health && attacker && isTargetingPos(attack, pos)) {
@@ -87,20 +84,8 @@ class ArmorStandEffectCard extends EffectCard {
 
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)
-		player.hooks.canAttach.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {slot} = pos
-		const {currentPlayer} = game
-		const result: CanAttachResult = []
-
-		if (!slot || slot.type !== 'hermit') result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-
-		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {

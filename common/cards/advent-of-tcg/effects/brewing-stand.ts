@@ -4,6 +4,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {HERMIT_CARDS} from '../..'
+import {slot} from '../../../slot'
 
 class BrewingStandEffectCard extends EffectCard {
 	constructor() {
@@ -33,12 +34,14 @@ class BrewingStandEffectCard extends EffectCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to discard',
+				canPick: slot.every(
+					slot.player,
+					slot.itemSlot,
+					slot.not(slot.empty),
+					(game, pick) => pick.rowIndex === pos.rowIndex
+				),
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex !== pos.rowIndex) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					const playerRow = player.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard

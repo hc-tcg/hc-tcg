@@ -4,6 +4,7 @@ import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {slot} from '../../../slot'
 
 class MonkeyfarmRareHermitCard extends HermitCard {
 	constructor() {
@@ -52,15 +53,10 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
+				canPick: slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					const row = opponentPlayer.board.rows[rowIndex]
 					if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'

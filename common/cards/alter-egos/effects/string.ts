@@ -7,11 +7,6 @@ import {CanAttachResult} from '../../base/card'
 import EffectCard from '../../base/effect-card'
 
 class StringEffectCard extends EffectCard {
-	public override canBeAttachedTo = slot.every(
-		slot.opponent,
-		slot.some(slot.effectSlot, slot.itemSlot)
-	)
-
 	constructor() {
 		super({
 			id: 'string',
@@ -24,6 +19,11 @@ class StringEffectCard extends EffectCard {
 				`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
 		})
 	}
+
+	public override canBeAttachedTo = slot.every(
+		slot.opponent,
+		slot.some(slot.effectSlot, slot.itemSlot)
+	)
 
 	// This card allows placing on either effect or item slot
 	public override getActions(game: GameModel): TurnActions {
