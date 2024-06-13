@@ -1,11 +1,17 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {SlotCondition, slot} from '../../../slot'
 import {TurnActions} from '../../../types/game-state'
 import {CanAttachResult} from '../../base/card'
 import EffectCard from '../../base/effect-card'
 
 class StringEffectCard extends EffectCard {
+	public override canBeAttachedTo = slot.every(
+		slot.opponent,
+		slot.some(slot.effectSlot, slot.itemSlot)
+	)
+
 	constructor() {
 		super({
 			id: 'string',
@@ -17,22 +23,6 @@ class StringEffectCard extends EffectCard {
 			log: (values) =>
 				`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {opponentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		// attach to effect or item slot
-		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') result.push('INVALID_SLOT')
-
-		// can only attach to opponent
-		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
-
-		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-
-		return result
 	}
 
 	// This card allows placing on either effect or item slot
