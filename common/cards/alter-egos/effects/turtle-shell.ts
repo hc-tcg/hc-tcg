@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
@@ -16,16 +17,7 @@ class TurtleShellEffectCard extends EffectCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {player} = pos
-
-		const result = super.canAttach(game, pos)
-
-		// turtle shell addition - hermit must be inactive to attach
-		if (!(player.board.activeRow !== pos.rowIndex)) result.push('INVALID_SLOT')
-
-		return result
-	}
+	override canBeAttachedTo = slot.every(super.canBeAttachedTo, slot.not(slot.activeRow))
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos

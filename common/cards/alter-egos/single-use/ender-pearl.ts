@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot, SlotCondition} from '../../../slot'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {hasActive} from '../../../utils/game'
@@ -20,17 +21,10 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {player} = pos
-		if (!hasActive(player)) result.push('UNMET_CONDITION')
-		for (const row of player.board.rows) {
-			if (row.hermitCard === null) return result
-		}
-		result.push('UNMET_CONDITION')
-		return result
-	}
+	override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => {
+		if (!hasActive(pos.player)) return false
+		return pos.player.board.rows.some((row) => row.hermitCard === null)
+	})
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -40,15 +34,11 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty Hermit slot',
+			canPick: slot.every(slot.empty, slot.hermitSlot, slot.player),
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
 				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 				// We need to have no card there
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 				const activeRow = getActiveRowPos(player)
 				if (player.board.activeRow === null || !activeRow) return 'FAILURE_INVALID_DATA'

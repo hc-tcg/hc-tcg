@@ -131,6 +131,13 @@ export namespace slot {
 		}
 	}
 
+	/* Return true if the card is in a player's hand */
+	export const hand: SlotCondition = (game, pos) => {
+		return [game.currentPlayer, game.opponentPlayer].some((player) => {
+			return player.hand.some((card) => card.cardInstance === pos.card?.cardInstance)
+		})
+	}
+
 	export const rowHasHermit: SlotCondition = (game, pos) => {
 		return pos.row !== null && pos.row.hermitCard !== null
 	}

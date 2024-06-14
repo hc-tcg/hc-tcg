@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardFromHand} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -45,11 +46,8 @@ class JinglerRareHermitCard extends HermitCard {
 				playerId: opponentPlayer.id,
 				id: this.id,
 				message: 'Pick 1 card from your hand to discard',
+				canPick: slot.hand,
 				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
-
 					discardFromHand(opponentPlayer, pickResult.card)
 
 					return 'SUCCESS'

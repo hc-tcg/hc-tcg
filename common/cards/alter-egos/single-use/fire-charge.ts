@@ -6,6 +6,7 @@ import {isRemovable} from '../../../utils/cards'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
+import {slot, SlotCondition} from '../../../slot'
 
 class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -20,29 +21,12 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {player} = pos
-
-		for (const row of player.board.rows) {
-			const cards = row.itemCards
-			let total = 0
-			// Should be able to remove string on the item slots
-			const validTypes = new Set(['effect', 'item'])
-
-			for (const card of cards) {
-				if (card && validTypes.has(CARDS[card.cardId]?.type)) {
-					total++
-				}
-			}
-
-			if ((row.effectCard !== null && isRemovable(row.effectCard)) || total > 0) return result
-		}
-
-		result.push('UNMET_CONDITION')
-		return result
-	}
+	override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) =>
+		pos.player.board.rows.some((row) => {
+			if (row.itemCards.some((i) => i !== null)) return true
+			if (row.effectCard && isRemovable(row.effectCard)) return true
+		})
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -51,18 +35,16 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
+			canPick: slot.every(
+				slot.player,
+				slot.not(slot.empty),
+				slot.some(
+					slot.itemSlot,
+					slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isRemovable(pick.card))
+				)
+			),
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-				if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (pickResult.slot.type !== 'item' && pickResult.slot.type !== 'effect')
-					return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-				if (pickResult.slot.type === 'effect' && !isRemovable(pickResult.card))
-					return 'FAILURE_CANNOT_COMPLETE'
-
-				const row = player.board.rows[pickResult.rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
 				const pos = getCardPos(game, pickResult.card.cardInstance)
 				if (!pos) return 'FAILURE_CANNOT_COMPLETE'
 

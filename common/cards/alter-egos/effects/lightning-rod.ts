@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot, SlotCondition} from '../../../slot'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
@@ -16,17 +17,9 @@ class LightningRodEffectCard extends EffectCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const board = pos.player.board
-		if (board.rows.find((row) => row.effectCard?.cardId === this.id)) {
-			// Can't attach if there's already one attached
-			result.push('UNMET_CONDITION')
-		}
-
-		return result
-	}
+	override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) =>
+		pos.player.board.rows.some((row) => row.effectCard?.cardId === this.id)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row, rowIndex} = pos
