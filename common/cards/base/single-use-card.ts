@@ -17,7 +17,7 @@ export type SingleUseDefs = {
 
 class SingleUseCard extends Card {
 	public description: string
-	public override canBeAttachedTo = slot.singleUseSlot
+	public override canBeAttachedTo = slot.every(slot.singleUseSlot, slot.playerHasActiveHermit)
 
 	constructor(defs: SingleUseDefs) {
 		super({
