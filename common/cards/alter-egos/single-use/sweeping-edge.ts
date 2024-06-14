@@ -16,30 +16,6 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) {
-			result.push('UNMET_CONDITION')
-			return result
-		}
-
-		const rows = opponentPlayer.board.rows
-		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
-			(index) => index >= 0 && index < rows.length
-		)
-
-		for (const row of targetIndex) {
-			const effectCard = rows[row].effectCard
-			if (effectCard && isRemovable(effectCard)) return result
-		}
-
-		result.push('UNMET_CONDITION')
-		return result
-	}
-
 	override canApply() {
 		return true
 	}

@@ -25,7 +25,8 @@ class BerryBushEffectCard extends EffectCard {
 		slot.opponent,
 		slot.hermitSlot,
 		slot.empty,
-		(game, pos) => hasActive(game.currentPlayer) && hasActive(game.opponentPlayer)
+		slot.playerHasActiveHermit,
+		slot.opponentHasActiveHermit
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

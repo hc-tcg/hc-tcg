@@ -32,23 +32,6 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 		return true
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (
-			!opponentActiveRow ||
-			!opponentActiveRow.effectCard ||
-			!isRemovable(opponentActiveRow.effectCard)
-		) {
-			result.push('UNMET_CONDITION')
-		}
-
-		return result
-	}
-
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
