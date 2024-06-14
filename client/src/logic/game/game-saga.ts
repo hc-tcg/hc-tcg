@@ -41,7 +41,8 @@ function* actionSaga(): SagaIterator {
 		]),
 		applyEffect: take('APPLY_EFFECT'),
 		removeEffect: take('REMOVE_EFFECT'),
-		requestPlayableSlots: take('REQUEST_PLAYABLE_SLOTS'),
+		playableSlotsRequest: take('PLAYABLE_SLOTS_REQUEST'),
+		deselectCard: take('DESELECT_CARD'),
 		pickCard: take('PICK_REQUEST'),
 		customModal: take('MODAL_REQUEST'),
 		attack: take(['SINGLE_USE_ATTACK', 'PRIMARY_ATTACK', 'SECONDARY_ATTACK']),
@@ -55,8 +56,10 @@ function* actionSaga(): SagaIterator {
 		yield call(sendMsg, 'APPLY_EFFECT', turnAction.applyEffect.payload)
 	} else if (turnAction.removeEffect) {
 		yield call(sendMsg, 'REMOVE_EFFECT')
-	} else if (turnAction.requestPlayableSlots) {
-		yield call(sendMsg, 'REQUEST_PLAYABLE_SLOTS', turnAction.requestPlayableSlots.payload)
+	} else if (turnAction.playableSlotsRequest) {
+		yield call(sendMsg, 'PLAYABLE_SLOTS_REQUEST', turnAction.playableSlotsRequest.payload)
+	} else if (turnAction.deselectCard) {
+		yield call(sendMsg, 'DESELECT_CARD')
 	} else if (turnAction.pickCard) {
 		yield call(sendMsg, 'PICK_REQUEST', turnAction.pickCard.payload)
 	} else if (turnAction.customModal) {

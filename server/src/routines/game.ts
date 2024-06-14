@@ -3,7 +3,7 @@ import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import attackSaga from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
-import requestPlayableSlotsSaga from './turn-actions/request-playable-slots'
+import {playableSlotsRequestSaga, deselectCardSaga} from './turn-actions/request-playable-slots'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
@@ -20,7 +20,12 @@ import {discardCard, discardSingleUse} from 'common/utils/movement'
 import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
-import {AttackActionData, PickCardActionData, RequestPlayableSlotsData, attackToAttackAction} from 'common/types/action-data'
+import {
+	AttackActionData,
+	PickCardActionData,
+	RequestPlayableSlotsData,
+	attackToAttackAction,
+} from 'common/types/action-data'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -63,8 +68,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const actions: TurnActions = []
 
 	// Card requests are always available
-	actions.push('REQUEST_PLAYABLE_SLOTS')
-	
+	actions.push('PLAYABLE_SLOTS_REQUEST')
+
 	// Custom modals
 	if (modalRequests.length > 0) {
 		const request = modalRequests[0]
@@ -249,7 +254,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			: game.state.turn.opponentAvailableActions
 
 	console.log(availableActions, actionType)
-			
+
 	if (!availableActions.includes(actionType)) {
 		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
@@ -279,9 +284,11 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
 			break
-		case 'REQUEST_PLAYABLE_SLOTS':
-			console.log("recieving request playable slots")
-			result = yield* call(requestPlayableSlotsSaga, game, turnAction as RequestPlayableSlotsData)
+		case 'PLAYABLE_SLOTS_REQUEST':
+			result = yield* call(playableSlotsRequestSaga, game, turnAction as RequestPlayableSlotsData)
+			break
+		case 'DESELECT_CARD':
+			result = yield* call(deselectCardSaga, game)
 			break
 		case 'PICK_REQUEST':
 			result = yield* call(
@@ -316,11 +323,10 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 
 function* turnActionsSaga(game: GameModel) {
 	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game
-	console.log("HERE")
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['REQUEST_PLAYABLE_SLOTS', 'PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
+			...['PLAYABLE_SLOTS_REQUEST', 'DESELECT_CARD', 'PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
 				playerAction(type, opponentPlayerId)
 			),
 			...[
@@ -328,7 +334,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PLAY_ITEM_CARD',
 				'PLAY_EFFECT_CARD',
 				'PLAY_SINGLE_USE_CARD',
-				'REQUEST_PLAYABLE_SLOTS',
+				'PLAYABLE_SLOTS_REQUEST',
 				'PICK_REQUEST',
 				'MODAL_REQUEST',
 				'CHANGE_ACTIVE_HERMIT',

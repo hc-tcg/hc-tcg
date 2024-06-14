@@ -108,14 +108,14 @@ function Game() {
 
 			dispatch(actionData)
 		} else {
+			dispatch(setSelectedCard(card))
 			const actionData: RequestPlayableSlotsData = {
-				type: 'REQUEST_PLAYABLE_SLOTS',
+				type: 'PLAYABLE_SLOTS_REQUEST',
 				payload: {
 					card: card,
 				},
 			}
 			dispatch(actionData)
-			dispatch(setSelectedCard(card))
 		}
 	}
 

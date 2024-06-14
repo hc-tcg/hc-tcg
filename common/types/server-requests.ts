@@ -6,6 +6,12 @@ import {ActionResult, CardT, ModalData} from './game-state'
 
 export type PickedSlotType = SlotTypeT | 'hand'
 
+export type SlotDisplayPosition = {
+	type: PickedSlotType
+	playerId: string
+	rowIndex?: number
+}
+
 export type SlotInfo = {
 	type: PickedSlotType
 	index: number

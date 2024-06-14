@@ -12,9 +12,13 @@ import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
+import {useSelector} from 'react-redux'
+import {getPickableSlots} from 'logic/game/game-selectors'
 
 export type SlotProps = {
 	type: SlotTypeT
+	rowIndex?: number | null
+	playerId: string,
 	onClick?: () => void
 	card: CardT | null
 	rowState?: RowState
@@ -22,7 +26,20 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects: Array<StatusEffectT>
 }
-const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: SlotProps) => {
+const Slot = ({
+	type,
+	rowIndex,
+	playerId,
+	onClick,
+	card,
+	rowState,
+	active,
+	cssId,
+	statusEffects,
+}: SlotProps) => {
+	const pickableSlots = useSelector(getPickableSlots)
+	console.log(pickableSlots)
+
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
@@ -56,7 +73,7 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -78,16 +95,29 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 	)
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
+	const getIsSelectable = () => {
+		if (pickableSlots === undefined || pickableSlots === null) return false
+		for (const slot of pickableSlots) {
+			if (slot.type === type && slot.rowIndex === rowIndex && slot.playerId == playerId) {
+				return true
+			}
+		}
+		return false
+	}
+
+	const isPickable = getIsSelectable()
+	console.log(isPickable)
+
 	return (
-		<div
+		<button
 			onClick={onClick}
+			disabled={!isPickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
+				[css.pickable]: isPickable,
 				[css.available]: !!onClick,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
-				// [css.afk]: cardInfo && !active,
-				// [css.afk]: cardInfo?.type === 'hermit' && !active,
 				[css.afk]: !active && type !== 'single_use',
 			})}
 		>
@@ -97,18 +127,18 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
-		</div>
+		</button>
 	)
 }
 

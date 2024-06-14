@@ -17,12 +17,14 @@ const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
 
 type BoardRowProps = {
 	type: 'left' | 'right'
+	rowIndex: number
 	onClick: (card: CardT | null, slot: SlotInfo) => void
 	rowState: RowState
 	active: boolean
+	playerId: string,
 	statusEffects: Array<StatusEffectT>
 }
-const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProps) => {
+const BoardRow = ({type, rowIndex, onClick, rowState, active, playerId, statusEffects}: BoardRowProps) => {
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
@@ -37,6 +39,8 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 				active={active}
 				key={slotType + '-' + index}
 				type={slotType}
+				rowIndex={rowIndex}
+				playerId={playerId} 
 				statusEffects={statusEffects}
 			/>
 		)

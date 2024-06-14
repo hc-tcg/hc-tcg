@@ -1,13 +1,13 @@
 import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
 import {CardT, PlayerState, RowState} from './types/game-state'
-import {PickInfo, SlotInfo} from './types/server-requests'
+import {PickInfo, PickedSlotType, SlotInfo} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
 
 type SlotConditionInfo = {
 	player: PlayerState
-	slot: SlotInfo
+	type: PickedSlotType
 	rowIndex: number | null
 	row: RowState | null
 	card: CardT | null
@@ -20,7 +20,7 @@ export function callSlotConditionWithCardPosModel(
 ): boolean {
 	return condition(game, {
 		player: cardPos.player,
-		slot: cardPos.slot,
+		type: cardPos.slot.type,
 		rowIndex: cardPos.rowIndex,
 		row: cardPos.row,
 		card: getCardAtPos(game, cardPos),
@@ -37,7 +37,7 @@ export function callSlotConditionWithPickInfo(
 
 	return condition(game, {
 		player: playerState,
-		slot: pickInfo.slot,
+		type: pickInfo.slot.type,
 		rowIndex: pickInfo.rowIndex || null,
 		row: row,
 		card: pickInfo.card,
@@ -99,19 +99,19 @@ export namespace slot {
 	}
 	/** Return true if the card is attached to a hermit slot. */
 	export const hermitSlot: SlotCondition = (game, pos) => {
-		return pos.slot.type === 'hermit'
+		return pos.type === 'hermit'
 	}
 	/** Return true if the card is attached to an effect slot. */
 	export const effectSlot: SlotCondition = (game, pos) => {
-		return pos.slot.type === 'effect'
+		return pos.type === 'effect'
 	}
 	/** Return true if the card is attached to a single use slot. */
 	export const singleUseSlot: SlotCondition = (game, pos) => {
-		return pos.slot.type === 'single_use'
+		return pos.type === 'single_use'
 	}
 	/** Return true if the card is attached to an item slot. */
 	export const itemSlot: SlotCondition = (game, pos) => {
-		return pos.slot.type === 'item'
+		return pos.type === 'item'
 	}
 	/** Return true if the card is attached to the active row. */
 	export const activeRow: SlotCondition = (game, pos) => {
