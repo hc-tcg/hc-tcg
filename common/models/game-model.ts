@@ -13,7 +13,7 @@ import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
 import {CARDS} from '../cards'
 import {SlotCondition} from '../slot'
-import { CardPosModel } from './card-pos-model'
+import {CardPosModel} from './card-pos-model'
 
 export class GameModel {
 	private internalCreatedTime: number

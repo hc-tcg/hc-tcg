@@ -27,7 +27,7 @@ import {
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
-import {PickCardActionData} from 'common/types/action-data'
+import {PickCardActionData, RequestPlayableSlotsData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
 import {PickInfo} from 'common/types/server-requests'
@@ -108,6 +108,13 @@ function Game() {
 
 			dispatch(actionData)
 		} else {
+			const actionData: RequestPlayableSlotsData = {
+				type: 'REQUEST_PLAYABLE_SLOTS',
+				payload: {
+					card: card,
+				},
+			}
+			dispatch(actionData)
 			dispatch(setSelectedCard(card))
 		}
 	}
