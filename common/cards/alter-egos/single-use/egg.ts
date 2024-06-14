@@ -1,7 +1,7 @@
-import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {PickInfo} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -20,16 +20,10 @@ class EggSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-
-		const inactiveHermits = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveHermits.length === 0) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override canBeAttachedTo = slot.every(
+		super.canBeAttachedTo,
+		(game, pos) => getNonEmptyRows(game.opponentPlayer, true).length > 1
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
@@ -40,15 +34,14 @@ class EggSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
+				canPick: slot.every(
+					slot.opponent,
+					slot.hermitSlot,
+					slot.not(slot.activeRow),
+					slot.not(slot.empty)
+				),
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					// Store the row index to use later
 					player.custom[targetKey] = pickResult

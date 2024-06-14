@@ -5,6 +5,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
+import {slot} from '../../../slot'
 
 class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
@@ -94,15 +95,15 @@ class HumanCleoRareHermitCard extends HermitCard {
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick one of your AFK Hermits',
+					canPick: slot.every(
+						slot.player,
+						slot.not(slot.activeRow),
+						slot.not(slot.empty),
+						slot.hermitSlot
+					),
 					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
 						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card || !rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
