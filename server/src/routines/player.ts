@@ -55,7 +55,7 @@ function* playerDisconnectedSaga(action: any) {
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
-			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.playerId === playerId
+			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId
 		),
 	})
 
