@@ -163,6 +163,8 @@ export function executeAttacks(
 
 		if (attack.nextAttacks.length > 0) {
 			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
+			// Only want to block actions after first attack
+			withoutBlockingActions = true
 		}
 	})
 
