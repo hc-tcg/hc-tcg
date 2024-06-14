@@ -1,6 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'
 import {discardFromHand} from '../../../utils/movement'
@@ -19,6 +20,8 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => game.state.turn.turnNumber !== 1)
+	
 	override canApply() {
 		return true
 	}
@@ -71,16 +74,6 @@ class SpyglassSingleUseCard extends SingleUseCard {
 				},
 			})
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
-
-		if (opponentPlayer.hand.length === 0) result.push('UNMET_CONDITION')
-		if (game.state.turn.turnNumber === 1) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
