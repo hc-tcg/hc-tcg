@@ -108,6 +108,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
 				<Slot
 					card={singleUseCard}
+					playerId={playerId}
 					type={'single_use'}
 					onClick={handleClick}
 					statusEffects={gameState.statusEffects}

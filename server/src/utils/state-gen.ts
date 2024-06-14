@@ -283,8 +283,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	// Pick message or modal id
 	let currentPickMessage = null
 	let currentModalData = null
-	// @TODO
-	let currentPickableSlots = null
+	let currentPickableSlots = playerState.pickableSlots
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]

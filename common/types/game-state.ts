@@ -6,7 +6,7 @@ import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT, Slot, SlotPos} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickRequest, PickInfo, SlotInfo} from './server-requests'
+import {ModalRequest, PickRequest, PickInfo, SlotInfo, SlotDisplayPosition} from './server-requests'
 
 export type PlayerId = string
 
@@ -72,6 +72,8 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
+
+	pickableSlots: Array<SlotDisplayPosition> | null
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -233,7 +235,8 @@ export type TurnAction =
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'
-	| 'REQUEST_PLAYABLE_SLOTS'
+	| 'PLAYABLE_SLOTS_REQUEST'
+	| 'DESELECT_CARD'
 	| 'PICK_REQUEST'
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
@@ -296,7 +299,7 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentPickableSlots: Array<SlotInfo> | null
+	currentPickableSlots: Array<SlotDisplayPosition> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 
