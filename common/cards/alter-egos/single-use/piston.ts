@@ -1,6 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot, SlotCondition} from '../../../slot'
 import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
 import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
@@ -19,46 +20,37 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {player} = pos
-
-		const result = super.canAttach(game, pos)
-
-		const playerBoard = player.board
-
-		for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
-			const row = playerBoard.rows[rowIndex]
-			if (!row || !row.hermitCard) continue
-			if (isRowEmpty(row)) continue
+	override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => {
+		return pos.player.board.rows.some((row, rowIndex) => {
+			if (!row || !row.hermitCard) return false
+			if (isRowEmpty(row)) return false
 
 			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
-				(index) => index >= 0 && index < playerBoard.rows.length
+				(index) => index >= 0 && index < pos.player.board.rows.length
 			)
 
 			const items = row.itemCards
 			// for each row, check adjacent rows for each item card against all empty slots on that row
 			for (const index of adjacentRowsIndex) {
-				const newRow = playerBoard.rows[index]
-				if (!newRow.hermitCard) continue
-				if (!rowHasEmptyItemSlot(newRow)) continue
+				const newRow = pos.player.board.rows[index]
+				if (!newRow.hermitCard) return false
+				if (!rowHasEmptyItemSlot(newRow)) return false
 
 				for (const item of items) {
-					if (!item) continue
+					if (!item) return false
 
 					for (let i = 0; i < 3; i++) {
-						const targetSlot = getSlotPos(player, index, 'item', i)
+						const targetSlot = getSlotPos(pos.player, index, 'item', i)
 
-						if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
+						if (canAttachToSlot(game, targetSlot, item)) return false
 
 						// We're good to place
-						return result
+						return true
 					}
 				}
 			}
-		}
-
-		return [...result, 'UNMET_CONDITION']
-	}
+		})
+	})
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -69,17 +61,12 @@ class PistonSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
+			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 				// Store the row and index of the chosen item
-				player.custom[rowIndexKey] = rowIndex
+				player.custom[rowIndexKey] = pickResult.rowIndex
 				player.custom[itemIndexKey] = pickResult.slot.index
 
 				return 'SUCCESS'
@@ -89,26 +76,19 @@ class PistonSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
+			canPick: slot.every(slot.player, slot.itemSlot, slot.empty, (game, pick) => {
+				const firstRowIndex = player.custom[rowIndexKey]
+				return [firstRowIndex - 1, firstRowIndex + 1].includes(pick.rowIndex)
+			}),
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
 				const pickedIndex = pickResult.rowIndex
-				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-				// Get the index of the row we chose
-				const firstRowIndex: number = player.custom[rowIndexKey]
-				const adjacentRows = [firstRowIndex - 1, firstRowIndex + 1]
-				// Must be adjacent
-				if (!adjacentRows.includes(pickedIndex)) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 				const pickedRow = player.board.rows[pickedIndex]
+				const firstRowIndex = player.custom[rowIndexKey]
 				if (!pickedRow) return 'FAILURE_INVALID_SLOT'
 				const firstRow = player.board.rows[firstRowIndex]
 				if (!firstRow) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				// Slot must be empty
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
@@ -117,7 +97,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
 				const itemCard = firstRow.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
+				if (canAttachToSlot(game, targetPos, itemCard!)) {
 					return 'FAILURE_INVALID_SLOT'
 				}
 
