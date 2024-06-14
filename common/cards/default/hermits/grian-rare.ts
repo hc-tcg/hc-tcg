@@ -61,9 +61,9 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttachResult = canAttachToSlot(game, effectSlot, opponentEffectCard, true)
+			const canAttachResult = canAttachToSlot(game, effectSlot, opponentEffectCard)
 
-			if (canAttachResult.length > 0) {
+			if (!canAttachResult) {
 				// We can't attach the new card, don't bother showing a modal
 				discardCard(game, opponentEffectCard, player)
 				return

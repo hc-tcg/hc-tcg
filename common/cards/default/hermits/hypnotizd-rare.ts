@@ -1,6 +1,7 @@
 import {ITEM_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
@@ -85,14 +86,8 @@ class HypnotizdRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
+				canPick: slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
 					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 					const itemCard = ITEM_CARDS[pickResult.card.cardId]
@@ -116,14 +111,9 @@ class HypnotizdRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
+				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 					// Store the row index to use later
 					player.custom[targetKey] = rowIndex

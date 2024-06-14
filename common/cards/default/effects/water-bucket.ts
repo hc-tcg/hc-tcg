@@ -6,6 +6,7 @@ import EffectCard from '../../base/effect-card'
 import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {CanAttachResult} from '../../base/card'
+import { slot } from '../../../slot'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -24,19 +25,21 @@ class WaterBucketEffectCard extends EffectCard {
 		})
 	}
 
+	override canBeAttachedTo = slot.some(
+		slot.singleUseSlot,
+		slot.every(slot.player, slot.effectSlot, slot.rowHasHermit)
+	)
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
-		if (slot.type === 'single_use') {
+		const {player, opponentPlayer, row} = pos
+		if (pos.slot.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
 				id: instance,
 				message: 'Pick one of your Hermits',
+				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
@@ -61,7 +64,7 @@ class WaterBucketEffectCard extends EffectCard {
 					return 'SUCCESS'
 				},
 			})
-		} else if (slot.type === 'effect') {
+		} else if (pos.slot.type === 'effect') {
 			// Straight away remove fire
 			const fireStatusEffect = game.state.statusEffects.find((ail) => {
 				return ail.targetInstance === row?.hermitCard?.cardInstance && ail.statusEffectId == 'fire'
@@ -96,19 +99,6 @@ class WaterBucketEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {currentPlayer} = game
-		const result: CanAttachResult = []
-
-		if (!['single_use', 'effect'].includes(pos.slot.type)) result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-		if (pos.slot.type === 'effect') {
-			if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-		}
-
-		return result
 	}
 
 	// Allows placing in effect or single use slot

@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {getActiveRowPos, getRowPos} from '../../../utils/board'
 import EffectCard from '../../base/effect-card'
 
@@ -16,16 +17,8 @@ class WolfEffectCard extends EffectCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		// wolf addition - hermit must also be active to attach
-		if (!(player.board.activeRow === pos.rowIndex)) result.push('INVALID_SLOT')
-
-		return result
-	}
-
+	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, slot.activeRow) 
+	
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const activated = this.getInstanceKey(instance, 'activated')
