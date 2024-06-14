@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {applyStatusEffect} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -14,6 +15,8 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	public override canBeAttachedTo = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit) 
+	
 	override canApply() {
 		return true
 	}
@@ -30,14 +33,6 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance
 			)
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		if (pos.opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
