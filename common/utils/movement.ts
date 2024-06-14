@@ -3,7 +3,7 @@ import {CardT, GameState, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
 import {BasicCardPos, CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
-import {SlotPos} from '../types/cards'
+import {SlotPos, SlotTypeT} from '../types/cards'
 import {getSlotPos} from './board'
 import {CanAttachResult} from '../cards/base/card'
 
@@ -185,35 +185,24 @@ function exceptInvalidPlayer(
 	return result !== 'INVALID_PLAYER'
 }
 
-export function canAttachToSlot(
-	game: GameModel,
-	slotPos: SlotPos,
-	card: CardT,
-	excludeInvalidPlayer = false
-): CanAttachResult {
+export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): boolean {
 	const {player, rowIndex, row, slot} = slotPos
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
-	if (!opponentPlayerId) return ['UNKNOWN_ERROR']
+	if (!opponentPlayerId) return false
 
 	const basicPos: BasicCardPos = {
 		player,
 		opponentPlayer: game.state.players[opponentPlayerId],
 		rowIndex,
 		row,
-		slot,
+		slot: {type: slot.type as SlotTypeT, index: slot.index},
 	}
 
 	// Create a fake card pos model
 	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
 
 	const cardInfo = CARDS[card.cardId]
-	const canAttach = cardInfo.canAttach(game, pos)
-	player.hooks.canAttach.call(canAttach, pos)
-
-	if (excludeInvalidPlayer) {
-		return canAttach.filter(exceptInvalidPlayer)
-	}
-	return canAttach
+	return cardInfo.canBeAttachedTo(game, pos)
 }
 
 /** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
@@ -234,14 +223,12 @@ export function swapSlots(
 	const cardA = getSlotCard(slotAPos)
 	const cardB = getSlotCard(slotBPos)
 	if (cardB) {
-		// Return false if we can't attach for any reason other than wrong player
-		const canAttachResult = canAttachToSlot(game, slotAPos, cardB, true)
-		if (canAttachResult.length > 0) return false
+		const canAttachResult = canAttachToSlot(game, slotAPos, cardB)
+		if (!canAttachResult) return false
 	}
 	if (cardA) {
-		// Return false if we can't attach for any reason other than wrong player
-		const canAttachResult = canAttachToSlot(game, slotBPos, cardA, true)
-		if (canAttachResult.length > 0) return false
+		const canAttachResult = canAttachToSlot(game, slotBPos, cardA)
+		if (!canAttachResult) return false
 	}
 
 	// make checks for each slot and then detach
