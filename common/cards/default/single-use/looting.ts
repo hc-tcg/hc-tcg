@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {getActiveRow, isRowEmpty} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardToHand} from '../../../utils/movement'
@@ -19,18 +20,14 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => {
+		const {opponentPlayer} = game
+		const opponentActiveRow = getActiveRow(opponentPlayer)
+		return opponentActiveRow !== null && !isRowEmpty(opponentActiveRow)
+	})
+
 	override canApply() {
 		return true
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (!opponentActiveRow || isRowEmpty(opponentActiveRow)) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -48,12 +45,11 @@ class LootingSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
+				canPick: slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (pickResult.rowIndex === undefined || pickResult.card === null) {
+						return 'FAILURE_INVALID_SLOT'
+					}
 
 					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard
