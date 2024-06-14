@@ -132,6 +132,10 @@ export namespace slot {
 	}
 
 	export const rowHasHermit: SlotCondition = (game, pos) => {
-		return pos.row != null && pos.row.hermitCard != null
+		return pos.row !== null && pos.row.hermitCard !== null
+	}
+
+	export const playerHasActiveHermit:SlotCondition = (game, pos) => {
+		return pos.player.board.activeRow !== undefined
 	}
 }
