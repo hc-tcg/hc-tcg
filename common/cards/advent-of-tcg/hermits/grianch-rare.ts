@@ -62,7 +62,7 @@ class GrianchRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
-				canPick: slot.every(slot.not(slot.activeRow), slot.hermitSlot),
+				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
