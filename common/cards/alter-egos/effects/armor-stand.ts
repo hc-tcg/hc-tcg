@@ -52,7 +52,7 @@ class ArmorStandEffectCard extends EffectCard {
 			row.itemCards = []
 		}
 
-		game.battleLog.addEntry(player, `$pArmor Stand$ was knocked out`)
+		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
 
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)
