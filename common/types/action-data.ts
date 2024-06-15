@@ -30,6 +30,10 @@ export type RequestPlayableSlotsData = {
 	}
 }
 
+export type DeselectCard = {
+	type: 'DESELECT_CARD'
+}
+
 export type PlayCardActionData = {
 	type: PlayCardAction
 	payload: {

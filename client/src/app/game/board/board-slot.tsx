@@ -38,7 +38,6 @@ const Slot = ({
 	statusEffects,
 }: SlotProps) => {
 	const pickableSlots = useSelector(getPickableSlots)
-	console.log(pickableSlots)
 
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
@@ -106,7 +105,6 @@ const Slot = ({
 	}
 
 	const isPickable = getIsSelectable()
-	console.log(isPickable)
 
 	return (
 		<button

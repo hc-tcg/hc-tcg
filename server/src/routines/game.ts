@@ -68,7 +68,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const actions: TurnActions = []
 
 	// Card requests are always available
-	actions.push('PLAYABLE_SLOTS_REQUEST')
+	actions.push('PLAYABLE_SLOTS_REQUEST', 'DESELECT_CARD')
 
 	// Custom modals
 	if (modalRequests.length > 0) {
@@ -288,6 +288,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(playableSlotsRequestSaga, game, turnAction as RequestPlayableSlotsData)
 			break
 		case 'DESELECT_CARD':
+			console.log("here hello")
 			result = yield* call(deselectCardSaga, game)
 			break
 		case 'PICK_REQUEST':
@@ -326,7 +327,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PLAYABLE_SLOTS_REQUEST', 'DESELECT_CARD', 'PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
 				playerAction(type, opponentPlayerId)
 			),
 			...[
@@ -334,6 +335,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PLAY_ITEM_CARD',
 				'PLAY_EFFECT_CARD',
 				'PLAY_SINGLE_USE_CARD',
+				'DESELECT_CARD',
 				'PLAYABLE_SLOTS_REQUEST',
 				'PICK_REQUEST',
 				'MODAL_REQUEST',

@@ -109,6 +109,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 					card={singleUseCard}
 					type={'single_use'}
 					onClick={handleClick}
+					playerId={playerId}
 					statusEffects={localGameState.statusEffects}
 				/>
 			</div>
