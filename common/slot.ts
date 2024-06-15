@@ -93,8 +93,6 @@ export namespace slot {
 	}
 	/** Return true if the card is attached to the opponents side. */
 	export const opponent: SlotCondition = (game, pos) => {
-		console.log(pos.player.id)
-		console.log(game.opponentPlayer.id)
 		return pos.player.id === game.opponentPlayer.id
 	}
 	/** Return true if the card is attached to a hermit slot. */
