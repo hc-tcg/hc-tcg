@@ -6,6 +6,7 @@ import {equalCard} from './cards'
 import {SlotPos, SlotTypeT} from '../types/cards'
 import {getSlotPos} from './board'
 import {CanAttachResult} from '../cards/base/card'
+import {callSlotConditionWithCardPosModel} from '../slot'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -202,7 +203,7 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
 
 	const cardInfo = CARDS[card.cardId]
-	return cardInfo.attachCondition(game, pos)
+	return callSlotConditionWithCardPosModel(cardInfo.attachCondition, game, pos)
 }
 
 /** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
