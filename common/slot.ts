@@ -5,7 +5,7 @@ import {PickInfo, PickedSlotType, SlotInfo} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
 
-type SlotConditionInfo = {
+export type SlotConditionInfo = {
 	player: PlayerState
 	type: PickedSlotType
 	rowIndex: number | null
