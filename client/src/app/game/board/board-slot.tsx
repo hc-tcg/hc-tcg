@@ -40,7 +40,6 @@ const Slot = ({
 	statusEffects,
 }: SlotProps) => {
 	const pickableSlots = useSelector(getPickableSlots)
-	const selectedCard = useSelector(getSelectedCard)
 
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
@@ -113,16 +112,17 @@ const Slot = ({
 	}
 
 	const isPickable = getIsSelectable()
+	const somethingPickable = pickableSlots !== null
 	
-	const isDisabled = (card !== null  && selectedCard !== null) || !isPickable
+	const isDisabled = (card !== null  && somethingPickable) || !isPickable
 	
 	return (
 		<div
 			onClick={isDisabled ? () => {} : onClick }
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.pickable]: isPickable && selectedCard !== null,
-				[css.unpickable]: !isPickable && selectedCard !== null,
+				[css.pickable]: isPickable && somethingPickable,
+				[css.unpickable]: !isPickable && somethingPickable,
 				[css.available]: !isDisabled,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,

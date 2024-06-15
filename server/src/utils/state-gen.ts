@@ -218,6 +218,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
+		pickableSlots: null,
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
