@@ -187,13 +187,16 @@ function* checkHermitHealth(game: GameModel) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// Add battle log entry
-				game.battleLog.addDeathEntry(playerState, row)
-
 				const cardType = CARDS[row.hermitCard.cardId].type
+
+				// Add battle log entry. Non Hermit cards can create their detach message themselves.
+				if (cardType === 'hermit') {
+					game.battleLog.addDeathEntry(playerState, row)
+				}
 
 				discardCard(game, row.hermitCard)
 				discardCard(game, row.effectCard)
+
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
