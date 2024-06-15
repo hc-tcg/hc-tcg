@@ -190,6 +190,11 @@ function* checkHermitHealth(game: GameModel) {
 				// Add battle log entry
 				const cardType = CARDS[row.hermitCard.cardId].type
 
+				// Add battle log entry. Non Hermit cards can create their detach message themselves.
+				if (cardType === 'hermit') {
+					game.battleLog.addDeathEntry(playerState, row)
+				}
+
 				discardCard(game, row.hermitCard)
 				discardCard(game, row.effectCard)
 
@@ -202,9 +207,6 @@ function* checkHermitHealth(game: GameModel) {
 
 				// Only hermit cards give points
 				if (cardType === 'hermit') {
-					// Add battle log entry. Other should create their detach message themselves.
-					game.battleLog.addDeathEntry(playerState, row)
-
 					playerState.lives -= 1
 
 					// reward card
