@@ -17,7 +17,8 @@ import {getPickableSlots} from 'logic/game/game-selectors'
 
 export type SlotProps = {
 	type: SlotTypeT
-	rowIndex?: number | null
+	rowIndex?: number
+	index?: number
 	playerId: string,
 	onClick?: () => void
 	card: CardT | null
@@ -29,6 +30,7 @@ export type SlotProps = {
 const Slot = ({
 	type,
 	rowIndex,
+	index,
 	playerId,
 	onClick,
 	card,
@@ -97,7 +99,7 @@ const Slot = ({
 	const getIsSelectable = () => {
 		if (pickableSlots === undefined || pickableSlots === null) return false
 		for (const slot of pickableSlots) {
-			if (slot.type === type && slot.rowIndex === rowIndex && slot.playerId == playerId) {
+			if (slot.type === type && slot.rowIndex === rowIndex && slot.index == index && slot.playerId == playerId) {
 				return true
 			}
 		}

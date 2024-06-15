@@ -17,7 +17,7 @@ type ItemDefs = {
 
 abstract class ItemCard extends Card {
 	public hermitType: HermitTypeT
-	public override canBeAttachedTo = slot.every(slot.player, slot.itemSlot, slot.rowHasHermit)
+	public override canBeAttachedTo = slot.every(slot.player, slot.itemSlot, slot.empty, slot.rowHasHermit)
 
 	constructor(defs: ItemDefs) {
 		super({
