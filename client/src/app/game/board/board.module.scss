@@ -93,12 +93,11 @@ $grid-size: 25px;
 		background: #353536;
 	}
 
-	&.lock {
-		position: absolute;
-		top: 5px;
-		right: 5px;
-		width: 15px;
-		height: 15px;
+	&.pickable {
+		filter: brightness(105%);
+	}
+
+	&.unpickable {
 		filter: brightness(75%);
 	}
 
@@ -204,10 +203,6 @@ $grid-size: 25px;
 	background: url('/images/status/protected.png') no-repeat;
 	height: 22px;
 	background-size: contain;
-}
-
-.pickable {
-	filter: drop-shadow(0 0 0.75rem yellow);
 }
 
 // UTILITIES
