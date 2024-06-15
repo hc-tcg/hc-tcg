@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 
 class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -15,8 +15,11 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => game.opponentPlayer.board.activeRow !== null)
-	
+	public override attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) => game.opponentPlayer.board.activeRow !== null
+	)
+
 	override canApply() {
 		return true
 	}

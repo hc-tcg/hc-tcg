@@ -12,7 +12,7 @@ class FletchingTableSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canBeAttachedTo = slot.nothing
+	override attachCondition = slot.nothing
 
 	public override getExpansion(): string {
 		return 'advent_of_tcg'

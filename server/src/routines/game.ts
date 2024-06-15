@@ -154,7 +154,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		const desiredActions = currentPlayer.hand.reduce(
 			(reducer: TurnActions, card: CardT): TurnActions => {
 				const cardInfo = CARDS[card.cardId]
-				const pickableSlots = game.getPickableSlots(cardInfo.canBeAttachedTo)
+				const pickableSlots = game.getPickableSlots(cardInfo.attachCondition)
 
 				if (
 					pickableSlots.find((slot) => slot.type === 'hermit') &&

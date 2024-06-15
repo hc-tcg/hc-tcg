@@ -1,7 +1,7 @@
 import {CardRarityT} from '../../types/cards'
 import Card from './card'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import { slot } from '../../slot'
+import {slot} from '../../slot'
 
 type HealthDefs = {
 	id: string
@@ -26,7 +26,7 @@ class HealthCard extends Card {
 		this.health = defs.health
 	}
 
-	override canBeAttachedTo = slot.nothing
+	override attachCondition = slot.nothing
 
 	public override getFormattedDescription(): FormattedTextNode {
 		return formatText(`${this.health}`)

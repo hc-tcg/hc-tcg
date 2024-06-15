@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 import {getActiveRowPos, getRowPos} from '../../../utils/board'
 import EffectCard from '../../base/effect-card'
 
@@ -17,8 +17,8 @@ class WolfEffectCard extends EffectCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, slot.activeRow) 
-	
+	public override attachCondition = slot.every(super.attachCondition, slot.activeRow)
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const activated = this.getInstanceKey(instance, 'activated')

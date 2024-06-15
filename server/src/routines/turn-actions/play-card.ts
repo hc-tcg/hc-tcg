@@ -6,8 +6,8 @@ import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {callSlotConditionWithCardPosModel, slot} from 'common/slot'
-import { call } from 'typed-redux-saga'
-import { deselectCardSaga } from './request-playable-slots'
+import {call} from 'typed-redux-saga'
+import {deselectCardSaga} from './request-playable-slots'
 
 function* playCardSaga(
 	game: GameModel,
@@ -15,7 +15,7 @@ function* playCardSaga(
 ): Generator<any, ActionResult> {
 	// When we play a card, we want to unhighlight the selected slots
 	yield* call(deselectCardSaga, game)
-	
+
 	// Make sure data sent from client is correct
 	const pickInfo = turnAction?.payload?.pickInfo
 	const card = turnAction?.payload?.card
@@ -63,7 +63,7 @@ function* playCardSaga(
 
 	// Do we meet requirements to place the card
 	const canAttach = callSlotConditionWithCardPosModel(
-		slot.every(cardInfo.canBeAttachedTo, slot.empty),
+		slot.every(cardInfo.attachCondition, slot.empty),
 		game,
 		pos
 	)

@@ -19,7 +19,7 @@ type EffectDefs = {
 abstract class EffectCard extends Card {
 	public description: string
 
-	public override canBeAttachedTo = slot.every(slot.effectSlot, slot.rowHasHermit, slot.player)
+	public override attachCondition = slot.every(slot.effectSlot, slot.rowHasHermit, slot.player)
 
 	constructor(defs: EffectDefs) {
 		super({

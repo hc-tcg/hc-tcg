@@ -20,8 +20,11 @@ class SpyglassSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => game.state.turn.turnNumber !== 1)
-	
+	public override attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) => game.state.turn.turnNumber !== 1
+	)
+
 	override canApply() {
 		return true
 	}

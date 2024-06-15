@@ -36,7 +36,7 @@ abstract class Card {
 	/**
 	 * A combinator expression that returns if the card can be attached to a specified slot.
 	 */
-	public abstract canBeAttachedTo: SlotCondition
+	public abstract attachCondition: SlotCondition
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type

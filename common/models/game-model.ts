@@ -294,7 +294,7 @@ export class GameModel {
 			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
 				const row = player.board.rows[rowIndex]
 
-				const appendCanBeAttachedTo = (
+				const appendAttachCondition = (
 					type: PickedSlotType,
 					index: number,
 					cardInstance: CardT | null
@@ -318,10 +318,10 @@ export class GameModel {
 
 				for (const [index, item] of row.itemCards.entries()) {
 					console.log(item)
-					appendCanBeAttachedTo('item', index, item)
+					appendAttachCondition('item', index, item)
 				}
-				appendCanBeAttachedTo('effect', 3, row.effectCard)
-				appendCanBeAttachedTo('hermit', 4, row.hermitCard)
+				appendAttachCondition('effect', 3, row.effectCard)
+				appendAttachCondition('hermit', 4, row.hermitCard)
 			}
 
 			if (

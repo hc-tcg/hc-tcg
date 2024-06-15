@@ -4,7 +4,7 @@ import {HERMIT_CARDS} from '../..'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect} from '../../../utils/board'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 
 class BedEffectCard extends EffectCard {
 	constructor() {
@@ -18,7 +18,7 @@ class BedEffectCard extends EffectCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, slot.activeRow)
+	public override attachCondition = slot.every(super.attachCondition, slot.activeRow)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns

@@ -16,7 +16,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canBeAttachedTo = slot.every(super.canBeAttachedTo, slot.opponentHasActiveHermit)
+	override attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true

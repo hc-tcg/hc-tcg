@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 import {applyStatusEffect} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -15,8 +15,8 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit) 
-	
+	public override attachCondition = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit)
+
 	override canApply() {
 		return true
 	}

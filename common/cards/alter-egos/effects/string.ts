@@ -20,7 +20,7 @@ class StringEffectCard extends EffectCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(
+	public override attachCondition = slot.every(
 		slot.opponent,
 		slot.rowHasHermit,
 		slot.empty,

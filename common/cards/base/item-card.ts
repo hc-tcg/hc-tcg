@@ -17,7 +17,7 @@ type ItemDefs = {
 
 abstract class ItemCard extends Card {
 	public hermitType: HermitTypeT
-	public override canBeAttachedTo = slot.every(
+	public override attachCondition = slot.every(
 		slot.player,
 		slot.itemSlot,
 		slot.empty,

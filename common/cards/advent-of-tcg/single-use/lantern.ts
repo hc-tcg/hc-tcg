@@ -16,8 +16,8 @@ class LanternSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canBeAttachedTo = slot.every(
-		super.canBeAttachedTo,
+	override attachCondition = slot.every(
+		super.attachCondition,
 		(game, pos) => pos.player.pile.length >= 4
 	)
 

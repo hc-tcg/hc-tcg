@@ -25,7 +25,7 @@ class WaterBucketEffectCard extends EffectCard {
 		})
 	}
 
-	override canBeAttachedTo = slot.some(
+	override attachCondition = slot.some(
 		slot.singleUseSlot,
 		slot.every(slot.player, slot.effectSlot, slot.rowHasHermit)
 	)

@@ -20,7 +20,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override canBeAttachedTo = slot.every(super.canBeAttachedTo, (game, pos) => {
+	public override attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		const {opponentPlayer} = game
 		const opponentActiveRow = getActiveRow(opponentPlayer)
 		return opponentActiveRow !== null && !isRowEmpty(opponentActiveRow)
