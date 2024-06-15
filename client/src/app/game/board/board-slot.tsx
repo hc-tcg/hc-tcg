@@ -99,7 +99,12 @@ const Slot = ({
 	const getIsSelectable = () => {
 		if (pickableSlots === undefined || pickableSlots === null) return false
 		for (const slot of pickableSlots) {
-			if (slot.type === type && slot.rowIndex === rowIndex && slot.index == index && slot.playerId == playerId) {
+			if (
+				slot.type === type &&
+				slot.rowIndex === rowIndex &&
+				slot.index == index &&
+				slot.playerId == playerId
+			) {
 				return true
 			}
 		}
@@ -114,6 +119,7 @@ const Slot = ({
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable,
+				[css.unpickable]: pickableSlots && !isPickable,
 				[css.available]: !!onClick,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,

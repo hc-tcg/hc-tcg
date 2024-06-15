@@ -6,14 +6,21 @@ import {
 	TurnActions,
 	PlayerState,
 	Message,
+	CardT,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
-import {ModalRequest, PickRequest} from '../types/server-requests'
+import {
+	ModalRequest,
+	PickRequest,
+	PickedSlotType,
+	SlotDisplayPosition,
+} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {getSlotPos} from '../utils/board'
 import {CARDS} from '../cards'
 import {SlotCondition} from '../slot'
 import {CardPosModel} from './card-pos-model'
+import Card from '../cards/base/card'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -278,5 +285,60 @@ export class GameModel {
 		player.board.rows[newRow] = oldRowState
 
 		return true
+	}
+
+	public getPickableSlots(check: SlotCondition) {
+		let pickableSlots: Array<SlotDisplayPosition> = []
+
+		for (const player of Object.values(this.state.players)) {
+			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
+				const row = player.board.rows[rowIndex]
+
+				const appendCanBeAttachedTo = (
+					type: PickedSlotType,
+					index: number,
+					cardInstance: CardT | null
+				) => {
+					const canBeAttached = check(this, {
+						player: player,
+						type: type,
+						rowIndex: rowIndex,
+						row: row,
+						card: cardInstance,
+					})
+					if (canBeAttached) {
+						pickableSlots.push({
+							type: type,
+							index: index,
+							rowIndex: rowIndex,
+							playerId: player.id,
+						})
+					}
+				}
+
+				for (const [index, item] of row.itemCards.entries()) {
+					console.log(item)
+					appendCanBeAttachedTo('item', index, item)
+				}
+				appendCanBeAttachedTo('effect', 3, row.effectCard)
+				appendCanBeAttachedTo('hermit', 4, row.hermitCard)
+			}
+
+			if (
+				check(this, {
+					player,
+					type: 'single_use',
+					rowIndex: null,
+					row: null,
+					card: player.board.singleUseCard,
+				})
+			) {
+				pickableSlots.push({
+					playerId: player.id,
+					type: 'single_use',
+				})
+			}
+		}
+		return pickableSlots
 	}
 }

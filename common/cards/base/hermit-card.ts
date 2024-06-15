@@ -31,7 +31,7 @@ abstract class HermitCard extends Card {
 	public primary: HermitAttackInfo
 	public secondary: HermitAttackInfo
 
-	public override canBeAttachedTo = slot.every(slot.hermitSlot, slot.player)
+	public override canBeAttachedTo = slot.every(slot.hermitSlot, slot.player, slot.empty)
 
 	constructor(defs: HermitDefs) {
 		super({

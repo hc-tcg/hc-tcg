@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
@@ -42,21 +43,12 @@ class IJevinRareHermitCard extends HermitCard {
 				game.addPickRequest({
 					playerId: opponentPlayer.id, // For opponent player to pick
 					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits.',
+					message: 'Choose a new active Hermit from your AFK Hermits.',
+					canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
 					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+						if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
-
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-						const row = opponentPlayer.board.rows[rowIndex]
-						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-						game.changeActiveRow(opponentPlayer, rowIndex)
+						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
 						return 'SUCCESS'
 					},
