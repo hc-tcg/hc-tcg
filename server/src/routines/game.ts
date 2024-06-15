@@ -188,12 +188,11 @@ function* checkHermitHealth(game: GameModel) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
 				// Add battle log entry
-				game.battleLog.addDeathEntry(playerState, row)
-
 				const cardType = CARDS[row.hermitCard.cardId].type
 
 				discardCard(game, row.hermitCard)
 				discardCard(game, row.effectCard)
+
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
@@ -203,6 +202,9 @@ function* checkHermitHealth(game: GameModel) {
 
 				// Only hermit cards give points
 				if (cardType === 'hermit') {
+					// Add battle log entry. Other should create their detach message themselves.
+					game.battleLog.addDeathEntry(playerState, row)
+
 					playerState.lives -= 1
 
 					// reward card

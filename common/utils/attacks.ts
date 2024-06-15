@@ -192,6 +192,11 @@ export function executeExtraAttacks(
 	withoutBlockingActions = false
 ) {
 	executeAttacks(game, attacks, withoutBlockingActions)
+
+	attacks.forEach((attack) => {
+		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, null)
+	})
+
 	game.battleLog.sendLogs()
 }
 
