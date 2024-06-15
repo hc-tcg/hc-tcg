@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {TurnActions} from '../../../types/game-state'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
@@ -16,6 +17,16 @@ class ClockSingleUseCard extends SingleUseCard {
 			log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 		})
 	}
+
+	override attachCondition = slot.every(super.attachCondition, (game, pos) => {
+		if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
+			return false
+		}
+
+		// The other player wouldn't be able to attach anything
+		if (game.state.turn.turnNumber === 1) return false
+		return true
+	})
 
 	override canApply() {
 		return true
@@ -43,19 +54,6 @@ class ClockSingleUseCard extends SingleUseCard {
 
 			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.cardInstance)
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
-			result.push('UNMET_CONDITION')
-		}
-
-		// The other player wouldn't be able to attach anything
-		if (game.state.turn.turnNumber === 1) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
