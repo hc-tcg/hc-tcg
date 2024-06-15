@@ -274,8 +274,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
-	console.log(availableActions, actionType)
-
 	if (!availableActions.includes(actionType)) {
 		game.setLastActionResult(actionType, 'FAILURE_ACTION_NOT_AVAILABLE')
 		return
@@ -309,7 +307,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(playableSlotsRequestSaga, game, turnAction as RequestPlayableSlotsData)
 			break
 		case 'DESELECT_CARD':
-			console.log('here hello')
 			result = yield* call(deselectCardSaga, game)
 			break
 		case 'PICK_REQUEST':
