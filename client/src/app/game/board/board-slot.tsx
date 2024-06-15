@@ -115,11 +115,11 @@ const Slot = ({
 
 	return (
 		<div
-			onClick={isPickable ? onClick : () => {}}
+			onClick={isPickable || card !== null ? onClick : () => {}}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable,
-				[css.unpickable]: pickableSlots && !isPickable,
+				[css.unpickable]: pickableSlots && !isPickable && card == null,
 				[css.available]: !!onClick && isPickable,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
