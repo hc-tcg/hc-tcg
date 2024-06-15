@@ -74,7 +74,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-						})
+					  })
 					: null}
 			</div>
 		)
@@ -132,13 +132,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-							? renderStatusEffects(effectStatusEffects)
-							: null}
+						? renderStatusEffects(effectStatusEffects)
+						: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-							? renderDamageStatusEffects(effectStatusEffects)
-							: renderDamageStatusEffects(null)}
+						? renderDamageStatusEffects(effectStatusEffects)
+						: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

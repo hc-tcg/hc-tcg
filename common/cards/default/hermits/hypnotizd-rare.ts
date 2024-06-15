@@ -1,7 +1,7 @@
 import {ITEM_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'

@@ -3,7 +3,7 @@ import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 
 class KeralisRareHermitCard extends HermitCard {
 	constructor() {
@@ -58,7 +58,7 @@ class KeralisRareHermitCard extends HermitCard {
 				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
- 					const rowIndex = pickResult.rowIndex
+					const rowIndex = pickResult.rowIndex
 					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					// Store the info to use later

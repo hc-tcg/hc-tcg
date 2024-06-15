@@ -99,7 +99,7 @@ class RendogRareHermitCard extends HermitCard {
 				onResult(pickResult) {
 					if (!pickResult.card) return 'FAILURE_INVALID_DATA'
 					let pickedCard = pickResult.card
-					
+
 					game.addModalRequest({
 						playerId: player.id,
 						data: {

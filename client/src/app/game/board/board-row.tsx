@@ -21,10 +21,18 @@ type BoardRowProps = {
 	onClick: (card: CardT | null, slot: SlotInfo) => void
 	rowState: RowState
 	active: boolean
-	playerId: string,
+	playerId: string
 	statusEffects: Array<StatusEffectT>
 }
-const BoardRow = ({type, rowIndex, onClick, rowState, active, playerId, statusEffects}: BoardRowProps) => {
+const BoardRow = ({
+	type,
+	rowIndex,
+	onClick,
+	rowState,
+	active,
+	playerId,
+	statusEffects,
+}: BoardRowProps) => {
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, index) => {
 		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
@@ -41,7 +49,7 @@ const BoardRow = ({type, rowIndex, onClick, rowState, active, playerId, statusEf
 				type={slotType}
 				rowIndex={rowIndex}
 				index={index}
-				playerId={playerId} 
+				playerId={playerId}
 				statusEffects={statusEffects}
 			/>
 		)
