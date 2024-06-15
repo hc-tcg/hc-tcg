@@ -107,9 +107,8 @@ const Slot = ({
 	const isPickable = getIsSelectable()
 
 	return (
-		<button
+		<div
 			onClick={onClick}
-			disabled={!isPickable}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable,
@@ -136,7 +135,7 @@ const Slot = ({
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
-		</button>
+		</div>
 	)
 }
 
