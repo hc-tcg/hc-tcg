@@ -283,10 +283,10 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	// Pick message or modal id
 	let currentPickMessage = null
 	let currentModalData = null
-	let currentPickableSlots = playerState.pickableSlots
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
+
 	if (currentModalRequest?.playerId === player.id) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
 		currentModalData = currentModalRequest.data
@@ -301,9 +301,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// We also want to highlight the slots for the player that must select a slot
 		const playerState = game.state.players[game.currentPlayer.id]
 		playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
-		console.log("finding pickable slots")
-		console.log(playerState.pickableSlots)
 	}
+
+	let currentPickableSlots = playerState.pickableSlots
 
 	const localGameState: LocalGameState = {
 		turn: {
