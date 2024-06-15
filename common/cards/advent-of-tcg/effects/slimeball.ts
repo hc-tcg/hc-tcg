@@ -37,18 +37,6 @@ class SlimeballEffectCard extends EffectCard {
 		pos.player.hooks.onDetach.remove(instance)
 	}
 
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer, opponentPlayer} = game
-
-		const rows = [...currentPlayer.board.rows, ...opponentPlayer.board.rows]
-
-		const spaceForEffect = rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-
-		return spaceForEffect ? ['PLAY_EFFECT_CARD'] : []
-	}
-
 	public override getExpansion(): string {
 		return 'advent_of_tcg'
 	}

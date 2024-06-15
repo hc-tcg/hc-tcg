@@ -38,17 +38,6 @@ abstract class EffectCard extends Card {
 		})
 	}
 
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there is a hermit on the board with space for an effect card
-		const spaceForEffect = currentPlayer.board.rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-
-		return spaceForEffect ? ['PLAY_EFFECT_CARD'] : []
-	}
-
 	public override showAttachTooltip() {
 		return true
 	}

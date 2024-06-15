@@ -6,7 +6,7 @@ import EffectCard from '../../base/effect-card'
 import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {CanAttachResult} from '../../base/card'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -99,23 +99,6 @@ class WaterBucketEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
-	}
-
-	// Allows placing in effect or single use slot
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there is a hermit on the board with space for an effect card
-		const spaceForEffect = currentPlayer.board.rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-		const hasHermit = currentPlayer.board.rows.some((row) => !!row.hermitCard)
-		const spaceForSingleUse = !game.currentPlayer.board.singleUseCard
-
-		const actions: TurnActions = []
-		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
-		if (hasHermit && spaceForSingleUse) actions.push('PLAY_SINGLE_USE_CARD')
-		return actions
 	}
 
 	override showSingleUseTooltip(): boolean {

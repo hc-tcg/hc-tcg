@@ -3,7 +3,7 @@ import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, TextNode} from '../../utils/formatting'
-import { SlotCondition } from '../../slot'
+import {SlotCondition} from '../../slot'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -106,14 +106,6 @@ abstract class Card {
 	 */
 	public showSingleUseTooltip(): boolean {
 		return false
-	}
-
-	/**
-	 * Returns the actions this card makes available when in the hand
-	 */
-	public getActions(game: GameModel): TurnActions {
-		// default is to return nothing
-		return []
 	}
 
 	/**

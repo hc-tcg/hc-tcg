@@ -151,7 +151,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			})
 		})
 
-		// @TODO requires getActions to be able to remove
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Puppetry" if there are not AFK Hermit cards other than rare Cleo(s)
 			const afkHermits = getNonEmptyRows(player, true).filter((rowPos) => {

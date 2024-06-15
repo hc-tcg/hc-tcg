@@ -88,15 +88,6 @@ class ArmorStandEffectCard extends EffectCard {
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
-	}
-
 	override getExpansion() {
 		return 'alter_egos'
 	}

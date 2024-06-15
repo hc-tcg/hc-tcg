@@ -83,15 +83,6 @@ class BerryBushEffectCard extends EffectCard {
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
 	}
 
-	public override getActions(game: GameModel): TurnActions {
-		const {opponentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
-	}
-
 	override getExpansion() {
 		return 'advent_of_tcg'
 	}

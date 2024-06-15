@@ -95,15 +95,6 @@ abstract class HermitCard extends Card {
 		return attack
 	}
 
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
-	}
-
 	/**
 	 * Returns the background to use for this hermit card
 	 */

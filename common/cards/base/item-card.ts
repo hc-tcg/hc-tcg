@@ -5,7 +5,7 @@ import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {HERMIT_CARDS} from '..'
-import { slot } from '../../slot'
+import {slot} from '../../slot'
 
 type ItemDefs = {
 	id: string
@@ -17,7 +17,12 @@ type ItemDefs = {
 
 abstract class ItemCard extends Card {
 	public hermitType: HermitTypeT
-	public override canBeAttachedTo = slot.every(slot.player, slot.itemSlot, slot.empty, slot.rowHasHermit)
+	public override canBeAttachedTo = slot.every(
+		slot.player,
+		slot.itemSlot,
+		slot.empty,
+		slot.rowHasHermit
+	)
 
 	constructor(defs: ItemDefs) {
 		super({
@@ -34,19 +39,6 @@ abstract class ItemCard extends Card {
 			(values) =>
 				`$p{You|${values.player}}$ attached $m${values.pos.name}$ to $p${values.pos.hermitCard}$`
 		)
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there is a hermit on the board with space for an item card
-		const spaceForItem = currentPlayer.board.rows.some((row) => {
-			const hasHermit = !!row.hermitCard
-			const hasEmptyItemSlot = row.itemCards.some((card) => card === null)
-			return hasHermit && hasEmptyItemSlot
-		})
-
-		return spaceForItem ? ['PLAY_ITEM_CARD'] : []
 	}
 
 	public override getFormattedDescription(): FormattedTextNode {

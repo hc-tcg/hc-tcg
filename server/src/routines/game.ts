@@ -17,7 +17,7 @@ import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {discardCard, discardSingleUse} from 'common/utils/movement'
-import {getCardPos} from 'common/models/card-pos-model'
+import {getBasicCardPos, getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {
@@ -151,19 +151,40 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRow !== null || turnState.turnNumber <= 2) {
-		const handCards = currentPlayer.hand.map((card) => CARDS[card.cardId])
-		const allDesiredActions: TurnActions = []
-		for (let x = 0; x < handCards.length; x++) {
-			const card = handCards[x]
-			const desiredActions: TurnActions = card.getActions(game)
-			for (let i = 0; i < desiredActions.length; i++) {
-				const desiredAction = desiredActions[i]
-				if (!allDesiredActions.includes(desiredAction)) {
-					allDesiredActions.push(desiredAction)
+		const desiredActions = currentPlayer.hand.reduce(
+			(reducer: TurnActions, card: CardT): TurnActions => {
+				const cardInfo = CARDS[card.cardId]
+				const pickableSlots = game.getPickableSlots(cardInfo.canBeAttachedTo)
+
+				if (
+					pickableSlots.find((slot) => slot.type === 'hermit') &&
+					!reducer.includes('PLAY_HERMIT_CARD')
+				) {
+					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-			}
-		}
-		actions.push(...allDesiredActions)
+				if (
+					pickableSlots.find((slot) => slot.type === 'effect') &&
+					!reducer.includes('PLAY_EFFECT_CARD')
+				) {
+					return [...reducer, 'PLAY_EFFECT_CARD']
+				}
+				if (
+					pickableSlots.find((slot) => slot.type === 'item') &&
+					!reducer.includes('PLAY_ITEM_CARD')
+				) {
+					return [...reducer, 'PLAY_ITEM_CARD']
+				}
+				if (
+					pickableSlots.find((slot) => slot.type === 'single_use') &&
+					!reducer.includes('PLAY_SINGLE_USE_CARD')
+				) {
+					return [...reducer, 'PLAY_SINGLE_USE_CARD']
+				}
+				return reducer
+			},
+			[] as TurnActions
+		)
+		actions.push(...desiredActions)
 	}
 
 	// Filter out actions that have already been completed - once an action is completed it cannot be used again for the turn
@@ -288,7 +309,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(playableSlotsRequestSaga, game, turnAction as RequestPlayableSlotsData)
 			break
 		case 'DESELECT_CARD':
-			console.log("here hello")
+			console.log('here hello')
 			result = yield* call(deselectCardSaga, game)
 			break
 		case 'PICK_REQUEST':
@@ -327,9 +348,7 @@ function* turnActionsSaga(game: GameModel) {
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) =>
-				playerAction(type, opponentPlayerId)
-			),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayerId)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
