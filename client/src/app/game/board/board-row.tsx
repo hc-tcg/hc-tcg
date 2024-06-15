@@ -40,6 +40,7 @@ const BoardRow = ({type, rowIndex, onClick, rowState, active, playerId, statusEf
 				key={slotType + '-' + index}
 				type={slotType}
 				rowIndex={rowIndex}
+				index={index}
 				playerId={playerId} 
 				statusEffects={statusEffects}
 			/>

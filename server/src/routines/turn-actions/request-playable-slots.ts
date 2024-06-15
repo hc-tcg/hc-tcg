@@ -16,10 +16,10 @@ export function* playableSlotsRequestSaga(
 	let pickableSlots: Array<SlotDisplayPosition> = []
 
 	for (const player of Object.values(game.state.players)) {
-		for (let rowIndex = 0; rowIndex < playerState.board.rows.length; rowIndex++) {
-			const row = playerState.board.rows[rowIndex]
+		for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
+			const row = player.board.rows[rowIndex]
 
-			const appendCanBeAttachedTo = (type: PickedSlotType, card: CardT | null) => {
+			const appendCanBeAttachedTo = (type: PickedSlotType, index: number, card: CardT | null) => {
 				const canBeAttached = cardObj.canBeAttachedTo(game, {
 					player: player,
 					type: type,
@@ -30,17 +30,19 @@ export function* playableSlotsRequestSaga(
 				if (canBeAttached) {
 					pickableSlots.push({
 						type: type,
+						index: index,
 						rowIndex: rowIndex,
 						playerId: player.id,
 					})
 				}
 			}
 
-			appendCanBeAttachedTo('effect', row.effectCard)
-			appendCanBeAttachedTo('hermit', row.hermitCard)
-			for (const item in row.itemCards) {
-				appendCanBeAttachedTo('item', row.itemCards[item])
+			for (const [index, item] of row.itemCards.entries()) {
+				console.log(item)
+				appendCanBeAttachedTo('item', index, item)
 			}
+			appendCanBeAttachedTo('effect', 3, row.effectCard)
+			appendCanBeAttachedTo('hermit', 4, row.hermitCard)
 		}
 
 		if (

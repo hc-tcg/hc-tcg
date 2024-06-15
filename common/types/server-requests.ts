@@ -9,6 +9,7 @@ export type PickedSlotType = SlotTypeT | 'hand'
 export type SlotDisplayPosition = {
 	type: PickedSlotType
 	playerId: string
+	index?: number
 	rowIndex?: number
 }
 
