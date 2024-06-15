@@ -53,10 +53,14 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
+		player.hooks.afterAttack.add(instance, () => {
 			player.hooks.getAttack.remove(instance)
-			player.hooks.beforeAttack.remove(instance)
 			player.hooks.afterAttack.remove(instance)
+		})
+
+		player.hooks.onTurnEnd.add(instance, () => {
+			player.hooks.beforeAttack.remove(instance)
+			player.hooks.onTurnEnd.remove(instance)
 		})
 	}
 
