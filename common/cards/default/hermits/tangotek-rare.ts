@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
@@ -52,13 +53,9 @@ class TangoTekRareHermitCard extends HermitCard {
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
+					canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
 					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
@@ -87,13 +84,9 @@ class TangoTekRareHermitCard extends HermitCard {
 					playerId: player.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
+					canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
 
 						game.changeActiveRow(player, pickResult.rowIndex)
 

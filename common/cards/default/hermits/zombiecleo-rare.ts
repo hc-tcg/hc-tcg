@@ -1,6 +1,7 @@
 import {HERMIT_CARDS} from '../..'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { slot } from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
 import {getNonEmptyRows} from '../../../utils/board'
@@ -90,14 +91,11 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick one of your AFK Hermits',
+				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.activeRow)), 
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 					if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
 					const pickedCard = pickResult.card
 					if (!pickedCard) return 'FAILURE_INVALID_SLOT'
 
