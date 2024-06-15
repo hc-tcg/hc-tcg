@@ -317,7 +317,6 @@ export class GameModel {
 				}
 
 				for (const [index, item] of row.itemCards.entries()) {
-					console.log(item)
 					appendAttachCondition('item', index, item)
 				}
 				appendAttachCondition('effect', 3, row.effectCard)
