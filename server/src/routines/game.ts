@@ -187,7 +187,6 @@ function* checkHermitHealth(game: GameModel) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// Add battle log entry
 				const cardType = CARDS[row.hermitCard.cardId].type
 
 				// Add battle log entry. Non Hermit cards can create their detach message themselves.
