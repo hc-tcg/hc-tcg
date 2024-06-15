@@ -43,7 +43,8 @@ export const slotPicked = (pickInfo: PickInfo) => ({
 })
 
 export const deselectCard = () => ({
-	type: 'DESELECT_CARD'
+	type: 'DESELECT_CARD',
+	payload: null,
 } as DeselectCard)
 
 export const forfeit = () => ({
