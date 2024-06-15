@@ -21,7 +21,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, (game, pos) =>
+	override attachCondition = slot.every(this.attachCondition, (game, pos) =>
 		pos.player.board.rows.some((row) => {
 			if (row.itemCards.some((i) => i !== null)) return true
 			if (row.effectCard && isRemovable(row.effectCard)) return true

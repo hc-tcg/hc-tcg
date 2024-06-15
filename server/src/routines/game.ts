@@ -153,7 +153,6 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	if (activeRow !== null || turnState.turnNumber <= 2) {
 		const desiredActions = currentPlayer.hand.reduce(
 			(reducer: TurnActions, card: CardT): TurnActions => {
-				console.log(card.cardId)
 				const cardInfo = CARDS[card.cardId]
 				const pickableSlots = game.getPickableSlots(cardInfo.attachCondition)
 

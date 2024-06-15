@@ -18,7 +18,7 @@ class ClockSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, (game, pos) => {
+	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
 		if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
 			return false
 		}

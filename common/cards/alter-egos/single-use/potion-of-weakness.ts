@@ -19,7 +19,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
+	override attachCondition = slot.every(this.attachCondition, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true
