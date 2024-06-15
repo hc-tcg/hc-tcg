@@ -19,7 +19,7 @@ export type SlotProps = {
 	type: SlotTypeT
 	rowIndex?: number
 	index?: number
-	playerId: string,
+	playerId: string
 	onClick?: () => void
 	card: CardT | null
 	rowState?: RowState
@@ -115,12 +115,12 @@ const Slot = ({
 
 	return (
 		<div
-			onClick={onClick}
+			onClick={isPickable ? onClick : () => {}}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
 				[css.pickable]: isPickable,
 				[css.unpickable]: pickableSlots && !isPickable,
-				[css.available]: !!onClick,
+				[css.available]: !!onClick && isPickable,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
 				[css.afk]: !active && type !== 'single_use',

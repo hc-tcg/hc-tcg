@@ -84,7 +84,6 @@ function Game() {
 	const handleBoardClick = (pickInfo: PickInfo) => {
 		console.log('Slot selected: ', pickInfo)
 		dispatch(slotPicked(pickInfo))
-		// dispatch(deselectCard())
 	}
 
 	const selectCard = (card: CardT) => {
