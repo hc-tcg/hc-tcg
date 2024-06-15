@@ -17,7 +17,6 @@ export type SingleUseDefs = {
 
 class SingleUseCard extends Card {
 	public description: string
-	override attachCondition = slot.every(slot.singleUseSlot, slot.playerHasActiveHermit)
 
 	constructor(defs: SingleUseDefs) {
 		super({
@@ -36,6 +35,12 @@ class SingleUseCard extends Card {
 				return defs.log(values)
 			})
 	}
+
+	public override attachCondition = slot.every(
+		slot.singleUseSlot,
+		slot.playerHasActiveHermit,
+		(game, pos) => !game.getAllBlockedActions().includes('PLAY_SINGLE_USE_CARD')
+	)
 
 	public override showSingleUseTooltip(): boolean {
 		return true

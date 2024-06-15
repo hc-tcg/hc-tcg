@@ -17,12 +17,6 @@ type ItemDefs = {
 
 abstract class ItemCard extends Card {
 	public hermitType: HermitTypeT
-	public override attachCondition = slot.every(
-		slot.player,
-		slot.itemSlot,
-		slot.empty,
-		slot.rowHasHermit
-	)
 
 	constructor(defs: ItemDefs) {
 		super({
@@ -40,6 +34,14 @@ abstract class ItemCard extends Card {
 				`$p{You|${values.player}}$ attached $m${values.pos.name}$ to $p${values.pos.hermitCard}$`
 		)
 	}
+
+	public override attachCondition = slot.every(
+		slot.player,
+		slot.itemSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		(game, pos) => !game.getAllBlockedActions().includes('PLAY_SINGLE_USE_CARD')
+	)
 
 	public override getFormattedDescription(): FormattedTextNode {
 		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
