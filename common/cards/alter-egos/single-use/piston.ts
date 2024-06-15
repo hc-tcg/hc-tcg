@@ -20,7 +20,7 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, (game, pos) => {
+	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
 		return pos.player.board.rows.some((row, rowIndex) => {
 			if (!row || !row.hermitCard) return false
 			if (isRowEmpty(row)) return false

@@ -17,7 +17,7 @@ class LightningRodEffectCard extends EffectCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, (game, pos) =>
+	override attachCondition = slot.every(this.attachCondition, (game, pos) =>
 		pos.player.board.rows.some((row) => row.effectCard?.cardId === this.id)
 	)
 

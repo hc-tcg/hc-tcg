@@ -21,7 +21,7 @@ class SpyglassSingleUseCard extends SingleUseCard {
 	}
 
 	public override attachCondition = slot.every(
-		super.attachCondition,
+		this.attachCondition,
 		(game, pos) => game.state.turn.turnNumber !== 1
 	)
 

@@ -18,7 +18,7 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override attachCondition = slot.every(super.attachCondition, (game, pos) => {
+	public override attachCondition = slot.every(this.attachCondition, (game, pos) => {
 		return getNonEmptyRows(game.opponentPlayer).length !== 0
 	})
 

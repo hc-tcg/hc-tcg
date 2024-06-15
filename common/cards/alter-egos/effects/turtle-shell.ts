@@ -17,7 +17,7 @@ class TurtleShellEffectCard extends EffectCard {
 		})
 	}
 
-	override attachCondition = slot.every(super.attachCondition, slot.not(slot.activeRow))
+	override attachCondition = slot.every(this.attachCondition, slot.not(slot.activeRow))
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
