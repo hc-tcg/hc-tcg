@@ -13,7 +13,7 @@ import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
-import {getPickableSlots} from 'logic/game/game-selectors'
+import {getPickableSlots, getSelectedCard} from 'logic/game/game-selectors'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -40,6 +40,7 @@ const Slot = ({
 	statusEffects,
 }: SlotProps) => {
 	const pickableSlots = useSelector(getPickableSlots)
+	const selectedCard = useSelector(getSelectedCard)
 
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
@@ -74,7 +75,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -112,15 +113,17 @@ const Slot = ({
 	}
 
 	const isPickable = getIsSelectable()
-
+	
+	const isDisabled = (card !== null  && selectedCard !== null) || !isPickable
+	
 	return (
 		<div
-			onClick={isPickable || card !== null ? onClick : () => {}}
+			onClick={isDisabled ? () => {} : onClick }
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.pickable]: isPickable,
-				[css.unpickable]: pickableSlots && !isPickable && card == null,
-				[css.available]: !!onClick && isPickable,
+				[css.pickable]: isPickable && selectedCard !== null,
+				[css.unpickable]: !isPickable && selectedCard !== null,
+				[css.available]: !isDisabled,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
 				[css.afk]: !active && type !== 'single_use',
@@ -132,13 +135,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />
