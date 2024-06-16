@@ -47,7 +47,9 @@ abstract class HermitCard extends Card {
 		this.updateLog(hermitCardBattleLog(this.name))
 	}
 
-	override _attachCondition = slot.every(slot.hermitSlot, slot.player, slot.empty)
+	override _attachCondition = slot.every(slot.hermitSlot, slot.player, slot.empty, (game, pos) =>
+		game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')
+	)
 
 	// Default is to return
 	public getAttack(

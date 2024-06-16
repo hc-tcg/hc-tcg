@@ -36,7 +36,12 @@ abstract class EffectCard extends Card {
 		})
 	}
 
-	override _attachCondition = slot.every(slot.effectSlot, slot.rowHasHermit, slot.player)
+	override _attachCondition = slot.every(
+		slot.effectSlot,
+		slot.rowHasHermit,
+		slot.player,
+		(game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
+	)
 
 	public override showAttachTooltip() {
 		return true

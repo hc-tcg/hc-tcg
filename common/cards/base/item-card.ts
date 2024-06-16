@@ -40,7 +40,7 @@ abstract class ItemCard extends Card {
 		slot.itemSlot,
 		slot.empty,
 		slot.rowHasHermit,
-		(game, pos) => !game.getAllBlockedActions().includes('PLAY_SINGLE_USE_CARD')
+		(game, pos) => game.state.turn.availableActions.includes('PLAY_ITEM_CARD')
 	)
 
 	public override getFormattedDescription(): FormattedTextNode {

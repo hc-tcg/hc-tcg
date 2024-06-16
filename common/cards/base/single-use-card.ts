@@ -39,7 +39,7 @@ class SingleUseCard extends Card {
 	public override _attachCondition = slot.every(
 		slot.singleUseSlot,
 		slot.playerHasActiveHermit,
-		(game, pos) => !game.getAllBlockedActions().includes('PLAY_SINGLE_USE_CARD')
+		(game, pos) => game.state.turn.availableActions.includes('PLAY_SINGLE_USE_CARD')
 	)
 
 	public override showSingleUseTooltip(): boolean {

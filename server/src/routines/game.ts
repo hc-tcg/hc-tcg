@@ -17,7 +17,7 @@ import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {discardCard, discardSingleUse} from 'common/utils/movement'
-import {getBasicCardPos, getCardPos} from 'common/models/card-pos-model'
+import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {
@@ -61,6 +61,10 @@ function getAvailableEnergy(game: GameModel) {
 	return availableEnergy
 }
 
+/**Returns if an action is currently available for the player to execute.
+ * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
+ * `state.turn.completedActions`.
+ */
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
@@ -151,6 +155,13 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRow !== null || turnState.turnNumber <= 2) {
+		// Add these to see if it works, then remove them
+		game.state.turn.availableActions.push(
+			'PLAY_EFFECT_CARD',
+			'PLAY_HERMIT_CARD',
+			'PLAY_ITEM_CARD',
+			'PLAY_SINGLE_USE_CARD'
+		)
 		const desiredActions = currentPlayer.hand.reduce(
 			(reducer: TurnActions, card: CardT): TurnActions => {
 				const cardInfo = CARDS[card.cardId]
@@ -184,6 +195,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			},
 			[] as TurnActions
 		)
+		game.state.turn.availableActions = []
 		actions.push(...desiredActions)
 	}
 
