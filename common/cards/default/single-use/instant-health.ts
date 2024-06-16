@@ -3,6 +3,7 @@ import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -16,18 +17,14 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		// Can't attach it there are no real hermits
-		const playerHasHermit = getNonEmptyRows(player).some(
-			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-		)
-		if (!playerHasHermit) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.playerHasActiveHermit,
+		(game, pos) =>
+			getNonEmptyRows(pos.player).some(
+				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
+			)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -36,16 +33,13 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an active or AFK Hermit',
+			canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
 				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				const row = player.board.rows[rowIndex]
-				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				const row = player.board.rows[rowIndex]
+				if (!row.health) return 'FAILURE_INVALID_SLOT'
 
 				const hermitInfo = HERMIT_CARDS[pickResult.card.cardId]
 				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'

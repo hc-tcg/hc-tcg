@@ -16,7 +16,7 @@ class ChestSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		if (pos.player.discarded.filter((card) => card.cardId !== 'clock').length <= 0) return false
 		return true
 	})

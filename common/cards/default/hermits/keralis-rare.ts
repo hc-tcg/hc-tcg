@@ -57,7 +57,6 @@ class KeralisRareHermitCard extends HermitCard {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickResult) {
-					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
 					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 

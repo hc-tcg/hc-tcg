@@ -21,7 +21,7 @@ class BerryBushEffectCard extends EffectCard {
 		})
 	}
 
-	override attachCondition = slot.every(
+	override _attachCondition = slot.every(
 		slot.opponent,
 		slot.hermitSlot,
 		slot.empty,

@@ -26,7 +26,7 @@ class HealthCard extends Card {
 		this.health = defs.health
 	}
 
-	override attachCondition = slot.nothing
+	override _attachCondition = slot.nothing
 
 	public override getFormattedDescription(): FormattedTextNode {
 		return formatText(`${this.health}`)

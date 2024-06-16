@@ -1,9 +1,9 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {canAttachToSlot, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class EmeraldSingleUseCard extends SingleUseCard {
@@ -17,41 +17,37 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		const {player, opponentPlayer} = pos
 		const playerActiveRowIndex = player.board.activeRow
 		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
-		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) {
-			result.push('UNMET_CONDITION')
-		} else {
-			const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
-			const playerActiveRow = player.board.rows[playerActiveRowIndex]
+		if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return false
 
-			const opponentEffect = opponentActiveRow.effectCard
-			const playerEffect = playerActiveRow.effectCard
+		const opponentActiveRow = opponentPlayer.board.rows[opponentActiveRowIndex]
+		const playerActiveRow = player.board.rows[playerActiveRowIndex]
 
-			// If either card can't be placed in the other slot, don't attach
-			const playerEffectSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
-			const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
+		const opponentEffect = opponentActiveRow.effectCard
+		const playerEffect = playerActiveRow.effectCard
 
-			if (playerEffect) {
-				const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect, true)
-				if (canAttach.length > 0) result.push('UNMET_CONDITION')
-				if (!isRemovable(playerEffect)) result.push('UNMET_CONDITION')
-			}
+		// If either card can't be placed in the other slot, don't attach
+		const playerEffectSlot = getSlotPos(player, playerActiveRowIndex, 'effect')
+		const opponentEffectSlot = getSlotPos(opponentPlayer, opponentActiveRowIndex, 'effect')
 
-			if (opponentEffect) {
-				const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect, true)
-				if (canAttach.length > 0) result.push('UNMET_CONDITION')
-				if (!isRemovable(opponentEffect)) result.push('UNMET_CONDITION')
-			}
+		if (playerEffect) {
+			const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect)
+			if (canAttach) return false
+			if (!isRemovable(playerEffect)) return false
 		}
 
-		return result
-	}
+		if (opponentEffect) {
+			const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect)
+			if (canAttach) return false
+			if (!isRemovable(opponentEffect)) return false
+		}
+
+		return true
+	})
 
 	override canApply() {
 		return true

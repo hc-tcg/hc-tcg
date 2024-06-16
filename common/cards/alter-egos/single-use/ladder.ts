@@ -17,7 +17,7 @@ class LadderSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		const activeRow = getActiveRow(pos.player)
 		if (!activeRow) return false
 		return pos.player.board.rows.some((row, index) => {

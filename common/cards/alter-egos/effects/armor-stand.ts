@@ -20,7 +20,7 @@ class ArmorStandEffectCard extends EffectCard {
 		})
 	}
 
-	override attachCondition = slot.every(slot.player, slot.hermitSlot)
+	override _attachCondition = slot.every(slot.player, slot.hermitSlot)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos

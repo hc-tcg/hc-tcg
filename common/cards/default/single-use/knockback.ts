@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -16,16 +17,10 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
-
-		// Check if there is an AFK Hermit
-		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveRows.length === 0) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) => getNonEmptyRows(pos.opponentPlayer).length === 0
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
@@ -46,21 +41,12 @@ class KnockbackSingleUseCard extends SingleUseCard {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits',
+					message: 'Choose a new active Hermit from your AFK Hermits',
+					canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
 					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
-
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-						const row = opponentPlayer.board.rows[rowIndex]
-						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-						game.changeActiveRow(opponentPlayer, rowIndex)
+						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
 						return 'SUCCESS'
 					},

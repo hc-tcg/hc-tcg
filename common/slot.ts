@@ -7,6 +7,7 @@ export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
 
 export type SlotConditionInfo = {
 	player: PlayerState
+	opponentPlayer: PlayerState
 	type: PickedSlotType
 	rowIndex: number | null
 	row: RowState | null
@@ -20,6 +21,7 @@ export function callSlotConditionWithCardPosModel(
 ): boolean {
 	return condition(game, {
 		player: cardPos.player,
+		opponentPlayer: cardPos.opponentPlayer,
 		type: cardPos.slot.type,
 		rowIndex: cardPos.rowIndex,
 		row: cardPos.row,
@@ -33,10 +35,14 @@ export function callSlotConditionWithPickInfo(
 	pickInfo: PickInfo
 ): boolean {
 	const playerState = game.state.players[pickInfo.playerId]
+	const opponentPlayerState = Object.values(game.state.players).filter(
+		(state) => state !== playerState
+	)[0]
 	const row = pickInfo.rowIndex ? playerState.board.rows[pickInfo.rowIndex] : null
 
 	return condition(game, {
 		player: playerState,
+		opponentPlayer: opponentPlayerState,
 		type: pickInfo.slot.type,
 		rowIndex: pickInfo.rowIndex || null,
 		row: row,

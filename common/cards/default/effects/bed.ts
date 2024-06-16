@@ -18,7 +18,7 @@ class BedEffectCard extends EffectCard {
 		})
 	}
 
-	public override attachCondition = slot.every(this.attachCondition, slot.activeRow)
+	public override _attachCondition = slot.every(super.attachCondition, slot.activeRow)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns

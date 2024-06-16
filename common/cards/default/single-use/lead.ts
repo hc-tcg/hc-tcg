@@ -1,12 +1,14 @@
 import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {callSlotConditionWithCardPosModel, slot} from '../../../slot'
 import {
 	applySingleUse,
 	getActiveRow,
 	getActiveRowPos,
 	getNonEmptyRows,
 	getSlotPos,
+	isRowEmpty,
 	rowHasEmptyItemSlot,
 	rowHasItem,
 } from '../../../utils/board'
@@ -28,37 +30,19 @@ class LeadSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
-
-		const activeRow = getActiveRow(opponentPlayer)
-		if (!activeRow || !rowHasItem(activeRow)) return [...result, 'UNMET_CONDITION']
-
-		const afkRows = getNonEmptyRows(opponentPlayer, true)
-
-		const items = activeRow.itemCards
-		// Check all afk rows for each item card against all empty slots on that row
-		for (let index = 0; index < afkRows.length; index++) {
-			const rowPos = afkRows[index]
-			if (!rowHasEmptyItemSlot(rowPos.row)) continue
-
-			for (const item of items) {
-				if (!item) continue
-
-				for (let i = 0; i < 3; i++) {
-					const targetSlot = getSlotPos(opponentPlayer, rowPos.rowIndex, 'item', i)
-
-					if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
-
-					// We're good to place
-					return result
-				}
-			}
-		}
-
-		return [...result, 'UNMET_CONDITION']
-	}
+	public override _attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) =>
+			rowHasItem(getActiveRow(pos.opponentPlayer)) &&
+			pos.opponentPlayer.board.rows.some((row, rowIndex) => {
+				return (
+					rowHasItem(row) &&
+					row.itemCards.some((item, i) => {
+						item && canAttachToSlot(game, getSlotPos(pos.opponentPlayer, rowIndex, 'item', i), item)
+					})
+				)
+			})
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
@@ -68,15 +52,9 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
+			canPick: slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty), slot.activeRow),
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 				// Store the index of the chosen item
 				player.custom[itemIndexKey] = pickResult.slot.index
@@ -88,18 +66,10 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
+			canPick: slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow)),
 			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
 				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-				// Slot must be empty
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 				// Get the index of the chosen item
 				const itemIndex: number | undefined = player.custom[itemIndexKey]
@@ -117,7 +87,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
 				const itemCard = opponentActivePos.row.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
+				if (canAttachToSlot(game, targetPos, itemCard!)) {
 					return 'FAILURE_INVALID_SLOT'
 				}
 

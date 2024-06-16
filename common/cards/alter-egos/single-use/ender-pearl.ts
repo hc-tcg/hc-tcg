@@ -21,7 +21,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		if (!hasActive(pos.player)) return false
 		return pos.player.board.rows.some((row) => row.hermitCard === null)
 	})

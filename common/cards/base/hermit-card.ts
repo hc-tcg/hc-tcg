@@ -31,8 +31,6 @@ abstract class HermitCard extends Card {
 	public primary: HermitAttackInfo
 	public secondary: HermitAttackInfo
 
-	override attachCondition = slot.every(slot.hermitSlot, slot.player, slot.empty)
-
 	constructor(defs: HermitDefs) {
 		super({
 			type: 'hermit',
@@ -48,6 +46,8 @@ abstract class HermitCard extends Card {
 		this.secondary = defs.secondary
 		this.updateLog(hermitCardBattleLog(this.name))
 	}
+
+	override _attachCondition = slot.every(slot.hermitSlot, slot.player, slot.empty)
 
 	// Default is to return
 	public getAttack(

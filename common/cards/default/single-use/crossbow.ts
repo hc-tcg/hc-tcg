@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
@@ -31,15 +32,11 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			const pickRequest: PickRequest = {
 				playerId: player.id,
 				id: this.id,
+				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
 				message: "Pick {?} of your opponent's Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
 					// If we already picked the row
 					if (player.custom[targetsKey].includes(rowIndex)) return 'FAILURE_WRONG_PICK'

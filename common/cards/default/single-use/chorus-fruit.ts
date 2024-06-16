@@ -16,7 +16,7 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(this.attachCondition, (game, pos) => {
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		const {player} = pos
 		const activeRow = getActiveRow(player)
 

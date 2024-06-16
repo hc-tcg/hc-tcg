@@ -17,7 +17,7 @@ class SlimeballEffectCard extends EffectCard {
 		})
 	}
 
-	override attachCondition = slot.every(slot.opponent, slot.effectSlot, slot.empty)
+	override _attachCondition = slot.every(slot.opponent, slot.effectSlot, slot.empty)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos

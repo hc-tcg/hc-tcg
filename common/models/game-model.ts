@@ -301,6 +301,9 @@ export class GameModel {
 				) => {
 					const canBeAttached = check(this, {
 						player: player,
+						opponentPlayer: Object.values(this.state.players).filter(
+							(opponent) => opponent.id !== player.id
+						)[0],
 						type: type,
 						rowIndex: rowIndex,
 						row: row,
@@ -326,6 +329,9 @@ export class GameModel {
 			if (
 				check(this, {
 					player,
+					opponentPlayer: Object.values(this.state.players).filter(
+						(opponent) => opponent.id !== player.id
+					)[0],
 					type: 'single_use',
 					rowIndex: null,
 					row: null,

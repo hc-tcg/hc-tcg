@@ -19,8 +19,6 @@ type EffectDefs = {
 abstract class EffectCard extends Card {
 	public description: string
 
-	override attachCondition = slot.every(slot.effectSlot, slot.rowHasHermit, slot.player)
-
 	constructor(defs: EffectDefs) {
 		super({
 			type: 'effect',
@@ -37,6 +35,8 @@ abstract class EffectCard extends Card {
 			return `$p{You|${values.player}}$ attached $e${values.pos.name}$ to $p${values.pos.hermitCard}$`
 		})
 	}
+
+	override _attachCondition = slot.every(slot.effectSlot, slot.rowHasHermit, slot.player)
 
 	public override showAttachTooltip() {
 		return true

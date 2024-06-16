@@ -1,9 +1,8 @@
 import {PlayCardLog, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
-import {FormattedTextNode, TextNode} from '../../utils/formatting'
-import {SlotCondition} from '../../slot'
+import {FormattedTextNode} from '../../utils/formatting'
+import {slot, SlotCondition} from '../../slot'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -36,7 +35,10 @@ abstract class Card {
 	/**
 	 * A combinator expression that returns if the card can be attached to a specified slot.
 	 */
-	public abstract attachCondition: SlotCondition
+	protected _attachCondition: SlotCondition
+	public get attachCondition(): SlotCondition {
+		return this._attachCondition
+	}
 
 	constructor(defs: CardDefs) {
 		this.type = defs.type
@@ -45,6 +47,8 @@ abstract class Card {
 		this.name = defs.name
 		this.rarity = defs.rarity
 		this.log = []
+
+		this._attachCondition = slot.nothing
 	}
 
 	public getKey(keyName: string) {

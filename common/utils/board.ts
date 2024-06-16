@@ -60,7 +60,8 @@ export function getSlotPos(
 	}
 }
 
-export function rowHasItem(row: RowState): boolean {
+export function rowHasItem(row: RowState | null): boolean {
+	if (!row) return false
 	const itemCards = row.itemCards
 	let total = 0
 	for (const itemCard of itemCards) {

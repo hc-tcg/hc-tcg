@@ -20,8 +20,8 @@ class EggSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override attachCondition = slot.every(
-		this.attachCondition,
+	override _attachCondition = slot.every(
+		super.attachCondition,
 		(game, pos) => getNonEmptyRows(game.opponentPlayer, true).length > 1
 	)
 
