@@ -1,8 +1,8 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {isTargetingPos} from '../../../utils/attacks'
+import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
 import EffectCard from '../../base/effect-card'
 
 class ThornsIIEffectCard extends EffectCard {
@@ -29,26 +29,24 @@ class ThornsIIEffectCard extends EffectCard {
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (attack.getAttacker() && isTargetingPos(attack, pos)) {
-				player.custom[triggeredKey] = true
+			if (!attack.getAttacker() || !isTargetingPos(attack, pos)) return
 
-				const backlashAttack = new AttackModel({
-					id: this.getInstanceKey(instance, 'backlash'),
-					attacker: attack.getTarget(),
-					target: attack.getAttacker(),
-					type: 'effect',
-					isBacklash: true,
-					log: (values) => `${values.target} took ${values.damage} damage from $eThorns II$`,
-				}).addDamage(this.id, 30)
+			player.custom[triggeredKey] = true
 
-				backlashAttack.shouldIgnoreSlots.push(
-					slot.has('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
-				)
+			const backlashAttack = new AttackModel({
+				id: this.getInstanceKey(instance, 'backlash'),
+				attacker: attack.getTarget(),
+				target: attack.getAttacker(),
+				type: 'effect',
+				isBacklash: true,
+				log: (values) => `${values.target} took ${values.damage} damage from $eThorns II$`,
+			}).addDamage(this.id, 30)
 
-				attack.addNewAttack(backlashAttack)
-			}
+			backlashAttack.shouldIgnoreSlots.push(
+				slot.has('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
+			)
 
-			return attack
+			executeExtraAttacks(game, [backlashAttack])
 		})
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {

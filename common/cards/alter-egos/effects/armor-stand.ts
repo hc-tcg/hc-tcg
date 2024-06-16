@@ -1,11 +1,11 @@
 import EffectCard from '../../base/effect-card'
-import {isTargetingPos} from '../../../utils/attacks'
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {hermitCardBattleLog} from '../../base/hermit-card'
 import {slot} from '../../../slot'
+import {isTargetingPos} from '../../../utils/attacks'
+import {discardCard} from '../../../utils/movement'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
@@ -81,6 +81,8 @@ class ArmorStandEffectCard extends EffectCard {
 			row.effectCard = null
 			row.itemCards = []
 		}
+
+		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
 
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)

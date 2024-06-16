@@ -228,30 +228,39 @@ function* checkHermitHealth(game: GameModel) {
 		if (!playerState.hasPlacedHermit) {
 			continue
 		}
-		
+
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// Add battle log entry
-				game.battleLog.addDeathEntry(playerState, row)
+				const cardType = CARDS[row.hermitCard.cardId].type
 
-				if (row.hermitCard) discardCard(game, row.hermitCard)
-				if (row.effectCard) discardCard(game, row.effectCard)
+				// Add battle log entry. Non Hermit cards can create their detach message themselves.
+				if (cardType === 'hermit') {
+					game.battleLog.addDeathEntry(playerState, row)
+				}
+
+				discardCard(game, row.hermitCard)
+				discardCard(game, row.effectCard)
+
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
 					game.changeActiveRow(playerState, null)
 					playerState.hooks.onActiveRowChange.call(activeRow, null)
 				}
-				playerState.lives -= 1
 
-				// reward card
-				const opponentState = playerStates.find((s) => s.id !== playerState.id)
-				if (!opponentState) continue
-				const rewardCard = playerState.pile.shift()
-				if (rewardCard) opponentState.hand.push(rewardCard)
+				// Only hermit cards give points
+				if (cardType === 'hermit') {
+					playerState.lives -= 1
+
+					// reward card
+					const opponentState = playerStates.find((s) => s.id !== playerState.id)
+					if (!opponentState) continue
+					const rewardCard = playerState.pile.shift()
+					if (rewardCard) opponentState.hand.push(rewardCard)
+				}
 			}
 		}
 

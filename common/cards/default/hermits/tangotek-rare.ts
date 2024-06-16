@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { slot } from '../../../slot'
+import {slot} from '../../../slot'
 import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
