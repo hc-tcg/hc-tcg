@@ -29,6 +29,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 	}
 
 	const result = pickRequest.onResult(pickResult)
+	game.state.players[game.currentPlayer.id].pickableSlots = null
 
 	if (result === 'SUCCESS') {
 		// We completed this pick request, remove it
