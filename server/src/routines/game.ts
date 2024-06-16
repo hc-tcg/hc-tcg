@@ -224,6 +224,11 @@ function* checkHermitHealth(game: GameModel) {
 	const playerStates: Array<PlayerState> = Object.values(game.state.players)
 	const deadPlayerIds: Array<string> = []
 	for (let playerState of playerStates) {
+		// Players are not allowed to die before they place their first hermit to prevent bugs
+		if (!playerState.hasPlacedHermit) {
+			continue
+		}
+		
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {

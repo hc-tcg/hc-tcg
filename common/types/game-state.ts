@@ -72,6 +72,7 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
+	hasPlacedHermit: boolean
 
 	pickableSlots: Array<SlotDisplayPosition> | null
 	board: {

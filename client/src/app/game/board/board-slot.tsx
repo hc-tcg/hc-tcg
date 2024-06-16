@@ -113,7 +113,7 @@ const Slot = ({
 
 	const isPickable = getIsSelectable()
 	const somethingPickable = pickableSlots !== null
-	const isDisabled = (!isPickable || !somethingPickable) || (!somethingPickable && card !== null)
+	const isDisabled = (!isPickable || !somethingPickable) && (somethingPickable || card === null)
 	
 	return (
 		<div

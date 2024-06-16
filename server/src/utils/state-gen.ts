@@ -212,6 +212,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		discarded: [],
 		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
 		custom: {},
+		hasPlacedHermit: false,
 		board: {
 			activeRow: null,
 			singleUseCard: null,

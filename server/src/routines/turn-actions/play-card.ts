@@ -83,6 +83,7 @@ function* playCardSaga(
 
 		switch (pos.slot.type) {
 			case 'hermit': {
+				player.hasPlacedHermit = true
 				row.hermitCard = card
 
 				// If the card is not a hermit card it will have to set the row health itself
