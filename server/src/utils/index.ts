@@ -51,8 +51,8 @@ export function printHooksState(game: GameModel) {
 				const instanceEntry = instancesInfo[instance] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance].card,
-					player: cardsInfo[instance].player,
+					card: cardsInfo[instance] && cardsInfo[instance].card,
+					player: cardsInfo[instance] && cardsInfo[instance].player,
 					slot: pos?.slot,
 					row: pos?.rowIndex,
 				}

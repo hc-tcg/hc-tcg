@@ -112,6 +112,7 @@ const Slot = ({
 	}
 
 	const isPickable = getIsSelectable()
+	console.log(pickableSlots)
 	const somethingPickable = pickableSlots !== null
 	const isClickable = (somethingPickable && isPickable) || (!somethingPickable && card !== null)
 

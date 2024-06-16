@@ -7,7 +7,7 @@ import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {callSlotConditionWithCardPosModel, slot} from 'common/slot'
 import {call} from 'typed-redux-saga'
-import {deselectCardSaga} from './request-playable-slots'
+import {deselectCardSaga} from './playable-slots-request'
 
 function* playCardSaga(
 	game: GameModel,
