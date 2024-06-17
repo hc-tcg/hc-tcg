@@ -1,4 +1,4 @@
-import {DeselectCard} from 'common/types/action-data'
+import {DeselectCard, RequestPlayableSlotsData as PlayableSlotsRequestData} from 'common/types/action-data'
 import {BattleLogT, LocalGameState, Message} from 'common/types/game-state'
 import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
 import {PickInfo} from 'common/types/server-requests'
@@ -48,6 +48,15 @@ export const deselectCard = () =>
 		payload: null,
 	} as DeselectCard)
 
+export const playableSlotsRequest = (card: CardT): PlayableSlotsRequestData => {
+	return {
+					type: 'PLAYABLE_SLOTS_REQUEST',
+					payload: {
+						card: card,
+					},
+				}
+}
+	
 export const forfeit = () => ({
 	type: 'FORFEIT' as const,
 })
