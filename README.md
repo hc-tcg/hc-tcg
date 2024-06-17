@@ -85,3 +85,15 @@ We run lint/prettier/tsc as part of the PR process. We also recommend to run pre
 	"typescript.tsdk": "node_modules/typescript/lib"
 }
 ```
+
+# Building & Self Hosting
+
+[Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
+```sh
+docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
+```
+
+To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:
+```sh
+docker compose up
+```
