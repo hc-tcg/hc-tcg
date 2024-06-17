@@ -94,11 +94,15 @@ $grid-size: 25px;
 	}
 
 	&.pickable {
-		filter: brightness(105%);
+		filter: brightness(130%);
+
+		&.hermit {
+			filter: brightness(105%);
+		}
 	}
 
 	&.unpickable {
-		filter: brightness(75%);
+		filter: brightness(80%)
 	}
 
 	&.empty {
