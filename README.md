@@ -97,3 +97,4 @@ To host the project with the image on [docker hub](https://hub.docker.com/r/benj
 ```sh
 docker compose up
 ```
+By default, the server will listen to requests on port 9000.
