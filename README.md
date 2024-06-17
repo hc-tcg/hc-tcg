@@ -72,29 +72,32 @@ We run lint/prettier/tsc as part of the PR process. We also recommend to run pre
 {
 	"[json][jsonc]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
+		"editor.formatOnSave": true,
 	},
 	"[javascript][typescript][typescriptreact]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
+		"editor.formatOnSave": true,
 	},
 	"[css][scss]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode",
-		"editor.formatOnSave": true
+		"editor.formatOnSave": true,
 	},
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"typescript.tsdk": "node_modules/typescript/lib",
 }
 ```
 
 # Building & Self Hosting
 
 [Docker](https://docs.docker.com/) is used for building and self hosting. To build a docker image, cd to the root of the project then run the command:
+
 ```sh
 docker build . --build-arg APP_VERSION=$(git rev-parse --short HEAD)
 ```
 
 To host the project with the image on [docker hub](https://hub.docker.com/r/benji42/hc-tcg), install the docker-compose plugin then run the command:
+
 ```sh
 docker compose up
 ```
+
 By default, the server will listen to requests on port 9000.
