@@ -145,7 +145,6 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 
 		player.hooks.afterApply.add(instance, () => {
-			console.log('afterApply')
 			discardSingleUse(game, player)
 
 			// Remove playing a single use from completed actions so it can be done again
