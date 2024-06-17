@@ -1,4 +1,4 @@
-import config from './server-config.json'
+import config from './../../server-config.json'
 import debugConfig from './../../debug-config.json'
 import ranks from './ranks.json'
 import expansions from './expansions.json'
