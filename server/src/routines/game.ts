@@ -155,10 +155,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRow !== null || turnState.turnNumber <= 2) {
-		// Add these to see if it works, then remove them
+		// Temporarily add these to see if any slots are available
 		game.state.turn.availableActions.push(
-			'PLAY_EFFECT_CARD',
 			'PLAY_HERMIT_CARD',
+			'PLAY_EFFECT_CARD',
 			'PLAY_ITEM_CARD',
 			'PLAY_SINGLE_USE_CARD'
 		)
@@ -167,28 +167,18 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 				const cardInfo = CARDS[card.cardId]
 				const pickableSlots = game.getPickableSlots(cardInfo.attachCondition)
 
-				if (
-					pickableSlots.find((slot) => slot.type === 'hermit') &&
-					!reducer.includes('PLAY_HERMIT_CARD')
-				) {
+				if (pickableSlots.length === 0) return reducer
+
+				if (cardInfo.type === 'hermit' && !reducer.includes('PLAY_HERMIT_CARD')) {
 					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-				if (
-					pickableSlots.find((slot) => slot.type === 'effect') &&
-					!reducer.includes('PLAY_EFFECT_CARD')
-				) {
+				if (cardInfo.type === 'effect' && !reducer.includes('PLAY_EFFECT_CARD')) {
 					return [...reducer, 'PLAY_EFFECT_CARD']
 				}
-				if (
-					pickableSlots.find((slot) => slot.type === 'item') &&
-					!reducer.includes('PLAY_ITEM_CARD')
-				) {
+				if (cardInfo.type === 'item' && !reducer.includes('PLAY_ITEM_CARD')) {
 					return [...reducer, 'PLAY_ITEM_CARD']
 				}
-				if (
-					pickableSlots.find((slot) => slot.type === 'single_use') &&
-					!reducer.includes('PLAY_SINGLE_USE_CARD')
-				) {
+				if (cardInfo.type === 'single_use' && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
 					return [...reducer, 'PLAY_SINGLE_USE_CARD']
 				}
 				return reducer

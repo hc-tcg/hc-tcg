@@ -51,7 +51,7 @@ function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): S
 			return
 		}
 
-		const actionType = slotToPlayCardAction[pickInfo.slot.type]
+		const actionType = slotToPlayCardAction[selectedCardInfo.type]
 		if (!actionType) return
 
 		const actionData: PlayCardActionData = {
