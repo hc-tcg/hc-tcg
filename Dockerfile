@@ -9,8 +9,7 @@ RUN apt-get install -y \
   curl \
   python-is-python3 \
   pkg-config \
-  build-essential \
-  git
+  build-essential
 
 RUN curl https://get.volta.sh | bash
 ENV VOLTA_HOME /root/.volta
