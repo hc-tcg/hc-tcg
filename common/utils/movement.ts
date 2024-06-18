@@ -200,7 +200,7 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 	}
 
 	// Create a fake card pos model
-	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
+	const pos = new CardPosModel(game, basicPos, card.cardInstance)
 
 	const cardInfo = CARDS[card.cardId]
 	return callSlotConditionWithCardPosModel(cardInfo.attachCondition, game, pos)
