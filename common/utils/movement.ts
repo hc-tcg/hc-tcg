@@ -179,12 +179,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-/**
- * Check if a card can be attached to a spot on the board.
- * @param [assumeEmpty=false]
- *     If true, pretend the square that the card is going to be attached to is empty.
- *     For an example, take a gander at the `swapSlots` function.
- */
+/** Check if a card can be attached to a spot on the board. */
 export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): boolean {
 	const {player, rowIndex, row, slot} = slotPos
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
@@ -211,7 +206,10 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 	})
 }
 
-/** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
+/**
+ * Swaps the positions of two cards on the board. Returns whether or not the swap was successful. 
+ * This function does not check whether the cards can be placed in the other card's slot.
+ */
 export function swapSlots(
 	game: GameModel,
 	slotAPos: SlotPos,
