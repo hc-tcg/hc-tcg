@@ -185,12 +185,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
  *     If true, pretend the square that the card is going to be attached to is empty.
  *     For an example, take a gander at the `swapSlots` function.
  */
-export function canAttachToSlot(
-	game: GameModel,
-	slotPos: SlotPos,
-	card: CardT,
-	assumeEmpty: boolean = false
-): boolean {
+export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): boolean {
 	const {player, rowIndex, row, slot} = slotPos
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
 	if (!opponentPlayerId) return false
@@ -206,35 +201,13 @@ export function canAttachToSlot(
 	const cardInfo = CARDS[card.cardId]
 	const pos = new CardPosModel(game, basicPos, card.cardInstance)
 
-	if (!assumeEmpty) {
-		return cardInfo.attachCondition(game, {
-			player: pos.player,
-			opponentPlayer: pos.opponentPlayer,
-			type: pos.slot.type,
-			rowIndex: pos.rowIndex,
-			row: pos.row,
-			card: pos.card,
-		})
-	}
-
-	// I apoligize for the hack to make this spot seem empty to the combinators!
-	let items: Array<CardT | null> = JSON.parse(JSON.stringify(row.itemCards))
-	if (pos.slot.type === 'item') {
-		items[pos.slot.index] = null
-	}
-
 	return cardInfo.attachCondition(game, {
 		player: pos.player,
 		opponentPlayer: pos.opponentPlayer,
 		type: pos.slot.type,
 		rowIndex: pos.rowIndex,
-		row: {
-			itemCards: items,
-			effectCard: pos.slot.type === 'effect' ? null : pos.row?.effectCard || null,
-			hermitCard: pos.slot.type === 'hermit' ? null : pos.row?.hermitCard || null,
-			health: pos.slot.type === 'health' ? null : pos.row?.health || null,
-		} as RowState,
-		card: null,
+		row: pos.row,
+		card: pos.card,
 	})
 }
 
