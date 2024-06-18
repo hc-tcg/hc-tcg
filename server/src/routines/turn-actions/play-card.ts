@@ -58,8 +58,6 @@ function* playCardSaga(
 		pickInfo
 	)
 
-	console.log(canAttach)
-
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'
 
