@@ -44,7 +44,7 @@ export function callSlotConditionWithPickInfo(
 		player: playerState,
 		opponentPlayer: opponentPlayerState,
 		type: pickInfo.slot.type,
-		rowIndex: pickInfo.rowIndex || null,
+		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
 		row: row,
 		card: pickInfo.card,
 	})
