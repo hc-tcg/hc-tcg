@@ -1,9 +1,7 @@
-import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getBasicCardPos, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {isTargetingPos} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -62,6 +60,15 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
 		})
+	}
+
+	public override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		player.hooks.getAttack.remove(instance)
+		player.hooks.beforeAttack.remove(instance)
+		player.hooks.afterApply.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 	}
 
 	override canAttack() {
