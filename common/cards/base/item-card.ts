@@ -47,6 +47,11 @@ abstract class ItemCard extends Card {
 		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 	}
 
+	// Item cards can only be played once per turn, so they block the action when attached
+	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+		game.addCompletedActions('PLAY_ITEM_CARD')
+	}
+
 	public abstract getEnergy(game: GameModel, instance: string, pos: CardPosModel): Array<EnergyT>
 }
 

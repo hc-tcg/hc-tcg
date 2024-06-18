@@ -100,10 +100,6 @@ function* playCardSaga(
 			}
 			case 'item': {
 				row.itemCards[pos.slot.index] = card
-
-				// This can only be done once per turn
-				game.addCompletedActions('PLAY_ITEM_CARD')
-
 				break
 			}
 			case 'effect': {
