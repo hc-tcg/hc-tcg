@@ -183,7 +183,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
  * Check if a card can be attached to a spot on the board.
  * @param [assumeEmpty=false]
  *     If true, pretend the square that the card is going to be attached to is empty.
- *     This is used in the `swapSlots` function.
+ *     For an example, take a gander at the `swapSlots` function.
  */
 export function canAttachToSlot(
 	game: GameModel,
