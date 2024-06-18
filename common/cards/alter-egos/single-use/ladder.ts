@@ -23,7 +23,8 @@ class LadderSingleUseCard extends SingleUseCard {
 		return pos.player.board.rows.some((row, index) => {
 			if (index + 1 === pos.player.board.activeRow || index - 1 === pos.player.board.activeRow) {
 				const hermitSlot = getSlotPos(pos.player, index, 'hermit')
-				if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard)) return true
+				if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard)) return false
+				return true
 			}
 			return false
 		})
