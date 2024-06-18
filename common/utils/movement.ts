@@ -1,5 +1,5 @@
 import {GameModel} from '../models/game-model'
-import {CardT, GameState, PlayerState} from '../types/game-state'
+import {CardT, GameState, PlayerState, RowState} from '../types/game-state'
 import {CARDS} from '../cards'
 import {BasicCardPos, CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
@@ -203,25 +203,38 @@ export function canAttachToSlot(
 		slot: {type: slot.type as SlotTypeT, index: slot.index},
 	}
 
-	// Create a fake card pos model
+	const cardInfo = CARDS[card.cardId]
 	const pos = new CardPosModel(game, basicPos, card.cardInstance)
 
+	if (!assumeEmpty) {
+		return cardInfo.attachCondition(game, {
+			player: pos.player,
+			opponentPlayer: pos.opponentPlayer,
+			type: pos.slot.type,
+			rowIndex: pos.rowIndex,
+			row: pos.row,
+			card: pos.card,
+		})
+	}
+
 	// I apoligize for the hack to make this spot seem empty to the combinators!
-	const cardInfo = CARDS[card.cardId]
+	let items: Array<CardT | null> = JSON.parse(JSON.stringify(row.itemCards))
+	if (pos.slot.type === 'item') {
+		items[pos.slot.index] = null
+	}
+
 	return cardInfo.attachCondition(game, {
 		player: pos.player,
 		opponentPlayer: pos.opponentPlayer,
 		type: pos.slot.type,
 		rowIndex: pos.rowIndex,
-		row: assumeEmpty
-			? {
-					itemCards: [],
-					effectCard: null,
-					hermitCard: null,
-					health: null,
-				}
-			: pos.row,
-		card: assumeEmpty ? null : pos.card,
+		row: {
+			itemCards: items,
+			effectCard: pos.slot.type === 'effect' ? null : pos.row?.effectCard || null,
+			hermitCard: pos.slot.type === 'hermit' ? null : pos.row?.hermitCard || null,
+			health: pos.slot.type === 'health' ? null : pos.row?.health || null,
+		} as RowState,
+		card: null,
 	})
 }
 
@@ -238,18 +251,6 @@ export function swapSlots(
 
 	// Info about non-empty slots
 	let cardsInfo: any = []
-
-	// Make sure each card can be placed in the other slot
-	const cardA = getSlotCard(slotAPos)
-	const cardB = getSlotCard(slotBPos)
-	if (cardB) {
-		const canAttachResult = canAttachToSlot(game, slotAPos, cardB, true)
-		if (!canAttachResult) return false
-	}
-	if (cardA) {
-		const canAttachResult = canAttachToSlot(game, slotBPos, cardA, true)
-		if (!canAttachResult) return false
-	}
 
 	// make checks for each slot and then detach
 	const slots = [slotAPos, slotBPos]

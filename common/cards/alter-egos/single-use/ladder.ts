@@ -25,9 +25,9 @@ class LadderSingleUseCard extends SingleUseCard {
 
 		return pos.player.board.rows.some((row, index) => {
 			if (!row.hermitCard) return false
-			if (index == activeRowIndex) return false
+			if (index === activeRowIndex) return false
 			if (index + 1 !== activeRowIndex && index - 1 !== activeRowIndex) return false
-			return canAttachToSlot(game, activeHermitSlot, row.hermitCard, true)
+			return true
 		})
 	})
 
