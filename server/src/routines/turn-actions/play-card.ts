@@ -5,9 +5,10 @@ import {PlayCardActionData} from 'common/types/action-data'
 import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
-import {callSlotConditionWithCardPosModel, slot} from 'common/slot'
+import {slot, callSlotConditionWithPickInfo} from 'common/slot'
 import {call} from 'typed-redux-saga'
 import {deselectCardSaga} from './playable-slots-request'
+import {Slot} from 'common/types/cards'
 
 function* playCardSaga(
 	game: GameModel,
@@ -46,27 +47,18 @@ function* playCardSaga(
 		return 'FAILURE_INVALID_SLOT'
 	}
 
-	// We can't automatically get the card pos, as the card is not on the board yet
-	const basicPos: BasicCardPos = {
-		player,
-		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex: pickedIndex === undefined ? null : pickedIndex,
-		row: pickedIndex !== undefined ? player.board.rows[pickedIndex] : null,
-		slot: {type: pickedSlot.type, index: pickedSlot.index},
-	}
-
-	const pos = new CardPosModel(game, basicPos, card.cardInstance, true)
-
-	// Can't attach if card is already there
-	if (pos.card !== null) return 'FAILURE_CANNOT_COMPLETE'
-	const {row, rowIndex} = pos
+	const row = pickedIndex !== undefined ? player.board.rows[pickedIndex] : null
+	const rowIndex = pickedIndex === undefined ? null : pickedIndex
+	const opponentPlayer = game.state.players[opponentPlayerId]
 
 	// Do we meet requirements to place the card
-	const canAttach = callSlotConditionWithCardPosModel(
+	const canAttach = callSlotConditionWithPickInfo(
 		slot.every(cardInfo.attachCondition, slot.empty),
 		game,
-		pos
+		pickInfo
 	)
+
+	console.log(canAttach)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'
@@ -75,13 +67,13 @@ function* playCardSaga(
 	// And set the action result to be sent to the client
 
 	// Single use slot
-	if (pos.slot.type === 'single_use') {
+	if (pickedSlot.type === 'single_use') {
 		player.board.singleUseCard = card
 	} else {
 		// All other positions requires us to have selected a valid row
 		if (!row || rowIndex === null) return 'FAILURE_CANNOT_COMPLETE'
 
-		switch (pos.slot.type) {
+		switch (pickedSlot.type) {
 			case 'hermit': {
 				player.hasPlacedHermit = true
 				row.hermitCard = card
@@ -99,7 +91,7 @@ function* playCardSaga(
 				break
 			}
 			case 'item': {
-				row.itemCards[pos.slot.index] = card
+				row.itemCards[pickInfo.slot.index] = card
 				break
 			}
 			case 'effect': {
@@ -107,19 +99,26 @@ function* playCardSaga(
 				break
 			}
 			default:
-				throw new Error('Unknown slot type when trying to play a card: ' + pos.slot.type)
+				throw new Error('Unknown slot type when trying to play a card: ' + pickInfo.slot.type)
 		}
 	}
 
-	// Remove the card from the hand
-	if (!DEBUG_CONFIG.unlimitedCards)
-		currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
+	const basicCardPos: BasicCardPos = {
+		player,
+		opponentPlayer,
+		row,
+		rowIndex,
+		slot: pickedSlot as Slot,
+	}
+	const pos = new CardPosModel(game, basicCardPos, card.cardInstance)
 
-	// Now it's actually been attached, remove the fake mark on the card pos
-	pos.fake = false
+	// Remove the card from the hand
+	if (!DEBUG_CONFIG.unlimitedCards) {
+		currentPlayer.hand = currentPlayer.hand.filter((handCard) => !equalCard(handCard, card))
+	}
 
 	// Add entry to battle log, unless it is played in a single use slot
-	if (pos.slot.type !== 'single_use') {
+	if (pickInfo.slot.type !== 'single_use') {
 		game.battleLog.addPlayCardEntry(cardInfo, pos, currentPlayer.coinFlips, undefined)
 	}
 
