@@ -179,14 +179,18 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	return row.itemCards[index]
 }
 
-/** Filters a `CanAttachResult` to remove all `'INVALID_PLAYER'` problems for movement checks */
-function exceptInvalidPlayer(
-	result: CanAttachResult[number]
-): result is Exclude<typeof result, 'INVALID_PLAYER'> {
-	return result !== 'INVALID_PLAYER'
-}
-
-export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): boolean {
+/**
+ * Check if a card can be attached to a spot on the board. 
+ * @param [assumeEmpty=false]
+ *     If true, pretend the square that the card is going to be attached to is empty.
+ *     This is used in the `swapSlots` function.
+ */
+export function canAttachToSlot(
+	game: GameModel,
+	slotPos: SlotPos,
+	card: CardT,
+	assumeEmpty: boolean = false
+): boolean {
 	const {player, rowIndex, row, slot} = slotPos
 	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
 	if (!opponentPlayerId) return false
@@ -203,7 +207,14 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 	const pos = new CardPosModel(game, basicPos, card.cardInstance)
 
 	const cardInfo = CARDS[card.cardId]
-	return callSlotConditionWithCardPosModel(cardInfo.attachCondition, game, pos)
+	return cardInfo.attachCondition(game, {
+		player: pos.player,
+		opponentPlayer: pos.opponentPlayer,
+		type: pos.slot.type,
+		rowIndex: pos.rowIndex,
+		row: pos.row,
+		card: assumeEmpty ? null : pos.card,
+	})
 }
 
 /** Swaps the positions of two cards on the board. Returns whether or not the swap was successful. */
@@ -224,11 +235,11 @@ export function swapSlots(
 	const cardA = getSlotCard(slotAPos)
 	const cardB = getSlotCard(slotBPos)
 	if (cardB) {
-		const canAttachResult = canAttachToSlot(game, slotAPos, cardB)
+		const canAttachResult = canAttachToSlot(game, slotAPos, cardB, true)
 		if (!canAttachResult) return false
 	}
 	if (cardA) {
-		const canAttachResult = canAttachToSlot(game, slotBPos, cardA)
+		const canAttachResult = canAttachToSlot(game, slotBPos, cardA, true)
 		if (!canAttachResult) return false
 	}
 
