@@ -120,18 +120,10 @@ export class CardPosModel {
 	private internalPos: BasicCardPos
 	private instance: string
 
-	/**
-	 * Is this card pos fake - meaning not pointing to a card actually on the board?
-	 *
-	 * If this is true, we never attempt to recalculate the card pos
-	 */
-	public fake: boolean
-
-	constructor(game: GameModel, cardPos: BasicCardPos, instance: string, fake: boolean = false) {
+	constructor(game: GameModel, cardPos: BasicCardPos, instance: string) {
 		this.game = game
 		this.internalPos = cardPos
 		this.instance = instance
-		this.fake = fake
 	}
 
 	private recalculateInternalPos() {
@@ -146,7 +138,7 @@ export class CardPosModel {
 	public get card() {
 		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
 		let card = getCardAtPos(this.game, this.internalPos)
-		if (!this.fake && !card) {
+		if (!card) {
 			this.recalculateInternalPos()
 			card = getCardAtPos(this.game, this.internalPos)
 		}
@@ -155,27 +147,27 @@ export class CardPosModel {
 	}
 
 	public get player() {
-		if (!this.fake && !this.card) this.recalculateInternalPos()
+		if (!this.card) this.recalculateInternalPos()
 		return this.internalPos.player
 	}
 
 	public get opponentPlayer() {
-		if (!this.fake && !this.card) this.recalculateInternalPos()
+		if (!this.card) this.recalculateInternalPos()
 		return this.internalPos.opponentPlayer
 	}
 
 	public get rowIndex() {
-		if (!this.fake && !this.card) this.recalculateInternalPos()
+		if (!this.card) this.recalculateInternalPos()
 		return this.internalPos.rowIndex
 	}
 
 	public get row() {
-		if (!this.fake && !this.card) this.recalculateInternalPos()
+		if (!this.card) this.recalculateInternalPos()
 		return this.internalPos.row
 	}
 
 	public get slot() {
-		if (!this.fake && !this.card) this.recalculateInternalPos()
+		if (!this.card) this.recalculateInternalPos()
 		return this.internalPos.slot
 	}
 }
