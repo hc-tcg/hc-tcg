@@ -287,6 +287,7 @@ export class GameModel {
 		return true
 	}
 
+	/** Gets the pickable slots for the current player */
 	public getPickableSlots(check: SlotCondition) {
 		let pickableSlots: Array<SlotDisplayPosition> = []
 
@@ -325,25 +326,24 @@ export class GameModel {
 				appendAttachCondition('effect', 3, row.effectCard)
 				appendAttachCondition('hermit', 4, row.hermitCard)
 			}
-
-			if (
-				check(this, {
-					player,
-					opponentPlayer: Object.values(this.state.players).filter(
-						(opponent) => opponent.id !== player.id
-					)[0],
-					type: 'single_use',
-					rowIndex: null,
-					row: null,
-					card: player.board.singleUseCard,
-				})
-			) {
-				pickableSlots.push({
-					playerId: player.id,
-					type: 'single_use',
-				})
-			}
 		}
+
+		if (
+			check(this, {
+				player: this.currentPlayer,
+				opponentPlayer: this.opponentPlayer,
+				type: 'single_use',
+				rowIndex: null,
+				row: null,
+				card: this.currentPlayer.board.singleUseCard,
+			})
+		) {
+			pickableSlots.push({
+				playerId: this.currentPlayer.id,
+				type: 'single_use',
+			})
+		}
+
 		return pickableSlots
 	}
 }

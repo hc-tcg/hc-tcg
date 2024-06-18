@@ -19,14 +19,15 @@ class LadderSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
 		const activeRow = getActiveRow(pos.player)
-		if (!activeRow) return false
+		const activeRowIndex = pos.player.board.activeRow
+		if (activeRow === null || activeRowIndex === null) return false
+		const activeHermitSlot = getSlotPos(pos.player, activeRowIndex, 'hermit')
+
 		return pos.player.board.rows.some((row, index) => {
-			if (index + 1 === pos.player.board.activeRow || index - 1 === pos.player.board.activeRow) {
-				const hermitSlot = getSlotPos(pos.player, index, 'hermit')
-				if (canAttachToSlot(game, hermitSlot, activeRow.hermitCard)) return false
-				return true
-			}
-			return false
+			if (!row.hermitCard) return false
+			if (index == activeRowIndex) return false
+			if (index + 1 !== activeRowIndex && index - 1 !== activeRowIndex) return false
+			return canAttachToSlot(game, activeHermitSlot, row.hermitCard, true)
 		})
 	})
 
@@ -57,8 +58,6 @@ class LadderSingleUseCard extends SingleUseCard {
 				const inactivePos = getSlotPos(player, pickResult.rowIndex, 'hermit')
 				const card = getSlotCard(activePos)
 				if (!card) return 'FAILURE_INVALID_DATA'
-
-				if (canAttachToSlot(game, inactivePos, card)) return 'FAILURE_INVALID_SLOT'
 
 				// Apply
 				applySingleUse(game)

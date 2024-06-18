@@ -180,7 +180,7 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 }
 
 /**
- * Check if a card can be attached to a spot on the board. 
+ * Check if a card can be attached to a spot on the board.
  * @param [assumeEmpty=false]
  *     If true, pretend the square that the card is going to be attached to is empty.
  *     This is used in the `swapSlots` function.
@@ -206,13 +206,21 @@ export function canAttachToSlot(
 	// Create a fake card pos model
 	const pos = new CardPosModel(game, basicPos, card.cardInstance)
 
+	// I apoligize for the hack to make this spot seem empty to the combinators!
 	const cardInfo = CARDS[card.cardId]
 	return cardInfo.attachCondition(game, {
 		player: pos.player,
 		opponentPlayer: pos.opponentPlayer,
 		type: pos.slot.type,
 		rowIndex: pos.rowIndex,
-		row: pos.row,
+		row: assumeEmpty
+			? {
+					itemCards: [],
+					effectCard: null,
+					hermitCard: null,
+					health: null,
+				}
+			: pos.row,
 		card: assumeEmpty ? null : pos.card,
 	})
 }
