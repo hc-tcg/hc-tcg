@@ -109,16 +109,6 @@ class PistonSingleUseCard extends SingleUseCard {
 				// Move the item
 				swapSlots(game, itemPos, targetPos)
 
-				// Only add the after apply hook here
-				player.hooks.afterApply.add(instance, () => {
-					discardSingleUse(game, player)
-
-					// Remove playing a single use from completed actions so it can be done again
-					game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
-					player.hooks.afterApply.remove(instance)
-				})
-
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 
@@ -133,6 +123,21 @@ class PistonSingleUseCard extends SingleUseCard {
 				delete player.custom[itemIndexKey]
 			},
 		})
+
+		player.hooks.afterApply.add(instance, () => {
+			discardSingleUse(game, player)
+
+			// Remove playing a single use from completed actions so it can be done again
+			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+
+			player.hooks.afterApply.remove(instance)
+		})
+	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		player.hooks.afterApply.remove(instance)
 	}
 
 	override getExpansion() {

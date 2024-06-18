@@ -40,8 +40,7 @@ function* gameManager(game: GameModel) {
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
-				(action: any) =>
-					action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.playerId)
+				(action: any) => action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.id)
 			),
 			forfeit: take(
 				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
