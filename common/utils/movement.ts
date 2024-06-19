@@ -6,7 +6,13 @@ import {equalCard} from './cards'
 import {SlotPos, SlotTypeT} from '../types/cards'
 import {getSlotPos} from './board'
 import {CanAttachResult} from '../cards/base/card'
-import {callSlotConditionWithCardPosModel} from '../slot'
+import {
+	callSlotConditionWithCardPosModel,
+	callSlotConditionWithPickInfo,
+	slot,
+	SlotConditionInfo,
+} from '../slot'
+import {PickInfo} from '../types/server-requests'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -177,33 +183,6 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
 	}
 
 	return row.itemCards[index]
-}
-
-/** Check if a card can be attached to a spot on the board. */
-export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT): boolean {
-	const {player, rowIndex, row, slot} = slotPos
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== slotPos.player.id)
-	if (!opponentPlayerId) return false
-
-	const basicPos: BasicCardPos = {
-		player,
-		opponentPlayer: game.state.players[opponentPlayerId],
-		rowIndex,
-		row,
-		slot: {type: slot.type as SlotTypeT, index: slot.index},
-	}
-
-	const cardInfo = CARDS[card.cardId]
-	const pos = new CardPosModel(game, basicPos, card.cardInstance)
-
-	return cardInfo.attachCondition(game, {
-		player: pos.player,
-		opponentPlayer: pos.opponentPlayer,
-		type: pos.slot.type,
-		rowIndex: pos.rowIndex,
-		row: pos.row,
-		card: pos.card,
-	})
 }
 
 /**

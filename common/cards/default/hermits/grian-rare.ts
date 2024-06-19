@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
-import {canAttachToSlot, discardCard, swapSlots} from '../../../utils/movement'
+import {discardCard, swapSlots} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after

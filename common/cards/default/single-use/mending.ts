@@ -9,7 +9,8 @@ const pickCondition = slot.every(
 	slot.player,
 	slot.effectSlot,
 	slot.empty,
-	slot.not(slot.activeRow)
+	slot.not(slot.activeRow),
+	slot.interactable
 )
 
 class MendingSingleUseCard extends singleUseCard {
