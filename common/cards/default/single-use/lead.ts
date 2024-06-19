@@ -1,19 +1,8 @@
-import {CARDS} from '../..'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {callSlotConditionWithCardPosModel, slot} from '../../../slot'
-import {
-	applySingleUse,
-	getActiveRow,
-	getActiveRowPos,
-	getNonEmptyRows,
-	getSlotPos,
-	isRowEmpty,
-	rowHasEmptyItemSlot,
-	rowHasItem,
-} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applySingleUse, getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 const firstPickCondition = slot.every(

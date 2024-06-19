@@ -1,10 +1,8 @@
-import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot, SlotCondition} from '../../../slot'
-import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applySingleUse, getSlotPos, rowHasEmptyItemSlot} from '../../../utils/board'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class PistonSingleUseCard extends SingleUseCard {
