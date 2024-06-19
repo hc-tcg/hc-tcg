@@ -6,6 +6,14 @@ import {hasActive} from '../../../utils/game'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 import {slot} from '../../../slot'
 
+const pickCondition = slot.every(
+	slot.hermitSlot,
+	// @todo Fix this by giving armor stand support for health
+	slot.not(slot.activeRow),
+	slot.not(slot.has('armor_stand')),
+	slot.not(slot.empty)
+)
+
 class GoldenAppleSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -21,10 +29,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.playerHasActiveHermit,
-		(game, pos) =>
-			getNonEmptyRows(pos.player, true).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
+		slot.someSlotFulfills(pickCondition),
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -34,7 +39,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick one of your AFK Hermits',
-			canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (!pickResult.card || rowIndex === undefined) return
