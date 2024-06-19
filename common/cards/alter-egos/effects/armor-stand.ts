@@ -46,46 +46,10 @@ class ArmorStandEffectCard extends EffectCard {
 			if (slot.rowIndex === pos.rowIndex) return false
 			return true
 		})
-
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!row.health && attacker && isTargetingPos(attack, pos)) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
-
-				const activeRow = player.board.activeRow
-				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attacker.player.id !== player.id) {
-					// Reset the active row so the player can switch
-					game.changeActiveRow(player, null)
-				}
-			}
-		})
-
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!row.health && attacker && isTargetingPos(attack, pos)) {
-				// Discard to prevent losing a life
-				discardCard(game, row.hermitCard)
-				game.battleLog.addEntry(player.id, `$p${this.name}$ was knocked out`)
-
-				const activeRow = player.board.activeRow
-				const isActive = activeRow !== null && activeRow == pos.rowIndex
-				if (isActive && attacker.player.id !== player.id) {
-					// Reset the active row so the player can switch
-					game.changeActiveRow(player, null)
-				}
-			}
-		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
-		if (slot && slot.type === 'hermit' && row) {
-			row.health = null
-			row.effectCard = null
-			row.itemCards = []
-		}
+		const {player, opponentPlayer} = pos
 
 		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
 
