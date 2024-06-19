@@ -10,7 +10,6 @@ class PistonSingleUseCard extends SingleUseCard {
 		super({
 			id: 'piston',
 			numericId: 144,
-
 			name: 'Piston',
 			rarity: 'common',
 			description:
