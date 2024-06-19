@@ -64,7 +64,7 @@ export function callSlotConditionWithPickInfo(
 
 export namespace slot {
 	/**
-	 * Return true if the card is attachable to a slot that fullfills all of the parameters.
+	 * Return true if the card is attachable to a slot that fulfills all of the parameters.
 	 *
 	 * ```js
 	 * every(player, hermit)
@@ -78,7 +78,7 @@ export namespace slot {
 	}
 
 	/**
-	 * Return true if the card is attachable to a slot that fullfills any of the parameters.
+	 * Return true if the card is attachable to a slot that fulfills any of the parameters.
 	 *
 	 * ```js
 	 * every(opponent, some(effect, item))
@@ -166,10 +166,10 @@ export namespace slot {
 		return game.opponentPlayer.board.activeRow !== undefined
 	}
 
-	export const someSlotFullfills =
+	export const someSlotFulfills =
 		(predicate: SlotCondition): SlotCondition =>
 		(game, pos) => {
-			return game.someSlotFullfills(predicate)
+			return game.someSlotFulfills(predicate)
 		}
 
 	export const interactable: SlotCondition = (game, pos) => {

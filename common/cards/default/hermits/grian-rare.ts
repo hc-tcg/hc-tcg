@@ -1,7 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {callSlotConditionWithCardPosModel, slot} from '../../../slot'
+import {slot} from '../../../slot'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -62,7 +62,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttach = game.someSlotFullfills(
+			const canAttach = game.someSlotFulfills(
 				slot.every(slot.player, slot.interactable, slot.effectSlot, slot.activeRow, slot.empty)
 			)
 

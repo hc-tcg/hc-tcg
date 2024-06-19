@@ -347,7 +347,7 @@ export class GameModel {
 		return pickableSlots
 	}
 
-	public someSlotFullfills(predicate: SlotCondition) {
+	public someSlotFulfills(predicate: SlotCondition) {
 		return this.getPickableSlots(predicate).length !== 0
 	}
 }

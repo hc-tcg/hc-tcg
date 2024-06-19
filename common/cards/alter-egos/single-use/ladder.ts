@@ -35,7 +35,7 @@ class LadderSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFullfills(pickCondition)
+		slot.someSlotFulfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

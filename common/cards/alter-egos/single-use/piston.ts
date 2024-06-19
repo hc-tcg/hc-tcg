@@ -20,7 +20,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFullfills(
+		slot.someSlotFulfills(
 			slot.every(
 				slot.player,
 				slot.itemSlot,

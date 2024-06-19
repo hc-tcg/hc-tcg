@@ -36,8 +36,8 @@ class LeadSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFullfills(firstPickCondition),
-		slot.someSlotFullfills(secondPickCondition)
+		slot.someSlotFulfills(firstPickCondition),
+		slot.someSlotFulfills(secondPickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

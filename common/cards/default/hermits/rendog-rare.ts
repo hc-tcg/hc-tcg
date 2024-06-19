@@ -183,7 +183,7 @@ class RendogRareHermitCard extends HermitCard {
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			if (!game.someSlotFullfills(this.pickCondition)) blockedActions.push('SECONDARY_ATTACK')
+			if (!game.someSlotFulfills(this.pickCondition)) blockedActions.push('SECONDARY_ATTACK')
 			return blockedActions
 		})
 	}
