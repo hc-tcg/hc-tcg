@@ -1,5 +1,4 @@
-import {CARDS} from '../..'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'

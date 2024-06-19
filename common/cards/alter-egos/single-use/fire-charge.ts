@@ -1,12 +1,11 @@
 import SingleUseCard from '../../base/single-use-card'
-import {CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {isRemovable} from '../../../utils/cards'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {slot, SlotCondition} from '../../../slot'
+import {slot} from '../../../slot'
 
 const pickCondition = slot.every(
 	slot.player,

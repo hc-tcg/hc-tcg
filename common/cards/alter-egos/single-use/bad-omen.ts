@@ -3,7 +3,6 @@ import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import {hasActive} from '../../../utils/game'
 
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {

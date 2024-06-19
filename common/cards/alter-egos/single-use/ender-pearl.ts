@@ -1,10 +1,9 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot, SlotCondition} from '../../../slot'
+import {slot} from '../../../slot'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
