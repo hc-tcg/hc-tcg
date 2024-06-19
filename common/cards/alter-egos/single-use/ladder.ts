@@ -5,6 +5,22 @@ import {applySingleUse, getActiveRow, getSlotPos} from '../../../utils/board'
 import {canAttachToSlot, getSlotCard, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(
+	slot.player,
+	slot.not(slot.empty),
+	slot.hermitSlot,
+	(game, pos) => {
+		if (
+			pos.rowIndex !== null &&
+			(pos.rowIndex + 1 === pos.player.board.activeRow ||
+				pos.rowIndex - 1 === pos.player.board.activeRow)
+		) {
+			return true
+		}
+		return false
+	}
+)
+
 class LadderSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -17,19 +33,10 @@ class LadderSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		const activeRow = getActiveRow(pos.player)
-		const activeRowIndex = pos.player.board.activeRow
-		if (activeRow === null || activeRowIndex === null) return false
-		const activeHermitSlot = getSlotPos(pos.player, activeRowIndex, 'hermit')
-
-		return pos.player.board.rows.some((row, index) => {
-			if (!row.hermitCard) return false
-			if (index === activeRowIndex) return false
-			if (index + 1 !== activeRowIndex && index - 1 !== activeRowIndex) return false
-			return true
-		})
-	})
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -38,17 +45,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
-			canPick: slot.every(slot.player, slot.not(slot.empty), slot.hermitSlot, (game, pick) => {
-				const pickedIndex = pick.rowIndex
-				if (
-					pickedIndex !== null &&
-					(pickedIndex + 1 === pick.player.board.activeRow ||
-						pickedIndex - 1 === pick.player.board.activeRow)
-				) {
-					return true
-				}
-				return false
-			}),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 				const activeRowIndex = player.board.activeRow

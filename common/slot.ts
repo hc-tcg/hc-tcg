@@ -153,4 +153,10 @@ export namespace slot {
 	export const opponentHasActiveHermit: SlotCondition = (game, pos) => {
 		return game.opponentPlayer.board.activeRow !== undefined
 	}
+
+	export const someSlotFullfills =
+		(predicate: SlotCondition): SlotCondition =>
+		(game, pos) => {
+			return game.getPickableSlots(predicate).length !== 0
+		}
 }
