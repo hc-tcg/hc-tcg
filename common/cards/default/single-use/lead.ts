@@ -17,7 +17,7 @@ import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 const firstPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty), slot.activeRow)
-const secondPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow)),
+const secondPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow))
 
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {

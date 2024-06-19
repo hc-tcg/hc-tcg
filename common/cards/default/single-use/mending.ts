@@ -1,9 +1,8 @@
-import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
-import {canAttachToSlot, discardSingleUse, getSlotCard, swapSlots} from '../../../utils/movement'
+import {applySingleUse, getActiveRow, getSlotPos} from '../../../utils/board'
+import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(
@@ -60,13 +59,8 @@ class MendingSingleUseCard extends singleUseCard {
 				const rowIndex = pickResult.rowIndex
 				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
-				// Make sure we can attach the item
 				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
 				const targetPos = getSlotPos(player, rowIndex, 'effect')
-				const effectCard = getSlotCard(sourcePos)!
-				if (canAttachToSlot(game, targetPos, effectCard)) {
-					return 'FAILURE_INVALID_SLOT'
-				}
 
 				const logInfo = pickResult
 				logInfo.card = sourcePos.row.effectCard
