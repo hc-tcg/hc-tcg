@@ -13,7 +13,7 @@ const pickCondition = slot.every(
 	slot.not(slot.empty),
 	slot.some(
 		slot.itemSlot,
-		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isRemovable(game, pick.card))
+		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && isRemovable(game, pick.card))
 	)
 )
 
@@ -30,7 +30,10 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -42,8 +45,6 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			canPick: pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-				const pos = getCardPos(game, pickResult.card.cardInstance)
-				if (!pos) return 'FAILURE_CANNOT_COMPLETE'
 
 				// Discard the picked card and apply su card
 				discardCard(game, pickResult.card)
