@@ -7,6 +7,8 @@ import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
+
 class EnderPearlSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -21,10 +23,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		if (!hasActive(pos.player)) return false
-		return pos.player.board.rows.some((row) => row.hermitCard === null)
-	})
+	override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -34,7 +33,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty Hermit slot',
-			canPick: slot.every(slot.empty, slot.hermitSlot, slot.player),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				// We need to have no card there

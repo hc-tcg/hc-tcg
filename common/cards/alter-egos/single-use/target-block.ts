@@ -5,6 +5,13 @@ import {slot} from '../../../slot'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(
+	slot.opponent,
+	slot.hermitSlot,
+	slot.not(slot.activeRow),
+	slot.not(slot.empty)
+)
+
 class TargetBlockSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -30,12 +37,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick one of your opponent's AFK Hermits",
-			canPick: slot.every(
-				slot.opponent,
-				slot.hermitSlot,
-				slot.not(slot.activeRow),
-				slot.not(slot.empty)
-			),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

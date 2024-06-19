@@ -4,6 +4,8 @@ import {slot} from '../../../slot'
 import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
+
 class KnockbackSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -19,7 +21,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) => getNonEmptyRows(pos.opponentPlayer).length === 0
+		slot.someSlotFullfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -42,7 +44,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Choose a new active Hermit from your AFK Hermits',
-					canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
+					canPick: pickCondition,
 					onResult(pickResult) {
 						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 

@@ -5,6 +5,8 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
 import {slot} from '../../../slot'
 
+const pickCondition = slot.every(slot.not(slot.empty), slot.hermitSlot)
+
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -20,10 +22,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.playerHasActiveHermit,
-		(game, pos) =>
-			getNonEmptyRows(pos.player).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
+		slot.someSlotFullfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -33,7 +32,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an active or AFK Hermit',
-			canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

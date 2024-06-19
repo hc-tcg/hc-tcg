@@ -8,6 +8,15 @@ import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
 import {slot, SlotCondition} from '../../../slot'
 
+const pickCondition = slot.every(
+	slot.player,
+	slot.not(slot.empty),
+	slot.some(
+		slot.itemSlot,
+		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isRemovable(game, pick.card))
+	)
+)
+
 class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -21,12 +30,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) =>
-		pos.player.board.rows.some((row) => {
-			if (row.itemCards.some((i) => i !== null)) return true
-			if (row.effectCard && isRemovable(game, row.effectCard)) return true
-		})
-	)
+	override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -35,17 +39,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
-			canPick: slot.every(
-				slot.player,
-				slot.not(slot.empty),
-				slot.some(
-					slot.itemSlot,
-					slot.every(
-						slot.effectSlot,
-						(game, pick) => pick.card !== null && !isRemovable(game, pick.card)
-					)
-				)
-			),
+			canPick: pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
 				const pos = getCardPos(game, pickResult.card.cardInstance)

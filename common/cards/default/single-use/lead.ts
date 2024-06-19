@@ -16,6 +16,9 @@ import {canAttachToSlot, swapSlots} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
+const firstPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty), slot.activeRow)
+const secondPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow)),
+
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -32,16 +35,8 @@ class LeadSingleUseCard extends SingleUseCard {
 
 	public override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) =>
-			rowHasItem(getActiveRow(pos.opponentPlayer)) &&
-			pos.opponentPlayer.board.rows.some((row, rowIndex) => {
-				return (
-					rowHasItem(row) &&
-					row.itemCards.some((item, i) => {
-						item && canAttachToSlot(game, getSlotPos(pos.opponentPlayer, rowIndex, 'item', i), item)
-					})
-				)
-			})
+		slot.someSlotFullfills(firstPickCondition),
+		slot.someSlotFullfills(secondPickCondition),
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -52,7 +47,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
-			canPick: slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty), slot.activeRow),
+			canPick: firstPickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
@@ -66,7 +61,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
-			canPick: slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow)),
+			canPick: secondPickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

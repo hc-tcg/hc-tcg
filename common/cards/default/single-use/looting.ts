@@ -7,6 +7,8 @@ import {moveCardToHand} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
+
 class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -20,11 +22,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		const {opponentPlayer} = game
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		return opponentActiveRow !== null && !isRowEmpty(opponentActiveRow)
-	})
+	public override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
 
 	override canApply() {
 		return true
@@ -45,7 +43,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
-				canPick: slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty)),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					if (pickResult.rowIndex === undefined || pickResult.card === null) {
 						return 'FAILURE_INVALID_SLOT'

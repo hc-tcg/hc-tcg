@@ -53,7 +53,7 @@ function* playCardSaga(
 
 	// Do we meet requirements to place the card
 	const canAttach = callSlotConditionWithPickInfo(
-		slot.every(cardInfo.attachCondition, slot.empty),
+		cardInfo.attachCondition,
 		game,
 		pickInfo
 	)

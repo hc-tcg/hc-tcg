@@ -7,6 +7,13 @@ import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/b
 import {flipCoin} from '../../../utils/coinFlips'
 import SingleUseCard from '../../base/single-use-card'
 
+const pickCondition = slot.every(
+					slot.opponent,
+					slot.hermitSlot,
+					slot.not(slot.activeRow),
+					slot.not(slot.empty)
+				)
+
 class EggSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -22,7 +29,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) => getNonEmptyRows(game.opponentPlayer, true).length > 1
+		slot.someSlotFullfills(pickCondition),
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -34,12 +41,7 @@ class EggSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
-				canPick: slot.every(
-					slot.opponent,
-					slot.hermitSlot,
-					slot.not(slot.activeRow),
-					slot.not(slot.empty)
-				),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 
