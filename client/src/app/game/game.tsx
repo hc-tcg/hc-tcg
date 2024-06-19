@@ -25,7 +25,13 @@ import {
 	getEndGameOverlay,
 	getAvailableActions,
 } from 'logic/game/game-selectors'
-import {deselectCard, playableSlotsRequest, setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
+import {
+	deselectCard,
+	playableSlotsRequest,
+	setOpenedModal,
+	setSelectedCard,
+	slotPicked,
+} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'

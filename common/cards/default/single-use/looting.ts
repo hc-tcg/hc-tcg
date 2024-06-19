@@ -22,7 +22,10 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
+	public override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(pickCondition)
+	)
 
 	override canApply() {
 		return true

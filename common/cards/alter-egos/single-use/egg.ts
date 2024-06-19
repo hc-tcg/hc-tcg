@@ -8,11 +8,11 @@ import {flipCoin} from '../../../utils/coinFlips'
 import SingleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(
-					slot.opponent,
-					slot.hermitSlot,
-					slot.not(slot.activeRow),
-					slot.not(slot.empty)
-				)
+	slot.opponent,
+	slot.hermitSlot,
+	slot.not(slot.activeRow),
+	slot.not(slot.empty)
+)
 
 class EggSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -29,7 +29,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFullfills(pickCondition),
+		slot.someSlotFullfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

@@ -20,7 +20,10 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
+	public override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos

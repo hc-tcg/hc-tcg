@@ -22,7 +22,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.playerHasActiveHermit,
-		slot.someSlotFullfills(pickCondition),
+		slot.someSlotFullfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
