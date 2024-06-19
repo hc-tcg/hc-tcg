@@ -174,7 +174,7 @@ export namespace slot {
 
 	export const interactable: SlotCondition = (game, pos) => {
 		if (pos.type === 'single_use' || pos.type === 'hand') return true
-		if (!pos.rowIndex || !pos.type) return false
+		if (pos.rowIndex === null || !pos.type) return false
 		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.type)
 		return game.currentPlayer.hooks.onSlotInteraction
 			.call(slotPos)
