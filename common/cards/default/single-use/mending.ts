@@ -6,7 +6,7 @@ import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(
-	slot.opponent,
+	slot.player,
 	slot.effectSlot,
 	slot.empty,
 	slot.not(slot.activeRow)
