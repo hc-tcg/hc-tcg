@@ -102,8 +102,6 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
-
-				return
 			},
 			onCancel() {
 				delete player.custom[rowIndexKey]

@@ -129,8 +129,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 						// Add a second pick request to remove an item
 						game.addPickRequest(itemRequest)
 					}
-
-					return
 				},
 				onTimeout() {
 					// We didn't choose anyone so we will just attack as normal

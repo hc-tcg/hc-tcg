@@ -71,8 +71,6 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 					if (!pickResult.card || rowIndex === undefined) return
 
 					applyStatusEffect(game, 'protected', pickResult.card.cardInstance)
-
-					return
 				},
 			})
 		})

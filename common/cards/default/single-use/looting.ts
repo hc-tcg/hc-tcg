@@ -56,8 +56,6 @@ class LootingSingleUseCard extends SingleUseCard {
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return
 					moveCardToHand(game, pickResult.card, player)
-
-					return
 				},
 			})
 		})

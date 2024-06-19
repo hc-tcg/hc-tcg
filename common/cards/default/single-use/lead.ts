@@ -54,8 +54,6 @@ class LeadSingleUseCard extends SingleUseCard {
 
 				// Store the index of the chosen item
 				player.custom[itemIndexKey] = pickResult.slot.index
-
-				return
 			},
 		})
 		game.addPickRequest({
@@ -68,16 +66,10 @@ class LeadSingleUseCard extends SingleUseCard {
 				if (pickResult.card || rowIndex === undefined) return
 
 				// Get the index of the chosen item
-				const itemIndex: number | undefined = player.custom[itemIndexKey]
+				const itemIndex: number = player.custom[itemIndexKey]
 
 				const opponentActivePos = getActiveRowPos(opponentPlayer)
-
-				if (itemIndex === undefined || !opponentActivePos) {
-					// Something went wrong, just return success
-					// To clarify, the problem here is that if itemIndex is null this pick request will never be able to succeed if we don't do this
-					// @TODO is a better failsafe mechanism needed for 2 picks in a row?
-					return
-				}
+				if (!opponentActivePos) return
 
 				// Make sure we can attach the item
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
@@ -92,8 +84,6 @@ class LeadSingleUseCard extends SingleUseCard {
 				swapSlots(game, itemPos, targetPos)
 
 				delete player.custom[itemIndexKey]
-
-				return
 			},
 		})
 	}

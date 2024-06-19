@@ -50,8 +50,6 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 100, maxHealth)
-
-				return
 			},
 		})
 	}

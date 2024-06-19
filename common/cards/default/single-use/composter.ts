@@ -42,8 +42,6 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 				// Discard the card straight away
 				discardFromHand(player, pickResult.card)
-
-				return
 			},
 		})
 		game.addPickRequest({
@@ -58,8 +56,6 @@ class ComposterSingleUseCard extends SingleUseCard {
 				applySingleUse(game)
 
 				drawCards(player, 2)
-
-				return
 			},
 		})
 	}

@@ -55,8 +55,6 @@ class BrewingStandEffectCard extends EffectCard {
 						playerRow.health += 50
 					}
 					discardCard(game, pickResult.card)
-
-					return
 				},
 			})
 		})

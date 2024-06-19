@@ -68,9 +68,7 @@ class ShubbleYTRareHermitCard extends HermitCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {
-					return
-				},
+				onTimeout() {},
 			})
 		})
 	}

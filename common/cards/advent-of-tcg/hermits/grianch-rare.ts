@@ -86,7 +86,6 @@ class GrianchRareHermitCard extends HermitCard {
 						// Armor Stand
 						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
 					}
-					return
 				},
 			})
 		})

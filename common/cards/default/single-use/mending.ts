@@ -75,8 +75,6 @@ class MendingSingleUseCard extends singleUseCard {
 
 				// Move the effect card
 				swapSlots(game, sourcePos, targetPos)
-
-				return
 			},
 		})
 	}

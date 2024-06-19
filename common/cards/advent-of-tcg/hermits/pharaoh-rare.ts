@@ -81,8 +81,6 @@ class PharaohRareHermitCard extends HermitCard {
 					// Store the info to use later
 					player.custom[playerKey] = pickResult.playerId
 					player.custom[rowKey] = rowIndex
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one

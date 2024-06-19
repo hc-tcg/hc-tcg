@@ -51,8 +51,6 @@ class CrossbowSingleUseCard extends SingleUseCard {
 					} else {
 						delete player.custom[remainingKey]
 					}
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

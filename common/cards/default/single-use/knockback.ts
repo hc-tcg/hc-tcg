@@ -49,8 +49,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 						if (pickResult.rowIndex === undefined) return
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
-
-						return
 					},
 					onTimeout() {
 						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)

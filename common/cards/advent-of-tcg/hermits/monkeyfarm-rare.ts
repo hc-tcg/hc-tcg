@@ -63,8 +63,6 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 
 					// Apply the card
 					discardCard(game, pickResult.card)
-
-					return
 				},
 			})
 		})

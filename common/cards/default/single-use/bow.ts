@@ -40,8 +40,6 @@ class BowSingleUseCard extends SingleUseCard {
 					if (rowIndex === undefined) return
 
 					player.custom[targetKey] = rowIndex
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

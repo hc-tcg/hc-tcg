@@ -140,8 +140,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 							}
 						},
 					})
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick someone so do nothing

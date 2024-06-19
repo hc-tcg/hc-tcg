@@ -57,8 +57,6 @@ class DungeonTangoRareHermitCard extends HermitCard {
 					discardCard(game, pickResult.card)
 
 					player.hand.push(player.pile.splice(i, 1)[0])
-
-					return
 				},
 			})
 		})

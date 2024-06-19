@@ -58,8 +58,6 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 						row,
 					})
 				})
-
-				return
 			},
 		})
 

@@ -53,13 +53,16 @@ class TangoTekRareHermitCard extends HermitCard {
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
-					canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.activeRow), slot.not(slot.empty)),
+					canPick: slot.every(
+						slot.opponent,
+						slot.hermitSlot,
+						slot.not(slot.activeRow),
+						slot.not(slot.empty)
+					),
 					onResult(pickResult) {
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.rowIndex === undefined) return
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
-
-						return 'SUCCESS'
 					},
 					onTimeout() {
 						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
@@ -84,13 +87,16 @@ class TangoTekRareHermitCard extends HermitCard {
 					playerId: player.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
-					canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.activeRow), slot.not(slot.empty)),
+					canPick: slot.every(
+						slot.player,
+						slot.hermitSlot,
+						slot.not(slot.activeRow),
+						slot.not(slot.empty)
+					),
 					onResult(pickResult) {
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.rowIndex === undefined) return
 
 						game.changeActiveRow(player, pickResult.rowIndex)
-
-						return 'SUCCESS'
 					},
 					onTimeout() {
 						const inactiveRows = getNonEmptyRows(player, true, true)

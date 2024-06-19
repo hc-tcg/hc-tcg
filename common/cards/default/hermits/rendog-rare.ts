@@ -160,8 +160,6 @@ class RendogRareHermitCard extends HermitCard {
 							}
 						},
 					})
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick someone to imitate so do nothing

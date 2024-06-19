@@ -59,8 +59,6 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (opponentPlayer.board.activeRow === null) return
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
-
-					return
 				},
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return

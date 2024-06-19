@@ -47,8 +47,6 @@ class EggSingleUseCard extends SingleUseCard {
 
 					// Store the row index to use later
 					player.custom[targetKey] = pickResult
-
-					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

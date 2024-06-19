@@ -49,8 +49,6 @@ class OrionSoundRareHermitCard extends HermitCard {
 
 					applyStatusEffect(game, 'melody', pickResult.card.cardInstance)
 					player.custom[instanceKey].push(pickResult.card.cardInstance)
-
-					return
 				},
 			})
 		})
