@@ -1,6 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {callSlotConditionWithCardPosModel, slot} from '../../../slot'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -61,13 +62,10 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttachResult = canAttachToSlot(game, effectSlot, opponentEffectCard)
-
-			if (!canAttachResult) {
-				// We can't attach the new card, don't bother showing a modal
-				discardCard(game, opponentEffectCard, player)
-				return
-			}
+			const canAttach =
+				game.getPickableSlots(
+					slot.every(slot.player, slot.interactable, slot.effectSlot, slot.activeRow, slot.empty)
+				).length > 0
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -80,10 +78,12 @@ class GrianRareHermitCard extends HermitCard {
 						} card?`,
 						cards: [opponentEffectCard],
 						selectionSize: 0,
-						primaryButton: {
-							text: 'Attach',
-							variant: 'default',
-						},
+						primaryButton: canAttach
+							? {
+									text: 'Attach',
+									variant: 'default',
+								}
+							: null,
 						secondaryButton: {
 							text: 'Discard',
 							variant: 'default',

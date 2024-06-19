@@ -20,6 +20,7 @@ function SelectCardsModal({closeModal}: Props) {
 	const [selected, setSelected] = useState<Array<CardT>>([])
 	const cards: Array<CardT> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
+	const primaryButton = modalData.payload.primaryButton
 	const secondaryButton = modalData.payload.secondaryButton
 
 	const handleSelection = (newSelected: CardT) => {
@@ -81,13 +82,15 @@ function SelectCardsModal({closeModal}: Props) {
 						{secondaryButton.text}
 					</Button>
 				)}
-				<Button
-					variant={modalData.payload.primaryButton.variant}
-					size="medium"
-					onClick={handlePrimary}
-				>
-					{modalData.payload.primaryButton.text}
-				</Button>
+				{primaryButton && (
+					<Button
+						variant={modalData.payload.primaryButton.variant}
+						size="medium"
+						onClick={handlePrimary}
+					>
+						{modalData.payload.primaryButton.text}
+					</Button>
+				)}
 			</div>
 		</Modal>
 	)
