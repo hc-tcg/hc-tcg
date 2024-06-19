@@ -23,7 +23,7 @@ WORKDIR /app
 
 COPY . .
 
-COPY common/config/debug-config.json common/config/debug-config.json
+COPY common/config/debug-config.example.json common/config/debug-config.json
 
 RUN npm ci && npm run build
 # Remove the build-time dependencies to keep the image small and enable node optimizations.
