@@ -34,10 +34,9 @@ class PistonSingleUseCard extends SingleUseCard {
 					if (!pos.rowIndex || !pos.player.board.activeRow) return false
 					return [pos.rowIndex - 1, pos.rowIndex + 1].some((row) => {
 						const rowState = pos.player.board.rows[row]
-						if (!rowState.hermitCard) return
+						if (!rowState.hermitCard) return false
 						if (rowHasEmptyItemSlot(rowState)) return true
 					})
-					return false
 				}
 			)
 		)
