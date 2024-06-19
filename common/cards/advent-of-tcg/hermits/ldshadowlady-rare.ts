@@ -48,7 +48,6 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			// Make sure opponent Hermit isn't dead
 			if (getActiveRow(opponentPlayer)?.health === 0) return
 
-			// Add a new pick request to the opponent player
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,

@@ -48,7 +48,6 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
 			if (opponentInactiveRows.length > 0) {
-				// Add a new pick request to the opponent player
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
