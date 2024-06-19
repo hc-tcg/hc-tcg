@@ -18,7 +18,7 @@ class WolfEffectCard extends EffectCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(super.attachCondition, slot.activeRow)
+	override _attachCondition = slot.every(super.attachCondition, slot.activeRow)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos

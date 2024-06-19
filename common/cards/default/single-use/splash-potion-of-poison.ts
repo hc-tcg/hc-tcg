@@ -15,7 +15,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(
+	override _attachCondition = slot.every(
 		super.attachCondition,
 		(game, pos) => game.opponentPlayer.board.activeRow !== null
 	)

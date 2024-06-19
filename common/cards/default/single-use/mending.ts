@@ -27,7 +27,7 @@ class MendingSingleUseCard extends singleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(
+	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.someSlotFullfills(pickCondition),
 		slot.someSlotFullfills(
