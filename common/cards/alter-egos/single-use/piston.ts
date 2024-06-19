@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot, SlotCondition} from '../../../slot'
 import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
-import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
+import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -12,6 +12,7 @@ class PistonSingleUseCard extends SingleUseCard {
 		super({
 			id: 'piston',
 			numericId: 144,
+
 			name: 'Piston',
 			rarity: 'common',
 			description:
@@ -20,37 +21,26 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		return pos.player.board.rows.some((row, rowIndex) => {
-			if (!row || !row.hermitCard) return false
-			if (isRowEmpty(row)) return false
-
-			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
-				(index) => index >= 0 && index < pos.player.board.rows.length
-			)
-
-			const items = row.itemCards
-			// for each row, check adjacent rows for each item card against all empty slots on that row
-			for (const index of adjacentRowsIndex) {
-				const newRow = pos.player.board.rows[index]
-				if (!newRow.hermitCard) return false
-				if (!rowHasEmptyItemSlot(newRow)) return false
-
-				for (const item of items) {
-					if (!item) return false
-
-					for (let i = 0; i < 3; i++) {
-						const targetSlot = getSlotPos(pos.player, index, 'item', i)
-
-						if (canAttachToSlot(game, targetSlot, item)) return false
-
-						// We're good to place
-						return true
-					}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(
+			slot.every(
+				slot.player,
+				slot.itemSlot,
+				slot.rowHasHermit,
+				slot.interactable,
+				slot.not(slot.empty),
+				(game, pos) => {
+					if (!pos.rowIndex || !pos.player.board.activeRow) return false
+					return [pos.rowIndex - 1, pos.rowIndex + 1].some((row) => {
+						const rowState = pos.player.board.rows[row]
+						if (!rowState.hermitCard) return false
+						if (rowHasEmptyItemSlot(rowState)) return true
+					})
 				}
-			}
-		})
-	})
+			)
+		)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -76,10 +66,17 @@ class PistonSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
-			canPick: slot.every(slot.player, slot.itemSlot, slot.empty, (game, pick) => {
-				const firstRowIndex = player.custom[rowIndexKey]
-				return [firstRowIndex - 1, firstRowIndex + 1].includes(pick.rowIndex)
-			}),
+			canPick: slot.every(
+				slot.player,
+				slot.itemSlot,
+				slot.empty,
+				slot.rowHasHermit,
+				slot.interactable,
+				(game, pick) => {
+					const firstRowIndex = player.custom[rowIndexKey]
+					return [firstRowIndex - 1, firstRowIndex + 1].includes(pick.rowIndex)
+				}
+			),
 			onResult(pickResult) {
 				const pickedIndex = pickResult.rowIndex
 				if (pickResult.card || pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -97,9 +94,6 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
 				const itemCard = firstRow.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!)) {
-					return 'FAILURE_INVALID_SLOT'
-				}
 
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]

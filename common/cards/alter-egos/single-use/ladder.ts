@@ -1,8 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getActiveRow, getSlotPos} from '../../../utils/board'
-import {canAttachToSlot, getSlotCard, swapSlots} from '../../../utils/movement'
+import {applySingleUse, getSlotPos} from '../../../utils/board'
+import {getSlotCard, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(

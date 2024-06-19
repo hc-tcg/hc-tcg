@@ -9,6 +9,8 @@ const pickCondition = slot.every(
 	slot.player,
 	slot.effectSlot,
 	slot.empty,
+	slot.interactable,
+	slot.rowHasHermit,
 	slot.not(slot.activeRow)
 )
 
@@ -27,7 +29,10 @@ class MendingSingleUseCard extends singleUseCard {
 
 	public override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFullfills(pickCondition)
+		slot.someSlotFullfills(pickCondition),
+		slot.someSlotFullfills(
+			slot.every(slot.activeRow, slot.effectSlot, slot.interactable, slot.not(slot.empty))
+		)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

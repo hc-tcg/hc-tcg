@@ -12,12 +12,24 @@ import {
 	rowHasEmptyItemSlot,
 	rowHasItem,
 } from '../../../utils/board'
-import {canAttachToSlot, swapSlots} from '../../../utils/movement'
+import {swapSlots} from '../../../utils/movement'
 import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
-const firstPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty), slot.activeRow)
-const secondPickCondition = slot.every(slot.opponent, slot.itemSlot, slot.empty, slot.not(slot.activeRow))
+const firstPickCondition = slot.every(
+	slot.opponent,
+	slot.itemSlot,
+	slot.not(slot.empty),
+	slot.activeRow,
+	slot.interactable
+)
+const secondPickCondition = slot.every(
+	slot.opponent,
+	slot.itemSlot,
+	slot.empty,
+	slot.not(slot.activeRow),
+	slot.interactable
+)
 
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -36,7 +48,7 @@ class LeadSingleUseCard extends SingleUseCard {
 	public override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.someSlotFullfills(firstPickCondition),
-		slot.someSlotFullfills(secondPickCondition),
+		slot.someSlotFullfills(secondPickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -81,10 +93,6 @@ class LeadSingleUseCard extends SingleUseCard {
 				// Make sure we can attach the item
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
-				const itemCard = opponentActivePos.row.itemCards[itemIndex]
-				if (canAttachToSlot(game, targetPos, itemCard!)) {
-					return 'FAILURE_INVALID_SLOT'
-				}
 
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
