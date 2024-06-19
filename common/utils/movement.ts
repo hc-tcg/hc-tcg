@@ -208,7 +208,7 @@ export function swapSlots(
 		if (!cardPos) continue
 
 		const results = cardPos.player.hooks.onSlotInteraction.call(slot)
-		if (results.includes(false)) continue
+		if (results.includes(false)) return false
 
 		const cardInfo = CARDS[card.cardId]
 
