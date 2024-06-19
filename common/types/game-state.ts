@@ -151,8 +151,9 @@ export type PlayerState = {
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		/** Hook called when a card attemps to move or rows are swapped.
-		 * Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to.
+		/** Hook called when a card attempts to attach, detatch, or move a card on the board.
+		 *
+		 * Returns whether or not the slots involved are able to be interacted with.
 		 */
 		onSlotInteraction: GameHook<(slot: SlotPos) => boolean>
 	}
