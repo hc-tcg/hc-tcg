@@ -35,7 +35,7 @@ abstract class ItemCard extends Card {
 		)
 	}
 
-	public override _attachCondition = slot.every(
+	override _attachCondition = slot.every(
 		slot.player,
 		slot.itemSlot,
 		slot.empty,

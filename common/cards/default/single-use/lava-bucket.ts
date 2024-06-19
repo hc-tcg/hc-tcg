@@ -15,7 +15,7 @@ class LavaBucketSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit)
+	override _attachCondition = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true

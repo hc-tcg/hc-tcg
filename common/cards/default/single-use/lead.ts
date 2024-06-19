@@ -34,7 +34,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(
+	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.someSlotFullfills(firstPickCondition),
 		slot.someSlotFullfills(secondPickCondition)
