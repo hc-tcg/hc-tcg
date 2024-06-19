@@ -62,10 +62,9 @@ class GrianRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttach =
-				game.getPickableSlots(
-					slot.every(slot.player, slot.interactable, slot.effectSlot, slot.activeRow, slot.empty)
-				).length > 0
+			const canAttach = game.someSlotFullfills(
+				slot.every(slot.player, slot.interactable, slot.effectSlot, slot.activeRow, slot.empty)
+			)
 
 			game.addModalRequest({
 				playerId: player.id,

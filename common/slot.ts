@@ -169,7 +169,7 @@ export namespace slot {
 	export const someSlotFullfills =
 		(predicate: SlotCondition): SlotCondition =>
 		(game, pos) => {
-			return game.getPickableSlots(predicate).length !== 0
+			return game.someSlotFullfills(predicate)
 		}
 
 	export const interactable: SlotCondition = (game, pos) => {

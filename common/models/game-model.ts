@@ -288,7 +288,7 @@ export class GameModel {
 	}
 
 	/** Gets the pickable slots for the current player */
-	public getPickableSlots(check: SlotCondition) {
+	public getPickableSlots(predicate: SlotCondition) {
 		let pickableSlots: Array<SlotDisplayPosition> = []
 
 		for (const player of Object.values(this.state.players)) {
@@ -300,7 +300,7 @@ export class GameModel {
 					index: number,
 					cardInstance: CardT | null
 				) => {
-					const canBeAttached = check(this, {
+					const canBeAttached = predicate(this, {
 						player: player,
 						opponentPlayer: Object.values(this.state.players).filter(
 							(opponent) => opponent.id !== player.id
@@ -329,7 +329,7 @@ export class GameModel {
 		}
 
 		if (
-			check(this, {
+			predicate(this, {
 				player: this.currentPlayer,
 				opponentPlayer: this.opponentPlayer,
 				type: 'single_use',
@@ -345,5 +345,9 @@ export class GameModel {
 		}
 
 		return pickableSlots
+	}
+
+	public someSlotFullfills(predicate: SlotCondition) {
+		return this.getPickableSlots(predicate).length !== 0
 	}
 }
