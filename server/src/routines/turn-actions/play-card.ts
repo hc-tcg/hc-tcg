@@ -52,11 +52,7 @@ function* playCardSaga(
 	const opponentPlayer = game.state.players[opponentPlayerId]
 
 	// Do we meet requirements to place the card
-	const canAttach = callSlotConditionWithPickInfo(
-		cardInfo.attachCondition,
-		game,
-		pickInfo
-	)
+	const canAttach = callSlotConditionWithPickInfo(cardInfo.attachCondition, game, pickInfo)
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'

@@ -2,6 +2,7 @@ import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
 import {CardT, PlayerState, RowState} from './types/game-state'
 import {PickInfo, PickedSlotType, SlotInfo} from './types/server-requests'
+import {getSlotPos} from './utils/board'
 
 export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
 
@@ -12,6 +13,17 @@ export type SlotConditionInfo = {
 	rowIndex: number | null
 	row: RowState | null
 	card: CardT | null
+}
+
+export function getSlotConditionInfo(game: GameModel, cardPos: CardPosModel): SlotConditionInfo {
+	return {
+		player: cardPos.player,
+		opponentPlayer: cardPos.opponentPlayer,
+		type: cardPos.slot.type,
+		rowIndex: cardPos.rowIndex,
+		row: cardPos.row,
+		card: getCardAtPos(game, cardPos),
+	}
 }
 
 export function callSlotConditionWithCardPosModel(
@@ -159,4 +171,13 @@ export namespace slot {
 		(game, pos) => {
 			return game.getPickableSlots(predicate).length !== 0
 		}
+
+	export const interactable: SlotCondition = (game, pos) => {
+		if (pos.type === 'single_use' || pos.type === 'hand') return true
+		if (!pos.rowIndex || !pos.type) return false
+		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.type)
+		return game.currentPlayer.hooks.onSlotInteraction
+			.call(slotPos)
+			.every((result) => result === true)
+	}
 }

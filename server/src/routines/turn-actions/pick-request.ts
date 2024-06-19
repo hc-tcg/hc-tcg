@@ -4,7 +4,6 @@ import {PickInfo} from 'common/types/server-requests'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
-import {getCardPos} from 'common/models/card-pos-model'
 import {callSlotConditionWithPickInfo} from 'common/slot'
 
 function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {

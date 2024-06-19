@@ -39,6 +39,7 @@ abstract class ItemCard extends Card {
 		slot.player,
 		slot.itemSlot,
 		slot.empty,
+		slot.interactable,
 		slot.rowHasHermit,
 		(game, pos) => game.state.turn.availableActions.includes('PLAY_ITEM_CARD')
 	)

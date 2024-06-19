@@ -43,7 +43,7 @@ class ArmorStandEffectCard extends EffectCard {
 		})
 
 		player.hooks.onSlotInteraction.add(instance, (slot) => {
-			if (slot.rowIndex === pos.rowIndex && slot.slot.type !== 'hermit') return false
+			if (slot.rowIndex === pos.rowIndex) return false
 			return true
 		})
 
