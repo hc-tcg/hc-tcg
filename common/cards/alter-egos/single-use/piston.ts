@@ -50,13 +50,13 @@ class PistonSingleUseCard extends SingleUseCard {
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 				// Store the row and index of the chosen item
 				player.custom[rowIndexKey] = pickResult.rowIndex
 				player.custom[itemIndexKey] = pickResult.slot.index
 
-				return 'SUCCESS'
+				return
 			},
 		})
 		game.addPickRequest({
@@ -76,13 +76,13 @@ class PistonSingleUseCard extends SingleUseCard {
 			),
 			onResult(pickResult) {
 				const pickedIndex = pickResult.rowIndex
-				if (pickResult.card || pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || pickedIndex === undefined) return
 
 				const pickedRow = player.board.rows[pickedIndex]
 				const firstRowIndex = player.custom[rowIndexKey]
-				if (!pickedRow) return 'FAILURE_INVALID_SLOT'
+				if (!pickedRow) return
 				const firstRow = player.board.rows[firstRowIndex]
-				if (!firstRow) return 'FAILURE_INVALID_SLOT'
+				if (!firstRow) return
 
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
@@ -103,7 +103,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 
-				return 'SUCCESS'
+				return
 			},
 			onCancel() {
 				delete player.custom[rowIndexKey]

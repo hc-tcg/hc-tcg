@@ -94,13 +94,13 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.activeRow)),
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex === undefined) return
+					if (rowIndex === player.board.activeRow) return
 					const pickedCard = pickResult.card
-					if (!pickedCard) return 'FAILURE_INVALID_SLOT'
+					if (!pickedCard) return
 
 					// No picking the same card as us
-					if (pickedCard.cardId === this.id) return 'FAILURE_WRONG_PICK'
+					if (pickedCard.cardId === this.id) return
 
 					game.addModalRequest({
 						playerId: player.id,
@@ -141,7 +141,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 						},
 					})
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick someone so do nothing

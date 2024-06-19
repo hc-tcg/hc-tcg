@@ -54,11 +54,11 @@ class Smajor1995RareHermitCard extends HermitCard {
 				),
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					applyStatusEffect(game, 'dyed', pickResult.card.cardInstance)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

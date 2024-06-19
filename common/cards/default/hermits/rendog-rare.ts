@@ -99,7 +99,7 @@ class RendogRareHermitCard extends HermitCard {
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
 				onResult(pickResult) {
-					if (!pickResult.card) return 'FAILURE_INVALID_DATA'
+					if (!pickResult.card) return
 					let pickedCard = pickResult.card
 
 					game.addModalRequest({
@@ -161,7 +161,7 @@ class RendogRareHermitCard extends HermitCard {
 						},
 					})
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick someone to imitate so do nothing

@@ -58,13 +58,13 @@ class KeralisRareHermitCard extends HermitCard {
 				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 					// Store the info to use later
 					player.custom[playerKey] = pickResult.playerId
 					player.custom[rowKey] = rowIndex
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one

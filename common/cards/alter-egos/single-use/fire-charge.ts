@@ -44,13 +44,13 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			canPick: pickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card) return
 
 				// Discard the picked card and apply su card
 				discardCard(game, pickResult.card)
 				applySingleUse(game, pickResult)
 
-				return 'SUCCESS'
+				return
 			},
 		})
 

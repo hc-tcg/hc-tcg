@@ -35,13 +35,13 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
-				if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || rowIndex === undefined) return
 
 				const row = player.board.rows[rowIndex]
-				if (!row.health) return 'FAILURE_INVALID_SLOT'
+				if (!row.health) return
 
 				const hermitInfo = HERMIT_CARDS[pickResult.card.cardId]
-				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
+				if (!hermitInfo) return
 
 				// Apply
 				applySingleUse(game, pickResult)
@@ -49,7 +49,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 30, maxHealth)
 
-				return 'SUCCESS'
+				return
 			},
 		})
 	}

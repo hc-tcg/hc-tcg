@@ -50,7 +50,7 @@ class MilkBucketEffectCard extends EffectCard {
 
 					applySingleUse(game, pickResult)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		} else if (pos.slot.type === 'effect') {

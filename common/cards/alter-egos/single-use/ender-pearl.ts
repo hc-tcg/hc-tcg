@@ -40,10 +40,10 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				// We need to have no card there
-				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || rowIndex === undefined) return
 
 				const activeRow = getActiveRowPos(player)
-				if (player.board.activeRow === null || !activeRow) return 'FAILURE_INVALID_DATA'
+				if (player.board.activeRow === null || !activeRow) return
 
 				const logInfo = pickResult
 				logInfo.card = activeRow.row.hermitCard
@@ -64,7 +64,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				}).addDamage(this.id, 10)
 				executeAttacks(game, [attack], true)
 
-				return 'SUCCESS'
+				return
 			},
 		})
 	}

@@ -41,11 +41,11 @@ class BrewingStandEffectCard extends EffectCard {
 					(game, pick) => pick.rowIndex === pos.rowIndex
 				),
 				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 					const playerRow = player.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'SUCCESS'
+					if (!hermitCard || !playerRow.health) return
 					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
 					if (hermitInfo) {
 						const maxHealth = Math.max(playerRow.health, hermitInfo.health)
@@ -56,7 +56,7 @@ class BrewingStandEffectCard extends EffectCard {
 					}
 					discardCard(game, pickResult.card)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

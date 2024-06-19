@@ -56,15 +56,15 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 				canPick: slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
-					if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+					if (!row.hermitCard) return
 
 					// Apply the card
 					discardCard(game, pickResult.card)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

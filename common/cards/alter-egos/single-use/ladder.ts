@@ -47,14 +47,14 @@ class LadderSingleUseCard extends SingleUseCard {
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			canPick: pickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || pickResult.rowIndex === undefined) return
 				const activeRowIndex = player.board.activeRow
-				if (activeRowIndex === null) return 'FAILURE_INVALID_DATA'
+				if (activeRowIndex === null) return
 
 				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
 				const inactivePos = getSlotPos(player, pickResult.rowIndex, 'hermit')
 				const card = getSlotCard(activePos)
-				if (!card) return 'FAILURE_INVALID_DATA'
+				if (!card) return
 
 				// Apply
 				applySingleUse(game)
@@ -64,7 +64,7 @@ class LadderSingleUseCard extends SingleUseCard {
 
 				game.changeActiveRow(player, pickResult.rowIndex)
 
-				return 'SUCCESS'
+				return
 			},
 		})
 	}

@@ -46,11 +46,11 @@ class KnockbackSingleUseCard extends SingleUseCard {
 					message: 'Choose a new active Hermit from your AFK Hermits',
 					canPick: pickCondition,
 					onResult(pickResult) {
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (pickResult.rowIndex === undefined) return
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
-						return 'SUCCESS'
+						return
 					},
 					onTimeout() {
 						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)

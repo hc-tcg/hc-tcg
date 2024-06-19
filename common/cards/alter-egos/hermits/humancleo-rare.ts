@@ -103,14 +103,14 @@ class HumanCleoRareHermitCard extends HermitCard {
 					),
 					onResult(pickResult) {
 						const rowIndex = pickResult.rowIndex
-						if (!pickResult.card || !rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+						if (!pickResult.card || !rowIndex === undefined) return
 
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Save the target index for opponent to attack
 						player.custom[opponentTargetKey] = rowIndex
 
-						return 'SUCCESS'
+						return
 					},
 					onTimeout() {
 						// Remove the hook straight away

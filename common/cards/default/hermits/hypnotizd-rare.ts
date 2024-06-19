@@ -88,10 +88,10 @@ class HypnotizdRareHermitCard extends HermitCard {
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return
 
 					const itemCard = ITEM_CARDS[pickResult.card.cardId]
-					if (!itemCard) return 'FAILURE_INVALID_SLOT'
+					if (!itemCard) return
 
 					discardCard(game, pickResult.card)
 
@@ -130,7 +130,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 						game.addPickRequest(itemRequest)
 					}
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't choose anyone so we will just attack as normal

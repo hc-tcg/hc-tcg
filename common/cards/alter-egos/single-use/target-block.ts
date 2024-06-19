@@ -40,10 +40,10 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			canPick: pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
-				if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || rowIndex === undefined) return
 
 				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+				if (!row.hermitCard) return
 
 				// Apply the card
 				applySingleUse(game, pickResult)
@@ -59,7 +59,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 					})
 				})
 
-				return 'SUCCESS'
+				return
 			},
 		})
 

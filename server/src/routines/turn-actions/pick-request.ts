@@ -27,30 +27,28 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 		return 'FAILURE_INVALID_SLOT'
 	}
 
-	const result = pickRequest.onResult(pickResult)
+	pickRequest.onResult(pickResult)
 	game.state.players[game.currentPlayer.id].pickableSlots = null
 
-	if (result === 'SUCCESS') {
-		// We completed this pick request, remove it
-		game.state.pickRequests.shift()
+	// We completed this pick request, remove it
+	game.state.pickRequests.shift()
 
-		if (!game.hasActiveRequests() && game.state.turn.currentAttack) {
-			// There are no active requests left, and we're in the middle of an attack. Execute it now.
-			const turnAction: AttackActionData = {
-				type: attackToAttackAction[game.state.turn.currentAttack],
-				payload: {
-					playerId: game.currentPlayerId,
-				},
-			}
-			const attackResult = yield* call(attackSaga, game, turnAction, false)
-
-			game.state.turn.currentAttack = null
-
-			return attackResult
+	if (!game.hasActiveRequests() && game.state.turn.currentAttack) {
+		// There are no active requests left, and we're in the middle of an attack. Execute it now.
+		const turnAction: AttackActionData = {
+			type: attackToAttackAction[game.state.turn.currentAttack],
+			payload: {
+				playerId: game.currentPlayerId,
+			},
 		}
+		const attackResult = yield* call(attackSaga, game, turnAction, false)
+
+		game.state.turn.currentAttack = null
+
+		return attackResult
 	}
 
-	return result
+	return 'SUCCESS'
 }
 
 export default pickRequestSaga

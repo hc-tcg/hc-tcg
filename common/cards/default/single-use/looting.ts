@@ -49,15 +49,15 @@ class LootingSingleUseCard extends SingleUseCard {
 				canPick: pickCondition,
 				onResult(pickResult) {
 					if (pickResult.rowIndex === undefined || pickResult.card === null) {
-						return 'FAILURE_INVALID_SLOT'
+						return
 					}
 
 					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'FAILURE_INVALID_SLOT'
+					if (!hermitCard || !playerRow.health) return
 					moveCardToHand(game, pickResult.card, player)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

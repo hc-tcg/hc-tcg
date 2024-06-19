@@ -69,20 +69,20 @@ class PharaohRareHermitCard extends HermitCard {
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					// Make sure it's an actual hermit card
 					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+					if (!hermitCard) return
 
 					//Cannot heal other pharaohs
-					if (hermitCard.id === 'pharaoh_rare') return 'FAILURE_INVALID_SLOT'
+					if (hermitCard.id === 'pharaoh_rare') return
 
 					// Store the info to use later
 					player.custom[playerKey] = pickResult.playerId
 					player.custom[rowKey] = rowIndex
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one

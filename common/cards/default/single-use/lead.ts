@@ -50,12 +50,12 @@ class LeadSingleUseCard extends SingleUseCard {
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: firstPickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 				// Store the index of the chosen item
 				player.custom[itemIndexKey] = pickResult.slot.index
 
-				return 'SUCCESS'
+				return
 			},
 		})
 		game.addPickRequest({
@@ -65,7 +65,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			canPick: secondPickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
-				if (pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+				if (pickResult.card || rowIndex === undefined) return
 
 				// Get the index of the chosen item
 				const itemIndex: number | undefined = player.custom[itemIndexKey]
@@ -76,7 +76,7 @@ class LeadSingleUseCard extends SingleUseCard {
 					// Something went wrong, just return success
 					// To clarify, the problem here is that if itemIndex is null this pick request will never be able to succeed if we don't do this
 					// @TODO is a better failsafe mechanism needed for 2 picks in a row?
-					return 'SUCCESS'
+					return
 				}
 
 				// Make sure we can attach the item
@@ -93,7 +93,7 @@ class LeadSingleUseCard extends SingleUseCard {
 
 				delete player.custom[itemIndexKey]
 
-				return 'SUCCESS'
+				return
 			},
 		})
 	}

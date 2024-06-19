@@ -52,13 +52,13 @@ class DungeonTangoRareHermitCard extends HermitCard {
 				message: 'Choose an item card to discard',
 				canPick: slot.every(slot.player, slot.itemSlot, slot.activeRow, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card) return
 
 					discardCard(game, pickResult.card)
 
 					player.hand.push(player.pile.splice(i, 1)[0])
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

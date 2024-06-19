@@ -68,11 +68,11 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				),
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					applyStatusEffect(game, 'protected', pickResult.card.cardInstance)
 
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

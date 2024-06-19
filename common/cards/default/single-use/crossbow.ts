@@ -36,10 +36,10 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				message: "Pick {?} of your opponent's Hermits",
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					// If we already picked the row
-					if (player.custom[targetsKey].includes(rowIndex)) return 'FAILURE_WRONG_PICK'
+					if (player.custom[targetsKey].includes(rowIndex)) return
 
 					// Add the row to the chosen list
 					player.custom[targetsKey].push(rowIndex)
@@ -52,7 +52,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 						delete player.custom[remainingKey]
 					}
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

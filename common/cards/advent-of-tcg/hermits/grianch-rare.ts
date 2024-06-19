@@ -66,15 +66,15 @@ class GrianchRareHermitCard extends HermitCard {
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || rowIndex === undefined) return
 
 					// Make sure it's an actual hermit card
 					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+					if (!hermitCard) return
 					const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
 					const hermitHealth = pickedPlayer.board.rows[rowIndex].health
 
-					if (!hermitHealth || !hermitId) return 'FAILURE_INVALID_SLOT'
+					if (!hermitHealth || !hermitId) return
 					const hermitInfo = HERMIT_CARDS[hermitId]
 					if (hermitInfo) {
 						// Heal
@@ -86,7 +86,7 @@ class GrianchRareHermitCard extends HermitCard {
 						// Armor Stand
 						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
 					}
-					return 'SUCCESS'
+					return
 				},
 			})
 		})

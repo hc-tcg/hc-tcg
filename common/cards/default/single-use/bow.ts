@@ -37,11 +37,11 @@ class BowSingleUseCard extends SingleUseCard {
 				canPick: pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (rowIndex === undefined) return
 
 					player.custom[targetKey] = rowIndex
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

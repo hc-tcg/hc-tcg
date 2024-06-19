@@ -50,7 +50,7 @@ class JinglerRareHermitCard extends HermitCard {
 				onResult(pickResult) {
 					discardFromHand(opponentPlayer, pickResult.card)
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// Discard the first card in the opponent's hand

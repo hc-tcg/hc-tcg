@@ -43,12 +43,12 @@ class EggSingleUseCard extends SingleUseCard {
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: pickCondition,
 				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
+					if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 					// Store the row index to use later
 					player.custom[targetKey] = pickResult
 
-					return 'SUCCESS'
+					return
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

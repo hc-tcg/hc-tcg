@@ -87,18 +87,18 @@ class IskallmanRareHermitCard extends HermitCard {
 						message: 'Pick an AFK Hermit from either side of the board',
 						canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 						onResult(pickResult) {
-							if (!pickResult.card) return 'FAILURE_INVALID_DATA'
-							if (!pickResult.rowIndex) return 'FAILURE_INVALID_DATA'
+							if (!pickResult.card) return
+							if (!pickResult.rowIndex) return
 
 							// Make sure it's an actual hermit card
 							const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-							if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+							if (!hermitCard) return
 
 							// Store the info to use later
 							player.custom[playerKey] = pickResult.playerId
 							player.custom[rowKey] = pickResult.rowIndex
 
-							return 'SUCCESS'
+							return
 						},
 						onTimeout() {
 							// We didn't pick anyone to heal, so heal no one
