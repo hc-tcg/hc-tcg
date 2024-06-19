@@ -3,12 +3,15 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
 import {canAttachToSlot, discardSingleUse, getSlotCard, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import singleUseCard from '../../base/single-use-card'
 
-const pickCondition = slot.every(slot.opponent, slot.effectSlot, slot.empty, slot.not(slot.activeRow))
+const pickCondition = slot.every(
+	slot.opponent,
+	slot.effectSlot,
+	slot.empty,
+	slot.not(slot.activeRow)
+)
 
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
@@ -23,7 +26,10 @@ class MendingSingleUseCard extends singleUseCard {
 		})
 	}
 
-	public override _attachCondition = slot.every(super.attachCondition, slot.someSlotFullfills(pickCondition))
+	public override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFullfills(pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos

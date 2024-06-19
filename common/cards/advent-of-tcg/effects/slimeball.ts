@@ -22,9 +22,9 @@ class SlimeballEffectCard extends EffectCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onSlotChange.add(instance, (slot) => {
+		player.hooks.onSlotInteraction.add(instance, (slot) => {
 			if (!isSlotEmpty(slot) && slot.rowIndex === pos.rowIndex) {
-				pos.player.hooks.onSlotChange.remove(instance)
+				pos.player.hooks.onSlotInteraction.remove(instance)
 				discardCard(game, pos.card)
 				return false
 			}
@@ -33,7 +33,7 @@ class SlimeballEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.onSlotChange.remove(instance)
+		pos.player.hooks.onSlotInteraction.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
 	}
 

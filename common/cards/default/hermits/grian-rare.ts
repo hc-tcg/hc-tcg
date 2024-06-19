@@ -54,7 +54,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (rowIndex === null || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
+			if (!opponentEffectCard || !isRemovable(game, opponentEffectCard)) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 

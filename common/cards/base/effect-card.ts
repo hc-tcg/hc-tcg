@@ -48,16 +48,6 @@ abstract class EffectCard extends Card {
 		return true
 	}
 
-	// @TODO replace with canDetach hook, need a standardized way to attach and detach things
-	// All cards that check for canAttach now eventually need to check canDetach too.
-	/**
-	 * Returns whether this card is removable from its position
-	 */
-	public getIsRemovable(): boolean {
-		// default
-		return true
-	}
-
 	public override getFormattedDescription(): FormattedTextNode {
 		return formatText(`*${this.description}*`)
 	}

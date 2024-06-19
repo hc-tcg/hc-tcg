@@ -37,13 +37,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 		if (playerEffect) {
 			const canAttach = canAttachToSlot(game, opponentEffectSlot, playerEffect)
 			if (canAttach) return false
-			if (!isRemovable(playerEffect)) return false
+			if (!isRemovable(game, playerEffect)) return false
 		}
 
 		if (opponentEffect) {
 			const canAttach = canAttachToSlot(game, playerEffectSlot, opponentEffect)
 			if (canAttach) return false
-			if (!isRemovable(opponentEffect)) return false
+			if (!isRemovable(game, opponentEffect)) return false
 		}
 
 		return true

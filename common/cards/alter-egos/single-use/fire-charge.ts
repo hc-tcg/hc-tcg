@@ -24,7 +24,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(super.attachCondition, (game, pos) =>
 		pos.player.board.rows.some((row) => {
 			if (row.itemCards.some((i) => i !== null)) return true
-			if (row.effectCard && isRemovable(row.effectCard)) return true
+			if (row.effectCard && isRemovable(game, row.effectCard)) return true
 		})
 	)
 
@@ -40,7 +40,10 @@ class FireChargeSingleUseCard extends SingleUseCard {
 				slot.not(slot.empty),
 				slot.some(
 					slot.itemSlot,
-					slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isRemovable(pick.card))
+					slot.every(
+						slot.effectSlot,
+						(game, pick) => pick.card !== null && !isRemovable(game, pick.card)
+					)
 				)
 			),
 			onResult(pickResult) {

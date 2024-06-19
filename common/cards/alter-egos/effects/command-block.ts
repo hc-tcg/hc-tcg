@@ -31,15 +31,17 @@ class CommandBlockEffectCard extends EffectCard {
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')
 		})
+
+		player.hooks.onSlotInteraction.add(instance, (slot) => {
+			if (slot.rowIndex === pos.rowIndex && slot.slot.type !== 'effect') return false
+			return true
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.availableEnergy.remove(instance)
-	}
-
-	override getIsRemovable() {
-		return false
+		player.hooks.onSlotInteraction.remove(instance)
 	}
 
 	override getExpansion() {

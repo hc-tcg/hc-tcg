@@ -40,7 +40,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 
 			if (opponentPlayer.board.activeRow === null) return 'NO'
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return
+			if (!opponentActiveRow.effectCard || !isRemovable(game, opponentActiveRow.effectCard)) return
 
 			// Can't discard two items on the same hermit
 			const limit = player.custom[this.getInstanceKey(instance)] || {}

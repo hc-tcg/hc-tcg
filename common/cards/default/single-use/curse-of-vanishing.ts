@@ -1,6 +1,5 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
 import {isRemovable} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -22,7 +21,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			if (opponentPlayer.board.activeRow === null) return
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
+			if (opponentActiveRow.effectCard && isRemovable(game, opponentActiveRow.effectCard)) {
 				discardCard(game, opponentActiveRow.effectCard)
 			}
 		})

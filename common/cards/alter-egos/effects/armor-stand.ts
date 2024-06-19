@@ -42,6 +42,11 @@ class ArmorStandEffectCard extends EffectCard {
 			return blockedActions
 		})
 
+		player.hooks.onSlotInteraction.add(instance, (slot) => {
+			if (slot.rowIndex === pos.rowIndex && slot.slot.type !== 'hermit') return false
+			return true
+		})
+
 		player.hooks.afterAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
 			if (!row.health && attacker && isTargetingPos(attack, pos)) {
@@ -87,6 +92,7 @@ class ArmorStandEffectCard extends EffectCard {
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
+		player.hooks.onSlotInteraction.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

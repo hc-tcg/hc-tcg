@@ -34,7 +34,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 
 			for (const index of targetIndex) {
 				const effectCard = rows[index].effectCard
-				if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
+				if (effectCard && isRemovable(game, effectCard)) discardCard(game, effectCard)
 			}
 		})
 	}

@@ -47,7 +47,7 @@ export function discardCard(
 	if (pos.row && pos.rowIndex && pos.slot.type !== 'single_use') {
 		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.slot.type, pos.slot.index)
 
-		const results = pos.player.hooks.onSlotChange.call(slotPos)
+		const results = pos.player.hooks.onSlotInteraction.call(slotPos)
 		if (results.includes(false)) return
 	}
 
@@ -207,7 +207,7 @@ export function canAttachToSlot(game: GameModel, slotPos: SlotPos, card: CardT):
 }
 
 /**
- * Swaps the positions of two cards on the board. Returns whether or not the swap was successful. 
+ * Swaps the positions of two cards on the board. Returns whether or not the swap was successful.
  * This function does not check whether the cards can be placed in the other card's slot.
  */
 export function swapSlots(
@@ -236,8 +236,8 @@ export function swapSlots(
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
 
-		const results = cardPos.player.hooks.onSlotChange.call(slot)
-		if (results.includes(false)) return false
+		const results = cardPos.player.hooks.onSlotInteraction.call(slot)
+		if (results.includes(false)) continue
 
 		const cardInfo = CARDS[card.cardId]
 

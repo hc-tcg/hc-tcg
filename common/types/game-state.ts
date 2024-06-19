@@ -151,9 +151,10 @@ export type PlayerState = {
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		// @TODO replace with canDetach, we already have canAttach
-		/** Hook called when a card attemps to move or rows are swapped. Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to. */
-		onSlotChange: GameHook<(slot: SlotPos) => boolean>
+		/** Hook called when a card attemps to move or rows are swapped.
+		 * Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to.
+		 */
+		onSlotInteraction: GameHook<(slot: SlotPos) => boolean>
 	}
 }
 

@@ -274,7 +274,7 @@ export class GameModel {
 	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
 		const oldSlotPos = getSlotPos(player, oldRow, 'hermit')
 
-		const results = player.hooks.onSlotChange.call(oldSlotPos)
+		const results = player.hooks.onSlotInteraction.call(oldSlotPos)
 		if (results.includes(false)) return false
 
 		const activeRowChanged = this.changeActiveRow(player, newRow)

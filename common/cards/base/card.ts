@@ -32,14 +32,6 @@ abstract class Card {
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	private log: Array<(values: PlayCardLog) => string>
 
-	/**
-	 * A combinator expression that returns if the card can be attached to a specified slot.
-	 */
-	protected _attachCondition: SlotCondition
-	public get attachCondition(): SlotCondition {
-		return this._attachCondition
-	}
-
 	constructor(defs: CardDefs) {
 		this.type = defs.type
 		this.id = defs.id
@@ -56,6 +48,14 @@ abstract class Card {
 	}
 	public getInstanceKey(instance: string, keyName: string = '') {
 		return this.id + ':' + instance + ':' + keyName
+	}
+
+	/**
+	 * A combinator expression that returns if the card can be attached to a specified slot.
+	 */
+	protected _attachCondition: SlotCondition
+	public get attachCondition(): SlotCondition {
+		return this._attachCondition
 	}
 
 	/**
