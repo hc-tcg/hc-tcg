@@ -33,7 +33,7 @@ class CommandBlockEffectCard extends EffectCard {
 		})
 
 		player.hooks.onSlotInteraction.add(instance, (slot) => {
-			if (slot.rowIndex === pos.rowIndex && slot.slot.type !== 'effect') return false
+			if (slot.rowIndex === pos.rowIndex && slot.slot.type === 'effect') return false
 			return true
 		})
 	}
