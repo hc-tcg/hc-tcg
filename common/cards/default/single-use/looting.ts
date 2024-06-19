@@ -1,10 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {getActiveRow, isRowEmpty} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardToHand} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 const pickCondition = slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty))

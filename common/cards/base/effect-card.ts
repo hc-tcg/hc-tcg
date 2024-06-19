@@ -1,11 +1,7 @@
-import Card, {CanAttachResult} from './card'
-import {CARDS} from '..'
-import {GameModel} from '../../models/game-model'
+import Card from './card'
 import {PlayCardLog, CardRarityT} from '../../types/cards'
-import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {SlotCondition, slot} from '../../slot'
+import {slot} from '../../slot'
 
 type EffectDefs = {
 	id: string

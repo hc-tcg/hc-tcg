@@ -1,10 +1,7 @@
 import {PlayCardLog, CardRarityT} from '../../types/cards'
-import Card, {CanAttachResult} from './card'
-import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
+import Card from './card'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {SlotCondition, slot} from '../../slot'
+import {slot} from '../../slot'
 
 export type SingleUseDefs = {
 	id: string

@@ -1,12 +1,10 @@
-import {CanAttachResult} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {CardPosModel} from '../models/card-pos-model'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT, Slot, SlotPos} from './cards'
+import {EnergyT, SlotPos} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickRequest, PickInfo, SlotInfo, SlotDisplayPosition} from './server-requests'
+import {ModalRequest, PickRequest, SlotDisplayPosition} from './server-requests'
 
 export type PlayerId = string
 

@@ -1,11 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {TurnActions} from '../../../types/game-state'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
-import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
 import {slot} from '../../../slot'
 
 class WaterBucketEffectCard extends EffectCard {

@@ -1,10 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRow} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
 import {slot} from '../../../slot'
 
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {

@@ -1,12 +1,8 @@
 import EffectCard from '../../base/effect-card'
-import {isTargetingPos} from '../../../utils/attacks'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
-import {TurnActions} from '../../../types/game-state'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
-import {hasActive} from '../../../utils/game'
 import {slot} from '../../../slot'
 
 class BerryBushEffectCard extends EffectCard {

@@ -1,18 +1,10 @@
 import {GameModel} from '../models/game-model'
-import {CardT, GameState, PlayerState, RowState} from '../types/game-state'
+import {CardT, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
-import {BasicCardPos, CardPosModel, getCardPos} from '../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
-import {SlotPos, SlotTypeT} from '../types/cards'
+import {SlotPos} from '../types/cards'
 import {getSlotPos} from './board'
-import {CanAttachResult} from '../cards/base/card'
-import {
-	callSlotConditionWithCardPosModel,
-	callSlotConditionWithPickInfo,
-	slot,
-	SlotConditionInfo,
-} from '../slot'
-import {PickInfo} from '../types/server-requests'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
