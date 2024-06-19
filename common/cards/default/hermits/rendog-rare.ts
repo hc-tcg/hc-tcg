@@ -31,6 +31,13 @@ class RendogRareHermitCard extends HermitCard {
 		})
 	}
 
+	private pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.not(slot.has(this.id))
+	)
+
 	override getAttack(
 		game: GameModel,
 		instance: string,
@@ -90,12 +97,7 @@ class RendogRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
-				canPick: slot.every(
-					slot.opponent,
-					slot.hermitSlot,
-					slot.not(slot.empty),
-					slot.not(slot.has(this.id))
-				),
+				canPick: this.pickCondition,
 				onResult(pickResult) {
 					if (!pickResult.card) return 'FAILURE_INVALID_DATA'
 					let pickedCard = pickResult.card
@@ -183,18 +185,7 @@ class RendogRareHermitCard extends HermitCard {
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			const opposingHermits = getNonEmptyRows(opponentPlayer, false).filter((rowPos) => {
-				const hermitId = rowPos.row.hermitCard.cardId
-				return HERMIT_CARDS[hermitId] && hermitId !== this.id
-			}).length
-			if (
-				player.board.activeRow === pos.rowIndex &&
-				opposingHermits <= 0 &&
-				!blockedActions.includes('SECONDARY_ATTACK')
-			) {
-				blockedActions.push('SECONDARY_ATTACK')
-			}
-
+			if (!game.someSlotFullfills(this.pickCondition)) blockedActions.push('SECONDARY_ATTACK')
 			return blockedActions
 		})
 	}
