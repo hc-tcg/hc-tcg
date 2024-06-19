@@ -164,7 +164,7 @@ function Game() {
 
 	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
-		if (gameState.turn.turnNumber == 1 || gameState.turn.currentPlayerId === gameState.playerId) {
+		if (gameState.turn.turnNumber === 1 || gameState.turn.currentPlayerId === gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.turn.currentPlayerId])
