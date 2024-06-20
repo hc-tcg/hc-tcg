@@ -1,7 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getSlotPos, rowHasEmptyItemSlot} from '../../../utils/board'
+import {applySingleUse, getSlotPos} from '../../../utils/board'
+import {isLocked} from '../../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -32,7 +33,9 @@ class PistonSingleUseCard extends SingleUseCard {
 					return [pos.rowIndex - 1, pos.rowIndex + 1].some((row) => {
 						const rowState = pos.player.board.rows[row]
 						if (!rowState.hermitCard) return false
-						if (rowHasEmptyItemSlot(rowState)) return true
+						if (isLocked(game, rowState.hermitCard)) return false
+						if (rowState.itemCards.filter((card) => card !== null).length === 3) return false
+						return true
 					})
 				}
 			)

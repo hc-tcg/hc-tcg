@@ -1,6 +1,5 @@
 import {GameModel} from '../models/game-model'
 import {SlotCondition} from '../slot'
-import {rowHasItem} from '../utils/board'
 import {SlotPos, SlotTypeT} from './cards'
 import {ActionResult, CardT, ModalData} from './game-state'
 

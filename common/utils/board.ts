@@ -60,33 +60,6 @@ export function getSlotPos(
 	}
 }
 
-export function rowHasItem(row: RowState | null): boolean {
-	if (!row) return false
-	const itemCards = row.itemCards
-	let total = 0
-	for (const itemCard of itemCards) {
-		if (!itemCard) continue
-		const cardInfo = ITEM_CARDS[itemCard.cardId]
-		// String
-		if (!cardInfo) continue
-		total += 1
-	}
-
-	return total > 0
-}
-
-export function rowHasEmptyItemSlot(row: RowStateWithHermit): boolean {
-	return row.itemCards.filter((card) => !card).length > 0
-}
-
-export function isRowFull(row: RowStateWithHermit): boolean {
-	return row.itemCards.filter((card) => !!card).length === 3
-}
-
-export function isRowEmpty(row: RowStateWithHermit): boolean {
-	return row.itemCards.filter((card) => !!card).length === 0
-}
-
 // @NOTE - ignoreNegativeHealth should be true when being used in afterAttack,
 // as health may be below 0 but hermits will not have been removed from the board yet
 export function getNonEmptyRows(
@@ -103,21 +76,6 @@ export function getNonEmptyRows(
 		if (row.hermitCard) rows.push({player: playerState, rowIndex: i, row})
 	}
 	return rows
-}
-
-export function getRowsWithEmptyItemsSlots(
-	playerState: PlayerState,
-	ignoreActive: boolean = false
-): RowStateWithHermit[] {
-	const result: Array<RowStateWithHermit> = []
-	const activeRow = playerState.board.activeRow
-	const rows = playerState.board.rows
-	for (let i = 0; i < rows.length; i++) {
-		const row = rows[i]
-		if (i === activeRow && ignoreActive) continue
-		if (row.hermitCard && !isRowFull(row)) result.push(row)
-	}
-	return result
 }
 
 export function getAdjacentRows(playerState: PlayerState): Array<RowStateWithHermit[]> {
