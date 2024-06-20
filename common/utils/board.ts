@@ -31,17 +31,6 @@ export function getActiveRowPos(player: PlayerState): RowPos | null {
 		row,
 	}
 }
-export function getRowPos(cardPos: CardPosModel): RowPos | null {
-	const rowIndex = cardPos.rowIndex
-	if (rowIndex === null) return null
-	const row = cardPos.row
-	if (!row?.hermitCard) return null
-	return {
-		player: cardPos.player,
-		rowIndex,
-		row,
-	}
-}
 
 export function getSlotPos(
 	player: PlayerState,
@@ -76,23 +65,6 @@ export function getNonEmptyRows(
 		if (row.hermitCard) rows.push({player: playerState, rowIndex: i, row})
 	}
 	return rows
-}
-
-export function getAdjacentRows(playerState: PlayerState): Array<RowStateWithHermit[]> {
-	const result: Array<RowStateWithHermit[]> = []
-	const rows = playerState.board.rows
-	for (let i = 1; i < rows.length + 1; i++) {
-		const row = rows[i]
-		const prevRow = rows[i - 1]
-		if (row && prevRow && row.hermitCard && prevRow.hermitCard) result.push([prevRow, row])
-	}
-	return result
-}
-
-export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boolean = false) {
-	const suCard = playerState.board.singleUseCard
-	const suUsed = playerState.board.singleUseCardUsed
-	return suCard?.cardId === id && suUsed === isUsed
 }
 
 export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericActionResult {
