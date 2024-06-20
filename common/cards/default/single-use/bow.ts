@@ -1,12 +1,9 @@
-import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {SlotCondition, slot} from '../../../slot'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
-
-const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.activeRow))
 
 class BowSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -20,9 +17,11 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.activeRow))
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition)
+		slot.someSlotFulfills(this.pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -34,7 +33,7 @@ class BowSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
-				canPick: pickCondition,
+				canPick: this.pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return

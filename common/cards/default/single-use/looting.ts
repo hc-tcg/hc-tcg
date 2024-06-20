@@ -5,8 +5,6 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardToHand} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
-const pickCondition = slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
-
 class LootingSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -20,9 +18,11 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition)
+		slot.someSlotFulfills(this.pickCondition)
 	)
 
 	override canApply() {
@@ -44,7 +44,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
-				canPick: pickCondition,
+				canPick: this.pickCondition,
 				onResult(pickResult) {
 					if (pickResult.rowIndex === undefined || pickResult.card === null) {
 						return

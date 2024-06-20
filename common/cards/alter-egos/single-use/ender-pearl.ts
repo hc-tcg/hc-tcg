@@ -6,8 +6,6 @@ import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
-const pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
-
 class EnderPearlSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -22,9 +20,11 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition)
+		slot.someSlotFulfills(this.pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -35,7 +35,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty Hermit slot',
-			canPick: pickCondition,
+			canPick: this.pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				// We need to have no card there

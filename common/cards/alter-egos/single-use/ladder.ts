@@ -5,22 +5,6 @@ import {applySingleUse, getSlotPos} from '../../../utils/board'
 import {getSlotCard, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
-const pickCondition = slot.every(
-	slot.player,
-	slot.not(slot.empty),
-	slot.hermitSlot,
-	(game, pos) => {
-		if (
-			pos.rowIndex !== null &&
-			(pos.rowIndex + 1 === pos.player.board.activeRow ||
-				pos.rowIndex - 1 === pos.player.board.activeRow)
-		) {
-			return true
-		}
-		return false
-	}
-)
-
 class LadderSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -33,9 +17,20 @@ class LadderSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.player, slot.not(slot.empty), slot.hermitSlot, (game, pos) => {
+		if (
+			pos.rowIndex !== null &&
+			(pos.rowIndex + 1 === pos.player.board.activeRow ||
+				pos.rowIndex - 1 === pos.player.board.activeRow)
+		) {
+			return true
+		}
+		return false
+	})
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition)
+		slot.someSlotFulfills(this.pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -45,7 +40,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
-			canPick: pickCondition,
+			canPick: this.pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === undefined) return
 				const activeRowIndex = player.board.activeRow

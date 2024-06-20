@@ -7,15 +7,6 @@ import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
 import {slot} from '../../../slot'
 
-const pickCondition = slot.every(
-	slot.player,
-	slot.not(slot.empty),
-	slot.some(
-		slot.itemSlot,
-		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isLocked(game, pick.card))
-	)
-)
-
 class FireChargeSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -29,9 +20,18 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(
+		slot.player,
+		slot.not(slot.empty),
+		slot.some(
+			slot.itemSlot,
+			slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isLocked(game, pick.card))
+		)
+	)
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition)
+		slot.someSlotFulfills(this.pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -41,7 +41,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
-			canPick: pickCondition,
+			canPick: this.pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card) return
 

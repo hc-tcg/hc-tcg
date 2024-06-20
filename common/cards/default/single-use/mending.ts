@@ -5,15 +5,6 @@ import {applySingleUse, getActiveRow, getSlotPos} from '../../../utils/board'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
-const pickCondition = slot.every(
-	slot.player,
-	slot.effectSlot,
-	slot.empty,
-	slot.not(slot.locked),
-	slot.rowHasHermit,
-	slot.not(slot.activeRow)
-)
-
 class MendingSingleUseCard extends singleUseCard {
 	constructor() {
 		super({
@@ -27,9 +18,18 @@ class MendingSingleUseCard extends singleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(
+		slot.player,
+		slot.effectSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.not(slot.locked),
+		slot.not(slot.activeRow)
+	)
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(pickCondition),
+		slot.someSlotFulfills(this.pickCondition),
 		slot.someSlotFulfills(
 			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.locked), slot.not(slot.empty))
 		)
@@ -59,7 +59,7 @@ class MendingSingleUseCard extends singleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty effect slot from one of your AFK Hermits',
-			canPick: pickCondition,
+			canPick: this.pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (pickResult.card || rowIndex === undefined) return

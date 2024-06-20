@@ -31,7 +31,7 @@ class RendogRareHermitCard extends HermitCard {
 		})
 	}
 
-	private pickCondition = slot.every(
+	pickCondition = slot.every(
 		slot.opponent,
 		slot.hermitSlot,
 		slot.not(slot.empty),
