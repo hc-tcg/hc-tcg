@@ -103,6 +103,7 @@ $grid-size: 25px;
 
 	&.unpickable {
 		filter: brightness(80%);
+		opacity: 80%,
 	}
 
 	&.empty {
