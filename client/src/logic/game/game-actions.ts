@@ -49,7 +49,7 @@ export const deselectCard = (playerId: string): DeselectCard => {
 	return {
 		type: 'DESELECT_CARD',
 		payload: {
-			playerId 
+			playerId,
 		},
 	}
 }

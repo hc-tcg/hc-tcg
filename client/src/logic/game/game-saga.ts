@@ -59,7 +59,7 @@ function* actionSaga(): SagaIterator {
 	} else if (turnAction.playableSlotsRequest) {
 		yield call(sendMsg, 'PLAYABLE_SLOTS_REQUEST', turnAction.playableSlotsRequest.payload)
 	} else if (turnAction.deselectCard) {
-		yield call(sendMsg, 'DESELECT_CARD')
+		yield call(sendMsg, 'DESELECT_CARD', turnAction.deselectCard.payload)
 	} else if (turnAction.pickCard) {
 		yield call(sendMsg, 'PICK_REQUEST', turnAction.pickCard.payload)
 	} else if (turnAction.customModal) {
