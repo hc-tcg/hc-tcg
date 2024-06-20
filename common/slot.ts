@@ -1,8 +1,7 @@
 import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
 import {CardT, PlayerState, RowState} from './types/game-state'
-import {PickInfo, PickedSlotType, SlotInfo} from './types/server-requests'
-import {getSlotPos} from './utils/board'
+import {PickInfo, PickedSlotType} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
 
