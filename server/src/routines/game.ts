@@ -321,7 +321,11 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(removeEffectSaga, game)
 			break
 		case 'PLAYABLE_SLOTS_REQUEST':
-			result = yield* call(playableSlotsRequestSaga, game, (turnAction as RequestPlayableSlotsData).payload)
+			result = yield* call(
+				playableSlotsRequestSaga,
+				game,
+				(turnAction as RequestPlayableSlotsData).payload
+			)
 			break
 		case 'DESELECT_CARD':
 			result = yield* call(deselectCardSaga, game, (turnAction as DeselectCard).payload)

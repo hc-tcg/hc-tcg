@@ -6,7 +6,7 @@ import {PickedSlotType, SlotDisplayPosition} from 'common/types/server-requests'
 
 export function* playableSlotsRequestSaga(
 	game: GameModel,
-	payload: RequestPlayableSlotsData["payload"]
+	payload: RequestPlayableSlotsData['payload']
 ): Generator<any, ActionResult> {
 	const playerState = game.state.players[payload.playerId]
 
@@ -20,7 +20,7 @@ export function* playableSlotsRequestSaga(
 
 export function* deselectCardSaga(
 	game: GameModel,
-	payload: DeselectCard["payload"]
+	payload: DeselectCard['payload']
 ): Generator<any, ActionResult> {
 	const playerState = game.state.players[payload.playerId]
 	playerState.pickableSlots = null

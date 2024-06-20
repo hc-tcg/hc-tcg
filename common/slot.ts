@@ -171,7 +171,7 @@ export namespace slot {
 	/**Returns if a card is marked as locked through the `shouldLockSlots` hook*/
 	export const locked: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))
-		
+
 		if (pos.type === 'single_use' || pos.type === 'hand') return true
 		if (pos.rowIndex === null || !pos.type) return false
 
