@@ -63,6 +63,16 @@ export function callSlotConditionWithPickInfo(
 }
 
 export namespace slot {
+	/** Always return true */
+	export const anything: SlotCondition = (game, pos) => {
+		return true
+	}
+
+	/** Always return false */
+	export const nothing: SlotCondition = (game, pos) => {
+		return false
+	}
+
 	/**
 	 * Return true if the card is attachable to a slot that fulfills all of the parameters.
 	 *
@@ -91,60 +101,51 @@ export namespace slot {
 		}
 	}
 
-	/** Always return true */
-	export const anything: SlotCondition = (game, pos) => {
-		return true
-	}
-	/** Always return false */
-	export const nothing: SlotCondition = (game, pos) => {
-		return false
-	}
 	/** Return the opposite of the condition*/
 	export const not = (condition: SlotCondition): SlotCondition => {
 		return (game, pos) => {
 			return !condition(game, pos)
 		}
 	}
+
 	/** Return true if the card is attached to the player's side. */
 	export const player: SlotCondition = (game, pos) => {
 		return pos.player.id === game.currentPlayer.id
 	}
+
 	/** Return true if the card is attached to the opponents side. */
 	export const opponent: SlotCondition = (game, pos) => {
 		return pos.player.id === game.opponentPlayer.id
 	}
-	/** Return true if the card is attached to a hermit slot. */
-	export const hermitSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'hermit'
-	}
-	/** Return true if the card is attached to an effect slot. */
-	export const effectSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'effect'
-	}
-	/** Return true if the card is attached to a single use slot. */
-	export const singleUseSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'single_use'
-	}
-	/** Return true if the card is attached to an item slot. */
-	export const itemSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'item'
-	}
-	/** Return true if the card is attached to the active row. */
-	export const activeRow: SlotCondition = (game, pos) => {
-		return pos.player.board.activeRow === pos.rowIndex
-	}
+
 	/** Return true if the spot is empty. */
 	export const empty: SlotCondition = (game, pos) => {
 		return pos.card === null
 	}
 
-	/** Return true if the spot contains any of the card IDs. */
-	export const has = (...cardIds: Array<string>): SlotCondition => {
-		return (game, pos) => {
-			return cardIds.some((cardId) => {
-				return pos.card !== null && pos.card.cardId === cardId
-			})
-		}
+	/** Return true if the card is attached to a hermit slot. */
+	export const hermitSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'hermit'
+	}
+
+	/** Return true if the card is attached to an effect slot. */
+	export const effectSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'effect'
+	}
+
+	/** Return true if the card is attached to a single use slot. */
+	export const singleUseSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'single_use'
+	}
+
+	/** Return true if the card is attached to an item slot. */
+	export const itemSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'item'
+	}
+
+	/** Return true if the card is attached to the active row. */
+	export const activeRow: SlotCondition = (game, pos) => {
+		return pos.player.board.activeRow === pos.rowIndex
 	}
 
 	/* Return true if the card is in a player's hand */
@@ -166,14 +167,17 @@ export namespace slot {
 		return game.opponentPlayer.board.activeRow !== undefined
 	}
 
-	export const someSlotFulfills =
-		(predicate: SlotCondition): SlotCondition =>
-		(game, pos) => {
-			return game.someSlotFulfills(predicate)
-		}
-
 	export const rowIndex = (rowIndex: number | null): SlotCondition => {
 		return (game, pos) => rowIndex !== null && pos.rowIndex === rowIndex
+	}
+
+	/** Return true if the spot contains any of the card IDs. */
+	export const has = (...cardIds: Array<string>): SlotCondition => {
+		return (game, pos) => {
+			return cardIds.some((cardId) => {
+				return pos.card !== null && pos.card.cardId === cardId
+			})
+		}
 	}
 
 	/**Returns if a card is marked as locked through the `shouldLockSlots` hook*/
@@ -194,4 +198,11 @@ export namespace slot {
 
 		return playerResult || opponentResult
 	}
+
+	/** Return true if there is a slot on the board that fullfils the condition given by the predicate */
+	export const someSlotFulfills =
+		(predicate: SlotCondition): SlotCondition =>
+		(game, pos) => {
+			return game.someSlotFulfills(predicate)
+		}
 }
