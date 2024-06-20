@@ -29,7 +29,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.playerHasActiveHermit,
-		slot.someSlotFulfills(pickCondition),
+		slot.someSlotFulfills(pickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
