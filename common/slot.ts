@@ -14,17 +14,6 @@ export type SlotConditionInfo = {
 	card: CardT | null
 }
 
-export function getSlotConditionInfo(game: GameModel, cardPos: CardPosModel): SlotConditionInfo {
-	return {
-		player: cardPos.player,
-		opponentPlayer: cardPos.opponentPlayer,
-		type: cardPos.slot.type,
-		rowIndex: cardPos.rowIndex,
-		row: cardPos.row,
-		card: getCardAtPos(game, cardPos),
-	}
-}
-
 export function callSlotConditionWithCardPosModel(
 	condition: SlotCondition,
 	game: GameModel,

@@ -46,11 +46,6 @@ export type Slot = {
 	index: number
 }
 
-export type BoardSlot = {
-	type: BoardSlotTypeT
-	index: number
-}
-
 export type RowPos = {
 	player: PlayerState
 	rowIndex: number
