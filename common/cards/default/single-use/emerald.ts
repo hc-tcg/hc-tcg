@@ -19,10 +19,10 @@ class EmeraldSingleUseCard extends SingleUseCard {
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.someSlotFulfills(
-			slot.every(slot.player, slot.activeRow, slot.effectSlot, slot.interactable)
+			slot.every(slot.player, slot.activeRow, slot.effectSlot, slot.not(slot.locked))
 		),
 		slot.someSlotFulfills(
-			slot.every(slot.opponent, slot.activeRow, slot.effectSlot, slot.interactable)
+			slot.every(slot.opponent, slot.activeRow, slot.effectSlot, slot.not(slot.locked))
 		)
 	)
 

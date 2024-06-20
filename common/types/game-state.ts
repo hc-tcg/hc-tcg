@@ -1,5 +1,6 @@
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
+import {SlotCondition} from '../slot'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT, SlotPos} from './cards'
@@ -149,11 +150,11 @@ export type PlayerState = {
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		/** Hook called when a card attempts to attach, detatch, or move a card on the board.
-		 *
-		 * Returns whether or not the slots involved are able to be interacted with.
+		/** Hook called when the `slot.locked` combinator is called.
+		 * Returns a combinator that verifies if the slot is locked or not.
+		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
-		onSlotInteraction: GameHook<(slot: SlotPos) => boolean>
+		shouldLockSlots: GameHook<() => SlotCondition>
 	}
 }
 

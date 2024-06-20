@@ -1,7 +1,7 @@
 import SingleUseCard from '../../base/single-use-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {isRemovable} from '../../../utils/cards'
+import {isLocked} from '../../../utils/cards'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
@@ -12,7 +12,7 @@ const pickCondition = slot.every(
 	slot.not(slot.empty),
 	slot.some(
 		slot.itemSlot,
-		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && isRemovable(game, pick.card))
+		slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isLocked(game, pick.card))
 	)
 )
 

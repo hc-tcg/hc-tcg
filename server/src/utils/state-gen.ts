@@ -22,6 +22,7 @@ import EffectCard from 'common/cards/base/effect-card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
+import {SlotCondition} from 'common/slot'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -247,7 +248,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 				(oldRow: number | null, newRow: number | null) => boolean
 			>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			onSlotInteraction: new GameHook<(slot: SlotPos) => boolean>(),
+			shouldLockSlots: new GameHook<() => SlotCondition>(),
 		},
 	}
 }

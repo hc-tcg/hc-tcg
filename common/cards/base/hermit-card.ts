@@ -51,7 +51,7 @@ abstract class HermitCard extends Card {
 		slot.hermitSlot,
 		slot.player,
 		slot.empty,
-		slot.interactable,
+		slot.not(slot.locked),
 		(game, pos) => game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')
 	)
 

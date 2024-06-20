@@ -172,12 +172,26 @@ export namespace slot {
 			return game.someSlotFulfills(predicate)
 		}
 
-	export const interactable: SlotCondition = (game, pos) => {
+	export const rowIndex = (rowIndex: number | null): SlotCondition => {
+		return (game, pos) => rowIndex !== null && pos.rowIndex === rowIndex
+	}
+
+	/**Returns if a card is marked as locked through the `shouldLockSlots` hook*/
+	export const locked: SlotCondition = (game, pos) => {
 		if (pos.type === 'single_use' || pos.type === 'hand') return true
 		if (pos.rowIndex === null || !pos.type) return false
-		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.type)
-		return game.currentPlayer.hooks.onSlotInteraction
-			.call(slotPos)
-			.every((result) => result === true)
+
+		const playerResult = game.currentPlayer.hooks.shouldLockSlots
+			.call()
+			.some((result) => result(game, pos))
+
+		pos.player = game.opponentPlayer
+		pos.opponentPlayer = game.currentPlayer
+
+		const opponentResult = game.opponentPlayer.hooks.shouldLockSlots
+			.call()
+			.some((result) => result(game, pos))
+
+		return playerResult || opponentResult
 	}
 }

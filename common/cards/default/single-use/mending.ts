@@ -9,7 +9,7 @@ const pickCondition = slot.every(
 	slot.player,
 	slot.effectSlot,
 	slot.empty,
-	slot.interactable,
+	slot.not(slot.locked),
 	slot.rowHasHermit,
 	slot.not(slot.activeRow)
 )
@@ -31,7 +31,7 @@ class MendingSingleUseCard extends singleUseCard {
 		super.attachCondition,
 		slot.someSlotFulfills(pickCondition),
 		slot.someSlotFulfills(
-			slot.every(slot.activeRow, slot.effectSlot, slot.interactable, slot.not(slot.empty))
+			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.locked), slot.not(slot.empty))
 		)
 	)
 

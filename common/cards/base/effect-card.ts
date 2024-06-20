@@ -36,7 +36,7 @@ abstract class EffectCard extends Card {
 		slot.player,
 		slot.effectSlot,
 		slot.empty,
-		slot.interactable,
+		slot.not(slot.locked),
 		slot.rowHasHermit,
 		(game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
 	)

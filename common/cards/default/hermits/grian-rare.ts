@@ -3,7 +3,7 @@ import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
+import {isLocked} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard, swapSlots} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -55,7 +55,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (rowIndex === null || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard || !isRemovable(game, opponentEffectCard)) return
+			if (!opponentEffectCard || isLocked(game, opponentEffectCard)) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
@@ -63,7 +63,7 @@ class GrianRareHermitCard extends HermitCard {
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
 			const canAttach = game.someSlotFulfills(
-				slot.every(slot.player, slot.interactable, slot.effectSlot, slot.activeRow, slot.empty)
+				slot.every(slot.player, slot.not(slot.locked), slot.effectSlot, slot.activeRow, slot.empty)
 			)
 
 			game.addModalRequest({

@@ -20,10 +20,16 @@ class ArmorStandEffectCard extends EffectCard {
 		})
 	}
 
-	override _attachCondition = slot.every(slot.player, slot.hermitSlot)
+	override _attachCondition = slot.every(
+		slot.hermitSlot,
+		slot.player,
+		slot.empty,
+		slot.not(slot.locked),
+		(game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, row} = pos
 		if (!row) return
 
 		row.health = 50
@@ -42,9 +48,8 @@ class ArmorStandEffectCard extends EffectCard {
 			return blockedActions
 		})
 
-		player.hooks.onSlotInteraction.add(instance, (slot) => {
-			if (slot.rowIndex === pos.rowIndex) return false
-			return true
+		player.hooks.shouldLockSlots.add(instance, () => {
+			return slot.every(slot.player, slot.rowIndex(pos.rowIndex))
 		})
 	}
 
@@ -56,7 +61,7 @@ class ArmorStandEffectCard extends EffectCard {
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
-		player.hooks.onSlotInteraction.remove(instance)
+		player.hooks.shouldLockSlots.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 

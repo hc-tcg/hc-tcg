@@ -21,6 +21,7 @@ import {CARDS} from '../cards'
 import {SlotCondition} from '../slot'
 import {CardPosModel} from './card-pos-model'
 import Card from '../cards/base/card'
+import {isLocked} from '../utils/cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -271,11 +272,12 @@ export class GameModel {
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-		const oldSlotPos = getSlotPos(player, oldRow, 'hermit')
+	public swapRows(game: GameModel, player: PlayerState, oldRow: number, newRow: number): boolean {
+		const oldHermit = player.board.rows[oldRow].hermitCard
+		const newHermit = player.board.rows[newRow].hermitCard
 
-		const results = player.hooks.onSlotInteraction.call(oldSlotPos)
-		if (results.includes(false)) return false
+		if ((oldHermit && !isLocked(game, oldHermit)) || (newHermit && !isLocked(game, newHermit)))
+			return false
 
 		const activeRowChanged = this.changeActiveRow(player, newRow)
 		if (!activeRowChanged) return false

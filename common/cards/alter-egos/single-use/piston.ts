@@ -25,7 +25,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				slot.player,
 				slot.itemSlot,
 				slot.rowHasHermit,
-				slot.interactable,
+				slot.not(slot.locked),
 				slot.not(slot.empty),
 				(game, pos) => {
 					if (!pos.rowIndex || !pos.player.board.activeRow) return false
@@ -68,7 +68,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				slot.itemSlot,
 				slot.empty,
 				slot.rowHasHermit,
-				slot.interactable,
+				slot.not(slot.locked),
 				(game, pick) => {
 					const firstRowIndex = player.custom[rowIndexKey]
 					return [firstRowIndex - 1, firstRowIndex + 1].includes(pick.rowIndex)

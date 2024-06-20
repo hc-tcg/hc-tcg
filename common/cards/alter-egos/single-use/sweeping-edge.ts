@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isRemovable} from '../../../utils/cards'
+import {isLocked} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -34,7 +34,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 
 			for (const index of targetIndex) {
 				const effectCard = rows[index].effectCard
-				if (effectCard && isRemovable(game, effectCard)) discardCard(game, effectCard)
+				if (effectCard && !isLocked(game, effectCard)) discardCard(game, effectCard)
 			}
 		})
 	}

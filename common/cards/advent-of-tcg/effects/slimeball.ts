@@ -1,8 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {TurnActions} from '../../../types/game-state'
-import {discardCard, isSlotEmpty} from '../../../utils/movement'
+import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 
 class SlimeballEffectCard extends EffectCard {
@@ -19,21 +18,21 @@ class SlimeballEffectCard extends EffectCard {
 
 	override _attachCondition = slot.every(slot.opponent, slot.effectSlot, slot.empty)
 
+	//@TODO Fix this card to work with new system
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onSlotInteraction.add(instance, (slot) => {
-			if (!isSlotEmpty(slot) && slot.rowIndex === pos.rowIndex) {
-				pos.player.hooks.onSlotInteraction.remove(instance)
-				discardCard(game, pos.card)
-				return false
-			}
-			return true
-		})
+		// player.hooks.shouldLockSlots.add(instance, () => {
+		// 	return slot.every(slot.not(slot.empty), slot.rowIndex(pos.rowIndex), (game, pos) => {
+		// 		pos.player.hooks.shouldLockSlots.remove(instance)
+		// 		discardCard(game, pos.card)
+		// 		return true
+		// 	})
+		// })
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.onSlotInteraction.remove(instance)
+		pos.player.hooks.shouldLockSlots.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
 	}
 

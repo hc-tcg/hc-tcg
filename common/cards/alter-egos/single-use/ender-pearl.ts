@@ -51,7 +51,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 				applySingleUse(game, logInfo)
 
 				// Move us
-				game.swapRows(player, player.board.activeRow, rowIndex)
+				game.swapRows(game, player, player.board.activeRow, rowIndex)
 
 				// Do 10 damage
 				const attack = new AttackModel({

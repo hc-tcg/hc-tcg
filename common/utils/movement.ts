@@ -5,6 +5,7 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotPos} from '../types/cards'
 import {getSlotPos} from './board'
+import {callSlotConditionWithCardPosModel} from '../slot'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -40,13 +41,6 @@ export function discardCard(
 		const err = new Error()
 		console.log('Cannot find card on board: ', card, err.stack)
 		return
-	}
-
-	if (pos.row && pos.rowIndex && pos.slot.type !== 'single_use') {
-		const slotPos = getSlotPos(pos.player, pos.rowIndex, pos.slot.type, pos.slot.index)
-
-		const results = pos.player.hooks.onSlotInteraction.call(slotPos)
-		if (results.includes(false)) return
 	}
 
 	// Call `onDetach`
@@ -148,21 +142,6 @@ export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: Pla
 	}
 }
 
-/**Returns whether the slot is empty or not. */
-export function isSlotEmpty(slotPos: SlotPos): boolean {
-	const {row, slot} = slotPos
-	const {index, type} = slot
-	if (type === 'hermit') {
-		if (!row.hermitCard) return true
-	} else if (type === 'effect') {
-		if (!row.effectCard) return true
-	} else if (type === 'item') {
-		if (!row.itemCards[index]) return true
-	}
-
-	return false
-}
-
 /**Returns a `CardT` of the card in the slot, or `null` if it's empty. */
 export function getSlotCard(slotPos: SlotPos): CardT | null {
 	const {row, slot} = slotPos
@@ -199,16 +178,11 @@ export function swapSlots(
 	for (let i = 0; i < slots.length; i++) {
 		const slot = slots[i]
 
-		if (isSlotEmpty(slot)) continue
-
 		const card = getSlotCard(slot)
 		if (!card) continue
 
 		const cardPos = getCardPos(game, card.cardInstance)
 		if (!cardPos) continue
-
-		const results = cardPos.player.hooks.onSlotInteraction.call(slot)
-		if (results.includes(false)) return false
 
 		const cardInfo = CARDS[card.cardId]
 

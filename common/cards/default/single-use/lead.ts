@@ -10,14 +10,14 @@ const firstPickCondition = slot.every(
 	slot.itemSlot,
 	slot.not(slot.empty),
 	slot.activeRow,
-	slot.interactable
+	slot.not(slot.locked)
 )
 const secondPickCondition = slot.every(
 	slot.opponent,
 	slot.itemSlot,
 	slot.empty,
 	slot.not(slot.activeRow),
-	slot.interactable
+	slot.not(slot.locked)
 )
 
 class LeadSingleUseCard extends SingleUseCard {
