@@ -22,6 +22,7 @@ import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {
 	AttackActionData,
+	DeselectCard,
 	PickCardActionData,
 	RequestPlayableSlotsData,
 	attackToAttackAction,
@@ -320,10 +321,10 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			result = yield* call(removeEffectSaga, game)
 			break
 		case 'PLAYABLE_SLOTS_REQUEST':
-			result = yield* call(playableSlotsRequestSaga, game, turnAction as RequestPlayableSlotsData)
+			result = yield* call(playableSlotsRequestSaga, game, (turnAction as RequestPlayableSlotsData).payload)
 			break
 		case 'DESELECT_CARD':
-			result = yield* call(deselectCardSaga, game)
+			result = yield* call(deselectCardSaga, game, (turnAction as DeselectCard).payload)
 			break
 		case 'PICK_REQUEST':
 			result = yield* call(

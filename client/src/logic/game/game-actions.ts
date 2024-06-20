@@ -45,17 +45,21 @@ export const slotPicked = (pickInfo: PickInfo) => ({
 	payload: {pickInfo},
 })
 
-export const deselectCard = () =>
-	({
+export const deselectCard = (playerId: string): DeselectCard => {
+	return {
 		type: 'DESELECT_CARD',
-		payload: null,
-	} as DeselectCard)
+		payload: {
+			playerId 
+		},
+	}
+}
 
-export const playableSlotsRequest = (card: CardT): PlayableSlotsRequestData => {
+export const playableSlotsRequest = (playerId: string, card: CardT): PlayableSlotsRequestData => {
 	return {
 		type: 'PLAYABLE_SLOTS_REQUEST',
 		payload: {
-			card: card,
+			playerId,
+			card,
 		},
 	}
 }

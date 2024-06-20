@@ -302,8 +302,10 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
-		const playerState = game.state.players[game.currentPlayer.id]
-		playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
+		if (currentPickRequest.playerId == player.id) {
+			const playerState = game.state.players[currentPickRequest.playerId]
+			playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
+		}
 	}
 
 	let currentPickableSlots = playerState.pickableSlots

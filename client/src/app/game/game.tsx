@@ -116,10 +116,10 @@ function Game() {
 		} else {
 			if (equalCard(card, selectedCard)) {
 				dispatch(setSelectedCard(null))
-				dispatch(deselectCard())
+				dispatch(deselectCard(gameState.playerId))
 			} else {
 				dispatch(setSelectedCard(card))
-				dispatch(playableSlotsRequest(card))
+				dispatch(playableSlotsRequest(gameState.playerId, card))
 			}
 		}
 	}

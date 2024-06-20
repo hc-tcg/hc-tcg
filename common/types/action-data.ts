@@ -26,12 +26,16 @@ export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
 export type RequestPlayableSlotsData = {
 	type: 'PLAYABLE_SLOTS_REQUEST'
 	payload: {
+		playerId: string
 		card: CardT
 	}
 }
 
 export type DeselectCard = {
 	type: 'DESELECT_CARD'
+	payload: {
+		playerId: string
+	}
 }
 
 export type PlayCardActionData = {

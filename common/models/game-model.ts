@@ -296,6 +296,9 @@ export class GameModel {
 		for (const player of Object.values(this.state.players)) {
 			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
 				const row = player.board.rows[rowIndex]
+				const opponentPlayer = Object.values(this.state.players).filter(
+					(opponent) => opponent.id !== player.id
+				)[0]
 
 				const appendAttachCondition = (
 					type: PickedSlotType,
@@ -304,9 +307,7 @@ export class GameModel {
 				) => {
 					const canBeAttached = predicate(this, {
 						player: player,
-						opponentPlayer: Object.values(this.state.players).filter(
-							(opponent) => opponent.id !== player.id
-						)[0],
+						opponentPlayer: opponentPlayer,
 						type: type,
 						rowIndex: rowIndex,
 						row: row,

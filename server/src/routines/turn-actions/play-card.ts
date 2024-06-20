@@ -15,7 +15,7 @@ function* playCardSaga(
 	turnAction: PlayCardActionData
 ): Generator<any, ActionResult> {
 	// When we play a card, we want to unhighlight the selected slots
-	yield* call(deselectCardSaga, game)
+	yield* call(deselectCardSaga, game, {playerId: game.currentPlayerId})
 
 	// Make sure data sent from client is correct
 	const pickInfo = turnAction?.payload?.pickInfo

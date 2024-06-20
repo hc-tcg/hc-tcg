@@ -28,7 +28,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 	}
 
 	pickRequest.onResult(pickResult)
-	game.state.players[game.currentPlayer.id].pickableSlots = null
+	game.state.players[pickRequest.playerId].pickableSlots = null
 
 	// We completed this pick request, remove it
 	game.state.pickRequests.shift()
