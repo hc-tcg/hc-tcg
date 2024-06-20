@@ -4,7 +4,6 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
 import {slot} from '../../../slot'
 
 class RendogRareHermitCard extends HermitCard {
@@ -82,7 +81,7 @@ class RendogRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 		const imitatingCardInstance = Math.random().toString()
