@@ -51,6 +51,18 @@ export function callSlotConditionWithPickInfo(
 }
 
 export namespace slot {
+	/** Used for debugging. Print a message provided by the msg function. */
+	export const trace = (
+		msg: (game: GameModel, pos: SlotConditionInfo, result: boolean) => any,
+		combinator: SlotCondition
+	): SlotCondition => {
+		return (game, pos) => {
+			const returnValue = combinator(game, pos)
+			console.info(msg(game, pos, returnValue))
+			return returnValue
+		}
+	}
+
 	/** Always return true */
 	export const anything: SlotCondition = (game, pos) => {
 		return true
