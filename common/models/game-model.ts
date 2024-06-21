@@ -279,7 +279,7 @@ export class GameModel {
 	}
 
 	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(predicate: SlotCondition) {
+	public filterSlots(predicate: SlotCondition): Array<SlotDisplayPosition> {
 		let pickableSlots: Array<SlotDisplayPosition> = []
 
 		for (const player of Object.values(this.state.players)) {

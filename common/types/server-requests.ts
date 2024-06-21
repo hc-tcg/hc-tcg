@@ -1,6 +1,5 @@
-import {GameModel} from '../models/game-model'
 import {SlotCondition} from '../slot'
-import {SlotPos, SlotTypeT} from './cards'
+import {SlotTypeT} from './cards'
 import {ActionResult, CardT, ModalData} from './game-state'
 
 export type PickedSlotType = SlotTypeT | 'hand'
