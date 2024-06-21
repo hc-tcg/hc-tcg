@@ -122,7 +122,13 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(attackAction())
 		}
 		function handleEndTurn() {
-			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+			/** @TODO Rewrite everything, there is no world in which this should be compared to a constant.
+			 * We are comparing to three because the player can always send:
+			 * - PLAYABLE_SLOTS_REQUEST
+			 * - DESELECT_CARD
+			 * - PICK_REQUEST
+			 */
+			if (availableActions.length === 3 || settings.confirmationDialogs === 'off') {
 				dispatch(endTurn())
 			} else {
 				dispatch(endTurnAction())
