@@ -3,6 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import EffectCard from '../../base/effect-card'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
+import SingleUseCard from '../../base/single-use-card'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -22,8 +23,8 @@ class MilkBucketEffectCard extends EffectCard {
 	}
 
 	override _attachCondition = slot.some(
-		slot.singleUseSlot,
-		slot.every(slot.player, slot.effectSlot, slot.rowHasHermit)
+		EffectCard.prototype.attachCondition,
+		SingleUseCard.prototype.attachCondition,
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
