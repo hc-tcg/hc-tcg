@@ -209,7 +209,7 @@ export namespace slot {
 	export const frozen: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))
 
-		if (pos.type === 'single_use' || pos.type === 'hand') return true
+		if (pos.type === 'single_use' || pos.type === 'hand') return false
 		if (pos.rowIndex === null || !pos.type) return false
 
 		const playerResult = game.currentPlayer.hooks.freezeSlots
