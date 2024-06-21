@@ -5,21 +5,6 @@ import {applySingleUse, getActiveRowPos, getSlotPos} from '../../../utils/board'
 import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
-const firstPickCondition = slot.every(
-	slot.opponent,
-	slot.itemSlot,
-	slot.not(slot.empty),
-	slot.activeRow,
-	slot.not(slot.locked)
-)
-const secondPickCondition = slot.every(
-	slot.opponent,
-	slot.itemSlot,
-	slot.empty,
-	slot.not(slot.activeRow),
-	slot.not(slot.locked)
-)
-
 class LeadSingleUseCard extends SingleUseCard {
 	constructor() {
 		super({
@@ -34,10 +19,25 @@ class LeadSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	firstPickCondition = slot.every(
+		slot.opponent,
+		slot.itemSlot,
+		slot.not(slot.empty),
+		slot.activeRow,
+		slot.not(slot.locked)
+	)
+	secondPickCondition = slot.every(
+		slot.opponent,
+		slot.itemSlot,
+		slot.empty,
+		slot.not(slot.activeRow),
+		slot.not(slot.locked)
+	)
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(firstPickCondition),
-		slot.someSlotFulfills(secondPickCondition)
+		slot.someSlotFulfills(this.firstPickCondition),
+		slot.someSlotFulfills(this.secondPickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -48,7 +48,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
-			canPick: firstPickCondition,
+			canPick: this.firstPickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === undefined) return
 
@@ -60,7 +60,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
-			canPick: secondPickCondition,
+			canPick: this.secondPickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				if (pickResult.card || rowIndex === undefined) return
