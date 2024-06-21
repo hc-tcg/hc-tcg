@@ -212,7 +212,7 @@ export namespace slot {
 	}
 
 	export const actionAvailable = (action: TurnAction): SlotCondition => {
-		return (game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
+		return (game, pos) => game.state.turn.availableActions.includes(action)
 	}
 
 	/** Return true if there is a slot on the board that fullfils the condition given by the predicate */
