@@ -123,14 +123,14 @@ export function registerApis(app: import('express').Express) {
 						['api-key', apiKeys?.botKey],
 					],
 					body: JSON.stringify({
-						code: code
-					})
+						code: code,
+					}),
 				})
 			} catch (e) {
 				console.log('Error notifying discord bot about cancelled private game: ' + e)
 			}
 		})
-    
+
 		fetch(`${CONFIG.botUrl}/updates`)
 			.then(async (response) => {
 				response.json().then((jsonResponse) => {
