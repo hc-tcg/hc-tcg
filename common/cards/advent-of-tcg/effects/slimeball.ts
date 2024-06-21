@@ -1,6 +1,6 @@
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {callSlotConditionWithCardPosModel, slot} from '../../../slot'
+import {slot} from '../../../slot'
 import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 

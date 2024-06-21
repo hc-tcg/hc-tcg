@@ -1,4 +1,4 @@
-import {Slot, SlotPos} from '../types/cards'
+import {Slot} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
 
@@ -86,7 +86,7 @@ export function getCardPos(game: GameModel, instance: string) {
 	return null
 }
 
-export function getCardAtPos(game: GameModel, pos: BasicCardPos) {
+export function getCardAtPos(pos: BasicCardPos) {
 	const {player, rowIndex, slot} = pos
 
 	const suCard = player.board.singleUseCard
@@ -137,10 +137,10 @@ export class CardPosModel {
 
 	public get card() {
 		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
-		let card = getCardAtPos(this.game, this.internalPos)
+		let card = getCardAtPos(this.internalPos)
 		if (!card) {
 			this.recalculateInternalPos()
-			card = getCardAtPos(this.game, this.internalPos)
+			card = getCardAtPos(this.internalPos)
 		}
 
 		return card

@@ -1,7 +1,6 @@
 import SingleUseCard from '../../base/single-use-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {isLocked} from '../../../utils/cards'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
@@ -22,11 +21,9 @@ class FireChargeSingleUseCard extends SingleUseCard {
 
 	pickCondition = slot.every(
 		slot.player,
+		slot.not(slot.frozen),
 		slot.not(slot.empty),
-		slot.some(
-			slot.itemSlot,
-			slot.every(slot.effectSlot, (game, pick) => pick.card !== null && !isLocked(game, pick.card))
-		)
+		slot.some(slot.itemSlot, slot.effectSlot)
 	)
 
 	override _attachCondition = slot.every(

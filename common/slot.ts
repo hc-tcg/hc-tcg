@@ -25,7 +25,7 @@ export function callSlotConditionWithCardPosModel(
 		type: cardPos.slot.type,
 		rowIndex: cardPos.rowIndex,
 		row: cardPos.row,
-		card: getCardAtPos(game, cardPos),
+		card: getCardAtPos(cardPos),
 	})
 }
 
@@ -163,7 +163,7 @@ export namespace slot {
 		return (game, pos) => {
 			if (pos.rowIndex === null) return false
 			return (
-				game.getPickableSlots(predicate).filter((pickedPos) => {
+				game.filterSlots(predicate).filter((pickedPos) => {
 					if (pos.rowIndex === null || pickedPos.rowIndex === undefined) return false
 					return [pos.rowIndex - 1, pos.rowIndex + 1].includes(pickedPos.rowIndex)
 				}).length >= 1
@@ -203,9 +203,9 @@ export namespace slot {
 	}
 
 	/**
-	* Returns if a slot is marked as frozen through the `freezeSlots` hook
-	* A frozen slot is a slot that can not have card placed in it or removed from it.
-	*/
+	 * Returns if a slot is marked as frozen through the `freezeSlots` hook
+	 * A frozen slot is a slot that can not have card placed in it or removed from it.
+	 */
 	export const frozen: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))
 
@@ -216,8 +216,9 @@ export namespace slot {
 			.call()
 			.some((result) => result(game, pos))
 
-		pos.player = game.opponentPlayer
-		pos.opponentPlayer = game.currentPlayer
+		const currentPlayer = pos.player
+		pos.player = pos.opponentPlayer
+		pos.opponentPlayer = currentPlayer
 
 		const opponentResult = game.opponentPlayer.hooks.freezeSlots
 			.call()

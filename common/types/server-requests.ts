@@ -10,6 +10,7 @@ export type SlotDisplayPosition = {
 	playerId: string
 	index?: number
 	rowIndex?: number
+	card?: CardT | null
 }
 
 export type SlotInfo = {

@@ -16,12 +16,7 @@ import {
 	SlotDisplayPosition,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {getSlotPos} from '../utils/board'
-import {CARDS} from '../cards'
 import {SlotCondition} from '../slot'
-import {CardPosModel} from './card-pos-model'
-import Card from '../cards/base/card'
-import {isLocked} from '../utils/cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -272,13 +267,7 @@ export class GameModel {
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(game: GameModel, player: PlayerState, oldRow: number, newRow: number): boolean {
-		const oldHermit = player.board.rows[oldRow].hermitCard
-		const newHermit = player.board.rows[newRow].hermitCard
-
-		if ((oldHermit && !isLocked(game, oldHermit)) || (newHermit && !isLocked(game, newHermit)))
-			return false
-
+	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
 		const activeRowChanged = this.changeActiveRow(player, newRow)
 		if (!activeRowChanged) return false
 
@@ -289,8 +278,8 @@ export class GameModel {
 		return true
 	}
 
-	/** Gets the pickable slots for the current player */
-	public getPickableSlots(predicate: SlotCondition) {
+	/** Return the slots that fullfil a condition given by the predicate */
+	public filterSlots(predicate: SlotCondition) {
 		let pickableSlots: Array<SlotDisplayPosition> = []
 
 		for (const player of Object.values(this.state.players)) {
@@ -319,6 +308,7 @@ export class GameModel {
 							index: index,
 							rowIndex: rowIndex,
 							playerId: player.id,
+							card: cardInstance,
 						})
 					}
 				}
@@ -344,6 +334,7 @@ export class GameModel {
 			pickableSlots.push({
 				playerId: this.currentPlayer.id,
 				type: 'single_use',
+				card: this.currentPlayer.board.singleUseCard,
 			})
 		}
 
@@ -351,6 +342,6 @@ export class GameModel {
 	}
 
 	public someSlotFulfills(predicate: SlotCondition) {
-		return this.getPickableSlots(predicate).length !== 0
+		return this.filterSlots(predicate).length !== 0
 	}
 }

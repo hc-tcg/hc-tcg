@@ -2,7 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse, getSlotPos} from '../../../utils/board'
-import {isLocked} from '../../../utils/cards'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 

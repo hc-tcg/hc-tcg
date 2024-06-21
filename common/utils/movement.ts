@@ -5,7 +5,6 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotPos} from '../types/cards'
 import {getSlotPos} from './board'
-import {callSlotConditionWithCardPosModel} from '../slot'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos

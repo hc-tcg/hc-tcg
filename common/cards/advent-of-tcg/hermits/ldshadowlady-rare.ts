@@ -57,7 +57,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 					if (pickResult.rowIndex === undefined) return
 					if (opponentPlayer.board.activeRow === null) return
 
-					game.swapRows(game, opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
 				},
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
@@ -69,7 +69,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
 
-					game.swapRows(game, opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},
 			})
 		})

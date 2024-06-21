@@ -1,9 +1,6 @@
 import {CARDS} from '../cards'
 import {CardTypeT} from '../types/cards'
 import {CardT} from '../types/game-state'
-import {getCardPos} from '../models/card-pos-model'
-import {GameModel} from '../models/game-model'
-import {callSlotConditionWithCardPosModel, slot} from '../slot'
 
 /**
  * Returns true if the two cards are equal
@@ -21,12 +18,6 @@ export function isCardType(card: CardT | null, type: CardTypeT): boolean {
 	if (!card) return false
 	const cardInfo = CARDS[card.cardId]
 	return cardInfo.type === type
-}
-
-export function isLocked(game: GameModel, card: CardT): boolean {
-	const pos = getCardPos(game, card.cardInstance)
-	if (!pos) return false
-	return callSlotConditionWithCardPosModel(slot.frozen, game, pos)
 }
 
 export function getCardExpansion(cardId: string) {

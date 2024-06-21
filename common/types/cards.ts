@@ -1,6 +1,5 @@
-import Card from '../cards/base/card'
 import {PlayerState, RowState, RowStateWithHermit} from './game-state'
-import {PickInfo, SlotInfo} from './server-requests'
+import {SlotInfo} from './server-requests'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 

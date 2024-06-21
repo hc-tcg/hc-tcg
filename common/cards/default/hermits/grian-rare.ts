@@ -3,7 +3,6 @@ import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {getActiveRowPos, getSlotPos} from '../../../utils/board'
-import {isLocked} from '../../../utils/cards'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard, swapSlots} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -55,7 +54,7 @@ class GrianRareHermitCard extends HermitCard {
 			if (rowIndex === null || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard || isLocked(game, opponentEffectCard)) return
+			if (!opponentEffectCard) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 

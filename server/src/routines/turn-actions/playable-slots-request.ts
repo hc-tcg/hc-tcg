@@ -13,7 +13,7 @@ export function* playableSlotsRequestSaga(
 	let card = payload.card
 	let cardObj = CARDS[card.cardId]
 
-	playerState.pickableSlots = game.getPickableSlots(cardObj.attachCondition)
+	playerState.pickableSlots = game.filterSlots(cardObj.attachCondition)
 
 	return 'SUCCESS'
 }
