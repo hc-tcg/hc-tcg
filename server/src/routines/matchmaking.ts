@@ -23,7 +23,7 @@ function* gameManager(game: GameModel) {
 		const gameType = game.code ? 'Private' : 'Public'
 		console.log(
 			`${gameType} game started.`,
-			`Players: ${players[0].playerName} + ${players[1].playerName}.`,
+			`Players: ${players[0].name} + ${players[1].name}.`,
 			'Total games:',
 			root.getGameIds().length
 		)
@@ -40,8 +40,7 @@ function* gameManager(game: GameModel) {
 			timeout: delay(1000 * 60 * 60),
 			// kill game when a player is disconnected for too long
 			playerRemoved: take(
-				(action: any) =>
-					action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.playerId)
+				(action: any) => action.type === 'PLAYER_REMOVED' && playerIds.includes(action.payload.id)
 			),
 			forfeit: take(
 				(action: any) => action.type === 'FORFEIT' && playerIds.includes(action.playerId)
@@ -54,7 +53,7 @@ function* gameManager(game: GameModel) {
 				gameState.timer.turnRemaining = 0
 				gameState.timer.turnStartTime = getTimerForSeconds(0)
 			}
-			const outcome = getGamePlayerOutcome(game, result, player.playerId)
+			const outcome = getGamePlayerOutcome(game, result, player.id)
 			broadcast([player], 'GAME_END', {
 				gameState,
 				outcome,
@@ -91,12 +90,8 @@ export function inQueue(playerId: string) {
 
 function* randomMatchmakingSaga() {
 	while (true) {
-		// Wait 3 seconds
 		yield* delay(1000 * 3)
 		if (!(root.queue.length > 1)) continue
-
-		// Remove extra player
-		const extraPlayer = root.queue.length % 2 === 1 ? root.queue.pop() || null : null
 
 		// Shuffle
 		for (var i = root.queue.length - 1; i > 0; i--) {
@@ -106,29 +101,27 @@ function* randomMatchmakingSaga() {
 			root.queue[randomPos] = oldValue
 		}
 
-		let index = 0
-		for (index = 0; index < root.queue.length; index += 2) {
-			const player1 = root.players[root.queue[index]]
-			const player2 = root.players[root.queue[index + 1]]
+		const playersToRemove: Array<string> = []
+
+		for (let index = 0; index < root.queue.length - 1; index += 2) {
+			const player1Id = root.queue[index]
+			const player2Id = root.queue[index + 1]
+			const player1 = root.players[player1Id]
+			const player2 = root.players[player2Id]
 
 			if (player1 && player2) {
-				// Create a new game for these players
+				playersToRemove.push(player1.id, player2.id)
 				const newGame = new GameModel(player1, player2)
 				root.addGame(newGame)
 				yield* fork(gameManager, newGame)
 			} else {
-				// Something went wrong, broadcast to both players to leave matchmaking
-				broadcast([player1, player2], 'LEAVE_MATCHMAKING')
+				// Something went wrong, remove the undefined player from the queue
+				if (player1 === undefined) playersToRemove.push(player1Id)
+				if (player2 === undefined) playersToRemove.push(player2Id)
 			}
 		}
 
-		// Add back extra player
-		if (extraPlayer) {
-			root.queue.push(extraPlayer)
-		}
-
-		// Remove players who got games from queue
-		root.queue.splice(0, index)
+		root.queue = root.queue.filter((player) => !playersToRemove.includes(player))
 	}
 }
 
@@ -162,7 +155,7 @@ function* joinQueue(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join queue] Player is already in game or queue:', player.playerName)
+		console.log('[Join queue] Player is already in game or queue:', player.name)
 		broadcast([player], 'JOIN_QUEUE_FAILURE')
 		return
 	}
@@ -170,7 +163,7 @@ function* joinQueue(msg: ClientMessage) {
 	// Add them to the queue
 	root.queue.push(playerId)
 	broadcast([player], 'JOIN_QUEUE_SUCCESS')
-	console.log(`Joining queue: ${player.playerName}`)
+	console.log(`Joining queue: ${player.name}`)
 }
 
 function* leaveQueue(msg: ClientMessage) {
@@ -187,10 +180,10 @@ function* leaveQueue(msg: ClientMessage) {
 	if (queueIndex >= 0) {
 		root.queue.splice(queueIndex, 1)
 		broadcast([player], 'LEAVE_QUEUE_SUCCESS')
-		console.log(`Left queue: ${player.playerName}`)
+		console.log(`Left queue: ${player.name}`)
 	} else {
 		broadcast([player], 'LEAVE_QUEUE_FAILURE')
-		console.log('[Leave queue]: Player tried to leave queue when not there:', player.playerName)
+		console.log('[Leave queue]: Player tried to leave queue when not there:', player.name)
 	}
 }
 
@@ -203,7 +196,7 @@ function* createPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Create private game] Player is already in game or queue:', player.playerName)
+		console.log('[Create private game] Player is already in game or queue:', player.name)
 		broadcast([player], 'CREATE_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -218,7 +211,7 @@ function* createPrivateGame(msg: ClientMessage) {
 	// Send code to player
 	broadcast([player], 'CREATE_PRIVATE_GAME_SUCCESS', gameCode)
 
-	console.log(`Private game created by ${player.playerName}.`, `Code: ${gameCode}`)
+	console.log(`Private game created by ${player.name}.`, `Code: ${gameCode}`)
 }
 
 function* joinPrivateGame(msg: ClientMessage) {
@@ -230,7 +223,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 	}
 
 	if (inGame(playerId) || inQueue(playerId)) {
-		console.log('[Join private game] Player is already in game or queue:', player.playerName)
+		console.log('[Join private game] Player is already in game or queue:', player.name)
 		broadcast([player], 'JOIN_PRIVATE_GAME_FAILURE')
 		return
 	}
@@ -260,7 +253,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 		// Remove this game from the queue, it's started
 		delete root.privateQueue[code]
 
-		console.log(`Joining private game: ${player.playerName}.`, `Code: ${code}`)
+		console.log(`Joining private game: ${player.name}.`, `Code: ${code}`)
 
 		broadcast([player], 'JOIN_PRIVATE_GAME_SUCCESS')
 		yield* fork(gameManager, newGame)
@@ -269,7 +262,7 @@ function* joinPrivateGame(msg: ClientMessage) {
 		root.privateQueue[code].playerId = playerId
 		broadcast([player], 'WAITING_FOR_PLAYER')
 
-		console.log(`Joining empty private game: ${player.playerName}.`, `Code: ${code}`)
+		console.log(`Joining empty private game: ${player.name}.`, `Code: ${code}`)
 	}
 }
 
@@ -295,18 +288,18 @@ function onPlayerLeft(player: PlayerModel) {
 	// Remove player from all queues
 
 	// Public queue
-	if (root.queue.some((id) => id === player.playerId)) {
-		const queueIndex = root.queue.indexOf(player.playerId)
+	if (root.queue.some((id) => id === player.id)) {
+		const queueIndex = root.queue.indexOf(player.id)
 		if (queueIndex >= 0) {
 			root.queue.splice(queueIndex, 1)
-			console.log(`Left queue: ${player.playerName}`)
+			console.log(`Left queue: ${player.name}`)
 		}
 	}
 
 	// Private queue
 	for (let code in root.privateQueue) {
 		const info = root.privateQueue[code]
-		if (info.playerId && info.playerId === player.playerId) {
+		if (info.playerId && info.playerId === player.id) {
 			delete root.privateQueue[code]
 			console.log(`Private game cancelled. Code: ${code}`)
 		}

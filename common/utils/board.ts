@@ -11,7 +11,7 @@ import {
 	RowState,
 	RowStateWithHermit,
 } from '../types/game-state'
-import {BattleLogFormatT} from '../models/battle-log'
+import {PickInfo} from '../types/server-requests'
 
 export function getActiveRow(player: PlayerState) {
 	if (player.board.activeRow === null) return null
@@ -43,7 +43,12 @@ export function getRowPos(cardPos: CardPosModel): RowPos | null {
 	}
 }
 
-export function getSlotPos(player: PlayerState, rowIndex: number, type: BoardSlotTypeT, index = 0): SlotPos {
+export function getSlotPos(
+	player: PlayerState,
+	rowIndex: number,
+	type: BoardSlotTypeT,
+	index = 0
+): SlotPos {
 	return {
 		player,
 		rowIndex,
@@ -131,10 +136,7 @@ export function hasSingleUse(playerState: PlayerState, id: string, isUsed: boole
 	return suCard?.cardId === id && suUsed === isUsed
 }
 
-export function applySingleUse(
-	game: GameModel,
-	effectAction: BattleLogFormatT[]
-): GenericActionResult {
+export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -149,11 +151,13 @@ export function applySingleUse(
 
 	currentPlayer.board.singleUseCardUsed = true
 
-	game.battleLog.addApplyEffectEntry(effectAction)
 	currentPlayer.hooks.onApply.call()
 
 	// This can only be done once per turn
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
+
+	// Create the logs
+	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, currentPlayer.coinFlips, pickResult)
 
 	currentPlayer.hooks.afterApply.call()
 
@@ -208,23 +212,8 @@ export function removeStatusEffect(
 
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
+	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
-}
-
-export function canAttachToCard(
-	game: GameModel,
-	card: CardT | null,
-	cardAttaching: CardT | null
-): boolean {
-	if (!card || !cardAttaching) return false
-
-	const cardAttachingPos = getCardPos(game, cardAttaching.cardInstance)
-	const cardInfo = CARDS[card.cardId]
-	if (!cardAttachingPos || !cardInfo) return false
-
-	if (!cardInfo.canAttachToCard(game, cardAttachingPos)) return false
-
-	return true
 }

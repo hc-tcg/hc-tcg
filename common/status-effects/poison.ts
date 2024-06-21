@@ -6,6 +6,7 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CARDS} from '../cards'
 
 class PoisonStatusEffect extends StatusEffect {
 	constructor() {
@@ -13,7 +14,7 @@ class PoisonStatusEffect extends StatusEffect {
 			id: 'poison',
 			name: 'Poison',
 			description:
-				'This Hermit takes an additional 20hp damage every turn until down to 10hp. Ignores armour. Continues to poison if health is recovered. Poison does not knock out Hermits.',
+				"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 			duration: 0,
 			counter: false,
 			damageEffect: true,
@@ -31,6 +32,10 @@ class PoisonStatusEffect extends StatusEffect {
 		if (hasDamageEffect) return
 
 		game.state.statusEffects.push(statusEffectInfo)
+
+		if (pos.card) {
+			game.battleLog.addEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $ePoisoned$`)
+		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
@@ -57,6 +62,7 @@ class PoisonStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
+				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
 			if (targetPos.row.health >= 30) {
@@ -65,12 +71,14 @@ class PoisonStatusEffect extends StatusEffect {
 				statusEffectAttack.addDamage(this.id, 10)
 			}
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Poison', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.rowIndex === null || !hermitPos.row) return
-			if (hermitPos.row != pos.row) return
+		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget) return
+			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
@@ -78,7 +86,7 @@ class PoisonStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

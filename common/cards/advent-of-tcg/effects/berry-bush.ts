@@ -5,6 +5,8 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {TurnActions} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
+import {CanAttachResult} from '../../base/card'
+import {hasActive} from '../../../utils/game'
 
 class BerryBushEffectCard extends EffectCard {
 	constructor() {
@@ -14,14 +16,12 @@ class BerryBushEffectCard extends EffectCard {
 			name: 'Sweet Berry Bush',
 			rarity: 'ultra_rare',
 			description:
-				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\n\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\n\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
+				"Use like a Hermit card. Place on one of your opponent's empty Hermit slots. Has 30hp.\nCan not attach cards to it.\nYou do not get a point when it's knocked out.\nLoses 10hp per turn. If you knock out Sweet Berry Bush before it's HP becomes 0, add 2 Instant Healing II into your hand.",
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const newPos = getBasicCardPos(game, instance)
-		if (!newPos) return
-		const {player, opponentPlayer, row, rowIndex} = newPos
+		const {player, opponentPlayer, row} = pos
 		if (!row) return
 
 		row.health = 30
@@ -31,6 +31,11 @@ class BerryBushEffectCard extends EffectCard {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 			}
+		})
+
+		player.hooks.canAttach.add(instance, (result, pos) => {
+			if (pos.row?.hermitCard?.cardInstance !== instance) return
+			if (['item', 'effect'].includes(pos.slot.type)) result.push('UNMET_CONDITION_SILENT')
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, () => {
@@ -70,6 +75,7 @@ class BerryBushEffectCard extends EffectCard {
 		}
 
 		player.hooks.afterAttack.remove(instance)
+		player.hooks.canAttach.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
 	}
@@ -77,17 +83,13 @@ class BerryBushEffectCard extends EffectCard {
 	override canAttach(game: GameModel, pos: CardPosModel) {
 		const {slot} = pos
 		const {currentPlayer, opponentPlayer} = game
+		const result: CanAttachResult = []
 
-		if (!slot || slot.type !== 'hermit') return 'INVALID'
-		if (pos.player.id !== opponentPlayer.id) return 'INVALID'
-		if (opponentPlayer.board.activeRow === null) return 'INVALID'
-		if (currentPlayer.board.activeRow === null) return 'INVALID'
+		if (!slot || slot.type !== 'hermit') result.push('INVALID_SLOT')
+		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
+		if (!hasActive(opponentPlayer) || !hasActive(currentPlayer)) result.push('UNMET_CONDITION')
 
-		return 'YES'
-	}
-
-	override canAttachToCard(game: GameModel, pos: CardPosModel) {
-		return false
+		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {

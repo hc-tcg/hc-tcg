@@ -12,7 +12,6 @@
 		"maxDuplicates": 3,
 		"maxDeckCost": 42
 	},
-	"logoSubText": "Woof woof.",
-	"botUrl": "http://51.83.19.63:8194",
-	"version": "0.6.41"
+	"logoSubText": "New Stuff!",
+	"botUrl": "http://51.68.21.110:8085"
 }

@@ -20,7 +20,6 @@ import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
-import {AttackModel} from 'common/models/attack-model'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -188,30 +187,33 @@ function* checkHermitHealth(game: GameModel) {
 		for (let rowIndex in playerRows) {
 			const row = playerRows[rowIndex]
 			if (row.hermitCard && row.health <= 0) {
-				// Call hermit death hooks
-				const hermitPos = getCardPos(game, row.hermitCard.cardInstance)
-				if (hermitPos) {
-					playerState.hooks.onHermitDeath.call(hermitPos)
+				const cardType = CARDS[row.hermitCard.cardId].type
+
+				// Add battle log entry. Non Hermit cards can create their detach message themselves.
+				if (cardType === 'hermit') {
+					game.battleLog.addDeathEntry(playerState, row)
 				}
 
-				// Add battle log entry
-				game.battleLog.addDeathEntry(playerState, row)
+				discardCard(game, row.hermitCard)
+				discardCard(game, row.effectCard)
 
-				if (row.hermitCard) discardCard(game, row.hermitCard)
-				if (row.effectCard) discardCard(game, row.effectCard)
 				row.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				playerRows[rowIndex] = getEmptyRow()
 				if (Number(rowIndex) === activeRow) {
 					game.changeActiveRow(playerState, null)
 					playerState.hooks.onActiveRowChange.call(activeRow, null)
 				}
-				playerState.lives -= 1
 
-				// reward card
-				const opponentState = playerStates.find((s) => s.id !== playerState.id)
-				if (!opponentState) continue
-				const rewardCard = playerState.pile.shift()
-				if (rewardCard) opponentState.hand.push(rewardCard)
+				// Only hermit cards give points
+				if (cardType === 'hermit') {
+					playerState.lives -= 1
+
+					// reward card
+					const opponentState = playerStates.find((s) => s.id !== playerState.id)
+					if (!opponentState) continue
+					const rewardCard = playerState.pile.shift()
+					if (rewardCard) opponentState.hand.push(rewardCard)
+				}
 			}
 		}
 
@@ -256,11 +258,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		return
 	}
 
-	let modalResult = null
-	if (turnAction.payload && turnAction.payload.modalResult) {
-		modalResult = turnAction.payload.modalResult
-	}
-
 	let endTurn = false
 
 	let result: ActionResult = 'FAILURE_UNKNOWN_ERROR'
@@ -297,6 +294,7 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 			break
 		case 'END_TURN':
 			endTurn = true
+			result = 'SUCCESS'
 			break
 		default:
 			// Unknown action type, ignore it completely
@@ -310,7 +308,9 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 	const deadPlayerIds = yield* call(checkHermitHealth, game)
 	if (deadPlayerIds.length) endTurn = true
 
-	return endTurn ? 'END_TURN' : undefined
+	if (endTurn) {
+		return 'END_TURN'
+	}
 }
 
 function* turnActionsSaga(game: GameModel) {
@@ -404,7 +404,7 @@ function* turnActionsSaga(game: GameModel) {
 			game.state.timer.turnRemaining = Math.floor((remainingTime + graceTime) / 1000)
 
 			yield* call(sendGameState, game)
-			game.battleLog.addCoinFlipEntry(currentPlayer.coinFlips)
+			game.battleLog.sendLogs()
 
 			const raceResult = yield* race({
 				turnAction: take(turnActionChannel),
@@ -574,6 +574,8 @@ function* turnSaga(game: GameModel) {
 			return 'GAME_END'
 		}
 	}
+
+	game.battleLog.addTurnEndEntry()
 
 	return 'DONE'
 }

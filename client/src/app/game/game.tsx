@@ -6,7 +6,6 @@ import Board from './board'
 import css from './game.module.scss'
 import {
 	AttackModal,
-	BorrowModal,
 	ChangeHermitModal,
 	ConfirmModal,
 	EndTurnModal,
@@ -42,7 +41,6 @@ const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	'unmet-condition': UnmetConditionModal,
 
 	// Custom modals
-	borrow: BorrowModal,
 	copyAttack: CopyAttackModal,
 	selectCards: SelectCardsModal,
 }
@@ -164,9 +162,9 @@ function Game() {
 		}
 	}
 
-	// Play SFX on turn start
+	// Play SFX on turn start or when the player enters a game
 	useEffect(() => {
-		if (gameState.turn.currentPlayerId === gameState.playerId) {
+		if (gameState.turn.turnNumber === 1 || gameState.turn.currentPlayerId === gameState.playerId) {
 			dispatch(playSound('/sfx/Click.ogg'))
 		}
 	}, [gameState.turn.currentPlayerId])

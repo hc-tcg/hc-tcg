@@ -1,8 +1,9 @@
-import {CardRarityT} from '../../types/cards'
-import Card from './card'
+import {PlayCardLog, CardRarityT} from '../../types/cards'
+import Card, {CanAttachResult} from './card'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 
 export type SingleUseDefs = {
 	id: string
@@ -10,6 +11,7 @@ export type SingleUseDefs = {
 	name: string
 	rarity: CardRarityT
 	description: string
+	log?: ((values: PlayCardLog) => string) | null
 }
 
 class SingleUseCard extends Card {
@@ -25,12 +27,18 @@ class SingleUseCard extends Card {
 		})
 
 		this.description = defs.description
+		if (defs.log !== null)
+			this.updateLog((values) => {
+				if (defs.log === undefined) return values.defaultLog
+				if (defs.log === null) return ''
+				return defs.log(values)
+			})
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID' {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		if (pos.slot.type !== 'single_use') return ['INVALID_SLOT']
 
-		return 'YES'
+		return []
 	}
 
 	public override getActions(game: GameModel): TurnActions {
@@ -60,6 +68,10 @@ class SingleUseCard extends Card {
 	public canAttack(): boolean {
 		// default is no
 		return false
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return formatText(`*${this.description}*`)
 	}
 }
 

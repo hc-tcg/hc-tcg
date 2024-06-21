@@ -7,7 +7,6 @@ import css from './card-list.module.scss'
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import Card from 'common/cards/base/card'
 import {equalCard} from 'common/utils/cards'
-import {forwardRef, useRef} from 'react'
 
 type CardListProps = {
 	cards: Array<CardT>
@@ -17,10 +16,11 @@ type CardListProps = {
 	onClick?: (card: CardT) => void
 	wrap?: boolean
 	tooltipAboveModal?: boolean
+	enableAnimations?: boolean
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, selected, picked} = props
+	const {wrap, onClick, cards, disabled, selected, picked, enableAnimations} = props
 
 	const cardsOutput = cards.map((card) => {
 		const info = CARDS[card.cardId] as Card
@@ -31,18 +31,23 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => card.cardId === id)
 
+		const cssClasses =
+			enableAnimations !== false
+				? {
+						enter: css.enter,
+						enterActive: css.enterActive,
+						enterDone: css.enterDone,
+						exit: css.exit,
+						exitActive: css.exitActive,
+				  }
+				: {}
+
 		return (
 			<CSSTransition
-				timeout={250}
 				key={card.cardInstance}
+				timeout={250}
 				unmountOnExit={true}
-				classNames={{
-					enter: css.enter,
-					enterActive: css.enterActive,
-					enterDone: css.enterDone,
-					exit: css.exit,
-					exitActive: css.exitActive,
-				}}
+				classNames={cssClasses}
 			>
 				<CardComponent
 					key={card.cardInstance}
@@ -53,7 +58,7 @@ const CardList = (props: CardListProps) => {
 					card={info}
 					disabled={isDisabled}
 					selected={isSelected}
-					picked={!!isPicked}
+					picked={isPicked}
 					tooltipAboveModal={props.tooltipAboveModal}
 				/>
 			</CSSTransition>

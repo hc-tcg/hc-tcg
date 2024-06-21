@@ -1,5 +1,5 @@
 import {useDeferredValue, useRef, useState} from 'react'
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import classNames from 'classnames'
 import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
@@ -21,6 +21,8 @@ import {deleteDeck, getSavedDeckNames} from 'logic/saved-decks/saved-decks'
 import {getCardExpansion} from 'common/utils/cards'
 import {getCardRank, getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
+import {getSettings} from 'logic/local-settings/local-settings-selectors'
+import {setSetting} from 'logic/local-settings/local-settings-actions'
 
 const RANK_NAMES = ['any', ...Object.keys(RANKS.ranks)]
 const DECK_ICONS = [
@@ -96,7 +98,6 @@ const DeckName = ({loadedDeck, setDeckName, isValid}: DeckNameT) => {
 				placeholder="Enter Deck Name..."
 				className={css.input}
 				required={true}
-				pattern={`^[a-zA-Z0-9 ]*$`}
 				onBlur={() => handleBlur()}
 				data-focused={inputIsFocused}
 			/>
@@ -116,6 +117,7 @@ type Props = {
 
 function EditDeck({back, title, saveDeck, deck}: Props) {
 	const dispatch = useDispatch()
+	const settings = useSelector(getSettings)
 
 	// STATE
 	const [textQuery, setTextQuery] = useState<string>('')
@@ -308,6 +310,31 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 								onChange={(e) => setTextQuery(e.target.value)}
 							/>
 							<div className={css.dynamicSpace} />
+							<button
+								className={css.dropdownButton}
+								title={
+									settings.showAdvancedTooltips === 'on'
+										? 'Hide detailed tooltips'
+										: 'Show detailed tooltips'
+								}
+								onClick={() =>
+									dispatch(
+										setSetting(
+											'showAdvancedTooltips',
+											settings.showAdvancedTooltips === 'on' ? 'off' : 'on'
+										)
+									)
+								}
+							>
+								<img
+									src={
+										settings.showAdvancedTooltips === 'on'
+											? '/images/toolbar/tooltips.png'
+											: '/images/toolbar/tooltips-off.png'
+									}
+									height="30"
+								/>
+							</button>
 							<Button
 								size="small"
 								variant="default"
@@ -324,6 +351,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'hermit'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -333,6 +361,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'effect'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -342,6 +371,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'single_use'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>
@@ -351,6 +381,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 							cards={sortCards(filteredCards).filter(
 								(card) => TYPED_CARDS[card.cardId].type === 'item'
 							)}
+							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}
 						/>

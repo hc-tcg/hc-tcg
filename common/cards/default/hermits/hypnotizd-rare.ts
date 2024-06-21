@@ -32,40 +32,38 @@ class HypnotizdRareHermitCard extends HermitCard {
 				cost: ['miner', 'any'],
 				damage: 70,
 				power:
-					"You can choose to attack an opponent's AFK Hermit.\n\nIf AFK Hermit is attacked, you must discard 1 attached item card.",
+					"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
 			},
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player, opponentPlayer} = pos
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
-		if (attacks[0].type !== 'secondary') return attacks
-
-		const hermitAttack = attacks[0]
+		if (!attack || attack.type !== 'secondary') return attack
 
 		const targetKey = this.getInstanceKey(instance, 'target')
 		const targetIndex: number | undefined = player.custom[targetKey]
-		if (targetIndex === undefined) return attacks
-		if (targetIndex === opponentPlayer.board.activeRow) return attacks
+		if (targetIndex === undefined) return attack
+		if (targetIndex === opponentPlayer.board.activeRow) return attack
 
 		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return attacks
+		if (!targetRow.hermitCard) return attack
 
 		// Change attack target
-		hermitAttack.setTarget(this.id, {
+		attack.setTarget(this.id, {
 			player: opponentPlayer,
 			rowIndex: targetIndex,
 			row: targetRow,
 		})
 
-		const newAttacks = [hermitAttack]
+		const newAttacks = attack
 
 		// Delete the target info now
 		delete player.custom[targetKey]
@@ -88,7 +86,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -119,7 +117,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
 
 					const rowIndex = pickResult.rowIndex
 					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'

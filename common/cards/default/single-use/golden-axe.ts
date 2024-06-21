@@ -1,8 +1,6 @@
-import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -14,75 +12,69 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			name: 'Golden Axe',
 			rarity: 'rare',
 			description:
-				"Do an additional 40hp damage.\nThe opponent Hermit's attached effect card is ignored during this attack.",
+				"Do 40hp damage to your opponent's active Hermit.\nAny effect card attached to your opponent's active Hermit is ignored during this turn.",
+			log: null,
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return []
+			if (!opponentActivePos) return null
 
 			const axeAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
+				log: (values) =>
+					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
 			}).addDamage(this.id, 40)
 
-			return [axeAttack]
+			return axeAttack
 		})
 
 		player.hooks.beforeAttack.addBefore(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return
+			if (!opponentActivePos) return null
 
 			if (attack.id === attackId) {
-				const opponentActiveHermitId = getActiveRowPos(opponentPlayer)?.row.hermitCard.cardId
-				applySingleUse(game, [
-					[`to attack `, 'plain'],
-					[`${opponentActiveHermitId ? CARDS[opponentActiveHermitId].name : ''} `, 'opponent'],
-				])
+				applySingleUse(game)
 			}
 
-			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreCards.push((instance) => {
-				const pos = getCardPos(game, instance)
-				if (!pos || !attack.getTarget()) return false
-
-				const isTargeting = isTargetingPos(attack, opponentActivePos)
-				if (isTargeting && pos.slot.type === 'effect') {
-					// It's the targets effect card, ignore it
-					return true
-				}
-
-				return false
+				const ignorePos = getBasicCardPos(game, instance)
+				if (!ignorePos || !ignorePos.row || !ignorePos.row.effectCard) return false
+				if (ignorePos.slot.type !== 'effect') return false
+				if (ignorePos.rowIndex !== opponentActivePos.rowIndex) return false
+				if (ignorePos.player === player) return false
+				return true
 			})
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
-			if (attack.id === attackId) {
-				// Clean up
-				player.hooks.getAttacks.remove(instance)
-				player.hooks.beforeAttack.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-			}
+		player.hooks.afterAttack.add(instance, () => {
+			player.hooks.getAttack.remove(instance)
+			player.hooks.afterAttack.remove(instance)
+		})
+
+		player.hooks.onTurnEnd.add(instance, () => {
+			player.hooks.beforeAttack.remove(instance)
+			player.hooks.onTurnEnd.remove(instance)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	public override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		// Clean up on detach
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterApply.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 	}
 
 	override canAttack() {

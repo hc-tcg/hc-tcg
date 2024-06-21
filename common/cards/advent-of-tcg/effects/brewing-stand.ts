@@ -13,7 +13,7 @@ class BrewingStandEffectCard extends EffectCard {
 			name: 'Brewing stand',
 			rarity: 'rare',
 			description:
-				'Attach to any active or AFK Hermit. At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
+				'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 		})
 	}
 
@@ -34,7 +34,7 @@ class BrewingStandEffectCard extends EffectCard {
 				id: this.id,
 				message: 'Pick an item card to discard',
 				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 					if (pickResult.rowIndex !== pos.rowIndex) return 'FAILURE_INVALID_SLOT'
 
 					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'

@@ -1,8 +1,10 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRow} from '../../../utils/board'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
+import {hasActive} from '../../../utils/game'
 
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -12,7 +14,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 			name: 'Potion of Weakness',
 			rarity: 'common',
 			description:
-				"Opponent's active Hermit type is now weak to your active Hermit's type for 3 turns.",
+				"Your opponent's active Hermit is weak to your active Hermit's type for 3 turns.",
 		})
 	}
 
@@ -21,11 +23,12 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		if (pos.slot.type !== 'single_use') return 'INVALID'
+		const result: CanAttachResult = []
+		if (pos.slot.type !== 'single_use') result.push('INVALID_SLOT')
 
-		if (pos.opponentPlayer.board.activeRow === null) return 'NO'
+		if (!hasActive(pos.opponentPlayer)) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -44,6 +47,15 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	}
 	override getExpansion() {
 		return 'alter_egos'
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'glossary',
+				name: 'weak',
+			},
+		]
 	}
 }
 

@@ -1,15 +1,9 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {
-	applySingleUse,
-	canAttachToCard,
-	getSlotPos,
-	isRowEmpty,
-	rowHasEmptyItemSlot,
-} from '../../../utils/board'
-import {isCardType} from '../../../utils/cards'
-import {discardSingleUse, swapSlots} from '../../../utils/movement'
+import {applySingleUse, getSlotPos, isRowEmpty, rowHasEmptyItemSlot} from '../../../utils/board'
+import {canAttachToSlot, discardSingleUse, swapSlots} from '../../../utils/movement'
+import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class PistonSingleUseCard extends SingleUseCard {
@@ -20,15 +14,17 @@ class PistonSingleUseCard extends SingleUseCard {
 			name: 'Piston',
 			rarity: 'common',
 			description:
-				'Move 1 of your attached item cards to an adjacent active or AFK Hermit. You can use another single use effect card this turn.',
+				'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
+			log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
+		const {player} = pos
 
-		const playerBoard = pos.player.board
+		const result = super.canAttach(game, pos)
+
+		const playerBoard = player.board
 
 		for (let rowIndex = 0; rowIndex < playerBoard.rows.length; rowIndex++) {
 			const row = playerBoard.rows[rowIndex]
@@ -38,16 +34,30 @@ class PistonSingleUseCard extends SingleUseCard {
 			const adjacentRowsIndex = [rowIndex - 1, rowIndex + 1].filter(
 				(index) => index >= 0 && index < playerBoard.rows.length
 			)
+
+			const items = row.itemCards
+			// for each row, check adjacent rows for each item card against all empty slots on that row
 			for (const index of adjacentRowsIndex) {
 				const newRow = playerBoard.rows[index]
 				if (!newRow.hermitCard) continue
-				if (!isCardType(newRow.hermitCard, 'hermit')) continue
 				if (!rowHasEmptyItemSlot(newRow)) continue
-				return 'YES'
+
+				for (const item of items) {
+					if (!item) continue
+
+					for (let i = 0; i < 3; i++) {
+						const targetSlot = getSlotPos(player, index, 'item', i)
+
+						if (canAttachToSlot(game, targetSlot, item, true).length > 0) continue
+
+						// We're good to place
+						return result
+					}
+				}
 			}
 		}
 
-		return 'NO'
+		return [...result, 'UNMET_CONDITION']
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -60,7 +70,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const rowIndex = pickResult.rowIndex
 				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -80,7 +90,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				const pickedIndex = pickResult.rowIndex
 				if (pickedIndex === undefined) return 'FAILURE_INVALID_SLOT'
@@ -104,34 +114,21 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemIndex: number = player.custom[itemIndexKey]
 
 				// Make sure we can attach the item
-				const itemCard = firstRow.itemCards[itemIndex]
-				if (!canAttachToCard(game, pickedRow.hermitCard, itemCard)) return 'FAILURE_INVALID_SLOT'
-
-				// Move the item
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
+				const itemCard = firstRow.itemCards[itemIndex]
+				if (canAttachToSlot(game, targetPos, itemCard!, true).length > 0) {
+					return 'FAILURE_INVALID_SLOT'
+				}
+
+				const logInfo = pickResult
+				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+
+				applySingleUse(game, logInfo)
+
+				// Move the item
 				swapSlots(game, itemPos, targetPos)
 
-				// Only add the after apply hook here
-				player.hooks.afterApply.add(instance, () => {
-					discardSingleUse(game, player)
-
-					// Remove playing a single use from completed actions so it can be done again
-					game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
-					player.hooks.afterApply.remove(instance)
-				})
-
-				const cardInfo = CARDS[itemCard!.cardId]
-				applySingleUse(game, [
-					[`to move `, 'plain'],
-					[
-						`${cardInfo.name}${
-							cardInfo.type === 'item' ? (cardInfo.rarity === 'rare' ? ' item x2' : ' item') : ''
-						} `,
-						'player',
-					],
-				])
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]
 
@@ -146,6 +143,21 @@ class PistonSingleUseCard extends SingleUseCard {
 				delete player.custom[itemIndexKey]
 			},
 		})
+
+		player.hooks.afterApply.add(instance, () => {
+			discardSingleUse(game, player)
+
+			// Remove playing a single use from completed actions so it can be done again
+			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
+
+			player.hooks.afterApply.remove(instance)
+		})
+	}
+
+	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {player} = pos
+
+		player.hooks.afterApply.remove(instance)
 	}
 
 	override getExpansion() {

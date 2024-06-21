@@ -15,7 +15,7 @@ function ChatItem() {
 	const opponentId = useSelector(getOpponentId)
 	const latestOpponentMessageTime =
 		chatMessages.filter((msg) => {
-			return msg.playerId === opponentId && msg.systemMessage === false
+			return msg.sender === opponentId && msg.systemMessage === false
 		})[0]?.createdAt || 0
 	const [lastSeen, setLastSeen] = useState<number>(latestOpponentMessageTime)
 	const dispatch = useDispatch()

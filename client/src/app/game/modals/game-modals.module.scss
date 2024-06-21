@@ -30,10 +30,20 @@
 }
 
 .cards {
+	display: flex;
+	flex-grow: 1;
+	align-items: center;
+	justify-content: center;
 	padding: 5px;
 	max-height: 400px;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
+
+.cardsListContainer {
+	margin: auto;
+	max-height: 100%;
+	overflow: auto;
 }
 
 .card {

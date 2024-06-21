@@ -1,9 +1,17 @@
-import {CardRarityT, CardTypeT} from '../../types/cards'
+import {PlayCardLog, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
-import {HermitAttackType} from '../../types/attack'
-import {PickRequest} from '../../types/server-requests'
+import {FormattedTextNode, TextNode} from '../../utils/formatting'
+
+export type CanAttachError =
+	| 'INVALID_PLAYER'
+	| 'INVALID_SLOT'
+	| 'UNMET_CONDITION'
+	| 'UNMET_CONDITION_SILENT'
+	| 'UNKNOWN_ERROR'
+
+export type CanAttachResult = Array<CanAttachError>
 
 type CardDefs = {
 	type: CardTypeT
@@ -20,12 +28,17 @@ abstract class Card {
 	public name: string
 	public rarity: CardRarityT
 
+	/** The battle log attached to this card */
+	/** Set to string when the card should generate a log when played or applied, and null otherwise */
+	private log: Array<(values: PlayCardLog) => string>
+
 	constructor(defs: CardDefs) {
 		this.type = defs.type
 		this.id = defs.id
 		this.numericId = defs.numericId
 		this.name = defs.name
 		this.rarity = defs.rarity
+		this.log = []
 	}
 
 	public getKey(keyName: string) {
@@ -37,22 +50,15 @@ abstract class Card {
 
 	/**
 	 * If the specified slot is empty, can this card be attached there
-	 * 
-	 * YES - Card can be attached to the slot
-	 * 
-	 * NO - This card normally can be attached in the slot but something is preventing it (Shows a popup)
-	 * 
-	 * INVALID - This card can never be attached in the slot - it's an invalid slot
+	 *
+	 * Returns an array of any of the problems there are with attaching, if any
 	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): 'YES' | 'NO' | 'INVALID'
+	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
 
 	/**
-	 * If this card is attached to a Hermit slot, can another card be attached to the row this card is in
+	 * Returns the description for this card that shows up in the sidebar.
 	 */
-	public canAttachToCard(game: GameModel, pos: CardPosModel): boolean {
-		// default is true
-		return true
-	}
+	public abstract getFormattedDescription(): FormattedTextNode
 
 	/**
 	 * Called when an instance of this card is attached to the board
@@ -83,6 +89,13 @@ abstract class Card {
 	}
 
 	/**
+	 * Returns the shortened name to use for this card
+	 */
+	public getShortName(): string {
+		return this.name
+	}
+
+	/**
 	 * Returns whether to show *Attach* on the card tooltip
 	 */
 	public showAttachTooltip(): boolean {
@@ -102,6 +115,34 @@ abstract class Card {
 	public getActions(game: GameModel): TurnActions {
 		// default is to return nothing
 		return []
+	}
+
+	/**
+	 * Returns the sidebar descriptions for this card
+	 */
+	public sidebarDescriptions(): Array<Record<string, string>> {
+		return []
+	}
+
+	/** Updates the log entry*/
+	public updateLog(logEntry: (values: PlayCardLog) => string) {
+		if (logEntry === null) return
+		this.log.push(logEntry)
+	}
+
+	private consolidateLogs(values: PlayCardLog, logIndex: number) {
+		if (logIndex > 0) {
+			values.previousLog = this.consolidateLogs(values, logIndex - 1)
+		}
+		return this.log[logIndex](values)
+	}
+
+	/** Gets the log entry for this attack*/
+	public getLog(values: PlayCardLog) {
+		if (this.log.length === 0) {
+			return ''
+		}
+		return this.consolidateLogs(values, this.log.length - 1)
 	}
 }
 

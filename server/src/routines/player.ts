@@ -9,7 +9,7 @@ function* playerConnectedSaga(action: any) {
 
 	if (action.payload.playerId) {
 		const existingPlayer = root.players[action.payload.playerId]
-		const validPlayer = existingPlayer?.playerSecret === action.payload.playerSecret
+		const validPlayer = existingPlayer?.secret === action.payload.playerSecret
 
 		if (validPlayer) {
 			existingPlayer.socket = socket
@@ -17,7 +17,7 @@ function* playerConnectedSaga(action: any) {
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',
-				payload: existingPlayer.playerDeck,
+				payload: existingPlayer.deck,
 			})
 		} else {
 			socket.emit('INVALID_PLAYER', {type: 'INVALID_PLAYER'})
@@ -45,7 +45,7 @@ function* playerDisconnectedSaga(action: any) {
 
 	const player = root.getPlayers().find((player) => player.socket === socket)
 	if (!player) return
-	const {playerId: playerId} = player
+	const {id: playerId} = player
 
 	// Remove player from queues straight away
 	root.hooks.playerLeft.call(player)
@@ -55,7 +55,7 @@ function* playerDisconnectedSaga(action: any) {
 	const result = yield* race({
 		timeout: delay(KEEP_PLAYER_AFTER_DISCONNECT_MS),
 		reconnect: take(
-			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.playerId === playerId
+			(action: any) => action.type === 'PLAYER_RECONNECTED' && action.payload.id === playerId
 		),
 	})
 
@@ -74,7 +74,7 @@ function* updateDeckSaga(action: any) {
 
 	player.socket?.emit('NEW_DECK', {
 		type: 'NEW_DECK',
-		payload: player.playerDeck,
+		payload: player.deck,
 	})
 }
 
@@ -91,9 +91,20 @@ function* updateMinecraftNameSaga(action: any) {
 	})
 }
 
+function* loadUpdatesSaga(action: any) {
+	const {playerId} = action
+	const player = root.players[playerId]
+
+	player.socket?.emit('LOAD_UPDATES', {
+		type: 'LOAD_UPDATES',
+		payload: root.updates,
+	})
+}
+
 export function* playerSaga() {
 	yield* takeEvery('CLIENT_CONNECTED', playerConnectedSaga)
 	yield* takeEvery('CLIENT_DISCONNECTED', playerDisconnectedSaga)
 	yield* takeEvery('UPDATE_DECK', updateDeckSaga)
 	yield* takeEvery('UPDATE_MINECRAFT_NAME', updateMinecraftNameSaga)
+	yield* takeEvery('GET_UPDATES', loadUpdatesSaga)
 }

@@ -23,23 +23,24 @@ class HotguyRareHermitCard extends HermitCard {
 				name: 'Hawkeye',
 				cost: ['explorer', 'explorer'],
 				damage: 80,
-				power:
-					'When used with the bow effect card, the bow card does double damage to the chosen AFK opposing Hermit.',
+				power: 'When used with a bow effect card, bow damage doubles.',
 			},
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
-		const attacks = super.getAttacks(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 		// Used for the Bow, we need to know the attack type
-		if (attacks[0].type === 'secondary') pos.player.custom[this.getInstanceKey(instance)] = true
+		if (attack && attack.type === 'secondary') {
+			pos.player.custom[this.getInstanceKey(instance)] = true
+		}
 
-		return attacks
+		return attack
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

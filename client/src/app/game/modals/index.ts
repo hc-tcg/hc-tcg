@@ -1,5 +1,4 @@
 export {default as AttackModal} from './attack-modal'
-export {default as BorrowModal} from './borrow-modal'
 export {default as ChangeHermitModal} from './change-hermit-modal'
 export {default as ConfirmModal} from './confirm-modal'
 export {default as EndTurnModal} from './end-turn-modal'

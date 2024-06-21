@@ -23,8 +23,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 				name: 'Cup of Tea',
 				cost: ['redstone', 'redstone'],
 				damage: 80,
-				power:
-					'Flip a coin. If heads, the opposing active Hermit is now poisoned.\n\nPoison does an additional 20hp damage every turn until poisoned Hermit is down to 10hp.\n\nIgnores armour. Continues to poison if health is recovered.\n\nDoes not knock out Hermit.',
+				power: "Flip a coin.\nIf heads, poison your opponent's active Hermit.",
 			},
 		})
 	}
@@ -53,6 +52,15 @@ class XisumavoidRareHermitCard extends HermitCard {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'poison',
+			},
+		]
 	}
 }
 

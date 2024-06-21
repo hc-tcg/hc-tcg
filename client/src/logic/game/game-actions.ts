@@ -1,6 +1,5 @@
-import {BattleLogT, LocalGameState} from 'common/types/game-state'
+import {BattleLogT, LocalGameState, Message} from 'common/types/game-state'
 import {CardT, GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
-import {MessageInfoT} from 'common/types/chat'
 import {PickInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
@@ -69,11 +68,6 @@ export const setCoinFlip = (payload: CurrentCoinFlipT | null) => ({
 	payload,
 })
 
-export const addBattleLogEntry = (payload: BattleLogT | null) => ({
-	type: 'ADD_BATTLE_LOG_ENTRY',
-	payload,
-})
-
 export const setOpponentConnection = (payload: boolean) => ({
 	type: 'SET_OPPONENT_CONNECTION',
 	payload,
@@ -104,7 +98,7 @@ export const chatMessage = (message: string) => ({
 	payload: message,
 })
 
-export const chatUpdate = (messages: Array<MessageInfoT>) => ({
+export const chatUpdate = (messages: Array<Message>) => ({
 	type: 'CHAT_UPDATE',
 	payload: messages,
 })

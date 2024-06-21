@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 class AnvilSingleUseCard extends SingleUseCard {
@@ -12,42 +13,44 @@ class AnvilSingleUseCard extends SingleUseCard {
 			name: 'Anvil',
 			rarity: 'rare',
 			description:
-				"Do 30hp damage to your opponent's Hermit directly opposite your active Hermit on the board and 10hp damage to each of their Hermits below it.",
+				'Do 30hp damage to the Hermit card directly opposite your active Hermit on the game board and 10hp damage to each Hermit below it.',
 		})
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
 
-		player.hooks.getAttacks.add(instance, () => {
+		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
-			if (!activePos) return []
+			if (!activePos) return null
 			const activeIndex = activePos.rowIndex
 
 			const opponentRows = opponentPlayer.board.rows
 
-			const attacks = []
-			for (let i = activeIndex; i < opponentRows.length; i++) {
-				const opponentRow = opponentRows[i]
-				if (!opponentRow || !opponentRow.hermitCard) continue
-				const attack = new AttackModel({
-					id: this.getInstanceKey(instance, activeIndex === i ? 'active' : 'inactive'),
+			const attack = opponentRows.reduce((r: null | AttackModel, row, rowIndex) => {
+				if (!row || !row.hermitCard) return r
+				if (rowIndex < activeIndex) return r
+				const newAttack = new AttackModel({
+					id: this.getInstanceKey(instance, activeIndex === rowIndex ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
-						rowIndex: i,
-						row: opponentRow,
+						rowIndex: rowIndex,
+						row: row,
 					},
 					type: 'effect',
-				}).addDamage(this.id, i === activeIndex ? 30 : 10)
+					log: (values) =>
+						rowIndex === activeIndex
+							? `${values.defaultLog} to attack ${values.target} for ${values.damage} damage`
+							: `, ${values.target} for ${values.damage} damage`,
+				}).addDamage(this.id, rowIndex === activeIndex ? 30 : 10)
 
-				attacks.push(attack)
-			}
+				if (r) return r.addNewAttack(newAttack)
 
-			player.custom[targetsKey] = attacks.length
+				return newAttack
+			}, null)
 
-			return attacks
+			return attack
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -55,12 +58,7 @@ class AnvilSingleUseCard extends SingleUseCard {
 			const inactiveAttackId = this.getInstanceKey(instance, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
-			applySingleUse(game, [
-				[`to attack `, 'plain'],
-				[`${player.custom[targetsKey]} hermits `, 'opponent'],
-			])
-
-			delete player.custom[targetsKey]
+			applySingleUse(game)
 
 			player.hooks.onAttack.remove(instance)
 		})
@@ -68,22 +66,17 @@ class AnvilSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.getAttacks.remove(instance)
+		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		delete player.custom[targetsKey]
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
+		const result = super.canAttach(game, pos)
 
 		const {player} = pos
-		const activeRow = player.board.activeRow
-		if (activeRow === null) return 'NO'
+		if (!hasActive(player)) result.push('UNMET_CONDITION')
 
-		return 'YES'
+		return result
 	}
 
 	override getExpansion() {

@@ -17,7 +17,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 				cost: ['explorer'],
 				damage: 50,
 				power:
-					'Flip a Coin.\n\nIf heads, opponent flips a coin their next turn.\n\nIf heads, opponent damages themselves.',
+					"Flip a coin.\nIf heads, on your opponent's next turn, flip a coin.\nIf heads, your opponent's active Hermit attacks themselves.",
 			},
 			secondary: {
 				name: 'Get Dangled',
@@ -42,7 +42,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			if (coinFlip[0] !== 'heads') return
 
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('status-effect') || attack.isBacklash) return
+				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
 				if (!attack.getAttacker()) return
 
 				// No need to flip a coin for multiple attacks

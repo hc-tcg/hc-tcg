@@ -25,7 +25,7 @@ class GrianchRareHermitCard extends HermitCard {
 				cost: ['builder', 'builder'],
 				damage: 80,
 				power:
-					'Flip a Coin.\n\nIf heads, attack damage doubles.\n\nIf tails, your opponent may attack twice next round.',
+					'Flip a Coin.\nIf heads, attack damage doubles.\nIf tails, your opponent may attack twice next round.',
 			},
 		})
 	}

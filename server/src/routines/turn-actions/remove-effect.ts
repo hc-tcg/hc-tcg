@@ -13,13 +13,7 @@ function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResul
 		return 'FAILURE_CANNOT_COMPLETE'
 	}
 
-	if (game.state.pickRequests[0]?.playerId === currentPlayer.id) {
-		// Cancel and clear pick requests
-		for (let i = 0; i < game.state.pickRequests.length; i++) {
-			game.state.pickRequests[i].onCancel?.()
-		}
-		game.state.pickRequests = []
-	}
+	game.cancelPickRequests()
 
 	// Remove current attack
 	if (game.state.turn.currentAttack) {

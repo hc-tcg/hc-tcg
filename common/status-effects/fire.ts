@@ -6,13 +6,15 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
+import {CARDS} from '../cards'
 
 class FireStatusEffect extends StatusEffect {
 	constructor() {
 		super({
 			id: 'fire',
-			name: 'On Fire',
-			description: 'This Hermit takes an additional 20hp damage every turn.',
+			name: 'Burn',
+			description:
+				"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
 			duration: 0,
 			counter: false,
 			damageEffect: true,
@@ -30,6 +32,10 @@ class FireStatusEffect extends StatusEffect {
 		if (hasDamageEffect) return
 
 		game.state.statusEffects.push(statusEffectInfo)
+
+		if (pos.card) {
+			game.battleLog.addEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $eBurned$`)
+		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
@@ -56,14 +62,18 @@ class FireStatusEffect extends StatusEffect {
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
+				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
 			})
 			statusEffectAttack.addDamage(this.id, 20)
 
-			executeExtraAttacks(game, [statusEffectAttack], 'Burn', true)
+			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
+		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget) return
+			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
@@ -71,7 +81,7 @@ class FireStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

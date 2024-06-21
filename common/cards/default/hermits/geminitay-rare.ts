@@ -23,7 +23,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 				name: 'Geminislay',
 				cost: ['terraform', 'terraform'],
 				damage: 80,
-				power: 'You may play an additional single use effect card at the end of your turn.',
+				power: 'At the end of your turn, you may use an additional single use effect card.',
 			},
 		})
 	}
@@ -31,20 +31,20 @@ class GeminiTayRareHermitCard extends HermitCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		// @TODO egg confusion, and how can we get rid of follow up
-		// is that even in the scope of this refactor?
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
-			// To keep this simple gem will discard the single use card, if it's used
-			if (player.board.singleUseCardUsed) {
+			player.hooks.afterAttack.add(instance, (attack) => {
+				// Discard the single-use card.
 				discardSingleUse(game, player)
-			}
 
-			// We are hooking into afterAttack, so we just remove the blocks on actions
-			// The beauty of this is that there is no need to replicate any of the existing logic anymore
-			game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
-			game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
+				// We are hooking into afterAttack, so we just remove the blocks on actions
+				// The beauty of this is that there is no need to replicate any of the existing logic anymore
+				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
+				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
+
+				player.hooks.afterAttack.remove(instance)
+			})
 		})
 	}
 
@@ -52,7 +52,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 		const {player} = pos
 
 		// Remove hook
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(instance)
 	}
 }
 

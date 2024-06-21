@@ -21,7 +21,8 @@ class WelsknightRareHermitCard extends HermitCard {
 				name: 'Vengeance',
 				cost: ['pvp', 'pvp', 'pvp'],
 				damage: 100,
-				power: 'Add 20hp damage if your HP is orange. Add 40hp damage if your HP is red.',
+				power:
+					"If this Hermit's HP is orange (190-100), do an additional 20hp damage.\nIf this Hermit's HP is red (90 or lower), do an additional 40hp damage.",
 			},
 		})
 	}

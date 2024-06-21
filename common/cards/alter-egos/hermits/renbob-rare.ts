@@ -22,20 +22,21 @@ class RenbobRareHermitCard extends HermitCard {
 				name: 'Hyperspace',
 				cost: ['explorer', 'explorer'],
 				damage: 80,
-				power:
-					'Damage is dealt to opponent directly opposite this card on the game board, regardless if AFK or active.',
+				power: 'Attack the Hermit card directly opposite this card on the game board.',
 			},
 		})
 	}
 
-	override getAttacks(
+	override getAttack(
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
 		const {opponentPlayer} = pos
-		let attack = super.getAttacks(game, instance, pos, hermitAttackType)[0]
+
+		let attack = super.getAttack(game, instance, pos, hermitAttackType)
+		if (!attack) return null
 		if (attack.type === 'secondary' && pos.rowIndex !== null) {
 			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]
 			if (opponentPlayerRow.hermitCard) {
@@ -49,9 +50,7 @@ class RenbobRareHermitCard extends HermitCard {
 			}
 		}
 
-		const attacks = [attack]
-
-		return attacks
+		return attack
 	}
 
 	override getExpansion() {

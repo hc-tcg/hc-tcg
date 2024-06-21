@@ -1,6 +1,6 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {HERMIT_CARDS} from '../cards'
+import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
@@ -24,6 +24,13 @@ class SlownessStatusEffect extends StatusEffect {
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
+		if (pos.card) {
+			game.battleLog.addEntry(
+				player.id,
+				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $eSlowness$`
+			)
+		}
+
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
 			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos || targetPos.rowIndex === null) return
@@ -45,8 +52,11 @@ class SlownessStatusEffect extends StatusEffect {
 			}
 		})
 
-		player.hooks.onHermitDeath.add(statusEffectInfo.statusEffectInstance, (hermitPos) => {
-			if (hermitPos.row?.hermitCard?.cardInstance != statusEffectInfo.targetInstance) return
+		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+			const attackTarget = attack.getTarget()
+			if (!attackTarget) return
+			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})
 	}
@@ -55,7 +65,7 @@ class SlownessStatusEffect extends StatusEffect {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onHermitDeath.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
 	}
 }
 

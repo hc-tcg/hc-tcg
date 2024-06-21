@@ -25,7 +25,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 				cost: ['miner', 'miner', 'miner'],
 				damage: 100,
 				power:
-					'Flip a Coin.\n\nIf heads, opponent is forced to discard effect card attached to active Hermit.\n\nOnly one effect card per opposing Hermit can be discarded.',
+					'Flip a coin.\nIf heads, your opponent must discard any effect card attached to their active Hermit.\nOnly one effect card per Hermit can be discarded using this ability.',
 			},
 		})
 	}

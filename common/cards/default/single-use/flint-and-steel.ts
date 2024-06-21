@@ -11,18 +11,18 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 			name: 'Flint & Steel',
 			rarity: 'common',
 			description:
-				'Discard your hand. Draw 3 cards.\n\nCan be used even if you do not have any cards in your hand.',
+				'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
+			log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {player} = pos
-		if (player.pile.length <= 3) return 'NO'
 
-		return 'YES'
+		if (player.pile.length <= 3) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override canApply() {

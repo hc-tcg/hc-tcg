@@ -4,7 +4,7 @@ import {applySingleUse} from 'common/utils/board'
 import {call} from 'typed-redux-saga'
 
 function* applyEffectSaga(game: GameModel): Generator<any, GenericActionResult> {
-	const result = applySingleUse(game, [])
+	const result = applySingleUse(game)
 
 	return result
 }

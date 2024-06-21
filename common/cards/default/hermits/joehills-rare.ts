@@ -25,7 +25,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 				cost: ['farm', 'farm', 'any'],
 				damage: 90,
 				power:
-					'Flip a coin. If heads, opponent skips their next turn.\n\nThey still draw a card and they may choose to make their active Hermit go AFK.\n\n"Time Skip" cannot be used consecutively if successful.',
+					'Flip a coin.\nIf heads, your opponent skips their next turn. "Time Skip" can not be used consecutively if successful.',
 			},
 		})
 	}
@@ -47,6 +47,10 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard, 1)
 			if (coinFlip[0] !== 'heads') return
+
+			attack.updateLog(
+				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
+			)
 
 			// This will tell us to block actions at the start of our next turn
 			// Storing the cardInstance of the card that attacked
@@ -91,6 +95,15 @@ class JoeHillsRareHermitCard extends HermitCard {
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
 		delete player.custom[skippedKey]
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'glossary',
+				name: 'turnSkip',
+			},
+		]
 	}
 }
 

@@ -23,8 +23,7 @@ class EthosLabRareHermitCard extends HermitCard {
 				name: 'Blue Fire',
 				cost: ['redstone', 'redstone'],
 				damage: 80,
-				power:
-					'Flip a coin. If heads, the opposing active Hermit is now burned.\n\nBurn does an additional 20hp damage at the end of your turns.\n\nGoing AFK does not eliminate the burn.',
+				power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
 			},
 		})
 	}
@@ -53,6 +52,15 @@ class EthosLabRareHermitCard extends HermitCard {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
+	}
+
+	override sidebarDescriptions() {
+		return [
+			{
+				type: 'statusEffect',
+				name: 'fire',
+			},
+		]
 	}
 }
 

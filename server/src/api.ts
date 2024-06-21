@@ -30,7 +30,7 @@ export function registerApis(app: import('express').Express) {
 									id: g.id,
 									code: g.code,
 									playerIds: g.getPlayerIds(),
-									playerNames: g.getPlayers().map((p) => p.playerName),
+									playerNames: g.getPlayers().map((p) => p.name),
 									state: g.state,
 								}
 							})
@@ -82,7 +82,7 @@ export function registerApis(app: import('express').Express) {
 						id: game.id,
 						code: game.code,
 						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.playerName),
+						playerNames: game.getPlayers().map((p) => p.name),
 						state: game.state,
 					}),
 				})
@@ -105,7 +105,7 @@ export function registerApis(app: import('express').Express) {
 						id: game.id,
 						code: game.code,
 						playerIds: game.getPlayerIds(),
-						playerNames: game.getPlayers().map((p) => p.playerName),
+						playerNames: game.getPlayers().map((p) => p.name),
 						endInfo: game.endInfo,
 					}),
 				})
@@ -130,6 +130,14 @@ export function registerApis(app: import('express').Express) {
 				console.log('Error notifying discord bot about cancelled private game: ' + e)
 			}
 		})
+    
+		fetch(`${CONFIG.botUrl}/updates`)
+			.then(async (response) => {
+				response.json().then((jsonResponse) => {
+					root.updates = jsonResponse as Record<string, Array<string>>
+				})
+			})
+			.catch()
 
 		console.log('apis registered')
 	} catch (err) {

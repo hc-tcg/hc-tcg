@@ -1,9 +1,10 @@
-import Card from './card'
-import {CARDS} from '..'
-import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import Card, {CanAttachResult} from './card'
+import {PlayCardLog, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {TurnActions} from '../../types/game-state'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {HERMIT_CARDS} from '..'
 
 type ItemDefs = {
 	id: string
@@ -26,22 +27,25 @@ abstract class ItemCard extends Card {
 		})
 
 		this.hermitType = defs.hermitType
+
+		this.updateLog(
+			(values) =>
+				`$p{You|${values.player}}$ attached $m${values.pos.name}$ to $p${values.pos.hermitCard}$`
+		)
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel) {
+	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
 		const {currentPlayer} = game
 
-		if (pos.slot.type !== 'item') return 'INVALID'
-		if (pos.player.id !== currentPlayer.id) return 'INVALID'
+		const result: CanAttachResult = []
 
-		// Can't attach without hermit - this is treated like invalid slot
-		if (!pos.row?.hermitCard) return 'INVALID'
+		if (pos.slot.type !== 'item') result.push('INVALID_SLOT')
+		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
 
-		const cardInfo = CARDS[pos.row.hermitCard?.cardId]
-		if (!cardInfo) return 'INVALID'
-		if (!cardInfo.canAttachToCard(game, pos)) return 'NO'
+		// Can't attach without hermit - this does not show the unmet condition modal
+		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
 
-		return 'YES'
+		return result
 	}
 
 	public override getActions(game: GameModel): TurnActions {
@@ -55,6 +59,10 @@ abstract class ItemCard extends Card {
 		})
 
 		return spaceForItem ? ['PLAY_ITEM_CARD'] : []
+	}
+
+	public override getFormattedDescription(): FormattedTextNode {
+		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
 	}
 
 	public abstract getEnergy(game: GameModel, instance: string, pos: CardPosModel): Array<EnergyT>

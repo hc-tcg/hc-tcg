@@ -14,18 +14,19 @@ class ComposterSingleUseCard extends SingleUseCard {
 			name: 'Composter',
 			rarity: 'common',
 			description:
-				'Discard 2 cards in your hand. Draw 2.\n\nCan not be used if you do not have 2 cards to discard.',
+				'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
+			log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
 		})
 	}
 
 	override canAttach(game: GameModel, pos: CardPosModel) {
-		const canAttach = super.canAttach(game, pos)
-		if (canAttach !== 'YES') return canAttach
-
+		const result = super.canAttach(game, pos)
 		const {player} = pos
-		if (player.hand.length < 2) return 'NO'
 
-		return 'YES'
+		if (player.hand.length < 2) result.push('UNMET_CONDITION')
+		if (player.pile.length <= 2) result.push('UNMET_CONDITION')
+
+		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -37,7 +38,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 2 cards from your hand',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
@@ -57,7 +58,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 1 more card from your hand',
 			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_WRONG_PLAYER'
+				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
 
 				if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
 				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
@@ -65,7 +66,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 				discardFromHand(player, pickResult.card)
 
 				// Apply
-				applySingleUse(game, [])
+				applySingleUse(game)
 
 				drawCards(player, 2)
 

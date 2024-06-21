@@ -91,9 +91,17 @@ text.attackName {
 
 .attackDamage.specialMove {
 	fill: rgb(23, 66, 234);
+
+	&.alter_egos {
+		fill: rgb(74, 128, 255);
+	}
 }
 
 .attackItems.alter_egos.prankster {
+	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
+}
+
+.attackItems.alter_egos.redstone {
 	filter: drop-shadow(1px 1px 0 white) drop-shadow(-2px 0px 0 white) drop-shadow(1px -1px 0 white);
 }
 
