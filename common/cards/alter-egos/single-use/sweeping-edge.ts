@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {isLocked} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -15,6 +16,25 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 				'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
 		})
 	}
+
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(
+			slot.every(
+				slot.opponent,
+				slot.effectSlot,
+				slot.not(slot.empty),
+				slot.not(slot.locked),
+				(game, pos) => {
+					const opponentActiveRow = pos.opponentPlayer.board.activeRow
+					if (opponentActiveRow === null || pos.rowIndex === null) return false
+					return [opponentActiveRow + 1, opponentActiveRow, opponentActiveRow - 1].includes(
+						pos.rowIndex
+					)
+				}
+			)
+		)
+	)
 
 	override canApply() {
 		return true
