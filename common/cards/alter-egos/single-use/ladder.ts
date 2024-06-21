@@ -17,16 +17,12 @@ class LadderSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(slot.player, slot.not(slot.empty), slot.hermitSlot, (game, pos) => {
-		if (
-			pos.rowIndex !== null &&
-			(pos.rowIndex + 1 === pos.player.board.activeRow ||
-				pos.rowIndex - 1 === pos.player.board.activeRow)
-		) {
-			return true
-		}
-		return false
-	})
+	pickCondition = slot.every(
+		slot.player,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.adjacentTo(slot.activeRow)
+	)
 
 	override _attachCondition = slot.every(
 		super.attachCondition,

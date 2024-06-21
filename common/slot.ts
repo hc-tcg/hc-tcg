@@ -159,6 +159,18 @@ export namespace slot {
 		return pos.row !== null && pos.row.hermitCard !== null
 	}
 
+	export const adjacentTo = (predicate: SlotCondition): SlotCondition => {
+		return (game, pos) => {
+			if (pos.rowIndex === null) return false
+			return (
+				game.getPickableSlots(predicate).filter((pickedPos) => {
+					if (pos.rowIndex === null || pickedPos.rowIndex === undefined) return false
+					return [pos.rowIndex - 1, pos.rowIndex + 1].includes(pickedPos.rowIndex)
+				}).length >= 1
+			)
+		}
+	}
+
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
 		return pos.player.board.activeRow !== undefined
 	}

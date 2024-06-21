@@ -21,17 +21,11 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		super.attachCondition,
 		slot.someSlotFulfills(
 			slot.every(
-				slot.opponent,
+				slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
 				slot.effectSlot,
+				slot.opponent,
 				slot.not(slot.empty),
-				slot.not(slot.locked),
-				(game, pos) => {
-					const opponentActiveRow = pos.opponentPlayer.board.activeRow
-					if (opponentActiveRow === null || pos.rowIndex === null) return false
-					return [opponentActiveRow + 1, opponentActiveRow, opponentActiveRow - 1].includes(
-						pos.rowIndex
-					)
-				}
+				slot.not(slot.locked)
 			)
 		)
 	)

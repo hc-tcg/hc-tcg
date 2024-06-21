@@ -28,16 +28,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				slot.rowHasHermit,
 				slot.not(slot.locked),
 				slot.not(slot.empty),
-				(game, pos) => {
-					if (!pos.rowIndex || !pos.player.board.activeRow) return false
-					return [pos.rowIndex - 1, pos.rowIndex + 1].some((row) => {
-						const rowState = pos.player.board.rows[row]
-						if (!rowState.hermitCard) return false
-						if (isLocked(game, rowState.hermitCard)) return false
-						if (rowState.itemCards.filter((card) => card !== null).length === 3) return false
-						return true
-					})
-				}
+				slot.adjacentTo(slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.locked)))
 			)
 		)
 	)
@@ -62,21 +53,22 @@ class PistonSingleUseCard extends SingleUseCard {
 				return
 			},
 		})
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
-			canPick: slot.every(
-				slot.player,
-				slot.itemSlot,
-				slot.empty,
-				slot.rowHasHermit,
-				slot.not(slot.locked),
-				(game, pick) => {
-					const firstRowIndex = player.custom[rowIndexKey]
-					return [firstRowIndex - 1, firstRowIndex + 1].includes(pick.rowIndex)
-				}
-			),
+			// Note: This lambda function allows player.custom[rowIndexKey] to be defined before we generate the condition.
+			// This will be fixed when player.custom is removed.
+			canPick: (game, pos) =>
+				slot.every(
+					slot.player,
+					slot.itemSlot,
+					slot.empty,
+					slot.rowHasHermit,
+					slot.not(slot.locked),
+					slot.adjacentTo(slot.rowIndex(player.custom[rowIndexKey]))
+				)(game, pos),
 			onResult(pickResult) {
 				const pickedIndex = pickResult.rowIndex
 				if (pickResult.card || pickedIndex === undefined) return
