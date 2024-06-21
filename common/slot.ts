@@ -202,21 +202,21 @@ export namespace slot {
 		}
 	}
 
-	/**Returns if a card is marked as locked through the `shouldLockSlots` hook*/
-	export const locked: SlotCondition = (game, pos) => {
+	/**Returns if a card is marked as locked through the `freezeSlots` hook*/
+	export const frozen: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))
 
 		if (pos.type === 'single_use' || pos.type === 'hand') return true
 		if (pos.rowIndex === null || !pos.type) return false
 
-		const playerResult = game.currentPlayer.hooks.shouldLockSlots
+		const playerResult = game.currentPlayer.hooks.freezeSlots
 			.call()
 			.some((result) => result(game, pos))
 
 		pos.player = game.opponentPlayer
 		pos.opponentPlayer = game.currentPlayer
 
-		const opponentResult = game.opponentPlayer.hooks.shouldLockSlots
+		const opponentResult = game.opponentPlayer.hooks.freezeSlots
 			.call()
 			.some((result) => result(game, pos))
 

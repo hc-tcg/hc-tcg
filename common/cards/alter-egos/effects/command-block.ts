@@ -33,7 +33,7 @@ class CommandBlockEffectCard extends EffectCard {
 			return availableEnergy.map(() => 'any')
 		})
 
-		player.hooks.shouldLockSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(instance, () => {
 			return slot.every(slot.player, slot.rowIndex(pos.rowIndex), slot.effectSlot)
 		})
 	}
@@ -41,7 +41,7 @@ class CommandBlockEffectCard extends EffectCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.availableEnergy.remove(instance)
-		player.hooks.shouldLockSlots.remove(instance)
+		player.hooks.freezeSlots.remove(instance)
 	}
 
 	override getExpansion() {

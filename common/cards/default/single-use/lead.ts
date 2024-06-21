@@ -24,14 +24,14 @@ class LeadSingleUseCard extends SingleUseCard {
 		slot.itemSlot,
 		slot.not(slot.empty),
 		slot.activeRow,
-		slot.not(slot.locked)
+		slot.not(slot.frozen)
 	)
 	secondPickCondition = slot.every(
 		slot.opponent,
 		slot.itemSlot,
 		slot.empty,
 		slot.not(slot.activeRow),
-		slot.not(slot.locked)
+		slot.not(slot.frozen)
 	)
 
 	override _attachCondition = slot.every(

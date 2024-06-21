@@ -23,7 +23,7 @@ class MendingSingleUseCard extends singleUseCard {
 		slot.effectSlot,
 		slot.empty,
 		slot.rowHasHermit,
-		slot.not(slot.locked),
+		slot.not(slot.frozen),
 		slot.not(slot.activeRow)
 	)
 
@@ -31,7 +31,7 @@ class MendingSingleUseCard extends singleUseCard {
 		super.attachCondition,
 		slot.someSlotFulfills(this.pickCondition),
 		slot.someSlotFulfills(
-			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.locked), slot.not(slot.empty))
+			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.frozen), slot.not(slot.empty))
 		)
 	)
 

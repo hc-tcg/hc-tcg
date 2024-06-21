@@ -26,10 +26,10 @@ class PistonSingleUseCard extends SingleUseCard {
 				slot.player,
 				slot.itemSlot,
 				slot.rowHasHermit,
-				slot.not(slot.locked),
+				slot.not(slot.frozen),
 				slot.not(slot.empty),
 				slot.adjacentTo(
-					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.locked))
+					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen))
 				)
 			)
 		)
@@ -68,7 +68,7 @@ class PistonSingleUseCard extends SingleUseCard {
 					slot.itemSlot,
 					slot.empty,
 					slot.rowHasHermit,
-					slot.not(slot.locked),
+					slot.not(slot.frozen),
 					slot.adjacentTo(slot.rowIndex(player.custom[rowIndexKey]))
 				)(game, pos),
 			onResult(pickResult) {

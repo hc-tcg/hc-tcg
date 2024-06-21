@@ -22,13 +22,13 @@ class SlimeballEffectCard extends EffectCard {
 		slot.empty,
 		slot.rowHasHermit,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.locked)
+		slot.not(slot.frozen)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.shouldLockSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(instance, () => {
 			return slot.every(
 				slot.player,
 				slot.rowIndex(pos.rowIndex),
@@ -39,7 +39,7 @@ class SlimeballEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.shouldLockSlots.remove(instance)
+		pos.player.hooks.freezeSlots.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
 	}
 

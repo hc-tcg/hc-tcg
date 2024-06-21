@@ -25,7 +25,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 				slot.effectSlot,
 				slot.opponent,
 				slot.not(slot.empty),
-				slot.not(slot.locked)
+				slot.not(slot.frozen)
 			)
 		)
 	)

@@ -26,7 +26,7 @@ export function isCardType(card: CardT | null, type: CardTypeT): boolean {
 export function isLocked(game: GameModel, card: CardT): boolean {
 	const pos = getCardPos(game, card.cardInstance)
 	if (!pos) return false
-	return callSlotConditionWithCardPosModel(slot.locked, game, pos)
+	return callSlotConditionWithCardPosModel(slot.frozen, game, pos)
 }
 
 export function getCardExpansion(cardId: string) {

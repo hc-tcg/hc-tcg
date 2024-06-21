@@ -24,7 +24,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 				slot.activeRow,
 				slot.effectSlot,
 				slot.not(slot.empty),
-				slot.not(slot.locked)
+				slot.not(slot.frozen)
 			)
 		)
 	)

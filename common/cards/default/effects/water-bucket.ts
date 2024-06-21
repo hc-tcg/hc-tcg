@@ -25,7 +25,7 @@ class WaterBucketEffectCard extends EffectCard {
 	override _attachCondition = slot.every(
 		slot.empty,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.locked),
+		slot.not(slot.frozen),
 		slot.some(slot.singleUseSlot, slot.every(slot.player, slot.effectSlot))
 	)
 

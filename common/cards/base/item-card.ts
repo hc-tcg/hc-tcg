@@ -39,7 +39,7 @@ abstract class ItemCard extends Card {
 		slot.empty,
 		slot.rowHasHermit,
 		slot.actionAvailable('PLAY_ITEM_CARD'),
-		slot.not(slot.locked)
+		slot.not(slot.frozen)
 	)
 
 	public override getFormattedDescription(): FormattedTextNode {

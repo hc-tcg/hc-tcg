@@ -63,7 +63,7 @@ class GrianRareHermitCard extends HermitCard {
 
 			const effectSlot = getSlotPos(player, rowIndex, 'effect')
 			const canAttach = game.someSlotFulfills(
-				slot.every(slot.player, slot.not(slot.locked), slot.effectSlot, slot.activeRow, slot.empty)
+				slot.every(slot.player, slot.not(slot.frozen), slot.effectSlot, slot.activeRow, slot.empty)
 			)
 
 			game.addModalRequest({

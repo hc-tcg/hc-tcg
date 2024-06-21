@@ -154,7 +154,7 @@ export type PlayerState = {
 		 * Returns a combinator that verifies if the slot is locked or not.
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
-		shouldLockSlots: GameHook<() => SlotCondition>
+		freezeSlots: GameHook<() => SlotCondition>
 	}
 }
 

@@ -25,7 +25,7 @@ class ArmorStandEffectCard extends EffectCard {
 		slot.player,
 		slot.empty,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.locked)
+		slot.not(slot.frozen)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -48,7 +48,7 @@ class ArmorStandEffectCard extends EffectCard {
 			return blockedActions
 		})
 
-		player.hooks.shouldLockSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(instance, () => {
 			return slot.every(slot.player, slot.rowIndex(pos.rowIndex))
 		})
 	}
@@ -61,7 +61,7 @@ class ArmorStandEffectCard extends EffectCard {
 		player.hooks.blockedActions.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
-		player.hooks.shouldLockSlots.remove(instance)
+		player.hooks.freezeSlots.remove(instance)
 		delete player.custom[this.getInstanceKey(instance)]
 	}
 
