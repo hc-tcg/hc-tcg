@@ -14,6 +14,7 @@ export class RootModel {
 		gameRemoved: new Hook<(game: GameModel) => void>(),
 		playerJoined: new Hook<(player: PlayerModel) => void>(),
 		playerLeft: new Hook<(player: PlayerModel) => void>(),
+		privateCancelled: new Hook<(code: string) => void>(),
 	}
 
 	public getGameIds() {

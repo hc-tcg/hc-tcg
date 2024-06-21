@@ -284,6 +284,7 @@ function* cancelPrivateGame(msg: ClientMessage) {
 				broadcast([player], 'PRIVATE_GAME_CANCELLED')
 			}
 
+			root.hooks.privateCancelled.call(code)
 			delete root.privateQueue[code]
 			console.log(`Private game cancelled. Code: ${code}`)
 		}

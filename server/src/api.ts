@@ -9,7 +9,7 @@ export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
 
 	const env = process.env.NODE_ENV || 'development'
-	if (env == 'development') {
+	if (env == 'development' && false) {
 		console.log('running in dev mode, not activating api')
 		return
 	}
@@ -71,7 +71,7 @@ export function registerApis(app: import('express').Express) {
 
 		root.hooks.newGame.add('api', (game: GameModel) => {
 			try {
-				fetch(`${CONFIG.botUrl}/admin/game_start`, {
+				fetch(`${apiKeys.botUrl}/admin/game_start`, {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
@@ -93,7 +93,7 @@ export function registerApis(app: import('express').Express) {
 
 		root.hooks.gameRemoved.add('api', (game: GameModel) => {
 			try {
-				fetch(`${CONFIG.botUrl}/admin/game_end`, {
+				fetch(`${apiKeys.botUrl}/admin/game_end`, {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
@@ -111,6 +111,23 @@ export function registerApis(app: import('express').Express) {
 				})
 			} catch (e) {
 				console.log('Error notifying discord bot about game end: ' + e)
+			}
+		})
+
+		root.hooks.privateCancelled.add('api', (code: string) => {
+			try {
+				fetch(`${apiKeys.botUrl}/admin/private_cancel`, {
+					method: 'POST',
+					headers: [
+						['Content-type', 'application/json'],
+						['api-key', apiKeys?.botKey],
+					],
+					body: JSON.stringify({
+						code: code
+					})
+				})
+			} catch (e) {
+				console.log('Error notifying discord bot about cancelled private game: ' + e)
 			}
 		})
 
