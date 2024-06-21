@@ -24,8 +24,8 @@ class ArmorStandEffectCard extends EffectCard {
 		slot.hermitSlot,
 		slot.player,
 		slot.empty,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		slot.not(slot.locked),
-		(game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

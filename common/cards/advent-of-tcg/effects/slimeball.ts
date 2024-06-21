@@ -21,8 +21,8 @@ class SlimeballEffectCard extends EffectCard {
 		slot.effectSlot,
 		slot.empty,
 		slot.rowHasHermit,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		slot.not(slot.locked),
-		(game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

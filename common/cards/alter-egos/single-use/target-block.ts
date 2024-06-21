@@ -25,7 +25,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) => getNonEmptyRows(game.opponentPlayer, true).length > 0
+		slot.someSlotFulfills(slot.not(slot.some(slot.empty, slot.activeRow)))
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
