@@ -535,7 +535,10 @@ function* turnActionsSaga(game: GameModel) {
 			// Run action logic
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
-			if (result === 'END_TURN') break
+			if (result === 'END_TURN') {
+				yield* call(deselectCardSaga, game, {playerId: game.currentPlayerId})
+				break
+			}
 		}
 	} finally {
 		turnActionChannel.close()
