@@ -4,7 +4,6 @@ import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import SingleUseCard from '../../base/single-use-card'
 
 class WaterBucketEffectCard extends EffectCard {
 	constructor() {
@@ -23,9 +22,11 @@ class WaterBucketEffectCard extends EffectCard {
 		})
 	}
 
-	override _attachCondition = slot.some(
-		EffectCard.prototype.attachCondition,
-		SingleUseCard.prototype.attachCondition,
+	override _attachCondition = slot.every(
+		slot.empty,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
+		slot.not(slot.locked),
+		slot.some(slot.singleUseSlot, slot.every(slot.player, slot.effectSlot))
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

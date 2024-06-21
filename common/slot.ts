@@ -1,6 +1,6 @@
 import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
-import {CardT, PlayerState, RowState} from './types/game-state'
+import {CardT, PlayerState, RowState, TurnAction} from './types/game-state'
 import {PickInfo, PickedSlotType} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
@@ -209,6 +209,10 @@ export namespace slot {
 			.some((result) => result(game, pos))
 
 		return playerResult || opponentResult
+	}
+
+	export const actionAvailable = (action: TurnAction): SlotCondition => {
+		return (game, pos) => game.state.turn.availableActions.includes('PLAY_EFFECT_CARD')
 	}
 
 	/** Return true if there is a slot on the board that fullfils the condition given by the predicate */

@@ -1,12 +1,11 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import Card, {CanAttachResult} from './card'
+import Card from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT, PlayCardLog} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {SlotCondition, slot} from '../../slot'
+import {slot} from '../../slot'
 
 type HermitDefs = {
 	id: string
@@ -51,8 +50,8 @@ abstract class HermitCard extends Card {
 		slot.hermitSlot,
 		slot.player,
 		slot.empty,
+		slot.actionAvailable('PLAY_HERMIT_CARD'),
 		slot.not(slot.locked),
-		(game, pos) => game.state.turn.availableActions.includes('PLAY_HERMIT_CARD')
 	)
 
 	// Default is to return
