@@ -38,7 +38,7 @@ abstract class EffectCard extends Card {
 		slot.empty,
 		slot.rowHasHermit,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.locked),
+		slot.not(slot.locked)
 	)
 
 	public override showAttachTooltip() {

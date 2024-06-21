@@ -15,10 +15,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		slot.opponentHasActiveHermit,
-	)
+	override _attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true

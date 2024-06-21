@@ -51,7 +51,7 @@ abstract class HermitCard extends Card {
 		slot.player,
 		slot.empty,
 		slot.actionAvailable('PLAY_HERMIT_CARD'),
-		slot.not(slot.locked),
+		slot.not(slot.locked)
 	)
 
 	// Default is to return

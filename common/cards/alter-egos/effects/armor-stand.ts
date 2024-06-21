@@ -25,7 +25,7 @@ class ArmorStandEffectCard extends EffectCard {
 		slot.player,
 		slot.empty,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.locked),
+		slot.not(slot.locked)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

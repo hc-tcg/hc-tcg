@@ -28,7 +28,9 @@ class PistonSingleUseCard extends SingleUseCard {
 				slot.rowHasHermit,
 				slot.not(slot.locked),
 				slot.not(slot.empty),
-				slot.adjacentTo(slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.locked)))
+				slot.adjacentTo(
+					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.locked))
+				)
 			)
 		)
 	)
