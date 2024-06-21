@@ -168,6 +168,16 @@ export namespace slot {
 		}
 	}
 
+	/** Return true if the hermit in a slot has a certian status effect */
+	export const hasStatusEffect = (statusEffect: string): SlotCondition => {
+		return (game, pos) => {
+			return game.state.statusEffects.some(
+				(effect) =>
+					effect.targetInstance == pos.card?.cardInstance && effect.statusEffectId == statusEffect
+			)
+		}
+	}
+
 	/**Returns if a card is marked as locked through the `shouldLockSlots` hook*/
 	export const locked: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))

@@ -139,12 +139,14 @@ export function printHooksState(game: GameModel) {
 		const slotType = slot?.type ? slot.type : ''
 		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
 
-		console.log(
-			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
-				info.card.cardId
-			} - ${attachedStatus}`
-		)
-		console.log(colorize(drawLine(60), 'white'))
+		if (info.player) {
+			console.log(
+				`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
+					info.card.cardId
+				} - ${attachedStatus}`
+			)
+			console.log(colorize(drawLine(60), 'white'))
+		}
 
 		for (const hook of info.hooks) {
 			console.log(colorize(hook, 'brightYellow'))

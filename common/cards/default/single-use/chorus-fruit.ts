@@ -16,17 +16,14 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		const {player} = pos
-		const activeRow = getActiveRow(player)
-
-		const isSleeping = game.state.statusEffects.some(
-			(a) =>
-				a.targetInstance == activeRow?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.not(
+			slot.someSlotFulfills(
+				slot.every(slot.player, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
+			)
 		)
-		if (isSleeping) return false
-		return true
-	})
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
