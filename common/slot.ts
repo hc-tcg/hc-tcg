@@ -202,7 +202,10 @@ export namespace slot {
 		}
 	}
 
-	/**Returns if a card is marked as locked through the `freezeSlots` hook*/
+	/**
+	* Returns if a slot is marked as frozen through the `freezeSlots` hook
+	* A frozen slot is a slot that can not have card placed in it or removed from it.
+	*/
 	export const frozen: SlotCondition = (game, pos) => {
 		pos = JSON.parse(JSON.stringify(pos))
 
