@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getActiveRowPos, getSlotPos} from '../../../utils/board'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -53,7 +53,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickResult.slot.index
+				player.custom[itemIndexKey] = pickResult.index
 			},
 		})
 		game.addPickRequest({
@@ -73,8 +73,10 @@ class LeadSingleUseCard extends SingleUseCard {
 
 				// Make sure we can attach the item
 				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
-				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.slot.index)
+				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.index)
 
+				if (!itemPos.row) return
+				
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
 

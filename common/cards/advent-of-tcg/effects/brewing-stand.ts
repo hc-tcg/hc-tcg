@@ -41,7 +41,7 @@ class BrewingStandEffectCard extends EffectCard {
 					(game, pick) => pick.rowIndex === pos.rowIndex
 				),
 				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === undefined) return
+					if (!pickResult.card || pickResult.rowIndex === null) return
 
 					const playerRow = player.board.rows[pickResult.rowIndex]
 					const hermitCard = playerRow.hermitCard

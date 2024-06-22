@@ -62,13 +62,13 @@ class BerryBushEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
+		const {player, opponentPlayer, type, row} = pos
 
 		if (getActiveRow(player) === row) {
 			game.changeActiveRow(player, null)
 		}
 
-		if (slot && slot.type === 'hermit' && row) {
+		if (slot && type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
 			row.itemCards = []

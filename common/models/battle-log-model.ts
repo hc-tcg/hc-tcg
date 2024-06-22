@@ -143,7 +143,7 @@ export class BattleLogModel {
 				hermitCard: pos.row?.hermitCard
 					? getCardName(pos.player, pos.row.hermitCard.cardId, pos.rowIndex)
 					: invalid,
-				slotType: pos.slot.type,
+				slotType: pos.type,
 			},
 			pick: {
 				rowIndex:
@@ -160,7 +160,7 @@ export class BattleLogModel {
 								pickInfo.rowIndex
 						  )
 						: invalid,
-				slotType: pickInfo ? pickInfo.slot.type : invalid,
+				slotType: pickInfo ? pickInfo.type : invalid,
 			},
 		})
 

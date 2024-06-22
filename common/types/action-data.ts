@@ -9,6 +9,7 @@ export const slotToPlayCardAction: Record<SlotTypeT, PlayCardAction | null> = {
 	effect: 'PLAY_EFFECT_CARD',
 	single_use: 'PLAY_SINGLE_USE_CARD',
 	health: null,
+	hand: null,
 }
 export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
 	'single-use': 'SINGLE_USE_ATTACK',

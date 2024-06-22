@@ -1,18 +1,10 @@
 import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
+import {SlotInfo} from './types/cards'
 import {CardT, PlayerState, RowState, TurnAction} from './types/game-state'
 import {PickInfo, PickedSlotType} from './types/server-requests'
 
-export type SlotCondition = (game: GameModel, pos: SlotConditionInfo) => boolean
-
-export type SlotConditionInfo = {
-	player: PlayerState
-	opponentPlayer: PlayerState
-	type: PickedSlotType
-	rowIndex: number | null
-	row: RowState | null
-	card: CardT | null
-}
+export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
 
 export function callSlotConditionWithCardPosModel(
 	condition: SlotCondition,
@@ -22,9 +14,10 @@ export function callSlotConditionWithCardPosModel(
 	return condition(game, {
 		player: cardPos.player,
 		opponentPlayer: cardPos.opponentPlayer,
-		type: cardPos.slot.type,
+		type: cardPos.type,
 		rowIndex: cardPos.rowIndex,
 		row: cardPos.row,
+		index: cardPos.index,
 		card: getCardAtPos(cardPos),
 	})
 }
@@ -43,9 +36,10 @@ export function callSlotConditionWithPickInfo(
 	return condition(game, {
 		player: playerState,
 		opponentPlayer: opponentPlayerState,
-		type: pickInfo.slot.type,
+		type: pickInfo.type,
 		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
 		row: row,
+		index: pickInfo.index,
 		card: pickInfo.card,
 	})
 }
@@ -53,7 +47,7 @@ export function callSlotConditionWithPickInfo(
 export namespace slot {
 	/** Used for debugging. Print a message provided by the msg function. */
 	export const trace = (
-		msg: (game: GameModel, pos: SlotConditionInfo, result: boolean) => any,
+		msg: (game: GameModel, pos: SlotInfo, result: boolean) => any,
 		combinator: SlotCondition
 	): SlotCondition => {
 		return (game, pos) => {
@@ -164,7 +158,7 @@ export namespace slot {
 			if (pos.rowIndex === null) return false
 			return (
 				game.filterSlots(predicate).filter((pickedPos) => {
-					if (pos.rowIndex === null || pickedPos.rowIndex === undefined) return false
+					if (pos.rowIndex === null || pickedPos.rowIndex === null) return false
 					return [pos.rowIndex - 1, pos.rowIndex + 1].includes(pickedPos.rowIndex)
 				}).length >= 1
 			)

@@ -3,8 +3,7 @@ import {CardT, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
-import {SlotPos} from '../types/cards'
-import {getSlotPos} from './board'
+import {SlotInfo} from '../types/cards'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, row, slot} = pos
@@ -125,13 +124,13 @@ export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: Pla
 
 	cardPos.player.hooks.onDetach.call(card.cardInstance)
 
-	if (cardPos.row && cardPos.slot.type === 'hermit') {
+	if (cardPos.row && cardPos.type === 'hermit') {
 		cardPos.row.hermitCard = null
-	} else if (cardPos.row && cardPos.slot.type === 'effect') {
+	} else if (cardPos.row && cardPos.type === 'effect') {
 		cardPos.row.effectCard = null
-	} else if (cardPos.row && cardPos.slot.type === 'item') {
-		cardPos.row.itemCards[cardPos.slot.index] = null
-	} else if (cardPos.slot.type === 'single_use') {
+	} else if (cardPos.row && cardPos.type === 'item') {
+		cardPos.row.itemCards[cardPos.index] = null
+	} else if (cardPos.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
 	}
 
@@ -142,10 +141,11 @@ export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: Pla
 }
 
 /**Returns a `CardT` of the card in the slot, or `null` if it's empty. */
-export function getSlotCard(slotPos: SlotPos): CardT | null {
-	const {row, slot} = slotPos
-	const {index, type} = slot
+export function getSlotCard(slotPos: SlotInfo): CardT | null {
+	const {row, index, type} = slotPos
 
+	if (!row || !index) return null
+	
 	if (type === 'hermit') {
 		return row.hermitCard
 	} else if (type === 'effect') {
@@ -161,8 +161,8 @@ export function getSlotCard(slotPos: SlotPos): CardT | null {
  */
 export function swapSlots(
 	game: GameModel,
-	slotAPos: SlotPos,
-	slotBPos: SlotPos,
+	slotAPos: SlotInfo,
+	slotBPos: SlotInfo,
 	withoutDetach: boolean = false
 ): boolean {
 	const {slot: slotA, row: rowA} = slotAPos

@@ -12,7 +12,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT, SlotPos} from 'common/types/cards'
+import {EnergyT, SlotInfo} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card from 'common/cards/base/card'
@@ -23,6 +23,7 @@ import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition} from 'common/slot'
+import {PickInfo} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -304,7 +305,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// We also want to highlight the slots for the player that must select a slot
 		if (currentPickRequest.playerId == player.id) {
 			const playerState = game.state.players[currentPickRequest.playerId]
-			playerState.pickableSlots = game.filterSlots(currentPickRequest.canPick)
+			playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
 		}
 	}
 

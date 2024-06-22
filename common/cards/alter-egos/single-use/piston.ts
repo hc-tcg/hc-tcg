@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getSlotPos} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -49,7 +49,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				// Store the row and index of the chosen item
 				player.custom[rowIndexKey] = pickResult.rowIndex
-				player.custom[itemIndexKey] = pickResult.slot.index
+				player.custom[itemIndexKey] = pickResult.index
 
 				return
 			},
@@ -85,9 +85,9 @@ class PistonSingleUseCard extends SingleUseCard {
 
 				// Make sure we can attach the item
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
-				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.slot.index)
+				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.index)
 				const itemCard = firstRow.itemCards[itemIndex]
-
+				
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
 

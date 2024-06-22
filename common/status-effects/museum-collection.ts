@@ -32,7 +32,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			const instanceLocation = getBasicCardPos(game, instance)
 			if (statusEffectInfo.duration === undefined) return
 			player.custom[oldHandSize] = player.hand.length
-			if (instanceLocation?.slot.type === 'single_use') return
+			if (instanceLocation?.type === 'single_use') return
 			statusEffectInfo.duration++
 		})
 

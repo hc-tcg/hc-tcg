@@ -3,9 +3,9 @@ import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT, SlotPos} from './cards'
+import {EnergyT, SlotInfo} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickRequest, SlotDisplayPosition} from './server-requests'
+import {ModalRequest, PickInfo, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
@@ -73,7 +73,7 @@ export type PlayerState = {
 	discarded: Array<CardT>
 	hasPlacedHermit: boolean
 
-	pickableSlots: Array<SlotDisplayPosition> | null
+	pickableSlots: Array<PickInfo> | null
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -302,7 +302,7 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentPickableSlots: Array<SlotDisplayPosition> | null
+	currentPickableSlots: Array<PickInfo> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 

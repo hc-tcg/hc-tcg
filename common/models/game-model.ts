@@ -9,14 +9,10 @@ import {
 	CardT,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
-import {
-	ModalRequest,
-	PickRequest,
-	PickedSlotType,
-	SlotDisplayPosition,
-} from '../types/server-requests'
+import {ModalRequest, PickRequest, PickedSlotType} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
+import {SlotInfo, SlotTypeT} from '../types/cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -279,8 +275,8 @@ export class GameModel {
 	}
 
 	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(predicate: SlotCondition): Array<SlotDisplayPosition> {
-		let pickableSlots: Array<SlotDisplayPosition> = []
+	public filterSlots(predicate: SlotCondition): Array<SlotInfo> {
+		let pickableSlots: Array<SlotInfo> = []
 
 		for (const player of Object.values(this.state.players)) {
 			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
@@ -294,22 +290,18 @@ export class GameModel {
 					index: number,
 					cardInstance: CardT | null
 				) => {
-					const canBeAttached = predicate(this, {
+					const slotInfo = {
 						player: player,
 						opponentPlayer: opponentPlayer,
 						type: type,
+						index: index,
 						rowIndex: rowIndex,
 						row: row,
 						card: cardInstance,
-					})
+					}
+					const canBeAttached = predicate(this, slotInfo)
 					if (canBeAttached) {
-						pickableSlots.push({
-							type: type,
-							index: index,
-							rowIndex: rowIndex,
-							playerId: player.id,
-							card: cardInstance,
-						})
+						pickableSlots.push(slotInfo)
 					}
 				}
 
@@ -321,24 +313,33 @@ export class GameModel {
 			}
 		}
 
-		if (
-			predicate(this, {
-				player: this.currentPlayer,
-				opponentPlayer: this.opponentPlayer,
-				type: 'single_use',
-				rowIndex: null,
-				row: null,
-				card: this.currentPlayer.board.singleUseCard,
-			})
-		) {
-			pickableSlots.push({
-				playerId: this.currentPlayer.id,
-				type: 'single_use',
-				card: this.currentPlayer.board.singleUseCard,
-			})
+		const singleUseSlotInfo = {
+			player: this.currentPlayer,
+			opponentPlayer: this.opponentPlayer,
+			type: 'single_use' as SlotTypeT,
+			index: null,
+			rowIndex: null,
+			row: null,
+			card: this.currentPlayer.board.singleUseCard,
+		}
+
+		if (predicate(this, singleUseSlotInfo)) {
+			pickableSlots.push(singleUseSlotInfo)
 		}
 
 		return pickableSlots
+	}
+
+	public getPickableSlots(predicate: SlotCondition) {
+		return this.filterSlots(predicate).map((slot) => {
+			return {
+				playerId: slot.player.id,
+				rowIndex: slot.rowIndex,
+				card: slot.card,
+				type: slot.type,
+				index: slot.index,
+			}
+		})
 	}
 
 	public someSlotFulfills(predicate: SlotCondition) {

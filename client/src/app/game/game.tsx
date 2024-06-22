@@ -104,10 +104,8 @@ function Game() {
 					pickResult: {
 						playerId: gameState.playerId,
 						card: card,
-						slot: {
-							type: 'hand',
-							index,
-						},
+						type: 'hand',
+						index,
 					},
 				},
 			}

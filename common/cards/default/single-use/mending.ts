@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getActiveRow, getSlotPos} from '../../../utils/board'
+import {applySingleUse, getActiveRow} from '../../../utils/board'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
@@ -67,6 +67,8 @@ class MendingSingleUseCard extends singleUseCard {
 				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
 				const targetPos = getSlotPos(player, rowIndex, 'effect')
 
+				if (!sourcePos.row) return
+				
 				const logInfo = pickResult
 				logInfo.card = sourcePos.row.effectCard
 

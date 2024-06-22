@@ -31,7 +31,7 @@ class WaterBucketEffectCard extends EffectCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
-		if (pos.slot.type === 'single_use') {
+		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
 				id: instance,
@@ -61,7 +61,7 @@ class WaterBucketEffectCard extends EffectCard {
 					applySingleUse(game, pickResult)
 				},
 			})
-		} else if (pos.slot.type === 'effect') {
+		} else if (pos.type === 'effect') {
 			// Straight away remove fire
 			const fireStatusEffect = game.state.statusEffects.find((ail) => {
 				return ail.targetInstance === row?.hermitCard?.cardInstance && ail.statusEffectId == 'fire'

@@ -4,24 +4,12 @@ import {ActionResult, CardT, ModalData} from './game-state'
 
 export type PickedSlotType = SlotTypeT | 'hand'
 
-export type SlotDisplayPosition = {
-	type: PickedSlotType
-	playerId: string
-	index?: number
-	rowIndex?: number
-	card?: CardT | null
-}
-
-export type SlotInfo = {
-	type: PickedSlotType
-	index: number
-}
-
 export type PickInfo = {
 	playerId: string
-	rowIndex?: number // This will be undefined for the hand
+	rowIndex: number | null // This will be null for the hand
 	card: CardT | null
-	slot: SlotInfo
+	type: SlotTypeT
+	index: number | null
 }
 
 export type PickRequest = {

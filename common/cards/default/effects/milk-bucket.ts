@@ -30,7 +30,7 @@ class MilkBucketEffectCard extends EffectCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
-		if (pos.slot.type === 'single_use') {
+		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
 				id: instance,
@@ -50,7 +50,7 @@ class MilkBucketEffectCard extends EffectCard {
 					applySingleUse(game, pickResult)
 				},
 			})
-		} else if (pos.slot.type === 'effect') {
+		} else if (pos.type === 'effect') {
 			// Straight away remove poison
 			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
 				return (

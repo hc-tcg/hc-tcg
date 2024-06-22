@@ -94,10 +94,8 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 		const handleClick = () => {
 			isPlayable &&
 				onClick({
-					slot: {
-						type: 'single_use',
-						index: 0,
-					},
+					type: 'single_use',
+					index: 0,
 					playerId: localGameState.turn.currentPlayerId,
 					card: singleUseCard,
 				})

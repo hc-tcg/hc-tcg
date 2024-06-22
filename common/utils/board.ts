@@ -2,7 +2,7 @@ import {CARDS} from '../cards'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {BoardSlotTypeT, RowPos, SlotPos} from '../types/cards'
+import {BoardSlotTypeT, RowPos, SlotInfo} from '../types/cards'
 import {
 	StatusEffectT,
 	GenericActionResult,
@@ -27,23 +27,6 @@ export function getActiveRowPos(player: PlayerState): RowPos | null {
 		player: player,
 		rowIndex,
 		row,
-	}
-}
-
-export function getSlotPos(
-	player: PlayerState,
-	rowIndex: number,
-	type: BoardSlotTypeT,
-	index = 0
-): SlotPos {
-	return {
-		player,
-		rowIndex,
-		row: player.board.rows[rowIndex],
-		slot: {
-			type,
-			index,
-		},
 	}
 }
 

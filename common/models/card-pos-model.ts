@@ -1,4 +1,4 @@
-import {Slot} from '../types/cards'
+import {SlotTypeT} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
 
@@ -7,7 +7,8 @@ export type BasicCardPos = {
 	opponentPlayer: PlayerState
 	rowIndex: number | null
 	row: RowState | null
-	slot: Slot
+	type: SlotTypeT
+	index: number | null
 }
 
 /**
@@ -32,7 +33,8 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 				opponentPlayer,
 				rowIndex: null,
 				row: null,
-				slot: {type: 'single_use', index: 0},
+				type: 'single_use',
+				index: 0
 			}
 		}
 
@@ -46,7 +48,8 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 					opponentPlayer,
 					rowIndex,
 					row,
-					slot: {type: 'hermit', index: 0},
+					type: 'hermit',
+					index: 0,
 				}
 			} else if (row.effectCard?.cardInstance === instance) {
 				return {
@@ -54,7 +57,8 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 					opponentPlayer,
 					rowIndex,
 					row,
-					slot: {type: 'effect', index: 0},
+					type: 'effect',
+					index: 0,
 				}
 			} else {
 				for (let i = 0; i < row.itemCards.length; i++) {
@@ -65,7 +69,8 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 							opponentPlayer,
 							rowIndex,
 							row,
-							slot: {type: 'item', index: i},
+							type: 'item',
+							index: i,
 						}
 					}
 				}
@@ -87,26 +92,26 @@ export function getCardPos(game: GameModel, instance: string) {
 }
 
 export function getCardAtPos(pos: BasicCardPos) {
-	const {player, rowIndex, slot} = pos
+	const {player, rowIndex, type, index} = pos
 
 	const suCard = player.board.singleUseCard
-	if (slot.type === 'single_use' && suCard) {
+	if (type === 'single_use' && suCard) {
 		return suCard
 	}
 
 	if (rowIndex === null) return null
 	const row = player.board.rows[rowIndex]
 
-	if (slot.type === 'hermit' && row.hermitCard) {
+	if (type === 'hermit' && row.hermitCard) {
 		return row.hermitCard
 	}
 
-	if (slot.type === 'effect' && row.effectCard) {
+	if (type === 'effect' && row.effectCard) {
 		return row.effectCard
 	}
 
-	if (slot.type === 'item' && row.itemCards[slot.index]) {
-		return row.itemCards[slot.index] || null
+	if (type === 'item' && index && row.itemCards[index]) {
+		return row.itemCards[index] || null
 	}
 
 	return null
@@ -166,8 +171,13 @@ export class CardPosModel {
 		return this.internalPos.row
 	}
 
-	public get slot() {
+	public get type() {
 		if (!this.card) this.recalculateInternalPos()
-		return this.internalPos.slot
+		return this.internalPos.type
+	}
+
+	public get index() {
+		if (!this.card) this.recalculateInternalPos()
+		return this.internalPos.index
 	}
 }
