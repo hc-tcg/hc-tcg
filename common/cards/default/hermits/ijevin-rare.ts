@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class IJevinRareHermitCard extends HermitCard {
@@ -36,37 +35,32 @@ class IJevinRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.getTarget()) return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-			if (opponentInactiveRows.length !== 0) {
-				const lastActiveRow = opponentPlayer.board.activeRow
+			const pickCondition = slot.every(
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
 
-				game.addPickRequest({
-					playerId: opponentPlayer.id, // For opponent player to pick
-					id: this.id,
-					message: 'Choose a new active Hermit from your AFK Hermits.',
-					canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
-					onResult(pickResult) {
-						if (!pickResult.card || pickResult.rowIndex === undefined) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
-						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
+			game.addPickRequest({
+				playerId: opponentPlayer.id, // For opponent player to pick
+				id: this.id,
+				message: 'Choose a new active Hermit from your AFK Hermits.',
+				canPick: pickCondition,
+				onResult(pickResult) {
+					if (!pickResult.card || pickResult.rowIndex === undefined) return
 
-						return
-					},
-					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+					game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== lastActiveRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
-							}
-						}
-					},
-				})
-			}
+					return
+				},
+				onTimeout() {
+					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex
+					if (rowIndex === undefined) return
+					game.changeActiveRow(opponentPlayer, rowIndex)
+				},
+			})
 		})
 	}
 

@@ -79,14 +79,19 @@ class HypnotizdRareHermitCard extends HermitCard {
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
 
-			const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-			if (inactiveRows.length === 0) return
+			const pickCondition = slot.every(
+				slot.player,
+				slot.activeRow,
+				slot.itemSlot,
+				slot.not(slot.empty)
+			)
 
+			if (!game.someSlotFulfills(pickCondition)) return
 			const itemRequest: PickRequest = {
 				playerId: player.id,
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
-				canPick: slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty)),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					if (!pickResult.card) return
 
