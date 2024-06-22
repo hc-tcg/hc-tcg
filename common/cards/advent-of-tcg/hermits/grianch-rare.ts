@@ -54,8 +54,12 @@ class GrianchRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
-			const pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
-			
+			const pickCondition = slot.every(
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
+
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({

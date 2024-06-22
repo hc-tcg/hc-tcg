@@ -77,7 +77,12 @@ class TangoTekRareHermitCard extends HermitCard {
 
 			// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
 			const attacker = attack.getAttacker()
-			if (game.someSlotFulfills(playerInactiveRowsPickCondition) && attacker && attacker.row.health > 0 && canChange) {
+			if (
+				game.someSlotFulfills(playerInactiveRowsPickCondition) &&
+				attacker &&
+				attacker.row.health > 0 &&
+				canChange
+			) {
 				game.addPickRequest({
 					playerId: player.id,
 					id: this.id,

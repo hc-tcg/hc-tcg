@@ -31,7 +31,12 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		})
 	}
 
-	pickCondition = slot.every(slot.player, slot.hermitSlot, slot.not(slot.activeRow), slot.not(slot.has(this.id)))
+	pickCondition = slot.every(
+		slot.player,
+		slot.hermitSlot,
+		slot.not(slot.activeRow),
+		slot.not(slot.has(this.id))
+	)
 
 	override getAttack(
 		game: GameModel,

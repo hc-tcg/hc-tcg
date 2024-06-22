@@ -59,7 +59,7 @@ class PharaohRareHermitCard extends HermitCard {
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
-			
+
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
