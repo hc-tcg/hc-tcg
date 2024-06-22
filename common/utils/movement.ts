@@ -161,10 +161,11 @@ export function getSlotCard(slotPos: SlotInfo): CardT | null {
  */
 export function swapSlots(
 	game: GameModel,
-	slotA: SlotInfo,
-	slotB: SlotInfo,
+	slotA: SlotInfo | null,
+	slotB: SlotInfo | null,
 	withoutDetach: boolean = false
 ): boolean {
+	if (!slotA || !slotB) return false
 	if (slotA.type !== slotB.type) return false
 	if (!slotA.row || !slotB.row || slotA.index === null || slotB.index === null) return false
 

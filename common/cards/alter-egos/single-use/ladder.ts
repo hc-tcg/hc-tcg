@@ -39,14 +39,9 @@ class LadderSingleUseCard extends SingleUseCard {
 			canPick: this.pickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === null) return
-				const activeRowIndex = player.board.activeRow
-				if (activeRowIndex === null) return
 
-				const activePos = getSlotPos(player, activeRowIndex, 'hermit')
-				const inactivePos = getSlotPos(player, pickResult.rowIndex, 'hermit')
-				const card = getSlotCard(activePos)
-				if (!card) return
-
+				const activePos = game.getSlot(slot.every(slot.player, slot.activeRow, slot.hermitSlot))
+				const inactivePos = game.getSlot(slot.every(slot.player, slot.rowIndex(pickResult.rowIndex), slot.hermitSlot))
 				// Apply
 				applySingleUse(game)
 
