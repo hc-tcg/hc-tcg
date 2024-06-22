@@ -52,8 +52,6 @@ class IJevinRareHermitCard extends HermitCard {
 					if (!pickResult.card || pickResult.rowIndex === undefined) return
 
 					game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
-
-					return
 				},
 				onTimeout() {
 					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex

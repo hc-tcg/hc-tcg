@@ -99,8 +99,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 					if (!itemCard) return
 
 					discardCard(game, pickResult.card)
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Discard the first available item card
