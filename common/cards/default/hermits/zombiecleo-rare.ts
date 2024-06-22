@@ -1,5 +1,5 @@
 import {HERMIT_CARDS} from '../..'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
@@ -113,7 +113,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Cleo: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
+								cardPos: getSlotInfo(game, pickedCard.cardInstance),
 							},
 						},
 						onResult(modalResult) {

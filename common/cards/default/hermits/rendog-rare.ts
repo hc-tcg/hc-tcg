@@ -1,7 +1,7 @@
 import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
 import {slot} from '../../../slot'
@@ -108,7 +108,7 @@ class RendogRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
+								cardPos: getSlotInfo(game, pickedCard.cardInstance),
 							},
 						},
 						onResult(modalResult) {

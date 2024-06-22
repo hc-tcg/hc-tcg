@@ -1,7 +1,7 @@
 import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
@@ -47,7 +47,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 			targetRows.forEach((row) => {
 				if (!row.hermitCard) return
 				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
-				const rowIndex = getBasicCardPos(game, row.hermitCard.cardInstance)?.rowIndex
+				const rowIndex = getSlotInfo(game, row.hermitCard.cardInstance)?.rowIndex
 				if (!rowIndex) return
 				if (hermitInfo) {
 					const maxHealth = Math.max(row.health, hermitInfo.health)

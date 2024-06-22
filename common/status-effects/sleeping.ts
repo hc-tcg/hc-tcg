@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {HERMIT_CARDS} from '../cards'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 
@@ -36,7 +36,7 @@ class SleepingStatusEffect extends StatusEffect {
 		)
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
+			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
 			if (!targetPos || !statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 

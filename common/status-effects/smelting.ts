@@ -1,6 +1,6 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
 import {StatusEffectT} from '../types/game-state'
 import {discardCard} from '../utils/movement'
 

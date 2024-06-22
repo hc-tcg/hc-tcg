@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
@@ -38,7 +38,7 @@ class PoisonStatusEffect extends StatusEffect {
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
+			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
 			if (!targetPos.row.hermitCard) return
 

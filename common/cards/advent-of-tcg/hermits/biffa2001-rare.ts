@@ -1,4 +1,4 @@
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'

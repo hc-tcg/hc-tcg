@@ -1,6 +1,6 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../models/card-pos-model'
+import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {HERMIT_CARDS} from '../cards'
@@ -30,7 +30,7 @@ class MelodyStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getBasicCardPos(game, statusEffectInfo.targetInstance)
+			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
 			if (!targetPos || !targetPos.row || !targetPos.row.hermitCard) return
 			if (targetPos.rowIndex === null) return
 

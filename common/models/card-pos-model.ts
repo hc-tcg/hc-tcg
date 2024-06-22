@@ -1,20 +1,11 @@
-import {SlotTypeT} from '../types/cards'
+import {SlotInfo, SlotTypeT} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
-
-export type BasicCardPos = {
-	player: PlayerState
-	opponentPlayer: PlayerState
-	rowIndex: number | null
-	row: RowState | null
-	type: SlotTypeT
-	index: number | null
-}
 
 /**
  * Get the card position on the board for a card instance (in object form)
  */
-export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos | null {
+export function getSlotInfo(game: GameModel, instance: string): SlotInfo | null {
 	const ids = game.getPlayerIds()
 	for (let i = 0; i < ids.length; i++) {
 		const playerId = ids[i]
@@ -34,7 +25,8 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 				rowIndex: null,
 				row: null,
 				type: 'single_use',
-				index: 0
+				card: board.singleUseCard,
+				index: 0,
 			}
 		}
 
@@ -49,6 +41,7 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 					rowIndex,
 					row,
 					type: 'hermit',
+					card: row.hermitCard,
 					index: 0,
 				}
 			} else if (row.effectCard?.cardInstance === instance) {
@@ -58,6 +51,7 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 					rowIndex,
 					row,
 					type: 'effect',
+					card: row.effectCard,
 					index: 0,
 				}
 			} else {
@@ -70,6 +64,7 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 							rowIndex,
 							row,
 							type: 'item',
+							card: card,
 							index: i,
 						}
 					}
@@ -82,7 +77,7 @@ export function getBasicCardPos(game: GameModel, instance: string): BasicCardPos
 }
 
 export function getCardPos(game: GameModel, instance: string) {
-	const basicPos = getBasicCardPos(game, instance)
+	const basicPos = getSlotInfo(game, instance)
 
 	if (basicPos) {
 		return new CardPosModel(game, basicPos, instance)
@@ -91,7 +86,7 @@ export function getCardPos(game: GameModel, instance: string) {
 	return null
 }
 
-export function getCardAtPos(pos: BasicCardPos) {
+export function getCardAtPos(pos: SlotInfo) {
 	const {player, rowIndex, type, index} = pos
 
 	const suCard = player.board.singleUseCard
@@ -122,17 +117,17 @@ export function getCardAtPos(pos: BasicCardPos) {
  */
 export class CardPosModel {
 	private game: GameModel
-	private internalPos: BasicCardPos
+	private internalPos: SlotInfo
 	private instance: string
 
-	constructor(game: GameModel, cardPos: BasicCardPos, instance: string) {
+	constructor(game: GameModel, cardPos: SlotInfo, instance: string) {
 		this.game = game
 		this.internalPos = cardPos
 		this.instance = instance
 	}
 
 	private recalculateInternalPos() {
-		const newPos = getBasicCardPos(this.game, this.instance)
+		const newPos = getSlotInfo(this.game, this.instance)
 
 		// Only change the stored card pos if the card is somewhere else on the board - if it's nowhere change nothing
 		if (newPos) {
