@@ -4,7 +4,6 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
-import {formatText} from '../../../utils/formatting'
 import HermitCard from '../../base/hermit-card'
 
 class ZombieCleoRareHermitCard extends HermitCard {
