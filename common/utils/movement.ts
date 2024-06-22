@@ -145,7 +145,7 @@ export function getSlotCard(slotPos: SlotInfo): CardT | null {
 	const {row, index, type} = slotPos
 
 	if (!row || !index) return null
-	
+
 	if (type === 'hermit') {
 		return row.hermitCard
 	} else if (type === 'effect') {
@@ -161,19 +161,18 @@ export function getSlotCard(slotPos: SlotInfo): CardT | null {
  */
 export function swapSlots(
 	game: GameModel,
-	slotAPos: SlotInfo,
-	slotBPos: SlotInfo,
+	slotA: SlotInfo,
+	slotB: SlotInfo,
 	withoutDetach: boolean = false
 ): boolean {
-	const {slot: slotA, row: rowA} = slotAPos
-	const {slot: slotB, row: rowB} = slotBPos
 	if (slotA.type !== slotB.type) return false
+	if (!slotA.row || !slotB.row || slotA.index === null || slotB.index === null) return false
 
 	// Info about non-empty slots
 	let cardsInfo: any = []
 
 	// make checks for each slot and then detach
-	const slots = [slotAPos, slotBPos]
+	const slots = [slotA, slotB]
 	for (let i = 0; i < slots.length; i++) {
 		const slot = slots[i]
 
@@ -196,17 +195,17 @@ export function swapSlots(
 
 	// Swap
 	if (slotA.type === 'hermit') {
-		let tempCard = rowA.hermitCard
-		rowA.hermitCard = rowB.hermitCard
-		rowB.hermitCard = tempCard
+		let tempCard = slotA.row?.hermitCard
+		slotA.row.hermitCard = slotB.row.hermitCard
+		slotB.row.hermitCard = tempCard
 	} else if (slotA.type === 'effect') {
-		let tempCard = rowA.effectCard
-		rowA.effectCard = rowB.effectCard
-		rowB.effectCard = tempCard
+		let tempCard = slotA.row.effectCard
+		slotA.row.effectCard = slotB.row.effectCard
+		slotB.row.effectCard = tempCard
 	} else if (slotA.type === 'item') {
-		let tempCard = rowA.itemCards[slotA.index]
-		rowA.itemCards[slotA.index] = rowB.itemCards[slotB.index]
-		rowB.itemCards[slotB.index] = tempCard
+		let tempCard = slotA.row.itemCards[slotA.index]
+		slotA.row.itemCards[slotA.index] = slotB.row.itemCards[slotB.index]
+		slotB.row.itemCards[slotB.index] = tempCard
 	}
 
 	if (!withoutDetach) {

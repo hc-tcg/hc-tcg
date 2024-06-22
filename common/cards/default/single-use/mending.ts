@@ -68,7 +68,7 @@ class MendingSingleUseCard extends singleUseCard {
 				const targetPos = getSlotPos(player, rowIndex, 'effect')
 
 				if (!sourcePos.row) return
-				
+
 				const logInfo = pickResult
 				logInfo.card = sourcePos.row.effectCard
 

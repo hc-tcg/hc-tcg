@@ -146,8 +146,7 @@ export class BattleLogModel {
 				slotType: pos.type,
 			},
 			pick: {
-				rowIndex:
-					pickInfo && pickInfo.rowIndex !== null ? `${pickInfo.rowIndex + 1}` : invalid,
+				rowIndex: pickInfo && pickInfo.rowIndex !== null ? `${pickInfo.rowIndex + 1}` : invalid,
 				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
 				name: pickInfo?.card
 					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)

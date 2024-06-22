@@ -87,7 +87,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
 				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.index)
 				const itemCard = firstRow.itemCards[itemIndex]
-				
+
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
 

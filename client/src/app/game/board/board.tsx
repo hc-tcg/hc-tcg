@@ -10,7 +10,7 @@ import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
 import {PickInfo} from 'common/types/server-requests'
-import { SlotTypeT } from 'common/types/cards'
+import {SlotTypeT} from 'common/types/cards'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void

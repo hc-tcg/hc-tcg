@@ -76,7 +76,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.index)
 
 				if (!itemPos.row) return
-				
+
 				const logInfo = pickResult
 				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
 

@@ -6,7 +6,11 @@ import cn from 'classnames'
 import {StatusEffectT} from 'common/types/game-state'
 import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
 
-const getCardBySlot = (slotType: SlotTypeT, slotIndex: number, row: RowState | null): CardT | null => {
+const getCardBySlot = (
+	slotType: SlotTypeT,
+	slotIndex: number,
+	row: RowState | null
+): CardT | null => {
 	if (!row) return null
 	if (slotType === 'hermit') return row.hermitCard || null
 	if (slotType === 'effect') return row.effectCard || null
