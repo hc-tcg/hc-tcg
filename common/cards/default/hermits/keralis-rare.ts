@@ -2,7 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
 
 class KeralisRareHermitCard extends HermitCard {
@@ -29,8 +29,10 @@ class KeralisRareHermitCard extends HermitCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
 
@@ -43,19 +45,13 @@ class KeralisRareHermitCard extends HermitCard {
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure there is something to select
-			const playerHasAfk = getNonEmptyRows(player, true).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
-			const opponentHasAfk = getNonEmptyRows(opponentPlayer, true).some(
-				(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-			)
-			if (!playerHasAfk && !opponentHasAfk) return
+			if (!game.someSlotFulfills(this.pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
-				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
+				canPick: this.pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
 					if (!pickResult.card || pickResult.rowIndex === undefined) return
