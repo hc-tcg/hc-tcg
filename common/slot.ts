@@ -177,6 +177,10 @@ export namespace slot {
 		return (game, pos) => rowIndex !== null && pos.rowIndex === rowIndex
 	}
 
+	export const index = (index: number | null): SlotCondition => {
+		return (game, pos) => index !== null && pos.index === index
+	}
+
 	/** Return true if the spot contains any of the card IDs. */
 	export const has = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {

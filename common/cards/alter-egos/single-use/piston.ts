@@ -72,7 +72,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				)(game, pos),
 			onResult(pickResult) {
 				const pickedIndex = pickResult.rowIndex
-				if (pickResult.card || pickedIndex === undefined) return
+				if (pickResult.card || pickedIndex === null) return
 
 				const pickedRow = player.board.rows[pickedIndex]
 				const firstRowIndex = player.custom[rowIndexKey]
@@ -83,13 +83,29 @@ class PistonSingleUseCard extends SingleUseCard {
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
 
-				// Make sure we can attach the item
-				const itemPos = getSlotPos(player, firstRowIndex, 'item', itemIndex)
-				const targetPos = getSlotPos(player, pickedIndex, 'item', pickResult.index)
+				const itemPos = game.getSlot(
+					slot.every(
+						slot.player,
+						slot.rowIndex(firstRowIndex),
+						slot.itemSlot,
+						slot.index(itemIndex)
+					)
+				)
+				const targetPos = game.getSlot(
+					slot.every(
+						slot.player,
+						slot.rowIndex(pickedIndex),
+						slot.itemSlot,
+						slot.index(pickResult.index)
+					)
+				)
+
 				const itemCard = firstRow.itemCards[itemIndex]
 
 				const logInfo = pickResult
-				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+				if (itemPos !== null && itemPos.row !== null) {
+					logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+				}
 
 				applySingleUse(game, logInfo)
 

@@ -40,13 +40,14 @@ class LadderSingleUseCard extends SingleUseCard {
 			onResult(pickResult) {
 				if (!pickResult.card || pickResult.rowIndex === null) return
 
-				const activePos = game.getSlot(slot.every(slot.player, slot.activeRow, slot.hermitSlot))
-				const inactivePos = game.getSlot(slot.every(slot.player, slot.rowIndex(pickResult.rowIndex), slot.hermitSlot))
 				// Apply
 				applySingleUse(game)
 
-				// Swap slots
-				swapSlots(game, activePos, inactivePos, true)
+				swapSlots(
+					game,
+					game.getSlot(slot.every(slot.player, slot.activeRow, slot.hermitSlot)),
+					game.getSlot(slot.every(slot.player, slot.rowIndex(pickResult.rowIndex), slot.hermitSlot))
+				)
 
 				game.changeActiveRow(player, pickResult.rowIndex)
 			},
