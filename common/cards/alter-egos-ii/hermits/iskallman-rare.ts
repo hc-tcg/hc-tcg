@@ -35,6 +35,15 @@ class IskallmanRareHermitCard extends HermitCard {
 		const {player, opponentPlayer} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
+		const pickCondition = slot.every(
+			slot.player,
+			slot.hermitSlot,
+			slot.not(slot.empty),
+			(game, rowPos) => {
+				if (!rowPos.row || !rowPos.row.hermitCard) return false
+				return HERMIT_CARDS[rowPos.row.hermitCard.cardId] === undefined
+			}
+		)
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -48,16 +57,7 @@ class IskallmanRareHermitCard extends HermitCard {
 			if (!activeRow || activeRow.health < 50) return
 
 			// Make sure there is something to select
-			const hasHealableAfk = [
-				...getNonEmptyRows(player, true),
-				...getNonEmptyRows(opponentPlayer, true),
-			].some((rowPos) => {
-				const hermitCard = HERMIT_CARDS[rowPos.row.hermitCard.cardId]
-				if (hermitCard === undefined) return false
-				if (rowPos.row.health === hermitCard.health) return false
-				return true
-			})
-			if (!hasHealableAfk) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -85,7 +85,7 @@ class IskallmanRareHermitCard extends HermitCard {
 						playerId: player.id,
 						id: 'iskallman_rare',
 						message: 'Pick an AFK Hermit from either side of the board',
-						canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
+						canPick: pickCondition,
 						onResult(pickResult) {
 							if (!pickResult.card) return
 							if (!pickResult.rowIndex) return
