@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {PickRequest} from '../../../types/server-requests'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class CrossbowSingleUseCard extends SingleUseCard {
@@ -22,17 +22,18 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const targetsKey = this.getInstanceKey(instance, 'targets')
 		const remainingKey = this.getInstanceKey(instance, 'remaining')
+		const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Rather than allowing you to choose to damage less we will make you pick the most you can
-			const pickAmount = Math.min(3, getNonEmptyRows(opponentPlayer).length)
+			const pickAmount = Math.min(3, game.filterSlots(pickCondition).length)
 			player.custom[targetsKey] = []
 			player.custom[remainingKey] = pickAmount
 
 			const pickRequest: PickRequest = {
 				playerId: player.id,
 				id: this.id,
-				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
+				canPick: pickCondition,
 				message: "Pick {?} of your opponent's Hermits",
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
