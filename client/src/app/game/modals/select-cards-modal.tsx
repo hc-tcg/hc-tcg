@@ -63,7 +63,7 @@ function SelectCardsModal({closeModal}: Props) {
 			<div className={css.description}>
 				{modalData.payload.modalDescription}
 				<div className={css.cards}>
-					<div>
+					<div className={css.cardsListContainer}>
 						<CardList
 							onClick={handleSelection}
 							cards={cards}

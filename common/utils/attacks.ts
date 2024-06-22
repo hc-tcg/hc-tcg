@@ -147,12 +147,8 @@ function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
 export function executeAttacks(
 	game: GameModel,
 	attacks: Array<AttackModel>,
-	withoutBlockingActions = false,
-	createLogs = true
+	withoutBlockingActions = false
 ) {
-	// We need to store the SU card for battle log stuff.
-	const thisAttackSagaSU = game.currentPlayer.board.singleUseCard
-
 	// STEP 1 - Call before attack and defence for all attacks
 	runBeforeAttackHooks(attacks)
 	runBeforeDefenceHooks(attacks)
@@ -166,14 +162,10 @@ export function executeAttacks(
 		executeAttack(attack)
 
 		if (attack.nextAttacks.length > 0) {
-			executeAttacks(game, attack.nextAttacks, withoutBlockingActions, false)
+			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
+			// Only want to block actions after first attack
+			withoutBlockingActions = true
 		}
-
-		if (createLogs) {
-			game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, thisAttackSagaSU)
-		}
-
-		attack.nextAttacks = []
 	})
 
 	if (!withoutBlockingActions) {
@@ -192,12 +184,6 @@ export function executeAttacks(
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(attacks)
 	runAfterDefenceHooks(attacks)
-
-	// STEP 7 - Execute new attacks created in afterAttack hooks
-	attacks.forEach((attack) => {
-		if (attack.nextAttacks.length === 0) return
-		executeAttacks(game, attack.nextAttacks, true, true)
-	})
 }
 
 export function executeExtraAttacks(
@@ -206,6 +192,11 @@ export function executeExtraAttacks(
 	withoutBlockingActions = false
 ) {
 	executeAttacks(game, attacks, withoutBlockingActions)
+
+	attacks.forEach((attack) => {
+		game.battleLog.addAttackEntry(attack, game.currentPlayer.coinFlips, null)
+	})
+
 	game.battleLog.sendLogs()
 }
 

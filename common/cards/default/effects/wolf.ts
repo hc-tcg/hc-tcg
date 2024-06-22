@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import {getActiveRowPos, getRowPos} from '../../../utils/board'
 import EffectCard from '../../base/effect-card'
 
@@ -64,7 +65,7 @@ class WolfEffectCard extends EffectCard {
 				log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
 			}).addDamage(this.id, 20)
 
-			attack.addNewAttack(backlashAttack)
+			executeExtraAttacks(game, [backlashAttack])
 		})
 	}
 

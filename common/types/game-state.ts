@@ -121,7 +121,8 @@ export type PlayerState = {
 		/** Hook called for every attack that targets our side of the board */
 		onDefence: GameHook<(attack: AttackModel) => void>
 		/**
-		 * Hook called after the main attack loop, for every attack from our side of the board.
+		 * Hook called after the main attack loop is completed, for every attack from our side of the board.
+		 * Attacks added from this hook will not be executed.
 		 *
 		 * This is called after actions are marked as completed and blocked
 		 */

@@ -21,7 +21,7 @@ export const getGamePlayerOutcome = (game, endResult, playerId) => {
 		return triggerPlayerId === playerId ? 'forfeit_loss' : 'forfeit_win'
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		const triggerPlayerId = endResult.playerRemoved.payload.playerId
+		const triggerPlayerId = endResult.playerRemoved.payload.id
 		return triggerPlayerId === playerId ? 'leave_loss' : 'leave_win'
 	}
 	if (game.endInfo.deadPlayerIds.length === 2) return 'tie'
@@ -38,7 +38,7 @@ export const getWinner = (game, endResult) => {
 		return getOpponentId(game, endResult.forfeit.playerId)
 	}
 	if (Object.hasOwn(endResult, 'playerRemoved')) {
-		return getOpponentId(game, endResult.playerRemoved.payload.playerId)
+		return getOpponentId(game, endResult.playerRemoved.payload.id)
 	}
 	if (game.endInfo.deadPlayerIds.length === 2) return null
 	const deadId = game.endInfo.deadPlayerIds[0]

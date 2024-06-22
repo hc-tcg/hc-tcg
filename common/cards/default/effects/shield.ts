@@ -24,7 +24,7 @@ class ShieldEffectCard extends EffectCard {
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return
+			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return attack
 
 			if (player.custom[instanceKey] === undefined) {
 				player.custom[instanceKey] = 0
@@ -39,12 +39,12 @@ class ShieldEffectCard extends EffectCard {
 			}
 		})
 
-		player.hooks.afterDefence.add(instance, () => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const {player, row} = pos
 
 			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
 				discardCard(game, row.effectCard)
-				if (!row.hermitCard) return
+				if (!row.hermitCard) return attack
 				const hermitName = HERMIT_CARDS[row.hermitCard?.cardId].name
 				game.battleLog.addEntry(player.id, `$p${hermitName}'s$ $eShield$ was broken`)
 			}
