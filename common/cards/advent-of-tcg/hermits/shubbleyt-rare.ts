@@ -3,7 +3,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {RowPos} from '../../../types/cards'
 import {RowStateWithHermit} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 

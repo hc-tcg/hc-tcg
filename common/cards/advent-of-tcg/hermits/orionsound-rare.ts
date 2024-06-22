@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applyStatusEffect, getNonEmptyRows, removeStatusEffect} from '../../../utils/board'
+import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class OrionSoundRareHermitCard extends HermitCard {

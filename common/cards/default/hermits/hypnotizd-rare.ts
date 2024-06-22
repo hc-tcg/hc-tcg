@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 

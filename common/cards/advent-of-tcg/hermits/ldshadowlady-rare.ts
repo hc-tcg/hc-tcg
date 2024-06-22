@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class LDShadowLadyRareHermitCard extends HermitCard {
@@ -40,19 +39,22 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
+			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermitSlot, slot.activeRow))) return
 
-			if (opponentInactiveRows.length === 4) return
-			if (opponentPlayer.board.activeRow === null) return
+			const pickCondition = slot.every(
+				slot.empty,
+				slot.hermitSlot,
+				slot.opponent,
+				slot.not(slot.activeRow)
+			)
 
-			// Make sure opponent Hermit isn't dead
-			if (getActiveRow(opponentPlayer)?.health === 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: "Move your opponent's active Hermit to a new slot.",
-				canPick: slot.every(slot.empty, slot.hermitSlot, slot.opponent),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					if (pickResult.rowIndex === undefined) return
 					if (opponentPlayer.board.activeRow === null) return
@@ -62,12 +64,12 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
-					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
+					const emptyHermitSlots = game.filterSlots(pickCondition)
 
-					if (emptyRows.length === 0) return
+					const pickedRowIndex =
+						emptyHermitSlots[Math.floor(Math.random() * emptyHermitSlots.length)].rowIndex
 
-					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
+					if (!pickedRowIndex) return
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},

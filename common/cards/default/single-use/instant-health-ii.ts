@@ -2,7 +2,7 @@ import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../slot'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {

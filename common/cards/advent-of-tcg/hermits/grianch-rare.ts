@@ -2,7 +2,6 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../slot'
 
@@ -55,14 +54,15 @@ class GrianchRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
-			const nonEmptyRows = getNonEmptyRows(player, true, true)
-			if (nonEmptyRows.length === 0) return
+			const pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
+			
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
-				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex

@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class TargetBlockSingleUseCard extends SingleUseCard {

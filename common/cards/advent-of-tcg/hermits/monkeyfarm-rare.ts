@@ -2,7 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
-import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../slot'
 
@@ -41,19 +40,15 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
-			const emptyRows = getNonEmptyRows(opponentPlayer, true, true)
-			const opponentItemCards = emptyRows.reduce(
-				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length,
-				0
-			)
+			const pickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty))
 
-			if (opponentItemCards == 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
-				canPick: slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty)),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
 					if (!pickResult.card || rowIndex === undefined) return

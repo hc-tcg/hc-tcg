@@ -2,7 +2,7 @@ import HermitCard from '../../base/hermit-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
 import {slot} from '../../../slot'
@@ -46,13 +46,19 @@ class HumanCleoRareHermitCard extends HermitCard {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
+			const pickCondition = slot.every(
+				slot.opponent,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
+
 			const blockActions = () => {
 				// Start by removing blocked actions in case requirements are no longer met
 				game.removeBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 				// Return if the opponent has no AFK Hermits to attack
-				const afk = getNonEmptyRows(opponentPlayer, true).length
-				if (afk < 1) return
+				if (!game.someSlotFulfills(pickCondition)) return
 
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (!opponentActiveRow) return
@@ -88,19 +94,13 @@ class HumanCleoRareHermitCard extends HermitCard {
 			// Add a pick request for opponent to pick an afk hermit to attack
 			opponentPlayer.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 				// Only pick if there is afk to pick
-				const afk = getNonEmptyRows(opponentPlayer, true).length
-				if (afk < 1) return
+				if (!game.someSlotFulfills(pickCondition)) return
 
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick one of your AFK Hermits',
-					canPick: slot.every(
-						slot.player,
-						slot.not(slot.activeRow),
-						slot.not(slot.empty),
-						slot.hermitSlot
-					),
+					canPick: pickCondition,
 					onResult(pickResult) {
 						const rowIndex = pickResult.rowIndex
 						if (!pickResult.card || !rowIndex === undefined) return
@@ -116,7 +116,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Pick the first afk hermit to attack
-						const firstAfk = getNonEmptyRows(opponentPlayer, true)[0]
+						const firstAfk = game.filterSlots(pickCondition)[0]
 						if (!firstAfk) return
 
 						// Save the target index for opponent to attack

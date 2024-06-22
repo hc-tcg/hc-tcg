@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {applySingleUse, getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, getActiveRow} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class KnockbackSingleUseCard extends SingleUseCard {
@@ -50,18 +50,10 @@ class KnockbackSingleUseCard extends SingleUseCard {
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 					},
-					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== lastActiveRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
-							}
-						}
+					onTimeout: () => {
+						const row = game.filterSlots(this.pickCondition)[0]
+						if (row === undefined || row.rowIndex === undefined) return
+						game.changeActiveRow(game.opponentPlayer, row.rowIndex)
 					},
 				})
 			}

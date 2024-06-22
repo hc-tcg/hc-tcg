@@ -13,7 +13,7 @@ import {
 } from '../types/game-state'
 import {PickInfo} from '../types/server-requests'
 
-export function getActiveRow(player: PlayerState) {
+export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
 	if (player.board.activeRow === null) return null
 	const row = player.board.rows[player.board.activeRow]
 	if (!row.hermitCard) return null
@@ -47,24 +47,6 @@ export function getSlotPos(
 			index,
 		},
 	}
-}
-
-// @NOTE - ignoreNegativeHealth should be true when being used in afterAttack,
-// as health may be below 0 but hermits will not have been removed from the board yet
-export function getNonEmptyRows(
-	playerState: PlayerState,
-	ignoreActive: boolean = false,
-	ignoreNegativeHealth: boolean = false
-): Array<RowPos> {
-	const rows: Array<RowPos> = []
-	const activeRowIndex = playerState.board.activeRow
-	for (let i = 0; i < playerState.board.rows.length; i++) {
-		const row = playerState.board.rows[i]
-		if (i === activeRowIndex && ignoreActive) continue
-		if ((!row.health || row.health < 0) && ignoreNegativeHealth) continue
-		if (row.hermitCard) rows.push({player: playerState, rowIndex: i, row})
-	}
-	return rows
 }
 
 export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericActionResult {

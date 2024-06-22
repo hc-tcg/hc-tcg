@@ -2,7 +2,7 @@ import {CARDS, HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -44,16 +44,6 @@ class PharaohRareHermitCard extends HermitCard {
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
 
-			// Make sure there is something to select and coin flip
-			const nonEmptyRows = getNonEmptyRows(player, true, true)
-			if (
-				nonEmptyRows.length === 0 ||
-				nonEmptyRows.every((c) => c.row.hermitCard.cardId === 'pharaoh_rare') ||
-				!nonEmptyRows.some((rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined)
-			) {
-				return
-			}
-
 			const attacker = getActiveRow(player)?.hermitCard
 			if (!attacker) return
 
@@ -61,11 +51,20 @@ class PharaohRareHermitCard extends HermitCard {
 
 			if (coinFlip[0] === 'tails') return
 
+			const pickCondition = slot.every(
+				slot.hermitSlot,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.not(slot.has(this.id))
+			)
+
+			if (!game.someSlotFulfills(pickCondition)) return
+			
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
-				canPick: slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot),
+				canPick: pickCondition,
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
