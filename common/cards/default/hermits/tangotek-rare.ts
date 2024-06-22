@@ -46,7 +46,7 @@ class TangoTekRareHermitCard extends HermitCard {
 				slot.not(slot.empty)
 			)
 			const playerInactiveRowsPickCondition = slot.every(
-				slot.opponent,
+				slot.player,
 				slot.hermitSlot,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty)
