@@ -6,24 +6,24 @@ import {equalCard} from './cards'
 import {SlotInfo} from '../types/cards'
 
 function discardAtPos(pos: CardPosModel) {
-	const {player, row, slot} = pos
+	const {player, row, type, index} = pos
 
-	if (slot.type === 'single_use') {
+	if (type === 'single_use') {
 		player.board.singleUseCard = null
 	}
 
 	if (!row) return
 
-	if (slot.type === 'hermit') {
+	if (type === 'hermit') {
 		row.hermitCard = null
 	}
 
-	if (slot.type === 'effect') {
+	if (type === 'effect') {
 		row.effectCard = null
 	}
 
-	if (slot.type === 'item') {
-		row.itemCards[slot.index] = null
+	if (type === 'item' && index !== null) {
+		row.itemCards[index] = null
 	}
 }
 
@@ -128,7 +128,7 @@ export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: Pla
 		cardPos.row.hermitCard = null
 	} else if (cardPos.row && cardPos.type === 'effect') {
 		cardPos.row.effectCard = null
-	} else if (cardPos.row && cardPos.type === 'item') {
+	} else if (cardPos.row && cardPos.type === 'item' && cardPos.index !== null) {
 		cardPos.row.itemCards[cardPos.index] = null
 	} else if (cardPos.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
