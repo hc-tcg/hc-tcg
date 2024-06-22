@@ -39,7 +39,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
 				// We need to have no card there
-				if (pickResult.card || rowIndex === undefined) return
+				if (pickResult.card || rowIndex === null) return
 
 				const activeRow = getActiveRowPos(player)
 				if (player.board.activeRow === null || !activeRow) return

@@ -45,7 +45,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return
+				if (!pickResult.card || pickResult.rowIndex === null) return
 
 				// Store the row and index of the chosen item
 				player.custom[rowIndexKey] = pickResult.rowIndex

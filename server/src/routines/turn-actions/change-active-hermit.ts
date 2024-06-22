@@ -11,7 +11,7 @@ function* changeActiveHermit(
 
 	// Find the row we are trying to change to
 	const rowIndex = turnAction?.payload?.pickInfo?.rowIndex
-	if (rowIndex === undefined) return 'FAILURE_INVALID_DATA'
+	if (rowIndex === null) return 'FAILURE_INVALID_DATA'
 	if (turnAction.payload.pickInfo.playerId !== currentPlayer.id) {
 		return 'FAILURE_CANNOT_COMPLETE'
 	}

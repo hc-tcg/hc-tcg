@@ -56,7 +56,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 				message: "Move your opponent's active Hermit to a new slot.",
 				canPick: pickCondition,
 				onResult(pickResult) {
-					if (pickResult.rowIndex === undefined) return
+					if (pickResult.rowIndex === null) return
 					if (opponentPlayer.board.activeRow === null) return
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)

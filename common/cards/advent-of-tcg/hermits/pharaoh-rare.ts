@@ -68,7 +68,7 @@ class PharaohRareHermitCard extends HermitCard {
 				onResult(pickResult) {
 					const pickedPlayer = game.state.players[pickResult.playerId]
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return
+					if (!pickResult.card || rowIndex === null) return
 
 					// Make sure it's an actual hermit card
 					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]

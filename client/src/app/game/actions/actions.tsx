@@ -96,7 +96,8 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			isPlayable &&
 				onClick({
 					type: 'single_use',
-					index: 0,
+					index: null,
+					rowIndex: null,
 					playerId: localGameState.turn.currentPlayerId,
 					card: singleUseCard,
 				})

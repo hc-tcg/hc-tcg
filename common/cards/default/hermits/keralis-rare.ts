@@ -54,7 +54,7 @@ class KeralisRareHermitCard extends HermitCard {
 				canPick: this.pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || pickResult.rowIndex === undefined) return
+					if (!pickResult.card || pickResult.rowIndex === null) return
 
 					// Store the info to use later
 					player.custom[playerKey] = pickResult.playerId

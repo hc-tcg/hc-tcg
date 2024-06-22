@@ -38,7 +38,7 @@ class WaterBucketEffectCard extends EffectCard {
 				message: 'Pick one of your Hermits',
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickResult) {
-					if (pickResult.rowIndex === undefined) return
+					if (pickResult.rowIndex === null) return
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (

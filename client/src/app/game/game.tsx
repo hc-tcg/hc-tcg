@@ -105,6 +105,7 @@ function Game() {
 						playerId: gameState.playerId,
 						card: card,
 						type: 'hand',
+						rowIndex: null,
 						index,
 					},
 				},

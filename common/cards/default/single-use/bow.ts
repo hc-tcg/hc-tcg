@@ -36,7 +36,7 @@ class BowSingleUseCard extends SingleUseCard {
 				canPick: this.pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return
+					if (rowIndex === null) return
 
 					player.custom[targetKey] = rowIndex
 				},

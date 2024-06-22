@@ -43,7 +43,7 @@ class EggSingleUseCard extends SingleUseCard {
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === undefined) return
+					if (!pickResult.card || pickResult.rowIndex === null) return
 
 					// Store the row index to use later
 					player.custom[targetKey] = pickResult
@@ -85,7 +85,7 @@ class EggSingleUseCard extends SingleUseCard {
 
 			player.hooks.afterAttack.add(instance, () => {
 				const pickInfo: PickInfo = player.custom[targetKey]
-				if (pickInfo.rowIndex === null || pickInfo.rowIndex === undefined) return
+				if (pickInfo.rowIndex === null || pickInfo.rowIndex === null) return
 				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
 
 				delete player.custom[targetKey]

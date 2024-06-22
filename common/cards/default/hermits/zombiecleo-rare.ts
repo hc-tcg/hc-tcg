@@ -98,7 +98,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				canPick: this.pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return
+					if (rowIndex === null) return
 					if (rowIndex === player.board.activeRow) return
 					const pickedCard = pickResult.card
 					if (!pickedCard) return

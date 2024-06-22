@@ -38,7 +38,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			canPick: this.pickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return
+				if (!pickResult.card || pickResult.rowIndex === null) return
 				const activeRowIndex = player.board.activeRow
 				if (activeRowIndex === null) return
 

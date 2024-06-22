@@ -17,7 +17,7 @@ function ChangeHermitModal({closeModal, info}: Props) {
 	const playerState = useSelector(getPlayerState)
 	const gameState = useSelector(getGameState)
 
-	if (info.type !== 'hermit' || !playerState || !gameState || info.rowIndex === undefined) {
+	if (info.type !== 'hermit' || !playerState || !gameState || info.rowIndex === null) {
 		throw new Error('This should never happen')
 	}
 

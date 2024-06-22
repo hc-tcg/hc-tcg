@@ -49,13 +49,13 @@ class IJevinRareHermitCard extends HermitCard {
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === undefined) return
+					if (!pickResult.card || pickResult.rowIndex === null) return
 
 					game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 				},
 				onTimeout() {
 					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex
-					if (rowIndex === undefined) return
+					if (rowIndex === null) return
 					game.changeActiveRow(opponentPlayer, rowIndex)
 				},
 			})

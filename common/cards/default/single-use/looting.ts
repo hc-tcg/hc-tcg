@@ -46,7 +46,7 @@ class LootingSingleUseCard extends SingleUseCard {
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,
 				onResult(pickResult) {
-					if (pickResult.rowIndex === undefined || pickResult.card === null) {
+					if (pickResult.rowIndex === null || pickResult.card === null) {
 						return
 					}
 

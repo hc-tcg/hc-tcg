@@ -63,13 +63,13 @@ class TangoTekRareHermitCard extends HermitCard {
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: opponentInactiveRowsPickCondition,
 					onResult(pickResult) {
-						if (pickResult.rowIndex === undefined) return
+						if (pickResult.rowIndex === null) return
 
 						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
 					},
 					onTimeout() {
 						let newActiveRow = game.filterSlots(opponentInactiveRowsPickCondition)[0]
-						if (newActiveRow === undefined || newActiveRow.rowIndex === undefined) return
+						if (newActiveRow === undefined || newActiveRow.rowIndex === null) return
 						game.changeActiveRow(game.opponentPlayer, newActiveRow.rowIndex)
 					},
 				})
@@ -89,13 +89,13 @@ class TangoTekRareHermitCard extends HermitCard {
 					message: 'Pick a new active Hermit from your afk hermits',
 					canPick: playerInactiveRowsPickCondition,
 					onResult(pickResult) {
-						if (pickResult.rowIndex === undefined) return
+						if (pickResult.rowIndex === null) return
 
 						game.changeActiveRow(player, pickResult.rowIndex)
 					},
 					onTimeout() {
 						let newActiveRow = game.filterSlots(playerInactiveRowsPickCondition)[0]
-						if (newActiveRow === undefined || newActiveRow.rowIndex === undefined) return
+						if (newActiveRow === undefined || newActiveRow.rowIndex === null) return
 						game.changeActiveRow(game.currentPlayer, newActiveRow.rowIndex)
 					},
 				})

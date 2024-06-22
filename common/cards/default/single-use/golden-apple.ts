@@ -41,7 +41,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 			canPick: this.pickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
-				if (!pickResult.card || rowIndex === undefined) return
+				if (!pickResult.card || rowIndex === null) return
 
 				const row = player.board.rows[rowIndex]
 				if (!row.health) return

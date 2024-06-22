@@ -52,7 +52,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 				canPick: pickCondition,
 				onResult(pickResult) {
 					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === undefined) return
+					if (!pickResult.card || rowIndex === null) return
 
 					applyStatusEffect(game, 'dyed', pickResult.card.cardInstance)
 				},

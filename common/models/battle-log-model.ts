@@ -147,7 +147,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex:
-					pickInfo && pickInfo.rowIndex !== undefined ? `${pickInfo.rowIndex + 1}` : invalid,
+					pickInfo && pickInfo.rowIndex !== null ? `${pickInfo.rowIndex + 1}` : invalid,
 				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
 				name: pickInfo?.card
 					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)

@@ -50,7 +50,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === undefined) return
+				if (!pickResult.card || pickResult.rowIndex === null) return
 
 				// Store the index of the chosen item
 				player.custom[itemIndexKey] = pickResult.index
@@ -63,7 +63,7 @@ class LeadSingleUseCard extends SingleUseCard {
 			canPick: this.secondPickCondition,
 			onResult(pickResult) {
 				const rowIndex = pickResult.rowIndex
-				if (pickResult.card || rowIndex === undefined) return
+				if (pickResult.card || rowIndex === null) return
 
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
