@@ -32,7 +32,7 @@ class IskallmanRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
 		const pickCondition = slot.every(
