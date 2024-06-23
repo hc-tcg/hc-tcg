@@ -15,7 +15,7 @@ export function getCardPos(game: GameModel, instance: string) {
 /**
  * A wrapper class around the SlotInfo object that automatically updates our slot info when the card is moved.
  */
-export class CardPosModel {
+export class CardPosModel implements SlotInfo {
 	private game: GameModel
 	private internalPos: SlotInfo
 	private instance: string
