@@ -82,7 +82,7 @@ class GrianRareHermitCard extends HermitCard {
 							? {
 									text: 'Attach',
 									variant: 'default',
-								}
+							  }
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -98,7 +98,9 @@ class GrianRareHermitCard extends HermitCard {
 						discardCard(game, row.effectCard)
 
 						// Move their effect card over
-						const opponentEffectSlot = game.findSlot(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
+						const opponentEffectSlot = game.findSlot(
+							slot.every(slot.opponent, slot.effectSlot, slot.activeRow)
+						)
 						swapSlots(game, effectSlot, opponentEffectSlot)
 
 						const newPos = getCardPos(game, opponentEffectCard.cardInstance)

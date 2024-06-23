@@ -1,4 +1,4 @@
-import { slot } from '../slot'
+import {slot} from '../slot'
 import {SlotInfo, SlotTypeT} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
