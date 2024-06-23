@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import {discardCard, swapSlots} from '../../../utils/movement'
+import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -101,7 +101,7 @@ class GrianRareHermitCard extends HermitCard {
 						const opponentEffectSlot = game.findSlot(
 							slot.every(slot.opponent, slot.effectSlot, slot.activeRow)
 						)
-						swapSlots(game, effectSlot, opponentEffectSlot)
+						game.swapSlots(effectSlot, opponentEffectSlot)
 
 						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
 

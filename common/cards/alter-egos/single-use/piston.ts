@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {SlotInfo} from '../../../types/cards'
 import {applySingleUse} from '../../../utils/board'
-import {discardSingleUse, swapSlots} from '../../../utils/movement'
+import {discardSingleUse} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class PistonSingleUseCard extends SingleUseCard {
@@ -78,7 +78,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				swapSlots(game, itemSlotInfo, pickedSlot)
+				game.swapSlots(itemSlotInfo, pickedSlot)
 
 				delete player.custom[itemKey]
 			},

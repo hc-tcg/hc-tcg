@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class EmeraldSingleUseCard extends SingleUseCard {
@@ -40,7 +39,7 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			const playerSlot = game.findSlot(slot.every(slot.player, slot.activeRow, slot.effectSlot))
 			const opponentSlot = game.findSlot(slot.every(slot.player, slot.activeRow, slot.effectSlot))
 
-			swapSlots(game, playerSlot, opponentSlot)
+			game.swapSlots(playerSlot, opponentSlot)
 		})
 	}
 

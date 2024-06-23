@@ -13,6 +13,9 @@ import {ModalRequest, PickRequest, PickedSlotType} from '../types/server-request
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from '../types/cards'
+import {getCardPos} from './card-pos-model'
+import {getSlotCard} from '../utils/movement'
+import {CARDS} from '../cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -332,6 +335,50 @@ export class GameModel {
 
 	public findSlot(prediate: SlotCondition): SlotInfo | null {
 		return this.filterSlots(prediate)[0]
+	}
+
+	/**
+	 * Swaps the positions of two cards on the board.
+	 * This function does not check whether the cards can be placed in the other card's slot.
+	 */
+	public swapSlots(
+		slotA: SlotInfo | null,
+		slotB: SlotInfo | null,
+		withoutDetach: boolean = false
+	): void {
+		if (!slotA || !slotB) return
+		if (slotA.type !== slotB.type) return
+		if (!slotA.row || !slotB.row) return
+
+		// Swap
+		if (slotA.type === 'hermit') {
+			let tempCard = slotA.row?.hermitCard
+			slotA.row.hermitCard = slotB.row.hermitCard
+			slotB.row.hermitCard = tempCard
+		} else if (slotA.type === 'effect') {
+			let tempCard = slotA.row.effectCard
+			slotA.row.effectCard = slotB.row.effectCard
+			slotB.row.effectCard = tempCard
+		} else if (slotA.type === 'item') {
+			if (slotA.index === null || slotB.index === null) return
+			let tempCard = slotA.row.itemCards[slotA.index]
+			slotA.row.itemCards[slotA.index] = slotB.row.itemCards[slotB.index]
+			slotB.row.itemCards[slotB.index] = tempCard
+		}
+
+		if (!withoutDetach) {
+			// onAttach
+			;[slotA, slotB].forEach((slot) => {
+				if (!slot.card) return
+				const cardPos = getCardPos(this, slot.card.cardInstance)
+				if (!cardPos) return
+
+				const cardInfo = CARDS[slot.card.cardId]
+				cardInfo.onAttach(this, slot.card.cardInstance, cardPos)
+
+				cardPos.player.hooks.onAttach.call(slot.card.cardInstance)
+			})
+		}
 	}
 
 	public getPickableSlots(predicate: SlotCondition) {

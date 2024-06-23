@@ -2,7 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import {swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LeadSingleUseCard extends SingleUseCard {
@@ -75,7 +74,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				swapSlots(game, player.custom[itemIndexKey], pickedSlot)
+				game.swapSlots(player.custom[itemIndexKey], pickedSlot)
 
 				delete player.custom[itemIndexKey]
 			},

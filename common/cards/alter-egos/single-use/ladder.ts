@@ -2,7 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse} from '../../../utils/board'
-import {getSlotCard, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LadderSingleUseCard extends SingleUseCard {
@@ -40,8 +39,7 @@ class LadderSingleUseCard extends SingleUseCard {
 			onResult(pickedSlot) {
 				applySingleUse(game)
 
-				swapSlots(
-					game,
+				game.swapSlots(
 					pickedSlot,
 					game.findSlot(slot.every(slot.player, slot.hermitSlot, slot.activeRow))
 				)

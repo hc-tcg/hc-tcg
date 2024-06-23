@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applySingleUse, getActiveRow} from '../../../utils/board'
-import {discardSingleUse, swapSlots} from '../../../utils/movement'
+import {discardSingleUse} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
 class MendingSingleUseCard extends singleUseCard {
@@ -74,7 +74,7 @@ class MendingSingleUseCard extends singleUseCard {
 				applySingleUse(game, logInfo)
 
 				// Move the effect card
-				swapSlots(game, hermitActiveEffectCard, pickedSlot)
+				game.swapSlots(hermitActiveEffectCard, pickedSlot)
 			},
 		})
 	}
