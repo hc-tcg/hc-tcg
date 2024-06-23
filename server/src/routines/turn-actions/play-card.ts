@@ -2,7 +2,7 @@ import {CARDS, HERMIT_CARDS} from 'common/cards'
 import {GameModel} from 'common/models/game-model'
 import {equalCard} from 'common/utils/cards'
 import {PlayCardActionData} from 'common/types/action-data'
-import {BasicCardPos, CardPosModel} from 'common/models/card-pos-model'
+import {CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {callSlotConditionWithPickInfo} from 'common/slot'
@@ -98,15 +98,16 @@ function* playCardSaga(
 		}
 	}
 
-	const basicCardPos: BasicCardPos = {
+	const slotInfo: SlotInfo = {
 		player,
 		opponentPlayer,
 		row,
 		rowIndex,
 		type,
 		index,
+		card,
 	}
-	const pos = new CardPosModel(game, basicCardPos, card.cardInstance)
+	const pos = new CardPosModel(game, slotInfo, card.cardInstance)
 
 	// Remove the card from the hand
 	if (!DEBUG_CONFIG.unlimitedCards) {
