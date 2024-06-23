@@ -94,9 +94,9 @@ class TangoTekRareHermitCard extends HermitCard {
 						game.changeActiveRow(player, pickedSlot.rowIndex)
 					},
 					onTimeout() {
-						let newActiveRow = game.filterSlots(playerInactiveRowsPickCondition)[0]
-						if (newActiveRow === undefined || newActiveRow.rowIndex === null) return
-						game.changeActiveRow(game.currentPlayer, newActiveRow.rowIndex)
+						let newActiveHermit = game.findSlot(playerInactiveRowsPickCondition)
+						if (!newActiveHermit || newActiveHermit.rowIndex === null) return
+						game.changeActiveRow(game.currentPlayer, newActiveHermit.rowIndex)
 					},
 				})
 			}
