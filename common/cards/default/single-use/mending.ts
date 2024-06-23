@@ -60,23 +60,19 @@ class MendingSingleUseCard extends singleUseCard {
 			id: this.id,
 			message: 'Pick an empty effect slot from one of your AFK Hermits',
 			canPick: this.pickCondition,
-			onResult(pickResult) {
-				const rowIndex = pickResult.rowIndex
-				if (pickResult.card || rowIndex === null) return
+			onResult(pickedSlot) {
+				const hermitActiveEffectCard = game.findSlot(slot.every(slot.player, slot.activeRow, slot.effectSlot))
 
-				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
-				const targetPos = getSlotPos(player, rowIndex, 'effect')
+				if (!hermitActiveEffectCard || !hermitActiveEffectCard.row) return
 
-				if (!sourcePos.row) return
-
-				const logInfo = pickResult
-				logInfo.card = sourcePos.row.effectCard
+				const logInfo = pickedSlot
+				logInfo.card = hermitActiveEffectCard.row.effectCard
 
 				// Apply the mending card
 				applySingleUse(game, logInfo)
 
 				// Move the effect card
-				swapSlots(game, sourcePos, targetPos)
+				swapSlots(game, hermitActiveEffectCard, pickedSlot)
 			},
 		})
 	}

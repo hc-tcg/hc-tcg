@@ -37,15 +37,15 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick one of your opponent's AFK Hermits",
 			canPick: this.pickCondition,
-			onResult(pickResult) {
-				const rowIndex = pickResult.rowIndex
-				if (!pickResult.card || rowIndex === null) return
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
+				if (!pickedSlot.card || rowIndex === null) return
 
 				const row = opponentPlayer.board.rows[rowIndex]
 				if (!row.hermitCard) return
 
 				// Apply the card
-				applySingleUse(game, pickResult)
+				applySingleUse(game, pickedSlot)
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {

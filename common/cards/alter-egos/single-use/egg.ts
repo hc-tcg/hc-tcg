@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {PickInfo} from '../../../types/server-requests'
+import { SlotInfo } from '../../../types/cards'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import SingleUseCard from '../../base/single-use-card'
@@ -42,11 +42,11 @@ class EggSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === null) return
+				onResult(pickedSlot) {
+					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 					// Store the row index to use later
-					player.custom[targetKey] = pickResult
+					player.custom[targetKey] = pickedSlot
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing
@@ -58,7 +58,7 @@ class EggSingleUseCard extends SingleUseCard {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
-			const pickInfo: PickInfo = player.custom[targetKey]
+			const pickInfo: SlotInfo = player.custom[targetKey]
 			if (!pickInfo || pickInfo.rowIndex === null || pickInfo.rowIndex == undefined) return
 			const opponentRow = opponentPlayer.board.rows[pickInfo.rowIndex]
 			if (!opponentRow.hermitCard) return
@@ -84,7 +84,7 @@ class EggSingleUseCard extends SingleUseCard {
 			}
 
 			player.hooks.afterAttack.add(instance, () => {
-				const pickInfo: PickInfo = player.custom[targetKey]
+				const pickInfo: SlotInfo = player.custom[targetKey]
 				if (pickInfo.rowIndex === null || pickInfo.rowIndex === null) return
 				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
 

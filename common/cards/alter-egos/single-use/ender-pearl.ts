@@ -36,15 +36,15 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an empty Hermit slot',
 			canPick: this.pickCondition,
-			onResult(pickResult) {
-				const rowIndex = pickResult.rowIndex
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
 				// We need to have no card there
-				if (pickResult.card || rowIndex === null) return
+				if (pickedSlot.card || rowIndex === null) return
 
 				const activeRow = getActiveRowPos(player)
 				if (player.board.activeRow === null || !activeRow) return
 
-				const logInfo = pickResult
+				const logInfo = pickedSlot
 				logInfo.card = activeRow.row.hermitCard
 
 				// Apply

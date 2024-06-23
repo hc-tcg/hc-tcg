@@ -49,21 +49,22 @@ class LeadSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
-			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === null) return
+			onResult(pickedSlot) {
+				if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickResult.index
+				player.custom[itemIndexKey] = pickedSlot
 			},
 		})
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
 			message: "Pick an empty item slot on one of your opponent's AFK Hermits",
 			canPick: this.secondPickCondition,
-			onResult(pickResult) {
-				const rowIndex = pickResult.rowIndex
-				if (pickResult.card || rowIndex === null) return
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
+				if (pickedSlot.card || rowIndex === null) return
 
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
@@ -71,19 +72,10 @@ class LeadSingleUseCard extends SingleUseCard {
 				const opponentActivePos = getActiveRowPos(opponentPlayer)
 				if (!opponentActivePos) return
 
-				// Make sure we can attach the item
-				const itemPos = getSlotPos(opponentPlayer, opponentActivePos.rowIndex, 'item', itemIndex)
-				const targetPos = getSlotPos(opponentPlayer, rowIndex, 'item', pickResult.index)
-
-				if (!itemPos.row) return
-
-				const logInfo = pickResult
-				logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
-
-				applySingleUse(game, logInfo)
+				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				swapSlots(game, itemPos, targetPos)
+				swapSlots(game, player.custom[itemIndexKey], pickedSlot)
 
 				delete player.custom[itemIndexKey]
 			},

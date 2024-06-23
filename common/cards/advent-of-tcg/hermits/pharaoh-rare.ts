@@ -1,4 +1,4 @@
-import {CARDS, HERMIT_CARDS} from '../..'
+import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
@@ -65,20 +65,19 @@ class PharaohRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
-				onResult(pickResult) {
-					const pickedPlayer = game.state.players[pickResult.playerId]
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
+					const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
 					if (!hermitCard) return
 
 					//Cannot heal other pharaohs
 					if (hermitCard.id === 'pharaoh_rare') return
 
 					// Store the info to use later
-					player.custom[playerKey] = pickResult.playerId
+					player.custom[playerKey] = pickedSlot.player.id
 					player.custom[rowKey] = rowIndex
 				},
 				onTimeout() {

@@ -40,10 +40,10 @@ class BrewingStandEffectCard extends EffectCard {
 					slot.not(slot.empty),
 					(game, pick) => pick.rowIndex === pos.rowIndex
 				),
-				onResult(pickResult) {
-					if (!pickResult.card || pickResult.rowIndex === null) return
+				onResult(pickedSlot) {
+					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
-					const playerRow = player.board.rows[pickResult.rowIndex]
+					const playerRow = player.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return
 					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
@@ -54,7 +54,7 @@ class BrewingStandEffectCard extends EffectCard {
 						// Armor Stand
 						playerRow.health += 50
 					}
-					discardCard(game, pickResult.card)
+					discardCard(game, pickedSlot.card)
 				},
 			})
 		})

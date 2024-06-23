@@ -35,13 +35,13 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 2 cards from your hand',
 			canPick: slot.hand,
-			onResult(pickResult) {
+			onResult(pickedSlot) {
 				// @TODO right now if one card is discarded then the card won't yet be applied
 				//we need a way on the server to highlight certain cards in the hand
 				// that way we can not discard until both are selected
 
 				// Discard the card straight away
-				discardFromHand(player, pickResult.card)
+				discardFromHand(player, pickedSlot.card)
 			},
 		})
 		game.addPickRequest({
@@ -49,8 +49,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick 1 more card from your hand',
 			canPick: slot.hand,
-			onResult(pickResult) {
-				discardFromHand(player, pickResult.card)
+			onResult(pickedSlot) {
+				discardFromHand(player, pickedSlot.card)
 
 				// Apply
 				applySingleUse(game)

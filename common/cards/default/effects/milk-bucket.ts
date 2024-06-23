@@ -36,10 +36,10 @@ class MilkBucketEffectCard extends EffectCard {
 				id: instance,
 				message: 'Pick one of your Hermits',
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
-				onResult(pickResult) {
+				onResult(pickedSlot) {
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
-							ail.targetInstance === pickResult.card?.cardInstance &&
+							ail.targetInstance === pickedSlot.card?.cardInstance &&
 							(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
 						)
 					})
@@ -47,7 +47,7 @@ class MilkBucketEffectCard extends EffectCard {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					applySingleUse(game, pickResult)
+					applySingleUse(game, pickedSlot)
 				},
 			})
 		} else if (pos.type === 'effect') {

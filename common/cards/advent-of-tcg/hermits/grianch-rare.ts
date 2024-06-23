@@ -67,28 +67,27 @@ class GrianchRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
-				onResult(pickResult) {
-					const pickedPlayer = game.state.players[pickResult.playerId]
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
+					const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
 					if (!hermitCard) return
-					const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
-					const hermitHealth = pickedPlayer.board.rows[rowIndex].health
+					const hermitId = pickedSlot.player.board.rows[rowIndex].hermitCard?.cardId
+					const hermitHealth = pickedSlot.player.board.rows[rowIndex].health
 
 					if (!hermitHealth || !hermitId) return
 					const hermitInfo = HERMIT_CARDS[hermitId]
 					if (hermitInfo) {
 						// Heal
-						pickedPlayer.board.rows[rowIndex].health = Math.min(
+						pickedSlot.player.board.rows[rowIndex].health = Math.min(
 							hermitHealth + 40,
 							hermitInfo.health // Max health
 						)
 					} else {
 						// Armor Stand
-						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
+						pickedSlot.player.board.rows[rowIndex].health = hermitHealth + 40
 					}
 				},
 			})

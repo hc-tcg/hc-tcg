@@ -49,15 +49,15 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
 					if (!row.hermitCard) return
 
 					// Apply the card
-					discardCard(game, pickResult.card)
+					discardCard(game, pickedSlot.card)
 				},
 			})
 		})

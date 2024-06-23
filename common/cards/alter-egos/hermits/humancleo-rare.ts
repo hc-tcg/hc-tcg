@@ -101,9 +101,9 @@ class HumanCleoRareHermitCard extends HermitCard {
 					id: this.id,
 					message: 'Pick one of your AFK Hermits',
 					canPick: pickCondition,
-					onResult(pickResult) {
-						const rowIndex = pickResult.rowIndex
-						if (!pickResult.card || !rowIndex === null) return
+					onResult(pickedSlot) {
+						const rowIndex = pickedSlot.rowIndex
+						if (!pickedSlot.card || !rowIndex === null) return
 
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)

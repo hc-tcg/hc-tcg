@@ -38,18 +38,18 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,
-			onResult(pickResult) {
-				const rowIndex = pickResult.rowIndex
-				if (!pickResult.card || rowIndex === null) return
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
+				if (!pickedSlot.card || rowIndex === null) return
 
 				const row = player.board.rows[rowIndex]
 				if (!row.health) return
 
-				const hermitInfo = HERMIT_CARDS[pickResult.card.cardId]
+				const hermitInfo = HERMIT_CARDS[pickedSlot.card.cardId]
 				if (!hermitInfo) return
 
 				// Apply
-				applySingleUse(game, pickResult)
+				applySingleUse(game, pickedSlot)
 
 				const maxHealth = Math.max(row.health, hermitInfo.health)
 				row.health = Math.min(row.health + 60, maxHealth)

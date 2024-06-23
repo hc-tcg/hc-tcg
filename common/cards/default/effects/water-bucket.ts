@@ -37,28 +37,28 @@ class WaterBucketEffectCard extends EffectCard {
 				id: instance,
 				message: 'Pick one of your Hermits',
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
-				onResult(pickResult) {
-					if (pickResult.rowIndex === null) return
+				onResult(pickedSlot) {
+					if (pickedSlot.rowIndex === null) return
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
-							ail.targetInstance === pickResult.card?.cardInstance && ail.statusEffectId == 'fire'
+							ail.targetInstance === pickedSlot.card?.cardInstance && ail.statusEffectId == 'fire'
 						)
 					})
 					statusEffectsToRemove.forEach((ail) => {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					if (player.board.rows[pickResult.rowIndex].effectCard?.cardId === 'string') {
-						discardCard(game, player.board.rows[pickResult.rowIndex].effectCard)
+					if (player.board.rows[pickedSlot.rowIndex].effectCard?.cardId === 'string') {
+						discardCard(game, player.board.rows[pickedSlot.rowIndex].effectCard)
 					}
-					for (let i = 0; i < player.board.rows[pickResult.rowIndex].itemCards.length; i++) {
-						if (player.board.rows[pickResult.rowIndex].itemCards[i]?.cardId === 'string') {
-							discardCard(game, player.board.rows[pickResult.rowIndex].itemCards[i])
+					for (let i = 0; i < player.board.rows[pickedSlot.rowIndex].itemCards.length; i++) {
+						if (player.board.rows[pickedSlot.rowIndex].itemCards[i]?.cardId === 'string') {
+							discardCard(game, player.board.rows[pickedSlot.rowIndex].itemCards[i])
 						}
 					}
 
-					applySingleUse(game, pickResult)
+					applySingleUse(game, pickedSlot)
 				},
 			})
 		} else if (pos.type === 'effect') {

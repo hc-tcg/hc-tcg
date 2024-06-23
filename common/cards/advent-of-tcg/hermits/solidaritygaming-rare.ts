@@ -63,11 +63,11 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				id: instance,
 				message: 'Choose an AFK Hermit to protect',
 				canPick: pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
-					applyStatusEffect(game, 'protected', pickResult.card.cardInstance)
+					applyStatusEffect(game, 'protected', pickedSlot.card.cardInstance)
 				},
 			})
 		})

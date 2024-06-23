@@ -46,8 +46,8 @@ class JinglerRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Pick 1 card from your hand to discard',
 				canPick: slot.hand,
-				onResult(pickResult) {
-					discardFromHand(opponentPlayer, pickResult.card)
+				onResult(pickedSlot) {
+					discardFromHand(opponentPlayer, pickedSlot.card)
 				},
 				onTimeout() {
 					discardFromHand(opponentPlayer, opponentPlayer.hand[0])

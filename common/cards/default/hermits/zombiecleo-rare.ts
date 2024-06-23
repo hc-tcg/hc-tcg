@@ -96,11 +96,11 @@ class ZombieCleoRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Pick one of your AFK Hermits',
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
 					if (rowIndex === null) return
 					if (rowIndex === player.board.activeRow) return
-					const pickedCard = pickResult.card
+					const pickedCard = pickedSlot.card
 					if (!pickedCard) return
 
 					// No picking the same card as us

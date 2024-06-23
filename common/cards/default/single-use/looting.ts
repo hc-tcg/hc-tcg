@@ -45,15 +45,15 @@ class LootingSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					if (pickResult.rowIndex === null || pickResult.card === null) {
+				onResult(pickedSlot) {
+					if (pickedSlot.rowIndex === null || pickedSlot.card === null) {
 						return
 					}
 
-					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
+					const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return
-					moveCardToHand(game, pickResult.card, player)
+					moveCardToHand(game, pickedSlot.card, player)
 				},
 			})
 		})

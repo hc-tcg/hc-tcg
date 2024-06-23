@@ -50,11 +50,11 @@ class Smajor1995RareHermitCard extends HermitCard {
 				id: instance,
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
-					applyStatusEffect(game, 'dyed', pickResult.card.cardInstance)
+					applyStatusEffect(game, 'dyed', pickedSlot.card.cardInstance)
 				},
 			})
 		})

@@ -34,8 +34,8 @@ class BowSingleUseCard extends SingleUseCard {
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
 					if (rowIndex === null) return
 
 					player.custom[targetKey] = rowIndex

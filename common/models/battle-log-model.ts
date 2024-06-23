@@ -15,6 +15,7 @@ import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import {PickInfo} from '../types/server-requests'
 import StatusEffect from '../status-effects/status-effect'
+import {SlotInfo} from '../types/cards'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -94,7 +95,7 @@ export class BattleLogModel {
 		card: Card,
 		pos: CardPosModel,
 		coinFlips: Array<CurrentCoinFlipT>,
-		pickInfo?: PickInfo
+		slotInfo?: SlotInfo
 	) {
 		const getCardName = (
 			player: PlayerState | undefined,
@@ -123,14 +124,6 @@ export class BattleLogModel {
 		const thisFlip = coinFlips.find((flip) => flip.cardId === card.id)
 		const invalid = '$bINVALID VALUE$'
 
-		const pickInfoPlayer = () => {
-			if (!pickInfo) return undefined
-			if (this.game.currentPlayer.id === pickInfo.playerId) return this.game.currentPlayer
-			return this.game.opponentPlayer
-		}
-
-		const pickedPlayer = pickInfoPlayer()
-
 		const logMessage = card.getLog({
 			player: pos.player.playerName,
 			opponent: pos.opponentPlayer.playerName,
@@ -146,20 +139,22 @@ export class BattleLogModel {
 				slotType: pos.type,
 			},
 			pick: {
-				rowIndex: pickInfo && pickInfo.rowIndex !== null ? `${pickInfo.rowIndex + 1}` : invalid,
-				id: pickInfo?.card ? pickInfo.card.cardId : invalid,
-				name: pickInfo?.card
-					? getCardName(pickedPlayer, pickInfo.card.cardId, pickInfo.rowIndex)
+				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
+				id: slotInfo?.card ? slotInfo.card.cardId : invalid,
+				name: slotInfo?.card
+					? getCardName(slotInfo.player, slotInfo.card.cardId, slotInfo.rowIndex)
 					: invalid,
 				hermitCard:
-					pickInfo && pickInfo.rowIndex !== null && pickInfo.rowIndex !== undefined && pickedPlayer
+					slotInfo &&
+					slotInfo.rowIndex !== null &&
+					slotInfo.rowIndex !== undefined
 						? getCardName(
-								pickedPlayer,
-								pickedPlayer.board.rows[pickInfo.rowIndex].hermitCard?.cardId,
-								pickInfo.rowIndex
-						  )
+								slotInfo.player,
+								slotInfo.player.board.rows[slotInfo.rowIndex].hermitCard?.cardId,
+								slotInfo.rowIndex
+							)
 						: invalid,
-				slotType: pickInfo ? pickInfo.type : invalid,
+				slotType: slotInfo ? slotInfo.type : invalid,
 			},
 		})
 
@@ -233,7 +228,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({

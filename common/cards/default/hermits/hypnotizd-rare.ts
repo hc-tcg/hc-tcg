@@ -92,13 +92,13 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
-				onResult(pickResult) {
-					if (!pickResult.card) return
+				onResult(pickedSlot) {
+					if (!pickedSlot.card) return
 
-					const itemCard = ITEM_CARDS[pickResult.card.cardId]
+					const itemCard = ITEM_CARDS[pickedSlot.card.cardId]
 					if (!itemCard) return
 
-					discardCard(game, pickResult.card)
+					discardCard(game, pickedSlot.card)
 				},
 				onTimeout() {
 					// Discard the first available item card
@@ -115,8 +115,8 @@ class HypnotizdRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
 
 					// Store the row index to use later
 					player.custom[targetKey] = rowIndex

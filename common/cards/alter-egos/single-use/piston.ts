@@ -44,12 +44,12 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
-			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === null) return
+			onResult(pickedSlot) {
+				if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 				// Store the row and index of the chosen item
-				player.custom[rowIndexKey] = pickResult.rowIndex
-				player.custom[itemIndexKey] = pickResult.index
+				player.custom[rowIndexKey] = pickedSlot.rowIndex
+				player.custom[itemIndexKey] = pickedSlot.index
 
 				return
 			},
@@ -70,9 +70,9 @@ class PistonSingleUseCard extends SingleUseCard {
 					slot.not(slot.frozen),
 					slot.adjacentTo(slot.rowIndex(player.custom[rowIndexKey]))
 				)(game, pos),
-			onResult(pickResult) {
-				const pickedIndex = pickResult.rowIndex
-				if (pickResult.card || pickedIndex === null) return
+			onResult(pickedSlot) {
+				const pickedIndex = pickedSlot.rowIndex
+				if (pickedSlot.card || pickedIndex === null) return
 
 				const pickedRow = player.board.rows[pickedIndex]
 				const firstRowIndex = player.custom[rowIndexKey]
@@ -80,37 +80,10 @@ class PistonSingleUseCard extends SingleUseCard {
 				const firstRow = player.board.rows[firstRowIndex]
 				if (!firstRow) return
 
-				// Get the index of the chosen item
-				const itemIndex: number = player.custom[itemIndexKey]
-
-				const itemPos = game.findSlot(
-					slot.every(
-						slot.player,
-						slot.rowIndex(firstRowIndex),
-						slot.itemSlot,
-						slot.index(itemIndex)
-					)
-				)
-				const targetPos = game.findSlot(
-					slot.every(
-						slot.player,
-						slot.rowIndex(pickedIndex),
-						slot.itemSlot,
-						slot.index(pickResult.index)
-					)
-				)
-
-				const itemCard = firstRow.itemCards[itemIndex]
-
-				const logInfo = pickResult
-				if (itemPos !== null && itemPos.row !== null) {
-					logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
-				}
-
-				applySingleUse(game, logInfo)
+				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				swapSlots(game, itemPos, targetPos)
+				swapSlots(game, pos, pickedSlot)
 
 				delete player.custom[rowIndexKey]
 				delete player.custom[itemIndexKey]

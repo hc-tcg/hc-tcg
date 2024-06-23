@@ -22,7 +22,7 @@ export type PickRequest = {
 	/** A function that returns if the card can be attached to a specific slot */
 	canPick: SlotCondition
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
-	onResult: (pickResult: SlotInfo) => void //
+	onResult: (pickedSlot: SlotInfo) => void //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
 	onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */

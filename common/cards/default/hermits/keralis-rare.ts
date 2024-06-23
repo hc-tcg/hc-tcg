@@ -52,12 +52,12 @@ class KeralisRareHermitCard extends HermitCard {
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || pickResult.rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 					// Store the info to use later
-					player.custom[playerKey] = pickResult.playerId
+					player.custom[playerKey] = pickedSlot.player.id
 					player.custom[rowKey] = rowIndex
 				},
 				onTimeout() {

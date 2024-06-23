@@ -43,12 +43,12 @@ class OrionSoundRareHermitCard extends HermitCard {
 				id: instance,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
-				onResult(pickResult) {
-					const rowIndex = pickResult.rowIndex
-					if (!pickResult.card || !rowIndex === null) return
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || !rowIndex === null) return
 
-					applyStatusEffect(game, 'melody', pickResult.card.cardInstance)
-					player.custom[instanceKey].push(pickResult.card.cardInstance)
+					applyStatusEffect(game, 'melody', pickedSlot.card.cardInstance)
+					player.custom[instanceKey].push(pickedSlot.card.cardInstance)
 				},
 			})
 		})

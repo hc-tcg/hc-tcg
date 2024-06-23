@@ -2,14 +2,13 @@ import {CARDS} from '../cards'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {BoardSlotTypeT, RowPos, SlotInfo} from '../types/cards'
+import {RowPos, SlotInfo} from '../types/cards'
 import {
 	StatusEffectT,
 	GenericActionResult,
 	PlayerState,
 	RowStateWithHermit,
 } from '../types/game-state'
-import {PickInfo} from '../types/server-requests'
 
 export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
 	if (player.board.activeRow === null) return null
@@ -30,7 +29,7 @@ export function getActiveRowPos(player: PlayerState): RowPos | null {
 	}
 }
 
-export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericActionResult {
+export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = currentPlayer.board.singleUseCard
@@ -51,7 +50,7 @@ export function applySingleUse(game: GameModel, pickResult?: PickInfo): GenericA
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	// Create the logs
-	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, currentPlayer.coinFlips, pickResult)
+	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, currentPlayer.coinFlips, slotInfo)
 
 	currentPlayer.hooks.afterApply.call()
 

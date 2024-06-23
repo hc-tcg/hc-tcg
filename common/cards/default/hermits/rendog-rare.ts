@@ -97,9 +97,9 @@ class RendogRareHermitCard extends HermitCard {
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
-				onResult(pickResult) {
-					if (!pickResult.card) return
-					let pickedCard = pickResult.card
+				onResult(pickedSlot) {
+					if (!pickedSlot.card) return
+					let pickedCard = pickedSlot.card
 
 					game.addModalRequest({
 						playerId: player.id,

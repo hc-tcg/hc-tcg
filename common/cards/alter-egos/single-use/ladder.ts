@@ -37,15 +37,19 @@ class LadderSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an AFK Hermit adjacent to your active Hermit',
 			canPick: this.pickCondition,
-			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === null) return
+			onResult(pickedSlot) {
+				if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 				// Apply
 				applySingleUse(game)
 
-				swapSlots(game, pickResult, pos)
+				swapSlots(
+					game,
+					pickedSlot,
+					game.findSlot(slot.every(slot.player, slot.hermitSlot, slot.activeRow))
+				)
 
-				game.changeActiveRow(player, pickResult.rowIndex)
+				game.changeActiveRow(player, pickedSlot.rowIndex)
 			},
 		})
 	}

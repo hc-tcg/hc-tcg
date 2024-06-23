@@ -60,8 +60,10 @@ class GrianRareHermitCard extends HermitCard {
 
 			if (coinFlip[0] === 'tails') return
 
-			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttach = game.someSlotFulfills(
+			const effectSlot = game.findSlot(
+				slot.every(slot.player, slot.rowIndex(rowIndex), slot.effectSlot)
+			)
+			const canAttach = game.findSlot(
 				slot.every(slot.player, slot.not(slot.frozen), slot.effectSlot, slot.activeRow, slot.empty)
 			)
 
@@ -80,7 +82,7 @@ class GrianRareHermitCard extends HermitCard {
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -96,7 +98,7 @@ class GrianRareHermitCard extends HermitCard {
 						discardCard(game, row.effectCard)
 
 						// Move their effect card over
-						const opponentEffectSlot = getSlotPos(opponentPlayer, opponentRowPos.rowIndex, 'effect')
+						const opponentEffectSlot = game.findSlot(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
 						swapSlots(game, effectSlot, opponentEffectSlot)
 
 						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
