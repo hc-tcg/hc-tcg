@@ -1,46 +1,12 @@
 import {slot} from '../slot'
-import {SlotInfo, SlotTypeT} from '../types/cards'
-import {PlayerState, RowState} from '../types/game-state'
+import {SlotInfo} from '../types/cards'
 import {GameModel} from './game-model'
 
-/**
- * Get the card position on the board for a card instance (in object form)
- */
-export function getSlotInfo(game: GameModel, instance: string) {
-	return game.findSlot(slot.hasInstance(instance))
-}
-
 export function getCardPos(game: GameModel, instance: string) {
-	const basicPos = getSlotInfo(game, instance)
+	const basicPos = game.findSlot(slot.hasInstance(instance))
 
 	if (basicPos) {
 		return new CardPosModel(game, basicPos, instance)
-	}
-
-	return null
-}
-
-export function getCardAtPos(pos: SlotInfo) {
-	const {player, rowIndex, type, index} = pos
-
-	const suCard = player.board.singleUseCard
-	if (type === 'single_use' && suCard) {
-		return suCard
-	}
-
-	if (rowIndex === null) return null
-	const row = player.board.rows[rowIndex]
-
-	if (type === 'hermit' && row.hermitCard) {
-		return row.hermitCard
-	}
-
-	if (type === 'effect' && row.effectCard) {
-		return row.effectCard
-	}
-
-	if (type === 'item' && index && row.itemCards[index]) {
-		return row.itemCards[index] || null
 	}
 
 	return null
@@ -61,7 +27,7 @@ export class CardPosModel {
 	}
 
 	private recalculateInternalPos() {
-		const newPos = getSlotInfo(this.game, this.instance)
+		const newPos = this.game.findSlot(slot.hasInstance(this.instance))
 
 		// Only change the stored card pos if the card is somewhere else on the board - if it's nowhere change nothing
 		if (newPos) {
@@ -71,13 +37,8 @@ export class CardPosModel {
 
 	public get card() {
 		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
-		let card = getCardAtPos(this.internalPos)
-		if (!card) {
-			this.recalculateInternalPos()
-			card = getCardAtPos(this.internalPos)
-		}
-
-		return card
+		this.recalculateInternalPos()
+		return this.internalPos.card
 	}
 
 	public get player() {

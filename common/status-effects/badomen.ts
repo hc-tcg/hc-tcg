@@ -1,9 +1,10 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {CARDS} from '../cards'
+import {slot} from '../slot'
 
 class BadOmenStatusEffect extends StatusEffect {
 	constructor() {
@@ -40,7 +41,7 @@ class BadOmenStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onCoinFlip.addBefore(statusEffectInfo.statusEffectInstance, (card, coinFlips) => {
-			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
+			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game

@@ -1,12 +1,13 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
-import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 import {CARDS} from '../cards'
+import {slot} from '../slot'
 
 class FireStatusEffect extends StatusEffect {
 	constructor() {
@@ -38,7 +39,7 @@ class FireStatusEffect extends StatusEffect {
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
+			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
 			if (!targetPos.row.hermitCard) return
 

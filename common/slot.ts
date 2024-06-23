@@ -1,26 +1,9 @@
-import {CardPosModel, getCardAtPos} from './models/card-pos-model'
 import {GameModel} from './models/game-model'
 import {SlotInfo} from './types/cards'
-import {CardT, PlayerState, RowState, TurnAction} from './types/game-state'
-import {PickInfo, PickedSlotType} from './types/server-requests'
+import {TurnAction} from './types/game-state'
+import {PickInfo} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
-
-export function callSlotConditionWithCardPosModel(
-	condition: SlotCondition,
-	game: GameModel,
-	cardPos: CardPosModel
-): boolean {
-	return condition(game, {
-		player: cardPos.player,
-		opponentPlayer: cardPos.opponentPlayer,
-		type: cardPos.type,
-		rowIndex: cardPos.rowIndex,
-		row: cardPos.row,
-		index: cardPos.index,
-		card: getCardAtPos(cardPos),
-	})
-}
 
 export function callSlotConditionWithPickInfo(
 	condition: SlotCondition,

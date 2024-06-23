@@ -1,7 +1,6 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getSlotInfo, getCardPos} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
+import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectT} from '../types/game-state'
 
 class DyedStatusEffect extends StatusEffect {

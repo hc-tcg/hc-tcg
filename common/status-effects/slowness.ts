@@ -1,9 +1,10 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CARDS, HERMIT_CARDS} from '../cards'
-import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
+import {slot} from '../slot'
 
 class SlownessStatusEffect extends StatusEffect {
 	constructor() {
@@ -32,7 +33,7 @@ class SlownessStatusEffect extends StatusEffect {
 		}
 
 		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
+			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || targetPos.rowIndex === null) return
 
 			if (player.board.activeRow === targetPos.rowIndex)
@@ -40,7 +41,7 @@ class SlownessStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			const targetPos = getSlotInfo(game, statusEffectInfo.targetInstance)
+			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
 

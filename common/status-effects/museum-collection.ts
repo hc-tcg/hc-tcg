@@ -1,10 +1,11 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getSlotInfo} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
+import {slot} from '../slot'
 
 class MuseumCollectionStatusEffect extends StatusEffect {
 	constructor() {
@@ -29,7 +30,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 
 		player.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
 			if (player.hand.length === player.custom[oldHandSize]) return
-			const instanceLocation = getSlotInfo(game, instance)
+			const instanceLocation = game.findSlot(slot.hasInstance(instance))
 			if (statusEffectInfo.duration === undefined) return
 			player.custom[oldHandSize] = player.hand.length
 			if (instanceLocation?.type === 'single_use') return
