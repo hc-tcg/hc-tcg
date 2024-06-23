@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, swapSlots} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -36,8 +37,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const rowIndexKey = this.getInstanceKey(instance, 'rowIndex')
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
+		const itemKey = this.getInstanceKey(instance, 'itemKey')
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -48,8 +48,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 				// Store the row and index of the chosen item
-				player.custom[rowIndexKey] = pickedSlot.rowIndex
-				player.custom[itemIndexKey] = pickedSlot.index
+				player.custom[itemKey] = pickedSlot
 
 				return
 			},
@@ -68,33 +67,26 @@ class PistonSingleUseCard extends SingleUseCard {
 					slot.empty,
 					slot.rowHasHermit,
 					slot.not(slot.frozen),
-					slot.adjacentTo(slot.rowIndex(player.custom[rowIndexKey]))
+					slot.adjacentTo(slot.rowIndex((player.custom[itemKey] as SlotInfo).rowIndex))
 				)(game, pos),
 			onResult(pickedSlot) {
 				const pickedIndex = pickedSlot.rowIndex
 				if (pickedSlot.card || pickedIndex === null) return
 
-				const pickedRow = player.board.rows[pickedIndex]
-				const firstRowIndex = player.custom[rowIndexKey]
-				if (!pickedRow) return
-				const firstRow = player.board.rows[firstRowIndex]
-				if (!firstRow) return
+				const itemSlotInfo = player.custom[itemKey]
 
 				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				swapSlots(game, pos, pickedSlot)
+				swapSlots(game, itemSlotInfo, pickedSlot)
 
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemKey]
 			},
 			onCancel() {
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemKey]
 			},
 			onTimeout() {
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemKey]
 			},
 		})
 
@@ -110,8 +102,10 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
+		const itemKey = this.getInstanceKey(instance, 'itemKey')
 
 		player.hooks.afterApply.remove(instance)
+		delete player.custom[itemKey]
 	}
 
 	override getExpansion() {
