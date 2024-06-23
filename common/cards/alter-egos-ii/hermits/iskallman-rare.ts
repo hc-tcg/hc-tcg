@@ -35,14 +35,12 @@ class IskallmanRareHermitCard extends HermitCard {
 		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
+
 		const pickCondition = slot.every(
 			slot.player,
 			slot.hermitSlot,
 			slot.not(slot.empty),
-			(game, rowPos) => {
-				if (!rowPos.row || !rowPos.row.hermitCard) return false
-				return HERMIT_CARDS[rowPos.row.hermitCard.cardId] === undefined
-			}
+			slot.not(slot.activeRow),
 		)
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
