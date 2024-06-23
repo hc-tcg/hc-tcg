@@ -46,7 +46,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			onResult(pickResult) {
 				if (!pickResult.card) return
 
-				// Store the row and index of the chosen item
+				// Store the instance of the chosen item
 				player.custom[itemInstanceKey] = pickResult.card.cardInstance
 
 				return
@@ -78,10 +78,9 @@ class PistonSingleUseCard extends SingleUseCard {
 					logInfo.card = itemPos.card
 				}
 
-				applySingleUse(game, logInfo)
-
-				// Move the item
+				// Move the card and apply su card
 				game.swapSlots(itemPos, pickResult, true)
+				applySingleUse(game, logInfo)
 
 				delete player.custom[itemInstanceKey]
 			},
