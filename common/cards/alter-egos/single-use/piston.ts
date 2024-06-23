@@ -36,8 +36,7 @@ class PistonSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
-		const rowIndexKey = this.getInstanceKey(instance, 'rowIndex')
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
+		const itemInstanceKey = this.getInstanceKey(instance, 'itemInstance')
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -45,11 +44,10 @@ class PistonSingleUseCard extends SingleUseCard {
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
 			onResult(pickResult) {
-				if (!pickResult.card || pickResult.rowIndex === null) return
+				if (!pickResult.card) return
 
 				// Store the row and index of the chosen item
-				player.custom[rowIndexKey] = pickResult.rowIndex
-				player.custom[itemIndexKey] = pickResult.index
+				player.custom[itemInstanceKey] = pickResult.card.cardInstance
 
 				return
 			},
@@ -68,36 +66,30 @@ class PistonSingleUseCard extends SingleUseCard {
 					slot.empty,
 					slot.rowHasHermit,
 					slot.not(slot.frozen),
-					slot.adjacentTo(slot.rowIndex(player.custom[rowIndexKey]))
+					slot.adjacentTo(slot.hasInstance(player.custom[itemInstanceKey]))
 				)(game, pos),
 			onResult(pickResult) {
-				const rowIndex = player.custom[rowIndexKey]
-				const itemIndex = player.custom[itemIndexKey]
+				const itemInstance = player.custom[itemInstanceKey]
 				if (pickResult.card) return
-				const itemPos = game.findSlot(
-					slot.every(slot.player, slot.rowIndex(rowIndex), slot.index(itemIndex))
-				)
+				const itemPos = game.findSlot(slot.hasInstance(itemInstance))
 
 				const logInfo = pickResult
 				if (itemPos !== null && itemPos.row !== null) {
-					logInfo.card = itemPos.row.itemCards[player.custom[itemIndexKey]]
+					logInfo.card = itemPos.card
 				}
 
 				applySingleUse(game, logInfo)
 
 				// Move the item
-				game.swapSlots(itemPos, pickResult)
+				game.swapSlots(itemPos, pickResult, true)
 
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemInstanceKey]
 			},
 			onCancel() {
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemInstanceKey]
 			},
 			onTimeout() {
-				delete player.custom[rowIndexKey]
-				delete player.custom[itemIndexKey]
+				delete player.custom[itemInstanceKey]
 			},
 		})
 
