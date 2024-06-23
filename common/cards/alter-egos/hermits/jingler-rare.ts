@@ -32,7 +32,6 @@ class JinglerRareHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const followUpKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
