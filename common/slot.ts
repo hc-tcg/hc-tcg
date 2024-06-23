@@ -212,8 +212,6 @@ export namespace slot {
 	 * A frozen slot is a slot that can not have card placed in it or removed from it.
 	 */
 	export const frozen: SlotCondition = (game, pos) => {
-		pos = JSON.parse(JSON.stringify(pos))
-
 		if (pos.type === 'single_use' || pos.type === 'hand') return false
 		if (pos.rowIndex === null || !pos.type) return false
 
@@ -221,9 +219,11 @@ export namespace slot {
 			.call()
 			.some((result) => result(game, pos))
 
-		const currentPlayer = pos.player
-		pos.player = pos.opponentPlayer
-		pos.opponentPlayer = currentPlayer
+		pos = {
+			...pos,
+			player: pos.opponentPlayer,
+			opponentPlayer: pos.player,
+		}
 
 		const opponentResult = game.opponentPlayer.hooks.freezeSlots
 			.call()
