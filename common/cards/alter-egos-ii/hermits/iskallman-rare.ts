@@ -40,7 +40,7 @@ class IskallmanRareHermitCard extends HermitCard {
 			slot.player,
 			slot.hermitSlot,
 			slot.not(slot.empty),
-			slot.not(slot.activeRow),
+			slot.not(slot.activeRow)
 		)
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
