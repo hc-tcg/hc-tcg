@@ -101,7 +101,7 @@ const Slot = ({
 		for (const slot of pickableSlots) {
 			if (
 				slot.type === type &&
-				slot.rowIndex === rowIndex &&
+				slot.rowIndex == rowIndex &&
 				slot.index == index &&
 				slot.playerId == playerId
 			) {
