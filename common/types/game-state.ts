@@ -74,6 +74,8 @@ export type PlayerState = {
 	hasPlacedHermit: boolean
 
 	pickableSlots: Array<PickInfo> | null
+	cardsCanBePlacedIn: Array<[CardT, Array<PickInfo>]>
+
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -238,8 +240,6 @@ export type TurnAction =
 	| 'APPLY_EFFECT'
 	| 'REMOVE_EFFECT'
 	| 'CHANGE_ACTIVE_HERMIT'
-	| 'PLAYABLE_SLOTS_REQUEST'
-	| 'DESELECT_CARD'
 	| 'PICK_REQUEST'
 	| 'MODAL_REQUEST'
 	| 'WAIT_FOR_TURN'
@@ -302,6 +302,7 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
+	currentCardsCanBePlacedIn: Array<[CardT, Array<PickInfo>]> | null
 	currentPickableSlots: Array<PickInfo> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null

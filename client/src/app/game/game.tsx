@@ -25,13 +25,7 @@ import {
 	getEndGameOverlay,
 	getAvailableActions,
 } from 'logic/game/game-selectors'
-import {
-	deselectCard,
-	playableSlotsRequest,
-	setOpenedModal,
-	setSelectedCard,
-	slotPicked,
-} from 'logic/game/game-actions'
+import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
@@ -115,10 +109,8 @@ function Game() {
 		} else {
 			if (equalCard(card, selectedCard)) {
 				dispatch(setSelectedCard(null))
-				dispatch(deselectCard(gameState.playerId))
 			} else {
 				dispatch(setSelectedCard(card))
-				dispatch(playableSlotsRequest(gameState.playerId, card))
 			}
 		}
 	}

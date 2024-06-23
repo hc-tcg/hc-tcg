@@ -9,7 +9,7 @@ import {
 	CardT,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
-import {ModalRequest, PickRequest, PickedSlotType} from '../types/server-requests'
+import {ModalRequest, PickInfo, PickRequest, PickedSlotType} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from '../types/cards'
@@ -236,6 +236,19 @@ export class GameModel {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
 	}
 
+	/** Update the cards that the players are able to select */
+	public updateCardsCanBePlacedIn() {
+		const getCardsCanBePlacedIn = (player: PlayerState) => {
+			return player.hand.reduce((cards, card) => {
+				cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
+				return cards
+			}, [] as Array<[CardT, Array<PickInfo>]>)
+		}
+
+		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
+		this.opponentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.opponentPlayer)
+	}
+
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
 	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
 		const currentActiveRow = player.board.activeRow
@@ -380,7 +393,7 @@ export class GameModel {
 		}
 	}
 
-	public getPickableSlots(predicate: SlotCondition) {
+	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
 		return this.filterSlots(predicate).map((slot) => {
 			return {
 				playerId: slot.player.id,

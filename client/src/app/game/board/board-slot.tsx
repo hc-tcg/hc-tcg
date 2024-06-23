@@ -13,7 +13,8 @@ import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
-import {getPickableSlots, getSelectedCard} from 'logic/game/game-selectors'
+import {getCardsCanBePlacedIn, getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {getLocalPlayerState} from 'server/src/utils/state-gen'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -39,7 +40,9 @@ const Slot = ({
 	cssId,
 	statusEffects,
 }: SlotProps) => {
-	const pickableSlots = useSelector(getPickableSlots)
+	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
+	const selectedCard = useSelector(getSelectedCard)
+	const localGameState = useSelector(getGameState)
 
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
@@ -96,9 +99,16 @@ const Slot = ({
 	)
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
-	const getIsSelectable = () => {
-		if (pickableSlots === undefined || pickableSlots === null) return false
-		for (const slot of pickableSlots) {
+	const getPickableSlots = () => {
+		if (!cardsCanBePlacedIn || !selectedCard) return []
+
+		return cardsCanBePlacedIn.filter(
+			([card, _]) => card?.cardInstance == selectedCard.cardInstance
+		)[0][1]
+	}
+
+	const getIsPickable = () => {
+		for (const slot of getPickableSlots()) {
 			if (
 				slot.type === type &&
 				slot.rowIndex == rowIndex &&
@@ -111,9 +121,15 @@ const Slot = ({
 		return false
 	}
 
-	const isPickable = getIsSelectable()
-	const somethingPickable = pickableSlots !== null
-	const isClickable = (somethingPickable && isPickable) || (!somethingPickable && card !== null)
+	let isPickable = false
+	let somethingPickable = false
+	let isClickable = false
+
+	if (localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) {
+		isPickable = getIsPickable()
+		somethingPickable = selectedCard !== null
+		isClickable = (somethingPickable && isPickable) || (!somethingPickable && card !== null)
+	}
 
 	return (
 		<div

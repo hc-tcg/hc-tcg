@@ -16,8 +16,6 @@ const ActionMap: Record<TurnAction, string | null> = {
 	PRIMARY_ATTACK: 'Attacking opponent with a primary attack',
 	SECONDARY_ATTACK: 'Attacking opponent with a secondary attack',
 	WAIT_FOR_OPPONENT_ACTION: null,
-	PLAYABLE_SLOTS_REQUEST: null,
-	DESELECT_CARD: null,
 	PICK_REQUEST: null,
 	APPLY_EFFECT: null,
 	REMOVE_EFFECT: null,

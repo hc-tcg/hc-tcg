@@ -76,6 +76,10 @@ export const getOpenedModal = (state: RootState) => {
 	return getGame(state).openedModal
 }
 
+export const getCardsCanBePlacedIn = (state: RootState) => {
+	return getGameState(state)?.currentCardsCanBePlacedIn
+}
+
 export const getPickableSlots = (state: RootState) => {
 	return getGameState(state)?.currentPickableSlots
 }

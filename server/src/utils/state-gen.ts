@@ -221,6 +221,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
 		},
+		cardsCanBePlacedIn: [],
 		pickableSlots: null,
 
 		hooks: {
@@ -333,6 +334,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		lastActionResult: game.state.lastActionResult,
 
+		currentCardsCanBePlacedIn: playerState.cardsCanBePlacedIn,
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,

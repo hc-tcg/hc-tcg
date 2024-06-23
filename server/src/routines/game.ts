@@ -3,7 +3,6 @@ import {CARDS, HERMIT_CARDS, ITEM_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
 import attackSaga from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
-import {playableSlotsRequestSaga, deselectCardSaga} from './turn-actions/playable-slots-request'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'
 import applyEffectSaga from './turn-actions/apply-effect'
 import removeEffectSaga from './turn-actions/remove-effect'
@@ -20,13 +19,8 @@ import {discardCard, discardSingleUse} from 'common/utils/movement'
 import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
-import {
-	AttackActionData,
-	DeselectCard,
-	PickCardActionData,
-	RequestPlayableSlotsData,
-	attackToAttackAction,
-} from 'common/types/action-data'
+import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
+import {PickInfo} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -71,9 +65,6 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const {currentPlayer} = game
 	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board
 	const actions: TurnActions = []
-
-	// Card requests are always available
-	actions.push('PLAYABLE_SLOTS_REQUEST', 'DESELECT_CARD')
 
 	// Custom modals
 	if (modalRequests.length > 0) {
@@ -320,16 +311,6 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 		case 'REMOVE_EFFECT':
 			result = yield* call(removeEffectSaga, game)
 			break
-		case 'PLAYABLE_SLOTS_REQUEST':
-			result = yield* call(
-				playableSlotsRequestSaga,
-				game,
-				(turnAction as RequestPlayableSlotsData).payload
-			)
-			break
-		case 'DESELECT_CARD':
-			result = yield* call(deselectCardSaga, game, (turnAction as DeselectCard).payload)
-			break
 		case 'PICK_REQUEST':
 			result = yield* call(
 				pickRequestSaga,
@@ -372,8 +353,6 @@ function* turnActionsSaga(game: GameModel) {
 				'PLAY_ITEM_CARD',
 				'PLAY_EFFECT_CARD',
 				'PLAY_SINGLE_USE_CARD',
-				'DESELECT_CARD',
-				'PLAYABLE_SLOTS_REQUEST',
 				'PICK_REQUEST',
 				'MODAL_REQUEST',
 				'CHANGE_ACTIVE_HERMIT',
@@ -437,6 +416,8 @@ function* turnActionsSaga(game: GameModel) {
 			}
 
 			// End of available actions code
+
+			game.updateCardsCanBePlacedIn()
 
 			// Timer calculation
 			game.state.timer.turnStartTime = game.state.timer.turnStartTime || Date.now()
@@ -536,7 +517,6 @@ function* turnActionsSaga(game: GameModel) {
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
 			if (result === 'END_TURN') {
-				yield* call(deselectCardSaga, game, {playerId: game.currentPlayerId})
 				break
 			}
 		}

@@ -23,22 +23,6 @@ export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
 }
 
 // @TODO long term all data types that can be sent to server should be here
-
-export type RequestPlayableSlotsData = {
-	type: 'PLAYABLE_SLOTS_REQUEST'
-	payload: {
-		playerId: string
-		card: CardT
-	}
-}
-
-export type DeselectCard = {
-	type: 'DESELECT_CARD'
-	payload: {
-		playerId: string
-	}
-}
-
 export type PlayCardActionData = {
 	type: PlayCardAction
 	payload: {
