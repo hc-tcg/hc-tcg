@@ -20,7 +20,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 	pickCondition = slot.every(
 		slot.hermitSlot,
 		// @todo Fix this by giving armor stand support for health
-		slot.not(slot.has('armor_stand')),
+		slot.not(slot.hasId('armor_stand')),
 		slot.not(slot.empty)
 	)
 

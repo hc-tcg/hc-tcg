@@ -34,7 +34,7 @@ class RendogRareHermitCard extends HermitCard {
 		slot.opponent,
 		slot.hermitSlot,
 		slot.not(slot.empty),
-		slot.not(slot.has(this.id))
+		slot.not(slot.hasId(this.id))
 	)
 
 	override getAttack(

@@ -55,7 +55,7 @@ class PharaohRareHermitCard extends HermitCard {
 				slot.hermitSlot,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty),
-				slot.not(slot.has(this.id))
+				slot.not(slot.hasId(this.id))
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return

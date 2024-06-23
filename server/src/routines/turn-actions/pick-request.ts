@@ -9,8 +9,7 @@ import {callSlotConditionWithPickInfo} from 'common/slot'
 function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
 	// First validate data sent from client
 	if (!pickResult || !pickResult.playerId) return 'FAILURE_INVALID_DATA'
-	if (!pickResult.slot || pickResult.slot.index === undefined || !pickResult.slot.type)
-		return 'FAILURE_INVALID_DATA'
+	if (pickResult.index === undefined || !pickResult.type) return 'FAILURE_INVALID_DATA'
 
 	// Find the current pick request
 	const pickRequest = game.state.pickRequests[0]
@@ -27,7 +26,20 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 		return 'FAILURE_INVALID_SLOT'
 	}
 
-	pickRequest.onResult(pickResult)
+	pickRequest.onResult({
+		player: game.state.players[pickResult.playerId],
+		opponentPlayer: Object.values(game.state.players).filter(
+			(opponent) => opponent.id !== pickResult.playerId
+		)[0],
+		type: pickResult.type,
+		index: pickResult.index,
+		rowIndex: pickResult.rowIndex,
+		row:
+			pickResult.rowIndex !== null
+				? game.state.players[pickResult.playerId].board.rows[pickResult.rowIndex]
+				: null,
+		card: pickResult.card,
+	})
 	game.state.players[pickRequest.playerId].pickableSlots = null
 
 	// We completed this pick request, remove it

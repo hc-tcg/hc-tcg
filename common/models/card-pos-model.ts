@@ -1,3 +1,4 @@
+import { slot } from '../slot'
 import {SlotInfo, SlotTypeT} from '../types/cards'
 import {PlayerState, RowState} from '../types/game-state'
 import {GameModel} from './game-model'
@@ -5,75 +6,8 @@ import {GameModel} from './game-model'
 /**
  * Get the card position on the board for a card instance (in object form)
  */
-export function getSlotInfo(game: GameModel, instance: string): SlotInfo | null {
-	const ids = game.getPlayerIds()
-	for (let i = 0; i < ids.length; i++) {
-		const playerId = ids[i]
-		const player = game.state.players[playerId]
-
-		const opponentPlayerId = ids.find((id) => id !== playerId)
-		if (!opponentPlayerId) continue
-		const opponentPlayer = game.state.players[opponentPlayerId]
-
-		const board = game.state.players[playerId].board
-
-		// single use slot
-		if (board.singleUseCard?.cardInstance === instance) {
-			return {
-				player,
-				opponentPlayer,
-				rowIndex: null,
-				row: null,
-				type: 'single_use',
-				card: board.singleUseCard,
-				index: 0,
-			}
-		}
-
-		// go through rows to find instance
-		for (let rowIndex = 0; rowIndex < board.rows.length; rowIndex++) {
-			const row = board.rows[rowIndex]
-
-			if (row.hermitCard?.cardInstance === instance) {
-				return {
-					player,
-					opponentPlayer,
-					rowIndex,
-					row,
-					type: 'hermit',
-					card: row.hermitCard,
-					index: 0,
-				}
-			} else if (row.effectCard?.cardInstance === instance) {
-				return {
-					player,
-					opponentPlayer,
-					rowIndex,
-					row,
-					type: 'effect',
-					card: row.effectCard,
-					index: 0,
-				}
-			} else {
-				for (let i = 0; i < row.itemCards.length; i++) {
-					const card = row.itemCards[i]
-					if (card?.cardInstance === instance) {
-						return {
-							player,
-							opponentPlayer,
-							rowIndex,
-							row,
-							type: 'item',
-							card: card,
-							index: i,
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return null
+export function getSlotInfo(game: GameModel, instance: string) {
+	return game.findSlot(slot.hasInstance(instance))
 }
 
 export function getCardPos(game: GameModel, instance: string) {

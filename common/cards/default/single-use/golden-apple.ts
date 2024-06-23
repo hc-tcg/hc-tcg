@@ -21,7 +21,7 @@ class GoldenAppleSingleUseCard extends SingleUseCard {
 		slot.hermitSlot,
 		// @todo Fix this by giving armor stand support for health
 		slot.not(slot.activeRow),
-		slot.not(slot.has('armor_stand')),
+		slot.not(slot.hasId('armor_stand')),
 		slot.not(slot.empty)
 	)
 

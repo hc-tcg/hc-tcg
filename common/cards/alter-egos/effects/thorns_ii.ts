@@ -43,7 +43,7 @@ class ThornsIIEffectCard extends EffectCard {
 			}).addDamage(this.id, 30)
 
 			backlashAttack.shouldIgnoreSlots.push(
-				slot.has('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
+				slot.hasId('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
 			)
 
 			executeExtraAttacks(game, [backlashAttack])

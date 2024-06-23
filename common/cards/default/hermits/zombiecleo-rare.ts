@@ -34,7 +34,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 		slot.player,
 		slot.hermitSlot,
 		slot.not(slot.activeRow),
-		slot.not(slot.has(this.id))
+		slot.not(slot.hasId(this.id))
 	)
 
 	override getAttack(

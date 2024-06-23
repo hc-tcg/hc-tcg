@@ -330,7 +330,7 @@ export class GameModel {
 		return pickableSlots
 	}
 
-	public getSlot(prediate: SlotCondition): SlotInfo | null {
+	public findSlot(prediate: SlotCondition): SlotInfo | null {
 		return this.filterSlots(prediate)[0]
 	}
 

@@ -83,7 +83,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				// Get the index of the chosen item
 				const itemIndex: number = player.custom[itemIndexKey]
 
-				const itemPos = game.getSlot(
+				const itemPos = game.findSlot(
 					slot.every(
 						slot.player,
 						slot.rowIndex(firstRowIndex),
@@ -91,7 +91,7 @@ class PistonSingleUseCard extends SingleUseCard {
 						slot.index(itemIndex)
 					)
 				)
-				const targetPos = game.getSlot(
+				const targetPos = game.findSlot(
 					slot.every(
 						slot.player,
 						slot.rowIndex(pickedIndex),
