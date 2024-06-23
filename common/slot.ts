@@ -136,18 +136,6 @@ export namespace slot {
 		return pos.row !== null && pos.row.hermitCard !== null
 	}
 
-	export const adjacentTo = (predicate: SlotCondition): SlotCondition => {
-		return (game, pos) => {
-			if (pos.rowIndex === null) return false
-			return (
-				game.filterSlots(predicate).filter((pickedPos) => {
-					if (pos.rowIndex === null || pickedPos.rowIndex === null) return false
-					return [pos.rowIndex - 1, pos.rowIndex + 1].includes(pickedPos.rowIndex)
-				}).length >= 1
-			)
-		}
-	}
-
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
 		return pos.player.board.activeRow !== undefined
 	}
@@ -219,10 +207,23 @@ export namespace slot {
 		return (game, pos) => game.state.turn.availableActions.includes(action)
 	}
 
-	/** Return true if there is a slot on the board that fullfils the condition given by the predicate */
+	/** Return true if a slot on the board exists that fullfils the condition given by the predicate */
 	export const someSlotFulfills =
 		(predicate: SlotCondition): SlotCondition =>
 		(game, pos) => {
 			return game.someSlotFulfills(predicate)
 		}
+
+	/* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
+	export const adjacentTo = (predicate: SlotCondition): SlotCondition => {
+		return (game, pos) => {
+			if (pos.rowIndex === null) return false
+			return (
+				game.filterSlots(predicate).filter((pickedPos) => {
+					if (pos.rowIndex === null || pickedPos.rowIndex === null) return false
+					return [pos.rowIndex - 1, pos.rowIndex + 1].includes(pickedPos.rowIndex)
+				}).length >= 1
+			)
+		}
+	}
 }
