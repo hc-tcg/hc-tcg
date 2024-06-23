@@ -20,6 +20,7 @@ import {
 	getSelectedCard,
 } from 'logic/game/game-selectors'
 import {getLocalPlayerState} from 'server/src/utils/state-gen'
+import {slot} from 'common/slot'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -83,7 +84,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -144,6 +145,10 @@ const Slot = ({
 		isClickable = somethingPickable && isPickable
 	}
 
+	if (type === 'single_use') {
+		isClickable = true
+	}
+
 	return (
 		<div
 			onClick={isClickable ? onClick : () => {}}
@@ -163,13 +168,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

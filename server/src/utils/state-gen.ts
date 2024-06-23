@@ -286,6 +286,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	// Pick message or modal id
+	playerState.pickableSlots = null
 	let currentPickMessage = null
 	let currentModalData = null
 
