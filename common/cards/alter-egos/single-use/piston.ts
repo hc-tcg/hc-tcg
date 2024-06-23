@@ -23,21 +23,15 @@ class PistonSingleUseCard extends SingleUseCard {
 		slot.itemSlot,
 		slot.rowHasHermit,
 		slot.not(slot.frozen),
-		slot.not(slot.empty)
+		slot.not(slot.empty),
+		// This condition needs to be different than the one for the second pick request in this case
+		// The reason is that we don't know the row that's chosen until after the first pick request is over
+		slot.adjacentTo(slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen)))
 	)
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.someSlotFulfills(
-			slot.every(
-				this.firstPickCondition,
-				// This condition needs to be different than the one for the second pick request in this case
-				// The reason is that we don't know the row that's chosen until after the first pick request is over
-				slot.adjacentTo(
-					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen))
-				)
-			)
-		)
+		slot.someSlotFulfills(this.firstPickCondition)
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
