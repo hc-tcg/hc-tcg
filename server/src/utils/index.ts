@@ -53,7 +53,8 @@ export function printHooksState(game: GameModel) {
 					hooks: [],
 					card: cardsInfo[instance] && cardsInfo[instance].card,
 					player: cardsInfo[instance] && cardsInfo[instance].player,
-					slot: pos?.slot,
+					type: pos?.type,
+					index: pos?.index,
 					row: pos?.rowIndex,
 				}
 
