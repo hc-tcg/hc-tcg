@@ -18,15 +18,20 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	firstPickCondition = slot.every(
+		slot.player,
+		slot.itemSlot,
+		slot.rowHasHermit,
+		slot.not(slot.frozen),
+		slot.not(slot.empty)
+	)
+
 	override _attachCondition = slot.every(
 		super.attachCondition,
 		slot.someSlotFulfills(
 			slot.every(
-				slot.player,
-				slot.itemSlot,
-				slot.rowHasHermit,
-				slot.not(slot.frozen),
-				slot.not(slot.empty),
+				this.firstPickCondition,
+				// This condition needs to be different than the one for the second pick request in this case
 				slot.adjacentTo(
 					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen))
 				)
@@ -42,7 +47,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
-			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
+			canPick: this.firstPickCondition,
 			onResult(pickResult) {
 				if (!pickResult.card) return
 
