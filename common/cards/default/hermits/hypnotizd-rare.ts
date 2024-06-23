@@ -101,12 +101,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 					discardCard(game, pickedSlot.card)
 				},
 				onTimeout() {
-					// Discard the first available item card
-					const activeRow = getActiveRow(player)
-					if (!activeRow) return
-					const itemCard = activeRow.itemCards.find((card) => !!card)
-					if (!itemCard) return
-					discardCard(game, itemCard)
+					discardCard(game, game.findSlot(pickCondition)?.card || null)
 				},
 			}
 
