@@ -145,7 +145,7 @@ const Slot = ({
 		isClickable = somethingPickable && isPickable
 	}
 
-	if (type === 'single_use') {
+	if (type === 'single_use' && somethingPickable && card !== null) {
 		isClickable = true
 	}
 
