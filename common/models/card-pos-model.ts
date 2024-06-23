@@ -13,7 +13,7 @@ export function getCardPos(game: GameModel, instance: string) {
 }
 
 /**
- * A wrapper class around the card pos object, providing functionality that checks if a card has moved without breaking code
+ * A wrapper class around the SlotInfo object that automatically updates our slot info when the card is moved.
  */
 export class CardPosModel {
 	private game: GameModel

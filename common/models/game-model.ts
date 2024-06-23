@@ -14,7 +14,6 @@ import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from '../types/cards'
 import {getCardPos} from './card-pos-model'
-import {getSlotCard} from '../utils/movement'
 import {CARDS} from '../cards'
 
 export class GameModel {
