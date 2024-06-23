@@ -32,6 +32,7 @@ class PistonSingleUseCard extends SingleUseCard {
 			slot.every(
 				this.firstPickCondition,
 				// This condition needs to be different than the one for the second pick request in this case
+				// The reason is that we don't know the row that's chosen until after the first pick request is over
 				slot.adjacentTo(
 					slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen))
 				)
