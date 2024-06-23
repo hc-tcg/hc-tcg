@@ -13,7 +13,12 @@ import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
-import {getCardsCanBePlacedIn, getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {
+	getCardsCanBePlacedIn,
+	getGameState,
+	getPickRequestPickableSlots,
+	getSelectedCard,
+} from 'logic/game/game-selectors'
 import {getLocalPlayerState} from 'server/src/utils/state-gen'
 
 export type SlotProps = {
@@ -41,6 +46,7 @@ const Slot = ({
 	statusEffects,
 }: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
+	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
 
@@ -77,7 +83,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -100,6 +106,10 @@ const Slot = ({
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
+		if (pickRequestPickableCard !== null && pickRequestPickableCard !== undefined) {
+			return pickRequestPickableCard
+		}
+
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
 		return cardsCanBePlacedIn.filter(
@@ -125,10 +135,13 @@ const Slot = ({
 	let somethingPickable = false
 	let isClickable = false
 
-	if (localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) {
+	if (
+		(localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) ||
+		pickRequestPickableCard !== null
+	) {
 		isPickable = getIsPickable()
-		somethingPickable = selectedCard !== null
-		isClickable = (somethingPickable && isPickable) || (!somethingPickable && card !== null)
+		somethingPickable = selectedCard !== null || pickRequestPickableCard !== null
+		isClickable = somethingPickable && isPickable
 	}
 
 	return (
@@ -150,13 +163,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

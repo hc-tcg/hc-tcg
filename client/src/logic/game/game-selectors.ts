@@ -80,7 +80,7 @@ export const getCardsCanBePlacedIn = (state: RootState) => {
 	return getGameState(state)?.currentCardsCanBePlacedIn
 }
 
-export const getPickableSlots = (state: RootState) => {
+export const getPickRequestPickableSlots = (state: RootState) => {
 	return getGameState(state)?.currentPickableSlots
 }
 
