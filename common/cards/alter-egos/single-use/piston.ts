@@ -43,13 +43,9 @@ class PistonSingleUseCard extends SingleUseCard {
 			id: this.id,
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: slot.every(slot.player, slot.itemSlot, slot.not(slot.empty)),
-			onResult(pickResult) {
-				if (!pickResult.card) return
-
-				// Store the instance of the chosen item
-				player.custom[itemInstanceKey] = pickResult.card.cardInstance
-
-				return
+			onResult(pickedSlot) {
+				if (!pickedSlot.card) return
+				player.custom[itemInstanceKey] = pickedSlot.card.cardInstance
 			},
 		})
 
@@ -68,18 +64,17 @@ class PistonSingleUseCard extends SingleUseCard {
 					slot.not(slot.frozen),
 					slot.adjacentTo(slot.hasInstance(player.custom[itemInstanceKey]))
 				)(game, pos),
-			onResult(pickResult) {
+			onResult(pickedSlot) {
 				const itemInstance = player.custom[itemInstanceKey]
-				if (pickResult.card) return
 				const itemPos = game.findSlot(slot.hasInstance(itemInstance))
 
-				const logInfo = pickResult
+				const logInfo = pickedSlot
 				if (itemPos !== null && itemPos.row !== null) {
 					logInfo.card = itemPos.card
 				}
 
 				// Move the card and apply su card
-				game.swapSlots(itemPos, pickResult, true)
+				game.swapSlots(itemPos, pickedSlot, true)
 				applySingleUse(game, logInfo)
 
 				delete player.custom[itemInstanceKey]
