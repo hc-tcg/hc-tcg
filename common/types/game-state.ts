@@ -1,3 +1,4 @@
+import {CARDS, HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
@@ -26,6 +27,27 @@ export type RowStateWithoutHermit = {
 	effectCard: null
 	itemCards: Array<null>
 	health: null
+}
+
+export function healHermit(row: RowState | null, amount: number) {
+	if (!row || !row?.hermitCard) return
+
+	const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+
+	let maxHealth: number
+	if (hermitInfo !== undefined) maxHealth = hermitInfo.health
+	else {
+		// This is a hack so armor stand can be healed
+		// This will be fixed once cards are reworked to use a composition based system
+		const cardInfo = CARDS[row.hermitCard.cardId]
+		if (cardInfo.id === 'armor_stand') {
+			maxHealth = 50
+		} else {
+			return
+		}
+	}
+
+	row.health = Math.min(row.health + amount, maxHealth)
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit

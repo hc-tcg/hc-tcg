@@ -1,9 +1,10 @@
 import HermitCard from '../../base/hermit-card'
-import {HERMIT_CARDS} from '../..'
+import {CARDS, HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
+import {healHermit} from '../../../types/game-state'
 class PotatoBoyRareHermitCard extends HermitCard {
 	constructor() {
 		super({
@@ -43,22 +44,19 @@ class PotatoBoyRareHermitCard extends HermitCard {
 			if (!activeHermit) return
 			const activeHermitName = HERMIT_CARDS[activeHermit.cardId].name
 
-			const targetRows = [rows[activeRow - 1], rows[activeRow + 1]].filter(Boolean)
-
-			targetRows.forEach((row) => {
-				if (!row.hermitCard) return
-				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
-				const rowIndex = game.findSlot(slot.hasInstance(row.hermitCard.cardInstance))?.rowIndex
-				if (!rowIndex) return
-				if (hermitInfo) {
-					const maxHealth = Math.max(row.health, hermitInfo.health)
-					row.health = Math.min(row.health + 40, maxHealth)
+			game
+				.filterSlots(
+					slot.every(slot.adjacentTo(slot.activeRow), slot.hermitSlot, slot.not(slot.empty))
+				)
+				.forEach(({row, rowIndex, card}) => {
+					if (!card || !rowIndex) return
+					let hermitInfo = CARDS[card?.cardId]
+					healHermit(row, 40)
 					game.battleLog.addEntry(
 						player.id,
 						`$p${hermitInfo.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${activeHermitName}$`
 					)
-				}
-			})
+				})
 		})
 	}
 

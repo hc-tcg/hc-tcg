@@ -4,6 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../slot'
+import {healHermit} from '../../../types/game-state'
 
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -17,12 +18,7 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(
-		slot.hermitSlot,
-		// @todo Fix this by giving armor stand support for health
-		slot.not(slot.hasId('armor_stand')),
-		slot.not(slot.empty)
-	)
+	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
@@ -45,14 +41,10 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 				const row = player.board.rows[rowIndex]
 				if (!row.health) return
 
-				const hermitInfo = HERMIT_CARDS[pickedSlot.card.cardId]
-				if (!hermitInfo) return
-
 				// Apply
 				applySingleUse(game, pickedSlot)
 
-				const maxHealth = Math.max(row.health, hermitInfo.health)
-				row.health = Math.min(row.health + 30, maxHealth)
+				healHermit(row, 30)
 			},
 		})
 	}
