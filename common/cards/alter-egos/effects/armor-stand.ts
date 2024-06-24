@@ -1,11 +1,8 @@
 import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {TurnActions} from '../../../types/game-state'
 import {hermitCardBattleLog} from '../../base/hermit-card'
 import {slot} from '../../../slot'
-import {isTargetingPos} from '../../../utils/attacks'
-import {discardCard} from '../../../utils/movement'
 
 class ArmorStandEffectCard extends EffectCard {
 	constructor() {
