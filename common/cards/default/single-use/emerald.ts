@@ -20,7 +20,13 @@ class EmeraldSingleUseCard extends SingleUseCard {
 			slot.every(slot.player, slot.activeRow, slot.effectSlot, slot.not(slot.frozen))
 		),
 		slot.someSlotFulfills(
-			slot.every(slot.opponent, slot.activeRow, slot.effectSlot, slot.not(slot.frozen))
+			slot.every(
+				slot.opponent,
+				slot.activeRow,
+				slot.effectSlot,
+				slot.not(slot.empty),
+				slot.not(slot.frozen)
+			)
 		)
 	)
 
@@ -30,14 +36,10 @@ class EmeraldSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const playerActiveRowIndex = player.board.activeRow
-		const opponentActiveRowIndex = opponentPlayer.board.activeRow
 
 		player.hooks.onApply.add(instance, () => {
-			if (playerActiveRowIndex === null || opponentActiveRowIndex === null) return
-
 			const playerSlot = game.findSlot(slot.every(slot.player, slot.activeRow, slot.effectSlot))
-			const opponentSlot = game.findSlot(slot.every(slot.player, slot.activeRow, slot.effectSlot))
+			const opponentSlot = game.findSlot(slot.every(slot.opponent, slot.activeRow, slot.effectSlot))
 
 			game.swapSlots(playerSlot, opponentSlot)
 		})
