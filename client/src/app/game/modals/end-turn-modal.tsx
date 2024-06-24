@@ -27,6 +27,11 @@ const ActionMap: Record<TurnAction, string | null> = {
 type Props = {
 	closeModal: () => void
 }
+
+export function endTurnModalEmpty(actions: Array<TurnAction>): boolean {
+	return actions.every((action) => ActionMap[action] === null)
+}
+
 function EndTurnModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 	const availableActions = useSelector(getAvailableActions)

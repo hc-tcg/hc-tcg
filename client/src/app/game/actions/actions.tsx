@@ -18,6 +18,7 @@ import Button from 'components/button'
 import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PickInfo} from 'common/types/server-requests'
+import {endTurnModalEmpty} from '../modals/end-turn-modal'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
@@ -124,7 +125,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			/** @TODO Rewrite everything, there is no world in which this should be compared to a constant.
 			 * We are comparing to one because the player can always send a PICK_REQUEST
 			 */
-			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+			if (endTurnModalEmpty(availableActions) || settings.confirmationDialogs === 'off') {
 				dispatch(endTurn())
 			} else {
 				dispatch(endTurnAction())
