@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../slot'
-import { healHermit } from '../../../types/game-state'
+import {healHermit} from '../../../types/game-state'
 
 class InstantHealthIISingleUseCard extends SingleUseCard {
 	constructor() {
@@ -18,10 +18,7 @@ class InstantHealthIISingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(
-		slot.hermitSlot,
-		slot.not(slot.empty)
-	)
+	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
 
 	override _attachCondition = slot.every(
 		super.attachCondition,

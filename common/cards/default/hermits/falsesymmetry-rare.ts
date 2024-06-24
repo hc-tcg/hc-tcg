@@ -1,7 +1,7 @@
 import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { healHermit } from '../../../types/game-state'
+import {healHermit} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 

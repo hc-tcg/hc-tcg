@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import { healHermit } from '../../../types/game-state'
+import {healHermit} from '../../../types/game-state'
 import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../../index'
 
