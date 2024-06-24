@@ -21,11 +21,13 @@ class MilkBucketEffectCard extends EffectCard {
 		})
 	}
 
-	override _attachCondition = slot.every(
-		slot.empty,
-		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.frozen),
-		slot.some(slot.singleUseSlot, slot.every(slot.player, slot.effectSlot))
+	override _attachCondition = slot.some(
+		slot.every(
+			slot.singleUseSlot,
+			slot.playerHasActiveHermit,
+			slot.actionAvailable('PLAY_SINGLE_USE_CARD')
+		),
+		super.attachCondition
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

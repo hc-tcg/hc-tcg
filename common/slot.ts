@@ -137,11 +137,11 @@ export namespace slot {
 	}
 
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
-		return pos.player.board.activeRow !== undefined
+		return pos.player.board.activeRow !== null
 	}
 
 	export const opponentHasActiveHermit: SlotCondition = (game, pos) => {
-		return game.opponentPlayer.board.activeRow !== undefined
+		return game.opponentPlayer.board.activeRow !== null
 	}
 
 	export const rowIndex = (rowIndex: number | null): SlotCondition => {
