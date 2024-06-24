@@ -47,7 +47,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			if (headsAmount < 2) return
 
 			const pickCondition = slot.every(
-				slot.opponent,
+				slot.player,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty),
 				slot.hermitSlot
