@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
@@ -30,12 +31,10 @@ class CrossbowSingleUseCard extends SingleUseCard {
 			player.custom[targetsKey] = []
 			player.custom[remainingKey] = pickAmount
 
-			const pickRequest: PickRequest = {
+			const pickRequest = {
 				playerId: player.id,
 				id: this.id,
-				canPick: pickCondition,
-				message: "Pick {?} of your opponent's Hermits",
-				onResult(pickedSlot) {
+				onResult(pickedSlot: SlotInfo) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.card || rowIndex === null) return
 
@@ -63,7 +62,13 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				if (newRemaining != pickAmount) remaining += ' more'
 				const request: PickRequest = {
 					...pickRequest,
-					message: pickRequest.message.replace('{?}', remaining),
+					canPick: slot.every(
+						pickCondition,
+						...player.custom[targetsKey].map(
+							(row: number) => slot.not(slot.rowIndex(row))
+						)
+					),
+					message: `Pick ${remaining} of your opponent's Hermits`,
 				}
 				game.addPickRequest(request)
 			}

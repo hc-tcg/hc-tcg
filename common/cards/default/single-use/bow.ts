@@ -17,7 +17,12 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.activeRow))
+	pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.not(slot.activeRow)
+	)
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
