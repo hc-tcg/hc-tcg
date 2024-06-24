@@ -31,6 +31,11 @@
 	outline: 3px dashed hsla(192deg, 56%, 58%, 70%);
 }
 
+.disabled {
+	filter: brightness(0.5);
+	cursor: not-allowed;
+}
+
 @keyframes selectedCard {
 	from {
 		transform: translateY(0);

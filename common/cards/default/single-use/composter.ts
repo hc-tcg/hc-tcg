@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardT} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
 import {equalCard} from '../../../utils/cards'
@@ -22,34 +23,38 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) => pos.player.hand.length >= 2,
-		(game, pos) => pos.player.pile.length > 2
+		(game, pos) => pos.player.hand.length >= 2
+		// (game, pos) => pos.player.pile.length > 2
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		// Literally just pick requests are needed
+		let firstPickedCard: CardT | null = null
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick 2 cards from your hand',
 			canPick: slot.hand,
 			onResult(pickedSlot) {
-				// @TODO right now if one card is discarded then the card won't yet be applied
-				//we need a way on the server to highlight certain cards in the hand
-				// that way we can not discard until both are selected
-
-				// Discard the card straight away
-				discardFromHand(player, pickedSlot.card)
+				firstPickedCard = pickedSlot.card
 			},
 		})
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick 1 more card from your hand',
-			canPick: slot.hand,
+			canPick: (game, pos) => {
+				if (firstPickedCard === null) return false
+				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard.cardInstance)))(
+					game,
+					pos
+				)
+			},
 			onResult(pickedSlot) {
+				discardFromHand(player, firstPickedCard)
 				discardFromHand(player, pickedSlot.card)
 
 				// Apply

@@ -239,10 +239,13 @@ export class GameModel {
 	/** Update the cards that the players are able to select */
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
-				return cards
-			}, [] as Array<[CardT, Array<PickInfo>]>)
+			return player.hand.reduce(
+				(cards, card) => {
+					cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
+					return cards
+				},
+				[] as Array<[CardT, Array<PickInfo>]>
+			)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -294,11 +297,12 @@ export class GameModel {
 		let pickableSlots: Array<SlotInfo> = []
 
 		for (const player of Object.values(this.state.players)) {
+			const opponentPlayer = Object.values(this.state.players).filter(
+				(opponent) => opponent.id !== player.id
+			)[0]
+
 			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
 				const row = player.board.rows[rowIndex]
-				const opponentPlayer = Object.values(this.state.players).filter(
-					(opponent) => opponent.id !== player.id
-				)[0]
 
 				const appendAttachCondition = (
 					type: PickedSlotType,
@@ -306,16 +310,15 @@ export class GameModel {
 					cardInstance: CardT | null
 				) => {
 					const slotInfo = {
-						player: player,
-						opponentPlayer: opponentPlayer,
-						type: type,
-						index: index,
-						rowIndex: rowIndex,
-						row: row,
+						player,
+						opponentPlayer,
+						type,
+						index,
+						rowIndex,
+						row,
 						card: cardInstance,
 					}
-					const canBeAttached = predicate(this, slotInfo)
-					if (canBeAttached) {
+					if (predicate(this, slotInfo)) {
 						pickableSlots.push(slotInfo)
 					}
 				}
@@ -326,12 +329,25 @@ export class GameModel {
 				appendAttachCondition('effect', 3, row.effectCard)
 				appendAttachCondition('hermit', 4, row.hermitCard)
 			}
+
+			for (const card of player.hand) {
+				const slotInfo: SlotInfo = {
+					player: player,
+					opponentPlayer: opponentPlayer,
+					type: 'hand',
+					index: null,
+					rowIndex: null,
+					row: null,
+					card,
+				}
+				if (predicate(this, slotInfo)) pickableSlots.push(slotInfo)
+			}
 		}
 
-		const singleUseSlotInfo = {
+		const singleUseSlotInfo: SlotInfo = {
 			player: this.currentPlayer,
 			opponentPlayer: this.opponentPlayer,
-			type: 'single_use' as SlotTypeT,
+			type: 'single_use',
 			index: null,
 			rowIndex: null,
 			row: null,

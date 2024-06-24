@@ -37,6 +37,7 @@ const Card = (props: CardProps) => {
 				className={cn(props.className, css.card, {
 					[css.selected]: selected,
 					[css.picked]: picked,
+					[css.disabled]: otherProps.disabled,
 				})}
 				onClick={onClick}
 			>

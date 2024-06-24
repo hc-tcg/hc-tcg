@@ -29,7 +29,9 @@ const CardList = (props: CardListProps) => {
 			? selected.some((selectedCard) => equalCard(card, selectedCard))
 			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
-		const isDisabled = !!disabled?.find((id) => card.cardId === id)
+		const isDisabled = !!disabled?.find((idOrInstance) =>
+			[card.cardId, card.cardInstance].includes(idOrInstance)
+		)
 
 		const cssClasses =
 			enableAnimations !== false
@@ -39,7 +41,7 @@ const CardList = (props: CardListProps) => {
 						enterDone: css.enterDone,
 						exit: css.exit,
 						exitActive: css.exitActive,
-				  }
+					}
 				: {}
 
 		return (

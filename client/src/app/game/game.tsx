@@ -24,6 +24,7 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 	getAvailableActions,
+	getPickRequestPickableSlots,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
@@ -63,6 +64,7 @@ function Game() {
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
@@ -210,6 +212,17 @@ function Game() {
 		return null
 	}
 
+	let disabledCards: Array<string> = []
+	const pickableCards = pickRequestPickableSlots
+		?.filter((slot) => slot.type === 'hand')
+		.map((slot) => slot.card?.cardInstance)
+
+	if (pickableCards != undefined) {
+		for (let card of filteredCards) {
+			if (!pickableCards.includes(card.cardInstance)) disabledCards.push(card.cardInstance)
+		}
+	}
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -228,6 +241,7 @@ function Game() {
 						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
+						disabled={disabledCards}
 					/>
 				</div>
 			</div>
