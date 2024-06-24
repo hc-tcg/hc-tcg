@@ -24,12 +24,14 @@ class SplashPotionOfHealingIISingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			game.filterSlots(slot.every(slot.player, slot.hermitSlot)).forEach(({row, card}) => {
-				if (!row || !row.health || !card) return
-				let hermitInfo = HERMIT_CARDS[card.cardId]
-				const maxHealth = Math.max(row.health, hermitInfo.health)
-				row.health = Math.min(row.health + 30, maxHealth)
-			})
+			game
+				.filterSlots(slot.every(slot.player, slot.hermitSlot, slot.not(slot.hasId('armor_stand'))))
+				.forEach(({row, card}) => {
+					if (!row || !row.health || !card) return
+					let hermitInfo = HERMIT_CARDS[card.cardId]
+					const maxHealth = Math.max(row.health, hermitInfo.health)
+					row.health = Math.min(row.health + 30, maxHealth)
+				})
 		})
 	}
 
