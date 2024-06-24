@@ -122,9 +122,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(attackAction())
 		}
 		function handleEndTurn() {
-			/** @TODO Rewrite everything, there is no world in which this should be compared to a constant.
-			 * We are comparing to one because the player can always send a PICK_REQUEST
-			 */
 			if (endTurnModalEmpty(availableActions) || settings.confirmationDialogs === 'off') {
 				dispatch(endTurn())
 			} else {
