@@ -29,6 +29,7 @@ class LeadSingleUseCard extends SingleUseCard {
 		slot.opponent,
 		slot.itemSlot,
 		slot.empty,
+		slot.rowHasHermit,
 		slot.not(slot.activeRow),
 		slot.not(slot.frozen)
 	)
@@ -49,10 +50,10 @@ class LeadSingleUseCard extends SingleUseCard {
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
 			onResult(pickedSlot) {
-				if (!pickedSlot.card || pickedSlot.rowIndex === null) return
+				if (!pickedSlot.card) return
 
 				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickedSlot
+				player.custom[itemIndexKey] = pickedSlot.card.cardInstance
 			},
 		})
 
@@ -74,7 +75,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				game.swapSlots(player.custom[itemIndexKey], pickedSlot)
+				game.swapSlots(game.findSlot(slot.hasInstance(player.custom[itemIndexKey])), pickedSlot)
 
 				delete player.custom[itemIndexKey]
 			},
