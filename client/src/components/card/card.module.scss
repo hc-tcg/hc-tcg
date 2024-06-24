@@ -31,9 +31,9 @@
 	outline: 3px dashed hsla(192deg, 56%, 58%, 70%);
 }
 
-.disabled {
-	filter: brightness(0.5);
-	cursor: not-allowed;
+.unpickable {
+	filter: brightness(0.6);
+	cursor: pointer
 }
 
 @keyframes selectedCard {

@@ -212,14 +212,14 @@ function Game() {
 		return null
 	}
 
-	let disabledCards: Array<string> = []
+	let unpickableCards: Array<CardT> = []
 	const pickableCards = pickRequestPickableSlots
 		?.filter((slot) => slot.type === 'hand')
 		.map((slot) => slot.card?.cardInstance)
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card.cardInstance)) disabledCards.push(card.cardInstance)
+			if (!pickableCards.includes(card.cardInstance)) unpickableCards.push(card)
 		}
 	}
 
@@ -241,7 +241,7 @@ function Game() {
 						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
-						disabled={disabledCards}
+						unpickable={unpickableCards}
 					/>
 				</div>
 			</div>

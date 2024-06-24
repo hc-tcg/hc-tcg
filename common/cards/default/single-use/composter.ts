@@ -23,8 +23,8 @@ class ComposterSingleUseCard extends SingleUseCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		(game, pos) => pos.player.hand.length >= 2
-		// (game, pos) => pos.player.pile.length > 2
+		(game, pos) => pos.player.hand.length >= 2,
+		(game, pos) => pos.player.pile.length > 2,
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
