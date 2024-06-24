@@ -187,12 +187,6 @@ export function executeAttacks(
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
 	runAfterAttackHooks(game, attacks)
 	runAfterDefenceHooks(game, attacks)
-
-	// STEP 7 - Execute new attacks created in afterAttack hooks
-	attacks.forEach((attack) => {
-		if (attack.nextAttacks.length === 0) return
-		executeAttacks(game, attack.nextAttacks, true)
-	})
 }
 
 export function executeExtraAttacks(
