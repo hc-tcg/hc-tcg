@@ -17,7 +17,12 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
+	pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.activeRow),
+		slot.not(slot.empty)
+	)
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
@@ -38,8 +43,6 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
-				const lastActiveRow = opponentPlayer.board.activeRow
-
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,

@@ -18,7 +18,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	pickCondition = slot.every(slot.player, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
+	pickCondition = slot.every(slot.opponent, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
