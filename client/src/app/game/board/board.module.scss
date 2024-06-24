@@ -99,11 +99,22 @@ $grid-size: 25px;
 		&.hermit {
 			filter: brightness(105%);
 		}
+
+		&.hermitSlot {
+			filter: brightness(100%);
+		}
 	}
 
 	&.unpickable {
-		filter: brightness(80%);
-		opacity: 80%;
+		filter: brightness(70%);
+
+		&.hermit {
+			filter: brightness(60%);
+		}
+
+		&.hermitSlot {
+			filter: brightness(65%);
+		}
 	}
 
 	&.empty {

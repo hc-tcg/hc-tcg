@@ -159,6 +159,7 @@ const Slot = ({
 				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
+				[css.hermitSlot]: type == 'hermit',
 				[css.afk]: !active && type !== 'single_use',
 			})}
 		>
