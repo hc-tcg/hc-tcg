@@ -64,9 +64,7 @@ class CrossbowSingleUseCard extends SingleUseCard {
 					...pickRequest,
 					canPick: slot.every(
 						pickCondition,
-						...player.custom[targetsKey].map(
-							(row: number) => slot.not(slot.rowIndex(row))
-						)
+						...player.custom[targetsKey].map((row: number) => slot.not(slot.rowIndex(row)))
 					),
 					message: `Pick ${remaining} of your opponent's Hermits`,
 				}
