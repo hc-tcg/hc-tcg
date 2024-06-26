@@ -35,12 +35,12 @@ export function healHermit(row: RowState | null, amount: number) {
 	const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
 
 	let maxHealth: number
-	if (hermitInfo !== undefined) maxHealth = hermitInfo.health
+	if (hermitInfo !== undefined) maxHealth = hermitInfo.props.health
 	else {
 		// This is a hack so armor stand can be healed
 		// This will be fixed once cards are reworked to use a composition based system
 		const cardInfo = CARDS[row.hermitCard.cardId]
-		if (cardInfo.id === 'armor_stand') {
+		if (cardInfo.props.id === 'armor_stand') {
 			maxHealth = 50
 		} else {
 			return

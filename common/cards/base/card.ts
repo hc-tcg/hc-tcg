@@ -98,12 +98,14 @@ export const attachable = {
 
 export type SingleUse = CardProps & {
 	singleUse: null
+	showConfirmationModal: boolean
 	description: string
 }
 
 export const singleUse = {
 	singleUse: null,
 	type: 'single_use' as CardTypeT,
+	showConfirmationModal: false,
 	attachCondition: slot.every(
 		slot.singleUseSlot,
 		slot.playerHasActiveHermit,
@@ -216,11 +218,6 @@ abstract class Card<Props extends CardProps = CardProps> {
 
 	public isSingleUseCard(): this is Card<CardProps & SingleUse> {
 		return 'singleUse' in this.props
-	}
-
-	public canApply(this: Card<SingleUse>): boolean {
-		// default is no
-		return false
 	}
 
 	/**

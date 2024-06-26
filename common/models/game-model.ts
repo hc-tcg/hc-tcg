@@ -12,7 +12,7 @@ import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickInfo, PickRequest, PickedSlotType} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
-import {SlotInfo, SlotTypeT} from '../types/cards'
+import {SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 import {CARDS} from '../cards'
 
