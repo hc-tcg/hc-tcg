@@ -7,7 +7,7 @@ class MumboJumboCommonHermitCard extends HermitCard {
 			numericId: 80,
 			name: 'Mumbo',
 			rarity: 'common',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 270,
 			primary: {
 				name: 'Chuffed to Bits',

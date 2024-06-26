@@ -5,7 +5,7 @@ import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import {memo} from 'react'
-import Card, { Hermit } from 'common/cards/base/card'
+import Card, {Hermit} from 'common/cards/base/card'
 
 export type HermitCardProps = {
 	card: Card<Hermit>
@@ -92,7 +92,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 			</g>
 			<g id="hermit-type">
 				<rect
-					className={css.hermitTypeBackground}
+					className={css.typeBackground}
 					x="315"
 					y="-5"
 					width="100"
@@ -105,8 +105,8 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					y="12"
 					width="68"
 					height="68"
-					href={`/images/types/type-${card.props.hermitType}.png`}
-					className={css.hermitType}
+					href={`/images/types/type-${card.props.type}.png`}
+					className={css.type}
 				/>
 			</g>
 			{showCost && rank.name !== 'stone' ? (

@@ -7,7 +7,7 @@ class Docm77CommonHermitCard extends HermitCard {
 			numericId: 15,
 			name: 'Docm77',
 			rarity: 'common',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 260,
 			primary: {
 				name: 'Hive Mind',

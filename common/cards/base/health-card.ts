@@ -1,6 +1,6 @@
 import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
-import Card, { CardProps } from './card'
+import Card, {CardProps} from './card'
 import {CardPosModel} from '../../models/card-pos-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 
@@ -15,7 +15,7 @@ type HealthDefs = {
 
 class HealthCard extends Card {
 	props: CardProps = {
-		type: 'health',
+		category: 'health',
 		id: 'health',
 		expansion: 'default',
 		numericId: -1,
@@ -25,7 +25,7 @@ class HealthCard extends Card {
 	}
 
 	health = 0
-	
+
 	public override getFormattedDescription(): FormattedTextNode {
 		return formatText(`${this.health}`)
 	}

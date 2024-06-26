@@ -4,7 +4,7 @@ import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {memo} from 'react'
-import Card, { Item } from 'common/cards/base/card'
+import Card, {Item} from 'common/cards/base/card'
 
 export type ItemCardProps = {
 	card: Card<Item>
@@ -17,7 +17,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 		<svg className={css.card} width="100%" height="100%" viewBox="0 0 400 400">
 			<rect
 				className={classnames(css.cardBackground, {
-					[css[card.props.hermitType]]: true,
+					[css[card.props.type]]: true,
 				})}
 				x="10"
 				y="10"
@@ -30,7 +30,7 @@ const ItemCardModule = memo(({card}: ItemCardProps) => {
 				<image className={css.star} href={`/images/star_white.svg`} x="-15" y="65" width="390" />
 				<image
 					className={css.icon}
-					href={`/images/types/type-${card.props.hermitType}.png`}
+					href={`/images/types/type-${card.props.type}.png`}
 					width="220"
 					height="220"
 					x="90"

@@ -9,7 +9,7 @@ class Cubfan135RareHermitCard extends HermitCard {
 			numericId: 10,
 			name: 'Cub',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 260,
 			primary: {
 				name: 'Dash',

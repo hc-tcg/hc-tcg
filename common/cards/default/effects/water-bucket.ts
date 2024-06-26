@@ -9,7 +9,7 @@ class WaterBucketEffectCard extends Card {
 	props: Attachable & SingleUse = {
 		...attachable,
 		...singleUse,
-		type: 'effect',
+		category: 'effect',
 		id: 'water_bucket',
 		expansion: 'default',
 		numericId: 105,

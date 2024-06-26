@@ -7,7 +7,7 @@ class TinFoilChefCommonHermitCard extends HermitCard {
 			numericId: 97,
 			name: 'TFC',
 			rarity: 'common',
-			hermitType: 'miner',
+			type: 'miner',
 			health: 290,
 			primary: {
 				name: '=π',

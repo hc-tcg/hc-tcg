@@ -1,10 +1,10 @@
 import {
 	PlayCardLog,
 	CardRarityT,
-	HermitTypeT,
+	typeT,
 	HermitAttackInfo,
 	ExpansionT,
-	CardTypeT,
+	CardCategoryT,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -24,7 +24,7 @@ export type CanAttachResult = Array<CanAttachError>
 
 export type CardProps = {
 	id: string
-	type: CardTypeT
+	category: CardCategoryT
 	expansion: ExpansionT
 	numericId: number
 	name: string
@@ -39,12 +39,12 @@ export type CardProps = {
 
 export type Item = CardProps & {
 	item: null
-	hermitType: HermitTypeT
+	type: typeT
 }
 
 export const item = {
 	item: null,
-	type: 'item' as CardTypeT,
+	type: 'item' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.itemSlot,
@@ -61,14 +61,14 @@ export type HasHealth = CardProps & {
 
 export type Hermit = HasHealth & {
 	hermit: null
-	hermitType: HermitTypeT
+	type: typeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 }
 
 export const hermit = {
 	hermit: null,
-	type: 'hermit' as CardTypeT,
+	type: 'hermit' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.hermitSlot,
 		slot.player,
@@ -85,7 +85,7 @@ export type Attachable = CardProps & {
 
 export const attachable = {
 	attachable: null,
-	type: 'effect' as CardTypeT,
+	type: 'effect' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.effectSlot,
@@ -103,7 +103,7 @@ export type SingleUse = CardProps & {
 
 export const singleUse = {
 	singleUse: null,
-	type: 'single_use' as CardTypeT,
+	type: 'single_use' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.singleUseSlot,
 		slot.playerHasActiveHermit,
@@ -152,7 +152,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return 'item' in this.props
 	}
 
-	public getEnergy(this: Card<Item>, game: GameModel, pos: CardPosModel): Array<HermitTypeT> {
+	public getEnergy(this: Card<Item>, game: GameModel, pos: CardPosModel): Array<typeT> {
 		return []
 	}
 

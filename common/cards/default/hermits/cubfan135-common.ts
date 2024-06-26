@@ -7,7 +7,7 @@ class Cubfan135CommonHermitCard extends HermitCard {
 			numericId: 9,
 			name: 'Cub',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 290,
 			primary: {
 				name: 'Heyo',

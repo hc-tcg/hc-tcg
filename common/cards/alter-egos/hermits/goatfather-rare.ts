@@ -12,7 +12,7 @@ class GoatfatherRareHermitCard extends HermitCard {
 			numericId: 129,
 			name: 'Goatfather',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 270,
 			primary: {
 				name: 'Omerta',

@@ -7,7 +7,7 @@ class GeminiTayCommonHermitCard extends HermitCard {
 			numericId: 27,
 			name: 'Gem',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 300,
 			primary: {
 				name: 'Cottagecore',

@@ -10,7 +10,7 @@ class StressMonster101RareHermitCard extends HermitCard {
 			numericId: 93,
 			name: 'Stress',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 300,
 			primary: {
 				name: 'Plonker',

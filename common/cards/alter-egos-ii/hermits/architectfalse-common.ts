@@ -7,7 +7,7 @@ class ArchitectFalseCommonHermitCard extends HermitCard {
 			numericId: 227,
 			name: 'Grand Architect',
 			rarity: 'common',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 270,
 			primary: {
 				name: 'Oxidize',

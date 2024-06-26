@@ -10,7 +10,7 @@ class TangoTekRareHermitCard extends HermitCard {
 			numericId: 95,
 			name: 'Tango',
 			rarity: 'rare',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 290,
 			primary: {
 				name: 'Skadoodle',

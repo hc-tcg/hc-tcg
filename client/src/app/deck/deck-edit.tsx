@@ -5,7 +5,7 @@ import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {CARDS} from 'common/cards'
-import Card, { Hermit, Item } from 'common/cards/base/card'
+import Card, {Hermit, Item} from 'common/cards/base/card'
 import {CardT} from 'common/types/game-state'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -143,9 +143,9 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			// Card Name Filter
 			TYPED_CARDS[card.cardId].props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
 			// Card Type Filter
-			(HTYPE_CARDS[card.cardId].props.hermitType === undefined
+			(HTYPE_CARDS[card.cardId].props.type === undefined
 				? TYPED_CARDS[card.cardId]
-				: HTYPE_CARDS[card.cardId].props.hermitType.includes(typeQuery)) &&
+				: HTYPE_CARDS[card.cardId].props.type.includes(typeQuery)) &&
 			// Card Rarity Filter
 			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
 			// Card Expansion Filter
@@ -157,12 +157,10 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].isHermitCard()),
 		items: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].isItemCard()),
-		attachableEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].isAttachableCard()
+		attachableEffects: loadedDeck.cards.filter((card) =>
+			TYPED_CARDS[card.cardId].isAttachableCard()
 		),
-		singleUseEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].isSingleUseCard()
-		),
+		singleUseEffects: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].isSingleUseCard()),
 	}
 
 	//CARD LOGIC
@@ -347,8 +345,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 				>
 					<Accordion header={'Hermits'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].isHermitCard()
+							cards={sortCards(filteredCards).filter((card) =>
+								TYPED_CARDS[card.cardId].isHermitCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -357,8 +355,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].isAttachableCard()
+							cards={sortCards(filteredCards).filter((card) =>
+								TYPED_CARDS[card.cardId].isAttachableCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -367,8 +365,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					</Accordion>
 					<Accordion header={'Single Use Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].isSingleUseCard()
+							cards={sortCards(filteredCards).filter((card) =>
+								TYPED_CARDS[card.cardId].isSingleUseCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -377,8 +375,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					</Accordion>
 					<Accordion header={'Items'}>
 						<CardList
-							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].isItemCard()
+							cards={sortCards(filteredCards).filter((card) =>
+								TYPED_CARDS[card.cardId].isItemCard()
 							)}
 							enableAnimations={false}
 							wrap={true}

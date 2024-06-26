@@ -10,7 +10,7 @@ class IJevinRareHermitCard extends HermitCard {
 			numericId: 39,
 			name: 'Jevin',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 300,
 			primary: {
 				name: 'Your Boi',

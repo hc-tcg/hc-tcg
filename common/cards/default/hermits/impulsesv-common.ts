@@ -7,7 +7,7 @@ class ImpulseSVCommonHermitCard extends HermitCard {
 			numericId: 40,
 			name: 'Impulse',
 			rarity: 'common',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 270,
 			primary: {
 				name: 'Shovel Shuffle',

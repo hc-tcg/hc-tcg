@@ -7,7 +7,7 @@ class FalseSymmetryCommonHermitCard extends HermitCard {
 			numericId: 22,
 			name: 'False',
 			rarity: 'common',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 250,
 			primary: {
 				name: 'Queen of Hearts',

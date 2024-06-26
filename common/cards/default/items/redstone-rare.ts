@@ -9,12 +9,12 @@ class RedstoneRareItemCard extends ItemCard {
 			numericId: 64,
 			name: 'Redstone',
 			rarity: 'rare',
-			hermitType: 'redstone',
+			type: 'redstone',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType, this.hermitType]
+		return [this.type, this.type]
 	}
 }
 

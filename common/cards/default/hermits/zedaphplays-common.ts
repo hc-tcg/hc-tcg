@@ -7,7 +7,7 @@ class ZedaphPlaysCommonHermitCard extends HermitCard {
 			numericId: 113,
 			name: 'Zedaph',
 			rarity: 'common',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 250,
 			primary: {
 				name: 'For Science',

@@ -11,7 +11,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 			numericId: 103,
 			name: 'Beef',
 			rarity: 'rare',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 290,
 			primary: {
 				name: 'Pojk',

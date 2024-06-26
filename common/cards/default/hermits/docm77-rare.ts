@@ -10,7 +10,7 @@ class Docm77RareHermitCard extends HermitCard {
 			numericId: 16,
 			name: 'Docm77',
 			rarity: 'rare',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 280,
 			primary: {
 				name: 'Shadow Tech',

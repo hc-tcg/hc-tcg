@@ -13,7 +13,7 @@ class EvilXisumaRareHermitCard extends HermitCard {
 			numericId: 128,
 			name: 'Evil X',
 			rarity: 'rare',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 280,
 			primary: {
 				name: 'Evil Inside',

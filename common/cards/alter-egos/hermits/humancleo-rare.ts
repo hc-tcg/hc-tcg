@@ -14,7 +14,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 			numericId: 132,
 			name: 'Human Cleo',
 			rarity: 'rare',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 270,
 			primary: {
 				name: 'Humanity',
@@ -64,7 +64,7 @@ class HumanCleoRareHermitCard extends HermitCard {
 				if (!opponentActiveRow) return
 
 				const energy = opponentActiveRow.itemCards.flatMap((item) => {
-					if (item) return ITEM_CARDS[item.cardId].hermitType
+					if (item) return ITEM_CARDS[item.cardId].type
 					return []
 				})
 

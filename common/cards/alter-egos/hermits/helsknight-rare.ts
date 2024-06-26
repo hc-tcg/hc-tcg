@@ -12,7 +12,7 @@ class HelsknightRareHermitCard extends HermitCard {
 			numericId: 130,
 			name: 'Helsknight',
 			rarity: 'rare',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 270,
 			primary: {
 				name: 'Pitiful',

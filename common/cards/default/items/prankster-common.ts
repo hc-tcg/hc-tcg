@@ -9,12 +9,12 @@ class PranksterCommonItemCard extends ItemCard {
 			numericId: 59,
 			name: 'Prankster',
 			rarity: 'common',
-			hermitType: 'prankster',
+			type: 'prankster',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+		return [this.type]
 	}
 }
 

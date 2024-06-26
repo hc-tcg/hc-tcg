@@ -12,7 +12,7 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			numericId: 23,
 			name: 'False',
 			rarity: 'rare',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 250,
 			primary: {
 				name: 'High Noon',

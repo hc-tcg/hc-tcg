@@ -7,7 +7,7 @@ class BdoubleO100CommonHermitCard extends HermitCard {
 			numericId: 0,
 			name: 'Bdubs',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 260,
 			primary: {
 				name: 'Gradient',

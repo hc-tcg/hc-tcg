@@ -7,7 +7,7 @@ class KeralisCommonHermitCard extends HermitCard {
 			numericId: 71,
 			name: 'Keralis',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 270,
 			primary: {
 				name: 'Looky Looky',

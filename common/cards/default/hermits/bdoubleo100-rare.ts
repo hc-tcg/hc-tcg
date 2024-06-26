@@ -11,7 +11,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			numericId: 1,
 			name: 'Bdubs',
 			rarity: 'rare',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 260,
 			primary: {
 				name: 'Retexture',

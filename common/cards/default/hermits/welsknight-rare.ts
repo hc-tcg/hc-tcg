@@ -9,7 +9,7 @@ class WelsknightRareHermitCard extends HermitCard {
 			numericId: 107,
 			name: 'Wels',
 			rarity: 'rare',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 280,
 			primary: {
 				name: "Knight's Blade",

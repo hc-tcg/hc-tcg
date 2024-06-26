@@ -7,7 +7,7 @@ class DwarfImpulseCommonHermitCard extends HermitCard {
 			numericId: 229,
 			name: 'Dwarf Impulse',
 			rarity: 'common',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 250,
 			primary: {
 				name: 'Beard Bash',

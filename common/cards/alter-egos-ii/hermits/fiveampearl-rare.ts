@@ -11,7 +11,7 @@ class FiveAMPearlRareHermitCard extends HermitCard {
 			numericId: 230,
 			name: '5AM Pearl',
 			rarity: 'rare',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 270,
 			primary: {
 				name: 'Wicked',

@@ -11,7 +11,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 			numericId: 228,
 			name: 'Boomer Bdubs',
 			rarity: 'rare',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 290,
 			primary: {
 				name: 'Boom',

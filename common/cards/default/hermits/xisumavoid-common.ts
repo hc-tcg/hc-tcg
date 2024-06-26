@@ -7,7 +7,7 @@ class XisumavoidCommonHermitCard extends HermitCard {
 			numericId: 111,
 			name: 'Xisuma',
 			rarity: 'common',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 300,
 			primary: {
 				name: 'Oh My Days',

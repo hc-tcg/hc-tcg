@@ -11,7 +11,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 			numericId: 218,
 			name: 'Scott',
 			rarity: 'rare',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 270,
 			primary: {
 				name: 'Color Splash',

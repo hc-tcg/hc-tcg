@@ -7,7 +7,7 @@ class PearlescentMoonCommonHermitCard extends HermitCard {
 			numericId: 84,
 			name: 'Pearl',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 270,
 			primary: {
 				name: '5 AM',

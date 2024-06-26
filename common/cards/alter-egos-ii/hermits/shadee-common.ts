@@ -7,7 +7,7 @@ class ShadEECommonHermitCard extends HermitCard {
 			numericId: 237,
 			name: 'Shade-E-E',
 			rarity: 'common',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 280,
 			primary: {
 				name: 'Free Glass',

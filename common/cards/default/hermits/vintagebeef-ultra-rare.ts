@@ -8,7 +8,7 @@ class VintageBeefUltraRareHermitCard extends HermitCard {
 			numericId: 104,
 			name: 'Beef',
 			rarity: 'ultra_rare',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 280,
 			primary: {
 				name: 'Back in Action',

@@ -12,7 +12,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 			numericId: 70,
 			name: 'Joe',
 			rarity: 'rare',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 270,
 			primary: {
 				name: 'Grow Hills',

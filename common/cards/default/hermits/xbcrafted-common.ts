@@ -7,7 +7,7 @@ class XBCraftedCommonHermitCard extends HermitCard {
 			numericId: 109,
 			name: 'xB',
 			rarity: 'common',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 270,
 			primary: {
 				name: 'Aww Yeah',

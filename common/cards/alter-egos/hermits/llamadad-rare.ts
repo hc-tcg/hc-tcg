@@ -10,7 +10,7 @@ class LlamadadRareHermitCard extends HermitCard {
 			numericId: 134,
 			name: 'Llamadad',
 			rarity: 'rare',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 290,
 			primary: {
 				name: 'Spitz',

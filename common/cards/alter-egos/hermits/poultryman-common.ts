@@ -7,7 +7,7 @@ class PoultrymanCommonHermitCard extends HermitCard {
 			numericId: 136,
 			name: 'Poultry Man',
 			rarity: 'common',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 260,
 			primary: {
 				name: 'Eggscuse Me',

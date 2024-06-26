@@ -11,7 +11,7 @@ class HotguyRareHermitCard extends HermitCard {
 			numericId: 131,
 			name: 'Hotguy',
 			rarity: 'rare',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 280,
 			primary: {
 				name: 'Velocité',

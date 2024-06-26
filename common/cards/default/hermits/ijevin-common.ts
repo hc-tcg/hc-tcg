@@ -7,7 +7,7 @@ class IJevinCommonHermitCard extends HermitCard {
 			numericId: 38,
 			name: 'Jevin',
 			rarity: 'common',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 250,
 			primary: {
 				name: "Got 'Em",

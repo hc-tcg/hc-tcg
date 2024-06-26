@@ -11,7 +11,7 @@ class EthosLabRareHermitCard extends HermitCard {
 			numericId: 20,
 			name: 'Etho',
 			rarity: 'rare',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 280,
 			primary: {
 				name: 'Oh Snappers',

@@ -9,12 +9,12 @@ class BuilderCommonItemCard extends ItemCard {
 			numericId: 51,
 			name: 'Builder',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+		return [this.type]
 	}
 }
 

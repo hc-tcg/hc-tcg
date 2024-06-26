@@ -7,7 +7,7 @@ class StressMonster101CommonHermitCard extends HermitCard {
 			numericId: 92,
 			name: 'Stress',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 280,
 			primary: {
 				name: "'Ello",

@@ -13,7 +13,7 @@ class RendogRareHermitCard extends HermitCard {
 			numericId: 87,
 			name: 'Rendog',
 			rarity: 'rare',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 250,
 			primary: {
 				name: "Comin' At Ya",
