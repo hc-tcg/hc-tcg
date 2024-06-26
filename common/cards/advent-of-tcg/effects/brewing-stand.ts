@@ -4,6 +4,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {HERMIT_CARDS} from '../..'
+import {slot} from '../../../slot'
 
 class BrewingStandEffectCard extends EffectCard {
 	constructor() {
@@ -33,16 +34,18 @@ class BrewingStandEffectCard extends EffectCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to discard',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex !== pos.rowIndex) return 'FAILURE_INVALID_SLOT'
+				canPick: slot.every(
+					slot.player,
+					slot.itemSlot,
+					slot.not(slot.empty),
+					(game, pick) => pick.rowIndex === pos.rowIndex
+				),
+				onResult(pickedSlot) {
+					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					const playerRow = player.board.rows[pickResult.rowIndex]
+					const playerRow = player.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'SUCCESS'
+					if (!hermitCard || !playerRow.health) return
 					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
 					if (hermitInfo) {
 						const maxHealth = Math.max(playerRow.health, hermitInfo.health)
@@ -51,9 +54,7 @@ class BrewingStandEffectCard extends EffectCard {
 						// Armor Stand
 						playerRow.health += 50
 					}
-					discardCard(game, pickResult.card)
-
-					return 'SUCCESS'
+					discardCard(game, pickedSlot.card)
 				},
 			})
 		})

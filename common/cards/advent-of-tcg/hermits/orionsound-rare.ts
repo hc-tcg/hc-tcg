@@ -1,7 +1,8 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect, getNonEmptyRows, removeStatusEffect} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class OrionSoundRareHermitCard extends HermitCard {
@@ -41,18 +42,13 @@ class OrionSoundRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: instance,
 				message: 'Choose an Active or AFK Hermit to heal.',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || !rowIndex === null) return
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					applyStatusEffect(game, 'melody', pickResult.card.cardInstance)
-					player.custom[instanceKey].push(pickResult.card.cardInstance)
-
-					return 'SUCCESS'
+					applyStatusEffect(game, 'melody', pickedSlot.card.cardInstance)
+					player.custom[instanceKey].push(pickedSlot.card.cardInstance)
 				},
 			})
 		})

@@ -1,10 +1,10 @@
 import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRowPos, getSlotPos} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
+import {slot} from '../../../slot'
+import {getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import {canAttachToSlot, discardCard, swapSlots} from '../../../utils/movement'
+import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
@@ -54,20 +54,18 @@ class GrianRareHermitCard extends HermitCard {
 			if (rowIndex === null || !row || !opponentRowPos) return
 
 			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard || !isRemovable(opponentEffectCard)) return
+			if (!opponentEffectCard) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') return
 
-			const effectSlot = getSlotPos(player, rowIndex, 'effect')
-			const canAttachResult = canAttachToSlot(game, effectSlot, opponentEffectCard, true)
-
-			if (canAttachResult.length > 0) {
-				// We can't attach the new card, don't bother showing a modal
-				discardCard(game, opponentEffectCard, player)
-				return
-			}
+			const effectSlot = game.findSlot(
+				slot.every(slot.player, slot.rowIndex(rowIndex), slot.effectSlot)
+			)
+			const canAttach = game.findSlot(
+				slot.every(slot.player, slot.not(slot.frozen), slot.effectSlot, slot.activeRow, slot.empty)
+			)
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -80,10 +78,12 @@ class GrianRareHermitCard extends HermitCard {
 						} card?`,
 						cards: [opponentEffectCard],
 						selectionSize: 0,
-						primaryButton: {
-							text: 'Attach',
-							variant: 'default',
-						},
+						primaryButton: canAttach
+							? {
+									text: 'Attach',
+									variant: 'default',
+							  }
+							: null,
 						secondaryButton: {
 							text: 'Discard',
 							variant: 'default',
@@ -98,8 +98,10 @@ class GrianRareHermitCard extends HermitCard {
 						discardCard(game, row.effectCard)
 
 						// Move their effect card over
-						const opponentEffectSlot = getSlotPos(opponentPlayer, opponentRowPos.rowIndex, 'effect')
-						swapSlots(game, effectSlot, opponentEffectSlot)
+						const opponentEffectSlot = game.findSlot(
+							slot.every(slot.opponent, slot.effectSlot, slot.activeRow)
+						)
+						game.swapSlots(effectSlot, opponentEffectSlot)
 
 						const newPos = getCardPos(game, opponentEffectCard.cardInstance)
 

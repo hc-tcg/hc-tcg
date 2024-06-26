@@ -1,9 +1,7 @@
 import {PlayCardLog, CardRarityT} from '../../types/cards'
-import Card, {CanAttachResult} from './card'
-import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
+import Card from './card'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {slot} from '../../slot'
 
 export type SingleUseDefs = {
 	id: string
@@ -35,20 +33,11 @@ class SingleUseCard extends Card {
 			})
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		if (pos.slot.type !== 'single_use') return ['INVALID_SLOT']
-
-		return []
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		const hasHermit = currentPlayer.board.rows.some((row) => !!row.hermitCard)
-		const spaceForSingleUse = !currentPlayer.board.singleUseCard
-
-		return hasHermit && spaceForSingleUse ? ['PLAY_SINGLE_USE_CARD'] : []
-	}
+	override _attachCondition = slot.every(
+		slot.singleUseSlot,
+		slot.playerHasActiveHermit,
+		slot.actionAvailable('PLAY_SINGLE_USE_CARD')
+	)
 
 	public override showSingleUseTooltip(): boolean {
 		return true

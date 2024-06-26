@@ -1,9 +1,9 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 class EnderPearlSingleUseCard extends SingleUseCard {
@@ -20,17 +20,12 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
+	pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
 
-		const {player} = pos
-		if (!hasActive(player)) result.push('UNMET_CONDITION')
-		for (const row of player.board.rows) {
-			if (row.hermitCard === null) return result
-		}
-		result.push('UNMET_CONDITION')
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -40,20 +35,16 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an empty Hermit slot',
-			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
 				// We need to have no card there
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
+				if (pickedSlot.card || rowIndex === null) return
 
 				const activeRow = getActiveRowPos(player)
-				if (player.board.activeRow === null || !activeRow) return 'FAILURE_INVALID_DATA'
+				if (player.board.activeRow === null || !activeRow) return
 
-				const logInfo = pickResult
+				const logInfo = pickedSlot
 				logInfo.card = activeRow.row.hermitCard
 
 				// Apply
@@ -71,8 +62,6 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 					isBacklash: true,
 				}).addDamage(this.id, 10)
 				executeAttacks(game, [attack], true)
-
-				return 'SUCCESS'
 			},
 		})
 	}

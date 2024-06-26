@@ -57,9 +57,7 @@ class CatEffectCard extends EffectCard {
 
 					return 'SUCCESS'
 				},
-				onTimeout() {
-					return
-				},
+				onTimeout() {},
 			})
 		})
 	}

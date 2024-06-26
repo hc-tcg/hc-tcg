@@ -2,8 +2,8 @@ import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {slot} from '../../../slot'
 
 class GrianchRareHermitCard extends HermitCard {
 	constructor() {
@@ -54,41 +54,41 @@ class GrianchRareHermitCard extends HermitCard {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== instanceKey || attack.type !== 'primary') return
 
-			const nonEmptyRows = getNonEmptyRows(player, true, true)
-			if (nonEmptyRows.length === 0) return
+			const pickCondition = slot.every(
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
+
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an AFK Hermit from either side of the board',
-				onResult(pickResult) {
-					const pickedPlayer = game.state.players[pickResult.playerId]
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-					if (!hermitCard) return 'FAILURE_INVALID_SLOT'
-					const hermitId = pickedPlayer.board.rows[rowIndex].hermitCard?.cardId
-					const hermitHealth = pickedPlayer.board.rows[rowIndex].health
+					const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
+					if (!hermitCard) return
+					const hermitId = pickedSlot.player.board.rows[rowIndex].hermitCard?.cardId
+					const hermitHealth = pickedSlot.player.board.rows[rowIndex].health
 
-					if (!hermitHealth || !hermitId) return 'FAILURE_INVALID_SLOT'
+					if (!hermitHealth || !hermitId) return
 					const hermitInfo = HERMIT_CARDS[hermitId]
 					if (hermitInfo) {
 						// Heal
-						pickedPlayer.board.rows[rowIndex].health = Math.min(
+						pickedSlot.player.board.rows[rowIndex].health = Math.min(
 							hermitHealth + 40,
 							hermitInfo.health // Max health
 						)
 					} else {
 						// Armor Stand
-						pickedPlayer.board.rows[rowIndex].health = hermitHealth + 40
+						pickedSlot.player.board.rows[rowIndex].health = hermitHealth + 40
 					}
-					return 'SUCCESS'
 				},
 			})
 		})

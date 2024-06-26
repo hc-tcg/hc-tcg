@@ -6,6 +6,7 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
+import {slot} from '../slot'
 
 function executeAttack(attack: AttackModel) {
 	const target = attack.getTarget()
@@ -27,7 +28,7 @@ function executeAttack(attack: AttackModel) {
 /**
  * Call before attack hooks for each attack that has an attacker
  */
-function runBeforeAttackHooks(attacks: Array<AttackModel>) {
+function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		const attacker = attack.getAttacker()
@@ -42,7 +43,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 
 		// Call before attack hooks
 		player.hooks.beforeAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
@@ -50,7 +51,7 @@ function runBeforeAttackHooks(attacks: Array<AttackModel>) {
 /**
  * Call before defence hooks, based on each attack's target
  */
-function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
+function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		const target = attack.getTarget()
@@ -61,7 +62,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 
 		// Call before defence hooks
 		player.hooks.beforeDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
@@ -69,7 +70,7 @@ function runBeforeDefenceHooks(attacks: Array<AttackModel>) {
 /**
  * Call attack hooks for each attack that has an attacker
  */
-function runOnAttackHooks(attacks: Array<AttackModel>) {
+function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		const attacker = attack.getAttacker()
@@ -80,7 +81,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>) {
 
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
@@ -88,7 +89,7 @@ function runOnAttackHooks(attacks: Array<AttackModel>) {
 /**
  * Call defence hooks, based on each attack's target
  */
-function runOnDefenceHooks(attacks: Array<AttackModel>) {
+function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
 		const target = attack.getTarget()
@@ -99,12 +100,12 @@ function runOnDefenceHooks(attacks: Array<AttackModel>) {
 
 		// Call on defence hooks
 		player.hooks.onDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
 
-function runAfterAttackHooks(attacks: Array<AttackModel>) {
+function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
 		const attacker = attack.getAttacker()
@@ -115,12 +116,12 @@ function runAfterAttackHooks(attacks: Array<AttackModel>) {
 
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
 
-function runAfterDefenceHooks(attacks: Array<AttackModel>) {
+function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
 		const target = attack.getTarget()
@@ -131,16 +132,18 @@ function runAfterDefenceHooks(attacks: Array<AttackModel>) {
 
 		// Call after attack hooks
 		player.hooks.afterDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, instance)
+			return shouldIgnoreCard(attack, game, instance)
 		})
 	}
 }
 
-function shouldIgnoreCard(attack: AttackModel, instance: string): boolean {
-	for (let i = 0; i < attack.shouldIgnoreCards.length; i++) {
-		const shouldIgnore = attack.shouldIgnoreCards[i]
-		if (shouldIgnore(instance)) return true
+function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: string): boolean {
+	const cardPos = getCardPos(game, instance)
+	if (!cardPos) return false
+	if (slot.some(...attack.shouldIgnoreSlots)(game, cardPos)) {
+		return true
 	}
+
 	return false
 }
 
@@ -150,12 +153,12 @@ export function executeAttacks(
 	withoutBlockingActions = false
 ) {
 	// STEP 1 - Call before attack and defence for all attacks
-	runBeforeAttackHooks(attacks)
-	runBeforeDefenceHooks(attacks)
+	runBeforeAttackHooks(game, attacks)
+	runBeforeDefenceHooks(game, attacks)
 
 	// STEP 2 - Call on attack and defence for all attacks
-	runOnAttackHooks(attacks)
-	runOnDefenceHooks(attacks)
+	runOnAttackHooks(game, attacks)
+	runOnDefenceHooks(game, attacks)
 
 	// STEP 3 - Execute all attacks
 	attacks.forEach((attack) => {
@@ -182,8 +185,8 @@ export function executeAttacks(
 	}
 
 	// STEP 6 - After all attacks have been executed, call after attack and defence hooks
-	runAfterAttackHooks(attacks)
-	runAfterDefenceHooks(attacks)
+	runAfterAttackHooks(game, attacks)
+	runAfterDefenceHooks(game, attacks)
 }
 
 export function executeExtraAttacks(

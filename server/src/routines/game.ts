@@ -20,6 +20,7 @@ import {getCardPos} from 'common/models/card-pos-model'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickCardActionData, attackToAttackAction} from 'common/types/action-data'
+import {PickInfo} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -55,6 +56,10 @@ function getAvailableEnergy(game: GameModel) {
 	return availableEnergy
 }
 
+/**Returns if an action is currently available for the player to execute.
+ * To be available, an action must be in `state.turn.availableActions`, and not in `state.turn.blockedActions` or
+ * `state.turn.completedActions`.
+ */
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
@@ -142,19 +147,38 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// Play card actions require an active row unless it's the players first turn
 	if (activeRow !== null || turnState.turnNumber <= 2) {
-		const handCards = currentPlayer.hand.map((card) => CARDS[card.cardId])
-		const allDesiredActions: TurnActions = []
-		for (let x = 0; x < handCards.length; x++) {
-			const card = handCards[x]
-			const desiredActions: TurnActions = card.getActions(game)
-			for (let i = 0; i < desiredActions.length; i++) {
-				const desiredAction = desiredActions[i]
-				if (!allDesiredActions.includes(desiredAction)) {
-					allDesiredActions.push(desiredAction)
+		// Temporarily add these to see if any slots are available
+		game.state.turn.availableActions.push(
+			'PLAY_HERMIT_CARD',
+			'PLAY_EFFECT_CARD',
+			'PLAY_ITEM_CARD',
+			'PLAY_SINGLE_USE_CARD'
+		)
+		const desiredActions = currentPlayer.hand.reduce(
+			(reducer: TurnActions, card: CardT): TurnActions => {
+				const cardInfo = CARDS[card.cardId]
+				const pickableSlots = game.filterSlots(cardInfo.attachCondition)
+
+				if (pickableSlots.length === 0) return reducer
+
+				if (cardInfo.type === 'hermit' && !reducer.includes('PLAY_HERMIT_CARD')) {
+					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-			}
-		}
-		actions.push(...allDesiredActions)
+				if (cardInfo.type === 'effect' && !reducer.includes('PLAY_EFFECT_CARD')) {
+					return [...reducer, 'PLAY_EFFECT_CARD']
+				}
+				if (cardInfo.type === 'item' && !reducer.includes('PLAY_ITEM_CARD')) {
+					return [...reducer, 'PLAY_ITEM_CARD']
+				}
+				if (cardInfo.type === 'single_use' && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
+					return [...reducer, 'PLAY_SINGLE_USE_CARD']
+				}
+				return reducer
+			},
+			[] as TurnActions
+		)
+		game.state.turn.availableActions = []
+		actions.push(...desiredActions)
 	}
 
 	// Filter out actions that have already been completed - once an action is completed it cannot be used again for the turn
@@ -182,6 +206,11 @@ function* checkHermitHealth(game: GameModel) {
 	const playerStates: Array<PlayerState> = Object.values(game.state.players)
 	const deadPlayerIds: Array<string> = []
 	for (let playerState of playerStates) {
+		// Players are not allowed to die before they place their first hermit to prevent bugs
+		if (!playerState.hasPlacedHermit) {
+			continue
+		}
+
 		const playerRows = playerState.board.rows
 		const activeRow = playerState.board.activeRow
 		for (let rowIndex in playerRows) {
@@ -388,6 +417,8 @@ function* turnActionsSaga(game: GameModel) {
 
 			// End of available actions code
 
+			game.updateCardsCanBePlacedIn()
+
 			// Timer calculation
 			game.state.timer.turnStartTime = game.state.timer.turnStartTime || Date.now()
 			let maxTime = CONFIG.limits.maxTurnTime * 1000
@@ -485,7 +516,9 @@ function* turnActionsSaga(game: GameModel) {
 			// Run action logic
 			const result = yield* call(turnActionSaga, game, raceResult.turnAction)
 
-			if (result === 'END_TURN') break
+			if (result === 'END_TURN') {
+				break
+			}
 		}
 	} finally {
 		turnActionChannel.close()

@@ -2,7 +2,8 @@ import {HERMIT_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {getActiveRow} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 
 class IskallmanRareHermitCard extends HermitCard {
@@ -31,9 +32,16 @@ class IskallmanRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
+
+		const pickCondition = slot.every(
+			slot.player,
+			slot.hermitSlot,
+			slot.not(slot.empty),
+			slot.not(slot.activeRow)
+		)
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -47,16 +55,7 @@ class IskallmanRareHermitCard extends HermitCard {
 			if (!activeRow || activeRow.health < 50) return
 
 			// Make sure there is something to select
-			const hasHealableAfk = [
-				...getNonEmptyRows(player, true),
-				...getNonEmptyRows(opponentPlayer, true),
-			].some((rowPos) => {
-				const hermitCard = HERMIT_CARDS[rowPos.row.hermitCard.cardId]
-				if (hermitCard === undefined) return false
-				if (rowPos.row.health === hermitCard.health) return false
-				return true
-			})
-			if (!hasHealableAfk) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -84,24 +83,18 @@ class IskallmanRareHermitCard extends HermitCard {
 						playerId: player.id,
 						id: 'iskallman_rare',
 						message: 'Pick an AFK Hermit from either side of the board',
-						onResult(pickResult) {
-							const pickedPlayer = game.state.players[pickResult.playerId]
-							const rowIndex = pickResult.rowIndex
-							if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-							if (rowIndex === pickedPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-							if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-							if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+						canPick: pickCondition,
+						onResult(pickedSlot) {
+							if (!pickedSlot.card) return
+							if (!pickedSlot.rowIndex) return
 
 							// Make sure it's an actual hermit card
-							const hermitCard = HERMIT_CARDS[pickResult.card.cardId]
-							if (!hermitCard) return 'FAILURE_INVALID_SLOT'
+							const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
+							if (!hermitCard) return
 
 							// Store the info to use later
-							player.custom[playerKey] = pickResult.playerId
-							player.custom[rowKey] = rowIndex
-
-							return 'SUCCESS'
+							player.custom[playerKey] = pickedSlot.player.id
+							player.custom[rowKey] = pickedSlot.rowIndex
 						},
 						onTimeout() {
 							// We didn't pick anyone to heal, so heal no one
@@ -142,9 +135,7 @@ class IskallmanRareHermitCard extends HermitCard {
 				isBacklash: true,
 			})
 			backlashAttack.addDamage(this.id, 50)
-			backlashAttack.shouldIgnoreCards.push(() => {
-				return true
-			})
+			backlashAttack.shouldIgnoreSlots.push(slot.anything)
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]

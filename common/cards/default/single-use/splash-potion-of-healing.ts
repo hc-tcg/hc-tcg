@@ -1,5 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
+import {healHermit} from '../../../types/game-state'
 import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../../index'
 
@@ -23,14 +25,9 @@ class SplashPotionOfHealingSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			for (let row of player.board.rows) {
-				if (!row.hermitCard) continue
-				const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
-				if (hermitInfo) {
-					const maxHealth = Math.max(row.health, hermitInfo.health)
-					row.health = Math.min(row.health + 20, maxHealth)
-				}
-			}
+			game
+				.filterSlots(slot.every(slot.player, slot.hermitSlot))
+				.forEach(({row, card}) => healHermit(row, 20))
 		})
 	}
 

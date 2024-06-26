@@ -1,10 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {TurnActions} from '../../../types/game-state'
 import EffectCard from '../../base/effect-card'
-import {CARDS} from '../..'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
+import {slot} from '../../../slot'
 
 class MilkBucketEffectCard extends EffectCard {
 	constructor() {
@@ -23,23 +21,27 @@ class MilkBucketEffectCard extends EffectCard {
 		})
 	}
 
+	override _attachCondition = slot.some(
+		slot.every(
+			slot.singleUseSlot,
+			slot.playerHasActiveHermit,
+			slot.actionAvailable('PLAY_SINGLE_USE_CARD')
+		),
+		super.attachCondition
+	)
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
-		if (slot.type === 'single_use') {
+		const {player, opponentPlayer, row} = pos
+		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
 				id: instance,
 				message: 'Pick one of your Hermits',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
+				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
+				onResult(pickedSlot) {
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
-							ail.targetInstance === pickResult.card?.cardInstance &&
+							ail.targetInstance === pickedSlot.card?.cardInstance &&
 							(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
 						)
 					})
@@ -47,12 +49,10 @@ class MilkBucketEffectCard extends EffectCard {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					applySingleUse(game, pickResult)
-
-					return 'SUCCESS'
+					applySingleUse(game, pickedSlot)
 				},
 			})
-		} else if (slot.type === 'effect') {
+		} else if (pos.type === 'effect') {
 			// Straight away remove poison
 			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
 				return (
@@ -95,36 +95,6 @@ class MilkBucketEffectCard extends EffectCard {
 		const {player, opponentPlayer} = pos
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {currentPlayer} = game
-		const result: CanAttachResult = []
-
-		if (!['single_use', 'effect'].includes(pos.slot.type)) result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-		if (pos.slot.type === 'effect') {
-			if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-		}
-
-		return result
-	}
-
-	// Allows placing in effect or single use slot
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there is a hermit on the board with space for an effect card
-		const spaceForEffect = currentPlayer.board.rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-		const hasHermit = currentPlayer.board.rows.some((row) => !!row.hermitCard)
-		const spaceForSingleUse = !game.currentPlayer.board.singleUseCard
-
-		const actions: TurnActions = []
-		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
-		if (hasHermit && spaceForSingleUse) actions.push('PLAY_SINGLE_USE_CARD')
-		return actions
 	}
 
 	override showSingleUseTooltip(): boolean {

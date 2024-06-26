@@ -2,9 +2,10 @@ import HermitCard from '../../base/hermit-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
 import {HERMIT_CARDS, ITEM_CARDS} from '../..'
+import {slot} from '../../../slot'
 
 class HumanCleoRareHermitCard extends HermitCard {
 	constructor() {
@@ -45,13 +46,19 @@ class HumanCleoRareHermitCard extends HermitCard {
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
 			if (headsAmount < 2) return
 
+			const pickCondition = slot.every(
+				slot.player,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
+
 			const blockActions = () => {
 				// Start by removing blocked actions in case requirements are no longer met
 				game.removeBlockedActions(this.id, 'CHANGE_ACTIVE_HERMIT', 'END_TURN')
 
 				// Return if the opponent has no AFK Hermits to attack
-				const afk = getNonEmptyRows(opponentPlayer, true).length
-				if (afk < 1) return
+				if (!game.someSlotFulfills(pickCondition)) return
 
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (!opponentActiveRow) return
@@ -87,35 +94,29 @@ class HumanCleoRareHermitCard extends HermitCard {
 			// Add a pick request for opponent to pick an afk hermit to attack
 			opponentPlayer.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 				// Only pick if there is afk to pick
-				const afk = getNonEmptyRows(opponentPlayer, true).length
-				if (afk < 1) return
+				if (!game.someSlotFulfills(pickCondition)) return
 
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick one of your AFK Hermits',
-					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+					canPick: pickCondition,
+					onResult(pickedSlot) {
+						const rowIndex = pickedSlot.rowIndex
+						if (!pickedSlot.card || !rowIndex === null) return
 
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Save the target index for opponent to attack
 						player.custom[opponentTargetKey] = rowIndex
 
-						return 'SUCCESS'
+						return
 					},
 					onTimeout() {
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Pick the first afk hermit to attack
-						const firstAfk = getNonEmptyRows(opponentPlayer, true)[0]
+						const firstAfk = game.filterSlots(pickCondition)[0]
 						if (!firstAfk) return
 
 						// Save the target index for opponent to attack

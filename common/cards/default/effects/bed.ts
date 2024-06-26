@@ -4,6 +4,7 @@ import {HERMIT_CARDS} from '../..'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class BedEffectCard extends EffectCard {
 	constructor() {
@@ -16,15 +17,8 @@ class BedEffectCard extends EffectCard {
 				'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
 		})
 	}
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
 
-		// bed addition - hermit must also be active to attach
-		if (!(player.board.activeRow === pos.rowIndex)) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(super.attachCondition, slot.activeRow)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns

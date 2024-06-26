@@ -1,10 +1,8 @@
-import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRow, getNonEmptyRows, getSlotPos} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
-import {canAttachToSlot, discardSingleUse, getSlotCard, swapSlots} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
+import {slot} from '../../../slot'
+import {applySingleUse, getActiveRow} from '../../../utils/board'
+import {discardSingleUse} from '../../../utils/movement'
 import singleUseCard from '../../base/single-use-card'
 
 class MendingSingleUseCard extends singleUseCard {
@@ -20,28 +18,22 @@ class MendingSingleUseCard extends singleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {player} = pos
+	pickCondition = slot.every(
+		slot.player,
+		slot.effectSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.not(slot.frozen),
+		slot.not(slot.activeRow)
+	)
 
-		const result = super.canAttach(game, pos)
-
-		const effectCard = getActiveRow(player)?.effectCard
-		if (effectCard && isRemovable(effectCard)) {
-			// check if there is an empty slot available to move the effect card to
-			const inactiveRows = getNonEmptyRows(player, true)
-			for (const rowPos of inactiveRows) {
-				if (rowPos.row.effectCard) continue
-				const slotPos = getSlotPos(player, rowPos.rowIndex, 'effect')
-				const canAttach = canAttachToSlot(game, slotPos, effectCard, true)
-
-				if (canAttach.length > 0) continue
-
-				return result
-			}
-		}
-
-		return [...result, 'UNMET_CONDITION']
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.pickCondition),
+		slot.someSlotFulfills(
+			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.frozen), slot.not(slot.empty))
+		)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -66,38 +58,23 @@ class MendingSingleUseCard extends singleUseCard {
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.id,
-			message: 'Pick an empty effect slot from one of your afk Hermits',
-			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+			message: 'Pick an empty effect slot from one of your AFK Hermits',
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				const hermitActiveEffectCard = game.findSlot(
+					slot.every(slot.player, slot.activeRow, slot.effectSlot)
+				)
 
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+				if (!hermitActiveEffectCard || !hermitActiveEffectCard.row) return
 
-				if (pickResult.slot.type !== 'effect') return 'FAILURE_INVALID_SLOT'
-				if (pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-				const row = player.board.rows[rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-				// Make sure we can attach the item
-				const sourcePos = getSlotPos(player, activeRowIndex, 'effect')
-				const targetPos = getSlotPos(player, rowIndex, 'effect')
-				const effectCard = getSlotCard(sourcePos)!
-				if (canAttachToSlot(game, targetPos, effectCard, true).length > 0) {
-					return 'FAILURE_INVALID_SLOT'
-				}
-
-				const logInfo = pickResult
-				logInfo.card = sourcePos.row.effectCard
+				const logInfo = pickedSlot
+				logInfo.card = hermitActiveEffectCard.row.effectCard
 
 				// Apply the mending card
 				applySingleUse(game, logInfo)
 
 				// Move the effect card
-				swapSlots(game, sourcePos, targetPos)
-
-				return 'SUCCESS'
+				game.swapSlots(hermitActiveEffectCard, pickedSlot)
 			},
 		})
 	}

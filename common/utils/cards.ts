@@ -1,7 +1,6 @@
-import {CARDS, EFFECT_CARDS} from '../cards'
-import {CardTypeT, RankT} from '../types/cards'
+import {CARDS} from '../cards'
+import {CardTypeT} from '../types/cards'
 import {CardT} from '../types/game-state'
-import Card from '../cards/base/card'
 
 /**
  * Returns true if the two cards are equal
@@ -19,12 +18,6 @@ export function isCardType(card: CardT | null, type: CardTypeT): boolean {
 	if (!card) return false
 	const cardInfo = CARDS[card.cardId]
 	return cardInfo.type === type
-}
-
-export const isRemovable = (card: CardT) => {
-	const cardInfo = EFFECT_CARDS[card.cardId]
-	if (!cardInfo) return false
-	return cardInfo.getIsRemovable()
 }
 
 export function getCardExpansion(cardId: string) {

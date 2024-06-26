@@ -2,7 +2,7 @@ import css from './actions.module.scss'
 import cn from 'classnames'
 import Slot from '../board/board-slot'
 import {useSelector, useDispatch} from 'react-redux'
-import {endTurn, setOpenedModal} from 'logic/game/game-actions'
+import {endTurn, endTurnAction, setOpenedModal} from 'logic/game/game-actions'
 import {
 	getPlayerStateById,
 	getAvailableActions,
@@ -18,6 +18,7 @@ import Button from 'components/button'
 import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PickInfo} from 'common/types/server-requests'
+import {endTurnModalEmpty} from '../modals/end-turn-modal'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
@@ -44,10 +45,10 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	if (!gameState || !playerState) return <main>Loading</main>
 
 	function handleEndTurn() {
-		if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+		if (endTurnModalEmpty(availableActions) || settings.confirmationDialogs === 'off') {
 			dispatch(endTurn())
 		} else {
-			dispatch(setOpenedModal('end-turn'))
+			dispatch(endTurnAction())
 		}
 	}
 
@@ -94,10 +95,9 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 		const handleClick = () => {
 			isPlayable &&
 				onClick({
-					slot: {
-						type: 'single_use',
-						index: 0,
-					},
+					type: 'single_use',
+					index: null,
+					rowIndex: null,
 					playerId: localGameState.turn.currentPlayerId,
 					card: singleUseCard,
 				})
@@ -109,6 +109,7 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 					card={singleUseCard}
 					type={'single_use'}
 					onClick={handleClick}
+					playerId={playerId}
 					statusEffects={localGameState.statusEffects}
 				/>
 			</div>

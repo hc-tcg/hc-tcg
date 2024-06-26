@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isRemovable} from '../../../utils/cards'
+import {slot} from '../../../slot'
 import {discardCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -16,29 +16,18 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
+	discardCondition = slot.every(
+		slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
+		slot.effectSlot,
+		slot.opponent,
+		slot.not(slot.empty),
+		slot.not(slot.frozen)
+	)
 
-		const {opponentPlayer} = pos
-		const activeRow = opponentPlayer.board.activeRow
-		if (activeRow === null) {
-			result.push('UNMET_CONDITION')
-			return result
-		}
-
-		const rows = opponentPlayer.board.rows
-		const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
-			(index) => index >= 0 && index < rows.length
-		)
-
-		for (const row of targetIndex) {
-			const effectCard = rows[row].effectCard
-			if (effectCard && isRemovable(effectCard)) return result
-		}
-
-		result.push('UNMET_CONDITION')
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.discardCondition)
+	)
 
 	override canApply() {
 		return true
@@ -48,18 +37,9 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const activeRow = opponentPlayer.board.activeRow
-			if (activeRow === null) return
-
-			const rows = opponentPlayer.board.rows
-			const targetIndex = [activeRow - 1, activeRow, activeRow + 1].filter(
-				(index) => index >= 0 && index < rows.length
-			)
-
-			for (const index of targetIndex) {
-				const effectCard = rows[index].effectCard
-				if (effectCard && isRemovable(effectCard)) discardCard(game, effectCard)
-			}
+			game
+				.filterSlots(this.discardCondition)
+				.map((slot) => slot.card && discardCard(game, slot.card))
 		})
 	}
 

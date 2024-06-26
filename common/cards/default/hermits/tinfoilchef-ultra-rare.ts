@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isRemovable} from '../../../utils/cards'
+import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -40,7 +40,9 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 
 			if (opponentPlayer.board.activeRow === null) return 'NO'
 			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (!opponentActiveRow.effectCard || !isRemovable(opponentActiveRow.effectCard)) return
+			if (!opponentActiveRow.effectCard) return
+			if (!slot.someSlotFulfills(slot.every(slot.opponent, slot.effectSlot, slot.not(slot.frozen))))
+				return
 
 			// Can't discard two items on the same hermit
 			const limit = player.custom[this.getInstanceKey(instance)] || {}
