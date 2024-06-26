@@ -4,7 +4,7 @@ import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT, SlotInfo} from './cards'
+import {EnergyT} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
 import {ModalRequest, PickInfo, PickRequest} from './server-requests'
 
