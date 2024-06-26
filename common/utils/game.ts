@@ -20,5 +20,5 @@ export function getFormattedName(cardId: string, opponent: boolean) {
 	const formatting = getFormatting(cardInfo, opponent)
 	if (!formatting) return ''
 
-	return `${formatting}${cardInfo.name}$`
+	return `${formatting}${cardInfo.props.name}$`
 }

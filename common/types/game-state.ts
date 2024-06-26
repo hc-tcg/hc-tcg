@@ -355,8 +355,8 @@ export type LocalGameRoot = {
 
 export type GameLog = {
 	type: 'public' | 'private'
-	startHand1: string[]
-	startHand2: string[]
+	startHand1: Array<CardInstance>
+	startHand2: Array<CardInstance>
 	startTimestamp: number
 	startDeck: string
 }
