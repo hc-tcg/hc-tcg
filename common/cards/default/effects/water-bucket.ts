@@ -1,35 +1,29 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import EffectCard from '../../base/effect-card'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
+import Card, {Attachable, SingleUse, attachable, singleUse} from '../../base/card'
 
-class WaterBucketEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'water_bucket',
-			numericId: 105,
-			name: 'Water Bucket',
-			rarity: 'common',
-			description:
-				'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
-			log: (values) => {
-				if (values.pos.slotType === 'single_use')
-					return `${values.defaultLog} on $p${values.pick.name}$`
-				return `$p{You|${values.player}}$ attached $e${this.name}$ to $p${values.pos.hermitCard}$`
-			},
-		})
+class WaterBucketEffectCard extends Card {
+	props: Attachable & SingleUse = {
+		...attachable,
+		...singleUse,
+		id: 'water_bucket',
+		expansion: 'default',
+		numericId: 105,
+		name: 'Water Bucket',
+		rarity: 'common',
+		tokens: 2,
+		description:
+			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
+		attachCondition: slot.some(attachable.attachCondition, singleUse.attachCondition),
+		log: (values) => {
+			if (values.pos.slotType === 'single_use')
+				return `${values.defaultLog} on $p${values.pick.name}$`
+			return `$p{You|${values.player}}$ attached $e${this.props.name}$ to $p${values.pos.hermitCard}$`
+		},
 	}
-
-	override _attachCondition = slot.some(
-		slot.every(
-			slot.singleUseSlot,
-			slot.playerHasActiveHermit,
-			slot.actionAvailable('PLAY_SINGLE_USE_CARD')
-		),
-		super.attachCondition
-	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos

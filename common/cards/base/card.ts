@@ -1,8 +1,16 @@
-import {PlayCardLog, CardRarityT, CardTypeT} from '../../types/cards'
+import {
+	PlayCardLog,
+	CardRarityT,
+	HermitTypeT,
+	HermitAttackInfo,
+	ExpansionT,
+} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {FormattedTextNode} from '../../utils/formatting'
+import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {slot, SlotCondition} from '../../slot'
+import {HermitAttackType} from '../../types/attack'
+import {AttackModel} from '../../models/attack-model'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -13,56 +21,113 @@ export type CanAttachError =
 
 export type CanAttachResult = Array<CanAttachError>
 
-type CardDefs = {
-	type: CardTypeT
+export type CardProps = {
 	id: string
+	expansion: ExpansionT
 	numericId: number
 	name: string
 	rarity: CardRarityT
-}
-
-abstract class Card {
-	public type: CardTypeT
-	public id: string
-	public numericId: number
-	public name: string
-	public rarity: CardRarityT
-
+	tokens: number
+	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
+	log?: (values: PlayCardLog) => string
+	attachCondition?: SlotCondition
+}
+
+export type Item = CardProps & {
+	item: null
+	hermitType: HermitTypeT
+}
+
+export const item = {
+	item: null,
+	attachCondition: slot.every(
+		slot.player,
+		slot.itemSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.actionAvailable('PLAY_ITEM_CARD'),
+		slot.not(slot.frozen)
+	),
+}
+
+export type HasHealth = CardProps & {
+	health: number
+}
+
+export type Hermit = HasHealth & {
+	hermit: null
+	hermitType: HermitTypeT
+	primary: HermitAttackInfo
+	secondary: HermitAttackInfo
+}
+
+export const hermit = {
+	hermit: null,
+	attachCondition: slot.every(
+		slot.hermitSlot,
+		slot.player,
+		slot.empty,
+		slot.actionAvailable('PLAY_HERMIT_CARD'),
+		slot.not(slot.frozen)
+	),
+}
+
+export type Attachable = CardProps & {
+	attachable: null
+	description: string
+}
+
+export const attachable = {
+	attachable: null,
+	attachCondition: slot.every(
+		slot.player,
+		slot.effectSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
+		slot.not(slot.frozen)
+	),
+}
+
+export type SingleUse = CardProps & {
+	singleUse: null
+	description: string
+}
+
+export const singleUse = {
+	singleUse: null,
+	attachCondition: slot.every(
+		slot.singleUseSlot,
+		slot.playerHasActiveHermit,
+		slot.actionAvailable('PLAY_SINGLE_USE_CARD')
+	),
+}
+
+abstract class Card<Props extends CardProps = CardProps> {
+	public abstract props: Props
+	public instance: string
 	private log: Array<(values: PlayCardLog) => string>
 
-	constructor(defs: CardDefs) {
-		this.type = defs.type
-		this.id = defs.id
-		this.numericId = defs.numericId
-		this.name = defs.name
-		this.rarity = defs.rarity
+	constructor() {
+		this.instance = Math.random().toString()
 		this.log = []
-
-		this._attachCondition = slot.nothing
-	}
-
-	public getKey(keyName: string) {
-		return this.id + ':' + keyName
-	}
-	public getInstanceKey(instance: string, keyName: string = '') {
-		return this.id + ':' + instance + ':' + keyName
 	}
 
 	/**
 	 * A combinator expression that returns if the card can be attached to a specified slot.
 	 */
-	protected _attachCondition: SlotCondition
 	public get attachCondition(): SlotCondition {
-		return this._attachCondition
+		return this.props.attachCondition || slot.nothing
 	}
 
-	/**
-	 * Returns the description for this card that shows up in the sidebar.
-	 */
-	public abstract getFormattedDescription(): FormattedTextNode
-
+	public getKey(keyName: string) {
+		return this.props.id + ':' + keyName
+	}
+	public getInstanceKey(instance: string, keyName: string = '') {
+		return this.props.id + ':' + instance + ':' + keyName
+	}
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
@@ -77,11 +142,79 @@ abstract class Card {
 		// default is do nothing
 	}
 
-	/**
-	 * Returns the expansion this card is a part of
-	 */
-	public getExpansion(): string {
-		return 'default'
+	public isItemCard(): this is Card<CardProps & Item> {
+		return 'item' in this.props
+	}
+
+	public getEnergy(this: Card<Item>, game: GameModel, pos: CardPosModel): Array<HermitTypeT> {
+		return []
+	}
+
+	public isHermitCard(): this is Card<CardProps & Hermit> {
+		return 'hermit' in this.props
+	}
+
+	public getAttack(
+		this: Card<Hermit>,
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel,
+		hermitAttackType: HermitAttackType
+	): AttackModel | null {
+		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
+
+		const {opponentPlayer: opponentPlayer} = game
+		const targetIndex = opponentPlayer.board.activeRow
+		if (targetIndex === null) return null
+
+		const targetRow = opponentPlayer.board.rows[targetIndex]
+		if (!targetRow.hermitCard) return null
+
+		// Create an attack with default damage
+		const attack = new AttackModel({
+			id: this.getInstanceKey(instance),
+			attacker: {
+				player: pos.player,
+				rowIndex: pos.rowIndex,
+				row: pos.row,
+			},
+			target: {
+				player: opponentPlayer,
+				rowIndex: targetIndex,
+				row: targetRow,
+			},
+			type: hermitAttackType,
+			createWeakness: 'ifWeak',
+			log: (values) =>
+				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
+					values.target
+				} with ${values.attackName} for ${values.damage} damage`,
+		})
+
+		if (attack.type === 'primary') {
+			attack.addDamage(this.props.id, this.props.primary.damage)
+		} else if (attack.type === 'secondary') {
+			attack.addDamage(this.props.id, this.props.secondary.damage)
+		}
+
+		return attack
+	}
+
+	public hasAttacks(this: Card<HasHealth>): this is Card<Props & Hermit> {
+		return 'primary' in this.props && 'secondary' in this.props
+	}
+
+	public isAttachableCard(): this is Card<CardProps & Attachable> {
+		return 'attachable' in this.props
+	}
+
+	public isSingleUseCard(): this is Card<CardProps & Attachable> {
+		return 'singleUse' in this.props
+	}
+
+	public canAttack(this: Card<Attachable>): boolean {
+		// default is no
+		return false
 	}
 
 	/**
@@ -91,11 +224,15 @@ abstract class Card {
 		return 'default'
 	}
 
+	public getBackground(): string {
+		return this.props.id.split('_')[0]
+	}
+
 	/**
 	 * Returns the shortened name to use for this card
 	 */
 	public getShortName(): string {
-		return this.name
+		return this.props.name
 	}
 
 	/**
@@ -117,6 +254,10 @@ abstract class Card {
 	 */
 	public sidebarDescriptions(): Array<Record<string, string>> {
 		return []
+	}
+
+	public getFormattedDescription(this: Card<Attachable | SingleUse>): FormattedTextNode {
+		return formatText(this.props.description)
 	}
 
 	/** Updates the log entry*/
