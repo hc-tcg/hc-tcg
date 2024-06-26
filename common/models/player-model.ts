@@ -1,5 +1,5 @@
 import {getStarterPack} from '../../server/src/utils/state-gen'
-import {CardT} from '../../common/types/game-state'
+import {CardInstance} from '../../common/types/game-state'
 import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
@@ -11,7 +11,7 @@ export class PlayerModel {
 	private internalDeck: {
 		name: string
 		icon: string
-		cards: Array<CardT>
+		cards: Array<CardInstance>
 	}
 
 	public name: string

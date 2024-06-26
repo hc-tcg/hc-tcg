@@ -6,7 +6,7 @@ import {
 	TurnActions,
 	PlayerState,
 	Message,
-	CardT,
+	CardInstance,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
 import {ModalRequest, PickInfo, PickRequest, PickedSlotType} from '../types/server-requests'
@@ -242,7 +242,7 @@ export class GameModel {
 			return player.hand.reduce((cards, card) => {
 				cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
 				return cards
-			}, [] as Array<[CardT, Array<PickInfo>]>)
+			}, [] as Array<[CardInstance, Array<PickInfo>]>)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -304,7 +304,7 @@ export class GameModel {
 				const appendAttachCondition = (
 					type: PickedSlotType,
 					index: number,
-					cardInstance: CardT | null
+					cardInstance: CardInstance | null
 				) => {
 					const slotInfo = {
 						player,

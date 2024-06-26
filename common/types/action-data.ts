@@ -1,6 +1,6 @@
 import {HermitAttackType} from './attack'
 import {SlotTypeT} from './cards'
-import {AttackAction, CardT, PlayCardAction} from './game-state'
+import {AttackAction, CardInstance, PlayCardAction} from './game-state'
 import {PickInfo} from './server-requests'
 
 export const slotToPlayCardAction: Record<SlotTypeT, PlayCardAction | null> = {
@@ -27,7 +27,7 @@ export type PlayCardActionData = {
 	type: PlayCardAction
 	payload: {
 		pickInfo: PickInfo
-		card: CardT
+		card: CardInstance
 	}
 }
 

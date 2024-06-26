@@ -1,5 +1,5 @@
 import {useSelector} from 'react-redux'
-import {CardT, LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
+import {CardInstance, LocalGameState, LocalPlayerState, RowState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import css from './board.module.scss'
 import BoardRow from './board-row'
@@ -31,7 +31,7 @@ function Board({onClick, localGameState}: Props) {
 	const handleRowClick = (
 		playerId: string,
 		rowIndex: number,
-		card: CardT | null,
+		card: CardInstance | null,
 		type: SlotTypeT,
 		index: number
 	) => {

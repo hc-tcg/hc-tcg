@@ -2,7 +2,7 @@ import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {moveCardToHand} from '../../../utils/movement'
+import {moveCardInstanceoHand} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
 class HelsknightRareHermitCard extends HermitCard {
@@ -45,7 +45,7 @@ class HelsknightRareHermitCard extends HermitCard {
 
 				if (coinFlip[0] == 'heads') {
 					const cardInfo = CARDS[opponentPlayer.board.singleUseCard.cardId]
-					moveCardToHand(game, opponentPlayer.board.singleUseCard, player)
+					moveCardInstanceoHand(game, opponentPlayer.board.singleUseCard, player)
 
 					opponentPlayer.board.singleUseCardUsed = false
 

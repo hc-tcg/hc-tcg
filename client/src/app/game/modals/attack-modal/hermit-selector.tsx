@@ -7,6 +7,7 @@ import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import Attack from './attack'
+import {isHermit} from 'common/cards/base/card'
 
 type HermitExtra = {
 	hermitId: string
@@ -30,7 +31,8 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	if (!activeRow || !playerState || !activeRow.hermitCard) return null
 	if (!opponentRow || !opponentRow.hermitCard) return null
 
-	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
+	const playerHermitInfo = activeRow.hermitCard
+	if (!isHermit(playerHermitInfo.props)) return null
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
 

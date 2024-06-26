@@ -1,13 +1,13 @@
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult, CardT, ModalData} from './game-state'
+import {ActionResult, CardInstance, ModalData} from './game-state'
 
 export type PickedSlotType = SlotTypeT | 'hand'
 
 export type PickInfo = {
 	playerId: string
 	rowIndex: number | null // This will be null for the hand
-	card: CardT | null
+	card: CardInstance | null
 	type: SlotTypeT
 	index: number | null
 }

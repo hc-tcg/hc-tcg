@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
-import {moveCardToHand} from '../../../utils/movement'
+import {moveCardInstanceoHand} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
 class LootingSingleUseCard extends SingleUseCard {
@@ -53,7 +53,7 @@ class LootingSingleUseCard extends SingleUseCard {
 					const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return
-					moveCardToHand(game, pickedSlot.card, player)
+					moveCardInstanceoHand(game, pickedSlot.card, player)
 				},
 			})
 		})

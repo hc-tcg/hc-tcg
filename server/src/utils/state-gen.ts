@@ -3,7 +3,7 @@ import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
-	CardT,
+	CardInstance,
 	CoinFlipT,
 	LocalGameState,
 	LocalPlayerState,
@@ -17,7 +17,6 @@ import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card, {Hermit} from 'common/cards/base/card'
 import {CardPosModel} from 'common/models/card-pos-model'
-import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition} from 'common/slot'
 import {PickInfo} from 'common/types/server-requests'
@@ -43,13 +42,13 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			cardInfo.isHermitCard() &&
-			cardInfo.isItemCard() &&
+			cardInfo.isHermit() &&
+			cardInfo.isItem() &&
 			types.includes(cardInfo.props.type) &&
 			!EXPANSIONS.disabled.includes(cardInfo.props.expansion)
 	)
 
-	const effectCards = cards.filter((card) => card.isSingleUseCard() || card.isAttachableCard())
+	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttachable())
 	const hermitCount = typesCount === 2 ? 8 : 10
 
 	const deck: Array<Card> = []
@@ -74,8 +73,8 @@ export function getStarterPack() {
 
 	// hermits, but not diamond ones
 	let hermitCards = cards
-		.filter((card) => card.isHermitCard())
-		.filter((card) => getCardRank(card.props.id).name !== 'diamond') as Array<Card<Hermit>>
+		.filter((card) => card.isHermit())
+		.filter((card) => card.props.name !== 'diamond') as Array<Card<Hermit>>
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -111,7 +110,7 @@ export function getStarterPack() {
 		const duplicates = deck.filter((card) => card.props.id === effectCard.props.id)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
-		const tokenCost = getCardCost(effectCard)
+		const tokenCost = effectCard.props.tokens
 		if (tokens + tokenCost >= limits.maxDeckCost) {
 			loopBreaker++
 			continue
@@ -146,8 +145,8 @@ export function getEmptyRow(): RowState {
 
 export function getPlayerState(player: PlayerModel): PlayerState {
 	const allCards = Object.values(CARDS).map(
-		(card: Card): CardT => ({
-			cardId: card.props.id,
+		(card: Card): CardInstance => ({
+			props: card.props,
 			cardInstance: card.props.id,
 		})
 	)
@@ -159,14 +158,14 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	// randomize instances
 	pack = pack.map((card) => {
 		return {
-			cardId: card.cardId,
+			props: card.props,
 			cardInstance: Math.random().toString(),
 		}
 	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
-		return CARDS[card.cardId].props.type === 'hermit'
+		return card.props.category === 'hermit'
 	})
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
@@ -185,7 +184,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		}
 
 		const cardInfo = {
-			cardId: id,
+			props: card.props,
 			cardInstance: Math.random().toString(),
 		}
 		pack.push(cardInfo)
@@ -235,8 +234,10 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardT>) => void>(),
-			onCoinFlip: new GameHook<(card: CardT, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>(),
+			onTurnEnd: new GameHook<(drawCards: Array<CardInstance>) => void>(),
+			onCoinFlip: new GameHook<
+				(card: CardInstance, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+			>(),
 			beforeActiveRowChange: new GameHook<
 				(oldRow: number | null, newRow: number | null) => boolean
 			>(),

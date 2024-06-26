@@ -8,6 +8,7 @@ import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
 import HermitSelector from './hermit-selector'
+import {isHermit} from 'common/cards/base/card'
 
 type Props = {
 	closeModal: () => void
@@ -26,11 +27,11 @@ function AttackModal({closeModal}: Props) {
 	if (!opponentRow || !opponentRow.hermitCard) return null
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
-	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
-	if (!playerHermitInfo) return null // Armor Stand
+	const playerHermitInfo = activeRow.hermitCard
+	if (!isHermit(playerHermitInfo.props)) return null
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
-	const singleUseInfo = singleUseCard ? SINGLE_USE_CARDS[singleUseCard.cardId] : null
+	const singleUseInfo = singleUseCard ? singleUseCard : null
 
 	const handleAttack = (type: 'single-use' | 'primary' | 'secondary') => {
 		dispatch(startAttack(type))

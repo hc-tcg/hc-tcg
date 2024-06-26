@@ -4,19 +4,19 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {HERMIT_CARDS} from '../..'
 import {slot} from '../../../slot'
-import Card, { Attachable, attachable } from '../../base/card'
+import Card, {Attachable, attachable} from '../../base/card'
 
 class BrewingStandEffectCard extends Card<Attachable> {
 	props: Attachable = {
 		...attachable,
-			id: 'brewing_stand',
-			numericId: 201,
-			name: 'Brewing stand',
-			expansion: 'advent_of_tcg',
-			rarity: 'rare',
-			tokens: 1,
-			description:
-				'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
+		id: 'brewing_stand',
+		numericId: 201,
+		name: 'Brewing stand',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

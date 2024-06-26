@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {CardT} from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
 import {equalCard} from '../../../utils/cards'
@@ -30,7 +30,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		let firstPickedCard: CardT | null = null
+		let firstPickedCard: CardInstance | null = null
 
 		game.addPickRequest({
 			playerId: player.id,

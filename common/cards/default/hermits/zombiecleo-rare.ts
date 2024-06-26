@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
-import {CardT} from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import HermitCard from '../../base/hermit-card'
 
 class ZombieCleoRareHermitCard extends HermitCard {
@@ -50,7 +50,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 
 		if (!attack || attack.type !== 'secondary') return attack
 
-		const pickedCard: CardT = player.custom[pickedCardKey]?.card
+		const pickedCard: CardInstance = player.custom[pickedCardKey]?.card
 		const attackType = player.custom[pickedCardKey]?.attack
 
 		// Delete the stored data straight away

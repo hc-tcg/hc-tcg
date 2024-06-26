@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {moveCardToHand} from '../../../utils/movement'
+import {moveCardInstanceoHand} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 
 class LoyaltyEffectCard extends EffectCard {
@@ -28,7 +28,7 @@ class LoyaltyEffectCard extends EffectCard {
 			for (let i = 0; i < attackTarget.row.itemCards.length; i++) {
 				const card = attackTarget.row.itemCards[i]
 				if (card) {
-					moveCardToHand(game, card)
+					moveCardInstanceoHand(game, card)
 				}
 			}
 		}

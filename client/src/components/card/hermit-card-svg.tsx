@@ -8,7 +8,7 @@ import {memo} from 'react'
 import Card, {Hermit} from 'common/cards/base/card'
 
 export type HermitCardProps = {
-	card: Card<Hermit>
+	card: Hermit
 }
 
 const COST_PAD = 20
@@ -20,15 +20,15 @@ const COST_X = [
 ]
 
 const HermitCardModule = memo(({card}: HermitCardProps) => {
-	const hermitFullName = card.props.id.split('_')[0]
+	const hermitFullName = card.id.split('_')[0]
 
-	const rank = getCardRank(card.props.id)
-	const palette = card.getPalette()
-	const backgroundName = card.getBackground()
+	const rank = getCardRank(card.tokens)
+	const palette = card.palette || ''
+	const backgroundName = card.background
 	const showCost = !useSelector(getGameState)
-	const name = card.getShortName()
+	const name = card.name
 	const nameLength = name.length
-	const disabled = EXPANSIONS.disabled.includes(card.props.expansion) ? 'disabled' : 'enabled'
+	const disabled = EXPANSIONS.disabled.includes(card.expansion) ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -70,7 +70,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 				dominantBaseline="hanging"
 				key={Math.random()}
 			>
-				{card.props.health}
+				{card.health}
 			</text>
 			<g id="hermit-image">
 				<rect x="45" y="60" fill="white" width="310" height="196" />
@@ -105,29 +105,29 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					y="12"
 					width="68"
 					height="68"
-					href={`/images/types/type-${card.props.type}.png`}
+					href={`/images/types/type-${card.type}.png`}
 					className={css.type}
 				/>
 			</g>
-			{showCost && rank.name !== 'stone' ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<image
 						x="68"
 						y="80"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank.name}.png`}
+						href={`/images/ranks/${rank}.png`}
 						className={css.rank}
 					/>
 				</g>
 			) : null}
 			<g id="hermit-attacks" className={css.hermitAttacks}>
 				<g>
-					{card.props.primary.cost.map((type: string, i: number) => (
+					{card.primary.cost.map((type: string, i: number) => (
 						<image
 							key={i}
 							href={`/images/types/type-${type}.png`}
-							x={COST_X[card.props.primary.cost.length - 1][i]}
+							x={COST_X[card.primary.cost.length - 1][i]}
 							y="273"
 							width={COST_SIZE}
 							height={COST_SIZE}
@@ -143,26 +143,26 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.props.primary.name}
+					{card.primary.name}
 				</text>
 				<text
 					x="380"
 					y="270"
 					className={classnames(css.attackDamage, css[palette], {
-						[css.specialMove]: !!card.props.primary.power,
+						[css.specialMove]: !!card.primary.power,
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.props.primary.damage === 0 ? '00' : card.props.primary.damage}
+					{card.primary.damage === 0 ? '00' : card.primary.damage}
 				</text>
 				<rect x="20" y="315" width="360" height="10" fill="white" />
-				{card.props.secondary.cost.map((type: string, i: number) => (
+				{card.secondary.cost.map((type: string, i: number) => (
 					<image
 						key={i}
 						href={`/images/types/type-${type}.png`}
-						x={COST_X[card.props.secondary.cost.length - 1][i]}
+						x={COST_X[card.secondary.cost.length - 1][i]}
 						y="343"
 						width={COST_SIZE}
 						height={COST_SIZE}
@@ -173,25 +173,25 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 					x="200"
 					y="342"
 					className={classnames(css.attackName, css[palette], css[palette], {
-						[css.specialMove]: !!card.props.secondary.power,
+						[css.specialMove]: !!card.secondary.power,
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.props.secondary.name}
+					{card.secondary.name}
 				</text>
 				<text
 					x="380"
 					y="340"
 					className={classnames(css.attackDamage, css[palette], {
-						[css.specialMove]: !!card.props.secondary.power,
+						[css.specialMove]: !!card.secondary.power,
 					})}
 					textAnchor="middle"
 					dominantBaseline="hanging"
 					key={Math.random()}
 				>
-					{card.props.secondary.damage === 0 ? '00' : card.props.secondary.damage}
+					{card.secondary.damage === 0 ? '00' : card.secondary.damage}
 				</text>
 			</g>
 		</svg>

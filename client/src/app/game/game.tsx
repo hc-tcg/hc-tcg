@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardT} from 'common/types/game-state'
+import {CardInstance} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'
@@ -73,7 +73,7 @@ function Game() {
 	if (!gameState || !playerState) return <p>Loading</p>
 	const [gameScale, setGameScale] = useState<number>(1)
 	const filteredCards = DEBUG_CONFIG.unlimitedCards
-		? gameState.hand.filter((c) => c.cardId.toLowerCase().includes(filter.toLowerCase()))
+		? gameState.hand.filter((c) => c.props.name.toLowerCase().includes(filter.toLowerCase()))
 		: gameState.hand
 
 	const gameWrapperRef = useRef<HTMLDivElement>(null)
@@ -88,7 +88,7 @@ function Game() {
 		dispatch(slotPicked(pickInfo))
 	}
 
-	const selectCard = (card: CardT) => {
+	const selectCard = (card: CardInstance) => {
 		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
@@ -212,7 +212,7 @@ function Game() {
 		return null
 	}
 
-	let unpickableCards: Array<CardT> = []
+	let unpickableCards: Array<CardInstance> = []
 	const pickableCards = pickRequestPickableSlots
 		?.filter((slot) => slot.type === 'hand')
 		.map((slot) => slot.card?.cardInstance)
@@ -239,7 +239,7 @@ function Game() {
 					<CardList
 						wrap={false}
 						cards={filteredCards}
-						onClick={(card: CardT) => selectCard(card)}
+						onClick={(card: CardInstance) => selectCard(card)}
 						selected={[selectedCard]}
 						unpickable={unpickableCards}
 					/>

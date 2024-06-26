@@ -1,7 +1,7 @@
 import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {CardT} from 'common/types/game-state'
+import {CardInstance} from 'common/types/game-state'
 import {
 	ChangeActiveHermitActionData,
 	PickCardActionData,
@@ -37,21 +37,14 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	yield put(actionData)
 }
 
-function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): SagaIterator {
-	const selectedCardInfo = CARDS[selectedCard.cardId]
+function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardInstance): SagaIterator {
 	const pickInfo = action.payload.pickInfo
 
 	yield putResolve(setSelectedCard(null))
 
 	// If the hand is clicked don't send data
 	if (pickInfo.type !== 'hand') {
-		if (!selectedCardInfo) {
-			// Validations
-			console.log('Unknown card id: ', selectedCard)
-			return
-		}
-
-		const actionType = slotToPlayCardAction[selectedCardInfo.props.type]
+		const actionType = slotToPlayCardAction[selectedCard.props.category]
 		if (!actionType) return
 
 		const actionData: PlayCardActionData = {

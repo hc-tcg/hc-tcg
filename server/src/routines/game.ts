@@ -11,7 +11,13 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
-import {TurnActions, CardT, PlayerState, ActionResult, TurnAction} from 'common/types/game-state'
+import {
+	TurnActions,
+	CardInstance,
+	PlayerState,
+	ActionResult,
+	TurnAction,
+} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
@@ -155,7 +161,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = currentPlayer.hand.reduce(
-			(reducer: TurnActions, card: CardT): TurnActions => {
+			(reducer: TurnActions, card: CardInstance): TurnActions => {
 				const cardInfo = CARDS[card.cardId]
 				const pickableSlots = game.filterSlots(cardInfo.attachCondition)
 
@@ -557,7 +563,7 @@ function* turnSaga(game: GameModel) {
 	if (result === 'GAME_END') return 'GAME_END'
 
 	// Create card draw array
-	const drawCards: Array<CardT | null> = []
+	const drawCards: Array<CardInstance | null> = []
 
 	// Call turn end hooks
 	currentPlayer.hooks.onTurnEnd.call(drawCards)

@@ -1,5 +1,5 @@
 import {GameModel} from '../models/game-model'
-import {CardT, PlayerState} from '../types/game-state'
+import {CardInstance, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
@@ -29,7 +29,7 @@ function discardAtPos(pos: CardPosModel) {
 
 export function discardCard(
 	game: GameModel,
-	card: CardT | null,
+	card: CardInstance | null,
 	playerDiscard?: PlayerState | null
 ) {
 	if (!card) return
@@ -59,7 +59,7 @@ export function discardCard(
 	}
 }
 
-export function retrieveCard(game: GameModel, card: CardT | null) {
+export function retrieveCard(game: GameModel, card: CardInstance | null) {
 	if (!card) return
 	for (let playerId in game.state.players) {
 		const player = game.state.players[playerId]
@@ -97,7 +97,7 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	}
 }
 
-export function discardFromHand(player: PlayerState, card: CardT | null) {
+export function discardFromHand(player: PlayerState, card: CardInstance | null) {
 	if (!card) return
 
 	player.hand = player.hand.filter((c) => !equalCard(c, card))
@@ -115,7 +115,11 @@ export function drawCards(playerState: PlayerState, amount: number) {
 	}
 }
 
-export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: PlayerState | null) {
+export function moveCardInstanceoHand(
+	game: GameModel,
+	card: CardInstance,
+	playerDiscard?: PlayerState | null
+) {
 	const cardPos = getCardPos(game, card.cardInstance)
 	if (!cardPos) return
 
@@ -140,8 +144,8 @@ export function moveCardToHand(game: GameModel, card: CardT, playerDiscard?: Pla
 	}
 }
 
-/**Returns a `CardT` of the card in the slot, or `null` if it's empty. */
-export function getSlotCard(slotPos: SlotInfo): CardT | null {
+/**Returns a `CardInstance` of the card in the slot, or `null` if it's empty. */
+export function getSlotCard(slotPos: SlotInfo): CardInstance | null {
 	const {row, index, type} = slotPos
 
 	if (!row || !index) return null

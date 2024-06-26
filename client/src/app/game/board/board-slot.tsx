@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
 import CardComponent from 'components/card'
-import {CardT, RowState} from 'common/types/game-state'
+import {CardInstance, RowState} from 'common/types/game-state'
 import css from './board.module.scss'
 import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
@@ -26,7 +26,7 @@ export type SlotProps = {
 	index?: number
 	playerId: string
 	onClick?: () => void
-	card: CardT | null
+	card: CardInstance | null
 	rowState?: RowState
 	active?: boolean
 	cssId?: string
@@ -49,11 +49,19 @@ const Slot = ({
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
 
-	let cardInfo = card?.cardId
-		? (CARDS[card.cardId] as Card<Hermit | Item | Attachable | SingleUse | CardProps>)
+	let cardInfo = card?.props
+		? (card.props as Hermit | Item | Attachable | SingleUse | CardProps)
 		: null
 	if (type === 'health' && rowState?.health) {
-		cardInfo = new HealthCard()
+		cardInfo = {
+			category: 'health',
+			id: 'health',
+			expansion: 'default',
+			numericId: -1,
+			tokens: -1,
+			name: 'Health Card',
+			rarity: 'common',
+		}
 	}
 	const renderStatusEffects = (cleanedStatusEffects: StatusEffectT[]) => {
 		return (
@@ -76,7 +84,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-						})
+					  })
 					: null}
 			</div>
 		)
@@ -161,13 +169,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-							? renderStatusEffects(effectStatusEffects)
-							: null}
+						? renderStatusEffects(effectStatusEffects)
+						: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-							? renderDamageStatusEffects(effectStatusEffects)
-							: renderDamageStatusEffects(null)}
+						? renderDamageStatusEffects(effectStatusEffects)
+						: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

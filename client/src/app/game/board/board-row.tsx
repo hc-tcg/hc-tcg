@@ -1,5 +1,5 @@
 import {RowState} from 'common/types/game-state'
-import {CardT} from 'common/types/game-state'
+import {CardInstance} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
@@ -10,7 +10,7 @@ const getCardBySlot = (
 	slotType: SlotTypeT,
 	slotIndex: number,
 	row: RowState | null
-): CardT | null => {
+): CardInstance | null => {
 	if (!row) return null
 	if (slotType === 'hermit') return row.hermitCard || null
 	if (slotType === 'effect') return row.effectCard || null
@@ -21,7 +21,7 @@ const getCardBySlot = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	rowIndex: number
-	onClick: (card: CardT | null, slot: SlotTypeT, index: number) => void
+	onClick: (card: CardInstance | null, slot: SlotTypeT, index: number) => void
 	rowState: RowState
 	active: boolean
 	playerId: string

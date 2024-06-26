@@ -1,18 +1,14 @@
-import {select, take} from 'typed-redux-saga'
-import {call, put, fork} from 'redux-saga/effects'
+import {select} from 'typed-redux-saga'
+import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
-import {CardT} from 'common/types/game-state'
-import {CARDS} from 'common/cards'
+import {CardInstance} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
-import {setOpenedModal, applyEffect, modalRequest} from 'logic/game/game-actions'
+import {setOpenedModal} from 'logic/game/game-actions'
+import {isSingleUse} from 'common/cards/base/card'
 
-function* singleUseSaga(card: CardT): SagaIterator {
-	// We use CARDS instead of SINGLE_USE_CARDS because of Water and Milk Buckets
-	const cardInfo = CARDS[card.cardId]
-	if (!cardInfo) return
-
-	if (cardInfo.isSingleUseCard() && cardInfo.canApply()) {
+function* singleUseSaga(card: CardInstance): SagaIterator {
+	if (isSingleUse(card.props) && card.props.showConfirmationModal) {
 		yield put(setOpenedModal('confirm'))
 	}
 }

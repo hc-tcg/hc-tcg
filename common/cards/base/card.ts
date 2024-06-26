@@ -42,6 +42,10 @@ export type Item = CardProps & {
 	type: typeT
 }
 
+export function isItem(props: CardProps | null): props is Item {
+	return props !== null && 'item' in props
+}
+
 export const item = {
 	item: null,
 	type: 'item' as CardCategoryT,
@@ -59,11 +63,21 @@ export type HasHealth = CardProps & {
 	health: number
 }
 
+export function isHealth(props: CardProps | null): props is HasHealth {
+	return props !== null && 'health' in props
+}
+
 export type Hermit = HasHealth & {
 	hermit: null
 	type: typeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
+	palette?: string
+	background?: string
+}
+
+export function isHermit(props: CardProps | null): props is Hermit {
+	return props !== null && 'hermit' in props
 }
 
 export const hermit = {
@@ -83,6 +97,10 @@ export type Attachable = CardProps & {
 	description: string
 }
 
+export function isAttachable(props: CardProps | null): props is Attachable {
+	return props !== null && 'attachable' in props
+}
+
 export const attachable = {
 	attachable: null,
 	type: 'effect' as CardCategoryT,
@@ -100,6 +118,10 @@ export type SingleUse = CardProps & {
 	singleUse: null
 	showConfirmationModal: boolean
 	description: string
+}
+
+export function isSingleUse(props: CardProps | null): props is SingleUse {
+	return props !== null && 'singleUse' in props
 }
 
 export const singleUse = {
@@ -150,16 +172,16 @@ abstract class Card<Props extends CardProps = CardProps> {
 		// default is do nothing
 	}
 
-	public isItemCard(): this is Card<CardProps & Item> {
-		return 'item' in this.props
+	public isItem(): this is Card<CardProps & Item> {
+		return isItem(this.props)
 	}
 
 	public getEnergy(this: Card<Item>, game: GameModel, pos: CardPosModel): Array<typeT> {
 		return []
 	}
 
-	public isHermitCard(): this is Card<CardProps & Hermit> {
-		return 'hermit' in this.props
+	public isHermit(): this is Card<CardProps & Hermit> {
+		return isHermit(this.props)
 	}
 
 	public getAttack(
@@ -212,44 +234,16 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return 'primary' in this.props && 'secondary' in this.props
 	}
 
-	public isAttachableCard(): this is Card<CardProps & Attachable> {
-		return 'attachable' in this.props
+	public isAttachable(): this is Card<CardProps & Attachable> {
+		return isAttachable(this.props)
 	}
 
-	public isSingleUseCard(): this is Card<CardProps & SingleUse> {
-		return 'singleUse' in this.props
-	}
-
-	/**
-	 * Returns the palette to use for this card
-	 */
-	public getPalette(): string {
-		return 'default'
+	public isSingleUse(): this is Card<CardProps & SingleUse> {
+		return isSingleUse(this.props)
 	}
 
 	public getBackground(): string {
 		return this.props.id.split('_')[0]
-	}
-
-	/**
-	 * Returns the shortened name to use for this card
-	 */
-	public getShortName(): string {
-		return this.props.name
-	}
-
-	/**
-	 * Returns whether to show *Attach* on the card tooltip
-	 */
-	public showAttachTooltip(): boolean {
-		return false
-	}
-
-	/**
-	 * Returns whether to show *Single Use* on the card tooltip
-	 */
-	public showSingleUseTooltip(): boolean {
-		return false
 	}
 
 	/**

@@ -1,10 +1,10 @@
 import {DEBUG_CONFIG} from '../config'
-import {CardT, CoinFlipT, PlayerState} from '../types/game-state'
+import {CardInstance, CoinFlipT, PlayerState} from '../types/game-state'
 import {CARDS} from '../cards'
 
 export function flipCoin(
 	playerTossingCoin: PlayerState,
-	card: CardT,
+	card: CardInstance,
 	times: number = 1,
 	currentPlayer: PlayerState | null = null
 ) {

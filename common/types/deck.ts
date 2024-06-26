@@ -1,4 +1,4 @@
-import {CardT} from './game-state'
+import {CardInstance} from './game-state'
 
 export type PlayerDeckT = {
 	name: string
@@ -14,5 +14,5 @@ export type PlayerDeckT = {
 		| 'redstone'
 		| 'speedrunner'
 		| 'terraform'
-	cards: Array<CardT>
+	cards: Array<CardInstance>
 }

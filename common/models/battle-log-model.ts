@@ -3,7 +3,7 @@ import {
 	CurrentCoinFlipT,
 	PlayerState,
 	RowStateWithHermit,
-	CardT,
+	CardInstance,
 	BattleLogT,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
@@ -28,7 +28,7 @@ export class BattleLogModel {
 		this.logMessageQueue = []
 	}
 
-	private generateEffectEntryHeader(card: CardT | null): string {
+	private generateEffectEntryHeader(card: CardInstance | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
 		const cardInfo = CARDS[card.cardId]
@@ -169,7 +169,7 @@ export class BattleLogModel {
 	public addAttackEntry(
 		attack: AttackModel,
 		coinFlips: Array<CurrentCoinFlipT>,
-		singleUse: CardT | null
+		singleUse: CardInstance | null
 	) {
 		const attacker = attack.getAttacker()
 		if (!attacker) return
@@ -261,8 +261,8 @@ export class BattleLogModel {
 	public addChangeRowEntry(
 		player: PlayerState,
 		newRow: number,
-		oldHermit: CardT | null,
-		newHermit: CardT | null
+		oldHermit: CardInstance | null,
+		newHermit: CardInstance | null
 	) {
 		if (!newHermit) return
 		const newHermitInfo = CARDS[newHermit.cardId]

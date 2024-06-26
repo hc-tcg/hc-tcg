@@ -1,4 +1,4 @@
-import Card, { Attachable, Hermit, Item, SingleUse } from './base/card'
+import Card, {Attachable, Hermit, Item, SingleUse} from './base/card'
 import defaultEffectCards from './default/effects'
 import alterEgosEffectCards from './alter-egos/effects'
 import adventOfTcgEffectCards from './advent-of-tcg/effects'

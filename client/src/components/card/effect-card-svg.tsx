@@ -5,16 +5,16 @@ import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {memo} from 'react'
-import Card, { Attachable, SingleUse } from 'common/cards/base/card'
+import Card, {Attachable, SingleUse} from 'common/cards/base/card'
 
 export type EffectCardProps = {
-	card: Card<Attachable | SingleUse>
+	card: Attachable | SingleUse
 }
 
 const EffectCardModule = memo(({card}: EffectCardProps) => {
-	const rank = getCardRank(card.props.id)
+	const rank = getCardRank(card.tokens)
 	const showCost = !useSelector(getGameState)
-	const disabled = EXPANSIONS.disabled.includes(card.props.expansion) ? 'disabled' : 'enabled'
+	const disabled = EXPANSIONS.disabled.includes(card.expansion) ? 'disabled' : 'enabled'
 
 	return (
 		<svg
@@ -28,7 +28,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 				<image className={css.star} href={`/images/star_color.svg`} x="-15" y="65" width="390" />
 				<image
 					className={css.icon}
-					href={`/images/effects/${card.props.id}.png`}
+					href={`/images/effects/${card.id}.png`}
 					width="220"
 					height="220"
 					x="90"
@@ -56,7 +56,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 					EFFECT
 				</text>
 			</g>
-			{showCost && rank.name !== 'stone' ? (
+			{showCost && rank !== 'stone' ? (
 				<g>
 					<rect className={css.rarity} x="0" y="302" width="100" height="100" rx="50" ry="50" />
 					<image
@@ -64,7 +64,7 @@ const EffectCardModule = memo(({card}: EffectCardProps) => {
 						y="315"
 						width="70"
 						height="70"
-						href={`/images/ranks/${rank.name}.png`}
+						href={`/images/ranks/${rank}.png`}
 						className={css.rank}
 					/>
 				</g>
