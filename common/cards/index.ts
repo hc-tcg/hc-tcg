@@ -1,8 +1,4 @@
-import Card from './base/card'
-import EffectCard from './base/effect-card'
-import HermitCard from './base/hermit-card'
-import ItemCard from './base/item-card'
-import SingleUseCard from './base/single-use-card'
+import Card, { Attachable, Hermit, Item, SingleUse } from './base/card'
 import defaultEffectCards from './default/effects'
 import alterEgosEffectCards from './alter-egos/effects'
 import adventOfTcgEffectCards from './advent-of-tcg/effects'
@@ -15,22 +11,22 @@ import alterEgosSingleUseCards from './alter-egos/single-use'
 import adventOfTcgSingleUseCards from './advent-of-tcg/single-use'
 import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
 
-const effectCardClasses: Array<EffectCard> = [
+const effectCardClasses: Array<Card<Attachable>> = [
 	...defaultEffectCards,
 	...alterEgosEffectCards,
 	...adventOfTcgEffectCards,
 ]
 
-const hermitCardClasses: Array<HermitCard> = [
+const hermitCardClasses: Array<Card<Hermit>> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
 	...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
 ]
 
-const itemCardClasses: Array<ItemCard> = [...defaultItemCards]
+const itemCardClasses: Array<Card<Item>> = [...defaultItemCards]
 
-const singleUseCardClasses: Array<SingleUseCard> = [
+const singleUseCardClasses: Array<Card<SingleUse>> = [
 	...defaultSingleUseCards,
 	...alterEgosSingleUseCards,
 	...adventOfTcgSingleUseCards,
@@ -45,39 +41,39 @@ const allCardClasses: Array<Card> = [
 
 export const CARDS: Record<string, Card> = allCardClasses.reduce(
 	(result: Record<string, Card>, card) => {
-		result[card.id] = card
+		result[card.props.id] = card
 		return result
 	},
 	{}
 )
 
-export const EFFECT_CARDS: Record<string, EffectCard> = effectCardClasses.reduce(
-	(result: Record<string, EffectCard>, card) => {
-		result[card.id] = card
+export const EFFECT_CARDS: Record<string, Card<Attachable>> = effectCardClasses.reduce(
+	(result: Record<string, Card<Attachable>>, card) => {
+		result[card.props.id] = card
 		return result
 	},
 	{}
 )
 
-export const HERMIT_CARDS: Record<string, HermitCard> = hermitCardClasses.reduce(
-	(result: Record<string, HermitCard>, card) => {
-		result[card.id] = card
+export const HERMIT_CARDS: Record<string, Card<Hermit>> = hermitCardClasses.reduce(
+	(result: Record<string, Card<Hermit>>, card) => {
+		result[card.props.id] = card
 		return result
 	},
 	{}
 )
 
-export const ITEM_CARDS: Record<string, ItemCard> = itemCardClasses.reduce(
-	(result: Record<string, ItemCard>, card) => {
-		result[card.id] = card
+export const ITEM_CARDS: Record<string, Card<Item>> = itemCardClasses.reduce(
+	(result: Record<string, Card<Item>>, card) => {
+		result[card.props.id] = card
 		return result
 	},
 	{}
 )
 
-export const SINGLE_USE_CARDS: Record<string, SingleUseCard> = singleUseCardClasses.reduce(
-	(result: Record<string, SingleUseCard>, card) => {
-		result[card.id] = card
+export const SINGLE_USE_CARDS: Record<string, Card<SingleUse>> = singleUseCardClasses.reduce(
+	(result: Record<string, Card<SingleUse>>, card) => {
+		result[card.props.id] = card
 		return result
 	},
 	{}

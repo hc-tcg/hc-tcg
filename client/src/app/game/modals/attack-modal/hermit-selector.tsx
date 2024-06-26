@@ -32,21 +32,21 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const playerHermitInfo = HERMIT_CARDS[activeRow.hermitCard.cardId]
 
-	const hermitFullName = playerHermitInfo.id.split('_')[0]
+	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
 
 	const eaResult = extraAttacks.reduce((agg, extra) => {
 		const [hermitId, action] = extra.split(':')
 		const hermitInfo = HERMIT_CARDS[hermitId]
 		if (!hermitInfo) throw new Error('Invalid extra attack')
 		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
-		const hermitFullName = hermitInfo.id.split('_')[0]
+		const hermitFullName = hermitInfo.props.id.split('_')[0]
 		agg[hermitId] = agg[hermitId] || {}
 		agg[hermitId][type] = (
 			<Attack
 				key={extra}
-				name={hermitInfo[type].name}
+				name={hermitInfo.props[type].name}
 				icon={`/images/hermits-nobg/${hermitFullName}.png`}
-				attackInfo={hermitInfo[type]}
+				attackInfo={hermitInfo.props[type]}
 				onClick={() => handleExtraAttack({hermitId, type})}
 				extra
 			/>
@@ -56,7 +56,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
 		const hermitInfo = HERMIT_CARDS[hermitId]
-		const hermitFullName = hermitInfo.id.split('_')[0]
+		const hermitFullName = hermitInfo.props.id.split('_')[0]
 		return (
 			<img
 				key={hermitId}
@@ -65,8 +65,8 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 					[css.selected]: selectedHermit === hermitId,
 				})}
 				src={`/images/hermits-emoji/${hermitFullName}.png`}
-				alt={hermitInfo.name}
-				title={hermitInfo.name}
+				alt={hermitInfo.props.name}
+				title={hermitInfo.props.name}
 			/>
 		)
 	})
@@ -79,7 +79,7 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 				</div>
 				<div className={css.info}>
 					<div className={css.name}>
-						{playerHermitInfo.secondary.name}
+						{playerHermitInfo.props.secondary.name}
 						<span className={css.select}> Select a hermit...</span>
 					</div>
 					<button className={css.hermitOptions}>{hermitOptions}</button>

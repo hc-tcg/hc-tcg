@@ -15,10 +15,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {EnergyT, SlotInfo} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card from 'common/cards/base/card'
-import HermitCard from 'common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
-import EffectCard from 'common/cards/base/effect-card'
+import Card, { Hermit } from 'common/cards/base/card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
@@ -33,16 +30,6 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const isHermitOrItem: (cardInfo: Card) => cardInfo is HermitCard | ItemCard = (
-	cardInfo
-): cardInfo is HermitCard | ItemCard => ['hermit', 'item'].includes(cardInfo.type)
-
-const isHermit: (cardInfo: Card) => cardInfo is HermitCard = (cardInfo): cardInfo is HermitCard =>
-	cardInfo.type === 'hermit'
-
-const isEffect: (cardInfo: Card) => cardInfo is EffectCard = (cardInfo): cardInfo is EffectCard =>
-	['effect', 'single_use'].includes(cardInfo.type)
-
 export function getStarterPack() {
 	const limits = CONFIG.limits
 
@@ -56,11 +43,13 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			(!isHermitOrItem(cardInfo) || hermitTypes.includes(cardInfo.hermitType)) &&
-			!EXPANSIONS.disabled.includes(cardInfo.getExpansion())
+			cardInfo.isHermitCard() &&
+			cardInfo.isItemCard() &&
+			hermitTypes.includes(cardInfo.props.hermitType) &&
+			!EXPANSIONS.disabled.includes(cardInfo.props.expansion)
 	)
 
-	const effectCards = cards.filter(isEffect)
+	const effectCards = cards.filter((card) => card.isSingleUseCard() || card.isAttachableCard())
 	const hermitCount = hermitTypesCount === 2 ? 8 : 10
 
 	const deck: Array<Card> = []
@@ -84,7 +73,7 @@ export function getStarterPack() {
 	let tokens = 0
 
 	// hermits, but not diamond ones
-	let hermitCards = cards.filter(isHermit).filter((card) => getCardRank(card.id).name !== 'diamond')
+	let hermitCards = cards.filter((card) => card.isHermitCard()).filter((card) => getCardRank(card.props.id).name !== 'diamond') as Array<Card<Hermit>> 
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -96,10 +85,10 @@ export function getStarterPack() {
 		// add 1 - 3 of this hermit
 		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
 
-		tokens += getCardCost(hermitCard) * hermitAmount
+		tokens += hermitCard.props.tokens * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.hermitType].items += 2
+			itemCounts[hermitCard.props.hermitType].items += 2
 		}
 	}
 
@@ -117,7 +106,7 @@ export function getStarterPack() {
 	while (deck.length < limits.maxCards) {
 		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
-		const duplicates = deck.filter((card) => card.id === effectCard.id)
+		const duplicates = deck.filter((card) => card.props.id === effectCard.props.id)
 		if (duplicates.length >= limits.maxDuplicates) continue
 
 		const tokenCost = getCardCost(effectCard)
@@ -137,7 +126,7 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	const deckIds: Array<string> = deck.map((card) => card.id)
+	const deckIds: Array<string> = deck.map((card) => card.props.id)
 	return deckIds
 }
 
@@ -156,8 +145,8 @@ export function getEmptyRow(): RowState {
 export function getPlayerState(player: PlayerModel): PlayerState {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): CardT => ({
-			cardId: card.id,
-			cardInstance: card.id,
+			cardId: card.props.id,
+			cardInstance: card.props.id,
 		})
 	)
 	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.deck.cards
@@ -175,7 +164,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
-		return CARDS[card.cardId].type === 'hermit'
+		return CARDS[card.cardId].props.type === 'hermit'
 	})
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
@@ -302,7 +291,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// Add the card name before the request
 		const cardInfo = CARDS[currentPickRequest.id]
 		if (cardInfo) {
-			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
+			currentPickMessage = `${cardInfo.props.name}: ${currentPickMessage}`
 		}
 		// We also want to highlight the slots for the player that must select a slot
 		if (currentPickRequest.playerId == player.id) {

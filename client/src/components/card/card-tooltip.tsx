@@ -1,11 +1,8 @@
 import React from 'react'
 import {HermitTypeT} from 'common/types/cards'
-import Card from 'common/cards/base/card'
+import Card, {Attachable, SingleUse} from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
 import formattingCss from '../formatting/formatting.module.scss'
-import HermitCard from 'common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
-import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
@@ -33,7 +30,7 @@ type Props = {
 	card: Card
 }
 
-const getDescription = (card: Card): React.ReactNode => {
+const getDescription = (card: Card<Attachable | SingleUse>): React.ReactNode => {
 	return FormattedText(card.getFormattedDescription())
 }
 
@@ -44,11 +41,11 @@ const joinJsx = (array: Array<React.ReactNode>) => {
 }
 
 const getStrengthsAndWeaknesses = (card: Card): React.ReactNode => {
-	if (!(card instanceof HermitCard)) return null
+	if (!card.isHermitCard()) return null
 
-	const strengths = STRENGTHS[card.hermitType]
+	const strengths = STRENGTHS[card.props.hermitType]
 	const weaknesses = Object.entries(STRENGTHS)
-		.filter(([, value]) => value.includes(card.hermitType))
+		.filter(([, value]) => value.includes(card.props.hermitType))
 		.map(([key]) => key) as Array<HermitTypeT>
 
 	const result = (
@@ -79,14 +76,14 @@ const getStrengthsAndWeaknesses = (card: Card): React.ReactNode => {
 }
 
 const getName = (card: Card): React.ReactNode => {
-	if (card instanceof ItemCard) {
-		return <div className={classNames(css.name, css[card.hermitType])}>{card.name}</div>
+	if (card.isItemCard()) {
+		return <div className={classNames(css.name, css[card.props.hermitType])}>{card.props.name}</div>
 	}
-	return <div className={css.name}>{card.name}</div>
+	return <div className={css.name}>{card.props.name}</div>
 }
 
 const getRank = (card: Card): React.ReactNode => {
-	const {name, cost} = getCardRank(card.id)
+	const {name, cost} = getCardRank(card.props.id)
 	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
 	return (
 		<div className={classNames(css.rank, css[name])}>
@@ -96,8 +93,8 @@ const getRank = (card: Card): React.ReactNode => {
 }
 
 const getExpansion = (card: Card): React.ReactNode => {
-	if (card.getExpansion() !== 'default') {
-		const expansion = card.getExpansion() as
+	if (card.props.expansion !== 'default') {
+		const expansion = card.props.expansion as
 			| 'default'
 			| 'alter_egos'
 			| 'advent_of_tcg'
@@ -121,10 +118,10 @@ const getSingleUse = (card: Card): React.ReactNode => {
 }
 
 const getHermitType = (card: Card): React.ReactNode => {
-	if (card instanceof HermitCard) {
+	if (card.isHermitCard()) {
 		return (
-			<div className={classNames(css.hermitType, css[card.hermitType])}>
-				{HERMIT_TYPES[card.hermitType] || card.hermitType} Type
+			<div className={classNames(css.hermitType, css[card.props.hermitType])}>
+				{HERMIT_TYPES[card.props.hermitType] || card.props.hermitType} Type
 			</div>
 		)
 	}
@@ -159,7 +156,7 @@ const getSidebarDescriptions = (card: Card): React.ReactNode => {
 }
 
 const CardTooltip = ({card}: Props) => {
-	if (card instanceof HealthCard) return null
+	if (card.isHermitCard()) return null
 	const settings = useSelector(getSettings)
 
 	return (
@@ -178,7 +175,7 @@ const CardTooltip = ({card}: Props) => {
 					{getExpansion(card)}
 					{getRank(card)}
 					{getStrengthsAndWeaknesses(card)}
-					{getDescription(card)}
+					{(card.isAttachableCard() || card.isSingleUseCard()) && getDescription(card)}
 				</div>
 				<div></div>
 			</div>

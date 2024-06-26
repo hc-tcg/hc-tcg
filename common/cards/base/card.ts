@@ -4,6 +4,7 @@ import {
 	HermitTypeT,
 	HermitAttackInfo,
 	ExpansionT,
+	CardTypeT,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -23,6 +24,7 @@ export type CanAttachResult = Array<CanAttachError>
 
 export type CardProps = {
 	id: string
+	type: CardTypeT
 	expansion: ExpansionT
 	numericId: number
 	name: string
@@ -42,6 +44,7 @@ export type Item = CardProps & {
 
 export const item = {
 	item: null,
+	type: 'item' as CardTypeT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.itemSlot,
@@ -65,6 +68,7 @@ export type Hermit = HasHealth & {
 
 export const hermit = {
 	hermit: null,
+	type: 'hermit' as CardTypeT,
 	attachCondition: slot.every(
 		slot.hermitSlot,
 		slot.player,
@@ -81,6 +85,7 @@ export type Attachable = CardProps & {
 
 export const attachable = {
 	attachable: null,
+	type: 'effect' as CardTypeT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.effectSlot,
@@ -98,6 +103,7 @@ export type SingleUse = CardProps & {
 
 export const singleUse = {
 	singleUse: null,
+	type: 'single_use' as CardTypeT,
 	attachCondition: slot.every(
 		slot.singleUseSlot,
 		slot.playerHasActiveHermit,
@@ -107,11 +113,9 @@ export const singleUse = {
 
 abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
-	public instance: string
 	private log: Array<(values: PlayCardLog) => string>
 
 	constructor() {
-		this.instance = Math.random().toString()
 		this.log = []
 	}
 
@@ -125,9 +129,11 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public getKey(keyName: string) {
 		return this.props.id + ':' + keyName
 	}
+
 	public getInstanceKey(instance: string, keyName: string = '') {
 		return this.props.id + ':' + instance + ':' + keyName
 	}
+
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
@@ -208,11 +214,11 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return 'attachable' in this.props
 	}
 
-	public isSingleUseCard(): this is Card<CardProps & Attachable> {
+	public isSingleUseCard(): this is Card<CardProps & SingleUse> {
 		return 'singleUse' in this.props
 	}
 
-	public canAttack(this: Card<Attachable>): boolean {
+	public canApply(this: Card<SingleUse>): boolean {
 		// default is no
 		return false
 	}

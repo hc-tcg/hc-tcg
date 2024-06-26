@@ -6,14 +6,13 @@ import {CardT} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal, applyEffect, modalRequest} from 'logic/game/game-actions'
-import SingleUseCard from 'common/cards/base/single-use-card'
 
 function* singleUseSaga(card: CardT): SagaIterator {
 	// We use CARDS instead of SINGLE_USE_CARDS because of Water and Milk Buckets
 	const cardInfo = CARDS[card.cardId]
 	if (!cardInfo) return
 
-	if (cardInfo instanceof SingleUseCard && cardInfo.canApply()) {
+	if (cardInfo.isSingleUseCard() && cardInfo.canApply()) {
 		yield put(setOpenedModal('confirm'))
 	}
 }

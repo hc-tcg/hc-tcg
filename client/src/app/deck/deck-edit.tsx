@@ -5,9 +5,7 @@ import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {CARDS} from 'common/cards'
-import HermitCard from 'common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
-import Card from 'common/cards/base/card'
+import Card, { Hermit, Item } from 'common/cards/base/card'
 import {CardT} from 'common/types/game-state'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -43,7 +41,7 @@ const EXPANSION_NAMES = [
 	'any',
 	...Object.keys(EXPANSIONS.expansions).filter((expansion) => {
 		return Object.values(CARDS).some(
-			(card) => card.getExpansion() === expansion && !EXPANSIONS.disabled.includes(expansion)
+			(card) => card.props.expansion === expansion && !EXPANSIONS.disabled.includes(expansion)
 		)
 	}),
 ]
@@ -133,21 +131,21 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	//MISC
 	const initialDeckState = deck
 	const TYPED_CARDS = CARDS as Record<string, Card>
-	const HTYPE_CARDS = CARDS as Record<string, HermitCard | ItemCard>
+	const HTYPE_CARDS = CARDS as Record<string, Card<Hermit & Item>>
 	const allCards = Object.values(TYPED_CARDS).map(
 		(card: Card): CardT => ({
-			cardId: card.id,
-			cardInstance: card.id,
+			cardId: card.props.id,
+			cardInstance: card.props.id,
 		})
 	)
 	const filteredCards: CardT[] = allCards.filter(
 		(card) =>
 			// Card Name Filter
-			TYPED_CARDS[card.cardId].name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
+			TYPED_CARDS[card.cardId].props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
 			// Card Type Filter
-			(HTYPE_CARDS[card.cardId].hermitType === undefined
+			(HTYPE_CARDS[card.cardId].props.hermitType === undefined
 				? TYPED_CARDS[card.cardId]
-				: HTYPE_CARDS[card.cardId].hermitType.includes(typeQuery)) &&
+				: HTYPE_CARDS[card.cardId].props.hermitType.includes(typeQuery)) &&
 			// Card Rarity Filter
 			(rankQuery === '' || getCardRank(card.cardId).name === rankQuery) &&
 			// Card Expansion Filter
@@ -155,14 +153,15 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			// Don't show disabled cards
 			!EXPANSIONS.disabled.includes(getCardExpansion(card.cardId))
 	)
+
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'hermit'),
-		items: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].type === 'item'),
+		hermits: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].isHermitCard()),
+		items: loadedDeck.cards.filter((card) => TYPED_CARDS[card.cardId].isItemCard()),
 		attachableEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'effect'
+			(card) => TYPED_CARDS[card.cardId].isAttachableCard()
 		),
 		singleUseEffects: loadedDeck.cards.filter(
-			(card) => TYPED_CARDS[card.cardId].type === 'single_use'
+			(card) => TYPED_CARDS[card.cardId].isSingleUseCard()
 		),
 	}
 
@@ -349,7 +348,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					<Accordion header={'Hermits'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'hermit'
+								(card) => TYPED_CARDS[card.cardId].isHermitCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -359,7 +358,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					<Accordion header={'Attachable Effects'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'effect'
+								(card) => TYPED_CARDS[card.cardId].isAttachableCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -369,7 +368,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					<Accordion header={'Single Use Effects'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'single_use'
+								(card) => TYPED_CARDS[card.cardId].isSingleUseCard()
 							)}
 							enableAnimations={false}
 							wrap={true}
@@ -379,7 +378,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					<Accordion header={'Items'}>
 						<CardList
 							cards={sortCards(filteredCards).filter(
-								(card) => TYPED_CARDS[card.cardId].type === 'item'
+								(card) => TYPED_CARDS[card.cardId].isItemCard()
 							)}
 							enableAnimations={false}
 							wrap={true}

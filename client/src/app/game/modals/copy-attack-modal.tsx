@@ -46,16 +46,16 @@ function CopyAttackModal({closeModal}: Props) {
 				<div className={css.description}>
 					<Attack
 						key="primary"
-						name={opponentHermitInfo.primary.name}
+						name={opponentHermitInfo.props.primary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.primary}
+						attackInfo={opponentHermitInfo.props.primary}
 						onClick={handlePrimary}
 					/>
 					<Attack
 						key="secondary"
-						name={opponentHermitInfo.secondary.name}
+						name={opponentHermitInfo.props.secondary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.secondary}
+						attackInfo={opponentHermitInfo.props.secondary}
 						onClick={handleSecondary}
 					/>
 				</div>

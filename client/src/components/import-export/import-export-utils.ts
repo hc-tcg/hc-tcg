@@ -12,7 +12,7 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 	}
 	const deck = []
 	for (let i = 0; i < b64.length; i++) {
-		const cardId = Object.values(CARDS).find((value) => value.numericId === b64[i])?.id
+		const cardId = Object.values(CARDS).find((value) => value.props.numericId === b64[i])?.props.id
 		if (!cardId) continue
 		deck.push({
 			cardId: cardId,
@@ -26,7 +26,7 @@ export const getDeckFromHash = (hash: string): Array<CardT> => {
 export const getHashFromDeck = (pickedCards: Array<CardT>): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
-		const id = CARDS[pickedCards[i].cardId].numericId
+		const id = CARDS[pickedCards[i].cardId].props.numericId
 		if (id >= 0) indicies.push(id)
 	}
 	const b64cards = encode(String.fromCharCode.apply(null, indicies))

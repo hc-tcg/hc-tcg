@@ -28,8 +28,6 @@ import {
 	saveDeck,
 	setActiveDeck,
 } from 'logic/saved-decks/saved-decks'
-import HermitCard from '../../../../common/cards/base/hermit-card'
-import ItemCard from 'common/cards/base/item-card'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 
@@ -48,41 +46,41 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 		const cardCostA = getCardCost(cardInfoA)
 		const cardCostB = getCardCost(cardInfoB)
 
-		if (cardInfoA.type !== cardInfoB.type) {
+		if (cardInfoA.props.type !== cardInfoB.props.type) {
 			// seperate by types first
-			return TYPE_ORDER[cardInfoA.type] - TYPE_ORDER[cardInfoB.type]
+			return TYPE_ORDER[cardInfoA.props.type] - TYPE_ORDER[cardInfoB.props.type]
 		} else if (
 			// then by hermit types
-			cardInfoA instanceof HermitCard &&
-			cardInfoB instanceof HermitCard &&
-			cardInfoA.hermitType !== cardInfoB.hermitType
+			cardInfoA.isHermitCard() &&
+			cardInfoB.isHermitCard() &&
+			cardInfoA.props.hermitType !== cardInfoB.props.hermitType
 		) {
-			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+			return cardInfoA.props.hermitType.localeCompare(cardInfoB.props.hermitType)
 		} else if (
 			// then by item types
-			cardInfoA instanceof ItemCard &&
-			cardInfoB instanceof ItemCard &&
-			cardInfoA.hermitType !== cardInfoB.hermitType
+			cardInfoA.isItemCard() &&
+			cardInfoB.isItemCard() &&
+			cardInfoA.props.hermitType !== cardInfoB.props.hermitType
 		) {
-			return cardInfoA.hermitType.localeCompare(cardInfoB.hermitType)
+			return cardInfoA.props.hermitType.localeCompare(cardInfoB.props.hermitType)
 		} else if (
-			cardInfoA instanceof HermitCard &&
-			cardInfoB instanceof HermitCard &&
-			cardInfoA.getExpansion() !== cardInfoB.getExpansion()
+			cardInfoA.isHermitCard() &&
+			cardInfoB.isHermitCard() &&
+			cardInfoA.props.expansion !== cardInfoB.props.expansion
 		) {
 			// then by expansion if they are both hermits
-			return cardInfoA.getExpansion().localeCompare(cardInfoA.getExpansion())
+			return cardInfoA.props.expansion.localeCompare(cardInfoA.props.expansion)
 		} else if (cardCostA !== cardCostB) {
 			// order by ranks
 			return cardCostA - cardCostB
-		} else if (cardInfoA.name !== cardInfoB.name) {
-			return cardInfoA.name.localeCompare(cardInfoB.name)
+		} else if (cardInfoA.props.name !== cardInfoB.props.name) {
+			return cardInfoA.props.name.localeCompare(cardInfoB.props.name)
 		}
 
 		// rarity is our last hope
 		const rarities = ['common', 'rare', 'ultra_rare']
-		const rarityValueA = rarities.findIndex((s) => s === cardInfoA.rarity) + 1
-		const rarityValueB = rarities.findIndex((s) => s === cardInfoB.rarity) + 1
+		const rarityValueA = rarities.findIndex((s) => s === cardInfoA.props.rarity) + 1
+		const rarityValueB = rarities.findIndex((s) => s === cardInfoB.props.rarity) + 1
 		return rarityValueA - rarityValueB
 	})
 }
@@ -259,10 +257,10 @@ const Deck = ({setMenuSection}: Props) => {
 	})
 	const validationMessage = validateDeck(loadedDeck.cards.map((card) => card.cardId))
 	const selectedCards = {
-		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'hermit'),
-		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'item'),
-		attachableEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'effect'),
-		singleUseEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.type === 'single_use'),
+		hermits: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.isHermitCard()),
+		items: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.isItemCard()),
+		attachableEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.isAttachableCard()),
+		singleUseEffects: loadedDeck.cards.filter((card) => CARDS[card.cardId]?.isSingleUseCard()),
 	}
 
 	//MISC

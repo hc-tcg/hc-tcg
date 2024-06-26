@@ -1,7 +1,8 @@
+import {GameModel} from '../../models/game-model'
 import {CardRarityT} from '../../types/cards'
-import Card from './card'
+import Card, { CardProps } from './card'
+import {CardPosModel} from '../../models/card-pos-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {slot} from '../../slot'
 
 type HealthDefs = {
 	id: string
@@ -13,21 +14,18 @@ type HealthDefs = {
 // @TODO extending card does not really make sense for this
 
 class HealthCard extends Card {
-	public health: number
-	constructor(defs: HealthDefs) {
-		super({
-			type: 'health',
-			id: defs.id,
-			numericId: -1,
-			name: defs.name,
-			rarity: defs.rarity,
-		})
-
-		this.health = defs.health
+	props: CardProps = {
+		type: 'health',
+		id: 'health',
+		expansion: 'default',
+		numericId: -1,
+		tokens: -1,
+		name: 'Health Card',
+		rarity: 'common',
 	}
 
-	override _attachCondition = slot.nothing
-
+	health = 0
+	
 	public override getFormattedDescription(): FormattedTextNode {
 		return formatText(`${this.health}`)
 	}

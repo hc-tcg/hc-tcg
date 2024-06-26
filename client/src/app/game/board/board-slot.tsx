@@ -1,17 +1,13 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
-import Card from 'components/card'
+import CardComponent from 'components/card'
 import {CardT, RowState} from 'common/types/game-state'
 import css from './board.module.scss'
-import HermitCard from 'common/cards/base/hermit-card'
-import EffectCard from 'common/cards/base/effect-card'
-import SingleUseCard from 'common/cards/base/single-use-card'
-import ItemCard from 'common/cards/base/item-card'
-import HealthCard from 'common/cards/base/health-card'
 import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
+import HealthCard from 'common/cards/base/health-card'
 import {useSelector} from 'react-redux'
 import {
 	getCardsCanBePlacedIn,
@@ -21,6 +17,8 @@ import {
 } from 'logic/game/game-selectors'
 import {getLocalPlayerState} from 'server/src/utils/state-gen'
 import {slot} from 'common/slot'
+import Card, {Attachable, CardProps, Hermit, Item, SingleUse} from 'common/cards/base/card'
+import {Effect} from 'redux-saga/effects'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -52,17 +50,11 @@ const Slot = ({
 	const localGameState = useSelector(getGameState)
 
 	let cardInfo = card?.cardId
-		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
+		? (CARDS[card.cardId] as Card<Hermit | Item | Attachable | SingleUse | CardProps>)
 		: null
 	if (type === 'health' && rowState?.health) {
-		cardInfo = new HealthCard({
-			id: 'health',
-			name: 'Health Card',
-			rarity: 'common',
-			health: rowState.health,
-		})
+		cardInfo = new HealthCard()
 	}
-
 	const renderStatusEffects = (cleanedStatusEffects: StatusEffectT[]) => {
 		return (
 			<div className={css.statusEffectContainer}>
@@ -84,7 +76,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -165,17 +157,17 @@ const Slot = ({
 		>
 			{cardInfo ? (
 				<div className={css.cardWrapper}>
-					<Card card={cardInfo} />
+					<CardComponent card={cardInfo} />
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

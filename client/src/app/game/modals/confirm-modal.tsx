@@ -30,7 +30,7 @@ function ConfirmModal({closeModal}: Props) {
 
 		if (!singleUseCard) return null
 		const cardId = singleUseCard.cardId
-		const cardName = CARDS[cardId].name
+		const cardName = CARDS[cardId].props.name
 
 		return cardName
 	}

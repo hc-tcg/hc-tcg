@@ -22,7 +22,7 @@ interface CardProps
 }
 
 const Card = (props: CardProps) => {
-	const {type} = props.card
+	const {type} = props.card.props
 	const {onClick, selected, picked, unpickable, ...otherProps} = props
 	let card = null
 	if (type === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
