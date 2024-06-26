@@ -24,7 +24,7 @@ class GrianRareHermitCard extends HermitCard {
 			numericId: 35,
 			name: 'Grian',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 300,
 			primary: {
 				name: 'Borrow',

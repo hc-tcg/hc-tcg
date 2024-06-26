@@ -12,7 +12,7 @@ class KeralisRareHermitCard extends HermitCard {
 			numericId: 72,
 			name: 'Keralis',
 			rarity: 'rare',
-			hermitType: 'terraform',
+			type: 'terraform',
 			health: 250,
 			primary: {
 				name: 'Booshes',

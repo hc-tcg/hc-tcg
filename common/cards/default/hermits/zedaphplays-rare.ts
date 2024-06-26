@@ -10,7 +10,7 @@ class ZedaphPlaysRareHermitCard extends HermitCard {
 			numericId: 114,
 			name: 'Zedaph',
 			rarity: 'rare',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 290,
 			primary: {
 				name: 'Sheep Stare',

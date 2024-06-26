@@ -12,7 +12,7 @@ class JinglerRareHermitCard extends HermitCard {
 			numericId: 133,
 			name: 'Jingler',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 280,
 			primary: {
 				name: 'Jingled',

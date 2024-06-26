@@ -10,7 +10,7 @@ class PearlescentMoonRareHermitCard extends HermitCard {
 			numericId: 85,
 			name: 'Pearl',
 			rarity: 'rare',
-			hermitType: 'terraform',
+			type: 'terraform',
 			health: 300,
 			primary: {
 				name: 'Cleaning Lady',

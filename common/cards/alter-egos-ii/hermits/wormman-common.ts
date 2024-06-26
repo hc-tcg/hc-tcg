@@ -7,7 +7,7 @@ class WormManCommonHermitCard extends HermitCard {
 			numericId: 240,
 			name: 'Worm Man',
 			rarity: 'common',
-			hermitType: 'terraform',
+			type: 'terraform',
 			health: 290,
 			primary: {
 				name: 'Justice!',

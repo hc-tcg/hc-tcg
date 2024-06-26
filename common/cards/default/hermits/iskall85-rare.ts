@@ -13,7 +13,7 @@ class Iskall85RareHermitCard extends Card {
 		expansion: 'default',
 		rarity: 'rare',
 		tokens: 1,
-		hermitType: 'farm',
+		type: 'farm',
 		health: 290,
 		primary: {
 			name: 'Of Doom',
@@ -39,7 +39,7 @@ class Iskall85RareHermitCard extends Card {
 
 			const isBuilder =
 				target.row.hermitCard &&
-				HERMIT_CARDS[target.row.hermitCard.cardId]?.hermitType === 'builder'
+				HERMIT_CARDS[target.row.hermitCard.cardId]?.props.type === 'builder'
 					? 2
 					: 1
 

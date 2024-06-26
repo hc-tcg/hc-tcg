@@ -15,7 +15,7 @@ import {PlayerModel} from 'common/models/player-model'
 import {EnergyT, SlotInfo} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card, { Hermit } from 'common/cards/base/card'
+import Card, {Hermit} from 'common/cards/base/card'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
@@ -35,37 +35,37 @@ export function getStarterPack() {
 
 	// only allow some starting types
 	const startingTypes = ['balanced', 'builder', 'farm', 'miner', 'redstone']
-	const hermitTypesCount = randomBetween(2, 3)
-	const hermitTypes = Object.keys(STRENGTHS)
+	const typesCount = randomBetween(2, 3)
+	const types = Object.keys(STRENGTHS)
 		.filter((type) => startingTypes.includes(type))
 		.sort(() => 0.5 - Math.random())
-		.slice(0, hermitTypesCount)
+		.slice(0, typesCount)
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
 			cardInfo.isHermitCard() &&
 			cardInfo.isItemCard() &&
-			hermitTypes.includes(cardInfo.props.hermitType) &&
+			types.includes(cardInfo.props.type) &&
 			!EXPANSIONS.disabled.includes(cardInfo.props.expansion)
 	)
 
 	const effectCards = cards.filter((card) => card.isSingleUseCard() || card.isAttachableCard())
-	const hermitCount = hermitTypesCount === 2 ? 8 : 10
+	const hermitCount = typesCount === 2 ? 8 : 10
 
 	const deck: Array<Card> = []
 
 	let itemCounts = {
-		[hermitTypes[0]]: {
+		[types[0]]: {
 			items: 0,
 			tokens: 0,
 		},
-		[hermitTypes[1]]: {
+		[types[1]]: {
 			items: 0,
 			tokens: 0,
 		},
 	}
-	if (hermitTypes[2]) {
-		itemCounts[hermitTypes[2]] = {
+	if (types[2]) {
+		itemCounts[types[2]] = {
 			items: 0,
 			tokens: 0,
 		}
@@ -73,7 +73,9 @@ export function getStarterPack() {
 	let tokens = 0
 
 	// hermits, but not diamond ones
-	let hermitCards = cards.filter((card) => card.isHermitCard()).filter((card) => getCardRank(card.props.id).name !== 'diamond') as Array<Card<Hermit>> 
+	let hermitCards = cards
+		.filter((card) => card.isHermitCard())
+		.filter((card) => getCardRank(card.props.id).name !== 'diamond') as Array<Card<Hermit>>
 
 	while (deck.length < hermitCount && hermitCards.length > 0) {
 		const randomIndex = Math.floor(Math.random() * hermitCards.length)
@@ -88,16 +90,16 @@ export function getStarterPack() {
 		tokens += hermitCard.props.tokens * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.props.hermitType].items += 2
+			itemCounts[hermitCard.props.type].items += 2
 		}
 	}
 
 	// items
-	for (let hermitType in itemCounts) {
-		let counts = itemCounts[hermitType]
+	for (let type in itemCounts) {
+		let counts = itemCounts[type]
 
 		for (let i = 0; i < counts.items; i++) {
-			deck.push(CARDS[`item_${hermitType}_common`])
+			deck.push(CARDS[`item_${type}_common`])
 		}
 	}
 

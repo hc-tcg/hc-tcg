@@ -7,7 +7,7 @@ class ZombieCleoCommonHermitCard extends HermitCard {
 			numericId: 115,
 			name: 'Cleo',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 260,
 			primary: {
 				name: "It's Fine",

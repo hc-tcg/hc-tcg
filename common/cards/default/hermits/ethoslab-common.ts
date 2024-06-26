@@ -7,7 +7,7 @@ class EthosLabCommonHermitCard extends HermitCard {
 			numericId: 19,
 			name: 'Etho',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 260,
 			primary: {
 				name: 'Snack Time',

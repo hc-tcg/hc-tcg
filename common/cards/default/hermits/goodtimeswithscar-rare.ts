@@ -11,7 +11,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 			numericId: 33,
 			name: 'Scar',
 			rarity: 'rare',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 270,
 			primary: {
 				name: 'Scarred For Life',

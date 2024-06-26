@@ -7,7 +7,7 @@ class WelsknightCommonHermitCard extends HermitCard {
 			numericId: 106,
 			name: 'Wels',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 300,
 			primary: {
 				name: 'Chivalry',

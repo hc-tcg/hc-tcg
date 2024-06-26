@@ -9,12 +9,12 @@ class TerraformRareItemCard extends ItemCard {
 			numericId: 68,
 			name: 'Terraform',
 			rarity: 'rare',
-			hermitType: 'terraform',
+			type: 'terraform',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType, this.hermitType]
+		return [this.type, this.type]
 	}
 }
 

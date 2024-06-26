@@ -1,5 +1,5 @@
 import React from 'react'
-import {HermitTypeT} from 'common/types/cards'
+import {typeT} from 'common/types/cards'
 import Card, {Attachable, SingleUse} from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
 import formattingCss from '../formatting/formatting.module.scss'
@@ -43,19 +43,19 @@ const joinJsx = (array: Array<React.ReactNode>) => {
 const getStrengthsAndWeaknesses = (card: Card): React.ReactNode => {
 	if (!card.isHermitCard()) return null
 
-	const strengths = STRENGTHS[card.props.hermitType]
+	const strengths = STRENGTHS[card.props.type]
 	const weaknesses = Object.entries(STRENGTHS)
-		.filter(([, value]) => value.includes(card.props.hermitType))
-		.map(([key]) => key) as Array<HermitTypeT>
+		.filter(([, value]) => value.includes(card.props.type))
+		.map(([key]) => key) as Array<typeT>
 
 	const result = (
 		<div className={css.strengthsAndWeaknesses}>
 			<div className={css.strengths}>
 				<span className={css.swTitle}>Strengths: </span>
 				{joinJsx(
-					strengths.map((hermitType) => (
-						<span key={hermitType} className={css[hermitType]}>
-							{HERMIT_TYPES[hermitType]}
+					strengths.map((type) => (
+						<span key={type} className={css[type]}>
+							{HERMIT_TYPES[type]}
 						</span>
 					))
 				)}
@@ -63,9 +63,9 @@ const getStrengthsAndWeaknesses = (card: Card): React.ReactNode => {
 			<div className={css.weaknesses}>
 				<span className={css.swTitle}>Weaknesses: </span>
 				{joinJsx(
-					weaknesses.map((hermitType) => (
-						<span key={hermitType} className={css[hermitType]}>
-							{HERMIT_TYPES[hermitType]}
+					weaknesses.map((type) => (
+						<span key={type} className={css[type]}>
+							{HERMIT_TYPES[type]}
 						</span>
 					))
 				)}
@@ -77,7 +77,7 @@ const getStrengthsAndWeaknesses = (card: Card): React.ReactNode => {
 
 const getName = (card: Card): React.ReactNode => {
 	if (card.isItemCard()) {
-		return <div className={classNames(css.name, css[card.props.hermitType])}>{card.props.name}</div>
+		return <div className={classNames(css.name, css[card.props.type])}>{card.props.name}</div>
 	}
 	return <div className={css.name}>{card.props.name}</div>
 }
@@ -117,11 +117,11 @@ const getSingleUse = (card: Card): React.ReactNode => {
 	return <div className={css.singleUse}>Single Use</div>
 }
 
-const getHermitType = (card: Card): React.ReactNode => {
+const gettype = (card: Card): React.ReactNode => {
 	if (card.isHermitCard()) {
 		return (
-			<div className={classNames(css.hermitType, css[card.props.hermitType])}>
-				{HERMIT_TYPES[card.props.hermitType] || card.props.hermitType} Type
+			<div className={classNames(css.type, css[card.props.type])}>
+				{HERMIT_TYPES[card.props.type] || card.props.type} Type
 			</div>
 		)
 	}
@@ -167,7 +167,7 @@ const CardTooltip = ({card}: Props) => {
 			<div className={css.cardTooltip}>
 				<div className={css.topLine}>
 					{getName(card)}
-					{getHermitType(card)}
+					{gettype(card)}
 					{getAttach(card)}
 					{getSingleUse(card)}
 				</div>

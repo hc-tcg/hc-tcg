@@ -104,12 +104,12 @@ export class BattleLogModel {
 		) => {
 			if (!cardId) return invalid
 			const cardInfo = CARDS[cardId]
-			if (cardInfo.type === 'item') {
+			if (cardInfo.props.category === 'item') {
 				return `${cardInfo.name} ${cardInfo.rarity === 'rare' ? ' item x2' : 'item'}`
 			}
 
 			if (
-				cardInfo.type === 'hermit' &&
+				cardInfo.props.category === 'hermit' &&
 				player &&
 				player.board.activeRow !== rowIndex &&
 				rowIndex !== null &&

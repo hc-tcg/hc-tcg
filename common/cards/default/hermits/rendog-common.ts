@@ -7,7 +7,7 @@ class RendogCommonHermitCard extends HermitCard {
 			numericId: 86,
 			name: 'Rendog',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 260,
 			primary: {
 				name: 'Professional',

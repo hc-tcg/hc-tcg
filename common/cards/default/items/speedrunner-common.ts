@@ -9,12 +9,12 @@ class SpeedrunnerCommonItemCard extends ItemCard {
 			numericId: 65,
 			name: 'Speedrunner',
 			rarity: 'common',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+		return [this.type]
 	}
 }
 

@@ -7,7 +7,7 @@ class TangoTekCommonHermitCard extends HermitCard {
 			numericId: 94,
 			name: 'Tango',
 			rarity: 'common',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 300,
 			primary: {
 				name: 'Thing-ificator',

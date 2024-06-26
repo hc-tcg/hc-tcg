@@ -53,16 +53,16 @@ export const sortCards = (cards: Array<CardT>): Array<CardT> => {
 			// then by hermit types
 			cardInfoA.isHermitCard() &&
 			cardInfoB.isHermitCard() &&
-			cardInfoA.props.hermitType !== cardInfoB.props.hermitType
+			cardInfoA.props.type !== cardInfoB.props.type
 		) {
-			return cardInfoA.props.hermitType.localeCompare(cardInfoB.props.hermitType)
+			return cardInfoA.props.type.localeCompare(cardInfoB.props.type)
 		} else if (
 			// then by item types
 			cardInfoA.isItemCard() &&
 			cardInfoB.isItemCard() &&
-			cardInfoA.props.hermitType !== cardInfoB.props.hermitType
+			cardInfoA.props.type !== cardInfoB.props.type
 		) {
-			return cardInfoA.props.hermitType.localeCompare(cardInfoB.props.hermitType)
+			return cardInfoA.props.type.localeCompare(cardInfoB.props.type)
 		} else if (
 			cardInfoA.isHermitCard() &&
 			cardInfoB.isHermitCard() &&

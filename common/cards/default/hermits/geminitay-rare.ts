@@ -11,7 +11,7 @@ class GeminiTayRareHermitCard extends HermitCard {
 			numericId: 28,
 			name: 'Gem',
 			rarity: 'rare',
-			hermitType: 'terraform',
+			type: 'terraform',
 			health: 270,
 			primary: {
 				name: "It's Fine",

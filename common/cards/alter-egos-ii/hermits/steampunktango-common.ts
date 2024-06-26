@@ -7,7 +7,7 @@ class SteampunkTangoCommonHermitCard extends HermitCard {
 			numericId: 239,
 			name: 'Steampunk Tango',
 			rarity: 'common',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 250,
 			primary: {
 				name: 'Create',

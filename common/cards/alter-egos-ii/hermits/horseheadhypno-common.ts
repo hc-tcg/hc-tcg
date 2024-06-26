@@ -7,7 +7,7 @@ class HorseHeadHypnoCommonHermitCard extends HermitCard {
 			numericId: 232,
 			name: 'Horse Head Hypno',
 			rarity: 'common',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 260,
 			primary: {
 				name: 'I.O.U.',

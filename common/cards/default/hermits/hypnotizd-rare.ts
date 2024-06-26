@@ -20,7 +20,7 @@ class HypnotizdRareHermitCard extends HermitCard {
 			numericId: 37,
 			name: 'Hypno',
 			rarity: 'rare',
-			hermitType: 'miner',
+			type: 'miner',
 			health: 270,
 			primary: {
 				name: 'MmHmm',

@@ -12,7 +12,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 			numericId: 135,
 			name: 'Potato Boy',
 			rarity: 'rare',
-			hermitType: 'farm',
+			type: 'farm',
 			health: 270,
 			primary: {
 				name: 'Peace & Love',

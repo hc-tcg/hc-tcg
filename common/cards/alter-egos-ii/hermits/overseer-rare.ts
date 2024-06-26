@@ -10,7 +10,7 @@ class OverseerRareHermitCard extends HermitCard {
 			numericId: 235,
 			name: 'Overseer',
 			rarity: 'rare',
-			hermitType: 'miner',
+			type: 'miner',
 			health: 250,
 			primary: {
 				name: 'Testing',
@@ -36,9 +36,7 @@ class OverseerRareHermitCard extends HermitCard {
 			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
 			const isFarmer =
-				target.row.hermitCard && HERMIT_CARDS[target.row.hermitCard.cardId]?.hermitType === 'farm'
-					? 2
-					: 1
+				target.row.hermitCard && HERMIT_CARDS[target.row.hermitCard.cardId]?.type === 'farm' ? 2 : 1
 
 			attack.multiplyDamage(this.id, isFarmer)
 		})

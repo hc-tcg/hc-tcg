@@ -9,12 +9,12 @@ class PvPCommonItemCard extends ItemCard {
 			numericId: 61,
 			name: 'PvP',
 			rarity: 'common',
-			hermitType: 'pvp',
+			type: 'pvp',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+		return [this.type]
 	}
 }
 

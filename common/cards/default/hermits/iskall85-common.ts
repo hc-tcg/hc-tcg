@@ -7,7 +7,7 @@ class Iskall85CommonHermitCard extends HermitCard {
 			numericId: 47,
 			name: 'Iskall',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 280,
 			primary: {
 				name: 'Hallo',

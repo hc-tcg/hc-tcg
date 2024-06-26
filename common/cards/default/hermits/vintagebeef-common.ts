@@ -7,7 +7,7 @@ class VintageBeefCommonHermitCard extends HermitCard {
 			numericId: 102,
 			name: 'Beef',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 250,
 			primary: {
 				name: 'Hey Guys!',

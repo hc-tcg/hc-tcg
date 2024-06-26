@@ -12,7 +12,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 			numericId: 110,
 			name: 'xB',
 			rarity: 'rare',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 270,
 			primary: {
 				name: 'Giggle',

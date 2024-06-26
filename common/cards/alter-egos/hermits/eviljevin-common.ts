@@ -7,7 +7,7 @@ class EvilJevinCommonHermitCard extends HermitCard {
 			numericId: 127,
 			name: 'Evil Jevin',
 			rarity: 'common',
-			hermitType: 'miner',
+			type: 'miner',
 			health: 260,
 			primary: {
 				name: 'Pickle',

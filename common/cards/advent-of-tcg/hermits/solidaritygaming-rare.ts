@@ -11,7 +11,7 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 			numericId: 220,
 			name: 'Jimmy',
 			rarity: 'rare',
-			hermitType: 'prankster',
+			type: 'prankster',
 			health: 270,
 			primary: {
 				name: 'The Law',

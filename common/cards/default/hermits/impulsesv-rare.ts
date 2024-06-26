@@ -9,7 +9,7 @@ class ImpulseSVRareHermitCard extends HermitCard {
 			numericId: 41,
 			name: 'Impulse',
 			rarity: 'rare',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 250,
 			primary: {
 				name: 'Bop',

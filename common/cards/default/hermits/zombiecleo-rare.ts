@@ -13,7 +13,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			numericId: 116,
 			name: 'Cleo',
 			rarity: 'rare',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 290,
 			primary: {
 				name: 'Dismissed',

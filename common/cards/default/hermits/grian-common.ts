@@ -7,7 +7,7 @@ class GrianCommonHermitCard extends HermitCard {
 			numericId: 34,
 			name: 'Grian',
 			rarity: 'common',
-			hermitType: 'builder',
+			type: 'builder',
 			health: 300,
 			primary: {
 				name: 'Copper Golem',

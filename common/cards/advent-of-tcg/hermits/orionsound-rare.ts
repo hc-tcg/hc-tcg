@@ -12,7 +12,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 			numericId: 213,
 			name: 'Oli',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 280,
 			primary: {
 				name: 'Melody',

@@ -7,7 +7,7 @@ class HypnotizdCommonHermitCard extends HermitCard {
 			numericId: 36,
 			name: 'Hypno',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 			health: 250,
 			primary: {
 				name: 'What Up',

@@ -10,7 +10,7 @@ class EthosLabUltraRareHermitCard extends HermitCard {
 			numericId: 21,
 			name: 'Etho',
 			rarity: 'ultra_rare',
-			hermitType: 'pvp',
+			type: 'pvp',
 			health: 250,
 			primary: {
 				name: 'Ladders',

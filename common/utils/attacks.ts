@@ -256,8 +256,8 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 
 	if (!attackerCardInfo || !targetCardInfo) return null
 
-	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.hermitType)) {
+	const strength = STRENGTHS[attackerCardInfo.type]
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.type)) {
 		return null
 	}
 

@@ -9,12 +9,12 @@ class BalancedCommonItemCard extends ItemCard {
 			numericId: 49,
 			name: 'Balanced',
 			rarity: 'common',
-			hermitType: 'balanced',
+			type: 'balanced',
 		})
 	}
 
 	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+		return [this.type]
 	}
 }
 

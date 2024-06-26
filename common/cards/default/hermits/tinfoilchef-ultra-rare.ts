@@ -12,7 +12,7 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 			numericId: 99,
 			name: 'TFC',
 			rarity: 'ultra_rare',
-			hermitType: 'miner',
+			type: 'miner',
 			health: 300,
 			primary: {
 				name: 'Phone Call',

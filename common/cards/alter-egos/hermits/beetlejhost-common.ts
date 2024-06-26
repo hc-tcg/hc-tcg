@@ -7,7 +7,7 @@ class BeetlejhostCommonHermitCard extends HermitCard {
 			numericId: 126,
 			name: 'Beetlejhost',
 			rarity: 'common',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 290,
 			primary: {
 				name: 'Expand',

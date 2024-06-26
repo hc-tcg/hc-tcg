@@ -7,7 +7,7 @@ class DreamRareHermitCard extends HermitCard {
 			numericId: 117,
 			name: 'Dream',
 			rarity: 'rare',
-			hermitType: 'speedrunner',
+			type: 'speedrunner',
 			health: 290,
 			primary: {
 				name: "C'mere",

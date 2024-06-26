@@ -11,7 +11,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 			numericId: 112,
 			name: 'Xisuma',
 			rarity: 'rare',
-			hermitType: 'redstone',
+			type: 'redstone',
 			health: 280,
 			primary: {
 				name: 'Goodness Me',

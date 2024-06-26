@@ -7,7 +7,7 @@ class JoeHillsCommonHermitCard extends HermitCard {
 			numericId: 69,
 			name: 'Joe',
 			rarity: 'common',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 270,
 			primary: {
 				name: 'Howdy',

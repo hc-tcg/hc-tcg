@@ -13,7 +13,7 @@ class IskallmanRareHermitCard extends HermitCard {
 			numericId: 233,
 			name: 'IskallMAN',
 			rarity: 'rare',
-			hermitType: 'explorer',
+			type: 'explorer',
 			health: 260,
 			primary: {
 				name: 'Iskall...MAAAN',

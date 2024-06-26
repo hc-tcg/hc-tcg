@@ -1,5 +1,5 @@
 import {CARDS} from '../cards'
-import {CardTypeT} from '../types/cards'
+import {CardCategoryT} from '../types/cards'
 import {CardT} from '../types/game-state'
 
 /**
@@ -14,10 +14,10 @@ export function equalCard(card1: CardT | null, card2: CardT | null) {
 /**
  * Check if card is the type of card
  */
-export function isCardType(card: CardT | null, type: CardTypeT): boolean {
+export function isCardType(card: CardT | null, type: CardCategoryT): boolean {
 	if (!card) return false
 	const cardInfo = CARDS[card.cardId]
-	return cardInfo.type === type
+	return cardInfo.props.category === type
 }
 
 export function getCardExpansion(cardId: string) {
