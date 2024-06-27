@@ -19,6 +19,8 @@ class StringEffectCard extends EffectCard {
 		slot.opponent,
 		slot.rowHasHermit,
 		slot.empty,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
+		slot.not(slot.frozen),
 		slot.some(slot.effectSlot, slot.itemSlot)
 	)
 
