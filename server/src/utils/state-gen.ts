@@ -16,10 +16,8 @@ import {EnergyT} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card, {Hermit} from 'common/cards/base/card'
-import {CardPosModel} from 'common/models/card-pos-model'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition} from 'common/slot'
-import {PickInfo} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
