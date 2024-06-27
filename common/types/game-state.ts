@@ -70,7 +70,7 @@ export type StatusEffectT = {
 }
 
 export type CurrentCoinFlipT = {
-	cardId: string
+	card: CardInstance
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>

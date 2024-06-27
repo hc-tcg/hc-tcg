@@ -29,7 +29,7 @@ class SmeltingStatusEffect extends StatusEffect {
 				discardCard(game, pos.card)
 				pos.row?.itemCards.forEach((card) => {
 					if (!card) return
-					card.cardId = card.cardId.replace('common', 'rare')
+					card.props.id = card.props.id.replace('common', 'rare')
 				})
 			}
 		})

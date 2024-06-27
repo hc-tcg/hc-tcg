@@ -6,7 +6,6 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
-import {CARDS} from '../cards'
 import {slot} from '../slot'
 
 class PoisonStatusEffect extends StatusEffect {
@@ -35,7 +34,7 @@ class PoisonStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 
 		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${CARDS[pos.card.cardId].name}$ was $ePoisoned$`)
+			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $ePoisoned$`)
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {

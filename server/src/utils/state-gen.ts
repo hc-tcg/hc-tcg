@@ -127,8 +127,7 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	const deckIds: Array<string> = deck.map((card) => card.props.id)
-	return deckIds
+	return deck
 }
 
 export function getEmptyRow(): RowState {

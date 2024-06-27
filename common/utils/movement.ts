@@ -42,8 +42,7 @@ export function discardCard(
 	}
 
 	// Call `onDetach`
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.instance, pos)
+	card.card.onDetach(game, card.instance, pos)
 	pos.player.hooks.onDetach.call(card.instance)
 
 	// Remove the card
@@ -52,10 +51,7 @@ export function discardCard(
 	if (playerDiscard !== null) {
 		const discardPlayer = playerDiscard ? playerDiscard : pos.player
 
-		discardPlayer.discarded.push({
-			cardId: card.cardId,
-			instance: card.instance,
-		})
+		discardPlayer.discarded.push(card)
 	}
 }
 
@@ -80,9 +76,7 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	const pos = getCardPos(game, suCard.instance)
 	if (!pos) return
 
-	// Water and Milk Buckets can be on this slot so we use CARDS to get the card info
-	const cardInfo = CARDS[suCard.cardId]
-	cardInfo.onDetach(game, suCard.instance, pos)
+	suCard.card.onDetach(game, suCard.instance, pos)
 
 	// Call onDetach hook
 	playerState.hooks.onDetach.call(suCard.instance)
@@ -102,10 +96,7 @@ export function discardFromHand(player: PlayerState, card: CardInstance | null) 
 
 	player.hand = player.hand.filter((c) => !equalCard(c, card))
 
-	player.discarded.push({
-		cardId: card.cardId,
-		instance: card.instance,
-	})
+	player.discarded.push(card)
 }
 
 export function drawCards(playerState: PlayerState, amount: number) {
@@ -123,8 +114,7 @@ export function moveCardInstanceoHand(
 	const cardPos = getCardPos(game, card.instance)
 	if (!cardPos) return
 
-	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.instance, cardPos)
+	card.card.onDetach(game, card.instance, cardPos)
 
 	cardPos.player.hooks.onDetach.call(card.instance)
 

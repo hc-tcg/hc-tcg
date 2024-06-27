@@ -1,7 +1,7 @@
 import {HERMIT_CARDS} from './cards'
 import {GameModel} from './models/game-model'
 import {SlotInfo} from './types/cards'
-import {TurnAction} from './types/game-state'
+import {CardInstance, TurnAction} from './types/game-state'
 import {PickInfo} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
@@ -24,7 +24,7 @@ export function callSlotConditionWithPickInfo(
 		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
 		row: row,
 		index: pickInfo.index,
-		card: pickInfo.card,
+		card: pickInfo.card ? CardInstance.fromLocalCardInstance(pickInfo.card) : null,
 	})
 }
 
@@ -164,7 +164,7 @@ export namespace slot {
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
 			return cardIds.some((cardId) => {
-				return pos.card !== null && pos.card.cardId === cardId
+				return pos.card !== null && pos.card.card.props.id === pos.card.card.props.id
 			})
 		}
 	}

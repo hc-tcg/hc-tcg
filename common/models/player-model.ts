@@ -27,9 +27,7 @@ export class PlayerModel {
 		this.internalDeck = {
 			name: 'Starter Deck',
 			icon: 'any',
-			cards: getStarterPack().map((id) => {
-				return {cardId: id, cardInstance: Math.random().toString()}
-			}),
+			cards: getStarterPack(),
 		}
 
 		this.name = playerName
@@ -61,9 +59,16 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
+		let deckCards = newDeck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
+		const validationMessage = validateDeck(deckCards)
 		if (validationMessage) return
-		this.internalDeck = newDeck
+		this.internalDeck = {
+			name: newDeck.name,
+			icon: newDeck.icon,
+			cards: deckCards,
+
+
+			}
 	}
 
 	setMinecraftName(name: string) {

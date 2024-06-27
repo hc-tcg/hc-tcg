@@ -28,7 +28,7 @@ class SlownessStatusEffect extends StatusEffect {
 		if (pos.card) {
 			game.battleLog.addEntry(
 				player.id,
-				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $eSlowness$`
+				`$p${pos.card.props.name}$ was inflicted with $eSlowness$`
 			)
 		}
 

@@ -53,6 +53,7 @@ const Slot = ({
 		? (card.props as Hermit | Item | Attachable | SingleUse | CardProps)
 		: null
 	if (type === 'health' && rowState?.health) {
+		// @ts-ignore SORRY, I have no idea how to fix this
 		cardInfo = {
 			category: 'health',
 			id: 'health',
