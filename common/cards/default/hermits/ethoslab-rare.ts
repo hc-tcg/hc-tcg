@@ -1,31 +1,32 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
+import Card, {Hermit, hermit} from '../../base/card'
 
-class EthosLabRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'ethoslab_rare',
-			numericId: 20,
-			name: 'Etho',
-			rarity: 'rare',
-			type: 'redstone',
-			health: 280,
-			primary: {
-				name: 'Oh Snappers',
-				cost: ['redstone'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Blue Fire',
-				cost: ['redstone', 'redstone'],
-				damage: 80,
-				power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
-			},
-		})
+class EthosLabRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'ethoslab_rare',
+		numericId: 20,
+		name: 'Etho',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 3,
+		type: 'redstone',
+		health: 280,
+		primary: {
+			name: 'Oh Snappers',
+			cost: ['redstone'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Blue Fire',
+			cost: ['redstone', 'redstone'],
+			damage: 80,
+			power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
+		},
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

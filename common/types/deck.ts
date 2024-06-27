@@ -1,5 +1,5 @@
 import {CardInstance} from './game-state'
-import { LocalCardInstance } from './server-requests'
+import {LocalCardInstance} from './server-requests'
 
 export type PlayerDeckT = {
 	name: string

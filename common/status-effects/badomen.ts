@@ -26,10 +26,7 @@ class BadOmenStatusEffect extends StatusEffect {
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
 		if (pos.card) {
-			game.battleLog.addEntry(
-				player.id,
-				`$p${pos.card.props.name}$ was inflicted with $bBad Omen$`
-			)
+			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $bBad Omen$`)
 		}
 
 		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {

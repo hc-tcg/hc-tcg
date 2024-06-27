@@ -1,29 +1,30 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import HermitCard from '../../base/hermit-card'
+import Card, {Hermit, hermit} from '../../base/card'
 
-class Cubfan135RareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'cubfan135_rare',
-			numericId: 10,
-			name: 'Cub',
-			rarity: 'rare',
-			type: 'speedrunner',
-			health: 260,
-			primary: {
-				name: 'Dash',
-				cost: ['any'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: "Let's Go",
-				cost: ['speedrunner', 'speedrunner', 'speedrunner'],
-				damage: 100,
-				power: 'After attack, you can choose to go AFK.',
-			},
-		})
+class Cubfan135RareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'cubfan135_rare',
+		numericId: 10,
+		name: 'Cub',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'speedrunner',
+		health: 260,
+		primary: {
+			name: 'Dash',
+			cost: ['any'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: "Let's Go",
+			cost: ['speedrunner', 'speedrunner', 'speedrunner'],
+			damage: 100,
+			power: 'After attack, you can choose to go AFK.',
+		},
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

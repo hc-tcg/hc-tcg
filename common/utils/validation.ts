@@ -1,6 +1,6 @@
 import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from '../config'
 import {getDeckCost} from './ranks'
-import { LocalCardInstance } from '../types/server-requests'
+import {LocalCardInstance} from '../types/server-requests'
 
 export function validateDeck(deckCards: Array<LocalCardInstance>) {
 	if (DEBUG_CONFIG.disableDeckValidation) return

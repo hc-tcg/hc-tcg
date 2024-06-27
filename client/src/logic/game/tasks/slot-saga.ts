@@ -18,7 +18,7 @@ import {
 } from 'logic/game/game-selectors'
 import {setSelectedCard, setOpenedModal, removeEffect, slotPicked} from 'logic/game/game-actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
-import { LocalCardInstance } from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 type SlotPickedAction = ReturnType<typeof slotPicked>
 
@@ -38,7 +38,10 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 	yield put(actionData)
 }
 
-function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: LocalCardInstance): SagaIterator {
+function* pickWithSelectedSaga(
+	action: SlotPickedAction,
+	selectedCard: LocalCardInstance
+): SagaIterator {
 	const pickInfo = action.payload.pickInfo
 
 	yield putResolve(setSelectedCard(null))

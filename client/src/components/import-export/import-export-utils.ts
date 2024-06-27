@@ -1,7 +1,7 @@
 import {CardInstance} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {encode, decode} from 'js-base64'
-import { LocalCardInstance } from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {

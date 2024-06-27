@@ -2,21 +2,21 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
-import EffectCard from '../../base/effect-card'
 import {removeStatusEffect} from '../../../utils/board'
-import {HERMIT_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
+import Card, {Attachable, attachable} from '../../base/card'
 
-class TotemEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'totem',
-			numericId: 101,
-			name: 'Totem',
-			rarity: 'ultra_rare',
-			description:
-				'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
-		})
+class TotemEffectCard extends Card {
+	props: Attachable = {
+		...attachable,
+		id: 'totem',
+		numericId: 101,
+		name: 'Totem',
+		expansion: 'default',
+		rarity: 'ultra_rare',
+		tokens: 3,
+		description:
+			'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -37,7 +37,7 @@ class TotemEffectCard extends EffectCard {
 				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 
-			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
+			const revivedHermit = row.hermitCard.props.name
 			game.battleLog.addEntry(player.id, `Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`)
 
 			// This will remove this hook, so it'll only be called once

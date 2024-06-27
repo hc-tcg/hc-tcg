@@ -31,7 +31,7 @@ import {
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {isAttachable, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
-import { LocalCardInstance } from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 const TYPE_ORDER = {
 	hermit: 0,

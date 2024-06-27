@@ -38,9 +38,7 @@ class WaterBucketEffectCard extends Card {
 					if (pickedSlot.rowIndex === null) return
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-						return (
-							ail.targetInstance === pickedSlot.card?.instance && ail.statusEffectId == 'fire'
-						)
+						return ail.targetInstance === pickedSlot.card?.instance && ail.statusEffectId == 'fire'
 					})
 					statusEffectsToRemove.forEach((ail) => {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)

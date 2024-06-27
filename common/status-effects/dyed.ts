@@ -32,8 +32,7 @@ class DyedStatusEffect extends StatusEffect {
 
 			const activeRow = player.board.rows[player.board.activeRow]
 
-			if (statusEffectInfo.targetInstance !== activeRow.hermitCard?.instance)
-				return availableEnergy
+			if (statusEffectInfo.targetInstance !== activeRow.hermitCard?.instance) return availableEnergy
 
 			return availableEnergy.map(() => 'any')
 		})

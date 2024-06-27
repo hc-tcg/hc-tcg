@@ -55,9 +55,7 @@ class MilkBucketEffectCard extends EffectCard {
 		} else if (pos.type === 'effect') {
 			// Straight away remove poison
 			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
-				return (
-					ail.targetInstance === row?.hermitCard?.instance && ail.statusEffectId == 'poison'
-				)
+				return ail.targetInstance === row?.hermitCard?.instance && ail.statusEffectId == 'poison'
 			})
 			if (poisonStatusEffect) {
 				removeStatusEffect(game, pos, poisonStatusEffect.statusEffectInstance)

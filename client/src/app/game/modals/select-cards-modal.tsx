@@ -7,7 +7,7 @@ import css from './game-modals.module.scss'
 import {modalRequest} from 'logic/game/game-actions'
 import Button from 'components/button'
 import {getGameState} from 'logic/game/game-selectors'
-import { LocalCardInstance } from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 type Props = {
 	closeModal: () => void

@@ -1,5 +1,5 @@
 import {RankT} from '../types/cards'
-import { LocalCardInstance } from '../types/server-requests'
+import {LocalCardInstance} from '../types/server-requests'
 
 export function getCardRank(tokens: number): RankT {
 	if (tokens === 0) {

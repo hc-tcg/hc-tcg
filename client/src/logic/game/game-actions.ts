@@ -1,9 +1,5 @@
 import {LocalGameState, Message} from 'common/types/game-state'
-import {
-	GameEndOutcomeT,
-	GameEndReasonT,
-	CurrentCoinFlipT,
-} from 'common/types/game-state'
+import {GameEndOutcomeT, GameEndReasonT, CurrentCoinFlipT} from 'common/types/game-state'
 import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
