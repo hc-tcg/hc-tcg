@@ -18,7 +18,8 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const { player, opponentPlayer } = pos
+		const {player, opponentPlayer} = pos
+
 		let attacking = false
 
 		player.hooks.getAttack.add(instance, () => {
@@ -74,7 +75,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 			attacking = false
 		})
 
-		player.hooks.onDetach.add((instance), () => {
+		player.hooks.onDetach.add(instance, () => {
 			player.hooks.getAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
 			if (!attacking) {
