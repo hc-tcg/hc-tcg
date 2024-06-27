@@ -3,8 +3,13 @@ import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult, ModalData} from './game-state'
 
+// Functions are removed from LocalCardInstance, because these become undefined when passed from the backend to frontend.
+type RemoveFunctions<Type> = {
+	[Property in keyof Type as Exclude<Exclude<Property, 'log'>, 'attachCondition'>]: Type[Property]
+}
+
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	props: Props
+	props: RemoveFunctions<Props>
 	instance: string
 }
 

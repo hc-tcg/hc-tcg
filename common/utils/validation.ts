@@ -1,7 +1,5 @@
 import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from '../config'
-import {CARDS} from '../cards'
 import {getDeckCost} from './ranks'
-import {CardInstance} from '../types/game-state'
 import { LocalCardInstance } from '../types/server-requests'
 
 export function validateDeck(deckCards: Array<LocalCardInstance>) {

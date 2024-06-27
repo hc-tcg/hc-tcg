@@ -12,7 +12,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT, SlotInfo} from 'common/types/cards'
+import {EnergyT} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card, {Hermit} from 'common/cards/base/card'
