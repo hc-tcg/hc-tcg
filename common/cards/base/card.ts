@@ -30,11 +30,11 @@ export type CardProps = {
 	name: string
 	rarity: CardRarityT
 	tokens: number
+	attachCondition: SlotCondition
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
 	log?: (values: PlayCardLog) => string
-	attachCondition?: SlotCondition
 }
 
 export type Item = CardProps & {
@@ -117,6 +117,7 @@ export const attachable = {
 export type SingleUse = CardProps & {
 	singleUse: null
 	showConfirmationModal: boolean
+	hasAttack: boolean
 	description: string
 }
 
@@ -127,6 +128,7 @@ export function isSingleUse(props: CardProps | null): props is SingleUse {
 export const singleUse = {
 	singleUse: null,
 	showConfirmationModal: false,
+	hasAttack: false,
 	type: 'single_use' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.singleUseSlot,
@@ -176,8 +178,17 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isItem(this.props)
 	}
 
-	public getEnergy(this: Card<Item>, game: GameModel, pos: CardPosModel): Array<typeT> {
+	public getEnergy(
+		this: Card<Item>,
+		game: GameModel,
+		instance: string,
+		pos: CardPosModel
+	): Array<typeT> {
 		return []
+	}
+
+	public isHealth(): this is Card<CardProps & HasHealth> {
+		return isHealth(this.props)
 	}
 
 	public isHermit(): this is Card<CardProps & Hermit> {

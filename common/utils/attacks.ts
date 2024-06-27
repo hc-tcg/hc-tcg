@@ -7,6 +7,7 @@ import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {slot} from '../slot'
+import {isHermit} from '../cards/base/card'
 
 function executeAttack(attack: AttackModel) {
 	const target = attack.getTarget()
@@ -251,13 +252,19 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 
 	if (!attacker || !target || !attackId) return null
 
-	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+	const attackerCardInfo = attacker.row.hermitCard.card
+	const targetCardInfo = target.row.hermitCard.card
 
-	if (!attackerCardInfo || !targetCardInfo) return null
+	if (
+		!attackerCardInfo ||
+		!targetCardInfo ||
+		!attackerCardInfo.isHermit() ||
+		!targetCardInfo.isHermit()
+	)
+		return null
 
-	const strength = STRENGTHS[attackerCardInfo.type]
-	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.type)) {
+	const strength = attackerCardInfo.props.type
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
 		return null
 	}
 
@@ -268,7 +275,7 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.props.id, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

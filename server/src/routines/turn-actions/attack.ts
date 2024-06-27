@@ -21,11 +21,12 @@ function getAttack(
 	if (!attackPos.row || !attackPos.row.hermitCard) return []
 
 	// hermit attacks
-	const hermitCard = HERMIT_CARDS[attackPos.row.hermitCard.cardId]
+	const hermitCard = attackPos.row.hermitCard
+	if (!hermitCard.card.isHermit()) return []
 
-	const nextAttack = hermitCard.getAttack(
+	const nextAttack = hermitCard.card.getAttack(
 		game,
-		attackPos.row.hermitCard.cardInstance,
+		attackPos.row.hermitCard.instance,
 		attackPos,
 		hermitAttackType
 	)
@@ -58,7 +59,7 @@ function* attackSaga(
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
 	const {currentPlayer, opponentPlayer, state} = game
-	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.cardInstance
+	const activeInstance = getActiveRow(currentPlayer)?.hermitCard?.instance
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (checkForRequests) {
@@ -81,7 +82,7 @@ function* attackSaga(
 
 	const attackRow = playerBoard.rows[attackIndex]
 	if (!attackRow.hermitCard) return 'FAILURE_CANNOT_COMPLETE'
-	const attackPos = getCardPos(game, attackRow.hermitCard.cardInstance)
+	const attackPos = getCardPos(game, attackRow.hermitCard.instance)
 	if (!attackPos) return 'FAILURE_UNKNOWN_ERROR'
 
 	// Defender

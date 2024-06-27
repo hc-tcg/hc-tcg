@@ -1,5 +1,5 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
-import Card, {CardProps, isHealth, isHermit} from '../cards/base/card'
+import Card, {Attachable, CardProps, HasHealth, Item, SingleUse, isHealth, isHermit} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
@@ -12,23 +12,27 @@ import {LocalCardInstance, ModalRequest, PickInfo, PickRequest} from './server-r
 export type PlayerId = string
 
 export class CardInstance<Props extends CardProps = CardProps> {
-	card: Card<CardProps>
+	card: Card<Props>
 	instance: string
 
-	constructor(card: Card<CardProps>, instance: string) {
+	constructor(card: Card<Props>, instance: string) {
 		this.card = card
 		this.instance = instance
 	}
 
-	public get props(): CardProps {
+	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
+		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
+	}
+
+	public get props(): Props {
 		return this.card.props
 	}
 }
 
 export type RowStateWithHermit = {
-	hermitCard: CardInstance
-	effectCard: CardInstance | null
-	itemCards: Array<CardInstance | null>
+	hermitCard: CardInstance<HasHealth>
+	effectCard: CardInstance<Attachable> | null
+	itemCards: Array<CardInstance<Item> | null>
 	health: number
 }
 
@@ -98,7 +102,7 @@ export type PlayerState = {
 
 	board: {
 		activeRow: number | null
-		singleUseCard: CardInstance | null
+		singleUseCard: CardInstance<SingleUse> | null
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
 	}
