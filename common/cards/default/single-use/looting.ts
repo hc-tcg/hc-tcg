@@ -35,7 +35,7 @@ class LootingSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, {
 				cardId: this.id,
-				cardInstance: instance,
+				instance: instance,
 			})
 
 			if (coinFlip[0] === 'tails') return

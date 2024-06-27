@@ -50,7 +50,7 @@ class BrushSingleUseCard extends SingleUseCard {
 
 					const cards: Array<CardInstance> = modalResult.cards
 					const bottomCards: Array<CardInstance> = player.pile.slice(0, 3).filter((c) => {
-						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
+						if (cards.some((d) => c.instance === d.instance)) return false
 						return true
 					})
 

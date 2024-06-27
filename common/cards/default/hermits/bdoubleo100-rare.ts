@@ -43,7 +43,7 @@ class BdoubleO100RareHermitCard extends HermitCard {
 			if (!row) return
 
 			// Add new sleeping statusEffect
-			applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
+			applyStatusEffect(game, 'sleeping', row.hermitCard.instance)
 		})
 	}
 

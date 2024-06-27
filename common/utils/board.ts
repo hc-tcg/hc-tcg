@@ -34,10 +34,10 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
-	const pos = getCardPos(game, suCard.cardInstance)
+	const pos = getCardPos(game, suCard.instance)
 	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
-	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
+	const cardInstance = currentPlayer.board.singleUseCard?.instance
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()

@@ -48,7 +48,7 @@ class ComposterSingleUseCard extends SingleUseCard {
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
 				if (firstPickedCard === null) return false
-				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard.cardInstance)))(
+				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard.instance)))(
 					game,
 					pos
 				)

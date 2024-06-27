@@ -7,7 +7,6 @@ import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
-import HealthCard from 'common/cards/base/health-card'
 import {useSelector} from 'react-redux'
 import {
 	getCardsCanBePlacedIn,
@@ -19,6 +18,7 @@ import {getLocalPlayerState} from 'server/src/utils/state-gen'
 import {slot} from 'common/slot'
 import Card, {Attachable, CardProps, Hermit, Item, SingleUse} from 'common/cards/base/card'
 import {Effect} from 'redux-saga/effects'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -26,7 +26,7 @@ export type SlotProps = {
 	index?: number
 	playerId: string
 	onClick?: () => void
-	card: CardInstance | null
+	card: LocalCardInstance | null
 	rowState?: RowState
 	active?: boolean
 	cssId?: string
@@ -84,7 +84,7 @@ const Slot = ({
 							if (!statusEffect || !statusEffect.visible) return null
 							if (statusEffect.damageEffect == false) return null
 							return <StatusEffect statusEffect={statusEffect} />
-					  })
+						})
 					: null}
 			</div>
 		)
@@ -93,14 +93,14 @@ const Slot = ({
 	const hermitStatusEffects = Array.from(
 		new Set(
 			statusEffects
-				.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance)
+				.filter((a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.instance)
 				.map((a) => a) || []
 		)
 	)
 	const effectStatusEffects = Array.from(
 		new Set(
 			statusEffects.filter(
-				(a) => rowState?.effectCard && a.targetInstance == rowState.effectCard.cardInstance
+				(a) => rowState?.effectCard && a.targetInstance == rowState.effectCard.instance
 			) || []
 		)
 	)
@@ -113,9 +113,7 @@ const Slot = ({
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(
-			([card, _]) => card?.cardInstance == selectedCard.cardInstance
-		)[0][1]
+		return cardsCanBePlacedIn.filter(([card, _]) => card?.instance == selectedCard.instance)[0][1]
 	}
 
 	const getIsPickable = () => {
@@ -169,13 +167,13 @@ const Slot = ({
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
+							? renderStatusEffects(effectStatusEffects)
+							: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'effect'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+							? renderDamageStatusEffects(effectStatusEffects)
+							: renderDamageStatusEffects(null)}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

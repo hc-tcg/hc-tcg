@@ -1,5 +1,5 @@
 import {CARDS, HERMIT_CARDS} from '../cards'
-import {CardProps, isHealth, isHermit} from '../cards/base/card'
+import Card, {CardProps, isHealth, isHermit} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
@@ -7,13 +7,22 @@ import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickInfo, PickRequest} from './server-requests'
+import {LocalCardInstance, ModalRequest, PickInfo, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
-export type CardInstance<Props extends CardProps = CardProps> = {
-	props: Props
-	cardInstance: string
+export class CardInstance<Props extends CardProps = CardProps> {
+	card: Card<CardProps>
+	instance: string
+
+	constructor(card: Card<CardProps>, instance: string) {
+		this.card = card
+		this.instance = instance
+	}
+
+	public get props(): CardProps {
+		return this.card.props
+	}
 }
 
 export type RowStateWithHermit = {
@@ -288,7 +297,7 @@ export type LocalPlayerState = {
 	lives: number
 	board: {
 		activeRow: number | null
-		singleUseCard: CardInstance | null
+		singleUseCard: LocalCardInstance | null
 		singleUseCardUsed: boolean
 		rows: Array<RowState>
 	}
@@ -300,9 +309,9 @@ export type LocalGameState = {
 	statusEffects: Array<StatusEffectT>
 
 	// personal data
-	hand: Array<CardInstance>
+	hand: Array<LocalCardInstance>
 	pileCount: number
-	discarded: Array<CardInstance>
+	discarded: Array<LocalCardInstance>
 
 	// ids
 	playerId: PlayerId
@@ -313,7 +322,7 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
-	currentCardsCanBePlacedIn: Array<[CardInstance, Array<PickInfo>]> | null
+	currentCardsCanBePlacedIn: Array<[LocalCardInstance, Array<PickInfo>]> | null
 	currentPickableSlots: Array<PickInfo> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
@@ -338,7 +347,7 @@ export type LocalGameRoot = {
 	localGameState: LocalGameState | null
 	time: number
 
-	selectedCard: CardInstance | null
+	selectedCard: LocalCardInstance | null
 	openedModal: {
 		id: string
 		info: null

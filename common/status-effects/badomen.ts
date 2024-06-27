@@ -46,7 +46,7 @@ class BadOmenStatusEffect extends StatusEffect {
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
 			if (
-				statusEffectInfo.targetInstance !== card.cardInstance &&
+				statusEffectInfo.targetInstance !== card.instance &&
 				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips

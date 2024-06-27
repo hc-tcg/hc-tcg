@@ -53,7 +53,7 @@ class LeadSingleUseCard extends SingleUseCard {
 				if (!pickedSlot.card) return
 
 				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickedSlot.card.cardInstance
+				player.custom[itemIndexKey] = pickedSlot.card.instance
 			},
 		})
 

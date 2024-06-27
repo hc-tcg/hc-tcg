@@ -6,7 +6,7 @@ import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {CARDS} from 'common/cards'
 import Card from 'common/cards/base/card'
-import {CardInstance} from 'common/types/game-state'
+import {LocalCardInstance} from 'common/types/server-requests'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
 import Accordion from 'components/accordion'
@@ -130,12 +130,12 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	//MISC
 	const initialDeckState = deck
 	const allCards = Object.values(CARDS).map(
-		(card: Card): CardInstance => ({
+		(card: Card): LocalCardInstance => ({
 			props: card.props,
-			cardInstance: card.props.id,
+			instance: card.props.id,
 		})
 	)
-	const filteredCards: CardInstance[] = allCards.filter(
+	const filteredCards: LocalCardInstance[] = allCards.filter(
 		(card) =>
 			// Card Name Filter
 			card.props.name.toLowerCase().includes(deferredTextQuery.toLowerCase()) &&
@@ -160,16 +160,16 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const clearDeck = () => {
 		setLoadedDeck({...loadedDeck, cards: []})
 	}
-	const addCard = (card: CardInstance) => {
+	const addCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: [...loadedDeck.cards, {props: card.props, cardInstance: Math.random().toString()}],
+			cards: [...loadedDeck.cards, {props: card.props, instance: Math.random().toString()}],
 		}))
 	}
-	const removeCard = (card: CardInstance) => {
+	const removeCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.cardInstance !== card.cardInstance),
+			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.instance !== card.instance),
 		}))
 	}
 

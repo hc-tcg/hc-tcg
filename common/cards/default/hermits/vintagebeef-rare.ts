@@ -44,7 +44,7 @@ class VintageBeefRareHermitCard extends HermitCard {
 				if (!row.hermitCard) return
 
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return ail.targetInstance === row.hermitCard.cardInstance
+					return ail.targetInstance === row.hermitCard.instance
 				})
 
 				statusEffectsToRemove.forEach((ail) => {

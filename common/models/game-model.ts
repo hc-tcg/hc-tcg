@@ -14,7 +14,6 @@ import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
 import {SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
-import {CARDS} from '../cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -239,10 +238,13 @@ export class GameModel {
 	/** Update the cards that the players are able to select */
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
-				return cards
-			}, [] as Array<[CardInstance, Array<PickInfo>]>)
+			return player.hand.reduce(
+				(cards, card) => {
+					cards.push([card, this.getPickableSlots(card.card.attachCondition)])
+					return cards
+				},
+				[] as Array<[CardInstance, Array<PickInfo>]>
+			)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -395,13 +397,12 @@ export class GameModel {
 			// onAttach
 			;[slotA, slotB].forEach((slot) => {
 				if (!slot.card) return
-				const cardPos = getCardPos(this, slot.card.cardInstance)
+				const cardPos = getCardPos(this, slot.card.instance)
 				if (!cardPos) return
 
-				const cardInfo = CARDS[slot.card.cardId]
-				cardInfo.onAttach(this, slot.card.cardInstance, cardPos)
+				slot.card.card.onAttach(this, slot.card.instance, cardPos)
 
-				cardPos.player.hooks.onAttach.call(slot.card.cardInstance)
+				cardPos.player.hooks.onAttach.call(slot.card.instance)
 			})
 		}
 	}

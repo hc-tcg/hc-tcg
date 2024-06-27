@@ -54,9 +54,9 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 			// This will tell us to block actions at the start of our next turn
 			// Storing the cardInstance of the card that attacked
-			player.custom[skippedKey] = attacker.row.hermitCard.cardInstance
+			player.custom[skippedKey] = attacker.row.hermitCard.instance
 
-			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.cardInstance)
+			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.instance)
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
@@ -78,7 +78,7 @@ class JoeHillsRareHermitCard extends HermitCard {
 
 		// Block secondary attack if we skipped
 		player.hooks.onTurnStart.add(instance, () => {
-			const sameActive = game.activeRow?.hermitCard?.cardInstance === player.custom[skippedKey]
+			const sameActive = game.activeRow?.hermitCard?.instance === player.custom[skippedKey]
 			if (player.custom[skippedKey] && sameActive) {
 				// We skipped last turn and we are still the active hermit, block secondary attacks
 				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')

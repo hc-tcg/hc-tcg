@@ -1,13 +1,19 @@
+import {CardProps} from '../cards/base/card'
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult, CardInstance, ModalData} from './game-state'
+import {ActionResult, ModalData} from './game-state'
+
+export type LocalCardInstance<Props extends CardProps = CardProps> = {
+	props: Props
+	instance: string
+}
 
 export type PickedSlotType = SlotTypeT | 'hand'
 
 export type PickInfo = {
 	playerId: string
 	rowIndex: number | null // This will be null for the hand
-	card: CardInstance | null
+	card: LocalCardInstance | null
 	type: SlotTypeT
 	index: number | null
 }

@@ -44,7 +44,7 @@ class XisumavoidRareHermitCard extends HermitCard {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
 
-			applyStatusEffect(game, 'poison', opponentActiveRow?.hermitCard.cardInstance)
+			applyStatusEffect(game, 'poison', opponentActiveRow?.hermitCard.instance)
 		})
 	}
 

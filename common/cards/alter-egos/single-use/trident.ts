@@ -46,7 +46,7 @@ class TridentSingleUseCard extends SingleUseCard {
 
 			player.custom[this.getInstanceKey(instance)] = flipCoin(player, {
 				cardId: this.id,
-				cardInstance: instance,
+				instance: instance,
 			})[0]
 
 			applySingleUse(game)

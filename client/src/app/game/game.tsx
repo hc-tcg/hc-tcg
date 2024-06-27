@@ -31,7 +31,7 @@ import {DEBUG_CONFIG} from 'common/config'
 import {PickCardActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
 
 const MODAL_COMPONENTS: Record<string, React.FC<any>> = {
 	attack: AttackModal,
@@ -88,7 +88,7 @@ function Game() {
 		dispatch(slotPicked(pickInfo))
 	}
 
-	const selectCard = (card: CardInstance) => {
+	const selectCard = (card: LocalCardInstance) => {
 		if (availableActions.includes('PICK_REQUEST')) {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
@@ -212,14 +212,14 @@ function Game() {
 		return null
 	}
 
-	let unpickableCards: Array<CardInstance> = []
+	let unpickableCards: Array<LocalCardInstance> = []
 	const pickableCards = pickRequestPickableSlots
 		?.filter((slot) => slot.type === 'hand')
-		.map((slot) => slot.card?.cardInstance)
+		.map((slot) => slot.card?.instance)
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card.cardInstance)) unpickableCards.push(card)
+			if (!pickableCards.includes(card.instance)) unpickableCards.push(card)
 		}
 	}
 
@@ -239,7 +239,7 @@ function Game() {
 					<CardList
 						wrap={false}
 						cards={filteredCards}
-						onClick={(card: CardInstance) => selectCard(card)}
+						onClick={(card: LocalCardInstance) => selectCard(card)}
 						selected={[selectedCard]}
 						unpickable={unpickableCards}
 					/>

@@ -144,24 +144,14 @@ export function getEmptyRow(): RowState {
 }
 
 export function getPlayerState(player: PlayerModel): PlayerState {
-	const allCards = Object.values(CARDS).map(
-		(card: Card): CardInstance => ({
-			props: card.props,
-			cardInstance: card.props.id,
-		})
-	)
+	const allCards = Object.values(CARDS).map((card: Card) => new CardInstance(card, card.props.id))
 	let pack = DEBUG_CONFIG.unlimitedCards ? allCards : player.deck.cards
 
 	// shuffle cards
 	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
 
 	// randomize instances
-	pack = pack.map((card) => {
-		return {
-			props: card.props,
-			cardInstance: Math.random().toString(),
-		}
-	})
+	pack = pack.map((card) => new CardInstance(card.card, Math.random().toString()))
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -183,10 +173,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			continue
 		}
 
-		const cardInfo = {
-			props: card.props,
-			cardInstance: Math.random().toString(),
-		}
+		const cardInfo = new CardInstance(card, Math.random().toString())
 		pack.push(cardInfo)
 		hand.unshift(cardInfo)
 	}

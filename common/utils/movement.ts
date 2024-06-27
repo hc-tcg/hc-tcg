@@ -34,7 +34,7 @@ export function discardCard(
 ) {
 	if (!card) return
 
-	const pos = getCardPos(game, card.cardInstance)
+	const pos = getCardPos(game, card.instance)
 	if (!pos) {
 		const err = new Error()
 		console.log('Cannot find card on board: ', card, err.stack)
@@ -43,8 +43,8 @@ export function discardCard(
 
 	// Call `onDetach`
 	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance, pos)
-	pos.player.hooks.onDetach.call(card.cardInstance)
+	cardInfo.onDetach(game, card.instance, pos)
+	pos.player.hooks.onDetach.call(card.instance)
 
 	// Remove the card
 	discardAtPos(pos)
@@ -54,7 +54,7 @@ export function discardCard(
 
 		discardPlayer.discarded.push({
 			cardId: card.cardId,
-			cardInstance: card.cardInstance,
+			instance: card.instance,
 		})
 	}
 }
@@ -77,15 +77,15 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
-	const pos = getCardPos(game, suCard.cardInstance)
+	const pos = getCardPos(game, suCard.instance)
 	if (!pos) return
 
 	// Water and Milk Buckets can be on this slot so we use CARDS to get the card info
 	const cardInfo = CARDS[suCard.cardId]
-	cardInfo.onDetach(game, suCard.cardInstance, pos)
+	cardInfo.onDetach(game, suCard.instance, pos)
 
 	// Call onDetach hook
-	playerState.hooks.onDetach.call(suCard.cardInstance)
+	playerState.hooks.onDetach.call(suCard.instance)
 
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
@@ -104,7 +104,7 @@ export function discardFromHand(player: PlayerState, card: CardInstance | null) 
 
 	player.discarded.push({
 		cardId: card.cardId,
-		cardInstance: card.cardInstance,
+		instance: card.instance,
 	})
 }
 
@@ -120,13 +120,13 @@ export function moveCardInstanceoHand(
 	card: CardInstance,
 	playerDiscard?: PlayerState | null
 ) {
-	const cardPos = getCardPos(game, card.cardInstance)
+	const cardPos = getCardPos(game, card.instance)
 	if (!cardPos) return
 
 	const cardInfo = CARDS[card.cardId]
-	cardInfo.onDetach(game, card.cardInstance, cardPos)
+	cardInfo.onDetach(game, card.instance, cardPos)
 
-	cardPos.player.hooks.onDetach.call(card.cardInstance)
+	cardPos.player.hooks.onDetach.call(card.instance)
 
 	if (cardPos.row && cardPos.type === 'hermit') {
 		cardPos.row.hermitCard = null

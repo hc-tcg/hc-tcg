@@ -67,7 +67,7 @@ class RendogRareHermitCard extends HermitCard {
 		delete player.custom[pickedAttackKey]
 
 		// Return the attack we picked from the card we picked
-		const newAttack = hermitInfo.getAttack(game, imitatingCard.cardInstance, pos, attackType)
+		const newAttack = hermitInfo.getAttack(game, imitatingCard.instance, pos, attackType)
 		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? hermitInfo.primary.name : hermitInfo.secondary.name
@@ -132,7 +132,7 @@ class RendogRareHermitCard extends HermitCard {
 									// Detach the old card
 									const hermitInfo = HERMIT_CARDS[imitatingCard.cardId]
 									if (hermitInfo) {
-										hermitInfo.onDetach(game, imitatingCard.cardInstance, pos)
+										hermitInfo.onDetach(game, imitatingCard.instance, pos)
 									}
 								}
 
@@ -174,7 +174,7 @@ class RendogRareHermitCard extends HermitCard {
 					// Detach the old card
 					const hermitInfo = HERMIT_CARDS[imitatingCard.cardId]
 					if (hermitInfo) {
-						hermitInfo.onDetach(game, imitatingCard.cardInstance, pos)
+						hermitInfo.onDetach(game, imitatingCard.instance, pos)
 					}
 				}
 			}
@@ -197,7 +197,7 @@ class RendogRareHermitCard extends HermitCard {
 		if (imitatingCard) {
 			const hermitInfo = HERMIT_CARDS[player.custom[imitatingCardKey]]
 			if (hermitInfo) {
-				hermitInfo.onDetach(game, imitatingCard.cardInstance, pos)
+				hermitInfo.onDetach(game, imitatingCard.instance, pos)
 			}
 		}
 

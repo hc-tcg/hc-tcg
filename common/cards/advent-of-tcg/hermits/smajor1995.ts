@@ -54,7 +54,7 @@ class Smajor1995RareHermitCard extends HermitCard {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.card || rowIndex === null) return
 
-					applyStatusEffect(game, 'dyed', pickedSlot.card.cardInstance)
+					applyStatusEffect(game, 'dyed', pickedSlot.card.instance)
 				},
 			})
 		})

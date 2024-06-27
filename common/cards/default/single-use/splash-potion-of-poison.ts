@@ -30,7 +30,7 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			applyStatusEffect(
 				game,
 				'poison',
-				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance
+				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.instance
 			)
 		})
 	}

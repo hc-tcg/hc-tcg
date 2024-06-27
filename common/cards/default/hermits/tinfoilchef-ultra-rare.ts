@@ -46,12 +46,12 @@ class TinFoilChefUltraRareHermitCard extends HermitCard {
 
 			// Can't discard two items on the same hermit
 			const limit = player.custom[this.getInstanceKey(instance)] || {}
-			if (limit[opponentActiveRow.hermitCard.cardInstance]) return
+			if (limit[opponentActiveRow.hermitCard.instance]) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] === 'tails') return
 
-			limit[opponentActiveRow.hermitCard.cardInstance] = true
+			limit[opponentActiveRow.hermitCard.instance] = true
 			player.custom[this.getInstanceKey(instance)] = limit
 
 			discardCard(game, opponentActiveRow.effectCard)

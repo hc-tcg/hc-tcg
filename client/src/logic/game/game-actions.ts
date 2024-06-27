@@ -1,11 +1,10 @@
-import {BattleLogT, LocalGameState, Message} from 'common/types/game-state'
+import {LocalGameState, Message} from 'common/types/game-state'
 import {
-	CardInstance,
 	GameEndOutcomeT,
 	GameEndReasonT,
 	CurrentCoinFlipT,
 } from 'common/types/game-state'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
 
 export const gameStateReceived = (localGameState: LocalGameState) => ({
 	type: 'GAME_STATE_RECEIVED' as const,
@@ -31,7 +30,7 @@ export const gameEnd = () => ({
 	type: 'GAME_END' as const,
 })
 
-export const setSelectedCard = (card: CardInstance | null) => ({
+export const setSelectedCard = (card: LocalCardInstance | null) => ({
 	type: 'SET_SELECTED_CARD' as const,
 	payload: card,
 })

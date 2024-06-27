@@ -27,7 +27,7 @@ class CommandBlockEffectCard extends EffectCard {
 			const row = rows[activeRow]
 
 			// Make sure this row has our instance
-			if (row.effectCard?.cardInstance !== instance) return availableEnergy
+			if (row.effectCard?.instance !== instance) return availableEnergy
 
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')

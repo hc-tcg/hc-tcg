@@ -27,7 +27,7 @@ class PoisonStatusEffect extends StatusEffect {
 		const {player, opponentPlayer} = pos
 
 		const hasDamageEffect = game.state.statusEffects.some(
-			(a) => a.targetInstance === pos.card?.cardInstance && a.damageEffect === true
+			(a) => a.targetInstance === pos.card?.instance && a.damageEffect === true
 		)
 
 		if (hasDamageEffect) return
@@ -78,7 +78,7 @@ class PoisonStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})

@@ -31,6 +31,7 @@ import {
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
 import {isAttachable, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
+import { LocalCardInstance } from 'common/types/server-requests'
 
 const TYPE_ORDER = {
 	hermit: 0,
@@ -40,8 +41,8 @@ const TYPE_ORDER = {
 	health: 4,
 }
 
-export const sortCards = (cards: Array<CardInstance>): Array<CardInstance> => {
-	return cards.slice().sort((a: CardInstance, b: CardInstance) => {
+export const sortCards = (cards: Array<LocalCardInstance>): Array<LocalCardInstance> => {
+	return cards.slice().sort((a: LocalCardInstance, b: LocalCardInstance) => {
 		const cardCostA = a.props.tokens
 		const cardCostB = b.props.tokens
 
@@ -80,7 +81,7 @@ export const sortCards = (cards: Array<CardInstance>): Array<CardInstance> => {
 	})
 }
 
-export const cardGroupHeader = (title: string, cards: CardInstance[]) => (
+export const cardGroupHeader = (title: string, cards: Array<LocalCardInstance>) => (
 	<p className={css.cardGroupHeader}>
 		{`${title} `}
 		<span style={{fontSize: '0.9rem'}}>{`(${cards.length}) `}</span>
@@ -174,7 +175,7 @@ const Deck = ({setMenuSection}: Props) => {
 		const deck = getSavedDeck(deckName)
 		if (!deck) return console.log(`[LoadDeck]: Could not load the ${deckName} deck.`)
 
-		const deckIds = deck.cards?.filter((card: CardInstance) => card.props.id)
+		const deckIds = deck.cards?.filter((card) => card.props.id)
 
 		setLoadedDeck({
 			...deck,

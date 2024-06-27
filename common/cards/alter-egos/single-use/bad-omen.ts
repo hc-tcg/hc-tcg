@@ -30,7 +30,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			applyStatusEffect(
 				game,
 				'badomen',
-				opponentPlayer.board.rows[activeRow].hermitCard?.cardInstance
+				opponentPlayer.board.rows[activeRow].hermitCard?.instance
 			)
 		})
 	}

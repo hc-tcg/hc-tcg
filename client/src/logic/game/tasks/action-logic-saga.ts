@@ -2,12 +2,12 @@ import {select} from 'typed-redux-saga'
 import {call, put} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
-import {CardInstance} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal} from 'logic/game/game-actions'
 import {isSingleUse} from 'common/cards/base/card'
+import {LocalCardInstance} from 'common/types/server-requests'
 
-function* singleUseSaga(card: CardInstance): SagaIterator {
+function* singleUseSaga(card: LocalCardInstance): SagaIterator {
 	if (isSingleUse(card.props) && card.props.showConfirmationModal) {
 		yield put(setOpenedModal('confirm'))
 	}

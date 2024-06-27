@@ -1,8 +1,5 @@
-import {RANKS} from '../config'
 import {RankT} from '../types/cards'
-import Card, {CardProps} from '../cards/base/card'
-import {CARDS} from '../cards'
-import {CardInstance} from '../types/game-state'
+import { LocalCardInstance } from '../types/server-requests'
 
 export function getCardRank(tokens: number): RankT {
 	if (tokens === 0) {
@@ -19,6 +16,6 @@ export function getCardRank(tokens: number): RankT {
 	return 'stone'
 }
 
-export function getDeckCost(deckCards: Array<CardInstance>) {
+export function getDeckCost(deckCards: Array<LocalCardInstance>) {
 	return deckCards.reduce((cost, card) => (cost += card.props.tokens), 0)
 }

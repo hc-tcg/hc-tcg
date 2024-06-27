@@ -56,7 +56,7 @@ class HotguyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.cardInstance)
+			const bowId = SINGLE_USE_CARDS['bow'].getInstanceKey(singleUseCard.instance)
 			if (attack.id === bowId) {
 				attack.addDamage(this.id, attack.getDamage())
 			}

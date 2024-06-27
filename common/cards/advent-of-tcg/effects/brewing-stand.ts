@@ -28,7 +28,7 @@ class BrewingStandEffectCard extends Card<Attachable> {
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, {cardId: this.props.id, cardInstance: instance})[0]
+			const flip = flipCoin(player, {cardId: this.props.id, instance: instance})[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({

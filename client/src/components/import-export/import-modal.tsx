@@ -10,6 +10,7 @@ import {getDeckFromHash} from './import-export-utils'
 import {CardInstance} from '../../../../common/types/game-state'
 import {EnergyT} from 'common/types/cards'
 import {saveDeck} from 'logic/saved-decks/saved-decks'
+import { LocalCardInstance } from 'common/types/server-requests'
 
 type Props = {
 	setOpen: boolean
@@ -26,7 +27,7 @@ export const ImportModal = ({setOpen, onClose, importDeck, handleMassImport}: Pr
 	//IMPORT DECK FUNCTION
 	const importFromHash = () => {
 		if (!hashRef.current) return
-		let deck: Array<CardInstance> = []
+		let deck: Array<LocalCardInstance> = []
 
 		try {
 			deck = getDeckFromHash(hashRef.current.value)

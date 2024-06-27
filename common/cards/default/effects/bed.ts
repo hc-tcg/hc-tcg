@@ -26,13 +26,13 @@ class BedEffectCard extends EffectCard {
 		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
 
 		if (row && row.hermitCard) {
-			applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
+			applyStatusEffect(game, 'sleeping', row.hermitCard.instance)
 		}
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(instance, () => {
 			const isSleeping = game.state.statusEffects.some(
-				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
+				(a) => a.targetInstance == row?.hermitCard?.instance && a.statusEffectId == 'sleeping'
 			)
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)
@@ -41,23 +41,23 @@ class BedEffectCard extends EffectCard {
 		})
 
 		player.hooks.beforeApply.add(instance, () => {
-			player.custom[hermitSlot] = row?.hermitCard?.cardInstance
+			player.custom[hermitSlot] = row?.hermitCard?.instance
 		})
 
 		//Ladder
 		player.hooks.afterApply.add(instance, () => {
-			if (player.custom[hermitSlot] != row?.hermitCard?.cardInstance && row && row.hermitCard) {
+			if (player.custom[hermitSlot] != row?.hermitCard?.instance && row && row.hermitCard) {
 				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
 
 				// Add new sleeping statusEffect
-				applyStatusEffect(game, 'sleeping', row.hermitCard.cardInstance)
+				applyStatusEffect(game, 'sleeping', row.hermitCard.instance)
 			}
 			delete player.custom[hermitSlot]
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
 			const isSleeping = game.state.statusEffects.some(
-				(a) => a.targetInstance == row?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
+				(a) => a.targetInstance == row?.hermitCard?.instance && a.statusEffectId == 'sleeping'
 			)
 
 			// if sleeping has worn off, discard the bed

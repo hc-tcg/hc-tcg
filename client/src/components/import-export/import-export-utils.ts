@@ -1,8 +1,9 @@
 import {CardInstance} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {encode, decode} from 'js-base64'
+import { LocalCardInstance } from 'common/types/server-requests'
 
-export const getDeckFromHash = (hash: string): Array<CardInstance> => {
+export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
 		var b64 = decode(hash)
 			.split('')
@@ -16,13 +17,13 @@ export const getDeckFromHash = (hash: string): Array<CardInstance> => {
 		if (!props) continue
 		deck.push({
 			props: props,
-			cardInstance: Math.random().toString(),
+			instance: Math.random().toString(),
 		})
 	}
 	return deck
 }
 
-export const getHashFromDeck = (pickedCards: Array<CardInstance>): string => {
+export const getHashFromDeck = (pickedCards: Array<LocalCardInstance>): string => {
 	const indicies = []
 	for (let i = 0; i < pickedCards.length; i++) {
 		const id = CARDS[pickedCards[i].props.id].props.numericId

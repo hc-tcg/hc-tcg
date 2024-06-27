@@ -1,18 +1,18 @@
 import cn from 'classnames'
-import {CardInstance} from 'common/types/game-state'
 import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
 import {equalCard} from 'common/utils/cards'
+import { LocalCardInstance } from 'common/types/server-requests'
 
 type CardListProps = {
-	cards: Array<CardInstance>
+	cards: Array<LocalCardInstance>
 	disabled?: Array<string>
-	unpickable?: Array<CardInstance>
-	selected?: Array<CardInstance | null>
-	picked?: Array<CardInstance>
-	onClick?: (card: CardInstance) => void
+	unpickable?: Array<LocalCardInstance>
+	selected?: Array<LocalCardInstance | null>
+	picked?: Array<LocalCardInstance>
+	onClick?: (card: LocalCardInstance) => void
 	wrap?: boolean
 	tooltipAboveModal?: boolean
 	enableAnimations?: boolean
@@ -30,7 +30,7 @@ const CardList = (props: CardListProps) => {
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
 		const isDisabled = !!disabled?.find((id) => id == info.id)
 		const isUnpickable = !!unpickable?.find(
-			(findCard) => findCard.cardInstance === card.cardInstance
+			(findCard) => findCard.instance === card.instance
 		)
 
 		const cssClasses =
@@ -46,13 +46,13 @@ const CardList = (props: CardListProps) => {
 
 		return (
 			<CSSTransition
-				key={card.cardInstance}
+				key={card.instance}
 				timeout={250}
 				unmountOnExit={true}
 				classNames={cssClasses}
 			>
 				<CardComponent
-					key={card.cardInstance}
+					key={card.instance}
 					className={cn(css.card, {
 						[css.clickable]: !!onClick && !isDisabled,
 					})}

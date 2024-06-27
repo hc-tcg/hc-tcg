@@ -85,7 +85,7 @@ class BoomerBdubsRareHermitCard extends HermitCard {
 					// This is sketchy AF but fortune needs to be removed after the first coin flip
 					// to prevent infinite flips from being easy.
 					const fortuneInstances = player.playerDeck.filter((card) => card.cardId === 'fortune')
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.cardInstance))
+					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.instance))
 
 					return 'SUCCESS'
 				},
