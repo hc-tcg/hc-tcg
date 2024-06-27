@@ -4,7 +4,6 @@ import {PlayCardActionData} from 'common/types/action-data'
 import {CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult, CardInstance} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
-import {callSlotConditionWithPickInfo} from 'common/slot'
 import {SlotInfo} from 'common/types/cards'
 import {Attachable, HasHealth, Item, SingleUse} from 'common/cards/base/card'
 
@@ -48,7 +47,15 @@ function* playCardSaga(
 	const opponentPlayer = game.state.players[opponentPlayerId]
 
 	// Do we meet requirements to place the card
-	const canAttach = callSlotConditionWithPickInfo(card.props.attachCondition, game, pickInfo)
+	const canAttach = card.props.attachCondition(game, {
+		player: player,
+		opponentPlayer: opponentPlayer,
+		type: pickInfo.type,
+		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
+		row: row,
+		index: pickInfo.index,
+		card: pickInfo.card ? CardInstance.fromLocalCardInstance(pickInfo.card) : null,
+	})
 
 	// It's the wrong kind of slot or does not satisfy the condition
 	if (!canAttach) return 'FAILURE_INVALID_SLOT'

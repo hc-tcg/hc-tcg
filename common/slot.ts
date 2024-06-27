@@ -1,31 +1,8 @@
 import {GameModel} from './models/game-model'
 import {SlotInfo} from './types/cards'
-import {CardInstance, TurnAction} from './types/game-state'
-import {PickInfo} from './types/server-requests'
+import {TurnAction} from './types/game-state'
 
 export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
-
-export function callSlotConditionWithPickInfo(
-	condition: SlotCondition,
-	game: GameModel,
-	pickInfo: PickInfo
-): boolean {
-	const playerState = game.state.players[pickInfo.playerId]
-	const opponentPlayerState = Object.values(game.state.players).filter(
-		(state) => state !== playerState
-	)[0]
-	const row = pickInfo.rowIndex ? playerState.board.rows[pickInfo.rowIndex] : null
-
-	return condition(game, {
-		player: playerState,
-		opponentPlayer: opponentPlayerState,
-		type: pickInfo.type,
-		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
-		row: row,
-		index: pickInfo.index,
-		card: pickInfo.card ? CardInstance.fromLocalCardInstance(pickInfo.card) : null,
-	})
-}
 
 export namespace slot {
 	/** Used for debugging. Print a message provided by the msg function. */

@@ -42,10 +42,10 @@ export function getStarterPack() {
 
 	const cards = Object.values(CARDS).filter(
 		(cardInfo) =>
-			cardInfo.isHermit() &&
-			cardInfo.isItem() &&
-			types.includes(cardInfo.props.type) &&
-			!EXPANSIONS.disabled.includes(cardInfo.props.expansion)
+			!cardInfo.isHermit() ||
+			!cardInfo.isItem() ||
+			(types.includes(cardInfo.props.type) &&
+				!EXPANSIONS.disabled.includes(cardInfo.props.expansion))
 	)
 
 	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttachable())
@@ -104,7 +104,7 @@ export function getStarterPack() {
 
 	let loopBreaker = 0
 	// effects
-	while (deck.length < limits.maxCards) {
+	while (deck.length < limits.maxCards && deck.length < effectCards.length) {
 		const effectCard = effectCards[Math.floor(Math.random() * effectCards.length)]
 
 		const duplicates = deck.filter((card) => card.props.id === effectCard.props.id)
@@ -117,7 +117,7 @@ export function getStarterPack() {
 		} else {
 			loopBreaker = 0
 		}
-		if (loopBreaker >= 10000) {
+		if (loopBreaker >= 100) {
 			const err = new Error()
 			console.log('Broke out of loop while generating starter deck!', err.stack)
 			break
