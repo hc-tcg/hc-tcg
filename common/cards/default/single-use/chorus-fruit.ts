@@ -36,7 +36,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			player.hooks.afterAttack.add(instance, (attack) => {
 				if (player.custom[removedBlockKey]) return
 				// Remove change active hermit from the blocked actions so it can be done once more
-				game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
 				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
 				player.custom[removedBlockKey] = true
 				// If another attack loop runs let the blocked action be removed again
