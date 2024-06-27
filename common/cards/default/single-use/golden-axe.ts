@@ -52,7 +52,6 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				applySingleUse(game)
 			}
 
-			player.hooks.onAttack.add
 			attack.shouldIgnoreCards.push((instance) => {
 				const ignorePos = getBasicCardPos(game, instance)
 				if (!ignorePos || !ignorePos.row || !ignorePos.row.effectCard) return false
