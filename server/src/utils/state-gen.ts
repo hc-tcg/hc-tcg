@@ -127,7 +127,7 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	return deck
+	return deck.map((card) => new CardInstance(card, Math.random().toString()))
 }
 
 export function getEmptyRow(): RowState {

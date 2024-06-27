@@ -66,9 +66,7 @@ export class PlayerModel {
 			name: newDeck.name,
 			icon: newDeck.icon,
 			cards: deckCards,
-
-
-			}
+		}
 	}
 
 	setMinecraftName(name: string) {

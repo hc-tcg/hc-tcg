@@ -3,7 +3,6 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
-import {HERMIT_CARDS} from '../cards'
 import {slot} from '../slot'
 
 class MelodyStatusEffect extends StatusEffect {

@@ -1,24 +1,23 @@
-import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
-import {HERMIT_CARDS} from '../..'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
+import Card, {Attachable, attachable} from '../../base/card'
 
-class BedEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'bed',
-			numericId: 2,
-			name: 'Bed',
-			rarity: 'ultra_rare',
-			description:
-				'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
-		})
+class BedEffectCard extends Card {
+	props: Attachable = {
+		...attachable,
+		id: 'bed',
+		numericId: 2,
+		expansion: 'default',
+		name: 'Bed',
+		rarity: 'ultra_rare',
+		tokens: 3,
+		description:
+			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+		attachCondition: slot.every(attachable.attachCondition, slot.activeRow),
 	}
-
-	override _attachCondition = slot.every(super.attachCondition, slot.activeRow)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns
@@ -47,7 +46,7 @@ class BedEffectCard extends EffectCard {
 		//Ladder
 		player.hooks.afterApply.add(instance, () => {
 			if (player.custom[hermitSlot] != row?.hermitCard?.instance && row && row.hermitCard) {
-				row.health = HERMIT_CARDS[row.hermitCard.cardId].health
+				row.health = row.hermitCard.props.health
 
 				// Add new sleeping statusEffect
 				applyStatusEffect(game, 'sleeping', row.hermitCard.instance)

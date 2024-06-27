@@ -1,13 +1,14 @@
 import {useSelector} from 'react-redux'
 import {useState} from 'react'
 import classnames from 'classnames'
-import {HERMIT_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {getPlayerStateById} from 'logic/game/game-selectors'
 import Attack from './attack'
-import {isHermit} from 'common/cards/base/card'
+import Card, {Hermit, isHermit} from 'common/cards/base/card'
+import {CARDS} from 'common/cards'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 type HermitExtra = {
 	hermitId: string
@@ -36,28 +37,31 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
 
-	const eaResult = extraAttacks.reduce((agg, extra) => {
-		const [hermitId, action] = extra.split(':')
-		const hermitInfo = HERMIT_CARDS[hermitId]
-		if (!hermitInfo) throw new Error('Invalid extra attack')
-		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
-		const hermitFullName = hermitInfo.props.id.split('_')[0]
-		agg[hermitId] = agg[hermitId] || {}
-		agg[hermitId][type] = (
-			<Attack
-				key={extra}
-				name={hermitInfo.props[type].name}
-				icon={`/images/hermits-nobg/${hermitFullName}.png`}
-				attackInfo={hermitInfo.props[type]}
-				onClick={() => handleExtraAttack({hermitId, type})}
-				extra
-			/>
-		)
-		return agg
-	}, {} as Record<string, any>)
+	const eaResult = extraAttacks.reduce(
+		(agg, extra) => {
+			const [hermitId, action] = extra.split(':')
+			const hermitInfo = CARDS[hermitId] as Card<Hermit>
+			if (!hermitInfo) throw new Error('Invalid extra attack')
+			const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
+			const hermitFullName = hermitInfo.props.id.split('_')[0]
+			agg[hermitId] = agg[hermitId] || {}
+			agg[hermitId][type] = (
+				<Attack
+					key={extra}
+					name={hermitInfo.props[type].name}
+					icon={`/images/hermits-nobg/${hermitFullName}.png`}
+					attackInfo={hermitInfo.props[type]}
+					onClick={() => handleExtraAttack({hermitId, type})}
+					extra
+				/>
+			)
+			return agg
+		},
+		{} as Record<string, any>
+	)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
-		const hermitInfo = HERMIT_CARDS[hermitId]
+		const hermitInfo = CARDS[hermitId]
 		const hermitFullName = hermitInfo.props.id.split('_')[0]
 		return (
 			<img

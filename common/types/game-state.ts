@@ -1,4 +1,4 @@
-import {CARDS, HERMIT_CARDS} from '../cards'
+import {CARDS} from '../cards'
 import Card, {Attachable, CardProps, HasHealth, Item, SingleUse, isHealth, isHermit} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'

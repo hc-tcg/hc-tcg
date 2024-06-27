@@ -1,6 +1,5 @@
 import Modal from 'components/modal'
 import {useSelector, useDispatch} from 'react-redux'
-import {HERMIT_CARDS, SINGLE_USE_CARDS} from 'common/cards'
 import {getPlayerActiveRow, getOpponentActiveRow} from '../../game-selectors'
 import css from '../game-modals.module.scss'
 import {getPlayerId} from 'logic/session/session-selectors'

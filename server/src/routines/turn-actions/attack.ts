@@ -1,5 +1,4 @@
 import {call} from 'typed-redux-saga'
-import {HERMIT_CARDS} from 'common/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'

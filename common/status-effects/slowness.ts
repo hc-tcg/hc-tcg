@@ -1,6 +1,5 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CARDS, HERMIT_CARDS} from '../cards'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'

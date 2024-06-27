@@ -1,4 +1,3 @@
-import {CARDS, HERMIT_CARDS} from 'common/cards'
 import {GameModel} from 'common/models/game-model'
 import {equalCard} from 'common/utils/cards'
 import {PlayCardActionData} from 'common/types/action-data'
@@ -7,7 +6,7 @@ import {ActionResult, CardInstance} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {callSlotConditionWithPickInfo} from 'common/slot'
 import {SlotInfo} from 'common/types/cards'
-import { Attachable, HasHealth, Item, SingleUse, isHealth, isHermit } from 'common/cards/base/card'
+import {Attachable, HasHealth, Item, SingleUse} from 'common/cards/base/card'
 
 function* playCardSaga(
 	game: GameModel,

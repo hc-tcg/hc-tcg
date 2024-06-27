@@ -82,7 +82,7 @@ export function isHermit(props: CardProps | null): props is Hermit {
 
 export const hermit = {
 	hermit: null,
-	type: 'hermit' as CardCategoryT,
+	category: 'hermit' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.hermitSlot,
 		slot.player,
@@ -103,7 +103,7 @@ export function isAttachable(props: CardProps | null): props is Attachable {
 
 export const attachable = {
 	attachable: null,
-	type: 'effect' as CardCategoryT,
+	category: 'effect' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.effectSlot,
@@ -129,7 +129,7 @@ export const singleUse = {
 	singleUse: null,
 	showConfirmationModal: false,
 	hasAttack: false,
-	type: 'single_use' as CardCategoryT,
+	category: 'single_use' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.singleUseSlot,
 		slot.playerHasActiveHermit,
