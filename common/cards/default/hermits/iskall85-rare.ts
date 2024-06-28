@@ -1,8 +1,6 @@
-import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import Card, {Hermit, hermit} from '../../base/card'
-import HermitCard from '../../base/hermit-card'
 
 class Iskall85RareHermitCard extends Card {
 	props: Hermit = {
@@ -38,8 +36,7 @@ class Iskall85RareHermitCard extends Card {
 			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
 			const isBuilder =
-				target.row.hermitCard &&
-				HERMIT_CARDS[target.row.hermitCard.cardId]?.props.type === 'builder'
+				target.row.hermitCard.card.isHermit() && target.row.hermitCard.card.props.type === 'builder'
 					? 2
 					: 1
 

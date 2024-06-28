@@ -4,6 +4,7 @@ import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
+import {LocalCardInstance} from '../types/server-requests'
 
 export class PlayerModel {
 	private internalId: string
@@ -11,7 +12,7 @@ export class PlayerModel {
 	private internalDeck: {
 		name: string
 		icon: string
-		cards: Array<CardInstance>
+		cards: Array<LocalCardInstance>
 	}
 
 	public name: string
@@ -59,13 +60,12 @@ export class PlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		let deckCards = newDeck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
-		const validationMessage = validateDeck(deckCards)
+		const validationMessage = validateDeck(newDeck.cards)
 		if (validationMessage) return
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
-			cards: deckCards,
+			cards: newDeck.cards,
 		}
 	}
 
