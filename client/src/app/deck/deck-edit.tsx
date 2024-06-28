@@ -152,7 +152,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => card.props.category === 'hermit'),
 		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
-		attachableEffects: loadedDeck.cards.filter((card) => card.props.category === 'effect'),
+		attachableEffects: loadedDeck.cards.filter((card) => card.props.category === 'attach'),
 		singleUseEffects: loadedDeck.cards.filter((card) => card.props.category === 'single_use'),
 	}
 
@@ -346,7 +346,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 					</Accordion>
 					<Accordion header={'Attachable Effects'}>
 						<CardList
-							cards={sortCards(filteredCards).filter((card) => card.props.category === 'effect')}
+							cards={sortCards(filteredCards).filter((card) => card.props.category === 'attach')}
 							enableAnimations={false}
 							wrap={true}
 							onClick={addCard}

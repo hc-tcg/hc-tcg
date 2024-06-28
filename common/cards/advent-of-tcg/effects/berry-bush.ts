@@ -3,10 +3,10 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
-class BerryBushEffectCard extends Card<Attachable> {
-	props: Attachable = {
+class BerryBushEffectCard extends Card<Attach> {
+	props: Attach = {
 		...attachable,
 		id: 'berry_bush',
 		numericId: 200,

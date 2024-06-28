@@ -1,6 +1,6 @@
 import {CARDS} from '../cards'
 import Card, {
-	Attachable,
+	Attach,
 	CardProps,
 	HasHealth,
 	Hermit,
@@ -46,7 +46,7 @@ export class CardInstance<Props extends CardProps = CardProps> {
 
 export type RowStateWithHermit = {
 	hermitCard: CardInstance<HasHealth>
-	effectCard: CardInstance<Attachable> | null
+	effectCard: CardInstance<Attach> | null
 	itemCards: Array<CardInstance<Item> | null>
 	health: number
 }
@@ -71,7 +71,7 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type LocalRowState = {
 	hermitCard: LocalCardInstance<HasHealth> | null
-	effectCard: LocalCardInstance<Attachable> | null
+	effectCard: LocalCardInstance<Attach> | null
 	itemCards: Array<LocalCardInstance<Item> | null>
 	health: number | null
 }

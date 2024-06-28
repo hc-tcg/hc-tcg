@@ -1,10 +1,10 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
 class GoldArmorEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'gold_armor',
 		numericId: 29,

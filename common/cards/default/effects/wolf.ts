@@ -4,10 +4,10 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {getActiveRowPos} from '../../../utils/board'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
 class WolfEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'wolf',
 		numericId: 108,

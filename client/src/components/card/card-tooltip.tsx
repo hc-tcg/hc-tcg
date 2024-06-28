@@ -1,7 +1,7 @@
 import React from 'react'
 import {typeT} from 'common/types/cards'
 import {
-	Attachable,
+	Attach,
 	CardProps,
 	SingleUse,
 	WithoutFunctions,
@@ -39,7 +39,7 @@ type Props = {
 	card: WithoutFunctions<CardProps>
 }
 
-const getDescription = (card: WithoutFunctions<Attachable | SingleUse>): React.ReactNode => {
+const getDescription = (card: WithoutFunctions<Attach | SingleUse>): React.ReactNode => {
 	return FormattedText(formatText(card.description))
 }
 
@@ -161,7 +161,6 @@ const getSidebarDescriptions = (card: WithoutFunctions<CardProps>): React.ReactN
 }
 
 const CardInstanceTooltip = ({card}: Props) => {
-	if (isHermit(card)) return null
 	const settings = useSelector(getSettings)
 
 	return (

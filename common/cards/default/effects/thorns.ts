@@ -3,10 +3,10 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
 class ThornsEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'thorns',
 		numericId: 96,

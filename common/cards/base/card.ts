@@ -105,24 +105,24 @@ export const hermit = {
 	),
 }
 
-export type Attachable = CardProps & {
+export type Attach = CardProps & {
 	attachable: null
 	description: string
 }
 
 export function isAttachable(
 	props: WithoutFunctions<CardProps>
-): props is WithoutFunctions<Attachable>
-export function isAttachable(props: CardProps): props is Attachable
+): props is WithoutFunctions<Attach>
+export function isAttachable(props: CardProps): props is Attach
 export function isAttachable(
 	props: CardProps | WithoutFunctions<CardProps> | null
-): props is Attachable {
+): props is Attach {
 	return props !== null && 'attachable' in props
 }
 
 export const attachable = {
 	attachable: null,
-	category: 'effect' as CardCategoryT,
+	category: 'attach' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.effectSlot,
@@ -275,7 +275,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return 'primary' in this.props && 'secondary' in this.props
 	}
 
-	public isAttachable(): this is Card<CardProps & Attachable> {
+	public isAttachable(): this is Card<CardProps & Attach> {
 		return isAttachable(this.props)
 	}
 
@@ -294,7 +294,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return []
 	}
 
-	public getFormattedDescription(this: Card<Attachable | SingleUse>): FormattedTextNode {
+	public getFormattedDescription(this: Card<Attach | SingleUse>): FormattedTextNode {
 		return formatText(this.props.description)
 	}
 

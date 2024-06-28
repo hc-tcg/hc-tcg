@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../slot'
-import Card, {Attachable, attachable, hermit, hermitBattleLog} from '../../base/card'
+import Card, {Attach, attachable, hermit, hermitBattleLog} from '../../base/card'
 
 class ArmorStandEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'armor_stand',
 		numericId: 118,

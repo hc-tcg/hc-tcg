@@ -27,7 +27,7 @@ const Card = (props: CardReactProps) => {
 	let card = null
 	if (category === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
 	else if (category === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
-	else if (['effect', 'single_use'].includes(category))
+	else if (['attach', 'single_use'].includes(category))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
 	else if ('health' in otherProps) {
 		let health = (otherProps as {health: number}).health

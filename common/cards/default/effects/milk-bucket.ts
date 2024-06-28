@@ -2,15 +2,16 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attachable, SingleUse, attachable, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse, attachable, singleUse} from '../../base/card'
 
 class MilkBucketEffectCard extends Card {
-	props: Attachable & SingleUse = {
+	props: Attach & SingleUse = {
 		...attachable,
 		...singleUse,
 		id: 'milk_bucket',
 		numericId: 79,
 		name: 'Milk Bucket',
+		category: 'attach',
 		expansion: 'default',
 		rarity: 'common',
 		tokens: 0,

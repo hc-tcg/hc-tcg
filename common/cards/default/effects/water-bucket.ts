@@ -3,13 +3,13 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attachable, SingleUse, attachable, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse, attachable, singleUse} from '../../base/card'
 
 class WaterBucketEffectCard extends Card {
-	props: Attachable & SingleUse = {
+	props: Attach & SingleUse = {
 		...attachable,
 		...singleUse,
-		category: 'effect',
+		category: 'attach',
 		id: 'water_bucket',
 		expansion: 'default',
 		numericId: 105,

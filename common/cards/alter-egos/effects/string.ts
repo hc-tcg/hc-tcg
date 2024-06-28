@@ -1,8 +1,8 @@
 import {slot} from '../../../slot'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
 class StringEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'string',
 		numericId: 122,

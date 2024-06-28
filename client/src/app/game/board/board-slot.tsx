@@ -16,7 +16,7 @@ import {
 } from 'logic/game/game-selectors'
 import {getLocalPlayerState} from 'server/src/utils/state-gen'
 import {slot} from 'common/slot'
-import Card, {Attachable, CardProps, Hermit, Item, SingleUse} from 'common/cards/base/card'
+import Card, {Attach, CardProps, Hermit, Item, SingleUse} from 'common/cards/base/card'
 import {Effect} from 'redux-saga/effects'
 import {LocalCardInstance} from 'common/types/server-requests'
 
@@ -50,7 +50,7 @@ const Slot = ({
 	const localGameState = useSelector(getGameState)
 
 	let cardInfo = card?.props
-		? (card.props as Hermit | Item | Attachable | SingleUse | CardProps)
+		? (card.props as Hermit | Item | Attach | SingleUse | CardProps)
 		: null
 	if (type === 'health' && rowState?.health) {
 		// @ts-ignore SORRY, I have no idea how to fix this

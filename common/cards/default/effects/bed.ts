@@ -3,10 +3,10 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attachable, attachable} from '../../base/card'
+import Card, {Attach, attachable} from '../../base/card'
 
 class BedEffectCard extends Card {
-	props: Attachable = {
+	props: Attach = {
 		...attachable,
 		id: 'bed',
 		numericId: 2,
