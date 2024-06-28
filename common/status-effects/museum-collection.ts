@@ -50,7 +50,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			if (!targetHermit) return
 			if (
 				attack.id !==
-					this.getTargetInstanceKey(targetHermit?.props.id, statusEffectInfo.targetInstance) ||
+					this.getTargetInstanceKey(targetHermit?.card.props.id, statusEffectInfo.targetInstance) ||
 				attack.type !== 'secondary'
 			)
 				return

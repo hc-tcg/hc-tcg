@@ -116,7 +116,7 @@ export class BattleLogModel {
 			return `${card.props.name}`
 		}
 
-		const thisFlip = coinFlips.find((flip) => flip.card.props.id === card.props.id)
+		const thisFlip = coinFlips.find((flip) => flip.card.card.props.id === card.props.id)
 		const invalid = '$bINVALID VALUE$'
 
 		const logMessage = card.getLog({
@@ -126,7 +126,7 @@ export class BattleLogModel {
 			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
-				id: pos.card ? pos.card.props.id : invalid,
+				id: pos.card ? pos.card.card.props.id : invalid,
 				name: pos.card ? genCardName(pos.player, pos.card, pos.rowIndex) : invalid,
 				hermitCard: pos.row?.hermitCard
 					? genCardName(pos.player, pos.row.hermitCard, pos.rowIndex)
@@ -135,7 +135,7 @@ export class BattleLogModel {
 			},
 			pick: {
 				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
-				id: slotInfo?.card ? slotInfo.card.props.id : invalid,
+				id: slotInfo?.card ? slotInfo.card.card.props.id : invalid,
 				name: slotInfo?.card
 					? genCardName(slotInfo.player, slotInfo.card, slotInfo.rowIndex)
 					: invalid,

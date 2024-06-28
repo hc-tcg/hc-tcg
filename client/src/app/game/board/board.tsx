@@ -9,7 +9,7 @@ import Actions from '../actions/actions'
 import {CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
 
 type Props = {
@@ -31,7 +31,7 @@ function Board({onClick, localGameState}: Props) {
 	const handleRowClick = (
 		playerId: string,
 		rowIndex: number,
-		card: CardInstance | null,
+		card: LocalCardInstance | null,
 		type: SlotTypeT,
 		index: number
 	) => {

@@ -20,15 +20,14 @@ type CardListProps = {
 
 const CardList = (props: CardListProps) => {
 	const {wrap, onClick, cards, disabled, unpickable, selected, picked, enableAnimations} = props
+	console.log(cards)
 
 	const cardsOutput = cards.map((card) => {
-		const info = card.props
-		if (!info) return null
 		const isSelected = selected
 			? selected.some((selectedCard) => equalCard(card, selectedCard))
 			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
-		const isDisabled = !!disabled?.find((id) => id == info.id)
+		const isDisabled = !!disabled?.find((id) => id == card.props.id)
 		const isUnpickable = !!unpickable?.find((findCard) => findCard.instance === card.instance)
 
 		const cssClasses =
@@ -50,7 +49,7 @@ const CardList = (props: CardListProps) => {
 						[css.clickable]: !!onClick && !isDisabled,
 					})}
 					onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
-					card={info}
+					card={card.props}
 					unpickable={isUnpickable}
 					disabled={isDisabled}
 					selected={isSelected}

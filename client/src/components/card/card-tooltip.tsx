@@ -113,12 +113,12 @@ const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const getAttach = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	if (isAttachable(card)) return null
+	if (!isAttachable(card)) return null
 	return <div className={css.attach}>Attach</div>
 }
 
 const getSingleUse = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	if (isSingleUse(card)) return null
+	if (!isSingleUse(card)) return null
 	return <div className={css.singleUse}>Single Use</div>
 }
 

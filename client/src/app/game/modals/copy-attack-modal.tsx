@@ -21,7 +21,7 @@ function CopyAttackModal({closeModal}: Props) {
 	if (rowPos.rowIndex === null || !rowPos.row.hermitCard) return null
 
 	const opponentHermitInfo = rowPos.row.hermitCard
-	if (!isHermit(opponentHermitInfo.props)) return null
+	if (!isHermit(opponentHermitInfo.card.props)) return null
 
 	const hermitFullName = rowPos.row.hermitCard.props.name
 
@@ -47,16 +47,16 @@ function CopyAttackModal({closeModal}: Props) {
 				<div className={css.description}>
 					<Attack
 						key="primary"
-						name={opponentHermitInfo.props.primary.name}
+						name={opponentHermitInfo.card.props.primary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.primary}
+						attackInfo={opponentHermitInfo.card.props.primary}
 						onClick={handlePrimary}
 					/>
 					<Attack
 						key="secondary"
-						name={opponentHermitInfo.props.secondary.name}
+						name={opponentHermitInfo.card.props.secondary.name}
 						icon={`/images/hermits-nobg/${hermitFullName}.png`}
-						attackInfo={opponentHermitInfo.props.secondary}
+						attackInfo={opponentHermitInfo.card.props.secondary}
 						onClick={handleSecondary}
 					/>
 				</div>

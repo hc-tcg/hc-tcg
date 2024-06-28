@@ -47,7 +47,7 @@ function* playCardSaga(
 	const opponentPlayer = game.state.players[opponentPlayerId]
 
 	// Do we meet requirements to place the card
-	const canAttach = card.props.attachCondition(game, {
+	const canAttach = card.card.props.attachCondition(game, {
 		player: player,
 		opponentPlayer: opponentPlayer,
 		type: pickInfo.type,
@@ -78,7 +78,7 @@ function* playCardSaga(
 				row.hermitCard = card as CardInstance<HasHealth>
 
 				// If the card is not a hermit card it will have to set the row health itself
-				row.health = row.hermitCard.props.health
+				row.health = row.hermitCard.card.props.health
 
 				if (player.board.activeRow === null) {
 					game.changeActiveRow(player, rowIndex)

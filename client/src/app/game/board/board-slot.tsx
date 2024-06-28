@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
 import CardComponent from 'components/card'
-import {CardInstance, RowState} from 'common/types/game-state'
+import {LocalRowState, RowState} from 'common/types/game-state'
 import css from './board.module.scss'
 import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
@@ -27,7 +27,7 @@ export type SlotProps = {
 	playerId: string
 	onClick?: () => void
 	card: LocalCardInstance | null
-	rowState?: RowState
+	rowState?: LocalRowState
 	active?: boolean
 	cssId?: string
 	statusEffects: Array<StatusEffectT>

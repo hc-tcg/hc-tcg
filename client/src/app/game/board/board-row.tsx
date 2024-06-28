@@ -1,16 +1,17 @@
-import {RowState} from 'common/types/game-state'
+import {LocalRowState, RowState} from 'common/types/game-state'
 import {CardInstance} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {StatusEffectT} from 'common/types/game-state'
 import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
+import { LocalCardInstance } from 'common/types/server-requests'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
 	slotIndex: number,
-	row: RowState | null
-): CardInstance | null => {
+	row: LocalRowState | null
+): LocalCardInstance | null => {
 	if (!row) return null
 	if (slotType === 'hermit') return row.hermitCard || null
 	if (slotType === 'effect') return row.effectCard || null
@@ -21,8 +22,8 @@ const getCardBySlot = (
 type BoardRowProps = {
 	type: 'left' | 'right'
 	rowIndex: number
-	onClick: (card: CardInstance | null, slot: SlotTypeT, index: number) => void
-	rowState: RowState
+	onClick: (card: LocalCardInstance | null, slot: SlotTypeT, index: number) => void
+	rowState: LocalRowState
 	active: boolean
 	playerId: string
 	statusEffects: Array<StatusEffectT>

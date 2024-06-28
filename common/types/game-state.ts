@@ -1,5 +1,13 @@
 import {CARDS} from '../cards'
-import Card, {Attachable, CardProps, HasHealth, Item, SingleUse, isHealth} from '../cards/base/card'
+import Card, {
+	Attachable,
+	CardProps,
+	HasHealth,
+	Hermit,
+	Item,
+	SingleUse,
+	isHealth,
+} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
@@ -24,7 +32,14 @@ export class CardInstance<Props extends CardProps = CardProps> {
 		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
 	}
 
-	public get props(): Props {
+	public toLocalCardInstance(): LocalCardInstance<Props> {
+		return {
+			props: this.card.props,
+			instance: this.instance,
+		}
+	}
+
+	public props(): Props {
 		return this.card.props
 	}
 }
@@ -46,13 +61,20 @@ export type RowStateWithoutHermit = {
 export function healHermit(row: RowState | null, amount: number) {
 	if (!row || !row?.hermitCard) return
 
-	if (!isHealth(row.hermitCard.props)) {
+	if (!isHealth(row.hermitCard.props())) {
 		return
 	}
-	row.health = Math.min(row.health + amount, row.hermitCard.props.health)
+	row.health = Math.min(row.health + amount, row.hermitCard.props().health)
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
+
+export type LocalRowState = {
+	hermitCard: LocalCardInstance<HasHealth> | null
+	effectCard: LocalCardInstance<Attachable> | null
+	itemCards: Array<LocalCardInstance<Item> | null>
+	health: number | null
+}
 
 export type CoinFlipT = 'heads' | 'tails'
 
@@ -303,7 +325,7 @@ export type LocalPlayerState = {
 		activeRow: number | null
 		singleUseCard: LocalCardInstance | null
 		singleUseCardUsed: boolean
-		rows: Array<RowState>
+		rows: Array<LocalRowState>
 	}
 }
 

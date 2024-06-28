@@ -34,7 +34,7 @@ const hermitCardClasses: Array<Card> = [
 
 const allCardClasses: Array<Card> = [
 	...effectCardClasses,
-	// ...hermitCardClasses,
+	...hermitCardClasses,
 	// ...itemCardClasses,
 	// ...singleUseCardClasses,
 ]

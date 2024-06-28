@@ -87,7 +87,9 @@ export function getStarterPack() {
 		tokens += hermitCard.props.tokens * hermitAmount
 		for (let i = 0; i < hermitAmount; i++) {
 			deck.push(hermitCard)
-			itemCounts[hermitCard.props.type].items += 2
+			// @todo Figure out why this is broken
+			// Possibly just need to enable all types?
+			// itemCounts[hermitCard.props.type].items += 2
 		}
 	}
 
@@ -125,7 +127,7 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	return deck.map((card) => new CardInstance(card, Math.random().toString()))
+	return deck.map((card) => new CardInstance(card, Math.random().toString()).toLocalCardInstance())
 }
 
 export function getEmptyRow(): RowState {
@@ -151,14 +153,14 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 	// randomize instances
 	pack = pack.map((card) => {
-		let instance = CardInstance.fromLocalCardInstance(card)
+		let instance = CardInstance.fromLocalCardInstance(card.toLocalCardInstance())
 		instance.instance = Math.random().toString()
 		return instance
 	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
-		return card.props.category === 'hermit'
+		return card.props().category === 'hermit'
 	})
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
@@ -246,7 +248,19 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 		coinFlips: playerState.coinFlips,
 		custom: playerState.custom,
 		lives: playerState.lives,
-		board: playerState.board,
+		board: {
+			activeRow: playerState.board.activeRow,
+			singleUseCard: playerState.board.singleUseCard?.toLocalCardInstance() || null,
+			singleUseCardUsed: playerState.board.singleUseCardUsed,
+			rows: playerState.board.rows.map((row) => {
+				return {
+					hermitCard: row.hermitCard?.toLocalCardInstance() || null,
+					effectCard: row.effectCard?.toLocalCardInstance() || null,
+					itemCards: row.itemCards.map((card) => card?.toLocalCardInstance() || null),
+					health: row.health,
+				}
+			}),
+		},
 	}
 	return localPlayerState
 }
@@ -306,9 +320,9 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		statusEffects: game.state.statusEffects,
 
 		// personal info
-		hand: playerState.hand,
+		hand: playerState.hand.map((card) => card.toLocalCardInstance()),
 		pileCount: playerState.pile.length,
-		discarded: playerState.discarded,
+		discarded: playerState.discarded.map((card) => card.toLocalCardInstance()),
 
 		// ids
 		playerId: player.id,
@@ -316,7 +330,10 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		lastActionResult: game.state.lastActionResult,
 
-		currentCardsCanBePlacedIn: playerState.cardsCanBePlacedIn,
+		currentCardsCanBePlacedIn: playerState.cardsCanBePlacedIn.map(([card, place]) => [
+			card.toLocalCardInstance(),
+			place,
+		]),
 		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,

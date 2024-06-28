@@ -409,7 +409,7 @@ export class GameModel {
 			return {
 				playerId: slot.player.id,
 				rowIndex: slot.rowIndex,
-				card: slot.card,
+				card: slot.card?.toLocalCardInstance() || null,
 				type: slot.type,
 				index: slot.index,
 			}

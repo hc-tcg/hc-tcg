@@ -1,6 +1,5 @@
 import {GameModel} from '../models/game-model'
 import {CardInstance, PlayerState} from '../types/game-state'
-import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
 import {SlotInfo} from '../types/cards'
