@@ -1,10 +1,10 @@
-import {CardProps} from '../cards/base/card'
+import {CardProps, WithoutFunctions} from '../cards/base/card'
 import {SlotCondition} from '../slot'
 import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult, ModalData} from './game-state'
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	props: Props
+	props: WithoutFunctions<Props>
 	instance: string
 }
 

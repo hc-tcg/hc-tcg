@@ -6,14 +6,14 @@ import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
 import HealthCardModule from './health-card-svg'
-import {CardProps} from 'common/cards/base/card'
+import {CardProps, WithoutFunctions} from 'common/cards/base/card'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	card: CardProps
+	card: WithoutFunctions<CardProps>
 	selected?: boolean
 	picked?: boolean
 	unpickable?: boolean

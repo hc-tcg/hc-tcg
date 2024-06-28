@@ -22,6 +22,11 @@ export type CanAttachError =
 
 export type CanAttachResult = Array<CanAttachError>
 
+/* A type to remove functions from card props to prevent issues when sending cards to the cient */
+export type WithoutFunctions<Type extends CardProps> = {
+	[Property in keyof Type as Exclude<Exclude<Property, 'log'>, 'attachCondition'>]: Type[Property]
+}
+
 export type CardProps = {
 	id: string
 	category: CardCategoryT
@@ -42,7 +47,9 @@ export type Item = CardProps & {
 	type: typeT
 }
 
-export function isItem(props: CardProps | null): props is Item {
+export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
+export function isItem(props: CardProps): props is Item
+export function isItem(props: CardProps | WithoutFunctions<CardProps> | null): props is Item {
 	return props !== null && 'item' in props
 }
 
@@ -63,7 +70,11 @@ export type HasHealth = CardProps & {
 	health: number
 }
 
-export function isHealth(props: CardProps | null): props is HasHealth {
+export function isHealth(props: WithoutFunctions<CardProps>): props is WithoutFunctions<HasHealth>
+export function isHealth(props: CardProps): props is HasHealth
+export function isHealth(
+	props: CardProps | WithoutFunctions<CardProps> | null
+): props is HasHealth {
 	return props !== null && 'health' in props
 }
 
@@ -76,7 +87,9 @@ export type Hermit = HasHealth & {
 	background?: string
 }
 
-export function isHermit(props: CardProps | null): props is Hermit {
+export function isHermit(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Hermit>
+export function isHermit(props: CardProps): props is Hermit
+export function isHermit(props: CardProps | WithoutFunctions<CardProps> | null): props is Hermit {
 	return props !== null && 'hermit' in props
 }
 
@@ -97,7 +110,13 @@ export type Attachable = CardProps & {
 	description: string
 }
 
-export function isAttachable(props: CardProps | null): props is Attachable {
+export function isAttachable(
+	props: WithoutFunctions<CardProps>
+): props is WithoutFunctions<Attachable>
+export function isAttachable(props: CardProps): props is Attachable
+export function isAttachable(
+	props: CardProps | WithoutFunctions<CardProps> | null
+): props is Attachable {
 	return props !== null && 'attachable' in props
 }
 
@@ -121,7 +140,13 @@ export type SingleUse = CardProps & {
 	description: string
 }
 
-export function isSingleUse(props: CardProps | null): props is SingleUse {
+export function isSingleUse(
+	props: WithoutFunctions<CardProps>
+): props is WithoutFunctions<SingleUse>
+export function isSingleUse(props: CardProps): props is SingleUse
+export function isSingleUse(
+	props: CardProps | WithoutFunctions<CardProps> | null
+): props is SingleUse {
 	return props !== null && 'singleUse' in props
 }
 

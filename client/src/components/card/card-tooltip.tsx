@@ -4,13 +4,13 @@ import {
 	Attachable,
 	CardProps,
 	SingleUse,
+	WithoutFunctions,
 	isAttachable,
 	isHermit,
 	isItem,
 	isSingleUse,
 } from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
-import formattingCss from '../formatting/formatting.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
@@ -36,10 +36,10 @@ const HERMIT_TYPES: Record<string, string> = {
 }
 
 type Props = {
-	card: CardProps
+	card: WithoutFunctions<CardProps>
 }
 
-const getDescription = (card: Attachable | SingleUse): React.ReactNode => {
+const getDescription = (card: WithoutFunctions<Attachable | SingleUse>): React.ReactNode => {
 	return FormattedText(formatText(card.description))
 }
 
@@ -49,7 +49,7 @@ const joinJsx = (array: Array<React.ReactNode>) => {
 	return array.reduce((prev: any, curr: any): any => [prev, ' ', curr])
 }
 
-const getStrengthsAndWeaknesses = (card: CardProps): React.ReactNode => {
+const getStrengthsAndWeaknesses = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (!isHermit(card)) return null
 
 	const strengths = STRENGTHS[card.type]
@@ -84,14 +84,14 @@ const getStrengthsAndWeaknesses = (card: CardProps): React.ReactNode => {
 	return result
 }
 
-const getName = (card: CardProps): React.ReactNode => {
+const getName = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isItem(card)) {
 		return <div className={classNames(css.name, css[card.type])}>{card.name}</div>
 	}
 	return <div className={css.name}>{card.name}</div>
 }
 
-const getRank = (card: CardProps): React.ReactNode => {
+const getRank = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	const name = getCardRank(card.tokens)
 	const highlight = name === 'stone' || name === 'iron' ? '■' : '★'
 	return (
@@ -101,7 +101,7 @@ const getRank = (card: CardProps): React.ReactNode => {
 	)
 }
 
-const getExpansion = (card: CardProps): React.ReactNode => {
+const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (card.expansion !== 'default') {
 		const expansion = card.expansion as 'default' | 'alter_egos' | 'advent_of_tcg' | 'alter_egos_ii'
 		return (
@@ -112,17 +112,17 @@ const getExpansion = (card: CardProps): React.ReactNode => {
 	}
 }
 
-const getAttach = (card: CardProps): React.ReactNode => {
+const getAttach = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isAttachable(card)) return null
 	return <div className={css.attach}>Attach</div>
 }
 
-const getSingleUse = (card: CardProps): React.ReactNode => {
+const getSingleUse = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isSingleUse(card)) return null
 	return <div className={css.singleUse}>Single Use</div>
 }
 
-const gettype = (card: CardProps): React.ReactNode => {
+const gettype = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	if (isHermit(card)) {
 		return (
 			<div className={classNames(css.type, css[card.type])}>
@@ -133,7 +133,7 @@ const gettype = (card: CardProps): React.ReactNode => {
 	return null
 }
 
-const getSidebarDescriptions = (card: CardProps): React.ReactNode => {
+const getSidebarDescriptions = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 	return (card.sidebarDescriptions || []).map((description, i) => {
 		if (description.type === 'statusEffect') {
 			const statusEffect = description.name
