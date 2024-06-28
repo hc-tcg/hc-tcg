@@ -44,11 +44,11 @@ class WaterBucketEffectCard extends Card {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					if (player.board.rows[pickedSlot.rowIndex].effectCard?.cardId === 'string') {
+					if (player.board.rows[pickedSlot.rowIndex].effectCard?.props.id === 'string') {
 						discardCard(game, player.board.rows[pickedSlot.rowIndex].effectCard)
 					}
 					for (let i = 0; i < player.board.rows[pickedSlot.rowIndex].itemCards.length; i++) {
-						if (player.board.rows[pickedSlot.rowIndex].itemCards[i]?.cardId === 'string') {
+						if (player.board.rows[pickedSlot.rowIndex].itemCards[i]?.props.id === 'string') {
 							discardCard(game, player.board.rows[pickedSlot.rowIndex].itemCards[i])
 						}
 					}
@@ -91,10 +91,6 @@ class WaterBucketEffectCard extends Card {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)
-	}
-
-	override showSingleUseTooltip(): boolean {
-		return true
 	}
 }
 

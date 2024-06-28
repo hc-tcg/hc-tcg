@@ -162,6 +162,11 @@ export const singleUse = {
 	),
 }
 
+export function hermitBattleLog(name: string) {
+	return (values: PlayCardLog) =>
+		`$p{You|${values.player}}$ placed $p${name}$ on row #${values.pos.rowIndex}`
+}
+
 abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
 	private log: Array<(values: PlayCardLog) => string>
