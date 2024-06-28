@@ -1,11 +1,10 @@
-import {CARDS} from '../..'
 import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import HermitCard from '../../base/hermit-card'
+import Card, {Hermit, hermit} from '../../base/card'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
 
@@ -17,29 +16,30 @@ Some assumptions that make sense to me:
 - If you choose to discard the card it gets discarded to your discard pile
 */
 
-class GrianRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'grian_rare',
-			numericId: 35,
-			name: 'Grian',
-			rarity: 'rare',
-			type: 'prankster',
-			health: 300,
-			primary: {
-				name: 'Borrow',
-				cost: ['prankster', 'prankster'],
-				damage: 50,
-				power:
-					"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
-			},
-			secondary: {
-				name: 'Start a War',
-				cost: ['prankster', 'prankster', 'prankster'],
-				damage: 100,
-				power: null,
-			},
-		})
+class GrianRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'grian_rare',
+		numericId: 35,
+		name: 'Grian',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'prankster',
+		health: 300,
+		primary: {
+			name: 'Borrow',
+			cost: ['prankster', 'prankster'],
+			damage: 50,
+			power:
+				"After your attack, flip a coin.\nIf heads, steal the attached effect card of your opponent's active Hermit, and then choose to attach or discard it.",
+		},
+		secondary: {
+			name: 'Start a War',
+			cost: ['prankster', 'prankster', 'prankster'],
+			damage: 100,
+			power: null,
+		},
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -74,7 +74,7 @@ class GrianRareHermitCard extends HermitCard {
 					payload: {
 						modalName: 'Grian - Borrow',
 						modalDescription: `Would you like to attach or discard your opponent's ${
-							CARDS[opponentEffectCard.cardId].name
+							opponentEffectCard.props.name
 						} card?`,
 						cards: [opponentEffectCard],
 						selectionSize: 0,
@@ -107,8 +107,7 @@ class GrianRareHermitCard extends HermitCard {
 
 						if (newPos) {
 							// Call onAttach
-							const cardInfo = CARDS[opponentEffectCard.cardId]
-							cardInfo.onAttach(game, opponentEffectCard.instance, newPos)
+							opponentEffectCard.card.onAttach(game, opponentEffectCard.instance, newPos)
 							player.hooks.onAttach.call(opponentEffectCard.instance)
 						}
 					} else {

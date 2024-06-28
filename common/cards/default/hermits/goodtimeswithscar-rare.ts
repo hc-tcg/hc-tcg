@@ -1,32 +1,32 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import HermitCard from '../../base/hermit-card'
 import {removeStatusEffect} from '../../../utils/board'
-import {HERMIT_CARDS} from '../..'
+import Card, {Hermit, hermit} from '../../base/card'
 
-class GoodTimesWithScarRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'goodtimeswithscar_rare',
-			numericId: 33,
-			name: 'Scar',
-			rarity: 'rare',
-			type: 'builder',
-			health: 270,
-			primary: {
-				name: 'Scarred For Life',
-				cost: ['builder'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Deathloop',
-				cost: ['builder', 'any'],
-				damage: 70,
-				power:
-					'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
-			},
-		})
+class GoodTimesWithScarRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'goodtimeswithscar_rare',
+		numericId: 33,
+		name: 'Scar',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'builder',
+		health: 270,
+		primary: {
+			name: 'Scarred For Life',
+			cost: ['builder'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Deathloop',
+			cost: ['builder', 'any'],
+			damage: 70,
+			power:
+				'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
+		},
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -53,8 +53,6 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			row.health = 50
 
-			const revivedHermit = HERMIT_CARDS[row.hermitCard.cardId].name
-
 			game.state.statusEffects.forEach((ail) => {
 				if (ail.targetInstance === targetInstance) {
 					removeStatusEffect(game, pos, ail.statusEffectInstance)
@@ -63,7 +61,7 @@ class GoodTimesWithScarRareHermitCard extends HermitCard {
 
 			game.battleLog.addEntry(
 				player.id,
-				`Using $vDeathloop$, $p${revivedHermit}$ revived with $g50hp$`
+				`Using $vDeathloop$, $p${row.hermitCard.props.name}$ revived with $g50hp$`
 			)
 
 			// Prevents hermits from being revived more than once by Deathloop
