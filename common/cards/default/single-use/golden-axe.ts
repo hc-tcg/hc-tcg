@@ -20,6 +20,8 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
+		let attacking = false
+
 		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
@@ -41,6 +43,9 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.beforeAttack.addBefore(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
+
+			attacking = true
+
 			if (!opponentActivePos) return null
 
 			if (attack.id === attackId) {
@@ -65,16 +70,17 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.onTurnEnd.add(instance, () => {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
+
+			attacking = false
 		})
-	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.getAttack.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterApply.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onDetach.add(instance, () => {
+			player.hooks.getAttack.remove(instance)
+			player.hooks.onTurnEnd.remove(instance)
+			if (!attacking) {
+				player.hooks.beforeAttack.remove(instance)
+			}
+		})
 	}
 
 	override canAttack() {
