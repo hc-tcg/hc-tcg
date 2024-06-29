@@ -5,7 +5,7 @@ import {CardPosModel} from 'common/models/card-pos-model'
 import {ActionResult, CardInstance} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {SlotInfo} from 'common/types/cards'
-import {Attachable, HasHealth, Item, SingleUse} from 'common/cards/base/card'
+import {Attach, HasHealth, Item, SingleUse} from 'common/cards/base/card'
 
 function* playCardSaga(
 	game: GameModel,
@@ -73,7 +73,7 @@ function* playCardSaga(
 		switch (type) {
 			case 'hermit': {
 				player.hasPlacedHermit = true
-				if (card.card.isHealth()) return 'FAILURE_INVALID_DATA'
+				if (!card.card.isHealth()) return 'FAILURE_INVALID_DATA'
 
 				row.hermitCard = card as CardInstance<HasHealth>
 
@@ -92,9 +92,9 @@ function* playCardSaga(
 				row.itemCards[index] = card as CardInstance<Item>
 				break
 			}
-			case 'effect': {
-				if (!card.card.isAttachable()) return 'FAILURE_INVALID_DATA'
-				row.effectCard = card as CardInstance<Attachable>
+			case 'attach': {
+				if (!card.card.isAttach()) return 'FAILURE_INVALID_DATA'
+				row.effectCard = card as CardInstance<Attach>
 				break
 			}
 			default:

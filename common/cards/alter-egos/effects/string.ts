@@ -18,7 +18,7 @@ class StringEffectCard extends Card {
 			slot.opponent,
 			slot.rowHasHermit,
 			slot.empty,
-			slot.some(slot.effectSlot, slot.itemSlot)
+			slot.some(slot.attachSlot, slot.itemSlot)
 		),
 	}
 }

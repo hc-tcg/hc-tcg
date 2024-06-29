@@ -5,7 +5,7 @@ import {
 	CardProps,
 	SingleUse,
 	WithoutFunctions,
-	isAttachable,
+	isAttach,
 	isHermit,
 	isItem,
 	isSingleUse,
@@ -113,7 +113,7 @@ const getExpansion = (card: WithoutFunctions<CardProps>): React.ReactNode => {
 }
 
 const getAttach = (card: WithoutFunctions<CardProps>): React.ReactNode => {
-	if (!isAttachable(card)) return null
+	if (!isAttach(card)) return null
 	return <div className={css.attach}>Attach</div>
 }
 
@@ -179,7 +179,7 @@ const CardInstanceTooltip = ({card}: Props) => {
 					{getExpansion(card)}
 					{getRank(card)}
 					{getStrengthsAndWeaknesses(card)}
-					{(isAttachable(card) || isSingleUse(card)) && getDescription(card)}
+					{(isAttach(card) || isSingleUse(card)) && getDescription(card)}
 				</div>
 				<div></div>
 			</div>

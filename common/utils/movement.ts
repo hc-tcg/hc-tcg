@@ -17,7 +17,7 @@ function discardAtPos(pos: CardPosModel) {
 		row.hermitCard = null
 	}
 
-	if (type === 'effect') {
+	if (type === 'attach') {
 		row.effectCard = null
 	}
 
@@ -119,7 +119,7 @@ export function moveCardInstanceoHand(
 
 	if (cardPos.row && cardPos.type === 'hermit') {
 		cardPos.row.hermitCard = null
-	} else if (cardPos.row && cardPos.type === 'effect') {
+	} else if (cardPos.row && cardPos.type === 'attach') {
 		cardPos.row.effectCard = null
 	} else if (cardPos.row && cardPos.type === 'item' && cardPos.index !== null) {
 		cardPos.row.itemCards[cardPos.index] = null
@@ -141,7 +141,7 @@ export function getSlotCard(slotPos: SlotInfo): CardInstance | null {
 
 	if (type === 'hermit') {
 		return row.hermitCard
-	} else if (type === 'effect') {
+	} else if (type === 'attach') {
 		return row.effectCard
 	}
 

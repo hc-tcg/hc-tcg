@@ -56,7 +56,7 @@ class WaterBucketEffectCard extends Card {
 					applySingleUse(game, pickedSlot)
 				},
 			})
-		} else if (pos.type === 'effect') {
+		} else if (pos.type === 'attach') {
 			// Straight away remove fire
 			const fireStatusEffect = game.state.statusEffects.find((ail) => {
 				return ail.targetInstance === row?.hermitCard?.instance && ail.statusEffectId == 'fire'

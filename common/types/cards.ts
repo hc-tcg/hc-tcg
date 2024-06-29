@@ -19,7 +19,7 @@ export type typeT =
 export type EnergyT = typeT | 'any'
 
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
-export type BoardSlotTypeT = 'item' | 'effect' | 'hermit' | 'health'
+export type BoardSlotTypeT = 'item' | 'attach' | 'hermit' | 'health'
 export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand'
 export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
 

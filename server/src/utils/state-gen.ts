@@ -46,7 +46,7 @@ export function getStarterPack() {
 				!EXPANSIONS.disabled.includes(cardInfo.props.expansion))
 	)
 
-	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttachable())
+	const effectCards = cards.filter((card) => card.isSingleUse() || card.isAttach())
 	const hermitCount = typesCount === 2 ? 8 : 10
 
 	const deck: Array<Card> = []

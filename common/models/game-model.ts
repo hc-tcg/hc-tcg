@@ -322,7 +322,7 @@ export class GameModel {
 				for (const [index, item] of row.itemCards.entries()) {
 					appendAttachCondition('item', index, item)
 				}
-				appendAttachCondition('effect', 3, row.effectCard)
+				appendAttachCondition('attach', 3, row.effectCard)
 				appendAttachCondition('hermit', 4, row.hermitCard)
 			}
 
@@ -379,7 +379,7 @@ export class GameModel {
 			let tempCard = slotA.row?.hermitCard
 			slotA.row.hermitCard = slotB.row.hermitCard
 			slotB.row.hermitCard = tempCard
-		} else if (slotA.type === 'effect') {
+		} else if (slotA.type === 'attach') {
 			let tempCard = slotA.row.effectCard
 			slotA.row.effectCard = slotB.row.effectCard
 			slotB.row.effectCard = tempCard

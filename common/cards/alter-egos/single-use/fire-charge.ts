@@ -23,7 +23,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		slot.player,
 		slot.not(slot.frozen),
 		slot.not(slot.empty),
-		slot.some(slot.itemSlot, slot.effectSlot)
+		slot.some(slot.itemSlot, slot.attachSlot)
 	)
 
 	override _attachCondition = slot.every(

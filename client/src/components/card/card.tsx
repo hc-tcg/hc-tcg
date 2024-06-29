@@ -29,8 +29,8 @@ const Card = (props: CardReactProps) => {
 	else if (category === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
 	else if (['attach', 'single_use'].includes(category))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
-	else if ('health' in otherProps) {
-		let health = (otherProps as {health: number}).health
+	else if ('health' in otherProps.card) {
+		let health = otherProps.card.health as number
 		card = <HealthCardModule {...{health: health}} />
 	} else throw new Error('Unsupported card type: ' + category)
 

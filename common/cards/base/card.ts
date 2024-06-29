@@ -110,13 +110,9 @@ export type Attach = CardProps & {
 	description: string
 }
 
-export function isAttachable(
-	props: WithoutFunctions<CardProps>
-): props is WithoutFunctions<Attach>
-export function isAttachable(props: CardProps): props is Attach
-export function isAttachable(
-	props: CardProps | WithoutFunctions<CardProps> | null
-): props is Attach {
+export function isAttach(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Attach>
+export function isAttach(props: CardProps): props is Attach
+export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null): props is Attach {
 	return props !== null && 'attachable' in props
 }
 
@@ -125,7 +121,7 @@ export const attachable = {
 	category: 'attach' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
-		slot.effectSlot,
+		slot.attachSlot,
 		slot.empty,
 		slot.rowHasHermit,
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
@@ -275,8 +271,8 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return 'primary' in this.props && 'secondary' in this.props
 	}
 
-	public isAttachable(): this is Card<CardProps & Attach> {
-		return isAttachable(this.props)
+	public isAttach(): this is Card<CardProps & Attach> {
+		return isAttach(this.props)
 	}
 
 	public isSingleUse(): this is Card<CardProps & SingleUse> {

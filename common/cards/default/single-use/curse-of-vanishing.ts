@@ -18,7 +18,7 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 	discardCondition = slot.every(
 		slot.opponent,
 		slot.activeRow,
-		slot.effectSlot,
+		slot.attachSlot,
 		slot.not(slot.empty),
 		slot.not(slot.frozen)
 	)

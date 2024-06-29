@@ -83,8 +83,8 @@ export namespace slot {
 	}
 
 	/** Return true if the card is attached to an effect slot. */
-	export const effectSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'effect'
+	export const attachSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'attach'
 	}
 
 	/** Return true if the card is attached to a single use slot. */

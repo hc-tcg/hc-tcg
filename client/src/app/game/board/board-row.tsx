@@ -5,7 +5,7 @@ import css from './board.module.scss'
 import cn from 'classnames'
 import {StatusEffectT} from 'common/types/game-state'
 import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
-import { LocalCardInstance } from 'common/types/server-requests'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
@@ -14,7 +14,7 @@ const getCardBySlot = (
 ): LocalCardInstance | null => {
 	if (!row) return null
 	if (slotType === 'hermit') return row.hermitCard || null
-	if (slotType === 'effect') return row.effectCard || null
+	if (slotType === 'attach') return row.effectCard || null
 	if (slotType === 'item') return row.itemCards[slotIndex] || null
 	return null
 }
@@ -38,7 +38,7 @@ const BoardRow = ({
 	playerId,
 	statusEffects,
 }: BoardRowProps) => {
-	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
+	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit', 'health']
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const card = getCardBySlot(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType

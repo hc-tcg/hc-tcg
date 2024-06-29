@@ -57,7 +57,7 @@ class XBCraftedRareHermitCard extends HermitCard {
 			if (!opponentActivePos) return
 
 			// All attacks from our side should ignore opponent attached effect card this turn
-			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
+			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {

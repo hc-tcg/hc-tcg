@@ -20,7 +20,7 @@ class MendingSingleUseCard extends singleUseCard {
 
 	pickCondition = slot.every(
 		slot.player,
-		slot.effectSlot,
+		slot.attachSlot,
 		slot.empty,
 		slot.rowHasHermit,
 		slot.not(slot.frozen),
@@ -31,7 +31,7 @@ class MendingSingleUseCard extends singleUseCard {
 		super.attachCondition,
 		slot.someSlotFulfills(this.pickCondition),
 		slot.someSlotFulfills(
-			slot.every(slot.activeRow, slot.effectSlot, slot.not(slot.frozen), slot.not(slot.empty))
+			slot.every(slot.activeRow, slot.attachSlot, slot.not(slot.frozen), slot.not(slot.empty))
 		)
 	)
 
@@ -62,7 +62,7 @@ class MendingSingleUseCard extends singleUseCard {
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				const hermitActiveEffectCard = game.findSlot(
-					slot.every(slot.player, slot.activeRow, slot.effectSlot)
+					slot.every(slot.player, slot.activeRow, slot.attachSlot)
 				)
 
 				if (!hermitActiveEffectCard || !hermitActiveEffectCard.row) return

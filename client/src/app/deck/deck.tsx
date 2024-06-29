@@ -30,12 +30,12 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
-import {isAttachable, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
+import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 const TYPE_ORDER = {
 	hermit: 0,
-	effect: 1,
+	attach: 1,
 	single_use: 2,
 	item: 3,
 	health: 4,
@@ -253,7 +253,7 @@ const Deck = ({setMenuSection}: Props) => {
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => isHermit(card.props)),
 		items: loadedDeck.cards.filter((card) => isItem(card.props)),
-		attachableEffects: loadedDeck.cards.filter((card) => isAttachable(card.props)),
+		attachableEffects: loadedDeck.cards.filter((card) => isAttach(card.props)),
 		singleUseEffects: loadedDeck.cards.filter((card) => isSingleUse(card.props)),
 	}
 

@@ -16,7 +16,7 @@ import {
 } from 'logic/game/game-selectors'
 import {getLocalPlayerState} from 'server/src/utils/state-gen'
 import {slot} from 'common/slot'
-import Card, {Attach, CardProps, Hermit, Item, SingleUse} from 'common/cards/base/card'
+import Card, {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from 'common/cards/base/card'
 import {Effect} from 'redux-saga/effects'
 import {LocalCardInstance} from 'common/types/server-requests'
 
@@ -49,9 +49,7 @@ const Slot = ({
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
 
-	let cardInfo = card?.props
-		? (card.props as Hermit | Item | Attach | SingleUse | CardProps)
-		: null
+	let cardInfo = card?.props ? (card.props as Hermit | Item | Attach | SingleUse | CardProps) : null
 	if (type === 'health' && rowState?.health) {
 		// @ts-ignore SORRY, I have no idea how to fix this
 		cardInfo = {
@@ -62,7 +60,8 @@ const Slot = ({
 			tokens: -1,
 			name: 'Health Card',
 			rarity: 'common',
-		}
+			health: rowState?.health,
+		} as HasHealth
 	}
 	const renderStatusEffects = (cleanedStatusEffects: StatusEffectT[]) => {
 		return (
@@ -167,12 +166,12 @@ const Slot = ({
 					<CardComponent card={cardInfo} />
 					{type === 'health'
 						? renderStatusEffects(hermitStatusEffects)
-						: type === 'effect'
+						: type === 'attach'
 						? renderStatusEffects(effectStatusEffects)
 						: null}
 					{type === 'health'
 						? renderDamageStatusEffects(hermitStatusEffects)
-						: type === 'effect'
+						: type === 'attach'
 						? renderDamageStatusEffects(effectStatusEffects)
 						: renderDamageStatusEffects(null)}
 				</div>

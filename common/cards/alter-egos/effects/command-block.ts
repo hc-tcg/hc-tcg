@@ -34,7 +34,7 @@ class CommandBlockEffectCard extends EffectCard {
 		})
 
 		player.hooks.freezeSlots.add(instance, () => {
-			return slot.every(slot.player, slot.rowIndex(pos.rowIndex), slot.effectSlot)
+			return slot.every(slot.player, slot.rowIndex(pos.rowIndex), slot.attachSlot)
 		})
 	}
 

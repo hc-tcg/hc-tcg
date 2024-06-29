@@ -164,13 +164,16 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 				if (card.card.props.category === 'hermit' && !reducer.includes('PLAY_HERMIT_CARD')) {
 					return [...reducer, 'PLAY_HERMIT_CARD']
 				}
-				if (card.card.props.category === 'effect' && !reducer.includes('PLAY_EFFECT_CARD')) {
+				if (card.card.props.category === 'attach' && !reducer.includes('PLAY_EFFECT_CARD')) {
 					return [...reducer, 'PLAY_EFFECT_CARD']
 				}
 				if (card.card.props.category === 'item' && !reducer.includes('PLAY_ITEM_CARD')) {
 					return [...reducer, 'PLAY_ITEM_CARD']
 				}
-				if (card.card.props.category === 'single_use' && !reducer.includes('PLAY_SINGLE_USE_CARD')) {
+				if (
+					card.card.props.category === 'single_use' &&
+					!reducer.includes('PLAY_SINGLE_USE_CARD')
+				) {
 					return [...reducer, 'PLAY_SINGLE_USE_CARD']
 				}
 				return reducer

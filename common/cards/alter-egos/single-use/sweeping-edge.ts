@@ -18,7 +18,7 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 
 	discardCondition = slot.every(
 		slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
-		slot.effectSlot,
+		slot.attachSlot,
 		slot.opponent,
 		slot.not(slot.empty),
 		slot.not(slot.frozen)
