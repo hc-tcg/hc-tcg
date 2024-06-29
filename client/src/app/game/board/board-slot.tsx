@@ -1,7 +1,6 @@
 import classnames from 'classnames'
-import {CARDS} from 'common/cards'
 import CardComponent from 'components/card'
-import {LocalRowState, RowState} from 'common/types/game-state'
+import {LocalRowState} from 'common/types/game-state'
 import css from './board.module.scss'
 import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
@@ -14,10 +13,7 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {getLocalPlayerState} from 'server/src/utils/state-gen'
-import {slot} from 'common/slot'
-import Card, {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from 'common/cards/base/card'
-import {Effect} from 'redux-saga/effects'
+import {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from 'common/cards/base/card'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 export type SlotProps = {
