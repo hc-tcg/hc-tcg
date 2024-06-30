@@ -24,9 +24,9 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 
 	const rank = getCardRank(card.tokens)
 	const palette = card.palette || ''
-	const backgroundName = card.background || card.id.split('_')[0]
+	const backgroundName = card.background || hermitFullName
 	const showCost = !useSelector(getGameState)
-	const name = card.name
+	const name = card.shortName || card.name
 	const nameLength = name.length
 	const disabled = EXPANSIONS.disabled.includes(card.expansion) ? 'disabled' : 'enabled'
 
