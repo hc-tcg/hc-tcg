@@ -33,7 +33,7 @@ export type CardProps = {
 	expansion: ExpansionT
 	numericId: number
 	name: string
-	short_name?: string,
+	shortName?: string,
 	rarity: CardRarityT
 	tokens: number
 	attachCondition: SlotCondition
