@@ -2,23 +2,20 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {applyStatusEffect} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class LavaBucketSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'lava_bucket',
-			numericId: 74,
-			name: 'Lava Bucket',
-			rarity: 'rare',
-			description: "Burn your opponent's active Hermit.",
-		})
-	}
-
-	override _attachCondition = slot.every(slot.singleUseSlot, slot.opponentHasActiveHermit)
-
-	override canApply() {
-		return true
+class LavaBucketSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'lava_bucket',
+		numericId: 74,
+		name: 'Lava Bucket',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 3,
+		description: "Burn your opponent's active Hermit.",
+		showConfirmationModal: true,
+		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
