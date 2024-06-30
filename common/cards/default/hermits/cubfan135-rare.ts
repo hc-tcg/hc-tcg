@@ -35,7 +35,6 @@ class Cubfan135RareHermitCard extends HermitCard {
 
 			// We used our secondary attack, activate power
 			// AKA remove change active hermit from blocked actions
-			game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
 			game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
 		})
 	}
