@@ -12,6 +12,7 @@ class BoomerBdubsRareHermitCard extends Card {
 		name: 'Boomer Bdubs',
 		shortName: 'Boomer B.',
 		expansion: 'alter_egos_ii',
+		background: 'alter_egos',
 		palette: 'alter_egos',
 		rarity: 'rare',
 		tokens: 1,
