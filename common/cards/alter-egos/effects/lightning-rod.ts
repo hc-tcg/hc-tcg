@@ -19,7 +19,7 @@ class LightningRodEffectCard extends EffectCard {
 
 	override _attachCondition = slot.every(
 		super.attachCondition,
-		slot.not(slot.someSlotFulfills(slot.every(slot.player, slot.hasId(this.id))))
+		slot.not(slot.someSlotFulfills(slot.every(slot.player, slot.effectSlot, slot.hasId(this.id))))
 	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
