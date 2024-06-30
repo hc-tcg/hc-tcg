@@ -33,6 +33,7 @@ export type CardProps = {
 	expansion: ExpansionT
 	numericId: number
 	name: string
+	short_name?: string,
 	rarity: CardRarityT
 	tokens: number
 	attachCondition: SlotCondition
@@ -83,8 +84,8 @@ export type Hermit = HasHealth & {
 	type: typeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	palette?: string
-	background?: string
+	palette?: 'alter_egos'
+	background?: 'alter_egos'
 }
 
 export function isHermit(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Hermit>
