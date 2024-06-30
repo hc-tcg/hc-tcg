@@ -2,11 +2,11 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {moveCardInstanceoHand} from '../../../utils/movement'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class LoyaltyEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'loyalty',
 		numericId: 77,
 		name: 'Loyalty',

@@ -1,11 +1,11 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class NetheriteArmorEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'netherite_armor',
 		numericId: 82,
 		name: 'Netherite Armour',

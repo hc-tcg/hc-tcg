@@ -2,11 +2,11 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class ShieldEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'shield',
 		numericId: 88,
 		name: 'Shield',

@@ -117,7 +117,7 @@ export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null):
 	return props !== null && 'attachable' in props
 }
 
-export const attachable = {
+export const attach = {
 	attachable: null,
 	category: 'attach' as CardCategoryT,
 	attachCondition: slot.every(
@@ -128,6 +128,7 @@ export const attachable = {
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		slot.not(slot.frozen)
 	),
+	log: undefined,
 }
 
 export type SingleUse = CardProps & {

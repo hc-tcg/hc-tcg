@@ -3,11 +3,11 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class BedEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'bed',
 		numericId: 2,
 		expansion: 'default',
@@ -22,7 +22,7 @@ class BedEffectCard extends Card {
 				name: 'sleeping',
 			},
 		],
-		attachCondition: slot.every(attachable.attachCondition, slot.activeRow),
+		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

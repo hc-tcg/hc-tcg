@@ -4,11 +4,11 @@ import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class TotemEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'totem',
 		numericId: 101,
 		name: 'Totem',

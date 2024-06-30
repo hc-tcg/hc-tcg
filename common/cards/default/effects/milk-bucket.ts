@@ -2,11 +2,11 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attach, SingleUse, attachable, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
 
 class MilkBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
-		...attachable,
+		...attach,
 		...singleUse,
 		id: 'milk_bucket',
 		numericId: 79,
@@ -17,7 +17,7 @@ class MilkBucketEffectCard extends Card {
 		tokens: 0,
 		description:
 			'Remove poison and bad omen from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
-		attachCondition: slot.some(attachable.attachCondition, singleUse.attachCondition),
+		attachCondition: slot.some(attach.attachCondition, singleUse.attachCondition),
 		log: (values) => {
 			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`

@@ -1,18 +1,19 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import EffectCard from '../../base/effect-card'
+import Card, {Attach, attach} from '../../base/card'
 
-class CommandBlockEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'command_block',
-			numericId: 120,
-			name: 'Command Block',
-			rarity: 'rare',
-			description:
-				'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
-		})
+class CommandBlockEffectCard extends Card {
+	props: Attach = {
+		...attach,
+		id: 'command_block',
+		numericId: 120,
+		name: 'Command Block',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -42,10 +43,6 @@ class CommandBlockEffectCard extends EffectCard {
 		const {player} = pos
 		player.hooks.availableEnergy.remove(instance)
 		player.hooks.freezeSlots.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
 	}
 }
 

@@ -3,11 +3,11 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Attach, SingleUse, attachable, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
 
 class WaterBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
-		...attachable,
+		...attach,
 		...singleUse,
 		category: 'attach',
 		id: 'water_bucket',
@@ -18,7 +18,7 @@ class WaterBucketEffectCard extends Card {
 		tokens: 2,
 		description:
 			'Remove burn and String from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being burned.',
-		attachCondition: slot.some(attachable.attachCondition, singleUse.attachCondition),
+		attachCondition: slot.some(attach.attachCondition, singleUse.attachCondition),
 		log: (values) => {
 			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`

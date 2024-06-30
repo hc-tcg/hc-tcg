@@ -4,11 +4,11 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {HERMIT_CARDS} from '../..'
 import {slot} from '../../../slot'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class BrewingStandEffectCard extends Card<Attach> {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'brewing_stand',
 		numericId: 201,
 		name: 'Brewing stand',

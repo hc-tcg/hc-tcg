@@ -4,11 +4,11 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {getActiveRowPos} from '../../../utils/board'
-import Card, {Attach, attachable} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class WolfEffectCard extends Card {
 	props: Attach = {
-		...attachable,
+		...attach,
 		id: 'wolf',
 		numericId: 108,
 		name: 'Wolf',
@@ -17,7 +17,7 @@ class WolfEffectCard extends Card {
 		tokens: 1,
 		description:
 			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
-		attachCondition: slot.every(attachable.attachCondition, slot.activeRow),
+		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
