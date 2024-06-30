@@ -16,6 +16,12 @@ class BedEffectCard extends Card {
 		tokens: 3,
 		description:
 			'Attach to your active Hermit. This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up. Discard after your Hermit wakes up.',
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'sleeping',
+			},
+		],
 		attachCondition: slot.every(attachable.attachCondition, slot.activeRow),
 	}
 
@@ -74,15 +80,6 @@ class BedEffectCard extends Card {
 		player.hooks.beforeApply.remove(instance)
 		player.hooks.afterApply.remove(instance)
 		delete player.custom[this.getInstanceKey(instance, 'hermitSlot')]
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'statusEffect',
-				name: 'sleeping',
-			},
-		]
 	}
 }
 

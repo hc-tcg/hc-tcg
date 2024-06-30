@@ -17,6 +17,12 @@ class TotemEffectCard extends Card {
 		tokens: 3,
 		description:
 			'If the Hermit this card is attached to is knocked out, they are revived with 10hp.\nDoes not count as a knockout. Discard after use.',
+		sidebarDescriptions: [
+			{
+				type: 'glossary',
+				name: 'knockout',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -56,15 +62,6 @@ class TotemEffectCard extends Card {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
 		pos.opponentPlayer.hooks.afterAttack.remove(instance)
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'glossary',
-				name: 'knockout',
-			},
-		]
 	}
 }
 

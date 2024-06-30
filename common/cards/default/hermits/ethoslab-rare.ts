@@ -27,6 +27,12 @@ class EthosLabRareHermitCard extends Card {
 			damage: 80,
 			power: "Flip a coin.\nIf heads, burn your opponent's active Hermit.",
 		},
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'fire',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -53,15 +59,6 @@ class EthosLabRareHermitCard extends Card {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'statusEffect',
-				name: 'fire',
-			},
-		]
 	}
 }
 

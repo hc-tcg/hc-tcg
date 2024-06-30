@@ -27,6 +27,12 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			power:
 				'If this Hermit is knocked out before the start of your next turn, they are revived with 50hp.\nDoes not count as a knockout. This Hermit can only be revived once using this ability.',
 		},
+		sidebarDescriptions: [
+			{
+				type: 'glossary',
+				name: 'knockout',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -116,15 +122,6 @@ class GoodTimesWithScarRareHermitCard extends Card {
 				if (canCleanUp()) player.hooks.afterDefence.remove(instance)
 			})
 		}
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'glossary',
-				name: 'knockout',
-			},
-		]
 	}
 }
 

@@ -280,17 +280,6 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isSingleUse(this.props)
 	}
 
-	public getBackground(): string {
-		return this.props.id.split('_')[0]
-	}
-
-	/**
-	 * Returns the sidebar descriptions for this card
-	 */
-	public sidebarDescriptions(): Array<Record<string, string>> {
-		return []
-	}
-
 	public getFormattedDescription(this: Card<Attach | SingleUse>): FormattedTextNode {
 		return formatText(this.props.description)
 	}

@@ -27,6 +27,12 @@ class BdoubleO100RareHermitCard extends Card {
 			power:
 				'This Hermit restores all HP, then sleeps for the rest of this turn, and the following two turns, before waking up.',
 		},
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'sleeping',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -51,15 +57,6 @@ class BdoubleO100RareHermitCard extends Card {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'statusEffect',
-				name: 'sleeping',
-			},
-		]
 	}
 }
 
