@@ -55,7 +55,7 @@ export function isItem(props: CardProps | WithoutFunctions<CardProps> | null): p
 
 export const item = {
 	item: null,
-	type: 'item' as CardCategoryT,
+	category: 'item' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.player,
 		slot.itemSlot,

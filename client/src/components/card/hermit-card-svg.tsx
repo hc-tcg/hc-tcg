@@ -5,7 +5,7 @@ import {getGameState} from 'logic/game/game-selectors'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import {memo} from 'react'
-import Card, {Hermit} from 'common/cards/base/card'
+import {Hermit} from 'common/cards/base/card'
 
 export type HermitCardProps = {
 	card: Hermit
@@ -24,7 +24,7 @@ const HermitCardModule = memo(({card}: HermitCardProps) => {
 
 	const rank = getCardRank(card.tokens)
 	const palette = card.palette || ''
-	const backgroundName = card.background
+	const backgroundName = card.background || card.id.split('_')[0]
 	const showCost = !useSelector(getGameState)
 	const name = card.name
 	const nameLength = name.length

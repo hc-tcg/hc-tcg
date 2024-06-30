@@ -88,7 +88,7 @@ function* playCardSaga(
 			}
 			case 'item': {
 				if (index === null) break
-				if (!card.card.isSingleUse()) return 'FAILURE_INVALID_DATA'
+				if (!card.card.isItem()) return 'FAILURE_INVALID_DATA'
 				row.itemCards[index] = card as CardInstance<Item>
 				break
 			}
