@@ -4,8 +4,8 @@ import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult, ModalData} from './game-state'
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
-	props: WithoutFunctions<Props>
-	instance: string
+	readonly props: WithoutFunctions<Props>
+	readonly instance: string
 }
 
 export type PickedSlotType = SlotTypeT | 'hand'

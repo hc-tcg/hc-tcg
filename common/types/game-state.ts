@@ -3,9 +3,9 @@ import Card, {
 	Attach,
 	CardProps,
 	HasHealth,
-	Hermit,
 	Item,
 	SingleUse,
+	WithoutFunctions,
 	isHealth,
 } from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
@@ -20,8 +20,8 @@ import {LocalCardInstance, ModalRequest, PickInfo, PickRequest} from './server-r
 export type PlayerId = string
 
 export class CardInstance<Props extends CardProps = CardProps> {
-	card: Card<Props>
-	instance: string
+	readonly card: Card<Props>
+	readonly instance: string
 
 	constructor(card: Card<Props>, instance: string) {
 		this.card = card
@@ -34,12 +34,12 @@ export class CardInstance<Props extends CardProps = CardProps> {
 
 	public toLocalCardInstance(): LocalCardInstance<Props> {
 		return {
-			props: this.card.props,
+			props: this.card.props as WithoutFunctions<Props>,
 			instance: this.instance,
 		}
 	}
 
-	public props(): Props {
+	public get props(): Props {
 		return this.card.props
 	}
 }
@@ -61,10 +61,10 @@ export type RowStateWithoutHermit = {
 export function healHermit(row: RowState | null, amount: number) {
 	if (!row || !row?.hermitCard) return
 
-	if (!isHealth(row.hermitCard.props())) {
+	if (!isHealth(row.hermitCard.props)) {
 		return
 	}
-	row.health = Math.min(row.health + amount, row.hermitCard.props().health)
+	row.health = Math.min(row.health + amount, row.hermitCard.props.health)
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit

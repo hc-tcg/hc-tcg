@@ -43,7 +43,7 @@ class TotemEffectCard extends Card {
 				removeStatusEffect(game, pos, ail.statusEffectInstance)
 			})
 
-			const revivedHermit = row.hermitCard.props.name
+			const revivedHermit = row.hermitCard.card.props.name
 			game.battleLog.addEntry(player.id, `Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`)
 
 			// This will remove this hook, so it'll only be called once

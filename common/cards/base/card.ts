@@ -24,7 +24,7 @@ export type CanAttachResult = Array<CanAttachError>
 
 /* A type to remove functions from card props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type extends CardProps> = {
-	[Property in keyof Type as Exclude<Exclude<Property, 'log'>, 'attachCondition'>]: Type[Property]
+	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
 }
 
 export type CardProps = {
