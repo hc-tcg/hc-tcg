@@ -16,13 +16,14 @@ interface CardProps
 	card: CardClass
 	selected?: boolean
 	picked?: boolean
+	unpickable?: boolean
 	tooltipAboveModal?: boolean
 	onClick?: () => void
 }
 
 const Card = (props: CardProps) => {
 	const {type} = props.card
-	const {onClick, selected, picked, ...otherProps} = props
+	const {onClick, selected, picked, unpickable, ...otherProps} = props
 	let card = null
 	if (type === 'hermit') card = <HermitCardModule {...(otherProps as HermitCardProps)} />
 	else if (type === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
@@ -37,8 +38,9 @@ const Card = (props: CardProps) => {
 				className={cn(props.className, css.card, {
 					[css.selected]: selected,
 					[css.picked]: picked,
+					[css.unpickable]: unpickable,
 				})}
-				onClick={onClick}
+				onClick={unpickable ? () => {} : onClick}
 			>
 				{card}
 			</button>

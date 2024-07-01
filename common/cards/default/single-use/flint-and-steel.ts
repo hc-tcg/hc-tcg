@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {discardFromHand, drawCards} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -16,14 +17,10 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		if (player.pile.length <= 3) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) => pos.player.pile.length > 3
+	)
 
 	override canApply() {
 		return true

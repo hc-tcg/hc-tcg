@@ -93,13 +93,28 @@ $grid-size: 25px;
 		background: #353536;
 	}
 
-	&.lock {
-		position: absolute;
-		top: 5px;
-		right: 5px;
-		width: 15px;
-		height: 15px;
-		filter: brightness(75%);
+	&.pickable {
+		filter: brightness(130%);
+
+		&.hermit {
+			filter: brightness(105%);
+		}
+
+		&.hermitSlot {
+			filter: brightness(100%);
+		}
+	}
+
+	&.unpickable {
+		filter: brightness(70%);
+
+		&.hermit {
+			filter: brightness(60%);
+		}
+
+		&.hermitSlot {
+			filter: brightness(65%);
+		}
 	}
 
 	&.empty {

@@ -51,9 +51,10 @@ export function printHooksState(game: GameModel) {
 				const instanceEntry = instancesInfo[instance] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance].card,
-					player: cardsInfo[instance].player,
-					slot: pos?.slot,
+					card: cardsInfo[instance] && cardsInfo[instance].card,
+					player: cardsInfo[instance] && cardsInfo[instance].player,
+					type: pos?.type,
+					index: pos?.index,
 					row: pos?.rowIndex,
 				}
 
@@ -139,12 +140,14 @@ export function printHooksState(game: GameModel) {
 		const slotType = slot?.type ? slot.type : ''
 		const rowIndex = row !== null ? 'Row: ' + row + ' - ' : ''
 
-		console.log(
-			`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
-				info.card.cardId
-			} - ${attachedStatus}`
-		)
-		console.log(colorize(drawLine(60), 'white'))
+		if (info.player) {
+			console.log(
+				`${info.player.playerName} | ${rowIndex}${slotType}${slotIndex}${slotType ? ' | ' : ''}${
+					info.card.cardId
+				} - ${attachedStatus}`
+			)
+			console.log(colorize(drawLine(60), 'white'))
+		}
 
 		for (const hook of info.hooks) {
 			console.log(colorize(hook, 'brightYellow'))

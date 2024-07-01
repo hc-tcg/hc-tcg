@@ -1,11 +1,8 @@
-import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {RowPos} from '../../../types/cards'
-import {RowStateWithHermit} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
 import HermitCard from '../../base/hermit-card'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class SolidaritygamingRareHermitCard extends HermitCard {
 	constructor() {
@@ -38,9 +35,6 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
-			const playerInactiveRows = getNonEmptyRows(player, true)
-			if (playerInactiveRows.length === 0) return
-
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
@@ -55,22 +49,25 @@ class SolidaritygamingRareHermitCard extends HermitCard {
 				})
 			})
 
+			const pickCondition = slot.every(
+				slot.player,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
+
+			if (!game.someSlotFulfills(pickCondition)) return
+
 			game.addPickRequest({
 				playerId: player.id,
 				id: instance,
 				message: 'Choose an AFK Hermit to protect',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined || rowIndex === player.board.activeRow)
-						return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					applyStatusEffect(game, 'protected', pickResult.card.cardInstance)
-
-					return 'SUCCESS'
+					applyStatusEffect(game, 'protected', pickedSlot.card.cardInstance)
 				},
 			})
 		})

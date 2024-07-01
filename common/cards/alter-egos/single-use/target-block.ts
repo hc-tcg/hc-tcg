@@ -1,7 +1,7 @@
-import {CARDS} from '../..'
-import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applySingleUse} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class TargetBlockSingleUseCard extends SingleUseCard {
@@ -16,15 +16,17 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
+	pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.activeRow),
+		slot.not(slot.empty)
+	)
 
-		// Inactive Hermits
-		if (getNonEmptyRows(opponentPlayer, true).length === 0) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
@@ -34,21 +36,16 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: "Pick one of your opponent's AFK Hermits",
-			onResult(pickResult) {
-				if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-				if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
+				if (!pickedSlot.card || rowIndex === null) return
 
 				const row = opponentPlayer.board.rows[rowIndex]
-				if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+				if (!row.hermitCard) return
 
 				// Apply the card
-				applySingleUse(game, pickResult)
+				applySingleUse(game, pickedSlot)
 
 				// Redirect all future attacks this turn
 				player.hooks.beforeAttack.add(instance, (attack) => {
@@ -60,8 +57,6 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 						row,
 					})
 				})
-
-				return 'SUCCESS'
 			},
 		})
 

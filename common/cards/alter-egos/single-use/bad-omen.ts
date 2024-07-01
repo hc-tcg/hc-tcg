@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
+import {slot} from '../../../slot'
 
 class BadOmenSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -14,6 +14,8 @@ class BadOmenSingleUseCard extends SingleUseCard {
 			description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
 		})
 	}
+
+	override _attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true
@@ -36,16 +38,6 @@ class BadOmenSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {opponentPlayer} = pos
-
-		const result = super.canAttach(game, pos)
-
-		if (!hasActive(opponentPlayer)) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override getExpansion() {

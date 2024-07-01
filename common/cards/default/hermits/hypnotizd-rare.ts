@@ -1,9 +1,10 @@
 import {ITEM_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {getActiveRow} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
 
@@ -78,37 +79,29 @@ class HypnotizdRareHermitCard extends HermitCard {
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
 
-			const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-			if (inactiveRows.length === 0) return
+			const pickCondition = slot.every(
+				slot.player,
+				slot.activeRow,
+				slot.itemSlot,
+				slot.not(slot.empty)
+			)
 
+			if (!game.someSlotFulfills(pickCondition)) return
 			const itemRequest: PickRequest = {
 				playerId: player.id,
 				id: this.id,
 				message: 'Choose an item to discard from your active Hermit.',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					if (!pickedSlot.card) return
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex !== player.board.activeRow) return 'FAILURE_INVALID_SLOT'
+					const itemCard = ITEM_CARDS[pickedSlot.card.cardId]
+					if (!itemCard) return
 
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					const itemCard = ITEM_CARDS[pickResult.card.cardId]
-					if (!itemCard) return 'FAILURE_INVALID_SLOT'
-
-					discardCard(game, pickResult.card)
-
-					return 'SUCCESS'
+					discardCard(game, pickedSlot.card)
 				},
 				onTimeout() {
-					// Discard the first available item card
-					const activeRow = getActiveRow(player)
-					if (!activeRow) return
-					const itemCard = activeRow.itemCards.find((card) => !!card)
-					if (!itemCard) return
-					discardCard(game, itemCard)
+					discardCard(game, game.findSlot(pickCondition)?.card || null)
 				},
 			}
 
@@ -116,14 +109,9 @@ class HypnotizdRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
 
 					// Store the row index to use later
 					player.custom[targetKey] = rowIndex
@@ -139,8 +127,6 @@ class HypnotizdRareHermitCard extends HermitCard {
 						// Add a second pick request to remove an item
 						game.addPickRequest(itemRequest)
 					}
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't choose anyone so we will just attack as normal

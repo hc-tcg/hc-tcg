@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 import HermitCard from '../../base/hermit-card'
 
 class TangoTekRareHermitCard extends HermitCard {
@@ -39,78 +39,64 @@ class TangoTekRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-			const playerInactiveRows = getNonEmptyRows(player, true, true)
+			const opponentInactiveRowsPickCondition = slot.every(
+				slot.opponent,
+				slot.hermitSlot,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty)
+			)
+			const playerInactiveRowsPickCondition = slot.every(
+				slot.player,
+				slot.hermitSlot,
+				slot.not(slot.activeRow),
+				slot.not(slot.empty)
+			)
 
 			// Check if we are blocked from changing by anything other than the game
 			const canChange = !game.isActionBlocked('CHANGE_ACTIVE_HERMIT', ['game'])
 
 			// If opponent has hermit they can switch to, add a pick request for them to switch
-			if (opponentInactiveRows.length > 0) {
-				// Add a new pick request to the opponent player
+			if (game.someSlotFulfills(opponentInactiveRowsPickCondition)) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
-					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
+					canPick: opponentInactiveRowsPickCondition,
+					onResult(pickedSlot) {
+						if (pickedSlot.rowIndex === null) return
 
-						game.changeActiveRow(opponentPlayer, pickResult.rowIndex)
-
-						return 'SUCCESS'
+						game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
 					},
 					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== opponentPlayer.board.activeRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
-							}
-						}
+						let newActiveRow = game.filterSlots(opponentInactiveRowsPickCondition)[0]
+						if (newActiveRow === undefined || newActiveRow.rowIndex === null) return
+						game.changeActiveRow(game.opponentPlayer, newActiveRow.rowIndex)
 					},
 				})
 			}
 
 			// If we have an afk hermit, didn't just die, and are not bound in place, add a pick for us to switch
 			const attacker = attack.getAttacker()
-			if (playerInactiveRows.length !== 0 && attacker && attacker.row.health > 0 && canChange) {
+			if (
+				game.someSlotFulfills(playerInactiveRowsPickCondition) &&
+				attacker &&
+				attacker.row.health > 0 &&
+				canChange
+			) {
 				game.addPickRequest({
 					playerId: player.id,
 					id: this.id,
 					message: 'Pick a new active Hermit from your afk hermits',
-					onResult(pickResult) {
-						// Validation
-						if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-						if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (pickResult.card === null) return 'FAILURE_INVALID_SLOT'
-						if (pickResult.rowIndex === player.board.activeRow) return 'FAILURE_WRONG_PICK'
+					canPick: playerInactiveRowsPickCondition,
+					onResult(pickedSlot) {
+						if (pickedSlot.rowIndex === null) return
 
-						game.changeActiveRow(player, pickResult.rowIndex)
-
-						return 'SUCCESS'
+						game.changeActiveRow(player, pickedSlot.rowIndex)
 					},
 					onTimeout() {
-						const inactiveRows = getNonEmptyRows(player, true, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of inactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== player.board.activeRow
-							if (canBeActive) {
-								game.changeActiveRow(player, rowIndex)
-								break
-							}
-						}
+						let newActiveHermit = game.findSlot(playerInactiveRowsPickCondition)
+						if (!newActiveHermit || newActiveHermit.rowIndex === null) return
+						game.changeActiveRow(game.currentPlayer, newActiveHermit.rowIndex)
 					},
 				})
 			}

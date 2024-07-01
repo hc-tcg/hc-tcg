@@ -2,8 +2,8 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
-import {getNonEmptyRows} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
+import {slot} from '../../../slot'
 
 class MonkeyfarmRareHermitCard extends HermitCard {
 	constructor() {
@@ -40,35 +40,24 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] !== 'heads') return
 
-			const emptyRows = getNonEmptyRows(opponentPlayer, true, true)
-			const opponentItemCards = emptyRows.reduce(
-				(partialSum, a) => partialSum + a.row.itemCards.filter((x) => x != null).length,
-				0
-			)
+			const pickCondition = slot.every(slot.opponent, slot.itemSlot, slot.not(slot.empty))
 
-			if (opponentItemCards == 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
-					if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
+					if (!row.hermitCard) return
 
 					// Apply the card
-					discardCard(game, pickResult.card)
-
-					return 'SUCCESS'
+					discardCard(game, pickedSlot.card)
 				},
 			})
 		})

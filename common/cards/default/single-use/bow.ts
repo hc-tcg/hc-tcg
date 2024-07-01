@@ -1,8 +1,8 @@
-import {CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class BowSingleUseCard extends SingleUseCard {
@@ -17,16 +17,17 @@ class BowSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {opponentPlayer} = pos
+	pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.not(slot.activeRow)
+	)
 
-		// Check if there is an AFK Hermit
-		const inactiveRows = getNonEmptyRows(opponentPlayer, true)
-		if (inactiveRows.length === 0) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
@@ -37,20 +38,12 @@ class BowSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's AFK Hermits",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+				canPick: this.pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (rowIndex === null) return
 
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					// Store the row index to use later
 					player.custom[targetKey] = rowIndex
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing

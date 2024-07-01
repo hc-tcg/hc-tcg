@@ -1,10 +1,9 @@
 import {HERMIT_CARDS} from '../..'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
-import {formatText} from '../../../utils/formatting'
 import HermitCard from '../../base/hermit-card'
 
 class ZombieCleoRareHermitCard extends HermitCard {
@@ -30,6 +29,14 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			},
 		})
 	}
+
+	pickCondition = slot.every(
+		slot.player,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.not(slot.activeRow),
+		slot.not(slot.hasId(this.id))
+	)
 
 	override getAttack(
 		game: GameModel,
@@ -83,26 +90,22 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure we have an afk hermit to pick
-			const afk = getNonEmptyRows(player, true)
-			if (afk.length === 0) return
+			if (!game.someSlotFulfills(this.pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick one of your AFK Hermits',
-				onResult(pickResult) {
-					if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (rowIndex === player.board.activeRow) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					const pickedCard = pickResult.card
-					if (!pickedCard) return 'FAILURE_INVALID_SLOT'
+				canPick: this.pickCondition,
+				onResult(pickedSlot) {
+					const rowIndex = pickedSlot.rowIndex
+					if (rowIndex === null) return
+					if (rowIndex === player.board.activeRow) return
+					const pickedCard = pickedSlot.card
+					if (!pickedCard) return
 
 					// No picking the same card as us
-					if (pickedCard.cardId === this.id) return 'FAILURE_WRONG_PICK'
+					if (pickedCard.cardId === this.id) return
 
 					game.addModalRequest({
 						playerId: player.id,
@@ -111,7 +114,7 @@ class ZombieCleoRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Cleo: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
+								cardPos: pickedSlot,
 							},
 						},
 						onResult(modalResult) {
@@ -142,8 +145,6 @@ class ZombieCleoRareHermitCard extends HermitCard {
 							}
 						},
 					})
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't pick someone so do nothing
@@ -151,13 +152,9 @@ class ZombieCleoRareHermitCard extends HermitCard {
 			})
 		})
 
-		// @TODO requires getActions to be able to remove
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Puppetry" if there are not AFK Hermit cards other than rare Cleo(s)
-			const afkHermits = getNonEmptyRows(player, true).filter((rowPos) => {
-				const hermitId = rowPos.row.hermitCard.cardId
-				return HERMIT_CARDS[hermitId] && hermitId !== this.id
-			}).length
+			const afkHermits = game.filterSlots(this.pickCondition).length
 			if (
 				player.board.activeRow === pos.rowIndex &&
 				afkHermits <= 0 &&

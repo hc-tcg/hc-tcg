@@ -1,6 +1,4 @@
-import Card from '../cards/base/card'
-import {PlayerState, RowState, RowStateWithHermit} from './game-state'
-import {PickInfo} from './server-requests'
+import {CardT, PlayerState, RowState, RowStateWithHermit} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -25,7 +23,7 @@ export type EnergyT = HermitTypeT | 'any'
 
 export type CardTypeT = 'item' | 'single_use' | 'effect' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'effect' | 'hermit' | 'health'
-export type SlotTypeT = BoardSlotTypeT | 'single_use'
+export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand'
 
 export type DamageT = {
 	target?: number
@@ -41,27 +39,20 @@ export type HermitAttackInfo = {
 	formattedPower?: Array<Node>
 }
 
-export type Slot = {
-	type: SlotTypeT
-	index: number
-}
-
-export type BoardSlot = {
-	type: BoardSlotTypeT
-	index: number
-}
-
 export type RowPos = {
 	player: PlayerState
 	rowIndex: number
 	row: RowStateWithHermit
 }
 
-export type SlotPos = {
+export type SlotInfo = {
 	player: PlayerState
-	rowIndex: number
-	row: RowState
-	slot: BoardSlot
+	opponentPlayer: PlayerState
+	type: SlotTypeT
+	index: number | null
+	rowIndex: number | null
+	row: RowState | null
+	card: CardT | null
 }
 
 export type PlayCardLog = {

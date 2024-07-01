@@ -9,6 +9,7 @@ export const slotToPlayCardAction: Record<SlotTypeT, PlayCardAction | null> = {
 	effect: 'PLAY_EFFECT_CARD',
 	single_use: 'PLAY_SINGLE_USE_CARD',
 	health: null,
+	hand: null,
 }
 export const attackToAttackAction: Record<HermitAttackType, AttackAction> = {
 	'single-use': 'SINGLE_USE_ATTACK',
@@ -22,7 +23,6 @@ export const attackActionToAttack: Record<AttackAction, HermitAttackType> = {
 }
 
 // @TODO long term all data types that can be sent to server should be here
-
 export type PlayCardActionData = {
 	type: PlayCardAction
 	payload: {
@@ -30,6 +30,7 @@ export type PlayCardActionData = {
 		card: CardT
 	}
 }
+
 export type ChangeActiveHermitActionData = {
 	type: 'CHANGE_ACTIVE_HERMIT'
 	payload: {

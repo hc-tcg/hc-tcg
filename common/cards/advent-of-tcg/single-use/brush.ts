@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot, SlotCondition} from '../../../slot'
 import {CardT} from '../../../types/game-state'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -14,6 +15,11 @@ class BrushSingleUseCard extends SingleUseCard {
 				'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
 		})
 	}
+
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		(game, pos) => pos.player.pile.length >= 3
+	)
 
 	override canApply() {
 		return true
@@ -59,16 +65,6 @@ class BrushSingleUseCard extends SingleUseCard {
 				},
 			})
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		// Cannot use if you have 3 or less cards
-		if (player.pile.length <= 3) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

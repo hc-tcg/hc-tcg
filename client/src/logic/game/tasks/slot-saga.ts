@@ -44,14 +44,14 @@ function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): S
 	yield putResolve(setSelectedCard(null))
 
 	// If the hand is clicked don't send data
-	if (pickInfo.slot.type !== 'hand') {
+	if (pickInfo.type !== 'hand') {
 		if (!selectedCardInfo) {
 			// Validations
 			console.log('Unknown card id: ', selectedCard)
 			return
 		}
 
-		const actionType = slotToPlayCardAction[pickInfo.slot.type]
+		const actionType = slotToPlayCardAction[selectedCardInfo.type]
 		if (!actionType) return
 
 		const actionData: PlayCardActionData = {
@@ -64,15 +64,15 @@ function* pickWithSelectedSaga(action: SlotPickedAction, selectedCard: CardT): S
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
-	const {playerId, rowIndex, slot} = action.payload.pickInfo
+	const {playerId, rowIndex, type} = action.payload.pickInfo
 
-	if (slot.type !== 'hermit') return
+	if (type !== 'hermit') return
 
 	const currentPlayerId = yield* select(getPlayerId)
 	const playerState = yield* select(getPlayerState)
 	const settings = yield* select(getSettings)
 
-	if (!playerState || rowIndex === undefined) return
+	if (!playerState || rowIndex === null) return
 	const row = playerState.board.rows[rowIndex]
 	if (!row.hermitCard) return
 
@@ -102,7 +102,7 @@ function* slotPickedSaga(action: SlotPickedAction): SagaIterator {
 	const selectedCard = yield* select(getSelectedCard)
 	if (availableActions.includes('WAIT_FOR_TURN')) return
 
-	if (action.payload.pickInfo.slot.type === 'single_use') {
+	if (action.payload.pickInfo.type === 'single_use') {
 		const playerState = yield* select(getPlayerState)
 		if (playerState?.board.singleUseCard && !playerState?.board.singleUseCardUsed) {
 			yield put(removeEffect())

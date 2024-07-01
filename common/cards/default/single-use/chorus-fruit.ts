@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {applySingleUse, getActiveRow} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -14,6 +15,15 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 			log: (values) => `${values.defaultLog} with {your|their} attack`,
 		})
 	}
+
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.not(
+			slot.someSlotFulfills(
+				slot.every(slot.player, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
+			)
+		)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -45,21 +55,6 @@ class ChorusFruitSingleUseCard extends SingleUseCard {
 
 			player.hooks.onAttack.remove(instance)
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {player} = pos
-		const activeRow = getActiveRow(player)
-
-		const isSleeping = game.state.statusEffects.some(
-			(a) =>
-				a.targetInstance == activeRow?.hermitCard?.cardInstance && a.statusEffectId == 'sleeping'
-		)
-		if (isSleeping) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

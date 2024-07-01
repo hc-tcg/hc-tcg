@@ -1,10 +1,9 @@
-import Card, {CanAttachResult} from './card'
-import {PlayCardLog, CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
+import Card from './card'
+import {CardRarityT, EnergyT, HermitTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {HERMIT_CARDS} from '..'
+import {slot} from '../../slot'
 
 type ItemDefs = {
 	id: string
@@ -34,35 +33,22 @@ abstract class ItemCard extends Card {
 		)
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {currentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		if (pos.slot.type !== 'item') result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-
-		// Can't attach without hermit - this does not show the unmet condition modal
-		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-
-		return result
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there is a hermit on the board with space for an item card
-		const spaceForItem = currentPlayer.board.rows.some((row) => {
-			const hasHermit = !!row.hermitCard
-			const hasEmptyItemSlot = row.itemCards.some((card) => card === null)
-			return hasHermit && hasEmptyItemSlot
-		})
-
-		return spaceForItem ? ['PLAY_ITEM_CARD'] : []
-	}
+	override _attachCondition = slot.every(
+		slot.player,
+		slot.itemSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.actionAvailable('PLAY_ITEM_CARD'),
+		slot.not(slot.frozen)
+	)
 
 	public override getFormattedDescription(): FormattedTextNode {
 		return this.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : formatText('')
+	}
+
+	// Item cards can only be played once per turn, so they block the action when attached
+	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+		game.addCompletedActions('PLAY_ITEM_CARD')
 	}
 
 	public abstract getEnergy(game: GameModel, instance: string, pos: CardPosModel): Array<EnergyT>

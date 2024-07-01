@@ -1,9 +1,7 @@
-import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
+import {CardPosModel, getCardPos} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {TurnActions} from '../../../types/game-state'
-import {discardCard, isSlotEmpty} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
+import {slot} from '../../../slot'
+import {discardCard} from '../../../utils/movement'
 import EffectCard from '../../base/effect-card'
 
 class SlimeballEffectCard extends EffectCard {
@@ -14,47 +12,35 @@ class SlimeballEffectCard extends EffectCard {
 			name: 'Slimeball',
 			rarity: 'ultra_rare',
 			description:
-				"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. After either player attempts to remove any of these cards, Slimeball will be discarded.",
+				"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result: CanAttachResult = []
-		if (pos.slot.type !== 'effect') result.push('INVALID_SLOT')
-
-		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		slot.opponent,
+		slot.effectSlot,
+		slot.empty,
+		slot.rowHasHermit,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
+		slot.not(slot.frozen)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onSlotChange.add(instance, (slot) => {
-			if (!isSlotEmpty(slot) && slot.rowIndex === pos.rowIndex) {
-				pos.player.hooks.onSlotChange.remove(instance)
-				discardCard(game, pos.card)
-				return false
-			}
-			return true
+		player.hooks.freezeSlots.add(instance, () => {
+			return slot.every(
+				slot.player,
+				slot.rowIndex(pos.rowIndex),
+				slot.not(slot.effectSlot),
+				slot.not(slot.empty)
+			)
 		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		pos.player.hooks.onSlotChange.remove(instance)
+		pos.player.hooks.freezeSlots.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer, opponentPlayer} = game
-
-		const rows = [...currentPlayer.board.rows, ...opponentPlayer.board.rows]
-
-		const spaceForEffect = rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-
-		return spaceForEffect ? ['PLAY_EFFECT_CARD'] : []
 	}
 
 	public override getExpansion(): string {

@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardFromHand} from '../../../utils/movement'
 import HermitCard from '../../base/hermit-card'
@@ -31,7 +32,6 @@ class JinglerRareHermitCard extends HermitCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const followUpKey = this.getInstanceKey(instance)
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
@@ -40,22 +40,15 @@ class JinglerRareHermitCard extends HermitCard {
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] === 'tails') return
 
-			// Add a new pick request for the opponent player
 			game.addPickRequest({
 				playerId: opponentPlayer.id,
 				id: this.id,
 				message: 'Pick 1 card from your hand to discard',
-				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.slot.type !== 'hand') return 'FAILURE_INVALID_SLOT'
-
-					discardFromHand(opponentPlayer, pickResult.card)
-
-					return 'SUCCESS'
+				canPick: slot.hand,
+				onResult(pickedSlot) {
+					discardFromHand(opponentPlayer, pickedSlot.card)
 				},
 				onTimeout() {
-					// Discard the first card in the opponent's hand
 					discardFromHand(opponentPlayer, opponentPlayer.hand[0])
 				},
 			})

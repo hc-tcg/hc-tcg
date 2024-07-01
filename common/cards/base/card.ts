@@ -1,8 +1,8 @@
 import {PlayCardLog, CardRarityT, CardTypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
-import {FormattedTextNode, TextNode} from '../../utils/formatting'
+import {FormattedTextNode} from '../../utils/formatting'
+import {slot, SlotCondition} from '../../slot'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -39,6 +39,8 @@ abstract class Card {
 		this.name = defs.name
 		this.rarity = defs.rarity
 		this.log = []
+
+		this._attachCondition = slot.nothing
 	}
 
 	public getKey(keyName: string) {
@@ -49,11 +51,12 @@ abstract class Card {
 	}
 
 	/**
-	 * If the specified slot is empty, can this card be attached there
-	 *
-	 * Returns an array of any of the problems there are with attaching, if any
+	 * A combinator expression that returns if the card can be attached to a specified slot.
 	 */
-	public abstract canAttach(game: GameModel, pos: CardPosModel): CanAttachResult
+	protected _attachCondition: SlotCondition
+	public get attachCondition(): SlotCondition {
+		return this._attachCondition
+	}
 
 	/**
 	 * Returns the description for this card that shows up in the sidebar.
@@ -107,14 +110,6 @@ abstract class Card {
 	 */
 	public showSingleUseTooltip(): boolean {
 		return false
-	}
-
-	/**
-	 * Returns the actions this card makes available when in the hand
-	 */
-	public getActions(game: GameModel): TurnActions {
-		// default is to return nothing
-		return []
 	}
 
 	/**

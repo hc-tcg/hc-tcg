@@ -1,8 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {PickRequest} from '../../../types/server-requests'
-import {applySingleUse, getActiveRowPos, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
 class CrossbowSingleUseCard extends SingleUseCard {
@@ -21,28 +23,23 @@ class CrossbowSingleUseCard extends SingleUseCard {
 		const {player, opponentPlayer} = pos
 		const targetsKey = this.getInstanceKey(instance, 'targets')
 		const remainingKey = this.getInstanceKey(instance, 'remaining')
+		const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Rather than allowing you to choose to damage less we will make you pick the most you can
-			const pickAmount = Math.min(3, getNonEmptyRows(opponentPlayer).length)
+			const pickAmount = Math.min(3, game.filterSlots(pickCondition).length)
 			player.custom[targetsKey] = []
 			player.custom[remainingKey] = pickAmount
 
-			const pickRequest: PickRequest = {
+			const pickRequest = {
 				playerId: player.id,
 				id: this.id,
-				message: "Pick {?} of your opponent's Hermits",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+				onResult(pickedSlot: SlotInfo) {
+					const rowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.card || rowIndex === null) return
 
 					// If we already picked the row
-					if (player.custom[targetsKey].includes(rowIndex)) return 'FAILURE_WRONG_PICK'
+					if (player.custom[targetsKey].includes(rowIndex)) return
 
 					// Add the row to the chosen list
 					player.custom[targetsKey].push(rowIndex)
@@ -54,8 +51,6 @@ class CrossbowSingleUseCard extends SingleUseCard {
 					} else {
 						delete player.custom[remainingKey]
 					}
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing
@@ -67,7 +62,11 @@ class CrossbowSingleUseCard extends SingleUseCard {
 				if (newRemaining != pickAmount) remaining += ' more'
 				const request: PickRequest = {
 					...pickRequest,
-					message: pickRequest.message.replace('{?}', remaining),
+					canPick: slot.every(
+						pickCondition,
+						...player.custom[targetsKey].map((row: number) => slot.not(slot.rowIndex(row)))
+					),
+					message: `Pick ${remaining} of your opponent's Hermits`,
 				}
 				game.addPickRequest(request)
 			}

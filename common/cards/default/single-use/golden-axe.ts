@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -52,14 +53,7 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 				applySingleUse(game)
 			}
 
-			attack.shouldIgnoreCards.push((instance) => {
-				const ignorePos = getBasicCardPos(game, instance)
-				if (!ignorePos || !ignorePos.row || !ignorePos.row.effectCard) return false
-				if (ignorePos.slot.type !== 'effect') return false
-				if (ignorePos.rowIndex !== opponentActivePos.rowIndex) return false
-				if (ignorePos.player === player) return false
-				return true
-			})
+			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
 		})
 
 		player.hooks.afterAttack.add(instance, () => {

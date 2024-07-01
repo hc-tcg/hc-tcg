@@ -1,18 +1,15 @@
-import {SlotTypeT} from './cards'
+import {SlotCondition} from '../slot'
+import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult, CardT, ModalData} from './game-state'
 
 export type PickedSlotType = SlotTypeT | 'hand'
 
-export type SlotInfo = {
-	type: PickedSlotType
-	index: number
-}
-
 export type PickInfo = {
 	playerId: string
-	rowIndex?: number // This will be undefined for the hand
+	rowIndex: number | null // This will be null for the hand
 	card: CardT | null
-	slot: SlotInfo
+	type: SlotTypeT
+	index: number | null
 }
 
 export type PickRequest = {
@@ -22,8 +19,10 @@ export type PickRequest = {
 	id: string
 	/** The message to display to the player */
 	message: string
+	/** A function that returns if the card can be attached to a specific slot */
+	canPick: SlotCondition
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
-	onResult: (pickResult: PickInfo) => ActionResult //
+	onResult: (pickedSlot: SlotInfo) => void //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
 	onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */
