@@ -4,7 +4,7 @@ import {RowPos} from '../types/cards'
 import {CardPosModel} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 import {slot} from '../slot'
 
@@ -22,7 +22,7 @@ class PoisonStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const hasDamageEffect = game.state.statusEffects.some(
@@ -83,7 +83,7 @@ class PoisonStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)

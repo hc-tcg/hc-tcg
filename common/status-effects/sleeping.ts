@@ -2,7 +2,7 @@ import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {slot} from '../slot'
 
 class SleepingStatusEffect extends StatusEffect {
@@ -19,7 +19,7 @@ class SleepingStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, card, row, rowIndex} = pos
 
 		if (!card || !row?.hermitCard || rowIndex === null || !card.card.isHealth()) return
@@ -63,7 +63,7 @@ class SleepingStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)

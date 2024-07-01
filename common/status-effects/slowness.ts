@@ -2,7 +2,7 @@ import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {slot} from '../slot'
 
 class SlownessStatusEffect extends StatusEffect {
@@ -18,7 +18,7 @@ class SlownessStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
@@ -58,7 +58,7 @@ class SlownessStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
 		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)

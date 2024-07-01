@@ -3,7 +3,7 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos, SlotInfo} from '../types/cards'
 import {
-	StatusEffectT,
+	StatusEffectInstance,
 	GenericActionResult,
 	PlayerState,
 	RowStateWithHermit,
@@ -75,7 +75,7 @@ export function applyStatusEffect(
 	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
 	const statusEffectInstance = Math.random().toString()
 
-	const statusEffectInfo: StatusEffectT = {
+	const statusEffectInfo: StatusEffectInstance = {
 		statusEffectId: statusEffectId,
 		statusEffectInstance: statusEffectInstance,
 		targetInstance: targetInstance,

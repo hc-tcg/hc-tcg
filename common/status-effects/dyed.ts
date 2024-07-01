@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 
 class DyedStatusEffect extends StatusEffect {
 	constructor() {
@@ -16,7 +16,7 @@ class DyedStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		const hasDyed = game.state.statusEffects.some(
@@ -38,7 +38,7 @@ class DyedStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.availableEnergy.remove(statusEffectInfo.statusEffectInstance)

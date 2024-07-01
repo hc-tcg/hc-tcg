@@ -1,7 +1,7 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {discardCard} from '../utils/movement'
 
 class SmeltingStatusEffect extends StatusEffect {
@@ -18,7 +18,7 @@ class SmeltingStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
@@ -35,7 +35,7 @@ class SmeltingStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)

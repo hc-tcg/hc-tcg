@@ -2,7 +2,7 @@ import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
 import {slot} from '../slot'
@@ -21,7 +21,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const oldHandSize = this.getInstanceKey(statusEffectInfo.statusEffectInstance)
 		const {player} = pos
@@ -94,7 +94,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)

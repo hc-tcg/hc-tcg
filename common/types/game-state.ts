@@ -98,7 +98,7 @@ export type LocalRowState = {
 
 export type CoinFlipT = 'heads' | 'tails'
 
-export type StatusEffectT = {
+export type StatusEffectInstance = {
 	/** The ID of the statusEffect. */
 	statusEffectId: string
 	/** The statusEffect's instance. */
@@ -274,7 +274,7 @@ export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
-	statusEffects: Array<StatusEffectT>
+	statusEffects: Array<StatusEffectInstance>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -352,7 +352,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
-	statusEffects: Array<StatusEffectT>
+	statusEffects: Array<StatusEffectInstance>
 
 	// personal data
 	hand: Array<LocalCardInstance>

@@ -1,6 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 
 type StatusEffectDefs = {
 	id: string
@@ -48,14 +48,14 @@ abstract class StatusEffect {
 	/**
 	 * Called when this statusEffect is applied
 	 */
-	public onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	public onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
-	public onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	public onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		// default is do nothing
 	}
 }

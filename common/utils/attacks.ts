@@ -5,7 +5,7 @@ import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {slot} from '../slot'
-import { CardInstance } from '../types/game-state'
+import {CardInstance} from '../types/game-state'
 
 function executeAttack(attack: AttackModel) {
 	const target = attack.getTarget()
