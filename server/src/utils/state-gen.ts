@@ -153,14 +153,12 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 
 	// randomize instances
 	pack = pack.map((card) => {
-		let instance = CardInstance.fromLocalCardInstance(card.toLocalCardInstance())
-		instance.instance = Math.random().toString()
-		return instance
+		return new CardInstance(card.card, Math.random().toString())
 	})
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
-		return card.props().category === 'hermit'
+		return card.props.category === 'hermit'
 	})
 	if (hermitIndex > 5) {
 		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]

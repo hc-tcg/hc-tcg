@@ -5,10 +5,10 @@ import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {memo} from 'react'
-import Card, {Attach, SingleUse} from 'common/cards/base/card'
+import Card, {Attach, SingleUse, WithoutFunctions} from 'common/cards/base/card'
 
 export type EffectCardProps = {
-	card: Attach | SingleUse
+	card: WithoutFunctions<Attach | SingleUse>
 }
 
 const EffectCardModule = memo(({card}: EffectCardProps) => {

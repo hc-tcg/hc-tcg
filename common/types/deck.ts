@@ -1,5 +1,5 @@
 import {CARDS} from '../cards'
-import {CardInstance, PlayerId} from './game-state'
+import { WithoutFunctions } from '../cards/base/card'
 import {LocalCardInstance} from './server-requests'
 
 export type PlayerDeckT = {
@@ -64,7 +64,7 @@ export function loadSavedDeck(deck: SavedDeckT | null): PlayerDeckT | null {
 	let cards = deck.cards.map((card) => {
 		let cardInfo = CARDS[card.cardId]
 		return {
-			props: cardInfo.props,
+			props: WithoutFunctions(cardInfo.props),
 			instance: card.cardInstance,
 		}
 	})

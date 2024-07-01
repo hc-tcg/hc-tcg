@@ -3,11 +3,11 @@ import css from './item-card-svg.module.scss'
 import {useSelector} from 'react-redux'
 import {getGameState} from 'logic/game/game-selectors'
 import {memo} from 'react'
-import Card, {Item} from 'common/cards/base/card'
+import Card, {Item, WithoutFunctions} from 'common/cards/base/card'
 import {getCardRank} from 'common/utils/ranks'
 
 export type ItemCardProps = {
-	card: Item
+	card: WithoutFunctions<Item>
 }
 
 const ItemCardModule = memo(({card}: ItemCardProps) => {

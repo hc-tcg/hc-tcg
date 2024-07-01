@@ -5,7 +5,7 @@ import {sortCards, cardGroupHeader} from './deck'
 import css from './deck.module.scss'
 import DeckLayout from './layout'
 import {CARDS} from 'common/cards'
-import Card from 'common/cards/base/card'
+import Card, { WithoutFunctions } from 'common/cards/base/card'
 import {LocalCardInstance} from 'common/types/server-requests'
 import {PlayerDeckT} from 'common/types/deck'
 import CardList from 'components/card-list'
@@ -131,7 +131,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const initialDeckState = deck
 	const allCards = Object.values(CARDS).map(
 		(card: Card): LocalCardInstance => ({
-			props: card.props,
+			props: WithoutFunctions(card.props),
 			instance: card.props.id,
 		})
 	)

@@ -26,6 +26,9 @@ export type CanAttachResult = Array<CanAttachError>
 export type WithoutFunctions<Type extends CardProps> = {
 	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
 }
+export function WithoutFunctions<T extends CardProps>(t: T): WithoutFunctions<T> {
+	return t as WithoutFunctions<T>
+}
 
 export type CardProps = {
 	id: string
@@ -33,7 +36,7 @@ export type CardProps = {
 	expansion: ExpansionT
 	numericId: number
 	name: string
-	shortName?: string,
+	shortName?: string
 	rarity: CardRarityT
 	tokens: number
 	attachCondition: SlotCondition
