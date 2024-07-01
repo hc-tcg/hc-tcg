@@ -3,10 +3,14 @@ import Card, {
 	Attach,
 	CardProps,
 	HasHealth,
+	Hermit,
 	Item,
 	SingleUse,
 	WithoutFunctions,
+	isAttach,
 	isHealth,
+	isHermit,
+	isSingleUse,
 } from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
@@ -41,6 +45,22 @@ export class CardInstance<Props extends CardProps = CardProps> {
 
 	public get props(): Props {
 		return this.card.props
+	}
+
+	public isItem(): this is CardInstance<Item> {
+		return isHermit(this.props)
+	}
+	public isSingleUse(): this is CardInstance<SingleUse> {
+		return isSingleUse(this.props)
+	}
+	public isAttach(): this is CardInstance<Attach> {
+		return isAttach(this.props)
+	}
+	public isHealth(): this is CardInstance<HasHealth> {
+		return isHealth(this.props)
+	}
+	public isHermit(): this is CardInstance<Hermit> {
+		return isHermit(this.props)
 	}
 }
 

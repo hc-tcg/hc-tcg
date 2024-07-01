@@ -37,7 +37,7 @@ class FiveAMPearlRareHermitCard extends Card {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const effectCard = getActiveRow(player)?.effectCard
-			if (!effectCard || effectCard.card.props.id !== 'wolf') return
+			if (!effectCard || effectCard.props.id !== 'wolf') return
 
 			attack.addDamage(this.props.id, 30)
 		})

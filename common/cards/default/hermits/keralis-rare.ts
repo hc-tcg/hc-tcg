@@ -82,14 +82,14 @@ class KeralisRareHermitCard extends Card {
 
 			if (pickedRow.hermitCard) {
 				// Heal
-				const maxHealth = Math.max(pickedRow.health, pickedRow.hermitCard.card.props.health)
+				const maxHealth = Math.max(pickedRow.health, pickedRow.hermitCard.props.health)
 				pickedRow.health = Math.min(pickedRow.health + 100, maxHealth)
 
 				game.battleLog.addEntry(
 					player.id,
-					`$p${pickedRow.hermitCard.card.props.name} (${
+					`$p${pickedRow.hermitCard.props.name} (${
 						pickedRowIndex + 1
-					})$ was healed $g100hp$ by $p${activeHermit.card.props.name}$`
+					})$ was healed $g100hp$ by $p${activeHermit.props.name}$`
 				)
 			}
 

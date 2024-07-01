@@ -44,11 +44,11 @@ class WaterBucketEffectCard extends Card {
 						removeStatusEffect(game, pos, ail.statusEffectInstance)
 					})
 
-					if (player.board.rows[pickedSlot.rowIndex].effectCard?.card.props.id === 'string') {
+					if (player.board.rows[pickedSlot.rowIndex].effectCard?.props.id === 'string') {
 						discardCard(game, player.board.rows[pickedSlot.rowIndex].effectCard)
 					}
 					for (let i = 0; i < player.board.rows[pickedSlot.rowIndex].itemCards.length; i++) {
-						if (player.board.rows[pickedSlot.rowIndex].itemCards[i]?.card.props.id === 'string') {
+						if (player.board.rows[pickedSlot.rowIndex].itemCards[i]?.props.id === 'string') {
 							discardCard(game, player.board.rows[pickedSlot.rowIndex].itemCards[i])
 						}
 					}
