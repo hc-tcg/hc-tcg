@@ -10,9 +10,7 @@
 	padding: 0 0.5rem;
 	padding-bottom: 0.25rem;
 	flex-shrink: 0;
-	box-shadow:
-		inset 0 -4px 0 0 var(--gray-500),
-		inset 1px 1px 0 0 var(--gray-100),
+	box-shadow: inset 0 -4px 0 0 var(--gray-500), inset 1px 1px 0 0 var(--gray-100),
 		inset -1px -5px 0 0 var(--gray-100);
 	color: var(--text-dark);
 	border: 2px solid black;
@@ -41,8 +39,7 @@
 
 .primary {
 	background: var(--color-primary);
-	box-shadow:
-		inset 0 -4px 1px var(--color-primary-shadow),
+	box-shadow: inset 0 -4px 1px var(--color-primary-shadow),
 		inset 1px 1px 0 1px var(--color-primary-highlight),
 		inset -1px -5px 0 1px var(--color-primary-highlight);
 	color: var(--text-light);
@@ -55,8 +52,7 @@
 
 .secondary {
 	background: var(--color-secondary);
-	box-shadow:
-		inset 0 -4px 1px var(--color-secondary-shadow),
+	box-shadow: inset 0 -4px 1px var(--color-secondary-shadow),
 		inset 1px 1px 0 1px var(--color-secondary-highlight),
 		inset -1px -5px 0 1px var(--color-secondary-highlight);
 	color: var(--text-dark);
@@ -69,10 +65,8 @@
 
 .error {
 	background: var(--color-error);
-	box-shadow:
-		inset 0 -4px 0 0 var(--color-error-shadow),
-		inset 1px 1px 0 0 var(--color-error-highlight),
-		inset -1px -5px 0 0 var(--color-error-highlight);
+	box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+		inset 1px 1px 0 0 var(--color-error-highlight), inset -1px -5px 0 0 var(--color-error-highlight);
 	color: var(--text-light);
 
 	&:hover:not(:disabled),
@@ -88,9 +82,7 @@
 	font-size: 2vh;
 	border: 0.3vh solid #000;
 	text-shadow: 0.2vh 0.2vh #000;
-	box-shadow:
-		inset -0.3vh -0.5vh #0006,
-		inset 0.3vh 0.3vh #fff7;
+	box-shadow: inset -0.3vh -0.5vh #0006, inset 0.3vh 0.3vh #fff7;
 	padding: 0 2vh;
 	outline: none;
 	box-sizing: border-box;
@@ -166,9 +158,7 @@
 		&:first-child {
 			border-right: 0;
 			flex-grow: 1;
-			box-shadow:
-				inset 0 -4px 0 0 var(--gray-500),
-				inset 0 -6px 0 0 var(--gray-100),
+			box-shadow: inset 0 -4px 0 0 var(--gray-500), inset 0 -6px 0 0 var(--gray-100),
 				inset 2px 2px 0 0 var(--gray-100);
 		}
 
@@ -176,18 +166,14 @@
 			border-left: 0;
 			border-right: 0;
 			flex-grow: 1;
-			box-shadow:
-				inset 0 -4px 0 0 var(--gray-500),
-				inset 0 -6px 0 0 var(--gray-100),
+			box-shadow: inset 0 -4px 0 0 var(--gray-500), inset 0 -6px 0 0 var(--gray-100),
 				inset 0 2px 0 0 var(--gray-100);
 		}
 
 		&:last-child {
 			border-left: 0;
 			min-width: 1.5rem;
-			box-shadow:
-				inset 0 -4px 0 0 var(--gray-500),
-				inset -2px -6px 0 0 var(--gray-100),
+			box-shadow: inset 0 -4px 0 0 var(--gray-500), inset -2px -6px 0 0 var(--gray-100),
 				inset 0 2px 0 0 var(--gray-100);
 		}
 	}
@@ -195,22 +181,19 @@
 	// Primary SplitButton Styles
 	.primary {
 		&:first-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-primary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
 				inset 0 -6px 0 0 var(--color-primary-highlight),
 				inset 2px 2px 0 0 var(--color-primary-highlight);
 		}
 
 		&:not(:first-child, :last-child) {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-primary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
 				inset 0 -6px 0 0 var(--color-primary-highlight),
 				inset 0 2px 0 0 var(--color-primary-highlight);
 		}
 
 		&:last-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-primary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-primary-shadow),
 				inset -2px -6px 0 0 var(--color-primary-highlight),
 				inset 0 2px 0 0 var(--color-primary-highlight);
 		}
@@ -219,22 +202,19 @@
 	// Secondary SplitButton Styles
 	.secondary {
 		&:first-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-secondary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
 				inset 0 -6px 0 0 var(--color-secondary-highlight),
 				inset 2px 2px 0 0 var(--color-secondary-highlight);
 		}
 
 		&:not(:first-child, :last-child) {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-secondary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
 				inset 0 -6px 0 0 var(--color-secondary-highlight),
 				inset 0 2px 0 0 var(--color-secondary-highlight);
 		}
 
 		&:last-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-secondary-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-secondary-shadow),
 				inset -2px -6px 0 0 var(--color-secondary-highlight),
 				inset 0 2px 0 0 var(--color-secondary-highlight);
 		}
@@ -243,22 +223,18 @@
 	// Error SplitButton Styles
 	.error {
 		&:first-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-error-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
 				inset 0 -6px 0 0 var(--color-error-highlight),
 				inset 2px 2px 0 0 var(--color-error-highlight);
 		}
 
 		&:not(:first-child, :last-child) {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-error-shadow),
-				inset 0 -6px 0 0 var(--color-error-highlight),
-				inset 0 2px 0 0 var(--color-error-highlight);
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
+				inset 0 -6px 0 0 var(--color-error-highlight), inset 0 2px 0 0 var(--color-error-highlight);
 		}
 
 		&:last-child {
-			box-shadow:
-				inset 0 -4px 0 0 var(--color-error-shadow),
+			box-shadow: inset 0 -4px 0 0 var(--color-error-shadow),
 				inset -2px -6px 0 0 var(--color-error-highlight),
 				inset 0 2px 0 0 var(--color-error-highlight);
 		}
@@ -267,21 +243,15 @@
 	// Stone SplitButton Styles
 	.stone {
 		&:first-child {
-			box-shadow:
-				inset 0 -4px 0 0 #0006,
-				inset 2px 2px 0 0 #fff7;
+			box-shadow: inset 0 -4px 0 0 #0006, inset 2px 2px 0 0 #fff7;
 		}
 
 		&:not(:first-child, :last-child) {
-			box-shadow:
-				inset 0 -4px 0 0 #0006,
-				inset 0 2px 0 0 #fff7;
+			box-shadow: inset 0 -4px 0 0 #0006, inset 0 2px 0 0 #fff7;
 		}
 
 		&:last-child {
-			box-shadow:
-				inset -2px -4px 0 0 #0006,
-				inset 0 2px 0 0 #fff7;
+			box-shadow: inset -2px -4px 0 0 #0006, inset 0 2px 0 0 #fff7;
 		}
 	}
 }

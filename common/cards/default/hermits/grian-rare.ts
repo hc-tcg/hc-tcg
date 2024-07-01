@@ -82,7 +82,7 @@ class GrianRareHermitCard extends HermitCard {
 							? {
 									text: 'Attach',
 									variant: 'default',
-								}
+							  }
 							: null,
 						secondaryButton: {
 							text: 'Discard',
