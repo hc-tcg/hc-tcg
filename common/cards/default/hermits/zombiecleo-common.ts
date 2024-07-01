@@ -1,12 +1,14 @@
-import HermitCard from '../../base/hermit-card'
+import Card, { Hermit, hermit } from '../../base/card'
 
-class ZombieCleoCommonHermitCard extends HermitCard {
-	constructor() {
-		super({
+class ZombieCleoCommonHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
 			id: 'zombiecleo_common',
 			numericId: 115,
 			name: 'Cleo',
+			expansion: 'default',
 			rarity: 'common',
+			tokens: 0,
 			type: 'builder',
 			health: 260,
 			primary: {
@@ -21,7 +23,6 @@ class ZombieCleoCommonHermitCard extends HermitCard {
 				damage: 80,
 				power: null,
 			},
-		})
 	}
 }
 
