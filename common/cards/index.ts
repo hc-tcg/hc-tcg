@@ -26,17 +26,17 @@ const hermitCardClasses: Array<Card> = [
 
 const itemCardClasses: Array<Card> = [...defaultItemCards]
 
-// const singleUseCardClasses: Array<Card<SingleUse>> = [
-// 	...defaultSingleUseCards,
-// 	...alterEgosSingleUseCards,
-// 	...adventOfTcgSingleUseCards,
-// ]
+const singleUseCardClasses: Array<Card> = [
+	...defaultSingleUseCards,
+	// ...alterEgosSingleUseCards,
+	// ...adventOfTcgSingleUseCards,
+]
 
 const allCardClasses: Array<Card> = [
 	...effectCardClasses,
 	...hermitCardClasses,
 	...itemCardClasses,
-	// ...singleUseCardClasses,
+	...singleUseCardClasses,
 ]
 
 export const CARDS: Record<string, Card> = allCardClasses.reduce(

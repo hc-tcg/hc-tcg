@@ -22,7 +22,7 @@ class SpyglassSingleUseCard extends Card<SingleUse> {
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} and ${values.coinFlip}`,
 		attachCondition: slot.every(
-			super.attachCondition,
+			singleUse.attachCondition,
 			(game, pos) => game.state.turn.turnNumber !== 1
 		),
 	}
