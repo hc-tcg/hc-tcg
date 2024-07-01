@@ -27,11 +27,11 @@ class SpyglassSingleUseCard extends Card<SingleUse> {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, new CardInstance(this, instance))
+			const coinFlip = flipCoin(player, instance)
 			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.hand.length > 0
 
 			game.addModalRequest({
@@ -77,7 +77,7 @@ class SpyglassSingleUseCard extends Card<SingleUse> {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

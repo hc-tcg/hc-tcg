@@ -35,7 +35,7 @@ class EthosLabRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -55,7 +55,7 @@ class EthosLabRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)

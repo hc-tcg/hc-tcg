@@ -33,7 +33,7 @@ export function discardCard(
 ) {
 	if (!card) return
 
-	const pos = getCardPos(game, card.instance)
+	const pos = getCardPos(game, card)
 	if (!pos) {
 		const err = new Error()
 		console.log('Cannot find card on board: ', card, err.stack)
@@ -41,8 +41,8 @@ export function discardCard(
 	}
 
 	// Call `onDetach`
-	card.card.onDetach(game, card.instance, pos)
-	pos.player.hooks.onDetach.call(card.instance)
+	card.card.onDetach(game, card, pos)
+	pos.player.hooks.onDetach.call(card)
 
 	// Remove the card
 	discardAtPos(pos)
@@ -72,13 +72,13 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
-	const pos = getCardPos(game, suCard.instance)
+	const pos = getCardPos(game, suCard)
 	if (!pos) return
 
-	suCard.card.onDetach(game, suCard.instance, pos)
+	suCard.card.onDetach(game, suCard, pos)
 
 	// Call onDetach hook
-	playerState.hooks.onDetach.call(suCard.instance)
+	playerState.hooks.onDetach.call(suCard)
 
 	playerState.board.singleUseCardUsed = false
 	playerState.board.singleUseCard = null
@@ -110,12 +110,12 @@ export function moveCardInstanceoHand(
 	card: CardInstance,
 	playerDiscard?: PlayerState | null
 ) {
-	const cardPos = getCardPos(game, card.instance)
+	const cardPos = getCardPos(game, card)
 	if (!cardPos) return
 
-	card.card.onDetach(game, card.instance, cardPos)
+	card.card.onDetach(game, card, cardPos)
 
-	cardPos.player.hooks.onDetach.call(card.instance)
+	cardPos.player.hooks.onDetach.call(card)
 
 	if (cardPos.row && cardPos.type === 'hermit') {
 		cardPos.row.hermitCard = null

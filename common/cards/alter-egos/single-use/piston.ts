@@ -34,7 +34,7 @@ class PistonSingleUseCard extends SingleUseCard {
 		slot.someSlotFulfills(this.firstPickCondition)
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const itemInstanceKey = this.getInstanceKey(instance, 'itemInstance')
 
@@ -99,7 +99,7 @@ class PistonSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterApply.remove(instance)

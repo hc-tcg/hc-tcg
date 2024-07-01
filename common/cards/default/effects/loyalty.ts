@@ -17,7 +17,7 @@ class LoyaltyEffectCard extends Card {
 			'When the Hermit that this card is attached to is knocked out, all attached item cards are returned to your hand.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const afterAttack = (attack: AttackModel) => {
@@ -38,7 +38,7 @@ class LoyaltyEffectCard extends Card {
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)

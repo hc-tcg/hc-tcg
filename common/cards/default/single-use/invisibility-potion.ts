@@ -25,7 +25,7 @@ class InvisibilityPotionSingleUseCard extends Card<SingleUse> {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const usedKey = this.getInstanceKey(instance, 'used')
 
@@ -52,7 +52,7 @@ class InvisibilityPotionSingleUseCard extends Card<SingleUse> {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

@@ -25,7 +25,7 @@ class InstantHealthIISingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addPickRequest({

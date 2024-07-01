@@ -20,7 +20,7 @@ class WolfEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const activated = this.getInstanceKey(instance, 'activated')
 
@@ -63,7 +63,7 @@ class WolfEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		// Delete hooks and custom

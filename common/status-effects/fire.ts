@@ -27,7 +27,7 @@ class FireStatusEffect extends StatusEffect {
 		const {player, opponentPlayer} = pos
 
 		const hasDamageEffect = game.state.statusEffects.some(
-			(a) => a.targetInstance === pos.card?.instance && a.damageEffect === true
+			(a) => a.targetInstance.instance === pos.card?.instance && a.damageEffect === true
 		)
 
 		if (hasDamageEffect) return
@@ -49,7 +49,7 @@ class FireStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-				  }
+					}
 				: null
 
 			const targetRow: RowPos = {
@@ -73,7 +73,7 @@ class FireStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})

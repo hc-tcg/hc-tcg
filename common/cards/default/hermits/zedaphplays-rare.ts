@@ -29,7 +29,7 @@ class ZedaphPlaysRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
@@ -67,7 +67,7 @@ class ZedaphPlaysRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		// Remove hooks

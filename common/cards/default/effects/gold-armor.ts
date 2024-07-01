@@ -16,7 +16,7 @@ class GoldArmorEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
@@ -47,7 +47,7 @@ class GoldArmorEffectCard extends Card {
 		opponentPlayer.hooks.onTurnStart.add(instance, resetCounter)
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onDefence.remove(instance)
 		player.hooks.onTurnStart.remove(instance)

@@ -30,7 +30,7 @@ class HotguyRareHermitCard extends HermitCard {
 
 	override getAttack(
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -43,7 +43,7 @@ class HotguyRareHermitCard extends HermitCard {
 		return attack
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		// How do I avoid using the cardId here? | Impossible so long as this is about a specific card - sense
@@ -67,7 +67,7 @@ class HotguyRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.beforeAttack.remove(instance)

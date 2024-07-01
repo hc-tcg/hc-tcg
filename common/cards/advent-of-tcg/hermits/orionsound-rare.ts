@@ -30,7 +30,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		})
 	}
 
-	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		player.custom[instanceKey] = []
@@ -72,7 +72,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 

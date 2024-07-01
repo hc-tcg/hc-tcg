@@ -7,6 +7,7 @@ import {
 	GenericActionResult,
 	PlayerState,
 	RowStateWithHermit,
+    CardInstance,
 } from '../types/game-state'
 
 export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
@@ -33,7 +34,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
-	const pos = getCardPos(game, suCard.instance)
+	const pos = getCardPos(game, suCard)
 	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
 	const cardInstance = currentPlayer.board.singleUseCard?.instance
@@ -63,7 +64,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 export function applyStatusEffect(
 	game: GameModel,
 	statusEffectId: string,
-	targetInstance: string | undefined
+	targetInstance: CardInstance | undefined
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 

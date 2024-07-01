@@ -20,7 +20,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 		return true
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -30,7 +30,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

@@ -14,7 +14,7 @@ class PranksterCommonItemCard extends Card {
 		type: 'prankster',
 	}
 
-	override getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
+	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		return [this.props.type]
 	}
 }

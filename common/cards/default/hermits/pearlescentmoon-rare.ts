@@ -35,7 +35,7 @@ class PearlescentMoonRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const status = this.getInstanceKey(instance, 'status')
 		player.custom[status] = 'none'
@@ -84,7 +84,7 @@ class PearlescentMoonRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)

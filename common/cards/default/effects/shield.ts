@@ -17,7 +17,7 @@ class ShieldEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
@@ -51,7 +51,7 @@ class ShieldEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onDefence.remove(instance)
 		player.hooks.afterDefence.remove(instance)

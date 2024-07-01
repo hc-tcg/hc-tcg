@@ -25,7 +25,7 @@ class SlimeballEffectCard extends EffectCard {
 		slot.not(slot.frozen)
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.freezeSlots.add(instance, () => {
@@ -38,7 +38,7 @@ class SlimeballEffectCard extends EffectCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		pos.player.hooks.freezeSlots.remove(instance)
 		pos.player.hooks.onDetach.remove(instance)
 	}

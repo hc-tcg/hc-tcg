@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import { CardInstance } from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -40,7 +41,7 @@ class LeadSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
 
@@ -82,7 +83,7 @@ class LeadSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
 		delete player.custom[itemIndexKey]

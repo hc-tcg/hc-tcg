@@ -25,7 +25,7 @@ class BedEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns
 		const {player, row} = pos
 		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
@@ -73,7 +73,7 @@ class BedEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)

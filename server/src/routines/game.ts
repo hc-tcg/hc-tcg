@@ -49,7 +49,7 @@ function getAvailableEnergy(game: GameModel) {
 			const pos = getCardPos(game, card.instance)
 			if (!pos) continue
 
-			availableEnergy.push(...card.card.getEnergy(game, card.instance, pos))
+			availableEnergy.push(...card.card.getEnergy(game, card, pos))
 		}
 
 		// Modify available energy

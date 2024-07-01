@@ -40,7 +40,7 @@ class HypnotizdRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -72,7 +72,7 @@ class HypnotizdRareHermitCard extends Card {
 		return newAttacks
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 		const targetKey = this.getInstanceKey(instance, 'target')
 
@@ -126,7 +126,7 @@ class HypnotizdRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 	}

@@ -18,7 +18,7 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} and healed all {your|their} Hermits $g20hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -28,7 +28,7 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

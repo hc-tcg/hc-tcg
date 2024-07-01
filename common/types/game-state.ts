@@ -104,7 +104,7 @@ export type StatusEffectT = {
 	/** The statusEffect's instance. */
 	statusEffectInstance: string
 	/** The target card's instance. */
-	targetInstance: string
+	targetInstance: CardInstance
 	/** The duration of the effect. If undefined, the effect is infinite. */
 	duration?: number
 	/** Whether the statusEffect is a damage effect or not. */
@@ -157,9 +157,9 @@ export type PlayerState = {
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 
 		/** Hook called when a card is attached */
-		onAttach: GameHook<(instance: string) => void>
+		onAttach: GameHook<(instance: CardInstance) => void>
 		/** Hook called when a card is detached */
-		onDetach: GameHook<(instance: string) => void>
+		onDetach: GameHook<(instance: CardInstance) => void>
 
 		/** Hook called before a single use card is applied */
 		beforeApply: GameHook<() => void>
@@ -174,7 +174,7 @@ export type PlayerState = {
 		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
 		 */
 		getAttackRequests: GameHook<
-			(activeInstance: string, hermitAttackType: HermitAttackType) => void
+			(activeInstance: CardInstance, hermitAttackType: HermitAttackType) => void
 		>
 
 		/** Hook that returns attacks to execute */

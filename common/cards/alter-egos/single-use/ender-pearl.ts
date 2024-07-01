@@ -27,7 +27,7 @@ class EnderPearlSingleUseCard extends SingleUseCard {
 		slot.someSlotFulfills(this.pickCondition)
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const attackId = this.getInstanceKey(instance)
 

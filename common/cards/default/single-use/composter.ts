@@ -25,7 +25,7 @@ class ComposterSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		let firstPickedCard: CardInstance | null = null
@@ -46,7 +46,7 @@ class ComposterSingleUseCard extends Card {
 			message: 'Pick 1 more card from your hand',
 			canPick: (game, pos) => {
 				if (firstPickedCard === null) return false
-				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard.instance)))(
+				return slot.every(slot.hand, slot.not(slot.hasInstance(firstPickedCard)))(
 					game,
 					pos
 				)

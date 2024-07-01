@@ -1,6 +1,5 @@
 import StatusEffect from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
 import {StatusEffectT} from '../types/game-state'
@@ -80,7 +79,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
 		})

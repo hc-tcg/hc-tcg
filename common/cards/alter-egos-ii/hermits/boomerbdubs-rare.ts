@@ -33,7 +33,7 @@ class BoomerBdubsRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
@@ -115,7 +115,7 @@ class BoomerBdubsRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		delete player.custom[instanceKey]

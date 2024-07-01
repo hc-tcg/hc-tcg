@@ -36,7 +36,7 @@ class JoeHillsRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		// null | card instance
 		const skippedKey = this.getInstanceKey(instance, 'skipped')
@@ -94,7 +94,7 @@ class JoeHillsRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const skippedKey = this.getInstanceKey(instance, 'skipped')
 		// Remove hooks

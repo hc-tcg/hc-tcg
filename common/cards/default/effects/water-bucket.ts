@@ -26,7 +26,7 @@ class WaterBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
@@ -87,7 +87,7 @@ class WaterBucketEffectCard extends Card {
 		}
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.afterApply.remove(instance)
 		player.hooks.onDefence.remove(instance)

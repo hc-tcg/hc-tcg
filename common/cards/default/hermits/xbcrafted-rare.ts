@@ -33,7 +33,7 @@ class XBCraftedRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -48,7 +48,7 @@ class XBCraftedRareHermitCard extends Card {
 		return attack
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const ignoreKey = this.getInstanceKey(instance, 'ignore')
 
@@ -69,7 +69,7 @@ class XBCraftedRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		// Remove hooks

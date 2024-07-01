@@ -31,7 +31,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
 
@@ -84,7 +84,7 @@ class BigBSt4tzRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const dealDamageNextTurn = this.getInstanceKey(instance, 'dealDamageNextTurn')
 

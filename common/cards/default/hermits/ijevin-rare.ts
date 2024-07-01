@@ -29,7 +29,7 @@ class IJevinRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -63,7 +63,7 @@ class IJevinRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterAttack.remove(instance)

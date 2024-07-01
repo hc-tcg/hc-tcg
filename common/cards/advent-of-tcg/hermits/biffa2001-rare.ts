@@ -27,7 +27,7 @@ class Biffa2001RareHermitCard extends HermitCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		applyStatusEffect(game, 'museum-collection', instance)
@@ -37,7 +37,7 @@ class Biffa2001RareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onTurnStart.remove(instance)

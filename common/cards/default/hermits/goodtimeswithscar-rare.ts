@@ -35,7 +35,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const canRevives: {[key: string]: boolean} = (player.custom[this.getKey('reviveNextTurn')] ||=
@@ -90,7 +90,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const canRevives = player.custom[this.getKey('reviveNextTurn')]
 		const canCleanUp = () => !Object.keys(canRevives).length

@@ -28,7 +28,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -77,7 +77,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterAttack.remove(instance)

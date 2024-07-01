@@ -39,7 +39,7 @@ class RendogRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -80,7 +80,7 @@ class RendogRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
@@ -180,7 +180,7 @@ class RendogRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')

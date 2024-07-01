@@ -29,7 +29,7 @@ class RenbobRareHermitCard extends HermitCard {
 
 	override getAttack(
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {

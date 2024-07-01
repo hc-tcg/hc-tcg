@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import { CardInstance } from '../../../types/game-state'
 import {applySingleUse, getActiveRow} from '../../../utils/board'
 import {discardSingleUse} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -35,7 +36,7 @@ class MendingSingleUseCard extends Card {
 			`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		const activeRowIndex = player.board.activeRow

@@ -25,7 +25,7 @@ class TotemEffectCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const reviveHook = (attack: AttackModel) => {
@@ -59,7 +59,7 @@ class TotemEffectCard extends Card {
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => reviveHook(attack))
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
 		pos.opponentPlayer.hooks.afterAttack.remove(instance)
 	}

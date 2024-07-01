@@ -24,11 +24,11 @@ class LootingSingleUseCard extends Card<SingleUse> {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, new CardInstance(this, instance))
+			const coinFlip = flipCoin(player, instance)
 
 			if (coinFlip[0] === 'tails') return
 
@@ -51,7 +51,7 @@ class LootingSingleUseCard extends Card<SingleUse> {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

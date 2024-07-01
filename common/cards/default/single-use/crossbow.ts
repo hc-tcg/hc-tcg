@@ -20,7 +20,7 @@ class CrossbowSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const targetsKey = this.getInstanceKey(instance, 'targets')
 		const remainingKey = this.getInstanceKey(instance, 'remaining')
@@ -121,7 +121,7 @@ class CrossbowSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.getAttack.remove(instance)

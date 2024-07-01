@@ -31,7 +31,7 @@ class PharaohRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
@@ -112,7 +112,7 @@ class PharaohRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)

@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import { CardInstance } from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, retrieveCard} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -20,7 +21,7 @@ class ChestSingleUseCard extends Card {
 			return true
 		}),
 	}
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addModalRequest({

@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import { CardInstance } from '../../../types/game-state'
 import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -18,7 +19,7 @@ class ThornsIIEffectCard extends Card {
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 30hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const triggeredKey = this.getInstanceKey(instance, 'triggered')
 
@@ -56,7 +57,7 @@ class ThornsIIEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const triggeredKey = this.getInstanceKey(instance, 'triggered')
 		opponentPlayer.hooks.afterAttack.remove(instance)

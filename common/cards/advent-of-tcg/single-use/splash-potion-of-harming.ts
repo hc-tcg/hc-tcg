@@ -17,7 +17,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.getAttack.add(instance, () => {
@@ -59,7 +59,7 @@ class SplashPotionOfHarmingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)

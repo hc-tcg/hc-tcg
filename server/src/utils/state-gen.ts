@@ -208,13 +208,13 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
-			onAttach: new GameHook<(instance: string) => void>(),
-			onDetach: new GameHook<(instance: string) => void>(),
+			onAttach: new GameHook<(instance: CardInstance) => void>(),
+			onDetach: new GameHook<(instance: CardInstance) => void>(),
 			beforeApply: new GameHook<() => void>(),
 			onApply: new GameHook<() => void>(),
 			afterApply: new GameHook<() => void>(),
 			getAttackRequests: new GameHook<
-				(activeInstance: string, hermitAttackType: HermitAttackType) => void
+				(activeInstance: CardInstance, hermitAttackType: HermitAttackType) => void
 			>(),
 			getAttack: new GameHook<() => AttackModel | null>(),
 			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
@@ -224,7 +224,7 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardInstance>) => void>(),
+			onTurnEnd: new GameHook<(drawCards: Array<CardInstance | null>) => void>(),
 			onCoinFlip: new GameHook<
 				(card: CardInstance, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
 			>(),

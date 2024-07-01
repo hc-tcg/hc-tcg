@@ -394,12 +394,12 @@ export class GameModel {
 			// onAttach
 			;[slotA, slotB].forEach((slot) => {
 				if (!slot.card) return
-				const cardPos = getCardPos(this, slot.card.instance)
+				const cardPos = getCardPos(this, slot.card)
 				if (!cardPos) return
 
-				slot.card.card.onAttach(this, slot.card.instance, cardPos)
+				slot.card.card.onAttach(this, slot.card, cardPos)
 
-				cardPos.player.hooks.onAttach.call(slot.card.instance)
+				cardPos.player.hooks.onAttach.call(slot.card)
 			})
 		}
 	}

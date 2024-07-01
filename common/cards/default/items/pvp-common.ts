@@ -14,7 +14,7 @@ class PvPCommonItemCard extends Card {
 		type: 'pvp',
 	}
 
-	override getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
+	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		return [this.props.type]
 	}
 }

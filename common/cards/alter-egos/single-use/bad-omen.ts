@@ -21,7 +21,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		return true
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
@@ -31,7 +31,7 @@ class BadOmenSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

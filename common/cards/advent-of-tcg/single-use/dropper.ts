@@ -17,7 +17,7 @@ class DropperSingleUseCard extends SingleUseCard {
 		return true
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -35,7 +35,7 @@ class DropperSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 
 		player.hooks.onApply.remove(instance)

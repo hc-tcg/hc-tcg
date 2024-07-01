@@ -12,6 +12,7 @@ import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {slot, SlotCondition} from '../../slot'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
+import { CardInstance } from '../../types/game-state'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -187,21 +188,21 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return this.props.id + ':' + keyName
 	}
 
-	public getInstanceKey(instance: string, keyName: string = '') {
-		return this.props.id + ':' + instance + ':' + keyName
+	public getInstanceKey(instance: CardInstance, keyName: string = '') {
+		return this.props.id + ':' + instance.instance + ':' + keyName
 	}
 
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	public onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when an instance of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	public onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		// default is do nothing
 	}
 
@@ -212,7 +213,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public getEnergy(
 		this: Card<Item>,
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel
 	): Array<typeT> {
 		return []
@@ -229,7 +230,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public getAttack(
 		this: Card<Hermit>,
 		game: GameModel,
-		instance: string,
+		instance: CardInstance,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {

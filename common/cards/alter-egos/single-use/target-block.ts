@@ -28,7 +28,7 @@ class TargetBlockSingleUseCard extends SingleUseCard {
 		slot.someSlotFulfills(this.pickCondition)
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 

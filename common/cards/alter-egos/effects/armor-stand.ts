@@ -2,6 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../slot'
 import Card, {Attach, attach, hermit, hermitBattleLog} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class ArmorStandEffectCard extends Card {
 	props: Attach = {
@@ -24,7 +25,7 @@ class ArmorStandEffectCard extends Card {
 		log: hermitBattleLog('Armour Stand'),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, row} = pos
 		if (!row) return
 
@@ -49,7 +50,7 @@ class ArmorStandEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)

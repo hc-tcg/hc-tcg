@@ -1,8 +1,9 @@
 import {slot} from '../slot'
 import {SlotInfo} from '../types/cards'
+import { CardInstance } from '../types/game-state'
 import {GameModel} from './game-model'
 
-export function getCardPos(game: GameModel, instance: string) {
+export function getCardPos(game: GameModel, instance: CardInstance) {
 	const basicPos = game.findSlot(slot.hasInstance(instance))
 
 	if (basicPos) {
@@ -18,9 +19,9 @@ export function getCardPos(game: GameModel, instance: string) {
 export class CardPosModel implements SlotInfo {
 	private game: GameModel
 	private internalPos: SlotInfo
-	private instance: string
+	private instance: CardInstance
 
-	constructor(game: GameModel, cardPos: SlotInfo, instance: string) {
+	constructor(game: GameModel, cardPos: SlotInfo, instance: CardInstance) {
 		this.game = game
 		this.internalPos = cardPos
 		this.instance = instance

@@ -25,7 +25,7 @@ class MilkBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
@@ -84,7 +84,7 @@ class MilkBucketEffectCard extends Card {
 		}
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)

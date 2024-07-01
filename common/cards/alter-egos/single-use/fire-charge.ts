@@ -31,7 +31,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		slot.someSlotFulfills(this.pickCondition)
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addPickRequest({
@@ -58,7 +58,7 @@ class FireChargeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterApply.remove(instance)
