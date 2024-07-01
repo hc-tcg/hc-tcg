@@ -1,5 +1,5 @@
 import HermitCard from '../../base/hermit-card'
-import {HERMIT_CARDS} from '../..'
+import {CARDS, HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
@@ -78,7 +78,7 @@ class KeralisRareHermitCard extends HermitCard {
 			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
 			if (!pickedRow || !pickedRow.hermitCard) return
 
-			const pickedHermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
+			const pickedHermitInfo = CARDS[pickedRow.hermitCard.cardId]
 			const activeHermit = getActiveRow(player)?.hermitCard
 			if (!activeHermit) return
 			const activeHermitName = HERMIT_CARDS[activeHermit.cardId].name

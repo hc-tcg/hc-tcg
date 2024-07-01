@@ -1,4 +1,4 @@
-import {HERMIT_CARDS} from '../..'
+import {CARDS, HERMIT_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
@@ -140,7 +140,7 @@ class IskallmanRareHermitCard extends HermitCard {
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
+			const hermitInfo = CARDS[pickedRow.hermitCard.cardId]
 			if (hermitInfo) {
 				healHermit(pickedRow, 50)
 				game.battleLog.addEntry(
