@@ -55,7 +55,7 @@ class PotatoBoyRareHermitCard extends HermitCard {
 				)
 				.forEach(({row, rowIndex, card}) => {
 					if (!card || rowIndex === null) return
-					let hermitInfo = CARDS[card?.cardId]
+					const hermitInfo = CARDS[card?.cardId]
 					healHermit(row, 40)
 					game.battleLog.addEntry(
 						player.id,
