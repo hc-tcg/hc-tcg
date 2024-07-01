@@ -1,7 +1,7 @@
-import {CardInstance} from 'common/types/game-state'
 import {CARDS} from 'common/cards'
 import {encode, decode} from 'js-base64'
 import {LocalCardInstance} from 'common/types/server-requests'
+import { WithoutFunctions } from 'common/cards/base/card'
 
 export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 	try {
@@ -16,7 +16,7 @@ export const getDeckFromHash = (hash: string): Array<LocalCardInstance> => {
 		const props = Object.values(CARDS).find((value) => value.props.numericId === b64[i])?.props
 		if (!props) continue
 		deck.push({
-			props: props,
+			props: WithoutFunctions(props),
 			instance: Math.random().toString(),
 		})
 	}
