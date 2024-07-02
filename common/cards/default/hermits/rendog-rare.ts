@@ -5,6 +5,11 @@ import {CardInstance} from '../../../types/game-state'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
 
+type Data = {
+	imitatingCard?: CardInstance
+	pickedAttack?: HermitAttackType
+}
+
 class RendogRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
@@ -39,52 +44,50 @@ class RendogRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: CardInstance,
+		instance: CardInstance & Data,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos
-		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
-		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 		if (attack.id !== this.getInstanceKey(instance)) return attack
 
-		const imitatingCard: CardInstance | undefined = player.custom[imitatingCardKey]
-
-		if (!imitatingCard) return null
+		if (!instance.imitatingCard) return null
 
 		// No loops please
-		if (imitatingCard.props.id === this.props.id) return null
-		if (!imitatingCard.isHermit()) return null
+		if (instance.imitatingCard.props.id === this.props.id) return null
+		if (!instance.imitatingCard.isHermit()) return null
 
-		const attackType = player.custom[pickedAttackKey]
-		if (!attackType) return null
-		// Delete the stored data about the attack we chose
-		delete player.custom[pickedAttackKey]
+		if (!instance.pickedAttack) return null
 
 		// Return the attack we picked from the card we picked
-		const newAttack = imitatingCard.card.getAttack(game, imitatingCard.instance, pos, attackType)
+		const newAttack = instance.imitatingCard.card.getAttack(
+			game,
+			instance.imitatingCard,
+			pos,
+			instance.pickedAttack
+		)
 		if (!newAttack) return null
+
 		const attackName =
 			newAttack.type === 'primary'
-				? imitatingCard.props.primary.name
-				: imitatingCard.props.secondary.name
+				? instance.imitatingCard.props.primary.name
+				: instance.imitatingCard.props.secondary.name
 		newAttack.updateLog(
 			(values) =>
 				`${values.attacker} ${values.coinFlip ? values.coinFlip + ', then ' : ''} attacked ${
 					values.target
-				} with $v${imitatingCard.props.name}'s ${attackName}$ for ${values.damage} damage`
+				} with $v${instance.imitatingCard?.props.name}'s ${attackName}$ for ${values.damage} damage`
 		)
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance & Data, pos: CardPosModel) {
 		const {player} = pos
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
-		const imitatingCardInstance = Math.random().toString()
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -123,28 +126,21 @@ class RendogRareHermitCard extends Card {
 							const attack: HermitAttackType = modalResult.pick
 
 							// Store the chosen attack to copy
-							player.custom[pickedAttackKey] = attack
+							instance.pickedAttack = attack
 
 							// Replace the hooks of the card we're imitating only if it changed
-							const imitatingCard: CardInstance | undefined = player.custom[imitatingCardKey]
-							if (!imitatingCard || pickedCard.props.id !== imitatingCard.props.id) {
-								if (imitatingCard) {
-									// Detach the old card
-									imitatingCard.card.onDetach(game, imitatingCard.instance, pos)
+							if (
+								!instance.imitatingCard ||
+								pickedCard.props.id !== instance.imitatingCard.props.id
+							) {
+								if (instance.imitatingCard) {
+									instance.imitatingCard.card.onDetach(game, instance.imitatingCard, pos)
 								}
 
-								// Attach the new card
-								pickedCard.card.onAttach(game, imitatingCardInstance, pos)
-
-								// Store which card we are imitating with our own instance
-								player.custom[imitatingCardKey] = new CardInstance(
-									pickedCard.card,
-									imitatingCardInstance
-								)
+								instance.imitatingCard = pickedCard
+								pickedCard.card.onAttach(game, instance.imitatingCard, pos)
+								player.hooks.getAttackRequests.call(instance.imitatingCard, modalResult.pick)
 							}
-
-							// Add the attack requests of the chosen card
-							player.hooks.getAttackRequests.call(imitatingCardInstance, modalResult.pick)
 
 							return 'SUCCESS'
 						},
@@ -165,10 +161,9 @@ class RendogRareHermitCard extends Card {
 		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
 			if (pos.rowIndex === oldRow) {
 				// We switched away from ren, delete the imitating card
-				const imitatingCard: CardInstance | undefined = player.custom[imitatingCardKey]
-				if (imitatingCard) {
+				if (instance.imitatingCard) {
 					// Detach the old card
-					imitatingCard.card.onDetach(game, imitatingCard.instance, pos)
+					instance.imitatingCard.card.onDetach(game, instance.imitatingCard, pos)
 				}
 			}
 		})
@@ -180,23 +175,19 @@ class RendogRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance & Data, pos: CardPosModel) {
 		const {player} = pos
-		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 
 		// If the card we are imitating is still attached, detach it
-		const imitatingCard: CardInstance | undefined = player.custom[imitatingCardKey]
+		const imitatingCard: CardInstance | undefined = instance.imitatingCard
 		if (imitatingCard) {
-			imitatingCard.card.onDetach(game, imitatingCard.instance, pos)
+			imitatingCard.card.onDetach(game, imitatingCard, pos)
 		}
 
 		// Remove hooks and custom data
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onActiveRowChange.remove(instance)
 		player.hooks.blockedActions.remove(instance)
-		delete player.custom[imitatingCardKey]
-		delete player.custom[pickedAttackKey]
 	}
 }
 
