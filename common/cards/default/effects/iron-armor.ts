@@ -19,7 +19,6 @@ class IronArmorEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
 
 		let damageBlocked = 0
 
