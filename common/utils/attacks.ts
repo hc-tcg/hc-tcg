@@ -5,6 +5,7 @@ import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {slot} from '../slot'
+import { STRENGTHS } from '../const/strengths'
 
 function executeAttack(attack: AttackModel) {
 	const target = attack.getTarget()
@@ -260,7 +261,7 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 	)
 		return null
 
-	const strength = attackerCardInfo.props.type
+	const strength = STRENGTHS[attackerCardInfo.props.type]
 	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
 		return null
 	}
