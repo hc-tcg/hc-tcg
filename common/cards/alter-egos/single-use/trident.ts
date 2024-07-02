@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardInstance, CoinFlipT} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardSingleUse} from '../../../utils/movement'
@@ -23,6 +23,8 @@ class TridentSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
+
+		let coinflipResult: CoinFlipT | null = null
 
 		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
@@ -46,14 +48,14 @@ class TridentSingleUseCard extends Card {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			player.custom[this.getInstanceKey(instance)] = flipCoin(player, instance)[0]
+			coinflipResult = flipCoin(player, instance)[0]
 
 			applySingleUse(game)
 		})
 
 		player.hooks.onApply.add(instance, () => {
 			// Return to hand
-			if (player.custom[this.getInstanceKey(instance)] === 'heads') {
+			if (coinflipResult === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise
 				player.board.singleUseCardUsed = false
 				discardSingleUse(game, player)
@@ -67,7 +69,6 @@ class TridentSingleUseCard extends Card {
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onApply.remove(instance)
 		player.hooks.onAttack.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

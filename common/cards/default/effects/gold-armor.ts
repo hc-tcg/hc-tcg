@@ -21,26 +21,20 @@ class GoldArmorEffectCard extends Card {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
+		let damageBlocked = 0
+
 		player.hooks.onDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return
 
-			if (player.custom[instanceKey] === undefined) {
-				player.custom[instanceKey] = 0
-			}
-
-			const totalReduction = player.custom[instanceKey]
-
-			if (totalReduction < 10) {
-				const damageReduction = Math.min(attack.calculateDamage(), 10 - totalReduction)
-				player.custom[instanceKey] += damageReduction
+			if (damageBlocked < 10) {
+				const damageReduction = Math.min(attack.calculateDamage(), 10 - damageBlocked)
+				damageBlocked += damageReduction
 				attack.reduceDamage(this.props.id, damageReduction)
 			}
 		})
 
 		const resetCounter = () => {
-			if (player.custom[instanceKey] !== undefined) {
-				delete player.custom[instanceKey]
-			}
+			damageBlocked = 0
 		}
 
 		// Reset counter at the start of every turn
@@ -53,7 +47,6 @@ class GoldArmorEffectCard extends Card {
 		player.hooks.onDefence.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
 		opponentPlayer.hooks.onTurnStart.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

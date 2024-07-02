@@ -5,6 +5,7 @@ import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
+import {SlotInfo} from '../../../types/cards'
 
 class BedEffectCard extends Card {
 	props: Attach = {
@@ -29,7 +30,8 @@ class BedEffectCard extends Card {
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns
 		const {player, row} = pos
-		const hermitSlot = this.getInstanceKey(instance, 'hermitSlot')
+
+		let hermitCard: CardInstance | null = null
 
 		if (row && row.hermitCard) {
 			applyStatusEffect(game, 'sleeping', row.hermitCard)
@@ -48,18 +50,17 @@ class BedEffectCard extends Card {
 		})
 
 		player.hooks.beforeApply.add(instance, () => {
-			player.custom[hermitSlot] = row?.hermitCard?.instance
+			hermitCard = row?.hermitCard || null
 		})
 
 		//Ladder
 		player.hooks.afterApply.add(instance, () => {
-			if (player.custom[hermitSlot] != row?.hermitCard?.instance && row && row.hermitCard) {
+			if (hermitCard?.instance != row?.hermitCard?.instance && row && row.hermitCard) {
 				row.health = row.hermitCard.props.health
 
 				// Add new sleeping statusEffect
 				applyStatusEffect(game, 'sleeping', row.hermitCard)
 			}
-			delete player.custom[hermitSlot]
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
@@ -82,7 +83,6 @@ class BedEffectCard extends Card {
 		player.hooks.onTurnStart.remove(instance)
 		player.hooks.beforeApply.remove(instance)
 		player.hooks.afterApply.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'hermitSlot')]
 	}
 }
 
