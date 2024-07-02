@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../slot'
 import Card, {Attach, attach, hermit, hermitBattleLog} from '../../base/card'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class ArmorStandEffectCard extends Card {
 	props: Attach = {

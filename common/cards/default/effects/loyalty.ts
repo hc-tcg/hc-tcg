@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {Attach, attach} from '../../base/card'
 

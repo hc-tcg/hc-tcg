@@ -99,7 +99,9 @@ const Slot = ({
 	const hermitStatusEffects = Array.from(
 		new Set(
 			statusEffects
-				.filter((a) => rowState?.hermitCard && a.targetInstance.instance == rowState.hermitCard.instance)
+				.filter(
+					(a) => rowState?.hermitCard && a.targetInstance.instance == rowState.hermitCard.instance
+				)
 				.map((a) => a) || []
 		)
 	)

@@ -1,6 +1,6 @@
 import {slot} from '../slot'
 import {SlotInfo} from '../types/cards'
-import { CardInstance } from '../types/game-state'
+import {CardInstance} from '../types/game-state'
 import {GameModel} from './game-model'
 
 export function getCardPos(game: GameModel, instance: CardInstance) {

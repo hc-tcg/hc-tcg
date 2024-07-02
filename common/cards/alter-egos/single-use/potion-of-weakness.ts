@@ -4,7 +4,7 @@ import {getActiveRow} from '../../../utils/board'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class PotionOfWeaknessSingleUseCard extends Card {
 	props: SingleUse = {

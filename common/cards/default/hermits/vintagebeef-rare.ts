@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class VintageBeefRareHermitCard extends Card {
 	props: Hermit = {

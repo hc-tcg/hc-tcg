@@ -2,7 +2,7 @@ import {CardInstance, StatusEffectInstance} from './game-state'
 
 export class Hook<
 	Args extends (...args: any) => any,
-	Instance = CardInstance | StatusEffectInstance,
+	Instance = CardInstance | StatusEffectInstance
 > {
 	public listeners: Array<[any, Args]> = []
 
@@ -42,7 +42,7 @@ export class Hook<
  */
 export class GameHook<
 	Args extends (...args: any) => any,
-	Instance = CardInstance | StatusEffectInstance,
+	Instance = CardInstance | StatusEffectInstance
 > extends Hook<Args, Instance> {
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
@@ -61,7 +61,7 @@ export class GameHook<
  */
 export class WaterfallHook<
 	Args extends (...args: any) => Parameters<Args>[0],
-	Instance = CardInstance | StatusEffectInstance,
+	Instance = CardInstance | StatusEffectInstance
 > extends Hook<Args, Instance> {
 	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
 		return this.listeners.reduce((params, [_, listener]) => {

@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
 

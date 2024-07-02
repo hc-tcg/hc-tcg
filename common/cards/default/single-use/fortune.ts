@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.

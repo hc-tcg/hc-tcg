@@ -5,7 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
 import {slot} from '../../../slot'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class FireChargeSingleUseCard extends Card {
 	pickCondition = slot.every(

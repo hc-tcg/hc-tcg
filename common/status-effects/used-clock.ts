@@ -27,8 +27,7 @@ class UsedClockStatusEffect extends StatusEffect {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo)
+			if (statusEffectInfo.duration === 0) removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 

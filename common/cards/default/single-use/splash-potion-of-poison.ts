@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class SplashPotionOfPoisonSingleUseCard extends Card {
 	props: SingleUse = {

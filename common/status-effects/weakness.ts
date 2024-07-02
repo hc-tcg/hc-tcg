@@ -32,8 +32,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo)
+			if (statusEffectInfo.duration === 0) removeStatusEffect(game, pos, statusEffectInfo)
 		})
 
 		opponentPlayer.hooks.onAttack.add(statusEffectInfo, (attack) => {

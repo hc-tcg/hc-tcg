@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 

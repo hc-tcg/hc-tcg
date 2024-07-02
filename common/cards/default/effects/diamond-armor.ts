@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 

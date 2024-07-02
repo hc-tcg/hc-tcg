@@ -37,6 +37,8 @@ class EggSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 		const targetKey = this.getInstanceKey(instance, 'target')
 
+		let afkHermitSlot: SlotInfo | null = null
+
 		player.hooks.getAttackRequests.add(instance, () => {
 			game.addPickRequest({
 				playerId: player.id,
@@ -44,10 +46,7 @@ class EggSingleUseCard extends Card {
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
-
-					// Store the row index to use later
-					player.custom[targetKey] = pickedSlot
+					afkHermitSlot = pickedSlot
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing
@@ -59,12 +58,12 @@ class EggSingleUseCard extends Card {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
-			const pickInfo: SlotInfo = player.custom[targetKey]
-			if (!pickInfo || pickInfo.rowIndex === null || pickInfo.rowIndex == undefined) return
-			const opponentRow = opponentPlayer.board.rows[pickInfo.rowIndex]
+			if (!afkHermitSlot || afkHermitSlot.rowIndex === null || afkHermitSlot.rowIndex == undefined)
+				return
+			const opponentRow = opponentPlayer.board.rows[afkHermitSlot.rowIndex]
 			if (!opponentRow.hermitCard) return
 
-			applySingleUse(game, pickInfo)
+			applySingleUse(game, afkHermitSlot)
 
 			const coinFlip = flipCoin(player, instance)
 			if (coinFlip[0] === 'heads') {
@@ -73,7 +72,7 @@ class EggSingleUseCard extends Card {
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
-						rowIndex: pickInfo.rowIndex,
+						rowIndex: afkHermitSlot.rowIndex,
 						row: opponentRow,
 					},
 					log: (values) =>
@@ -85,12 +84,9 @@ class EggSingleUseCard extends Card {
 			}
 
 			player.hooks.afterAttack.add(instance, () => {
-				const pickInfo: SlotInfo = player.custom[targetKey]
-				if (pickInfo.rowIndex === null || pickInfo.rowIndex === null) return
-				game.changeActiveRow(opponentPlayer, pickInfo.rowIndex)
-
-				delete player.custom[targetKey]
-
+				if (!afkHermitSlot || afkHermitSlot.rowIndex === null || afkHermitSlot.rowIndex === null)
+					return
+				game.changeActiveRow(opponentPlayer, afkHermitSlot.rowIndex)
 				player.hooks.afterAttack.remove(instance)
 			})
 

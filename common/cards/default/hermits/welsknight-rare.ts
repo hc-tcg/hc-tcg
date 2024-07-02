@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class WelsknightRareHermitCard extends Card {
