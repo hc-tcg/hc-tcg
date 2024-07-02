@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import CardComponent from 'components/card'
 import {LocalRowState} from 'common/types/game-state'
 import css from './board.module.scss'
-import {StatusEffectT} from 'common/types/game-state'
+import {StatusEffectInstance} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
@@ -34,7 +34,7 @@ export type SlotProps = {
 	rowState?: LocalRowState
 	active?: boolean
 	cssId?: string
-	statusEffects: Array<StatusEffectT>
+	statusEffects: Array<StatusEffectInstance>
 }
 const Slot = ({
 	type,
@@ -69,7 +69,7 @@ const Slot = ({
 			health: rowState?.health,
 		} as HasHealth
 	}
-	const renderStatusEffects = (cleanedStatusEffects: StatusEffectT[]) => {
+	const renderStatusEffects = (cleanedStatusEffects: StatusEffectInstance[]) => {
 		return (
 			<div className={css.statusEffectContainer}>
 				{cleanedStatusEffects.map((a) => {
@@ -81,7 +81,7 @@ const Slot = ({
 			</div>
 		)
 	}
-	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectT[] | null) => {
+	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectInstance[] | null) => {
 		return (
 			<div className={css.damageStatusEffectContainer}>
 				{cleanedStatusEffects

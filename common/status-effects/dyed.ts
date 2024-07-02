@@ -27,12 +27,13 @@ class DyedStatusEffect extends StatusEffect {
 
 		game.state.statusEffects.push(statusEffectInfo)
 
-		player.hooks.availableEnergy.add(statusEffectInfo.statusEffectInstance, (availableEnergy) => {
+		player.hooks.availableEnergy.add(statusEffectInfo, (availableEnergy) => {
 			if (player.board.activeRow === null) return availableEnergy
 
 			const activeRow = player.board.rows[player.board.activeRow]
 
-			if (statusEffectInfo.targetInstance.instance !== activeRow.hermitCard?.instance) return availableEnergy
+			if (statusEffectInfo.targetInstance.instance !== activeRow.hermitCard?.instance)
+				return availableEnergy
 
 			return availableEnergy.map(() => 'any')
 		})
@@ -41,8 +42,8 @@ class DyedStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.availableEnergy.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.availableEnergy.remove(statusEffectInfo)
+		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo)
 	}
 }
 

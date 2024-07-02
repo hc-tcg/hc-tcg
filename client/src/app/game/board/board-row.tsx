@@ -3,7 +3,7 @@ import {CardInstance} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
-import {StatusEffectT} from 'common/types/game-state'
+import {StatusEffectInstance} from 'common/types/game-state'
 import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance} from 'common/types/server-requests'
 
@@ -26,7 +26,7 @@ type BoardRowProps = {
 	rowState: LocalRowState
 	active: boolean
 	playerId: string
-	statusEffects: Array<StatusEffectT>
+	statusEffects: Array<StatusEffectInstance>
 }
 
 const BoardRow = ({
