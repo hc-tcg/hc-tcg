@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -61,8 +61,8 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			row.health = 50
 
 			game.state.statusEffects.forEach((ail) => {
-				if (ail.targetInstance === targetInstance) {
-					removeStatusEffect(game, pos, ail.statusEffectInstance)
+				if (ail.targetInstance.instance === targetInstance) {
+					removeStatusEffect(game, pos, ail)
 				}
 			})
 

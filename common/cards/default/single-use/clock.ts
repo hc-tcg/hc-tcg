@@ -51,7 +51,7 @@ class ClockSingleUseCard extends Card {
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 			})
 
-			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.instance)
+			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard)
 		})
 	}
 

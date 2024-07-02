@@ -46,7 +46,7 @@ function getAvailableEnergy(game: GameModel) {
 		for (let i = 0; i < activeRow.itemCards.length; i++) {
 			const card = activeRow.itemCards[i]
 			if (!card) continue
-			const pos = getCardPos(game, card.instance)
+			const pos = getCardPos(game, card)
 			if (!pos) continue
 
 			availableEnergy.push(...card.card.getEnergy(game, card, pos))

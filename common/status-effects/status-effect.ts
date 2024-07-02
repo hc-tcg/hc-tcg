@@ -34,15 +34,15 @@ abstract class StatusEffect {
 	public getKey(keyName: string) {
 		return this.id + ':' + keyName
 	}
-	public getInstanceKey(instance: string, keyName: string = '') {
-		return this.id + ':' + instance + ':' + keyName
+	public getInstanceKey(instance: StatusEffectInstance, keyName: string = '') {
+		return this.id + ':' + instance.statusEffectInstance + ':' + keyName
 	}
 
 	/**
 	 * Same as `getInstanceKey` but for the statusEffect's target
 	 */
-	public getTargetInstanceKey(targetId: string, instance: string, keyName: string = '') {
-		return targetId + ':' + instance + ':' + keyName
+	public getTargetInstanceKey(instance: StatusEffectInstance, keyName: string = '') {
+		return instance.targetInstance.props.id + ':' + instance.targetInstance.instance + ':' + keyName
 	}
 
 	/**

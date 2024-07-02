@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class CurseOfBindingSingleUseCard extends Card {

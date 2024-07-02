@@ -10,11 +10,11 @@ export class RootModel {
 	/** Game code ->  time code was created, and info */
 	public privateQueue: Record<string, {createdTime: number; playerId: string | null}> = {}
 	public hooks = {
-		newGame: new Hook<(game: GameModel) => void>(),
-		gameRemoved: new Hook<(game: GameModel) => void>(),
-		playerJoined: new Hook<(player: PlayerModel) => void>(),
-		playerLeft: new Hook<(player: PlayerModel) => void>(),
-		privateCancelled: new Hook<(code: string) => void>(),
+		newGame: new Hook<(game: GameModel) => void, String>(),
+		gameRemoved: new Hook<(game: GameModel) => void, String>(),
+		playerJoined: new Hook<(player: PlayerModel) => void, String>(),
+		playerLeft: new Hook<(player: PlayerModel) => void, String>(),
+		privateCancelled: new Hook<(code: string) => void, String>(),
 	}
 	public updates: Record<string, Array<string>> = {}
 

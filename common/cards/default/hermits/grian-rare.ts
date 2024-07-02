@@ -102,12 +102,12 @@ class GrianRareHermitCard extends Card {
 						)
 						game.swapSlots(effectSlot, opponentEffectSlot)
 
-						const newPos = getCardPos(game, opponentEffectCard.instance)
+						const newPos = getCardPos(game, opponentEffectCard)
 
 						if (newPos) {
 							// Call onAttach
-							opponentEffectCard.card.onAttach(game, opponentEffectCard.instance, newPos)
-							player.hooks.onAttach.call(opponentEffectCard.instance)
+							opponentEffectCard.card.onAttach(game, opponentEffectCard, newPos)
+							player.hooks.onAttach.call(opponentEffectCard)
 						}
 					} else {
 						// Discard

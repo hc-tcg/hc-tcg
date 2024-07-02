@@ -34,7 +34,7 @@ class LavaBucketSingleUseCard extends Card {
 			applyStatusEffect(
 				game,
 				'fire',
-				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.instance
+				opponentPlayer.board.rows[opponentActiveRow].hermitCard
 			)
 		})
 	}

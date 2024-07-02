@@ -64,7 +64,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 export function applyStatusEffect(
 	game: GameModel,
 	statusEffectId: string,
-	targetInstance: CardInstance | undefined
+	targetInstance: CardInstance | undefined | null
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 

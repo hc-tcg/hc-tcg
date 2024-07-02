@@ -4,6 +4,7 @@ import {getActiveRow} from '../../../utils/board'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {SingleUse, singleUse} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class PotionOfWeaknessSingleUseCard extends Card {
 	props: SingleUse = {
@@ -31,7 +32,7 @@ class PotionOfWeaknessSingleUseCard extends Card {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard?.instance)
+			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard)
 		})
 	}
 

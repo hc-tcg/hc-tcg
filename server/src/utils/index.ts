@@ -13,9 +13,9 @@ export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): nu
 	let total = 0
 	for (const itemCard of itemCards) {
 		if (!itemCard) continue
-		const pos = getCardPos(game, itemCard.instance)
+		const pos = getCardPos(game, itemCard)
 		if (!pos) continue
-		total += itemCard.card.getEnergy(game, itemCard.instance, pos).length
+		total += itemCard.card.getEnergy(game, itemCard, pos).length
 	}
 
 	return total

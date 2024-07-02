@@ -31,7 +31,7 @@ class MilkBucketEffectCard extends Card {
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance,
+				id: this.props.id,
 				message: 'Pick one of your Hermits',
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickedSlot) {

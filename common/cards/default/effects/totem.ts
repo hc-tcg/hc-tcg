@@ -38,10 +38,10 @@ class TotemEffectCard extends Card {
 			row.health = 10
 
 			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-				return ail.targetInstance === pos.card?.instance
+				return ail.targetInstance.instance === pos.card?.instance
 			})
 			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+				removeStatusEffect(game, pos, ail)
 			})
 
 			const revivedHermit = row.hermitCard.props.name

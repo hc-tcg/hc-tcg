@@ -44,7 +44,7 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		// Call before attack hooks
 		player.hooks.beforeAttack.callSome([attack], (instance) => {
 			if (instance instanceof CardInstance) return shouldIgnoreCard(attack, game, instance)
-			return false
+			return true
 		})
 	}
 }
@@ -64,7 +64,7 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 		// Call before defence hooks
 		player.hooks.beforeDefence.callSome([attack], (instance) => {
 			if (instance instanceof CardInstance) return shouldIgnoreCard(attack, game, instance)
-			return false
+			return true
 		})
 	}
 }
@@ -84,7 +84,7 @@ function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
 			if (instance instanceof CardInstance) return shouldIgnoreCard(attack, game, instance)
-			return false
+			return true
 		})
 	}
 }
@@ -104,7 +104,7 @@ function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 		// Call on defence hooks
 		player.hooks.onDefence.callSome([attack], (instance) => {
 			if (instance instanceof CardInstance) return shouldIgnoreCard(attack, game, instance)
-			return false
+			return true
 		})
 	}
 }
@@ -121,7 +121,7 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
 			if (instance instanceof CardInstance) return shouldIgnoreCard(attack, game, instance)
-			return false
+			return true
 		})
 	}
 }

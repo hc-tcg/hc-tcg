@@ -31,7 +31,7 @@ class BadOmenSingleUseCard extends Card {
 		if (activeRow === null) return
 
 		player.hooks.onApply.add(instance, () => {
-			applyStatusEffect(game, 'badomen', opponentPlayer.board.rows[activeRow].hermitCard?.instance)
+			applyStatusEffect(game, 'badomen', opponentPlayer.board.rows[activeRow].hermitCard)
 		})
 	}
 
