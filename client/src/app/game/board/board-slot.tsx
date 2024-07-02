@@ -12,9 +12,21 @@ import {StatusEffectT} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
 import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
+import {useSelector} from 'react-redux'
+import {
+	getCardsCanBePlacedIn,
+	getGameState,
+	getPickRequestPickableSlots,
+	getSelectedCard,
+} from 'logic/game/game-selectors'
+import {getLocalPlayerState} from 'server/src/utils/state-gen'
+import {slot} from 'common/slot'
 
 export type SlotProps = {
 	type: SlotTypeT
+	rowIndex?: number
+	index?: number
+	playerId: string
 	onClick?: () => void
 	card: CardT | null
 	rowState?: RowState
@@ -22,7 +34,23 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects: Array<StatusEffectT>
 }
-const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: SlotProps) => {
+const Slot = ({
+	type,
+	rowIndex,
+	index,
+	playerId,
+	onClick,
+	card,
+	rowState,
+	active,
+	cssId,
+	statusEffects,
+}: SlotProps) => {
+	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
+	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
+	const selectedCard = useSelector(getSelectedCard)
+	const localGameState = useSelector(getGameState)
+
 	let cardInfo = card?.cardId
 		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard | HealthCard)
 		: null
@@ -78,16 +106,60 @@ const Slot = ({type, onClick, card, rowState, active, cssId, statusEffects}: Slo
 	)
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
+	const getPickableSlots = () => {
+		if (pickRequestPickableCard !== null && pickRequestPickableCard !== undefined) {
+			return pickRequestPickableCard
+		}
+
+		if (!cardsCanBePlacedIn || !selectedCard) return []
+
+		return cardsCanBePlacedIn.filter(
+			([card, _]) => card?.cardInstance == selectedCard.cardInstance
+		)[0][1]
+	}
+
+	const getIsPickable = () => {
+		for (const slot of getPickableSlots()) {
+			if (
+				slot.type === type &&
+				slot.rowIndex == rowIndex &&
+				slot.index == index &&
+				slot.playerId == playerId
+			) {
+				return true
+			}
+		}
+		return false
+	}
+
+	let isPickable = false
+	let somethingPickable = false
+	let isClickable = false
+
+	if (
+		(localGameState && localGameState.playerId === localGameState.turn.currentPlayerId) ||
+		pickRequestPickableCard !== null
+	) {
+		isPickable = getIsPickable()
+		somethingPickable = selectedCard !== null || pickRequestPickableCard !== null
+		isClickable = somethingPickable && isPickable
+	}
+
+	if (card !== null) {
+		isClickable = true
+	}
+
 	return (
 		<div
-			onClick={onClick}
+			onClick={isClickable ? onClick : () => {}}
 			id={css[cssId || 'slot']}
 			className={classnames(css.slot, {
-				[css.available]: !!onClick,
+				[css.pickable]: isPickable && somethingPickable,
+				[css.unpickable]: !isPickable && somethingPickable,
+				[css.available]: isClickable,
 				[css[type]]: true,
 				[css.empty]: !cardInfo,
-				// [css.afk]: cardInfo && !active,
-				// [css.afk]: cardInfo?.type === 'hermit' && !active,
+				[css.hermitSlot]: type == 'hermit',
 				[css.afk]: !active && type !== 'single_use',
 			})}
 		>

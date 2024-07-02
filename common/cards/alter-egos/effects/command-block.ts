@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import EffectCard from '../../base/effect-card'
 
 class CommandBlockEffectCard extends EffectCard {
@@ -31,15 +32,16 @@ class CommandBlockEffectCard extends EffectCard {
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')
 		})
+
+		player.hooks.freezeSlots.add(instance, () => {
+			return slot.every(slot.player, slot.rowIndex(pos.rowIndex), slot.effectSlot)
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.availableEnergy.remove(instance)
-	}
-
-	override getIsRemovable() {
-		return false
+		player.hooks.freezeSlots.remove(instance)
 	}
 
 	override getExpansion() {

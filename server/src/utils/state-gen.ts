@@ -12,10 +12,10 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT, SlotPos} from 'common/types/cards'
+import {EnergyT, SlotInfo} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card, {CanAttachResult} from 'common/cards/base/card'
+import Card from 'common/cards/base/card'
 import HermitCard from 'common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
 import EffectCard from 'common/cards/base/effect-card'
@@ -23,6 +23,8 @@ import {CardPosModel} from 'common/models/card-pos-model'
 import {getCardCost, getCardRank} from 'common/utils/ranks'
 import {HermitAttackType} from 'common/types/attack'
 import {VirtualPlayerModel} from 'common/models/virtual-player-model'
+import {SlotCondition} from 'common/slot'
+import {PickInfo} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -213,18 +215,20 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 		discarded: [],
 		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
 		custom: {},
+		hasPlacedHermit: false,
 		board: {
 			activeRow: null,
 			singleUseCard: null,
 			singleUseCardUsed: false,
 			rows: new Array(TOTAL_ROWS).fill(null).map(() => getEmptyRow(MAX_ITEMS)),
 		},
+		cardsCanBePlacedIn: [],
+		pickableSlots: null,
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
-			canAttach: new GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>(),
 			onAttach: new GameHook<(instance: string) => void>(),
 			onDetach: new GameHook<(instance: string) => void>(),
 			beforeApply: new GameHook<() => void>(),
@@ -247,7 +251,7 @@ export function getPlayerState(player: PlayerModel | VirtualPlayerModel): Player
 				(oldRow: number | null, newRow: number | null) => boolean
 			>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			onSlotChange: new GameHook<(slot: SlotPos) => boolean>(),
+			freezeSlots: new GameHook<() => SlotCondition>(),
 		},
 	}
 }
@@ -286,11 +290,13 @@ export function getLocalGameState(
 	players[opponentPlayerId] = getLocalPlayerState(opponentState)
 
 	// Pick message or modal id
+	playerState.pickableSlots = null
 	let currentPickMessage = null
 	let currentModalData = null
 
 	const currentPickRequest = game.state.pickRequests[0]
 	const currentModalRequest = game.state.modalRequests[0]
+
 	if (currentModalRequest?.playerId === player.id) {
 		// We must send modal requests first, to stop pick requests from overwriting them.
 		currentModalData = currentModalRequest.data
@@ -302,7 +308,13 @@ export function getLocalGameState(
 		if (cardInfo) {
 			currentPickMessage = `${cardInfo.name}: ${currentPickMessage}`
 		}
+		// We also want to highlight the slots for the player that must select a slot
+		if (currentPickRequest.playerId == player.id) {
+			playerState.pickableSlots = game.getPickableSlots(currentPickRequest.canPick)
+		}
 	}
+
+	let currentPickableSlots = playerState.pickableSlots
 
 	const localGameState: LocalGameState = {
 		turn: {
@@ -326,6 +338,8 @@ export function getLocalGameState(
 
 		lastActionResult: game.state.lastActionResult,
 
+		currentCardsCanBePlacedIn: playerState.cardsCanBePlacedIn,
+		currentPickableSlots,
 		currentPickMessage,
 		currentModalData,
 

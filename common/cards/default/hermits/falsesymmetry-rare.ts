@@ -1,6 +1,7 @@
 import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {healHermit} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import HermitCard from '../../base/hermit-card'
 
@@ -41,10 +42,8 @@ class FalseSymmetryRareHermitCard extends HermitCard {
 			if (coinFlip[0] === 'tails') return
 
 			// Heal 40hp
+			healHermit(pos.row, 40)
 			const hermitInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-			const maxHealth = Math.max(attacker.row.health, hermitInfo.health)
-			attacker.row.health = Math.min(attacker.row.health + 40, maxHealth)
-
 			game.battleLog.addEntry(player.id, `$p${hermitInfo.name}$ healed $g40hp$`)
 		})
 	}

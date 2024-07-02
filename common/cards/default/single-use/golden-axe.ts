@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -19,6 +20,8 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
+
+		let attacking = false
 
 		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
@@ -41,20 +44,16 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.beforeAttack.addBefore(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
+
+			attacking = true
+
 			if (!opponentActivePos) return null
 
 			if (attack.id === attackId) {
 				applySingleUse(game)
 			}
 
-			attack.shouldIgnoreCards.push((instance) => {
-				const ignorePos = getBasicCardPos(game, instance)
-				if (!ignorePos || !ignorePos.row || !ignorePos.row.effectCard) return false
-				if (ignorePos.slot.type !== 'effect') return false
-				if (ignorePos.rowIndex !== opponentActivePos.rowIndex) return false
-				if (ignorePos.player === player) return false
-				return true
-			})
+			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.effectSlot, slot.activeRow))
 		})
 
 		player.hooks.afterAttack.add(instance, () => {
@@ -65,16 +64,17 @@ class GoldenAxeSingleUseCard extends SingleUseCard {
 		player.hooks.onTurnEnd.add(instance, () => {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
+
+			attacking = false
 		})
-	}
 
-	public override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player} = pos
-
-		player.hooks.getAttack.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterApply.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onDetach.add(instance, () => {
+			player.hooks.getAttack.remove(instance)
+			player.hooks.onTurnEnd.remove(instance)
+			if (!attacking) {
+				player.hooks.beforeAttack.remove(instance)
+			}
+		})
 	}
 
 	override canAttack() {

@@ -24,6 +24,7 @@ import {
 	getPlayerState,
 	getEndGameOverlay,
 	getAvailableActions,
+	getPickRequestPickableSlots,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
@@ -63,6 +64,7 @@ function Game() {
 	const openedModal = useSelector(getOpenedModal)
 	const playerState = useSelector(getPlayerState)
 	const endGameOverlay = useSelector(getEndGameOverlay)
+	const pickRequestPickableSlots = useSelector(getPickRequestPickableSlots)
 	// const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 	const handRef = useRef<HTMLDivElement>(null)
@@ -98,17 +100,20 @@ function Game() {
 					pickResult: {
 						playerId: gameState.playerId,
 						card: card,
-						slot: {
-							type: 'hand',
-							index,
-						},
+						type: 'hand',
+						rowIndex: null,
+						index,
 					},
 				},
 			}
 
 			dispatch(actionData)
 		} else {
-			dispatch(setSelectedCard(card))
+			if (equalCard(card, selectedCard)) {
+				dispatch(setSelectedCard(null))
+			} else {
+				dispatch(setSelectedCard(card))
+			}
 		}
 	}
 
@@ -229,6 +234,17 @@ function Game() {
 		return null
 	}
 
+	let unpickableCards: Array<CardT> = []
+	const pickableCards = pickRequestPickableSlots
+		?.filter((slot) => slot.type === 'hand')
+		.map((slot) => slot.card?.cardInstance)
+
+	if (pickableCards != undefined) {
+		for (let card of filteredCards) {
+			if (!pickableCards.includes(card.cardInstance)) unpickableCards.push(card)
+		}
+	}
+
 	return (
 		<div className={css.game}>
 			<div className={css.playAreaWrapper} ref={gameWrapperRef}>
@@ -247,6 +263,7 @@ function Game() {
 						cards={filteredCards}
 						onClick={(card: CardT) => selectCard(card)}
 						selected={[selectedCard]}
+						unpickable={unpickableCards}
 					/>
 				</div>
 			</div>

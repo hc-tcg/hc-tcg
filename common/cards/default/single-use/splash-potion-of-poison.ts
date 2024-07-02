@@ -2,6 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -13,6 +14,8 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 			description: "Poison your opponent's active Hermit.",
 		})
 	}
+
+	override _attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
 
 	override canApply() {
 		return true
@@ -30,14 +33,6 @@ class SplashPotionOfPoisonSingleUseCard extends SingleUseCard {
 				opponentPlayer.board.rows[opponentActiveRow].hermitCard?.cardInstance
 			)
 		})
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		if (pos.opponentPlayer.board.activeRow === null) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

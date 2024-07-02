@@ -1,12 +1,12 @@
-import {CanAttachResult} from '../cards/base/card'
+import {CARDS, HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {CardPosModel} from '../models/card-pos-model'
+import {SlotCondition} from '../slot'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT, Slot, SlotPos} from './cards'
+import {EnergyT, SlotInfo} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {ModalRequest, PickRequest, PickInfo} from './server-requests'
+import {ModalRequest, PickInfo, PickRequest} from './server-requests'
 
 export type PlayerId = string
 
@@ -27,6 +27,27 @@ export type RowStateWithoutHermit = {
 	effectCard: null
 	itemCards: Array<null>
 	health: null
+}
+
+export function healHermit(row: RowState | null, amount: number) {
+	if (!row || !row?.hermitCard) return
+
+	const hermitInfo = HERMIT_CARDS[row.hermitCard.cardId]
+
+	let maxHealth: number
+	if (hermitInfo !== undefined) maxHealth = hermitInfo.health
+	else {
+		// This is a hack so armor stand can be healed
+		// This will be fixed once cards are reworked to use a composition based system
+		const cardInfo = CARDS[row.hermitCard.cardId]
+		if (cardInfo.id === 'armor_stand') {
+			maxHealth = 50
+		} else {
+			return
+		}
+	}
+
+	row.health = Math.min(row.health + amount, maxHealth)
 }
 
 export type RowState = RowStateWithHermit | RowStateWithoutHermit
@@ -73,6 +94,11 @@ export type PlayerState = {
 	lives: number
 	pile: Array<CardT>
 	discarded: Array<CardT>
+	hasPlacedHermit: boolean
+
+	pickableSlots: Array<PickInfo> | null
+	cardsCanBePlacedIn: Array<[CardT, Array<PickInfo>]>
+
 	board: {
 		activeRow: number | null
 		singleUseCard: CardT | null
@@ -87,8 +113,6 @@ export type PlayerState = {
 		/** Hook that modifies and returns blockedActions */
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 
-		/** Hook called when checking if a card can be attached. The result can be modified and will be stored */
-		canAttach: GameHook<(canAttach: CanAttachResult, pos: CardPosModel) => void>
 		/** Hook called when a card is attached */
 		onAttach: GameHook<(instance: string) => void>
 		/** Hook called when a card is detached */
@@ -151,9 +175,11 @@ export type PlayerState = {
 		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
 		/** Hook called when the active row is changed. */
 		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
-		// @TODO replace with canDetach, we already have canAttach
-		/** Hook called when a card attemps to move or rows are swapped. Returns whether the card in this position can be moved, or if the slot is empty, if it can be moved to. */
-		onSlotChange: GameHook<(slot: SlotPos) => boolean>
+		/** Hook called when the `slot.locked` combinator is called.
+		 * Returns a combinator that verifies if the slot is locked or not.
+		 * Locked slots cannot be chosen in some combinator expressions.
+		 */
+		freezeSlots: GameHook<() => SlotCondition>
 	}
 }
 
@@ -304,6 +330,8 @@ export type LocalGameState = {
 		result: ActionResult
 	} | null
 
+	currentCardsCanBePlacedIn: Array<[CardT, Array<PickInfo>]> | null
+	currentPickableSlots: Array<PickInfo> | null
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 

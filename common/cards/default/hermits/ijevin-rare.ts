@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 import HermitCard from '../../base/hermit-card'
 
 class IJevinRareHermitCard extends HermitCard {
@@ -35,46 +35,30 @@ class IJevinRareHermitCard extends HermitCard {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			if (attack.type !== 'secondary' || !attack.getTarget()) return
 
-			const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-			if (opponentInactiveRows.length !== 0) {
-				const lastActiveRow = opponentPlayer.board.activeRow
+			const pickCondition = slot.every(
+				slot.not(slot.activeRow),
+				slot.not(slot.empty),
+				slot.hermitSlot
+			)
 
-				game.addPickRequest({
-					playerId: opponentPlayer.id, // For opponent player to pick
-					id: this.id,
-					message: 'Choose a new active Hermit from your afk Hermits.',
-					onResult(pickResult) {
-						if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+			if (!game.someSlotFulfills(pickCondition)) return
 
-						const rowIndex = pickResult.rowIndex
-						if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-						if (rowIndex === lastActiveRow) return 'FAILURE_INVALID_SLOT'
+			game.addPickRequest({
+				playerId: opponentPlayer.id, // For opponent player to pick
+				id: this.id,
+				message: 'Choose a new active Hermit from your AFK Hermits.',
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
-						if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-						if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-						const row = opponentPlayer.board.rows[rowIndex]
-						if (!row.hermitCard) return 'FAILURE_INVALID_SLOT'
-
-						game.changeActiveRow(opponentPlayer, rowIndex)
-
-						return 'SUCCESS'
-					},
-					onTimeout() {
-						const opponentInactiveRows = getNonEmptyRows(opponentPlayer, true, true)
-
-						// Choose the first afk row
-						for (const inactiveRow of opponentInactiveRows) {
-							const {rowIndex} = inactiveRow
-							const canBeActive = rowIndex !== lastActiveRow
-							if (canBeActive) {
-								game.changeActiveRow(opponentPlayer, rowIndex)
-								break
-							}
-						}
-					},
-				})
-			}
+					game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
+				},
+				onTimeout() {
+					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex
+					if (rowIndex === null) return
+					game.changeActiveRow(opponentPlayer, rowIndex)
+				},
+			})
 		})
 	}
 

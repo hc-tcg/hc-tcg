@@ -1,10 +1,9 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {getActiveRow} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
+import {slot} from '../../../slot'
 
 class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -18,17 +17,10 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	override _attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
+
 	override canApply() {
 		return true
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result: CanAttachResult = []
-		if (pos.slot.type !== 'single_use') result.push('INVALID_SLOT')
-
-		if (!hasActive(pos.opponentPlayer)) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

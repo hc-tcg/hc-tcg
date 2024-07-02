@@ -1,7 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow} from '../../../utils/board'
-import {isRemovable} from '../../../utils/cards'
+import {slot} from '../../../slot'
 import {discardCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
 
@@ -16,37 +15,31 @@ class CurseOfVanishingSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	discardCondition = slot.every(
+		slot.opponent,
+		slot.activeRow,
+		slot.effectSlot,
+		slot.not(slot.empty),
+		slot.not(slot.frozen)
+	)
 
-		player.hooks.onApply.add(instance, () => {
-			if (opponentPlayer.board.activeRow === null) return
-			const opponentActiveRow = opponentPlayer.board.rows[opponentPlayer.board.activeRow]
-			if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard)) {
-				discardCard(game, opponentActiveRow.effectCard)
-			}
-		})
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.discardCondition)
+	)
 
 	override canApply() {
 		return true
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+		const {opponentPlayer, player} = pos
 
-		const {opponentPlayer} = pos
-
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (
-			!opponentActiveRow ||
-			!opponentActiveRow.effectCard ||
-			!isRemovable(opponentActiveRow.effectCard)
-		) {
-			result.push('UNMET_CONDITION')
-		}
-
-		return result
+		player.hooks.onApply.add(instance, () => {
+			game
+				.filterSlots(this.discardCondition)
+				.map((slot) => slot.card && discardCard(game, slot.card))
+		})
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {

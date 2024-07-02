@@ -11,6 +11,7 @@ import {equalCard} from 'common/utils/cards'
 type CardListProps = {
 	cards: Array<CardT>
 	disabled?: Array<string>
+	unpickable?: Array<CardT>
 	selected?: Array<CardT | null>
 	picked?: Array<CardT>
 	onClick?: (card: CardT) => void
@@ -20,7 +21,7 @@ type CardListProps = {
 }
 
 const CardList = (props: CardListProps) => {
-	const {wrap, onClick, cards, disabled, selected, picked, enableAnimations} = props
+	const {wrap, onClick, cards, disabled, unpickable, selected, picked, enableAnimations} = props
 
 	const cardsOutput = cards.map((card) => {
 		const info = CARDS[card.cardId] as Card
@@ -29,7 +30,10 @@ const CardList = (props: CardListProps) => {
 			? selected.some((selectedCard) => equalCard(card, selectedCard))
 			: false
 		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
-		const isDisabled = !!disabled?.find((id) => card.cardId === id)
+		const isDisabled = !!disabled?.find((id) => id == card.cardId)
+		const isUnpickable = !!unpickable?.find(
+			(findCard) => findCard.cardInstance === card.cardInstance
+		)
 
 		const cssClasses =
 			enableAnimations !== false
@@ -56,6 +60,7 @@ const CardList = (props: CardListProps) => {
 					})}
 					onClick={onClick && !isDisabled ? () => onClick(card) : undefined}
 					card={info}
+					unpickable={isUnpickable}
 					disabled={isDisabled}
 					selected={isSelected}
 					picked={isPicked}

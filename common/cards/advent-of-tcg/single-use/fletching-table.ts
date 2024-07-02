@@ -1,6 +1,4 @@
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {CanAttachResult} from '../../base/card'
+import {slot} from '../../../slot'
 import SingleUseCard from '../../base/single-use-card'
 
 class FletchingTableSingleUseCard extends SingleUseCard {
@@ -14,9 +12,7 @@ class FletchingTableSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		return ['INVALID_SLOT']
-	}
+	override _attachCondition = slot.nothing
 
 	public override getExpansion(): string {
 		return 'advent_of_tcg'

@@ -1,9 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, isRowEmpty} from '../../../utils/board'
+import {slot} from '../../../slot'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardToHand} from '../../../utils/movement'
-import {CanAttachResult} from '../../base/card'
 import SingleUseCard from '../../base/single-use-card'
 
 class LootingSingleUseCard extends SingleUseCard {
@@ -19,18 +18,15 @@ class LootingSingleUseCard extends SingleUseCard {
 		})
 	}
 
+	pickCondition = slot.every(slot.opponent, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
+
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.someSlotFulfills(this.pickCondition)
+	)
+
 	override canApply() {
 		return true
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const result = super.canAttach(game, pos)
-
-		const {opponentPlayer} = pos
-		const opponentActiveRow = getActiveRow(opponentPlayer)
-		if (!opponentActiveRow || isRowEmpty(opponentActiveRow)) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
@@ -48,19 +44,16 @@ class LootingSingleUseCard extends SingleUseCard {
 				playerId: player.id,
 				id: this.id,
 				message: 'Pick an item card to add to your hand',
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+				canPick: this.pickCondition,
+				onResult(pickedSlot) {
+					if (pickedSlot.rowIndex === null || pickedSlot.card === null) {
+						return
+					}
 
-					if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-					if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-					const playerRow = opponentPlayer.board.rows[pickResult.rowIndex]
+					const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return 'FAILURE_INVALID_SLOT'
-					moveCardToHand(game, pickResult.card, player)
-
-					return 'SUCCESS'
+					if (!hermitCard || !playerRow.health) return
+					moveCardToHand(game, pickedSlot.card, player)
 				},
 			})
 		})

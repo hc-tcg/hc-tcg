@@ -2,7 +2,6 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import {hasActive} from '../../../utils/game'
 import SingleUseCard from '../../base/single-use-card'
 
 class AnvilSingleUseCard extends SingleUseCard {
@@ -84,15 +83,6 @@ class AnvilSingleUseCard extends SingleUseCard {
 		const {player} = pos
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-
-		const {player} = pos
-		if (!hasActive(player)) result.push('UNMET_CONDITION')
-
-		return result
 	}
 
 	override getExpansion() {

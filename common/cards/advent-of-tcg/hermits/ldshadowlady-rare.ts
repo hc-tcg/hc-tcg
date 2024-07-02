@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {getActiveRow, getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 import HermitCard from '../../base/hermit-card'
 
 class LDShadowLadyRareHermitCard extends HermitCard {
@@ -39,41 +39,37 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 			)
 				return
 
-			const opponentOccupiedRows = getNonEmptyRows(opponentPlayer, false, true)
+			if (!game.someSlotFulfills(slot.every(slot.opponent, slot.hermitSlot, slot.activeRow))) return
 
-			if (opponentOccupiedRows.length === opponentPlayer.board.rows.length) return
-			if (opponentPlayer.board.activeRow === null) return
+			const pickCondition = slot.every(
+				slot.empty,
+				slot.hermitSlot,
+				slot.opponent,
+				slot.not(slot.activeRow)
+			)
 
-			// Make sure opponent Hermit isn't dead
-			if (getActiveRow(opponentPlayer)?.health === 0) return
+			if (!game.someSlotFulfills(pickCondition)) return
 
-			// Add a new pick request to the opponent player
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.id,
 				message: "Move your opponent's active Hermit to a new slot.",
-				onResult(pickResult) {
-					// Validation
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-					if (pickResult.rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					if (pickResult.card !== null) return 'FAILURE_INVALID_SLOT'
-					if (pickResult.rowIndex === opponentPlayer.board.activeRow) return 'FAILURE_WRONG_PICK'
-					if (opponentPlayer.board.activeRow === null) return 'FAILURE_INVALID_DATA'
+				canPick: pickCondition,
+				onResult(pickedSlot) {
+					if (pickedSlot.rowIndex === null) return
+					if (opponentPlayer.board.activeRow === null) return
 
-					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickResult.rowIndex)
-
-					return 'SUCCESS'
+					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedSlot.rowIndex)
 				},
 				onTimeout() {
 					if (opponentPlayer.board.activeRow === null) return
 
-					const filledRowNumbers = getNonEmptyRows(opponentPlayer).map((r) => r.rowIndex)
-					const emptyRows = [0, 1, 2, 3, 4].filter((n) => !filledRowNumbers.includes(n))
+					const emptyHermitSlots = game.filterSlots(pickCondition)
 
-					if (emptyRows.length === 0) return
+					const pickedRowIndex =
+						emptyHermitSlots[Math.floor(Math.random() * emptyHermitSlots.length)].rowIndex
 
-					const pickedRowIndex = emptyRows[Math.floor(Math.random() * emptyRows.length)]
+					if (!pickedRowIndex) return
 
 					game.swapRows(opponentPlayer, opponentPlayer.board.activeRow, pickedRowIndex)
 				},

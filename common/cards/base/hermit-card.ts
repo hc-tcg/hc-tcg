@@ -1,11 +1,11 @@
 import {AttackModel} from '../../models/attack-model'
 import {GameModel} from '../../models/game-model'
-import Card, {CanAttachResult} from './card'
+import Card from './card'
 import {CardRarityT, HermitAttackInfo, HermitTypeT, PlayCardLog} from '../../types/cards'
 import {HermitAttackType} from '../../types/attack'
 import {CardPosModel} from '../../models/card-pos-model'
-import {TurnActions} from '../../types/game-state'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
+import {slot} from '../../slot'
 
 type HermitDefs = {
 	id: string
@@ -46,16 +46,13 @@ abstract class HermitCard extends Card {
 		this.updateLog(hermitCardBattleLog(this.name))
 	}
 
-	public override canAttach(game: GameModel, pos: CardPosModel): CanAttachResult {
-		const {currentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		if (pos.slot.type !== 'hermit') result.push('INVALID_SLOT')
-		if (pos.player.id !== currentPlayer.id) result.push('INVALID_PLAYER')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		slot.hermitSlot,
+		slot.player,
+		slot.empty,
+		slot.actionAvailable('PLAY_HERMIT_CARD'),
+		slot.not(slot.frozen)
+	)
 
 	// Default is to return
 	public getAttack(
@@ -101,15 +98,6 @@ abstract class HermitCard extends Card {
 		}
 
 		return attack
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {currentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = currentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
 
 	/**

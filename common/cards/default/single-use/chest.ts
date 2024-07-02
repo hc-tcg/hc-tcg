@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, retrieveCard} from '../../../utils/movement'
 import SingleUseCard from '../../base/single-use-card'
@@ -15,15 +16,10 @@ class ChestSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
-
-		if (player.discarded.filter((card) => card.cardId !== 'clock').length <= 0)
-			result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
+		if (pos.player.discarded.filter((card) => card.cardId !== 'clock').length <= 0) return false
+		return true
+	})
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos

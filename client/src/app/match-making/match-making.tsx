@@ -54,6 +54,11 @@ function MatchMaking() {
 					<>
 						<Spinner />
 						<p>Waiting for second player</p>
+						<div className={css.options}>
+							<Button variant="stone" onClick={handleCancel}>
+								Cancel
+							</Button>
+						</div>
 					</>
 				)
 			case 'starting':

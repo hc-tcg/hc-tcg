@@ -1,8 +1,4 @@
-import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {GameModel} from '../../../models/game-model'
-import {TurnActions} from '../../../types/game-state'
-import {CanAttachResult} from '../../base/card'
+import {slot} from '../../../slot'
 import EffectCard from '../../base/effect-card'
 
 class StringEffectCard extends EffectCard {
@@ -19,42 +15,14 @@ class StringEffectCard extends EffectCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {opponentPlayer} = game
-
-		const result: CanAttachResult = []
-
-		// attach to effect or item slot
-		if (pos.slot.type !== 'effect' && pos.slot.type !== 'item') result.push('INVALID_SLOT')
-
-		// can only attach to opponent
-		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
-
-		if (!pos.row?.hermitCard) result.push('UNMET_CONDITION_SILENT')
-
-		return result
-	}
-
-	// This card allows placing on either effect or item slot
-	public override getActions(game: GameModel): TurnActions {
-		const {opponentPlayer} = game
-
-		// Is there is a hermit on the opponent's board with space for an item card
-		const spaceForItem = opponentPlayer.board.rows.some((row) => {
-			const hasHermit = !!row.hermitCard
-			const hasEmptyItemSlot = row.itemCards.some((card) => card === null)
-			return hasHermit && hasEmptyItemSlot
-		})
-		// Is there is a hermit on the opponent's board with space for an effect card
-		const spaceForEffect = opponentPlayer.board.rows.some((row) => {
-			return !!row.hermitCard && !row.effectCard
-		})
-
-		const actions: TurnActions = []
-		if (spaceForItem) actions.push('PLAY_ITEM_CARD')
-		if (spaceForEffect) actions.push('PLAY_EFFECT_CARD')
-		return actions
-	}
+	override _attachCondition = slot.every(
+		slot.opponent,
+		slot.rowHasHermit,
+		slot.empty,
+		slot.actionAvailable('PLAY_EFFECT_CARD'),
+		slot.not(slot.frozen),
+		slot.some(slot.effectSlot, slot.itemSlot)
+	)
 
 	override getExpansion() {
 		return 'alter_egos'

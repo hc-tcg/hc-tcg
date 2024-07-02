@@ -2,7 +2,9 @@ import SingleUseCard from '../../base/single-use-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {applySingleUse, getNonEmptyRows} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
+import {slot} from '../../../slot'
+import {healHermit} from '../../../types/game-state'
 
 class InstantHealthSingleUseCard extends SingleUseCard {
 	constructor() {
@@ -16,18 +18,13 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const result = super.canAttach(game, pos)
-		const {player} = pos
+	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
 
-		// Can't attach it there are no real hermits
-		const playerHasHermit = getNonEmptyRows(player).some(
-			(rowPos) => HERMIT_CARDS[rowPos.row.hermitCard.cardId] !== undefined
-		)
-		if (!playerHasHermit) result.push('UNMET_CONDITION')
-
-		return result
-	}
+	override _attachCondition = slot.every(
+		super.attachCondition,
+		slot.playerHasActiveHermit,
+		slot.someSlotFulfills(this.pickCondition)
+	)
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player} = pos
@@ -36,27 +33,18 @@ class InstantHealthSingleUseCard extends SingleUseCard {
 			playerId: player.id,
 			id: this.id,
 			message: 'Pick an active or AFK Hermit',
-			onResult(pickResult) {
-				if (pickResult.playerId !== player.id) return 'FAILURE_INVALID_PLAYER'
+			canPick: this.pickCondition,
+			onResult(pickedSlot) {
+				const rowIndex = pickedSlot.rowIndex
+				if (!pickedSlot.card || rowIndex === null) return
 
-				const rowIndex = pickResult.rowIndex
-				if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
 				const row = player.board.rows[rowIndex]
-				if (!row || !row.health) return 'FAILURE_INVALID_SLOT'
-
-				if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-				if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
-
-				const hermitInfo = HERMIT_CARDS[pickResult.card.cardId]
-				if (!hermitInfo) return 'FAILURE_CANNOT_COMPLETE'
+				if (!row.health) return
 
 				// Apply
-				applySingleUse(game, pickResult)
+				applySingleUse(game, pickedSlot)
 
-				const maxHealth = Math.max(row.health, hermitInfo.health)
-				row.health = Math.min(row.health + 30, maxHealth)
-
-				return 'SUCCESS'
+				healHermit(row, 30)
 			},
 		})
 	}

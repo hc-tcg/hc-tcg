@@ -1,12 +1,9 @@
 import EffectCard from '../../base/effect-card'
-import {isTargetingPos} from '../../../utils/attacks'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
-import {TurnActions} from '../../../types/game-state'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
-import {CanAttachResult} from '../../base/card'
-import {hasActive} from '../../../utils/game'
+import {slot} from '../../../slot'
 
 class BerryBushEffectCard extends EffectCard {
 	constructor() {
@@ -20,6 +17,14 @@ class BerryBushEffectCard extends EffectCard {
 		})
 	}
 
+	override _attachCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.empty,
+		slot.playerHasActiveHermit,
+		slot.opponentHasActiveHermit
+	)
+
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		if (!row) return
@@ -31,11 +36,6 @@ class BerryBushEffectCard extends EffectCard {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 			}
-		})
-
-		player.hooks.canAttach.add(instance, (result, pos) => {
-			if (pos.row?.hermitCard?.cardInstance !== instance) return
-			if (['item', 'effect'].includes(pos.slot.type)) result.push('UNMET_CONDITION_SILENT')
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, () => {
@@ -62,43 +62,21 @@ class BerryBushEffectCard extends EffectCard {
 	}
 
 	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer, slot, row} = pos
+		const {player, opponentPlayer, type, row} = pos
 
 		if (getActiveRow(player) === row) {
 			game.changeActiveRow(player, null)
 		}
 
-		if (slot && slot.type === 'hermit' && row) {
+		if (slot && type === 'hermit' && row) {
 			row.health = null
 			row.effectCard = null
 			row.itemCards = row.itemCards.map(() => null)
 		}
 
 		player.hooks.afterAttack.remove(instance)
-		player.hooks.canAttach.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-	}
-
-	override canAttach(game: GameModel, pos: CardPosModel) {
-		const {slot} = pos
-		const {currentPlayer, opponentPlayer} = game
-		const result: CanAttachResult = []
-
-		if (!slot || slot.type !== 'hermit') result.push('INVALID_SLOT')
-		if (pos.player.id !== opponentPlayer.id) result.push('INVALID_PLAYER')
-		if (!hasActive(opponentPlayer) || !hasActive(currentPlayer)) result.push('UNMET_CONDITION')
-
-		return result
-	}
-
-	public override getActions(game: GameModel): TurnActions {
-		const {opponentPlayer} = game
-
-		// Is there a hermit slot free on the board
-		const spaceForHermit = opponentPlayer.board.rows.some((row) => !row.hermitCard)
-
-		return spaceForHermit ? ['PLAY_HERMIT_CARD'] : []
 	}
 
 	override getExpansion() {

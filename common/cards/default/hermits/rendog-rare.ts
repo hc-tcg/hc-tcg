@@ -1,10 +1,10 @@
 import HermitCard from '../../base/hermit-card'
 import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel, getBasicCardPos} from '../../../models/card-pos-model'
+import {CardPosModel} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardT} from '../../../types/game-state'
-import {getNonEmptyRows} from '../../../utils/board'
+import {slot} from '../../../slot'
 
 class RendogRareHermitCard extends HermitCard {
 	constructor() {
@@ -29,6 +29,13 @@ class RendogRareHermitCard extends HermitCard {
 			},
 		})
 	}
+
+	pickCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.not(slot.empty),
+		slot.not(slot.hasId(this.id))
+	)
 
 	override getAttack(
 		game: GameModel,
@@ -74,7 +81,7 @@ class RendogRareHermitCard extends HermitCard {
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
 		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 		const imitatingCardInstance = Math.random().toString()
@@ -89,18 +96,10 @@ class RendogRareHermitCard extends HermitCard {
 				playerId: player.id,
 				id: this.id,
 				message: "Pick one of your opponent's Hermits",
-				onResult(pickResult) {
-					if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
-
-					const rowIndex = pickResult.rowIndex
-					if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-
-					if (pickResult.slot.type !== 'hermit') return 'FAILURE_INVALID_SLOT'
-					const pickedCard = pickResult.card
-					if (!pickedCard) return 'FAILURE_INVALID_SLOT'
-
-					// No picking the same card as us
-					if (pickedCard.cardId === this.id) return 'FAILURE_WRONG_PICK'
+				canPick: this.pickCondition,
+				onResult(pickedSlot) {
+					if (!pickedSlot.card) return
+					let pickedCard = pickedSlot.card
 
 					game.addModalRequest({
 						playerId: player.id,
@@ -109,7 +108,7 @@ class RendogRareHermitCard extends HermitCard {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: getBasicCardPos(game, pickedCard.cardInstance),
+								cardPos: pickedSlot,
 							},
 						},
 						onResult(modalResult) {
@@ -160,8 +159,6 @@ class RendogRareHermitCard extends HermitCard {
 							}
 						},
 					})
-
-					return 'SUCCESS'
 				},
 				onTimeout() {
 					// We didn't pick someone to imitate so do nothing
@@ -185,18 +182,7 @@ class RendogRareHermitCard extends HermitCard {
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Role Play" if there are not opposing Hermit cards other than rare Ren(s)
-			const opposingHermits = getNonEmptyRows(opponentPlayer, false).filter((rowPos) => {
-				const hermitId = rowPos.row.hermitCard.cardId
-				return HERMIT_CARDS[hermitId] && hermitId !== this.id
-			}).length
-			if (
-				player.board.activeRow === pos.rowIndex &&
-				opposingHermits <= 0 &&
-				!blockedActions.includes('SECONDARY_ATTACK')
-			) {
-				blockedActions.push('SECONDARY_ATTACK')
-			}
-
+			if (!game.someSlotFulfills(this.pickCondition)) blockedActions.push('SECONDARY_ATTACK')
 			return blockedActions
 		})
 	}

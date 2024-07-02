@@ -18,6 +18,7 @@ import Button from 'components/button'
 import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PickInfo} from 'common/types/server-requests'
+import {endTurnModalEmpty} from '../modals/end-turn-modal'
 
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
@@ -95,10 +96,9 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 		const handleClick = () => {
 			isPlayable &&
 				onClick({
-					slot: {
-						type: 'single_use',
-						index: 0,
-					},
+					type: 'single_use',
+					index: null,
+					rowIndex: null,
 					playerId: localGameState.turn.currentPlayerId,
 					card: singleUseCard,
 				})
@@ -108,6 +108,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
 				<Slot
 					card={singleUseCard}
+					playerId={playerId}
 					type={'single_use'}
 					onClick={handleClick}
 					statusEffects={gameState.statusEffects}
@@ -121,7 +122,7 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 			dispatch(attackAction())
 		}
 		function handleEndTurn() {
-			if (availableActions.length === 1 || settings.confirmationDialogs === 'off') {
+			if (endTurnModalEmpty(availableActions) || settings.confirmationDialogs === 'off') {
 				dispatch(endTurn())
 			} else {
 				dispatch(endTurnAction())

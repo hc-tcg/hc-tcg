@@ -48,7 +48,7 @@ const gameReducer = (state = defaultState, action: AnyAction): LocalGameRoot => 
 		case 'SET_SELECTED_CARD':
 			return {
 				...state,
-				selectedCard: equalCard(action.payload, state.selectedCard) ? null : action.payload,
+				selectedCard: action.payload,
 			}
 		case 'SET_OPENED_MODAL':
 			return {

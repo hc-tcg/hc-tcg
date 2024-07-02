@@ -4,33 +4,46 @@ import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {StatusEffectT} from 'common/types/game-state'
-import {SlotInfo} from 'common/types/server-requests'
-import {BoardSlotTypeT} from 'common/types/cards'
+import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
 
-const getCardBySlot = (slot: SlotInfo, row: RowState | null): CardT | null => {
+const getCardBySlot = (
+	slotType: SlotTypeT,
+	slotIndex: number,
+	row: RowState | null
+): CardT | null => {
 	if (!row) return null
-	if (slot.type === 'hermit') return row.hermitCard || null
-	if (slot.type === 'effect') return row.effectCard || null
-	if (slot.type === 'item') return row.itemCards[slot.index] || null
+	if (slotType === 'hermit') return row.hermitCard || null
+	if (slotType === 'effect') return row.effectCard || null
+	if (slotType === 'item') return row.itemCards[slotIndex] || null
 	return null
 }
 
 type BoardRowProps = {
 	type: 'left' | 'right'
-	onClick: (card: CardT | null, slot: SlotInfo) => void
+	rowIndex: number
+	onClick: (card: CardT | null, slot: SlotTypeT, index: number) => void
 	rowState: RowState
 	active: boolean
+	playerId: string
 	statusEffects: Array<StatusEffectT>
 }
-const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProps) => {
+
+const BoardRow = ({
+	type,
+	rowIndex,
+	onClick,
+	rowState,
+	active,
+	playerId,
+	statusEffects,
+}: BoardRowProps) => {
 	const itemSlots = rowState.itemCards.length
 	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
-	const slots = slotTypes.map((slotType, index) => {
-		const slotInfo: SlotInfo = {type: slotType, index: index < 3 ? index : 0}
-		const card = getCardBySlot(slotInfo, rowState)
-		const cssId = slotType === 'item' ? slotType + (index + 1) : slotType
+	const slots = slotTypes.map((slotType, slotIndex) => {
+		const card = getCardBySlot(slotType, slotIndex, rowState)
+		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
 
-		if (slotType === 'item' && itemSlots <= index)
+		if (slotType === 'item' && itemSlots <= slotIndex)
 			return (
 				<div
 					id={css[cssId]}
@@ -41,12 +54,15 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 		return (
 			<Slot
 				cssId={cssId}
-				onClick={() => onClick(card, slotInfo)}
+				onClick={() => onClick(card, slotType, slotIndex)}
 				card={card}
 				rowState={rowState}
 				active={active}
-				key={slotType + '-' + index}
+				key={slotType + '-' + slotIndex}
 				type={slotType}
+				rowIndex={rowIndex}
+				index={slotIndex}
+				playerId={playerId}
 				statusEffects={statusEffects}
 			/>
 		)
