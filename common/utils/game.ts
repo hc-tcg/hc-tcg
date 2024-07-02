@@ -12,7 +12,7 @@ export function getFormattedName(cardId: string, opponent: boolean) {
 	const getFormatting = (cardInfo: Card, opponent: boolean): string | null => {
 		if (cardInfo.props.category === 'hermit') return opponent ? '$o' : '$p'
 		if (cardInfo.props.category === 'single_use') return '$e'
-		if (cardInfo.props.category === 'effect') return '$e'
+		if (cardInfo.props.category === 'attach') return '$e'
 		if (cardInfo.props.category === 'item') return '$m'
 		return null
 	}

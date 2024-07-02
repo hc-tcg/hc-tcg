@@ -3,6 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
+import {healHermit} from '../../../types/game-state'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {
@@ -81,9 +82,7 @@ class KeralisRareHermitCard extends Card {
 			if (!activeHermit) return
 
 			if (pickedRow.hermitCard) {
-				// Heal
-				const maxHealth = Math.max(pickedRow.health, pickedRow.hermitCard.props.health)
-				pickedRow.health = Math.min(pickedRow.health + 100, maxHealth)
+				healHermit(pickedRow, 100)
 
 				game.battleLog.addEntry(
 					player.id,

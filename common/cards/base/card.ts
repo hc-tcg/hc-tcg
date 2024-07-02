@@ -1,7 +1,7 @@
 import {
 	PlayCardLog,
 	CardRarityT,
-	typeT,
+	TypeT,
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
@@ -48,7 +48,7 @@ export type CardProps = {
 
 export type Item = CardProps & {
 	item: null
-	type: typeT
+	type: TypeT
 }
 
 export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
@@ -84,7 +84,7 @@ export function isHealth(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: typeT
+	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	palette?: 'alter_egos'
@@ -214,7 +214,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		game: GameModel,
 		instance: string,
 		pos: CardPosModel
-	): Array<typeT> {
+	): Array<TypeT> {
 		return []
 	}
 

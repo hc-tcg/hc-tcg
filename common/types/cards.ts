@@ -4,7 +4,7 @@ export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
 export type RankT = 'stone' | 'iron' | 'gold' | 'emerald' | 'diamond'
 
-export type typeT =
+export type TypeT =
 	| 'balanced'
 	| 'builder'
 	| 'speedrunner'
@@ -16,7 +16,7 @@ export type typeT =
 	| 'miner'
 	| 'explorer'
 
-export type EnergyT = typeT | 'any'
+export type EnergyT = TypeT | 'any'
 
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit' | 'health'

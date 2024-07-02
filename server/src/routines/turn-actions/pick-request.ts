@@ -4,6 +4,7 @@ import {PickInfo} from 'common/types/server-requests'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'
 import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
+import {callSlotConditionWithPickInfo} from 'common/slot'
 
 function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
 	// First validate data sent from client
