@@ -31,7 +31,6 @@ class TargetBlockSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const ignoreThisWeakness = this.getInstanceKey(instance, 'ignoreThisWeakness')
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -65,7 +64,6 @@ class TargetBlockSingleUseCard extends Card {
 			player.hooks.beforeAttack.remove(instance)
 			player.hooks.onTurnEnd.remove(instance)
 			opponentPlayer.hooks.onDefence.remove(instance)
-			delete player.custom[ignoreThisWeakness]
 		})
 	}
 }

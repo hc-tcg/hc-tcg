@@ -71,6 +71,7 @@ class HotguyRareHermitCard extends Card {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
+		this.usingSecondaryAttack.clear(instance)
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
 	}

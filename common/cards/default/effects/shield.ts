@@ -20,22 +20,15 @@ class ShieldEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		let damageBlocked = 0
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
-
 		player.hooks.onDefence.add(instance, (attack) => {
 			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return attack
 
-			if (player.custom[instanceKey] === undefined) {
-				player.custom[instanceKey] = 0
-			}
-
-			const totalReduction = player.custom[instanceKey]
-
-			if (totalReduction < 60) {
-				const damageReduction = Math.min(attack.calculateDamage(), 60 - totalReduction)
-				player.custom[instanceKey] += damageReduction
+			if (damageBlocked < 60) {
+				const damageReduction = Math.min(attack.calculateDamage(), 60 - damageBlocked)
+				damageBlocked += damageReduction
 				attack.reduceDamage(this.props.id, damageReduction)
 			}
 		})
@@ -43,7 +36,7 @@ class ShieldEffectCard extends Card {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const {player, row} = pos
 
-			if (player.custom[instanceKey] !== undefined && player.custom[instanceKey] > 0 && row) {
+			if (damageBlocked > 0 && row) {
 				discardCard(game, row.effectCard)
 				if (!row.hermitCard) return attack
 				const hermitName = row.hermitCard?.props.name
@@ -56,7 +49,6 @@ class ShieldEffectCard extends Card {
 		const {player} = pos
 		player.hooks.onDefence.remove(instance)
 		player.hooks.afterDefence.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

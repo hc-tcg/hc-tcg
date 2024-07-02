@@ -1,30 +1,27 @@
 import {CardInstance, StatusEffectInstance} from './game-state'
 
-export class Hook<
-	Args extends (...args: any) => any,
-	Instance = CardInstance | StatusEffectInstance
-> {
+export class Hook<Listener, Args extends (...args: any) => any> {
 	public listeners: Array<[any, Args]> = []
 
 	/**
 	 * Adds a new listener to this hook
 	 */
-	public add(instance: Instance, listener: Args) {
-		this.listeners.push([instance, listener])
+	public add(listener: Listener, call: Args) {
+		this.listeners.push([listener, call])
 	}
 
 	/**
 	 * Adds a new listener to this hook before any other existing listeners
 	 */
-	public addBefore(instance: Instance, listener: Args) {
-		this.listeners.unshift([instance, listener])
+	public addBefore(listener: Listener, call: Args) {
+		this.listeners.unshift([listener, call])
 	}
 
 	/**
 	 * Removes all the listeners tied to a specific instance
 	 */
-	public remove(instance: Instance) {
-		this.listeners = this.listeners.filter(([hookInstance, _]) => hookInstance == instance)
+	public remove(listener: Listener) {
+		this.listeners = this.listeners.filter(([hookListener, _]) => hookListener == listener)
 	}
 
 	/**
@@ -40,14 +37,17 @@ export class Hook<
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
-export class GameHook<
-	Args extends (...args: any) => any,
-	Instance = CardInstance | StatusEffectInstance
-> extends Hook<Args, Instance> {
+export class GameHook<Args extends (...args: any) => any> extends Hook<
+	CardInstance | StatusEffectInstance,
+	Args
+> {
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
-	public callSome(params: Parameters<Args>, predicate: (instance: Instance) => boolean) {
+	public callSome(
+		params: Parameters<Args>,
+		predicate: (instance: CardInstance | StatusEffectInstance) => boolean
+	) {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))
 			.map(([_, listener]) => listener(...(params as Array<any>)))
@@ -59,10 +59,10 @@ export class GameHook<
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all listeners while passing through the first parameter.
  */
-export class WaterfallHook<
-	Args extends (...args: any) => Parameters<Args>[0],
-	Instance = CardInstance | StatusEffectInstance
-> extends Hook<Args, Instance> {
+export class WaterfallHook<Args extends (...args: any) => Parameters<Args>[0]> extends Hook<
+	CardInstance | StatusEffectInstance,
+	Args
+> {
 	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
 		return this.listeners.reduce((params, [_, listener]) => {
 			params[0] = listener(...(params as Array<any>))

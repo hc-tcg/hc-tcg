@@ -20,13 +20,13 @@ class ThornsEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const triggeredKey = this.getInstanceKey(instance, 'triggered')
+		const {opponentPlayer} = pos
+		let hasTriggered = false
 
 		// Only when the opponent attacks us
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
 			// If we have already triggered once this turn do not do so again
-			if (player.custom[triggeredKey]) return
+			if (hasTriggered) return
 
 			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack did damage
@@ -34,7 +34,7 @@ class ThornsEffectCard extends Card {
 
 			if (!attack.getAttacker() || !isTargetingPos(attack, pos)) return
 
-			player.custom[triggeredKey] = true
+			hasTriggered = true
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
@@ -51,18 +51,12 @@ class ThornsEffectCard extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[triggeredKey]
-		})
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		const triggeredKey = this.getInstanceKey(instance, 'triggered')
+		const {opponentPlayer} = pos
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[triggeredKey]
 	}
 }
 

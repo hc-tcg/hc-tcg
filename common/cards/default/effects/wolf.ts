@@ -23,11 +23,11 @@ class WolfEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const activated = this.getInstanceKey(instance, 'activated')
+		let activated = false
 
 		opponentPlayer.hooks.onTurnStart.add(instance, () => {
 			// Allow another activation this turn
-			player.custom[activated] = false
+			activated = false
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
@@ -43,8 +43,8 @@ class WolfEffectCard extends Card {
 			// Make sure the attack is doing some damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (player.custom[activated]) return
-			player.custom[activated] = true
+			if (activated) return
+			activated = true
 			if (!pos.row || !pos.row.hermitCard || pos.rowIndex === null) return
 
 			// Add a backlash attack, targeting the opponent's active hermit.
@@ -68,7 +68,6 @@ class WolfEffectCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		// Delete hooks and custom
-		delete player.custom[this.getInstanceKey(instance, 'activated')]
 		opponentPlayer.hooks.onTurnStart.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 	}
