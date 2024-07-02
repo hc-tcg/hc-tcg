@@ -1,7 +1,7 @@
 import {
 	PlayCardLog,
 	CardRarityT,
-	typeT,
+	TypeT,
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
@@ -49,7 +49,7 @@ export type CardProps = {
 
 export type Item = CardProps & {
 	item: null
-	type: typeT
+	type: TypeT
 }
 
 export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
@@ -85,7 +85,7 @@ export function isHealth(
 
 export type Hermit = HasHealth & {
 	hermit: null
-	type: typeT
+	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
 	palette?: 'alter_egos'
@@ -177,13 +177,6 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this.log = []
 	}
 
-	/**
-	 * A combinator expression that returns if the card can be attached to a specified slot.
-	 */
-	public get attachCondition(): SlotCondition {
-		return this.props.attachCondition || slot.nothing
-	}
-
 	public getKey(keyName: string) {
 		return this.props.id + ':' + keyName
 	}
@@ -215,7 +208,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		game: GameModel,
 		instance: CardInstance,
 		pos: CardPosModel
-	): Array<typeT> {
+	): Array<TypeT> {
 		return []
 	}
 

@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import Card, {hermit, Hermit} from '../../base/card'
 
@@ -139,8 +140,7 @@ class IskallmanRareHermitCard extends Card {
 			const attackerInfo = attacker.row.hermitCard.card
 			const hermitInfo = pickedRow.hermitCard.card
 			if (hermitInfo) {
-				const maxHealth = Math.max(pickedRow.health, hermitInfo.props.health)
-				pickedRow.health = Math.min(pickedRow.health + 50, maxHealth)
+				healHermit(pickedRow, 50)
 				game.battleLog.addEntry(
 					player.id,
 					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${

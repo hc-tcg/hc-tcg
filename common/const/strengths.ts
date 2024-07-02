@@ -1,6 +1,6 @@
-import {typeT} from '../../common/types/cards'
+import {TypeT} from '../../common/types/cards'
 
-export const STRENGTHS: Record<typeT, Array<typeT>> = {
+export const STRENGTHS: Record<TypeT, Array<TypeT>> = {
 	balanced: [],
 	builder: ['terraform'],
 	explorer: ['builder'],

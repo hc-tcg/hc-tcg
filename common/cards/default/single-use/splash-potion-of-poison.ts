@@ -21,7 +21,7 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 				name: 'poison',
 			},
 		],
-		attachCondition: slot.every(super.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {

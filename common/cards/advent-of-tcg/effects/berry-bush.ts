@@ -25,7 +25,15 @@ class BerryBushEffectCard extends Card<Attach> {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override _attachCondition = slot.every(
+		slot.opponent,
+		slot.hermitSlot,
+		slot.empty,
+		slot.playerHasActiveHermit,
+		slot.opponentHasActiveHermit
+	)
+
+	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		if (!row) return
 

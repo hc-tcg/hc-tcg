@@ -3,32 +3,32 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {getActiveRowPos} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, { Hermit, hermit } from '../../base/card'
+import Card, {Hermit, hermit} from '../../base/card'
 
 class XBCraftedRareHermitCard extends Card {
 	props: Hermit = {
 		...hermit,
-			id: 'xbcrafted_rare',
-			numericId: 110,
-			name: 'xB',
-			expansion: 'default',
-			rarity: 'rare',
-			tokens: 1,
-			type: 'explorer',
-			health: 270,
-			primary: {
-				name: 'Giggle',
-				cost: ['explorer'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Noice!',
-				cost: ['explorer', 'any'],
-				damage: 70,
-				power:
-					"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
-			},
+		id: 'xbcrafted_rare',
+		numericId: 110,
+		name: 'xB',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'explorer',
+		health: 270,
+		primary: {
+			name: 'Giggle',
+			cost: ['explorer'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Noice!',
+			cost: ['explorer', 'any'],
+			damage: 70,
+			power:
+				"Any effect card attached to your opponent's active Hermit is ignored during this turn.",
+		},
 	}
 
 	override getAttack(

@@ -19,7 +19,9 @@ class LightningRodEffectCard extends Card {
 			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
 		attachCondition: slot.every(
 			attach.attachCondition,
-			slot.not(slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod'))))
+			slot.not(
+				slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod')))
+			)
 		),
 	}
 

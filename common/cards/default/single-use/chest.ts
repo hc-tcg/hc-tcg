@@ -16,7 +16,7 @@ class ChestSingleUseCard extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description: 'Choose one card from your discard pile to return to your hand.',
-		attachCondition: slot.every(super.attachCondition, (game, pos) => {
+		attachCondition: slot.every(singleUse.attachCondition, (game, pos) => {
 			if (pos.player.discarded.filter((card) => card.props.id !== 'clock').length <= 0) return false
 			return true
 		}),

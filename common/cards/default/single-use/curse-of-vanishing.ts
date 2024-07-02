@@ -30,8 +30,8 @@ class CurseOfVanishingSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {opponentPlayer, player} = pos
+	public override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
+		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
 			game

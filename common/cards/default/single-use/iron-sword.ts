@@ -2,19 +2,19 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
-import Card, { SingleUse, singleUse } from '../../base/card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
 class IronSwordSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
-			id: 'iron_sword',
-			numericId: 46,
-			name: 'Iron Sword',
-			expansion: 'default',
-			rarity: 'common',
-			tokens: 0,
-			description: "Do 20hp damage to your opponent's active Hermit.",
-			hasAttack: true,
+		id: 'iron_sword',
+		numericId: 46,
+		name: 'Iron Sword',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		description: "Do 20hp damage to your opponent's active Hermit.",
+		hasAttack: true,
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {

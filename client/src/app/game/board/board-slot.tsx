@@ -13,7 +13,15 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {Attach, CardProps, HasHealth, Hermit, Item, SingleUse, WithoutFunctions} from 'common/cards/base/card'
+import {
+	Attach,
+	CardProps,
+	HasHealth,
+	Hermit,
+	Item,
+	SingleUse,
+	WithoutFunctions,
+} from 'common/cards/base/card'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 export type SlotProps = {
@@ -45,7 +53,9 @@ const Slot = ({
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
 
-	let cardInfo = card?.props ? (card.props as WithoutFunctions<Hermit | Item | Attach | SingleUse | CardProps>) : null
+	let cardInfo = card?.props
+		? (card.props as WithoutFunctions<Hermit | Item | Attach | SingleUse | CardProps>)
+		: null
 	if (type === 'health' && rowState?.health) {
 		// @ts-ignore SORRY, I have no idea how to fix this
 		cardInfo = {

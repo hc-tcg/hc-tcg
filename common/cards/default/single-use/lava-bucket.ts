@@ -16,6 +16,12 @@ class LavaBucketSingleUseCard extends Card {
 		description: "Burn your opponent's active Hermit.",
 		showConfirmationModal: true,
 		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'fire',
+			},
+		],
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -35,15 +41,6 @@ class LavaBucketSingleUseCard extends Card {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'statusEffect',
-				name: 'fire',
-			},
-		]
 	}
 }
 

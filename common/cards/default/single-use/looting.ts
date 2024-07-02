@@ -20,7 +20,10 @@ class LootingSingleUseCard extends Card<SingleUse> {
 		description:
 			"Flip a coin.\nIf heads, choose one item card attached to your opponent's active Hermit and add it to your hand.",
 		showConfirmationModal: true,
-		attachCondition: slot.every(super.attachCondition, slot.someSlotFulfills(this.pickCondition)),
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			slot.someSlotFulfills(this.pickCondition)
+		),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 

@@ -35,7 +35,7 @@ class LeadSingleUseCard extends Card {
 		log: (values) =>
 			`${values.defaultLog} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
 		attachCondition: slot.every(
-			super.attachCondition,
+			singleUse.attachCondition,
 			slot.someSlotFulfills(this.firstPickCondition),
 			slot.someSlotFulfills(this.secondPickCondition)
 		),

@@ -38,9 +38,7 @@ class OverseerRareHermitCard extends Card {
 			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
 			const isFarmer =
-				target.row.hermitCard.card.isHermit() && target.row.hermitCard.props.type === 'farm'
-					? 2
-					: 1
+				target.row.hermitCard.isHermit() && target.row.hermitCard.props.type === 'farm' ? 2 : 1
 
 			attack.multiplyDamage(this.props.id, isFarmer)
 		})
