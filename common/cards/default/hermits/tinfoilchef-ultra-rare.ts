@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -35,6 +35,8 @@ class TinFoilChefUltraRareHermitCard extends Card {
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
+		let hasDiscardedFrom = new Set<string>()
+
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			const attacker = attack.getAttacker()
@@ -47,14 +49,12 @@ class TinFoilChefUltraRareHermitCard extends Card {
 				return
 
 			// Can't discard two items on the same hermit
-			const limit = player.custom[this.getInstanceKey(instance)] || {}
-			if (limit[opponentActiveRow.hermitCard.instance]) return
+			if (hasDiscardedFrom.has(opponentActiveRow.hermitCard.instance)) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 			if (coinFlip[0] === 'tails') return
 
-			limit[opponentActiveRow.hermitCard.instance] = true
-			player.custom[this.getInstanceKey(instance)] = limit
+			hasDiscardedFrom.add(opponentActiveRow.hermitCard.instance)
 
 			discardCard(game, opponentActiveRow.effectCard)
 		})
@@ -64,7 +64,6 @@ class TinFoilChefUltraRareHermitCard extends Card {
 		const {player} = pos
 
 		player.hooks.beforeAttack.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

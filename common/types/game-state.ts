@@ -132,7 +132,6 @@ export type PlayerState = {
 	playerDeck: Array<CardInstance>
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
-	custom: Record<string, any>
 	hand: Array<CardInstance>
 	lives: number
 	pile: Array<CardInstance>

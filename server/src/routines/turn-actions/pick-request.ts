@@ -34,7 +34,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 		card: CardInstance.fromLocalCardInstance(pickResult.card),
 	}
 
-	const canPick = slotInfo.card.card.props.attachCondition(game, slotInfo)
+	const canPick = pickRequest.canPick(game, slotInfo)
 
 	if (!canPick) {
 		return 'FAILURE_INVALID_SLOT'

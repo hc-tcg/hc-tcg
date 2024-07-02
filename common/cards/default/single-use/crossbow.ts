@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {SlotInfo} from '../../../types/cards'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -23,15 +23,14 @@ class CrossbowSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		const remainingKey = this.getInstanceKey(instance, 'remaining')
 		const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
+
+		let targets = new Set<number>()
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Rather than allowing you to choose to damage less we will make you pick the most you can
-			const pickAmount = Math.min(3, game.filterSlots(pickCondition).length)
-			player.custom[targetsKey] = []
-			player.custom[remainingKey] = pickAmount
+			let totalTargets = Math.min(3, game.filterSlots(pickCondition).length)
+			let targetsRemaining = totalTargets
 
 			const pickRequest = {
 				playerId: player.id,
@@ -40,18 +39,12 @@ class CrossbowSingleUseCard extends Card {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.card || rowIndex === null) return
 
-					// If we already picked the row
-					if (player.custom[targetsKey].includes(rowIndex)) return
-
 					// Add the row to the chosen list
-					player.custom[targetsKey].push(rowIndex)
+					targets.add(rowIndex)
+					targetsRemaining--
 
-					player.custom[remainingKey]--
-					const newRemaining = player.custom[remainingKey]
-					if (player.custom[remainingKey] > 0) {
-						addPickRequest(newRemaining)
-					} else {
-						delete player.custom[remainingKey]
+					if (targetsRemaining > 0) {
+						addPickRequest()
 					}
 				},
 				onTimeout() {
@@ -59,31 +52,28 @@ class CrossbowSingleUseCard extends Card {
 				},
 			}
 
-			function addPickRequest(newRemaining: number) {
-				let remaining = newRemaining.toString()
-				if (newRemaining != pickAmount) remaining += ' more'
+			function addPickRequest() {
+				let remaining = targetsRemaining.toString()
+				if (totalTargets != totalTargets) remaining += ' more'
 				const request: PickRequest = {
 					...pickRequest,
 					canPick: slot.every(
 						pickCondition,
-						...player.custom[targetsKey].map((row: number) => slot.not(slot.rowIndex(row)))
+						...Array.from(targets).map((row: number) => slot.not(slot.rowIndex(row)))
 					),
 					message: `Pick ${remaining} of your opponent's Hermits`,
 				}
 				game.addPickRequest(request)
 			}
 
-			addPickRequest(pickAmount)
+			addPickRequest()
 		})
 
 		player.hooks.getAttack.add(instance, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 
-			const targets: Array<number> = player.custom[targetsKey]
-			if (targets === undefined) return null
-
-			const attack = targets.reduce((r: null | AttackModel, target, i) => {
+			const attack = Array.from(targets).reduce((r: null | AttackModel, target, i) => {
 				const row = opponentPlayer.board.rows[target]
 				if (!row || !row.hermitCard) return r
 				const newAttack = new AttackModel({
@@ -115,8 +105,6 @@ class CrossbowSingleUseCard extends Card {
 
 			applySingleUse(game)
 
-			delete player.custom[targetsKey]
-
 			// Do not apply single use more than once
 			player.hooks.onAttack.remove(instance)
 		})
@@ -130,8 +118,6 @@ class CrossbowSingleUseCard extends Card {
 
 		const targetsKey = this.getInstanceKey(instance, 'targets')
 		const remainingKey = this.getInstanceKey(instance, 'remaining')
-		delete player.custom[targetsKey]
-		delete player.custom[remainingKey]
 	}
 }
 

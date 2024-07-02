@@ -22,24 +22,23 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
-		const oldHandSize = this.getInstanceKey(statusEffectInfo)
 		const {player} = pos
 
-		player.custom[oldHandSize] = player.hand.length
+		game.state.statusEffects.push(statusEffectInfo)
+		let oldHandSize = player.hand.length
 
 		player.hooks.onAttach.add(statusEffectInfo, (instance) => {
-			if (player.hand.length === player.custom[oldHandSize]) return
+			if (player.hand.length === oldHandSize) return
 			const instanceLocation = game.findSlot(slot.hasInstance(instance))
 			if (statusEffectInfo.duration === undefined) return
-			player.custom[oldHandSize] = player.hand.length
+			oldHandSize = player.hand.length
 			if (instanceLocation?.type === 'single_use') return
 			statusEffectInfo.duration++
 		})
 
 		player.hooks.onApply.add(statusEffectInfo, () => {
 			if (statusEffectInfo.duration === undefined) return
-			player.custom[oldHandSize] = player.hand.length
+			oldHandSize = player.hand.length
 			statusEffectInfo.duration++
 		})
 
@@ -74,7 +73,6 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
-			delete player.custom[oldHandSize]
 			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 

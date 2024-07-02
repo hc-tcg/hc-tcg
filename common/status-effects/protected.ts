@@ -21,16 +21,17 @@ class ProtectedStatusEffect extends StatusEffect {
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(statusEffectInfo)
+
+		let canBlock = true
 
 		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
 			if (player.board.activeRow === pos.rowIndex) {
-				player.custom[instanceKey] = true
+				canBlock = false
 			}
 		})
 
 		player.hooks.onTurnStart.add(statusEffectInfo, () => {
-			if (player.custom[instanceKey]) {
+			if (!canBlock) {
 				removeStatusEffect(game, pos, statusEffectInfo)
 			}
 		})
@@ -39,7 +40,8 @@ class ProtectedStatusEffect extends StatusEffect {
 			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
 			if (!targetPos) return
 			// Only block if just became active
-			if (!player.custom[instanceKey]) return
+			if (!canBlock) return
+
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, targetPos)) return
@@ -63,13 +65,11 @@ class ProtectedStatusEffect extends StatusEffect {
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(statusEffectInfo)
 
 		player.hooks.onDefence.remove(statusEffectInfo)
 		player.hooks.onTurnEnd.remove(statusEffectInfo)
 		player.hooks.onTurnStart.remove(statusEffectInfo)
 		player.hooks.onDefence.remove(statusEffectInfo)
-		delete player.custom[instanceKey]
 	}
 }
 
