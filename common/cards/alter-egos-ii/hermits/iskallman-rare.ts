@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {CardInstance, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import Card, {hermit, Hermit} from '../../base/card'
@@ -38,6 +39,8 @@ class IskallmanRareHermitCard extends Card {
 		const {player} = pos
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
+
+		let pickedSlotInPickRequest: SlotInfo | null = null
 
 		const pickCondition = slot.every(
 			slot.player,
@@ -90,10 +93,7 @@ class IskallmanRareHermitCard extends Card {
 						onResult(pickedSlot) {
 							if (!pickedSlot.card) return
 							if (!pickedSlot.rowIndex) return
-
-							// Store the info to use later
-							player.custom[playerKey] = pickedSlot.player.id
-							player.custom[rowKey] = pickedSlot.rowIndex
+							pickedSlotInPickRequest = pickedSlot
 						},
 						onTimeout() {
 							// We didn't pick anyone to heal, so heal no one
@@ -112,16 +112,10 @@ class IskallmanRareHermitCard extends Card {
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
-
-			const pickedPlayer = game.state.players[player.custom[playerKey]]
-			if (!pickedPlayer) return
-			const pickedRowIndex = player.custom[rowKey]
-			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
-			if (!pickedRow || !pickedRow.hermitCard) return
-
 			const activeRow = getActiveRow(player)
 
 			if (!activeRow) return
+			if (!pickedSlotInPickRequest) return
 
 			const attacker = attack.getAttacker()
 			if (!attacker) return
@@ -138,26 +132,23 @@ class IskallmanRareHermitCard extends Card {
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = attacker.row.hermitCard.card
-			const hermitInfo = pickedRow.hermitCard.card
+			const hermitInfo = pickedSlotInPickRequest.row?.hermitCard?.card
+
 			if (hermitInfo) {
-				healHermit(pickedRow, 50)
+				healHermit(pickedSlotInPickRequest.row, 50)
 				game.battleLog.addEntry(
 					player.id,
 					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${
 						hermitInfo.props.name
-					} (${pickedRowIndex + 1})$ by $g50hp$`
+					} (${(pickedSlotInPickRequest.rowIndex || 0) + 1})$ by $g50hp$`
 				)
 			}
-
-			delete player.custom[playerKey]
-			delete player.custom[rowKey]
 		})
 	}
 
 	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		delete player.custom[instanceKey]
 
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)

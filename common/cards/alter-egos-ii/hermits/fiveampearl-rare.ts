@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import Card, {hermit, Hermit} from '../../base/card'
 
@@ -42,10 +42,6 @@ class FiveAMPearlRareHermitCard extends Card {
 
 			attack.addDamage(this.props.id, 30)
 		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[this.getInstanceKey(instance)]
-		})
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -53,7 +49,6 @@ class FiveAMPearlRareHermitCard extends Card {
 
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

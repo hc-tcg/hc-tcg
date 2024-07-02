@@ -138,11 +138,9 @@ class RendogRareHermitCard extends Card {
 
 							return 'SUCCESS'
 						},
-						onTimeout() {
-							player.custom[pickedAttackKey] = {
-								card: pickedCard,
-								attack: 'primary',
-							}
+						onTimeout: () => {
+							this.imitatingCard.set(instance, pickedCard)
+							this.pickedAttack.set(instance, 'primary')
 						},
 					})
 				},
@@ -180,11 +178,11 @@ class RendogRareHermitCard extends Card {
 		}
 
 		// Remove hooks and custom data
+		this.imitatingCard.clear(instance)
+		this.pickedAttack.clear(instance)
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onActiveRowChange.remove(instance)
 		player.hooks.blockedActions.remove(instance)
-		this.imitatingCard.clear(instance)
-		this.pickedAttack.clear(instance)
 	}
 }
 

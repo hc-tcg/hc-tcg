@@ -169,6 +169,8 @@ export function hermitBattleLog(name: string) {
 		`$p{You|${values.player}}$ placed $p${name}$ on row #${values.pos.rowIndex}`
 }
 
+
+/** Type that allows multiple functions in a card to share values. */
 export class InstancedValue<T> {
 	default: T
 	values: Record<string, T> = {}
