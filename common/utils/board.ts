@@ -7,7 +7,7 @@ import {
 	GenericActionResult,
 	PlayerState,
 	RowStateWithHermit,
-    CardInstance,
+	CardInstance,
 } from '../types/game-state'
 
 export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
@@ -96,10 +96,10 @@ export function applyStatusEffect(
 export function removeStatusEffect(
 	game: GameModel,
 	pos: CardPosModel,
-	statusEffectInstance: string
+	statusEffectInstance: StatusEffectInstance
 ): GenericActionResult {
 	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.statusEffectInstance === statusEffectInstance
+		(a) => a.statusEffectInstance === statusEffectInstance.statusEffectInstance
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 

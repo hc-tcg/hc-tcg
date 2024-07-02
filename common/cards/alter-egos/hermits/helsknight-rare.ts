@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {Hermit, hermit} from '../../base/card'

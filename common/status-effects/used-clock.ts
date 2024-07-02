@@ -23,19 +23,19 @@ class UsedClockStatusEffect extends StatusEffect {
 
 		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
 			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+				removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo)
+		player.hooks.onTurnStart.remove(statusEffectInfo)
 	}
 }
 

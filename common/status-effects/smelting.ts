@@ -22,7 +22,7 @@ class SmeltingStatusEffect extends StatusEffect {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo, () => {
 			if (statusEffectInfo.duration === undefined) return
 			statusEffectInfo.duration -= 1
 			if (statusEffectInfo.duration === 0) {
@@ -38,7 +38,7 @@ class SmeltingStatusEffect extends StatusEffect {
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnStart.remove(statusEffectInfo)
 	}
 }
 

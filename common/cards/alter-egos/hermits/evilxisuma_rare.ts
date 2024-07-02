@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -57,7 +58,7 @@ class EvilXisumaRareHermitCard extends Card {
 					payload: {
 						modalName: 'Evil X: Disable an attack for 1 turn',
 						modalDescription: "Which of the opponent's attacks do you want to disable?",
-						cardPos: game.findSlot(slot.hasInstance(opponentActiveRow.row.hermitCard.instance)),
+						cardPos: game.findSlot(slot.hasInstance(opponentActiveRow.row.hermitCard)),
 					},
 				},
 				onResult(modalResult) {

@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -49,7 +50,7 @@ class BdoubleO100RareHermitCard extends Card {
 			if (!row) return
 
 			// Add new sleeping statusEffect
-			applyStatusEffect(game, 'sleeping', row.hermitCard.instance)
+			applyStatusEffect(game, 'sleeping', row.hermitCard)
 		})
 	}
 

@@ -34,7 +34,7 @@ class BadOmenStatusEffect extends StatusEffect {
 			statusEffectInfo.duration--
 
 			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+				removeStatusEffect(game, pos, statusEffectInfo)
 		})
 
 		player.hooks.onCoinFlip.addBefore(statusEffectInfo, (card, coinFlips) => {

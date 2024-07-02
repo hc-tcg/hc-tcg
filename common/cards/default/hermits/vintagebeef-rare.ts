@@ -3,6 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class VintageBeefRareHermitCard extends Card {
 	props: Hermit = {
@@ -45,11 +46,11 @@ class VintageBeefRareHermitCard extends Card {
 				if (!row.hermitCard) return
 
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return ail.targetInstance === row.hermitCard.instance
+					return ail.targetInstance.instance === row.hermitCard.instance
 				})
 
 				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail.statusEffectInstance)
+					removeStatusEffect(game, pos, ail)
 				})
 			})
 		})

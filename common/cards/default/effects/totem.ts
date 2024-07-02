@@ -5,6 +5,7 @@ import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
 import Card, {Attach, attach} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class TotemEffectCard extends Card {
 	props: Attach = {

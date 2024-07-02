@@ -35,13 +35,13 @@ class SleepingStatusEffect extends StatusEffect {
 			`$p${card.props.name}$ went to $eSleep$ and restored $gfull health$`
 		)
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo, () => {
 			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || !statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
 			if (statusEffectInfo.duration === 0 || player.board.activeRow !== targetPos.rowIndex) {
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+				removeStatusEffect(game, pos, statusEffectInfo)
 				return
 			}
 
@@ -54,19 +54,19 @@ class SleepingStatusEffect extends StatusEffect {
 				)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
 			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnStart.remove(statusEffectInfo)
+		player.hooks.afterDefence.remove(statusEffectInfo)
 	}
 }
 

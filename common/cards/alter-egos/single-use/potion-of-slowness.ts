@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {applyStatusEffect} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -24,7 +25,7 @@ class PotionOfSlownessSingleUseCard extends Card {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard?.instance)
+			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard)
 		})
 	}
 

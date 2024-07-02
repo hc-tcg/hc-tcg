@@ -3,6 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class XisumavoidRareHermitCard extends Card {
 	props: Hermit = {
@@ -51,7 +52,7 @@ class XisumavoidRareHermitCard extends Card {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
 
-			applyStatusEffect(game, 'poison', opponentActiveRow?.hermitCard.instance)
+			applyStatusEffect(game, 'poison', opponentActiveRow?.hermitCard)
 		})
 	}
 

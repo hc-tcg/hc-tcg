@@ -2,6 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import { CardInstance } from '../../../types/game-state'
 import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 

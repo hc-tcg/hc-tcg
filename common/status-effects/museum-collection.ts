@@ -23,12 +23,12 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
-		const oldHandSize = this.getInstanceKey(statusEffectInfo.statusEffectInstance)
+		const oldHandSize = this.getInstanceKey(statusEffectInfo)
 		const {player} = pos
 
 		player.custom[oldHandSize] = player.hand.length
 
-		player.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
+		player.hooks.onAttach.add(statusEffectInfo, (instance) => {
 			if (player.hand.length === player.custom[oldHandSize]) return
 			const instanceLocation = game.findSlot(slot.hasInstance(instance))
 			if (statusEffectInfo.duration === undefined) return
@@ -37,13 +37,13 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			statusEffectInfo.duration++
 		})
 
-		player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onApply.add(statusEffectInfo, () => {
 			if (statusEffectInfo.duration === undefined) return
 			player.custom[oldHandSize] = player.hand.length
 			statusEffectInfo.duration++
 		})
 
-		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.onAttack.add(statusEffectInfo, (attack) => {
 			const activeRow = player.board.activeRow
 			if (activeRow === null) return
 			const targetHermit = player.board.rows[activeRow].hermitCard
@@ -59,20 +59,20 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 				return
 			if (statusEffectInfo.duration === undefined) return
 
-			player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
-			player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
+			player.hooks.onApply.remove(statusEffectInfo)
+			player.hooks.onApply.add(statusEffectInfo, () => {
 				if (statusEffectInfo.duration === undefined) return
 				statusEffectInfo.duration++
 
 				const additionalAttack = new AttackModel({
-					id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'additionalAttack'),
+					id: this.getInstanceKey(statusEffectInfo, 'additionalAttack'),
 					attacker: attack.getAttacker(),
 					target: attack.getTarget(),
 					type: 'secondary',
 				})
 				additionalAttack.addDamage(this.id, 20)
 
-				player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
+				player.hooks.onApply.remove(statusEffectInfo)
 
 				executeAttacks(game, [additionalAttack], true)
 			})
@@ -80,28 +80,28 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			attack.addDamage(this.id, 20 * statusEffectInfo.duration)
 		})
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
 			delete player.custom[oldHandSize]
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
 			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onAttach.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onApply.remove(statusEffectInfo)
+		player.hooks.onAttach.remove(statusEffectInfo)
+		player.hooks.onAttack.remove(statusEffectInfo)
+		player.hooks.onTurnEnd.remove(statusEffectInfo)
+		player.hooks.afterDefence.remove(statusEffectInfo)
 	}
 }
 

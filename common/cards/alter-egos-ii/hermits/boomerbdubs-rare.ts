@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -89,7 +90,7 @@ class BoomerBdubsRareHermitCard extends Card {
 					// This is sketchy AF but fortune needs to be removed after the first coin flip
 					// to prevent infinite flips from being easy.
 					const fortuneInstances = player.playerDeck.filter((card) => card.props.id === 'fortune')
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.instance))
+					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card))
 
 					return 'SUCCESS'
 				},

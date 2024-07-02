@@ -1,6 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class StressMonster101RareHermitCard extends Card {

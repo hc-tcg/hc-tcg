@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../slot'
-import {healHermit} from '../../../types/game-state'
+import {CardInstance, healHermit} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class InstantHealthIISingleUseCard extends Card {

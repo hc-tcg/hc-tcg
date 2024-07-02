@@ -5,6 +5,7 @@ import {getActiveRow} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class HumanCleoRareHermitCard extends Card {
 	props: Hermit = {

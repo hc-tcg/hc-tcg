@@ -4,6 +4,7 @@ import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class WaterBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
@@ -38,10 +39,10 @@ class WaterBucketEffectCard extends Card {
 					if (pickedSlot.rowIndex === null) return
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-						return ail.targetInstance === pickedSlot.card?.instance && ail.statusEffectId == 'fire'
+						return ail.targetInstance.instance === pickedSlot.card?.instance && ail.statusEffectId == 'fire'
 					})
 					statusEffectsToRemove.forEach((ail) => {
-						removeStatusEffect(game, pos, ail.statusEffectInstance)
+						removeStatusEffect(game, pos, ail)
 					})
 
 					if (player.board.rows[pickedSlot.rowIndex].effectCard?.props.id === 'string') {
@@ -59,29 +60,29 @@ class WaterBucketEffectCard extends Card {
 		} else if (pos.type === 'attach') {
 			// Straight away remove fire
 			const fireStatusEffect = game.state.statusEffects.find((ail) => {
-				return ail.targetInstance === row?.hermitCard?.instance && ail.statusEffectId == 'fire'
+				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.statusEffectId == 'fire'
 			})
 			if (fireStatusEffect) {
-				removeStatusEffect(game, pos, fireStatusEffect.statusEffectInstance)
+				removeStatusEffect(game, pos, fireStatusEffect)
 			}
 
 			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return ail.targetInstance === row.hermitCard?.instance && ail.statusEffectId == 'fire'
+					return ail.targetInstance.instance === row.hermitCard?.instance && ail.statusEffectId == 'fire'
 				})
 				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail.statusEffectInstance)
+					removeStatusEffect(game, pos, ail)
 				})
 			})
 
 			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
-					return ail.targetInstance === row.hermitCard?.instance && ail.statusEffectId == 'fire'
+					return ail.targetInstance.instance === row.hermitCard?.instance && ail.statusEffectId == 'fire'
 				})
 				statusEffectsToRemove.forEach((ail) => {
-					removeStatusEffect(game, pos, ail.statusEffectInstance)
+					removeStatusEffect(game, pos, ail)
 				})
 			})
 		}

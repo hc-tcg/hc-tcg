@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {healHermit} from '../../../types/game-state'
+import {CardInstance, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import Card, {hermit, Hermit} from '../../base/card'
 

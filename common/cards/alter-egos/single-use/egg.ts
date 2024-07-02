@@ -66,7 +66,7 @@ class EggSingleUseCard extends Card<SingleUse> {
 
 			applySingleUse(game, pickInfo)
 
-			const coinFlip = flipCoin(player, new CardInstance(this, instance))
+			const coinFlip = flipCoin(player, instance)
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = new AttackModel({
 					id: this.getInstanceKey(instance),

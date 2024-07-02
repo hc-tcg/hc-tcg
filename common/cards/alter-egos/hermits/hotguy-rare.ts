@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
+import { CardInstance } from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class HotguyRareHermitCard extends Card {
@@ -58,7 +59,7 @@ class HotguyRareHermitCard extends Card {
 			)
 				return
 
-			const bowId = singleUseCard.card.getInstanceKey(singleUseCard.instance)
+			const bowId = singleUseCard.card.getInstanceKey(singleUseCard)
 			if (attack.id === bowId) {
 				attack.addDamage(this.props.id, attack.getDamage())
 			}

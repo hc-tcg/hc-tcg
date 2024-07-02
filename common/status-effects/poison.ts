@@ -37,7 +37,7 @@ class PoisonStatusEffect extends StatusEffect {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $ePoisoned$`)
 		}
 
-		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo, () => {
 			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
 			if (!targetPos.row.hermitCard) return
@@ -58,7 +58,7 @@ class PoisonStatusEffect extends StatusEffect {
 			}
 
 			const statusEffectAttack = new AttackModel({
-				id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'statusEffectAttack'),
+				id: this.getInstanceKey(statusEffectInfo, 'statusEffectAttack'),
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
@@ -74,19 +74,19 @@ class PoisonStatusEffect extends StatusEffect {
 			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
 			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo)
+		player.hooks.afterDefence.remove(statusEffectInfo)
 	}
 }
 

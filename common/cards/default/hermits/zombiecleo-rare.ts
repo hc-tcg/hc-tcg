@@ -64,7 +64,7 @@ class ZombieCleoRareHermitCard extends Card {
 		if (!pickedCard.isHermit()) return null
 
 		// Return that cards secondary attack
-		const newAttack = pickedCard.card.getAttack(game, pickedCard.instance, pos, attackType)
+		const newAttack = pickedCard.card.getAttack(game, pickedCard, pos, attackType)
 		if (!newAttack) return null
 		const attackName =
 			newAttack.type === 'primary' ? pickedCard.props.primary.name : pickedCard.props.secondary.name
@@ -133,7 +133,7 @@ class ZombieCleoRareHermitCard extends Card {
 							}
 
 							// Add the attack requests of the chosen card as they would not be called otherwise
-							player.hooks.getAttackRequests.call(pickedCard.instance, modalResult.pick)
+							player.hooks.getAttackRequests.call(pickedCard, modalResult.pick)
 
 							return 'SUCCESS'
 						},

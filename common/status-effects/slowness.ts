@@ -28,7 +28,7 @@ class SlownessStatusEffect extends StatusEffect {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $eSlowness$`)
 		}
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo, () => {
 			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || targetPos.rowIndex === null) return
 
@@ -36,7 +36,7 @@ class SlownessStatusEffect extends StatusEffect {
 				game.addBlockedActions(this.id, 'SECONDARY_ATTACK')
 		})
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
 			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
 			if (!targetPos || targetPos.rowIndex === null) return
 			if (!statusEffectInfo.duration) return
@@ -44,25 +44,25 @@ class SlownessStatusEffect extends StatusEffect {
 			statusEffectInfo.duration--
 
 			if (statusEffectInfo.duration === 0) {
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+				removeStatusEffect(game, pos, statusEffectInfo)
 				return
 			}
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
 			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnStart.remove(statusEffectInfo)
+		player.hooks.onTurnEnd.remove(statusEffectInfo)
+		player.hooks.afterDefence.remove(statusEffectInfo)
 	}
 }
 

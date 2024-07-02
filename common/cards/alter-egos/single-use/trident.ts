@@ -46,10 +46,7 @@ class TridentSingleUseCard extends Card<SingleUse> {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
 
-			player.custom[this.getInstanceKey(instance)] = flipCoin(
-				player,
-				new CardInstance(this, instance)
-			)[0]
+			player.custom[this.getInstanceKey(instance)] = flipCoin(player, instance)[0]
 
 			applySingleUse(game)
 		})

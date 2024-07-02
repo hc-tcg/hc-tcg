@@ -33,7 +33,7 @@ class BerryBushEffectCard extends Card<Attach> {
 		slot.opponentHasActiveHermit
 	)
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
 		if (!row) return
 

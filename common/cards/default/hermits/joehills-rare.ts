@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { CardInstance } from '../../../types/game-state'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -62,7 +63,7 @@ class JoeHillsRareHermitCard extends Card {
 			// Storing the cardInstance of the card that attacked
 			player.custom[skippedKey] = attacker.row.hermitCard.instance
 
-			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard.instance)
+			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard)
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {

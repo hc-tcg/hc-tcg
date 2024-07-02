@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
-import {healHermit} from '../../../types/game-state'
+import {CardInstance, healHermit} from '../../../types/game-state'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {

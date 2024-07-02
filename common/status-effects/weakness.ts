@@ -28,15 +28,15 @@ class WeaknessStatusEffect extends StatusEffect {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $eWeakness$`)
 		}
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
+		player.hooks.onTurnStart.add(statusEffectInfo, () => {
 			if (!statusEffectInfo.duration) return
 			statusEffectInfo.duration--
 
 			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+				removeStatusEffect(game, pos, statusEffectInfo)
 		})
 
-		opponentPlayer.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		opponentPlayer.hooks.onAttack.add(statusEffectInfo, (attack) => {
 			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
 
 			if (!targetPos) return
@@ -48,7 +48,7 @@ class WeaknessStatusEffect extends StatusEffect {
 			attack.createWeakness = 'always'
 		})
 
-		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.onAttack.add(statusEffectInfo, (attack) => {
 			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
 
 			if (!targetPos) return
@@ -76,21 +76,21 @@ class WeaknessStatusEffect extends StatusEffect {
 			attack.createWeakness = 'always'
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
 			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 
 	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onAttack.remove(statusEffectInfo)
+		opponentPlayer.hooks.onAttack.remove(statusEffectInfo)
+		player.hooks.onTurnStart.remove(statusEffectInfo)
+		player.hooks.afterDefence.remove(statusEffectInfo)
 	}
 }
 

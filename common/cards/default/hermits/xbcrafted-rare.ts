@@ -4,6 +4,7 @@ import {HermitAttackType} from '../../../types/attack'
 import {getActiveRowPos} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
+import { CardInstance } from '../../../types/game-state'
 
 class XBCraftedRareHermitCard extends Card {
 	props: Hermit = {
