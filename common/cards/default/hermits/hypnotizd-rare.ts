@@ -6,7 +6,7 @@ import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {getActiveRow} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -39,6 +39,8 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
+	targetIndex = new InstancedValue<number | null>(null)
+
 	override getAttack(
 		game: GameModel,
 		instance: CardInstance,
@@ -50,11 +52,10 @@ class HypnotizdRareHermitCard extends Card {
 
 		if (!attack || attack.type !== 'secondary') return attack
 
-		const targetKey = this.getInstanceKey(instance, 'target')
-		const targetIndex: number | undefined = player.custom[targetKey]
-		if (targetIndex === undefined) return attack
+		const targetIndex = this.targetIndex.get(instance)
 		if (targetIndex === opponentPlayer.board.activeRow) return attack
 
+		if (targetIndex === null) return null
 		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return attack
 
@@ -67,8 +68,7 @@ class HypnotizdRareHermitCard extends Card {
 
 		const newAttacks = attack
 
-		// Delete the target info now
-		delete player.custom[targetKey]
+		this.targetIndex.set(instance, null)
 
 		return newAttacks
 	}
@@ -107,11 +107,11 @@ class HypnotizdRareHermitCard extends Card {
 				id: this.props.id,
 				message: "Pick one of your opponent's Hermits",
 				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
-				onResult(pickedSlot) {
+				onResult: (pickedSlot) => {
 					const rowIndex = pickedSlot.rowIndex
 
 					// Store the row index to use later
-					player.custom[targetKey] = rowIndex
+					this.targetIndex.set(instance, rowIndex)
 
 					const targetingAfk = rowIndex !== opponentPlayer.board.activeRow
 
@@ -119,9 +119,6 @@ class HypnotizdRareHermitCard extends Card {
 						// Add a second pick request to remove an item
 						game.addPickRequest(itemRequest)
 					}
-				},
-				onTimeout() {
-					// We didn't choose anyone so we will just attack as normal
 				},
 			})
 		})

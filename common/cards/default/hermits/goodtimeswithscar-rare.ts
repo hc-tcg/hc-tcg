@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance} from '../../../types/game-state'
 import {removeStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
 class GoodTimesWithScarRareHermitCard extends Card {
 	props: Hermit = {
@@ -36,6 +36,8 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		],
 	}
 
+	reviveNextTurn = new InstancedValue<Set<CardInstance>>(new Set())
+	
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
