@@ -1,5 +1,5 @@
 import React from 'react'
-import {typeT} from 'common/types/cards'
+import {TypeT} from 'common/types/cards'
 import {
 	Attach,
 	CardProps,
@@ -55,7 +55,7 @@ const getStrengthsAndWeaknesses = (card: WithoutFunctions<CardProps>): React.Rea
 	const strengths = STRENGTHS[card.type]
 	const weaknesses = Object.entries(STRENGTHS)
 		.filter(([, value]) => value.includes(card.type))
-		.map(([key]) => key) as Array<typeT>
+		.map(([key]) => key) as Array<TypeT>
 
 	const result = (
 		<div className={css.strengthsAndWeaknesses}>

@@ -21,7 +21,7 @@ const hermitCardClasses: Array<Card> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
 	// 	...adventOfTcgHermitCards,
-		...alterEgosIIHermitCards,
+	...alterEgosIIHermitCards,
 ]
 
 const itemCardClasses: Array<Card> = [...defaultItemCards]
