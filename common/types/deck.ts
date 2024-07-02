@@ -1,5 +1,5 @@
 import {CARDS} from '../cards'
-import { WithoutFunctions } from '../cards/base/card'
+import {WithoutFunctions} from '../cards/base/card'
 import {LocalCardInstance} from './server-requests'
 
 export type PlayerDeckT = {

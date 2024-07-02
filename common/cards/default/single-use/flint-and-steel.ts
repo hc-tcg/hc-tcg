@@ -15,9 +15,12 @@ class FlintAndSteelSingleUseCard extends Card {
 		tokens: 1,
 		description:
 			'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
-			showConfirmationModal: true,
+		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
-		attachCondition: slot.every(singleUse.attachCondition, (game, pos) => pos.player.pile.length > 3),
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length > 3
+		),
 	}
 
 	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {

@@ -87,9 +87,9 @@ class KeralisRareHermitCard extends Card {
 
 				game.battleLog.addEntry(
 					player.id,
-					`$p${pickedRow.hermitCard.props.name} (${
-						pickedRowIndex + 1
-					})$ was healed $g100hp$ by $p${activeHermit.props.name}$`
+					`$p${pickedRow.hermitCard.props.name} (${pickedRowIndex + 1})$ was healed $g100hp$ by $p${
+						activeHermit.props.name
+					}$`
 				)
 			}
 

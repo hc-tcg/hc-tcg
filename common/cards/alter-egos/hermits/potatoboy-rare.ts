@@ -55,7 +55,9 @@ class PotatoBoyRareHermitCard extends Card {
 					healHermit(row, 40)
 					game.battleLog.addEntry(
 						player.id,
-						`$p${card.props.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${activeHermit.props.name}$`
+						`$p${card.props.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${
+							activeHermit.props.name
+						}$`
 					)
 				})
 		})
