@@ -176,13 +176,6 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this.log = []
 	}
 
-	/**
-	 * A combinator expression that returns if the card can be attached to a specified slot.
-	 */
-	public get attachCondition(): SlotCondition {
-		return this.props.attachCondition || slot.nothing
-	}
-
 	public getKey(keyName: string) {
 		return this.props.id + ':' + keyName
 	}

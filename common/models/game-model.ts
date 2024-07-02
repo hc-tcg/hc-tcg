@@ -239,7 +239,7 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
 			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(card.card.attachCondition)])
+				cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
 				return cards
 			}, [] as Array<[CardInstance, Array<PickInfo>]>)
 		}

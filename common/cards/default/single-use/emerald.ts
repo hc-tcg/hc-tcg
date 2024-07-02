@@ -15,7 +15,7 @@ class EmeraldSingleUseCard extends Card {
 		description: "Steal or swap the attached effect card of your opponent's active Hermit.",
 		showConfirmationModal: true,
 		attachCondition: slot.every(
-			super.attachCondition,
+			singleUse.attachCondition,
 			slot.someSlotFulfills(
 				slot.every(slot.player, slot.activeRow, slot.attachSlot, slot.not(slot.frozen))
 			),
