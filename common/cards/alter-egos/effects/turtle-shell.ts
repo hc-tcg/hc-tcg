@@ -22,23 +22,23 @@ class TurtleShellEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		let firstActiveTurn = true
 
 		player.hooks.onTurnEnd.add(instance, () => {
 			if (player.board.activeRow === pos.rowIndex) {
-				player.custom[instanceKey] = true
+				firstActiveTurn = true
 			}
 		})
 
 		player.hooks.onTurnStart.add(instance, () => {
-			if (player.custom[instanceKey]) {
+			if (firstActiveTurn) {
 				discardCard(game, pos.card)
 			}
 		})
 
 		player.hooks.onDefence.add(instance, (attack) => {
 			// Only block if just became active
-			if (!player.custom[instanceKey]) return
+			if (!firstActiveTurn) return
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
 			if (!isActive || !isTargetingPos(attack, pos)) return
@@ -59,7 +59,6 @@ class TurtleShellEffectCard extends Card {
 		player.hooks.onDefence.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[instanceKey]
 	}
 }
 

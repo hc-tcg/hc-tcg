@@ -36,7 +36,6 @@ class EvilXisumaRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const disableKey = this.getInstanceKey(instance, 'disable')
 
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
@@ -51,6 +50,8 @@ class EvilXisumaRareHermitCard extends Card {
 
 			if (coinFlip[0] !== 'heads') return
 
+			let playerPick: any = null
+
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -64,19 +65,18 @@ class EvilXisumaRareHermitCard extends Card {
 				onResult(modalResult) {
 					if (!modalResult || !modalResult.pick) return 'FAILURE_INVALID_DATA'
 
-					player.custom[disableKey] = modalResult.pick
+					playerPick = modalResult.pick
 
 					return 'SUCCESS'
 				},
 				onTimeout() {
 					// Disable the secondary attack if we didn't choose one
-					player.custom[disableKey] = 'secondary'
+					playerPick = 'secondary'
 				},
 			})
 
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {
-				const disable = player.custom[disableKey]
-				if (!disable) return
+				const disable = playerPick
 
 				const activeRow = opponentPlayer.board.activeRow
 				if (activeRow === null) return
@@ -86,7 +86,6 @@ class EvilXisumaRareHermitCard extends Card {
 				game.addBlockedActions(this.props.id, actionToBlock)
 
 				opponentPlayer.hooks.onTurnStart.remove(instance)
-				delete player.custom[disableKey]
 			})
 		})
 	}

@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance, RowState} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -34,6 +34,9 @@ class BowSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 		const targetKey = this.getInstanceKey(instance, 'target')
 
+		let pickedRow: RowState | null = null
+		let pickedRowIndex: number | null = null
+
 		player.hooks.getAttackRequests.add(instance, () => {
 			game.addPickRequest({
 				playerId: player.id,
@@ -41,10 +44,8 @@ class BowSingleUseCard extends Card {
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (rowIndex === null) return
-
-					player.custom[targetKey] = rowIndex
+					pickedRow = pickedSlot.row
+					pickedRowIndex = pickedSlot.rowIndex
 				},
 				onTimeout() {
 					// We didn't pick a target so do nothing
@@ -56,18 +57,15 @@ class BowSingleUseCard extends Card {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 
-			const opponentIndex = player.custom[targetKey]
-			if (opponentIndex === null || opponentIndex === undefined) return null
-			const opponentRow = opponentPlayer.board.rows[opponentIndex]
-			if (!opponentRow || !opponentRow.hermitCard) return null
+			if (!pickedRow || !pickedRow.hermitCard || !pickedRowIndex) return null
 
 			const bowAttack = new AttackModel({
 				id: this.getInstanceKey(instance),
 				attacker: activePos,
 				target: {
 					player: opponentPlayer,
-					rowIndex: opponentIndex,
-					row: opponentRow,
+					rowIndex: pickedRowIndex,
+					row: pickedRow,
 				},
 				type: 'effect',
 				log: (values) =>
@@ -92,7 +90,6 @@ class BowSingleUseCard extends Card {
 		player.hooks.onAttack.remove(instance)
 
 		const targetKey = this.getInstanceKey(instance, 'target')
-		delete player.custom[targetKey]
 	}
 }
 

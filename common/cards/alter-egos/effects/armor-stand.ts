@@ -59,7 +59,6 @@ class ArmorStandEffectCard extends Card {
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		player.hooks.freezeSlots.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

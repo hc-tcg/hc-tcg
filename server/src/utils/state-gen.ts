@@ -193,7 +193,6 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 		hand,
 		discarded: [],
 		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
-		custom: {},
 		hasPlacedHermit: false,
 		board: {
 			activeRow: null,
@@ -244,7 +243,6 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
 		coinFlips: playerState.coinFlips,
-		custom: playerState.custom,
 		lives: playerState.lives,
 		board: {
 			activeRow: playerState.board.activeRow,

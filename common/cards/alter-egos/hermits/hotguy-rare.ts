@@ -1,8 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
-import { CardInstance } from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
 class HotguyRareHermitCard extends Card {
 	props: Hermit = {
@@ -31,6 +31,8 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
+	usingSecondaryAttack = new InstancedValue<boolean>(false)
+
 	override getAttack(
 		game: GameModel,
 		instance: CardInstance,
@@ -40,7 +42,7 @@ class HotguyRareHermitCard extends Card {
 		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 		// Used for the Bow, we need to know the attack type
 		if (attack && attack.type === 'secondary') {
-			pos.player.custom[this.getInstanceKey(instance)] = true
+			this.usingSecondaryAttack.set(instance, true)
 		}
 
 		return attack
@@ -55,7 +57,7 @@ class HotguyRareHermitCard extends Card {
 			if (
 				!singleUseCard ||
 				singleUseCard.props.id !== 'bow' ||
-				!player.custom[this.getInstanceKey(instance)]
+				!this.usingSecondaryAttack.get(instance)
 			)
 				return
 
@@ -64,10 +66,6 @@ class HotguyRareHermitCard extends Card {
 				attack.addDamage(this.props.id, attack.getDamage())
 			}
 		})
-
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[this.getInstanceKey(instance)]
-		})
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -75,7 +73,6 @@ class HotguyRareHermitCard extends Card {
 
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
-		delete player.custom[this.getInstanceKey(instance)]
 	}
 }
 

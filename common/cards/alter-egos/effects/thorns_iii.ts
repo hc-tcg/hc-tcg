@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import { CardInstance } from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -21,12 +21,12 @@ class ThornsIIIEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const triggeredKey = this.getInstanceKey(instance, 'triggered')
+
+		let hasTriggered = false
 
 		// Only when the opponent attacks us
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			// If we have already triggered once this turn do not do so again
-			if (player.custom[triggeredKey]) return
+			if (hasTriggered) return
 
 			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack did damage
@@ -34,7 +34,7 @@ class ThornsIIIEffectCard extends Card {
 
 			if (!attack.getAttacker() || !isTargetingPos(attack, pos)) return
 
-			player.custom[triggeredKey] = true
+			hasTriggered = true
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
@@ -51,10 +51,6 @@ class ThornsIIIEffectCard extends Card {
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
-
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[triggeredKey]
-		})
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -62,7 +58,6 @@ class ThornsIIIEffectCard extends Card {
 		const triggeredKey = this.getInstanceKey(instance, 'triggered')
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[triggeredKey]
 	}
 }
 

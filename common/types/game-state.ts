@@ -338,7 +338,6 @@ export type LocalPlayerState = {
 	minecraftName: string
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
-	custom: Record<string, any>
 	lives: number
 	board: {
 		activeRow: number | null
