@@ -6,7 +6,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
-class LootingSingleUseCard extends Card<SingleUse> {
+class LootingSingleUseCard extends Card {
 	pickCondition = slot.every(slot.opponent, slot.activeRow, slot.itemSlot, slot.not(slot.empty))
 
 	props: SingleUse = {

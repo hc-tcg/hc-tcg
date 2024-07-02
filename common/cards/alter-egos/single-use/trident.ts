@@ -7,7 +7,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardSingleUse} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
-class TridentSingleUseCard extends Card<SingleUse> {
+class TridentSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'trident',

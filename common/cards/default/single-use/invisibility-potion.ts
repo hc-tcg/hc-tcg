@@ -4,7 +4,7 @@ import {CardInstance} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
-class InvisibilityPotionSingleUseCard extends Card<SingleUse> {
+class InvisibilityPotionSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'invisibility_potion',

@@ -8,7 +8,7 @@ import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
-class EggSingleUseCard extends Card<SingleUse> {
+class EggSingleUseCard extends Card {
 	pickCondition = slot.every(
 		slot.opponent,
 		slot.hermitSlot,

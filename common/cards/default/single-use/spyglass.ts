@@ -8,7 +8,7 @@ import {getFormattedName} from '../../../utils/game'
 import {discardFromHand} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
-class SpyglassSingleUseCard extends Card<SingleUse> {
+class SpyglassSingleUseCard extends Card {
 	props: SingleUse = {
 		...singleUse,
 		id: 'spyglass',
