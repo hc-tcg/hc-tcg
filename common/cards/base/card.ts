@@ -12,7 +12,7 @@ import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {slot, SlotCondition} from '../../slot'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import { CardInstance } from '../../types/game-state'
+import {CardInstance} from '../../types/game-state'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -167,6 +167,30 @@ export const singleUse = {
 export function hermitBattleLog(name: string) {
 	return (values: PlayCardLog) =>
 		`$p{You|${values.player}}$ placed $p${name}$ on row #${values.pos.rowIndex}`
+}
+
+export class InstancedValue<T> {
+	default: T
+	values: Record<string, T> = {}
+
+	public constructor(defaultValue: T) {
+		this.default = defaultValue
+	}
+
+	public set(instance: CardInstance, value: T) {
+		this.values[instance.instance] = value
+	}
+
+	public get(instance: CardInstance): T {
+		if (instance.instance in this.values) {
+			return this.values[instance.instance]
+		}
+		return this.default
+	}
+
+	public clear(instance: CardInstance) {
+		delete this.values[instance.instance]
+	}
 }
 
 abstract class Card<Props extends CardProps = CardProps> {
