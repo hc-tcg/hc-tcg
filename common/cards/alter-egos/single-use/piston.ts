@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse} from '../../../utils/movement'
@@ -39,6 +40,8 @@ class PistonSingleUseCard extends Card {
 		const {player} = pos
 		const itemInstanceKey = this.getInstanceKey(instance, 'itemInstance')
 
+		let pickedItemSlot: SlotInfo | null = null
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.props.id,
@@ -48,7 +51,7 @@ class PistonSingleUseCard extends Card {
 				if (!pickResult.card) return
 
 				// Store the instance of the chosen item
-				player.custom[itemInstanceKey] = pickResult.card.instance
+				pickedItemSlot = pickResult
 			},
 		})
 
@@ -56,37 +59,25 @@ class PistonSingleUseCard extends Card {
 			playerId: player.id,
 			id: this.props.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
-			// Note: This lambda function allows player.custom[rowIndexKey] to be defined before we generate the condition.
-			// This will be fixed when player.custom is removed.
-			canPick: (game, pos) =>
-				slot.every(
-					slot.player,
-					slot.itemSlot,
-					slot.empty,
-					slot.rowHasHermit,
-					slot.not(slot.frozen),
-					slot.adjacentTo(slot.hasInstance(player.custom[itemInstanceKey]))
-				)(game, pos),
+			canPick: slot.every(
+				slot.player,
+				slot.itemSlot,
+				slot.empty,
+				slot.rowHasHermit,
+				slot.not(slot.frozen),
+				slot.adjacentTo(
+					(game, pos) => !!pickedItemSlot?.card && slot.hasInstance(pickedItemSlot?.card)(game, pos)
+				)
+			),
 			onResult(pickedSlot) {
-				const itemInstance = player.custom[itemInstanceKey]
-				const itemPos = game.findSlot(slot.hasInstance(itemInstance))
-
 				const logInfo = pickedSlot
-				if (itemPos !== null && itemPos.row !== null) {
-					logInfo.card = itemPos.card
+				if (pickedItemSlot !== null && pickedItemSlot.card !== null) {
+					logInfo.card = pickedItemSlot.card
 				}
 
 				// Move the card and apply su card
-				game.swapSlots(itemPos, pickedSlot, true)
+				game.swapSlots(pickedItemSlot, pickedSlot, true)
 				applySingleUse(game, logInfo)
-
-				delete player.custom[itemInstanceKey]
-			},
-			onCancel() {
-				delete player.custom[itemInstanceKey]
-			},
-			onTimeout() {
-				delete player.custom[itemInstanceKey]
 			},
 		})
 
