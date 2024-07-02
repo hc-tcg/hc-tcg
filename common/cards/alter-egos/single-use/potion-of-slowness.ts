@@ -26,7 +26,7 @@ class PotionOfSlownessSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard?.cardInstance)
+			applyStatusEffect(game, 'slowness', opponentActiveRow.hermitCard?.instance)
 		})
 	}
 

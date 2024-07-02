@@ -1,5 +1,3 @@
-import {STRENGTHS} from '../const/strengths'
-import {HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
@@ -251,13 +249,19 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 
 	if (!attacker || !target || !attackId) return null
 
-	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+	const attackerCardInfo = attacker.row.hermitCard.card
+	const targetCardInfo = target.row.hermitCard.card
 
-	if (!attackerCardInfo || !targetCardInfo) return null
+	if (
+		!attackerCardInfo ||
+		!targetCardInfo ||
+		!attackerCardInfo.isHermit() ||
+		!targetCardInfo.isHermit()
+	)
+		return null
 
-	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.hermitType)) {
+	const strength = attackerCardInfo.props.type
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
 		return null
 	}
 
@@ -268,7 +272,7 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.props.id, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

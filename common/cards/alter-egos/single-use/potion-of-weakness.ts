@@ -29,7 +29,7 @@ class PotionOfWeaknessSingleUseCard extends SingleUseCard {
 		player.hooks.onApply.add(instance, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
-			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard?.cardInstance)
+			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard?.instance)
 		})
 	}
 

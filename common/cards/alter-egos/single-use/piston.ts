@@ -47,7 +47,7 @@ class PistonSingleUseCard extends SingleUseCard {
 				if (!pickResult.card) return
 
 				// Store the instance of the chosen item
-				player.custom[itemInstanceKey] = pickResult.card.cardInstance
+				player.custom[itemInstanceKey] = pickResult.card.instance
 			},
 		})
 
