@@ -69,8 +69,9 @@ class ExBossAI implements VirtualAI {
 						pickInfo: {
 							playerId: currentPlayerId,
 							rowIndex: 0,
-							card: bossCard,
-							slot: {type: 'hermit', index: 0},
+							card: null,
+							type: 'hermit',
+							index: 0,
 						},
 						card: bossCard,
 					},

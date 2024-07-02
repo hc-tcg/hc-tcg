@@ -1,11 +1,19 @@
 import {CardPosModel} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
+import {slot} from '../slot'
 import {StatusEffectT} from '../types/game-state'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
-import {isRemovable} from '../utils/cards'
 import {discardCard, discardFromHand} from '../utils/movement'
 import StatusEffect from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
+
+const effectDiscardCondition = slot.every(
+	slot.opponent,
+	slot.activeRow,
+	slot.effectSlot,
+	slot.not(slot.empty),
+	slot.not(slot.frozen)
+)
 
 class ExBossNineStatusEffect extends StatusEffect {
 	constructor() {
@@ -52,8 +60,9 @@ class ExBossNineStatusEffect extends StatusEffect {
 				)
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (opponentActiveRow) {
-					if (opponentActiveRow.effectCard && isRemovable(opponentActiveRow.effectCard))
-						discardCard(game, opponentActiveRow.effectCard)
+					game
+						.filterSlots(effectDiscardCondition)
+						.map((slot) => slot.card && discardCard(game, slot.card))
 
 					opponentActiveRow.itemCards.forEach((itemCard) => itemCard && discardCard(game, itemCard))
 				}

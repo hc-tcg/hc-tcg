@@ -2,15 +2,11 @@ import {ITEM_CARDS} from '../..'
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {AttackLog, HermitAttackType} from '../../../types/attack'
 import {PickRequest} from '../../../types/server-requests'
-import {
-	applyStatusEffect,
-	getActiveRow,
-	getNonEmptyRows,
-	removeStatusEffect,
-} from '../../../utils/board'
-import {isCardType, isRemovable} from '../../../utils/cards'
+import {applyStatusEffect, getActiveRow, removeStatusEffect} from '../../../utils/board'
+import {isCardType} from '../../../utils/cards'
 import {discardCard} from '../../../utils/movement'
 import EvilXisumaRareHermitCard from '../../alter-egos/hermits/evilxisuma_rare'
 
@@ -59,6 +55,14 @@ const attackLog = (bossAttack: BOSS_ATTACK): ((values: AttackLog) => string) | u
 	return baseLog
 }
 
+const effectDiscardCondition = slot.every(
+	slot.opponent,
+	slot.activeRow,
+	slot.effectSlot,
+	slot.not(slot.empty),
+	slot.not(slot.frozen)
+)
+
 class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 	constructor() {
 		super()
@@ -85,25 +89,22 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
 
 		const {player, row, rowIndex, opponentPlayer} = pos
-		const targetIndex = opponentPlayer.board.activeRow
-		if (targetIndex === null) return null
+		const activeIndex = opponentPlayer.board.activeRow
+		if (activeIndex === null) return null
 
-		const targetRow = opponentPlayer.board.rows[targetIndex]
+		const targetRow = opponentPlayer.board.rows[activeIndex]
 		if (!targetRow.hermitCard) return null
 
 		const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
 
+		const attacker = {player, rowIndex, row}
 		// Create an attack with 0 damage
 		const attack = new AttackModel({
 			id: this.getInstanceKey(instance),
-			attacker: {
-				player,
-				rowIndex,
-				row,
-			},
+			attacker,
 			target: {
 				player: opponentPlayer,
-				rowIndex: targetIndex,
+				rowIndex: activeIndex,
 				row: targetRow,
 			},
 			type: hermitAttackType,
@@ -118,8 +119,9 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 
 		if (bossAttack[2] === 'EFFECTCARD') {
 			// Remove effect card before attack is executed to mimic Curse of Vanishing
-			if (targetRow.effectCard && isRemovable(targetRow.effectCard))
-				discardCard(game, targetRow.effectCard)
+			game
+				.filterSlots(effectDiscardCondition)
+				.map((slot) => slot.card && discardCard(game, slot.card))
 		}
 
 		// If the opponent blocks EX's "attack", then EX can not deal damage or set opponent on fire
@@ -131,18 +133,23 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			if (bossAttack[1] === 'DOUBLE') attack.multiplyDamage(this.id, 2)
 
 			if (bossAttack[2] === 'AFK20') {
-				const opponentRows = getNonEmptyRows(opponentPlayer, true)
-				for (const opponentRow of opponentRows) {
-					if (!opponentRow || opponentRow.rowIndex == opponentPlayer.board.activeRow) continue
+				const opponentRows = opponentPlayer.board.rows
+				opponentRows.forEach((row, rowIndex) => {
+					if (!row || !row.hermitCard) return
+					if (rowIndex === activeIndex) return
 					const newAttack = new AttackModel({
 						id: this.getInstanceKey(instance, 'inactive'),
-						attacker: {player, rowIndex, row},
-						target: opponentRow,
+						attacker,
+						target: {
+							player: opponentPlayer,
+							rowIndex,
+							row,
+						},
 						type: hermitAttackType,
 						log: (values) => `, ${values.damage} damage to ${values.target}`,
 					}).addDamage(this.id, 20)
 					attack.addNewAttack(newAttack)
-				}
+				})
 			}
 		}
 
@@ -205,30 +212,30 @@ class EvilXisumaBossHermitCard extends EvilXisumaRareHermitCard {
 			const bossAttack: BOSS_ATTACK = player.custom['BOSS_ATTACK']
 			if (bossAttack[2] === 'ITEMCARD') {
 				// Remove an item card attached to the opponent's active Hermit
-				const opponentActiveRow = getActiveRow(opponentPlayer)
-				if (
-					opponentActiveRow &&
-					opponentActiveRow.health &&
-					opponentActiveRow.itemCards.find((card) => isCardType(card, 'item'))
-				) {
+				const pickCondition = slot.every(
+					slot.opponent,
+					slot.activeRow,
+					slot.itemSlot,
+					slot.not(slot.empty)
+				)
+				if (game.someSlotFulfills(pickCondition)) {
 					game.addPickRequest({
 						playerId: opponentPlayer.id,
 						id: this.id,
 						message: 'Choose an item to discard from your active Hermit.',
-						onResult(pickResult) {
-							if (pickResult.playerId !== opponentPlayer.id) return 'FAILURE_INVALID_PLAYER'
+						canPick: pickCondition,
+						onResult(pickedSlot) {
+							if (pickedSlot.rowIndex === null || pickedSlot.card === null) return
 
-							const rowIndex = pickResult.rowIndex
-							if (rowIndex === undefined) return 'FAILURE_INVALID_SLOT'
-							if (rowIndex !== opponentPlayer.board.activeRow) return 'FAILURE_INVALID_SLOT'
+							const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
 
-							if (pickResult.slot.type !== 'item') return 'FAILURE_INVALID_SLOT'
-							if (!pickResult.card) return 'FAILURE_INVALID_SLOT'
+							const hermitCard = playerRow.hermitCard
+							if (!hermitCard || !playerRow.health) return
 
-							const itemCard = ITEM_CARDS[pickResult.card.cardId]
+							const itemCard = ITEM_CARDS[pickedSlot.card.cardId]
 							if (!itemCard) return 'FAILURE_INVALID_SLOT'
 
-							discardCard(game, pickResult.card)
+							discardCard(game, pickedSlot.card)
 
 							return 'SUCCESS'
 						},
