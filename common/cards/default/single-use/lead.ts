@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {SlotInfo} from '../../../types/cards'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -43,7 +44,7 @@ class LeadSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
+		let itemSlot: SlotInfo | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -51,10 +52,7 @@ class LeadSingleUseCard extends Card {
 			message: "Pick an item card attached to your opponent's active Hermit",
 			canPick: this.firstPickCondition,
 			onResult(pickedSlot) {
-				if (!pickedSlot.card) return
-
-				// Store the index of the chosen item
-				player.custom[itemIndexKey] = pickedSlot.card.instance
+				itemSlot = pickedSlot
 			},
 		})
 
@@ -68,25 +66,15 @@ class LeadSingleUseCard extends Card {
 				if (pickedSlot.card || rowIndex === null) return
 
 				// Get the index of the chosen item
-				const itemIndex: number = player.custom[itemIndexKey]
-
 				const opponentActivePos = getActiveRowPos(opponentPlayer)
 				if (!opponentActivePos) return
 
 				applySingleUse(game, pickedSlot)
 
 				// Move the item
-				game.swapSlots(game.findSlot(slot.hasInstance(player.custom[itemIndexKey])), pickedSlot)
-
-				delete player.custom[itemIndexKey]
+				game.swapSlots(itemSlot, pickedSlot)
 			},
 		})
-	}
-
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		const itemIndexKey = this.getInstanceKey(instance, 'itemIndex')
-		delete player.custom[itemIndexKey]
 	}
 }
 

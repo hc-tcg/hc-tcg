@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
 class ZombieCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -38,6 +38,8 @@ class ZombieCleoRareHermitCard extends Card {
 		slot.not(slot.hasId(this.props.id))
 	)
 
+	pickedAttack = new InstancedValue<{card: CardInstance; attack: HermitAttackType} | null>(null)
+
 	override getAttack(
 		game: GameModel,
 		instance: CardInstance,
@@ -45,16 +47,15 @@ class ZombieCleoRareHermitCard extends Card {
 		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos
-		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
 		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 
-		const pickedCard: CardInstance = player.custom[pickedCardKey]?.card
-		const attackType = player.custom[pickedCardKey]?.attack
+		const pickedCard = this.pickedAttack.get(instance)?.card
+		const attackType = this.pickedAttack.get(instance)?.attack
 
 		// Delete the stored data straight away
-		delete pos.player.custom[pickedCardKey]
+		this.pickedAttack.set(instance, null)
 
 		if (!pickedCard || !attackType) return null
 
@@ -79,7 +80,6 @@ class ZombieCleoRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -116,7 +116,7 @@ class ZombieCleoRareHermitCard extends Card {
 								cardPos: pickedSlot,
 							},
 						},
-						onResult(modalResult) {
+						onResult: (modalResult) => {
 							if (!modalResult) return 'FAILURE_INVALID_DATA'
 							if (modalResult.cancel) {
 								// Cancel this attack so player can choose a different hermit to imitate
@@ -127,21 +127,21 @@ class ZombieCleoRareHermitCard extends Card {
 							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 							// Store the card id to use when getting attacks
-							player.custom[pickedCardKey] = {
+							this.pickedAttack.set(instance, {
 								card: pickedCard,
 								attack: modalResult.pick,
-							}
+							})
 
 							// Add the attack requests of the chosen card as they would not be called otherwise
 							player.hooks.getAttackRequests.call(pickedCard, modalResult.pick)
 
 							return 'SUCCESS'
 						},
-						onTimeout() {
-							player.custom[pickedCardKey] = {
+						onTimeout: () => {
+							this.pickedAttack.set(instance, {
 								card: pickedCard,
 								attack: 'primary',
-							}
+							})
 						},
 					})
 				},
@@ -168,10 +168,9 @@ class ZombieCleoRareHermitCard extends Card {
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const pickedCardKey = this.getInstanceKey(instance, 'pickedCard')
+		this.pickedAttack.clear(instance)
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.blockedActions.remove(instance)
-		delete player.custom[pickedCardKey]
 	}
 }
 
