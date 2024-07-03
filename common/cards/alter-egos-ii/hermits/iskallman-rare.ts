@@ -37,10 +37,7 @@ class IskallmanRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
-		const playerKey = this.getInstanceKey(instance, 'player')
-		const rowKey = this.getInstanceKey(instance, 'row')
-
-		let pickedSlotInPickRequest: SlotInfo | null = null
+		let pickedAfkHermit: SlotInfo | null = null
 
 		const pickCondition = slot.every(
 			slot.player,
@@ -93,7 +90,7 @@ class IskallmanRareHermitCard extends Card {
 						onResult(pickedSlot) {
 							if (!pickedSlot.card) return
 							if (!pickedSlot.rowIndex) return
-							pickedSlotInPickRequest = pickedSlot
+							pickedAfkHermit = pickedSlot
 						},
 						onTimeout() {
 							// We didn't pick anyone to heal, so heal no one
@@ -115,7 +112,7 @@ class IskallmanRareHermitCard extends Card {
 			const activeRow = getActiveRow(player)
 
 			if (!activeRow) return
-			if (!pickedSlotInPickRequest) return
+			if (!pickedAfkHermit) return
 
 			const attacker = attack.getAttacker()
 			if (!attacker) return
@@ -132,15 +129,15 @@ class IskallmanRareHermitCard extends Card {
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = attacker.row.hermitCard.card
-			const hermitInfo = pickedSlotInPickRequest.row?.hermitCard?.card
+			const hermitInfo = pickedAfkHermit.row?.hermitCard?.card
 
 			if (hermitInfo) {
-				healHermit(pickedSlotInPickRequest.row, 50)
+				healHermit(pickedAfkHermit.row, 50)
 				game.battleLog.addEntry(
 					player.id,
 					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${
 						hermitInfo.props.name
-					} (${(pickedSlotInPickRequest.rowIndex || 0) + 1})$ by $g50hp$`
+					} (${(pickedAfkHermit.rowIndex || 0) + 1})$ by $g50hp$`
 				)
 			}
 		})
@@ -148,7 +145,6 @@ class IskallmanRareHermitCard extends Card {
 
 	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)
