@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardInstance, CoinFlipT} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -33,7 +33,8 @@ class ZedaphPlaysRareHermitCard extends Card {
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const coinFlipResult = this.getInstanceKey(instance, 'coinFlipResult')
+
+		let coinFlipResult: CoinFlipT | null = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
@@ -48,12 +49,12 @@ class ZedaphPlaysRareHermitCard extends Card {
 				if (!attack.getAttacker()) return
 
 				// No need to flip a coin for multiple attacks
-				if (!player.custom[coinFlipResult]) {
+				if (!coinFlipResult) {
 					const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
-					player.custom[coinFlipResult] = coinFlip[0]
+					coinFlipResult = coinFlip[0]
 				}
 
-				if (player.custom[coinFlipResult] === 'heads') {
+				if (coinFlipResult === 'heads') {
 					// Change attack target - this just works
 					attack.setTarget(this.props.id, attack.getAttacker())
 				}
@@ -61,7 +62,6 @@ class ZedaphPlaysRareHermitCard extends Card {
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 				// Delete our hook at the end of opponents turn
-				delete player.custom[coinFlipResult]
 				opponentPlayer.hooks.onTurnEnd.remove(instance)
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 			})
