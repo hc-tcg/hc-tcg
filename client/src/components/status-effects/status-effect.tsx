@@ -19,7 +19,7 @@ const StatusEffect = (props: StatusEffectProps) => {
 	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
 	const statusEffectClass =
 		damageEffect == true ? css.damageStatusEffectImage : css.statusEffectImage
-		
+
 	return (
 		<Tooltip
 			tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} duration={props.duration} />}

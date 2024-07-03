@@ -38,7 +38,9 @@ class ZombieCleoRareHermitCard extends Card {
 		slot.not(slot.hasId(this.props.id))
 	)
 
-	pickedAttack = new InstancedValue<{card: CardInstance; attack: HermitAttackType} | null>(() => null)
+	pickedAttack = new InstancedValue<{card: CardInstance; attack: HermitAttackType} | null>(
+		() => null
+	)
 
 	override getAttack(
 		game: GameModel,
