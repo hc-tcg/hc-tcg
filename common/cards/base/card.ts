@@ -174,8 +174,8 @@ export class InstancedValue<T> {
 	default: T
 	values: Record<string, T> = {}
 
-	public constructor(defaultValue: T) {
-		this.default = defaultValue
+	public constructor(defaultFactory: () => T) {
+		this.default = defaultFactory()
 	}
 
 	public set(instance: CardInstance, value: T) {

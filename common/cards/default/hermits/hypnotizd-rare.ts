@@ -39,7 +39,7 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
-	targetIndex = new InstancedValue<number | null>(null)
+	targetIndex = new InstancedValue<number | null>(() => null)
 
 	override getAttack(
 		game: GameModel,

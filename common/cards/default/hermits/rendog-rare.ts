@@ -37,8 +37,8 @@ class RendogRareHermitCard extends Card {
 		slot.not(slot.hasId(this.props.id))
 	)
 
-	imitatingCard = new InstancedValue<CardInstance | null>(null)
-	pickedAttack = new InstancedValue<HermitAttackType | null>(null)
+	imitatingCard = new InstancedValue<CardInstance | null>(() => null)
+	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
 
 	override getAttack(
 		game: GameModel,

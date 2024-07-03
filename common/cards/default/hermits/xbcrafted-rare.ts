@@ -32,7 +32,7 @@ class XBCraftedRareHermitCard extends Card {
 		},
 	}
 
-	ignoreEffectCard = new InstancedValue(false)
+	ignoreEffectCard = new InstancedValue(() => false)
 
 	override getAttack(
 		game: GameModel,
