@@ -22,7 +22,7 @@ class FurnaceEffectCard extends EffectCard {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		game.state.statusEffects.forEach((ail) => {
 			if (ail.targetInstance === instance) {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+				removeStatusEffect(game, pos, ail.instance)
 			}
 		})
 	}

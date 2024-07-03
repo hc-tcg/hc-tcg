@@ -64,7 +64,7 @@ class OrionSoundRareHermitCard extends HermitCard {
 				)
 			})
 			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail.statusEffectInstance)
+				removeStatusEffect(game, pos, ail.instance)
 			})
 		}
 

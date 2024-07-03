@@ -77,7 +77,7 @@ export function applyStatusEffect(
 
 	const statusEffectInfo: StatusEffectInstance = {
 		statusEffectId: statusEffectId,
-		statusEffectInstance: statusEffectInstance,
+		instance: statusEffectInstance,
 		targetInstance: targetInstance,
 		damageEffect: statusEffect.damageEffect,
 	}
@@ -99,7 +99,7 @@ export function removeStatusEffect(
 	statusEffectInstance: StatusEffectInstance
 ): GenericActionResult {
 	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.statusEffectInstance === statusEffectInstance.statusEffectInstance
+		(a) => a.instance === statusEffectInstance.instance
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 

@@ -102,7 +102,7 @@ export type StatusEffectInstance = {
 	/** The ID of the statusEffect. */
 	statusEffectId: string
 	/** The statusEffect's instance. */
-	statusEffectInstance: string
+	instance: string
 	/** The target card's instance. */
 	targetInstance: CardInstance
 	/** The duration of the effect. If undefined, the effect is infinite. */

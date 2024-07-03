@@ -48,8 +48,8 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			const targetHermit = player.board.rows[activeRow].hermitCard
 			if (!targetHermit) return
 			if (
-				attack.id !==
-					statusEffectInfo.targetInstance.card.getInstanceKey(statusEffectInfo.targetInstance) ||
+				attack.getAttacker()?.row.hermitCard.instance !==
+					statusEffectInfo.targetInstance.instance ||
 				attack.type !== 'secondary'
 			)
 				return
