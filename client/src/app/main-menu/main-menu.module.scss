@@ -63,7 +63,6 @@ nav {
 	gap: 1vh;
 	grid-template-areas:
 		'public'
-		'boss'
 		'private-create'
 		'private-join'
 		'deck'
@@ -74,10 +73,6 @@ nav {
 
 #public {
 	grid-area: public;
-}
-
-#boss {
-	grid-area: boss;
 }
 
 #privateCreate {
@@ -292,7 +287,6 @@ nav {
 		grid-template-columns: 1fr 1fr;
 		grid-template-areas:
 			'public public'
-			'boss boss'
 			'private-create private-join'
 			'deck deck'
 			'logout settings';

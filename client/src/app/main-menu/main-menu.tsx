@@ -17,9 +17,8 @@ function MainMenu({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 	const {playerName, playerDeck} = useSelector(getSession)
 	const handleJoinQueue = () => dispatch(joinQueue())
-	const handleCreatePrivateGame = () => dispatch(createPrivateGame())
+	const handleCreatePrivateGame = () => setMenuSection('create-private')
 	const handleJoinPrivateGame = () => dispatch(joinPrivateGame())
-	const handleChallengeBoss = () => setMenuSection('boss-landing')
 	const handleLogOut = () => dispatch(logout())
 	const handleDeck = () => setMenuSection('deck')
 	const handleSettings = () => setMenuSection('settings')
@@ -58,9 +57,6 @@ function MainMenu({setMenuSection}: Props) {
 					<nav>
 						<Button variant="stone" id={css.public} onClick={handleJoinQueue}>
 							Public Game
-						</Button>
-						<Button variant="stone" id={css.boss} onClick={handleChallengeBoss}>
-							Challenge Evil X
 						</Button>
 						<Button variant="stone" id={css.privateCreate} onClick={handleCreatePrivateGame}>
 							Create Private Game
