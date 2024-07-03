@@ -5,7 +5,8 @@ import {getActiveRow} from '../../../utils/board'
 import {hasEnoughEnergy} from '../../../utils/attacks'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
+import {SlotInfo} from '../../../types/cards'
 
 class HumanCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -38,7 +39,8 @@ class HumanCleoRareHermitCard extends Card {
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
-		const opponentTargetKey = this.getInstanceKey(instance, 'opponentTarget')
+
+		let pickedAfkHermit: SlotInfo | null = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
@@ -110,19 +112,14 @@ class HumanCleoRareHermitCard extends Card {
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
 						// Save the target index for opponent to attack
-						player.custom[opponentTargetKey] = rowIndex
-
-						return
+						pickedAfkHermit = pickedSlot
 					},
 					onTimeout() {
 						// Remove the hook straight away
 						opponentPlayer.hooks.getAttackRequests.remove(instance)
-						// Pick the first afk hermit to attack
 						const firstAfk = game.filterSlots(pickCondition)[0]
 						if (!firstAfk) return
-
-						// Save the target index for opponent to attack
-						player.custom[opponentTargetKey] = firstAfk.rowIndex
+						pickedAfkHermit = firstAfk
 					},
 				})
 			})
@@ -133,18 +130,18 @@ class HumanCleoRareHermitCard extends Card {
 				// Immediately remove the hook
 				opponentPlayer.hooks.beforeAttack.remove(instance)
 
-				const opponentTarget: number = player.custom[opponentTargetKey]
-				if (opponentTarget !== undefined) {
-					delete player.custom[opponentTargetKey]
-
-					const targetRow = opponentPlayer.board.rows[opponentTarget]
-					if (targetRow && targetRow.hermitCard) {
-						attack.setTarget(this.props.id, {
-							player: opponentPlayer,
-							rowIndex: opponentTarget,
-							row: targetRow,
-						})
-					}
+				if (
+					pickedAfkHermit !== null &&
+					pickedAfkHermit.card &&
+					pickedAfkHermit.row &&
+					pickedAfkHermit.rowIndex !== null
+				) {
+					attack.setTarget(this.props.id, {
+						player: opponentPlayer,
+						rowIndex: pickedAfkHermit.rowIndex,
+						// This cast is safe because we verified in the if statement that the hermit card in the row exists.
+						row: pickedAfkHermit.row as RowStateWithHermit,
+					})
 				}
 
 				// They attacked now, they can end turn or change hermits with Chorus Fruit
@@ -152,9 +149,6 @@ class HumanCleoRareHermitCard extends Card {
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				// Make sure the target is always deleted
-				delete player.custom[opponentTargetKey]
-				// Delete hooks generated during opponent's attack
 				opponentPlayer.hooks.onTurnStart.remove(instance)
 				opponentPlayer.hooks.onAttach.remove(instance)
 				opponentPlayer.hooks.onDetach.remove(instance)
@@ -176,7 +170,6 @@ class HumanCleoRareHermitCard extends Card {
 		opponentPlayer.hooks.getAttackRequests.remove(instance)
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'opponentTarget')]
 	}
 }
 

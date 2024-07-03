@@ -27,7 +27,7 @@ class IronArmorEffectCard extends Card {
 
 			if (damageBlocked < 20) {
 				const damageReduction = Math.min(attack.calculateDamage(), 20 - damageBlocked)
-				damageBlocked  += damageReduction
+				damageBlocked += damageReduction
 				attack.reduceDamage(this.props.id, damageReduction)
 			}
 		})

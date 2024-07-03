@@ -29,7 +29,7 @@ class InvisibilityPotionSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		let usedUp = false
-		
+
 		player.hooks.onApply.add(instance, () => {
 			const coinFlip = flipCoin(player, instance)
 			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
@@ -37,7 +37,7 @@ class InvisibilityPotionSingleUseCard extends Card {
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (attack.isType('weakness', 'effect', 'status-effect')) return
 
-				usedUp  = true
+				usedUp = true
 				attack.multiplyDamage(this.props.id, multiplier)
 			})
 
