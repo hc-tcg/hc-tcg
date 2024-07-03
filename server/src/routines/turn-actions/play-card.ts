@@ -111,7 +111,7 @@ function* playCardSaga(
 		index,
 		card,
 	}
-	const pos = new CardPosModel(game, slotInfo, card.instance)
+	const pos = new CardPosModel(game, slotInfo, card)
 
 	// Remove the card from the hand
 	if (!DEBUG_CONFIG.unlimitedCards) {
@@ -123,10 +123,10 @@ function* playCardSaga(
 		game.battleLog.addPlayCardEntry(card.card, pos, currentPlayer.coinFlips, undefined)
 	}
 
-	card.card.onAttach(game, card.instance, pos)
+	card.card.onAttach(game, card, pos)
 
 	// Call onAttach hook
-	currentPlayer.hooks.onAttach.call(card.instance)
+	currentPlayer.hooks.onAttach.call(card)
 
 	return 'SUCCESS'
 }

@@ -1,7 +1,7 @@
 import {CardInstance, StatusEffectInstance} from './game-state'
 
 export class Hook<Listener, Args extends (...args: any) => any> {
-	public listeners: Array<[any, Args]> = []
+	public listeners: Array<[Listener, Args]> = []
 
 	/**
 	 * Adds a new listener to this hook

@@ -31,7 +31,7 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	usingSecondaryAttack = new InstancedValue<boolean>(false)
+	usingSecondaryAttack = new InstancedValue<boolean>(() => false)
 
 	override getAttack(
 		game: GameModel,

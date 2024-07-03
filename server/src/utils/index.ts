@@ -1,4 +1,4 @@
-import {RowStateWithHermit} from 'common/types/game-state'
+import {CardInstance, RowStateWithHermit} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {getCardPos} from 'common/models/card-pos-model'
@@ -41,21 +41,22 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			Object.keys(hookValue.listeners).forEach((instance, i) => {
+			hookValue.listeners.forEach(([instance, _], i) => {
+				if (!(instance instanceof CardInstance)) return
 				const pos = getCardPos(game, instance)
 				const inBoard = Boolean(pos)
-				const instanceEntry = instancesInfo[instance] || {
+				const instanceEntry = instancesInfo[instance.instance] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance] && cardsInfo[instance].card,
-					player: cardsInfo[instance] && cardsInfo[instance].player,
+					card: cardsInfo[instance.instance] && cardsInfo[instance.instance].card,
+					player: cardsInfo[instance.instance] && cardsInfo[instance.instance].player,
 					type: pos?.type,
 					index: pos?.index,
 					row: pos?.rowIndex,
 				}
 
 				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
-				instancesInfo[instance] = instanceEntry
+				instancesInfo[instance.instance] = instanceEntry
 			})
 		}
 
@@ -70,12 +71,6 @@ export function printHooksState(game: GameModel) {
 				return aRow - bRow
 			})
 		)
-
-		// Custom Values
-		for (const [instanceKey, custom] of Object.entries(player.custom)) {
-			const [id, instance, keyName] = instanceKey.split(':')
-			customValues[instance] = {id, value: custom, keyName}
-		}
 	}
 
 	// Helpers to print

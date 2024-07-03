@@ -110,3 +110,11 @@ export function removeStatusEffect(
 
 	return 'SUCCESS'
 }
+
+export function hasStatusEffect(game: GameModel, instance: CardInstance, statusEffectId: string) {
+	return (
+		game.state.statusEffects.filter(
+			(ail) => ail.statusEffectId === statusEffectId && ail.instance === instance.instance
+		).length !== 0
+	)
+}
