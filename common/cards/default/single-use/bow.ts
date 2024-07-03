@@ -32,7 +32,6 @@ class BowSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const targetKey = this.getInstanceKey(instance, 'target')
 
 		let pickedRow: RowState | null = null
 		let pickedRowIndex: number | null = null
