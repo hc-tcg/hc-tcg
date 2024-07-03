@@ -21,7 +21,7 @@ export class Hook<Listener, Args extends (...args: any) => any> {
 	 * Removes all the listeners tied to a specific instance
 	 */
 	public remove(listener: Listener) {
-		this.listeners = this.listeners.filter(([hookListener, _]) => hookListener == listener)
+		this.listeners = this.listeners.filter(([hookListener, _]) => hookListener !== listener)
 	}
 
 	/**
@@ -41,6 +41,13 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 	CardInstance | StatusEffectInstance,
 	Args
 > {
+	/* We override this method because card and status instances can not be compared with the regular === operator. */
+	override remove(listener: CardInstance | StatusEffectInstance) {
+		this.listeners = this.listeners.filter(
+			([hookListener, _]) => hookListener.instance !== listener.instance
+		)
+	}
+
 	/**
 	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
@@ -59,10 +66,9 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all listeners while passing through the first parameter.
  */
-export class WaterfallHook<Args extends (...args: any) => Parameters<Args>[0]> extends Hook<
-	CardInstance | StatusEffectInstance,
-	Args
-> {
+export class WaterfallHook<
+	Args extends (...args: any) => Parameters<Args>[0],
+> extends GameHook<Args> {
 	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
 		return this.listeners.reduce((params, [_, listener]) => {
 			params[0] = listener(...(params as Array<any>))

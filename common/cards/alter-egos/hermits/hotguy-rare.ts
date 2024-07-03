@@ -55,8 +55,7 @@ class HotguyRareHermitCard extends Card {
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (
-				!singleUseCard ||
-				singleUseCard.props.id !== 'bow' ||
+				singleUseCard?.props.id !== 'bow' ||
 				!this.usingSecondaryAttack.get(instance)
 			)
 				return

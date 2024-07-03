@@ -47,9 +47,6 @@ class BowSingleUseCard extends Card {
 					pickedRow = pickedSlot.row
 					pickedRowIndex = pickedSlot.rowIndex
 				},
-				onTimeout() {
-					// We didn't pick a target so do nothing
-				},
 			})
 		})
 
@@ -78,7 +75,6 @@ class BowSingleUseCard extends Card {
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId) return
-
 			applySingleUse(game)
 		})
 	}
@@ -88,8 +84,6 @@ class BowSingleUseCard extends Card {
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		const targetKey = this.getInstanceKey(instance, 'target')
 	}
 }
 
