@@ -6,7 +6,7 @@ export function flipCoin(
 	card: CardInstance,
 	times: number = 1,
 	currentPlayer: PlayerState | null = null
-) {
+): Array<CoinFlipT> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.board.activeRow
 	if (activeRowIndex === null) {

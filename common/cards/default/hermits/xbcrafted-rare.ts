@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {getActiveRowPos} from '../../../utils/board'
 import {slot} from '../../../slot'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
 class XBCraftedRareHermitCard extends Card {
@@ -32,6 +32,8 @@ class XBCraftedRareHermitCard extends Card {
 		},
 	}
 
+	ignoreEffectCard = new InstancedValue(false)
+
 	override getAttack(
 		game: GameModel,
 		instance: CardInstance,
@@ -43,7 +45,7 @@ class XBCraftedRareHermitCard extends Card {
 
 		if (attack.type === 'secondary') {
 			// Noice attack, set flag to ignore target effect card
-			pos.player.custom[this.getInstanceKey(instance, 'ignore')] = true
+			this.ignoreEffectCard.set(instance, true)
 		}
 
 		return attack
@@ -51,10 +53,9 @@ class XBCraftedRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const ignoreKey = this.getInstanceKey(instance, 'ignore')
 
 		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			if (!player.custom[ignoreKey]) return
+			if (!this.ignoreEffectCard.get(instance)) return
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
 			if (!opponentActivePos) return
 
@@ -64,9 +65,7 @@ class XBCraftedRareHermitCard extends Card {
 
 		player.hooks.onTurnEnd.add(instance, () => {
 			// Remove ignore flag
-			if (player.custom[ignoreKey]) {
-				delete player.custom[ignoreKey]
-			}
+			this.ignoreEffectCard.set(instance, false)
 		})
 	}
 
@@ -74,6 +73,7 @@ class XBCraftedRareHermitCard extends Card {
 		const {player} = pos
 
 		// Remove hooks
+		this.ignoreEffectCard.clear(instance)
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 	}

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardInstance, CoinFlipT} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -38,16 +38,16 @@ class PearlescentMoonRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		const status = this.getInstanceKey(instance, 'status')
-		player.custom[status] = 'none'
+
+		let status: CoinFlipT | 'missed' | null = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary' || !attacker)
 				return
 
-			if (player.custom[status] === 'missed') {
-				player.custom[status] = 'none'
+			if (status === 'missed') {
+				status = null
 				return
 			}
 
@@ -55,22 +55,22 @@ class PearlescentMoonRareHermitCard extends Card {
 			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 				if (!attack.isType('primary', 'secondary')) return
 
-				const hasFlipped = player.custom[status] === 'heads' || player.custom[status] === 'tails'
+				const hasFlipped = status === 'heads' || status === 'tails'
 
 				// Only flip a coin once
 				if (!hasFlipped) {
 					const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
-					player.custom[status] = coinFlip[0]
+					status = coinFlip[0]
 				}
 
-				if (player.custom[status] === 'heads') {
+				if (status === 'heads') {
 					attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
 				}
 			})
 
 			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				if (player.custom[status] === 'heads') {
-					player.custom[status] = 'missed'
+				if (status === 'heads') {
+					status = 'missed'
 				}
 
 				opponentPlayer.hooks.beforeAttack.remove(instance)
@@ -81,7 +81,7 @@ class PearlescentMoonRareHermitCard extends Card {
 		// If the opponent missed the previous turn and we switch hermits or we don't
 		// attack this turn then we reset the status
 		player.hooks.onTurnEnd.add(instance, () => {
-			player.custom[status] = 'none'
+			status = null
 		})
 	}
 
@@ -91,7 +91,6 @@ class PearlescentMoonRareHermitCard extends Card {
 		player.hooks.onTurnEnd.remove(instance)
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-		delete player.custom[this.getInstanceKey(instance, 'status')]
 	}
 }
 

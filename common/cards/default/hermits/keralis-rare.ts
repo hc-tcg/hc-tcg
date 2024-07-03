@@ -4,6 +4,7 @@ import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance, healHermit} from '../../../types/game-state'
+import {SlotInfo} from '../../../types/cards'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {
@@ -37,6 +38,8 @@ class KeralisRareHermitCard extends Card {
 		const playerKey = this.getInstanceKey(instance, 'player')
 		const rowKey = this.getInstanceKey(instance, 'row')
 
+		let pickedAfkHermit: SlotInfo | null = null
+
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -54,12 +57,10 @@ class KeralisRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 					// Store the info to use later
-					player.custom[playerKey] = pickedSlot.player.id
-					player.custom[rowKey] = rowIndex
+					pickedAfkHermit = pickedSlot
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one
@@ -72,11 +73,10 @@ class KeralisRareHermitCard extends Card {
 			const attackId = this.getInstanceKey(instance)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
-			const pickedPlayer = game.state.players[player.custom[playerKey]]
-			if (!pickedPlayer) return
-			const pickedRowIndex = player.custom[rowKey]
-			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
-			if (!pickedRow || !pickedRow.hermitCard) return
+			if (!pickedAfkHermit) return
+			const pickedRowIndex = pickedAfkHermit.rowIndex
+			const pickedRow = pickedAfkHermit.row
+			if (!pickedRow || !pickedRow.hermitCard || pickedRowIndex === null) return
 
 			const activeHermit = getActiveRow(player)?.hermitCard
 			if (!activeHermit) return
@@ -91,9 +91,6 @@ class KeralisRareHermitCard extends Card {
 					}$`
 				)
 			}
-
-			delete player.custom[playerKey]
-			delete player.custom[rowKey]
 		})
 	}
 
@@ -101,9 +98,6 @@ class KeralisRareHermitCard extends Card {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)
-
-		delete player.custom[this.getInstanceKey(instance, 'player')]
-		delete player.custom[this.getInstanceKey(instance, 'row')]
 	}
 }
 
