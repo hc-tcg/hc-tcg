@@ -4,7 +4,6 @@ import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
-import {getActiveRow} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
@@ -53,9 +52,8 @@ class HypnotizdRareHermitCard extends Card {
 		if (!attack || attack.type !== 'secondary') return attack
 
 		const targetIndex = this.targetIndex.get(instance)
-		if (targetIndex === opponentPlayer.board.activeRow) return attack
+		if (targetIndex === opponentPlayer.board.activeRow || targetIndex === null) return attack
 
-		if (targetIndex === null) return null
 		const targetRow = opponentPlayer.board.rows[targetIndex]
 		if (!targetRow.hermitCard) return attack
 
