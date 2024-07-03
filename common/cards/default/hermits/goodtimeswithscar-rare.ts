@@ -36,7 +36,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		],
 	}
 
-	reviveNextTurn = new InstancedValue<Set<CardInstance>>(new Set())
+	reviveNextTurn = new InstancedValue<Set<CardInstance>>(() => new Set())
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
