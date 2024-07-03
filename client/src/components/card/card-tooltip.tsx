@@ -1,9 +1,7 @@
 import React from 'react'
 import {TypeT} from 'common/types/cards'
 import {
-	Attach,
 	CardProps,
-	SingleUse,
 	WithoutFunctions,
 	isAttach,
 	isHermit,
@@ -20,7 +18,7 @@ import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {FormattedText} from 'components/formatting/formatting'
-import {formatText} from 'common/utils/formatting'
+import {EmptyNode, FormattedTextNode, formatText} from 'common/utils/formatting'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',
@@ -39,8 +37,19 @@ type Props = {
 	card: WithoutFunctions<CardProps>
 }
 
-const getDescription = (card: WithoutFunctions<Attach | SingleUse>): React.ReactNode => {
-	return FormattedText(formatText(card.description))
+const getDescription = (card: WithoutFunctions<CardProps>): React.ReactNode => {
+	let text: FormattedTextNode = EmptyNode()
+	if (isHermit(card)) {
+		text = formatText(
+			(card.primary.power ? `**${card.primary.name}**\n*${card.primary.power}*` : '') +
+				(card.secondary.power ? `**${card.secondary.name}**\n*${card.secondary.power}*` : '')
+		)
+	} else if (isAttach(card) || isSingleUse(card)) {
+		text = formatText(card.description)
+	} else if (isItem(card)) {
+		text = card.rarity === 'rare' ? formatText('*Counts as 2 Item cards.*') : EmptyNode()
+	}
+	return FormattedText(text)
 }
 
 const joinJsx = (array: Array<React.ReactNode>) => {
@@ -179,7 +188,7 @@ const CardInstanceTooltip = ({card}: Props) => {
 					{getExpansion(card)}
 					{getRank(card)}
 					{getStrengthsAndWeaknesses(card)}
-					{(isAttach(card) || isSingleUse(card)) && getDescription(card)}
+					{getDescription(card)}
 				</div>
 				<div></div>
 			</div>
