@@ -39,9 +39,7 @@ class JoeHillsRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		// null | card instance
-		const skippedKey = this.getInstanceKey(instance, 'skipped')
-		player.custom[skippedKey] = null
+		let skipped: CardInstance | null = null
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
@@ -61,7 +59,7 @@ class JoeHillsRareHermitCard extends Card {
 
 			// This will tell us to block actions at the start of our next turn
 			// Storing the cardInstance of the card that attacked
-			player.custom[skippedKey] = attacker.row.hermitCard.instance
+			skipped = attacker.row.hermitCard
 
 			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard)
 
@@ -85,23 +83,21 @@ class JoeHillsRareHermitCard extends Card {
 
 		// Block secondary attack if we skipped
 		player.hooks.onTurnStart.add(instance, () => {
-			const sameActive = game.activeRow?.hermitCard?.instance === player.custom[skippedKey]
-			if (player.custom[skippedKey] && sameActive) {
+			const sameActive = game.activeRow?.hermitCard === skipped
+			if (skipped !== null && sameActive) {
 				// We skipped last turn and we are still the active hermit, block secondary attacks
 				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
 			}
 
-			player.custom[skippedKey] = null
+			skipped = null
 		})
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const skippedKey = this.getInstanceKey(instance, 'skipped')
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnStart.remove(instance)
-		delete player.custom[skippedKey]
 	}
 }
 
