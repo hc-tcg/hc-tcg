@@ -2,8 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {CardInstance} from '../../../types/game-state'
-import {applySingleUse, getActiveRow} from '../../../utils/board'
-import {discardSingleUse} from '../../../utils/movement'
+import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class MendingSingleUseCard extends Card {
@@ -38,23 +37,6 @@ class MendingSingleUseCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-
-		const activeRowIndex = player.board.activeRow
-		if (activeRowIndex === null) {
-			discardSingleUse(game, player)
-			return
-		}
-
-		const activeRow = getActiveRow(player)
-		if (!activeRow) {
-			discardSingleUse(game, player)
-			return
-		}
-		const effectCard = activeRow.effectCard
-		if (!effectCard) {
-			discardSingleUse(game, player)
-			return
-		}
 
 		game.addPickRequest({
 			playerId: player.id,

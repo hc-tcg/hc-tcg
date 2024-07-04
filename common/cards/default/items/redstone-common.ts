@@ -12,7 +12,7 @@ class RedstoneCommonItemCard extends Card {
 		shortName: 'Redstone',
 		expansion: 'default',
 		rarity: 'common',
-		tokens: 2,
+		tokens: 0,
 		type: 'redstone',
 	}
 

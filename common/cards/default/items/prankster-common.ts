@@ -8,7 +8,7 @@ class PranksterCommonItemCard extends Card {
 		...item,
 		id: 'item_prankster_common',
 		numericId: 59,
-		name: 'Prankster Item x2',
+		name: 'Prankster Item',
 		shortName: 'Prankster',
 		expansion: 'default',
 		rarity: 'common',

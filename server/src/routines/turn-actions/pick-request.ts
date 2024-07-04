@@ -7,7 +7,7 @@ import {AttackActionData, attackToAttackAction} from 'common/types/action-data'
 
 function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any, ActionResult> {
 	// First validate data sent from client
-	if (!pickResult || !pickResult.playerId || !pickResult.card) return 'FAILURE_INVALID_DATA'
+	if (!pickResult || !pickResult.playerId) return 'FAILURE_INVALID_DATA'
 	if (pickResult.index === undefined || !pickResult.type) return 'FAILURE_INVALID_DATA'
 
 	// Find the current pick request
@@ -31,7 +31,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 			pickResult.rowIndex !== null
 				? game.state.players[pickResult.playerId].board.rows[pickResult.rowIndex]
 				: null,
-		card: CardInstance.fromLocalCardInstance(pickResult.card),
+		card: pickResult.card ? CardInstance.fromLocalCardInstance(pickResult.card) : null,
 	}
 
 	const canPick = pickRequest.canPick(game, slotInfo)
