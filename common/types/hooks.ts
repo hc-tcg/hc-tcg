@@ -2,6 +2,11 @@ import {CardInstance, StatusEffectInstance} from './game-state'
 
 export class Hook<Listener, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args]> = []
+	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
+
+	public constructor(eq?: (a: Listener, b: Listener) => boolean) {
+		this.eq = eq || this.eq
+	}
 
 	/**
 	 * Adds a new listener to this hook
@@ -21,7 +26,7 @@ export class Hook<Listener, Args extends (...args: any) => any> {
 	 * Removes all the listeners tied to a specific instance
 	 */
 	public remove(listener: Listener) {
-		this.listeners = this.listeners.filter(([hookListener, _]) => hookListener !== listener)
+		this.listeners = this.listeners.filter(([hookListener, _]) => !this.eq(hookListener, listener))
 	}
 
 	/**
@@ -41,11 +46,9 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 	CardInstance | StatusEffectInstance,
 	Args
 > {
-	/* We override this method because card and status instances can not be compared with the regular === operator. */
-	override remove(listener: CardInstance | StatusEffectInstance) {
-		this.listeners = this.listeners.filter(
-			([hookListener, _]) => hookListener.instance !== listener.instance
-		)
+	constructor() {
+		// We override the eq function because card and status instances can not be compared with the regular === operator.
+		super((a, b) => a.instance == b.instance)
 	}
 
 	/**
