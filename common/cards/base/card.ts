@@ -69,6 +69,8 @@ export const item = {
 		slot.actionAvailable('PLAY_ITEM_CARD'),
 		slot.not(slot.frozen)
 	),
+	log: (values: PlayCardLog) =>
+		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
 }
 
 export type HasHealth = CardProps & {
@@ -108,6 +110,8 @@ export const hermit = {
 		slot.actionAvailable('PLAY_HERMIT_CARD'),
 		slot.not(slot.frozen)
 	),
+	log: (values: PlayCardLog) =>
+		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
 }
 
 export type Attach = CardProps & {
@@ -132,7 +136,8 @@ export const attach = {
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		slot.not(slot.frozen)
 	),
-	log: undefined,
+	log: (values: PlayCardLog) =>
+		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
 }
 
 export type SingleUse = CardProps & {
@@ -162,11 +167,6 @@ export const singleUse = {
 		slot.playerHasActiveHermit,
 		slot.actionAvailable('PLAY_SINGLE_USE_CARD')
 	),
-}
-
-export function hermitBattleLog(name: string) {
-	return (values: PlayCardLog) =>
-		`$p{You|${values.player}}$ placed $p${name}$ on row #${values.pos.rowIndex}`
 }
 
 /** Type that allows multiple functions in a card to share values. */
@@ -322,6 +322,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 
 	/** Gets the log entry for this attack*/
 	public getLog(values: PlayCardLog) {
+		if (this.props.log) {
+			this.updateLog(this.props.log)
+		}
 		if (this.log.length === 0) {
 			return ''
 		}
