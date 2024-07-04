@@ -10,6 +10,7 @@ import Card, {
 	isAttach,
 	isHealth,
 	isHermit,
+	isItem,
 	isSingleUse,
 } from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
@@ -48,7 +49,7 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	}
 
 	public isItem(): this is CardInstance<Item> {
-		return isHermit(this.props)
+		return isItem(this.props)
 	}
 	public isSingleUse(): this is CardInstance<SingleUse> {
 		return isSingleUse(this.props)
