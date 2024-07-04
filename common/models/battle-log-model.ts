@@ -100,10 +100,6 @@ export class BattleLogModel {
 		) => {
 			if (card == null) return invalid
 
-			if (card.props.category === 'item') {
-				return `${card.props.name} ${card.props.rarity === 'rare' ? ' item x2' : 'item'}`
-			}
-
 			if (
 				card.props.category === 'hermit' &&
 				player &&
@@ -217,7 +213,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
