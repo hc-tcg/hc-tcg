@@ -196,11 +196,6 @@ export class InstancedValue<T> {
 
 abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
-	private log: Array<(values: PlayCardLog) => string>
-
-	constructor() {
-		this.log = []
-	}
 
 	public getKey(keyName: string) {
 		return this.props.id + ':' + keyName
@@ -307,28 +302,10 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return formatText(this.props.description)
 	}
 
-	/** Updates the log entry*/
-	public updateLog(logEntry: (values: PlayCardLog) => string) {
-		if (logEntry === null) return
-		this.log.push(logEntry)
-	}
-
-	private consolidateLogs(values: PlayCardLog, logIndex: number) {
-		if (logIndex > 0) {
-			values.previousLog = this.consolidateLogs(values, logIndex - 1)
-		}
-		return this.log[logIndex](values)
-	}
-
 	/** Gets the log entry for this attack*/
 	public getLog(values: PlayCardLog) {
-		if (this.props.log) {
-			this.updateLog(this.props.log)
-		}
-		if (this.log.length === 0) {
-			return ''
-		}
-		return this.consolidateLogs(values, this.log.length - 1)
+		if (!this.props.log) return ''
+		return this.props.log(values)
 	}
 }
 
