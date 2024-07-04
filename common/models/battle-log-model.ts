@@ -95,9 +95,11 @@ export class BattleLogModel {
 	) {
 		const genCardName = (
 			player: PlayerState | undefined,
-			cardInstance: CardInstance | undefined | null,
+			card: CardInstance | null | undefined,
 			rowIndex: number | null | undefined
 		) => {
+			if (card == null) return invalid
+
 			if (card.props.category === 'item') {
 				return `${card.props.name} ${card.props.rarity === 'rare' ? ' item x2' : 'item'}`
 			}
@@ -127,25 +129,18 @@ export class BattleLogModel {
 				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
 				id: pos.card ? pos.card.card.props.id : invalid,
 				name: pos.card ? genCardName(pos.player, pos.card, pos.rowIndex) : invalid,
-				hermitCard: pos.row?.hermitCard
-					? genCardName(pos.player, pos.row.hermitCard, pos.rowIndex)
-					: invalid,
+				hermitCard: genCardName(pos.player, pos.row?.hermitCard, pos.rowIndex),
 				slotType: pos.type,
 			},
 			pick: {
 				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
 				id: slotInfo?.card ? slotInfo.card.card.props.id : invalid,
-				name: slotInfo?.card
-					? genCardName(slotInfo.player, slotInfo.card, slotInfo.rowIndex)
-					: invalid,
-				hermitCard:
-					slotInfo && slotInfo.rowIndex !== null && slotInfo.rowIndex !== undefined
-						? genCardName(
-								slotInfo.player,
-								slotInfo.player.board.rows[slotInfo.rowIndex].hermitCard,
-								slotInfo.rowIndex
-						  )
-						: invalid,
+				name: genCardName(slotInfo?.player, slotInfo?.card, slotInfo?.rowIndex),
+				hermitCard: genCardName(
+					slotInfo?.player,
+					slotInfo?.rowIndex ? slotInfo?.player.board.rows[slotInfo?.rowIndex].hermitCard : null,
+					slotInfo?.rowIndex
+				),
 				slotType: slotInfo ? slotInfo.type : invalid,
 			},
 		})

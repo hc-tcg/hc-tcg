@@ -54,11 +54,7 @@ class HotguyRareHermitCard extends Card {
 		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const singleUseCard = player.board.singleUseCard
-			if (
-				singleUseCard?.props.id !== 'bow' ||
-				!this.usingSecondaryAttack.get(instance)
-			)
-				return
+			if (singleUseCard?.props.id !== 'bow' || !this.usingSecondaryAttack.get(instance)) return
 
 			const bowId = singleUseCard.card.getInstanceKey(singleUseCard)
 			if (attack.id === bowId) {
