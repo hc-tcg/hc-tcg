@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
@@ -51,17 +51,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			}
 		})
 
-		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (oldRow === null || newRow === null) return
-
-			let oldHermit = player.board.rows[oldRow].hermitCard
-			let newHermit = player.board.rows[newRow].hermitCard
-
-			if (!oldHermit || !newHermit) return
-
-			removeStatusEffect(game, getCardPos(game, oldHermit), instance)
-			applyStatusEffect(game, 'aussie-ping', newHermit)
-		})
+		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
@@ -89,9 +79,19 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 	): void {
 		const {player} = pos
 
+		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 		player.hooks.onTurnStart.add(instance, () => {
 			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
 			player.hooks.onTurnStart.remove(instance)
 		})
+	}
+
+	public override onRemoval(
+		game: GameModel,
+		instance: StatusEffectInstance<StatusEffectProps>,
+		pos: CardPosModel
+	): void {
+		const {player} = pos
+		player.hooks.onActiveRowChange.remove(instance)
 	}
 }

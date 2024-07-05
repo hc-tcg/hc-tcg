@@ -1,6 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectInstance} from '../types/game-state'
+import {PlayerState, StatusEffectInstance} from '../types/game-state'
 import {SlotCondition, slot} from '../slot'
 import {SlotInfo} from '../types/cards'
 
@@ -36,6 +36,22 @@ export function isCounter(
 	props: StatusEffectProps | StatusEffect<StatusEffectProps> | null
 ): props is Counter {
 	return props !== null && 'counter' in props
+}
+
+/** Returns a function that can be hooked to onActiveRowChange. */
+export function followActiveHermit(game: GameModel, instance: StatusEffectInstance) {
+	return (_: number | null, newRow: number | null) => {
+		if (newRow === null) return
+		let newHermit = game.currentPlayer.board.rows[newRow].hermitCard
+		if (!newHermit) return
+
+		game.state.statusEffects = game.state.statusEffects.filter(
+			(effect) => effect.instance !== instance.instance
+		)
+
+		let newInstance = new StatusEffectInstance(instance.statusEffect, instance.instance, newHermit)
+		game.state.statusEffects.push(newInstance)
+	}
 }
 
 abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps> {

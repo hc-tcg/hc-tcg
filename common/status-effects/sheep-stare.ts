@@ -1,16 +1,17 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
+import {CardPosModel} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {applyStatusEffect, removeStatusEffect} from '../utils/board'
+import {removeStatusEffect} from '../utils/board'
 
 class SheepStareEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'sheep-stare',
 		name: 'Sheep Stare',
-		description: 'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
+		description:
+			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
@@ -41,17 +42,7 @@ class SheepStareEffect extends StatusEffect {
 			removeStatusEffect(game, pos, instance)
 		})
 
-		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
-			if (oldRow === null || newRow === null) return
-
-			let oldHermit = player.board.rows[oldRow].hermitCard
-			let newHermit = player.board.rows[newRow].hermitCard
-
-			if (!oldHermit || !newHermit) return
-
-			removeStatusEffect(game, getCardPos(game, oldHermit), instance)
-			applyStatusEffect(game, 'sheep-stare', newHermit)
-		})
+		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
