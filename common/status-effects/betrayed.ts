@@ -12,7 +12,8 @@ class BetrayedStatusEffect extends StatusEffect {
 		...statusEffect,
 		id: 'betrayed',
 		name: 'Betrayed',
-		description: 'This Hermit must attack an AKF hermit if one exists.',
+		description:
+			'This Hermit must attack an AFK hermit if one exists and they have the neccesary items attached to attack.',
 		damageEffect: false,
 	}
 
