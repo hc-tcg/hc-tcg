@@ -5,12 +5,14 @@ import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
 
-class SheepStareEffect extends StatusEffect {
+// @TODO Prevent missing on multiple rounds in a row
+class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
-		id: 'sheep-stare',
-		name: 'Sheep Stare',
-		description: 'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
+		id: 'aussie-ping',
+		name: 'Aussie Ping',
+		description:
+			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
@@ -29,7 +31,7 @@ class SheepStareEffect extends StatusEffect {
 			}
 
 			if (coinFlipResult === 'heads') {
-				attack.setTarget(this.props.id, attack.getAttacker())
+				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
 			}
 		})
 
@@ -50,7 +52,7 @@ class SheepStareEffect extends StatusEffect {
 			if (!oldHermit || !newHermit) return
 
 			removeStatusEffect(game, getCardPos(game, oldHermit), instance)
-			applyStatusEffect(game, 'sheep-stare', newHermit)
+			applyStatusEffect(game, 'aussie-ping', newHermit)
 		})
 	}
 
@@ -64,4 +66,4 @@ class SheepStareEffect extends StatusEffect {
 	}
 }
 
-export default SheepStareEffect
+export default AussiePingStatusEffect
