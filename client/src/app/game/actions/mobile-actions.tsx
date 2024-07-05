@@ -22,11 +22,10 @@ import {endTurnModalEmpty} from '../modals/end-turn-modal'
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
 	localGameState: LocalGameState
-	mobile?: boolean
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
+const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
@@ -37,7 +36,6 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const player = useSelector(getPlayerState)
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 
