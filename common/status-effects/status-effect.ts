@@ -1,6 +1,6 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {PlayerState, StatusEffectInstance} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {SlotCondition, slot} from '../slot'
 import {SlotInfo} from '../types/cards'
 
