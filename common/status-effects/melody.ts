@@ -15,11 +15,11 @@ class MelodyStatusEffect extends StatusEffect {
 		applyCondition: slot.not(slot.hasStatusEffect('melody')),
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.add(statusEffectInfo, () => {
-			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
+		player.hooks.onTurnStart.add(instance, () => {
+			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
 			if (!targetPos || !targetPos.row || !targetPos.row.hermitCard) return
 			if (targetPos.rowIndex === null) return
 
@@ -30,20 +30,20 @@ class MelodyStatusEffect extends StatusEffect {
 			}
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo)
+			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(statusEffectInfo)
-		player.hooks.afterDefence.remove(statusEffectInfo)
+		player.hooks.onTurnStart.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 }
 

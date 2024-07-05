@@ -14,23 +14,23 @@ class UsedClockStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter
+		if (!instance.counter) instance.counter = this.props.counter
 
-		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
-			if (!statusEffectInfo.counter) return
-			statusEffectInfo.counter--
+		player.hooks.onTurnEnd.add(instance, () => {
+			if (!instance.counter) return
+			instance.counter--
 
-			if (statusEffectInfo.counter === 0) removeStatusEffect(game, pos, statusEffectInfo)
+			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo)
-		player.hooks.onTurnStart.remove(statusEffectInfo)
+		opponentPlayer.hooks.beforeAttack.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
 	}
 }
 

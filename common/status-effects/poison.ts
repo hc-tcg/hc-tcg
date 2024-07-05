@@ -17,15 +17,15 @@ class PoisonStatusEffect extends StatusEffect {
 			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		if (pos.card) {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $ePoisoned$`)
 		}
 
-		opponentPlayer.hooks.onTurnEnd.add(statusEffectInfo, () => {
-			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
+		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
 			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
 			if (!targetPos.row.hermitCard) return
 
@@ -45,7 +45,7 @@ class PoisonStatusEffect extends StatusEffect {
 			}
 
 			const statusEffectAttack = new AttackModel({
-				id: this.getInstanceKey(statusEffectInfo, 'statusEffectAttack'),
+				id: this.getInstanceKey(instance, 'statusEffectAttack'),
 				attacker: sourceRow,
 				target: targetRow,
 				type: 'status-effect',
@@ -61,19 +61,19 @@ class PoisonStatusEffect extends StatusEffect {
 			executeExtraAttacks(game, [statusEffectAttack], true)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo, (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== statusEffectInfo.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo)
+			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onTurnEnd.remove(statusEffectInfo)
-		player.hooks.afterDefence.remove(statusEffectInfo)
+		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 }
 

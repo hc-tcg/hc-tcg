@@ -16,29 +16,29 @@ class BadOmenStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter
+		if (!instance.counter) instance.counter = this.props.counter
 
 		if (pos.card) {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $bBad Omen$`)
 		}
 
-		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo, () => {
-			if (!statusEffectInfo.counter) return
-			statusEffectInfo.counter--
+		opponentPlayer.hooks.onTurnStart.add(instance, () => {
+			if (!instance.counter) return
+			instance.counter--
 
-			if (statusEffectInfo.counter === 0) removeStatusEffect(game, pos, statusEffectInfo)
+			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
 		})
 
-		player.hooks.onCoinFlip.addBefore(statusEffectInfo, (card, coinFlips) => {
-			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
+		player.hooks.onCoinFlip.addBefore(instance, (card, coinFlips) => {
+			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
 
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
 			if (
-				statusEffectInfo.targetInstance.instance !== card.instance &&
+				instance.targetInstance.instance !== card.instance &&
 				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips
@@ -51,10 +51,10 @@ class BadOmenStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onCoinFlip.remove(statusEffectInfo)
-		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo)
+		player.hooks.onCoinFlip.remove(instance)
+		opponentPlayer.hooks.onTurnStart.remove(instance)
 	}
 }
 

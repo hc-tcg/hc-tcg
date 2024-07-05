@@ -15,13 +15,13 @@ class SmeltingStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.add(statusEffectInfo, () => {
-			if (statusEffectInfo.counter === null) return
-			statusEffectInfo.counter -= 1
-			if (statusEffectInfo.counter === 0) {
+		player.hooks.onTurnStart.add(instance, () => {
+			if (instance.counter === null) return
+			instance.counter -= 1
+			if (instance.counter === 0) {
 				discardCard(game, pos.card)
 				pos.row?.itemCards.forEach((card) => {
 					if (!card) return
@@ -31,10 +31,10 @@ class SmeltingStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(statusEffectInfo)
+		player.hooks.onTurnStart.remove(instance)
 	}
 }
 
