@@ -50,6 +50,7 @@ export function followActiveHermit(game: GameModel, instance: StatusEffectInstan
 		)
 
 		let newInstance = new StatusEffectInstance(instance.statusEffect, instance.instance, newHermit)
+		newInstance.counter = instance.counter
 		game.state.statusEffects.push(newInstance)
 	}
 }

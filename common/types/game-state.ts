@@ -119,17 +119,6 @@ export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffect
 		this.counter = null
 	}
 
-	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
-		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
-	}
-
-	public toLocalCardInstance(): LocalStatusEffectInstance<Props> {
-		return {
-			props: this.statusEffect.props,
-			instance: this.instance,
-		}
-	}
-
 	public get props(): Props {
 		return this.statusEffect.props
 	}
