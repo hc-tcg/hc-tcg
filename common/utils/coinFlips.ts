@@ -21,7 +21,7 @@ export function flipCoin(
 		if (forceHeads) {
 			coinFlips.push('heads')
 		} else {
-			const coinFlip: CoinFlipT = Math.random() > 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipT = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
 	}

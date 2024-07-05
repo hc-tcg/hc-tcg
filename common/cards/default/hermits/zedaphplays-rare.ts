@@ -1,6 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance, CoinFlipT} from '../../../types/game-state'
+import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -34,8 +35,6 @@ class ZedaphPlaysRareHermitCard extends Card {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
-		let coinFlipResult: CoinFlipT | null = null
-
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attacker = attack.getAttacker()
 			if (attack.id !== instanceKey || attack.type !== 'primary' || !attacker) return
@@ -44,27 +43,7 @@ class ZedaphPlaysRareHermitCard extends Card {
 			const coinFlip = flipCoin(player, attackerHermit)
 			if (coinFlip[0] !== 'heads') return
 
-			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-				if (!attack.getAttacker()) return
-
-				// No need to flip a coin for multiple attacks
-				if (!coinFlipResult) {
-					const coinFlip = flipCoin(player, attackerHermit, 1, opponentPlayer)
-					coinFlipResult = coinFlip[0]
-				}
-
-				if (coinFlipResult === 'heads') {
-					// Change attack target - this just works
-					attack.setTarget(this.props.id, attack.getAttacker())
-				}
-			})
-
-			opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-				// Delete our hook at the end of opponents turn
-				opponentPlayer.hooks.onTurnEnd.remove(instance)
-				opponentPlayer.hooks.beforeAttack.remove(instance)
-			})
+			applyStatusEffect(game, 'sheep-stare', attack.getTarget()?.row.hermitCard)
 		})
 	}
 
