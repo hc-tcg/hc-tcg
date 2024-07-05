@@ -22,9 +22,9 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		const {player} = pos
 		let oldHandSize = player.hand.length
 
-		player.hooks.onAttach.add(instance, (instance) => {
+		player.hooks.onAttach.add(instance, (cardInstance) => {
 			if (player.hand.length === oldHandSize) return
-			const instanceLocation = game.findSlot(slot.hasInstance(instance))
+			const instanceLocation = game.findSlot(slot.hasInstance(cardInstance))
 			if (instance.counter === null) return
 			oldHandSize = player.hand.length
 			if (instanceLocation?.type === 'single_use') return
@@ -43,8 +43,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			const targetHermit = player.board.rows[activeRow].hermitCard
 			if (!targetHermit) return
 			if (
-				attack.getAttacker()?.row.hermitCard.instance !==
-					instance.targetInstance.instance ||
+				attack.getAttacker()?.row.hermitCard.instance !== instance.targetInstance.instance ||
 				attack.type !== 'secondary'
 			)
 				return
