@@ -39,6 +39,12 @@ class SheepStareEffect extends StatusEffect {
 		player.hooks.afterAttack.add(instance, (attack) => {
 			removeStatusEffect(game, pos, instance)
 		})
+
+		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
+			if (oldRow === null || newRow === null) return
+
+			removeStatusEffect(game, player.board.rows[oldRow].hermitCard, instance)
+		})
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
