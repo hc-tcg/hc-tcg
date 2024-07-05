@@ -40,18 +40,18 @@ $grid-size: 25px;
 	grid-template-columns: repeat(11, $size);
 	grid-template-rows: repeat(6, $size);
 	grid-template-areas:
-		'item1 item1 effect effect effect hermit hermit hermit hermit hermit hermit'
-		'item1 item1 effect effect effect hermit hermit hermit hermit hermit hermit'
-		'item2 item2 effect effect effect hermit hermit hermit hermit hermit hermit'
+		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit'
+		'item1 item1 attach attach attach hermit hermit hermit hermit hermit hermit'
+		'item2 item2 attach attach attach hermit hermit hermit hermit hermit hermit'
 		'item2 item2 health health health hermit hermit hermit hermit hermit hermit'
 		'item3 item3 health health health hermit hermit hermit hermit hermit hermit'
 		'item3 item3 health health health hermit hermit hermit hermit hermit hermit';
 
 	&.reversed {
 		grid-template-areas:
-			'hermit hermit hermit hermit hermit hermit effect effect effect item1 item1'
-			'hermit hermit hermit hermit hermit hermit effect effect effect item1 item1'
-			'hermit hermit hermit hermit hermit hermit effect effect effect item2 item2'
+			'hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
+			'hermit hermit hermit hermit hermit hermit attach attach attach item1 item1'
+			'hermit hermit hermit hermit hermit hermit attach attach attach item2 item2'
 			'hermit hermit hermit hermit hermit hermit health health health item2 item2'
 			'hermit hermit hermit hermit hermit hermit health health health item3 item3'
 			'hermit hermit hermit hermit hermit hermit health health health item3 item3';
@@ -89,7 +89,7 @@ $grid-size: 25px;
 		background: #6d6e64;
 	}
 
-	&.effect {
+	&.attach {
 		background: #353536;
 	}
 
@@ -126,7 +126,7 @@ $grid-size: 25px;
 			box-shadow: 0 0 5px #333;
 		}
 
-		&.effect .frame {
+		&.attach .frame {
 			box-shadow: 0 0 3px #ddd;
 		}
 	}
@@ -167,8 +167,8 @@ $grid-size: 25px;
 	grid-area: hermit;
 }
 
-#effect {
-	grid-area: effect;
+#attach {
+	grid-area: attach;
 }
 
 @for $i from 1 through 3 {
@@ -243,10 +243,10 @@ $grid-size: 25px;
 
 		grid-template-columns: repeat(6, $size);
 		grid-template-rows: repeat(1, $size);
-		grid-template-areas: 'item3 item2 item1 effect hermit health';
+		grid-template-areas: 'item3 item2 item1 attach hermit health';
 
 		&.reversed {
-			grid-template-areas: 'health hermit effect item1 item2 item3';
+			grid-template-areas: 'health hermit attach item1 item2 item3';
 		}
 	}
 }
