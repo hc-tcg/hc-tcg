@@ -25,8 +25,8 @@ export const statusEffect = {
 export const damageEffect = {
 	damageEffect: true,
 	applyCondition: (game: GameModel, pos: SlotInfo) =>
-		game.state.statusEffects.some(
-			(a) => a.targetInstance.instance === pos.card?.instance && a.props.damageEffect === true
+		game.state.statusEffects.every(
+			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.damageEffect === false
 		),
 }
 
