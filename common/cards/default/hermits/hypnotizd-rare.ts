@@ -4,6 +4,7 @@ import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
+import {hasStatusEffect} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
@@ -84,6 +85,10 @@ class HypnotizdRareHermitCard extends Card {
 				slot.itemSlot,
 				slot.not(slot.empty)
 			)
+
+			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
+			// to make the game easier to follow.
+			if (hasStatusEffect(game, instance, 'betrayed')) return
 
 			if (!game.someSlotFulfills(pickCondition)) return
 			const itemRequest: PickRequest = {
