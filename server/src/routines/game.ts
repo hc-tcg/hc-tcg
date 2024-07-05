@@ -45,7 +45,7 @@ function getAvailableEnergy(game: GameModel) {
 		// Get energy from each item card
 		for (let i = 0; i < activeRow.itemCards.length; i++) {
 			const card = activeRow.itemCards[i]
-			if (!card) continue
+			if (!card?.isItem()) continue
 			const pos = getCardPos(game, card)
 			if (!pos) continue
 

@@ -75,7 +75,7 @@ export class CardInstance<Props extends CardProps = CardProps> {
 export type RowStateWithHermit = {
 	hermitCard: CardInstance<HasHealth>
 	effectCard: CardInstance<Attach> | null
-	itemCards: Array<CardInstance<Item> | null>
+	itemCards: Array<CardInstance<CardProps> | null>
 	health: number
 }
 
@@ -100,7 +100,7 @@ export type RowState = RowStateWithHermit | RowStateWithoutHermit
 export type LocalRowState = {
 	hermitCard: LocalCardInstance<HasHealth> | null
 	effectCard: LocalCardInstance<Attach> | null
-	itemCards: Array<LocalCardInstance<Item> | null>
+	itemCards: Array<LocalCardInstance<CardProps> | null>
 	health: number | null
 }
 

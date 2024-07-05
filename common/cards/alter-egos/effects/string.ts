@@ -1,5 +1,5 @@
 import {slot} from '../../../slot'
-import Card, {Attach, Item, attach, item} from '../../base/card'
+import Card, {Attach, attach} from '../../base/card'
 
 class StringEffectCard extends Card {
 	props: Attach = {

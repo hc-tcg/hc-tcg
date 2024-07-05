@@ -39,7 +39,7 @@ class BetrayedStatusEffect extends StatusEffect {
 			if (!opponentActiveRow) return
 
 			const energy = opponentActiveRow.itemCards.flatMap((item) => {
-				if (item) return item.props.type
+				if (item?.isItem()) return item.props.type
 				return []
 			})
 
