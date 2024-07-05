@@ -1,4 +1,4 @@
-import StatusEffect from './status-effect'
+import StatusEffect, { Counter, StatusEffectProps } from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -7,33 +7,30 @@ import {CARDS} from '../cards'
 import {slot} from '../slot'
 
 class BadOmenStatusEffect extends StatusEffect {
-	constructor() {
-		super({
+	props: StatusEffectProps & Counter = {
 			id: 'badomen',
 			name: 'Bad Omen',
 			description: 'All coinflips are tails.',
-			duration: 3,
-			counter: false,
+			counter: 3,
+			counterType: 'turns',
 			damageEffect: false,
-			visible: true,
-		})
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter
 
 		if (pos.card) {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $bBad Omen$`)
 		}
 
 		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
+			if (!statusEffectInfo.counter) return
+			statusEffectInfo.counter--
 
-			if (statusEffectInfo.duration === 0) removeStatusEffect(game, pos, statusEffectInfo)
+			if (statusEffectInfo.counter === 0) removeStatusEffect(game, pos, statusEffectInfo)
 		})
 
 		player.hooks.onCoinFlip.addBefore(statusEffectInfo, (card, coinFlips) => {

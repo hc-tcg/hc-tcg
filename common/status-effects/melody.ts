@@ -1,30 +1,22 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
+import {hasStatusEffect, removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {slot} from '../slot'
 
 class MelodyStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'melody',
-			name: "Ollie's Melody",
-			description: 'This Hermit heals 10hp every turn.',
-			duration: 0,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps = {
+		id: 'melody',
+		name: "Ollie's Melody",
+		description: 'This Hermit heals 10hp every turn.',
+		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		const hasMelody = game.state.statusEffects.some(
-			(a) => a.targetInstance.instance === pos.card?.instance && a.statusEffectId === 'melody'
-		)
-
+		const hasMelody = hasStatusEffect(game, pos.card, 'melody')
 		if (hasMelody) return
 
 		game.state.statusEffects.push(statusEffectInfo)

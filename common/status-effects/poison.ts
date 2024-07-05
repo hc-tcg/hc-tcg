@@ -1,4 +1,4 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
 import {CardPosModel} from '../models/card-pos-model'
@@ -9,24 +9,19 @@ import {executeExtraAttacks} from '../utils/attacks'
 import {slot} from '../slot'
 
 class PoisonStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'poison',
-			name: 'Poison',
-			description:
-				"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
-			duration: 0,
-			counter: false,
-			damageEffect: true,
-			visible: true,
-		})
+	props: StatusEffectProps = {
+		id: 'poison',
+		name: 'Poison',
+		description:
+			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
+		damageEffect: true,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const hasDamageEffect = game.state.statusEffects.some(
-			(a) => a.targetInstance.instance === pos.card?.instance && a.damageEffect === true
+			(a) => a.targetInstance.instance === pos.card?.instance && a.props.damageEffect === true
 		)
 
 		if (hasDamageEffect) return
@@ -48,7 +43,7 @@ class PoisonStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-				  }
+					}
 				: null
 
 			const targetRow: RowPos = {
@@ -66,9 +61,9 @@ class PoisonStatusEffect extends StatusEffect {
 			})
 
 			if (targetPos.row.health >= 30) {
-				statusEffectAttack.addDamage(this.id, 20)
+				statusEffectAttack.addDamage(this.props.id, 20)
 			} else if (targetPos.row.health == 20) {
-				statusEffectAttack.addDamage(this.id, 10)
+				statusEffectAttack.addDamage(this.props.id, 10)
 			}
 
 			executeExtraAttacks(game, [statusEffectAttack], true)

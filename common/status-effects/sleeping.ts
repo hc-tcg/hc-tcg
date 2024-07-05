@@ -13,6 +13,7 @@ class SleepingStatusEffect extends StatusEffect {
 			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 		damageEffect: false,
 		counter: 3,
+		counterType: 'turns',
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {

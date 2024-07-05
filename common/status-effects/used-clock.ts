@@ -10,6 +10,7 @@ class UsedClockStatusEffect extends StatusEffect {
 		name: 'Turn Skipped',
 		description: 'Turns can not be skipped consecutively.',
 		counter: 2,
+		counterType: 'turns',
 		damageEffect: false,
 	}
 

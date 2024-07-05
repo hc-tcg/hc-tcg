@@ -1,28 +1,21 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
+import {hasStatusEffect} from '../utils/board'
 
 class DyedStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'dyed',
-			name: 'Dyed',
-			description: 'Items attached to this Hermit become any type.',
-			duration: 0,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps = {
+		id: 'dyed',
+		name: 'Dyed',
+		description: 'Items attached to this Hermit become any type.',
+		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		const hasDyed = game.state.statusEffects.some(
-			(a) => a.targetInstance.instance === pos.card?.instance && a.statusEffectId === 'dyed'
-		)
-
+		const hasDyed = hasStatusEffect(game, pos.card, 'dyed')
 		if (hasDyed) return
 
 		game.state.statusEffects.push(statusEffectInfo)

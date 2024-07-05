@@ -1,4 +1,4 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -6,16 +6,11 @@ import {StatusEffectInstance} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
 
 class ProtectedStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'protected',
-			name: "Sheriff's Protection",
-			description: 'This Hermit does not take damage on their first active turn.',
-			duration: 0,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps = {
+		id: 'protected',
+		name: "Sheriff's Protection",
+		description: 'This Hermit does not take damage on their first active turn.',
+		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
@@ -50,7 +45,7 @@ class ProtectedStatusEffect extends StatusEffect {
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.id, 0).lockDamage(this.id)
+				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
 			}
 		})
 

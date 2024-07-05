@@ -11,6 +11,7 @@ export type StatusEffectProps = {
 
 export type Counter = StatusEffectProps & {
 	counter: number
+	counterType: 'turns' | 'number'
 }
 
 export function isCounter(props: StatusEffect<StatusEffectProps>): props is StatusEffect<Counter>

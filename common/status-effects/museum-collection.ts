@@ -1,4 +1,4 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -8,17 +8,14 @@ import {AttackModel} from '../models/attack-model'
 import {slot} from '../slot'
 
 class MuseumCollectionStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'museum-collection',
-			name: 'Museum Collection Size',
-			description:
-				"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
-			duration: 0,
-			counter: true,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps & Counter = {
+		id: 'museum-collection',
+		name: 'Museum Collection Size',
+		description:
+			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
+		counter: 0,
+		counterType: 'number',
+		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
@@ -30,16 +27,16 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		player.hooks.onAttach.add(statusEffectInfo, (instance) => {
 			if (player.hand.length === oldHandSize) return
 			const instanceLocation = game.findSlot(slot.hasInstance(instance))
-			if (statusEffectInfo.duration === undefined) return
+			if (statusEffectInfo.counter === null) return
 			oldHandSize = player.hand.length
 			if (instanceLocation?.type === 'single_use') return
-			statusEffectInfo.duration++
+			statusEffectInfo.counter++
 		})
 
 		player.hooks.onApply.add(statusEffectInfo, () => {
-			if (statusEffectInfo.duration === undefined) return
+			if (statusEffectInfo.counter === null) return
 			oldHandSize = player.hand.length
-			statusEffectInfo.duration++
+			statusEffectInfo.counter++
 		})
 
 		player.hooks.onAttack.add(statusEffectInfo, (attack) => {
@@ -53,12 +50,12 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 				attack.type !== 'secondary'
 			)
 				return
-			if (statusEffectInfo.duration === undefined) return
+			if (statusEffectInfo.counter === null) return
 
 			player.hooks.onApply.remove(statusEffectInfo)
 			player.hooks.onApply.add(statusEffectInfo, () => {
-				if (statusEffectInfo.duration === undefined) return
-				statusEffectInfo.duration++
+				if (statusEffectInfo.counter == null) return
+				statusEffectInfo.counter++
 
 				const additionalAttack = new AttackModel({
 					id: this.getInstanceKey(statusEffectInfo, 'additionalAttack'),
@@ -66,14 +63,14 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 					target: attack.getTarget(),
 					type: 'secondary',
 				})
-				additionalAttack.addDamage(this.id, 20)
+				additionalAttack.addDamage(this.props.id, 20)
 
 				player.hooks.onApply.remove(statusEffectInfo)
 
 				executeAttacks(game, [additionalAttack], true)
 			})
 
-			attack.addDamage(this.id, 20 * statusEffectInfo.duration)
+			attack.addDamage(this.props.id, 20 * statusEffectInfo.counter)
 		})
 
 		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
