@@ -73,7 +73,7 @@ const Slot = ({
 		return (
 			<div className={css.statusEffectContainer}>
 				{cleanedStatusEffects.map((effect) => {
-					if (effect.props.damageEffect == true) return null
+					if (effect.statusEffect.props.damageEffect === true) return null
 					return <StatusEffect statusEffect={effect.statusEffect} counter={effect.counter} />
 				})}
 			</div>
@@ -84,7 +84,7 @@ const Slot = ({
 		return (
 			<div className={css.damageStatusEffectContainer}>
 				{cleanedStatusEffects.map((effect) => {
-					if (effect.props.damageEffect == false) return null
+					if (effect.statusEffect.props.damageEffect === false) return null
 					return <StatusEffect statusEffect={effect.statusEffect} counter={null} />
 				})}
 			</div>
