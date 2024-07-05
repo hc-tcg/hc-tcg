@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {applyStatusEffect} from '../../../utils/board'
+import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
@@ -63,13 +63,8 @@ class BedEffectCard extends Card {
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
-			const isSleeping = game.state.statusEffects.some(
-				(a) =>
-					a.targetInstance.instance == row?.hermitCard?.instance && a.statusEffectId == 'sleeping'
-			)
-
 			// if sleeping has worn off, discard the bed
-			if (!isSleeping) {
+			if (!hasStatusEffect(game, instance, 'sleeping')) {
 				discardCard(game, row?.effectCard || null)
 				player.hooks.onTurnEnd.remove(instance)
 			}

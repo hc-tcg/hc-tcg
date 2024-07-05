@@ -2,14 +2,12 @@ import {slot} from '../../../slot'
 import Card, {Attach, Item, attach, item} from '../../base/card'
 
 class StringEffectCard extends Card {
-	props: Attach & Item = {
+	props: Attach = {
 		...attach,
-		...item,
 		id: 'string',
 		numericId: 122,
 		name: 'String',
 		expansion: 'alter_egos',
-		type: 'balanced',
 		category: 'attach',
 		rarity: 'rare',
 		tokens: 2,

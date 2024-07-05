@@ -51,10 +51,7 @@ class MilkBucketEffectCard extends Card {
 		} else if (pos.type === 'attach') {
 			// Straight away remove poison
 			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
-				return (
-					ail.targetInstance.instance === row?.hermitCard?.instance &&
-					ail.statusEffectId == 'poison'
-				)
+				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.props.id == 'poison'
 			})
 			if (poisonStatusEffect) {
 				removeStatusEffect(game, pos, poisonStatusEffect)
@@ -65,7 +62,7 @@ class MilkBucketEffectCard extends Card {
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 					return (
 						ail.targetInstance.instance === row.hermitCard?.instance &&
-						(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
+						(ail.props.id == 'poison' || ail.props.id == 'badomen')
 					)
 				})
 				statusEffectsToRemove.forEach((ail) => {
@@ -78,7 +75,7 @@ class MilkBucketEffectCard extends Card {
 				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 					return (
 						ail.targetInstance.instance === row.hermitCard?.instance &&
-						(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
+						(ail.props.id == 'poison' || ail.props.id == 'badomen')
 					)
 				})
 				statusEffectsToRemove.forEach((ail) => {
