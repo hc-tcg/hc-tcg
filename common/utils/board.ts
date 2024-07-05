@@ -72,20 +72,13 @@ export function applyStatusEffect(
 
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
-	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
-	const statusEffectInstance = Math.random().toString()
+	const statusEffectInstance = new StatusEffectInstance(
+		STATUS_EFFECT_CLASSES[statusEffectId],
+		Math.random().toString(),
+		targetInstance
+	)
 
-	const statusEffectInfo: StatusEffectInstance = {
-		statusEffectId: statusEffectId,
-		instance: statusEffectInstance,
-		targetInstance: targetInstance,
-		damageEffect: statusEffect.damageEffect,
-	}
-
-	statusEffect.onApply(game, statusEffectInfo, pos)
-
-	if (statusEffect.duration > 0 || statusEffect.counter)
-		statusEffectInfo.duration = statusEffect.duration
+	statusEffectInstance.statusEffect.onApply(game, statusEffectInstance, pos)
 
 	return 'SUCCESS'
 }
@@ -103,7 +96,7 @@ export function removeStatusEffect(
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
-	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
+	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
 	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
@@ -114,7 +107,7 @@ export function removeStatusEffect(
 export function hasStatusEffect(game: GameModel, instance: CardInstance, statusEffectId: string) {
 	return (
 		game.state.statusEffects.filter(
-			(ail) => ail.statusEffectId === statusEffectId && ail.instance === instance.instance
+			(ail) => ail.props.id === statusEffectId && ail.instance === instance.instance
 		).length !== 0
 	)
 }

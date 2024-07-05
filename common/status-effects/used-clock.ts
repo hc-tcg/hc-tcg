@@ -1,33 +1,29 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 
 class UsedClockStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'used-clock',
-			name: 'Turn Skipped',
-			description: 'Turns can not be skipped consecutively.',
-			duration: 2,
-			counter: false,
-			damageEffect: false,
-			visible: false,
-		})
+	props: StatusEffectProps & Counter = {
+		id: 'used-clock',
+		name: 'Turn Skipped',
+		description: 'Turns can not be skipped consecutively.',
+		counter: 2,
+		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter
 
 		player.hooks.onTurnEnd.add(statusEffectInfo, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
+			if (!statusEffectInfo.counter) return
+			statusEffectInfo.counter--
 
-			if (statusEffectInfo.duration === 0) removeStatusEffect(game, pos, statusEffectInfo)
+			if (statusEffectInfo.counter === 0) removeStatusEffect(game, pos, statusEffectInfo)
 		})
 	}
 

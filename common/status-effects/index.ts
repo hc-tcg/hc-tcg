@@ -30,8 +30,9 @@ const effectClasses: Array<StatusEffect> = [
 ]
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, card) => {
-		result[card.id] = card
+	(result: Record<string, StatusEffect>, effect) => {
+		if (!effect.props) return result
+		result[effect.props.id] = effect
 		return result
 	},
 	{}

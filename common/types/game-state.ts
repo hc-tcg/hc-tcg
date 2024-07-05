@@ -16,11 +16,18 @@ import Card, {
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {SlotCondition} from '../slot'
+import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
 import {GameHook, WaterfallHook} from './hooks'
-import {LocalCardInstance, ModalRequest, PickInfo, PickRequest} from './server-requests'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+	ModalRequest,
+	PickInfo,
+	PickRequest,
+} from './server-requests'
 
 export type PlayerId = string
 
@@ -99,17 +106,37 @@ export type LocalRowState = {
 
 export type CoinFlipT = 'heads' | 'tails'
 
-export type StatusEffectInstance = {
-	/** The ID of the statusEffect. */
-	statusEffectId: string
-	/** The statusEffect's instance. */
-	instance: string
-	/** The target card's instance. */
-	targetInstance: CardInstance
-	/** The duration of the effect. If undefined, the effect is infinite. */
-	duration?: number
-	/** Whether the statusEffect is a damage effect or not. */
-	damageEffect: boolean
+export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> {
+	readonly statusEffect: StatusEffect<Props>
+	readonly instance: string
+	readonly targetInstance: CardInstance
+	public counter: number | null
+
+	constructor(statusEffect: StatusEffect<Props>, instance: string, targetInstance: CardInstance) {
+		this.statusEffect = statusEffect
+		this.instance = instance
+		this.targetInstance = targetInstance
+		this.counter = null
+	}
+
+	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
+		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
+	}
+
+	public toLocalCardInstance(): LocalStatusEffectInstance<Props> {
+		return {
+			props: this.statusEffect.props,
+			instance: this.instance,
+		}
+	}
+
+	public get props(): Props {
+		return this.statusEffect.props
+	}
+
+	public isValue(): this is StatusEffectInstance<Counter> {
+		return isCounter(this.statusEffect.props)
+	}
 }
 
 export type CurrentCoinFlipT = {

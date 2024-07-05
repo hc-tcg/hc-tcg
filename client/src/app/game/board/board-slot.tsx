@@ -4,7 +4,6 @@ import {LocalRowState} from 'common/types/game-state'
 import css from './board.module.scss'
 import {StatusEffectInstance} from 'common/types/game-state'
 import StatusEffect from 'components/status-effects/status-effect'
-import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
 import {
@@ -69,49 +68,39 @@ const Slot = ({
 			health: rowState?.health,
 		} as HasHealth
 	}
+
 	const renderStatusEffects = (cleanedStatusEffects: StatusEffectInstance[]) => {
 		return (
 			<div className={css.statusEffectContainer}>
-				{cleanedStatusEffects.map((a) => {
-					const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-					if (!statusEffect || !statusEffect.visible) return null
-					if (statusEffect.damageEffect == true) return null
-					return <StatusEffect statusEffect={statusEffect} duration={a.duration} />
+				{cleanedStatusEffects.map((effect) => {
+					if (effect.props.damageEffect == true) return null
+					return <StatusEffect statusEffect={effect.statusEffect} counter={effect.counter} />
 				})}
 			</div>
 		)
 	}
-	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectInstance[] | null) => {
+
+	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectInstance[]) => {
 		return (
 			<div className={css.damageStatusEffectContainer}>
-				{cleanedStatusEffects
-					? cleanedStatusEffects.map((a) => {
-							const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-							if (!statusEffect || !statusEffect.visible) return null
-							if (statusEffect.damageEffect == false) return null
-							return <StatusEffect statusEffect={statusEffect} />
-					  })
-					: null}
+				{cleanedStatusEffects.map((effect) => {
+					if (effect.props.damageEffect == false) return null
+					return <StatusEffect statusEffect={effect.statusEffect} counter={null} />
+				})}
 			</div>
 		)
 	}
 
-	const hermitStatusEffects = Array.from(
-		new Set(
-			statusEffects
-				.filter(
-					(a) => rowState?.hermitCard && a.targetInstance.instance == rowState.hermitCard.instance
-				)
-				.map((a) => a) || []
-		)
-	)
-	const effectStatusEffects = Array.from(
-		new Set(
-			statusEffects.filter(
-				(a) => rowState?.effectCard && a.targetInstance.instance == rowState.effectCard.instance
-			) || []
-		)
-	)
+	const hermitStatusEffects =
+		statusEffects.filter(
+			(a) => rowState?.hermitCard && a.targetInstance.instance == rowState.hermitCard.instance
+		) || []
+
+	const effectStatusEffects =
+		statusEffects.filter(
+			(a) => rowState?.effectCard && a.targetInstance.instance == rowState.effectCard.instance
+		) || []
+
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
@@ -181,7 +170,7 @@ const Slot = ({
 						? renderDamageStatusEffects(hermitStatusEffects)
 						: type === 'attach'
 						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects(null)}
+						: renderDamageStatusEffects([])}
 				</div>
 			) : type === 'health' ? null : (
 				<img draggable="false" className={css.frame} src={frameImg} />

@@ -10,11 +10,12 @@ interface StatusEffectProps
 		HTMLButtonElement
 	> {
 	statusEffect: StatusEffectClass
-	duration?: number | undefined
+	counter: number | null
 }
 
 const StatusEffect = (props: StatusEffectProps) => {
-	const {id, damageEffect, visible} = props.statusEffect
+	console.log(props)
+	const {id, damageEffect} = props.statusEffect.props
 
 	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
 	const statusEffectClass =
@@ -22,11 +23,11 @@ const StatusEffect = (props: StatusEffectProps) => {
 
 	return (
 		<Tooltip
-			tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} duration={props.duration} />}
+			tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} counter={props.counter} />}
 		>
 			<div className={css.statusEffect}>
 				<img className={statusEffectClass} src={'/images/status/' + id + extension}></img>
-				{props.duration !== undefined && <p className={css.durationIndicator}>{props.duration}</p>}
+				{props.counter !== null && <p className={css.durationIndicator}>{props.counter}</p>}
 			</div>
 		</Tooltip>
 	)
