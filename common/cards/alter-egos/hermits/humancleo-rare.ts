@@ -1,12 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
-import {hasEnoughEnergy} from '../../../utils/attacks'
+import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
-import {SlotInfo} from '../../../types/cards'
+import {CardInstance} from '../../../types/game-state'
 
 class HumanCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -37,7 +35,7 @@ class HumanCleoRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -47,7 +45,7 @@ class HumanCleoRareHermitCard extends Card {
 			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
 
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			// if (headsAmount < 2) return
+			if (headsAmount < 2) return
 
 			applyStatusEffect(
 				game,
