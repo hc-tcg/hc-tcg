@@ -109,7 +109,7 @@ export type CoinFlipT = 'heads' | 'tails'
 export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> {
 	readonly statusEffect: StatusEffect<Props>
 	readonly instance: string
-	readonly targetInstance: CardInstance
+	public targetInstance: CardInstance
 	public counter: number | null
 
 	constructor(statusEffect: StatusEffect<Props>, instance: string, targetInstance: CardInstance) {

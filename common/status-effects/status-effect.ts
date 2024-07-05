@@ -45,13 +45,7 @@ export function followActiveHermit(game: GameModel, instance: StatusEffectInstan
 		let newHermit = game.currentPlayer.board.rows[newRow].hermitCard
 		if (!newHermit) return
 
-		game.state.statusEffects = game.state.statusEffects.filter(
-			(effect) => effect.instance !== instance.instance
-		)
-
-		let newInstance = new StatusEffectInstance(instance.statusEffect, instance.instance, newHermit)
-		newInstance.counter = instance.counter
-		game.state.statusEffects.push(newInstance)
+		instance.targetInstance = newHermit
 	}
 }
 
