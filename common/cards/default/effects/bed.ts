@@ -40,8 +40,7 @@ class BedEffectCard extends Card {
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(instance, () => {
 			const isSleeping = game.state.statusEffects.some(
-				(a) =>
-					a.targetInstance.instance == row?.hermitCard?.instance && a.statusEffectId == 'sleeping'
+				(a) => a.targetInstance.instance == row?.hermitCard?.instance && a.props.id == 'sleeping'
 			)
 			if (!isSleeping) {
 				discardCard(game, row?.effectCard || null)

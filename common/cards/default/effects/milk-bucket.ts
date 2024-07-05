@@ -38,7 +38,7 @@ class MilkBucketEffectCard extends Card {
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
 							ail.targetInstance.instance === pickedSlot.card?.instance &&
-							(ail.statusEffectId == 'poison' || ail.statusEffectId == 'badomen')
+							(ail.props.id == 'poison' || ail.props.id == 'badomen')
 						)
 					})
 					statusEffectsToRemove.forEach((ail) => {

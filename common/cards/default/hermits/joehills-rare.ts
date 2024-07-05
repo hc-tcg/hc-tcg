@@ -46,7 +46,7 @@ class JoeHillsRareHermitCard extends Card {
 			const attacker = attack.getAttacker()
 			if (!attacker || attack.type !== 'secondary') return
 
-			if (game.state.statusEffects.some((effect) => effect.statusEffectId === 'used-clock')) {
+			if (game.state.statusEffects.some((effect) => effect.props.id === 'used-clock')) {
 				return
 			}
 
@@ -61,7 +61,7 @@ class JoeHillsRareHermitCard extends Card {
 			// Storing the cardInstance of the card that attacked
 			skipped = attacker.row.hermitCard
 
-			applyStatusEffect(game, 'used-clock', getActiveRow(player)?.hermitCard)
+			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(instance, () => {

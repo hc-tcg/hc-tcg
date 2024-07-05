@@ -213,7 +213,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
-				}, '')
+			  }, '')
 			: ''
 
 		this.logMessageQueue.push({
@@ -295,7 +295,7 @@ export class BattleLogModel {
 	public addRemoveStatusEffectEntry(statusEffect: StatusEffect) {
 		this.logMessageQueue.push({
 			player: this.game.currentPlayer.id,
-			description: `$e${statusEffect.name}$ wore off`,
+			description: `$e${statusEffect.props.name}$ wore off`,
 		})
 		this.sendLogs()
 	}

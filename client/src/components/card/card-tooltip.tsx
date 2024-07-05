@@ -149,9 +149,9 @@ const getSidebarDescriptions = (card: WithoutFunctions<CardProps>): React.ReactN
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{STATUS_EFFECT_CLASSES[statusEffect].name}</u>
+						<u>{STATUS_EFFECT_CLASSES[statusEffect].props.name}</u>
 					</b>
-					<p>{STATUS_EFFECT_CLASSES[statusEffect].description}</p>
+					<p>{STATUS_EFFECT_CLASSES[statusEffect].props.description}</p>
 				</div>
 			)
 		}
