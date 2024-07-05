@@ -1,17 +1,33 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
+import {SlotCondition, slot} from '../slot'
+import {SlotInfo} from '../types/cards'
 
 export type StatusEffectProps = {
 	id: string
 	name: string
 	description: string
-	damageEffect: boolean
+	damageEffect?: boolean
+	applyCondition: SlotCondition
 }
 
 export type Counter = StatusEffectProps & {
 	counter: number
 	counterType: 'turns' | 'number'
+}
+
+export const statusEffect = {
+	damageEffect: false,
+	applyCondition: slot.anything
+}
+
+export const damageEffect = {
+	damageEffect: true,
+	attachCondition: (game: GameModel, pos: SlotInfo) =>
+		game.state.statusEffects.some(
+			(a) => a.targetInstance.instance === pos.card?.instance && a.props.damageEffect === true
+		),
 }
 
 export function isCounter(props: StatusEffect<StatusEffectProps>): props is StatusEffect<Counter>

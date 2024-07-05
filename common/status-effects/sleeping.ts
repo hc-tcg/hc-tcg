@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps, Counter} from './status-effect'
+import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -7,13 +7,14 @@ import {slot} from '../slot'
 
 class SleepingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'sleeping',
 		name: 'Sleep',
 		description:
 			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
-		damageEffect: false,
 		counter: 3,
 		counterType: 'turns',
+		applyCondition: slot.every(slot.hermitSlot, slot.not(slot.empty)),
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
@@ -21,7 +22,6 @@ class SleepingStatusEffect extends StatusEffect {
 
 		if (!card || !row?.hermitCard || rowIndex === null || !card.card.isHealth()) return
 
-		game.state.statusEffects.push(statusEffectInfo)
 		game.addBlockedActions(
 			this.props.id,
 			'PRIMARY_ATTACK',

@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps} from './status-effect'
+import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {RowPos} from '../types/cards'
 import {CardPosModel} from '../models/card-pos-model'
@@ -10,23 +10,15 @@ import {slot} from '../slot'
 
 class FireStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
+		...damageEffect,
 		id: 'fire',
 		name: 'Burn',
 		description:
 			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
-		damageEffect: true,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-
-		const hasDamageEffect = game.state.statusEffects.some(
-			(a) => a.targetInstance.instance === pos.card?.instance && a.props.damageEffect === true
-		)
-
-		if (hasDamageEffect) return
-
-		game.state.statusEffects.push(statusEffectInfo)
 
 		if (pos.card) {
 			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $eBurned$`)

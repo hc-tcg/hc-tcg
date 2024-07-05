@@ -1,4 +1,4 @@
-import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -7,16 +7,15 @@ import {slot} from '../slot'
 
 class SlownessStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'slowness',
 		name: 'Slowness',
 		description: 'This Hermit can only use their primary attack.',
 		counter: 1,
 		counterType: 'turns',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
 		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter

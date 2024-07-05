@@ -78,7 +78,10 @@ export function applyStatusEffect(
 		targetInstance
 	)
 
+	if (!statusEffectInstance.props.applyCondition(game, pos)) return 'FAILURE_CANNOT_COMPLETE'
+
 	statusEffectInstance.statusEffect.onApply(game, statusEffectInstance, pos)
+	game.state.statusEffects.push(statusEffectInstance)
 
 	return 'SUCCESS'
 }

@@ -1,4 +1,4 @@
-import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
@@ -6,17 +6,16 @@ import {discardCard} from '../utils/movement'
 
 class SmeltingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'smelting',
 		name: 'Smelting',
 		description:
 			'When the counter reaches 0, upgrades all item cards attached to this Hermit to double items',
 		counter: 4,
 		counterType: 'turns',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
 		player.hooks.onTurnStart.add(statusEffectInfo, () => {

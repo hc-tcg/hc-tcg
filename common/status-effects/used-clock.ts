@@ -1,4 +1,4 @@
-import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -6,16 +6,15 @@ import {StatusEffectInstance} from '../types/game-state'
 
 class UsedClockStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'used-clock',
 		name: 'Turn Skipped',
 		description: 'Turns can not be skipped consecutively.',
 		counter: 1,
 		counterType: 'turns',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
 		const {player} = pos
 
 		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter

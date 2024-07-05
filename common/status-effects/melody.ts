@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps} from './status-effect'
+import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {hasStatusEffect, removeStatusEffect} from '../utils/board'
@@ -7,19 +7,16 @@ import {slot} from '../slot'
 
 class MelodyStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
+		...statusEffect,
 		id: 'melody',
 		name: "Ollie's Melody",
 		description: 'This Hermit heals 10hp every turn.',
 		damageEffect: false,
+		applyCondition: slot.not(slot.hasStatusEffect('melody')),
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-
-		const hasMelody = hasStatusEffect(game, pos.card, 'melody')
-		if (hasMelody) return
-
-		game.state.statusEffects.push(statusEffectInfo)
 
 		player.hooks.onTurnStart.add(statusEffectInfo, () => {
 			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))

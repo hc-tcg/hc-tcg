@@ -1,4 +1,4 @@
-import StatusEffect, { Counter, StatusEffectProps } from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -8,16 +8,15 @@ import {slot} from '../slot'
 
 class BadOmenStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
-			id: 'badomen',
-			name: 'Bad Omen',
-			description: 'All coinflips are tails.',
-			counter: 3,
-			counterType: 'turns',
-			damageEffect: false,
+		...statusEffect,
+		id: 'badomen',
+		name: 'Bad Omen',
+		description: 'All coinflips are tails.',
+		counter: 3,
+		counterType: 'turns',
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
 
 		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter

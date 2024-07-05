@@ -1,4 +1,4 @@
-import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
@@ -7,16 +7,15 @@ import {isTargetingPos} from '../utils/attacks'
 
 class WeaknessStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'weakness',
 		name: 'Weakness',
 		description: "This Hermit is weak to the opponent's active Hermit's type.",
 		counter: 3,
 		counterType: 'turns',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
 		const {player, opponentPlayer} = pos
 
 		if (!statusEffectInfo.counter) statusEffectInfo.counter = this.props.counter

@@ -1,4 +1,4 @@
-import StatusEffect, {Counter, StatusEffectProps} from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
@@ -9,19 +9,17 @@ import {slot} from '../slot'
 
 class MuseumCollectionStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
+		...statusEffect,
 		id: 'museum-collection',
 		name: 'Museum Collection Size',
 		description:
 			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
 		counter: 0,
 		counterType: 'number',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-
-		game.state.statusEffects.push(statusEffectInfo)
 		let oldHandSize = player.hand.length
 
 		player.hooks.onAttach.add(statusEffectInfo, (instance) => {

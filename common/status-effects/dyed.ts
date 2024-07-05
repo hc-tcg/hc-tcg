@@ -1,24 +1,20 @@
-import StatusEffect, {StatusEffectProps} from './status-effect'
+import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
-import {hasStatusEffect} from '../utils/board'
+import {slot} from '../slot'
 
 class DyedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
+		...statusEffect,
 		id: 'dyed',
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
-		damageEffect: false,
+		applyCondition: slot.not(slot.hasStatusEffect('dyed')),
 	}
 
 	override onApply(game: GameModel, statusEffectInfo: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
-
-		const hasDyed = hasStatusEffect(game, pos.card, 'dyed')
-		if (hasDyed) return
-
-		game.state.statusEffects.push(statusEffectInfo)
 
 		player.hooks.availableEnergy.add(statusEffectInfo, (availableEnergy) => {
 			if (player.board.activeRow === null) return availableEnergy
