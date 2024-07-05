@@ -91,9 +91,10 @@ export function applyStatusEffect(
  */
 export function removeStatusEffect(
 	game: GameModel,
-	pos: CardPosModel,
+	pos: CardPosModel | null,
 	statusEffectInstance: StatusEffectInstance
 ): GenericActionResult {
+	if (!pos) return 'FAILURE_NOT_APPLICABLE'
 	const statusEffects = game.state.statusEffects.filter(
 		(a) => a.instance === statusEffectInstance.instance
 	)
