@@ -19,7 +19,7 @@ export type Counter = StatusEffectProps & {
 
 export const statusEffect = {
 	damageEffect: false,
-	applyCondition: slot.anything
+	applyCondition: slot.anything,
 }
 
 export const damageEffect = {

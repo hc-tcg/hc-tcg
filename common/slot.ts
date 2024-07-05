@@ -150,8 +150,7 @@ export namespace slot {
 		return (game, pos) => {
 			return game.state.statusEffects.some(
 				(effect) =>
-					effect.targetInstance.instance == pos.card?.instance &&
-					effect.props.id == statusEffect
+					effect.targetInstance.instance == pos.card?.instance && effect.props.id == statusEffect
 			)
 		}
 	}
