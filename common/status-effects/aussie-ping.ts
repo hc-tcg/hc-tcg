@@ -4,15 +4,17 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
+import {slot} from '../slot'
 
 // @TODO Prevent missing on multiple rounds in a row
-class AussiePingStatusEffect extends StatusEffect {
+export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'aussie-ping',
 		name: 'Aussie Ping',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
+		applyCondition: slot.not(slot.hasStatusEffect('aussie-ping-immune')),
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
@@ -37,10 +39,16 @@ class AussiePingStatusEffect extends StatusEffect {
 
 		player.hooks.afterAttack.add(instance, (_) => {
 			removeStatusEffect(game, pos, instance)
+			if (coinFlipResult === 'heads') {
+				applyStatusEffect(game, 'aussie-ping-immune', instance.targetInstance)
+			}
 		})
 
 		player.hooks.onTurnEnd.add(instance, (_) => {
 			removeStatusEffect(game, pos, instance)
+			if (coinFlipResult === 'heads') {
+				applyStatusEffect(game, 'aussie-ping-immune', instance.targetInstance)
+			}
 		})
 
 		player.hooks.onActiveRowChange.add(instance, (oldRow, newRow) => {
@@ -66,4 +74,24 @@ class AussiePingStatusEffect extends StatusEffect {
 	}
 }
 
-export default AussiePingStatusEffect
+export class AussiePingImmuneStatusEffect extends StatusEffect {
+	props: StatusEffectProps = {
+		...statusEffect,
+		id: 'aussie-ping-immune',
+		name: 'Aussie Pinged',
+		description: 'This hermit is immune to Aussie Ping until the next turn.',
+	}
+
+	public override onApply(
+		game: GameModel,
+		instance: StatusEffectInstance<StatusEffectProps>,
+		pos: CardPosModel
+	): void {
+		const {player} = pos
+
+		player.hooks.onTurnStart.add(instance, () => {
+			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+			player.hooks.onTurnStart.remove(instance)
+		})
+	}
+}

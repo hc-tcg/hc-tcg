@@ -14,7 +14,7 @@ import UsedClockStatusEffect from './used-clock'
 import RevivedByDeathloopStatusEffect from './revived-by-deathloop'
 import BetrayedStatusEffect from './betrayed'
 import SheepStareStatusEffect from './sheep-stare'
-import AussiePingStatusEffect from './aussie-ping'
+import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-ping'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),
@@ -33,6 +33,7 @@ const effectClasses: Array<StatusEffect> = [
 	new BetrayedStatusEffect(),
 	new SheepStareStatusEffect(),
 	new AussiePingStatusEffect(),
+	new AussiePingImmuneStatusEffect(),
 ]
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(
