@@ -1,11 +1,11 @@
-import {LocalRowState, RowState} from 'common/types/game-state'
-import {CardInstance} from 'common/types/game-state'
+import {LocalRowState} from 'common/types/game-state'
 import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {StatusEffectInstance} from 'common/types/game-state'
-import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
+import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
 import {LocalCardInstance} from 'common/types/server-requests'
+import HealthSlot from './board-health'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
@@ -38,10 +38,11 @@ const BoardRow = ({
 	playerId,
 	statusEffects,
 }: BoardRowProps) => {
-	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit', 'health']
+	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'attach', 'hermit']
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const card = getCardBySlot(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
+
 		return (
 			<Slot
 				cssId={cssId}
@@ -53,8 +54,10 @@ const BoardRow = ({
 				type={slotType}
 				rowIndex={rowIndex}
 				index={slotIndex}
+				statusEffects={statusEffects.filter(
+					(a) => a.targetInstance.instance == card?.instance && slotType != 'hermit'
+				)}
 				playerId={playerId}
-				statusEffects={statusEffects}
 			/>
 		)
 	})
@@ -67,6 +70,12 @@ const BoardRow = ({
 			})}
 		>
 			{slots}
+			<HealthSlot
+				rowState={rowState}
+				statusEffects={statusEffects.filter(
+					(a) => a.targetInstance.instance == rowState.hermitCard?.instance
+				)}
+			/>
 		</div>
 	)
 }

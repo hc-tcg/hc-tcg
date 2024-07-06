@@ -123,7 +123,7 @@ export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffect
 		return this.statusEffect.props
 	}
 
-	public isValue(): this is StatusEffectInstance<Counter> {
+	public isCounter(): this is StatusEffectInstance<Counter> {
 		return isCounter(this.statusEffect.props)
 	}
 }

@@ -1,9 +1,8 @@
 import classnames from 'classnames'
-import CardComponent from 'components/card'
 import {LocalRowState} from 'common/types/game-state'
-import css from './board.module.scss'
+import Card from 'components/card'
 import {StatusEffectInstance} from 'common/types/game-state'
-import StatusEffect from 'components/status-effects/status-effect'
+import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
 import {
@@ -12,16 +11,8 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {
-	Attach,
-	CardProps,
-	HasHealth,
-	Hermit,
-	Item,
-	SingleUse,
-	WithoutFunctions,
-} from 'common/cards/base/card'
 import {LocalCardInstance} from 'common/types/server-requests'
+import StatusEffectContainer from './board-status-effects'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -33,7 +24,7 @@ export type SlotProps = {
 	rowState?: LocalRowState
 	active?: boolean
 	cssId?: string
-	statusEffects: Array<StatusEffectInstance>
+	statusEffects?: Array<StatusEffectInstance>
 }
 const Slot = ({
 	type,
@@ -42,64 +33,14 @@ const Slot = ({
 	playerId,
 	onClick,
 	card,
-	rowState,
 	active,
-	cssId,
 	statusEffects,
+	cssId,
 }: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
-
-	let cardInfo = card?.props
-		? (card.props as WithoutFunctions<Hermit | Item | Attach | SingleUse | CardProps>)
-		: null
-	if (type === 'health' && rowState?.health) {
-		// @ts-ignore SORRY, I have no idea how to fix this
-		cardInfo = {
-			category: 'health',
-			id: 'health',
-			expansion: 'default',
-			numericId: -1,
-			tokens: -1,
-			name: 'Health Card',
-			rarity: 'common',
-			health: rowState?.health,
-		} as HasHealth
-	}
-
-	const renderStatusEffects = (cleanedStatusEffects: StatusEffectInstance[]) => {
-		return (
-			<div className={css.statusEffectContainer}>
-				{cleanedStatusEffects.map((effect) => {
-					if (effect.statusEffect.props.damageEffect === true) return null
-					return <StatusEffect statusEffect={effect.statusEffect} counter={effect.counter} />
-				})}
-			</div>
-		)
-	}
-
-	const renderDamageStatusEffects = (cleanedStatusEffects: StatusEffectInstance[]) => {
-		return (
-			<div className={css.damageStatusEffectContainer}>
-				{cleanedStatusEffects.map((effect) => {
-					if (effect.statusEffect.props.damageEffect === false) return null
-					return <StatusEffect statusEffect={effect.statusEffect} counter={null} />
-				})}
-			</div>
-		)
-	}
-
-	const hermitStatusEffects =
-		statusEffects.filter(
-			(a) => rowState?.hermitCard && a.targetInstance.instance == rowState.hermitCard.instance
-		) || []
-
-	const effectStatusEffects =
-		statusEffects.filter(
-			(a) => rowState?.effectCard && a.targetInstance.instance == rowState.effectCard.instance
-		) || []
 
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
@@ -153,28 +94,19 @@ const Slot = ({
 				[css.unpickable]: !isPickable && somethingPickable,
 				[css.available]: isClickable,
 				[css[type]]: true,
-				[css.empty]: !cardInfo,
+				[css.empty]: !card,
 				[css.hermitSlot]: type == 'hermit',
 				[css.afk]: !active && type !== 'single_use',
 			})}
 		>
-			{cardInfo ? (
+			{card ? (
 				<div className={css.cardWrapper}>
-					<CardComponent card={cardInfo} />
-					{type === 'health'
-						? renderStatusEffects(hermitStatusEffects)
-						: type === 'attach'
-						? renderStatusEffects(effectStatusEffects)
-						: null}
-					{type === 'health'
-						? renderDamageStatusEffects(hermitStatusEffects)
-						: type === 'attach'
-						? renderDamageStatusEffects(effectStatusEffects)
-						: renderDamageStatusEffects([])}
+					<Card card={card.props} />
 				</div>
-			) : type === 'health' ? null : (
+			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
+			<StatusEffectContainer statusEffects={statusEffects || []} />
 		</div>
 	)
 }

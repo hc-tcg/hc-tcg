@@ -30,11 +30,7 @@ export const damageEffect = {
 		),
 }
 
-export function isCounter(props: StatusEffect<StatusEffectProps>): props is StatusEffect<Counter>
-export function isCounter(props: StatusEffectProps): props is Counter
-export function isCounter(
-	props: StatusEffectProps | StatusEffect<StatusEffectProps> | null
-): props is Counter {
+export function isCounter(props: StatusEffectProps | null): props is Counter {
 	return props !== null && 'counter' in props
 }
 

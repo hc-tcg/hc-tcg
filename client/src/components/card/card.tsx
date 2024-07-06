@@ -5,7 +5,6 @@ import CardInstanceTooltip from './card-tooltip'
 import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
-import HealthCardModule from './health-card-svg'
 import {CardProps, WithoutFunctions} from 'common/cards/base/card'
 
 interface CardReactProps
@@ -29,10 +28,7 @@ const Card = (props: CardReactProps) => {
 	else if (category === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
 	else if (['attach', 'single_use'].includes(category))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
-	else if ('health' in otherProps.card) {
-		let health = otherProps.card.health as number
-		card = <HealthCardModule {...{health: health}} />
-	} else throw new Error('Unsupported card type: ' + category)
+	else throw new Error('Unsupported card category: ' + category)
 
 	return (
 		<Tooltip
