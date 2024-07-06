@@ -4,7 +4,8 @@ import Slot from './board-slot'
 import css from './board.module.scss'
 import cn from 'classnames'
 import {StatusEffectT} from 'common/types/game-state'
-import {BoardSlotTypeT, SlotInfo, SlotTypeT} from 'common/types/cards'
+import {BoardSlotTypeT, SlotTypeT} from 'common/types/cards'
+import HealthSlot from './board-health'
 
 const getCardBySlot = (
 	slotType: SlotTypeT,
@@ -37,7 +38,7 @@ const BoardRow = ({
 	playerId,
 	statusEffects,
 }: BoardRowProps) => {
-	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit', 'health']
+	const slotTypes: Array<BoardSlotTypeT> = ['item', 'item', 'item', 'effect', 'hermit']
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const card = getCardBySlot(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
@@ -53,7 +54,6 @@ const BoardRow = ({
 				rowIndex={rowIndex}
 				index={slotIndex}
 				playerId={playerId}
-				statusEffects={statusEffects}
 			/>
 		)
 	})
@@ -66,6 +66,7 @@ const BoardRow = ({
 			})}
 		>
 			{slots}
+			<HealthSlot rowState={rowState} statusEffects={statusEffects} />
 		</div>
 	)
 }

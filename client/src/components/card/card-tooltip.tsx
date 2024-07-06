@@ -2,10 +2,8 @@ import React from 'react'
 import {HermitTypeT} from 'common/types/cards'
 import Card from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
-import formattingCss from '../formatting/formatting.module.scss'
 import HermitCard from 'common/cards/base/hermit-card'
 import ItemCard from 'common/cards/base/item-card'
-import HealthCard from 'common/cards/base/health-card'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
@@ -159,7 +157,6 @@ const getSidebarDescriptions = (card: Card): React.ReactNode => {
 }
 
 const CardTooltip = ({card}: Props) => {
-	if (card instanceof HealthCard) return null
 	const settings = useSelector(getSettings)
 
 	return (

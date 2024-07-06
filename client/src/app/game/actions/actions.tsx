@@ -15,7 +15,6 @@ import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
-import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PickInfo} from 'common/types/server-requests'
 import {endTurnModalEmpty} from '../modals/end-turn-modal'
@@ -111,7 +110,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 					playerId={playerId}
 					type={'single_use'}
 					onClick={handleClick}
-					statusEffects={gameState.statusEffects}
 				/>
 			</div>
 		)
