@@ -1,33 +1,36 @@
-import HermitCard from '../../base/hermit-card'
-import {HERMIT_CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../slot'
+import Card, {Hermit, hermit} from '../../base/card'
+import {CardInstance, healHermit} from '../../../types/game-state'
 
-class GrianchRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'grianch_rare',
-			numericId: 209,
-			name: 'The Grianch',
-			rarity: 'rare',
-			type: 'builder',
-			health: 250,
-			primary: {
-				name: 'Nice',
-				cost: ['builder', 'any'],
-				damage: 70,
-				power: 'Heal any AFK Hermit for 40hp.',
-			},
-			secondary: {
-				name: 'Naughty',
-				cost: ['builder', 'builder'],
-				damage: 80,
-				power:
-					'Flip a Coin.\nIf heads, attack damage doubles.\nIf tails, your opponent may attack twice next round.',
-			},
-		})
+class GrianchRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'grianch_rare',
+		numericId: 209,
+		name: 'The Grianch',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 3,
+		type: 'builder',
+		health: 250,
+		primary: {
+			name: 'Nice',
+			cost: ['builder', 'any'],
+			damage: 70,
+			power: 'Heal any AFK Hermit for 40hp.',
+		},
+		secondary: {
+			name: 'Naughty',
+			cost: ['builder', 'builder'],
+			damage: 80,
+			power:
+				'Flip a Coin.\nIf heads, attack damage doubles.\nIf tails, your opponent may attack twice next round.',
+		},
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -48,7 +51,7 @@ class GrianchRareHermitCard extends HermitCard {
 				return
 			}
 
-			attack.addDamage(this.id, this.secondary.damage)
+			attack.addDamage(this.props.id, this.props.secondary.damage)
 		})
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -64,31 +67,11 @@ class GrianchRareHermitCard extends HermitCard {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
-
-					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
-					if (!hermitCard) return
-					const hermitId = pickedSlot.player.board.rows[rowIndex].hermitCard?.cardId
-					const hermitHealth = pickedSlot.player.board.rows[rowIndex].health
-
-					if (!hermitHealth || !hermitId) return
-					const hermitInfo = HERMIT_CARDS[hermitId]
-					if (hermitInfo) {
-						// Heal
-						pickedSlot.player.board.rows[rowIndex].health = Math.min(
-							hermitHealth + 40,
-							hermitInfo.health // Max health
-						)
-					} else {
-						// Armor Stand
-						pickedSlot.player.board.rows[rowIndex].health = hermitHealth + 40
-					}
+					healHermit(pickedSlot.row, 40)
 				},
 			})
 		})
@@ -98,18 +81,6 @@ class GrianchRareHermitCard extends HermitCard {
 		const {player} = pos
 		player.hooks.onAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
 	}
 }
 

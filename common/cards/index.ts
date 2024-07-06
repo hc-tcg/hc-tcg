@@ -4,7 +4,7 @@ import alterEgosEffectCards from './alter-egos/effects'
 import adventOfTcgEffectCards from './advent-of-tcg/effects'
 import defaultHermitCards from './default/hermits'
 import alterEgosHermitCards from './alter-egos/hermits'
-// import adventOfTcgHermitCards from './advent-of-tcg/hermits'
+import adventOfTcgHermitCards from './advent-of-tcg/hermits'
 import defaultItemCards from './default/items'
 import defaultSingleUseCards from './default/single-use'
 import alterEgosSingleUseCards from './alter-egos/single-use'
@@ -20,7 +20,7 @@ const effectCardClasses: Array<Card> = [
 const hermitCardClasses: Array<Card> = [
 	...defaultHermitCards,
 	...alterEgosHermitCards,
-	// 	...adventOfTcgHermitCards,
+	...adventOfTcgHermitCards,
 	...alterEgosIIHermitCards,
 ]
 
