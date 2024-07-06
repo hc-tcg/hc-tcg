@@ -12,7 +12,10 @@ type HealthSlotProps = {
 
 const HealthSlot = ({rowState, statusEffects}: HealthSlotProps) => {
 	return (
-		<div className={cn(slotCss.cardWrapper, slotCss.health, slotCss.slot, cardCss.card)}>
+		<div
+			id={slotCss.health}
+			className={cn(slotCss.cardWrapper, slotCss.health, slotCss.slot, cardCss.card)}
+		>
 			{rowState.health && <HealthDisplayModule health={rowState.health} />}
 			<StatusEffectContainer statusEffects={statusEffects} />
 		</div>
