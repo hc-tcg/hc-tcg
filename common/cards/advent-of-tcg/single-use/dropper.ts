@@ -1,20 +1,19 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import SingleUseCard from '../../base/single-use-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class DropperSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'dropper',
-			numericId: 222,
-			name: 'Dropper',
-			rarity: 'rare',
-			description: "Shuffle 2 fletching tables into your opponent's deck",
-		})
-	}
-
-	public override canApply(): boolean {
-		return true
+class DropperSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'dropper',
+		numericId: 222,
+		name: 'Dropper',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 0,
+		description: "Shuffle 2 fletching tables into your opponent's deck",
+		showConfirmationModal: true,
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
@@ -22,14 +21,10 @@ class DropperSingleUseCard extends SingleUseCard {
 
 		player.hooks.onApply.add(instance, () => {
 			for (let i = 0; i < 2; i++) {
-				const cardInfo = {
-					cardId: 'fletching_table',
-					cardInstance: Math.random().toString(),
-				}
 				opponentPlayer.pile.splice(
 					Math.round(Math.random() * opponentPlayer.pile.length),
 					0,
-					cardInfo
+					CardInstance.fromCardId('fletching_table')
 				)
 			}
 		})
@@ -39,10 +34,6 @@ class DropperSingleUseCard extends SingleUseCard {
 		const {player} = pos
 
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 

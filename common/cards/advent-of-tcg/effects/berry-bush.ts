@@ -46,9 +46,7 @@ class BerryBushEffectCard extends Card {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
-					opponentPlayer.hand.push(
-						new CardInstance(CARDS['instant_health_ii'], Math.random().toString())
-					)
+					opponentPlayer.hand.push(CardInstance.fromCardId('instant_health_ii'))
 				}
 			}
 		})

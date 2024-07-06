@@ -2,27 +2,24 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {CardInstance} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class LanternSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'lantern',
-			numericId: 225,
-			name: 'Lantern',
-			rarity: 'rare',
-			description:
-				'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
-		})
-	}
-
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		(game, pos) => pos.player.pile.length >= 4
-	)
-
-	override canApply() {
-		return true
+class LanternSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'lantern',
+		numericId: 225,
+		name: 'Lantern',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 3,
+		description:
+			'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
+		showConfirmationModal: true,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length >= 4
+		),
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -93,10 +90,6 @@ class LanternSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 

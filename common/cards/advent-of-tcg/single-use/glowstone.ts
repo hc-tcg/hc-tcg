@@ -1,22 +1,20 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class GlowstoneSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'glowstone',
-			numericId: 224,
-			name: 'Glowstone',
-			rarity: 'rare',
-			description:
-				'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
-		})
-	}
-
-	override canApply() {
-		return true
+class GlowstoneSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'glowstone',
+		numericId: 224,
+		name: 'Glowstone',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 2,
+		description:
+			'View the top 3 cards of your opponent’s deck. Choose one for them to draw. The other 2 will be placed on the bottom of their deck in their original order.',
+		showConfirmationModal: true,
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -66,10 +64,6 @@ class GlowstoneSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 
