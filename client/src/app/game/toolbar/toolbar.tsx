@@ -15,7 +15,7 @@ function Toolbar() {
 
 	const handleDiscarded = () => {
 		if (!gameState) return
-		const data = {
+		gameState.currentModalData = {
 			modalId: 'selectCards',
 			payload: {
 				modalName: 'Discarded',
@@ -27,12 +27,8 @@ function Toolbar() {
 					text: 'Close',
 					variant: 'default',
 				},
-				closeButton: {
-					visible: true,
-				},
 			},
 		}
-		gameState.currentModalData = data
 		dispatch(setOpenedModal(gameState.currentModalData.modalId))
 	}
 
