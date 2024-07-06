@@ -35,12 +35,12 @@ class HotguyRareHermitCard extends Card {
 
 		let usingSecondaryAttack = false
 
-		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance)) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 
+		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (singleUseCard?.props.id !== 'bow' || !usingSecondaryAttack) return
