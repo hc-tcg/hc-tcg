@@ -28,7 +28,7 @@ class GlowstoneSingleUseCard extends Card {
 					payload: {
 						modalName: 'Glowstone: Choose the card for your opponent to draw.',
 						modalDescription: 'The other two cards will be placed on the bottom of their deck.',
-						cards: opponentPlayer.pile.slice(0, 3),
+						cards: opponentPlayer.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
 						selectionSize: 1,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -41,10 +41,14 @@ class GlowstoneSingleUseCard extends Card {
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 
-					const cards: Array<CardInstance> = modalResult.cards
-					const bottomCards: Array<CardInstance> = opponentPlayer.pile.slice(0, 3).filter((c) => {
-						if (cards.some((d) => c.instance === d.instance)) return false
-						return true
+					const card = modalResult.cards[0]
+
+					const cards: Array<CardInstance> = []
+					const bottomCards: Array<CardInstance> = []
+
+					opponentPlayer.pile.slice(0, 3).forEach((c) => {
+						if (card.instance === c.instance) cards.push(c)
+						else bottomCards.push(c)
 					})
 
 					opponentPlayer.pile = opponentPlayer.pile.slice(3)

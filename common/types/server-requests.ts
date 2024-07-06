@@ -1,8 +1,8 @@
-import {CardProps, Hermit, WithoutFunctions} from '../cards/base/card'
+import {CardProps, WithoutFunctions} from '../cards/base/card'
 import {SlotCondition} from '../slot'
 import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult, LocalPlayerState, PlayerState} from './game-state'
+import {ActionResult} from './game-state'
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>

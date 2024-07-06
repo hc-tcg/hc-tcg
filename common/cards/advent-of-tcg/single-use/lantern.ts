@@ -33,7 +33,7 @@ class LanternSingleUseCard extends Card {
 					payload: {
 						modalName: 'Lantern: Choose 2 cards to draw immediately.',
 						modalDescription: '',
-						cards: player.pile.slice(0, 4),
+						cards: player.pile.slice(0, 4).map((card) => card.toLocalCardInstance()),
 						selectionSize: 2,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -46,14 +46,15 @@ class LanternSingleUseCard extends Card {
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 2) return 'FAILURE_INVALID_DATA'
 
-					const cards: Array<CardInstance> = modalResult.cards
+					const cards = modalResult.cards
 
 					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.instance === d.instance)) return false
+						if (cards.some((d) => c.instance === d.instance)) {
+							player.hand.push(c)
+							return false
+						}
 						return true
 					})
-
-					cards.forEach((c) => player.hand.push(c))
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
