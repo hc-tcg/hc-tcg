@@ -19,7 +19,7 @@ class StringEffectCard extends Card {
 			slot.empty,
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			slot.some(slot.attachSlot, slot.itemSlot),
-			slot.not(slot.frozen),
+			slot.not(slot.frozen)
 		),
 		log: (values) =>
 			`$o{${values.opponent}|You}$ attached $eString$ to $p${values.pos.hermitCard}$`,

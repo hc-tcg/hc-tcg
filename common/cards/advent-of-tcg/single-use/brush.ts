@@ -2,27 +2,24 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot, SlotCondition} from '../../../slot'
 import {CardInstance} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {singleUse, SingleUse} from '../../base/card'
 
-class BrushSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'brush',
-			numericId: 221,
-			name: 'Brush',
-			rarity: 'rare',
-			description:
-				'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
-		})
-	}
-
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		(game, pos) => pos.player.pile.length >= 3
-	)
-
-	override canApply() {
-		return true
+class BrushSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'brush',
+		numericId: 221,
+		name: 'Brush',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+		showConfirmationModal: true,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length >= 3
+		),
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
@@ -70,10 +67,6 @@ class BrushSingleUseCard extends SingleUseCard {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 

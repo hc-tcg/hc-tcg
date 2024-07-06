@@ -90,8 +90,8 @@ export type Hermit = HasHealth & {
 	type: TypeT
 	primary: HermitAttackInfo
 	secondary: HermitAttackInfo
-	palette?: 'alter_egos'
-	background?: 'alter_egos'
+	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharoah'
+	background?: 'alter_egos' | 'advent_of_tcg'
 }
 
 export function isHermit(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Hermit>

@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {slot} from '../../../slot'
 import Card, {Attach, attach} from '../../base/card'
-import { CardInstance, healHermit } from '../../../types/game-state'
+import {CardInstance, healHermit} from '../../../types/game-state'
 
 class BrewingStandEffectCard extends Card {
 	props: Attach = {
@@ -39,7 +39,7 @@ class BrewingStandEffectCard extends Card {
 					slot.player,
 					slot.itemSlot,
 					slot.not(slot.empty),
-					slot.rowIndex(pos.rowIndex),
+					slot.rowIndex(pos.rowIndex)
 				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.card || pickedSlot.rowIndex === null) return

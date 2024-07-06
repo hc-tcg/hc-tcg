@@ -21,7 +21,7 @@ class TrapdoorEffectCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		let totalReduction = 0
-		
+
 		player.hooks.onDefence.add(instance, (attack) => {
 			const target = attack.getTarget()
 			if (target?.player.id !== player.id || attack.getAttacker()?.player.id !== opponentPlayer.id)

@@ -41,6 +41,10 @@ export class CardInstance<Props extends CardProps = CardProps> {
 		this.instance = instance
 	}
 
+	static fromCardId(cardId: string) {
+		return new CardInstance(CARDS[cardId], Math.random().toString())
+	}
+
 	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
 		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
 	}
