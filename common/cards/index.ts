@@ -1,7 +1,7 @@
 import Card from './base/card'
 import defaultEffectCards from './default/effects'
 import alterEgosEffectCards from './alter-egos/effects'
-// import adventOfTcgEffectCards from './advent-of-tcg/effects'
+import adventOfTcgEffectCards from './advent-of-tcg/effects'
 import defaultHermitCards from './default/hermits'
 import alterEgosHermitCards from './alter-egos/hermits'
 // import adventOfTcgHermitCards from './advent-of-tcg/hermits'
@@ -14,7 +14,7 @@ import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
 const effectCardClasses: Array<Card> = [
 	...defaultEffectCards,
 	...alterEgosEffectCards,
-	// ...adventOfTcgEffectCards,
+	...adventOfTcgEffectCards,
 ]
 
 const hermitCardClasses: Array<Card> = [

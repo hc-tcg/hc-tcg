@@ -2,11 +2,11 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import {HERMIT_CARDS} from '../..'
 import {slot} from '../../../slot'
 import Card, {Attach, attach} from '../../base/card'
+import { CardInstance, healHermit } from '../../../types/game-state'
 
-class BrewingStandEffectCard extends Card<Attach> {
+class BrewingStandEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'brewing_stand',
@@ -28,7 +28,7 @@ class BrewingStandEffectCard extends Card<Attach> {
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, {cardId: this.props.id, instance: instance})[0]
+			const flip = flipCoin(player, instance)[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
@@ -39,22 +39,13 @@ class BrewingStandEffectCard extends Card<Attach> {
 					slot.player,
 					slot.itemSlot,
 					slot.not(slot.empty),
-					(game, pick) => pick.rowIndex === pos.rowIndex
+					slot.rowIndex(pos.rowIndex),
 				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 					const playerRow = player.board.rows[pickedSlot.rowIndex]
-					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return
-					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
-					if (hermitInfo) {
-						const maxHealth = Math.max(playerRow.health, hermitInfo.props.health)
-						playerRow.health = Math.min(playerRow.health + 50, maxHealth)
-					} else {
-						// Armor Stand
-						playerRow.health += 50
-					}
+					healHermit(playerRow, 50)
 					discardCard(game, pickedSlot.card)
 				},
 			})

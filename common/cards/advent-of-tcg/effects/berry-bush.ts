@@ -4,8 +4,10 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../slot'
 import Card, {Attach, attach} from '../../base/card'
+import {CardInstance} from '../../../types/game-state'
+import {CARDS} from '../..'
 
-class BerryBushEffectCard extends Card<Attach> {
+class BerryBushEffectCard extends Card {
 	props: Attach = {
 		...attach,
 		id: 'berry_bush',
@@ -21,17 +23,10 @@ class BerryBushEffectCard extends Card<Attach> {
 			slot.hermitSlot,
 			slot.empty,
 			slot.playerHasActiveHermit,
-			slot.opponentHasActiveHermit
+			slot.opponentHasActiveHermit,
+			slot.not(slot.frozen)
 		),
 	}
-
-	override _attachCondition = slot.every(
-		slot.opponent,
-		slot.hermitSlot,
-		slot.empty,
-		slot.playerHasActiveHermit,
-		slot.opponentHasActiveHermit
-	)
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row} = pos
@@ -51,11 +46,9 @@ class BerryBushEffectCard extends Card<Attach> {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
-					const cardInfo = {
-						cardId: 'instant_health_ii',
-						cardInstance: Math.random().toString(),
-					}
-					opponentPlayer.hand.push(cardInfo)
+					opponentPlayer.hand.push(
+						new CardInstance(CARDS['instant_health_ii'], Math.random().toString())
+					)
 				}
 			}
 		})
@@ -85,10 +78,6 @@ class BerryBushEffectCard extends Card<Attach> {
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
-	}
-
-	override showAttachTooltip() {
-		return false
 	}
 }
 
