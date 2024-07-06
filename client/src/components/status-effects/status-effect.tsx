@@ -1,4 +1,3 @@
-import cn from 'classnames'
 import css from './status-effect.module.scss'
 import Tooltip from 'components/tooltip'
 import StatusEffectTooltip from './status-effect-tooltip'

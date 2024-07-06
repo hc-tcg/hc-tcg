@@ -5,7 +5,6 @@ import CardTooltip from './card-tooltip'
 import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
-import HealthCardModule, {HealthCardProps} from './health-card-svg'
 import CardClass from 'common/cards/base/card'
 
 interface CardProps
@@ -29,7 +28,6 @@ const Card = (props: CardProps) => {
 	else if (type === 'item') card = <ItemCardModule {...(otherProps as ItemCardProps)} />
 	else if (['effect', 'single_use'].includes(type))
 		card = <EffectCardModule {...(otherProps as EffectCardProps)} />
-	else if (type === 'health') card = <HealthCardModule {...(otherProps as HealthCardProps)} />
 	else throw new Error('Unsupported card type: ' + type)
 
 	return (
