@@ -31,7 +31,7 @@ class ChestSingleUseCard extends Card {
 				payload: {
 					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
 					modalDescription: '',
-					cards: player.discarded,
+					cards: player.discarded.map((card) => card.toLocalCardInstance()),
 					selectionSize: 1,
 					primaryButton: {
 						text: 'Confirm Selection',
@@ -48,10 +48,13 @@ class ChestSingleUseCard extends Card {
 				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].cardId === 'clock') return 'FAILURE_CANNOT_COMPLETE'
+				if (modalResult.cards[0].props.id === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)
-				retrieveCard(game, modalResult.cards[0])
+				retrieveCard(
+					game,
+					player.discarded.find((card) => card.instance === modalResult.cards![0].instance) || null
+				)
 
 				return 'SUCCESS'
 			},

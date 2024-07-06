@@ -1,8 +1,8 @@
-import {CardProps, WithoutFunctions} from '../cards/base/card'
+import {CardProps, Hermit, WithoutFunctions} from '../cards/base/card'
 import {SlotCondition} from '../slot'
 import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult, ModalData} from './game-state'
+import {ActionResult, LocalPlayerState, PlayerState} from './game-state'
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
@@ -41,13 +41,79 @@ export type PickRequest = {
 	onTimeout?: () => void
 }
 
-export type ModalRequest = {
-	/** The id of the player to request the pick from */
-	playerId: string
-	/** The id of the custom modal, used to reference it at a later date */
-	data: ModalData
-	/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
-	onResult: (modalResult: any) => ActionResult
-	/** Called when the modal request times out before being resolved successfully */
-	onTimeout: () => void
+export type ModalRequest = SelectCards.Request | CopyAttack.Request
+export type ModalData = SelectCards.Data | CopyAttack.Data
+export type ModalResult = SelectCards.Result | CopyAttack.Result
+
+export namespace SelectCards {
+	export type Request = {
+		/** The id of the player to request the pick from */
+		playerId: string
+		data: Data
+		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
+		onResult: (modalResult: Result | undefined) => ActionResult
+		/** Called when the modal request times out before being resolved successfully */
+		onTimeout: () => void
+	}
+
+	type ButtonVariant = 'default' | 'primary' | 'secondary' | 'error' | 'stone'
+
+	export type Data = {
+		modalId: 'selectCards'
+		payload: {
+			modalName: string
+			modalDescription: string
+			cards: Array<LocalCardInstance>
+			selectionSize: number
+			primaryButton?: {
+				text: string
+				variant?: ButtonVariant
+			} | null
+			secondaryButton?: {
+				text: string
+				variant?: ButtonVariant
+			} | null
+		}
+	}
+
+	export type Result =
+		| {
+				result: true
+				cards: null | LocalCardInstance[]
+		  }
+		| {
+				result: false
+				cards: null
+		  }
+}
+
+export namespace CopyAttack {
+	export type Request = {
+		/** The id of the player to request the pick from */
+		playerId: string
+		data: Data
+		/** The function that will be called when we receive a modal result. This will return whether this was a success or not*/
+		onResult: (modalResult: Result | undefined) => ActionResult
+		/** Called when the modal request times out before being resolved successfully */
+		onTimeout: () => void
+	}
+
+	export type Data = {
+		modalId: 'copyAttack'
+		payload: {
+			modalName: string
+			modalDescription: string
+			hermitCard: LocalCardInstance
+		}
+	}
+
+	export type Result =
+		| {
+				cancel: true
+				pick?: undefined
+		  }
+		| {
+				cancel?: undefined
+				pick: 'primary' | 'secondary'
+		  }
 }

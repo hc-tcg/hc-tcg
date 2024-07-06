@@ -4,6 +4,7 @@ import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
 import {slot} from '../../../slot'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
+import {CopyAttack} from '../../../types/server-requests'
 
 class RendogRareHermitCard extends Card {
 	props: Hermit = {
@@ -107,7 +108,7 @@ class RendogRareHermitCard extends Card {
 							payload: {
 								modalName: 'Rendog: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: pickedSlot,
+								hermitCard: pickedCard.toLocalCardInstance(),
 							},
 						},
 						onResult: (modalResult) => {

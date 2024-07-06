@@ -9,7 +9,14 @@ import {
 	CardInstance,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
-import {ModalRequest, PickInfo, PickRequest, PickedSlotType} from '../types/server-requests'
+import {
+	CopyAttack,
+	ModalRequest,
+	PickInfo,
+	PickRequest,
+	PickedSlotType,
+	SelectCards,
+} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition} from '../slot'
 import {SlotInfo} from '../types/cards'
@@ -215,6 +222,8 @@ export class GameModel {
 		}
 	}
 
+	public addModalRequest(newRequest: SelectCards.Request, before?: boolean): void
+	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)

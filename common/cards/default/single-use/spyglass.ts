@@ -41,7 +41,7 @@ class SpyglassSingleUseCard extends Card {
 					payload: {
 						modalName: `Spyglass${canDiscard ? `: Select 1 card to discard` : ''}`,
 						modalDescription: '',
-						cards: opponentPlayer.hand,
+						cards: opponentPlayer.hand.map((card) => card.toLocalCardInstance()),
 						selectionSize: canDiscard ? 1 : 0,
 						primaryButton: {
 							text: canDiscard ? 'Confirm Selection' : 'Close',
@@ -54,12 +54,15 @@ class SpyglassSingleUseCard extends Card {
 					if (!canDiscard) return 'SUCCESS'
 
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
-					discardFromHand(opponentPlayer, modalResult.cards[0])
+					const card =
+						opponentPlayer.hand.find((card) => card.instance === modalResult.cards![0].instance) ||
+						null
+					discardFromHand(opponentPlayer, card)
 
 					game.battleLog.addEntry(
 						player.id,
 						`$p{You|${opponentPlayer.playerName}}$ discarded ${getFormattedName(
-							modalResult.cards[0].cardId,
+							modalResult.cards[0].props.id,
 							true
 						)} from {$o${game.opponentPlayer.playerName}'s$|your} hand`
 					)
