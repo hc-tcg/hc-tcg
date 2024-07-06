@@ -42,6 +42,7 @@ const BoardRow = ({
 	const slots = slotTypes.map((slotType, slotIndex) => {
 		const card = getCardBySlot(slotType, slotIndex, rowState)
 		const cssId = slotType === 'item' ? slotType + (slotIndex + 1) : slotType
+
 		return (
 			<Slot
 				cssId={cssId}
@@ -53,6 +54,9 @@ const BoardRow = ({
 				type={slotType}
 				rowIndex={rowIndex}
 				index={slotIndex}
+				statusEffects={statusEffects.filter(
+					(a) => a.targetInstance == card?.cardInstance && slotType != 'hermit'
+				)}
 				playerId={playerId}
 			/>
 		)
@@ -66,7 +70,12 @@ const BoardRow = ({
 			})}
 		>
 			{slots}
-			<HealthSlot rowState={rowState} statusEffects={statusEffects} />
+			<HealthSlot
+				rowState={rowState}
+				statusEffects={statusEffects.filter(
+					(a) => rowState?.hermitCard && a.targetInstance == rowState.hermitCard.cardInstance
+				)}
+			/>
 		</div>
 	)
 }

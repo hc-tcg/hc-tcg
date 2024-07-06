@@ -1,7 +1,7 @@
 import classnames from 'classnames'
 import {CARDS} from 'common/cards'
 import Card from 'components/card'
-import {CardT, RowState} from 'common/types/game-state'
+import {CardT, RowState, StatusEffectT} from 'common/types/game-state'
 import css from './board.module.scss'
 import HermitCard from 'common/cards/base/hermit-card'
 import EffectCard from 'common/cards/base/effect-card'
@@ -15,6 +15,7 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
+import StatusEffectContainer from './board-status-effects'
 
 export type SlotProps = {
 	type: SlotTypeT
@@ -25,9 +26,20 @@ export type SlotProps = {
 	card: CardT | null
 	rowState?: RowState
 	active?: boolean
+	statusEffects?: Array<StatusEffectT>
 	cssId?: string
 }
-const Slot = ({type, rowIndex, index, playerId, onClick, card, active, cssId}: SlotProps) => {
+const Slot = ({
+	type,
+	rowIndex,
+	index,
+	playerId,
+	onClick,
+	card,
+	active,
+	statusEffects,
+	cssId,
+}: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
@@ -103,6 +115,7 @@ const Slot = ({type, rowIndex, index, playerId, onClick, card, active, cssId}: S
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />
 			)}
+			<StatusEffectContainer statusEffects={statusEffects || []} />
 		</div>
 	)
 }
