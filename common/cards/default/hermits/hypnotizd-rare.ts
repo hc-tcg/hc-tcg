@@ -2,11 +2,12 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
+import {SlotInfo} from '../../../types/cards'
+import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {hasStatusEffect} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
+import Card, {Hermit, hermit} from '../../base/card'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -39,42 +40,22 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
-	targetIndex = new InstancedValue<number | null>(() => null)
-
-	override getAttack(
-		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const {player, opponentPlayer} = pos
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
-
-		if (!attack || attack.type !== 'secondary') return attack
-
-		const targetIndex = this.targetIndex.get(instance)
-		if (targetIndex === opponentPlayer.board.activeRow || targetIndex === null) return attack
-
-		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return attack
-
-		// Change attack target
-		attack.setTarget(this.props.id, {
-			player: opponentPlayer,
-			rowIndex: targetIndex,
-			row: targetRow,
-		})
-
-		const newAttacks = attack
-
-		this.targetIndex.set(instance, null)
-
-		return newAttacks
-	}
-
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
-		const targetKey = this.getInstanceKey(instance, 'target')
+		let target: SlotInfo | null = null
+
+		player.hooks.beforeAttack.add(instance, (attack) => {
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+			if (!target || target.rowIndex == null || !target.row) return
+
+			attack.setTarget(this.props.id, {
+				player: opponentPlayer,
+				rowIndex: target?.rowIndex,
+				row: target?.row as RowStateWithHermit,
+			})
+
+			target = null
+		})
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
@@ -111,12 +92,10 @@ class HypnotizdRareHermitCard extends Card {
 				message: "Pick one of your opponent's Hermits",
 				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
 				onResult: (pickedSlot) => {
-					const rowIndex = pickedSlot.rowIndex
-
 					// Store the row index to use later
-					this.targetIndex.set(instance, rowIndex)
+					target = pickedSlot
 
-					const targetingAfk = rowIndex !== opponentPlayer.board.activeRow
+					const targetingAfk = pickedSlot.rowIndex !== opponentPlayer.board.activeRow
 
 					if (targetingAfk) {
 						// Add a second pick request to remove an item

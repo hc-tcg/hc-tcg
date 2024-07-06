@@ -1,8 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
-import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
+import Card, {Hermit, hermit} from '../../base/card'
 
 class HotguyRareHermitCard extends Card {
 	props: Hermit = {
@@ -31,30 +30,20 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	usingSecondaryAttack = new InstancedValue<boolean>(() => false)
-
-	override getAttack(
-		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
-		// Used for the Bow, we need to know the attack type
-		if (attack && attack.type === 'secondary') {
-			this.usingSecondaryAttack.set(instance, true)
-		}
-
-		return attack
-	}
-
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
+		let usingSecondaryAttack = false
+
 		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack.add(instance, (attack) => {
+			if (attack.id !== this.getInstanceKey(instance)) return
+			usingSecondaryAttack = attack.type === 'secondary'
+		})
+
+		player.hooks.beforeAttack.add(instance, (attack) => {
 			const singleUseCard = player.board.singleUseCard
-			if (singleUseCard?.props.id !== 'bow' || !this.usingSecondaryAttack.get(instance)) return
+			if (singleUseCard?.props.id !== 'bow' || !usingSecondaryAttack) return
 
 			const bowId = singleUseCard.card.getInstanceKey(singleUseCard)
 			if (attack.id === bowId) {
@@ -66,7 +55,6 @@ class HotguyRareHermitCard extends Card {
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		this.usingSecondaryAttack.clear(instance)
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
 	}
