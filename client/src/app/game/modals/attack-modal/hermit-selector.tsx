@@ -37,28 +37,25 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]
 
-	const eaResult = extraAttacks.reduce(
-		(agg, extra) => {
-			const [hermitId, action] = extra.split(':')
-			const hermitInfo = CARDS[hermitId] as Card<Hermit>
-			if (!hermitInfo) throw new Error('Invalid extra attack')
-			const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
-			const hermitFullName = hermitInfo.props.id.split('_')[0]
-			agg[hermitId] = agg[hermitId] || {}
-			agg[hermitId][type] = (
-				<Attack
-					key={extra}
-					name={hermitInfo.props[type].name}
-					icon={`/images/hermits-nobg/${hermitFullName}.png`}
-					attackInfo={hermitInfo.props[type]}
-					onClick={() => handleExtraAttack({hermitId, type})}
-					extra
-				/>
-			)
-			return agg
-		},
-		{} as Record<string, any>
-	)
+	const eaResult = extraAttacks.reduce((agg, extra) => {
+		const [hermitId, action] = extra.split(':')
+		const hermitInfo = CARDS[hermitId] as Card<Hermit>
+		if (!hermitInfo) throw new Error('Invalid extra attack')
+		const type = action === 'PRIMARY_ATTACK' ? 'primary' : 'secondary'
+		const hermitFullName = hermitInfo.props.id.split('_')[0]
+		agg[hermitId] = agg[hermitId] || {}
+		agg[hermitId][type] = (
+			<Attack
+				key={extra}
+				name={hermitInfo.props[type].name}
+				icon={`/images/hermits-nobg/${hermitFullName}.png`}
+				attackInfo={hermitInfo.props[type]}
+				onClick={() => handleExtraAttack({hermitId, type})}
+				extra
+			/>
+		)
+		return agg
+	}, {} as Record<string, any>)
 
 	const hermitOptions = Object.keys(eaResult).map((hermitId) => {
 		const hermitInfo = CARDS[hermitId]
