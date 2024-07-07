@@ -55,7 +55,7 @@ class RendogRareHermitCard extends Card {
 		const imitatingCard = this.imitatingCard.get(instance)
 		const pickedAttack = this.pickedAttack.get(instance)
 
-		if (!imitatingCard) return null
+		if (!imitatingCard) return attack
 
 		// No loops please
 		if (imitatingCard.props.id === this.props.id) return null
@@ -82,8 +82,6 @@ class RendogRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const imitatingCardKey = this.getInstanceKey(instance, 'imitatingCard')
-		const pickedAttackKey = this.getInstanceKey(instance, 'pickedAttack')
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking

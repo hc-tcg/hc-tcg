@@ -140,7 +140,7 @@ export namespace slot {
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
 			return cardIds.some((cardId) => {
-				return pos.card !== null && pos.card.card.props.id === pos.card.card.props.id
+				return pos.card !== null && pos.card.card.props.id === cardId
 			})
 		}
 	}
