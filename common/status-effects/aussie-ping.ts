@@ -1,4 +1,9 @@
-import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './status-effect'
+import StatusEffect, {
+	StatusEffectProps,
+	followActiveHermit,
+	hiddenStatusEffect,
+	statusEffect,
+} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
@@ -66,10 +71,8 @@ export class AussiePingStatusEffect extends StatusEffect {
 
 export class AussiePingImmuneStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...hiddenStatusEffect,
 		id: 'aussie-ping-immune',
-		name: 'Aussie Ping Immune',
-		description: 'This hermit is immune to Aussie Ping until the next turn.',
 	}
 
 	public override onApply(

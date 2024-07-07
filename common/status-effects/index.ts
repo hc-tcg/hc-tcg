@@ -15,7 +15,10 @@ import RevivedByDeathloopStatusEffect from './revived-by-deathloop'
 import BetrayedStatusEffect from './betrayed'
 import SheepStareStatusEffect from './sheep-stare'
 import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-ping'
-import { InvisibilityPotionHeadsStatusEffect, InvisibilityPotionTailsStatusEffect } from './invisbility-potion'
+import {
+	InvisibilityPotionHeadsStatusEffect,
+	InvisibilityPotionTailsStatusEffect,
+} from './invisbility-potion'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),

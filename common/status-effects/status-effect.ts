@@ -10,6 +10,7 @@ export type StatusEffectProps = {
 	description: string
 	damageEffect?: boolean
 	applyCondition: SlotCondition
+	hidden?: boolean
 }
 
 export type Counter = StatusEffectProps & {
@@ -19,6 +20,13 @@ export type Counter = StatusEffectProps & {
 
 export const statusEffect = {
 	damageEffect: false,
+	applyCondition: slot.anything,
+}
+
+export const hiddenStatusEffect = {
+	hidden: true,
+	name: '',
+	description: '',
 	applyCondition: slot.anything,
 }
 
