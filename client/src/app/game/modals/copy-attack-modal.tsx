@@ -23,7 +23,7 @@ function CopyAttackModal({closeModal}: Props) {
 	const opponentHermitInfo = rowPos.row.hermitCard
 	if (!isHermit(opponentHermitInfo.card.props)) return null
 
-	const hermitFullName = rowPos.row.hermitCard.card.props.name
+	const hermitFullName = rowPos.row.hermitCard.card.props.id.split('_')[0]
 
 	const handlePrimary = () => {
 		dispatch(modalRequest({modalResult: {pick: 'primary'}}))
