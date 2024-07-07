@@ -11,7 +11,6 @@ import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
 import {slot} from '../slot'
 
-// @TODO Prevent missing on multiple rounds in a row
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
