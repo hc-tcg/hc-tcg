@@ -27,7 +27,6 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 
 		player.hooks.afterAttack.add(instance, () => {
 			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
-			game.battleLog.addEntry(player.id, `$eInvisibility Potion$ wore off`)
 		})
 	}
 
@@ -66,7 +65,6 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 
 		player.hooks.afterAttack.add(instance, () => {
 			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
-			game.battleLog.addEntry(player.id, `$eInvisibility Potion$ wore off`)
 		})
 	}
 
