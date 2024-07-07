@@ -68,7 +68,7 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
 		...statusEffect,
 		id: 'aussie-ping-immune',
-		name: 'Aussie Pinged',
+		name: 'Aussie Ping Immune',
 		description: 'This hermit is immune to Aussie Ping until the next turn.',
 	}
 
