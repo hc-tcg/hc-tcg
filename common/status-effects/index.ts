@@ -18,7 +18,7 @@ import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-pin
 import {
 	InvisibilityPotionHeadsStatusEffect,
 	InvisibilityPotionTailsStatusEffect,
-} from './invisbility-potion'
+} from '../../invisibility-potion'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),
