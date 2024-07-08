@@ -20,7 +20,7 @@ function CopyAttackModal({closeModal}: Props) {
 	const opponentHermitInfo = modalData.payload.hermitCard
 	if (!isHermit(opponentHermitInfo.props)) return null
 
-	const hermitFullName = opponentHermitInfo.props.name
+	const hermitFullName = opponentHermitInfo.props.id.split('_')[0]
 
 	const handlePrimary = () => {
 		dispatch(modalRequest({modalResult: {pick: 'primary'}}))

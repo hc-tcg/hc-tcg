@@ -15,6 +15,10 @@ import RevivedByDeathloopStatusEffect from './revived-by-deathloop'
 import BetrayedStatusEffect from './betrayed'
 import SheepStareStatusEffect from './sheep-stare'
 import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-ping'
+import {
+	InvisibilityPotionHeadsStatusEffect,
+	InvisibilityPotionTailsStatusEffect,
+} from '../../invisibility-potion'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),
@@ -34,6 +38,8 @@ const effectClasses: Array<StatusEffect> = [
 	new SheepStareStatusEffect(),
 	new AussiePingStatusEffect(),
 	new AussiePingImmuneStatusEffect(),
+	new InvisibilityPotionHeadsStatusEffect(),
+	new InvisibilityPotionTailsStatusEffect(),
 ]
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(

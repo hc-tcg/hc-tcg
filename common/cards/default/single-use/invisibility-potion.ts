@@ -1,10 +1,14 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import {slot} from '../../../slot'
 import {CardInstance} from '../../../types/game-state'
+import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class InvisibilityPotionSingleUseCard extends Card {
+	applyTo = slot.every(slot.opponent, slot.activeRow, slot.hermitSlot)
+
 	props: SingleUse = {
 		...singleUse,
 		id: 'invisibility_potion',
@@ -22,33 +26,22 @@ class InvisibilityPotionSingleUseCard extends Card {
 				name: 'missed',
 			},
 		],
+		attachCondition: slot.every(singleUse.attachCondition, slot.someSlotFulfills(this.applyTo)),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		let usedUp = false
-
 		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, instance)
-			const multiplier = coinFlip[0] === 'heads' ? 0 : 2
+			let opponentActiveHermit = game.findSlot(this.applyTo)?.card
+			if (!opponentActiveHermit) return
 
-			opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
-				if (attack.isType('weakness', 'effect', 'status-effect')) return
-
-				usedUp = true
-				attack.multiplyDamage(this.props.id, multiplier)
-			})
-
-			opponentPlayer.hooks.afterAttack.add(instance, () => {
-				if (!usedUp) return
-
-				opponentPlayer.hooks.afterAttack.remove(instance)
-				opponentPlayer.hooks.beforeAttack.remove(instance)
-
-				game.battleLog.addEntry(player.id, `$eInvisibility Potion$ wore off`)
-			})
+			if (flipCoin(player, instance)[0] === 'heads') {
+				applyStatusEffect(game, 'invisibility-potion-heads', opponentActiveHermit)
+			} else {
+				applyStatusEffect(game, 'invisibility-potion-tails', opponentActiveHermit)
+			}
 		})
 	}
 

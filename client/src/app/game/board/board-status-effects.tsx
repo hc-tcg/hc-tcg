@@ -11,7 +11,7 @@ const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 		<div>
 			<div className={css.statusEffectContainer}>
 				{statusEffects.map((effect) => {
-					if (effect.statusEffect.props.damageEffect) return
+					if (effect.statusEffect.props.damageEffect || effect.statusEffect.props.hidden) return
 					return (
 						<StatusEffect
 							key={effect.instance}
@@ -23,7 +23,7 @@ const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 			</div>
 			<div className={css.damageStatusEffectContainer}>
 				{statusEffects.map((effect) => {
-					if (!effect.statusEffect.props.damageEffect) return
+					if (!effect.statusEffect.props.damageEffect || effect.statusEffect.props.hidden) return
 					return (
 						<StatusEffect
 							key={effect.instance}

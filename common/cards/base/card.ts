@@ -171,11 +171,11 @@ export const singleUse = {
 
 /** Type that allows multiple functions in a card to share values. */
 export class InstancedValue<T> {
-	default: T
+	default: () => T
 	values: Record<string, T> = {}
 
 	public constructor(defaultFactory: () => T) {
-		this.default = defaultFactory()
+		this.default = defaultFactory
 	}
 
 	public set(instance: CardInstance, value: T) {
@@ -186,7 +186,7 @@ export class InstancedValue<T> {
 		if (instance.instance in this.values) {
 			return this.values[instance.instance]
 		}
-		return this.default
+		return this.default()
 	}
 
 	public clear(instance: CardInstance) {

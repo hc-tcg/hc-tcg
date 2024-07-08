@@ -155,12 +155,7 @@ class ZombieCleoRareHermitCard extends Card {
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
 			// Block "Puppetry" if there are not AFK Hermit cards other than rare Cleo(s)
-			const afkHermits = game.filterSlots(this.pickCondition).length
-			if (
-				player.board.activeRow === pos.rowIndex &&
-				afkHermits <= 0 &&
-				!blockedActions.includes('SECONDARY_ATTACK')
-			) {
+			if (!game.someSlotFulfills(this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
 
