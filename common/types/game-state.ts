@@ -14,8 +14,7 @@ import Card, {
 } from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {GameModel} from '../models/game-model'
-import {SlotCondition, slot} from '../slot'
+import {SlotCondition} from '../slot'
 import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
@@ -46,11 +45,8 @@ export class CardInstance<Props extends CardProps = CardProps> {
 		return new CardInstance(CARDS[cardId], Math.random().toString())
 	}
 
-	static fromLocalCardInstance(
-		game: GameModel,
-		localCardInstance: LocalCardInstance
-	): CardInstance {
-		return game.findSlot(slot.hasInstance(localCardInstance))?.card as CardInstance
+	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
+		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
 	}
 
 	public toLocalCardInstance(): LocalCardInstance<Props> {
