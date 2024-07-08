@@ -73,7 +73,10 @@ function* playCardSaga(
 		switch (type) {
 			case 'hermit': {
 				player.hasPlacedHermit = true
-				if (!card.card.isHealth()) return 'FAILURE_INVALID_DATA'
+				if (!card.card.isHealth())
+					throw Error(
+						'Attempted to add card that does not implement health to hermit slot: ' + card.props.id
+					)
 
 				row.hermitCard = card as CardInstance<HasHealth>
 
@@ -88,13 +91,15 @@ function* playCardSaga(
 			}
 			case 'item': {
 				if (index === null) break
-				if (!card.card.isItem()) return 'FAILURE_INVALID_DATA'
 				if (card.props.category === 'item') game.addCompletedActions('PLAY_ITEM_CARD')
 				row.itemCards[index] = card
 				break
 			}
 			case 'attach': {
-				if (!card.card.isAttach()) return 'FAILURE_INVALID_DATA'
+				if (!card.card.isAttach())
+					throw Error(
+						'Attempted to add card that implement attach to an attach slot: ' + card.props.id
+					)
 				row.effectCard = card as CardInstance<Attach>
 				break
 			}
