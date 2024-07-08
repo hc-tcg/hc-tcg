@@ -17,7 +17,7 @@ function SelectCardsModal({closeModal}: Props) {
 	const dispatch = useDispatch()
 
 	const modalData: ModalData | null | undefined = useSelector(getGameState)?.currentModalData
-	if (!modalData) return null
+	if (!modalData || modalData.modalId !== 'selectCards') return null
 	const [selected, setSelected] = useState<Array<LocalCardInstance>>([])
 	const cards: Array<LocalCardInstance> = modalData.payload.cards
 	const selectionSize = modalData.payload.selectionSize
@@ -84,12 +84,8 @@ function SelectCardsModal({closeModal}: Props) {
 					</Button>
 				)}
 				{primaryButton && (
-					<Button
-						variant={modalData.payload.primaryButton.variant}
-						size="medium"
-						onClick={handlePrimary}
-					>
-						{modalData.payload.primaryButton.text}
+					<Button variant={primaryButton.variant} size="medium" onClick={handlePrimary}>
+						{primaryButton.text}
 					</Button>
 				)}
 			</div>

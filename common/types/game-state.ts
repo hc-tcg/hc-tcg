@@ -24,6 +24,7 @@ import {GameHook, WaterfallHook} from './hooks'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
+	ModalData,
 	ModalRequest,
 	PickInfo,
 	PickRequest,
@@ -267,10 +268,7 @@ export type PickCardActionResult =
 
 export type ActionResult = GenericActionResult | PlayCardActionResult | PickCardActionResult
 
-export type ModalData = {
-	modalId: string
-	payload?: any
-}
+export type {ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number

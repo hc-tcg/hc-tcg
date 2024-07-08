@@ -31,7 +31,7 @@ class CatEffectCard extends Card {
 					payload: {
 						modalName: 'Cat: Draw a card from the bottom of your deck?',
 						modalDescription: '',
-						cards: [player.pile[0]],
+						cards: [player.pile[0].toLocalCardInstance()],
 						selectionSize: 0,
 						primaryButton: {
 							text: 'Draw from Bottom',

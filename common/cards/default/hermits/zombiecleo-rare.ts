@@ -115,7 +115,7 @@ class ZombieCleoRareHermitCard extends Card {
 							payload: {
 								modalName: 'Cleo: Choose an attack to copy',
 								modalDescription: "Which of the Hermit's attacks do you want to copy?",
-								cardPos: pickedSlot,
+								hermitCard: pickedCard.toLocalCardInstance(),
 							},
 						},
 						onResult: (modalResult) => {
