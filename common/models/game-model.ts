@@ -369,8 +369,7 @@ export class GameModel {
 	}
 
 	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
-		let predicate = slot.every(...predicates)
-		return this.filterSlots(predicate)[0]
+		return this.filterSlots(slot.every(...predicates))[0]
 	}
 
 	/**
