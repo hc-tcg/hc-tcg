@@ -40,7 +40,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.instance !== instance.instance) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return

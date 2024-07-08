@@ -35,15 +35,13 @@ class KeralisRareHermitCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const playerKey = this.getInstanceKey(instance, 'player')
-		const rowKey = this.getInstanceKey(instance, 'row')
 
 		let pickedAfkHermit: SlotInfo | null = null
 
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.instance !== instance.instance) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return

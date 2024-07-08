@@ -35,7 +35,8 @@ class RendogRareHermitCard extends Card {
 		slot.opponent,
 		slot.hermitSlot,
 		slot.not(slot.empty),
-		slot.not(slot.hasId(this.props.id))
+		slot.not(slot.hasId(this.props.id)),
+		slot.not(slot.hasId('armor_stand'))
 	)
 
 	imitatingCard = new InstancedValue<CardInstance | null>(() => null)
@@ -57,9 +58,6 @@ class RendogRareHermitCard extends Card {
 		const pickedAttack = this.pickedAttack.get(instance)
 
 		if (!imitatingCard) return attack
-
-		// No loops please
-		if (imitatingCard.props.id === this.props.id) return null
 		if (!imitatingCard.isHermit()) return null
 
 		if (!pickedAttack) return null
@@ -86,7 +84,7 @@ class RendogRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.instance !== instance.instance) return
 			// Only activate power on secondary attack
 			if (hermitAttackType !== 'secondary') return
 

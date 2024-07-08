@@ -35,7 +35,8 @@ class ZombieCleoRareHermitCard extends Card {
 		slot.hermitSlot,
 		slot.not(slot.empty),
 		slot.not(slot.activeRow),
-		slot.not(slot.hasId(this.props.id))
+		slot.not(slot.hasId(this.props.id)),
+		slot.not(slot.hasId('armor_stand'))
 	)
 
 	pickedAttack = new InstancedValue<{card: CardInstance; attack: HermitAttackType} | null>(
@@ -60,10 +61,6 @@ class ZombieCleoRareHermitCard extends Card {
 		this.pickedAttack.set(instance, null)
 
 		if (!pickedCard || !attackType) return null
-
-		// No loops please
-		if (pickedCard.props.id === this.props.id) return null
-
 		if (!pickedCard.isHermit()) return null
 
 		// Return that cards secondary attack
@@ -85,7 +82,7 @@ class ZombieCleoRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.instance !== instance.instance) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -154,7 +151,6 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
-			// Block "Puppetry" if there are not AFK Hermit cards other than rare Cleo(s)
 			if (!game.someSlotFulfills(this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
