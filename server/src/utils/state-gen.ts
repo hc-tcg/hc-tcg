@@ -317,7 +317,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		statusEffects: game.state.statusEffects,
+		statusEffects: game.state.statusEffects.map((effect) => effect.toLocalStatusEffectInstance()),
 
 		// personal info
 		hand: playerState.hand.map((card) => card.toLocalCardInstance()),

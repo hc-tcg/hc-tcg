@@ -6,7 +6,6 @@ import Card, {
 	Hermit,
 	Item,
 	SingleUse,
-	WithoutFunctions,
 	isAttach,
 	isHealth,
 	isHermit,
@@ -28,6 +27,7 @@ import {
 	ModalRequest,
 	PickInfo,
 	PickRequest,
+	WithoutFunctions,
 } from './server-requests'
 
 export type PlayerId = string
@@ -122,6 +122,15 @@ export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffect
 		this.instance = instance
 		this.targetInstance = targetInstance
 		this.counter = null
+	}
+
+	public toLocalStatusEffectInstance(): LocalStatusEffectInstance {
+		return {
+			props: WithoutFunctions(this.props),
+			instance: this.instance,
+			targetInstance: this.targetInstance.toLocalCardInstance(),
+			counter: this.counter,
+		}
 	}
 
 	public get props(): Props {
@@ -369,7 +378,7 @@ export type LocalPlayerState = {
 export type LocalGameState = {
 	turn: LocalTurnState
 	order: Array<PlayerId>
-	statusEffects: Array<StatusEffectInstance>
+	statusEffects: Array<LocalStatusEffectInstance>
 
 	// personal data
 	hand: Array<LocalCardInstance>

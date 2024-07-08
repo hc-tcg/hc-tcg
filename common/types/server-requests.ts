@@ -1,8 +1,17 @@
-import {CardProps, WithoutFunctions} from '../cards/base/card'
+import {CardProps} from '../cards/base/card'
 import {SlotCondition} from '../slot'
-import StatusEffect, {StatusEffectProps} from '../status-effects/status-effect'
+import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult} from './game-state'
+
+/* A type to remove functions from.props to prevent issues when sending cards to the cient */
+export type WithoutFunctions<Type> = {
+	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
+}
+
+export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
+	return t as WithoutFunctions<T>
+}
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
@@ -10,8 +19,10 @@ export type LocalCardInstance<Props extends CardProps = CardProps> = {
 }
 
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
-	readonly props: Props
+	readonly props: WithoutFunctions<Props>
 	readonly instance: string
+	readonly targetInstance: LocalCardInstance
+	readonly counter: number | null
 }
 
 export type PickedSlotType = SlotTypeT | 'hand'

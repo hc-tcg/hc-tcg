@@ -1,13 +1,6 @@
 import React from 'react'
 import {TypeT} from 'common/types/cards'
-import {
-	CardProps,
-	WithoutFunctions,
-	isAttach,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from 'common/cards/base/card'
+import {CardProps, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
@@ -19,6 +12,7 @@ import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {FormattedText} from 'components/formatting/formatting'
 import {EmptyNode, FormattedTextNode, formatText} from 'common/utils/formatting'
+import {WithoutFunctions} from 'common/types/server-requests'
 
 const HERMIT_TYPES: Record<string, string> = {
 	balanced: 'Balanced',

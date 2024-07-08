@@ -1,7 +1,6 @@
 import classnames from 'classnames'
 import {LocalRowState} from 'common/types/game-state'
 import Card from 'components/card'
-import {StatusEffectInstance} from 'common/types/game-state'
 import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
@@ -11,7 +10,7 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
-import {LocalCardInstance} from 'common/types/server-requests'
+import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
 
 export type SlotProps = {
@@ -24,7 +23,7 @@ export type SlotProps = {
 	rowState?: LocalRowState
 	active?: boolean
 	cssId?: string
-	statusEffects?: Array<StatusEffectInstance>
+	statusEffects?: Array<LocalStatusEffectInstance>
 }
 const Slot = ({
 	type,

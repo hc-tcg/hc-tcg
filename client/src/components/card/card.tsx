@@ -5,7 +5,8 @@ import CardInstanceTooltip from './card-tooltip'
 import HermitCardModule, {HermitCardProps} from './hermit-card-svg'
 import EffectCardModule, {EffectCardProps} from './effect-card-svg'
 import ItemCardModule, {ItemCardProps} from './item-card-svg'
-import {CardProps, WithoutFunctions} from 'common/cards/base/card'
+import {CardProps} from 'common/cards/base/card'
+import {WithoutFunctions} from 'common/types/server-requests'
 
 interface CardReactProps
 	extends React.DetailedHTMLProps<

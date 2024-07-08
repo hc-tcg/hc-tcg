@@ -1,9 +1,10 @@
 import {StatusEffectInstance} from 'common/types/game-state'
 import css from './board.module.scss'
 import StatusEffect from 'components/status-effects/status-effect'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
 
 type StatusEffectDisplayProps = {
-	statusEffects: Array<StatusEffectInstance>
+	statusEffects: Array<LocalStatusEffectInstance>
 }
 
 const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
@@ -11,11 +12,11 @@ const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 		<div>
 			<div className={css.statusEffectContainer}>
 				{statusEffects.map((effect) => {
-					if (effect.statusEffect.props.damageEffect || effect.statusEffect.props.hidden) return
+					if (effect.props.damageEffect || effect.props.hidden) return
 					return (
 						<StatusEffect
 							key={effect.instance}
-							statusEffect={effect.statusEffect.props}
+							statusEffect={effect.props}
 							counter={effect.counter}
 						/>
 					)
@@ -23,11 +24,11 @@ const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 			</div>
 			<div className={css.damageStatusEffectContainer}>
 				{statusEffects.map((effect) => {
-					if (!effect.statusEffect.props.damageEffect || effect.statusEffect.props.hidden) return
+					if (!effect.props.damageEffect || effect.props.hidden) return
 					return (
 						<StatusEffect
 							key={effect.instance}
-							statusEffect={effect.statusEffect.props}
+							statusEffect={effect.props}
 							counter={effect.counter}
 						/>
 					)

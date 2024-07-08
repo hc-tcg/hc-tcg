@@ -13,6 +13,7 @@ import {slot, SlotCondition} from '../../slot'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {CardInstance} from '../../types/game-state'
+import {WithoutFunctions} from '../../types/server-requests'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -22,14 +23,6 @@ export type CanAttachError =
 	| 'UNKNOWN_ERROR'
 
 export type CanAttachResult = Array<CanAttachError>
-
-/* A type to remove functions from.props to prevent issues when sending cards to the cient */
-export type WithoutFunctions<Type extends CardProps> = {
-	[Property in keyof Type]: Type[Property] extends Function ? never : Type[Property]
-}
-export function WithoutFunctions<T extends CardProps>(t: T): WithoutFunctions<T> {
-	return t as WithoutFunctions<T>
-}
 
 export type CardProps = {
 	id: string
