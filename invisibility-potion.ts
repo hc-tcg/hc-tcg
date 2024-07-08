@@ -2,7 +2,11 @@ import {CardPosModel, getCardPos} from './common/models/card-pos-model'
 import {GameModel} from './common/models/game-model'
 import {StatusEffectInstance} from './common/types/game-state'
 import {removeStatusEffect} from './common/utils/board'
-import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './common/status-effects/status-effect'
+import StatusEffect, {
+	StatusEffectProps,
+	followActiveHermit,
+	statusEffect,
+} from './common/status-effects/status-effect'
 
 export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
