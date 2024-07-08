@@ -300,7 +300,6 @@ export class GameModel {
 	/** Return the slots that fullfil a condition given by the predicate */
 	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
 		let predicate = slot.every(...predicates)
-
 		let pickableSlots: Array<SlotInfo> = []
 
 		for (const player of Object.values(this.state.players)) {
