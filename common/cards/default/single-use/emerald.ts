@@ -36,8 +36,8 @@ class EmeraldSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const playerSlot = game.findSlot(slot.every(slot.player, slot.activeRow, slot.attachSlot))
-			const opponentSlot = game.findSlot(slot.every(slot.opponent, slot.activeRow, slot.attachSlot))
+			const playerSlot = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
+			const opponentSlot = game.findSlot(slot.opponent, slot.activeRow, slot.attachSlot)
 
 			game.swapSlots(playerSlot, opponentSlot)
 		})

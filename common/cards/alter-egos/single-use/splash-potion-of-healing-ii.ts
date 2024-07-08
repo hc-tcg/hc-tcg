@@ -22,9 +22,7 @@ class SplashPotionOfHealingIISingleUseCard extends Card {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			game
-				.filterSlots(slot.every(slot.player, slot.hermitSlot))
-				.forEach(({row, card}) => healHermit(row, 20))
+			game.filterSlots(slot.player, slot.hermitSlot).forEach(({row, card}) => healHermit(row, 20))
 		})
 	}
 

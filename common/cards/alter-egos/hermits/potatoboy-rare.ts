@@ -48,12 +48,10 @@ class PotatoBoyRareHermitCard extends Card {
 
 			game
 				.filterSlots(
-					slot.every(
-						slot.player,
-						slot.adjacentTo(slot.activeRow),
-						slot.hermitSlot,
-						slot.not(slot.empty)
-					)
+					slot.player,
+					slot.adjacentTo(slot.activeRow),
+					slot.hermitSlot,
+					slot.not(slot.empty)
 				)
 				.forEach(({row, rowIndex, card}) => {
 					if (!card || rowIndex === null) return

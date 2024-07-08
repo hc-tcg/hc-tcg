@@ -50,7 +50,7 @@ class HumanCleoRareHermitCard extends Card {
 			applyStatusEffect(
 				game,
 				'betrayed',
-				game.findSlot(slot.every(slot.opponent, slot.activeRow, slot.hermitSlot))?.card
+				game.findSlot(slot.opponent, slot.activeRow, slot.hermitSlot)?.card
 			)
 		})
 	}

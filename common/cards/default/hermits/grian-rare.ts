@@ -61,11 +61,13 @@ class GrianRareHermitCard extends Card {
 
 			if (coinFlip[0] === 'tails') return
 
-			const effectSlot = game.findSlot(
-				slot.every(slot.player, slot.rowIndex(rowIndex), slot.attachSlot)
-			)
+			const effectSlot = game.findSlot(slot.player, slot.rowIndex(rowIndex), slot.attachSlot)
 			const canAttach = game.findSlot(
-				slot.every(slot.player, slot.not(slot.frozen), slot.attachSlot, slot.activeRow, slot.empty)
+				slot.player,
+				slot.not(slot.frozen),
+				slot.attachSlot,
+				slot.activeRow,
+				slot.empty
 			)
 
 			game.addModalRequest({
@@ -97,9 +99,7 @@ class GrianRareHermitCard extends Card {
 						discardCard(game, row.effectCard)
 
 						// Move their effect card over
-						const opponentEffectSlot = game.findSlot(
-							slot.every(slot.opponent, slot.attachSlot, slot.activeRow)
-						)
+						const opponentEffectSlot = game.findSlot(slot.opponent, slot.attachSlot, slot.activeRow)
 						game.swapSlots(effectSlot, opponentEffectSlot)
 
 						const newPos = getCardPos(game, opponentEffectCard)

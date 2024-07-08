@@ -40,10 +40,7 @@ class LadderSingleUseCard extends Card {
 			onResult(pickedSlot) {
 				applySingleUse(game)
 
-				game.swapSlots(
-					pickedSlot,
-					game.findSlot(slot.every(slot.player, slot.hermitSlot, slot.activeRow))
-				)
+				game.swapSlots(pickedSlot, game.findSlot(slot.player, slot.hermitSlot, slot.activeRow))
 
 				game.changeActiveRow(player, pickedSlot.rowIndex)
 			},

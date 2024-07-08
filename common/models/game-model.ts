@@ -18,7 +18,7 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {SlotCondition} from '../slot'
+import {SlotCondition, slot} from '../slot'
 import {SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 
@@ -298,7 +298,9 @@ export class GameModel {
 	}
 
 	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(predicate: SlotCondition): Array<SlotInfo> {
+	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
+		let predicate = slot.every(...predicates)
+
 		let pickableSlots: Array<SlotInfo> = []
 
 		for (const player of Object.values(this.state.players)) {
@@ -366,8 +368,9 @@ export class GameModel {
 		return pickableSlots
 	}
 
-	public findSlot(prediate: SlotCondition): SlotInfo | null {
-		return this.filterSlots(prediate)[0]
+	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
+		let predicate = slot.every(...predicates)
+		return this.filterSlots(predicate)[0]
 	}
 
 	/**

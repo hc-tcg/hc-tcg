@@ -1,6 +1,7 @@
 import {GameModel} from './models/game-model'
 import {SlotInfo} from './types/cards'
 import {CardInstance, TurnAction} from './types/game-state'
+import {LocalCardInstance} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
 
@@ -130,7 +131,7 @@ export namespace slot {
 	}
 
 	/** Return true if the spot contains the specified card instance. */
-	export const hasInstance = (cardInstance: CardInstance): SlotCondition => {
+	export const hasInstance = (cardInstance: CardInstance | LocalCardInstance): SlotCondition => {
 		return (game, pos) => {
 			return pos.card !== null && pos.card.instance === cardInstance.instance
 		}
