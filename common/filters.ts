@@ -222,6 +222,8 @@ export namespace slot {
 	}
 }
 
+const slotCombinators = slot
+
 export namespace card {
 	export const anything = anythingCombinator
 	export const nothing = nothingCombinator
@@ -242,6 +244,9 @@ export namespace card {
 			return card.slot !== null ? everyCombinator(...predicates)(game, card.slot) : null || false
 		}
 	}
+
+	export const pile: CardCondition = card.slot(slotCombinators.pile)
+	export const hand: CardCondition = card.slot(slotCombinators.hand)
 
 	export function inSlot(slot: SlotComponent | null): CardCondition {
 		return (game, card) => slot !== null && slot.entity === card.slot?.entity

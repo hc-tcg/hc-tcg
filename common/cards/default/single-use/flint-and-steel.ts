@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {card, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import {discardFromHand, drawCards} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -20,7 +20,8 @@ class FlintAndSteelSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
 		attachCondition: slot.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length > 3
+			(game, pos) =>
+				game.state.cards.filter(card.player(game.currentPlayer.id), card.pile).length > 3
 		),
 	}
 

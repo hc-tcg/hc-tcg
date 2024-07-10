@@ -15,7 +15,7 @@ export type PlayerDeckT = {
 		| 'redstone'
 		| 'speedrunner'
 		| 'terraform'
-	cards: Array<string>
+	cards: Array<LocalCardInstance>
 }
 
 export type SavedDeckT = {
