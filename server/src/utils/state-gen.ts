@@ -27,7 +27,7 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export function getStarterPack() {
+export function getStarterPack(): Array<string> {
 	const limits = CONFIG.limits
 
 	// only allow some starting types
@@ -127,39 +127,19 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	return deck.map((card) => {
-		return {
-			props: card,
-			instance: Math.random().toString,
-		}
-	})
+	return deck.map((card) => card.props.id)
 }
 
-export function getPlayerState(player: PlayerModel): PlayerState {
+export function getPlayerState(game: GameModel, player: PlayerModel): PlayerState {
 	// const allCards = Object.values(CARDS).map((card: Card) => new CardInstance(card, card.props.id))
 	// let pack = DEBUG_CONFIG.unlimitedCards
-	// 	? allCards
-	// 	: player.deck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
+	// ? allCards
+	// : player.deck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
 
 	// // shuffle cards
 	// !DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
 
 	// // randomize instances
-	// pack = pack.map((card) => {
-	// 	return new CardInstance(card.card, Math.random().toString())
-	// })
-
-	// // ensure a hermit in first 5 cards
-	// const hermitIndex = pack.findIndex((card) => {
-	// 	return card.props.category === 'hermit'
-	// })
-	// if (hermitIndex > 5) {
-	// 	;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
-	// }
-
-	// const amountOfStartingCards =
-	// 	DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
-	// const hand = pack.slice(0, amountOfStartingCards)
 
 	// for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
 	// 	const id = DEBUG_CONFIG.extraStartingCards[i]
@@ -228,7 +208,7 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 			game.state.cards.find(card.singleUse, card.slot(slot.singleUseSlot))?.toLocalCardInstance() ||
 			null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
-		rows: game.state.rows.filter(row.player).map((row) => {
+		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
 			return {
 				hermitCard:
 					(game.state.cards
@@ -271,8 +251,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 	// convert player states
 	const players: Record<string, LocalPlayerState> = {}
-	players[player.id] = getLocalPlayerState(playerState)
-	players[opponentPlayerId] = getLocalPlayerState(opponentState)
+	players[player.id] = getLocalPlayerState(game, playerState)
+	players[opponentPlayerId] = getLocalPlayerState(game, opponentState)
 
 	// Pick message or modal id
 	playerState.pickableSlots = null
@@ -314,12 +294,18 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		statusEffects: game.state.statusEffects.map((effect) => effect.toLocalStatusEffectInstance()),
+		statusEffects: game.state.statusEffects
+			.list()
+			.map((effect) => effect.toLocalStatusEffectInstance()),
 
 		// personal info
-		hand: playerState.hand.map((card) => card.toLocalCardInstance()),
-		pileCount: playerState.pile.length,
-		discarded: playerState.discarded.map((card) => card.toLocalCardInstance()),
+		hand: game.state.cards
+			.filter(card.slot(slot.player(playerState.id), slot.hand))
+			.map((inst) => inst.toLocalCardInstance()),
+		pileCount: game.state.cards.filter(card.slot(slot.player(playerState.id), slot.pile)).length,
+		discarded: game.state.cards
+			.filter(card.slot(slot.player(playerState.id), slot.discardPile))
+			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids
 		playerId: player.id,

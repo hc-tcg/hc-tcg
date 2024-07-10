@@ -18,7 +18,7 @@ class EmeraldSingleUseCard extends Card {
 		attachCondition: slot.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(
-				slot.every(slot.player, slot.activeRow, slot.attachSlot, slot.not(slot.frozen))
+				slot.every(slot.currentPlayer, slot.activeRow, slot.attachSlot, slot.not(slot.frozen))
 			),
 			slot.someSlotFulfills(
 				slot.every(
@@ -36,7 +36,7 @@ class EmeraldSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			const playerSlot = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
+			const playerSlot = game.findSlot(slot.currentPlayer, slot.activeRow, slot.attachSlot)
 			const opponentSlot = game.findSlot(slot.opponent, slot.activeRow, slot.attachSlot)
 
 			game.swapSlots(playerSlot, opponentSlot)

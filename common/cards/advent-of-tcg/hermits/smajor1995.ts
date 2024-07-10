@@ -40,7 +40,7 @@ class Smajor1995RareHermitCard extends Card {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 
 			const pickCondition = slot.every(
-				slot.player,
+				slot.currentPlayer,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty),
 				slot.hermitSlot

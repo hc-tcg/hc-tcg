@@ -54,7 +54,7 @@ class SolidaritygamingRareHermitCard extends Card {
 			})
 
 			const pickCondition = slot.every(
-				slot.player,
+				slot.currentPlayer,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty),
 				slot.hermitSlot

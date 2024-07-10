@@ -7,7 +7,7 @@ import Card, {SingleUse, singleUse} from '../../base/card'
 
 class LadderSingleUseCard extends Card {
 	pickCondition = slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.hermitSlot,
 		slot.not(slot.empty),
 		slot.adjacentTo(slot.activeRow)
@@ -40,7 +40,7 @@ class LadderSingleUseCard extends Card {
 			onResult(pickedSlot) {
 				applySingleUse(game)
 
-				game.swapSlots(pickedSlot, game.findSlot(slot.player, slot.hermitSlot, slot.activeRow))
+				game.swapSlots(pickedSlot, game.findSlot(slot.currentPlayer, slot.hermitSlot, slot.activeRow))
 
 				game.changeActiveRow(player, pickedSlot.rowIndex)
 			},

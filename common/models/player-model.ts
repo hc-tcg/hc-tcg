@@ -3,7 +3,6 @@ import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
-import {LocalCardInstance} from '../types/server-requests'
 import {PlayerId} from '../types/game-state'
 
 export class PlayerModel {
@@ -65,7 +64,7 @@ export class PlayerModel {
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
-			cards: newDeck.cards.map((card) => card.instance),
+			cards: newDeck.cards.map((card) => card.props.id),
 		}
 	}
 

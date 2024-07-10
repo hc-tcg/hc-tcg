@@ -15,8 +15,14 @@ export class EntityList<Id extends string, Value extends {id: Id}> {
 		return this.data[id] || null
 	}
 
+	/** Add a value and return the ID of the value */
 	public add(value: Value) {
 		this.data[value.id] = value
+		return value.id
+	}
+
+	public list(): Array<Value> {
+		return Object.values(this.data)
 	}
 
 	public filter(...predicates: Array<Predicate<Value>>): Array<Value> {

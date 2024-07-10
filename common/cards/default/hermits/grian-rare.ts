@@ -60,9 +60,9 @@ class GrianRareHermitCard extends Card {
 
 			if (coinFlip[0] === 'tails') return
 
-			const effectSlot = game.findSlot(slot.player, slot.rowIndex(rowIndex), slot.attachSlot)
+			const effectSlot = game.findSlot(slot.currentPlayer, slot.rowIndex(rowIndex), slot.attachSlot)
 			const canAttach = game.findSlot(
-				slot.player,
+				slot.currentPlayer,
 				slot.not(slot.frozen),
 				slot.attachSlot,
 				slot.activeRow,

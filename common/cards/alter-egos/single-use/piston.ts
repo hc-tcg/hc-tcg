@@ -9,7 +9,7 @@ import Card, {SingleUse, singleUse} from '../../base/card'
 
 class PistonSingleUseCard extends Card {
 	firstPickCondition = slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.itemSlot,
 		slot.rowHasHermit,
 		slot.not(slot.frozen),
@@ -60,7 +60,7 @@ class PistonSingleUseCard extends Card {
 			id: this.props.id,
 			message: 'Pick an empty item slot on one of your adjacent active or AFK Hermits',
 			canPick: slot.every(
-				slot.player,
+				slot.currentPlayer,
 				slot.itemSlot,
 				slot.empty,
 				slot.rowHasHermit,

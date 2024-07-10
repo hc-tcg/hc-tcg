@@ -1,23 +1,47 @@
 import {getPlayerState} from '../../server/src/utils/state-gen'
+import {DEBUG_CONFIG} from '../config'
+import {card} from '../filters'
 import {GameModel} from '../models/game-model'
-import {RowInfo, SlotInfo} from '../types/cards'
+import {BoardSlotInfo, HandSlotInfo, PileSlotInfo, RowInfo} from '../types/cards'
 import {EntityList} from '../types/entity-list'
 import {CardInstance, GameState, PlayerId} from '../types/game-state'
 
 export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
-		let row = new RowInfo(game, rowIndex)
-		gameState.rows.add(row)
+		let rowId = gameState.rows.add(new RowInfo(game, playerId, rowIndex))
 
-		gameState.slots.add(new SlotInfo(game, playerId, 'item', 0, row.id))
-		gameState.slots.add(new SlotInfo(game, playerId, 'item', 1, row.id))
-		gameState.slots.add(new SlotInfo(game, playerId, 'item', 2, row.id))
-		gameState.slots.add(new SlotInfo(game, playerId, 'attach', 3, row.id))
-		gameState.slots.add(new SlotInfo(game, playerId, 'hermit', 4, row.id))
+		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 0, rowId))
+		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 1, rowId))
+		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 2, rowId))
+		gameState.slots.add(new BoardSlotInfo(game, playerId, 'attach', 3, rowId))
+		gameState.slots.add(new BoardSlotInfo(game, playerId, 'hermit', 4, rowId))
 	}
 
-	for (const card of game.players[playerId].deck.cards) {
-		gameState.cards.add(new CardInstance(game, card))
+	let cards = [...game.players[playerId].deck.cards]
+
+	cards.sort(() => Math.random() - 0.5)
+
+	for (const card of cards) {
+		let cardInstance = new CardInstance(game, card, playerId)
+		gameState.cards.add(cardInstance)
+		cardInstance.slotId = gameState.slots.add(new PileSlotInfo(game, playerId))
+	}
+
+	const pack = gameState.cards.filter(card.player(playerId))
+
+	// ensure a hermit in first 5 cards
+	const hermitIndex = pack.findIndex((card) => {
+		return card.props.category === 'hermit'
+	})
+	if (hermitIndex > 5) {
+		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	}
+
+	const amountOfStartingCards =
+		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
+
+	for (let i = 0; i < amountOfStartingCards && i < pack.length; i++) {
+		pack[i].slotId = gameState.slots.add(new HandSlotInfo(game, playerId))
 	}
 }
 
@@ -45,7 +69,7 @@ export function getGameState(game: GameModel): GameState {
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
 				...playerStates,
-				[playerId]: getPlayerState(game.players[playerId]),
+				[playerId]: getPlayerState(game, game.players[playerId]),
 			}),
 			{}
 		),
@@ -63,7 +87,7 @@ export function getGameState(game: GameModel): GameState {
 	setupGameStateForPlayer(game, gameState, playerIds[0])
 	setupGameStateForPlayer(game, gameState, playerIds[1])
 
-	gameState.slots.add(new SlotInfo(game, null, 'single_use', null, null))
+	gameState.slots.add(new BoardSlotInfo(game, null, 'single_use', null, null))
 
 	return gameState
 }

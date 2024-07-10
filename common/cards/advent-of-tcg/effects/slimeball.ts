@@ -30,7 +30,7 @@ class SlimeballEffectCard extends Card {
 
 		player.hooks.freezeSlots.add(instance, () => {
 			return slot.every(
-				slot.player,
+				slot.currentPlayer,
 				slot.rowIndex(pos.rowIndex),
 				slot.not(slot.attachSlot),
 				slot.not(slot.empty)

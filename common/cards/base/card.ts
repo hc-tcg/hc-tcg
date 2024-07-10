@@ -5,7 +5,7 @@ import {
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
-    SlotInfo,
+	SlotInfo,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -56,7 +56,7 @@ export const item = {
 	item: null,
 	category: 'item' as CardCategoryT,
 	attachCondition: slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.itemSlot,
 		slot.empty,
 		slot.rowHasHermit,
@@ -99,7 +99,7 @@ export const hermit = {
 	category: 'hermit' as CardCategoryT,
 	attachCondition: slot.every(
 		slot.hermitSlot,
-		slot.player,
+		slot.currentPlayer,
 		slot.empty,
 		slot.actionAvailable('PLAY_HERMIT_CARD'),
 		slot.not(slot.frozen)
@@ -123,7 +123,7 @@ export const attach = {
 	attachable: null,
 	category: 'attach' as CardCategoryT,
 	attachCondition: slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
 		slot.rowHasHermit,

@@ -19,8 +19,8 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {SlotCondition, slot} from '../filters'
-import {RowInfo, SlotInfo} from '../types/cards'
+import {SlotCondition, card, slot} from '../filters'
+import {BoardSlotInfo, RowInfo, SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 
 export class GameModel {
@@ -253,13 +253,15 @@ export class GameModel {
 	/** Update the cards that the players are able to select */
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return player.hand.reduce(
-				(cards, card) => {
-					cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
-					return cards
-				},
-				[] as Array<[CardInstance, Array<PickInfo>]>
-			)
+			return this.state.cards
+				.filter(card.slot(slot.hand, slot.player(player.id)))
+				.map(
+					(card) =>
+						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
+							CardInstance,
+							PickInfo[],
+						]
+				)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -343,18 +345,24 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		return this.filterSlots(predicate).map((slot) => {
+		return this.state.slots.filter(predicate).map((slotInfo) => {
+			if (!(slotInfo instanceof BoardSlotInfo)) {
+				return {
+					playerId: slotInfo.player?.id || null,
+					rowIndex: null,
+					card: this.state.cards.find(card.inSlot(slotInfo))?.toLocalCardInstance() || null,
+					type: slotInfo.type,
+					index: null,
+				}
+			}
+
 			return {
-				playerId: slot.player.id,
-				rowIndex: slot.rowIndex,
-				card: slot.cardId?.toLocalCardInstance() || null,
-				type: slot.type,
-				index: slot.index,
+				playerId: slotInfo.player?.id || null,
+				rowIndex: slotInfo.row?.index || null,
+				card: this.state.cards.find(card.inSlot(slotInfo))?.toLocalCardInstance() || null,
+				type: slotInfo.type,
+				index: slotInfo.index,
 			}
 		})
-	}
-
-	public someSlotFulfills(predicate: SlotCondition) {
-		return this.filterSlots(predicate).length !== 0
 	}
 }

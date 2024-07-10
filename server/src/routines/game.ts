@@ -63,6 +63,7 @@ function getAvailableEnergy(game: GameModel) {
  * `state.turn.completedActions`.
  */
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
+	return []
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
 	const {activeRow, rows, singleUseCard: su, singleUseCardUsed: suUsed} = currentPlayer.board

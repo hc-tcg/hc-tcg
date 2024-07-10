@@ -20,7 +20,7 @@ class LightningRodEffectCard extends Card {
 		attachCondition: slot.every(
 			attach.attachCondition,
 			slot.not(
-				slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod')))
+				slot.someSlotFulfills(slot.every(slot.currentPlayer, slot.attachSlot, slot.hasId('lightning_rod')))
 			)
 		),
 	}

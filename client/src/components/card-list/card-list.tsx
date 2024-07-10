@@ -23,9 +23,9 @@ const CardList = (props: CardListProps) => {
 
 	const cardsOutput = cards.map((card) => {
 		const isSelected = selected
-			? selected.some((selectedCard) => equalCard(card, selectedCard))
+			? selected.some((selectedCard) => card.instance === selectedCard?.instance)
 			: false
-		const isPicked = !!picked?.find((pickedCard) => equalCard(card, pickedCard))
+		const isPicked = !!picked?.find((pickedCard) => card.instance === pickedCard.instance)
 		const isDisabled = !!disabled?.find((id) => id == card.props.id)
 		const isUnpickable = !!unpickable?.find((findCard) => findCard.instance === card.instance)
 
@@ -37,7 +37,7 @@ const CardList = (props: CardListProps) => {
 						enterDone: css.enterDone,
 						exit: css.exit,
 						exitActive: css.exitActive,
-				  }
+					}
 				: {}
 
 		return (

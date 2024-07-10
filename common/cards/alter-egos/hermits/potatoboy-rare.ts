@@ -47,7 +47,7 @@ class PotatoBoyRareHermitCard extends Card {
 
 			game
 				.filterSlots(
-					slot.player,
+					slot.currentPlayer,
 					slot.adjacentTo(slot.activeRow),
 					slot.hermitSlot,
 					slot.not(slot.empty)

@@ -112,6 +112,7 @@ function Game() {
 			if (equalCard(card, selectedCard)) {
 				dispatch(setSelectedCard(null))
 			} else {
+				console.log("Selecting card:", card)
 				dispatch(setSelectedCard(card))
 			}
 		}

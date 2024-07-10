@@ -36,7 +36,7 @@ class ImpulseSVRareHermitCard extends Card {
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 			const boomerAmount = game.filterSlots(
-				slot.player,
+				slot.currentPlayer,
 				slot.hasId('bdoubleo100_common', 'bdoubleo100_rare', 'tangotek_common', 'tangotek_rare'),
 				slot.not(slot.activeRow)
 			).length

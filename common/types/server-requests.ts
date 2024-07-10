@@ -2,7 +2,7 @@ import {CardProps} from '../cards/base/card'
 import {SlotCondition} from '../filters'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult} from './game-state'
+import {ActionResult, PlayerId} from './game-state'
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
@@ -28,7 +28,7 @@ export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEf
 export type PickedSlotType = SlotTypeT | 'hand'
 
 export type PickInfo = {
-	playerId: string
+	playerId: PlayerId | null
 	rowIndex: number | null // This will be null for the hand
 	card: LocalCardInstance | null
 	type: SlotTypeT

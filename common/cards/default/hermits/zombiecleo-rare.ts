@@ -31,7 +31,7 @@ class ZombieCleoRareHermitCard extends Card {
 	}
 
 	pickCondition = slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.hermitSlot,
 		slot.not(slot.empty),
 		slot.not(slot.activeRow),

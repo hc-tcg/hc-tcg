@@ -1,3 +1,4 @@
+import {card} from '../filters'
 import {GameModel} from '../models/game-model'
 import {CardId, CardInstance, PlayerId, RowId, SlotId, newInstanceId} from './game-state'
 
@@ -20,8 +21,8 @@ export type TypeT =
 export type EnergyT = TypeT | 'any'
 
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
-export type BoardSlotTypeT = 'item' | 'attach' | 'hermit' | 'health'
-export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand'
+export type BoardSlotTypeT = 'item' | 'attach' | 'hermit'
+export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand' | 'pile' | 'discardPile'
 export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
 
 export type DamageT = {
@@ -43,39 +44,35 @@ export class RowInfo {
 	readonly id: RowId
 	playerId: PlayerId
 	index: number
-	health: number
+	health: number | null
 
 	constructor(game: GameModel, playerId: PlayerId, index: number) {
 		this.game = game
 		this.id = newInstanceId() as RowId
 		this.playerId = playerId
 		this.index = index
-		this.health = 0
+		this.health = null
+	}
+
+	public heal(amount: number) {
+		let hermit = this.game.state.cards.find(card.hermit, card.inRow(this))
+		if (this.health === null) return
+		if (!hermit?.isHealth()) return
+		this.health = Math.min(this.health + amount, hermit.props.health)
 	}
 }
 
 export class SlotInfo {
 	readonly game: GameModel
 	readonly id: SlotId
-
 	readonly playerId: PlayerId | null
 	readonly type: SlotTypeT
-	readonly index: number | null
-	readonly rowId: RowId | null
 
-	constructor(
-		game: GameModel,
-		playerId: PlayerId | null,
-		type: SlotTypeT,
-		index: number | null,
-		row: RowId | null
-	) {
+	constructor(game: GameModel, playerId: PlayerId | null, type: SlotTypeT) {
 		this.id = newInstanceId() as SlotId
 		this.game = game
 		this.playerId = playerId
 		this.type = type
-		this.index = index
-		this.rowId = row
 	}
 
 	get player() {
@@ -87,10 +84,39 @@ export class SlotInfo {
 		if (!this.playerId) return null
 		return this.game.state.players[this.game.otherPlayer(this.playerId)]
 	}
+}
+
+export class BoardSlotInfo extends SlotInfo {
+	readonly index: number | null
+	readonly rowId: RowId | null
+
+	constructor(
+		game: GameModel,
+		playerId: PlayerId | null,
+		type: SlotTypeT,
+		index: number | null,
+		row: RowId | null
+	) {
+		super(game, playerId, type)
+		this.index = index
+		this.rowId = row
+	}
 
 	get row() {
 		if (!this.rowId) return null
 		return this.game.state.rows.get(this.rowId)
+	}
+}
+
+export class HandSlotInfo extends SlotInfo {
+	constructor(game: GameModel, playerId: PlayerId | null) {
+		super(game, playerId, 'hand')
+	}
+}
+
+export class PileSlotInfo extends SlotInfo {
+	constructor(game: GameModel, playerId: PlayerId | null) {
+		super(game, playerId, 'pile')
 	}
 }
 

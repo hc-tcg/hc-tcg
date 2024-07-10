@@ -44,29 +44,26 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
 	readonly id: CardId
+	readonly playerId: PlayerId
 
 	slotId: SlotId | null
-	health: number
 
-	constructor(game: GameModel, id: string) {
+	constructor(game: GameModel, id: string, playerId: PlayerId) {
 		this.game = game
 		this.card = CARDS[id] as any
 		this.id = newInstanceId() as CardId
-		if (this.card.isHealth()) {
-			this.health = this.card.props.health
-		} else {
-			this.health = 0
-		}
+		this.playerId = playerId
 		this.slotId = null
+		this.playerId = playerId
 	}
 
 	static fromLocalCardInstance(
 		game: GameModel,
 		localCardInstance: LocalCardInstance
 	): CardInstance | null {
-		for (const instance of Object.values(game.state.cards)) {
-			if (instance.instance == localCardInstance.instance) {
-				return instance
+		for (const card of game.state.cards.list()) {
+			if (card.id == localCardInstance.instance) {
+				return card
 			}
 		}
 		throw new Error('An ID for a nonexistent card should never be created')
@@ -100,10 +97,6 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	}
 	public isHermit(): this is CardInstance<Hermit> {
 		return isHermit(this.props)
-	}
-
-	public heal(this: CardInstance<HasHealth>, amount: number) {
-		this.health = Math.min(this.health + amount, this.card.props.health)
 	}
 }
 

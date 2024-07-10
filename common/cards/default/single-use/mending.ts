@@ -7,7 +7,7 @@ import Card, {SingleUse, singleUse} from '../../base/card'
 
 class MendingSingleUseCard extends Card {
 	pickCondition = slot.every(
-		slot.player,
+		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
 		slot.rowHasHermit,
@@ -44,7 +44,7 @@ class MendingSingleUseCard extends Card {
 			message: 'Pick an empty effect slot from one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const hermitActiveEffectCard = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
+				const hermitActiveEffectCard = game.findSlot(slot.currentPlayer, slot.activeRow, slot.attachSlot)
 
 				if (!hermitActiveEffectCard || !hermitActiveEffectCard.rowId) return
 
