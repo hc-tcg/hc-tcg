@@ -22,7 +22,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 	cards.sort(() => Math.random() - 0.5)
 
 	for (const card of cards) {
-		const cardInstance = gameState.cards.new(CardComponent, card, playerId)
+		const cardInstance = gameState.cards.new(CardComponent, card.props.id, playerId)
 		cardInstance.slotEntity = gameState.slots.new(PileSlotInfo, playerId).entity
 	}
 

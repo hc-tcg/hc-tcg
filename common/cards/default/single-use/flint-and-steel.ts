@@ -21,6 +21,7 @@ class FlintAndSteelSingleUseCard extends Card {
 		attachCondition: slot.every(
 			singleUse.attachCondition,
 			(game, pos) =>
+				// What should player be here?
 				game.state.cards.filter(card.player(game.currentPlayer.id), card.pile).length > 3
 		),
 	}
