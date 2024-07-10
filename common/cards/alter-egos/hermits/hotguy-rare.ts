@@ -1,5 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
+import { BoardSlotComponent } from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -30,8 +31,8 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, instance: CardComponent, pos: BoardSlotComponent) {
+		const {player} = instance
 
 		let usingSecondaryAttack = false
 

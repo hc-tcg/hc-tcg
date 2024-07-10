@@ -1,10 +1,5 @@
 import {CARDS} from '../cards'
 import Card from '../cards/base/card'
-import {PlayerState} from '../types/game-state'
-
-export function hasActive(playerState: PlayerState): boolean {
-	return playerState.board.activeRow !== null
-}
 
 export function getFormattedName(cardId: string, opponent: boolean) {
 	const cardInfo = CARDS[cardId]
