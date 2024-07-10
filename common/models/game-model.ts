@@ -19,8 +19,7 @@ import {
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition, card, slot} from '../filters'
-import {BoardSlotComponent, RowInfo, SlotComponent} from '../types/cards'
-import {getCardPos} from './card-pos-model'
+import {RowComponent, SlotComponent} from '../types/cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -263,7 +262,7 @@ export class GameModel {
 	}
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerState, newRow: RowInfo): boolean {
+	public changeActiveRow(player: PlayerState, newRow: RowComponent): boolean {
 		const currentActiveRow = this.state.rows.get(player.activeRowEntity)
 
 		// Can't change to existing active row
@@ -281,7 +280,10 @@ export class GameModel {
 				card.hermit,
 				card.slotFulfills(slot.row(currentActiveRow?.entity))
 			)
-			const oldHermit = this.state.cards.find(card.hermit, card.slotFulfills(slot.row(newRow)))
+			const oldHermit = this.state.cards.find(
+				card.hermit,
+				card.slotFulfills(slot.row(newRow.entity))
+			)
 			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
@@ -297,7 +299,7 @@ export class GameModel {
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: RowInfo, newRow: RowInfo) {
+	public swapRows(player: PlayerState, oldRow: RowComponent, newRow: RowComponent) {
 		let oldIndex = oldRow.index
 		oldRow.index = newRow.index
 		newRow.index = oldIndex
@@ -326,10 +328,9 @@ export class GameModel {
 
 		if (!withoutDetach) {
 			// onAttach
-			;[slotA, slotB].forEach((slot) => {
-				slot.card?.onAttach(this, slot.cardId, slot)
-
-				cardPos.player.hooks.onAttach.call(slot.cardId)
+			;[...slotACards, ...slotBCards].forEach((card) => {
+				card.card.onAttach(this, card)
+				card.player.hooks.onAttach.call(card)
 			})
 		}
 	}
