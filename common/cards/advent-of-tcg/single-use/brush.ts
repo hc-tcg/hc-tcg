@@ -1,31 +1,28 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot, SlotCondition} from '../../../slot'
-import {CardT} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {singleUse, SingleUse} from '../../base/card'
 
-class BrushSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'brush',
-			numericId: 221,
-			name: 'Brush',
-			rarity: 'rare',
-			description:
-				'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
-		})
+class BrushSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'brush',
+		numericId: 221,
+		name: 'Brush',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
+		showConfirmationModal: true,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length >= 3
+		),
 	}
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		(game, pos) => pos.player.pile.length >= 3
-	)
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -36,7 +33,7 @@ class BrushSingleUseCard extends SingleUseCard {
 					payload: {
 						modalName: 'Brush: Choose cards to place on the top of your deck.',
 						modalDescription: 'Select cards you would like to draw sooner first.',
-						cards: player.pile.slice(0, 3),
+						cards: player.pile.slice(0, 3).map((card) => card.toLocalCardInstance()),
 						selectionSize: 3,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -48,14 +45,18 @@ class BrushSingleUseCard extends SingleUseCard {
 					if (!modalResult) return 'FAILURE_INVALID_DATA'
 					if (!modalResult.cards) return 'SUCCESS'
 
-					const cards: Array<CardT> = modalResult.cards
-					const bottomCards: Array<CardT> = player.pile.slice(0, 3).filter((c) => {
-						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
-						return true
+					const cards = modalResult.cards
+
+					const topCards: Array<CardInstance> = []
+					const bottomCards: Array<CardInstance> = []
+
+					player.pile.slice(0, 3).forEach((c) => {
+						if (cards.some((d) => c.instance === d.instance)) topCards.push(c)
+						else bottomCards.push(c)
 					})
 
 					player.pile = player.pile.slice(3)
-					cards.reverse().forEach((c) => player.pile.unshift(c))
+					topCards.reverse().forEach((c) => player.pile.unshift(c))
 					bottomCards.forEach((c) => player.pile.push(c))
 
 					return 'SUCCESS'
@@ -67,13 +68,9 @@ class BrushSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 

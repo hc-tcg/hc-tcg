@@ -1,52 +1,39 @@
-export class Hook<T extends (...args: any) => any> {
-	public listeners: Record<string, T> = {}
+import {CardInstance, StatusEffectInstance} from './game-state'
+
+export class Hook<Listener, Args extends (...args: any) => any> {
+	public listeners: Array<[Listener, Args]> = []
+	private eq: (a: Listener, b: Listener) => boolean = (a, b) => a == b
+
+	public constructor(eq?: (a: Listener, b: Listener) => boolean) {
+		this.eq = eq || this.eq
+	}
 
 	/**
 	 * Adds a new listener to this hook
 	 */
-	public add(identifier: string, listener: T) {
-		this.listeners[identifier] = listener
+	public add(listener: Listener, call: Args) {
+		this.listeners.push([listener, call])
 	}
 
 	/**
 	 * Adds a new listener to this hook before any other existing listeners
 	 */
-	public addBefore(identifier: string, listener: T) {
-		const currentInstances = Object.keys(this.listeners)
-		const currentListeners = Object.values(this.listeners) as Array<T>
-		currentInstances.unshift(identifier)
-		currentListeners.unshift(listener)
-
-		this.listeners = currentInstances.reduce(
-			(result: Record<string, T>, currentInstance, index) => {
-				result[currentInstance] = currentListeners[index]
-				return result
-			},
-			{}
-		)
+	public addBefore(listener: Listener, call: Args) {
+		this.listeners.unshift([listener, call])
 	}
 
 	/**
-	 * Removes the specified listener
+	 * Removes all the listeners tied to a specific instance
 	 */
-	public remove(identifier: string) {
-		delete this.listeners[identifier]
+	public remove(listener: Listener) {
+		this.listeners = this.listeners.filter(([hookListener, _]) => !this.eq(hookListener, listener))
 	}
 
 	/**
 	 * Calls all the added listeners. Returns an array of the results
 	 */
-	public call(...params: Parameters<T>) {
-		const results: Array<ReturnType<T>> = []
-		const hooks = Object.values(this.listeners)
-		for (let i = 0; i < hooks.length; i++) {
-			const result = hooks[i](...(params as Array<any>))
-			if (result !== undefined) {
-				results.push(result)
-			}
-		}
-
-		return results
+	public call(...params: Parameters<Args>) {
+		return this.listeners.map(([_, listener]) => listener(...(params as Array<any>)))
 	}
 }
 
@@ -55,47 +42,25 @@ export class Hook<T extends (...args: any) => any> {
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
-export class GameHook<T extends (...args: any) => any> extends Hook<(...args: any) => any> {
-	// These are overriden so we can call the param instance instead of identifier
-	public override add(instance: string, listener: T) {
-		super.add(instance, listener)
-	}
-	public override addBefore(instance: string, listener: T) {
-		super.addBefore(instance, listener)
-	}
-	public override remove(instance: string) {
-		super.remove(instance)
-	}
-	public override call(...params: Parameters<T>) {
-		const results: Array<ReturnType<T>> = []
-		const hooks = Object.values(this.listeners)
-		for (let i = 0; i < hooks.length; i++) {
-			const result = hooks[i](...(params as Array<any>))
-			if (result !== undefined) {
-				results.push(result)
-			}
-		}
-
-		return results
+export class GameHook<Args extends (...args: any) => any> extends Hook<
+	CardInstance | StatusEffectInstance,
+	Args
+> {
+	constructor() {
+		// We override the eq function because card and status instances can not be compared with the regular === operator.
+		super((a, b) => a.instance == b.instance)
 	}
 
 	/**
-	 * Calls only the listeners belonging to instances that pass the specified test
+	 * Calls only the listeners belonging to instances that pass the predicate
 	 */
-	public callSome(params: Parameters<T>, ignoreInstance: (instance: string) => boolean) {
-		const results: Array<ReturnType<T>> = []
-		const instances = Object.keys(this.listeners)
-		const hooks = Object.values(this.listeners)
-		for (let i = 0; i < instances.length; i++) {
-			if (!ignoreInstance(instances[i])) {
-				const result = hooks[i](...(params as Array<any>))
-				if (result !== undefined) {
-					results.push(result)
-				}
-			}
-		}
-
-		return results
+	public callSome(
+		params: Parameters<Args>,
+		predicate: (instance: CardInstance | StatusEffectInstance) => boolean
+	) {
+		return this.listeners
+			.filter(([instance, _]) => predicate(instance))
+			.map(([_, listener]) => listener(...(params as Array<any>)))
 	}
 }
 
@@ -104,27 +69,13 @@ export class GameHook<T extends (...args: any) => any> extends Hook<(...args: an
  *
  * Allows adding and removing listeners with the card instance as a reference, and calling all listeners while passing through the first parameter.
  */
-export class WaterfallHook<T extends (...args: any) => Parameters<T>[0]> extends Hook<
-	(...args: any) => any
-> {
-	// These are overriden so we can call the param instance instead of identifier
-	public override add(instance: string, listener: T) {
-		super.add(instance, listener)
-	}
-	public override addBefore(instance: string, listener: T) {
-		super.addBefore(instance, listener)
-	}
-	public override remove(instance: string) {
-		super.remove(instance)
-	}
-
-	public override call(...params: Parameters<T>): Parameters<T>[0] {
-		let newParams = params
-		const hooks = Object.values(this.listeners)
-		for (let i = 0; i < hooks.length; i++) {
-			newParams[0] = hooks[i](...(newParams as Array<any>))
-		}
-
-		return newParams[0]
+export class WaterfallHook<
+	Args extends (...args: any) => Parameters<Args>[0]
+> extends GameHook<Args> {
+	public override call(...params: Parameters<Args>): Parameters<Args>[0] {
+		return this.listeners.reduce((params, [_, listener]) => {
+			params[0] = listener(...(params as Array<any>))
+			return params
+		}, params)[0]
 	}
 }

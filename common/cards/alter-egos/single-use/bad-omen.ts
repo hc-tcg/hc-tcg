@@ -1,56 +1,43 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import SingleUseCard from '../../base/single-use-card'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../slot'
+import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardInstance} from '../../../types/game-state'
 
-class BadOmenSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'bad_omen',
-			numericId: 139,
-			name: 'Bad Omen',
-			rarity: 'rare',
-			description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
-		})
+class BadOmenSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'bad_omen',
+		numericId: 139,
+		name: 'Bad Omen',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 1,
+		description: `Give your opponent's active Hermit bad omen for their next 3 turns.`,
+		showConfirmationModal: true,
+		sidebarDescriptions: [
+			{
+				type: 'statusEffect',
+				name: 'badomen',
+			},
+		],
+		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override _attachCondition = slot.every(super.attachCondition, slot.opponentHasActiveHermit)
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 		const activeRow = opponentPlayer.board.activeRow
 		if (activeRow === null) return
 
 		player.hooks.onApply.add(instance, () => {
-			applyStatusEffect(
-				game,
-				'badomen',
-				opponentPlayer.board.rows[activeRow].hermitCard?.cardInstance
-			)
+			applyStatusEffect(game, 'badomen', opponentPlayer.board.rows[activeRow].hermitCard)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
-	}
-
-	override sidebarDescriptions() {
-		return [
-			{
-				type: 'statusEffect',
-				name: 'badomen',
-			},
-		]
 	}
 }
 

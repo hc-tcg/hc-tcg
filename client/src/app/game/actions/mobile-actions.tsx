@@ -15,7 +15,6 @@ import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import CoinFlip from 'components/coin-flip'
 import Button from 'components/button'
-import {SINGLE_USE_CARDS} from 'common/cards'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {PickInfo} from 'common/types/server-requests'
 import {endTurnModalEmpty} from '../modals/end-turn-modal'
@@ -23,11 +22,10 @@ import {endTurnModalEmpty} from '../modals/end-turn-modal'
 type Props = {
 	onClick: (pickInfo: PickInfo) => void
 	localGameState: LocalGameState
-	mobile?: boolean
 	id?: string
 }
 
-const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
+const MobileActions = ({onClick, localGameState, id}: Props) => {
 	const currentPlayer = useSelector(getPlayerStateById(localGameState.turn.currentPlayerId))
 	const gameState = useSelector(getGameState)
 	const playerState = useSelector(getPlayerState)
@@ -38,7 +36,6 @@ const MobileActions = ({onClick, localGameState, mobile, id}: Props) => {
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
 	const pickMessage = useSelector(getCurrentPickMessage)
-	const player = useSelector(getPlayerState)
 	const settings = useSelector(getSettings)
 	const dispatch = useDispatch()
 

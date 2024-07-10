@@ -1,104 +1,96 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
 import {slot} from '../slot'
 
 class MuseumCollectionStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'museum-collection',
-			name: 'Museum Collection Size',
-			description:
-				"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
-			duration: 0,
-			counter: true,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		id: 'museum-collection',
+		name: 'Museum Collection Size',
+		description:
+			"Number of cards you've played this turn. Each card adds 20 damage to Biffa's secondary attack.",
+		counter: 0,
+		counterType: 'number',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
-		const oldHandSize = this.getInstanceKey(statusEffectInfo.statusEffectInstance)
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
+		let oldHandSize = player.hand.length
 
-		player.custom[oldHandSize] = player.hand.length
-
-		player.hooks.onAttach.add(statusEffectInfo.statusEffectInstance, (instance) => {
-			if (player.hand.length === player.custom[oldHandSize]) return
-			const instanceLocation = game.findSlot(slot.hasInstance(instance))
-			if (statusEffectInfo.duration === undefined) return
-			player.custom[oldHandSize] = player.hand.length
+		player.hooks.onAttach.add(instance, (cardInstance) => {
+			if (player.hand.length === oldHandSize) return
+			const instanceLocation = game.findSlot(slot.hasInstance(cardInstance))
+			if (instance.counter === null) return
+			oldHandSize = player.hand.length
 			if (instanceLocation?.type === 'single_use') return
-			statusEffectInfo.duration++
+			instance.counter++
 		})
 
-		player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
-			if (statusEffectInfo.duration === undefined) return
-			player.custom[oldHandSize] = player.hand.length
-			statusEffectInfo.duration++
+		player.hooks.onApply.add(instance, () => {
+			if (instance.counter === null) return
+			oldHandSize = player.hand.length
+			instance.counter++
 		})
 
-		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.onAttack.add(instance, (attack) => {
 			const activeRow = player.board.activeRow
 			if (activeRow === null) return
 			const targetHermit = player.board.rows[activeRow].hermitCard
-			if (!targetHermit?.cardId) return
+			if (!targetHermit) return
 			if (
-				attack.id !==
-					this.getTargetInstanceKey(targetHermit?.cardId, statusEffectInfo.targetInstance) ||
+				attack.getAttacker()?.row.hermitCard.instance !== instance.targetInstance.instance ||
 				attack.type !== 'secondary'
 			)
 				return
-			if (statusEffectInfo.duration === undefined) return
+			if (instance.counter === null) return
 
-			player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
-			player.hooks.onApply.add(statusEffectInfo.statusEffectInstance, () => {
-				if (statusEffectInfo.duration === undefined) return
-				statusEffectInfo.duration++
+			player.hooks.onApply.remove(instance)
+			player.hooks.onApply.add(instance, () => {
+				if (instance.counter == null) return
+				instance.counter++
 
 				const additionalAttack = new AttackModel({
-					id: this.getInstanceKey(statusEffectInfo.statusEffectInstance, 'additionalAttack'),
+					id: this.getInstanceKey(instance, 'additionalAttack'),
 					attacker: attack.getAttacker(),
 					target: attack.getTarget(),
 					type: 'secondary',
 				})
-				additionalAttack.addDamage(this.id, 20)
+				additionalAttack.addDamage(this.props.id, 20)
 
-				player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
+				player.hooks.onApply.remove(instance)
 
 				executeAttacks(game, [additionalAttack], true)
 			})
 
-			attack.addDamage(this.id, 20 * statusEffectInfo.duration)
+			attack.addDamage(this.props.id, 20 * instance.counter)
 		})
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			delete player.custom[oldHandSize]
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+		player.hooks.onTurnEnd.add(instance, () => {
+			removeStatusEffect(game, pos, instance)
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onApply.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onAttach.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnEnd.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onApply.remove(instance)
+		player.hooks.onAttach.remove(instance)
+		player.hooks.onAttack.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 }
 

@@ -1,4 +1,4 @@
-import {RowState, StatusEffectT} from 'common/types/game-state'
+import {LocalRowState} from 'common/types/game-state'
 import HealthDisplayModule from 'components/card/health-card-svg'
 import slotCss from './board.module.scss'
 import cardCss from './board.module.scss'
@@ -6,10 +6,11 @@ import cn from 'classnames'
 import StatusEffectContainer from './board-status-effects'
 import {useSelector} from 'react-redux'
 import {getGameState, getSelectedCard} from 'logic/game/game-selectors'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
 
 type HealthSlotProps = {
-	rowState: RowState
-	statusEffects: Array<StatusEffectT>
+	rowState: LocalRowState
+	statusEffects: Array<LocalStatusEffectInstance>
 }
 
 const HealthSlot = ({rowState, statusEffects}: HealthSlotProps) => {

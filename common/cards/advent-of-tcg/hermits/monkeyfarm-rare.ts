@@ -1,35 +1,39 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import HermitCard from '../../base/hermit-card'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../slot'
+import Card, {Hermit, hermit} from '../../base/card'
+import {CardInstance} from '../../../types/game-state'
 
-class MonkeyfarmRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'monkeyfarm_rare',
-			numericId: 212,
-			name: 'Monkeyfarm',
-			rarity: 'rare',
-			hermitType: 'farm',
-			health: 250,
-			primary: {
-				name: 'Skull',
-				cost: ['farm'],
-				damage: 40,
-				power: null,
-			},
-			secondary: {
-				name: 'Monkeystep',
-				cost: ['farm', 'farm'],
-				damage: 80,
-				power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
-			},
-		})
+class MonkeyfarmRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'monkeyfarm_rare',
+		numericId: 212,
+		name: 'Monkeyfarm',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'farm',
+		health: 250,
+		primary: {
+			name: 'Skull',
+			cost: ['farm'],
+			damage: 40,
+			power: null,
+		},
+		secondary: {
+			name: 'Monkeystep',
+			cost: ['farm', 'farm'],
+			damage: 80,
+			power: "Flip a coin. If heads, discard 1 attached item card from an opponent's AFK Hermit.",
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -46,7 +50,7 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: "Pick one of your opponent's AFK Hermit's item cards",
 				canPick: pickCondition,
 				onResult(pickedSlot) {
@@ -63,22 +67,10 @@ class MonkeyfarmRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
 	}
 }
 

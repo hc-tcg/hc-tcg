@@ -1,32 +1,30 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {discardFromHand, drawCards} from '../../../utils/movement'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class FlintAndSteelSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'flint_&_steel',
-			numericId: 25,
-			name: 'Flint & Steel',
-			rarity: 'common',
-			description:
-				'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
-			log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
-		})
+class FlintAndSteelSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'flint_&_steel',
+		numericId: 25,
+		name: 'Flint & Steel',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 1,
+		description:
+			'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
+		showConfirmationModal: true,
+		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length > 3
+		),
 	}
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		(game, pos) => pos.player.pile.length > 3
-	)
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -39,7 +37,7 @@ class FlintAndSteelSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

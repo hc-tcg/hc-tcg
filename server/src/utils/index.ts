@@ -1,5 +1,4 @@
-import {RowStateWithHermit} from 'common/types/game-state'
-import {ITEM_CARDS} from 'common/cards'
+import {CardInstance, RowStateWithHermit} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {getCardPos} from 'common/models/card-pos-model'
@@ -13,13 +12,10 @@ export function getItemCardsEnergy(game: GameModel, row: RowStateWithHermit): nu
 	const itemCards = row.itemCards
 	let total = 0
 	for (const itemCard of itemCards) {
-		if (!itemCard) continue
-		const cardInfo = ITEM_CARDS[itemCard.cardId]
-		// String
-		if (!cardInfo) continue
-		const pos = getCardPos(game, itemCard.cardInstance)
+		if (!itemCard?.isItem()) continue
+		const pos = getCardPos(game, itemCard)
 		if (!pos) continue
-		total += cardInfo.getEnergy(game, itemCard.cardInstance, pos).length
+		total += itemCard.card.getEnergy(game, itemCard, pos).length
 	}
 
 	return total
@@ -34,7 +30,7 @@ export function printHooksState(game: GameModel) {
 	// First loop to populate cardsInfo
 	for (const player of [currentPlayer, opponentPlayer]) {
 		for (const card of player.playerDeck) {
-			cardsInfo[card.cardInstance] = {
+			cardsInfo[card.instance] = {
 				card,
 				player: player,
 			}
@@ -45,21 +41,22 @@ export function printHooksState(game: GameModel) {
 	for (const player of [currentPlayer, opponentPlayer]) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
-			Object.keys(hookValue.listeners).forEach((instance, i) => {
+			hookValue.listeners.forEach(([instance, _], i) => {
+				if (!(instance instanceof CardInstance)) return
 				const pos = getCardPos(game, instance)
 				const inBoard = Boolean(pos)
-				const instanceEntry = instancesInfo[instance] || {
+				const instanceEntry = instancesInfo[instance.instance] || {
 					board: inBoard,
 					hooks: [],
-					card: cardsInfo[instance] && cardsInfo[instance].card,
-					player: cardsInfo[instance] && cardsInfo[instance].player,
+					card: cardsInfo[instance.instance] && cardsInfo[instance.instance].card,
+					player: cardsInfo[instance.instance] && cardsInfo[instance.instance].player,
 					type: pos?.type,
 					index: pos?.index,
 					row: pos?.rowIndex,
 				}
 
 				instanceEntry.hooks.push(`#${i + 1} | ${player.playerName}.${hookName}`)
-				instancesInfo[instance] = instanceEntry
+				instancesInfo[instance.instance] = instanceEntry
 			})
 		}
 
@@ -74,12 +71,6 @@ export function printHooksState(game: GameModel) {
 				return aRow - bRow
 			})
 		)
-
-		// Custom Values
-		for (const [instanceKey, custom] of Object.entries(player.custom)) {
-			const [id, instance, keyName] = instanceKey.split(':')
-			customValues[instance] = {id, value: custom, keyName}
-		}
 	}
 
 	// Helpers to print

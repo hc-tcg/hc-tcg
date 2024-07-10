@@ -1,5 +1,3 @@
-import {STRENGTHS} from '../const/strengths'
-import {HERMIT_CARDS} from '../cards'
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
@@ -7,6 +5,8 @@ import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {slot} from '../slot'
+import {STRENGTHS} from '../const/strengths'
+import {CardInstance} from '../types/game-state'
 
 function executeAttack(attack: AttackModel) {
 	const target = attack.getTarget()
@@ -43,7 +43,8 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call before attack hooks
 		player.hooks.beforeAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
@@ -62,7 +63,8 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call before defence hooks
 		player.hooks.beforeDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
@@ -81,7 +83,8 @@ function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
@@ -100,7 +103,8 @@ function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call on defence hooks
 		player.hooks.onDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
@@ -116,7 +120,8 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
@@ -132,12 +137,13 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 		// Call after attack hooks
 		player.hooks.afterDefence.callSome([attack], (instance) => {
-			return shouldIgnoreCard(attack, game, instance)
+			if (instance instanceof CardInstance) return !shouldIgnoreCard(attack, game, instance)
+			return true
 		})
 	}
 }
 
-function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: string): boolean {
+function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: CardInstance): boolean {
 	const cardPos = getCardPos(game, instance)
 	if (!cardPos) return false
 	if (slot.some(...attack.shouldIgnoreSlots)(game, cardPos)) {
@@ -251,13 +257,19 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 
 	if (!attacker || !target || !attackId) return null
 
-	const attackerCardInfo = HERMIT_CARDS[attacker.row.hermitCard.cardId]
-	const targetCardInfo = HERMIT_CARDS[target.row.hermitCard.cardId]
+	const attackerCardInfo = attacker.row.hermitCard.card
+	const targetCardInfo = target.row.hermitCard.card
 
-	if (!attackerCardInfo || !targetCardInfo) return null
+	if (
+		!attackerCardInfo ||
+		!targetCardInfo ||
+		!attackerCardInfo.isHermit() ||
+		!targetCardInfo.isHermit()
+	)
+		return null
 
-	const strength = STRENGTHS[attackerCardInfo.hermitType]
-	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.hermitType)) {
+	const strength = STRENGTHS[attackerCardInfo.props.type]
+	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
 		return null
 	}
 
@@ -268,7 +280,7 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attackerCardInfo.id, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.props.id, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

@@ -1,12 +1,7 @@
 import classnames from 'classnames'
-import {CARDS} from 'common/cards'
+import {LocalRowState} from 'common/types/game-state'
 import Card from 'components/card'
-import {CardT, RowState, StatusEffectT} from 'common/types/game-state'
 import css from './board.module.scss'
-import HermitCard from 'common/cards/base/hermit-card'
-import EffectCard from 'common/cards/base/effect-card'
-import SingleUseCard from 'common/cards/base/single-use-card'
-import ItemCard from 'common/cards/base/item-card'
 import {SlotTypeT} from 'common/types/cards'
 import {useSelector} from 'react-redux'
 import {
@@ -15,6 +10,7 @@ import {
 	getPickRequestPickableSlots,
 	getSelectedCard,
 } from 'logic/game/game-selectors'
+import {LocalCardInstance, LocalStatusEffectInstance} from 'common/types/server-requests'
 import StatusEffectContainer from './board-status-effects'
 
 export type SlotProps = {
@@ -23,11 +19,11 @@ export type SlotProps = {
 	index?: number
 	playerId: string
 	onClick?: () => void
-	card: CardT | null
-	rowState?: RowState
+	card: LocalCardInstance | null
+	rowState?: LocalRowState
 	active?: boolean
-	statusEffects?: Array<StatusEffectT>
 	cssId?: string
+	statusEffects?: Array<LocalStatusEffectInstance>
 }
 const Slot = ({
 	type,
@@ -45,10 +41,6 @@ const Slot = ({
 	const selectedCard = useSelector(getSelectedCard)
 	const localGameState = useSelector(getGameState)
 
-	let cardInfo = card?.cardId
-		? (CARDS[card.cardId] as HermitCard | EffectCard | SingleUseCard | ItemCard)
-		: null
-
 	const frameImg = type === 'hermit' ? '/images/game/frame_glow.png' : '/images/game/frame.png'
 
 	const getPickableSlots = () => {
@@ -58,9 +50,7 @@ const Slot = ({
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(
-			([card, _]) => card?.cardInstance == selectedCard.cardInstance
-		)[0][1]
+		return cardsCanBePlacedIn.filter(([card, _]) => card?.instance == selectedCard.instance)[0][1]
 	}
 
 	const getIsPickable = () => {
@@ -103,14 +93,14 @@ const Slot = ({
 				[css.unpickable]: !isPickable && somethingPickable,
 				[css.available]: isClickable,
 				[css[type]]: true,
-				[css.empty]: !cardInfo,
+				[css.empty]: !card,
 				[css.hermitSlot]: type == 'hermit',
 				[css.afk]: !active && type !== 'single_use',
 			})}
 		>
-			{cardInfo ? (
+			{card ? (
 				<div className={css.cardWrapper}>
-					<Card card={cardInfo} />
+					<Card card={card.props} />
 				</div>
 			) : (
 				<img draggable="false" className={css.frame} src={frameImg} />

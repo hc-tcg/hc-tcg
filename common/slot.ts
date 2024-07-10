@@ -1,32 +1,9 @@
-import {HERMIT_CARDS} from './cards'
 import {GameModel} from './models/game-model'
 import {SlotInfo} from './types/cards'
-import {TurnAction} from './types/game-state'
-import {PickInfo} from './types/server-requests'
+import {CardInstance, TurnAction} from './types/game-state'
+import {LocalCardInstance} from './types/server-requests'
 
 export type SlotCondition = (game: GameModel, pos: SlotInfo) => boolean
-
-export function callSlotConditionWithPickInfo(
-	condition: SlotCondition,
-	game: GameModel,
-	pickInfo: PickInfo
-): boolean {
-	const playerState = game.state.players[pickInfo.playerId]
-	const opponentPlayerState = Object.values(game.state.players).filter(
-		(state) => state !== playerState
-	)[0]
-	const row = pickInfo.rowIndex !== null ? playerState.board.rows[pickInfo.rowIndex] : null
-
-	return condition(game, {
-		player: playerState,
-		opponentPlayer: opponentPlayerState,
-		type: pickInfo.type,
-		rowIndex: pickInfo.rowIndex !== undefined ? pickInfo.rowIndex : null,
-		row: row,
-		index: pickInfo.index,
-		card: pickInfo.card,
-	})
-}
 
 export namespace slot {
 	/** Used for debugging. Print a message provided by the msg function. */
@@ -107,8 +84,8 @@ export namespace slot {
 	}
 
 	/** Return true if the card is attached to an effect slot. */
-	export const effectSlot: SlotCondition = (game, pos) => {
-		return pos.type === 'effect'
+	export const attachSlot: SlotCondition = (game, pos) => {
+		return pos.type === 'attach'
 	}
 
 	/** Return true if the card is attached to a single use slot. */
@@ -129,7 +106,7 @@ export namespace slot {
 	/* Return true if the card is in a player's hand */
 	export const hand: SlotCondition = (game, pos) => {
 		return [game.currentPlayer, game.opponentPlayer].some((player) => {
-			return player.hand.some((card) => card.cardInstance === pos.card?.cardInstance)
+			return player.hand.some((card) => card.instance === pos.card?.instance)
 		})
 	}
 
@@ -154,9 +131,9 @@ export namespace slot {
 	}
 
 	/** Return true if the spot contains the specified card instance. */
-	export const hasInstance = (cardInstance: string): SlotCondition => {
+	export const hasInstance = (cardInstance: CardInstance | LocalCardInstance): SlotCondition => {
 		return (game, pos) => {
-			return pos.card !== null && pos.card.cardInstance === cardInstance
+			return pos.card !== null && pos.card.instance === cardInstance.instance
 		}
 	}
 
@@ -164,7 +141,7 @@ export namespace slot {
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
 			return cardIds.some((cardId) => {
-				return pos.card !== null && pos.card.cardId === cardId
+				return pos.card !== null && pos.card.card.props.id === cardId
 			})
 		}
 	}
@@ -174,7 +151,7 @@ export namespace slot {
 		return (game, pos) => {
 			return game.state.statusEffects.some(
 				(effect) =>
-					effect.targetInstance == pos.card?.cardInstance && effect.statusEffectId == statusEffect
+					effect.targetInstance.instance == pos.card?.instance && effect.props.id == statusEffect
 			)
 		}
 	}

@@ -1,41 +1,36 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 
 class UsedClockStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'used-clock',
-			name: 'Turn Skipped',
-			description: 'Turns can not be skipped consecutively.',
-			duration: 2,
-			counter: false,
-			damageEffect: false,
-			visible: false,
-		})
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		id: 'used-clock',
+		name: 'Turn Skipped',
+		description: 'Turns can not be skipped consecutively.',
+		counter: 1,
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player} = pos
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+		if (!instance.counter) instance.counter = this.props.counter
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
+		player.hooks.onTurnEnd.add(instance, () => {
+			if (!instance.counter) return
+			instance.counter--
 
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.beforeAttack.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
 	}
 }
 

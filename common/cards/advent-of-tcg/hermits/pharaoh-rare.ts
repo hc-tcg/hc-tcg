@@ -1,45 +1,47 @@
-import {HERMIT_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance, RowStateWithHermit, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import HermitCard from '../../base/hermit-card'
+import Card, {Hermit, hermit} from '../../base/card'
 
-class PharaohRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'pharaoh_rare',
-			numericId: 214,
-			name: 'Pharaoh',
-			rarity: 'rare',
-			hermitType: 'balanced',
-			health: 300,
-			primary: {
-				name: 'Targét',
-				cost: ['balanced'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Xibalba',
-				cost: ['balanced', 'balanced'],
-				damage: 80,
-				power:
-					'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
-			},
-		})
+class PharaohRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'pharaoh_rare',
+		numericId: 214,
+		name: 'Pharaoh',
+		expansion: 'advent_of_tcg',
+		palette: 'pharoah',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 2,
+		type: 'balanced',
+		health: 300,
+		primary: {
+			name: 'Targét',
+			cost: ['balanced'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Xibalba',
+			cost: ['balanced', 'balanced'],
+			damage: 80,
+			power:
+				'Flip a coin. If heads, can give up to 80hp to AFK Hermit. Health given is equal to damage during attack. Can not heal other Pharaohs.',
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
-		const playerKey = this.getInstanceKey(instance, 'player')
-		const rowKey = this.getInstanceKey(instance, 'row')
+		let pickedRow: RowStateWithHermit | null = null
 
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance !== instance) return
+			if (activeInstance.instance !== instance.instance) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -55,30 +57,18 @@ class PharaohRareHermitCard extends HermitCard {
 				slot.hermitSlot,
 				slot.not(slot.activeRow),
 				slot.not(slot.empty),
-				slot.not(slot.hasId(this.id))
+				slot.not(slot.hasId(this.props.id))
 			)
 
 			if (!game.someSlotFulfills(pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
-
-					// Make sure it's an actual hermit card
-					const hermitCard = HERMIT_CARDS[pickedSlot.card.cardId]
-					if (!hermitCard) return
-
-					//Cannot heal other pharaohs
-					if (hermitCard.id === 'pharaoh_rare') return
-
-					// Store the info to use later
-					player.custom[playerKey] = pickedSlot.player.id
-					player.custom[rowKey] = rowIndex
+					pickedRow = pickedSlot.row as RowStateWithHermit
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one
@@ -89,42 +79,20 @@ class PharaohRareHermitCard extends HermitCard {
 		// Heals the afk hermit *before* we actually do damage
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)
-
-			const pickedPlayer = game.state.players[player.custom[playerKey]]
-			if (!pickedPlayer) return
-			const pickedRowIndex = player.custom[rowKey]
-			const pickedRow = pickedPlayer.board.rows[pickedRowIndex]
-			if (!pickedRow || !pickedRow.hermitCard) return
-
-			const hermitInfo = HERMIT_CARDS[pickedRow.hermitCard.cardId]
-			if (hermitInfo) {
-				// Heal
-				pickedRow.health = Math.min(
-					pickedRow.health + attack.calculateDamage(),
-					hermitInfo.health // Max health
-				)
-			}
+			if (attack.id === attackId) return
+			healHermit(pickedRow, attack.calculateDamage())
 		})
 
 		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[playerKey]
-			delete player.custom[rowKey]
+			pickedRow = null
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'pharaoh'
 	}
 }
 

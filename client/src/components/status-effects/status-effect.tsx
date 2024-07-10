@@ -1,31 +1,36 @@
 import css from './status-effect.module.scss'
 import Tooltip from 'components/tooltip'
 import StatusEffectTooltip from './status-effect-tooltip'
-import StatusEffectClass from 'common/status-effects/status-effect'
+import {StatusEffectProps, isCounter} from 'common/status-effects/status-effect'
 
-interface StatusEffectProps
+interface StatusEffectReactProps
 	extends React.DetailedHTMLProps<
 		React.ButtonHTMLAttributes<HTMLButtonElement>,
 		HTMLButtonElement
 	> {
-	statusEffect: StatusEffectClass
-	duration?: number | undefined
+	statusEffect: StatusEffectProps
+	counter: number | null
 }
 
-const StatusEffect = (props: StatusEffectProps) => {
-	const {id, damageEffect, visible} = props.statusEffect
+const StatusEffect = (props: StatusEffectReactProps) => {
+	const {statusEffect, counter} = props
 
-	const extension = ['sleeping', 'poison', 'fire'].includes(id) ? '.gif' : '.png'
+	const extension = ['sleeping', 'poison', 'fire'].includes(statusEffect.id) ? '.gif' : '.png'
 	const statusEffectClass =
-		damageEffect == true ? css.damageStatusEffectImage : css.statusEffectImage
+		statusEffect.damageEffect == true ? css.damageStatusEffectImage : css.statusEffectImage
 
 	return (
-		<Tooltip
-			tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} duration={props.duration} />}
-		>
+		<Tooltip tooltip={<StatusEffectTooltip statusEffect={props.statusEffect} counter={counter} />}>
 			<div className={css.statusEffect}>
-				<img className={statusEffectClass} src={'/images/status/' + id + extension}></img>
-				{props.duration !== undefined && <p className={css.durationIndicator}>{props.duration}</p>}
+				<img
+					className={statusEffectClass}
+					src={'/images/status/' + statusEffect.id + extension}
+				></img>
+				{isCounter(statusEffect) &&
+					((statusEffect.counterType === 'turns' && statusEffect.counter !== 1) ||
+						statusEffect.counterType === 'number') && (
+						<p className={css.durationIndicator}>{counter}</p>
+					)}
 			</div>
 		</Tooltip>
 	)

@@ -1,29 +1,37 @@
-import {StatusEffectT} from 'common/types/game-state'
+import {StatusEffectInstance} from 'common/types/game-state'
 import css from './board.module.scss'
-import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
 import StatusEffect from 'components/status-effects/status-effect'
+import {LocalStatusEffectInstance} from 'common/types/server-requests'
 
 type StatusEffectDisplayProps = {
-	statusEffects: Array<StatusEffectT>
+	statusEffects: Array<LocalStatusEffectInstance>
 }
 
 const StatusEffectContainer = ({statusEffects}: StatusEffectDisplayProps) => {
 	return (
 		<div>
 			<div className={css.statusEffectContainer}>
-				{statusEffects.map((a) => {
-					const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-					if (!statusEffect || !statusEffect.visible) return null
-					if (statusEffect.damageEffect == true) return null
-					return <StatusEffect statusEffect={statusEffect} duration={a.duration} />
+				{statusEffects.map((effect) => {
+					if (effect.props.damageEffect || effect.props.hidden) return
+					return (
+						<StatusEffect
+							key={effect.instance}
+							statusEffect={effect.props}
+							counter={effect.counter}
+						/>
+					)
 				})}
 			</div>
 			<div className={css.damageStatusEffectContainer}>
-				{statusEffects.map((a) => {
-					const statusEffect = STATUS_EFFECT_CLASSES[a.statusEffectId]
-					if (!statusEffect || !statusEffect.visible) return null
-					if (statusEffect.damageEffect == false) return null
-					return <StatusEffect statusEffect={statusEffect} duration={a.duration} />
+				{statusEffects.map((effect) => {
+					if (!effect.props.damageEffect || effect.props.hidden) return
+					return (
+						<StatusEffect
+							key={effect.instance}
+							statusEffect={effect.props}
+							counter={effect.counter}
+						/>
+					)
 				})}
 			</div>
 		</div>

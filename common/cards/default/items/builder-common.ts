@@ -1,20 +1,23 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import ItemCard from '../../base/item-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {Item, item} from '../../base/card'
 
-class BuilderCommonItemCard extends ItemCard {
-	constructor() {
-		super({
-			id: 'item_builder_common',
-			numericId: 51,
-			name: 'Builder',
-			rarity: 'common',
-			hermitType: 'builder',
-		})
+class BuilderCommonItemCard extends Card {
+	props: Item = {
+		...item,
+		id: 'item_builder_common',
+		numericId: 51,
+		name: 'Builder Item',
+		shortName: 'Builder',
+		expansion: 'default',
+		rarity: 'common',
+		tokens: 0,
+		type: 'builder',
 	}
 
-	getEnergy(game: GameModel, instance: string, pos: CardPosModel) {
-		return [this.hermitType]
+	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+		return [this.props.type]
 	}
 }
 

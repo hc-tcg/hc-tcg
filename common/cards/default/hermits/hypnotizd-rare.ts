@@ -1,83 +1,64 @@
-import {ITEM_CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
 import {HermitAttackType} from '../../../types/attack'
+import {SlotInfo} from '../../../types/cards'
+import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
-import {getActiveRow} from '../../../utils/board'
+import {hasStatusEffect} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
-import HermitCard from '../../base/hermit-card'
+import Card, {Hermit, hermit} from '../../base/card'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
 - If the afk target for Hypno's ability & e.g. bow are the same, don't apply weakness twice
 - TODO - Can't use Got 'Em to attack AFK hermits even with Efficiency if Hypno has no item cards to discard
 */
-class HypnotizdRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'hypnotizd_rare',
-			numericId: 37,
-			name: 'Hypno',
-			rarity: 'rare',
-			hermitType: 'miner',
-			health: 270,
-			primary: {
-				name: 'MmHmm',
-				cost: ['miner'],
-				damage: 60,
-				power: null,
-			},
-			secondary: {
-				name: "Got 'Em",
-				cost: ['miner', 'any'],
-				damage: 70,
-				power:
-					"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
-			},
-		})
+class HypnotizdRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'hypnotizd_rare',
+		numericId: 37,
+		name: 'Hypno',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 3,
+		type: 'miner',
+		health: 270,
+		primary: {
+			name: 'MmHmm',
+			cost: ['miner'],
+			damage: 60,
+			power: null,
+		},
+		secondary: {
+			name: "Got 'Em",
+			cost: ['miner', 'any'],
+			damage: 70,
+			power:
+				"You can choose to attack one of your opponent's AFK Hermits. If you do this, you must discard one item card attached to your active Hermit.",
+		},
 	}
 
-	override getAttack(
-		game: GameModel,
-		instance: string,
-		pos: CardPosModel,
-		hermitAttackType: HermitAttackType
-	) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
+		let target: SlotInfo | null = null
 
-		if (!attack || attack.type !== 'secondary') return attack
+		player.hooks.beforeAttack.add(instance, (attack) => {
+			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+			if (!target || target.rowIndex == null || !target.row) return
 
-		const targetKey = this.getInstanceKey(instance, 'target')
-		const targetIndex: number | undefined = player.custom[targetKey]
-		if (targetIndex === undefined) return attack
-		if (targetIndex === opponentPlayer.board.activeRow) return attack
+			attack.setTarget(this.props.id, {
+				player: opponentPlayer,
+				rowIndex: target?.rowIndex,
+				row: target?.row as RowStateWithHermit,
+			})
 
-		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return attack
-
-		// Change attack target
-		attack.setTarget(this.id, {
-			player: opponentPlayer,
-			rowIndex: targetIndex,
-			row: targetRow,
+			target = null
 		})
-
-		const newAttacks = attack
-
-		// Delete the target info now
-		delete player.custom[targetKey]
-
-		return newAttacks
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel): void {
-		const {player, opponentPlayer} = pos
-		const targetKey = this.getInstanceKey(instance, 'target')
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			if (activeInstance !== instance || hermitAttackType !== 'secondary') return
+			if (activeInstance.instance !== instance.instance || hermitAttackType !== 'secondary') return
 
 			const pickCondition = slot.every(
 				slot.player,
@@ -86,18 +67,18 @@ class HypnotizdRareHermitCard extends HermitCard {
 				slot.not(slot.empty)
 			)
 
+			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
+			// to make the game easier to follow.
+			if (hasStatusEffect(game, instance, 'betrayed')) return
+
 			if (!game.someSlotFulfills(pickCondition)) return
 			const itemRequest: PickRequest = {
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					if (!pickedSlot.card) return
-
-					const itemCard = ITEM_CARDS[pickedSlot.card.cardId]
-					if (!itemCard) return
-
 					discardCard(game, pickedSlot.card)
 				},
 				onTimeout() {
@@ -107,35 +88,25 @@ class HypnotizdRareHermitCard extends HermitCard {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: "Pick one of your opponent's Hermits",
 				canPick: slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty)),
-				onResult(pickedSlot) {
-					const rowIndex = pickedSlot.rowIndex
-
+				onResult: (pickedSlot) => {
 					// Store the row index to use later
-					player.custom[targetKey] = rowIndex
+					target = pickedSlot
 
-					const isItemToDiscard = getActiveRow(player)?.itemCards.some((card) => {
-						if (!card) return false
-						if (!ITEM_CARDS[card.cardId]) return false
-						return true
-					})
-					const targetingAfk = rowIndex !== opponentPlayer.board.activeRow
+					const targetingAfk = pickedSlot.rowIndex !== opponentPlayer.board.activeRow
 
-					if (isItemToDiscard && targetingAfk) {
+					if (targetingAfk) {
 						// Add a second pick request to remove an item
 						game.addPickRequest(itemRequest)
 					}
-				},
-				onTimeout() {
-					// We didn't choose anyone so we will just attack as normal
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel): void {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 	}
