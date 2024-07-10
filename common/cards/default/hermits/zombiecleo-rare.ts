@@ -49,7 +49,6 @@ class ZombieCleoRareHermitCard extends Card {
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
-		const {player} = pos
 		const attack = super.getAttack(game, instance, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
@@ -151,7 +150,8 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
-			if (!game.someSlotFulfills(slot.every(slot.activeRow, slot.hasInstance(instance)))) return blockedActions
+			if (!game.someSlotFulfills(slot.every(slot.activeRow, slot.hasInstance(instance))))
+				return blockedActions
 			if (!game.someSlotFulfills(this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
