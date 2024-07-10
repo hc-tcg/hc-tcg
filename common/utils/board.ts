@@ -116,7 +116,7 @@ export function hasStatusEffect(
 	if (!instance) return false
 	return (
 		game.state.statusEffects.filter(
-			(ail) => ail.props.id === statusEffectId && ail.instance === instance.instance
+			(ail) => ail.props.id === statusEffectId && ail.targetInstance === instance
 		).length !== 0
 	)
 }
