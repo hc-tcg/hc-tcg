@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
 	CardComponent,
@@ -8,6 +8,8 @@ import {
 	LocalGameState,
 	LocalPlayerState,
 	PlayerState,
+	newEntity,
+	CardEntity,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
@@ -17,7 +19,7 @@ import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition, card, row, slot} from 'common/filters'
-import {LocalCardInstance} from 'common/types/server-requests'
+import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -27,7 +29,7 @@ function randomBetween(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-export function getStarterPack(): Array<string> {
+export function getStarterPack(): Array<LocalCardInstance> {
 	const limits = CONFIG.limits
 
 	// only allow some starting types
@@ -127,7 +129,13 @@ export function getStarterPack(): Array<string> {
 		deck.push(effectCard)
 	}
 
-	return deck.map((card) => card.props.id)
+	return deck.map((card) => {
+		return {
+			props: WithoutFunctions(CARDS[card.props.id].props),
+			instance: newEntity() as CardEntity,
+			slot: null,
+		}
+	})
 }
 
 export function getPlayerState(game: GameModel, player: PlayerModel): PlayerState {

@@ -5,7 +5,7 @@ import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class CrossbowSingleUseCard extends Card {

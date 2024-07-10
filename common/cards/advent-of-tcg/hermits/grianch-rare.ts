@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent, healHermit} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class GrianchRareHermitCard extends Card {
 	props: Hermit = {

@@ -8,7 +8,6 @@ import {
 	SlotComponent,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
-import {CardPosModel} from '../../models/card-pos-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {slot, SlotCondition} from '../../filters'
 import {HermitAttackType} from '../../types/attack'

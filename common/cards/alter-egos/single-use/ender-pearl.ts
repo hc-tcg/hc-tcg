@@ -4,7 +4,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import {executeAttacks} from '../../../utils/attacks'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class EnderPearlSingleUseCard extends Card {

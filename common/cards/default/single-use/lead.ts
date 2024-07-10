@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
-import {applySingleUse, getActiveRowPos} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class LeadSingleUseCard extends Card {

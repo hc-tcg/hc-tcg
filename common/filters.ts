@@ -156,9 +156,7 @@ export namespace slot {
 	/** Return true if the spot contains any of the card IDs. */
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
-			return cardIds.some((cardId) => {
-				return pos.cardId !== null && pos.cardId.card.props.id === cardId
-			})
+			return game.state.cards.somethingFulfills(card.id(...cardIds), card.inSlot(pos))
 		}
 	}
 
@@ -177,18 +175,19 @@ export namespace slot {
 	 * A frozen slot is a slot that can not have card placed in it or removed from it.
 	 */
 	export const frozen: SlotCondition = (game, pos) => {
-		if (pos.type === 'single_use' || pos.type === 'hand') return false
-		if (pos.rowIndex === null || !pos.type) return false
+		if (!pos.onBoard()) return false
+		if (pos.row?.index === null || !pos.type) return false
 
 		const playerResult = game.currentPlayer.hooks.freezeSlots
 			.call()
 			.some((result) => result(game, pos))
 
-		pos = {
-			...pos,
-			player: pos.opponentPlayer,
-			opponentPlayer: pos.player,
-		}
+		/// Figure out how to redo this
+		// pos = {
+		// 	...pos,
+		// 	player: pos.opponentPlayer,
+		// 	opponentPlayer: pos.player,
+		// }
 
 		const opponentResult = game.opponentPlayer.hooks.freezeSlots
 			.call()
@@ -205,15 +204,16 @@ export namespace slot {
 	export const someSlotFulfills =
 		(predicate: SlotCondition): SlotCondition =>
 		(game, pos) => {
-			return game.someSlotFulfills(predicate)
+			return game.state.slots.somethingFulfills(predicate)
 		}
 
 	/* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
 	export const adjacentTo = (predicate: SlotCondition): SlotCondition => {
 		return (game, pos) => {
-			if (pos.row === null) return false
+			if (!pos.onBoard() || pos.row === null) return false
 			return (
 				game.state.slots.filter(predicate).filter((pickedPos) => {
+					if (!pickedPos.onBoard()) return false
 					if (pos.row === null || pickedPos.row === null) return false
 					return [pos.row.index - 1, pos.row.index + 1].includes(pickedPos.row.index)
 				}).length >= 1
@@ -249,7 +249,8 @@ export namespace card {
 
 	export function inRow(row: RowInfo): CardCondition {
 		return (game, card) => {
-			row.entity === card.slot?.row?.id
+			if (!card.slot?.onBoard()) return false
+			return row.entity === card.slot?.row?.entity
 		}
 	}
 
@@ -257,6 +258,10 @@ export namespace card {
 		return (game, card) => {
 			return card.playerId === player
 		}
+	}
+
+	export function id(...cardIds: Array<string>): Predicate<CardComponent> {
+		return (game, card) => cardIds.includes(card.props.id)
 	}
 }
 
@@ -270,8 +275,9 @@ export namespace row {
 	export const active: Predicate<RowInfo> = (game, row) =>
 		game.activeRow !== null && game.activeRow.entity === row.entity
 
-	export function player(player: PlayerId): Predicate<RowInfo> {
+	export function player(player: PlayerId | null): Predicate<RowInfo> {
 		return (game, row) => {
+			if (!player) return false
 			return row.playerId === player
 		}
 	}

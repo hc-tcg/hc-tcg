@@ -2,8 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {AttackModel} from '../../../models/attack-model'
 import {executeAttacks} from '../../../utils/attacks'
-import {getActiveRow} from '../../../utils/board'
-import {RowPos} from '../../../types/cards'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 

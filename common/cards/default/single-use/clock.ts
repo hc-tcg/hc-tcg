@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent, TurnActions} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
+import {applyStatusEffect} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class ClockSingleUseCard extends Card {

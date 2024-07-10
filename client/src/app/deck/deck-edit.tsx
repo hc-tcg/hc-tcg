@@ -20,6 +20,7 @@ import {getDeckCost} from 'common/utils/ranks'
 import {validateDeck} from 'common/utils/validation'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import {setSetting} from 'logic/local-settings/local-settings-actions'
+import {CardEntity, newEntity} from 'common/types/game-state'
 
 const RANK_NAMES = ['any', 'stone', 'iron', 'gold', 'emerald', 'diamond']
 const DECK_ICONS = [
@@ -132,7 +133,8 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			instance: card.props.id,
+			instance: newEntity() as CardEntity,
+			slot: null,
 		})
 	)
 	const filteredCards: LocalCardInstance[] = allCards.filter(
@@ -163,9 +165,13 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const addCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: [...loadedDeck.cards, {props: card.props, instance: Math.random().toString()}],
+			cards: [
+				...loadedDeck.cards,
+				{props: card.props, instance: newEntity() as CardEntity, slot: null},
+			],
 		}))
 	}
+
 	const removeCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,

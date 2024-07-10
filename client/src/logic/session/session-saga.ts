@@ -126,7 +126,7 @@ export function* loginSaga(): SagaIterator {
 	}
 
 	if (result.playerInfo) {
-		const {payload} = result.playerInfo
+		const payload = result.playerInfo.payload as PlayerInfoT
 		yield put(setPlayerInfo({...payload}))
 		saveSession(payload)
 

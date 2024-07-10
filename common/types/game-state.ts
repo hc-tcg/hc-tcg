@@ -34,10 +34,10 @@ import {CARDS} from '../cards'
 
 export type PlayerId = string & {__player_id: never}
 
-export type InstanceId = string & {__instance_id: never}
+export type Entity = string & {__instance_id: never}
 
-export function newInstanceId(): InstanceId {
-	return Math.random().toString() as InstanceId
+export function newEntity(): Entity {
+	return Math.random().toString() as Entity
 }
 
 export class CardComponent<Props extends CardProps = CardProps> {
@@ -80,8 +80,17 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public get props(): Props {
 		return this.card.props
 	}
+
 	public get slot(): SlotComponent | null {
 		return this.game.state.slots.get(this.slotEntity)
+	}
+
+	public get player(): PlayerState {
+		return this.game.state.players[this.playerId]
+	}
+
+	public get opponent(): PlayerState {
+		return this.game.state.players[this.game.otherPlayer(this.playerId)]
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -295,10 +304,10 @@ export type LocalTurnState = {
 	availableActions: TurnActions
 }
 
-export type SlotEntity = InstanceId & {__slot_id: never}
-export type RowEntity = InstanceId & {__row_id: never}
-export type CardEntity = InstanceId & {__card_id: never}
-export type StatusEffectEntity = InstanceId & {__status_effect_id: never}
+export type SlotEntity = Entity & {__slot_id: never}
+export type RowEntity = Entity & {__row_id: never}
+export type CardEntity = Entity & {__card_id: never}
+export type StatusEffectEntity = Entity & {__status_effect_id: never}
 
 export type GameState = {
 	turn: TurnState

@@ -5,7 +5,6 @@ import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
-import {SlotComponent} from '../../../types/cards'
 
 class BedEffectCard extends Card {
 	props: Attach = {

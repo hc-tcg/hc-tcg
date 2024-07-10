@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
-import {CardComponent, healHermit} from '../../../types/game-state'
+import {row, slot} from '../../../filters'
+import {CardComponent} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class SplashPotionOfHealingSingleUseCard extends Card {
@@ -19,11 +19,11 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = instance
 
-		player.hooks.onApply.add(instance, () => {
-			game.filterSlots(slot.currentPlayer, slot.hermitSlot).forEach(({rowId: row, cardId: card}) => healHermit(row, 20))
-		})
+		player.hooks.onApply.add(instance, () =>
+			game.state.rows.filter(row.player(player?.id || null)).forEach((row) => row.heal(20))
+		)
 	}
 
 	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {

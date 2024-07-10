@@ -4,6 +4,7 @@ import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
 import {PlayerId} from '../types/game-state'
+import {LocalCardInstance} from '../types/server-requests'
 
 export class PlayerModel {
 	private internalId: PlayerId
@@ -11,7 +12,7 @@ export class PlayerModel {
 	private internalDeck: {
 		name: string
 		icon: string
-		cards: Array<string>
+		cards: Array<LocalCardInstance>
 	}
 
 	public name: string

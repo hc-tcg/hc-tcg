@@ -3,8 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
-import {CardComponent, healHermit} from '../../../types/game-state'
-import {getActiveRow} from '../../../utils/board'
+import {CardComponent} from '../../../types/game-state'
 import Card, {hermit, Hermit} from '../../base/card'
 
 class IskallmanRareHermitCard extends Card {
