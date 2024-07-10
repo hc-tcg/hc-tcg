@@ -161,7 +161,7 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 		singleUseCardUsed: false,
 		cardsCanBePlacedIn: [],
 		pickableSlots: null,
-		activeRowId: null,
+		activeRowEntity: null,
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
@@ -198,7 +198,7 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 
 export function getLocalPlayerState(game: GameModel, playerState: PlayerState): LocalPlayerState {
 	let board = {
-		activeRow: game.state.rows.find(row.active)?.entity || null,
+		activeRow: game.state.rows.find(row.active, row.player(playerState.id))?.entity || null,
 		singleUseCard:
 			game.state.cards
 				.find(card.singleUse, card.slotFulfills(slot.singleUseSlot))

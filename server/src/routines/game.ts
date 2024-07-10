@@ -20,7 +20,7 @@ import {
 import {GameModel} from 'common/models/game-model'
 import {DiscardSlotComponent, EnergyT, HandSlotComponent} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
-import {discardCard, discardSingleUse} from 'common/utils/movement'
+import {discardCard} from 'common/utils/movement'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
@@ -56,7 +56,7 @@ function getAvailableEnergy(game: GameModel) {
 function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): TurnActions {
 	const {turn: turnState, pickRequests, modalRequests} = game.state
 	const {currentPlayer} = game
-	const {activeRowId, singleUseCardUsed: suUsed} = currentPlayer
+	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
 	const actions: TurnActions = []
 
 	const su = game.state.cards.find(card.singleUse, card.attached) as CardComponent<SingleUse> | null

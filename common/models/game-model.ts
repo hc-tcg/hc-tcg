@@ -80,14 +80,9 @@ export class GameModel {
 		return this.state.players[this.opponentPlayerId]
 	}
 
-	public get activeRow() {
-		const player = this.currentPlayer
-		return player.activeRowId !== null ? this.state.rows.get(player.activeRowId) : null
-	}
-
 	public get opponentActiveRow() {
 		const player = this.opponentPlayer
-		return player.activeRowId !== null ? this.state.rows.get(player.activeRowId) : null
+		return player.activeRowEntity !== null ? this.state.rows.get(player.activeRowEntity) : null
 	}
 
 	public getPlayerIds() {
@@ -269,7 +264,7 @@ export class GameModel {
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
 	public changeActiveRow(player: PlayerState, newRow: RowInfo): boolean {
-		const currentActiveRow = this.state.rows.get(player.activeRowId)
+		const currentActiveRow = this.state.rows.get(player.activeRowEntity)
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
@@ -282,13 +277,16 @@ export class GameModel {
 
 		// Create battle log entry
 		if (newRow !== null) {
-			const newHermit = this.state.cards.find(card.hermit, card.slotFulfills(slot.row(currentActiveRow)))
+			const newHermit = this.state.cards.find(
+				card.hermit,
+				card.slotFulfills(slot.row(currentActiveRow?.entity))
+			)
 			const oldHermit = this.state.cards.find(card.hermit, card.slotFulfills(slot.row(newRow)))
 			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
 		// Change the active row
-		player.activeRowId = newRow.entity
+		player.activeRowEntity = newRow.entity
 
 		// Call on active row change hooks
 		if (currentActiveRow) {
@@ -300,8 +298,6 @@ export class GameModel {
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
 	public swapRows(player: PlayerState, oldRow: RowInfo, newRow: RowInfo) {
-		const activeRowChanged = this.changeActiveRow(player, oldRow)
-
 		let oldIndex = oldRow.index
 		oldRow.index = newRow.index
 		newRow.index = oldIndex

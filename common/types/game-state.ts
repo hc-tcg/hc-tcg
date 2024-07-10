@@ -189,7 +189,7 @@ export type PlayerState = {
 	pickableSlots: Array<PickInfo> | null
 	cardsCanBePlacedIn: Array<[CardComponent, Array<PickInfo>]>
 
-	activeRowId: RowEntity | null
+	activeRowEntity: RowEntity | null
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */

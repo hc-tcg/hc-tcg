@@ -51,7 +51,7 @@ export namespace row {
 	export const not = notCombinator
 
 	export const active: Predicate<RowComponent> = (game, row) =>
-		game.activeRow !== null && game.activeRow.entity === row.entity
+		[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
 
 	export function player(player: PlayerId | null): Predicate<RowComponent> {
 		return (game, row) => {
@@ -140,7 +140,7 @@ export namespace slot {
 
 	/** Return true if the card is attached to the active row. */
 	export const activeRow: SlotCondition = (game, pos) => {
-		return pos.onBoard() && pos.player?.activeRowId === pos.rowEntity
+		return pos.onBoard() && pos.player?.activeRowEntity === pos.rowEntity
 	}
 
 	/* Return true if the slot is in a player's hand */
@@ -168,11 +168,11 @@ export namespace slot {
 	}
 
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
-		return pos.player?.activeRowId !== null
+		return pos.player?.activeRowEntity !== null
 	}
 
 	export const opponentHasActiveHermit: SlotCondition = (game, pos) => {
-		return game.opponentPlayer.activeRowId !== null
+		return game.opponentPlayer.activeRowEntity !== null
 	}
 
 	export const row = (row: RowEntity | null | undefined): SlotCondition => {
