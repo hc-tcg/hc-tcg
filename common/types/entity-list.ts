@@ -1,7 +1,8 @@
 import {Predicate} from '../filters'
 import {GameModel} from '../models/game-model'
+import {InstanceId, newInstanceId} from './game-state'
 
-export class EntityList<Id extends string, Value extends {id: Id}> {
+export class EntityList<Id extends InstanceId, Value extends {entity: Id}> {
 	game: GameModel
 	data: Record<Id, Value>
 
@@ -16,9 +17,13 @@ export class EntityList<Id extends string, Value extends {id: Id}> {
 	}
 
 	/** Add a value and return the ID of the value */
-	public add(value: Value) {
-		this.data[value.id] = value
-		return value.id
+	public new<Args extends Array<any>>(
+		newValue: new (game: GameModel, id: Id, ...args: Args) => Value,
+		...args: Args
+	): Value {
+		const value = new newValue(this.game, newInstanceId() as Id, ...args)
+		this.data[value.entity] = value
+		return value
 	}
 
 	public list(): Array<Value> {

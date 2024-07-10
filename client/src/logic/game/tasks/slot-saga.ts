@@ -1,10 +1,10 @@
 import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {CardInstance} from 'common/types/game-state'
+import {CardComponent} from 'common/types/game-state'
 import {
 	ChangeActiveHermitActionData,
-	PickCardActionData,
+	PickSlotActionData,
 	PlayCardActionData,
 	slotToPlayCardAction,
 } from 'common/types/action-data'
@@ -28,7 +28,7 @@ function* pickForPickRequestSaga(action: SlotPickedAction): SagaIterator {
 
 	const pickInfo = action.payload.pickInfo
 
-	const actionData: PickCardActionData = {
+	const actionData: PickSlotActionData = {
 		type: 'PICK_REQUEST',
 		payload: {
 			pickResult: pickInfo,
@@ -71,7 +71,7 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 
 	if (!playerState || rowIndex === null) return
 	const row = playerState.board.rows[rowIndex]
-	if (!row.hermitCard) return
+	if (!row.hermit) return
 
 	if (playerId !== currentPlayerId) return
 

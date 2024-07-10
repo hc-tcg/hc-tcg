@@ -1,7 +1,7 @@
 import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
+import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {removeStatusEffect} from '../utils/board'
 
@@ -14,7 +14,7 @@ class SheepStareEffect extends StatusEffect {
 			'When this hermit attacks, flip a coin. If heads, this hermit attacks themselves. Lasts until this hermit attacks or the end of the turn.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		let {player} = pos
 
 		let coinFlipResult: CoinFlipT | null = null
@@ -45,7 +45,7 @@ class SheepStareEffect extends StatusEffect {
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.beforeAttack.remove(instance)

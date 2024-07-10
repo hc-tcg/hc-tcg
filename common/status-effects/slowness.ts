@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {slot} from '../filters'
 
 class SlownessStatusEffect extends StatusEffect {
@@ -15,7 +15,7 @@ class SlownessStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		if (!instance.counter) instance.counter = this.props.counter
@@ -48,13 +48,13 @@ class SlownessStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.entity) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnStart.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)

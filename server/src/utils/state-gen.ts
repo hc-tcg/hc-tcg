@@ -3,7 +3,7 @@ import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
-	CardInstance,
+	CardComponent,
 	CoinFlipT,
 	LocalGameState,
 	LocalPlayerState,
@@ -172,13 +172,13 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
-			onAttach: new GameHook<(instance: CardInstance) => void>(),
-			onDetach: new GameHook<(instance: CardInstance) => void>(),
+			onAttach: new GameHook<(instance: CardComponent) => void>(),
+			onDetach: new GameHook<(instance: CardComponent) => void>(),
 			beforeApply: new GameHook<() => void>(),
 			onApply: new GameHook<() => void>(),
 			afterApply: new GameHook<() => void>(),
 			getAttackRequests: new GameHook<
-				(activeInstance: CardInstance, hermitAttackType: HermitAttackType) => void
+				(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
 			>(),
 			getAttack: new GameHook<() => AttackModel | null>(),
 			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
@@ -188,9 +188,9 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 			afterAttack: new GameHook<(attack: AttackModel) => void>(),
 			afterDefence: new GameHook<(attack: AttackModel) => void>(),
 			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardInstance | null>) => void>(),
+			onTurnEnd: new GameHook<(drawCards: Array<CardComponent | null>) => void>(),
 			onCoinFlip: new GameHook<
-				(card: CardInstance, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+				(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
 			>(),
 			beforeActiveRowChange: new GameHook<
 				(oldRow: number | null, newRow: number | null) => boolean
@@ -209,18 +209,27 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 			null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
+			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row))
+			const hermitCard = game.state.cards.find(
+				card.inSlot(hermit)
+			) as CardComponent<HasHealth> | null
+
+			const attach = game.state.slots.find(slot.attachSlot, slot.row(row))
+			const attachCard = game.state.cards.find(card.inSlot(attach)) as CardComponent<Attach> | null
+
+			const items = game.state.slots.filter(slot.itemSlot, slot.row(row)).map((itemSlot) => {
+				return {
+					slot: itemSlot.entity,
+					card: game.state.cards.find(card.inSlot(itemSlot))?.toLocalCardInstance() || null,
+				}
+			})
+
+			if (!hermit || !attach) throw new Error('Slot is missing when generating local game state.')
+
 			return {
-				hermitCard:
-					(game.state.cards
-						.find(card.hermit, card.inRow(row))
-						?.toLocalCardInstance() as LocalCardInstance<HasHealth>) || null,
-				effectCard:
-					(game.state.cards
-						.find(card.attach, card.inRow(row))
-						?.toLocalCardInstance() as LocalCardInstance<Attach>) || null,
-				itemCards: game.state.cards
-					.filter(card.item, card.inRow(row))
-					.map((inst) => inst.toLocalCardInstance()),
+				hermit: {slot: hermit.entity, card: hermitCard?.toLocalCardInstance() || null},
+				attach: {slot: attach.entity, card: attachCard?.toLocalCardInstance() || null},
+				items: items,
 				health: row.health,
 			}
 		}),

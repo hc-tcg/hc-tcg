@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance, CoinFlipT} from '../../../types/game-state'
+import {CardComponent, CoinFlipT} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardSingleUse} from '../../../utils/movement'
@@ -21,7 +21,7 @@ class TridentSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		let coinflipResult: CoinFlipT | null = null
@@ -63,7 +63,7 @@ class TridentSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.getAttack.remove(instance)

@@ -1,5 +1,5 @@
 import classnames from 'classnames'
-import {LocalRowState} from 'common/types/game-state'
+import {LocalRowState, SlotEntity} from 'common/types/game-state'
 import Card from 'components/card'
 import css from './board.module.scss'
 import {SlotTypeT} from 'common/types/cards'
@@ -15,9 +15,7 @@ import StatusEffectContainer from './board-status-effects'
 
 export type SlotProps = {
 	type: SlotTypeT
-	rowIndex?: number
-	index?: number
-	playerId: string
+	entity?: SlotEntity
 	onClick?: () => void
 	card: LocalCardInstance | null
 	rowState?: LocalRowState
@@ -25,17 +23,7 @@ export type SlotProps = {
 	cssId?: string
 	statusEffects?: Array<LocalStatusEffectInstance>
 }
-const Slot = ({
-	type,
-	rowIndex,
-	index,
-	playerId,
-	onClick,
-	card,
-	active,
-	statusEffects,
-	cssId,
-}: SlotProps) => {
+const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotProps) => {
 	const cardsCanBePlacedIn = useSelector(getCardsCanBePlacedIn)
 	const pickRequestPickableCard = useSelector(getPickRequestPickableSlots)
 	const selectedCard = useSelector(getSelectedCard)
@@ -55,12 +43,7 @@ const Slot = ({
 
 	const getIsPickable = () => {
 		for (const slot of getPickableSlots()) {
-			if (
-				slot.type === type &&
-				slot.rowIndex == rowIndex &&
-				slot.index == index &&
-				slot.playerId == playerId
-			) {
+			if (slot.entity === entity) {
 				return true
 			}
 		}

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -33,7 +33,7 @@ class HelsknightRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -67,7 +67,7 @@ class HelsknightRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onAttack.remove(instance)
 	}

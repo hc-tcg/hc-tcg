@@ -6,7 +6,7 @@ import StatusEffect, {
 } from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
+import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
 import {slot} from '../filters'
@@ -21,7 +21,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 		applyCondition: slot.not(slot.hasStatusEffect('aussie-ping-immune')),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		let {player} = pos
 
 		let coinFlipResult: CoinFlipT | null = null
@@ -58,7 +58,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.beforeAttack.remove(instance)
@@ -76,7 +76,7 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos
@@ -90,7 +90,7 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 	public override onRemoval(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos

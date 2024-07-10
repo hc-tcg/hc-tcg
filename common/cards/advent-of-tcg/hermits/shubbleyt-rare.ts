@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class ShubbleYTRareHermitCard extends Card {
@@ -31,7 +31,7 @@ class ShubbleYTRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -72,7 +72,7 @@ class ShubbleYTRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 
 		player.hooks.afterAttack.remove(instance)

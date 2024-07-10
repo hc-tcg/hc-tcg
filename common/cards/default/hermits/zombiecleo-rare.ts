@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 
 class ZombieCleoRareHermitCard extends Card {
@@ -39,13 +39,13 @@ class ZombieCleoRareHermitCard extends Card {
 		slot.not(slot.hasId('armor_stand'))
 	)
 
-	pickedAttack = new InstancedValue<{card: CardInstance; attack: HermitAttackType} | null>(
+	pickedAttack = new InstancedValue<{card: CardComponent; attack: HermitAttackType} | null>(
 		() => null
 	)
 
 	override getAttack(
 		game: GameModel,
-		instance: CardInstance,
+		instance: CardComponent,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -77,12 +77,12 @@ class ZombieCleoRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -159,7 +159,7 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		this.pickedAttack.clear(instance)
 		player.hooks.getAttackRequests.remove(instance)

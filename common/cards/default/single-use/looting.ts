@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -27,7 +27,7 @@ class LootingSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -54,7 +54,7 @@ class LootingSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

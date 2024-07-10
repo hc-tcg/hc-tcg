@@ -1,4 +1,4 @@
-import {CardInstance, StatusEffectInstance} from './game-state'
+import {CardComponent, StatusEffectComponent} from './game-state'
 
 export class Hook<Listener, Args extends (...args: any) => any> {
 	public listeners: Array<[Listener, Args]> = []
@@ -43,12 +43,12 @@ export class Hook<Listener, Args extends (...args: any) => any> {
  * Allows adding and removing listeners with the card instance as a reference, and calling all or some of the listeners.
  */
 export class GameHook<Args extends (...args: any) => any> extends Hook<
-	CardInstance | StatusEffectInstance,
+	CardComponent | StatusEffectComponent,
 	Args
 > {
 	constructor() {
 		// We override the eq function because card and status instances can not be compared with the regular === operator.
-		super((a, b) => a.id == b.id)
+		super((a, b) => a.entity == b.entity)
 	}
 
 	/**
@@ -56,7 +56,7 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 	 */
 	public callSome(
 		params: Parameters<Args>,
-		predicate: (instance: CardInstance | StatusEffectInstance) => boolean
+		predicate: (instance: CardComponent | StatusEffectComponent) => boolean
 	) {
 		return this.listeners
 			.filter(([instance, _]) => predicate(instance))

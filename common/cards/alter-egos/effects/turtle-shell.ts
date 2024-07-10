@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import Card, {Attach, attach} from '../../base/card'
@@ -20,7 +20,7 @@ class TurtleShellEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.not(slot.activeRow)),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		let firstActiveTurn = true
 
@@ -52,7 +52,7 @@ class TurtleShellEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 

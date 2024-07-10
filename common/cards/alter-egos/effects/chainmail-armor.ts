@@ -1,7 +1,7 @@
 import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -18,7 +18,7 @@ class ChainmailArmorEffectCard extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onDefence.add(instance, (attack) => {
@@ -41,7 +41,7 @@ class ChainmailArmorEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onDefence.remove(instance)
 	}

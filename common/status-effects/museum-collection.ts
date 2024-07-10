@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
 import {slot} from '../filters'
@@ -18,7 +18,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		counterType: 'number',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 		let oldHandSize = player.hand.length
 
@@ -43,7 +43,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 			const targetHermit = player.board.rows[activeRow].hermitCard
 			if (!targetHermit) return
 			if (
-				attack.getAttacker()?.row.hermitCard.instance !== instance.target.id ||
+				attack.getAttacker()?.row.hermitCard.instance !== instance.target.entity ||
 				attack.type !== 'secondary'
 			)
 				return
@@ -77,13 +77,13 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.entity) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onApply.remove(instance)

@@ -2,8 +2,8 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
-import {SlotInfo} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {
@@ -32,15 +32,15 @@ class KeralisRareHermitCard extends Card {
 
 	pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
-		let pickedAfkHermit: SlotInfo | null = null
+		let pickedAfkHermit: SlotComponent | null = null
 
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -91,7 +91,7 @@ class KeralisRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)

@@ -2,8 +2,8 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -33,10 +33,10 @@ class EggSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		let afkHermitSlot: SlotInfo | null = null
+		let afkHermitSlot: SlotComponent | null = null
 
 		player.hooks.getAttackRequests.add(instance, () => {
 			game.addPickRequest({
@@ -94,7 +94,7 @@ class EggSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.remove(instance)

@@ -4,7 +4,7 @@ import {getActiveRow} from '../../../utils/board'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class PotionOfWeaknessSingleUseCard extends Card {
 	props: SingleUse = {
@@ -26,7 +26,7 @@ class PotionOfWeaknessSingleUseCard extends Card {
 		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -36,7 +36,7 @@ class PotionOfWeaknessSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

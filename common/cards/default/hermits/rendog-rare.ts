@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {slot} from '../../../filters'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 import {CopyAttack} from '../../../types/server-requests'
@@ -39,12 +39,12 @@ class RendogRareHermitCard extends Card {
 		slot.not(slot.hasId('armor_stand'))
 	)
 
-	imitatingCard = new InstancedValue<CardInstance | null>(() => null)
+	imitatingCard = new InstancedValue<CardComponent | null>(() => null)
 	pickedAttack = new InstancedValue<HermitAttackType | null>(() => null)
 
 	override getAttack(
 		game: GameModel,
-		instance: CardInstance,
+		instance: CardComponent,
 		pos: CardPosModel,
 		hermitAttackType: HermitAttackType
 	) {
@@ -79,12 +79,12 @@ class RendogRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 			// Only activate power on secondary attack
 			if (hermitAttackType !== 'secondary') return
 
@@ -165,7 +165,7 @@ class RendogRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		// If the card we are imitating is still attached, detach it

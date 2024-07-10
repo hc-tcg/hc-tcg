@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -20,7 +20,7 @@ class GoldenAxeSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		let attacking = false

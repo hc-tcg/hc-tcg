@@ -1,9 +1,9 @@
 import {DEBUG_CONFIG} from '../config'
-import {CardInstance, CoinFlipT, PlayerState} from '../types/game-state'
+import {CardComponent, CoinFlipT, PlayerState} from '../types/game-state'
 
 export function flipCoin(
 	playerTossingCoin: PlayerState,
-	card: CardInstance,
+	card: CardComponent,
 	times: number = 1,
 	currentPlayer: PlayerState | null = null
 ): Array<CoinFlipT> {

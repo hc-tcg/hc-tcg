@@ -1,5 +1,5 @@
 import {useSelector} from 'react-redux'
-import {LocalGameState, LocalPlayerState} from 'common/types/game-state'
+import {LocalGameState, LocalPlayerState, SlotEntity} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import css from './board.module.scss'
 import BoardRow from './board-row'
@@ -28,18 +28,12 @@ function Board({onClick, localGameState}: Props) {
 	const rightPlayer = side === 'Right' ? player : opponent
 
 	const handleRowClick = (
-		playerId: string,
-		rowIndex: number,
-		card: LocalCardInstance | null,
-		type: SlotTypeT,
-		index: number
+		entity: SlotEntity,
+		type:SlotTypeT,
 	) => {
 		onClick({
-			playerId,
-			rowIndex,
-			card,
+			entity,
 			type,
-			index,
 		})
 	}
 
@@ -54,11 +48,9 @@ function Board({onClick, localGameState}: Props) {
 					return (
 						<BoardRow
 							key={index}
-							rowIndex={index}
 							rowState={rows[index]}
 							active={index === player.board.activeRow}
-							playerId={player.id}
-							onClick={handleRowClick.bind(null, player.id, index)}
+							onClick={handleRowClick}
 							type={direction}
 							statusEffects={localGameState.statusEffects}
 						/>

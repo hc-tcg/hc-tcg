@@ -1,7 +1,7 @@
 import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {slot} from '../filters'
 
 class DyedStatusEffect extends StatusEffect {
@@ -13,7 +13,7 @@ class DyedStatusEffect extends StatusEffect {
 		applyCondition: slot.not(slot.hasStatusEffect('dyed')),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
@@ -21,14 +21,14 @@ class DyedStatusEffect extends StatusEffect {
 
 			const activeRow = player.board.rows[player.board.activeRow]
 
-			if (instance.target.id !== activeRow.hermitCard?.instance)
+			if (instance.target.entity !== activeRow.hermitCard?.instance)
 				return availableEnergy
 
 			return availableEnergy.map(() => 'any')
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.availableEnergy.remove(instance)

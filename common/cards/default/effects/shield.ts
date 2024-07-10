@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import Card, {Attach, attach} from '../../base/card'
@@ -18,7 +18,7 @@ class ShieldEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		let damageBlocked = 0
 
@@ -45,7 +45,7 @@ class ShieldEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onDefence.remove(instance)
 		player.hooks.afterDefence.remove(instance)

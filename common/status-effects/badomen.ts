@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance as StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent as StatusEffectComponent} from '../types/game-state'
 import {CARDS} from '../cards'
 import {slot} from '../filters'
 
@@ -16,7 +16,7 @@ class BadOmenStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		if (!instance.counter) instance.counter = this.props.counter
@@ -38,7 +38,7 @@ class BadOmenStatusEffect extends StatusEffect {
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
 			if (
-				instance.target.id !== card.id &&
+				instance.target.entity !== card.entity &&
 				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips
@@ -51,7 +51,7 @@ class BadOmenStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onCoinFlip.remove(instance)
 		opponentPlayer.hooks.onTurnStart.remove(instance)

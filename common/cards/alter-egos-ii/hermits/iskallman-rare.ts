@@ -2,8 +2,8 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import Card, {hermit, Hermit} from '../../base/card'
 
@@ -35,9 +35,9 @@ class IskallmanRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
-		let pickedAfkHermit: SlotInfo | null = null
+		let pickedAfkHermit: SlotComponent | null = null
 
 		const pickCondition = slot.every(
 			slot.currentPlayer,
@@ -48,7 +48,7 @@ class IskallmanRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -143,7 +143,7 @@ class IskallmanRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.remove(instance)

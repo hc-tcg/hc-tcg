@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class MilkBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
@@ -26,7 +26,7 @@ class MilkBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
@@ -85,7 +85,7 @@ class MilkBucketEffectCard extends Card {
 		}
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.onDefence.remove(instance)
 		opponentPlayer.hooks.afterApply.remove(instance)

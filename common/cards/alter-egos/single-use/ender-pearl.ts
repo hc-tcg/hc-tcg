@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -28,7 +28,7 @@ class EnderPearlSingleUseCard extends Card {
 			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		const attackId = this.getInstanceKey(instance)
 

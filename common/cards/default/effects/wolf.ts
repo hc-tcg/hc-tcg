@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -20,7 +20,7 @@ class WolfEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		let activated = false
 
@@ -63,7 +63,7 @@ class WolfEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		// Delete hooks and custom

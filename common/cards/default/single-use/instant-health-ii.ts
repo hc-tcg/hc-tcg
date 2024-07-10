@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../filters'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {CardComponent, healHermit} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class InstantHealthIISingleUseCard extends Card {
@@ -25,7 +25,7 @@ class InstantHealthIISingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addPickRequest({

@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -18,7 +18,7 @@ class NetheriteSwordSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.getAttack.add(instance, () => {
@@ -48,7 +48,7 @@ class NetheriteSwordSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)

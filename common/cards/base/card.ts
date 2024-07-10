@@ -5,7 +5,7 @@ import {
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
-	SlotInfo,
+	SlotComponent,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
@@ -13,7 +13,7 @@ import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {slot, SlotCondition} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {CardInstance} from '../../types/game-state'
+import {CardComponent} from '../../types/game-state'
 import {WithoutFunctions} from '../../types/server-requests'
 
 export type CanAttachError =
@@ -172,19 +172,19 @@ export class InstancedValue<T> {
 		this.default = defaultFactory
 	}
 
-	public set(instance: CardInstance, value: T) {
-		this.values[instance.id] = value
+	public set(instance: CardComponent, value: T) {
+		this.values[instance.entity] = value
 	}
 
-	public get(instance: CardInstance): T {
-		if (instance.id in this.values) {
-			return this.values[instance.id]
+	public get(instance: CardComponent): T {
+		if (instance.entity in this.values) {
+			return this.values[instance.entity]
 		}
 		return this.default()
 	}
 
-	public clear(instance: CardInstance) {
-		delete this.values[instance.id]
+	public clear(instance: CardComponent) {
+		delete this.values[instance.entity]
 	}
 }
 
@@ -195,21 +195,21 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return this.props.id + ':' + keyName
 	}
 
-	public getInstanceKey(instance: CardInstance, keyName: string = '') {
-		return this.props.id + ':' + instance.id + ':' + keyName
+	public getInstanceKey(instance: CardComponent, keyName: string = '') {
+		return this.props.id + ':' + instance.entity + ':' + keyName
 	}
 
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, instance: CardInstance, placedIn: SlotInfo) {
+	public onAttach(game: GameModel, instance: CardComponent, placedIn: SlotComponent) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when an instance of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, instance: CardInstance, from: SlotInfo) {
+	public onDetach(game: GameModel, instance: CardComponent, from: SlotComponent) {
 		// default is do nothing
 	}
 
@@ -217,12 +217,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isItem(this.props)
 	}
 
-	public getEnergy(
-		this: Card<Item>,
-		game: GameModel,
-		instance: CardInstance,
-		pos: CardPosModel
-	): Array<TypeT> {
+	public getEnergy(this: Card<Item>, game: GameModel, instance: CardComponent): Array<TypeT> {
 		return []
 	}
 
@@ -237,8 +232,8 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public getAttack(
 		this: Card<Hermit>,
 		game: GameModel,
-		instance: CardInstance,
-		pos: SlotInfo,
+		instance: CardComponent,
+		pos: SlotComponent,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {
 		if (pos.row === null || !pos.rowId || !pos.row.index) return null

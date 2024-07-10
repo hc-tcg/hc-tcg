@@ -4,8 +4,8 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
-import {SlotInfo} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
 
 class BedEffectCard extends Card {
 	props: Attach = {
@@ -27,11 +27,11 @@ class BedEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns
 		const {player, rowId: row} = pos
 
-		let hermitCard: CardInstance | null = null
+		let hermitCard: CardComponent | null = null
 
 		if (row && row.hermitCard) {
 			applyStatusEffect(game, 'sleeping', row.hermitCard)
@@ -54,7 +54,7 @@ class BedEffectCard extends Card {
 
 		//Ladder
 		player.hooks.afterApply.add(instance, () => {
-			if (hermitCard?.id != row?.hermitCard?.instance && row && row.hermitCard) {
+			if (hermitCard?.entity != row?.hermitCard?.instance && row && row.hermitCard) {
 				row.health = row.hermitCard.props.health
 
 				// Add new sleeping statusEffect
@@ -71,7 +71,7 @@ class BedEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onTurnEnd.remove(instance)
 		player.hooks.onTurnStart.remove(instance)

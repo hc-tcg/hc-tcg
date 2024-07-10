@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -34,13 +34,13 @@ export class BoomerBdubsRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -114,7 +114,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 		delete player.custom[instanceKey]

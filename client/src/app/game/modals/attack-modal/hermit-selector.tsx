@@ -29,10 +29,10 @@ function HermitSelector({extraAttacks, handleExtraAttack}: Props) {
 	const initialId = extraAttacks[0].split(':')[0]
 	const [selectedHermit, setSelectedHermit] = useState<string>(initialId)
 
-	if (!activeRow || !playerState || !activeRow.hermitCard) return null
-	if (!opponentRow || !opponentRow.hermitCard) return null
+	if (!activeRow || !playerState || !activeRow.hermit) return null
+	if (!opponentRow || !opponentRow.hermit) return null
 
-	const playerHermitInfo = activeRow.hermitCard
+	const playerHermitInfo = activeRow.hermit
 	if (!isHermit(playerHermitInfo.props)) return null
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]

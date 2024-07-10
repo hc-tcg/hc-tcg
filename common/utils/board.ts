@@ -1,16 +1,16 @@
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {SlotInfo} from '../types/cards'
+import {SlotComponent} from '../types/cards'
 import {
-	StatusEffectInstance,
+	StatusEffectComponent,
 	GenericActionResult,
 	PlayerState,
-	CardInstance,
+	CardComponent,
 } from '../types/game-state'
 import {card} from '../filters'
 
-export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericActionResult {
+export function applySingleUse(game: GameModel, slotInfo?: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game
 
 	const suCard = game.state.cards.find(card.singleUse)
@@ -19,7 +19,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 	const pos = getCardPos(game, suCard)
 	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
-	const cardInstance = suCard?.id
+	const cardInstance = suCard?.entity
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()
@@ -46,7 +46,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 export function applyStatusEffect(
 	game: GameModel,
 	statusEffectId: string,
-	targetInstance: CardInstance | undefined | null
+	targetInstance: CardComponent | undefined | null
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 
@@ -54,7 +54,7 @@ export function applyStatusEffect(
 
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
-	const statusEffectInstance = new StatusEffectInstance(
+	const statusEffectInstance = new StatusEffectComponent(
 		STATUS_EFFECT_CLASSES[statusEffectId],
 		Math.random().toString(),
 		targetInstance
@@ -74,11 +74,11 @@ export function applyStatusEffect(
 export function removeStatusEffect(
 	game: GameModel,
 	pos: CardPosModel | null,
-	statusEffectInstance: StatusEffectInstance
+	statusEffectInstance: StatusEffectComponent
 ): GenericActionResult {
 	if (!pos) return 'FAILURE_NOT_APPLICABLE'
 	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.instance === statusEffectInstance.id
+		(a) => a.instance === statusEffectInstance.entity
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
@@ -92,13 +92,13 @@ export function removeStatusEffect(
 
 export function hasStatusEffect(
 	game: GameModel,
-	instance: CardInstance | null,
+	instance: CardComponent | null,
 	statusEffectId: string
 ) {
 	if (!instance) return false
 	return (
 		game.state.statusEffects.filter(
-			(ail) => ail.props.id === statusEffectId && ail.instance === instance.id
+			(ail) => ail.props.id === statusEffectId && ail.instance === instance.entity
 		).length !== 0
 	)
 }

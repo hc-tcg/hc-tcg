@@ -1,6 +1,6 @@
 import {CardPosModel, getCardPos} from './common/models/card-pos-model'
 import {GameModel} from './common/models/game-model'
-import {StatusEffectInstance} from './common/types/game-state'
+import {StatusEffectComponent} from './common/types/game-state'
 import {removeStatusEffect} from './common/utils/board'
 import StatusEffect, {
 	StatusEffectProps,
@@ -18,7 +18,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos
@@ -36,7 +36,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 
 	public override onRemoval(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos
@@ -56,7 +56,7 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos
@@ -74,7 +74,7 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 
 	public override onRemoval(
 		game: GameModel,
-		instance: StatusEffectInstance<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
 		const {player} = pos

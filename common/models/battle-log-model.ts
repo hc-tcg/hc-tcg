@@ -2,7 +2,7 @@ import {
 	CurrentCoinFlipT,
 	PlayerState,
 	RowStateWithHermit,
-	CardInstance,
+	CardComponent,
 	BattleLogT,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
@@ -13,7 +13,7 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import StatusEffect from '../status-effects/status-effect'
-import {SlotInfo} from '../types/cards'
+import {RowInfo, SlotComponent} from '../types/cards'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -26,7 +26,7 @@ export class BattleLogModel {
 		this.logMessageQueue = []
 	}
 
-	private generateEffectEntryHeader(card: CardInstance | null): string {
+	private generateEffectEntryHeader(card: CardComponent | null): string {
 		const currentPlayer = this.game.currentPlayer.playerName
 		if (!card) return ''
 		return `$p{You|${currentPlayer}}$ used $e${card.props.name}$ `
@@ -89,13 +89,13 @@ export class BattleLogModel {
 
 	public addPlayCardEntry(
 		card: Card,
-		pos: CardPosModel,
+		pos: SlotComponent,
 		coinFlips: Array<CurrentCoinFlipT>,
-		slotInfo?: SlotInfo
+		slotInfo?: SlotComponent
 	) {
 		const genCardName = (
 			player: PlayerState | undefined,
-			card: CardInstance | null | undefined,
+			card: CardComponent | null | undefined,
 			rowIndex: number | null | undefined
 		) => {
 			if (card == null) return invalid
@@ -154,7 +154,7 @@ export class BattleLogModel {
 	public addAttackEntry(
 		attack: AttackModel,
 		coinFlips: Array<CurrentCoinFlipT>,
-		singleUse: CardInstance | null
+		singleUse: CardComponent | null
 	) {
 		const attacker = attack.getAttacker()
 		if (!attacker) return
@@ -246,9 +246,9 @@ export class BattleLogModel {
 
 	public addChangeRowEntry(
 		player: PlayerState,
-		newRow: number,
-		oldHermit: CardInstance | null,
-		newHermit: CardInstance | null
+		newRow: RowInfo,
+		oldHermit: CardComponent | null,
+		newHermit: CardComponent | null
 	) {
 		if (!newHermit) return
 		if (oldHermit) {
@@ -256,13 +256,13 @@ export class BattleLogModel {
 				player: player.id,
 				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.props.name}$ for $p${
 					newHermit.props.name
-				} (${newRow + 1})$`,
+				} (${newRow.index + 1})$`,
 			})
 		} else {
 			this.logMessageQueue.push({
 				player: player.id,
 				description: `$p{You|${player.playerName}}$ activated $p${newHermit.props.name} (${
-					newRow + 1
+					newRow.index + 1
 				})$`,
 			})
 		}

@@ -5,7 +5,7 @@ import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class TotemEffectCard extends Card {
 	props: Attach = {
@@ -26,7 +26,7 @@ class TotemEffectCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const reviveHook = (attack: AttackModel) => {
@@ -60,7 +60,7 @@ class TotemEffectCard extends Card {
 		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => reviveHook(attack))
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		pos.player.hooks.afterDefence.remove(instance)
 		pos.opponentPlayer.hooks.afterAttack.remove(instance)
 	}

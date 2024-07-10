@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import {useState, ReactNode} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardInstance} from 'common/types/game-state'
+import {CardComponent} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import {CARDS} from 'common/cards'
 import {validateDeck} from 'common/utils/validation'

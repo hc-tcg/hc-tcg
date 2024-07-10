@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance, RowStateWithHermit, healHermit} from '../../../types/game-state'
+import {CardComponent, RowStateWithHermit, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -34,14 +34,14 @@ class PharaohRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		let pickedRow: RowStateWithHermit | null = null
 
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.id !== instance.id) return
+			if (activeInstance.entity !== instance.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -88,7 +88,7 @@ class PharaohRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.onAttack.remove(instance)

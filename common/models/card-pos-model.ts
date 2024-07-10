@@ -1,9 +1,9 @@
 import {slot} from '../filters'
-import {SlotInfo} from '../types/cards'
-import {CardInstance} from '../types/game-state'
+import {SlotComponent} from '../types/cards'
+import {CardComponent} from '../types/game-state'
 import {GameModel} from './game-model'
 
-export function getCardPos(game: GameModel, instance: CardInstance) {
+export function getCardPos(game: GameModel, instance: CardComponent) {
 	const basicPos = game.findSlot(slot.hasInstance(instance))
 
 	if (basicPos) {
@@ -16,12 +16,12 @@ export function getCardPos(game: GameModel, instance: CardInstance) {
 /**
  * A wrapper class around the SlotInfo object that automatically updates our slot info when the card is moved.
  */
-export class CardPosModel implements SlotInfo {
+export class CardPosModel implements SlotComponent {
 	private game: GameModel
-	private internalPos: SlotInfo
-	private instance: CardInstance
+	private internalPos: SlotComponent
+	private instance: CardComponent
 
-	constructor(game: GameModel, cardPos: SlotInfo, instance: CardInstance) {
+	constructor(game: GameModel, cardPos: SlotComponent, instance: CardComponent) {
 		this.game = game
 		this.internalPos = cardPos
 		this.instance = instance

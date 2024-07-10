@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {AttackModel} from '../../../models/attack-model'
-import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
+import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import Card, {Attach, attach} from '../../base/card'
 
 class TrapdoorEffectCard extends Card {
@@ -17,7 +17,7 @@ class TrapdoorEffectCard extends Card {
 			"When an adjacent Hermit takes damage from an opponent's attack, up to 40hp damage is taken by this Hermit instead.",
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		let totalReduction = 0
@@ -56,7 +56,7 @@ class TrapdoorEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onDefence.remove(instance)

@@ -1,6 +1,6 @@
 import {createRequire} from 'module'
 const require = createRequire(import.meta.url)
-import {CardInstance, GameLog, PlayerState} from 'common/types/game-state'
+import {CardComponent, GameLog, PlayerState} from 'common/types/game-state'
 import {Database} from 'firebase-admin/lib/database/database'
 import {CONFIG} from 'common/config'
 import {ServiceAccount} from 'firebase-admin/app'

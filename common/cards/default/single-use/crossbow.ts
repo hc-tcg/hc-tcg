@@ -2,8 +2,8 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -21,7 +21,7 @@ class CrossbowSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
 
@@ -35,7 +35,7 @@ class CrossbowSingleUseCard extends Card {
 			const pickRequest = {
 				playerId: player.id,
 				id: this.props.id,
-				onResult(pickedSlot: SlotInfo) {
+				onResult(pickedSlot: SlotComponent) {
 					const rowIndex = pickedSlot.rowIndex
 					if (!pickedSlot.cardId || rowIndex === null) return
 
@@ -110,7 +110,7 @@ class CrossbowSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 		player.hooks.getAttack.remove(instance)

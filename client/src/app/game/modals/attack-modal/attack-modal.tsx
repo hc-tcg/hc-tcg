@@ -22,11 +22,11 @@ function AttackModal({closeModal}: Props) {
 	const playerState = useSelector(getPlayerStateById(playerId))
 	const singleUseCard = playerState?.board.singleUseCard
 
-	if (!activeRow || !playerState || !activeRow.hermitCard) return null
-	if (!opponentRow || !opponentRow.hermitCard) return null
+	if (!activeRow || !playerState || !activeRow.hermit) return null
+	if (!opponentRow || !opponentRow.hermit) return null
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
-	const playerHermitInfo = activeRow.hermitCard
+	const playerHermitInfo = activeRow.hermit
 	if (!isHermit(playerHermitInfo.props)) return null
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]

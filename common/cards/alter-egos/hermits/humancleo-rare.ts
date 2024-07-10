@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class HumanCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,7 +34,7 @@ class HumanCleoRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
@@ -55,7 +55,7 @@ class HumanCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		// Remove hooks
 		player.hooks.onAttack.remove(instance)

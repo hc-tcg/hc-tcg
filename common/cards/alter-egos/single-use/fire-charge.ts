@@ -5,7 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
 import {slot} from '../../../filters'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class FireChargeSingleUseCard extends Card {
 	pickCondition = slot.every(
@@ -32,7 +32,7 @@ class FireChargeSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addPickRequest({
@@ -59,7 +59,7 @@ class FireChargeSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterApply.remove(instance)

@@ -2,10 +2,10 @@ import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {slot} from '../filters'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {SlotInfo} from '../types/cards'
+import {SlotComponent} from '../types/cards'
 
 class BetrayedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -17,7 +17,7 @@ class BetrayedStatusEffect extends StatusEffect {
 		damageEffect: false,
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		const pickCondition = slot.every(
@@ -27,7 +27,7 @@ class BetrayedStatusEffect extends StatusEffect {
 			slot.hermitSlot
 		)
 
-		let pickedAfkHermit: SlotInfo | null = null
+		let pickedAfkHermit: SlotComponent | null = null
 
 		const blockActions = () => {
 			// Start by removing blocked actions in case requirements are no longer met
@@ -118,7 +118,7 @@ class BetrayedStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.remove(instance)

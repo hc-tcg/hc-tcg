@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class CatEffectCard extends Card {
 	props: Attach = {
@@ -16,7 +16,7 @@ class CatEffectCard extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.add(instance, (attack) => {
 			if (!pos.rowId || !pos.rowId.hermitCard) return
@@ -59,7 +59,7 @@ class CatEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.remove(instance)
 	}

@@ -1,8 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -36,11 +36,11 @@ class PistonSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 		const itemInstanceKey = this.getInstanceKey(instance, 'itemInstance')
 
-		let pickedItemSlot: SlotInfo | null = null
+		let pickedItemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -91,7 +91,7 @@ class PistonSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterApply.remove(instance)

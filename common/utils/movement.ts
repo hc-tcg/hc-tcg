@@ -1,8 +1,8 @@
 import {GameModel} from '../models/game-model'
-import {CardInstance, PlayerState} from '../types/game-state'
+import {CardComponent, PlayerState} from '../types/game-state'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {equalCard} from './cards'
-import {SlotInfo} from '../types/cards'
+import {SlotComponent} from '../types/cards'
 
 function discardAtPos(pos: CardPosModel) {
 	const {player, rowId: row, type, index} = pos
@@ -28,7 +28,7 @@ function discardAtPos(pos: CardPosModel) {
 
 export function discardCard(
 	game: GameModel,
-	card: CardInstance | null,
+	card: CardComponent | null,
 	playerDiscard?: PlayerState | null
 ) {
 	if (!card) return
@@ -54,7 +54,7 @@ export function discardCard(
 	}
 }
 
-export function retrieveCard(game: GameModel, card: CardInstance | null) {
+export function retrieveCard(game: GameModel, card: CardComponent | null) {
 	if (!card) return
 	for (let playerId in game.state.players) {
 		const player = game.state.players[playerId]
@@ -90,7 +90,7 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	}
 }
 
-export function discardFromHand(player: PlayerState, card: CardInstance | null) {
+export function discardFromHand(player: PlayerState, card: CardComponent | null) {
 	if (!card) return
 
 	player.hand = player.hand.filter((c) => !equalCard(c, card))
@@ -107,7 +107,7 @@ export function drawCards(playerState: PlayerState, amount: number) {
 
 export function moveCardInstanceoHand(
 	game: GameModel,
-	card: CardInstance,
+	card: CardComponent,
 	playerDiscard?: PlayerState | null
 ) {
 	const cardPos = getCardPos(game, card)
@@ -134,7 +134,7 @@ export function moveCardInstanceoHand(
 }
 
 /**Returns a `CardInstance` of the card in the slot, or `null` if it's empty. */
-export function getSlotCard(slotPos: SlotInfo): CardInstance | null {
+export function getSlotCard(slotPos: SlotComponent): CardComponent | null {
 	const {rowId: row, index, type} = slotPos
 
 	if (!row || !index) return null

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import Card, {Item, item} from '../../base/card'
 
 class TerraformRareItemCard extends Card {
@@ -16,7 +16,7 @@ class TerraformRareItemCard extends Card {
 		type: 'terraform',
 	}
 
-	override getEnergy(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override getEnergy(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		return [this.props.type, this.props.type]
 	}
 }

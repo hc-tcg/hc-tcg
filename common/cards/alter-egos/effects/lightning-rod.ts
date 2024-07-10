@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import Card, {attach, Attach} from '../../base/card'
@@ -25,7 +25,7 @@ class LightningRodEffectCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer, rowId: row, rowIndex} = pos
 
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
@@ -53,7 +53,7 @@ class LightningRodEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {opponentPlayer} = pos
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)

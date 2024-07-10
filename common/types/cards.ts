@@ -1,6 +1,6 @@
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
-import {CardId, CardInstance, PlayerId, RowId, SlotId, newInstanceId} from './game-state'
+import {PlayerId, RowEntity, SlotEntity} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -39,16 +39,16 @@ export type HermitAttackInfo = {
 	formattedPower?: Array<Node>
 }
 
-export class RowInfo {
+export class RowComponent {
 	readonly game: GameModel
-	readonly id: RowId
+	readonly entity: RowEntity
 	playerId: PlayerId
 	index: number
 	health: number | null
 
-	constructor(game: GameModel, playerId: PlayerId, index: number) {
+	constructor(game: GameModel, entity: RowEntity, playerId: PlayerId, index: number) {
 		this.game = game
-		this.id = newInstanceId() as RowId
+		this.entity = entity
 		this.playerId = playerId
 		this.index = index
 		this.health = null
@@ -62,17 +62,33 @@ export class RowInfo {
 	}
 }
 
-export class SlotInfo {
+export class SlotComponent {
 	readonly game: GameModel
-	readonly id: SlotId
+	readonly entity: SlotEntity
 	readonly playerId: PlayerId | null
 	readonly type: SlotTypeT
 
-	constructor(game: GameModel, playerId: PlayerId | null, type: SlotTypeT) {
-		this.id = newInstanceId() as SlotId
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null, type: SlotTypeT) {
+		this.entity = entity
 		this.game = game
 		this.playerId = playerId
 		this.type = type
+	}
+
+	public onBoard(): this is BoardSlotInfo {
+		return false
+	}
+
+	public inHand(): this is HandSlotInfo {
+		return false
+	}
+
+	public inPile(): this is PileSlotInfo {
+		return false
+	}
+
+	public inDiscardPile(): this is DiscardSlotInfo {
+		return false
 	}
 
 	get player() {
@@ -86,37 +102,60 @@ export class SlotInfo {
 	}
 }
 
-export class BoardSlotInfo extends SlotInfo {
+export class BoardSlotInfo extends SlotComponent {
 	readonly index: number | null
-	readonly rowId: RowId | null
+	readonly rowEntity: RowEntity | null
 
 	constructor(
 		game: GameModel,
+		entity: SlotEntity,
 		playerId: PlayerId | null,
 		type: SlotTypeT,
 		index: number | null,
-		row: RowId | null
+		row: RowEntity | null
 	) {
-		super(game, playerId, type)
+		super(game, entity, playerId, type)
 		this.index = index
-		this.rowId = row
+		this.rowEntity = row
+	}
+
+	override onBoard(): this is BoardSlotInfo {
+		return true
 	}
 
 	get row() {
-		if (!this.rowId) return null
-		return this.game.state.rows.get(this.rowId)
+		if (!this.rowEntity) return null
+		return this.game.state.rows.get(this.rowEntity)
 	}
 }
 
-export class HandSlotInfo extends SlotInfo {
-	constructor(game: GameModel, playerId: PlayerId | null) {
-		super(game, playerId, 'hand')
+export class HandSlotInfo extends SlotComponent {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+		super(game, entity, playerId, 'hand')
+	}
+
+	override inHand(): this is HandSlotInfo {
+		return true
 	}
 }
 
-export class PileSlotInfo extends SlotInfo {
-	constructor(game: GameModel, playerId: PlayerId | null) {
-		super(game, playerId, 'pile')
+export class PileSlotInfo extends SlotComponent {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+		super(game, entity, playerId, 'pile')
+	}
+
+	override inPile(): this is PileSlotInfo {
+		return true
+	}
+}
+
+export class DiscardSlotInfo extends SlotComponent {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+		super(game, entity, playerId, 'discardPile')
+	}
+
+	override inDiscardPile(): this is DiscardSlotInfo {
+		return true
 	}
 }
 

@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 import {slot} from '../filters'
 
@@ -16,7 +16,7 @@ class FireStatusEffect extends StatusEffect {
 			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		if (pos.cardId) {
@@ -58,13 +58,13 @@ class FireStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.entity) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.onTurnEnd.remove(instance)
 		player.hooks.afterDefence.remove(instance)

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 // We could stop displaying the coin flips but I think it may confuse players when Zedaph or Pearl uses fortune.
@@ -17,7 +17,7 @@ class FortuneSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -35,7 +35,7 @@ class FortuneSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onApply.remove(instance)

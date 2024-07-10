@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance, CoinFlipT} from '../../../types/game-state'
+import {CardComponent, CoinFlipT} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -31,7 +31,7 @@ class ZedaphPlaysRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 
@@ -47,7 +47,7 @@ class ZedaphPlaysRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		// Remove hooks

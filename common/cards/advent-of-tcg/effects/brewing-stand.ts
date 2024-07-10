@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class BrewingStandEffectCard extends Card {
 	props: Attach = {
@@ -19,7 +19,7 @@ class BrewingStandEffectCard extends Card {
 			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.add(instance, () => {
@@ -52,7 +52,7 @@ class BrewingStandEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.remove(instance)

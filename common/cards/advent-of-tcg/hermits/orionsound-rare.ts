@@ -2,7 +2,7 @@ import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -34,7 +34,7 @@ class OrionSoundRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 
 		let cardsWithStatusEffects: Array<string> = []
@@ -44,7 +44,7 @@ class OrionSoundRareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.id,
+				id: instance.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickedSlot) {
@@ -76,7 +76,7 @@ class OrionSoundRareHermitCard extends Card {
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
 		const instanceKey = this.getInstanceKey(instance)
 

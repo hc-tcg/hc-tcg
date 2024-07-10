@@ -2,7 +2,7 @@ import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
 
 class ProtectedStatusEffect extends StatusEffect {
@@ -13,7 +13,7 @@ class ProtectedStatusEffect extends StatusEffect {
 		description: 'This Hermit does not take damage on their first active turn.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		let canBlock = true
@@ -51,13 +51,13 @@ class ProtectedStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.entity) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onDefence.remove(instance)

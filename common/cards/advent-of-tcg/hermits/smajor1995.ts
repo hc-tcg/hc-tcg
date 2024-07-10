@@ -3,7 +3,7 @@ import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class Smajor1995RareHermitCard extends Card {
 	props: Hermit = {
@@ -33,7 +33,7 @@ class Smajor1995RareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
@@ -50,7 +50,7 @@ class Smajor1995RareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.id,
+				id: instance.entity,
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
@@ -63,7 +63,7 @@ class Smajor1995RareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 		player.hooks.onAttack.remove(instance)
 	}

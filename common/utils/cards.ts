@@ -1,13 +1,13 @@
 import {CardCategoryT} from '../types/cards'
-import {CardInstance} from '../types/game-state'
+import {CardComponent} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal
  */
 export function equalCard(
-	card1: CardInstance | LocalCardInstance | null,
-	card2: CardInstance | LocalCardInstance | null
+	card1: CardComponent | LocalCardInstance | null,
+	card2: CardComponent | LocalCardInstance | null
 ) {
 	if (!card1 && !card2) return true
 	if (!card1 || !card2) return false

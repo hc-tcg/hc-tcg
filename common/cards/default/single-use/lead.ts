@@ -1,8 +1,8 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -42,9 +42,9 @@ class LeadSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		let itemSlot: SlotInfo | null = null
+		let itemSlot: SlotComponent | null = null
 
 		game.addPickRequest({
 			playerId: player.id,

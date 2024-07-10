@@ -3,7 +3,7 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {CARDS} from '../..'
 
 class BerryBushEffectCard extends Card {
@@ -27,7 +27,7 @@ class BerryBushEffectCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (!row) return
 
@@ -45,7 +45,7 @@ class BerryBushEffectCard extends Card {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 				for (let i = 0; i < 2; i++) {
-					opponentPlayer.hand.push(CardInstance.fromCardId('instant_health_ii'))
+					opponentPlayer.hand.push(CardComponent.fromCardId('instant_health_ii'))
 				}
 			}
 		})
@@ -59,7 +59,7 @@ class BerryBushEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {

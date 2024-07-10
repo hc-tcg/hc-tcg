@@ -2,7 +2,7 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectInstance} from '../types/game-state'
+import {StatusEffectComponent} from '../types/game-state'
 
 class UsedClockStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -14,7 +14,7 @@ class UsedClockStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player} = pos
 
 		if (!instance.counter) instance.counter = this.props.counter
@@ -27,7 +27,7 @@ class UsedClockStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		player.hooks.onTurnStart.remove(instance)

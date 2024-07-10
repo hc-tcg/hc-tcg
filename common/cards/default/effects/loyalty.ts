@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -18,7 +18,7 @@ class LoyaltyEffectCard extends Card {
 			'When the Hermit that this card is attached to is knocked out, all attached item cards are returned to your hand.',
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		const afterAttack = (attack: AttackModel) => {
@@ -39,7 +39,7 @@ class LoyaltyEffectCard extends Card {
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 		player.hooks.afterAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)

@@ -1,8 +1,8 @@
 import {CardProps} from '../cards/base/card'
 import {SlotCondition} from '../filters'
 import {StatusEffectProps} from '../status-effects/status-effect'
-import {SlotInfo, SlotTypeT} from './cards'
-import {ActionResult, PlayerId} from './game-state'
+import {SlotComponent, SlotTypeT} from './cards'
+import {ActionResult, CardEntity, SlotEntity} from './game-state'
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
 export type WithoutFunctions<Type> = {
@@ -15,7 +15,8 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
-	readonly instance: string
+	readonly instance: CardEntity
+	readonly slot: SlotEntity | null
 }
 
 export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> = {
@@ -25,14 +26,9 @@ export type LocalStatusEffectInstance<Props extends StatusEffectProps = StatusEf
 	readonly counter: number | null
 }
 
-export type PickedSlotType = SlotTypeT | 'hand'
-
 export type PickInfo = {
-	playerId: PlayerId | null
-	rowIndex: number | null // This will be null for the hand
-	card: LocalCardInstance | null
+	entity: SlotEntity
 	type: SlotTypeT
-	index: number | null
 }
 
 export type PickRequest = {
@@ -45,7 +41,7 @@ export type PickRequest = {
 	/** A function that returns if the card can be attached to a specific slot */
 	canPick: SlotCondition
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
-	onResult: (pickedSlot: SlotInfo) => void //
+	onResult: (pickedSlot: SlotComponent) => void //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
 	onCancel?: () => void
 	/** Called when the pick request times out before being resolved successfully */

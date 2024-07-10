@@ -1,4 +1,4 @@
-import {CardInstance, RowStateWithHermit} from 'common/types/game-state'
+import {CardComponent, RowStateWithHermit} from 'common/types/game-state'
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
 import {getCardPos} from 'common/models/card-pos-model'
@@ -42,7 +42,7 @@ export function printHooksState(game: GameModel) {
 		// Instance Info
 		for (const [hookName, hookValue] of Object.entries(player.hooks)) {
 			hookValue.listeners.forEach(([instance, _], i) => {
-				if (!(instance instanceof CardInstance)) return
+				if (!(instance instanceof CardComponent)) return
 				const pos = getCardPos(game, instance)
 				const inBoard = Boolean(pos)
 				const instanceEntry = instancesInfo[instance.instance] || {

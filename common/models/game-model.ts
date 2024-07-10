@@ -6,7 +6,7 @@ import {
 	TurnActions,
 	PlayerState,
 	Message,
-	CardInstance,
+	CardComponent,
 	PlayerId,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
@@ -15,12 +15,11 @@ import {
 	ModalRequest,
 	PickInfo,
 	PickRequest,
-	PickedSlotType,
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition, card, slot} from '../filters'
-import {BoardSlotInfo, RowInfo, SlotInfo} from '../types/cards'
+import {BoardSlotInfo, RowInfo, SlotComponent} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 
 export class GameModel {
@@ -258,7 +257,7 @@ export class GameModel {
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
-							CardInstance,
+							CardComponent,
 							PickInfo[],
 						]
 				)
@@ -270,28 +269,31 @@ export class GameModel {
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
 	public changeActiveRow(player: PlayerState, newRow: RowInfo): boolean {
-		const currentActiveRow = player.board.activeRow
+		const currentActiveRow = this.state.rows.get(player.activeRowId)
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
 
 		// Call before active row change hooks - if any of the results are false do not change
-		const results = player.hooks.beforeActiveRowChange.call(currentActiveRow, newRow)
-		if (results.includes(false)) return false
+		if (currentActiveRow) {
+			const results = player.hooks.beforeActiveRowChange.call(currentActiveRow?.index, newRow.index)
+			if (results.includes(false)) return false
+		}
 
 		// Create battle log entry
 		if (newRow !== null) {
-			const newHermit = player.board.rows[newRow].hermitCard
-			const oldHermit =
-				currentActiveRow !== null ? player.board.rows[currentActiveRow].hermitCard : null
+			const newHermit = this.state.cards.find(card.hermit, card.slot(slot.row(currentActiveRow)))
+			const oldHermit = this.state.cards.find(card.hermit, card.slot(slot.row(newRow)))
 			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 
 		// Change the active row
-		player.board.activeRow = newRow
+		player.activeRowId = newRow.entity
 
 		// Call on active row change hooks
-		player.hooks.onActiveRowChange.call(currentActiveRow, newRow)
+		if (currentActiveRow) {
+			player.hooks.onActiveRowChange.call(currentActiveRow.index, newRow.index)
+		}
 
 		return true
 	}
@@ -310,8 +312,8 @@ export class GameModel {
 	 * This function does not check whether the cards can be placed in the other card's slot.
 	 */
 	public swapSlots(
-		slotA: SlotInfo | null,
-		slotB: SlotInfo | null,
+		slotA: SlotComponent | null,
+		slotB: SlotComponent | null,
 		withoutDetach: boolean = false
 	): void {
 		if (!slotA || !slotB) return
@@ -346,22 +348,9 @@ export class GameModel {
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
 		return this.state.slots.filter(predicate).map((slotInfo) => {
-			if (!(slotInfo instanceof BoardSlotInfo)) {
-				return {
-					playerId: slotInfo.player?.id || null,
-					rowIndex: null,
-					card: this.state.cards.find(card.inSlot(slotInfo))?.toLocalCardInstance() || null,
-					type: slotInfo.type,
-					index: null,
-				}
-			}
-
 			return {
-				playerId: slotInfo.player?.id || null,
-				rowIndex: slotInfo.row?.index || null,
-				card: this.state.cards.find(card.inSlot(slotInfo))?.toLocalCardInstance() || null,
+				entity: slotInfo.entity,
 				type: slotInfo.type,
-				index: slotInfo.index,
 			}
 		})
 	}

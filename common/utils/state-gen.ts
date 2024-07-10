@@ -2,19 +2,19 @@ import {getPlayerState} from '../../server/src/utils/state-gen'
 import {DEBUG_CONFIG} from '../config'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
-import {BoardSlotInfo, HandSlotInfo, PileSlotInfo, RowInfo} from '../types/cards'
+import {BoardSlotInfo, HandSlotInfo, PileSlotInfo, RowComponent} from '../types/cards'
 import {EntityList} from '../types/entity-list'
-import {CardInstance, GameState, PlayerId} from '../types/game-state'
+import {CardComponent, GameState, PlayerId} from '../types/game-state'
 
 export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
-		let rowId = gameState.rows.add(new RowInfo(game, playerId, rowIndex))
+		let row = gameState.rows.new(RowComponent, playerId, rowIndex)
 
-		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 0, rowId))
-		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 1, rowId))
-		gameState.slots.add(new BoardSlotInfo(game, playerId, 'item', 2, rowId))
-		gameState.slots.add(new BoardSlotInfo(game, playerId, 'attach', 3, rowId))
-		gameState.slots.add(new BoardSlotInfo(game, playerId, 'hermit', 4, rowId))
+		gameState.slots.new(BoardSlotInfo, playerId, 'item', 0, row.entity)
+		gameState.slots.new(BoardSlotInfo, playerId, 'item', 1, row.entity)
+		gameState.slots.new(BoardSlotInfo, playerId, 'item', 2, row.entity)
+		gameState.slots.new(BoardSlotInfo, playerId, 'attach', 3, row.entity)
+		gameState.slots.new(BoardSlotInfo, playerId, 'hermit', 4, row.entity)
 	}
 
 	let cards = [...game.players[playerId].deck.cards]
@@ -22,9 +22,8 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 	cards.sort(() => Math.random() - 0.5)
 
 	for (const card of cards) {
-		let cardInstance = new CardInstance(game, card, playerId)
-		gameState.cards.add(cardInstance)
-		cardInstance.slotId = gameState.slots.add(new PileSlotInfo(game, playerId))
+		const cardInstance = gameState.cards.new(CardComponent, card, playerId)
+		cardInstance.slotEntity = gameState.slots.new(PileSlotInfo, playerId).entity
 	}
 
 	const pack = gameState.cards.filter(card.player(playerId))
@@ -41,7 +40,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 
 	for (let i = 0; i < amountOfStartingCards && i < pack.length; i++) {
-		pack[i].slotId = gameState.slots.add(new HandSlotInfo(game, playerId))
+		pack[i].slotEntity = gameState.slots.new(HandSlotInfo, playerId).entity
 	}
 }
 
@@ -87,7 +86,7 @@ export function getGameState(game: GameModel): GameState {
 	setupGameStateForPlayer(game, gameState, playerIds[0])
 	setupGameStateForPlayer(game, gameState, playerIds[1])
 
-	gameState.slots.add(new BoardSlotInfo(game, null, 'single_use', null, null))
+	gameState.slots.new(BoardSlotInfo, null, 'single_use', null, null)
 
 	return gameState
 }

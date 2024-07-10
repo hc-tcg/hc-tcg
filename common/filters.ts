@@ -1,12 +1,19 @@
 import {GameModel} from './models/game-model'
-import {BoardSlotInfo, RowInfo, SlotInfo} from './types/cards'
-import {CardInstance, PlayerId, StatusEffectInstance, TurnAction} from './types/game-state'
+import {BoardSlotInfo, RowInfo, SlotComponent} from './types/cards'
+import {
+	CardComponent,
+	PlayerId,
+	RowEntity,
+	SlotEntity,
+	StatusEffectComponent,
+	TurnAction,
+} from './types/game-state'
 
 export type Predicate<Value> = (game: GameModel, value: Value) => boolean
 
-export type SlotCondition = Predicate<SlotInfo>
-export type CardCondition = Predicate<CardInstance>
-export type StatusEffectCondition = Predicate<StatusEffectInstance>
+export type SlotCondition = Predicate<SlotComponent>
+export type CardCondition = Predicate<CardComponent>
+export type StatusEffectCondition = Predicate<StatusEffectComponent>
 
 /** Always return true */
 function anythingCombinator<T>(game: GameModel, value: T) {
@@ -39,7 +46,7 @@ function notCombinator<T>(condition: Predicate<T>): Predicate<T> {
 export namespace slot {
 	/** Used for debugging. Print a message provided by the msg function. */
 	export const trace = (
-		msg: (game: GameModel, pos: SlotInfo, result: boolean) => any,
+		msg: (game: GameModel, pos: SlotComponent, result: boolean) => any,
 		combinator: SlotCondition
 	): SlotCondition => {
 		return (game, pos) => {
@@ -65,7 +72,7 @@ export namespace slot {
 		return pos.player?.id === game.opponentPlayer.id
 	}
 
-	export function player(player: PlayerId | null): Predicate<SlotInfo> {
+	export function player(player: PlayerId | null): Predicate<SlotComponent> {
 		return (game, slot) => {
 			return slot.playerId === player
 		}
@@ -98,7 +105,7 @@ export namespace slot {
 
 	/** Return true if the card is attached to the active row. */
 	export const activeRow: SlotCondition = (game, pos) => {
-		return pos.player?.activeRowId === pos.rowId
+		return pos.onBoard() && pos.player?.activeRowId === pos.rowEntity
 	}
 
 	/* Return true if the slot is in a player's hand */
@@ -117,7 +124,9 @@ export namespace slot {
 	}
 
 	export const rowHasHermit: SlotCondition = (game, pos) => {
-		return !game.state.cards.somethingFulfills(card.hermit, card.slot(slot.row(pos.row)))
+		return (
+			pos.onBoard() && game.state.cards.somethingFulfills(card.hermit, card.slot(slot.row(pos.row)))
+		)
 	}
 
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
@@ -128,12 +137,20 @@ export namespace slot {
 		return game.opponentPlayer.activeRowId !== null
 	}
 
-	export const row = (row: RowInfo | null): SlotCondition => {
-		return (game, pos) => pos.row?.id === row?.id
+	export const row = (row: RowInfo | RowEntity | null): SlotCondition => {
+		return (game, pos) => {
+			if (row === null || !pos.onBoard()) return false
+			if (row instanceof String) return pos.row?.entity === row
+			return pos.row?.entity === (row as RowInfo)?.entity
+		}
 	}
 
 	export const index = (index: number | null): SlotCondition => {
-		return (game, pos) => index !== null && pos.index === index
+		return (game, pos) => pos.onBoard() && index !== null && pos.index === index
+	}
+
+	export const entity = (entity: SlotEntity | null): SlotCondition => {
+		return (game, pos) => pos.entity === entity
 	}
 
 	/** Return true if the spot contains any of the card IDs. */
@@ -217,23 +234,26 @@ export namespace card {
 	export const item: CardCondition = (game, card) => card.isItem()
 	export const singleUse: CardCondition = (game, card) => card.isSingleUse()
 
+	export const attached: CardCondition = (game, card) =>
+		card.slot !== null && ['hermit', 'attach', 'item', 'single_use'].includes(card.slot.type)
+
 	export function slot(...predicates: Array<SlotCondition>): CardCondition {
 		return (game, card) => {
 			return card.slot !== null ? everyCombinator(...predicates)(game, card.slot) : null || false
 		}
 	}
 
-	export function inSlot(slot: SlotInfo): CardCondition {
-		return (game, card) => slot.id === card.slot?.id
+	export function inSlot(slot: SlotComponent | null): CardCondition {
+		return (game, card) => slot !== null && slot.entity === card.slot?.entity
 	}
 
 	export function inRow(row: RowInfo): CardCondition {
 		return (game, card) => {
-			row.id === card.slot?.row?.id
+			row.entity === card.slot?.row?.id
 		}
 	}
 
-	export function player(player: PlayerId): Predicate<CardInstance> {
+	export function player(player: PlayerId): Predicate<CardComponent> {
 		return (game, card) => {
 			return card.playerId === player
 		}
@@ -248,7 +268,7 @@ export namespace row {
 	export const not = notCombinator
 
 	export const active: Predicate<RowInfo> = (game, row) =>
-		game.activeRow !== null && game.activeRow.id === row.id
+		game.activeRow !== null && game.activeRow.entity === row.entity
 
 	export function player(player: PlayerId): Predicate<RowInfo> {
 		return (game, row) => {

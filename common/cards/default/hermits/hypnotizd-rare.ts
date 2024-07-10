@@ -2,8 +2,8 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
-import {SlotInfo} from '../../../types/cards'
-import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
+import {SlotComponent} from '../../../types/cards'
+import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {hasStatusEffect} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
@@ -40,9 +40,9 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
-		let target: SlotInfo | null = null
+		let target: SlotComponent | null = null
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
@@ -58,7 +58,7 @@ class HypnotizdRareHermitCard extends Card {
 		})
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			if (activeInstance.id !== instance.id || hermitAttackType !== 'secondary') return
+			if (activeInstance.entity !== instance.entity || hermitAttackType !== 'secondary') return
 
 			const pickCondition = slot.every(
 				slot.currentPlayer,
@@ -106,7 +106,7 @@ class HypnotizdRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
 		const {player} = pos
 		player.hooks.getAttackRequests.remove(instance)
 	}

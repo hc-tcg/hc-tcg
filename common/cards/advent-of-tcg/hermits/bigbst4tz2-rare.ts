@@ -5,7 +5,7 @@ import {executeAttacks} from '../../../utils/attacks'
 import {getActiveRow} from '../../../utils/board'
 import {RowPos} from '../../../types/cards'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance} from '../../../types/game-state'
+import {CardComponent} from '../../../types/game-state'
 
 class BigBSt4tzRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,7 +34,7 @@ class BigBSt4tzRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false
@@ -87,7 +87,7 @@ class BigBSt4tzRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onAttack.remove(instance)
