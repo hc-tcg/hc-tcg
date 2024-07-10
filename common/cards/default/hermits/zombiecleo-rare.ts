@@ -151,6 +151,7 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 
 		player.hooks.blockedActions.add(instance, (blockedActions) => {
+			if (!game.someSlotFulfills(slot.every(slot.activeRow, slot.hasInstance(instance)))) return blockedActions
 			if (!game.someSlotFulfills(this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
