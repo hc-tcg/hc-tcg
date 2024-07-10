@@ -6,7 +6,6 @@ import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
 import {CardPosModel, getCardPos} from 'common/models/card-pos-model'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
-import {getActiveRow} from 'common/utils/board'
 import {executeAttacks} from 'common/utils/attacks'
 
 function getAttack(

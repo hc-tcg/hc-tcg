@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'

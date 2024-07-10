@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect, getActiveRow} from '../../../utils/board'
+import {applyStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class BdoubleO100RareHermitCard extends Card {

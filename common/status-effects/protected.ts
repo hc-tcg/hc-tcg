@@ -31,7 +31,7 @@ class ProtectedStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			const targetPos = getCardPos(game, instance.targetInstance)
+			const targetPos = getCardPos(game, instance.target)
 			if (!targetPos) return
 			// Only block if just became active
 			if (!canBlock) return
@@ -51,7 +51,7 @@ class ProtectedStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})

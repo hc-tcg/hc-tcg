@@ -51,7 +51,7 @@ class BrushSingleUseCard extends Card {
 					const bottomCards: Array<CardInstance> = []
 
 					player.pile.slice(0, 3).forEach((c) => {
-						if (cards.some((d) => c.instance === d.instance)) topCards.push(c)
+						if (cards.some((d) => c.id === d.instance)) topCards.push(c)
 						else bottomCards.push(c)
 					})
 

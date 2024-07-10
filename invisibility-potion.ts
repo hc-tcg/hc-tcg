@@ -30,7 +30,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+			removeStatusEffect(game, getCardPos(game, instance.target), instance)
 		})
 	}
 
@@ -68,7 +68,7 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.afterAttack.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+			removeStatusEffect(game, getCardPos(game, instance.target), instance)
 		})
 	}
 

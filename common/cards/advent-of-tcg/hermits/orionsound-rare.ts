@@ -44,7 +44,7 @@ class OrionSoundRareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.instance,
+				id: instance.id,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickedSlot) {

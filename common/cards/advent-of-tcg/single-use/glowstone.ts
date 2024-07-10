@@ -47,7 +47,7 @@ class GlowstoneSingleUseCard extends Card {
 					const bottomCards: Array<CardInstance> = []
 
 					opponentPlayer.pile.slice(0, 3).forEach((c) => {
-						if (card.instance === c.instance) cards.push(c)
+						if (card.instance === c.id) cards.push(c)
 						else bottomCards.push(c)
 					})
 

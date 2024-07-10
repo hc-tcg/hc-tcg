@@ -4,7 +4,6 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import {getActiveRowPos} from '../../../utils/board'
 import Card, {Attach, attach} from '../../base/card'
 
 class WolfEffectCard extends Card {

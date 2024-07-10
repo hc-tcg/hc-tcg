@@ -14,12 +14,12 @@ import Card, {
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {GameModel} from '../models/game-model'
-import {SlotCondition, slot} from '../filters'
+import {SlotCondition} from '../filters'
 import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT, RowInfo, SlotInfo} from './cards'
-import { EntityList } from './ecs'
+import {EntityList} from './entity-list'
 import {GameHook, WaterfallHook} from './hooks'
 import {
 	LocalCardInstance,
@@ -30,6 +30,7 @@ import {
 	PickRequest,
 	WithoutFunctions,
 } from './server-requests'
+import {CARDS} from '../cards'
 
 export type PlayerId = string & {__player_id: never}
 
@@ -42,12 +43,21 @@ export function newInstanceId(): InstanceId {
 export class CardInstance<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
-	readonly instance: CardId
+	readonly id: CardId
 
-	constructor(game: GameModel, card: Card<Props>) {
+	slotId: SlotId | null
+	health: number
+
+	constructor(game: GameModel, id: string) {
 		this.game = game
-		this.card = card
-		this.instance = newInstanceId() as CardId
+		this.card = CARDS[id] as any
+		this.id = newInstanceId() as CardId
+		if (this.card.isHealth()) {
+			this.health = this.card.props.health
+		} else {
+			this.health = 0
+		}
+		this.slotId = null
 	}
 
 	static fromLocalCardInstance(
@@ -65,16 +75,15 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	public toLocalCardInstance(): LocalCardInstance<Props> {
 		return {
 			props: this.card.props as WithoutFunctions<Props>,
-			instance: this.instance,
+			instance: this.id,
 		}
 	}
 
 	public get props(): Props {
 		return this.card.props
 	}
-
-	public getSlot(): SlotInfo | null {
-		return this.game.findSlot(slot.hasInstance(this))
+	public get slot(): SlotInfo | null {
+		return this.game.state.slots.get(this.slotId)
 	}
 
 	public isItem(): this is CardInstance<Item> {
@@ -92,15 +101,10 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	public isHermit(): this is CardInstance<Hermit> {
 		return isHermit(this.props)
 	}
-}
 
-export function healHermit(row: RowInfo | null, amount: number) {
-	if (!row?.hermit?.card) return
-
-	if (!isHealth(row.hermit.card.props)) {
-		return
+	public heal(this: CardInstance<HasHealth>, amount: number) {
+		this.health = Math.min(this.health + amount, this.card.props.health)
 	}
-	row.health = Math.min(row.health + amount, row.hermit.card.props.health)
 }
 
 export type LocalRowState = {
@@ -114,22 +118,22 @@ export type CoinFlipT = 'heads' | 'tails'
 
 export class StatusEffectInstance<Props extends StatusEffectProps = StatusEffectProps> {
 	readonly statusEffect: StatusEffect<Props>
-	readonly instance: string
-	public targetInstance: CardInstance
+	readonly id: StatusEffectId
+	public target: CardInstance
 	public counter: number | null
 
-	constructor(statusEffect: StatusEffect<Props>, instance: string, targetInstance: CardInstance) {
+	constructor(statusEffect: StatusEffect<Props>, targetInstance: CardInstance) {
+		this.id = newInstanceId() as StatusEffectId
 		this.statusEffect = statusEffect
-		this.instance = instance
-		this.targetInstance = targetInstance
+		this.target = targetInstance
 		this.counter = null
 	}
 
 	public toLocalStatusEffectInstance(): LocalStatusEffectInstance {
 		return {
 			props: WithoutFunctions(this.props),
-			instance: this.instance,
-			targetInstance: this.targetInstance.toLocalCardInstance(),
+			instance: this.id,
+			targetInstance: this.target.toLocalCardInstance(),
 			counter: this.counter,
 		}
 	}
@@ -161,14 +165,11 @@ export type PlayerState = {
 	id: PlayerId
 	playerName: string
 	minecraftName: string
-	playerDeck: Array<CardInstance>
 	censoredPlayerName: string
 	coinFlips: Array<CurrentCoinFlipT>
-	hand: Array<CardInstance>
 	lives: number
-	pile: Array<CardInstance>
-	discarded: Array<CardInstance>
 	hasPlacedHermit: boolean
+	singleUseCardUsed: boolean
 
 	pickableSlots: Array<PickInfo> | null
 	cardsCanBePlacedIn: Array<[CardInstance, Array<PickInfo>]>

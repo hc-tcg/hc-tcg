@@ -1,9 +1,8 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {getActiveRow} from '../../../utils/board'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 import {SlotInfo} from '../../../types/cards'
 
 class KeralisRareHermitCard extends Card {
@@ -41,7 +40,7 @@ class KeralisRareHermitCard extends Card {
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.id !== instance.id) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return

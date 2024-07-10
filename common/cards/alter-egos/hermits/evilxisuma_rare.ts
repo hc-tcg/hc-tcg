@@ -2,7 +2,6 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
-import {getActiveRowPos} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card, {Hermit, hermit} from '../../base/card'
 

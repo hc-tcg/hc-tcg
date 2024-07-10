@@ -173,18 +173,18 @@ export class InstancedValue<T> {
 	}
 
 	public set(instance: CardInstance, value: T) {
-		this.values[instance.instance] = value
+		this.values[instance.id] = value
 	}
 
 	public get(instance: CardInstance): T {
-		if (instance.instance in this.values) {
-			return this.values[instance.instance]
+		if (instance.id in this.values) {
+			return this.values[instance.id]
 		}
 		return this.default()
 	}
 
 	public clear(instance: CardInstance) {
-		delete this.values[instance.instance]
+		delete this.values[instance.id]
 	}
 }
 
@@ -196,7 +196,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	}
 
 	public getInstanceKey(instance: CardInstance, keyName: string = '') {
-		return this.props.id + ':' + instance.instance + ':' + keyName
+		return this.props.id + ':' + instance.id + ':' + keyName
 	}
 
 	/**

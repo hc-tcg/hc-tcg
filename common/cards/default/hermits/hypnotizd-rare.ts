@@ -58,7 +58,7 @@ class HypnotizdRareHermitCard extends Card {
 		})
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			if (activeInstance.instance !== instance.instance || hermitAttackType !== 'secondary') return
+			if (activeInstance.id !== instance.id || hermitAttackType !== 'secondary') return
 
 			const pickCondition = slot.every(
 				slot.player,

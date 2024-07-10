@@ -33,12 +33,12 @@ class BadOmenStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onCoinFlip.addBefore(instance, (card, coinFlips) => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
+			const targetPos = game.findSlot(slot.hasInstance(instance.target))
 
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
 			if (
-				instance.targetInstance.instance !== card.instance &&
+				instance.target.id !== card.id &&
 				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips

@@ -50,7 +50,7 @@ class Smajor1995RareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.instance,
+				id: instance.id,
 				message: 'Choose an AFK Hermit to dye.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {

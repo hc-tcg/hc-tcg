@@ -32,7 +32,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, instance.targetInstance)
+				const coinFlip = flipCoin(player, instance.target)
 				coinFlipResult = coinFlip[0]
 			}
 
@@ -44,14 +44,14 @@ export class AussiePingStatusEffect extends StatusEffect {
 		player.hooks.afterAttack.add(instance, (_) => {
 			removeStatusEffect(game, pos, instance)
 			if (coinFlipResult === 'heads') {
-				applyStatusEffect(game, 'aussie-ping-immune', instance.targetInstance)
+				applyStatusEffect(game, 'aussie-ping-immune', instance.target)
 			}
 		})
 
 		player.hooks.onTurnEnd.add(instance, (_) => {
 			removeStatusEffect(game, pos, instance)
 			if (coinFlipResult === 'heads') {
-				applyStatusEffect(game, 'aussie-ping-immune', instance.targetInstance)
+				applyStatusEffect(game, 'aussie-ping-immune', instance.target)
 			}
 		})
 
@@ -83,7 +83,7 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 		player.hooks.onTurnStart.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.targetInstance), instance)
+			removeStatusEffect(game, getCardPos(game, instance.target), instance)
 			player.hooks.onTurnStart.remove(instance)
 		})
 	}

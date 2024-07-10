@@ -49,7 +49,7 @@ export function followActiveHermit(game: GameModel, instance: StatusEffectInstan
 		let newHermit = game.currentPlayer.board.rows[newRow].hermitCard
 		if (!newHermit) return
 
-		instance.targetInstance = newHermit
+		instance.target = newHermit
 	}
 }
 
@@ -61,7 +61,7 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	}
 
 	public getInstanceKey(instance: StatusEffectInstance, keyName: string = '') {
-		return this.props.id + ':' + instance.instance + ':' + keyName
+		return this.props.id + ':' + instance.id + ':' + keyName
 	}
 
 	/**

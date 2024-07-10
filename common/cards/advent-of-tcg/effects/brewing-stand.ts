@@ -4,7 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
-import {CardInstance, healHermit} from '../../../types/game-state'
+import {CardInstance} from '../../../types/game-state'
 
 class BrewingStandEffectCard extends Card {
 	props: Attach = {

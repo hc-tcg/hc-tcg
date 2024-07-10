@@ -84,7 +84,7 @@ class RendogRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.id !== instance.id) return
 			// Only activate power on secondary attack
 			if (hermitAttackType !== 'secondary') return
 

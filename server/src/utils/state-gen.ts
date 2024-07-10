@@ -8,16 +8,16 @@ import {
 	LocalGameState,
 	LocalPlayerState,
 	PlayerState,
-	RowState,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import {EnergyT} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card, {Hermit} from 'common/cards/base/card'
+import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
 import {HermitAttackType} from 'common/types/attack'
-import {SlotCondition} from 'common/slot'
+import {SlotCondition, card, row, slot} from 'common/filters'
+import {LocalCardInstance} from 'common/types/server-requests'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -127,81 +127,66 @@ export function getStarterPack() {
 		deck.push(effectCard)
 	}
 
-	return deck.map((card) => new CardInstance(card, Math.random().toString()).toLocalCardInstance())
-}
-
-export function getEmptyRow(): RowState {
-	const MAX_ITEMS = 3
-
-	const rowState: RowState = {
-		hermitCard: null,
-		effectCard: null,
-		itemCards: new Array(MAX_ITEMS).fill(null),
-		health: null,
-	}
-	return rowState
+	return deck.map((card) => {
+		return {
+			props: card,
+			instance: Math.random().toString,
+		}
+	})
 }
 
 export function getPlayerState(player: PlayerModel): PlayerState {
-	const allCards = Object.values(CARDS).map((card: Card) => new CardInstance(card, card.props.id))
-	let pack = DEBUG_CONFIG.unlimitedCards
-		? allCards
-		: player.deck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
+	// const allCards = Object.values(CARDS).map((card: Card) => new CardInstance(card, card.props.id))
+	// let pack = DEBUG_CONFIG.unlimitedCards
+	// 	? allCards
+	// 	: player.deck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
 
-	// shuffle cards
-	!DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
+	// // shuffle cards
+	// !DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
 
-	// randomize instances
-	pack = pack.map((card) => {
-		return new CardInstance(card.card, Math.random().toString())
-	})
+	// // randomize instances
+	// pack = pack.map((card) => {
+	// 	return new CardInstance(card.card, Math.random().toString())
+	// })
 
-	// ensure a hermit in first 5 cards
-	const hermitIndex = pack.findIndex((card) => {
-		return card.props.category === 'hermit'
-	})
-	if (hermitIndex > 5) {
-		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
-	}
+	// // ensure a hermit in first 5 cards
+	// const hermitIndex = pack.findIndex((card) => {
+	// 	return card.props.category === 'hermit'
+	// })
+	// if (hermitIndex > 5) {
+	// 	;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	// }
 
-	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
-	const hand = pack.slice(0, amountOfStartingCards)
+	// const amountOfStartingCards =
+	// 	DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
+	// const hand = pack.slice(0, amountOfStartingCards)
 
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
-		const card = CARDS[id]
-		if (!card) {
-			console.log('Invalid extra starting card in debug config:', id)
-			continue
-		}
+	// for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+	// 	const id = DEBUG_CONFIG.extraStartingCards[i]
+	// 	const card = CARDS[id]
+	// 	if (!card) {
+	// 		console.log('Invalid extra starting card in debug config:', id)
+	// 		continue
+	// 	}
 
-		const cardInfo = new CardInstance(card, Math.random().toString())
-		pack.push(cardInfo)
-		hand.unshift(cardInfo)
-	}
+	// 	const cardInfo = new CardInstance(card, Math.random().toString())
+	// 	pack.push(cardInfo)
+	// 	hand.unshift(cardInfo)
+	// }
 
-	const TOTAL_ROWS = 5
+	// const TOTAL_ROWS = 5
 	return {
 		id: player.id,
 		playerName: player.name,
 		minecraftName: player.minecraftName,
-		playerDeck: pack,
 		censoredPlayerName: player.censoredName,
 		coinFlips: [],
 		lives: 3,
-		hand,
-		discarded: [],
-		pile: DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? [] : pack.slice(7),
 		hasPlacedHermit: false,
-		board: {
-			activeRow: null,
-			singleUseCard: null,
-			singleUseCardUsed: false,
-			rows: new Array(TOTAL_ROWS).fill(null).map(getEmptyRow),
-		},
+		singleUseCardUsed: false,
 		cardsCanBePlacedIn: [],
 		pickableSlots: null,
+		activeRowId: null,
 
 		hooks: {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
@@ -236,7 +221,31 @@ export function getPlayerState(player: PlayerModel): PlayerState {
 	}
 }
 
-export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState {
+export function getLocalPlayerState(game: GameModel, playerState: PlayerState): LocalPlayerState {
+	let board = {
+		activeRow: game.state.rows.find(row.active)?.index || null,
+		singleUseCard:
+			game.state.cards.find(card.singleUse, card.slot(slot.singleUseSlot))?.toLocalCardInstance() ||
+			null,
+		singleUseCardUsed: playerState.singleUseCardUsed,
+		rows: game.state.rows.filter(row.player).map((row) => {
+			return {
+				hermitCard:
+					(game.state.cards
+						.find(card.hermit, card.inRow(row))
+						?.toLocalCardInstance() as LocalCardInstance<HasHealth>) || null,
+				effectCard:
+					(game.state.cards
+						.find(card.attach, card.inRow(row))
+						?.toLocalCardInstance() as LocalCardInstance<Attach>) || null,
+				itemCards: game.state.cards
+					.filter(card.item, card.inRow(row))
+					.map((inst) => inst.toLocalCardInstance()),
+				health: row.health,
+			}
+		}),
+	}
+
 	const localPlayerState: LocalPlayerState = {
 		id: playerState.id,
 		playerName: playerState.playerName,
@@ -244,19 +253,7 @@ export function getLocalPlayerState(playerState: PlayerState): LocalPlayerState 
 		censoredPlayerName: playerState.censoredPlayerName,
 		coinFlips: playerState.coinFlips,
 		lives: playerState.lives,
-		board: {
-			activeRow: playerState.board.activeRow,
-			singleUseCard: playerState.board.singleUseCard?.toLocalCardInstance() || null,
-			singleUseCardUsed: playerState.board.singleUseCardUsed,
-			rows: playerState.board.rows.map((row) => {
-				return {
-					hermitCard: row.hermitCard?.toLocalCardInstance() || null,
-					effectCard: row.effectCard?.toLocalCardInstance() || null,
-					itemCards: row.itemCards.map((card) => card?.toLocalCardInstance() || null),
-					health: row.health,
-				}
-			}),
-		},
+		board: board,
 	}
 	return localPlayerState
 }

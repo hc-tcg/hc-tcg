@@ -1,43 +1,25 @@
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
-import {RowPos, SlotInfo} from '../types/cards'
+import {SlotInfo} from '../types/cards'
 import {
 	StatusEffectInstance,
 	GenericActionResult,
 	PlayerState,
-	RowStateWithHermit,
 	CardInstance,
 } from '../types/game-state'
-
-export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
-	if (player.board.activeRow === null) return null
-	const row = player.board.rows[player.board.activeRow]
-	if (!row.hermitCard) return null
-	return row
-}
-
-export function getActiveRowPos(player: PlayerState): RowPos | null {
-	const rowIndex = player.board.activeRow
-	if (rowIndex === null) return null
-	const row = player.board.rows[rowIndex]
-	if (!row.hermitCard) return null
-	return {
-		player: player,
-		rowIndex,
-		row,
-	}
-}
+import {card} from '../filters'
 
 export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = currentPlayer.board.singleUseCard
+	const suCard = game.state.cards.find(card.singleUse)
+
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 	const pos = getCardPos(game, suCard)
 	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
-	const cardInstance = currentPlayer.board.singleUseCard?.instance
+	const cardInstance = suCard?.id
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()
@@ -96,7 +78,7 @@ export function removeStatusEffect(
 ): GenericActionResult {
 	if (!pos) return 'FAILURE_NOT_APPLICABLE'
 	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.instance === statusEffectInstance.instance
+		(a) => a.instance === statusEffectInstance.id
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
@@ -116,7 +98,7 @@ export function hasStatusEffect(
 	if (!instance) return false
 	return (
 		game.state.statusEffects.filter(
-			(ail) => ail.props.id === statusEffectId && ail.instance === instance.instance
+			(ail) => ail.props.id === statusEffectId && ail.instance === instance.id
 		).length !== 0
 	)
 }

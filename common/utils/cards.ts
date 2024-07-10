@@ -25,7 +25,7 @@ export function equalCard(
 		id2 = card2.props.id
 	}
 
-	return id1 === id2 && card1.instance === card2.instance
+	return id1 === id2 && card1.id === card2.id
 }
 
 /**

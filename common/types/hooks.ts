@@ -48,7 +48,7 @@ export class GameHook<Args extends (...args: any) => any> extends Hook<
 > {
 	constructor() {
 		// We override the eq function because card and status instances can not be compared with the regular === operator.
-		super((a, b) => a.instance == b.instance)
+		super((a, b) => a.id == b.id)
 	}
 
 	/**

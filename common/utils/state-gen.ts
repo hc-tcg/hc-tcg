@@ -1,40 +1,29 @@
 import {getPlayerState} from '../../server/src/utils/state-gen'
 import {GameModel} from '../models/game-model'
 import {RowInfo, SlotInfo} from '../types/cards'
-import {GameState, PlayerId, RowId, SlotId, newInstanceId} from '../types/game-state'
+import {EntityList} from '../types/entity-list'
+import {CardInstance, GameState, PlayerId} from '../types/game-state'
 
-export function buildSlotsForPlayer(game: GameModel, playerId: PlayerId) {
-	let slots: Record<SlotId, SlotInfo> = {}
-	let rows: Record<RowId, RowInfo> = {}
-
+export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
-		const rowId = newInstanceId() as RowId
+		let row = new RowInfo(game, rowIndex)
+		gameState.rows.add(row)
 
-		const hermitSlotId = newInstanceId() as SlotId
-		const attachSlotId = newInstanceId() as SlotId
-		const itemIds = [
-			newInstanceId() as SlotId,
-			newInstanceId() as SlotId,
-			newInstanceId() as SlotId,
-		]
-
-		rows[rowId] = new RowInfo(game, rowIndex, hermitSlotId, attachSlotId, itemIds as any)
-		slots[itemIds[0]] = new SlotInfo(game, playerId, 'item', 0, rowId, null)
-		slots[itemIds[1]] = new SlotInfo(game, playerId, 'item', 1, rowId, null)
-		slots[itemIds[2]] = new SlotInfo(game, playerId, 'item', 2, rowId, null)
-		slots[attachSlotId] = new SlotInfo(game, playerId, 'attach', 3, rowId, null)
-		slots[hermitSlotId] = new SlotInfo(game, playerId, 'hermit', 4, rowId, null)
+		gameState.slots.add(new SlotInfo(game, playerId, 'item', 0, row.id))
+		gameState.slots.add(new SlotInfo(game, playerId, 'item', 1, row.id))
+		gameState.slots.add(new SlotInfo(game, playerId, 'item', 2, row.id))
+		gameState.slots.add(new SlotInfo(game, playerId, 'attach', 3, row.id))
+		gameState.slots.add(new SlotInfo(game, playerId, 'hermit', 4, row.id))
 	}
 
-	return [slots, rows]
+	for (const card of game.players[playerId].deck.cards) {
+		gameState.cards.add(new CardInstance(game, card))
+	}
 }
 
 export function getGameState(game: GameModel): GameState {
 	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
-
-	const [playerOneSlots, playerOneRows] = buildSlotsForPlayer(game, playerIds[0])
-	const [playerTwoSlots, playerTwoRows] = buildSlotsForPlayer(game, playerIds[1])
 
 	const gameState: GameState = {
 		turn: {
@@ -48,10 +37,10 @@ export function getGameState(game: GameModel): GameState {
 		},
 		order: playerIds,
 		/* Global objects for the game state. Do NOT remove objects from these dictionaries. */
-		slots: {...playerOneSlots, ...playerTwoSlots},
-		rows: {...playerOneRows, ...playerTwoRows},
-		cards: {},
-		statusEffects: {},
+		slots: new EntityList(game),
+		rows: new EntityList(game),
+		cards: new EntityList(game),
+		statusEffects: new EntityList(game),
 		lastActionResult: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({
@@ -70,5 +59,11 @@ export function getGameState(game: GameModel): GameState {
 			opponentActionStartTime: null,
 		},
 	}
+
+	setupGameStateForPlayer(game, gameState, playerIds[0])
+	setupGameStateForPlayer(game, gameState, playerIds[1])
+
+	gameState.slots.add(new SlotInfo(game, null, 'single_use', null, null))
+
 	return gameState
 }

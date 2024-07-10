@@ -1,5 +1,4 @@
 import {SlotCondition} from '../filters'
-import {RowPos} from './cards'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 

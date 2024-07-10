@@ -1,11 +1,5 @@
 import {GameModel} from '../models/game-model'
-import {
-	CardId,
-	CardInstance,
-	PlayerId,
-	RowId,
-	SlotId,
-} from './game-state'
+import {CardId, CardInstance, PlayerId, RowId, SlotId, newInstanceId} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
 
@@ -44,89 +38,59 @@ export type HermitAttackInfo = {
 	formattedPower?: Array<Node>
 }
 
-/* Object storing a row's information */
 export class RowInfo {
 	readonly game: GameModel
-
-	index: number | null
+	readonly id: RowId
+	playerId: PlayerId
+	index: number
 	health: number
 
-	hermitSlot: SlotId
-	attachSlot: SlotId
-	itemSlots: [SlotId, SlotId, SlotId]
-
-	constructor(
-		game: GameModel,
-		rowIndex: number,
-		hermitSlot: SlotId,
-		attachSlot: SlotId,
-		itemSlots: [SlotId, SlotId, SlotId]
-	) {
-		this.index = rowIndex
+	constructor(game: GameModel, playerId: PlayerId, index: number) {
 		this.game = game
-
+		this.id = newInstanceId() as RowId
+		this.playerId = playerId
+		this.index = index
 		this.health = 0
-		this.hermitSlot = hermitSlot
-		this.attachSlot = attachSlot
-		this.itemSlots = itemSlots
-	}
-
-	get hermit() {
-		return this.game.state.slots.get(this.hermitSlot)
-	}
-
-	get attach() {
-		return this.game.state.slots.get(this.attachSlot)
-	}
-
-	get items() {
-		return this.itemSlots.map((id) => this.game.state.slots.get(id))
 	}
 }
 
 export class SlotInfo {
 	readonly game: GameModel
+	readonly id: SlotId
 
-	readonly playerId: PlayerId
+	readonly playerId: PlayerId | null
 	readonly type: SlotTypeT
 	readonly index: number | null
-	readonly rowId: RowId
-	cardId: CardId | null
+	readonly rowId: RowId | null
 
 	constructor(
 		game: GameModel,
-		playerId: PlayerId,
+		playerId: PlayerId | null,
 		type: SlotTypeT,
 		index: number | null,
-		rowId: RowId,
-		cardId: CardId | null
+		row: RowId | null
 	) {
+		this.id = newInstanceId() as SlotId
 		this.game = game
 		this.playerId = playerId
 		this.type = type
 		this.index = index
-		this.rowId = rowId
-		this.cardId = cardId
+		this.rowId = row
 	}
 
 	get player() {
+		if (!this.playerId) return null
 		return this.game.state.players[this.playerId]
 	}
 
 	get opponentPlayer() {
+		if (!this.playerId) return null
 		return this.game.state.players[this.game.otherPlayer(this.playerId)]
 	}
 
 	get row() {
+		if (!this.rowId) return null
 		return this.game.state.rows.get(this.rowId)
-	}
-
-	get card(): CardInstance | null {
-		return this.game.state.cards.get(this.cardId)
-	}
-
-	set card(card: CardInstance | null) {
-		this.cardId = card?.instance || null
 	}
 }
 

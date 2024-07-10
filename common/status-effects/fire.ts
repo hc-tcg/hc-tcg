@@ -1,9 +1,8 @@
 import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {RowPos} from '../types/cards'
 import {CardPosModel} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
-import {getActiveRowPos, removeStatusEffect} from '../utils/board'
+import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 import {slot} from '../filters'
@@ -25,7 +24,7 @@ class FireStatusEffect extends StatusEffect {
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
+			const targetPos = game.findSlot(slot.hasInstance(instance.target))
 			if (!targetPos || !targetPos.rowId || targetPos.rowIndex === null) return
 			if (!targetPos.rowId.hermitCard) return
 
@@ -35,7 +34,7 @@ class FireStatusEffect extends StatusEffect {
 						player: activeRowPos.player,
 						rowIndex: activeRowPos.rowIndex,
 						row: activeRowPos.row,
-				  }
+					}
 				: null
 
 			const targetRow: RowPos = {
@@ -59,7 +58,7 @@ class FireStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})

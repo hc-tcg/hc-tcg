@@ -64,7 +64,7 @@ class SolidaritygamingRareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.instance,
+				id: instance.id,
 				message: 'Choose an AFK Hermit to protect',
 				canPick: pickCondition,
 				onResult(pickedSlot) {

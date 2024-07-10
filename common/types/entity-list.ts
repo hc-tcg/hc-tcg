@@ -1,23 +1,22 @@
+import {Predicate} from '../filters'
 import {GameModel} from '../models/game-model'
 
-type Predicate<Value> = (game: GameModel, value: Value) => boolean
-
-export class EntityList<ID extends string, Value> {
+export class EntityList<Id extends string, Value extends {id: Id}> {
 	game: GameModel
-	data: Record<ID, Value>
+	data: Record<Id, Value>
 
 	constructor(game: GameModel) {
 		this.game = game
-		this.data = {} as Record<ID, Value>
+		this.data = {} as Record<Id, Value>
 	}
 
-	public get(id: ID | null): Value | null {
-		if (id === null) return null
+	public get(id: Id | null) {
+		if (!id) return null
 		return this.data[id] || null
 	}
 
-	public add(id: ID, value: Value) {
-		this.data[id] = value
+	public add(value: Value) {
+		this.data[value.id] = value
 	}
 
 	public filter(...predicates: Array<Predicate<Value>>): Array<Value> {
@@ -28,5 +27,9 @@ export class EntityList<ID extends string, Value> {
 
 	public find(...predicates: Array<Predicate<Value>>): Value | null {
 		return this.filter(...predicates)[0] || null
+	}
+
+	public somethingFulfills(...predicates: Array<Predicate<Value>>): boolean {
+		return this.find(...predicates) !== null
 	}
 }

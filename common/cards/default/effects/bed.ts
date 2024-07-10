@@ -54,7 +54,7 @@ class BedEffectCard extends Card {
 
 		//Ladder
 		player.hooks.afterApply.add(instance, () => {
-			if (hermitCard?.instance != row?.hermitCard?.instance && row && row.hermitCard) {
+			if (hermitCard?.id != row?.hermitCard?.instance && row && row.hermitCard) {
 				row.health = row.hermitCard.props.health
 
 				// Add new sleeping statusEffect

@@ -49,7 +49,7 @@ class LanternSingleUseCard extends Card {
 					const cards = modalResult.cards
 
 					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.instance === d.instance)) {
+						if (cards.some((d) => c.id === d.instance)) {
 							player.hand.push(c)
 							return false
 						}

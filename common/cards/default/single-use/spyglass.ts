@@ -54,7 +54,7 @@ class SpyglassSingleUseCard extends Card {
 
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 					const card =
-						opponentPlayer.hand.find((card) => card.instance === modalResult.cards![0].instance) ||
+						opponentPlayer.hand.find((card) => card.id === modalResult.cards![0].instance) ||
 						null
 					discardFromHand(opponentPlayer, card)
 

@@ -1,7 +1,7 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {getActiveRow, removeStatusEffect} from '../utils/board'
+import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
 
@@ -32,7 +32,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		})
 
 		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
-			const targetPos = getCardPos(game, instance.targetInstance)
+			const targetPos = getCardPos(game, instance.target)
 
 			if (!targetPos) return
 
@@ -44,7 +44,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			const targetPos = getCardPos(game, instance.targetInstance)
+			const targetPos = getCardPos(game, instance.target)
 
 			if (!targetPos) return
 
@@ -74,7 +74,7 @@ class WeaknessStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})

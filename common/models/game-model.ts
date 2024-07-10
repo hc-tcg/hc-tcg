@@ -303,15 +303,6 @@ export class GameModel {
 		newRow.index = oldIndex
 	}
 
-	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
-
-	}
-
-	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
-		return this.filterSlots(slot.every(...predicates))[0]
-	}
-
 	/**
 	 * Swaps the positions of two cards on the board.
 	 * This function does not check whether the cards can be placed in the other card's slot.

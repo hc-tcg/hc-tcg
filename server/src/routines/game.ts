@@ -1,5 +1,5 @@
 import {all, take, fork, cancel, race, delay, call, actionChannel} from 'typed-redux-saga'
-import {getEmptyRow, getLocalGameState} from '../utils/state-gen'
+import {getLocalGameState} from '../utils/state-gen'
 import attackSaga from './turn-actions/attack'
 import playCardSaga from './turn-actions/play-card'
 import changeActiveHermitSaga from './turn-actions/change-active-hermit'

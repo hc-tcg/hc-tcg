@@ -53,7 +53,7 @@ class ChestSingleUseCard extends Card {
 				applySingleUse(game)
 				retrieveCard(
 					game,
-					player.discarded.find((card) => card.instance === modalResult.cards![0].instance) || null
+					player.discarded.find((card) => card.id === modalResult.cards![0].instance) || null
 				)
 
 				return 'SUCCESS'

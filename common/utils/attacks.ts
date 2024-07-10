@@ -1,7 +1,7 @@
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
-import {EnergyT, RowPos} from '../types/cards'
+import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {slot} from '../filters'

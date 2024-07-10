@@ -40,7 +40,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 
 		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.instance !== instance.instance) return
+			if (activeInstance.id !== instance.id) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -90,7 +90,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 					// This is sketchy AF but fortune needs to be removed after the first coin flip
 					// to prevent infinite flips from being easy.
 					const fortuneInstances = player.playerDeck.filter((card) => card.props.id === 'fortune')
-					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.instance))
+					fortuneInstances.forEach((card) => player.hooks.onCoinFlip.remove(card.id))
 
 					return 'SUCCESS'
 				},

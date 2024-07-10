@@ -37,7 +37,7 @@ class SleepingStatusEffect extends StatusEffect {
 		)
 
 		player.hooks.onTurnStart.add(instance, () => {
-			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
+			const targetPos = game.findSlot(slot.hasInstance(instance.target))
 			if (!targetPos) return
 			if (instance.counter !== null) instance.counter--
 
@@ -58,7 +58,7 @@ class SleepingStatusEffect extends StatusEffect {
 		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
+			if (attackTarget.row.hermitCard.instance !== instance.target.id) return
 			if (attackTarget.row.health > 0) return
 			removeStatusEffect(game, pos, instance)
 		})
