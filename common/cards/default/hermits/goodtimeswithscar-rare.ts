@@ -1,7 +1,12 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance} from '../../../types/game-state'
-import {applyStatusEffect, hasStatusEffect, removeStatusEffect} from '../../../utils/board'
+import {
+	applyStatusEffect,
+	getActiveRow,
+	hasStatusEffect,
+	removeStatusEffect,
+} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
 
 class GoodTimesWithScarRareHermitCard extends Card {
@@ -44,7 +49,9 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		player.hooks.onAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
 			// If this instance is not blocked from reviving, make possible next turn
-			if (!hasStatusEffect(game, instance, 'revived-by-deathloop')) {
+			const attacker = attack.getAttacker()
+			if (!attacker) return
+			if (!hasStatusEffect(game, attacker.row.hermitCard, 'revived-by-deathloop')) {
 				reviveReady = true
 			}
 		})
@@ -74,7 +81,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			)
 
 			// Prevents hermits from being revived more than once by Deathloop
-			applyStatusEffect(game, 'revived-by-deathloop', instance)
+			applyStatusEffect(game, 'revived-by-deathloop', targetInstance)
 		})
 	}
 
