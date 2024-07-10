@@ -36,7 +36,7 @@ class BrewingStandEffectCard extends Card {
 				id: this.props.id,
 				message: 'Pick an item card to discard',
 				canPick: slot.every(
-					slot.currentPlayer,
+					slot.player,
 					slot.itemSlot,
 					slot.not(slot.empty),
 					slot.rowIndex(pos.rowIndex)

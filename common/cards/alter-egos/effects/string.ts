@@ -1,4 +1,4 @@
-import {slot} from '../../../filters'
+import {row, slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 
 class StringEffectCard extends Card {
@@ -15,8 +15,8 @@ class StringEffectCard extends Card {
 			"Attach to one of your opponent's empty item or effect slots.\nYour opponent can no longer attach cards to that slot.",
 		attachCondition: slot.every(
 			slot.opponent,
-			slot.rowHasHermit,
 			slot.empty,
+			slot.rowFulfills(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			slot.some(slot.attachSlot, slot.itemSlot),
 			slot.not(slot.frozen)

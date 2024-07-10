@@ -253,7 +253,7 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
 			return this.state.cards
-				.filter(card.slot(slot.hand, slot.player(player.id)))
+				.filter(card.slotFulfills(slot.hand, slot.player(player.id)))
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
@@ -282,8 +282,8 @@ export class GameModel {
 
 		// Create battle log entry
 		if (newRow !== null) {
-			const newHermit = this.state.cards.find(card.hermit, card.slot(slot.row(currentActiveRow)))
-			const oldHermit = this.state.cards.find(card.hermit, card.slot(slot.row(newRow)))
+			const newHermit = this.state.cards.find(card.hermit, card.slotFulfills(slot.row(currentActiveRow)))
+			const oldHermit = this.state.cards.find(card.hermit, card.slotFulfills(slot.row(newRow)))
 			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
 		}
 

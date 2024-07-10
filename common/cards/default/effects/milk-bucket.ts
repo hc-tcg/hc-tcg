@@ -33,7 +33,7 @@ class MilkBucketEffectCard extends Card {
 				playerId: player.id,
 				id: this.props.id,
 				message: 'Pick one of your Hermits',
-				canPick: slot.every(slot.currentPlayer, slot.hermitSlot, slot.not(slot.empty)),
+				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickedSlot) {
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (

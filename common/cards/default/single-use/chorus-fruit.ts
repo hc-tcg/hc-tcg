@@ -20,7 +20,7 @@ class ChorusFruitSingleUseCard extends Card {
 			singleUse.attachCondition,
 			slot.not(
 				slot.someSlotFulfills(
-					slot.every(slot.currentPlayer, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
+					slot.every(slot.player, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
 				)
 			)
 		),

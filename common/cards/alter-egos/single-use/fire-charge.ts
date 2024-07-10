@@ -9,7 +9,7 @@ import {CardComponent} from '../../../types/game-state'
 
 class FireChargeSingleUseCard extends Card {
 	pickCondition = slot.every(
-		slot.currentPlayer,
+		slot.player,
 		slot.not(slot.frozen),
 		slot.not(slot.empty),
 		slot.some(slot.itemSlot, slot.attachSlot)

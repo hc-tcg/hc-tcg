@@ -39,7 +39,7 @@ class IskallmanRareHermitCard extends Card {
 		let pickedAfkHermit: SlotComponent | null = null
 
 		const pickCondition = slot.every(
-			slot.currentPlayer,
+			slot.player,
 			slot.hermitSlot,
 			slot.not(slot.empty),
 			slot.not(slot.activeRow)

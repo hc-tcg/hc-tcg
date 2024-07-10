@@ -8,7 +8,7 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
+import {PickInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
 
 type Props = {
@@ -38,18 +38,14 @@ function Board({onClick, localGameState}: Props) {
 	}
 
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
-		const rows = player.board.rows
-		const boardArray = new Array(5).fill(null)
-
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
-				{boardArray.map((_, index) => {
-					if (!rows[index]) throw new Error('Rendering board row failed!')
+				{player.board.rows.map(row => {
 					return (
 						<BoardRow
-							key={index}
-							rowState={rows[index]}
-							active={index === player.board.activeRow}
+							key={row.entity}
+							rowState={row}
+							active={row.entity === player.board.activeRow}
 							onClick={handleRowClick}
 							type={direction}
 							statusEffects={localGameState.statusEffects}

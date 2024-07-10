@@ -9,7 +9,7 @@ import {
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {slot, SlotCondition} from '../../filters'
+import {row, slot, SlotCondition} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {CardComponent} from '../../types/game-state'
@@ -58,7 +58,7 @@ export const item = {
 		slot.currentPlayer,
 		slot.itemSlot,
 		slot.empty,
-		slot.rowHasHermit,
+		slot.rowFulfills(row.hasHermit),
 		slot.actionAvailable('PLAY_ITEM_CARD'),
 		slot.not(slot.frozen)
 	),
@@ -125,7 +125,7 @@ export const attach = {
 		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
-		slot.rowHasHermit,
+		slot.rowFulfills(row.hasHermit),
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		slot.not(slot.frozen)
 	),

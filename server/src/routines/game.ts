@@ -40,7 +40,7 @@ function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
 	const energy = game.state.cards
-		.filter(card.slot(slot.player(game.currentPlayer.id)), card.item, card.attached)
+		.filter(card.slotFulfills(slot.player(game.currentPlayer.id)), card.item, card.attached)
 		.flatMap((card) => {
 			if (!card.isItem()) return []
 			return card.card.getEnergy(game, card)
@@ -99,7 +99,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	game.state.timer.opponentActionStartTime = null
 	const hasOtherHermit = game.state.cards.filter(
 		card.attach,
-		card.slot(slot.not(slot.row(activeRowId)))
+		card.slotFulfills(slot.not(slot.row(activeRowId)))
 	)
 
 	// Actions that require us to have an active row
@@ -117,7 +117,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 		// Attack actions
 		if (activeRowId !== null && turnState.turnNumber > 1) {
-			const hermitCard = game.state.cards.find(card.slot(slot.row(activeRowId), slot.hermitSlot))
+			const hermitCard = game.state.cards.find(card.slotFulfills(slot.row(activeRowId), slot.hermitSlot))
 
 			// only add attack options if not sleeping
 			if (hermitCard && hermitCard.card.isHermit()) {
@@ -149,7 +149,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.state.cards
-			.filter(card.slot(slot.player(currentPlayer.id), slot.hand))
+			.filter(card.slotFulfills(slot.player(currentPlayer.id), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.state.slots.filter(card.card.props.attachCondition)
 
@@ -590,7 +590,7 @@ function* turnSaga(game: GameModel) {
 	}
 
 	// Draw a card from deck when turn ends
-	const newCard = game.state.cards.find(card.player(currentPlayer.id), card.slot(slot.pile))
+	const newCard = game.state.cards.find(card.player(currentPlayer.id), card.slotFulfills(slot.pile))
 	if (newCard) {
 		newCard.slotEntity = game.state.slots.new(HandSlotInfo, currentPlayer.id).entity
 	}

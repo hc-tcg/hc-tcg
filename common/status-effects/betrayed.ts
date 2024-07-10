@@ -21,7 +21,7 @@ class BetrayedStatusEffect extends StatusEffect {
 		const {player} = pos
 
 		const pickCondition = slot.every(
-			slot.currentPlayer,
+			slot.player,
 			slot.not(slot.activeRow),
 			slot.not(slot.empty),
 			slot.hermitSlot

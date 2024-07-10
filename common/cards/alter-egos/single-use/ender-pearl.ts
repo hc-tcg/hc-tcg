@@ -8,7 +8,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class EnderPearlSingleUseCard extends Card {
-	pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.currentPlayer)
+	pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
 
 	props: SingleUse = {
 		...singleUse,

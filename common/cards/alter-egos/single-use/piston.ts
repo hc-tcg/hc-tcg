@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {row, slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -11,12 +11,19 @@ class PistonSingleUseCard extends Card {
 	firstPickCondition = slot.every(
 		slot.currentPlayer,
 		slot.itemSlot,
-		slot.rowHasHermit,
+		slot.rowFulfills(row.hasHermit),
 		slot.not(slot.frozen),
 		slot.not(slot.empty),
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
-		slot.adjacentTo(slot.every(slot.rowHasHermit, slot.itemSlot, slot.empty, slot.not(slot.frozen)))
+		slot.adjacentTo(
+			slot.every(
+				slot.rowFulfills(row.hasHermit),
+				slot.itemSlot,
+				slot.empty,
+				slot.not(slot.frozen)
+			)
+		)
 	)
 
 	props: SingleUse = {
@@ -63,10 +70,11 @@ class PistonSingleUseCard extends Card {
 				slot.currentPlayer,
 				slot.itemSlot,
 				slot.empty,
-				slot.rowHasHermit,
+				slot.rowFulfills(row.hasHermit),
 				slot.not(slot.frozen),
 				slot.adjacentTo(
-					(game, pos) => !!pickedItemSlot?.cardId && slot.hasInstance(pickedItemSlot?.cardId)(game, pos)
+					(game, pos) =>
+						!!pickedItemSlot?.cardId && slot.hasInstance(pickedItemSlot?.cardId)(game, pos)
 				)
 			),
 			onResult(pickedSlot) {

@@ -61,7 +61,7 @@ class HypnotizdRareHermitCard extends Card {
 			if (activeInstance.entity !== instance.entity || hermitAttackType !== 'secondary') return
 
 			const pickCondition = slot.every(
-				slot.currentPlayer,
+				slot.player,
 				slot.activeRow,
 				slot.itemSlot,
 				slot.not(slot.empty)

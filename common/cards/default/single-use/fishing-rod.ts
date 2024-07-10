@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {card, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import {drawCards} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -19,7 +19,8 @@ class FishingRodSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to draw 2 cards`,
 		attachCondition: slot.every(
 			singleUse.attachCondition,
-			(game, pos) => pos.player.pile.length > 2
+			(game, pos) =>
+				game.state.cards.filter(card.slotFulfills(slot.currentPlayer, slot.pile)).length > 2
 		),
 	}
 

@@ -211,30 +211,30 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 
 export function getLocalPlayerState(game: GameModel, playerState: PlayerState): LocalPlayerState {
 	let board = {
-		activeRow: game.state.rows.find(row.active)?.index || null,
+		activeRow: game.state.rows.find(row.active)?.entity || null,
 		singleUseCard:
-			game.state.cards.find(card.singleUse, card.slot(slot.singleUseSlot))?.toLocalCardInstance() ||
-			null,
+			game.state.cards
+				.find(card.singleUse, card.slotFulfills(slot.singleUseSlot))
+				?.toLocalCardInstance() || null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
-			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row))
-			const hermitCard = game.state.cards.find(
-				card.inSlot(hermit)
-			) as CardComponent<HasHealth> | null
+			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row.entity))
+			const hermitCard = game.state.cards.find(card.slot(hermit)) as CardComponent<HasHealth> | null
 
-			const attach = game.state.slots.find(slot.attachSlot, slot.row(row))
-			const attachCard = game.state.cards.find(card.inSlot(attach)) as CardComponent<Attach> | null
+			const attach = game.state.slots.find(slot.attachSlot, slot.row(row.entity))
+			const attachCard = game.state.cards.find(card.slot(attach)) as CardComponent<Attach> | null
 
-			const items = game.state.slots.filter(slot.itemSlot, slot.row(row)).map((itemSlot) => {
+			const items = game.state.slots.filter(slot.itemSlot, slot.row(row.entity)).map((itemSlot) => {
 				return {
 					slot: itemSlot.entity,
-					card: game.state.cards.find(card.inSlot(itemSlot))?.toLocalCardInstance() || null,
+					card: game.state.cards.find(card.slot(itemSlot))?.toLocalCardInstance() || null,
 				}
 			})
 
 			if (!hermit || !attach) throw new Error('Slot is missing when generating local game state.')
 
 			return {
+				entity: row.entity,
 				hermit: {slot: hermit.entity, card: hermitCard?.toLocalCardInstance() || null},
 				attach: {slot: attach.entity, card: attachCard?.toLocalCardInstance() || null},
 				items: items,
@@ -317,11 +317,12 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.state.cards
-			.filter(card.slot(slot.player(playerState.id), slot.hand))
+			.filter(card.slotFulfills(slot.player(playerState.id), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
-		pileCount: game.state.cards.filter(card.slot(slot.player(playerState.id), slot.pile)).length,
+		pileCount: game.state.cards.filter(card.slotFulfills(slot.player(playerState.id), slot.pile))
+			.length,
 		discarded: game.state.cards
-			.filter(card.slot(slot.player(playerState.id), slot.discardPile))
+			.filter(card.slotFulfills(slot.player(playerState.id), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids

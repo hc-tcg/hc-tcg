@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {row, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -10,7 +10,7 @@ class MendingSingleUseCard extends Card {
 		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
-		slot.rowHasHermit,
+		slot.rowFulfills(row.hasHermit),
 		slot.not(slot.frozen),
 		slot.not(slot.activeRow)
 	)
@@ -44,7 +44,7 @@ class MendingSingleUseCard extends Card {
 			message: 'Pick an empty effect slot from one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const hermitActiveEffectCard = game.findSlot(slot.currentPlayer, slot.activeRow, slot.attachSlot)
+				const hermitActiveEffectCard = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
 
 				if (!hermitActiveEffectCard || !hermitActiveEffectCard.rowId) return
 

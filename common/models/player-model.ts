@@ -65,7 +65,7 @@ export class PlayerModel {
 		this.internalDeck = {
 			name: newDeck.name,
 			icon: newDeck.icon,
-			cards: newDeck.cards.map((card) => card.props.id),
+			cards: newDeck.cards,
 		}
 	}
 

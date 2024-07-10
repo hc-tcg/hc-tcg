@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {row, slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -18,7 +18,7 @@ class LeadSingleUseCard extends Card {
 		slot.opponent,
 		slot.itemSlot,
 		slot.empty,
-		slot.rowHasHermit,
+		slot.rowFulfills(row.hasHermit),
 		slot.not(slot.activeRow),
 		slot.not(slot.frozen)
 	)

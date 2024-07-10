@@ -13,7 +13,7 @@ function* playerConnectedSaga(action: any) {
 
 		if (validPlayer) {
 			existingPlayer.socket = socket
-			if (deck) existingPlayer.setPlayerDeck(deck)
+		if (deck) existingPlayer.setPlayerDeck(deck)
 			yield* put({type: 'PLAYER_RECONNECTED', payload: existingPlayer})
 			socket.emit('PLAYER_RECONNECTED', {
 				type: 'PLAYER_RECONNECTED',

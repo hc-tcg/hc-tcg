@@ -23,24 +23,6 @@ function* playCardSaga(
 		throw new Error('A slot that is not on the board can not be picked: ' + pickedSlot)
 	}
 
-	// opponentPlayerId is relative to where the card is being placed
-	// const opponentPlayerId = playerId === currentPlayer.id ? game.opponentPlayerId : currentPlayer.id
-
-	// // Card must be in hand to play it
-	// if (!currentPlayer.hand.find((handCard) => equalCard(handCard, card))) {
-	// 	return 'FAILURE_INVALID_DATA'
-	// }
-
-	// const player = game.state.players[playerId]
-	// if (!player) {
-	// 	return 'FAILURE_INVALID_DATA'
-	// }
-
-	// // Can't attach to hand or health slot
-	// if (type === 'health' || type === 'hand') {
-	// 	return 'FAILURE_INVALID_SLOT'
-	// }
-
 	const row = pickedSlot.row
 	const rowIndex = pickedSlot.index
 	const player = pickedSlot.player

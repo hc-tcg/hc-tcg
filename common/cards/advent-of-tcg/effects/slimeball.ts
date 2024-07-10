@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {row, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -19,7 +19,7 @@ class SlimeballEffectCard extends Card {
 			slot.opponent,
 			slot.attachSlot,
 			slot.empty,
-			slot.rowHasHermit,
+			slot.rowFulfills(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			slot.not(slot.frozen)
 		),
@@ -30,7 +30,7 @@ class SlimeballEffectCard extends Card {
 
 		player.hooks.freezeSlots.add(instance, () => {
 			return slot.every(
-				slot.currentPlayer,
+				slot.player,
 				slot.rowIndex(pos.rowIndex),
 				slot.not(slot.attachSlot),
 				slot.not(slot.empty)

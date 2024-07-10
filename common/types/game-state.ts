@@ -111,6 +111,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 }
 
 export type LocalRowState = {
+	entity: RowEntity
 	hermit: {slot: SlotEntity; card: LocalCardInstance<HasHealth> | null}
 	attach: {slot: SlotEntity; card: LocalCardInstance<Attach> | null}
 	items: Array<{slot: SlotEntity; card: LocalCardInstance<CardProps> | null}>
@@ -385,7 +386,7 @@ export type LocalPlayerState = {
 	coinFlips: Array<CurrentCoinFlipT>
 	lives: number
 	board: {
-		activeRow: number | null
+		activeRow: RowEntity | null
 		singleUseCard: LocalCardInstance | null
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
