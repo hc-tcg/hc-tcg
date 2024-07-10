@@ -283,8 +283,8 @@ export namespace card {
 	export const pile: CardCondition = card.slotFulfills(slotCombinators.pile)
 	export const hand: CardCondition = card.slotFulfills(slotCombinators.hand)
 
-	export function slot(slot: SlotComponent | null): CardCondition {
-		return (game, card) => slot !== null && slot.entity === card.slot?.entity
+	export function slot(slot: SlotEntity | null | undefined): CardCondition {
+		return (game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
 	}
 
 	export function row(row: RowEntity): CardCondition {

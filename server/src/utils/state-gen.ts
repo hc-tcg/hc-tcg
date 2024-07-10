@@ -206,15 +206,15 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
 			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row.entity))
-			const hermitCard = game.state.cards.find(card.slot(hermit)) as CardComponent<HasHealth> | null
+			const hermitCard = game.state.cards.find(card.slot(hermit?.entity)) as CardComponent<HasHealth> | null
 
 			const attach = game.state.slots.find(slot.attachSlot, slot.row(row.entity))
-			const attachCard = game.state.cards.find(card.slot(attach)) as CardComponent<Attach> | null
+			const attachCard = game.state.cards.find(card.slot(attach?.entity)) as CardComponent<Attach> | null
 
 			const items = game.state.slots.filter(slot.itemSlot, slot.row(row.entity)).map((itemSlot) => {
 				return {
 					slot: itemSlot.entity,
-					card: game.state.cards.find(card.slot(itemSlot))?.toLocalCardInstance() || null,
+					card: game.state.cards.find(card.slot(itemSlot.entity))?.toLocalCardInstance() || null,
 				}
 			})
 

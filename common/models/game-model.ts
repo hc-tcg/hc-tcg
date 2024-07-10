@@ -313,24 +313,16 @@ export class GameModel {
 		withoutDetach: boolean = false
 	): void {
 		if (!slotA || !slotB) return
-		if (slotA.type !== slotB.type) return
-		if (!slotA.rowId || !slotB.rowId) return
 
-		// Swap
-		if (slotA.type === 'hermit') {
-			let tempCard = slotA.row.hermit.card
-			slotA.row.hermit.card = slotB.row.hermit.card
-			slotB.row.hermit.card = tempCard
-		} else if (slotA.type === 'attach') {
-			let tempCard = slotA.row.attach.card
-			slotA.row.attach.card = slotB.row.attach.card
-			slotB.row.attach.card = tempCard
-		} else if (slotA.type === 'item') {
-			if (slotA.index === null || slotB.index === null) return
-			let tempCard = slotA.row.items[slotA.index].card
-			slotA.row.items[slotA.index].card = slotB.row.items[slotB.index].card
-			slotB.row.items[slotB.index].card = tempCard
-		}
+		const slotACards = this.state.cards.filter(card.slot(slotA.entity))
+		const slotBCards = this.state.cards.filter(card.slot(slotB.entity))
+
+		slotACards.forEach((card) => {
+			card.slot = slotB
+		})
+		slotBCards.forEach((card) => {
+			card.slot = slotA
+		})
 
 		if (!withoutDetach) {
 			// onAttach
