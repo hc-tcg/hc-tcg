@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -34,7 +34,7 @@ class InvisibilityPotionSingleUseCard extends Card {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
-			let opponentActiveHermit = game.findSlot(this.applyTo)?.card
+			let opponentActiveHermit = game.findSlot(this.applyTo)?.cardId
 			if (!opponentActiveHermit) return
 
 			if (flipCoin(player, instance)[0] === 'heads') {

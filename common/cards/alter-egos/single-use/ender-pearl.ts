@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
@@ -40,13 +40,13 @@ class EnderPearlSingleUseCard extends Card {
 			onResult(pickedSlot) {
 				const rowIndex = pickedSlot.rowIndex
 				// We need to have no card there
-				if (pickedSlot.card || rowIndex === null) return
+				if (pickedSlot.cardId || rowIndex === null) return
 
 				const activeRow = getActiveRowPos(player)
 				if (player.board.activeRow === null || !activeRow) return
 
 				const logInfo = pickedSlot
-				logInfo.card = activeRow.row.hermitCard
+				logInfo.cardId = activeRow.row.hermitCard
 
 				// Apply
 				applySingleUse(game, logInfo)

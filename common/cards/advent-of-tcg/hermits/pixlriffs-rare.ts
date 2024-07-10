@@ -34,10 +34,10 @@ class PixlriffsRareHermitCard extends Card {
 	public override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel): void {
 		const {player} = pos
 
-		let startingRow = pos.row
+		let startingRow = pos.rowId
 
 		player.hooks.onTurnStart.add(instance, () => {
-			startingRow = pos.row
+			startingRow = pos.rowId
 		})
 
 		player.hooks.onAttack.add(instance, (attack) => {

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
@@ -32,7 +32,7 @@ class TurtleShellEffectCard extends Card {
 
 		player.hooks.onTurnStart.add(instance, () => {
 			if (firstActiveTurn) {
-				discardCard(game, pos.card)
+				discardCard(game, pos.cardId)
 			}
 		})
 

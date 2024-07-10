@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
@@ -26,7 +26,7 @@ class LightningRodEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row, rowIndex} = pos
+		const {player, opponentPlayer, rowId: row, rowIndex} = pos
 
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
@@ -49,7 +49,7 @@ class LightningRodEffectCard extends Card {
 			if (!isTargetingPos(attack, pos)) return
 			if (attack.calculateDamage() <= 0) return
 
-			discardCard(game, pos.card)
+			discardCard(game, pos.cardId)
 		})
 	}
 

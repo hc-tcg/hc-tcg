@@ -9,7 +9,7 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectInstance} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

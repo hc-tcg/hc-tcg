@@ -19,8 +19,8 @@ class CatEffectCard extends Card {
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.add(instance, (attack) => {
-			if (!pos.row || !pos.row.hermitCard) return
-			if (attack.id !== pos.row.hermitCard.card.getInstanceKey(pos.row.hermitCard)) return
+			if (!pos.rowId || !pos.rowId.hermitCard) return
+			if (attack.id !== pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)) return
 
 			if (player.pile.length === 0) return
 

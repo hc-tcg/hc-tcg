@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
 import {SlotInfo} from '../../../types/cards'
 import {CardInstance, RowStateWithHermit} from '../../../types/game-state'
@@ -46,12 +46,12 @@ class HypnotizdRareHermitCard extends Card {
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
 			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			if (!target || target.rowIndex == null || !target.row) return
+			if (!target || target.rowIndex == null || !target.rowId) return
 
 			attack.setTarget(this.props.id, {
 				player: opponentPlayer,
 				rowIndex: target?.rowIndex,
-				row: target?.row as RowStateWithHermit,
+				row: target?.rowId as RowStateWithHermit,
 			})
 
 			target = null
@@ -78,11 +78,11 @@ class HypnotizdRareHermitCard extends Card {
 				message: 'Choose an item to discard from your active Hermit.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card) return
-					discardCard(game, pickedSlot.card)
+					if (!pickedSlot.cardId) return
+					discardCard(game, pickedSlot.cardId)
 				},
 				onTimeout() {
-					discardCard(game, game.findSlot(pickCondition)?.card || null)
+					discardCard(game, game.findSlot(pickCondition)?.cardId || null)
 				},
 			}
 

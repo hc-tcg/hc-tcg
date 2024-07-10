@@ -1,4 +1,4 @@
-import {slot} from '../slot'
+import {slot} from '../filters'
 import {SlotInfo} from '../types/cards'
 import {CardInstance} from '../types/game-state'
 import {GameModel} from './game-model'
@@ -36,39 +36,39 @@ export class CardPosModel implements SlotInfo {
 		}
 	}
 
-	public get card() {
+	public get cardId() {
 		// Return the card at the position, or try to recalculate if we moved (ender pearl, ladder)
 		this.recalculateInternalPos()
-		return this.internalPos.card
+		return this.internalPos.cardId
 	}
 
 	public get player() {
-		if (!this.card) this.recalculateInternalPos()
+		if (!this.cardId) this.recalculateInternalPos()
 		return this.internalPos.player
 	}
 
 	public get opponentPlayer() {
-		if (!this.card) this.recalculateInternalPos()
+		if (!this.cardId) this.recalculateInternalPos()
 		return this.internalPos.opponentPlayer
 	}
 
 	public get rowIndex() {
-		if (!this.card) this.recalculateInternalPos()
+		if (!this.cardId) this.recalculateInternalPos()
 		return this.internalPos.rowIndex
 	}
 
-	public get row() {
-		if (!this.card) this.recalculateInternalPos()
-		return this.internalPos.row
+	public get rowId() {
+		if (!this.cardId) this.recalculateInternalPos()
+		return this.internalPos.rowId
 	}
 
 	public get type() {
-		if (!this.card) this.recalculateInternalPos()
+		if (!this.cardId) this.recalculateInternalPos()
 		return this.internalPos.type
 	}
 
 	public get index() {
-		if (!this.card) this.recalculateInternalPos()
+		if (!this.cardId) this.recalculateInternalPos()
 		return this.internalPos.index
 	}
 }

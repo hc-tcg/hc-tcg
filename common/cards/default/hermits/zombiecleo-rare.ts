@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
@@ -99,7 +99,7 @@ class ZombieCleoRareHermitCard extends Card {
 					const rowIndex = pickedSlot.rowIndex
 					if (rowIndex === null) return
 					if (rowIndex === player.board.activeRow) return
-					const pickedCard = pickedSlot.card
+					const pickedCard = pickedSlot.cardId
 					if (!pickedCard) return
 
 					// No picking the same card as us

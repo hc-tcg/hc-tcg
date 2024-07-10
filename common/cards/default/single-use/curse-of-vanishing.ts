@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {discardCard} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -36,7 +36,7 @@ class CurseOfVanishingSingleUseCard extends Card {
 		player.hooks.onApply.add(instance, () => {
 			game
 				.filterSlots(this.discardCondition)
-				.map((slot) => slot.card && discardCard(game, slot.card))
+				.map((slot) => slot.cardId && discardCard(game, slot.cardId))
 		})
 	}
 

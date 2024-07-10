@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 

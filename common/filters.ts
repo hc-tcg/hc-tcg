@@ -75,7 +75,7 @@ export namespace slot {
 
 	/** Return true if the spot is empty. */
 	export const empty: SlotCondition = (game, pos) => {
-		return pos.card === null
+		return pos.cardId === null
 	}
 
 	/** Return true if the card is attached to a hermit slot. */
@@ -106,12 +106,12 @@ export namespace slot {
 	/* Return true if the card is in a player's hand */
 	export const hand: SlotCondition = (game, pos) => {
 		return [game.currentPlayer, game.opponentPlayer].some((player) => {
-			return player.hand.some((card) => card.instance === pos.card?.instance)
+			return player.hand.some((card) => card.instance === pos.cardId?.instance)
 		})
 	}
 
 	export const rowHasHermit: SlotCondition = (game, pos) => {
-		return pos.row !== null && pos.row.hermitCard !== null
+		return pos.rowId !== null && pos.rowId.hermitCard !== null
 	}
 
 	export const playerHasActiveHermit: SlotCondition = (game, pos) => {
@@ -133,7 +133,7 @@ export namespace slot {
 	/** Return true if the spot contains the specified card instance. */
 	export const hasInstance = (cardInstance: CardInstance | LocalCardInstance): SlotCondition => {
 		return (game, pos) => {
-			return pos.card !== null && pos.card.instance === cardInstance.instance
+			return pos.cardId !== null && pos.cardId.instance === cardInstance.instance
 		}
 	}
 
@@ -141,7 +141,7 @@ export namespace slot {
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
 			return cardIds.some((cardId) => {
-				return pos.card !== null && pos.card.card.props.id === cardId
+				return pos.cardId !== null && pos.cardId.card.props.id === cardId
 			})
 		}
 	}
@@ -151,7 +151,7 @@ export namespace slot {
 		return (game, pos) => {
 			return game.state.statusEffects.some(
 				(effect) =>
-					effect.targetInstance.instance == pos.card?.instance && effect.props.id == statusEffect
+					effect.targetInstance.instance == pos.cardId?.instance && effect.props.id == statusEffect
 			)
 		}
 	}

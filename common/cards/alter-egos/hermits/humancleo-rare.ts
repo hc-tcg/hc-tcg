@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -50,7 +50,7 @@ class HumanCleoRareHermitCard extends Card {
 			applyStatusEffect(
 				game,
 				'betrayed',
-				game.findSlot(slot.opponent, slot.activeRow, slot.hermitSlot)?.card
+				game.findSlot(slot.opponent, slot.activeRow, slot.hermitSlot)?.cardId
 			)
 		})
 	}

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -51,14 +51,13 @@ class IJevinRareHermitCard extends Card {
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
-
-					game.changeActiveRow(opponentPlayer, pickedSlot.rowIndex)
+					if (!pickedSlot.cardId || pickedSlot.row === null) return
+					game.changeActiveRow(opponentPlayer, pickedSlot.row)
 				},
 				onTimeout() {
-					const rowIndex = game.filterSlots(pickCondition)[0].rowIndex
-					if (rowIndex === null) return
-					game.changeActiveRow(opponentPlayer, rowIndex)
+					const row = game.state.slots.filter(pickCondition)[0].row
+					if (!row) return
+					game.changeActiveRow(opponentPlayer, row)
 				},
 			})
 		})

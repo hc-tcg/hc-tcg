@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {SlotInfo} from '../../../types/cards'
 import {CardInstance} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
@@ -37,7 +37,7 @@ class CrossbowSingleUseCard extends Card {
 				id: this.props.id,
 				onResult(pickedSlot: SlotInfo) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
 					// Add the row to the chosen list
 					targets.add(rowIndex)

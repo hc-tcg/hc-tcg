@@ -1,4 +1,4 @@
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 
 class StringEffectCard extends Card {

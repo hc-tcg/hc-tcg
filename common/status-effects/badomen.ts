@@ -4,7 +4,7 @@ import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance as StatusEffectInstance} from '../types/game-state'
 import {CARDS} from '../cards'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class BadOmenStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -21,8 +21,8 @@ class BadOmenStatusEffect extends StatusEffect {
 
 		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $bBad Omen$`)
+		if (pos.cardId) {
+			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was inflicted with $bBad Omen$`)
 		}
 
 		opponentPlayer.hooks.onTurnStart.add(instance, () => {

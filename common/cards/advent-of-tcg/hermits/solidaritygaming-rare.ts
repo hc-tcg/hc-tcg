@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -69,9 +69,9 @@ class SolidaritygamingRareHermitCard extends Card {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, 'protected', pickedSlot.card)
+					applyStatusEffect(game, 'protected', pickedSlot.cardId)
 				},
 			})
 		})

@@ -5,11 +5,12 @@ import {
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
+    SlotInfo,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {CardPosModel} from '../../models/card-pos-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {slot, SlotCondition} from '../../slot'
+import {slot, SlotCondition} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {CardInstance} from '../../types/game-state'
@@ -201,14 +202,14 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	public onAttach(game: GameModel, instance: CardInstance, placedIn: SlotInfo) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when an instance of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
+	public onDetach(game: GameModel, instance: CardInstance, from: SlotInfo) {
 		// default is do nothing
 	}
 
@@ -237,10 +238,10 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this: Card<Hermit>,
 		game: GameModel,
 		instance: CardInstance,
-		pos: CardPosModel,
+		pos: SlotInfo,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {
-		if (pos.rowIndex === null || !pos.row || !pos.row.hermitCard) return null
+		if (pos.row === null || !pos.rowId || !pos.row.index) return null
 
 		const {opponentPlayer: opponentPlayer} = game
 		const targetIndex = opponentPlayer.board.activeRow
@@ -254,8 +255,8 @@ abstract class Card<Props extends CardProps = CardProps> {
 			id: this.getInstanceKey(instance),
 			attacker: {
 				player: pos.player,
-				rowIndex: pos.rowIndex,
-				row: pos.row,
+				rowIndex: pos.row.index,
+				rowId: pos.rowId,
 			},
 			target: {
 				player: opponentPlayer,

@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {SlotInfo} from '../../../types/cards'
 import {CardInstance, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
@@ -88,7 +88,7 @@ class IskallmanRareHermitCard extends Card {
 						message: 'Pick an AFK Hermit from either side of the board',
 						canPick: pickCondition,
 						onResult(pickedSlot) {
-							if (!pickedSlot.card) return
+							if (!pickedSlot.cardId) return
 							if (!pickedSlot.rowIndex) return
 							pickedAfkHermit = pickedSlot
 						},
@@ -129,10 +129,10 @@ class IskallmanRareHermitCard extends Card {
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = attacker.row.hermitCard.card
-			const hermitInfo = pickedAfkHermit.row?.hermitCard?.card
+			const hermitInfo = pickedAfkHermit.rowId?.hermitCard?.card
 
 			if (hermitInfo) {
-				healHermit(pickedAfkHermit.row, 50)
+				healHermit(pickedAfkHermit.rowId, 50)
 				game.battleLog.addEntry(
 					player.id,
 					`$p${attackerInfo.props.name}$ took $b50hp$ damage, and healed $p${

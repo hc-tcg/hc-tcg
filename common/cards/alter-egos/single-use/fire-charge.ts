@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {SingleUse, singleUse} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -41,10 +41,10 @@ class FireChargeSingleUseCard extends Card {
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				if (!pickedSlot.card) return
+				if (!pickedSlot.cardId) return
 
 				// Discard the picked card and apply su card
-				discardCard(game, pickedSlot.card)
+				discardCard(game, pickedSlot.cardId)
 				applySingleUse(game, pickedSlot)
 			},
 		})

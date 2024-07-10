@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class SlownessStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -20,8 +20,8 @@ class SlownessStatusEffect extends StatusEffect {
 
 		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $eSlowness$`)
+		if (pos.cardId) {
+			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was inflicted with $eSlowness$`)
 		}
 
 		player.hooks.onTurnStart.add(instance, () => {

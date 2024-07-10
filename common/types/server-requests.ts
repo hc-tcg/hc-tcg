@@ -1,5 +1,5 @@
 import {CardProps} from '../cards/base/card'
-import {SlotCondition} from '../slot'
+import {SlotCondition} from '../filters'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotInfo, SlotTypeT} from './cards'
 import {ActionResult} from './game-state'

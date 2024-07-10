@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -28,7 +28,7 @@ class WaterBucketEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer, rowId: row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
@@ -40,7 +40,7 @@ class WaterBucketEffectCard extends Card {
 
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
-							ail.targetInstance.instance === pickedSlot.card?.instance && ail.props.id == 'fire'
+							ail.targetInstance.instance === pickedSlot.cardId?.instance && ail.props.id == 'fire'
 						)
 					})
 					statusEffectsToRemove.forEach((ail) => {

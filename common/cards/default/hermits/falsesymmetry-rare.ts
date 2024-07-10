@@ -42,7 +42,7 @@ class FalseSymmetryRareHermitCard extends Card {
 			if (coinFlip[0] === 'tails') return
 
 			// Heal 40hp
-			healHermit(pos.row, 40)
+			healHermit(pos.rowId, 40)
 			game.battleLog.addEntry(player.id, `$p${attacker.row.hermitCard.props.name}$ healed $g40hp$`)
 		})
 	}

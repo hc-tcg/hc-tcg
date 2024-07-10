@@ -5,7 +5,7 @@ import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class MuseumCollectionStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

@@ -6,7 +6,7 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class PoisonStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -20,14 +20,14 @@ class PoisonStatusEffect extends StatusEffect {
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $ePoisoned$`)
+		if (pos.cardId) {
+			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was $ePoisoned$`)
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
-			if (!targetPos.row.hermitCard) return
+			if (!targetPos || !targetPos.rowId || targetPos.rowIndex === null) return
+			if (!targetPos.rowId.hermitCard) return
 
 			const activeRowPos = getActiveRowPos(opponentPlayer)
 			const sourceRow: RowPos | null = activeRowPos
@@ -41,7 +41,7 @@ class PoisonStatusEffect extends StatusEffect {
 			const targetRow: RowPos = {
 				player: targetPos.player,
 				rowIndex: targetPos.rowIndex,
-				row: targetPos.row,
+				row: targetPos.rowId,
 			}
 
 			const statusEffectAttack = new AttackModel({
@@ -52,9 +52,9 @@ class PoisonStatusEffect extends StatusEffect {
 				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
-			if (targetPos.row.health >= 30) {
+			if (targetPos.rowId.health >= 30) {
 				statusEffectAttack.addDamage(this.props.id, 20)
-			} else if (targetPos.row.health == 20) {
+			} else if (targetPos.rowId.health == 20) {
 				statusEffectAttack.addDamage(this.props.id, 10)
 			}
 

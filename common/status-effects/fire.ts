@@ -6,7 +6,7 @@ import {AttackModel} from '../models/attack-model'
 import {getActiveRowPos, removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class FireStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -20,14 +20,14 @@ class FireStatusEffect extends StatusEffect {
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $eBurned$`)
+		if (pos.cardId) {
+			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was $eBurned$`)
 		}
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos || !targetPos.row || targetPos.rowIndex === null) return
-			if (!targetPos.row.hermitCard) return
+			if (!targetPos || !targetPos.rowId || targetPos.rowIndex === null) return
+			if (!targetPos.rowId.hermitCard) return
 
 			const activeRowPos = getActiveRowPos(opponentPlayer)
 			const sourceRow: RowPos | null = activeRowPos
@@ -41,7 +41,7 @@ class FireStatusEffect extends StatusEffect {
 			const targetRow: RowPos = {
 				player: targetPos.player,
 				rowIndex: targetPos.rowIndex,
-				row: targetPos.row,
+				row: targetPos.rowId,
 			}
 
 			const statusEffectAttack = new AttackModel({

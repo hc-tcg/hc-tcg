@@ -41,7 +41,7 @@ class TrapdoorEffectCard extends Card {
 					target: {
 						player: player,
 						rowIndex: pos.rowIndex,
-						row: pos.row as RowStateWithHermit,
+						row: pos.rowId as RowStateWithHermit,
 					},
 					type: attack.type,
 					createWeakness: ['primary', 'secondary'].includes(attack.type) ? 'ifWeak' : 'never',

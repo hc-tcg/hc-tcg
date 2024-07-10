@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardInstance} from '../../../types/game-state'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 
 class CommandBlockEffectCard extends Card {

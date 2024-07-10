@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, HasHealth, attach, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
+import {SlotInfo} from '../../../types/cards'
 
 class ArmorStandEffectCard extends Card {
 	props: Attach & HasHealth = {
@@ -26,15 +27,14 @@ class ArmorStandEffectCard extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player} = pos
-		player.hooks.freezeSlots.add(instance, () => {
-			return slot.every(slot.player, slot.rowIndex(pos.rowIndex))
+	override onAttach(game: GameModel, instance: CardInstance, placedIn: SlotInfo) {
+		placedIn.player.hooks.freezeSlots.add(instance, () => {
+			return slot.every(slot.player, slot.rowIndex(placedIn.row.index))
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onDetach(game: GameModel, instance: CardInstance, from: SlotInfo) {
+		const {player, opponentPlayer} = from
 
 		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
 

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {moveCardInstanceoHand} from '../../../utils/movement'
@@ -41,14 +41,14 @@ class LootingSingleUseCard extends Card {
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (pickedSlot.rowIndex === null || pickedSlot.card === null) {
+					if (pickedSlot.rowIndex === null || pickedSlot.cardId === null) {
 						return
 					}
 
 					const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
 					const hermitCard = playerRow.hermitCard
 					if (!hermitCard || !playerRow.health) return
-					moveCardInstanceoHand(game, pickedSlot.card, player)
+					moveCardInstanceoHand(game, pickedSlot.cardId, player)
 				},
 			})
 		})

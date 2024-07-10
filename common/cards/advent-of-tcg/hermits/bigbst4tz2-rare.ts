@@ -35,7 +35,7 @@ class BigBSt4tzRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false
 

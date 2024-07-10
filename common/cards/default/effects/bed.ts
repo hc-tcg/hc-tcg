@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 import {SlotInfo} from '../../../types/cards'
@@ -29,7 +29,7 @@ class BedEffectCard extends Card {
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		// Give the current row sleeping for 3 turns
-		const {player, row} = pos
+		const {player, rowId: row} = pos
 
 		let hermitCard: CardInstance | null = null
 

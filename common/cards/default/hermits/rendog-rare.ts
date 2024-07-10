@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardInstance} from '../../../types/game-state'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 import {CopyAttack} from '../../../types/server-requests'
 
@@ -94,8 +94,8 @@ class RendogRareHermitCard extends Card {
 				message: "Pick one of your opponent's Hermits",
 				canPick: this.pickCondition,
 				onResult: (pickedSlot) => {
-					if (!pickedSlot.card) return
-					let pickedCard = pickedSlot.card
+					if (!pickedSlot.cardId) return
+					let pickedCard = pickedSlot.cardId
 
 					game.addModalRequest({
 						playerId: player.id,

@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {discardFromHand, drawCards} from '../../../utils/movement'
@@ -36,7 +36,7 @@ class ComposterSingleUseCard extends Card {
 			message: 'Pick 2 cards from your hand',
 			canPick: slot.hand,
 			onResult(pickedSlot) {
-				firstPickedCard = pickedSlot.card
+				firstPickedCard = pickedSlot.cardId
 			},
 		})
 
@@ -50,7 +50,7 @@ class ComposterSingleUseCard extends Card {
 			},
 			onResult(pickedSlot) {
 				discardFromHand(player, firstPickedCard)
-				discardFromHand(player, pickedSlot.card)
+				discardFromHand(player, pickedSlot.cardId)
 
 				// Apply
 				applySingleUse(game)

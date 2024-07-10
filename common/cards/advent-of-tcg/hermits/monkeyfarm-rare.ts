@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -55,13 +55,13 @@ class MonkeyfarmRareHermitCard extends Card {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
 					const row = opponentPlayer.board.rows[rowIndex]
 					if (!row.hermitCard) return
 
 					// Apply the card
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 				},
 			})
 		})

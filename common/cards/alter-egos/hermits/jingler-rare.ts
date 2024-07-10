@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardFromHand} from '../../../utils/movement'
@@ -49,7 +49,7 @@ class JinglerRareHermitCard extends Card {
 				message: 'Pick 1 card from your hand to discard',
 				canPick: slot.hand,
 				onResult(pickedSlot) {
-					discardFromHand(opponentPlayer, pickedSlot.card)
+					discardFromHand(opponentPlayer, pickedSlot.cardId)
 				},
 				onTimeout() {
 					discardFromHand(opponentPlayer, opponentPlayer.hand[0])

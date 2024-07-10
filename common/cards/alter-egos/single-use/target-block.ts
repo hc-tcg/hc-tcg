@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -39,7 +39,7 @@ class TargetBlockSingleUseCard extends Card {
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.card || rowIndex === null) return
+				if (!pickedSlot.cardId || rowIndex === null) return
 
 				const row = opponentPlayer.board.rows[rowIndex]
 				if (!row.hermitCard) return

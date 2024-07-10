@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {SlotInfo} from '../../../types/cards'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse, getActiveRowPos} from '../../../utils/board'
@@ -63,7 +63,7 @@ class LeadSingleUseCard extends Card {
 			canPick: this.secondPickCondition,
 			onResult(pickedSlot) {
 				const rowIndex = pickedSlot.rowIndex
-				if (pickedSlot.card || rowIndex === null) return
+				if (pickedSlot.cardId || rowIndex === null) return
 
 				// Get the index of the chosen item
 				const opponentActivePos = getActiveRowPos(opponentPlayer)

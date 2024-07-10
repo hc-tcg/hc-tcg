@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance, healHermit} from '../../../types/game-state'
 
@@ -71,7 +71,7 @@ class GrianchRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					healHermit(pickedSlot.row, 40)
+					healHermit(pickedSlot.rowId, 40)
 				},
 			})
 		})

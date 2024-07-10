@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -49,10 +49,10 @@ class OrionSoundRareHermitCard extends Card {
 				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || rowIndex === null) return
+					if (!pickedSlot.cardId || rowIndex === null) return
 
-					applyStatusEffect(game, 'melody', pickedSlot.card)
-					cardsWithStatusEffects.push(pickedSlot.card.instance)
+					applyStatusEffect(game, 'melody', pickedSlot.cardId)
+					cardsWithStatusEffects.push(pickedSlot.cardId.instance)
 				},
 			})
 		})

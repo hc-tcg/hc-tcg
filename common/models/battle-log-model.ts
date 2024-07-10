@@ -123,15 +123,15 @@ export class BattleLogModel {
 			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
-				id: pos.card ? pos.card.card.props.id : invalid,
-				name: pos.card ? genCardName(pos.player, pos.card, pos.rowIndex) : invalid,
-				hermitCard: genCardName(pos.player, pos.row?.hermitCard, pos.rowIndex),
+				id: pos.cardId ? pos.cardId.card.props.id : invalid,
+				name: pos.cardId ? genCardName(pos.player, pos.cardId, pos.rowIndex) : invalid,
+				hermitCard: genCardName(pos.player, pos.rowId?.hermitCard, pos.rowIndex),
 				slotType: pos.type,
 			},
 			pick: {
 				rowIndex: slotInfo && slotInfo.rowIndex !== null ? `${slotInfo.rowIndex + 1}` : invalid,
-				id: slotInfo?.card ? slotInfo.card.card.props.id : invalid,
-				name: genCardName(slotInfo?.player, slotInfo?.card, slotInfo?.rowIndex),
+				id: slotInfo?.cardId ? slotInfo.cardId.card.props.id : invalid,
+				name: genCardName(slotInfo?.player, slotInfo?.cardId, slotInfo?.rowIndex),
 				hermitCard: genCardName(
 					slotInfo?.player,
 					slotInfo?.rowIndex ? slotInfo?.player.board.rows[slotInfo?.rowIndex].hermitCard : null,

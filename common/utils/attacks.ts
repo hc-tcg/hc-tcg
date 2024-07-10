@@ -4,7 +4,7 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT, RowPos} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {slot} from '../slot'
+import {slot} from '../filters'
 import {STRENGTHS} from '../const/strengths'
 import {CardInstance} from '../types/game-state'
 

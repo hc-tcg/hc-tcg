@@ -44,7 +44,7 @@ class GoatfatherRareHermitCard extends Card {
 
 		if (!attack) return attack
 
-		const {player, opponentPlayer, row, rowIndex} = pos
+		const {player, opponentPlayer, rowId: row, rowIndex} = pos
 
 		if (attack.type !== 'secondary' || !row?.hermitCard) return attack
 

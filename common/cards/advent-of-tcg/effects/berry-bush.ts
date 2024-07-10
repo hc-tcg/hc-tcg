@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 import {CARDS} from '../..'
@@ -29,7 +29,7 @@ class BerryBushEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer, rowId: row} = pos
 		if (!row) return
 
 		row.health = 30
@@ -61,7 +61,7 @@ class BerryBushEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, type, row} = pos
+		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {
 			game.changeActiveRow(player, null)

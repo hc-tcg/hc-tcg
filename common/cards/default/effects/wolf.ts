@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import {getActiveRowPos} from '../../../utils/board'
@@ -45,7 +45,7 @@ class WolfEffectCard extends Card {
 
 			if (activated) return
 			activated = true
-			if (!pos.row || !pos.row.hermitCard || pos.rowIndex === null) return
+			if (!pos.rowId || !pos.rowId.hermitCard || pos.rowIndex === null) return
 
 			// Add a backlash attack, targeting the opponent's active hermit.
 			// Note that the opponent active row could be null, but then the attack will just do nothing.
@@ -53,7 +53,7 @@ class WolfEffectCard extends Card {
 
 			const backlashAttack = new AttackModel({
 				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: {row: pos.row, player: pos.player, rowIndex: pos.rowIndex},
+				attacker: {row: pos.rowId, player: pos.player, rowIndex: pos.rowIndex},
 				target: opponentActiveRow,
 				type: 'effect',
 				isBacklash: true,

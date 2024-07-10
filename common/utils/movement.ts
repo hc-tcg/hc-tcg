@@ -5,7 +5,7 @@ import {equalCard} from './cards'
 import {SlotInfo} from '../types/cards'
 
 function discardAtPos(pos: CardPosModel) {
-	const {player, row, type, index} = pos
+	const {player, rowId: row, type, index} = pos
 
 	if (type === 'single_use') {
 		player.board.singleUseCard = null
@@ -117,12 +117,12 @@ export function moveCardInstanceoHand(
 
 	cardPos.player.hooks.onDetach.call(card)
 
-	if (cardPos.row && cardPos.type === 'hermit') {
-		cardPos.row.hermitCard = null
-	} else if (cardPos.row && cardPos.type === 'attach') {
-		cardPos.row.effectCard = null
-	} else if (cardPos.row && cardPos.type === 'item' && cardPos.index !== null) {
-		cardPos.row.itemCards[cardPos.index] = null
+	if (cardPos.rowId && cardPos.type === 'hermit') {
+		cardPos.rowId.hermitCard = null
+	} else if (cardPos.rowId && cardPos.type === 'attach') {
+		cardPos.rowId.effectCard = null
+	} else if (cardPos.rowId && cardPos.type === 'item' && cardPos.index !== null) {
+		cardPos.rowId.itemCards[cardPos.index] = null
 	} else if (cardPos.type === 'single_use') {
 		cardPos.player.board.singleUseCard = null
 	}
@@ -135,7 +135,7 @@ export function moveCardInstanceoHand(
 
 /**Returns a `CardInstance` of the card in the slot, or `null` if it's empty. */
 export function getSlotCard(slotPos: SlotInfo): CardInstance | null {
-	const {row, index, type} = slotPos
+	const {rowId: row, index, type} = slotPos
 
 	if (!row || !index) return null
 

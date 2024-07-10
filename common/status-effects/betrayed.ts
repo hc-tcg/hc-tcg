@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
 import {RowStateWithHermit, StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {slot} from '../filters'
 import {hasEnoughEnergy} from '../utils/attacks'
 import {SlotInfo} from '../types/cards'
 
@@ -78,7 +78,7 @@ class BetrayedStatusEffect extends StatusEffect {
 				canPick: pickCondition,
 				onResult(pickedSlot) {
 					const rowIndex = pickedSlot.rowIndex
-					if (!pickedSlot.card || !rowIndex === null) return
+					if (!pickedSlot.cardId || !rowIndex === null) return
 					player.hooks.getAttackRequests.remove(instance)
 					pickedAfkHermit = pickedSlot
 				},
@@ -97,15 +97,15 @@ class BetrayedStatusEffect extends StatusEffect {
 
 			if (
 				pickedAfkHermit !== null &&
-				pickedAfkHermit.card &&
-				pickedAfkHermit.row &&
+				pickedAfkHermit.cardId &&
+				pickedAfkHermit.rowId &&
 				pickedAfkHermit.rowIndex !== null
 			) {
 				attack.setTarget(this.props.id, {
 					player: player,
 					rowIndex: pickedAfkHermit.rowIndex,
 					// This cast is safe because we verified in the if statement that the hermit card in the row exists.
-					row: pickedAfkHermit.row as RowStateWithHermit,
+					row: pickedAfkHermit.rowId as RowStateWithHermit,
 				})
 			}
 

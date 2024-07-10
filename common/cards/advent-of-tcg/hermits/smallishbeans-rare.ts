@@ -32,7 +32,7 @@ class SmallishbeansRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, row} = pos
+		const {player, rowId: row} = pos
 
 		player.hooks.onAttack.add(instance, (attack) => {
 			const attackId = this.getInstanceKey(instance)

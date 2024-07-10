@@ -1,7 +1,7 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
-import {SlotCondition, slot} from '../slot'
+import {SlotCondition, slot} from '../filters'
 import {SlotInfo} from '../types/cards'
 
 export type StatusEffectProps = {
@@ -34,7 +34,7 @@ export const damageEffect = {
 	damageEffect: true,
 	applyCondition: (game: GameModel, pos: SlotInfo) =>
 		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.damageEffect === false
+			(a) => a.targetInstance.instance !== pos.cardId?.instance || a.props.damageEffect === false
 		),
 }
 

@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
 import {CardInstance} from '../../../types/game-state'
 
@@ -27,7 +27,7 @@ class MilkBucketEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
-		const {player, opponentPlayer, row} = pos
+		const {player, opponentPlayer, rowId: row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
@@ -37,7 +37,7 @@ class MilkBucketEffectCard extends Card {
 				onResult(pickedSlot) {
 					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
 						return (
-							ail.targetInstance.instance === pickedSlot.card?.instance &&
+							ail.targetInstance.instance === pickedSlot.cardId?.instance &&
 							(ail.props.id == 'poison' || ail.props.id == 'badomen')
 						)
 					})

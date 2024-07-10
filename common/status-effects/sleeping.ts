@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class SleepingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -18,7 +18,7 @@ class SleepingStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
-		const {player, card, row, rowIndex} = pos
+		const {player, cardId: card, rowId: row, rowIndex} = pos
 
 		if (!card || !row?.hermitCard || rowIndex === null || !card.card.isHealth()) return
 

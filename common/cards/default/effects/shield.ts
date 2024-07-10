@@ -34,7 +34,7 @@ class ShieldEffectCard extends Card {
 		})
 
 		player.hooks.afterDefence.add(instance, (attack) => {
-			const {player, row} = pos
+			const {player, rowId: row} = pos
 
 			if (damageBlocked > 0 && row) {
 				discardCard(game, row.effectCard)

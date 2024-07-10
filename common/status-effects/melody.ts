@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {hasStatusEffect, removeStatusEffect} from '../utils/board'
 import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class MelodyStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -20,13 +20,13 @@ class MelodyStatusEffect extends StatusEffect {
 
 		player.hooks.onTurnStart.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
-			if (!targetPos || !targetPos.row || !targetPos.row.hermitCard) return
+			if (!targetPos || !targetPos.rowId || !targetPos.rowId.hermitCard) return
 			if (targetPos.rowIndex === null) return
 
-			const hermitCard = targetPos.row.hermitCard
+			const hermitCard = targetPos.rowId.hermitCard
 			if (hermitCard) {
-				const maxHealth = Math.max(targetPos.row.health, hermitCard.card.props.health)
-				targetPos.row.health = Math.min(targetPos.row.health + 10, maxHealth)
+				const maxHealth = Math.max(targetPos.rowId.health, hermitCard.card.props.health)
+				targetPos.rowId.health = Math.min(targetPos.rowId.health + 10, maxHealth)
 			}
 		})
 

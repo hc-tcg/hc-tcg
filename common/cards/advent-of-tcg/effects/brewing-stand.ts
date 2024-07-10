@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CardInstance, healHermit} from '../../../types/game-state'
 
@@ -23,7 +23,7 @@ class BrewingStandEffectCard extends Card {
 		const {player} = pos
 
 		player.hooks.onTurnStart.add(instance, () => {
-			if (!pos.row?.itemCards || pos.row.itemCards.filter((card) => card !== null).length === 0)
+			if (!pos.rowId?.itemCards || pos.rowId.itemCards.filter((card) => card !== null).length === 0)
 				return
 
 			if (pos.rowIndex !== player.board.activeRow) return
@@ -42,11 +42,11 @@ class BrewingStandEffectCard extends Card {
 					slot.rowIndex(pos.rowIndex)
 				),
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
+					if (!pickedSlot.cardId || pickedSlot.rowIndex === null) return
 
 					const playerRow = player.board.rows[pickedSlot.rowIndex]
 					healHermit(playerRow, 50)
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 				},
 			})
 		})

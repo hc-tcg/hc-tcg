@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardInstance, healHermit} from '../../../types/game-state'
 import {SlotInfo} from '../../../types/cards'
@@ -55,7 +55,7 @@ class KeralisRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
+					if (!pickedSlot.cardId || pickedSlot.rowIndex === null) return
 
 					// Store the info to use later
 					pickedAfkHermit = pickedSlot
@@ -73,7 +73,7 @@ class KeralisRareHermitCard extends Card {
 
 			if (!pickedAfkHermit) return
 			const pickedRowIndex = pickedAfkHermit.rowIndex
-			const pickedRow = pickedAfkHermit.row
+			const pickedRow = pickedAfkHermit.rowId
 			if (!pickedRow || !pickedRow.hermitCard || pickedRowIndex === null) return
 
 			const activeHermit = getActiveRow(player)?.hermitCard

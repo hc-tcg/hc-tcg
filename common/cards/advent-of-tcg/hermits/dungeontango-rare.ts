@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {discardCard} from '../../../utils/movement'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -56,9 +56,9 @@ class DungeonTangoRareHermitCard extends Card {
 				message: 'Choose an item card to discard',
 				canPick: slot.every(slot.player, slot.itemSlot, slot.activeRow, slot.not(slot.empty)),
 				onResult(pickedSlot) {
-					if (!pickedSlot.card) return
+					if (!pickedSlot.cardId) return
 
-					discardCard(game, pickedSlot.card)
+					discardCard(game, pickedSlot.cardId)
 
 					player.hand.push(player.pile.splice(i, 1)[0])
 				},

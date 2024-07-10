@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {SlotInfo} from '../../../types/cards'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -48,7 +48,7 @@ class PistonSingleUseCard extends Card {
 			message: 'Pick an item card from one of your active or AFK Hermits',
 			canPick: this.firstPickCondition,
 			onResult(pickResult) {
-				if (!pickResult.card) return
+				if (!pickResult.cardId) return
 
 				// Store the instance of the chosen item
 				pickedItemSlot = pickResult
@@ -66,13 +66,13 @@ class PistonSingleUseCard extends Card {
 				slot.rowHasHermit,
 				slot.not(slot.frozen),
 				slot.adjacentTo(
-					(game, pos) => !!pickedItemSlot?.card && slot.hasInstance(pickedItemSlot?.card)(game, pos)
+					(game, pos) => !!pickedItemSlot?.cardId && slot.hasInstance(pickedItemSlot?.cardId)(game, pos)
 				)
 			),
 			onResult(pickedSlot) {
 				const logInfo = pickedSlot
-				if (pickedItemSlot !== null && pickedItemSlot.card !== null) {
-					logInfo.card = pickedItemSlot.card
+				if (pickedItemSlot !== null && pickedItemSlot.cardId !== null) {
+					logInfo.cardId = pickedItemSlot.cardId
 				}
 
 				// Move the card and apply su card

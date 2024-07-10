@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -46,10 +46,10 @@ class MendingSingleUseCard extends Card {
 			onResult(pickedSlot) {
 				const hermitActiveEffectCard = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
 
-				if (!hermitActiveEffectCard || !hermitActiveEffectCard.row) return
+				if (!hermitActiveEffectCard || !hermitActiveEffectCard.rowId) return
 
 				const logInfo = pickedSlot
-				logInfo.card = hermitActiveEffectCard.row.effectCard
+				logInfo.cardId = hermitActiveEffectCard.rowId.effectCard
 
 				// Apply the mending card
 				applySingleUse(game, logInfo)

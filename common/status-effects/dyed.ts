@@ -2,7 +2,7 @@ import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {StatusEffectInstance} from '../types/game-state'
-import {slot} from '../slot'
+import {slot} from '../filters'
 
 class DyedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

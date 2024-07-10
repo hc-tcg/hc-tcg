@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance, RowStateWithHermit, healHermit} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -68,7 +68,7 @@ class PharaohRareHermitCard extends Card {
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					pickedRow = pickedSlot.row as RowStateWithHermit
+					pickedRow = pickedSlot.rowId as RowStateWithHermit
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one

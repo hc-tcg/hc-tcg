@@ -7,6 +7,7 @@ import {
 	PlayerState,
 	Message,
 	CardInstance,
+	PlayerId,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
 import {
@@ -18,8 +19,8 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {SlotCondition, slot} from '../slot'
-import {SlotInfo} from '../types/cards'
+import {SlotCondition, slot} from '../filters'
+import {RowInfo, SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 
 export class GameModel {
@@ -82,16 +83,16 @@ export class GameModel {
 
 	public get activeRow() {
 		const player = this.currentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
+		return player.activeRowId !== null ? this.state.rows.get(player.activeRowId) : null
 	}
 
 	public get opponentActiveRow() {
 		const player = this.opponentPlayer
-		return player.board.activeRow !== null ? player.board.rows[player.board.activeRow] : null
+		return player.activeRowId !== null ? this.state.rows.get(player.activeRowId) : null
 	}
 
 	public getPlayerIds() {
-		return Object.keys(this.players)
+		return Object.keys(this.players) as Array<PlayerId>
 	}
 
 	public getPlayers() {
@@ -110,6 +111,10 @@ export class GameModel {
 		return this.internalCode
 	}
 
+	public otherPlayer(player: PlayerId) {
+		return this.getPlayerIds().filter((id) => id != player)[0]
+	}
+
 	// Functions
 
 	/** Set actions as completed so they cannot be done again this turn */
@@ -121,6 +126,7 @@ export class GameModel {
 			}
 		}
 	}
+
 	/** Remove action from the completed list so they can be done again this turn */
 	public removeCompletedActions(...actions: TurnActions) {
 		for (let i = 0; i < actions.length; i++) {
@@ -247,10 +253,13 @@ export class GameModel {
 	/** Update the cards that the players are able to select */
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
-				return cards
-			}, [] as Array<[CardInstance, Array<PickInfo>]>)
+			return player.hand.reduce(
+				(cards, card) => {
+					cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
+					return cards
+				},
+				[] as Array<[CardInstance, Array<PickInfo>]>
+			)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -258,7 +267,7 @@ export class GameModel {
 	}
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerState, newRow: number | null): boolean {
+	public changeActiveRow(player: PlayerState, newRow: RowInfo): boolean {
 		const currentActiveRow = player.board.activeRow
 
 		// Can't change to existing active row
@@ -286,85 +295,17 @@ export class GameModel {
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: number, newRow: number): boolean {
-		const activeRowChanged = this.changeActiveRow(player, newRow)
-		if (!activeRowChanged) return false
+	public swapRows(player: PlayerState, oldRow: RowInfo, newRow: RowInfo) {
+		const activeRowChanged = this.changeActiveRow(player, oldRow)
 
-		const oldRowState = player.board.rows[oldRow]
-		player.board.rows[oldRow] = player.board.rows[newRow]
-		player.board.rows[newRow] = oldRowState
-
-		return true
+		let oldIndex = oldRow.index
+		oldRow.index = newRow.index
+		newRow.index = oldIndex
 	}
 
 	/** Return the slots that fullfil a condition given by the predicate */
 	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
-		let predicate = slot.every(...predicates)
-		let pickableSlots: Array<SlotInfo> = []
 
-		for (const player of Object.values(this.state.players)) {
-			const opponentPlayer = Object.values(this.state.players).filter(
-				(opponent) => opponent.id !== player.id
-			)[0]
-
-			for (let rowIndex = 0; rowIndex < player.board.rows.length; rowIndex++) {
-				const row = player.board.rows[rowIndex]
-
-				const appendAttachCondition = (
-					type: PickedSlotType,
-					index: number,
-					cardInstance: CardInstance | null
-				) => {
-					const slotInfo = {
-						player,
-						opponentPlayer,
-						type,
-						index,
-						rowIndex,
-						row,
-						card: cardInstance,
-					}
-					if (predicate(this, slotInfo)) {
-						pickableSlots.push(slotInfo)
-					}
-				}
-
-				for (const [index, item] of row.itemCards.entries()) {
-					appendAttachCondition('item', index, item)
-				}
-				appendAttachCondition('attach', 3, row.effectCard)
-				appendAttachCondition('hermit', 4, row.hermitCard)
-			}
-
-			for (const card of player.hand) {
-				const slotInfo: SlotInfo = {
-					player: player,
-					opponentPlayer: opponentPlayer,
-					type: 'hand',
-					index: null,
-					rowIndex: null,
-					row: null,
-					card,
-				}
-				if (predicate(this, slotInfo)) pickableSlots.push(slotInfo)
-			}
-		}
-
-		const singleUseSlotInfo: SlotInfo = {
-			player: this.currentPlayer,
-			opponentPlayer: this.opponentPlayer,
-			type: 'single_use',
-			index: null,
-			rowIndex: null,
-			row: null,
-			card: this.currentPlayer.board.singleUseCard,
-		}
-
-		if (predicate(this, singleUseSlotInfo)) {
-			pickableSlots.push(singleUseSlotInfo)
-		}
-
-		return pickableSlots
 	}
 
 	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
@@ -382,34 +323,30 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 		if (slotA.type !== slotB.type) return
-		if (!slotA.row || !slotB.row) return
+		if (!slotA.rowId || !slotB.rowId) return
 
 		// Swap
 		if (slotA.type === 'hermit') {
-			let tempCard = slotA.row?.hermitCard
-			slotA.row.hermitCard = slotB.row.hermitCard
-			slotB.row.hermitCard = tempCard
+			let tempCard = slotA.row.hermit.card
+			slotA.row.hermit.card = slotB.row.hermit.card
+			slotB.row.hermit.card = tempCard
 		} else if (slotA.type === 'attach') {
-			let tempCard = slotA.row.effectCard
-			slotA.row.effectCard = slotB.row.effectCard
-			slotB.row.effectCard = tempCard
+			let tempCard = slotA.row.attach.card
+			slotA.row.attach.card = slotB.row.attach.card
+			slotB.row.attach.card = tempCard
 		} else if (slotA.type === 'item') {
 			if (slotA.index === null || slotB.index === null) return
-			let tempCard = slotA.row.itemCards[slotA.index]
-			slotA.row.itemCards[slotA.index] = slotB.row.itemCards[slotB.index]
-			slotB.row.itemCards[slotB.index] = tempCard
+			let tempCard = slotA.row.items[slotA.index].card
+			slotA.row.items[slotA.index].card = slotB.row.items[slotB.index].card
+			slotB.row.items[slotB.index].card = tempCard
 		}
 
 		if (!withoutDetach) {
 			// onAttach
 			;[slotA, slotB].forEach((slot) => {
-				if (!slot.card) return
-				const cardPos = getCardPos(this, slot.card)
-				if (!cardPos) return
+				slot.card?.onAttach(this, slot.cardId, slot)
 
-				slot.card.card.onAttach(this, slot.card, cardPos)
-
-				cardPos.player.hooks.onAttach.call(slot.card)
+				cardPos.player.hooks.onAttach.call(slot.cardId)
 			})
 		}
 	}
@@ -419,7 +356,7 @@ export class GameModel {
 			return {
 				playerId: slot.player.id,
 				rowIndex: slot.rowIndex,
-				card: slot.card?.toLocalCardInstance() || null,
+				card: slot.cardId?.toLocalCardInstance() || null,
 				type: slot.type,
 				index: slot.index,
 			}

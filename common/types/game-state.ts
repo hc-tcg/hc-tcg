@@ -1,4 +1,3 @@
-import {CARDS} from '../cards'
 import Card, {
 	Attach,
 	CardProps,
@@ -14,11 +13,13 @@ import Card, {
 } from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {SlotCondition} from '../slot'
+import {GameModel} from '../models/game-model'
+import {SlotCondition, slot} from '../filters'
 import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT} from './cards'
+import {EnergyT, RowInfo, SlotInfo} from './cards'
+import { EntityList } from './ecs'
 import {GameHook, WaterfallHook} from './hooks'
 import {
 	LocalCardInstance,
@@ -30,23 +31,35 @@ import {
 	WithoutFunctions,
 } from './server-requests'
 
-export type PlayerId = string
+export type PlayerId = string & {__player_id: never}
+
+export type InstanceId = string & {__instance_id: never}
+
+export function newInstanceId(): InstanceId {
+	return Math.random().toString() as InstanceId
+}
 
 export class CardInstance<Props extends CardProps = CardProps> {
+	readonly game: GameModel
 	readonly card: Card<Props>
-	readonly instance: string
+	readonly instance: CardId
 
-	constructor(card: Card<Props>, instance: string) {
+	constructor(game: GameModel, card: Card<Props>) {
+		this.game = game
 		this.card = card
-		this.instance = instance
+		this.instance = newInstanceId() as CardId
 	}
 
-	static fromCardId(cardId: string) {
-		return new CardInstance(CARDS[cardId], Math.random().toString())
-	}
-
-	static fromLocalCardInstance(localCardInstance: LocalCardInstance) {
-		return new CardInstance(CARDS[localCardInstance.props.id], localCardInstance.instance)
+	static fromLocalCardInstance(
+		game: GameModel,
+		localCardInstance: LocalCardInstance
+	): CardInstance | null {
+		for (const instance of Object.values(game.state.cards)) {
+			if (instance.instance == localCardInstance.instance) {
+				return instance
+			}
+		}
+		throw new Error('An ID for a nonexistent card should never be created')
 	}
 
 	public toLocalCardInstance(): LocalCardInstance<Props> {
@@ -58,6 +71,10 @@ export class CardInstance<Props extends CardProps = CardProps> {
 
 	public get props(): Props {
 		return this.card.props
+	}
+
+	public getSlot(): SlotInfo | null {
+		return this.game.findSlot(slot.hasInstance(this))
 	}
 
 	public isItem(): this is CardInstance<Item> {
@@ -77,30 +94,14 @@ export class CardInstance<Props extends CardProps = CardProps> {
 	}
 }
 
-export type RowStateWithHermit = {
-	hermitCard: CardInstance<HasHealth>
-	effectCard: CardInstance<Attach> | null
-	itemCards: Array<CardInstance<CardProps> | null>
-	health: number
-}
+export function healHermit(row: RowInfo | null, amount: number) {
+	if (!row?.hermit?.card) return
 
-export type RowStateWithoutHermit = {
-	hermitCard: null
-	effectCard: null
-	itemCards: Array<null>
-	health: null
-}
-
-export function healHermit(row: RowState | null, amount: number) {
-	if (!row || !row?.hermitCard) return
-
-	if (!isHealth(row.hermitCard.props)) {
+	if (!isHealth(row.hermit.card.props)) {
 		return
 	}
-	row.health = Math.min(row.health + amount, row.hermitCard.props.health)
+	row.health = Math.min(row.health + amount, row.hermit.card.props.health)
 }
-
-export type RowState = RowStateWithHermit | RowStateWithoutHermit
 
 export type LocalRowState = {
 	hermitCard: LocalCardInstance<HasHealth> | null
@@ -172,12 +173,7 @@ export type PlayerState = {
 	pickableSlots: Array<PickInfo> | null
 	cardsCanBePlacedIn: Array<[CardInstance, Array<PickInfo>]>
 
-	board: {
-		activeRow: number | null
-		singleUseCard: CardInstance<SingleUse> | null
-		singleUseCardUsed: boolean
-		rows: Array<RowState>
-	}
+	activeRowId: RowId | null
 
 	hooks: {
 		/** Hook that modifies and returns available energy from item cards */
@@ -297,11 +293,21 @@ export type LocalTurnState = {
 	availableActions: TurnActions
 }
 
+export type SlotId = InstanceId & {__slot_id: never}
+export type RowId = InstanceId & {__row_id: never}
+export type CardId = InstanceId & {__card_id: never}
+export type StatusEffectId = InstanceId & {__status_effect_id: never}
+
 export type GameState = {
 	turn: TurnState
 	order: Array<PlayerId>
 	players: Record<string, PlayerState>
-	statusEffects: Array<StatusEffectInstance>
+
+	// ECS Objects
+	slots: EntityList<SlotId, SlotInfo>
+	rows: EntityList<RowId, RowInfo>
+	cards: EntityList<CardId, CardInstance>
+	statusEffects: EntityList<StatusEffectId, StatusEffectInstance>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>

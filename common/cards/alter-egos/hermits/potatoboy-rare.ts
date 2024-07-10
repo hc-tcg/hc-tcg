@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {getActiveRow} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance, healHermit} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -53,7 +53,7 @@ class PotatoBoyRareHermitCard extends Card {
 					slot.hermitSlot,
 					slot.not(slot.empty)
 				)
-				.forEach(({row, rowIndex, card}) => {
+				.forEach(({rowId: row, rowIndex, cardId: card}) => {
 					if (!card || rowIndex === null) return
 					healHermit(row, 40)
 					game.battleLog.addEntry(

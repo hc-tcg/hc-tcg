@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance, healHermit} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
@@ -35,7 +35,7 @@ class GoldenAppleSingleUseCard extends Card {
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
 				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.card || rowIndex === null) return
+				if (!pickedSlot.cardId || rowIndex === null) return
 
 				const row = player.board.rows[rowIndex]
 				if (!row.health) return

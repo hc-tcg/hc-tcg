@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../slot'
+import {slot} from '../../../filters'
 import {CardInstance, TurnActions} from '../../../types/game-state'
 import {applyStatusEffect, getActiveRow} from '../../../utils/board'
 import Card, {SingleUse, singleUse} from '../../base/card'
