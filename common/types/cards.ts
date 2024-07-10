@@ -75,19 +75,19 @@ export class SlotComponent {
 		this.type = type
 	}
 
-	public onBoard(): this is BoardSlotInfo {
+	public onBoard(): this is BoardSlotComponent {
 		return false
 	}
 
-	public inHand(): this is HandSlotInfo {
+	public inHand(): this is HandSlotComponent {
 		return false
 	}
 
-	public inPile(): this is PileSlotInfo {
+	public inPile(): this is PileSlotComponent {
 		return false
 	}
 
-	public inDiscardPile(): this is DiscardSlotInfo {
+	public inDiscardPile(): this is DiscardSlotComponent {
 		return false
 	}
 
@@ -102,7 +102,7 @@ export class SlotComponent {
 	}
 }
 
-export class BoardSlotInfo extends SlotComponent {
+export class BoardSlotComponent extends SlotComponent {
 	readonly index: number | null
 	readonly rowEntity: RowEntity | null
 
@@ -119,7 +119,7 @@ export class BoardSlotInfo extends SlotComponent {
 		this.rowEntity = row
 	}
 
-	override onBoard(): this is BoardSlotInfo {
+	override onBoard(): this is BoardSlotComponent {
 		return true
 	}
 
@@ -129,32 +129,32 @@ export class BoardSlotInfo extends SlotComponent {
 	}
 }
 
-export class HandSlotInfo extends SlotComponent {
+export class HandSlotComponent extends SlotComponent {
 	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
 		super(game, entity, playerId, 'hand')
 	}
 
-	override inHand(): this is HandSlotInfo {
+	override inHand(): this is HandSlotComponent {
 		return true
 	}
 }
 
-export class PileSlotInfo extends SlotComponent {
+export class PileSlotComponent extends SlotComponent {
 	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
 		super(game, entity, playerId, 'pile')
 	}
 
-	override inPile(): this is PileSlotInfo {
+	override inPile(): this is PileSlotComponent {
 		return true
 	}
 }
 
-export class DiscardSlotInfo extends SlotComponent {
+export class DiscardSlotComponent extends SlotComponent {
 	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
 		super(game, entity, playerId, 'discardPile')
 	}
 
-	override inDiscardPile(): this is DiscardSlotInfo {
+	override inDiscardPile(): this is DiscardSlotComponent {
 		return true
 	}
 }

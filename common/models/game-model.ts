@@ -19,7 +19,7 @@ import {
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition, card, slot} from '../filters'
-import {BoardSlotInfo, RowInfo, SlotComponent} from '../types/cards'
+import {BoardSlotComponent, RowInfo, SlotComponent} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 
 export class GameModel {

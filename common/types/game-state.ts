@@ -85,6 +85,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return this.game.state.slots.get(this.slotEntity)
 	}
 
+	public set slot(component: SlotComponent) {
+		this.slotEntity = component.entity
+	}
+
 	public get player(): PlayerState {
 		return this.game.state.players[this.playerId]
 	}

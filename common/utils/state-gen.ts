@@ -2,7 +2,7 @@ import {getPlayerState} from '../../server/src/utils/state-gen'
 import {DEBUG_CONFIG} from '../config'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
-import {BoardSlotInfo, HandSlotInfo, PileSlotInfo, RowComponent} from '../types/cards'
+import {BoardSlotComponent, HandSlotComponent, PileSlotComponent, RowComponent} from '../types/cards'
 import {EntityList} from '../types/entity-list'
 import {CardComponent, GameState, PlayerId} from '../types/game-state'
 
@@ -10,11 +10,11 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = gameState.rows.new(RowComponent, playerId, rowIndex)
 
-		gameState.slots.new(BoardSlotInfo, playerId, 'item', 0, row.entity)
-		gameState.slots.new(BoardSlotInfo, playerId, 'item', 1, row.entity)
-		gameState.slots.new(BoardSlotInfo, playerId, 'item', 2, row.entity)
-		gameState.slots.new(BoardSlotInfo, playerId, 'attach', 3, row.entity)
-		gameState.slots.new(BoardSlotInfo, playerId, 'hermit', 4, row.entity)
+		gameState.slots.new(BoardSlotComponent, playerId, 'item', 0, row.entity)
+		gameState.slots.new(BoardSlotComponent, playerId, 'item', 1, row.entity)
+		gameState.slots.new(BoardSlotComponent, playerId, 'item', 2, row.entity)
+		gameState.slots.new(BoardSlotComponent, playerId, 'attach', 3, row.entity)
+		gameState.slots.new(BoardSlotComponent, playerId, 'hermit', 4, row.entity)
 	}
 
 	let cards = [...game.players[playerId].deck.cards]
@@ -23,7 +23,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 
 	for (const card of cards) {
 		const cardInstance = gameState.cards.new(CardComponent, card.props.id, playerId)
-		cardInstance.slotEntity = gameState.slots.new(PileSlotInfo, playerId).entity
+		cardInstance.slotEntity = gameState.slots.new(PileSlotComponent, playerId).entity
 	}
 
 	const pack = gameState.cards.filter(card.player(playerId))
@@ -40,7 +40,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 
 	for (let i = 0; i < amountOfStartingCards && i < pack.length; i++) {
-		pack[i].slotEntity = gameState.slots.new(HandSlotInfo, playerId).entity
+		pack[i].slotEntity = gameState.slots.new(HandSlotComponent, playerId).entity
 	}
 }
 
@@ -86,7 +86,7 @@ export function getGameState(game: GameModel): GameState {
 	setupGameStateForPlayer(game, gameState, playerIds[0])
 	setupGameStateForPlayer(game, gameState, playerIds[1])
 
-	gameState.slots.new(BoardSlotInfo, null, 'single_use', null, null)
+	gameState.slots.new(BoardSlotComponent, null, 'single_use', null, null)
 
 	return gameState
 }

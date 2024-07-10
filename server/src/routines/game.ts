@@ -18,7 +18,7 @@ import {
 	TurnAction,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {DiscardSlotInfo, EnergyT, HandSlotInfo} from 'common/types/cards'
+import {DiscardSlotComponent, EnergyT, HandSlotComponent} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
 import {discardCard, discardSingleUse} from 'common/utils/movement'
 import {printHooksState} from '../utils'
@@ -583,16 +583,16 @@ function* turnSaga(game: GameModel) {
 	const singleUseCard = game.state.cards.find(card.attached, card.singleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
-			singleUseCard.slotEntity = game.state.slots.new(HandSlotInfo, currentPlayer.id).entity
+			singleUseCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.id)
 		} else {
-			singleUseCard.slotEntity = game.state.slots.new(DiscardSlotInfo, currentPlayer.id).entity
+			singleUseCard.slot = game.state.slots.new(DiscardSlotComponent, currentPlayer.id)
 		}
 	}
 
 	// Draw a card from deck when turn ends
 	const newCard = game.state.cards.find(card.player(currentPlayer.id), card.slotFulfills(slot.pile))
 	if (newCard) {
-		newCard.slotEntity = game.state.slots.new(HandSlotInfo, currentPlayer.id).entity
+		newCard.slotEntity = game.state.slots.new(HandSlotComponent, currentPlayer.id).entity
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

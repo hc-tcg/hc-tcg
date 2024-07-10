@@ -1,6 +1,6 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
 import {
 	TurnActions,
 	CardComponent,
@@ -13,7 +13,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT} from 'common/types/cards'
+import {EnergyT, HandSlotComponent} from 'common/types/cards'
 import {AttackModel} from 'common/models/attack-model'
 import {GameHook, WaterfallHook} from 'common/types/hooks'
 import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
@@ -139,30 +139,17 @@ export function getStarterPack(): Array<LocalCardInstance> {
 }
 
 export function getPlayerState(game: GameModel, player: PlayerModel): PlayerState {
-	// const allCards = Object.values(CARDS).map((card: Card) => new CardInstance(card, card.props.id))
-	// let pack = DEBUG_CONFIG.unlimitedCards
-	// ? allCards
-	// : player.deck.cards.map((card) => CardInstance.fromLocalCardInstance(card))
+	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+		const id = DEBUG_CONFIG.extraStartingCards[i]
+		if (!CARDS[id]) {
+			console.log('Invalid extra starting card in debug config:', id)
+			continue
+		}
 
-	// // shuffle cards
-	// !DEBUG_CONFIG.unlimitedCards && pack.sort(() => 0.5 - Math.random())
+		let card = game.state.cards.new(CardComponent, id, player.id)
+		card.slot = game.state.slots.new(HandSlotComponent, player.id)
+	}
 
-	// // randomize instances
-
-	// for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-	// 	const id = DEBUG_CONFIG.extraStartingCards[i]
-	// 	const card = CARDS[id]
-	// 	if (!card) {
-	// 		console.log('Invalid extra starting card in debug config:', id)
-	// 		continue
-	// 	}
-
-	// 	const cardInfo = new CardInstance(card, Math.random().toString())
-	// 	pack.push(cardInfo)
-	// 	hand.unshift(cardInfo)
-	// }
-
-	// const TOTAL_ROWS = 5
 	return {
 		id: player.id,
 		playerName: player.name,
