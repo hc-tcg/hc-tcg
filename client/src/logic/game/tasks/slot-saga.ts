@@ -1,15 +1,12 @@
 import {select} from 'typed-redux-saga'
 import {put, takeLeading, call, take, putResolve} from 'redux-saga/effects'
 import {SagaIterator} from 'redux-saga'
-import {CardComponent} from 'common/types/game-state'
 import {
 	ChangeActiveHermitActionData,
 	PickSlotActionData,
 	PlayCardActionData,
 	slotToPlayCardAction,
 } from 'common/types/action-data'
-import {CARDS} from 'common/cards'
-import {getPlayerId} from 'logic/session/session-selectors'
 import {
 	getAvailableActions,
 	getSelectedCard,
@@ -61,21 +58,19 @@ function* pickWithSelectedSaga(
 }
 
 function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
-	const {playerId, rowIndex, type} = action.payload.pickInfo
+	const {type} = action.payload.pickInfo
 
 	if (type !== 'hermit') return
 
-	const currentPlayerId = yield* select(getPlayerId)
 	const playerState = yield* select(getPlayerState)
 	const settings = yield* select(getSettings)
 
-	if (!playerState || rowIndex === null) return
-	const row = playerState.board.rows[rowIndex]
-	if (!row.hermit) return
+	let activeRow = playerState?.board.rows.find(
+		(row) => row.hermit.slot == action.payload.pickInfo.entity
+	)
+	if (!activeRow) return
 
-	if (playerId !== currentPlayerId) return
-
-	if (playerState.board.activeRow === rowIndex) {
+	if (playerState?.board.activeRow === activeRow.entity) {
 		yield put(setOpenedModal('attack'))
 	} else {
 		if (settings.confirmationDialogs !== 'off') {
