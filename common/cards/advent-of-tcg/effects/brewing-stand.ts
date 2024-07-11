@@ -1,24 +1,25 @@
-import EffectCard from '../../base/effect-card'
 import {GameModel} from '../../../models/game-model'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import {HERMIT_CARDS} from '../..'
 import {slot} from '../../../slot'
+import Card, {Attach, attach} from '../../base/card'
+import {CardInstance, healHermit} from '../../../types/game-state'
 
-class BrewingStandEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'brewing_stand',
-			numericId: 201,
-			name: 'Brewing stand',
-			rarity: 'rare',
-			description:
-				'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
-		})
+class BrewingStandEffectCard extends Card {
+	props: Attach = {
+		...attach,
+		id: 'brewing_stand',
+		numericId: 201,
+		name: 'Brewing stand',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.add(instance, () => {
@@ -27,47 +28,34 @@ class BrewingStandEffectCard extends EffectCard {
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, {cardId: this.id, cardInstance: instance})[0]
+			const flip = flipCoin(player, instance)[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: 'Pick an item card to discard',
 				canPick: slot.every(
 					slot.player,
 					slot.itemSlot,
 					slot.not(slot.empty),
-					(game, pick) => pick.rowIndex === pos.rowIndex
+					slot.rowIndex(pos.rowIndex)
 				),
 				onResult(pickedSlot) {
 					if (!pickedSlot.card || pickedSlot.rowIndex === null) return
 
 					const playerRow = player.board.rows[pickedSlot.rowIndex]
-					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return
-					const hermitInfo = HERMIT_CARDS[hermitCard.cardId]
-					if (hermitInfo) {
-						const maxHealth = Math.max(playerRow.health, hermitInfo.health)
-						playerRow.health = Math.min(playerRow.health + 50, maxHealth)
-					} else {
-						// Armor Stand
-						playerRow.health += 50
-					}
+					healHermit(playerRow, 50)
 					discardCard(game, pickedSlot.card)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.onTurnStart.remove(instance)
-	}
-
-	public override getExpansion(): string {
-		return 'advent_of_tcg'
 	}
 }
 

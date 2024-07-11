@@ -1,52 +1,40 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance as StatusEffectInstance} from '../types/game-state'
 import {CARDS} from '../cards'
 import {slot} from '../slot'
 
 class BadOmenStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'badomen',
-			name: 'Bad Omen',
-			description: 'All coinflips are tails.',
-			duration: 3,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		id: 'badomen',
+		name: 'Bad Omen',
+		description: 'All coinflips are tails.',
+		counter: 3,
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(
-				player.id,
-				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $bBad Omen$`
-			)
-		}
+		opponentPlayer.hooks.onTurnStart.add(instance, () => {
+			if (!instance.counter) return
+			instance.counter--
 
-		opponentPlayer.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
-
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
 		})
 
-		player.hooks.onCoinFlip.addBefore(statusEffectInfo.statusEffectInstance, (card, coinFlips) => {
-			const targetPos = game.findSlot(slot.hasInstance(statusEffectInfo.targetInstance))
+		player.hooks.onCoinFlip.addBefore(instance, (card, coinFlips) => {
+			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
 
 			// Only modify when the target hermit is "flipping"
 			const {currentPlayer} = game
 			if (
-				statusEffectInfo.targetInstance !== card.cardInstance &&
+				instance.targetInstance.instance !== card.instance &&
 				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips
@@ -59,10 +47,10 @@ class BadOmenStatusEffect extends StatusEffect {
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onCoinFlip.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
+		player.hooks.onCoinFlip.remove(instance)
+		opponentPlayer.hooks.onTurnStart.remove(instance)
 	}
 }
 

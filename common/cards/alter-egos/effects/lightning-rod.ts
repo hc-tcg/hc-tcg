@@ -1,28 +1,31 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {slot, SlotCondition} from '../../../slot'
+import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {isTargetingPos} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
-import EffectCard from '../../base/effect-card'
+import Card, {attach, Attach} from '../../base/card'
 
-class LightningRodEffectCard extends EffectCard {
-	constructor() {
-		super({
-			id: 'lightning_rod',
-			numericId: 121,
-			name: 'Lightning Rod',
-			rarity: 'rare',
-			description:
-				"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
-		})
+class LightningRodEffectCard extends Card {
+	props: Attach = {
+		...attach,
+		id: 'lightning_rod',
+		numericId: 121,
+		name: 'Lightning Rod',
+		expansion: 'alter_egos',
+		rarity: 'rare',
+		tokens: 2,
+		description:
+			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
+		attachCondition: slot.every(
+			attach.attachCondition,
+			slot.not(
+				slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod')))
+			)
+		),
 	}
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		slot.not(slot.someSlotFulfills(slot.every(slot.player, slot.effectSlot, slot.hasId(this.id))))
-	)
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer, row, rowIndex} = pos
 
 		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
@@ -35,7 +38,7 @@ class LightningRodEffectCard extends EffectCard {
 			// Attack already has to be targeting us
 			if (attack.getTarget()?.player.id !== player.id) return
 
-			attack.setTarget(this.id, {
+			attack.setTarget(this.props.id, {
 				player,
 				rowIndex,
 				row,
@@ -50,14 +53,10 @@ class LightningRodEffectCard extends EffectCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer} = pos
 		opponentPlayer.hooks.beforeAttack.remove(instance)
 		opponentPlayer.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
 	}
 }
 

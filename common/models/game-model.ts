@@ -7,16 +7,22 @@ import {
 	PlayerState,
 	GameRules,
 	Message,
-	CardT,
+	CardInstance,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
-import {ModalRequest, PickInfo, PickRequest, PickedSlotType} from '../types/server-requests'
+import {
+	CopyAttack,
+	ModalRequest,
+	PickInfo,
+	PickRequest,
+	PickedSlotType,
+	SelectCards,
+} from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {SlotCondition} from '../slot'
-import {SlotInfo, SlotTypeT} from '../types/cards'
+import {SlotCondition, slot} from '../slot'
+import {SlotInfo} from '../types/cards'
 import {getCardPos} from './card-pos-model'
 import {VirtualPlayerModel} from './virtual-player-model'
-import {CARDS} from '../cards'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -226,6 +232,8 @@ export class GameModel {
 		}
 	}
 
+	public addModalRequest(newRequest: SelectCards.Request, before?: boolean): void
+	public addModalRequest(newRequest: CopyAttack.Request, before?: boolean): void
 	public addModalRequest(newRequest: ModalRequest, before = false) {
 		if (before) {
 			this.state.modalRequests.unshift(newRequest)
@@ -250,9 +258,9 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
 			return player.hand.reduce((cards, card) => {
-				cards.push([card, this.getPickableSlots(CARDS[card.cardId].attachCondition)])
+				cards.push([card, this.getPickableSlots(card.card.props.attachCondition)])
 				return cards
-			}, [] as Array<[CardT, Array<PickInfo>]>)
+			}, [] as Array<[CardInstance, Array<PickInfo>]>)
 		}
 
 		this.currentPlayer.cardsCanBePlacedIn = getCardsCanBePlacedIn(this.currentPlayer)
@@ -300,7 +308,8 @@ export class GameModel {
 	}
 
 	/** Return the slots that fullfil a condition given by the predicate */
-	public filterSlots(predicate: SlotCondition): Array<SlotInfo> {
+	public filterSlots(...predicates: Array<SlotCondition>): Array<SlotInfo> {
+		let predicate = slot.every(...predicates)
 		let pickableSlots: Array<SlotInfo> = []
 
 		for (const player of Object.values(this.state.players)) {
@@ -314,7 +323,7 @@ export class GameModel {
 				const appendAttachCondition = (
 					type: PickedSlotType,
 					index: number,
-					cardInstance: CardT | null
+					cardInstance: CardInstance | null
 				) => {
 					const slotInfo = {
 						player,
@@ -333,7 +342,7 @@ export class GameModel {
 				for (const [index, item] of row.itemCards.entries()) {
 					appendAttachCondition('item', index, item)
 				}
-				appendAttachCondition('effect', 3, row.effectCard)
+				appendAttachCondition('attach', 3, row.effectCard)
 				appendAttachCondition('hermit', 4, row.hermitCard)
 			}
 
@@ -368,8 +377,8 @@ export class GameModel {
 		return pickableSlots
 	}
 
-	public findSlot(prediate: SlotCondition): SlotInfo | null {
-		return this.filterSlots(prediate)[0]
+	public findSlot(...predicates: Array<SlotCondition>): SlotInfo | null {
+		return this.filterSlots(slot.every(...predicates))[0]
 	}
 
 	/**
@@ -390,7 +399,7 @@ export class GameModel {
 			let tempCard = slotA.row?.hermitCard
 			slotA.row.hermitCard = slotB.row.hermitCard
 			slotB.row.hermitCard = tempCard
-		} else if (slotA.type === 'effect') {
+		} else if (slotA.type === 'attach') {
 			let tempCard = slotA.row.effectCard
 			slotA.row.effectCard = slotB.row.effectCard
 			slotB.row.effectCard = tempCard
@@ -405,13 +414,12 @@ export class GameModel {
 			// onAttach
 			;[slotA, slotB].forEach((slot) => {
 				if (!slot.card) return
-				const cardPos = getCardPos(this, slot.card.cardInstance)
+				const cardPos = getCardPos(this, slot.card)
 				if (!cardPos) return
 
-				const cardInfo = CARDS[slot.card.cardId]
-				cardInfo.onAttach(this, slot.card.cardInstance, cardPos)
+				slot.card.card.onAttach(this, slot.card, cardPos)
 
-				cardPos.player.hooks.onAttach.call(slot.card.cardInstance)
+				cardPos.player.hooks.onAttach.call(slot.card)
 			})
 		}
 	}
@@ -421,7 +429,7 @@ export class GameModel {
 			return {
 				playerId: slot.player.id,
 				rowIndex: slot.rowIndex,
-				card: slot.card,
+				card: slot.card?.toLocalCardInstance() || null,
 				type: slot.type,
 				index: slot.index,
 			}

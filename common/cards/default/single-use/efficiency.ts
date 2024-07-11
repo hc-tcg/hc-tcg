@@ -1,24 +1,23 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import SingleUseCard from '../../base/single-use-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class EfficiencySingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'efficiency',
-			numericId: 17,
-			name: 'Efficiency',
-			rarity: 'rare',
-			description:
-				'Use an attack from your active Hermit without having the necessary item cards attached.',
-		})
+class EfficiencySingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'efficiency',
+		numericId: 17,
+		name: 'Efficiency',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 1,
+		description:
+			'Use an attack from your active Hermit without having the necessary item cards attached.',
+		showConfirmationModal: true,
 	}
 
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.add(instance, () => {
 			player.hooks.availableEnergy.add(instance, (availableEnergy) => {
@@ -41,7 +40,7 @@ class EfficiencySingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
 	}

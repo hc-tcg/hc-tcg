@@ -4,10 +4,9 @@ import SlimeballEffectCard from './slimeball'
 import CatEffectCard from './cat'
 import BerryBushEffectCard from './berry-bush'
 import TrapdoorEffectCard from './trapdoor'
-import EffectCard from '../../base/effect-card'
+import Card from '../../base/card'
 
-const effectCardClasses: Array<EffectCard> = [
-	// Advent of TCG cards
+const effectCardClasses: Array<Card> = [
 	new BrewingStandEffectCard(),
 	new FurnaceEffectCard(),
 	new SlimeballEffectCard(),

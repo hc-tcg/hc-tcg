@@ -1,34 +1,38 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import HermitCard from '../../base/hermit-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {Hermit, hermit} from '../../base/card'
 
-class LDShadowLadyRareHermitCard extends HermitCard {
-	constructor() {
-		super({
-			id: 'ldshadowlady_rare',
-			numericId: 211,
-			name: 'Lizzie',
-			rarity: 'rare',
-			hermitType: 'terraform',
-			health: 290,
-			primary: {
-				name: 'Fairy Fort',
-				cost: ['terraform'],
-				damage: 50,
-				power: null,
-			},
-			secondary: {
-				name: 'Evict',
-				cost: ['terraform', 'terraform', 'any'],
-				damage: 90,
-				power:
-					"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
-			},
-		})
+class LDShadowLadyRareHermitCard extends Card {
+	props: Hermit = {
+		...hermit,
+		id: 'ldshadowlady_rare',
+		numericId: 211,
+		name: 'Lizzie',
+		expansion: 'advent_of_tcg',
+		palette: 'advent_of_tcg',
+		background: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 1,
+		type: 'terraform',
+		health: 290,
+		primary: {
+			name: 'Fairy Fort',
+			cost: ['terraform'],
+			damage: 50,
+			power: null,
+		},
+		secondary: {
+			name: 'Evict',
+			cost: ['terraform', 'terraform', 'any'],
+			damage: 90,
+			power:
+				"Move your opponent's active Hermit and any attached cards to an open slot on their board, if one is available.",
+		},
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -52,7 +56,7 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.id,
+				id: this.props.id,
 				message: "Move your opponent's active Hermit to a new slot.",
 				canPick: pickCondition,
 				onResult(pickedSlot) {
@@ -77,22 +81,10 @@ class LDShadowLadyRareHermitCard extends HermitCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		player.hooks.afterAttack.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
-	}
-
-	override getPalette() {
-		return 'advent_of_tcg'
-	}
-
-	override getBackground() {
-		return 'advent_of_tcg'
 	}
 }
 

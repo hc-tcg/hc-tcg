@@ -1,13 +1,13 @@
-import {CARDS} from '../cards'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {RowPos, SlotInfo} from '../types/cards'
 import {
-	StatusEffectT,
+	StatusEffectInstance,
 	GenericActionResult,
 	PlayerState,
 	RowStateWithHermit,
+	CardInstance,
 } from '../types/game-state'
 
 export function getActiveRow(player: PlayerState): RowStateWithHermit | null {
@@ -34,10 +34,10 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 
 	const suCard = currentPlayer.board.singleUseCard
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
-	const pos = getCardPos(game, suCard.cardInstance)
+	const pos = getCardPos(game, suCard)
 	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
 
-	const cardInstance = currentPlayer.board.singleUseCard?.cardInstance
+	const cardInstance = currentPlayer.board.singleUseCard?.instance
 	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()
@@ -50,7 +50,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	// Create the logs
-	game.battleLog.addPlayCardEntry(CARDS[suCard.cardId], pos, currentPlayer.coinFlips, slotInfo)
+	game.battleLog.addPlayCardEntry(suCard.card, pos, currentPlayer.coinFlips, slotInfo)
 
 	currentPlayer.hooks.afterApply.call()
 
@@ -64,7 +64,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotInfo): GenericAct
 export function applyStatusEffect(
 	game: GameModel,
 	statusEffectId: string,
-	targetInstance: string | undefined
+	targetInstance: CardInstance | undefined | null
 ): GenericActionResult {
 	if (!targetInstance) return 'FAILURE_INVALID_DATA'
 
@@ -72,20 +72,20 @@ export function applyStatusEffect(
 
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
-	const statusEffect = STATUS_EFFECT_CLASSES[statusEffectId]
-	const statusEffectInstance = Math.random().toString()
+	const statusEffectInstance = new StatusEffectInstance(
+		STATUS_EFFECT_CLASSES[statusEffectId],
+		Math.random().toString(),
+		targetInstance
+	)
 
-	const statusEffectInfo: StatusEffectT = {
-		statusEffectId: statusEffectId,
-		statusEffectInstance: statusEffectInstance,
-		targetInstance: targetInstance,
-		damageEffect: statusEffect.damageEffect,
+	if (!statusEffectInstance.props.applyCondition(game, pos)) return 'FAILURE_CANNOT_COMPLETE'
+
+	if (statusEffectInstance.props.applyLog) {
+		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.applyLog)
 	}
 
-	statusEffect.onApply(game, statusEffectInfo, pos)
-
-	if (statusEffect.duration > 0 || statusEffect.counter)
-		statusEffectInfo.duration = statusEffect.duration
+	statusEffectInstance.statusEffect.onApply(game, statusEffectInstance, pos)
+	game.state.statusEffects.push(statusEffectInstance)
 
 	return 'SUCCESS'
 }
@@ -95,18 +95,36 @@ export function applyStatusEffect(
  */
 export function removeStatusEffect(
 	game: GameModel,
-	pos: CardPosModel,
-	statusEffectInstance: string
+	pos: CardPosModel | null,
+	statusEffectInstance: StatusEffectInstance
 ): GenericActionResult {
+	if (!pos) return 'FAILURE_NOT_APPLICABLE'
 	const statusEffects = game.state.statusEffects.filter(
-		(a) => a.statusEffectInstance === statusEffectInstance
+		(a) => a.instance === statusEffectInstance.instance
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
-	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].statusEffectId]
+	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
-	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
+
+	if (statusEffectInstance.props.removeLog) {
+		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.removeLog)
+	}
+
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
+}
+
+export function hasStatusEffect(
+	game: GameModel,
+	instance: CardInstance | null,
+	statusEffectId: string
+) {
+	if (!instance) return false
+	return (
+		game.state.statusEffects.filter(
+			(ail) => ail.props.id === statusEffectId && ail.targetInstance === instance
+		).length !== 0
+	)
 }

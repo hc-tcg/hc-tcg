@@ -1,18 +1,17 @@
 import {DEBUG_CONFIG} from '../config'
-import {CardT, CoinFlipT, PlayerState} from '../types/game-state'
-import {CARDS} from '../cards'
+import {CardInstance, CoinFlipT, PlayerState} from '../types/game-state'
 
 export function flipCoin(
 	playerTossingCoin: PlayerState,
-	card: CardT,
+	card: CardInstance,
 	times: number = 1,
 	currentPlayer: PlayerState | null = null
-) {
+): Array<CoinFlipT> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.board.activeRow
 	if (activeRowIndex === null) {
 		console.log(
-			`${card.cardId} attempted to flip coin with no active row!, that shouldn't be possible`
+			`${card.card.props.id} attempted to flip coin with no active row!, that shouldn't be possible`
 		)
 		return []
 	}
@@ -22,7 +21,7 @@ export function flipCoin(
 		if (forceHeads) {
 			coinFlips.push('heads')
 		} else {
-			const coinFlip: CoinFlipT = Math.random() > 0.5 ? 'heads' : 'tails'
+			const coinFlip: CoinFlipT = Math.random() >= 0.5 ? 'heads' : 'tails'
 			coinFlips.push(coinFlip)
 		}
 	}
@@ -31,10 +30,10 @@ export function flipCoin(
 
 	playerTossingCoin.hooks.onCoinFlip.call(card, coinFlips)
 
-	const name = CARDS[card.cardId].name
+	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
 	player.coinFlips.push({
-		cardId: card.cardId,
+		card: card,
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,

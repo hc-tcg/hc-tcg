@@ -12,6 +12,14 @@ import SmeltingStatusEffect from './smelting'
 import MelodyStatusEffect from './melody'
 import ExBossNineStatusEffect from './exboss-nine'
 import UsedClockStatusEffect from './used-clock'
+import RevivedByDeathloopStatusEffect from './revived-by-deathloop'
+import BetrayedStatusEffect from './betrayed'
+import SheepStareStatusEffect from './sheep-stare'
+import {AussiePingStatusEffect, AussiePingImmuneStatusEffect} from './aussie-ping'
+import {
+	InvisibilityPotionHeadsStatusEffect,
+	InvisibilityPotionTailsStatusEffect,
+} from '../../invisibility-potion'
 
 const effectClasses: Array<StatusEffect> = [
 	new FireStatusEffect(),
@@ -27,11 +35,19 @@ const effectClasses: Array<StatusEffect> = [
 	new MelodyStatusEffect(),
 	new ExBossNineStatusEffect(),
 	new UsedClockStatusEffect(),
+	new RevivedByDeathloopStatusEffect(),
+	new BetrayedStatusEffect(),
+	new SheepStareStatusEffect(),
+	new AussiePingStatusEffect(),
+	new AussiePingImmuneStatusEffect(),
+	new InvisibilityPotionHeadsStatusEffect(),
+	new InvisibilityPotionTailsStatusEffect(),
 ]
 
 export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, card) => {
-		result[card.id] = card
+	(result: Record<string, StatusEffect>, effect) => {
+		if (!effect.props) return result
+		result[effect.props.id] = effect
 		return result
 	},
 	{}

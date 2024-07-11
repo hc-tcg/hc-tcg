@@ -1,22 +1,11 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {applySingleUse, getActiveRow} from '../../../utils/board'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class KnockbackSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'knockback',
-			numericId: 73,
-			name: 'Knockback',
-			rarity: 'rare',
-			description:
-				'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
-			log: (values) => `${values.defaultLog} with {your|their} attack`,
-		})
-	}
-
+class KnockbackSingleUseCard extends Card {
 	pickCondition = slot.every(
 		slot.opponent,
 		slot.hermitSlot,
@@ -24,12 +13,24 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		slot.not(slot.empty)
 	)
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		slot.someSlotFulfills(this.pickCondition)
-	)
+	props: SingleUse = {
+		...singleUse,
+		id: 'knockback',
+		numericId: 73,
+		name: 'Knockback',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 0,
+		description:
+			'After your attack, your opponent must choose an AFK Hermit to set as their active Hermit, unless they have no AFK Hermits.',
+		log: (values) => `${values.defaultLog} with {your|their} attack`,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			slot.someSlotFulfills(this.pickCondition)
+		),
+	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.afterAttack.add(instance, (attack) => {
@@ -45,7 +46,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 			if (activeRow && activeRow.health) {
 				game.addPickRequest({
 					playerId: opponentPlayer.id,
-					id: this.id,
+					id: this.props.id,
 					message: 'Choose a new active Hermit from your AFK Hermits',
 					canPick: this.pickCondition,
 					onResult(pickedSlot) {
@@ -63,7 +64,7 @@ class KnockbackSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.afterAttack.remove(instance)
 		player.hooks.onApply.remove(instance)

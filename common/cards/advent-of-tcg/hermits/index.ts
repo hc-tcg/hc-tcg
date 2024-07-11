@@ -12,9 +12,9 @@ import BigBSt4tzRareHermitCard from './bigbst4tz2-rare'
 import ShubbleYTRareHermitCard from './shubbleyt-rare'
 import PharaohRareHermitCard from './pharaoh-rare'
 import GrianchRareHermitCard from './grianch-rare'
-import HermitCard from '../../base/hermit-card'
+import Card from '../../base/card'
 
-const hermitCardClasses: Array<HermitCard> = [
+const hermitCardClasses: Array<Card> = [
 	//Advent calendar cards
 	new MonkeyfarmRareHermitCard(),
 	new DungeonTangoRareHermitCard(),

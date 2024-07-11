@@ -1,27 +1,27 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, retrieveCard} from '../../../utils/movement'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class ChestSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'chest',
-			numericId: 4,
-			name: 'Chest',
-			rarity: 'rare',
-			description: 'Choose one card from your discard pile to return to your hand.',
-		})
+class ChestSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'chest',
+		numericId: 4,
+		name: 'Chest',
+		expansion: 'default',
+		rarity: 'rare',
+		tokens: 2,
+		description: 'Choose one card from your discard pile to return to your hand.',
+		attachCondition: slot.every(singleUse.attachCondition, (game, pos) => {
+			if (pos.player.discarded.filter((card) => card.props.id !== 'clock').length <= 0) return false
+			return true
+		}),
 	}
-
-	override _attachCondition = slot.every(super.attachCondition, (game, pos) => {
-		if (pos.player.discarded.filter((card) => card.cardId !== 'clock').length <= 0) return false
-		return true
-	})
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 
 		game.addModalRequest({
@@ -31,7 +31,7 @@ class ChestSingleUseCard extends SingleUseCard {
 				payload: {
 					modalName: 'Chest: Choose a card to retrieve from your discard pile.',
 					modalDescription: '',
-					cards: player.discarded,
+					cards: player.discarded.map((card) => card.toLocalCardInstance()),
 					selectionSize: 1,
 					primaryButton: {
 						text: 'Confirm Selection',
@@ -48,10 +48,13 @@ class ChestSingleUseCard extends SingleUseCard {
 				}
 				if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 				if (modalResult.cards.length !== 1) return 'FAILURE_CANNOT_COMPLETE'
-				if (modalResult.cards[0].cardId === 'clock') return 'FAILURE_CANNOT_COMPLETE'
+				if (modalResult.cards[0].props.id === 'clock') return 'FAILURE_CANNOT_COMPLETE'
 
 				applySingleUse(game)
-				retrieveCard(game, modalResult.cards[0])
+				retrieveCard(
+					game,
+					player.discarded.find((card) => card.instance === modalResult.cards![0].instance) || null
+				)
 
 				return 'SUCCESS'
 			},

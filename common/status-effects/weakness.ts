@@ -1,47 +1,34 @@
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CARDS} from '../cards'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {isTargetingPos} from '../utils/attacks'
 
 class WeaknessStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'weakness',
-			name: 'Weakness',
-			description: "This Hermit is weak to the opponent's active Hermit's type.",
-			duration: 3,
-			counter: false,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		id: 'weakness',
+		name: 'Weakness',
+		description: "This Hermit is weak to the opponent's active Hermit's type.",
+		counter: 3,
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
-		game.state.statusEffects.push(statusEffectInfo)
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
-		if (!statusEffectInfo.duration) statusEffectInfo.duration = this.duration
+		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(
-				player.id,
-				`$p${CARDS[pos.card.cardId].name}$ was inflicted with $eWeakness$`
-			)
-		}
+		player.hooks.onTurnStart.add(instance, () => {
+			if (!instance.counter) return
+			instance.counter--
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			if (!statusEffectInfo.duration) return
-			statusEffectInfo.duration--
-
-			if (statusEffectInfo.duration === 0)
-				removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
 		})
 
-		opponentPlayer.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
-			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
+		opponentPlayer.hooks.onAttack.add(instance, (attack) => {
+			const targetPos = getCardPos(game, instance.targetInstance)
 
 			if (!targetPos) return
 
@@ -52,8 +39,8 @@ class WeaknessStatusEffect extends StatusEffect {
 			attack.createWeakness = 'always'
 		})
 
-		player.hooks.onAttack.add(statusEffectInfo.statusEffectInstance, (attack) => {
-			const targetPos = getCardPos(game, statusEffectInfo.targetInstance)
+		player.hooks.onAttack.add(instance, (attack) => {
+			const targetPos = getCardPos(game, instance.targetInstance)
 
 			if (!targetPos) return
 
@@ -64,31 +51,37 @@ class WeaknessStatusEffect extends StatusEffect {
 			const attacker = attack.getAttacker()
 			const opponentActiveHermit = getActiveRow(opponentPlayer)
 
-			if (!attacker || !opponentActiveHermit) return
+			if (
+				!attacker ||
+				!opponentActiveHermit ||
+				!attacker.row.hermitCard.card.isHermit() ||
+				!opponentActiveHermit.hermitCard.card.isHermit()
+			)
+				return
 
-			const attackerType = CARDS[attacker.row.hermitCard.cardId].type
-			const opponentType = CARDS[opponentActiveHermit.hermitCard.cardId].type
+			const attackerType = attacker.row.hermitCard.card.props.type
+			const opponentType = opponentActiveHermit.hermitCard.card.props.type
 
 			if (attackerType !== opponentType) return
 
 			attack.createWeakness = 'always'
 		})
 
-		player.hooks.afterDefence.add(statusEffectInfo.statusEffectInstance, (attack) => {
+		player.hooks.afterDefence.add(instance, (attack) => {
 			const attackTarget = attack.getTarget()
 			if (!attackTarget) return
-			if (attackTarget.row.hermitCard.cardInstance !== statusEffectInfo.targetInstance) return
+			if (attackTarget.row.hermitCard.instance !== instance.targetInstance.instance) return
 			if (attackTarget.row.health > 0) return
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, instance)
 		})
 	}
 
-	override onRemoval(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel) {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		opponentPlayer.hooks.onAttack.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.onTurnStart.remove(statusEffectInfo.statusEffectInstance)
-		player.hooks.afterDefence.remove(statusEffectInfo.statusEffectInstance)
+		opponentPlayer.hooks.onAttack.remove(instance)
+		opponentPlayer.hooks.onAttack.remove(instance)
+		player.hooks.onTurnStart.remove(instance)
+		player.hooks.afterDefence.remove(instance)
 	}
 }
 

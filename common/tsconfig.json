@@ -11,5 +11,5 @@
 		"esModuleInterop": true,
 		"outDir": "./dist"
 	},
-	"include": ["."]
+	"include": [".", "../invisibility-potion.ts"]
 }

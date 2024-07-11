@@ -1,39 +1,37 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
+import {CardInstance} from '../../../types/game-state'
 import {discardCard} from '../../../utils/movement'
-import SingleUseCard from '../../base/single-use-card'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class SweepingEdgeSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'sweeping_edge',
-			numericId: 148,
-			name: 'Sweeping Edge',
-			rarity: 'ultra_rare',
-			description:
-				'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
-		})
-	}
-
+class SweepingEdgeSingleUseCard extends Card {
 	discardCondition = slot.every(
 		slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
-		slot.effectSlot,
+		slot.attachSlot,
 		slot.opponent,
 		slot.not(slot.empty),
 		slot.not(slot.frozen)
 	)
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		slot.someSlotFulfills(this.discardCondition)
-	)
-
-	override canApply() {
-		return true
+	props: SingleUse = {
+		...singleUse,
+		id: 'sweeping_edge',
+		numericId: 148,
+		name: 'Sweeping Edge',
+		expansion: 'alter_egos',
+		rarity: 'ultra_rare',
+		tokens: 2,
+		description:
+			'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
+		showConfirmationModal: true,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			slot.someSlotFulfills(this.discardCondition)
+		),
 	}
 
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {opponentPlayer, player} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -43,13 +41,9 @@ class SweepingEdgeSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'alter_egos'
 	}
 }
 

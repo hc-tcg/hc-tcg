@@ -1,31 +1,28 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../slot'
-import {CardT} from '../../../types/game-state'
-import SingleUseCard from '../../base/single-use-card'
+import {CardInstance} from '../../../types/game-state'
+import Card, {SingleUse, singleUse} from '../../base/card'
 
-class LanternSingleUseCard extends SingleUseCard {
-	constructor() {
-		super({
-			id: 'lantern',
-			numericId: 225,
-			name: 'Lantern',
-			rarity: 'rare',
-			description:
-				'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
-		})
+class LanternSingleUseCard extends Card {
+	props: SingleUse = {
+		...singleUse,
+		id: 'lantern',
+		numericId: 225,
+		name: 'Lantern',
+		expansion: 'advent_of_tcg',
+		rarity: 'rare',
+		tokens: 3,
+		description:
+			'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
+		showConfirmationModal: true,
+		attachCondition: slot.every(
+			singleUse.attachCondition,
+			(game, pos) => pos.player.pile.length >= 4
+		),
 	}
 
-	override _attachCondition = slot.every(
-		super.attachCondition,
-		(game, pos) => pos.player.pile.length >= 4
-	)
-
-	override canApply() {
-		return true
-	}
-
-	override onAttach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onAttach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
 
 		player.hooks.onApply.add(instance, () => {
@@ -36,7 +33,7 @@ class LanternSingleUseCard extends SingleUseCard {
 					payload: {
 						modalName: 'Lantern: Choose 2 cards to draw immediately.',
 						modalDescription: '',
-						cards: player.pile.slice(0, 4),
+						cards: player.pile.slice(0, 4).map((card) => card.toLocalCardInstance()),
 						selectionSize: 2,
 						primaryButton: {
 							text: 'Confirm Selection',
@@ -49,14 +46,15 @@ class LanternSingleUseCard extends SingleUseCard {
 					if (!modalResult.cards) return 'FAILURE_INVALID_DATA'
 					if (modalResult.cards.length !== 2) return 'FAILURE_INVALID_DATA'
 
-					const cards: Array<CardT> = modalResult.cards
+					const cards = modalResult.cards
 
 					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.cardInstance === d.cardInstance)) return false
+						if (cards.some((d) => c.instance === d.instance)) {
+							player.hand.push(c)
+							return false
+						}
 						return true
 					})
-
-					cards.forEach((c) => player.hand.push(c))
 
 					game.addModalRequest({
 						playerId: opponentPlayer.id,
@@ -90,13 +88,9 @@ class LanternSingleUseCard extends SingleUseCard {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: string, pos: CardPosModel) {
+	override onDetach(game: GameModel, instance: CardInstance, pos: CardPosModel) {
 		const {player} = pos
 		player.hooks.onApply.remove(instance)
-	}
-
-	override getExpansion() {
-		return 'advent_of_tcg'
 	}
 }
 
