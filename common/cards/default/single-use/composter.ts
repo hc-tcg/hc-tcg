@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -25,7 +24,7 @@ class ComposterSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		let firstPickedCard: CardComponent | null = null

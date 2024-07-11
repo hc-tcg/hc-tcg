@@ -1,6 +1,5 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import { CardComponent } from '../../../types/components'
+import {CardComponent} from '../../../types/components'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class DropperSingleUseCard extends Card {
@@ -16,10 +15,10 @@ class DropperSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	override onAttach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
 				opponentPlayer.pile.splice(
 					Math.round(Math.random() * opponentPlayer.pile.length),
@@ -30,10 +29,10 @@ class DropperSingleUseCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

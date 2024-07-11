@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {row, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -35,7 +34,7 @@ class MendingSingleUseCard extends Card {
 			`${values.defaultLog} to move $e${values.pick.name}$ to $p${values.pick.hermitCard}$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		game.addPickRequest({

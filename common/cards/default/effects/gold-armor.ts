@@ -1,8 +1,8 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../types/components'
 import {isTargeting} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import Card, {Attach} from '../../base/card'
+import {attach} from '../../base/defaults'
 
 class GoldArmorEffectCard extends Card {
 	props: Attach = {
@@ -17,18 +17,18 @@ class GoldArmorEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 10hp each turn.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 
 		let damageBlocked = 0
 
-		player.hooks.onDefence.add(instance, (attack) => {
+		player.hooks.onDefence.add(component, (attack) => {
 			if (!isTargeting(attack, pos) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 10) {
 				const damageReduction = Math.min(attack.calculateDamage(), 10 - damageBlocked)
 				damageBlocked += damageReduction
-				attack.reduceDamage(this.props.id, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 			}
 		})
 
@@ -37,15 +37,15 @@ class GoldArmorEffectCard extends Card {
 		}
 
 		// Reset counter at the start of every turn
-		player.hooks.onTurnStart.add(instance, resetCounter)
-		opponentPlayer.hooks.onTurnStart.add(instance, resetCounter)
+		player.hooks.onTurnStart.add(component, resetCounter)
+		opponentPlayer.hooks.onTurnStart.add(component, resetCounter)
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.onTurnStart.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
+		player.hooks.onDefence.remove(component)
+		player.hooks.onTurnStart.remove(component)
+		opponentPlayer.hooks.onTurnStart.remove(component)
 	}
 }
 

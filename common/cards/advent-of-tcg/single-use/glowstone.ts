@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -17,10 +16,10 @@ class GlowstoneSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -47,7 +46,7 @@ class GlowstoneSingleUseCard extends Card {
 					const bottomCards: Array<CardComponent> = []
 
 					opponentPlayer.pile.slice(0, 3).forEach((c) => {
-						if (card.instance === c.id) cards.push(c)
+						if (card.component === c.id) cards.push(c)
 						else bottomCards.push(c)
 					})
 
@@ -65,9 +64,9 @@ class GlowstoneSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

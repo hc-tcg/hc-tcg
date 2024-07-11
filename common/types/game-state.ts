@@ -1,7 +1,6 @@
 import {Attach, CardProps, HasHealth} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {SlotCondition} from '../filters'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
@@ -14,11 +13,12 @@ import {
 	PickInfo,
 	PickRequest,
 } from './server-requests'
-import {CardComponent, HandSlotComponent} from './components'
+import {CardComponent, HandSlotComponent, SlotComponent} from './components'
 import {GameModel} from '../models/game-model'
-import {PlayerModel} from '../models/player-model'
+import {PlayerId, PlayerModel} from '../models/player-model'
 import {DEBUG_CONFIG} from '../config'
 import {CARDS} from '../cards'
+import {Predicate} from '../filters'
 
 export type Entity = string & {__instance_id: never}
 
@@ -64,7 +64,7 @@ export class PlayerComponent {
 	readonly minecraftName: string
 	readonly censoredPlayerName: string
 
-	readonly id: string
+	readonly id: PlayerId
 
 	coinFlips: Array<CurrentCoinFlipT>
 	lives: number
@@ -149,7 +149,7 @@ export class PlayerComponent {
 		 * Returns a combinator that verifies if the slot is locked or not.
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
-		freezeSlots: GameHook<() => SlotCondition>
+		freezeSlots: GameHook<() => Predicate<SlotComponent>>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
@@ -206,8 +206,17 @@ export class PlayerComponent {
 				(oldRow: number | null, newRow: number | null) => boolean
 			>(),
 			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			freezeSlots: new GameHook<() => SlotCondition>(),
+			freezeSlots: new GameHook(),
 		}
+	}
+
+	get opponentPlayer() {
+		let player = this.game.ecs.find(
+			PlayerComponent,
+			(game, player) => player.entity !== this.entity
+		)
+		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
+		return player
 	}
 }
 
@@ -236,7 +245,7 @@ export type {ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
-	currentPlayerId: string
+	currentPlayerEntity: string
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions
@@ -339,8 +348,8 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerEntity
-	opponentPlayerId: PlayerEntity
+	playerId: PlayerId
+	opponentPlayerId: PlayerId
 
 	lastActionResult: {
 		action: TurnAction

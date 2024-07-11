@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -19,12 +18,12 @@ class ThornsEffectCard extends Card {
 			"When the Hermit this card is attached to takes damage, your opponent's active Hermit takes 20hp damage.\nIgnores armour.",
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer} = pos
 		let hasTriggered = false
 
 		// Only when the opponent attacks us
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
 
@@ -37,7 +36,7 @@ class ThornsEffectCard extends Card {
 			hasTriggered = true
 
 			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
+				id: this.getInstanceKey(component, 'backlash'),
 				attacker: attack.getTarget(),
 				target: attack.getAttacker(),
 				type: 'effect',
@@ -53,10 +52,10 @@ class ThornsEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer} = pos
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		opponentPlayer.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

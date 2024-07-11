@@ -21,7 +21,10 @@ class SlownessStatusEffect extends StatusEffect {
 		if (!instance.counter) instance.counter = this.props.counter
 
 		if (pos.cardId) {
-			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was inflicted with $eSlowness$`)
+			game.battleLog.addEntry(
+				player.id,
+				`$p${pos.cardId.props.name}$ was inflicted with $eSlowness$`
+			)
 		}
 
 		player.hooks.onTurnStart.add(instance, () => {

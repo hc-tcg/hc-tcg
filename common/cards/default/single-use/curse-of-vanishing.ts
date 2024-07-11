@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -30,19 +29,19 @@ class CurseOfVanishingSingleUseCard extends Card {
 		),
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game
 				.filterSlots(this.discardCondition)
 				.map((slot) => slot.cardId && discardCard(game, slot.cardId))
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

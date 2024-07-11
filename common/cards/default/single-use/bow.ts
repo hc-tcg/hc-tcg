@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -30,13 +29,13 @@ class BowSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		let pickedRow: RowState | null = null
 		let pickedRowIndex: number | null = null
 
-		player.hooks.getAttackRequests.add(instance, () => {
+		player.hooks.getAttackRequests.add(component, () => {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.props.id,
@@ -49,14 +48,14 @@ class BowSingleUseCard extends Card {
 			})
 		})
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 
 			if (!pickedRow || !pickedRow.hermitCard || !pickedRowIndex) return null
 
 			const bowAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
+				id: this.getInstanceKey(component),
 				attacker: activePos,
 				target: {
 					player: opponentPlayer,
@@ -71,18 +70,18 @@ class BowSingleUseCard extends Card {
 			return bowAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId) return
 			applySingleUse(game)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

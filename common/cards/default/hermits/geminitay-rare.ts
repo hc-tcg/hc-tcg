@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {discardSingleUse} from '../../../utils/movement'
@@ -30,13 +29,13 @@ class GeminiTayRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 
-			player.hooks.afterAttack.add(instance, (attack) => {
+			player.hooks.afterAttack.add(component, (attack) => {
 				// Discard the single-use card.
 				discardSingleUse(game, player)
 
@@ -45,16 +44,16 @@ class GeminiTayRareHermitCard extends Card {
 				game.removeCompletedActions('SINGLE_USE_ATTACK', 'PLAY_SINGLE_USE_CARD')
 				game.removeBlockedActions('game', 'PLAY_SINGLE_USE_CARD')
 
-				player.hooks.afterAttack.remove(instance)
+				player.hooks.afterAttack.remove(component)
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		// Remove hook
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

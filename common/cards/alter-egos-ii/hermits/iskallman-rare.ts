@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
@@ -34,7 +33,7 @@ class IskallmanRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 		let pickedAfkHermit: SlotComponent | null = null
 
@@ -45,9 +44,9 @@ class IskallmanRareHermitCard extends Card {
 			slot.not(slot.activeRow)
 		)
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -105,8 +104,8 @@ class IskallmanRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 			const activeRow = getActiveRow(player)
 
@@ -117,7 +116,7 @@ class IskallmanRareHermitCard extends Card {
 			if (!attacker) return
 
 			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'selfAttack'),
+				id: this.getInstanceKey(component, 'selfAttack'),
 				attacker,
 				target: attacker,
 				type: 'effect',
@@ -142,11 +141,11 @@ class IskallmanRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

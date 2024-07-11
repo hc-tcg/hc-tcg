@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -28,11 +27,11 @@ class Iskall85RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.beforeAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			const target = attack.getTarget()
 			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
 
@@ -43,10 +42,10 @@ class Iskall85RareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
+		player.hooks.beforeAttack.remove(component)
 	}
 }
 

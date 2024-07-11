@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
@@ -32,7 +31,7 @@ class FireChargeSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		game.addPickRequest({
@@ -49,20 +48,20 @@ class FireChargeSingleUseCard extends Card {
 			},
 		})
 
-		player.hooks.afterApply.add(instance, () => {
+		player.hooks.afterApply.add(component, () => {
 			discardSingleUse(game, player)
 
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 
-			player.hooks.afterApply.remove(instance)
+			player.hooks.afterApply.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.afterApply.remove(instance)
+		player.hooks.afterApply.remove(component)
 	}
 }
 

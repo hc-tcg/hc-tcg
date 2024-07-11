@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {applySingleUse} from '../../../utils/board'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -25,7 +24,7 @@ class InstantHealthIISingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		game.addPickRequest({

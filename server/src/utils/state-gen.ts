@@ -1,9 +1,7 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
-import {CONFIG, DEBUG_CONFIG, EXPANSIONS} from 'common/config'
+import {CONFIG, EXPANSIONS} from 'common/config'
 import {
-	TurnActions,
-	CoinFlipT,
 	LocalGameState,
 	LocalPlayerState,
 	newEntity,
@@ -12,19 +10,14 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import {EnergyT} from 'common/types/cards'
-import {AttackModel} from 'common/models/attack-model'
-import {GameHook, WaterfallHook} from 'common/types/hooks'
-import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
-import {HermitAttackType} from 'common/types/attack'
-import {SlotCondition, card, row, slot} from 'common/filters'
+import Card, {Hermit} from 'common/cards/base/card'
+import {card, row, slot} from 'common/filters'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {
-	BoardSlotComponent,
 	CardComponent,
-	HandSlotComponent,
 	RowComponent,
 	SlotComponent,
+	StatusEffectComponent,
 } from 'common/types/components'
 
 ////////////////////////////////////////
@@ -199,20 +192,22 @@ export function getLocalPlayerState(
 }
 
 export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
-	const opponentPlayerId = game.getPlayerIds().find((id) => id !== player.id)
-	if (!opponentPlayerId) {
-		return null
-	}
+	const playerState = game.ecs.find(
+		PlayerComponent,
+		(game, playerState) => playerState.id == player.id
+	)
 
-	const playerState = game.ecs.get(player.id)
-	const opponentState = game.ecs.get(opponentPlayerId)
+	if (!playerState) throw new Error('Player should be added to ECS before fetching local state')
+
+	const opponentState = playerState.opponentPlayer
+
 	const turnState = game.state.turn
-	const isCurrentPlayer = turnState.currentPlayerId === player.id
+	const isCurrentPlayer = turnState.currentPlayerEntity === player.id
 
 	// convert player states
 	const players: Record<string, LocalPlayerState> = {}
 	players[player.id] = getLocalPlayerState(game, playerState)
-	players[opponentPlayerId] = getLocalPlayerState(game, opponentState)
+	players[opponentState.id] = getLocalPlayerState(game, opponentState)
 
 	// Pick message or modal id
 	playerState.pickableSlots = null
@@ -248,30 +243,31 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
-			currentPlayerId: turnState.currentPlayerId,
+			currentPlayerId: turnState.currentPlayerEntity,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		statusEffects: game.state.statusEffects
-			.list()
+		statusEffects: game.ecs
+			.filter(StatusEffectComponent)
 			.map((effect) => effect.toLocalStatusEffectInstance()),
 
 		// personal info
-		hand: game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(playerState.entity), slot.hand))
+		hand: game.ecs
+			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
-		pileCount: game.state.cards.filter(
+		pileCount: game.ecs.filter(
+			CardComponent,
 			card.slotFulfills(slot.player(playerState.entity), slot.pile)
 		).length,
-		discarded: game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(playerState.entity), slot.discardPile))
+		discarded: game.ecs
+			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids
 		playerId: player.id,
-		opponentPlayerId: opponentPlayerId,
+		opponentPlayerId: opponentState.id,
 
 		lastActionResult: game.state.lastActionResult,
 

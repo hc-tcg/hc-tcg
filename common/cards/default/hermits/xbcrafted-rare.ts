@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -30,22 +29,22 @@ class XBCraftedRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.beforeAttack.addBefore(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
 			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		// Remove hooks
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.beforeAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

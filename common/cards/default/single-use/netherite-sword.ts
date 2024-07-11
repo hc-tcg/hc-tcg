@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -18,17 +17,17 @@ class NetheriteSwordSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
 			if (!opponentActivePos) return null
 
 			const swordAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
+				id: this.getInstanceKey(component, 'attack'),
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
@@ -39,8 +38,8 @@ class NetheriteSwordSingleUseCard extends Card {
 			return swordAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance, 'attack')
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component, 'attack')
 			if (attack.id !== attackId) return
 
 			// We've executed our attack, apply effect
@@ -48,10 +47,10 @@ class NetheriteSwordSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

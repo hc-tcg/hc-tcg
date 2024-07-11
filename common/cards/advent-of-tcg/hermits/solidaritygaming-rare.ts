@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
@@ -33,17 +32,17 @@ class SolidaritygamingRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
 				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return (
-						ail.targetInstance.instance === row.hermitCard.instance &&
+						ail.targetInstance.component === row.hermitCard.component &&
 						ail.statusEffect.props.id === 'protected'
 					)
 				})
@@ -64,7 +63,7 @@ class SolidaritygamingRareHermitCard extends Card {
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.entity,
+				id: component.entity,
 				message: 'Choose an AFK Hermit to protect',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
@@ -77,9 +76,9 @@ class SolidaritygamingRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

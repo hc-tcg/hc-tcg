@@ -1,6 +1,7 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Attach, attach} from '../../base/card'
+import {CardComponent} from '../../../types/components'
+import Card, {Attach} from '../../base/card'
+import {attach} from '../../base/defaults'
 
 class DiamondArmorEffectCard extends Card {
 	props: Attach = {
@@ -15,18 +16,18 @@ class DiamondArmorEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 30hp each turn.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		const {player, opponentPlayer} = instance
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 
 		let damageBlocked = 0
 
-		player.hooks.onDefence.add(instance, (attack) => {
+		player.hooks.onDefence.add(component, (attack) => {
 			if (!attack.isType('status-effect')) return
 
 			if (damageBlocked < 30) {
 				const damageReduction = Math.min(attack.calculateDamage(), 30 - damageBlocked)
 				damageBlocked += damageReduction
-				attack.reduceDamage(instance.entity, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 			}
 		})
 
@@ -35,15 +36,15 @@ class DiamondArmorEffectCard extends Card {
 		}
 
 		// Reset counter at the start of every turn
-		player.hooks.onTurnStart.add(instance, resetCounter)
-		opponentPlayer.hooks.onTurnStart.add(instance, resetCounter)
+		player.hooks.onTurnStart.add(component, resetCounter)
+		opponentPlayer.hooks.onTurnStart.add(component, resetCounter)
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent) {
-		const {player, opponentPlayer} = instance
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.onTurnStart.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
+		player.hooks.onDefence.remove(component)
+		player.hooks.onTurnStart.remove(component)
+		opponentPlayer.hooks.onTurnStart.remove(component)
 	}
 }
 

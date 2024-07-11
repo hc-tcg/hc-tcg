@@ -1,23 +1,15 @@
 import {CARDS} from '../cards'
-import Card, {
-	Attach,
-	CardProps,
-	HasHealth,
-	Hermit,
-	Item,
-	SingleUse,
-	isAttach,
-	isHealth,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from '../cards/base/card'
+import Card, {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/card'
+import type {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from '../cards/base/card'
+
 import {card} from '../filters'
-import {GameModel} from '../models/game-model'
+import type {GameModel} from '../models/game-model'
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
-import StatusEffect, {Counter, StatusEffectProps, isCounter} from '../status-effects/status-effect'
-import {SlotTypeT} from './cards'
-import {
+import type {Counter, StatusEffectProps} from '../status-effects/status-effect'
+import type StatusEffect from '../status-effects/status-effect'
+import type {isCounter} from '../status-effects/status-effect'
+import type {SlotTypeT} from './cards'
+import type {
 	CardEntity,
 	PlayerEntity,
 	PlayerComponent,
@@ -26,8 +18,6 @@ import {
 	StatusEffectEntity,
 } from './game-state'
 import {LocalCardInstance, LocalStatusEffectInstance, WithoutFunctions} from './server-requests'
-
-export class Component {}
 
 export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel

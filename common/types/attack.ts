@@ -55,7 +55,7 @@ export type AttackHistoryType =
 	| 'set_target'
 
 export type AttackHistory = {
-	source: AttackerEntity,
+	source: AttackerEntity
 	type: AttackHistoryType
 	value?: any
 }

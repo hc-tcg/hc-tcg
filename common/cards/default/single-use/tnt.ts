@@ -23,21 +23,25 @@ class TNTSingleUseCard extends Card {
 		const {player, opponentPlayer} = component
 
 		player.hooks.getAttack.add(component, () => {
-			const tntAttack = game.newAttack({
-				attacker: component.entity,
-				target: game.state.rows.findEntity(row.player(opponentPlayer.id), row.active),
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
-			}).addDamage(component.entity, 60)
+			const tntAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: game.state.rows.findEntity(row.player(opponentPlayer.id), row.active),
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
+				})
+				.addDamage(component.entity, 60)
 
-			const backlashAttack = game.newAttack({
-				attacker: component.entity,
-				target: game.state.rows.findEntity(row.player(player.id), row.active),
-				type: 'effect',
-				isBacklash: true,
-				log: (values) => `and took ${values.damage} backlash damage`,
-			}).addDamage(component.entity, 20)
+			const backlashAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: game.state.rows.findEntity(row.player(player.id), row.active),
+					type: 'effect',
+					isBacklash: true,
+					log: (values) => `and took ${values.damage} backlash damage`,
+				})
+				.addDamage(component.entity, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 

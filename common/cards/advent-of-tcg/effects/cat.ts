@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import Card, {Attach, attach} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 
@@ -16,9 +15,9 @@ class CatEffectCard extends Card {
 			'After the Hermit this card is attached to attacks, view the top card of your deck. You may choose to draw the bottom card of your deck at the end of your turn instead.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			if (!pos.rowId || !pos.rowId.hermitCard) return
 			if (attack.id !== pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)) return
 
@@ -47,8 +46,8 @@ class CatEffectCard extends Card {
 					if (!modalResult) return 'SUCCESS'
 					if (!modalResult.result) return 'SUCCESS'
 
-					player.hooks.onTurnEnd.add(instance, (drawCards) => {
-						player.hooks.onTurnEnd.remove(instance)
+					player.hooks.onTurnEnd.add(component, (drawCards) => {
+						player.hooks.onTurnEnd.remove(component)
 						return [player.pile[-1]]
 					})
 
@@ -59,9 +58,9 @@ class CatEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

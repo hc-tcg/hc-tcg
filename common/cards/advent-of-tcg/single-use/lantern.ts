@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -22,10 +21,10 @@ class LanternSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -49,7 +48,7 @@ class LanternSingleUseCard extends Card {
 					const cards = modalResult.cards
 
 					player.pile = player.pile.filter((c) => {
-						if (cards.some((d) => c.id === d.instance)) {
+						if (cards.some((d) => c.id === d.component)) {
 							player.hand.push(c)
 							return false
 						}
@@ -88,9 +87,9 @@ class LanternSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

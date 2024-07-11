@@ -23,10 +23,10 @@ class BadOmenSingleUseCard extends Card {
 		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		const {player} = instance
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			let target = game.ecs.findEntity(CardComponent, card.hermit, card.rowFulfills(row.active))
 			if (!target) return
 			let effect = game.ecs.add(StatusEffectComponent, player.entity, 'badomen')
@@ -34,9 +34,9 @@ class BadOmenSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent) {
-		const {player} = instance
-		player.hooks.onApply.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onApply.remove(component)
 	}
 }
 

@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -21,7 +20,7 @@ class ChestSingleUseCard extends Card {
 			return true
 		}),
 	}
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		game.addModalRequest({
@@ -53,7 +52,7 @@ class ChestSingleUseCard extends Card {
 				applySingleUse(game)
 				retrieveCard(
 					game,
-					player.discarded.find((card) => card.id === modalResult.cards![0].instance) || null
+					player.discarded.find((card) => card.id === modalResult.cards![0].component) || null
 				)
 
 				return 'SUCCESS'

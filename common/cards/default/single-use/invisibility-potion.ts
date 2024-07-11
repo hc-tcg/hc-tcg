@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -30,14 +29,14 @@ class InvisibilityPotionSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			let opponentActiveHermit = game.findSlot(this.applyTo)?.cardId
 			if (!opponentActiveHermit) return
 
-			if (flipCoin(player, instance)[0] === 'heads') {
+			if (flipCoin(player, component)[0] === 'heads') {
 				applyStatusEffect(game, 'invisibility-potion-heads', opponentActiveHermit)
 			} else {
 				applyStatusEffect(game, 'invisibility-potion-tails', opponentActiveHermit)
@@ -45,9 +44,9 @@ class InvisibilityPotionSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

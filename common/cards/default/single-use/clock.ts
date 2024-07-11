@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent, TurnActions} from '../../../types/game-state'
@@ -31,11 +30,11 @@ class ClockSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, () => {
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
+			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				game.addBlockedActions(
 					this.props.id,
 					'APPLY_EFFECT',
@@ -48,16 +47,16 @@ class ClockSingleUseCard extends Card {
 					'PLAY_SINGLE_USE_CARD',
 					'PLAY_EFFECT_CARD'
 				)
-				opponentPlayer.hooks.onTurnStart.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 
 			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

@@ -25,17 +25,17 @@ class ArmorStandEffectCard extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		instance.player.hooks.freezeSlots.add(instance, () => {
-			if (!instance.slot?.onBoard()) return slot.nothing
-			return slot.every(slot.currentPlayer, slot.row(instance.slot.row?.entity))
+	override onAttach(game: GameModel, component: CardComponent) {
+		component.player.hooks.freezeSlots.add(component, () => {
+			if (!component.slot?.onBoard()) return slot.nothing
+			return slot.every(slot.currentPlayer, slot.row(component.slot.row?.entity))
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent) {
-		const {player, opponentPlayer} = instance
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
-		player.hooks.freezeSlots.remove(instance)
+		player.hooks.freezeSlots.remove(component)
 	}
 }
 

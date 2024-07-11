@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
@@ -25,19 +24,19 @@ class PotionOfWeaknessSingleUseCard extends Card {
 		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			const opponentActiveRow = getActiveRow(opponentPlayer)
 			if (!opponentActiveRow) return
 			applyStatusEffect(game, 'weakness', opponentActiveRow.hermitCard)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

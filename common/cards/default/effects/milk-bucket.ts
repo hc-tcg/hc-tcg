@@ -1,9 +1,9 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
-import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
+import {attach, singleUse} from '../../base/defaults'
 
 class MilkBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
@@ -26,7 +26,7 @@ class MilkBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
@@ -37,7 +37,7 @@ class MilkBucketEffectCard extends Card {
 				onResult(pickedSlot) {
 					const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 						return (
-							ail.targetInstance.instance === pickedSlot.cardId?.instance &&
+							ail.targetInstance.component === pickedSlot.cardId?.component &&
 							(ail.props.id == 'poison' || ail.props.id == 'badomen')
 						)
 					})
@@ -51,17 +51,19 @@ class MilkBucketEffectCard extends Card {
 		} else if (pos.type === 'attach') {
 			// Straight away remove poison
 			const poisonStatusEffect = game.state.statusEffects.findEntity((ail) => {
-				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.props.id == 'poison'
+				return (
+					ail.targetInstance.component === row?.hermitCard?.component && ail.props.id == 'poison'
+				)
 			})
 			if (poisonStatusEffect) {
 				removeStatusEffect(game, pos, poisonStatusEffect)
 			}
 
-			player.hooks.onDefence.add(instance, (attack) => {
+			player.hooks.onDefence.add(component, (attack) => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return (
-						ail.targetInstance.instance === row.hermitCard?.instance &&
+						ail.targetInstance.component === row.hermitCard?.component &&
 						(ail.props.id == 'poison' || ail.props.id == 'badomen')
 					)
 				})
@@ -70,11 +72,11 @@ class MilkBucketEffectCard extends Card {
 				})
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, () => {
+			opponentPlayer.hooks.afterApply.add(component, () => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return (
-						ail.targetInstance.instance === row.hermitCard?.instance &&
+						ail.targetInstance.component === row.hermitCard?.component &&
 						(ail.props.id == 'poison' || ail.props.id == 'badomen')
 					)
 				})
@@ -85,10 +87,10 @@ class MilkBucketEffectCard extends Card {
 		}
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
-		player.hooks.onDefence.remove(instance)
-		opponentPlayer.hooks.afterApply.remove(instance)
+		player.hooks.onDefence.remove(component)
+		opponentPlayer.hooks.afterApply.remove(component)
 	}
 }
 

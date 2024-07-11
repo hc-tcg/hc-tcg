@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
@@ -45,20 +44,20 @@ class ZombieCleoRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: CardComponent,
-		pos: CardPosModel,
+		component: CardComponent,
+		, ,,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, component, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
 
-		const pickedCard = this.pickedAttack.get(instance)?.card
-		const attackType = this.pickedAttack.get(instance)?.attack
+		const pickedCard = this.pickedAttack.get(component)?.card
+		const attackType = this.pickedAttack.get(component)?.attack
 
 		// Delete the stored data straight away
-		this.pickedAttack.set(instance, null)
+		this.pickedAttack.set(component, null)
 
 		if (!pickedCard || !attackType) return null
 		if (!pickedCard.isHermit()) return null
@@ -77,12 +76,12 @@ class ZombieCleoRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent,) {
 		const {player} = pos
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -126,7 +125,7 @@ class ZombieCleoRareHermitCard extends Card {
 							if (!modalResult.pick) return 'FAILURE_INVALID_DATA'
 
 							// Store the card id to use when getting attacks
-							this.pickedAttack.set(instance, {
+							this.pickedAttack.set(component, {
 								card: pickedCard,
 								attack: modalResult.pick,
 							})
@@ -137,7 +136,7 @@ class ZombieCleoRareHermitCard extends Card {
 							return 'SUCCESS'
 						},
 						onTimeout: () => {
-							this.pickedAttack.set(instance, {
+							this.pickedAttack.set(component, {
 								card: pickedCard,
 								attack: 'primary',
 							})
@@ -150,7 +149,7 @@ class ZombieCleoRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.blockedActions.add(instance, (blockedActions) => {
+		player.hooks.blockedActions.add(component, (blockedActions) => {
 			if (!game.someSlotFulfills(this.pickCondition)) {
 				blockedActions.push('SECONDARY_ATTACK')
 			}
@@ -159,11 +158,11 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent,) {
 		const {player} = pos
-		this.pickedAttack.clear(instance)
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.blockedActions.remove(instance)
+		this.pickedAttack.clear(component)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.blockedActions.remove(component)
 	}
 }
 

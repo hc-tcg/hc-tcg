@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
@@ -33,12 +32,12 @@ class EggSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		let afkHermitSlot: SlotComponent | null = null
 
-		player.hooks.getAttackRequests.add(instance, () => {
+		player.hooks.getAttackRequests.add(component, () => {
 			game.addPickRequest({
 				playerId: player.id,
 				id: this.props.id,
@@ -53,7 +52,7 @@ class EggSingleUseCard extends Card {
 			})
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return []
 
@@ -64,10 +63,10 @@ class EggSingleUseCard extends Card {
 
 			applySingleUse(game, afkHermitSlot)
 
-			const coinFlip = flipCoin(player, instance)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] === 'heads') {
 				const eggAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
@@ -82,23 +81,23 @@ class EggSingleUseCard extends Card {
 				attack.addNewAttack(eggAttack)
 			}
 
-			player.hooks.afterAttack.add(instance, () => {
+			player.hooks.afterAttack.add(component, () => {
 				if (!afkHermitSlot || afkHermitSlot.rowIndex === null || afkHermitSlot.rowIndex === null)
 					return
 				game.changeActiveRow(opponentPlayer, afkHermitSlot.rowIndex)
-				player.hooks.afterAttack.remove(instance)
+				player.hooks.afterAttack.remove(component)
 			})
 
 			// Only do this once if there are multiple attacks
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

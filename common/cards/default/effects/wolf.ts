@@ -1,10 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardComponent} from '../../../types/game-state'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import Card, {Attach} from '../../base/card'
+import {attach} from '../../base/defaults'
+import {CardComponent} from '../../../types/components'
 
 class WolfEffectCard extends Card {
 	props: Attach = {
@@ -20,16 +20,16 @@ class WolfEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 		let activated = false
 
-		opponentPlayer.hooks.onTurnStart.add(instance, () => {
+		opponentPlayer.hooks.onTurnStart.add(component, () => {
 			// Allow another activation this turn
 			activated = false
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Only on opponents turn
@@ -51,7 +51,7 @@ class WolfEffectCard extends Card {
 			const opponentActiveRow = getActiveRowPos(opponentPlayer)
 
 			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
+				id: this.getInstanceKey(component, 'backlash'),
 				attacker: {row: pos.rowId, player: pos.player, rowIndex: pos.rowIndex},
 				target: opponentActiveRow,
 				type: 'effect',
@@ -63,12 +63,12 @@ class WolfEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		// Delete hooks and custom
-		opponentPlayer.hooks.onTurnStart.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.onTurnStart.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

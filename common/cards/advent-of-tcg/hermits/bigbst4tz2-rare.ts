@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {AttackModel} from '../../../models/attack-model'
 import {executeAttacks} from '../../../utils/attacks'
@@ -32,18 +31,18 @@ class BigBSt4tzRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowId: row} = pos
 
 		let dealDamageNextTurn = false
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 			dealDamageNextTurn = true
 		})
 
 		// Add before so health can be checked reliably
-		opponentPlayer.hooks.afterAttack.addBefore(instance, () => {
+		opponentPlayer.hooks.afterAttack.addBefore(component, () => {
 			if (dealDamageNextTurn) {
 				if (!row || row.health === null || row.health > 0) return
 
@@ -68,29 +67,29 @@ class BigBSt4tzRareHermitCard extends Card {
 				}
 
 				const statusEffectAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: sourceRow,
 					target: targetRow,
 					type: 'status-effect',
 				})
 				statusEffectAttack.addDamage(this.props.id, 140)
 
-				opponentPlayer.hooks.afterAttack.remove(instance)
+				opponentPlayer.hooks.afterAttack.remove(component)
 				executeAttacks(game, [statusEffectAttack], true)
 			}
 		})
 
-		player.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onTurnStart.add(component, () => {
 			dealDamageNextTurn = false
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.onAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		player.hooks.onAttack.remove(component)
+		opponentPlayer.hooks.onAttack.remove(component)
+		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

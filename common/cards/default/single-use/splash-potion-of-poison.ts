@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
@@ -25,10 +24,10 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
 			if (opponentActiveRow === null) return
 			applyStatusEffect(
@@ -39,9 +38,9 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

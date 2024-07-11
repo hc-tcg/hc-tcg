@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -26,42 +25,42 @@ class ChorusFruitSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		let removedBlock = false
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			// Apply the card
 			applySingleUse(game)
 
-			player.hooks.afterAttack.add(instance, (attack) => {
+			player.hooks.afterAttack.add(component, (attack) => {
 				if (removedBlock) return
 				// Remove change active hermit from the blocked actions so it can be done once more
 				game.removeCompletedActions('CHANGE_ACTIVE_HERMIT')
 				game.removeBlockedActions('game', 'CHANGE_ACTIVE_HERMIT')
 				removedBlock = true
 				// If another attack loop runs let the blocked action be removed again
-				player.hooks.beforeAttack.add(instance, (attack) => {
+				player.hooks.beforeAttack.add(component, (attack) => {
 					if (attack.isType('status-effect')) return // Ignore fire and poison attacks
 					removedBlock = false
-					player.hooks.beforeAttack.remove(instance)
+					player.hooks.beforeAttack.remove(component)
 				})
 			})
 
-			player.hooks.onTurnEnd.add(instance, (attack) => {
-				player.hooks.beforeAttack.remove(instance)
-				player.hooks.afterAttack.remove(instance)
-				player.hooks.onTurnEnd.remove(instance)
+			player.hooks.onTurnEnd.add(component, (attack) => {
+				player.hooks.beforeAttack.remove(component)
+				player.hooks.afterAttack.remove(component)
+				player.hooks.onTurnEnd.remove(component)
 			})
 
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

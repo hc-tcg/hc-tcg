@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -19,10 +18,10 @@ class AnvilSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 			const activeIndex = activePos.rowIndex
@@ -33,7 +32,7 @@ class AnvilSingleUseCard extends Card {
 				if (!row || !row.hermitCard) return r
 				if (rowIndex < activeIndex) return r
 				const newAttack = new AttackModel({
-					id: this.getInstanceKey(instance, activeIndex === rowIndex ? 'active' : 'inactive'),
+					id: this.getInstanceKey(component, activeIndex === rowIndex ? 'active' : 'inactive'),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
@@ -55,21 +54,21 @@ class AnvilSingleUseCard extends Card {
 			return attack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance, 'active')
-			const inactiveAttackId = this.getInstanceKey(instance, 'active')
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component, 'active')
+			const inactiveAttackId = this.getInstanceKey(component, 'active')
 			if (attack.id !== attackId && attackId !== inactiveAttackId) return
 
 			applySingleUse(game)
 
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

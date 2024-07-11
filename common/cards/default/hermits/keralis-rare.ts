@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
@@ -32,15 +31,15 @@ class KeralisRareHermitCard extends Card {
 
 	pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		let pickedAfkHermit: SlotComponent | null = null
 
 		// Pick the hermit to heal
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -66,8 +65,8 @@ class KeralisRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId || attack.type !== 'secondary') return
 
 			if (!pickedAfkHermit) return
@@ -91,10 +90,10 @@ class KeralisRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

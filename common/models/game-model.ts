@@ -1,4 +1,4 @@
-import {PlayerModel} from './player-model'
+import {PlayerId, PlayerModel} from './player-model'
 import {
 	TurnAction,
 	GameState,
@@ -30,7 +30,7 @@ export class GameModel {
 
 	public chat: Array<Message>
 	public battleLog: BattleLogModel
-	public players: Record<string, PlayerModel>
+	public players: Record<PlayerId, PlayerModel>
 	public task: any
 	public state: GameState
 	public ecs: ECS
@@ -63,9 +63,10 @@ export class GameModel {
 			[player2.id]: player2,
 		}
 
-		this.state = getGameState(this)
 		this.ecs = new ECS(this)
 		setupEcs(this.ecs, player1, player2)
+
+		this.state = getGameState(this)
 	}
 
 	public get currentPlayerId() {
@@ -90,7 +91,7 @@ export class GameModel {
 	}
 
 	public getPlayerIds() {
-		return Object.keys(this.players) as Array<PlayerEntity>
+		return Object.keys(this.players) as Array<PlayerId>
 	}
 
 	public getPlayers() {
@@ -261,7 +262,7 @@ export class GameModel {
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
 							CardComponent,
-							PickInfo[],
+							PickInfo[]
 						]
 				)
 		}

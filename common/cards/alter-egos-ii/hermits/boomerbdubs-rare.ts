@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {flipCoin} from '../../../utils/coinFlips'
@@ -33,15 +32,15 @@ class BoomerBdubsRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
 		let extraDamage = 0
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -95,8 +94,8 @@ class BoomerBdubsRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+		player.hooks.beforeAttack.add(component, (attack) => {
+			if (attack.id !== componentKey || attack.type !== 'secondary') return
 			if (extraDamage === 0) {
 				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
 				return
@@ -106,13 +105,13 @@ class BoomerBdubsRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.beforeAttack.remove(component)
+		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

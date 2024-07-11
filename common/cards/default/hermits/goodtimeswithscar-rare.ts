@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect, hasStatusEffect, removeStatusEffect} from '../../../utils/board'
@@ -36,21 +35,21 @@ class GoodTimesWithScarRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		let reviveReady = false
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
-			// If this instance is not blocked from reviving, make possible next turn
-			if (!hasStatusEffect(game, instance, 'revived-by-deathloop')) {
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
+			// If this component is not blocked from reviving, make possible next turn
+			if (!hasStatusEffect(game, component, 'revived-by-deathloop')) {
 				reviveReady = true
 			}
 		})
 
 		// Add before so health can be checked reliably
-		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => {
 			const targetInstance = attack.getTarget()?.row.hermitCard
 			if (!targetInstance) return
 			if (!reviveReady) return
@@ -63,7 +62,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			row.health = 50
 
 			game.state.statusEffects.forEach((ail) => {
-				if (ail.targetInstance.instance === targetInstance.instance) {
+				if (ail.targetInstance.component === targetInstance.component) {
 					removeStatusEffect(game, pos, ail)
 				}
 			})
@@ -74,14 +73,14 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			)
 
 			// Prevents hermits from being revived more than once by Deathloop
-			applyStatusEffect(game, 'revived-by-deathloop', instance)
+			applyStatusEffect(game, 'revived-by-deathloop', component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -34,17 +33,17 @@ class OrionSoundRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
 
 		let cardsWithStatusEffects: Array<string> = []
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: instance.entity,
+				id: component.entity,
 				message: 'Choose an Active or AFK Hermit to heal.',
 				canPick: slot.every(slot.not(slot.empty), slot.hermitSlot),
 				onResult(pickedSlot) {
@@ -52,7 +51,7 @@ class OrionSoundRareHermitCard extends Card {
 					if (!pickedSlot.cardId || rowIndex === null) return
 
 					applyStatusEffect(game, 'melody', pickedSlot.cardId)
-					cardsWithStatusEffects.push(pickedSlot.cardId.instance)
+					cardsWithStatusEffects.push(pickedSlot.cardId.component)
 				},
 			})
 		})
@@ -64,7 +63,7 @@ class OrionSoundRareHermitCard extends Card {
 
 			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 				return (
-					cardsWithStatusEffects.includes(ail.targetInstance.instance) && ail.props.id == 'melody'
+					cardsWithStatusEffects.includes(ail.targetInstance.component) && ail.props.id == 'melody'
 				)
 			})
 			statusEffectsToRemove.forEach((ail) => {
@@ -72,17 +71,17 @@ class OrionSoundRareHermitCard extends Card {
 			})
 		}
 
-		player.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => afterAttack(attack))
+		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

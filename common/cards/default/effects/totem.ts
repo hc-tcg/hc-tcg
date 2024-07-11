@@ -1,11 +1,9 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
-import Card, {Attach, attach} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card, {Attach} from '../../base/card'
 
 class TotemEffectCard extends Card {
 	props: Attach = {
@@ -26,7 +24,7 @@ class TotemEffectCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		const reviveHook = (attack: AttackModel) => {
@@ -38,7 +36,7 @@ class TotemEffectCard extends Card {
 			row.health = 10
 
 			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-				return ail.targetInstance.instance === pos.cardId?.instance
+				return ail.targetInstance.component === pos.cardId?.component
 			})
 			statusEffectsToRemove.forEach((ail) => {
 				removeStatusEffect(game, pos, ail)
@@ -53,16 +51,16 @@ class TotemEffectCard extends Card {
 
 		// If we are attacked from any source
 		// Add before any other hook so they can know a hermits health reliably
-		player.hooks.afterDefence.addBefore(instance, (attack) => reviveHook(attack))
+		player.hooks.afterDefence.addBefore(component, (attack) => reviveHook(attack))
 
 		// Also hook into afterAttack of opponent before other hooks, so that health will always be the same when their hooks are called
 		// @TODO this is slightly more hacky than I'd like
-		opponentPlayer.hooks.afterAttack.addBefore(instance, (attack) => reviveHook(attack))
+		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => reviveHook(attack))
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		pos.player.hooks.afterDefence.remove(instance)
-		pos.opponentPlayer.hooks.afterAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		pos.player.hooks.afterDefence.remove(component)
+		pos.opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

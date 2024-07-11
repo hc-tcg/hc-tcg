@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -26,11 +25,11 @@ class SpyglassSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onApply.add(instance, () => {
-			const coinFlip = flipCoin(player, instance)
+		player.hooks.onApply.add(component, () => {
+			const coinFlip = flipCoin(player, component)
 			const canDiscard = coinFlip[0] === 'heads' && opponentPlayer.hand.length > 0
 
 			game.addModalRequest({
@@ -54,8 +53,7 @@ class SpyglassSingleUseCard extends Card {
 
 					if (!modalResult.cards || modalResult.cards.length !== 1) return 'FAILURE_INVALID_DATA'
 					const card =
-						opponentPlayer.hand.find((card) => card.id === modalResult.cards![0].instance) ||
-						null
+						opponentPlayer.hand.find((card) => card.id === modalResult.cards![0].component) || null
 					discardFromHand(opponentPlayer, card)
 
 					game.battleLog.addEntry(
@@ -79,9 +77,9 @@ class SpyglassSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

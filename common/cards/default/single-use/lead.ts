@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {row, slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
@@ -42,7 +41,7 @@ class LeadSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 		let itemSlot: SlotComponent | null = null
 

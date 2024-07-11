@@ -20,7 +20,10 @@ class WeaknessStatusEffect extends StatusEffect {
 		if (!instance.counter) instance.counter = this.props.counter
 
 		if (pos.cardId) {
-			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was inflicted with $eWeakness$`)
+			game.battleLog.addEntry(
+				player.id,
+				`$p${pos.cardId.props.name}$ was inflicted with $eWeakness$`
+			)
 		}
 
 		player.hooks.onTurnStart.add(instance, () => {

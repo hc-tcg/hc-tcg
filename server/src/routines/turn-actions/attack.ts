@@ -6,7 +6,7 @@ import {GenericActionResult} from 'common/types/game-state'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {card, row, slot} from 'common/filters'
-import { CardComponent } from 'common/types/components'
+import {CardComponent} from 'common/types/components'
 
 function getAttack(
 	game: GameModel,

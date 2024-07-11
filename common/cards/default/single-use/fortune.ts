@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -17,28 +16,28 @@ class FortuneSingleUseCard extends Card {
 		showConfirmationModal: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, () => {
-			player.hooks.onCoinFlip.add(instance, (card, coinFlips) => {
+		player.hooks.onApply.add(component, () => {
+			player.hooks.onCoinFlip.add(component, (card, coinFlips) => {
 				for (let i = 0; i < coinFlips.length; i++) {
 					coinFlips[i] = 'heads'
 				}
 				return coinFlips
 			})
 
-			player.hooks.onTurnStart.add(instance, () => {
-				player.hooks.onTurnStart.remove(instance)
-				player.hooks.onCoinFlip.remove(instance)
+			player.hooks.onTurnStart.add(component, () => {
+				player.hooks.onTurnStart.remove(component)
+				player.hooks.onCoinFlip.remove(component)
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

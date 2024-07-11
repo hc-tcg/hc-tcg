@@ -1,10 +1,7 @@
 import {GameModel} from './common/models/game-model'
 import {removeStatusEffect} from './common/utils/board'
-import StatusEffect, {
-	StatusEffectProps,
-	statusEffect,
-} from './common/status-effects/status-effect'
-import { StatusEffectComponent } from './common/types/components'
+import StatusEffect, {StatusEffectProps, statusEffect} from './common/status-effects/status-effect'
+import {StatusEffectComponent} from './common/types/components'
 
 export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -16,7 +13,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectComponent<StatusEffectProps>,
+		instance: StatusEffectComponent<StatusEffectProps>
 	): void {
 		const {player} = pos
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))

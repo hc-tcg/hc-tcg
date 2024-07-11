@@ -1,10 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
 import {CARDS} from '../..'
-import { CardComponent } from '../../../types/components'
+import {CardComponent} from '../../../types/components'
 
 class BerryBushEffectCard extends Card {
 	props: Attach = {
@@ -27,20 +26,20 @@ class BerryBushEffectCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (!row) return
 
 		row.health = 30
 
-		player.hooks.afterAttack.add(instance, () => {
+		player.hooks.afterAttack.add(component, () => {
 			if (!row.health) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
 			}
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, () => {
+		opponentPlayer.hooks.afterAttack.add(component, () => {
 			if (!row.health) {
 				// Discard to prevent losing a life
 				discardCard(game, row.hermitCard)
@@ -50,7 +49,7 @@ class BerryBushEffectCard extends Card {
 			}
 		})
 
-		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
+		opponentPlayer.hooks.onTurnEnd.add(component, () => {
 			if (!row.health || row.health <= 10) {
 				discardCard(game, row.hermitCard)
 				return
@@ -59,7 +58,7 @@ class BerryBushEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, type, rowId: row} = pos
 
 		if (getActiveRow(player) === row) {
@@ -72,9 +71,9 @@ class BerryBushEffectCard extends Card {
 			row.itemCards = []
 		}
 
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		player.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
+		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}
 }
 

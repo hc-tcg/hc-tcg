@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {slot} from '../../../filters'
@@ -17,10 +16,10 @@ class CommandBlockEffectCard extends Card {
 			'The Hermit this card is attached to can use items of any type. Once attached, this card can not be removed from this Hermit.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
+		player.hooks.availableEnergy.add(component, (availableEnergy) => {
 			const {activeRow, rows} = player.board
 
 			// Make sure it's our row
@@ -28,22 +27,22 @@ class CommandBlockEffectCard extends Card {
 			if (activeRow !== pos.rowIndex) return availableEnergy
 			const row = rows[activeRow]
 
-			// Make sure this row has our instance
-			if (row.effectCard?.instance !== instance.entity) return availableEnergy
+			// Make sure this row has our component
+			if (row.effectCard?.component !== component.entity) return availableEnergy
 
 			// Turn all the energy into any energy
 			return availableEnergy.map(() => 'any')
 		})
 
-		player.hooks.freezeSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(component, () => {
 			return slot.every(slot.player, slot.rowIndex(pos.rowIndex), slot.attachSlot)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.availableEnergy.remove(instance)
-		player.hooks.freezeSlots.remove(instance)
+		player.hooks.availableEnergy.remove(component)
+		player.hooks.freezeSlots.remove(component)
 	}
 }
 

@@ -41,11 +41,11 @@ class GrianRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowIndex, rowId: row} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			const attacker = attack.getAttacker()
 			if (attack.type !== 'primary' || !attacker) return
 
@@ -122,9 +122,9 @@ class GrianRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

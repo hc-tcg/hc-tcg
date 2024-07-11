@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
@@ -37,12 +36,12 @@ class JoeHillsRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 		let skipped: CardComponent | null = null
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.onAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			const attacker = attack.getAttacker()
 			if (!attacker || attack.type !== 'secondary') return
 
@@ -64,7 +63,7 @@ class JoeHillsRareHermitCard extends Card {
 			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
 
 			// Block all actions of opponent for one turn
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				game.addBlockedActions(
 					this.props.id,
 					'APPLY_EFFECT',
@@ -77,12 +76,12 @@ class JoeHillsRareHermitCard extends Card {
 					'PLAY_SINGLE_USE_CARD',
 					'PLAY_EFFECT_CARD'
 				)
-				opponentPlayer.hooks.onTurnStart.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 		})
 
 		// Block secondary attack if we skipped
-		player.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onTurnStart.add(component, () => {
 			const sameActive = game.activeRow?.hermitCard === skipped
 			if (skipped !== null && sameActive) {
 				// We skipped last turn and we are still the active hermit, block secondary attacks
@@ -93,11 +92,11 @@ class JoeHillsRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onAttack.remove(component)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 

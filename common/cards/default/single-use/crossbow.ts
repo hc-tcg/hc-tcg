@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
@@ -21,13 +20,13 @@ class CrossbowSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 		const pickCondition = slot.every(slot.opponent, slot.hermitSlot, slot.not(slot.empty))
 
 		let targets = new Set<number>()
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Rather than allowing you to choose to damage less we will make you pick the most you can
 			let totalTargets = Math.min(3, game.filterSlots(pickCondition).length)
 			let targetsRemaining = totalTargets
@@ -69,7 +68,7 @@ class CrossbowSingleUseCard extends Card {
 			addPickRequest()
 		})
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 
@@ -77,7 +76,7 @@ class CrossbowSingleUseCard extends Card {
 				const row = opponentPlayer.board.rows[target]
 				if (!row || !row.hermitCard) return r
 				const newAttack = new AttackModel({
-					id: this.getInstanceKey(instance),
+					id: this.getInstanceKey(component),
 					attacker: activePos,
 					target: {
 						player: opponentPlayer,
@@ -99,25 +98,25 @@ class CrossbowSingleUseCard extends Card {
 			return attack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId) return
 
 			applySingleUse(game)
 
 			// Do not apply single use more than once
-			player.hooks.onAttack.remove(instance)
+			player.hooks.onAttack.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 
-		const targetsKey = this.getInstanceKey(instance, 'targets')
-		const remainingKey = this.getInstanceKey(instance, 'remaining')
+		const targetsKey = this.getInstanceKey(component, 'targets')
+		const remainingKey = this.getInstanceKey(component, 'remaining')
 	}
 }
 

@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../filters'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -33,20 +32,20 @@ class GrianchRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== instanceKey || attack.type !== 'secondary' || !attacker) return
+			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
 
 			if (coinFlip[0] === 'tails') {
-				opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+				opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 					game.removeCompletedActions('PRIMARY_ATTACK', 'SECONDARY_ATTACK', 'SINGLE_USE_ATTACK')
-					opponentPlayer.hooks.afterAttack.remove(instance)
+					opponentPlayer.hooks.afterAttack.remove(component)
 				})
 				return
 			}
@@ -54,8 +53,8 @@ class GrianchRareHermitCard extends Card {
 			attack.addDamage(this.props.id, this.props.secondary.damage)
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'primary') return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== componentKey || attack.type !== 'primary') return
 
 			const pickCondition = slot.every(
 				slot.not(slot.activeRow),
@@ -77,10 +76,10 @@ class GrianchRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

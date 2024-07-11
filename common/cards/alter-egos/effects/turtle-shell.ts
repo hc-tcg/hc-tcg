@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -20,23 +19,23 @@ class TurtleShellEffectCard extends Card {
 		attachCondition: slot.every(attach.attachCondition, slot.not(slot.activeRow)),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		let firstActiveTurn = true
 
-		player.hooks.onTurnEnd.add(instance, () => {
+		player.hooks.onTurnEnd.add(component, () => {
 			if (player.board.activeRow === pos.rowIndex) {
 				firstActiveTurn = true
 			}
 		})
 
-		player.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onTurnStart.add(component, () => {
 			if (firstActiveTurn) {
 				discardCard(game, pos.cardId)
 			}
 		})
 
-		player.hooks.onDefence.add(instance, (attack) => {
+		player.hooks.onDefence.add(component, (attack) => {
 			// Only block if just became active
 			if (!firstActiveTurn) return
 			// Only block damage when we are active
@@ -52,13 +51,13 @@ class TurtleShellEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onDefence.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onDefence.remove(component)
+		player.hooks.onTurnEnd.remove(component)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 

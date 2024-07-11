@@ -27,10 +27,7 @@ function Board({onClick, localGameState}: Props) {
 	const leftPlayer = side === 'Left' ? player : opponent
 	const rightPlayer = side === 'Right' ? player : opponent
 
-	const handleRowClick = (
-		entity: SlotEntity,
-		type:SlotTypeT,
-	) => {
+	const handleRowClick = (entity: SlotEntity, type: SlotTypeT) => {
 		onClick({
 			entity,
 			type,
@@ -40,7 +37,7 @@ function Board({onClick, localGameState}: Props) {
 	const PlayerBoard = (player: LocalPlayerState, direction: 'left' | 'right') => {
 		return (
 			<div className={css.playerBoard} id={css[direction]}>
-				{player.board.rows.map(row => {
+				{player.board.rows.map((row) => {
 					return (
 						<BoardRow
 							key={row.entity}

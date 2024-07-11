@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent} from '../../../types/game-state'
@@ -33,13 +32,13 @@ class RenbobRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: CardComponent,
-		pos: CardPosModel,
+		component: CardComponent,
+		, ,,
 		hermitAttackType: HermitAttackType
 	) {
 		const {opponentPlayer} = pos
 
-		let attack = super.getAttack(game, instance, pos, hermitAttackType)
+		let attack = super.getAttack(game, component, pos, hermitAttackType)
 		if (!attack) return null
 		if (attack.type === 'secondary' && pos.rowIndex !== null) {
 			const opponentPlayerRow = opponentPlayer.board.rows[pos.rowIndex]

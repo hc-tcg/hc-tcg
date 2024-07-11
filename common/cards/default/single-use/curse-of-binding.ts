@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {SingleUse, singleUse} from '../../base/card'
@@ -15,22 +14,22 @@ class CurseOfBindingSingleUseCard extends Card {
 		description: 'Your opponent can not make their active Hermit go AFK on their next turn.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer, player} = pos
 
-		player.hooks.onApply.add(instance, () => {
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
+			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				game.addBlockedActions(this.props.id, 'CHANGE_ACTIVE_HERMIT')
 
-				opponentPlayer.hooks.onTurnStart.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

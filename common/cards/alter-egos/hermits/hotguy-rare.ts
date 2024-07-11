@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import { BoardSlotComponent } from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
@@ -31,18 +30,18 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: BoardSlotComponent) {
-		const {player} = instance
+	override onAttach(game: GameModel, component: CardComponent, , BoardSlotComponent) {
+		const {player} = component
 
 		let usingSecondaryAttack = false
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.beforeAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 
 		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		player.hooks.beforeAttack.add(component, (attack) => {
 			const singleUseCard = player.board.singleUseCard
 			if (singleUseCard?.props.id !== 'bow' || !usingSecondaryAttack) return
 
@@ -53,11 +52,11 @@ class HotguyRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent,) {
 		const {player} = pos
 
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.beforeAttack.remove(component)
+		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

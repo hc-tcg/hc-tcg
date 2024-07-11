@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
@@ -34,13 +33,13 @@ class HumanCleoRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			if (attack.id !== instanceKey || attack.type !== 'secondary' || !attacker) return
+			if (attack.id !== componentKey || attack.type !== 'secondary' || !attacker) return
 
 			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
 
@@ -55,10 +54,10 @@ class HumanCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

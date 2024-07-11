@@ -30,20 +30,17 @@ class PotatoBoyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		const {player} = instance
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			game.state.rows.filterEntities(row.currentPlayer).forEach((row) => {
 				row.heal(40)
-				let hermit = game.state.cards.find(
-					card.row(row.entity),
-					card.slotFulfills(slot.activeRow)
-				)
+				let hermit = game.state.cards.find(card.row(row.entity), card.slotFulfills(slot.activeRow))
 				game.battleLog.addEntry(
 					player.id,
 					`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
-						instance.props.name
+						component.props.name
 					}$`
 				)
 			})

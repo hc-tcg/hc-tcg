@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {row, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -25,10 +24,10 @@ class SlimeballEffectCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.freezeSlots.add(instance, () => {
+		player.hooks.freezeSlots.add(component, () => {
 			return slot.every(
 				slot.player,
 				slot.rowIndex(pos.rowIndex),
@@ -38,9 +37,9 @@ class SlimeballEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		pos.player.hooks.freezeSlots.remove(instance)
-		pos.player.hooks.onDetach.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		pos.player.hooks.freezeSlots.remove(component)
+		pos.player.hooks.onDetach.remove(component)
 	}
 }
 

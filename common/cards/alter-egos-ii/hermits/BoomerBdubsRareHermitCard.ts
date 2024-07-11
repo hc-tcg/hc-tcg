@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {getActiveRow} from '../../../utils/board'
@@ -34,13 +33,13 @@ export class BoomerBdubsRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -75,15 +74,15 @@ export class BoomerBdubsRareHermitCard extends Card {
 					const flip = flipCoin(player, activeHermit)[0]
 
 					if (flip === 'tails') {
-						player.custom[instanceKey] = 0
+						player.custom[componentKey] = 0
 						return 'SUCCESS'
 					}
 
-					if (!player.custom[instanceKey]) {
-						player.custom[instanceKey] = 0
+					if (!player.custom[componentKey]) {
+						player.custom[componentKey] = 0
 					}
 
-					player.custom[instanceKey] += 20
+					player.custom[componentKey] += 20
 
 					player.hooks.getAttackRequests.call(activeInstance, hermitAttackType)
 
@@ -98,29 +97,29 @@ export class BoomerBdubsRareHermitCard extends Card {
 			})
 		})
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
-			if (player.custom[instanceKey] === 0) {
+		player.hooks.beforeAttack.add(component, (attack) => {
+			if (attack.id !== componentKey || attack.type !== 'secondary') return
+			if (player.custom[componentKey] === 0) {
 				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
 				return
 			}
-			if (!player.custom[instanceKey]) return
+			if (!player.custom[componentKey]) return
 
-			attack.addDamage(this.props.id, player.custom[instanceKey])
+			attack.addDamage(this.props.id, player.custom[componentKey])
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			delete player.custom[instanceKey]
+		player.hooks.onTurnEnd.add(component, () => {
+			delete player.custom[componentKey]
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
-		delete player.custom[instanceKey]
+		const componentKey = this.getInstanceKey(component)
+		delete player.custom[componentKey]
 
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.beforeAttack.remove(component)
+		player.hooks.onTurnEnd.remove(component)
 	}
 }

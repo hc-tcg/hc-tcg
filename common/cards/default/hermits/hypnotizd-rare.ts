@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {HermitAttackType} from '../../../types/attack'
@@ -40,12 +39,12 @@ class HypnotizdRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	override onAttach(game: GameModel, component: CardComponent): void {
 		const {player, opponentPlayer} = pos
 		let target: SlotComponent | null = null
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'secondary') return
+		player.hooks.beforeAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 			if (!target || target.rowIndex == null || !target.rowId) return
 
 			attack.setTarget(this.props.id, {
@@ -57,8 +56,8 @@ class HypnotizdRareHermitCard extends Card {
 			target = null
 		})
 
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
-			if (activeInstance.entity !== instance.entity || hermitAttackType !== 'secondary') return
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
+			if (activeInstance.entity !== component.entity || hermitAttackType !== 'secondary') return
 
 			const pickCondition = slot.every(
 				slot.player,
@@ -69,7 +68,7 @@ class HypnotizdRareHermitCard extends Card {
 
 			// Betrayed ignores the slot that you pick in this pick request, so we skip this pick request
 			// to make the game easier to follow.
-			if (hasStatusEffect(game, instance, 'betrayed')) return
+			if (hasStatusEffect(game, component, 'betrayed')) return
 
 			if (!game.someSlotFulfills(pickCondition)) return
 			const itemRequest: PickRequest = {
@@ -106,9 +105,9 @@ class HypnotizdRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
 	}
 }
 

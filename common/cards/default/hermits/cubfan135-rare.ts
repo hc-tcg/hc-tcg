@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -28,12 +27,12 @@ class Cubfan135RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		const instanceKey = this.getInstanceKey(instance)
+		const componentKey = this.getInstanceKey(component)
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== instanceKey || attack.type !== 'secondary') return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== componentKey || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
 			// AKA remove change active hermit from blocked actions
@@ -42,9 +41,9 @@ class Cubfan135RareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

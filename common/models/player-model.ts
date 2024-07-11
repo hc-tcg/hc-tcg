@@ -6,8 +6,10 @@ import {censorString} from '../utils/formatting'
 import {PlayerEntity} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
 
+export type PlayerId = string & {__player_id: never}
+
 export class PlayerModel {
-	private internalId: string
+	private internalId: PlayerId
 	private internalSecret: string
 	private internalDeck: {
 		name: string
@@ -21,7 +23,7 @@ export class PlayerModel {
 	public socket: Socket
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
-		this.internalId = Math.random().toString() as PlayerEntity
+		this.internalId = Math.random().toString() as PlayerId
 		this.internalSecret = Math.random().toString()
 
 		// Always generate a starter deck as the default

@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot, SlotCondition} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -22,10 +21,10 @@ class BrushSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
 				playerId: player.id,
 				data: {
@@ -51,7 +50,7 @@ class BrushSingleUseCard extends Card {
 					const bottomCards: Array<CardComponent> = []
 
 					player.pile.slice(0, 3).forEach((c) => {
-						if (cards.some((d) => c.id === d.instance)) topCards.push(c)
+						if (cards.some((d) => c.id === d.component)) topCards.push(c)
 						else bottomCards.push(c)
 					})
 
@@ -68,9 +67,9 @@ class BrushSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

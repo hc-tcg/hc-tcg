@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
@@ -36,12 +35,12 @@ class EthosLabRareHermitCard extends Card {
 		],
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.onAttack.add(instance, (attack) => {
+		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
-			const attackId = this.getInstanceKey(instance)
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.getTarget() || !attacker)
 				return
 
@@ -56,10 +55,10 @@ class EthosLabRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

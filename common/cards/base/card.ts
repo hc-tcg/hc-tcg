@@ -8,11 +8,11 @@ import {
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {row, slot, SlotCondition} from '../../filters'
+import {Predicate} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {WithoutFunctions} from '../../types/server-requests'
-import { CardComponent } from '../../types/components'
+import {CardComponent, RowComponent, SlotComponent} from '../../types/components'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -32,7 +32,7 @@ export type CardProps = {
 	shortName?: string
 	rarity: CardRarityT
 	tokens: number
-	attachCondition: SlotCondition
+	attachCondition: Predicate<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */
@@ -48,21 +48,6 @@ export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunc
 export function isItem(props: CardProps): props is Item
 export function isItem(props: CardProps | WithoutFunctions<CardProps> | null): props is Item {
 	return props !== null && 'item' in props
-}
-
-export const item = {
-	item: null,
-	category: 'item' as CardCategoryT,
-	attachCondition: slot.every(
-		slot.currentPlayer,
-		slot.itemSlot,
-		slot.empty,
-		slot.rowFulfills(row.hasHermit),
-		slot.actionAvailable('PLAY_ITEM_CARD'),
-		slot.not(slot.frozen)
-	),
-	log: (values: PlayCardLog) =>
-		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
 }
 
 export type HasHealth = CardProps & {
@@ -92,20 +77,6 @@ export function isHermit(props: CardProps | WithoutFunctions<CardProps> | null):
 	return props !== null && 'hermit' in props
 }
 
-export const hermit = {
-	hermit: null,
-	category: 'hermit' as CardCategoryT,
-	attachCondition: slot.every(
-		slot.hermitSlot,
-		slot.currentPlayer,
-		slot.empty,
-		slot.actionAvailable('PLAY_HERMIT_CARD'),
-		slot.not(slot.frozen)
-	),
-	log: (values: PlayCardLog) =>
-		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
-}
-
 export type Attach = CardProps & {
 	attachable: null
 	description: string
@@ -115,21 +86,6 @@ export function isAttach(props: WithoutFunctions<CardProps>): props is WithoutFu
 export function isAttach(props: CardProps): props is Attach
 export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null): props is Attach {
 	return props !== null && 'attachable' in props
-}
-
-export const attach = {
-	attachable: null,
-	category: 'attach' as CardCategoryT,
-	attachCondition: slot.every(
-		slot.currentPlayer,
-		slot.attachSlot,
-		slot.empty,
-		slot.rowFulfills(row.hasHermit),
-		slot.actionAvailable('PLAY_EFFECT_CARD'),
-		slot.not(slot.frozen)
-	),
-	log: (values: PlayCardLog) =>
-		`$p{You|${values.player}}$ placed $p${values.pos.name}$ on row #${values.pos.rowIndex}`,
 }
 
 export type SingleUse = CardProps & {
@@ -147,18 +103,6 @@ export function isSingleUse(
 	props: CardProps | WithoutFunctions<CardProps> | null
 ): props is SingleUse {
 	return props !== null && 'singleUse' in props
-}
-
-export const singleUse = {
-	singleUse: null,
-	showConfirmationModal: false,
-	hasAttack: false,
-	category: 'single_use' as CardCategoryT,
-	attachCondition: slot.every(
-		slot.singleUseSlot,
-		slot.playerHasActiveHermit,
-		slot.actionAvailable('PLAY_SINGLE_USE_CARD')
-	),
 }
 
 /** Type that allows multiple functions in a card to share values. */
@@ -227,7 +171,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.state.rows.findEntity(row.opponentPlayer, row.active),
+			target: game.ecs.findEntity(RowComponent, row.opponentPlayer, row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>

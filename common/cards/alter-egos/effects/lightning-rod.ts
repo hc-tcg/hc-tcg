@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -25,10 +24,10 @@ class LightningRodEffectCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowId: row, rowIndex} = pos
 
-		opponentPlayer.hooks.beforeAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.beforeAttack.add(component, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 			if (!row || rowIndex === null || !row.hermitCard) return
 
@@ -45,7 +44,7 @@ class LightningRodEffectCard extends Card {
 			})
 		})
 
-		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 			if (!isTargeting(attack, pos)) return
 			if (attack.calculateDamage() <= 0) return
 
@@ -53,10 +52,10 @@ class LightningRodEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
+		opponentPlayer.hooks.beforeAttack.remove(component)
+		opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

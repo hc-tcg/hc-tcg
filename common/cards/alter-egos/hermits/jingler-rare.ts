@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -33,11 +32,11 @@ class JinglerRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			const attacker = attack.getAttacker()
 			if (attack.type !== 'secondary' || !attack.getTarget() || !attacker) return
 			const coinFlip = flipCoin(player, attacker.row.hermitCard)
@@ -58,9 +57,9 @@ class JinglerRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

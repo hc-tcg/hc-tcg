@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -20,19 +19,19 @@ class GoldenAxeSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		let attacking = false
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
 			if (!opponentActivePos) return null
 
 			const axeAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
+				id: this.getInstanceKey(component),
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
@@ -43,8 +42,8 @@ class GoldenAxeSingleUseCard extends Card {
 			return axeAttack
 		})
 
-		player.hooks.beforeAttack.addBefore(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.beforeAttack.addBefore(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
 
 			attacking = true
@@ -58,23 +57,23 @@ class GoldenAxeSingleUseCard extends Card {
 			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
 		})
 
-		player.hooks.afterAttack.add(instance, () => {
-			player.hooks.getAttack.remove(instance)
-			player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.add(component, () => {
+			player.hooks.getAttack.remove(component)
+			player.hooks.afterAttack.remove(component)
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			player.hooks.beforeAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onTurnEnd.add(component, () => {
+			player.hooks.beforeAttack.remove(component)
+			player.hooks.onTurnEnd.remove(component)
 
 			attacking = false
 		})
 
-		player.hooks.onDetach.add(instance, () => {
-			player.hooks.getAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
+		player.hooks.onDetach.add(component, () => {
+			player.hooks.getAttack.remove(component)
+			player.hooks.onTurnEnd.remove(component)
 			if (!attacking) {
-				player.hooks.beforeAttack.remove(instance)
+				player.hooks.beforeAttack.remove(component)
 			}
 		})
 	}

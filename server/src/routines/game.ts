@@ -10,7 +10,7 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
-import {TurnActions, PlayerState, ActionResult, TurnAction} from 'common/types/game-state'
+import {TurnActions, ActionResult, TurnAction, PlayerComponent} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
@@ -20,7 +20,12 @@ import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
 import {card, row, slot} from 'common/filters'
 import {SingleUse} from 'common/cards/base/card'
-import {CardComponent, DiscardSlotComponent, HandSlotComponent} from 'common/types/components'
+import {
+	CardComponent,
+	DiscardSlotComponent,
+	HandSlotComponent,
+	SlotComponent,
+} from 'common/types/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -34,8 +39,9 @@ export const getTimerForSeconds = (seconds: number): number => {
 function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
-	const energy = game.state.cards
-		.filterComponents(
+	const energy = game.ecs
+		.filter(
+			CardComponent,
 			card.slotFulfills(slot.player(game.currentPlayer.entity)),
 			card.item,
 			card.attached
@@ -58,7 +64,11 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
 	const actions: TurnActions = []
 
-	const su = game.state.cards.find(card.singleUse, card.attached) as CardComponent<SingleUse> | null
+	const su = game.ecs.find(
+		CardComponent,
+		card.singleUse,
+		card.attached
+	) as CardComponent<SingleUse> | null
 
 	// Custom modals
 	if (modalRequests.length > 0) {
@@ -96,7 +106,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
-	const hasOtherHermit = game.state.cards.filter(
+	const hasOtherHermit = game.ecs.filter(
+		CardComponent,
 		card.attach,
 		card.slotFulfills(slot.not(slot.row(activeRowId)))
 	)
@@ -116,7 +127,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 		// Attack actions
 		if (activeRowId !== null && turnState.turnNumber > 1) {
-			const hermitCard = game.state.cards.findComponent(
+			const hermitCard = game.ecs.find(
+				CardComponent,
 				card.slotFulfills(slot.row(activeRowId), slot.hermitSlot)
 			)
 
@@ -149,10 +161,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_ITEM_CARD',
 			'PLAY_SINGLE_USE_CARD'
 		)
-		const desiredActions = game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(currentPlayer.entity), slot.hand))
+		const desiredActions = game.ecs
+			.filter(CardComponent, card.slotFulfills(slot.player(currentPlayer.entity), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
-				const pickableSlots = game.state.slots.filter(card.card.props.attachCondition)
+				const pickableSlots = game.ecs.filter(SlotComponent, card.card.props.attachCondition)
 
 				if (pickableSlots.length === 0) return reducer
 
@@ -199,9 +211,8 @@ function playerAction(actionType: string, playerId: string) {
 // return false in case one player is dead
 // @TODO completely redo how we calculate if a hermit is dead etc
 function* checkHermitHealth(game: GameModel) {
-	const playerStates: Array<PlayerState> = Object.values(game.state.players)
 	const deadPlayerIds: Array<string> = []
-	for (let playerState of playerStates) {
+	for (let playerState of game.ecs.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
 		if (!playerState.hasPlacedHermit) {
 			continue
@@ -250,7 +261,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.state.cards.somethingFulfills(card.attached, card.hermit)
+		const noHermitsLeft = !game.ecs.somethingFulfills(CardComponent, card.attached, card.hermit)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -529,7 +540,7 @@ function* turnSaga(game: GameModel) {
 
 	// Reset turn state
 	game.state.turn.availableActions = []
-	game.state.turn.currentPlayerId = currentPlayerId
+	game.state.turn.currentPlayerEntity = currentPlayerId
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
@@ -594,12 +605,13 @@ function* turnSaga(game: GameModel) {
 	}
 
 	// Draw a card from deck when turn ends
-	const newCard = game.state.cards.findComponent(
+	const newCard = game.ecs.find(
+		CardComponent,
 		card.player(currentPlayer.entity),
 		card.slotFulfills(slot.pile)
 	)
 	if (newCard) {
-		newCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.entity)
+		newCard.slot = game.ecs.add(HandSlotComponent, currentPlayer.entity)
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

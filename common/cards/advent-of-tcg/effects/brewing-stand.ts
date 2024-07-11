@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {slot} from '../../../filters'
@@ -19,16 +18,16 @@ class BrewingStandEffectCard extends Card {
 			'At the start of every turn where this Hermit is active, flip a coin. If heads, discard an item card attached to this Hermit and heal by 50hp.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.add(instance, () => {
+		player.hooks.onTurnStart.add(component, () => {
 			if (!pos.rowId?.itemCards || pos.rowId.itemCards.filter((card) => card !== null).length === 0)
 				return
 
 			if (pos.rowIndex !== player.board.activeRow) return
 
-			const flip = flipCoin(player, instance)[0]
+			const flip = flipCoin(player, component)[0]
 			if (flip !== 'heads') return
 
 			game.addPickRequest({
@@ -52,10 +51,10 @@ class BrewingStandEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 

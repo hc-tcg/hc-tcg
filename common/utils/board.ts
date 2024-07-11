@@ -1,11 +1,8 @@
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {GameModel} from '../models/game-model'
-import {
-	GenericActionResult,
-	PlayerComponent,
-} from '../types/game-state'
+import {GenericActionResult, PlayerComponent} from '../types/game-state'
 import {card} from '../filters'
-import { CardComponent, SlotComponent, StatusEffectComponent } from '../types/components'
+import {CardComponent, SlotComponent, StatusEffectComponent} from '../types/components'
 
 export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game
@@ -77,7 +74,9 @@ export function removeStatusEffect(
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
 	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
-	game.state.statusEffects = game.state.statusEffects.filterEntities((a) => !statusEffects.includes(a))
+	game.state.statusEffects = game.state.statusEffects.filterEntities(
+		(a) => !statusEffects.includes(a)
+	)
 
 	return 'SUCCESS'
 }

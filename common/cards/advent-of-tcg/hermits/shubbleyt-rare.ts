@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
@@ -31,11 +30,11 @@ class ShubbleYTRareHermitCard extends Card {
 		},
 	}
 
-	public override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onAttach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			if (attack.type !== 'secondary') return
 
 			game.addModalRequest({
@@ -72,10 +71,10 @@ class ShubbleYTRareHermitCard extends Card {
 		})
 	}
 
-	public override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel): void {
+	public override onDetach(game: GameModel, component: CardComponent): void {
 		const {player} = pos
 
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

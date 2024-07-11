@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {card, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -22,14 +21,15 @@ class FlintAndSteelSingleUseCard extends Card {
 			singleUse.attachCondition,
 			(game, pos) =>
 				// What should player be here?
-				game.state.cards.filterEntities(card.player(game.currentPlayer.entity), card.pile).length > 3
+				game.state.cards.filterEntities(card.player(game.currentPlayer.entity), card.pile).length >
+				3
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			const hand = player.hand
 			for (const card of hand) {
 				discardFromHand(player, card)
@@ -39,9 +39,9 @@ class FlintAndSteelSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onApply.remove(instance)
+		player.hooks.onApply.remove(component)
 	}
 }
 

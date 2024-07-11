@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -33,11 +32,11 @@ class EvilXisumaRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance)) return
+		player.hooks.afterAttack.add(component, (attack) => {
+			if (attack.id !== this.getInstanceKey(component)) return
 			const attacker = attack.getAttacker()
 			if (attack.type !== 'secondary' || !attacker) return
 
@@ -74,7 +73,7 @@ class EvilXisumaRareHermitCard extends Card {
 				},
 			})
 
-			opponentPlayer.hooks.onTurnStart.add(instance, () => {
+			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				const disable = playerPick
 
 				const activeRow = opponentPlayer.board.activeRow
@@ -84,14 +83,14 @@ class EvilXisumaRareHermitCard extends Card {
 				// This will add a blocked action for the duration of their turn
 				game.addBlockedActions(this.props.id, actionToBlock)
 
-				opponentPlayer.hooks.onTurnStart.remove(instance)
+				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
+		player.hooks.afterAttack.remove(component)
 	}
 }
 

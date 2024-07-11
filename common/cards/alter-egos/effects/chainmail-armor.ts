@@ -1,5 +1,4 @@
 import {CARDS} from '../..'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {isTargeting} from '../../../utils/attacks'
@@ -18,10 +17,10 @@ class ChainmailArmorEffectCard extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.onDefence.add(instance, (attack) => {
+		player.hooks.onDefence.add(component, (attack) => {
 			if (!isTargeting(attack, pos)) {
 				return
 			}
@@ -41,9 +40,9 @@ class ChainmailArmorEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onDefence.remove(instance)
+		player.hooks.onDefence.remove(component)
 	}
 }
 

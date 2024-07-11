@@ -1,9 +1,9 @@
 import {row} from '../../../filters'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/components'
 import {discardCard} from '../../../utils/movement'
-import Card, {Attach, attach} from '../../base/card'
+import Card, {Attach} from '../../base/card'
+import {attach} from '../../base/defaults'
 
 class ShieldEffectCard extends Card {
 	props: Attach = {
@@ -18,23 +18,23 @@ class ShieldEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 60hp, and then this card is discarded.',
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		const {player} = instance
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		let damageBlocked = 0
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
-		player.hooks.onDefence.add(instance, (attack) => {
-			let rowWithCard = game.state.rows.findEntity(row.hasCard(instance.entity))
+		player.hooks.onDefence.add(component, (attack) => {
+			let rowWithCard = game.state.rows.findEntity(row.hasCard(component.entity))
 			if (attack.getTarget() !== rowWithCard || attack.isType('status-effect')) return attack
 
 			if (damageBlocked < 60) {
 				const damageReduction = Math.min(attack.calculateDamage(), 60 - damageBlocked)
 				damageBlocked += damageReduction
-				attack.reduceDamage(instance.entity, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 			}
 		})
 
-		player.hooks.afterDefence.add(instance, (attack) => {
+		player.hooks.afterDefence.add(component, (attack) => {
 			if (damageBlocked > 0 && row) {
 				discardCard(game, row.effectCard)
 				if (!row.hermitCard) return attack
@@ -44,10 +44,10 @@ class ShieldEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.onDefence.remove(instance)
-		player.hooks.afterDefence.remove(instance)
+		player.hooks.onDefence.remove(component)
+		player.hooks.afterDefence.remove(component)
 	}
 }
 

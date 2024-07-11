@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -29,7 +28,7 @@ class TargetBlockSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		game.addPickRequest({
@@ -48,7 +47,7 @@ class TargetBlockSingleUseCard extends Card {
 				applySingleUse(game, pickedSlot)
 
 				// Redirect all future attacks this turn
-				player.hooks.beforeAttack.add(instance, (attack) => {
+				player.hooks.beforeAttack.add(component, (attack) => {
 					if (attack.isType('status-effect') || attack.isBacklash) return
 
 					attack.setTarget(this.id, {
@@ -60,10 +59,10 @@ class TargetBlockSingleUseCard extends Card {
 			},
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			player.hooks.beforeAttack.remove(instance)
-			player.hooks.onTurnEnd.remove(instance)
-			opponentPlayer.hooks.onDefence.remove(instance)
+		player.hooks.onTurnEnd.add(component, () => {
+			player.hooks.beforeAttack.remove(component)
+			player.hooks.onTurnEnd.remove(component)
+			opponentPlayer.hooks.onDefence.remove(component)
 		})
 	}
 }

@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {row, slot} from '../../../filters'
 import {SlotComponent} from '../../../types/cards'
@@ -17,12 +16,7 @@ class PistonSingleUseCard extends Card {
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
 		slot.adjacentTo(
-			slot.every(
-				slot.rowFulfills(row.hasHermit),
-				slot.itemSlot,
-				slot.empty,
-				slot.not(slot.frozen)
-			)
+			slot.every(slot.rowFulfills(row.hasHermit), slot.itemSlot, slot.empty, slot.not(slot.frozen))
 		)
 	)
 
@@ -43,9 +37,9 @@ class PistonSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		const itemInstanceKey = this.getInstanceKey(instance, 'itemInstance')
+		const itemInstanceKey = this.getInstanceKey(component, 'itemInstance')
 
 		let pickedItemSlot: SlotComponent | null = null
 
@@ -57,7 +51,7 @@ class PistonSingleUseCard extends Card {
 			onResult(pickResult) {
 				if (!pickResult.cardId) return
 
-				// Store the instance of the chosen item
+				// Store the component of the chosen item
 				pickedItemSlot = pickResult
 			},
 		})
@@ -89,20 +83,20 @@ class PistonSingleUseCard extends Card {
 			},
 		})
 
-		player.hooks.afterApply.add(instance, () => {
+		player.hooks.afterApply.add(component, () => {
 			discardSingleUse(game, player)
 
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
 
-			player.hooks.afterApply.remove(instance)
+			player.hooks.afterApply.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.afterApply.remove(instance)
+		player.hooks.afterApply.remove(component)
 	}
 }
 

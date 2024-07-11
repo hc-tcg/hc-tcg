@@ -1,10 +1,11 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../filters'
-import Card, {Attach, SingleUse, attach, singleUse} from '../../base/card'
+import Card, {Attach, SingleUse} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
+import singleUse from '../single-use'
+import {attach} from '../../base/defaults'
 
 class WaterBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
@@ -27,7 +28,7 @@ class WaterBucketEffectCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer, rowId: row} = pos
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
@@ -40,7 +41,8 @@ class WaterBucketEffectCard extends Card {
 
 					const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 						return (
-							ail.targetInstance.instance === pickedSlot.cardId?.instance && ail.props.id == 'fire'
+							ail.targetInstance.component === pickedSlot.cardId?.component &&
+							ail.props.id == 'fire'
 						)
 					})
 					statusEffectsToRemove.forEach((ail) => {
@@ -62,26 +64,30 @@ class WaterBucketEffectCard extends Card {
 		} else if (pos.type === 'attach') {
 			// Straight away remove fire
 			const fireStatusEffect = game.state.statusEffects.findEntity((ail) => {
-				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.props.id == 'fire'
+				return ail.targetInstance.component === row?.hermitCard?.component && ail.props.id == 'fire'
 			})
 			if (fireStatusEffect) {
 				removeStatusEffect(game, pos, fireStatusEffect)
 			}
 
-			player.hooks.onDefence.add(instance, (attack) => {
+			player.hooks.onDefence.add(component, (attack) => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-					return ail.targetInstance.instance === row.hermitCard?.instance && ail.props.id == 'fire'
+					return (
+						ail.targetInstance.component === row.hermitCard?.component && ail.props.id == 'fire'
+					)
 				})
 				statusEffectsToRemove.forEach((ail) => {
 					removeStatusEffect(game, pos, ail)
 				})
 			})
 
-			opponentPlayer.hooks.afterApply.add(instance, () => {
+			opponentPlayer.hooks.afterApply.add(component, () => {
 				if (!row) return
 				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-					return ail.targetInstance.instance === row.hermitCard?.instance && ail.props.id == 'fire'
+					return (
+						ail.targetInstance.component === row.hermitCard?.component && ail.props.id == 'fire'
+					)
 				})
 				statusEffectsToRemove.forEach((ail) => {
 					removeStatusEffect(game, pos, ail)
@@ -90,10 +96,10 @@ class WaterBucketEffectCard extends Card {
 		}
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.afterApply.remove(instance)
-		player.hooks.onDefence.remove(instance)
+		opponentPlayer.hooks.afterApply.remove(component)
+		player.hooks.onDefence.remove(component)
 	}
 }
 

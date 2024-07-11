@@ -1,8 +1,4 @@
-import StatusEffect, {
-	StatusEffectProps,
-	hiddenStatusEffect,
-	statusEffect,
-} from './status-effect'
+import StatusEffect, {StatusEffectProps, hiddenStatusEffect, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'

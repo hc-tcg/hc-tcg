@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -30,17 +29,17 @@ class KnockbackSingleUseCard extends Card {
 		),
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(component, (attack) => {
 			applySingleUse(game)
 
 			// Only Apply this for the first attack
-			player.hooks.afterAttack.remove(instance)
+			player.hooks.afterAttack.remove(component)
 		})
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			const activeRow = getActiveRow(opponentPlayer)
 
 			if (activeRow && activeRow.health) {
@@ -64,10 +63,10 @@ class KnockbackSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.onApply.remove(instance)
+		player.hooks.afterAttack.remove(component)
+		player.hooks.onApply.remove(component)
 	}
 }
 

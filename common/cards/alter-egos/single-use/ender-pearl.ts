@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -28,9 +27,9 @@ class EnderPearlSingleUseCard extends Card {
 			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		const attackId = this.getInstanceKey(instance)
+		const attackId = this.getInstanceKey(component)
 
 		game.addPickRequest({
 			playerId: player.id,

@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent, CoinFlipT} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -21,19 +20,19 @@ class TridentSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player, opponentPlayer} = pos
 
 		let coinflipResult: CoinFlipT | null = null
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const activePos = getActiveRowPos(player)
 			if (!activePos) return null
 			const opponentActivePos = getActiveRowPos(opponentPlayer)
 			if (!opponentActivePos) return null
 
 			const tridentAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
+				id: this.getInstanceKey(component),
 				attacker: activePos,
 				target: opponentActivePos,
 				type: 'effect',
@@ -44,16 +43,16 @@ class TridentSingleUseCard extends Card {
 			return tridentAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id !== attackId) return
 
-			coinflipResult = flipCoin(player, instance)[0]
+			coinflipResult = flipCoin(player, component)[0]
 
 			applySingleUse(game)
 		})
 
-		player.hooks.onApply.add(instance, () => {
+		player.hooks.onApply.add(component, () => {
 			// Return to hand
 			if (coinflipResult === 'heads') {
 				// Reset single use card used, won't return to the hand otherwise
@@ -63,12 +62,12 @@ class TridentSingleUseCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onApply.remove(instance)
-		player.hooks.onAttack.remove(instance)
+		player.hooks.getAttack.remove(component)
+		player.hooks.onApply.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 

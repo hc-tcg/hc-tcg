@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
@@ -33,14 +32,14 @@ class PharaohRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		let pickedRow: RowStateWithHermit | null = null
 
 		// Pick the hermit to heal
-		player.hooks.getAttackRequests.add(instance, (activeInstance, hermitAttackType) => {
+		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
-			if (activeInstance.entity !== instance.entity) return
+			if (activeInstance.entity !== component.entity) return
 
 			// Only secondary attack
 			if (hermitAttackType !== 'secondary') return
@@ -76,22 +75,22 @@ class PharaohRareHermitCard extends Card {
 		})
 
 		// Heals the afk hermit *before* we actually do damage
-		player.hooks.onAttack.add(instance, (attack) => {
-			const attackId = this.getInstanceKey(instance)
+		player.hooks.onAttack.add(component, (attack) => {
+			const attackId = this.getInstanceKey(component)
 			if (attack.id === attackId) return
 			healHermit(pickedRow, attack.calculateDamage())
 		})
 
-		player.hooks.onTurnEnd.add(instance, () => {
+		player.hooks.onTurnEnd.add(component, () => {
 			pickedRow = null
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
-		player.hooks.getAttackRequests.remove(instance)
-		player.hooks.onAttack.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.getAttackRequests.remove(component)
+		player.hooks.onAttack.remove(component)
+		player.hooks.onTurnEnd.remove(component)
 	}
 }
 

@@ -1,4 +1,3 @@
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
@@ -31,20 +30,20 @@ class Biffa2001RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
-		applyStatusEffect(game, 'museum-collection', instance)
+		applyStatusEffect(game, 'museum-collection', component)
 
-		player.hooks.onTurnStart.add(instance, () => {
-			applyStatusEffect(game, 'museum-collection', instance)
+		player.hooks.onTurnStart.add(component, () => {
+			applyStatusEffect(game, 'museum-collection', component)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 		// Remove hooks
-		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onTurnStart.remove(component)
 	}
 }
 

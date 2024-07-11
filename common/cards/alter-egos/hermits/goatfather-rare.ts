@@ -1,5 +1,4 @@
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent} from '../../../types/game-state'
@@ -36,11 +35,11 @@ class GoatfatherRareHermitCard extends Card {
 
 	override getAttack(
 		game: GameModel,
-		instance: CardComponent,
-		pos: CardPosModel,
+		component: CardComponent,
+		, ,,
 		hermitAttackType: HermitAttackType
 	) {
-		const attack = super.getAttack(game, instance, pos, hermitAttackType)
+		const attack = super.getAttack(game, component, pos, hermitAttackType)
 
 		if (!attack) return attack
 
@@ -63,7 +62,7 @@ class GoatfatherRareHermitCard extends Card {
 			if (!targetRow.hermitCard) continue
 
 			const newAttack = new AttackModel({
-				id: this.getInstanceKey(instance),
+				id: this.getInstanceKey(component),
 				attacker: {
 					player,
 					rowIndex: rowIndex,
