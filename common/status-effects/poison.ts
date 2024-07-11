@@ -5,7 +5,6 @@ import {AttackModel} from '../models/attack-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
-import {card, row, slot} from '../filters'
 
 class PoisonStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
