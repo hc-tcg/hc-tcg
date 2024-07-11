@@ -1,5 +1,5 @@
+import {row} from '../../../filters'
 import {AttackModel} from '../../../models/attack-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
@@ -19,45 +19,38 @@ class TNTSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onAttach(game: GameModel, instance: CardComponent) {
+		const {player, opponentPlayer} = instance
 
 		player.hooks.getAttack.add(instance, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-			const opponentActivePos = getActiveRowPos(opponentPlayer)
-			if (!opponentActivePos) return null
-
 			const tntAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'attack'),
-				attacker: activePos,
-				target: opponentActivePos,
+				attacker: instance.entity,
+				target: game.state.rows.find(row.player(opponentPlayer.id), row.active)?.entity,
 				type: 'effect',
 				log: (values) =>
 					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
-			}).addDamage(this.props.id, 60)
+			}).addDamage(instance.entity, 60)
 
 			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'backlash'),
-				attacker: activePos,
-				target: activePos,
+				attacker: instance.entity,
+				target: game.state.rows.find(row.player(player.id), row.active)?.entity,
 				type: 'effect',
 				isBacklash: true,
 				log: (values) => `and took ${values.damage} backlash damage`,
-			}).addDamage(this.props.id, 20)
+			}).addDamage(instance.entity, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 
 			return tntAttack
 		})
 
-		player.hooks.afterAttack.add(instance, (attack) => {
+		player.hooks.afterAttack.add(instance, (_) => {
 			applySingleUse(game)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player} = pos
+	override onDetach(game: GameModel, instance: CardComponent) {
+		const {player} = instance
 		player.hooks.getAttack.remove(instance)
 		player.hooks.onAttack.remove(instance)
 	}

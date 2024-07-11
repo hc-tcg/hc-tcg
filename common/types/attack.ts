@@ -37,8 +37,8 @@ export type AttackLog = {
 export type AttackerEntity = CardEntity | StatusEffectEntity
 
 export type AttackDefs = {
-	attacker?: AttackerEntity | null
-	target?: RowEntity | null
+	attacker?: AttackerEntity | null | undefined
+	target?: RowEntity | null | undefined
 	type: AttackType
 	shouldIgnoreSlots?: Array<ShouldIgnoreCard>
 	isBacklash?: boolean

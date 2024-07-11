@@ -93,7 +93,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return this.game.state.players[this.playerId]
 	}
 
-	public get opponent(): PlayerState {
+	public get opponentPlayer(): PlayerState {
 		return this.game.state.players[this.game.otherPlayer(this.playerId)]
 	}
 
