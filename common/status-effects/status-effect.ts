@@ -46,14 +46,14 @@ abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps>
 	/**
 	 * Called when this statusEffect is applied
 	 */
-	public onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	public onApply(game: GameModel, component: StatusEffectComponent, pos: CardPosModel) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when the statusEffect is removed, from either timeout or other means
 	 */
-	public onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	public onRemoval(game: GameModel, component: StatusEffectComponent, pos: CardPosModel) {
 		// default is do nothing
 	}
 }
