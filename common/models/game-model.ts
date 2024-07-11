@@ -284,7 +284,7 @@ export class GameModel {
 				card.hermit,
 				card.slotFulfills(slot.row(newRow.entity))
 			)
-			this.battleLog.addChangeRowEntry(player, newRow, oldHermit, newHermit)
+			this.battleLog.addChangeRowEntry(player, newRow.entity, oldHermit, newHermit)
 		}
 
 		// Change the active row
@@ -336,6 +336,7 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
+		console.log(this.state.slots.filter(predicate))
 		return this.state.slots.filter(predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,

@@ -1,6 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
-import {slot} from '../../../filters'
+import {card, row, slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -31,44 +30,29 @@ class PotatoBoyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player} = pos
+	override onAttach(game: GameModel, instance: CardComponent) {
+		const {player} = instance
 
 		player.hooks.onAttack.add(instance, (attack) => {
-			if (attack.id !== this.getInstanceKey(instance) || attack.type !== 'primary') return
-
-			const activeRow = player.board.activeRow
-			if (activeRow === null) return
-
-			const rows = player.board.rows
-
-			const activeHermit = getActiveRow(player)?.hermitCard
-			if (!activeHermit) return
-
-			game
-				.filterSlots(
-					slot.player,
-					slot.adjacentTo(slot.activeRow),
-					slot.hermitSlot,
-					slot.not(slot.empty)
+			game.state.rows.filter(row.currentPlayer).forEach((row) => {
+				row.heal(40)
+				let hermit = game.state.cards.findComponent(
+					card.row(row.entity),
+					card.slotFulfills(slot.activeRow)
 				)
-				.forEach(({rowId: row, rowIndex, cardId: card}) => {
-					if (!card || rowIndex === null) return
-					healHermit(row, 40)
-					game.battleLog.addEntry(
-						player.id,
-						`$p${card.props.name} (${rowIndex + 1})$ was healed $g40hp$ by $p${
-							activeHermit.props.name
-						}$`
-					)
-				})
+				game.battleLog.addEntry(
+					player.id,
+					`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
+						instance.props.name
+					}$`
+				)
+			})
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, pos: CardPosModel) {
-		const {player} = pos
-		// Remove hooks
-		player.hooks.onAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.onAttack.remove(component)
 	}
 }
 

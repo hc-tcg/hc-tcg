@@ -61,6 +61,12 @@ export namespace row {
 		}
 	}
 
+	export const currentPlayer: Predicate<RowComponent> = (game, pos) =>
+		row.player(game.currentPlayer.id)(game, pos)
+
+	export const opponentPlayer: Predicate<RowComponent> = (game, pos) =>
+		row.player(game.opponentPlayer.id)(game, pos)
+
 	export const hasHermit: Predicate<RowComponent> = (game, row) =>
 		game.state.cards.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
 }
@@ -123,7 +129,7 @@ export namespace slot {
 
 	/** Return true if the spot is empty. */
 	export const empty: SlotCondition = (game, pos) => {
-		return !game.state.cards.somethingFulfills(card.slot(pos))
+		return !game.state.cards.somethingFulfills(card.slot(pos.entity))
 	}
 
 	/** Return true if the card is attached to a hermit slot. */
@@ -201,7 +207,7 @@ export namespace slot {
 	/** Return true if the spot contains any of the card IDs. */
 	export const hasId = (...cardIds: Array<string>): SlotCondition => {
 		return (game, pos) => {
-			return game.state.cards.somethingFulfills(card.id(...cardIds), card.slot(pos))
+			return game.state.cards.somethingFulfills(card.id(...cardIds), card.slot(pos.entity))
 		}
 	}
 
@@ -217,6 +223,7 @@ export namespace slot {
 	 * A frozen slot is a slot that can not have card placed in it or removed from it.
 	 */
 	export const frozen: SlotCondition = (game, pos) => {
+		return false
 		if (!pos.onBoard()) return false
 		if (pos.row?.index === null || !pos.type) return false
 

@@ -193,14 +193,14 @@ abstract class Card<Props extends CardProps = CardProps> {
 	/**
 	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, component: CardComponent, placedIn: SlotComponent) {
+	public onAttach(game: GameModel, component: CardComponent) {
 		// default is do nothing
 	}
 
 	/**
 	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, component: CardComponent, from: SlotComponent) {
+	public onDetach(game: GameModel, component: CardComponent) {
 		// default is do nothing
 	}
 
@@ -228,7 +228,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	): AttackModel | null {
 		const attack = new AttackModel({
 			attacker: component.entity,
-			target: game.state.rows.find(row.player(game.opponentPlayerId), row.active),
+			target: game.state.rows.find(row.opponentPlayer, row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>

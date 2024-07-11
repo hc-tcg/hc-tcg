@@ -1,9 +1,11 @@
 import {
 	CurrentCoinFlipT,
 	PlayerState,
-	RowStateWithHermit,
 	CardComponent,
 	BattleLogT,
+	CardEntity,
+	PlayerId,
+	RowEntity,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
@@ -13,7 +15,7 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import StatusEffect from '../status-effects/status-effect'
-import {RowInfo, SlotComponent} from '../types/cards'
+import {SlotComponent} from '../types/cards'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -213,7 +215,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
@@ -237,7 +239,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public addEntry(player: string, entry: string) {
+	public addEntry(player: PlayerId, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,
@@ -246,11 +248,16 @@ export class BattleLogModel {
 
 	public addChangeRowEntry(
 		player: PlayerState,
-		newRow: RowInfo,
-		oldHermit: CardComponent | null,
-		newHermit: CardComponent | null
+		newRowEntity: RowEntity,
+		oldHermitEntity: CardEntity | null,
+		newHermitEntity: CardEntity | null
 	) {
-		if (!newHermit) return
+		let newRow = this.game.state.rows.get(newRowEntity)
+		let oldHermit = this.game.state.cards.get(oldHermitEntity)
+		let newHermit = this.game.state.cards.get(newHermitEntity)
+
+		if (!newRow || !oldHermit || !newHermit) return
+
 		if (oldHermit) {
 			this.logMessageQueue.push({
 				player: player.id,
@@ -268,7 +275,7 @@ export class BattleLogModel {
 		}
 	}
 
-	public addDeathEntry(player: PlayerState, row: RowStateWithHermit) {
+	public addDeathEntry(player: PlayerState, row: RowEntity) {
 		const card = row.hermitCard
 		const cardName = card.props.name
 
