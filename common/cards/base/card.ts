@@ -190,14 +190,6 @@ export class InstancedValue<T> {
 abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
 
-	public getKey(keyName: string) {
-		return this.props.id + ':' + keyName
-	}
-
-	public getInstanceKey(instance: CardComponent, keyName: string = '') {
-		return this.props.id + ':' + instance.entity + ':' + keyName
-	}
-
 	/**
 	 * Called when an instance of this card is attached to the board
 	 */
@@ -232,31 +224,14 @@ abstract class Card<Props extends CardProps = CardProps> {
 		this: Card<Hermit>,
 		game: GameModel,
 		instance: CardComponent,
-		pos: SlotComponent,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {
-		if (pos.row === null || !pos.rowId || !pos.row.index) return null
-
-		const {opponentPlayer: opponentPlayer} = game
-		const targetIndex = opponentPlayer.board.activeRow
-		if (targetIndex === null) return null
-
-		const targetRow = opponentPlayer.board.rows[targetIndex]
-		if (!targetRow.hermitCard) return null
+		const targetRow = game.state.rows.find(row.player(game.opponentPlayerId), row.active)
 
 		// Create an attack with default damage
 		const attack = new AttackModel({
-			id: this.getInstanceKey(instance),
-			attacker: {
-				player: pos.player,
-				rowIndex: pos.row.index,
-				rowId: pos.rowId,
-			},
-			target: {
-				player: opponentPlayer,
-				rowIndex: targetIndex,
-				row: targetRow,
-			},
+			attacker: instance.entity,
+			target: targetRow?.entity,
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>
@@ -266,9 +241,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 		})
 
 		if (attack.type === 'primary') {
-			attack.addDamage(this.props.id, this.props.primary.damage)
+			attack.addDamage(instance.entity, this.props.primary.damage)
 		} else if (attack.type === 'secondary') {
-			attack.addDamage(this.props.id, this.props.secondary.damage)
+			attack.addDamage(instance.entity, this.props.secondary.damage)
 		}
 
 		return attack

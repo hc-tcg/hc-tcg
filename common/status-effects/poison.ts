@@ -31,7 +31,6 @@ class PoisonStatusEffect extends StatusEffect {
 			if (!target) return
 
 			const statusEffectAttack = new AttackModel({
-				id: this.getInstanceKey(instance, 'statusEffectAttack'),
 				attacker: instance.entity,
 				target: target?.entity,
 				type: 'status-effect',

@@ -46,7 +46,6 @@ export class AttackModel {
 	public createWeakness: WeaknessType
 
 	constructor(defs: AttackDefs) {
-		this.id = defs.id || null
 		this.type = defs.type
 		this.isBacklash = defs.isBacklash || false
 

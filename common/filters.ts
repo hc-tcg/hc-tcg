@@ -2,6 +2,7 @@ import {GameModel} from './models/game-model'
 import {RowComponent, SlotComponent} from './types/cards'
 import {
 	CardComponent,
+	CardEntity,
 	PlayerId,
 	RowEntity,
 	SlotEntity,
@@ -71,8 +72,15 @@ export namespace effect {
 	export const some = someCombinator
 	export const not = notCombinator
 
+	export const damageEffect: Predicate<StatusEffectComponent> = (game, effect) =>
+		effect.props.damageEffect == false
+
 	export function id(id: string): Predicate<StatusEffectComponent> {
 		return (game, statusEffect) => statusEffect.props.id === id
+	}
+
+	export function target(target: CardEntity): Predicate<StatusEffectComponent> {
+		return (game, statusEffect) => statusEffect.targetEntity === target
 	}
 }
 

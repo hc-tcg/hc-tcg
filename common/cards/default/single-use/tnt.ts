@@ -51,11 +51,7 @@ class TNTSingleUseCard extends Card {
 			return tntAttack
 		})
 
-		player.hooks.onAttack.add(instance, (attack) => {
-			const backlashId = this.getInstanceKey(instance, 'backlash')
-			if (attack.id !== backlashId) return
-
-			// We've executed our attack, apply effect
+		player.hooks.afterAttack.add(instance, (attack) => {
 			applySingleUse(game)
 		})
 	}

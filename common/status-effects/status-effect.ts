@@ -1,7 +1,7 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectComponent} from '../types/game-state'
-import {SlotCondition, slot} from '../filters'
+import {CardComponent, StatusEffectComponent} from '../types/game-state'
+import {SlotCondition, effect, slot} from '../filters'
 import {SlotComponent} from '../types/cards'
 
 export type StatusEffectProps = {
@@ -32,37 +32,16 @@ export const hiddenStatusEffect = {
 
 export const damageEffect = {
 	damageEffect: true,
-	applyCondition: (game: GameModel, pos: SlotComponent) =>
-		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.cardId?.instance || a.props.damageEffect === false
-		),
+	applyCondition: (game: GameModel, card: CardComponent) =>
+		!game.state.statusEffects.somethingFulfills(effect.target(card.entity), effect.damageEffect),
 }
 
 export function isCounter(props: StatusEffectProps | null): props is Counter {
 	return props !== null && 'counter' in props
 }
 
-/** Returns a function that can be hooked to onActiveRowChange. */
-export function followActiveHermit(game: GameModel, instance: StatusEffectComponent) {
-	return (_: number | null, newRow: number | null) => {
-		if (newRow === null) return
-		let newHermit = game.currentPlayer.board.rows[newRow].hermitCard
-		if (!newHermit) return
-
-		instance.target = newHermit
-	}
-}
-
 abstract class StatusEffect<Props extends StatusEffectProps = StatusEffectProps> {
 	public abstract props: Props
-
-	public getKey(keyName: string) {
-		return this.props.id + ':' + keyName
-	}
-
-	public getInstanceKey(instance: StatusEffectComponent, keyName: string = '') {
-		return this.props.id + ':' + instance.entity + ':' + keyName
-	}
 
 	/**
 	 * Called when this statusEffect is applied

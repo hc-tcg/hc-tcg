@@ -1,6 +1,5 @@
 import StatusEffect, {
 	StatusEffectProps,
-	followActiveHermit,
 	hiddenStatusEffect,
 	statusEffect,
 } from './status-effect'

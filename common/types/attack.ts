@@ -37,7 +37,6 @@ export type AttackLog = {
 export type AttackerEntity = CardEntity | StatusEffectEntity
 
 export type AttackDefs = {
-	id?: string
 	attacker?: AttackerEntity | null
 	target?: RowEntity | null
 	type: AttackType

@@ -4,7 +4,6 @@ import {StatusEffectComponent} from './common/types/game-state'
 import {removeStatusEffect} from './common/utils/board'
 import StatusEffect, {
 	StatusEffectProps,
-	followActiveHermit,
 	statusEffect,
 } from './common/status-effects/status-effect'
 

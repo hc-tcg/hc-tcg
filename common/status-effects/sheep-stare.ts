@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps, followActiveHermit, statusEffect} from './status-effect'
+import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
