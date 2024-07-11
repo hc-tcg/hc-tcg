@@ -4,13 +4,21 @@ import {StatusEffectInstance} from '../types/game-state'
 import {SlotCondition, slot} from '../slot'
 import {SlotInfo} from '../types/cards'
 
+export type StatusEffectLog = {
+	/** The status effect target */
+	target: string
+	/** The status effect name */
+	statusEffect: string
+}
+
 export type StatusEffectProps = {
 	id: string
 	name: string
 	description: string
-	damageEffect?: boolean
+	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
+	applyLog: ((values: StatusEffectLog) => string) | null
+	removeLog: ((values: StatusEffectLog) => string) | null
 	applyCondition: SlotCondition
-	hidden?: boolean
 }
 
 export type Counter = StatusEffectProps & {
@@ -19,23 +27,38 @@ export type Counter = StatusEffectProps & {
 }
 
 export const statusEffect = {
-	damageEffect: false,
+	type: 'normal' as StatusEffectProps['type'],
 	applyCondition: slot.anything,
+	applyLog: (values: StatusEffectLog) =>
+		`${values.target} was inflicted with ${values.statusEffect}`,
+	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
+}
+
+export const systemStatusEffect = {
+	type: 'system' as StatusEffectProps['type'],
+	applyCondition: slot.anything,
+	applyLog: null,
+	removeLog: null,
 }
 
 export const hiddenStatusEffect = {
-	hidden: true,
+	type: 'hiddenSystem' as StatusEffectProps['type'],
 	name: '',
 	description: '',
 	applyCondition: slot.anything,
+	applyLog: null,
+	removeLog: null,
 }
 
 export const damageEffect = {
-	damageEffect: true,
+	type: 'damage' as StatusEffectProps['type'],
 	applyCondition: (game: GameModel, pos: SlotInfo) =>
 		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.damageEffect === false
+			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.type === 'damage'
 		),
+	applyLog: (values: StatusEffectLog) =>
+		`${values.target} was inflicted with ${values.statusEffect}`,
+	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
 }
 
 export function isCounter(props: StatusEffectProps | null): props is Counter {

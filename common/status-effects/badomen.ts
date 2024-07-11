@@ -21,10 +21,6 @@ class BadOmenStatusEffect extends StatusEffect {
 
 		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $bBad Omen$`)
-		}
-
 		opponentPlayer.hooks.onTurnStart.add(instance, () => {
 			if (!instance.counter) return
 			instance.counter--

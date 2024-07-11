@@ -1,4 +1,4 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import StatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
@@ -9,12 +9,11 @@ import {SlotInfo} from '../types/cards'
 
 class BetrayedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		id: 'betrayed',
 		name: 'Betrayed',
 		description:
 			'This Hermit must attack an AFK hermit if one exists and they have the neccesary items attached to attack.',
-		damageEffect: false,
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {

@@ -70,7 +70,10 @@ class GoodTimesWithScarRareHermitCard extends Card {
 			row.health = 50
 
 			game.state.statusEffects.forEach((ail) => {
-				if (ail.targetInstance.instance === targetInstance.instance) {
+				if (
+					ail.targetInstance.instance === targetInstance.instance &&
+					['normal', 'damage'].includes(ail.props.type)
+				) {
 					removeStatusEffect(game, pos, ail)
 				}
 			})

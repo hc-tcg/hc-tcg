@@ -2,7 +2,7 @@ import StatusEffect, {
 	StatusEffectProps,
 	followActiveHermit,
 	hiddenStatusEffect,
-	statusEffect,
+	systemStatusEffect,
 } from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
@@ -13,7 +13,7 @@ import {slot} from '../slot'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		id: 'aussie-ping',
 		name: 'Aussie Ping',
 		description:

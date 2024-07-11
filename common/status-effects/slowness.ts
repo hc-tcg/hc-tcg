@@ -20,10 +20,6 @@ class SlownessStatusEffect extends StatusEffect {
 
 		if (!instance.counter) instance.counter = this.props.counter
 
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was inflicted with $eSlowness$`)
-		}
-
 		player.hooks.onTurnStart.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))
 			if (!targetPos || targetPos.rowIndex === null) return
