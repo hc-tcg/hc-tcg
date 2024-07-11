@@ -15,7 +15,7 @@ export type StatusEffectProps = {
 	id: string
 	name: string
 	description: string
-	type: 'normal' | 'damage' | 'system' | 'hidden'
+	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
 	applyCondition: SlotCondition
@@ -42,7 +42,7 @@ export const systemStatusEffect = {
 }
 
 export const hiddenStatusEffect = {
-	type: 'hidden' as StatusEffectProps['type'],
+	type: 'hiddenSystem' as StatusEffectProps['type'],
 	name: '',
 	description: '',
 	applyCondition: slot.anything,
