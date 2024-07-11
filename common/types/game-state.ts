@@ -18,7 +18,7 @@ import {SlotCondition} from '../filters'
 import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
-import {EnergyT, RowComponent, SlotComponent} from './cards'
+import {EnergyT} from './cards'
 import {EntityList} from './entity-list'
 import {GameHook, WaterfallHook} from './hooks'
 import {
@@ -31,7 +31,7 @@ import {
 	WithoutFunctions,
 } from './server-requests'
 import {CARDS} from '../cards'
-import { CardComponent, StatusEffectComponent } from './components'
+import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './components'
 
 export type PlayerId = string & {__player_id: never}
 
