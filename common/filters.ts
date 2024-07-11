@@ -261,7 +261,7 @@ export namespace slot {
 		return (game, pos) => {
 			if (!pos.onBoard() || pos.row === null) return false
 			return (
-				game.state.slots.filter(predicate).filter((pickedPos) => {
+				game.state.slots.filterEntities(predicate).filter((pickedPos) => {
 					if (!pickedPos.onBoard()) return false
 					if (pos.row === null || pickedPos.row === null) return false
 					return [pos.row.index - 1, pos.row.index + 1].includes(pickedPos.row.index)

@@ -62,7 +62,7 @@ class OrionSoundRareHermitCard extends Card {
 			if (!attackTarget || attackTarget.row.health > 0) return
 			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 				return (
 					cardsWithStatusEffects.includes(ail.targetInstance.instance) && ail.props.id == 'melody'
 				)

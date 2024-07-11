@@ -35,7 +35,7 @@ class MilkBucketEffectCard extends Card {
 				message: 'Pick one of your Hermits',
 				canPick: slot.every(slot.player, slot.hermitSlot, slot.not(slot.empty)),
 				onResult(pickedSlot) {
-					const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+					const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 						return (
 							ail.targetInstance.instance === pickedSlot.cardId?.instance &&
 							(ail.props.id == 'poison' || ail.props.id == 'badomen')
@@ -50,7 +50,7 @@ class MilkBucketEffectCard extends Card {
 			})
 		} else if (pos.type === 'attach') {
 			// Straight away remove poison
-			const poisonStatusEffect = game.state.statusEffects.find((ail) => {
+			const poisonStatusEffect = game.state.statusEffects.findEntity((ail) => {
 				return ail.targetInstance.instance === row?.hermitCard?.instance && ail.props.id == 'poison'
 			})
 			if (poisonStatusEffect) {
@@ -59,7 +59,7 @@ class MilkBucketEffectCard extends Card {
 
 			player.hooks.onDefence.add(instance, (attack) => {
 				if (!row) return
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return (
 						ail.targetInstance.instance === row.hermitCard?.instance &&
 						(ail.props.id == 'poison' || ail.props.id == 'badomen')
@@ -72,7 +72,7 @@ class MilkBucketEffectCard extends Card {
 
 			opponentPlayer.hooks.afterApply.add(instance, () => {
 				if (!row) return
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return (
 						ail.targetInstance.instance === row.hermitCard?.instance &&
 						(ail.props.id == 'poison' || ail.props.id == 'badomen')

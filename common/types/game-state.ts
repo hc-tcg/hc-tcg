@@ -5,7 +5,7 @@ import {SlotCondition} from '../filters'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
-import {EntityList} from './entity-list'
+import {ComponentList} from './component-list'
 import {GameHook, WaterfallHook} from './hooks'
 import {
 	LocalCardInstance,
@@ -193,10 +193,10 @@ export type GameState = {
 	players: Record<string, PlayerState>
 
 	// ECS Objects
-	slots: EntityList<SlotEntity, SlotComponent>
-	rows: EntityList<RowEntity, RowComponent>
-	cards: EntityList<CardEntity, CardComponent>
-	statusEffects: EntityList<StatusEffectEntity, StatusEffectComponent>
+	slots: ComponentList<SlotEntity, SlotComponent>
+	rows: ComponentList<RowEntity, RowComponent>
+	cards: ComponentList<CardEntity, CardComponent>
+	statusEffects: ComponentList<StatusEffectEntity, StatusEffectComponent>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>

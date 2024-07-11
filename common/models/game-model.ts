@@ -252,7 +252,7 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
 			return this.state.cards
-				.filterComponents(card.slotFulfills(slot.hand, slot.player(player.id)))
+				.filter(card.slotFulfills(slot.hand, slot.player(player.id)))
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
@@ -281,11 +281,11 @@ export class GameModel {
 
 		// Create battle log entry
 		if (newRow !== null) {
-			const newHermit = this.state.cards.find(
+			const newHermit = this.state.cards.findEntity(
 				card.hermit,
 				card.slotFulfills(slot.row(currentActiveRow?.entity))
 			)
-			const oldHermit = this.state.cards.find(
+			const oldHermit = this.state.cards.findEntity(
 				card.hermit,
 				card.slotFulfills(slot.row(newRow.entity))
 			)
@@ -321,8 +321,8 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.state.cards.filterComponents(card.slot(slotA.entity))
-		const slotBCards = this.state.cards.filterComponents(card.slot(slotB.entity))
+		const slotACards = this.state.cards.filter(card.slot(slotA.entity))
+		const slotBCards = this.state.cards.filter(card.slot(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.slot = slotB
@@ -341,7 +341,7 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		return this.state.slots.filterComponents(predicate).map((slotInfo) => {
+		return this.state.slots.filter(predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,
 				type: slotInfo.type,

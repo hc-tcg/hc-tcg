@@ -22,7 +22,7 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		const {player} = instance
 
 		player.hooks.onApply.add(instance, () =>
-			game.state.rows.filter(row.player(player?.id || null)).forEach((row) => row.heal(20))
+			game.state.rows.filterEntities(row.player(player?.id || null)).forEach((row) => row.heal(20))
 		)
 	}
 

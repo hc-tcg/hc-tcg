@@ -1,6 +1,5 @@
 import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
 import {isTargeting} from '../utils/attacks'

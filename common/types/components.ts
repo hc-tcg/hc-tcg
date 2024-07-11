@@ -14,6 +14,7 @@ import Card, {
 } from '../cards/base/card'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
+import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import StatusEffect, {Counter, StatusEffectProps, isCounter} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {
@@ -106,22 +107,27 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
+	private targetEntity: CardEntity | null
 	public playerId: PlayerId
-	public targetEntity: CardEntity
 	public counter: number | null
 
 	constructor(
 		game: GameModel,
 		entity: StatusEffectEntity,
 		playerId: PlayerId,
-		statusEffect: StatusEffect<Props>,
-		targetEntity: CardEntity
+		statusEffect: string,
 	) {
 		this.game = game
 		this.entity = entity
 		this.playerId = playerId
-		this.statusEffect = statusEffect
-		this.targetEntity = targetEntity
+
+		let effect = STATUS_EFFECT_CLASSES[statusEffect]
+		if (!effect) {
+			throw new Error('Could not create status effect: ' + statusEffect)
+		}
+		this.statusEffect = effect as any
+
+		this.targetEntity = null
 		this.counter = null
 	}
 
@@ -140,6 +146,14 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 
 	public get target(): CardComponent {
 		return this.game.state.cards.getOrThrowError(this.targetEntity)
+	}
+
+	public set target(cardEntity: CardEntity | null) {
+		let cardComponent = this.game.state.cards.get(cardEntity)
+		if (cardComponent) {
+			this.statusEffect.onApply(this.game, this, cardComponent)
+		}
+		this.targetEntity = null
 	}
 
 	public get player(): PlayerState {
@@ -182,7 +196,7 @@ export class RowComponent {
 	}
 
 	public heal(amount: number) {
-		let hermit = this.game.state.cards.findComponent(card.hermit, card.row(this.entity))
+		let hermit = this.game.state.cards.find(card.hermit, card.row(this.entity))
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
 		this.health = Math.min(this.health + amount, hermit.props.health)

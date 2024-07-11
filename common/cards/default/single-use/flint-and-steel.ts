@@ -22,7 +22,7 @@ class FlintAndSteelSingleUseCard extends Card {
 			singleUse.attachCondition,
 			(game, pos) =>
 				// What should player be here?
-				game.state.cards.filter(card.player(game.currentPlayer.id), card.pile).length > 3
+				game.state.cards.filterEntities(card.player(game.currentPlayer.id), card.pile).length > 3
 		),
 	}
 

@@ -176,7 +176,7 @@ export class BattleLogModel {
 			if (subAttack.getDamage() === 0) return reducer
 
 			const attackingHermitInfo = attack.attacker
-			const targetHermitInfo = this.game.state.cards.findComponent(
+			const targetHermitInfo = this.game.state.cards.find(
 				card.hermit,
 				card.row(attack.target.entity)
 			)
@@ -275,7 +275,7 @@ export class BattleLogModel {
 	}
 
 	public addDeathEntry(player: PlayerState, row: RowEntity) {
-		const hermitCard = this.game.state.cards.findComponent(card.hermit, card.row(row))
+		const hermitCard = this.game.state.cards.find(card.hermit, card.row(row))
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
 

@@ -45,7 +45,7 @@ class VintageBeefRareHermitCard extends Card {
 			player.board.rows.forEach((row) => {
 				if (!row.hermitCard) return
 
-				const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+				const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 					return ail.targetInstance.instance === row.hermitCard.instance
 				})
 

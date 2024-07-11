@@ -9,7 +9,7 @@ import {
 	PileSlotComponent,
 	RowComponent,
 } from '../types/components'
-import {EntityList} from '../types/entity-list'
+import {ComponentList} from '../types/component-list'
 import {GameState, PlayerId} from '../types/game-state'
 
 export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
@@ -32,7 +32,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 		cardInstance.slotEntity = gameState.slots.new(PileSlotComponent, playerId).entity
 	}
 
-	const pack = gameState.cards.filterComponents(card.player(playerId))
+	const pack = gameState.cards.filter(card.player(playerId))
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -54,7 +54,7 @@ export function getGameState(game: GameModel): GameState {
 	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
 
-	const ecs = new EntityList(game)
+	const ecs = new ComponentList(game)
 
 	const gameState: GameState = {
 		turn: {
@@ -68,10 +68,10 @@ export function getGameState(game: GameModel): GameState {
 		},
 		order: playerIds,
 		/* Global objects for the game state. Do NOT remove objects from these dictionaries. */
-		slots: new EntityList(game),
-		rows: new EntityList(game),
-		cards: new EntityList(game),
-		statusEffects: new EntityList(game),
+		slots: new ComponentList(game),
+		rows: new ComponentList(game),
+		cards: new ComponentList(game),
+		statusEffects: new ComponentList(game),
 		lastActionResult: null,
 		players: playerIds.reduce(
 			(playerStates, playerId) => ({

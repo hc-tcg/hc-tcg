@@ -37,7 +37,7 @@ class TotemEffectCard extends Card {
 
 			row.health = 10
 
-			const statusEffectsToRemove = game.state.statusEffects.filter((ail) => {
+			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
 				return ail.targetInstance.instance === pos.cardId?.instance
 			})
 			statusEffectsToRemove.forEach((ail) => {

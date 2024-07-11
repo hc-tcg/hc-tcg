@@ -1,6 +1,5 @@
 import {DEBUG_CONFIG} from 'common/config'
 import {GameModel} from 'common/models/game-model'
-import {getCardPos} from 'common/models/card-pos-model'
 import {CardComponent} from 'common/types/components'
 
 export const getOpponentId = (game: GameModel, playerId: string) => {

@@ -1,5 +1,4 @@
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {
 	GenericActionResult,
@@ -11,7 +10,7 @@ import { CardComponent, SlotComponent, StatusEffectComponent } from '../types/co
 export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.state.cards.findComponent(card.singleUse)
+	const suCard = game.state.cards.find(card.singleUse)
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 
@@ -70,7 +69,7 @@ export function removeStatusEffect(
 	statusEffectInstance: StatusEffectComponent
 ): GenericActionResult {
 	if (!pos) return 'FAILURE_NOT_APPLICABLE'
-	const statusEffects = game.state.statusEffects.filter(
+	const statusEffects = game.state.statusEffects.filterEntities(
 		(a) => a.instance === statusEffectInstance.entity
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
@@ -78,7 +77,7 @@ export function removeStatusEffect(
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
 	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
-	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
+	game.state.statusEffects = game.state.statusEffects.filterEntities((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
 }
@@ -90,7 +89,7 @@ export function hasStatusEffect(
 ) {
 	if (!instance) return false
 	return (
-		game.state.statusEffects.filter(
+		game.state.statusEffects.filterEntities(
 			(ail) => ail.props.id === statusEffectId && ail.instance === instance.entity
 		).length !== 0
 	)

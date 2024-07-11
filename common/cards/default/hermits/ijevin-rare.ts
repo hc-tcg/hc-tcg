@@ -55,7 +55,7 @@ class IJevinRareHermitCard extends Card {
 					game.changeActiveRow(opponentPlayer, pickedSlot.row)
 				},
 				onTimeout() {
-					const row = game.state.slots.filter(pickCondition)[0].row
+					const row = game.state.slots.filterEntities(pickCondition)[0].row
 					if (!row) return
 					game.changeActiveRow(opponentPlayer, row)
 				},

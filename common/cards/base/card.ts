@@ -227,7 +227,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.state.rows.find(row.opponentPlayer, row.active),
+			target: game.state.rows.findEntity(row.opponentPlayer, row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>

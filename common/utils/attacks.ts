@@ -224,7 +224,7 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	let attacker = attack.attacker
 	if (!(attacker instanceof CardComponent)) return null
 
-	const targetCardInfo = game.state.cards.findComponent(card.row(attack.targetEntity), card.hermit)
+	const targetCardInfo = game.state.cards.find(card.row(attack.targetEntity), card.hermit)
 
 	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 

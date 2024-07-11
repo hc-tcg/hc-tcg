@@ -24,7 +24,7 @@ class ShieldEffectCard extends Card {
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 		player.hooks.onDefence.add(instance, (attack) => {
-			let rowWithCard = game.state.rows.find(row.hasCard(instance.entity))
+			let rowWithCard = game.state.rows.findEntity(row.hasCard(instance.entity))
 			if (attack.getTarget() !== rowWithCard || attack.isType('status-effect')) return attack
 
 			if (damageBlocked < 60) {
