@@ -15,14 +15,11 @@ class FireStatusEffect extends StatusEffect {
 		name: 'Burn',
 		description:
 			"Burned Hermits take an additional 20hp damage at the end of their opponent's turn, until knocked out. Can not stack with poison.",
+		applyLog: (values) => `${values.target} was $eBurned$`,
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel) {
 		const {player, opponentPlayer} = pos
-
-		if (pos.card) {
-			game.battleLog.addEntry(player.id, `$p${pos.card.props.name}$ was $eBurned$`)
-		}
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.targetInstance))

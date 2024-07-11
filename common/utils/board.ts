@@ -80,6 +80,10 @@ export function applyStatusEffect(
 
 	if (!statusEffectInstance.props.applyCondition(game, pos)) return 'FAILURE_CANNOT_COMPLETE'
 
+	if (statusEffectInstance.props.applyLog) {
+		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.applyLog)
+	}
+
 	statusEffectInstance.statusEffect.onApply(game, statusEffectInstance, pos)
 	game.state.statusEffects.push(statusEffectInstance)
 
@@ -102,7 +106,11 @@ export function removeStatusEffect(
 
 	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
-	game.battleLog.addRemoveStatusEffectEntry(statusEffectObject)
+
+	if (statusEffectInstance.props.removeLog) {
+		game.battleLog.addStatusEffectEntry(statusEffectInstance, statusEffectInstance.props.removeLog)
+	}
+
 	game.state.statusEffects = game.state.statusEffects.filter((a) => !statusEffects.includes(a))
 
 	return 'SUCCESS'
