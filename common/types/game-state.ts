@@ -128,19 +128,22 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly game: GameModel
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
-	public target: CardComponent
+	public playerId: PlayerId
+	public targetEntity: CardEntity
 	public counter: number | null
 
 	constructor(
 		game: GameModel,
 		entity: StatusEffectEntity,
+		playerId: PlayerId,
 		statusEffect: StatusEffect<Props>,
-		targetInstance: CardComponent
+		targetEntity: CardEntity
 	) {
 		this.game = game
 		this.entity = entity
+		this.playerId = playerId
 		this.statusEffect = statusEffect
-		this.target = targetInstance
+		this.targetEntity = targetEntity
 		this.counter = null
 	}
 
@@ -155,6 +158,18 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 
 	public get props(): Props {
 		return this.statusEffect.props
+	}
+
+	public get target(): CardComponent {
+		return this.game.state.cards.getOrThrowError(this.targetEntity)
+	}
+
+	public get player(): PlayerState {
+		return this.game.state.players[this.playerId]
+	}
+
+	public get opponentPlayer(): PlayerState {
+		return this.game.state.players[this.game.otherPlayer(this.playerId)]
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {

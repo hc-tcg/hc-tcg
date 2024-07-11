@@ -1,4 +1,5 @@
 import {SlotCondition} from '../filters'
+import {CardEntity, RowEntity, StatusEffectEntity} from './game-state'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
@@ -33,10 +34,12 @@ export type AttackLog = {
 	previousLog?: string
 }
 
+export type AttackerEntity = CardEntity | StatusEffectEntity
+
 export type AttackDefs = {
 	id?: string
-	attacker?: RowPos | null
-	target?: RowPos | null
+	attacker?: AttackerEntity | null
+	target?: RowEntity | null
 	type: AttackType
 	shouldIgnoreSlots?: Array<ShouldIgnoreCard>
 	isBacklash?: boolean
@@ -53,7 +56,7 @@ export type AttackHistoryType =
 	| 'set_target'
 
 export type AttackHistory = {
-	sourceId: string
+	source: AttackerEntity,
 	type: AttackHistoryType
 	value?: any
 }

@@ -16,6 +16,11 @@ export class EntityList<Id extends Entity, Value extends {entity: Id}> {
 		return this.data[id] || null
 	}
 
+	public getOrThrowError(id: Id | null) {
+		if (id && id in this.data) return this.data[id]
+		throw new Error(`Could not find id \`${id}\` in entity list`)
+	}
+
 	/** Add a value and return the ID of the value */
 	public new<Args extends Array<any>>(
 		newValue: new (game: GameModel, id: Id, ...args: Args) => Value,

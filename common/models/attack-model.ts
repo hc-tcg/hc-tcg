@@ -6,8 +6,9 @@ import {
 	ShouldIgnoreCard,
 	WeaknessType,
 	AttackLog,
+    AttackerEntity,
 } from '../types/attack'
-import {RowPos} from '../types/cards'
+import {RowEntity} from '../types/game-state'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -22,9 +23,9 @@ export class AttackModel {
 	private history: Array<AttackHistory> = []
 
 	/** The attacker */
-	private attacker: RowPos | null
+	private attacker: AttackerEntity | null
 	/** The attack target */
-	private target: RowPos | null
+	private target: RowEntity | null
 
 	/** The battle log attached to this attack */
 	private log: Array<(values: AttackLog) => string> = []
@@ -62,9 +63,9 @@ export class AttackModel {
 	// Helpers
 
 	/** Adds a change to the attack's history */
-	private addHistory(sourceId: string, type: AttackHistoryType, value?: any) {
+	private addHistory(source: AttackerEntity, type: AttackHistoryType, value?: any) {
 		this.history.push({
-			sourceId,
+			source,
 			type,
 			value,
 		})
@@ -109,45 +110,42 @@ export class AttackModel {
 	// Setters / modifier methods
 
 	/** Increases the damage the attack does */
-	public addDamage(sourceId: string, amount: number) {
+	public addDamage(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damage += amount
 
-		this.addHistory(sourceId, 'add_damage', amount)
+		this.addHistory(source, 'add_damage', amount)
 
 		return this
 	}
 
 	/** Reduces the damage the attack does */
-	public reduceDamage(sourceId: string, amount: number) {
+	public reduceDamage(source: AttackerEntity, amount: number) {
 		if (this.damageLocked) return this
 		this.damageReduction += amount
 
-		this.addHistory(sourceId, 'reduce_damage', amount)
+		this.addHistory(source, 'reduce_damage', amount)
 
 		return this
 	}
 
 	/** Multiplies the damage the attack does */
-	public multiplyDamage(sourceId: string, multiplier: number) {
+	public multiplyDamage(source: AttackerEntity, multiplier: number) {
 		if (this.damageLocked) return this
 		this.damageMultiplier = Math.max(this.damageMultiplier * multiplier, 0)
 
-		this.addHistory(sourceId, 'multiply_damage', multiplier)
+		this.addHistory(source, 'multiply_damage', multiplier)
 		return this
 	}
 
 	/** Sets the attacker for this attack */
-	public setAttacker(sourceId: string, attacker: RowPos | null) {
-		this.attacker = attacker
-
-		this.addHistory(sourceId, 'set_attacker', attacker)
+	public setAttacker(attacker: AttackerEntity) {
+		this.addHistory(attacker, 'set_attacker', attacker)
 		return this
 	}
 	/** Sets the target for this attack */
-	public setTarget(sourceId: string, target: RowPos | null) {
+	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
 		this.target = target
-
 		this.addHistory(sourceId, 'set_target', target)
 		return this
 	}
@@ -157,10 +155,10 @@ export class AttackModel {
 	 *
 	 * WARNING: Do not use lightly!
 	 */
-	public lockDamage(sourceId: string) {
+	public lockDamage(source: AttackerEntity) {
 		this.damageLocked = true
 
-		this.addHistory(sourceId, 'lock_damage')
+		this.addHistory(source, 'lock_damage')
 		return this
 	}
 
