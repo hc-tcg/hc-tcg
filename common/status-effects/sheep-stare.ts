@@ -1,4 +1,8 @@
-import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
+import StatusEffect, {
+	StatusEffectProps,
+	followActiveHermit,
+	systemStatusEffect,
+} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
@@ -7,7 +11,7 @@ import {removeStatusEffect} from '../utils/board'
 
 class SheepStareEffect extends StatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		id: 'sheep-stare',
 		name: 'Sheep Stare',
 		description:

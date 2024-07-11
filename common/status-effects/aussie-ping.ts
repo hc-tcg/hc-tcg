@@ -1,4 +1,9 @@
-import StatusEffect, {StatusEffectProps, hiddenStatusEffect, statusEffect} from './status-effect'
+import StatusEffect, {
+	StatusEffectProps,
+	followActiveHermit,
+	hiddenStatusEffect,
+	systemStatusEffect,
+} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
@@ -7,7 +12,7 @@ import {slot} from '../components/query'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
-		...statusEffect,
+		...systemStatusEffect,
 		id: 'aussie-ping',
 		name: 'Aussie Ping',
 		description:

@@ -11,7 +11,6 @@ class MelodyStatusEffect extends StatusEffect {
 		id: 'melody',
 		name: "Ollie's Melody",
 		description: 'This Hermit heals 10hp every turn.',
-		damageEffect: false,
 		applyCondition: slot.not(slot.hasStatusEffect('melody')),
 	}
 

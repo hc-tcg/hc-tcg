@@ -13,14 +13,11 @@ class PoisonStatusEffect extends StatusEffect {
 		name: 'Poison',
 		description:
 			"Poisoned Hermits take an additional 20hp damage at the end of their opponent's turn, until down to 10hp. Can not stack with burn.",
+		applyLog: (values) => `${values.target} was $ePoisoned$`,
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
 		const {player, opponentPlayer} = instance
-
-		if (pos.cardId) {
-			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was $ePoisoned$`)
-		}
 
 		opponentPlayer.hooks.onTurnEnd.add(instance, () => {
 			let targetSlot = game.state.cards.get(instance.target.entity)?.slot

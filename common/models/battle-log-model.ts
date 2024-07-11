@@ -2,19 +2,17 @@ import {
 	CurrentCoinFlipT,
 	PlayerComponent,
 	BattleLogT,
-	CardEntity,
-	PlayerEntity,
-	RowEntity,
+	StatusEffectInstance,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
+import {CardPosModel, getCardPos} from './card-pos-model'
 import {GameModel} from './game-model'
 import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
-import StatusEffect from '../status-effects/status-effect'
-import {CardComponent, SlotComponent} from '../components'
-import {card} from '../components/query'
+import StatusEffect, {statusEffect, StatusEffectLog} from '../status-effects/status-effect'
+import {SlotInfo} from '../types/cards'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -299,10 +297,19 @@ export class BattleLogModel {
 		broadcast(this.game.getPlayers(), 'CHAT_UPDATE', this.game.chat)
 	}
 
-	public addRemoveStatusEffectEntry(statusEffect: StatusEffect) {
-		this.logMessageQueue.push({
-			player: this.game.currentPlayer.entity,
-			description: `$e${statusEffect.props.name}$ wore off`,
+	public addStatusEffectEntry(
+		statusEffect: StatusEffectInstance,
+		log: (values: StatusEffectLog) => string
+	) {
+		const pos = getCardPos(this.game, statusEffect.targetInstance)
+		if (!pos || !pos.rowIndex) return
+		const targetFormatting = pos.player.id === this.game.currentPlayerId ? 'p' : 'o'
+		const rowNumberString =
+			pos.player.board.activeRow === pos.rowIndex ? '' : `(${pos.rowIndex + 1})`
+
+		const logMessage = log({
+			target: `$${targetFormatting}${statusEffect.targetInstance.props.name} ${rowNumberString}$`,
+			statusEffect: `$e${statusEffect.props.name}$`,
 		})
 
 		this.logMessageQueue.push({
