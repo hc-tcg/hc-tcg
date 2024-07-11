@@ -6,9 +6,9 @@ import {
 	CoinFlipT,
 	LocalGameState,
 	LocalPlayerState,
-	PlayerState,
 	newEntity,
 	CardEntity,
+	PlayerComponent,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
@@ -19,7 +19,13 @@ import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition, card, row, slot} from 'common/filters'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
-import {CardComponent, HandSlotComponent} from 'common/types/components'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	HandSlotComponent,
+	RowComponent,
+	SlotComponent,
+} from 'common/types/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -138,90 +144,32 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	})
 }
 
-export function getPlayerState(game: GameModel, player: PlayerModel): PlayerState {
-	for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
-		const id = DEBUG_CONFIG.extraStartingCards[i]
-		if (!CARDS[id]) {
-			console.log('Invalid extra starting card in debug config:', id)
-			continue
-		}
-
-		let card = game.state.cards.new(CardComponent, id, player.id)
-		card.slot = game.state.slots.new(HandSlotComponent, player.id)
-	}
-
-	return {
-		id: player.id,
-		playerName: player.name,
-		minecraftName: player.minecraftName,
-		censoredPlayerName: player.censoredName,
-		coinFlips: [],
-		lives: 3,
-		hasPlacedHermit: false,
-		singleUseCardUsed: false,
-		cardsCanBePlacedIn: [],
-		pickableSlots: null,
-		activeRowEntity: null,
-
-		hooks: {
-			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
-			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
-
-			onAttach: new GameHook<(instance: CardComponent) => void>(),
-			onDetach: new GameHook<(instance: CardComponent) => void>(),
-			beforeApply: new GameHook<() => void>(),
-			onApply: new GameHook<() => void>(),
-			afterApply: new GameHook<() => void>(),
-			getAttackRequests: new GameHook<
-				(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
-			>(),
-			getAttack: new GameHook<() => AttackModel | null>(),
-			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
-			onAttack: new GameHook<(attack: AttackModel) => void>(),
-			onDefence: new GameHook<(attack: AttackModel) => void>(),
-			afterAttack: new GameHook<(attack: AttackModel) => void>(),
-			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardComponent | null>) => void>(),
-			onCoinFlip: new GameHook<
-				(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
-			>(),
-			beforeActiveRowChange: new GameHook<
-				(oldRow: number | null, newRow: number | null) => boolean
-			>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
-			freezeSlots: new GameHook<() => SlotCondition>(),
-		},
-	}
-}
-
-export function getLocalPlayerState(game: GameModel, playerState: PlayerState): LocalPlayerState {
+export function getLocalPlayerState(
+	game: GameModel,
+	playerState: PlayerComponent
+): LocalPlayerState {
 	let board = {
-		activeRow: game.state.rows.find(row.active, row.player(playerState.id)) || null,
+		activeRow:
+			game.ecs.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
 		singleUseCard:
-			game.state.cards
-				.findComponent(card.singleUse, card.slotFulfills(slot.singleUseSlot))
+			game.ecs
+				.find(CardComponent, card.singleUse, card.slotFulfills(slot.singleUseSlot))
 				?.toLocalCardInstance() || null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
-		rows: game.state.rows.filterComponents(row.player(playerState.id)).map((row) => {
-			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row.entity))
-			const hermitCard = game.state.cards.findComponent(
-				card.slot(hermit)
-			) as CardComponent<HasHealth> | null
+		rows: game.ecs.filter(RowComponent, row.player(playerState.entity)).map((row) => {
+			const hermit = game.ecs.findEntity(SlotComponent, slot.hermitSlot, slot.row(row.entity))
+			const hermitCard = game.ecs.find(CardComponent, card.slot(hermit))
 
-			const attach = game.state.slots.find(slot.attachSlot, slot.row(row.entity))
-			const attachCard = game.state.cards.findComponent(
-				card.slot(attach)
-			) as CardComponent<Attach> | null
+			const attach = game.ecs.findEntity(SlotComponent, slot.attachSlot, slot.row(row.entity))
+			const attachCard = game.ecs.find(CardComponent, card.slot(attach))
 
-			const items = game.state.slots
-				.filterComponents(slot.itemSlot, slot.row(row.entity))
+			const items = game.ecs
+				.filter(SlotComponent, slot.itemSlot, slot.row(row.entity))
 				.map((itemSlot) => {
 					return {
 						slot: itemSlot.entity,
 						card:
-							game.state.cards.findComponent(card.slot(itemSlot.entity))?.toLocalCardInstance() ||
+							game.ecs.find(CardComponent, card.slot(itemSlot.entity))?.toLocalCardInstance() ||
 							null,
 					}
 				})
@@ -230,8 +178,8 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 
 			return {
 				entity: row.entity,
-				hermit: {slot: hermit, card: hermitCard?.toLocalCardInstance() || null},
-				attach: {slot: attach, card: attachCard?.toLocalCardInstance() || null},
+				hermit: {slot: hermit, card: (hermitCard?.toLocalCardInstance() as any) || null},
+				attach: {slot: attach, card: (attachCard?.toLocalCardInstance() as any) || null},
 				items: items,
 				health: row.health,
 			}
@@ -239,7 +187,7 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 	}
 
 	const localPlayerState: LocalPlayerState = {
-		id: playerState.id,
+		id: playerState.entity,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -256,8 +204,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		return null
 	}
 
-	const playerState = game.state.players[player.id]
-	const opponentState = game.state.players[opponentPlayerId]
+	const playerState = game.ecs.get(player.id)
+	const opponentState = game.ecs.get(opponentPlayerId)
 	const turnState = game.state.turn
 	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
@@ -312,12 +260,13 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(playerState.id), slot.hand))
+			.filterComponents(card.slotFulfills(slot.player(playerState.entity), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
-		pileCount: game.state.cards.filter(card.slotFulfills(slot.player(playerState.id), slot.pile))
-			.length,
+		pileCount: game.state.cards.filter(
+			card.slotFulfills(slot.player(playerState.entity), slot.pile)
+		).length,
 		discarded: game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(playerState.id), slot.discardPile))
+			.filterComponents(card.slotFulfills(slot.player(playerState.entity), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids

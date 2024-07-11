@@ -2,7 +2,7 @@ import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {GameModel} from '../models/game-model'
 import {
 	GenericActionResult,
-	PlayerState,
+	PlayerComponent,
 } from '../types/game-state'
 import {card} from '../filters'
 import { CardComponent, SlotComponent, StatusEffectComponent } from '../types/components'

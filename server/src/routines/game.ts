@@ -36,7 +36,7 @@ function getAvailableEnergy(game: GameModel) {
 
 	const energy = game.state.cards
 		.filterComponents(
-			card.slotFulfills(slot.player(game.currentPlayer.id)),
+			card.slotFulfills(slot.player(game.currentPlayer.entity)),
 			card.item,
 			card.attached
 		)
@@ -63,7 +63,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Custom modals
 	if (modalRequests.length > 0) {
 		const request = modalRequests[0]
-		if (request.playerId === currentPlayer.id) {
+		if (request.playerId === currentPlayer.entity) {
 			return ['MODAL_REQUEST']
 		} else {
 			// Activate opponent action timer
@@ -78,7 +78,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	// Pick requests
 	if (pickRequests.length > 0) {
 		const request = pickRequests[0]
-		if (request.playerId === currentPlayer.id) {
+		if (request.playerId === currentPlayer.entity) {
 			let pickActions: TurnActions = ['PICK_REQUEST']
 			if (su && !suUsed) {
 				pickActions.push('REMOVE_EFFECT')
@@ -150,7 +150,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.state.cards
-			.filterComponents(card.slotFulfills(slot.player(currentPlayer.id), slot.hand))
+			.filterComponents(card.slotFulfills(slot.player(currentPlayer.entity), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.state.slots.filter(card.card.props.attachCondition)
 
@@ -209,7 +209,7 @@ function* checkHermitHealth(game: GameModel) {
 
 		const hermitCards = game.state.cards.filterComponents(
 			card.attached,
-			card.player(game.currentPlayer.id)
+			card.player(game.currentPlayer.entity)
 		)
 
 		for (const card of hermitCards) {
@@ -508,7 +508,7 @@ function* turnActionsSaga(game: GameModel) {
 				}
 
 				game.endInfo.reason = 'time'
-				game.endInfo.deadPlayerIds = [currentPlayer.id]
+				game.endInfo.deadPlayerIds = [currentPlayer.entity]
 				return 'GAME_END'
 			}
 
@@ -587,19 +587,19 @@ function* turnSaga(game: GameModel) {
 	const singleUseCard = game.state.cards.findComponent(card.attached, card.singleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
-			singleUseCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.id)
+			singleUseCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.entity)
 		} else {
-			singleUseCard.slot = game.state.slots.new(DiscardSlotComponent, currentPlayer.id)
+			singleUseCard.slot = game.state.slots.new(DiscardSlotComponent, currentPlayer.entity)
 		}
 	}
 
 	// Draw a card from deck when turn ends
 	const newCard = game.state.cards.findComponent(
-		card.player(currentPlayer.id),
+		card.player(currentPlayer.entity),
 		card.slotFulfills(slot.pile)
 	)
 	if (newCard) {
-		newCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.id)
+		newCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.entity)
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

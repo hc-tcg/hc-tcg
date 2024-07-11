@@ -21,7 +21,7 @@ class BadOmenStatusEffect extends StatusEffect {
 		if (!component.counter) component.counter = this.props.counter
 
 		if (pos.cardId) {
-			game.battleLog.addEntry(player.id, `$p${pos.cardId.props.name}$ was inflicted with $bBad Omen$`)
+			game.battleLog.addEntry(player.entity, `$p${pos.cardId.props.name}$ was inflicted with $bBad Omen$`)
 		}
 		
 		opponentPlayer.hooks.onTurnStart.add(component, () => {
@@ -38,7 +38,7 @@ class BadOmenStatusEffect extends StatusEffect {
 			const {currentPlayer} = game
 			if (
 				instance.target.entity !== card.entity &&
-				(currentPlayer.id !== player.id || player.board.activeRow !== targetPos?.rowIndex)
+				(currentPlayer.entity !== player.entity || player.board.activeRow !== targetPos?.rowIndex)
 			) {
 				return coinFlips
 			}

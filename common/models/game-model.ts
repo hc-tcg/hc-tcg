@@ -4,11 +4,11 @@ import {
 	GameState,
 	ActionResult,
 	TurnActions,
-	PlayerState,
+	PlayerComponent,
 	Message,
-	PlayerId,
+	PlayerEntity,
 } from '../types/game-state'
-import {getGameState} from '../utils/state-gen'
+import {getGameState, setupEcs} from '../utils/state-gen'
 import {
 	CopyAttack,
 	ModalRequest,
@@ -21,6 +21,7 @@ import {SlotCondition, card, slot} from '../filters'
 import {CardComponent, RowComponent, SlotComponent} from '../types/components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
+import ECS from '../types/ecs'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -32,6 +33,7 @@ export class GameModel {
 	public players: Record<string, PlayerModel>
 	public task: any
 	public state: GameState
+	public ecs: ECS
 
 	public endInfo: {
 		deadPlayerIds: Array<string>
@@ -62,6 +64,8 @@ export class GameModel {
 		}
 
 		this.state = getGameState(this)
+		this.ecs = new ECS(this)
+		setupEcs(this.ecs, player1, player2)
 	}
 
 	public get currentPlayerId() {
@@ -73,20 +77,20 @@ export class GameModel {
 	}
 
 	public get currentPlayer() {
-		return this.state.players[this.currentPlayerId]
+		return this.ecs.getOrError(this.currentPlayerId)
 	}
 
 	public get opponentPlayer() {
-		return this.state.players[this.opponentPlayerId]
+		return this.ecs.getOrError(this.opponentPlayerId)
 	}
 
 	public get opponentActiveRow() {
 		const player = this.opponentPlayer
-		return player.activeRowEntity !== null ? this.state.rows.get(player.activeRowEntity) : null
+		return player.activeRowEntity !== null ? this.ecs.get(player.activeRowEntity) : null
 	}
 
 	public getPlayerIds() {
-		return Object.keys(this.players) as Array<PlayerId>
+		return Object.keys(this.players) as Array<PlayerEntity>
 	}
 
 	public getPlayers() {
@@ -105,7 +109,7 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public otherPlayer(player: PlayerId) {
+	public otherPlayer(player: PlayerEntity) {
 		return this.getPlayerIds().filter((id) => id != player)[0]
 	}
 
@@ -250,9 +254,9 @@ export class GameModel {
 
 	/** Update the cards that the players are able to select */
 	public updateCardsCanBePlacedIn() {
-		const getCardsCanBePlacedIn = (player: PlayerState) => {
-			return this.state.cards
-				.filter(card.slotFulfills(slot.hand, slot.player(player.id)))
+		const getCardsCanBePlacedIn = (player: PlayerComponent) => {
+			return this.ecs
+				.filter(CardComponent, card.slotFulfills(slot.hand, slot.player(player.entity)))
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
@@ -267,8 +271,8 @@ export class GameModel {
 	}
 
 	/** Helper method to change the active row. Returns whether or not the change was successful. */
-	public changeActiveRow(player: PlayerState, newRow: RowComponent): boolean {
-		const currentActiveRow = this.state.rows.get(player.activeRowEntity)
+	public changeActiveRow(player: PlayerComponent, newRow: RowComponent): boolean {
+		const currentActiveRow = this.ecs.get(player.activeRowEntity)
 
 		// Can't change to existing active row
 		if (newRow === currentActiveRow) return false
@@ -281,11 +285,13 @@ export class GameModel {
 
 		// Create battle log entry
 		if (newRow !== null) {
-			const newHermit = this.state.cards.findEntity(
+			const newHermit = this.ecs.findEntity(
+				CardComponent,
 				card.hermit,
 				card.slotFulfills(slot.row(currentActiveRow?.entity))
 			)
-			const oldHermit = this.state.cards.findEntity(
+			const oldHermit = this.ecs.findEntity(
+				CardComponent,
 				card.hermit,
 				card.slotFulfills(slot.row(newRow.entity))
 			)
@@ -321,8 +327,8 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.state.cards.filter(card.slot(slotA.entity))
-		const slotBCards = this.state.cards.filter(card.slot(slotB.entity))
+		const slotACards = this.ecs.filter(CardComponent, card.slot(slotA.entity))
+		const slotBCards = this.ecs.filter(CardComponent, card.slot(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.slot = slotB
@@ -341,7 +347,7 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		return this.state.slots.filter(predicate).map((slotInfo) => {
+		return this.ecs.filter(SlotComponent, predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,
 				type: slotInfo.type,

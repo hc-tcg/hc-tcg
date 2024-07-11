@@ -23,7 +23,7 @@ function* pickRequestSaga(game: GameModel, pickResult?: PickInfo): Generator<any
 	let slotInfo = {
 		player: game.state.players[pickResult.playerId],
 		opponentPlayer: Object.values(game.state.players).filter(
-			(opponent) => opponent.id !== pickResult.playerId
+			(opponent) => opponent.entity !== pickResult.playerId
 		)[0],
 		type: pickResult.type,
 		index: pickResult.index,

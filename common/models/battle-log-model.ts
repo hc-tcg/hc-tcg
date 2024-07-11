@@ -1,9 +1,9 @@
 import {
 	CurrentCoinFlipT,
-	PlayerState,
+	PlayerComponent,
 	BattleLogT,
 	CardEntity,
-	PlayerId,
+	PlayerEntity,
 	RowEntity,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
@@ -96,7 +96,7 @@ export class BattleLogModel {
 		let {player, opponentPlayer} = card
 		
 		const genCardName = (
-			player: PlayerState | undefined,
+			player: PlayerComponent | undefined,
 			card: CardComponent | null | undefined,
 			rowIndex: number | null | undefined
 		) => {
@@ -146,7 +146,7 @@ export class BattleLogModel {
 		if (logMessage.length === 0) return
 
 		this.logMessageQueue.unshift({
-			player: pos.player.id,
+			player: pos.player.entity,
 			description: logMessage,
 		})
 
@@ -159,7 +159,7 @@ export class BattleLogModel {
 		singleUse: CardComponent | null
 	) {
 		if (!attack.attacker) return
-		const playerId = attack.attacker.player.id
+		const playerId = attack.attacker.player.entity
 
 		if (!playerId) return
 
@@ -181,7 +181,7 @@ export class BattleLogModel {
 				card.row(attack.target.entity)
 			)
 
-			const targetFormatting = attack.target.player.id === playerId ? 'p' : 'o'
+			const targetFormatting = attack.target.player.entity === playerId ? 'p' : 'o'
 
 			const rowNumberString = `(${attack.target.index + 1})`
 
@@ -230,7 +230,7 @@ export class BattleLogModel {
 			if (!coinFlip.opponentFlip) return
 
 			this.logMessageQueue.push({
-				player: player.id,
+				player: player.entity,
 				description: `$o${coinFlip.card.props.name}$ ${this.generateCoinFlipDescription(
 					coinFlip
 				)} on their coinflip`,
@@ -238,7 +238,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public addEntry(player: PlayerId, entry: string) {
+	public addEntry(player: PlayerEntity, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,
@@ -246,7 +246,7 @@ export class BattleLogModel {
 	}
 
 	public addChangeRowEntry(
-		player: PlayerState,
+		player: PlayerComponent,
 		newRowEntity: RowEntity,
 		oldHermitEntity: CardEntity | null,
 		newHermitEntity: CardEntity | null
@@ -259,14 +259,14 @@ export class BattleLogModel {
 
 		if (oldHermit) {
 			this.logMessageQueue.push({
-				player: player.id,
+				player: player.entity,
 				description: `$p{You|${player.playerName}}$ swapped $p${oldHermit.props.name}$ for $p${
 					newHermit.props.name
 				} (${newRow.index + 1})$`,
 			})
 		} else {
 			this.logMessageQueue.push({
-				player: player.id,
+				player: player.entity,
 				description: `$p{You|${player.playerName}}$ activated $p${newHermit.props.name} (${
 					newRow.index + 1
 				})$`,
@@ -274,7 +274,7 @@ export class BattleLogModel {
 		}
 	}
 
-	public addDeathEntry(player: PlayerState, row: RowEntity) {
+	public addDeathEntry(player: PlayerComponent, row: RowEntity) {
 		const hermitCard = this.game.state.cards.find(card.hermit, card.row(row))
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
@@ -282,7 +282,7 @@ export class BattleLogModel {
 		const livesRemaining = player.lives === 3 ? 'two lives' : 'one life'
 
 		this.logMessageQueue.push({
-			player: player.id,
+			player: player.entity,
 			description: `$p${cardName}$ was knocked out, and $p{you|${player.playerName}}$ now {have|has} $b${livesRemaining}$ remaining`,
 		})
 		this.sendLogs()
@@ -292,7 +292,7 @@ export class BattleLogModel {
 		this.game.chat.push({
 			createdAt: Date.now(),
 			message: {TYPE: 'LineNode'},
-			sender: this.game.opponentPlayer.id,
+			sender: this.game.opponentPlayer.entity,
 			systemMessage: true,
 		})
 
@@ -301,7 +301,7 @@ export class BattleLogModel {
 
 	public addRemoveStatusEffectEntry(statusEffect: StatusEffect) {
 		this.logMessageQueue.push({
-			player: this.game.currentPlayer.id,
+			player: this.game.currentPlayer.entity,
 			description: `$e${statusEffect.props.name}$ wore off`,
 		})
 		this.sendLogs()

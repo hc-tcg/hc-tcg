@@ -104,16 +104,12 @@ export class AttackModel {
 
 	/** Returns the current attacker for this attack */
 	get attacker(): CardComponent | StatusEffectComponent | null {
-		if (this.game.state.cards.narrow(this.attackerEntity)) {
-			return this.game.state.cards.get(this.attackerEntity)
-		} else {
-			return this.game.state.statusEffects.get(this.attackerEntity)
-		}
+		return this.game.ecs.get(this.attackerEntity)
 	}
 
 	/** Returns the current target for this attack */
 	get target(): RowComponent | null {
-		return this.game.state.rows.get(this.targetEntity)
+		return this.game.ecs.get(this.targetEntity)
 	}
 
 	// Setters / modifier methods

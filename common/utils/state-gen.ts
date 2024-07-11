@@ -1,7 +1,7 @@
-import {getPlayerState} from '../../server/src/utils/state-gen'
 import {DEBUG_CONFIG} from '../config'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
+import {PlayerModel} from '../models/player-model'
 import {
 	BoardSlotComponent,
 	CardComponent,
@@ -9,30 +9,37 @@ import {
 	PileSlotComponent,
 	RowComponent,
 } from '../types/components'
-import {ComponentList} from '../types/component-list'
-import {GameState, PlayerId} from '../types/game-state'
+import ECS from '../types/ecs'
+import {GameState, PlayerComponent, PlayerEntity} from '../types/game-state'
 
-export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
+export function setupEcs(ecs: ECS, player1: PlayerModel, player2: PlayerModel) {
+	let player1Component = ecs.add(PlayerComponent, player1)
+	let player2Component = ecs.add(PlayerComponent, player2)
+
+	setupEcsForPlayer(ecs, player1, player1Component.entity)
+	setupEcsForPlayer(ecs, player2, player2Component.entity)
+	ecs.add(BoardSlotComponent, null, 'single_use', null, null)
+}
+
+export function setupEcsForPlayer(ecs: ECS, playerModel: PlayerModel, playerEntity: PlayerEntity) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
-		let row = gameState.rows.new(RowComponent, playerId, rowIndex)
+		let row = ecs.add(RowComponent, playerEntity, rowIndex)
 
-		gameState.slots.new(BoardSlotComponent, playerId, 'item', 0, row.entity)
-		gameState.slots.new(BoardSlotComponent, playerId, 'item', 1, row.entity)
-		gameState.slots.new(BoardSlotComponent, playerId, 'item', 2, row.entity)
-		gameState.slots.new(BoardSlotComponent, playerId, 'attach', 3, row.entity)
-		gameState.slots.new(BoardSlotComponent, playerId, 'hermit', 4, row.entity)
+		ecs.add(BoardSlotComponent, playerEntity, 'item', 0, row.entity)
+		ecs.add(BoardSlotComponent, playerEntity, 'item', 1, row.entity)
+		ecs.add(BoardSlotComponent, playerEntity, 'item', 2, row.entity)
+		ecs.add(BoardSlotComponent, playerEntity, 'attach', 3, row.entity)
+		ecs.add(BoardSlotComponent, playerEntity, 'hermit', 4, row.entity)
 	}
 
-	let cards = [...game.players[playerId].deck.cards]
-
-	cards.sort(() => Math.random() - 0.5)
+	const cards = [...playerModel.deck.cards].sort(() => Math.random() - 0.5)
 
 	for (const card of cards) {
-		const cardInstance = gameState.cards.new(CardComponent, card.props.id, playerId)
-		cardInstance.slotEntity = gameState.slots.new(PileSlotComponent, playerId).entity
+		const cardInstance = ecs.add(CardComponent, card.props.id, playerEntity)
+		cardInstance.slotEntity = ecs.add(PileSlotComponent, playerEntity).entity
 	}
 
-	const pack = gameState.cards.filter(card.player(playerId))
+	const pack = ecs.filter(CardComponent, card.player(playerEntity))
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -46,15 +53,13 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
 
 	for (let i = 0; i < amountOfStartingCards && i < pack.length; i++) {
-		pack[i].slotEntity = gameState.slots.new(HandSlotComponent, playerId).entity
+		pack[i].slotEntity = ecs.add(HandSlotComponent, playerEntity).entity
 	}
 }
 
 export function getGameState(game: GameModel): GameState {
 	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
-
-	const ecs = new ComponentList(game)
 
 	const gameState: GameState = {
 		turn: {
@@ -67,19 +72,7 @@ export function getGameState(game: GameModel): GameState {
 			currentAttack: null,
 		},
 		order: playerIds,
-		/* Global objects for the game state. Do NOT remove objects from these dictionaries. */
-		slots: new ComponentList(game),
-		rows: new ComponentList(game),
-		cards: new ComponentList(game),
-		statusEffects: new ComponentList(game),
 		lastActionResult: null,
-		players: playerIds.reduce(
-			(playerStates, playerId) => ({
-				...playerStates,
-				[playerId]: getPlayerState(game, game.players[playerId]),
-			}),
-			{}
-		),
 
 		pickRequests: [],
 		modalRequests: [],
@@ -90,11 +83,6 @@ export function getGameState(game: GameModel): GameState {
 			opponentActionStartTime: null,
 		},
 	}
-
-	setupGameStateForPlayer(game, gameState, playerIds[0])
-	setupGameStateForPlayer(game, gameState, playerIds[1])
-
-	gameState.slots.new(BoardSlotComponent, null, 'single_use', null, null)
 
 	return gameState
 }

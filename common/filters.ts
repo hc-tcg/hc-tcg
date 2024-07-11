@@ -1,6 +1,6 @@
 import {GameModel} from './models/game-model'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './types/components'
-import {CardEntity, PlayerId, RowEntity, SlotEntity, TurnAction} from './types/game-state'
+import {CardEntity, PlayerEntity, RowEntity, SlotEntity, TurnAction} from './types/game-state'
 
 export type Predicate<Value> = (game: GameModel, value: Value) => boolean
 
@@ -46,7 +46,7 @@ export namespace row {
 	export const active: Predicate<RowComponent> = (game, row) =>
 		[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
 
-	export function player(player: PlayerId | null): Predicate<RowComponent> {
+	export function player(player: PlayerEntity | null): Predicate<RowComponent> {
 		return (game, row) => {
 			if (!player) return false
 			return row.playerId === player
@@ -54,10 +54,10 @@ export namespace row {
 	}
 
 	export const currentPlayer: Predicate<RowComponent> = (game, pos) =>
-		row.player(game.currentPlayer.id)(game, pos)
+		row.player(game.currentPlayer.entity)(game, pos)
 
 	export const opponentPlayer: Predicate<RowComponent> = (game, pos) =>
-		row.player(game.opponentPlayer.id)(game, pos)
+		row.player(game.opponentPlayer.entity)(game, pos)
 
 	export const hasHermit: Predicate<RowComponent> = (game, row) =>
 		game.state.cards.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
@@ -113,15 +113,15 @@ export namespace slot {
 
 	/** Return true if the card is attached to the player's side. */
 	export const currentPlayer: SlotCondition = (game, pos) => {
-		return pos.player?.id === game.currentPlayer.id
+		return pos.player?.entity === game.currentPlayer.entity
 	}
 
 	/** Return true if the card is attached to the opponents side. */
 	export const opponent: SlotCondition = (game, pos) => {
-		return pos.player?.id === game.opponentPlayer.id
+		return pos.player?.entity === game.opponentPlayer.entity
 	}
 
-	export function player(player: PlayerId | null): Predicate<SlotComponent> {
+	export function player(player: PlayerEntity | null): Predicate<SlotComponent> {
 		return (game, slot) => {
 			return slot.playerId === player
 		}
@@ -319,17 +319,17 @@ export namespace card {
 		}
 	}
 
-	export function player(player: PlayerId): Predicate<CardComponent> {
+	export function player(player: PlayerEntity): Predicate<CardComponent> {
 		return (game, card) => {
 			return card.playerId === player
 		}
 	}
 
 	export const currentPlayer: Predicate<CardComponent> = (game, pos) =>
-		card.player(game.currentPlayer.id)(game, pos)
+		card.player(game.currentPlayer.entity)(game, pos)
 
 	export const opponentPlayer: Predicate<CardComponent> = (game, pos) =>
-		card.player(game.opponentPlayer.id)(game, pos)
+		card.player(game.opponentPlayer.entity)(game, pos)
 
 	export function id(...cardIds: Array<string>): Predicate<CardComponent> {
 		return (game, card) => cardIds.includes(card.props.id)

@@ -3,11 +3,11 @@ import {PlayerDeckT} from '../../common/types/deck'
 import {Socket} from 'socket.io'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
-import {PlayerId} from '../types/game-state'
+import {PlayerEntity} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
 
 export class PlayerModel {
-	private internalId: PlayerId
+	private internalId: string
 	private internalSecret: string
 	private internalDeck: {
 		name: string
@@ -21,7 +21,7 @@ export class PlayerModel {
 	public socket: Socket
 
 	constructor(playerName: string, minecraftName: string, socket: Socket) {
-		this.internalId = Math.random().toString() as PlayerId
+		this.internalId = Math.random().toString() as PlayerEntity
 		this.internalSecret = Math.random().toString()
 
 		// Always generate a starter deck as the default

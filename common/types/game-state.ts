@@ -5,7 +5,6 @@ import {SlotCondition} from '../filters'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
-import {ComponentList} from './component-list'
 import {GameHook, WaterfallHook} from './hooks'
 import {
 	LocalCardInstance,
@@ -15,12 +14,15 @@ import {
 	PickInfo,
 	PickRequest,
 } from './server-requests'
-import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './components'
-
-export type PlayerId = string & {__player_id: never}
+import {CardComponent, HandSlotComponent} from './components'
+import {GameModel} from '../models/game-model'
+import {PlayerModel} from '../models/player-model'
+import {DEBUG_CONFIG} from '../config'
+import {CARDS} from '../cards'
 
 export type Entity = string & {__instance_id: never}
 
+export type PlayerEntity = Entity & {__player_id: never}
 export type SlotEntity = Entity & {__slot_id: never}
 export type RowEntity = Entity & {__row_id: never}
 export type CardEntity = Entity & {__card_id: never}
@@ -50,15 +52,20 @@ export type CurrentCoinFlipT = {
 }
 
 export type BattleLogT = {
-	player: PlayerId
+	player: PlayerEntity
 	description: string
 }
 
-export type PlayerState = {
-	id: PlayerId
-	playerName: string
-	minecraftName: string
-	censoredPlayerName: string
+export class PlayerComponent {
+	readonly game: GameModel
+	readonly entity: PlayerEntity
+
+	readonly playerName: string
+	readonly minecraftName: string
+	readonly censoredPlayerName: string
+
+	readonly id: string
+
 	coinFlips: Array<CurrentCoinFlipT>
 	lives: number
 	hasPlacedHermit: boolean
@@ -144,6 +151,64 @@ export type PlayerState = {
 		 */
 		freezeSlots: GameHook<() => SlotCondition>
 	}
+
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+		this.game = game
+		this.entity = entity
+		this.playerName = player.name
+		this.minecraftName = player.minecraftName
+		this.censoredPlayerName = player.censoredName
+		this.id = player.id
+		this.coinFlips = []
+		this.lives = 3
+		this.hasPlacedHermit = false
+		this.singleUseCardUsed = false
+		this.cardsCanBePlacedIn = []
+		this.pickableSlots = null
+		this.activeRowEntity = null
+
+		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+			const id = DEBUG_CONFIG.extraStartingCards[i]
+			if (!CARDS[id]) {
+				console.log('Invalid extra starting card in debug config:', id)
+				continue
+			}
+
+			let card = game.ecs.add(CardComponent, id, this.entity)
+			card.slot = game.ecs.add(HandSlotComponent, this.entity)
+		}
+
+		this.hooks = {
+			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
+			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
+
+			onAttach: new GameHook<(instance: CardComponent) => void>(),
+			onDetach: new GameHook<(instance: CardComponent) => void>(),
+			beforeApply: new GameHook<() => void>(),
+			onApply: new GameHook<() => void>(),
+			afterApply: new GameHook<() => void>(),
+			getAttackRequests: new GameHook<
+				(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
+			>(),
+			getAttack: new GameHook<() => AttackModel | null>(),
+			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
+			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
+			onAttack: new GameHook<(attack: AttackModel) => void>(),
+			onDefence: new GameHook<(attack: AttackModel) => void>(),
+			afterAttack: new GameHook<(attack: AttackModel) => void>(),
+			afterDefence: new GameHook<(attack: AttackModel) => void>(),
+			onTurnStart: new GameHook<() => void>(),
+			onTurnEnd: new GameHook<(drawCards: Array<CardComponent | null>) => void>(),
+			onCoinFlip: new GameHook<
+				(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+			>(),
+			beforeActiveRowChange: new GameHook<
+				(oldRow: number | null, newRow: number | null) => boolean
+			>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
+			freezeSlots: new GameHook<() => SlotCondition>(),
+		}
+	}
 }
 
 export type GenericActionResult =
@@ -189,14 +254,7 @@ export type LocalTurnState = {
 
 export type GameState = {
 	turn: TurnState
-	order: Array<PlayerId>
-	players: Record<string, PlayerState>
-
-	// ECS Objects
-	slots: ComponentList<SlotEntity, SlotComponent>
-	rows: ComponentList<RowEntity, RowComponent>
-	cards: ComponentList<CardEntity, CardComponent>
-	statusEffects: ComponentList<StatusEffectEntity, StatusEffectComponent>
+	order: Array<PlayerEntity>
 
 	pickRequests: Array<PickRequest>
 	modalRequests: Array<ModalRequest>
@@ -256,7 +314,7 @@ export type GameEndOutcomeT =
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
-	id: PlayerId
+	id: PlayerEntity
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -272,7 +330,7 @@ export type LocalPlayerState = {
 
 export type LocalGameState = {
 	turn: LocalTurnState
-	order: Array<PlayerId>
+	order: Array<PlayerEntity>
 	statusEffects: Array<LocalStatusEffectInstance>
 
 	// personal data
@@ -281,8 +339,8 @@ export type LocalGameState = {
 	discarded: Array<LocalCardInstance>
 
 	// ids
-	playerId: PlayerId
-	opponentPlayerId: PlayerId
+	playerId: PlayerEntity
+	opponentPlayerId: PlayerEntity
 
 	lastActionResult: {
 		action: TurnAction
@@ -303,7 +361,7 @@ export type LocalGameState = {
 }
 
 export type Message = {
-	sender: PlayerId
+	sender: PlayerEntity
 	systemMessage: boolean
 	message: FormattedTextNode
 	createdAt: number

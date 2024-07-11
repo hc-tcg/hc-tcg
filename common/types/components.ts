@@ -19,8 +19,8 @@ import StatusEffect, {Counter, StatusEffectProps, isCounter} from '../status-eff
 import {SlotTypeT} from './cards'
 import {
 	CardEntity,
-	PlayerId,
-	PlayerState,
+	PlayerEntity,
+	PlayerComponent,
 	RowEntity,
 	SlotEntity,
 	StatusEffectEntity,
@@ -33,11 +33,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
 	readonly entity: CardEntity
-	readonly playerId: PlayerId
+	readonly playerId: PlayerEntity
 
 	slotEntity: SlotEntity | null
 
-	constructor(game: GameModel, entity: CardEntity, id: string, playerId: PlayerId) {
+	constructor(game: GameModel, entity: CardEntity, id: string, playerId: PlayerEntity) {
 		this.game = game
 		this.entity = entity
 		this.card = CARDS[id] as any
@@ -50,7 +50,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		game: GameModel,
 		localCardInstance: LocalCardInstance
 	): CardComponent {
-		for (const card of game.state.cards.list()) {
+		for (const card of game.ecs.filter(CardComponent)) {
 			if (card.entity == localCardInstance.instance) {
 				return card
 			}
@@ -71,19 +71,19 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	}
 
 	public get slot(): SlotComponent | null {
-		return this.game.state.slots.get(this.slotEntity)
+		return this.game.ecs.get(this.slotEntity)
 	}
 
 	public set slot(component: SlotComponent) {
 		this.slotEntity = component.entity
 	}
 
-	public get player(): PlayerState {
-		return this.game.state.players[this.playerId]
+	public get player(): PlayerComponent {
+		return this.game.ecs.getOrError(this.playerId)
 	}
 
-	public get opponentPlayer(): PlayerState {
-		return this.game.state.players[this.game.otherPlayer(this.playerId)]
+	public get opponentPlayer(): PlayerComponent {
+		return this.game.ecs.getOrError(this.game.otherPlayer(this.playerId))
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -108,14 +108,14 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
 	private targetEntity: CardEntity | null
-	public playerId: PlayerId
+	public playerId: PlayerEntity
 	public counter: number | null
 
 	constructor(
 		game: GameModel,
 		entity: StatusEffectEntity,
-		playerId: PlayerId,
-		statusEffect: string,
+		playerId: PlayerEntity,
+		statusEffect: string
 	) {
 		this.game = game
 		this.entity = entity
@@ -135,7 +135,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		return {
 			props: WithoutFunctions(this.props),
 			instance: this.entity,
-			targetInstance: this.target.toLocalCardInstance(),
+			targetInstance: this.target?.toLocalCardInstance(),
 			counter: this.counter,
 		}
 	}
@@ -144,24 +144,24 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		return this.statusEffect.props
 	}
 
-	public get target(): CardComponent {
-		return this.game.state.cards.getOrThrowError(this.targetEntity)
+	public get target(): CardComponent | null {
+		return this.game.ecs.get(this.targetEntity)
 	}
 
 	public set target(cardEntity: CardEntity | null) {
-		let cardComponent = this.game.state.cards.get(cardEntity)
+		let cardComponent = this.game.ecs.get(cardEntity)
 		if (cardComponent) {
 			this.statusEffect.onApply(this.game, this, cardComponent)
 		}
 		this.targetEntity = null
 	}
 
-	public get player(): PlayerState {
-		return this.game.state.players[this.playerId]
+	public get player(): PlayerComponent {
+		return this.game.ecs.getOrError(this.playerId)
 	}
 
-	public get opponentPlayer(): PlayerState {
-		return this.game.state.players[this.game.otherPlayer(this.playerId)]
+	public get opponentPlayer(): PlayerComponent {
+		return this.game.ecs.getOrError(this.game.otherPlayer(this.playerId))
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {
@@ -172,11 +172,11 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 export class RowComponent {
 	readonly game: GameModel
 	readonly entity: RowEntity
-	playerId: PlayerId
+	playerId: PlayerEntity
 	index: number
 	health: number | null
 
-	constructor(game: GameModel, entity: RowEntity, playerId: PlayerId, index: number) {
+	constructor(game: GameModel, entity: RowEntity, playerId: PlayerEntity, index: number) {
 		this.game = game
 		this.entity = entity
 		this.playerId = playerId
@@ -185,7 +185,7 @@ export class RowComponent {
 	}
 
 	get player() {
-		return this.game.state.players[this.playerId]
+		return this.game.ecs.getOrError(this.playerId)
 	}
 
 	public damage(amount: number) {
@@ -196,7 +196,7 @@ export class RowComponent {
 	}
 
 	public heal(amount: number) {
-		let hermit = this.game.state.cards.find(card.hermit, card.row(this.entity))
+		let hermit = this.game.ecs.find(CardComponent, card.hermit, card.row(this.entity))
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
 		this.health = Math.min(this.health + amount, hermit.props.health)
@@ -205,10 +205,10 @@ export class RowComponent {
 export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
-	readonly playerId: PlayerId | null
+	readonly playerId: PlayerEntity | null
 	readonly type: SlotTypeT
 
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null, type: SlotTypeT) {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null, type: SlotTypeT) {
 		this.entity = entity
 		this.game = game
 		this.playerId = playerId
@@ -233,12 +233,12 @@ export class SlotComponent {
 
 	get player() {
 		if (!this.playerId) return null
-		return this.game.state.players[this.playerId]
+		return this.game.ecs.getOrError(this.playerId)
 	}
 
 	get opponentPlayer() {
 		if (!this.playerId) return null
-		return this.game.state.players[this.game.otherPlayer(this.playerId)]
+		return this.game.ecs.get(this.game.otherPlayer(this.playerId))
 	}
 }
 
@@ -249,7 +249,7 @@ export class BoardSlotComponent extends SlotComponent {
 	constructor(
 		game: GameModel,
 		entity: SlotEntity,
-		playerId: PlayerId | null,
+		playerId: PlayerEntity | null,
 		type: SlotTypeT,
 		index: number | null,
 		row: RowEntity | null
@@ -265,12 +265,12 @@ export class BoardSlotComponent extends SlotComponent {
 
 	get row() {
 		if (!this.rowEntity) return null
-		return this.game.state.rows.get(this.rowEntity)
+		return this.game.ecs.get(this.rowEntity)
 	}
 }
 
 export class HandSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
 		super(game, entity, playerId, 'hand')
 	}
 
@@ -280,7 +280,7 @@ export class HandSlotComponent extends SlotComponent {
 }
 
 export class PileSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
 		super(game, entity, playerId, 'pile')
 	}
 
@@ -290,7 +290,7 @@ export class PileSlotComponent extends SlotComponent {
 }
 
 export class DiscardSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerId | null) {
+	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
 		super(game, entity, playerId, 'discardPile')
 	}
 

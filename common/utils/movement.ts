@@ -1,5 +1,5 @@
 import {GameModel} from '../models/game-model'
-import {CardComponent, PlayerState} from '../types/game-state'
+import {CardComponent, PlayerComponent} from '../types/game-state'
 import {equalCard} from './cards'
 import {SlotComponent} from '../types/cards'
 
@@ -28,7 +28,7 @@ function discardAtPos(pos: CardPosModel) {
 export function discardCard(
 	game: GameModel,
 	card: CardComponent | null,
-	playerDiscard?: PlayerState | null
+	playerDiscard?: PlayerComponent | null
 ) {
 	if (!card) return
 
@@ -67,7 +67,7 @@ export function retrieveCard(game: GameModel, card: CardComponent | null) {
 	}
 }
 
-export function discardSingleUse(game: GameModel, playerState: PlayerState) {
+export function discardSingleUse(game: GameModel, playerState: PlayerComponent) {
 	const suCard = playerState.board.singleUseCard
 	const suUsed = playerState.board.singleUseCardUsed
 	if (!suCard) return
@@ -89,7 +89,7 @@ export function discardSingleUse(game: GameModel, playerState: PlayerState) {
 	}
 }
 
-export function discardFromHand(player: PlayerState, card: CardComponent | null) {
+export function discardFromHand(player: PlayerComponent, card: CardComponent | null) {
 	if (!card) return
 
 	player.hand = player.hand.filter((c) => !equalCard(c, card))
@@ -97,7 +97,7 @@ export function discardFromHand(player: PlayerState, card: CardComponent | null)
 	player.discarded.push(card)
 }
 
-export function drawCards(playerState: PlayerState, amount: number) {
+export function drawCards(playerState: PlayerComponent, amount: number) {
 	for (let i = 0; i < Math.min(playerState.pile.length, amount); i++) {
 		const drawCard = playerState.pile.shift()
 		if (drawCard) playerState.hand.push(drawCard)
@@ -107,7 +107,7 @@ export function drawCards(playerState: PlayerState, amount: number) {
 export function moveCardInstanceoHand(
 	game: GameModel,
 	card: CardComponent,
-	playerDiscard?: PlayerState | null
+	playerDiscard?: PlayerComponent | null
 ) {
 	const cardPos = getCardPos(game, card)
 	if (!cardPos) return

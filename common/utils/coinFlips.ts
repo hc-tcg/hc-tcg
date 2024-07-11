@@ -1,11 +1,11 @@
 import {DEBUG_CONFIG} from '../config'
-import {CardComponent, CoinFlipT, PlayerState} from '../types/game-state'
+import {CardComponent, CoinFlipT, PlayerComponent} from '../types/game-state'
 
 export function flipCoin(
-	playerTossingCoin: PlayerState,
+	playerTossingCoin: PlayerComponent,
 	card: CardComponent,
 	times: number = 1,
-	currentPlayer: PlayerState | null = null
+	currentPlayer: PlayerComponent | null = null
 ): Array<CoinFlipT> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
 	const activeRowIndex = playerTossingCoin.board.activeRow
