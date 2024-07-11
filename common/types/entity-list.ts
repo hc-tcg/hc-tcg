@@ -35,17 +35,28 @@ export class EntityList<Id extends Entity, Value extends {entity: Id}> {
 		return Object.values(this.data)
 	}
 
-	public filter(...predicates: Array<Predicate<Value>>): Array<Value> {
+	public filter(...predicates: Array<Predicate<Value>>): Array<Id> {
+		return Object.values(this.data)
+			.map((value) => value as Value)
+			.filter((value) => predicates.every((predicate) => predicate(this.game, value)))
+			.map((value) => value.entity)
+	}
+
+	public filterComponents(...predicates: Array<Predicate<Value>>): Array<Value> {
 		return Object.values(this.data)
 			.map((value) => value as Value)
 			.filter((value) => predicates.every((predicate) => predicate(this.game, value)))
 	}
 
-	public find(...predicates: Array<Predicate<Value>>): Value | null {
-		return this.filter(...predicates)[0] || null
+	public find(...predicates: Array<Predicate<Value>>): Id | null {
+		return this.filterComponents(...predicates)[0]?.entity || null
+	}
+
+	public findComponent(...predicates: Array<Predicate<Value>>): Value | null {
+		return this.filterComponents(...predicates)[0] || null
 	}
 
 	public somethingFulfills(...predicates: Array<Predicate<Value>>): boolean {
-		return this.find(...predicates) !== null
+		return this.findComponent(...predicates) !== null
 	}
 }

@@ -19,40 +19,40 @@ class TNTSingleUseCard extends Card {
 		hasAttack: true,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent) {
-		const {player, opponentPlayer} = instance
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 
-		player.hooks.getAttack.add(instance, () => {
+		player.hooks.getAttack.add(component, () => {
 			const tntAttack = new AttackModel({
-				attacker: instance.entity,
-				target: game.state.rows.find(row.player(opponentPlayer.id), row.active)?.entity,
+				attacker: component.entity,
+				target: game.state.rows.find(row.player(opponentPlayer.id), row.active),
 				type: 'effect',
 				log: (values) =>
 					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage `,
-			}).addDamage(instance.entity, 60)
+			}).addDamage(component.entity, 60)
 
 			const backlashAttack = new AttackModel({
-				attacker: instance.entity,
-				target: game.state.rows.find(row.player(player.id), row.active)?.entity,
+				attacker: component.entity,
+				target: game.state.rows.find(row.player(player.id), row.active),
 				type: 'effect',
 				isBacklash: true,
 				log: (values) => `and took ${values.damage} backlash damage`,
-			}).addDamage(instance.entity, 20)
+			}).addDamage(component.entity, 20)
 
 			tntAttack.addNewAttack(backlashAttack)
 
 			return tntAttack
 		})
 
-		player.hooks.afterAttack.add(instance, (_) => {
+		player.hooks.afterAttack.add(component, (_) => {
 			applySingleUse(game)
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent) {
-		const {player} = instance
-		player.hooks.getAttack.remove(instance)
-		player.hooks.onAttack.remove(instance)
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
+		player.hooks.getAttack.remove(component)
+		player.hooks.onAttack.remove(component)
 	}
 }
 
