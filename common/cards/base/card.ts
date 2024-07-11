@@ -171,19 +171,19 @@ export class InstancedValue<T> {
 		this.default = defaultFactory
 	}
 
-	public set(instance: CardComponent, value: T) {
-		this.values[instance.entity] = value
+	public set(component: CardComponent, value: T) {
+		this.values[component.entity] = value
 	}
 
-	public get(instance: CardComponent): T {
-		if (instance.entity in this.values) {
-			return this.values[instance.entity]
+	public get(component: CardComponent): T {
+		if (component.entity in this.values) {
+			return this.values[component.entity]
 		}
 		return this.default()
 	}
 
-	public clear(instance: CardComponent) {
-		delete this.values[instance.entity]
+	public clear(component: CardComponent) {
+		delete this.values[component.entity]
 	}
 }
 
@@ -191,16 +191,16 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public abstract props: Props
 
 	/**
-	 * Called when an instance of this card is attached to the board
+	 * Called when a component of this card is attached to the board
 	 */
-	public onAttach(game: GameModel, instance: CardComponent, placedIn: SlotComponent) {
+	public onAttach(game: GameModel, component: CardComponent, placedIn: SlotComponent) {
 		// default is do nothing
 	}
 
 	/**
-	 * Called when an instance of this card is removed from the board
+	 * Called when a compoent of this card is removed from the board
 	 */
-	public onDetach(game: GameModel, instance: CardComponent, from: SlotComponent) {
+	public onDetach(game: GameModel, component: CardComponent, from: SlotComponent) {
 		// default is do nothing
 	}
 
@@ -208,7 +208,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		return isItem(this.props)
 	}
 
-	public getEnergy(this: Card<Item>, game: GameModel, instance: CardComponent): Array<TypeT> {
+	public getEnergy(this: Card<Item>, game: GameModel, component: CardComponent): Array<TypeT> {
 		return []
 	}
 
@@ -223,15 +223,12 @@ abstract class Card<Props extends CardProps = CardProps> {
 	public getAttack(
 		this: Card<Hermit>,
 		game: GameModel,
-		instance: CardComponent,
+		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {
-		const targetRow = game.state.rows.find(row.player(game.opponentPlayerId), row.active)
-
-		// Create an attack with default damage
 		const attack = new AttackModel({
-			attacker: instance.entity,
-			target: targetRow?.entity,
+			attacker: component.entity,
+			target: game.state.rows.find(row.player(game.opponentPlayerId), row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>
@@ -241,9 +238,9 @@ abstract class Card<Props extends CardProps = CardProps> {
 		})
 
 		if (attack.type === 'primary') {
-			attack.addDamage(instance.entity, this.props.primary.damage)
+			attack.addDamage(component.entity, this.props.primary.damage)
 		} else if (attack.type === 'secondary') {
-			attack.addDamage(instance.entity, this.props.secondary.damage)
+			attack.addDamage(component.entity, this.props.secondary.damage)
 		}
 
 		return attack
