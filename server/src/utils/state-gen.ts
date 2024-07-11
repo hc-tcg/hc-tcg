@@ -19,6 +19,7 @@ import Card, {Attach, HasHealth, Hermit} from 'common/cards/base/card'
 import {HermitAttackType} from 'common/types/attack'
 import {SlotCondition, card, row, slot} from 'common/filters'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {CardComponent, HandSlotComponent} from 'common/types/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -203,21 +204,27 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 				.findComponent(card.singleUse, card.slotFulfills(slot.singleUseSlot))
 				?.toLocalCardInstance() || null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
-		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
+		rows: game.state.rows.filterComponents(row.player(playerState.id)).map((row) => {
 			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row.entity))
-			const hermitCard = game.state.cards.findComponent(card.slot(hermit)) as CardComponent<HasHealth> | null
+			const hermitCard = game.state.cards.findComponent(
+				card.slot(hermit)
+			) as CardComponent<HasHealth> | null
 
 			const attach = game.state.slots.find(slot.attachSlot, slot.row(row.entity))
-			const attachCard = game.state.cards.findComponent(card.slot(attach)) as CardComponent<Attach> | null
+			const attachCard = game.state.cards.findComponent(
+				card.slot(attach)
+			) as CardComponent<Attach> | null
 
-			const items = game.state.slots.filter(slot.itemSlot, slot.row(row.entity)).map((itemSlot) => {
-				return {
-					slot: itemSlot.entity,
-					card:
-						game.state.cards.findComponent(card.slot(itemSlot.entity))?.toLocalCardInstance() ||
-						null,
-				}
-			})
+			const items = game.state.slots
+				.filterComponents(slot.itemSlot, slot.row(row.entity))
+				.map((itemSlot) => {
+					return {
+						slot: itemSlot.entity,
+						card:
+							game.state.cards.findComponent(card.slot(itemSlot.entity))?.toLocalCardInstance() ||
+							null,
+					}
+				})
 
 			if (!hermit || !attach) throw new Error('Slot is missing when generating local game state.')
 
@@ -305,12 +312,12 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.state.cards
-			.filter(card.slotFulfills(slot.player(playerState.id), slot.hand))
+			.filterComponents(card.slotFulfills(slot.player(playerState.id), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
 		pileCount: game.state.cards.filter(card.slotFulfills(slot.player(playerState.id), slot.pile))
 			.length,
 		discarded: game.state.cards
-			.filter(card.slotFulfills(slot.player(playerState.id), slot.discardPile))
+			.filterComponents(card.slotFulfills(slot.player(playerState.id), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids

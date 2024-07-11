@@ -10,12 +10,7 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
-import {
-	TurnActions,
-	PlayerState,
-	ActionResult,
-	TurnAction,
-} from 'common/types/game-state'
+import {TurnActions, PlayerState, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
@@ -25,7 +20,7 @@ import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
 import {card, row, slot} from 'common/filters'
 import {SingleUse} from 'common/cards/base/card'
-import { CardComponent } from 'common/types/components'
+import {CardComponent, DiscardSlotComponent, HandSlotComponent} from 'common/types/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -40,7 +35,11 @@ function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
 	const energy = game.state.cards
-		.filter(card.slotFulfills(slot.player(game.currentPlayer.id)), card.item, card.attached)
+		.filterComponents(
+			card.slotFulfills(slot.player(game.currentPlayer.id)),
+			card.item,
+			card.attached
+		)
 		.flatMap((card) => {
 			if (!card.isItem()) return []
 			return card.card.getEnergy(game, card)
@@ -151,7 +150,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.state.cards
-			.filter(card.slotFulfills(slot.player(currentPlayer.id), slot.hand))
+			.filterComponents(card.slotFulfills(slot.player(currentPlayer.id), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.state.slots.filter(card.card.props.attachCondition)
 
@@ -208,7 +207,10 @@ function* checkHermitHealth(game: GameModel) {
 			continue
 		}
 
-		const hermitCards = game.state.cards.filter(card.attached, card.player(game.currentPlayer.id))
+		const hermitCards = game.state.cards.filterComponents(
+			card.attached,
+			card.player(game.currentPlayer.id)
+		)
 
 		for (const card of hermitCards) {
 			if (!card.slot?.onBoard()) return
@@ -582,7 +584,7 @@ function* turnSaga(game: GameModel) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	const singleUseCard = game.state.cards.find(card.attached, card.singleUse)
+	const singleUseCard = game.state.cards.findComponent(card.attached, card.singleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
 			singleUseCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.id)
@@ -592,9 +594,12 @@ function* turnSaga(game: GameModel) {
 	}
 
 	// Draw a card from deck when turn ends
-	const newCard = game.state.cards.find(card.player(currentPlayer.id), card.slotFulfills(slot.pile))
+	const newCard = game.state.cards.findComponent(
+		card.player(currentPlayer.id),
+		card.slotFulfills(slot.pile)
+	)
 	if (newCard) {
-		newCard.slotEntity = game.state.slots.new(HandSlotComponent, currentPlayer.id).entity
+		newCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.id)
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

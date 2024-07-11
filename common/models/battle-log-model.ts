@@ -1,7 +1,6 @@
 import {
 	CurrentCoinFlipT,
 	PlayerState,
-	CardComponent,
 	BattleLogT,
 	CardEntity,
 	PlayerId,
@@ -14,7 +13,8 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import StatusEffect from '../status-effects/status-effect'
-import {SlotComponent} from '../types/cards'
+import {CardComponent, SlotComponent} from '../types/components'
+import {card} from '../filters'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -89,11 +89,12 @@ export class BattleLogModel {
 	}
 
 	public addPlayCardEntry(
-		card: Card,
-		pos: SlotComponent,
+		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlipT>,
-		slotInfo?: SlotComponent
+		pos: SlotComponent
 	) {
+		let {player, opponentPlayer} = card
+		
 		const genCardName = (
 			player: PlayerState | undefined,
 			card: CardComponent | null | undefined,
@@ -118,10 +119,10 @@ export class BattleLogModel {
 		const invalid = '$bINVALID VALUE$'
 
 		const logMessage = card.getLog({
-			player: pos.player.playerName,
-			opponent: pos.opponentPlayer.playerName,
+			player: player.playerName,
+			opponent: opponentPlayer.playerName,
 			coinFlip: thisFlip ? this.generateCoinFlipDescription(thisFlip) : '',
-			defaultLog: `$p{You|${pos.player.playerName}}$ used $e${card.props.name}$`,
+			defaultLog: `$p{You|${player.playerName}}$ used $e${card.props.name}$`,
 			pos: {
 				rowIndex: pos.rowIndex !== null ? `${pos.rowIndex + 1}` : invalid,
 				id: pos.cardId ? pos.cardId.card.props.id : invalid,
@@ -157,36 +158,35 @@ export class BattleLogModel {
 		coinFlips: Array<CurrentCoinFlipT>,
 		singleUse: CardComponent | null
 	) {
-		const attacker = attack.getAttacker()
-		if (!attacker) return
-		const playerId = attacker.player.id
+		if (!attack.attacker) return
+		const playerId = attack.attacker.player.id
 
 		if (!playerId) return
 
 		const attacks = [attack, ...attack.nextAttacks]
 
 		let log = attacks.reduce((reducer, subAttack) => {
-			const attacker = subAttack.getAttacker()
-			const target = subAttack.getTarget()
-
 			if (subAttack.type !== attack.type) {
 				this.addAttackEntry(subAttack, coinFlips, singleUse)
 				return reducer
 			}
 
-			if (!attacker || !target) return reducer
+			if (!attack.attacker || !attack.target) return reducer
 
 			if (subAttack.getDamage() === 0) return reducer
 
-			const attackingHermitInfo = attacker.row.hermitCard.card
-			const targetHermitInfo = target.row.hermitCard.card
+			const attackingHermitInfo = attack.attacker
+			const targetHermitInfo = this.game.state.cards.findComponent(
+				card.hermit,
+				card.row(attack.target.entity)
+			)
 
+			const targetFormatting = attack.target.player.id === playerId ? 'p' : 'o'
+
+			const rowNumberString = `(${attack.target.index + 1})`
+
+			if (!(attackingHermitInfo instanceof CardComponent)) return reducer
 			if (!attackingHermitInfo.isHermit()) return reducer
-
-			const targetFormatting = target.player.id === playerId ? 'p' : 'o'
-
-			const rowNumberString =
-				target.player.board.activeRow === target.rowIndex ? '' : `(${target.rowIndex + 1})`
 
 			const attackName =
 				subAttack.type === 'primary'
@@ -195,9 +195,9 @@ export class BattleLogModel {
 
 			const logMessage = subAttack.getLog({
 				attacker: `$p${attackingHermitInfo.props.name}$`,
-				player: attacker.player.playerName,
-				opponent: target.player.playerName,
-				target: `$${targetFormatting}${targetHermitInfo.props.name} ${rowNumberString}$`,
+				player: attack.attacker.player.playerName,
+				opponent: attack.target.player.playerName,
+				target: `$${targetFormatting}${targetHermitInfo?.props?.name} ${rowNumberString}$`,
 				attackName: `$v${attackName}$`,
 				damage: `$b${subAttack.calculateDamage()}hp$`,
 				defaultLog: this.generateEffectEntryHeader(singleUse),
@@ -213,7 +213,7 @@ export class BattleLogModel {
 
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
-					return reduce + `\n\t${hist.sourceId} → ${hist.type} ${hist.value}`
+					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
 				}, '')
 			: ''
 
@@ -275,8 +275,9 @@ export class BattleLogModel {
 	}
 
 	public addDeathEntry(player: PlayerState, row: RowEntity) {
-		const card = row.hermitCard
-		const cardName = card.props.name
+		const hermitCard = this.game.state.cards.findComponent(card.hermit, card.row(row))
+		if (!hermitCard) return
+		const cardName = hermitCard.props.name
 
 		const livesRemaining = player.lives === 3 ? 'two lives' : 'one life'
 

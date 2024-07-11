@@ -8,21 +8,16 @@ import {
 import {card} from '../filters'
 import { CardComponent, SlotComponent, StatusEffectComponent } from '../types/components'
 
-export function applySingleUse(game: GameModel, slotInfo?: SlotComponent): GenericActionResult {
+export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.state.cards.find(card.singleUse)
+	const suCard = game.state.cards.findComponent(card.singleUse)
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
-	const pos = getCardPos(game, suCard)
-	if (!pos) return 'FAILURE_UNKNOWN_ERROR'
-
-	const cardInstance = suCard?.entity
-	if (!cardInstance) return 'FAILURE_NOT_APPLICABLE'
 
 	currentPlayer.hooks.beforeApply.call()
 
-	currentPlayer.board.singleUseCardUsed = true
+	currentPlayer.singleUseCardUsed = true
 
 	currentPlayer.hooks.onApply.call()
 
@@ -30,7 +25,7 @@ export function applySingleUse(game: GameModel, slotInfo?: SlotComponent): Gener
 	game.addCompletedActions('PLAY_SINGLE_USE_CARD')
 
 	// Create the logs
-	game.battleLog.addPlayCardEntry(suCard.card, pos, currentPlayer.coinFlips, slotInfo)
+	game.battleLog.addPlayCardEntry(suCard, currentPlayer.coinFlips, slotInfo)
 
 	currentPlayer.hooks.afterApply.call()
 

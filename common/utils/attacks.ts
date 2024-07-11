@@ -8,9 +8,7 @@ import {STRENGTHS} from '../const/strengths'
 import {CardComponent} from '../types/components'
 
 function executeAttack(game: GameModel, attack: AttackModel) {
-	const target = game.state.rows.get(attack.getTarget())
-	if (!target) return
-	target.damage(attack.calculateDamage())
+	attack.target?.damage(attack.calculateDamage())
 }
 
 /**
@@ -19,11 +17,10 @@ function executeAttack(game: GameModel, attack: AttackModel) {
 function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		const attacker = attack.getAttacker()
-		if (!attacker) continue
+		if (!attack.attacker) return
 
 		// The hooks we call are determined by the source of the attack
-		const player = attacker.player
+		const player = attack.attacker.player
 
 		if (DEBUG_CONFIG.disableDamage) {
 			attack.multiplyDamage('debug', 0).lockDamage('debug')
@@ -43,7 +40,7 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		const target = attack.getTarget()
+		const target = attack.target
 		if (!target) continue
 
 		// The hooks we call are determined by the target of the attack
@@ -63,11 +60,10 @@ function runBeforeDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		const attacker = attack.getAttacker()
-		if (!attacker) continue
+		if (!attack.attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attacker.player
+		const player = attack.attacker.player
 
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
@@ -83,11 +79,10 @@ function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let attackIndex = 0; attackIndex < attacks.length; attackIndex++) {
 		const attack = attacks[attackIndex]
-		const target = attack.getTarget()
-		if (!target) continue
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the target of the attack
-		const player = target.player
+		const player = attack.target.player
 
 		// Call on defence hooks
 		player.hooks.onDefence.callSome([attack], (instance) => {
@@ -100,11 +95,10 @@ function runOnDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
-		const attacker = attack.getAttacker()
-		if (!attacker) continue
+		if (!attack.attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attacker.player
+		const player = attack.attacker.player
 
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
@@ -117,11 +111,10 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 	for (let i = 0; i < attacks.length; i++) {
 		const attack = attacks[i]
-		const target = attack.getTarget()
-		if (!target) continue
+		if (!attack.target) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = target.player
+		const player = attack.target.player
 
 		// Call after attack hooks
 		player.hooks.afterDefence.callSome([attack], (instance) => {
@@ -228,28 +221,25 @@ function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel
 	if (attack.createWeakness === 'never') return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
-	const attacker = attack.getAttacker()
-	const target = attack.getTarget()
+	let attacker = attack.attacker
+	if (!(attacker instanceof CardComponent)) return null
 
-	if (!game.state.cards.narrow(attacker)) return null
+	const targetCardInfo = game.state.cards.findComponent(card.row(attack.targetEntity), card.hermit)
 
-	const attackerCardInfo = game.state.cards.get(attacker)
-	const targetCardInfo = game.state.cards.findComponent(card.row(target), card.hermit)
+	if (!attacker.isHermit() || !targetCardInfo?.isHermit()) return null
 
-	if (!attackerCardInfo?.isHermit() || !targetCardInfo?.isHermit()) return null
-
-	const strength = STRENGTHS[attackerCardInfo.props.type]
+	const strength = STRENGTHS[attacker.props.type]
 	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
 		return null
 	}
 
-	const weaknessAttack = new AttackModel({
-		attacker,
-		target,
+	const weaknessAttack = game.newAttack({
+		attacker: attacker.entity,
+		target: attack.targetEntity,
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attackerCardInfo.entity, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attacker.entity, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

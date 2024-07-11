@@ -2,10 +2,11 @@ import {AttackModel} from 'common/models/attack-model'
 import {GameModel} from 'common/models/game-model'
 import {DEBUG_CONFIG} from 'common/config'
 import {HermitAttackType} from 'common/types/attack'
-import {CardComponent, GenericActionResult} from 'common/types/game-state'
+import {GenericActionResult} from 'common/types/game-state'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
 import {card, row, slot} from 'common/filters'
+import { CardComponent } from 'common/types/components'
 
 function getAttack(
 	game: GameModel,

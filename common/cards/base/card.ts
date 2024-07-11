@@ -225,7 +225,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	): AttackModel | null {
-		const attack = new AttackModel({
+		const attack = game.newAttack({
 			attacker: component.entity,
 			target: game.state.rows.find(row.opponentPlayer, row.active),
 			type: hermitAttackType,

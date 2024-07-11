@@ -16,7 +16,8 @@ export class EntityList<Id extends Entity, Value extends {entity: Id}> {
 		return this.data[id] || null
 	}
 
-	public narrow(entity: Entity): entity is Id {
+	public narrow(entity: Entity | null): entity is Id {
+		if (!entity) return false
 		return entity in this.data
 	}
 

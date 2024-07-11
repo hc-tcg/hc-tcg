@@ -8,6 +8,7 @@ import {
 	AttackLog,
 	AttackerEntity,
 } from '../types/attack'
+import {CardComponent, RowComponent, StatusEffectComponent} from '../types/components'
 import {RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
 
@@ -25,9 +26,9 @@ export class AttackModel {
 	private history: Array<AttackHistory> = []
 
 	/** The attacker */
-	private attacker: AttackerEntity | null
+	public attackerEntity: AttackerEntity | null
 	/** The attack target */
-	private target: RowEntity | null
+	public targetEntity: RowEntity | null
 
 	/** The battle log attached to this attack */
 	private log: Array<(values: AttackLog) => string> = []
@@ -52,8 +53,8 @@ export class AttackModel {
 		this.type = defs.type
 		this.isBacklash = defs.isBacklash || false
 
-		this.attacker = defs.attacker || null
-		this.target = defs.target || null
+		this.attackerEntity = defs.attacker || null
+		this.targetEntity = defs.target || null
 		this.shouldIgnoreSlots = defs.shouldIgnoreSlots || []
 		this.createWeakness = defs.createWeakness || 'never'
 
@@ -83,16 +84,16 @@ export class AttackModel {
 		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)
 	}
 
-	// Getters
-
 	/** Returns the damage this attack will do */
 	public getDamage() {
 		return this.damage
 	}
+
 	/** Returns the damage multiplier for this attack */
 	public getDamageMultiplier() {
 		return this.damageMultiplier
 	}
+
 	/** Returns the history of changes to this attack, optionally filtered by type */
 	public getHistory(type?: AttackHistoryType) {
 		if (type) {
@@ -100,13 +101,19 @@ export class AttackModel {
 		}
 		return this.history
 	}
+
 	/** Returns the current attacker for this attack */
-	public getAttacker() {
-		return this.attacker
+	get attacker(): CardComponent | StatusEffectComponent | null {
+		if (this.game.state.cards.narrow(this.attackerEntity)) {
+			return this.game.state.cards.get(this.attackerEntity)
+		} else {
+			return this.game.state.statusEffects.get(this.attackerEntity)
+		}
 	}
+
 	/** Returns the current target for this attack */
-	public getTarget() {
-		return this.target
+	get target(): RowComponent | null {
+		return this.game.state.rows.get(this.targetEntity)
 	}
 
 	// Setters / modifier methods
@@ -147,7 +154,7 @@ export class AttackModel {
 	}
 	/** Sets the target for this attack */
 	public setTarget(sourceId: AttackerEntity, target: RowEntity | null) {
-		this.target = target
+		this.targetEntity = target
 		this.addHistory(sourceId, 'set_target', target)
 		return this
 	}

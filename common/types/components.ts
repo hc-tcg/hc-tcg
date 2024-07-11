@@ -170,6 +170,10 @@ export class RowComponent {
 		this.health = null
 	}
 
+	get player() {
+		return this.game.state.players[this.playerId]
+	}
+
 	public damage(amount: number) {
 		// Deduct and clamp health
 		if (this.health === null) return
