@@ -1,6 +1,5 @@
 import {AttackModel} from '../models/attack-model'
 import {WEAKNESS_DAMAGE} from '../const/damage'
-import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
@@ -133,9 +132,8 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 }
 
 function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: CardComponent): boolean {
-	const cardPos = getCardPos(game, instance)
-	if (!cardPos) return false
-	if (slot.some(...attack.shouldIgnoreSlots)(game, cardPos)) {
+	if (!instance.slot) return false
+	if (slot.some(...attack.shouldIgnoreSlots)(game, instance.slot)) {
 		return true
 	}
 
@@ -224,9 +222,7 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 	return remainingEnergy.length >= anyCost.length
 }
 
-export function isTargeting() {
-
-	}
+export function isTargeting() {}
 
 function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null

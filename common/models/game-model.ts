@@ -6,7 +6,6 @@ import {
 	TurnActions,
 	PlayerState,
 	Message,
-	CardComponent,
 	PlayerId,
 } from '../types/game-state'
 import {getGameState} from '../utils/state-gen'
@@ -19,7 +18,9 @@ import {
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {SlotCondition, card, slot} from '../filters'
-import {RowComponent, SlotComponent} from '../types/cards'
+import {CardComponent, RowComponent, SlotComponent} from '../types/components'
+import {AttackDefs} from '../types/attack'
+import {AttackModel} from './attack-model'
 
 export class GameModel {
 	private internalCreatedTime: number
@@ -239,6 +240,10 @@ export class GameModel {
 		}
 	}
 
+	public newAttack(defs: AttackDefs): AttackModel {
+		return new AttackModel(this, defs)
+	}
+
 	public hasActiveRequests(): boolean {
 		return this.state.pickRequests.length > 0 || this.state.modalRequests.length > 0
 	}
@@ -247,7 +252,7 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerState) => {
 			return this.state.cards
-				.filter(card.slotFulfills(slot.hand, slot.player(player.id)))
+				.filterComponents(card.slotFulfills(slot.hand, slot.player(player.id)))
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
@@ -316,8 +321,8 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.state.cards.filter(card.slot(slotA.entity))
-		const slotBCards = this.state.cards.filter(card.slot(slotB.entity))
+		const slotACards = this.state.cards.filterComponents(card.slot(slotA.entity))
+		const slotBCards = this.state.cards.filterComponents(card.slot(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.slot = slotB
@@ -336,7 +341,7 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		return this.state.slots.filter(predicate).map((slotInfo) => {
+		return this.state.slots.filterComponents(predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,
 				type: slotInfo.type,

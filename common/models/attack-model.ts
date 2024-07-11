@@ -8,10 +8,11 @@ import {
 	AttackLog,
 	AttackerEntity,
 } from '../types/attack'
-import {CardComponent, StatusEffectComponent} from '../types/components'
 import {RowEntity} from '../types/game-state'
+import {GameModel} from './game-model'
 
 export class AttackModel {
+	private readonly game: GameModel
 	/** The damage this attack does */
 	private damage: number = 0
 	/** The damage multiplier */
@@ -46,7 +47,8 @@ export class AttackModel {
 	/** Whether or not the attack should create a weakness attack */
 	public createWeakness: WeaknessType
 
-	constructor(defs: AttackDefs) {
+	constructor(game: GameModel, defs: AttackDefs) {
+		this.game = game
 		this.type = defs.type
 		this.isBacklash = defs.isBacklash || false
 
