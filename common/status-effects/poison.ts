@@ -38,11 +38,9 @@ class PoisonStatusEffect extends StatusEffect {
 				log: (values) => `${values.target} took ${values.damage} damage from $bPoison$`,
 			})
 
-			if (target.health) {
-				if (target.health >= 30) {
-					let damage = Math.max(Math.min(target.health - 10, 20), 0)
-					statusEffectAttack.addDamage(instance.entity, damage)
-				}
+			if (target.health && target.health >= 30) {
+				let damage = Math.max(Math.min(target.health - 10, 20), 0)
+				statusEffectAttack.addDamage(instance.entity, damage)
 			}
 
 			executeExtraAttacks(game, [statusEffectAttack], true)
