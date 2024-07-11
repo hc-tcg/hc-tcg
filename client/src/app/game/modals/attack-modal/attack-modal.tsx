@@ -12,6 +12,7 @@ import {isHermit} from 'common/cards/base/card'
 type Props = {
 	closeModal: () => void
 }
+
 function AttackModal({closeModal}: Props) {
 	// TODO - This whole file needs to be rafactored
 	const dispatch = useDispatch()
@@ -26,7 +27,9 @@ function AttackModal({closeModal}: Props) {
 	if (!opponentRow || !opponentRow.hermit) return null
 	if (availableActions.includes('WAIT_FOR_TURN')) return null
 
-	const playerHermitInfo = activeRow.hermit
+	const playerHermitInfo = activeRow.hermit.card
+	if (!playerHermitInfo) return null
+
 	if (!isHermit(playerHermitInfo.props)) return null
 
 	const hermitFullName = playerHermitInfo.props.id.split('_')[0]

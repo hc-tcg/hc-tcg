@@ -8,21 +8,10 @@ import {slot} from '../filters'
 import {STRENGTHS} from '../const/strengths'
 import {CardComponent} from '../types/game-state'
 
-function executeAttack(attack: AttackModel) {
-	const target = attack.getTarget()
+function executeAttack(game: GameModel, attack: AttackModel) {
+	const target = game.state.rows.get(attack.getTarget())
 	if (!target) return
-
-	const {row} = target
-	if (!row.hermitCard) return
-
-	const currentHealth = row.health
-
-	const weaknessAttack = createWeaknessAttack(attack)
-	if (weaknessAttack) attack.addNewAttack(weaknessAttack)
-
-	// Deduct and clamp health
-	const newHealth = Math.max(currentHealth - attack.calculateDamage(), 0)
-	row.health = Math.min(newHealth, currentHealth)
+	target.damage(attack.calculateDamage())
 }
 
 /**
@@ -168,7 +157,7 @@ export function executeAttacks(
 
 	// STEP 3 - Execute all attacks
 	attacks.forEach((attack) => {
-		executeAttack(attack)
+		executeAttack(game, attack)
 
 		if (attack.nextAttacks.length > 0) {
 			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)

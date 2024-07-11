@@ -65,12 +65,12 @@ function* pickWithoutSelectedSaga(action: SlotPickedAction): SagaIterator {
 	const playerState = yield* select(getPlayerState)
 	const settings = yield* select(getSettings)
 
-	let activeRow = playerState?.board.rows.find(
+	let hermitRow = playerState?.board.rows.find(
 		(row) => row.hermit.slot == action.payload.pickInfo.entity
-	)
-	if (!activeRow) return
-
-	if (playerState?.board.activeRow === activeRow.entity) {
+	)	
+	if (!hermitRow) return
+	
+	if (playerState?.board.activeRow === hermitRow.entity) {
 		yield put(setOpenedModal('attack'))
 	} else {
 		if (settings.confirmationDialogs !== 'off') {

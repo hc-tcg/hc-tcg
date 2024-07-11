@@ -198,23 +198,25 @@ export function getPlayerState(game: GameModel, player: PlayerModel): PlayerStat
 
 export function getLocalPlayerState(game: GameModel, playerState: PlayerState): LocalPlayerState {
 	let board = {
-		activeRow: game.state.rows.find(row.active, row.player(playerState.id))?.entity || null,
+		activeRow: game.state.rows.find(row.active, row.player(playerState.id)) || null,
 		singleUseCard:
 			game.state.cards
-				.find(card.singleUse, card.slotFulfills(slot.singleUseSlot))
+				.findComponent(card.singleUse, card.slotFulfills(slot.singleUseSlot))
 				?.toLocalCardInstance() || null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.state.rows.filter(row.player(playerState.id)).map((row) => {
 			const hermit = game.state.slots.find(slot.hermitSlot, slot.row(row.entity))
-			const hermitCard = game.state.cards.find(card.slot(hermit?.entity)) as CardComponent<HasHealth> | null
+			const hermitCard = game.state.cards.findComponent(card.slot(hermit)) as CardComponent<HasHealth> | null
 
 			const attach = game.state.slots.find(slot.attachSlot, slot.row(row.entity))
-			const attachCard = game.state.cards.find(card.slot(attach?.entity)) as CardComponent<Attach> | null
+			const attachCard = game.state.cards.findComponent(card.slot(attach)) as CardComponent<Attach> | null
 
 			const items = game.state.slots.filter(slot.itemSlot, slot.row(row.entity)).map((itemSlot) => {
 				return {
 					slot: itemSlot.entity,
-					card: game.state.cards.find(card.slot(itemSlot.entity))?.toLocalCardInstance() || null,
+					card:
+						game.state.cards.findComponent(card.slot(itemSlot.entity))?.toLocalCardInstance() ||
+						null,
 				}
 			})
 
@@ -222,8 +224,8 @@ export function getLocalPlayerState(game: GameModel, playerState: PlayerState): 
 
 			return {
 				entity: row.entity,
-				hermit: {slot: hermit.entity, card: hermitCard?.toLocalCardInstance() || null},
-				attach: {slot: attach.entity, card: attachCard?.toLocalCardInstance() || null},
+				hermit: {slot: hermit, card: hermitCard?.toLocalCardInstance() || null},
+				attach: {slot: attach, card: attachCard?.toLocalCardInstance() || null},
 				items: items,
 				health: row.health,
 			}

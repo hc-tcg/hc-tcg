@@ -18,7 +18,7 @@ function* playCardSaga(
 
 	const {currentPlayer} = game
 
-	const pickedSlot = game.state.slots.find(slot.entity(pickInfo.entity))
+	const pickedSlot = game.state.slots.get(pickInfo.entity)
 	if (!pickedSlot || !pickedSlot.onBoard()) {
 		throw new Error('A slot that is not on the board can not be picked: ' + pickedSlot)
 	}
@@ -83,7 +83,7 @@ function* playCardSaga(
 		// game.battleLog.addPlayCardEntry(card.card, card.slot, currentPlayer.coinFlips, undefined)
 	}
 
-	card.card.onAttach(game, card, pickedSlot)
+	card.card.onAttach(game, card)
 
 	// Call onAttach hook
 	currentPlayer.hooks.onAttach.call(card)

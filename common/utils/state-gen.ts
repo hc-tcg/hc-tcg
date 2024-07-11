@@ -48,6 +48,8 @@ export function getGameState(game: GameModel): GameState {
 	const playerIds = game.getPlayerIds()
 	if (Math.random() > 0.5) playerIds.reverse()
 
+	const ecs = new EntityList(game)
+	
 	const gameState: GameState = {
 		turn: {
 			turnNumber: 0,

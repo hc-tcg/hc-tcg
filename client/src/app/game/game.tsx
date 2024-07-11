@@ -28,7 +28,7 @@ import {
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
-import {PickSlotActionData, PlayCardActionData} from 'common/types/action-data'
+import {PickSlotActionData} from 'common/types/action-data'
 import {equalCard} from 'common/utils/cards'
 import CopyAttackModal from './modals/copy-attack-modal'
 import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
@@ -93,7 +93,7 @@ function Game() {
 			const index = gameState.hand.findIndex((c) => equalCard(c, card))
 			if (index === -1) return
 			if (card.slot === null) return
-			
+
 			// Send pick card action with the hand info
 			const actionData: PickSlotActionData = {
 				type: 'PICK_REQUEST',

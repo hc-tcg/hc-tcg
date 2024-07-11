@@ -8,7 +8,7 @@ import {
 	AttackLog,
     AttackerEntity,
 } from '../types/attack'
-import {RowEntity} from '../types/game-state'
+import {CardComponent, RowEntity, StatusEffectComponent} from '../types/game-state'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -98,7 +98,7 @@ export class AttackModel {
 		return this.history
 	}
 	/** Returns the current attacker for this attack */
-	public getAttacker() {
+	public getAttacker(): CardComponent | StatusEffectComponent  {
 		return this.attacker
 	}
 	/** Returns the current target for this attack */

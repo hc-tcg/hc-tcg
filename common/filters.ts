@@ -295,6 +295,15 @@ export namespace card {
 		}
 	}
 
+	export function rowFulfills(...predicates: Array<Predicate<RowComponent>>): CardCondition {
+		return (game, card) => {
+			if (!card.slot?.onBoard() || card.slot.row === null) return false
+			return card.slot !== null
+				? everyCombinator(...predicates)(game, card.slot.row)
+				: null || false
+		}
+	}
+
 	export const pile: CardCondition = card.slotFulfills(slotCombinators.pile)
 	export const hand: CardCondition = card.slotFulfills(slotCombinators.hand)
 
@@ -314,6 +323,12 @@ export namespace card {
 			return card.playerId === player
 		}
 	}
+
+	export const currentPlayer: Predicate<CardComponent> = (game, pos) =>
+		card.player(game.currentPlayer.id)(game, pos)
+
+	export const opponentPlayer: Predicate<CardComponent> = (game, pos) =>
+		card.player(game.opponentPlayer.id)(game, pos)
 
 	export function id(...cardIds: Array<string>): Predicate<CardComponent> {
 		return (game, card) => cardIds.includes(card.props.id)

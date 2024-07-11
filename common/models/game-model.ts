@@ -299,7 +299,7 @@ export class GameModel {
 	}
 
 	/**Helper method to swap the positions of two rows on the board. Returns whether or not the change was successful. */
-	public swapRows(player: PlayerState, oldRow: RowComponent, newRow: RowComponent) {
+	public swapRows(oldRow: RowComponent, newRow: RowComponent) {
 		let oldIndex = oldRow.index
 		oldRow.index = newRow.index
 		newRow.index = oldIndex
@@ -336,7 +336,6 @@ export class GameModel {
 	}
 
 	public getPickableSlots(predicate: SlotCondition): Array<PickInfo> {
-		console.log(this.state.slots.filter(predicate))
 		return this.state.slots.filter(predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,

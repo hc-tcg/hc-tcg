@@ -1,9 +1,7 @@
 import {GameModel} from '../../../models/game-model'
-import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Attach, HasHealth, attach, hermit} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
-import {SlotComponent} from '../../../types/cards'
 
 class ArmorStandEffectCard extends Card {
 	props: Attach & HasHealth = {
@@ -27,20 +25,16 @@ class ArmorStandEffectCard extends Card {
 		log: hermit.log,
 	}
 
-	override onAttach(game: GameModel, instance: CardComponent, placedIn: SlotComponent) {
-		placedIn.player.hooks.freezeSlots.add(instance, () => {
-			return slot.every(slot.player, slot.rowIndex(placedIn.row.index))
+	override onAttach(game: GameModel, instance: CardComponent) {
+		instance.player.hooks.freezeSlots.add(instance, () => {
+			if (!instance.slot?.onBoard()) return slot.nothing
+			return slot.every(slot.currentPlayer, slot.row(instance.slot.row?.entity))
 		})
 	}
 
-	override onDetach(game: GameModel, instance: CardComponent, from: SlotComponent) {
-		const {player, opponentPlayer} = from
-
+	override onDetach(game: GameModel, instance: CardComponent) {
+		const {player, opponentPlayer} = instance
 		game.battleLog.addEntry(player.id, `$pArmor Stand$ was knocked out`)
-
-		player.hooks.blockedActions.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		opponentPlayer.hooks.afterAttack.remove(instance)
 		player.hooks.freezeSlots.remove(instance)
 	}
 }

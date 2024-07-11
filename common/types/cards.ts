@@ -54,8 +54,15 @@ export class RowComponent {
 		this.health = null
 	}
 
+	public damage(amount: number) {
+		// Deduct and clamp health
+		if (this.health === null) return
+		const newHealth = Math.max(this.health - amount, 0)
+		this.health = Math.min(newHealth, this.health)
+	}
+
 	public heal(amount: number) {
-		let hermit = this.game.state.cards.find(card.hermit, card.row(this.entity))
+		let hermit = this.game.state.cards.findComponent(card.hermit, card.row(this.entity))
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
 		this.health = Math.min(this.health + amount, hermit.props.health)

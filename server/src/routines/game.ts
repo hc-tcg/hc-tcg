@@ -117,7 +117,9 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 		// Attack actions
 		if (activeRowId !== null && turnState.turnNumber > 1) {
-			const hermitCard = game.state.cards.find(card.slotFulfills(slot.row(activeRowId), slot.hermitSlot))
+			const hermitCard = game.state.cards.findComponent(
+				card.slotFulfills(slot.row(activeRowId), slot.hermitSlot)
+			)
 
 			// only add attack options if not sleeping
 			if (hermitCard && hermitCard.card.isHermit()) {

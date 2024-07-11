@@ -10,7 +10,7 @@ function* changeActiveHermit(
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
-	const pickedSlot = game.state.slots.find(slot.entity(turnAction?.payload?.pickInfo?.entity))
+	const pickedSlot = game.state.slots.findComponent(slot.entity(turnAction?.payload?.pickInfo?.entity))
 	if (!pickedSlot?.onBoard()) return 'FAILURE_INVALID_DATA'
 	const row = pickedSlot.row
 	if (!row) return 'FAILURE_INVALID_DATA'
