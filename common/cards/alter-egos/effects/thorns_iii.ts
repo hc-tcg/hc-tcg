@@ -3,7 +3,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
-import {executeExtraAttacks, isTargetingPos} from '../../../utils/attacks'
+import {executeExtraAttacks, isTargeting} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
 class ThornsIIIEffectCard extends Card {
@@ -32,7 +32,7 @@ class ThornsIIIEffectCard extends Card {
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (!attack.getAttacker() || !isTargetingPos(attack, pos)) return
+			if (!attack.getAttacker() || !isTargeting(attack, pos)) return
 
 			hasTriggered = true
 

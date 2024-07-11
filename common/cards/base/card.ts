@@ -5,15 +5,14 @@ import {
 	HermitAttackInfo,
 	ExpansionT,
 	CardCategoryT,
-	SlotComponent,
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {row, slot, SlotCondition} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {CardComponent} from '../../types/game-state'
 import {WithoutFunctions} from '../../types/server-requests'
+import { CardComponent } from '../../types/components'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'

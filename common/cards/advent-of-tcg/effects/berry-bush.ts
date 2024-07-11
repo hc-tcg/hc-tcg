@@ -3,8 +3,8 @@ import {discardCard} from '../../../utils/movement'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {slot} from '../../../filters'
 import Card, {Attach, attach} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
 import {CARDS} from '../..'
+import { CardComponent } from '../../../types/components'
 
 class BerryBushEffectCard extends Card {
 	props: Attach = {

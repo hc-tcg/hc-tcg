@@ -1,7 +1,8 @@
 import {CardProps} from '../cards/base/card'
 import {SlotCondition} from '../filters'
 import {StatusEffectProps} from '../status-effects/status-effect'
-import {SlotComponent, SlotTypeT} from './cards'
+import {SlotTypeT} from './cards'
+import {SlotComponent} from './components'
 import {ActionResult, CardEntity, SlotEntity} from './game-state'
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */

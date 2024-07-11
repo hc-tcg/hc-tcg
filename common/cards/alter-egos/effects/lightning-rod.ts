@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
+import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import Card, {attach, Attach} from '../../base/card'
 
@@ -46,7 +46,7 @@ class LightningRodEffectCard extends Card {
 		})
 
 		opponentPlayer.hooks.afterAttack.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos)) return
+			if (!isTargeting(attack, pos)) return
 			if (attack.calculateDamage() <= 0) return
 
 			discardCard(game, pos.cardId)

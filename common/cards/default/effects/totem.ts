@@ -1,6 +1,6 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
-import {isTargetingPos} from '../../../utils/attacks'
+import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
@@ -31,7 +31,7 @@ class TotemEffectCard extends Card {
 
 		const reviveHook = (attack: AttackModel) => {
 			const target = attack.getTarget()
-			if (!isTargetingPos(attack, pos) || !target) return
+			if (!isTargeting(attack, pos) || !target) return
 			const {row} = target
 			if (row.health) return
 

@@ -4,9 +4,9 @@ import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {slot} from '../filters'
+import {card, slot} from '../filters'
 import {STRENGTHS} from '../const/strengths'
-import {CardComponent} from '../types/game-state'
+import {CardComponent} from '../types/components'
 
 function executeAttack(game: GameModel, attack: AttackModel) {
 	const target = game.state.rows.get(attack.getTarget())
@@ -224,38 +224,23 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 	return remainingEnergy.length >= anyCost.length
 }
 
-/**
- * Returns true if the attack is targeting the card / row position
- */
-export function isTargetingPos(attack: AttackModel, pos: CardPosModel | RowPos): boolean {
-	const target = attack.getTarget()
-	if (!target) return false
-	const targetingPlayer = target.player.id === pos.player.id
-	const targetingRow = target.rowIndex === pos.rowIndex
+export function isTargeting() {
 
-	return targetingPlayer && targetingRow
-}
+	}
 
-function createWeaknessAttack(attack: AttackModel): AttackModel | null {
+function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null
 
 	const attacker = attack.getAttacker()
 	const target = attack.getTarget()
-	const attackId = attack.id
 
-	if (!attacker || !target || !attackId) return null
+	if (!game.state.cards.narrow(attacker)) return null
 
-	const attackerCardInfo = attacker.row.hermitCard.card
-	const targetCardInfo = target.row.hermitCard.card
+	const attackerCardInfo = game.state.cards.get(attacker)
+	const targetCardInfo = game.state.cards.findComponent(card.row(target), card.hermit)
 
-	if (
-		!attackerCardInfo ||
-		!targetCardInfo ||
-		!attackerCardInfo.isHermit() ||
-		!targetCardInfo.isHermit()
-	)
-		return null
+	if (!attackerCardInfo?.isHermit() || !targetCardInfo?.isHermit()) return null
 
 	const strength = STRENGTHS[attackerCardInfo.props.type]
 	if (attack.createWeakness !== 'always' && !strength.includes(targetCardInfo.props.type)) {
@@ -263,13 +248,12 @@ function createWeaknessAttack(attack: AttackModel): AttackModel | null {
 	}
 
 	const weaknessAttack = new AttackModel({
-		id: attackId + 'weakness',
 		attacker,
 		target,
 		type: 'weakness',
 	})
 
-	weaknessAttack.addDamage(attackerCardInfo.props.id, WEAKNESS_DAMAGE)
+	weaknessAttack.addDamage(attackerCardInfo.entity, WEAKNESS_DAMAGE)
 
 	return weaknessAttack
 }

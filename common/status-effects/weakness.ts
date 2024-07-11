@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
+import {isTargeting} from '../utils/attacks'
 
 class WeaknessStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -36,7 +36,7 @@ class WeaknessStatusEffect extends StatusEffect {
 
 			if (!targetPos) return
 
-			if (!isTargetingPos(attack, targetPos) || attack.createWeakness === 'never') {
+			if (!isTargeting(attack, targetPos) || attack.createWeakness === 'never') {
 				return
 			}
 
@@ -48,7 +48,7 @@ class WeaknessStatusEffect extends StatusEffect {
 
 			if (!targetPos) return
 
-			if (!isTargetingPos(attack, targetPos) || attack.createWeakness === 'never') {
+			if (!isTargeting(attack, targetPos) || attack.createWeakness === 'never') {
 				return
 			}
 

@@ -1,21 +1,7 @@
-import Card, {
-	Attach,
-	CardProps,
-	HasHealth,
-	Hermit,
-	Item,
-	SingleUse,
-	isAttach,
-	isHealth,
-	isHermit,
-	isItem,
-	isSingleUse,
-} from '../cards/base/card'
+import {Attach, CardProps, HasHealth} from '../cards/base/card'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
-import {GameModel} from '../models/game-model'
 import {SlotCondition} from '../filters'
-import StatusEffect, {StatusEffectProps, Counter, isCounter} from '../status-effects/status-effect'
 import {FormattedTextNode} from '../utils/formatting'
 import {HermitAttackType} from './attack'
 import {EnergyT} from './cards'
@@ -28,14 +14,17 @@ import {
 	ModalRequest,
 	PickInfo,
 	PickRequest,
-	WithoutFunctions,
 } from './server-requests'
-import {CARDS} from '../cards'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './components'
 
 export type PlayerId = string & {__player_id: never}
 
 export type Entity = string & {__instance_id: never}
+
+export type SlotEntity = Entity & {__slot_id: never}
+export type RowEntity = Entity & {__row_id: never}
+export type CardEntity = Entity & {__card_id: never}
+export type StatusEffectEntity = Entity & {__status_effect_id: never}
 
 export function newEntity(): Entity {
 	return Math.random().toString() as Entity
@@ -197,11 +186,6 @@ export type LocalTurnState = {
 	currentPlayerId: string
 	availableActions: TurnActions
 }
-
-export type SlotEntity = Entity & {__slot_id: never}
-export type RowEntity = Entity & {__row_id: never}
-export type CardEntity = Entity & {__card_id: never}
-export type StatusEffectEntity = Entity & {__status_effect_id: never}
 
 export type GameState = {
 	turn: TurnState

@@ -2,7 +2,7 @@ import {CARDS} from '../..'
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
+import {isTargeting} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
 class ChainmailArmorEffectCard extends Card {
@@ -22,7 +22,7 @@ class ChainmailArmorEffectCard extends Card {
 		const {player} = pos
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos)) {
+			if (!isTargeting(attack, pos)) {
 				return
 			}
 

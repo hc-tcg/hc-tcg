@@ -1,7 +1,7 @@
 import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
+import {isTargeting} from '../../../utils/attacks'
 import Card, {Attach, attach} from '../../base/card'
 
 class NetheriteArmorEffectCard extends Card {
@@ -24,7 +24,7 @@ class NetheriteArmorEffectCard extends Card {
 		let damageBlocked = 0
 
 		player.hooks.onDefence.add(instance, (attack) => {
-			if (!isTargetingPos(attack, pos) || attack.isType('status-effect')) return
+			if (!isTargeting(attack, pos) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 40) {
 				const damageReduction = Math.min(attack.calculateDamage(), 40 - damageBlocked)

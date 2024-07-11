@@ -1,6 +1,6 @@
 import {Predicate} from '../filters'
 import {GameModel} from '../models/game-model'
-import { Entity, newEntity } from './game-state'
+import {Entity, newEntity} from './game-state'
 
 export class EntityList<Id extends Entity, Value extends {entity: Id}> {
 	game: GameModel
@@ -14,6 +14,10 @@ export class EntityList<Id extends Entity, Value extends {entity: Id}> {
 	public get(id: Id | null) {
 		if (!id) return null
 		return this.data[id] || null
+	}
+
+	public narrow(entity: Entity): entity is Id {
+		return entity in this.data
 	}
 
 	public getOrThrowError(id: Id | null) {

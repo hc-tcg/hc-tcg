@@ -6,9 +6,10 @@ import {
 	ShouldIgnoreCard,
 	WeaknessType,
 	AttackLog,
-    AttackerEntity,
+	AttackerEntity,
 } from '../types/attack'
-import {CardComponent, RowEntity, StatusEffectComponent} from '../types/game-state'
+import {CardComponent, StatusEffectComponent} from '../types/components'
+import {RowEntity} from '../types/game-state'
 
 export class AttackModel {
 	/** The damage this attack does */
@@ -98,7 +99,7 @@ export class AttackModel {
 		return this.history
 	}
 	/** Returns the current attacker for this attack */
-	public getAttacker(): CardComponent | StatusEffectComponent  {
+	public getAttacker() {
 		return this.attacker
 	}
 	/** Returns the current target for this attack */

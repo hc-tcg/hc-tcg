@@ -1,14 +1,6 @@
 import {GameModel} from './models/game-model'
-import {RowComponent, SlotComponent} from './types/cards'
-import {
-	CardComponent,
-	CardEntity,
-	PlayerId,
-	RowEntity,
-	SlotEntity,
-	StatusEffectComponent,
-	TurnAction,
-} from './types/game-state'
+import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './types/components'
+import {CardEntity, PlayerId, RowEntity, SlotEntity, TurnAction} from './types/game-state'
 
 export type Predicate<Value> = (game: GameModel, value: Value) => boolean
 
@@ -69,6 +61,14 @@ export namespace row {
 
 	export const hasHermit: Predicate<RowComponent> = (game, row) =>
 		game.state.cards.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
+
+	export function hasCard(cardEntity: CardEntity): Predicate<RowComponent> {
+		return (game, row) => {
+			let card = game.state.cards.get(cardEntity)
+			if (!card?.slot?.onBoard()) return false
+			return card.slot.rowEntity === row.entity
+		}
+	}
 }
 
 export namespace effect {
@@ -311,8 +311,9 @@ export namespace card {
 		return (game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
 	}
 
-	export function row(row: RowEntity): CardCondition {
+	export function row(row: RowEntity | null): CardCondition {
 		return (game, card) => {
+			if (!row) return false
 			if (!card.slot?.onBoard()) return false
 			return row === card.slot?.row?.entity
 		}

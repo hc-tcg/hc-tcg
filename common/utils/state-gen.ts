@@ -2,9 +2,15 @@ import {getPlayerState} from '../../server/src/utils/state-gen'
 import {DEBUG_CONFIG} from '../config'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
-import {BoardSlotComponent, HandSlotComponent, PileSlotComponent, RowComponent} from '../types/cards'
+import {
+	BoardSlotComponent,
+	CardComponent,
+	HandSlotComponent,
+	PileSlotComponent,
+	RowComponent,
+} from '../types/components'
 import {EntityList} from '../types/entity-list'
-import {CardComponent, GameState, PlayerId} from '../types/game-state'
+import {GameState, PlayerId} from '../types/game-state'
 
 export function setupGameStateForPlayer(game: GameModel, gameState: GameState, playerId: PlayerId) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
@@ -26,7 +32,7 @@ export function setupGameStateForPlayer(game: GameModel, gameState: GameState, p
 		cardInstance.slotEntity = gameState.slots.new(PileSlotComponent, playerId).entity
 	}
 
-	const pack = gameState.cards.filter(card.player(playerId))
+	const pack = gameState.cards.filterComponents(card.player(playerId))
 
 	// ensure a hermit in first 5 cards
 	const hermitIndex = pack.findIndex((card) => {
@@ -49,7 +55,7 @@ export function getGameState(game: GameModel): GameState {
 	if (Math.random() > 0.5) playerIds.reverse()
 
 	const ecs = new EntityList(game)
-	
+
 	const gameState: GameState = {
 		turn: {
 			turnNumber: 0,

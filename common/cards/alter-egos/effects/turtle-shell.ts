@@ -2,7 +2,7 @@ import {CardPosModel} from '../../../models/card-pos-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
-import {isTargetingPos} from '../../../utils/attacks'
+import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import Card, {Attach, attach} from '../../base/card'
 
@@ -41,7 +41,7 @@ class TurtleShellEffectCard extends Card {
 			if (!firstActiveTurn) return
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !isTargetingPos(attack, pos)) return
+			if (!isActive || !isTargeting(attack, pos)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 

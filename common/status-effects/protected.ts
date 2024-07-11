@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel, getCardPos} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
-import {isTargetingPos} from '../utils/attacks'
+import {isTargeting} from '../utils/attacks'
 
 class ProtectedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -38,7 +38,7 @@ class ProtectedStatusEffect extends StatusEffect {
 
 			// Only block damage when we are active
 			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !isTargetingPos(attack, targetPos)) return
+			if (!isActive || !isTargeting(attack, targetPos)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 
