@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
-import {CardComponent, TurnActions} from '../../../types/game-state'
+import {TurnActions} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card, {SingleUse} from '../../base/card'
+import {CardComponent} from '../../../types/components'
+import singleUse from '.'
 
 class ClockSingleUseCard extends Card {
 	props: SingleUse = {

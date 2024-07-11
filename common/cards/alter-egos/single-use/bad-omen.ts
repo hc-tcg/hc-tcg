@@ -27,10 +27,10 @@ class BadOmenSingleUseCard extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			let target = game.ecs.findEntity(CardComponent, card.hermit, card.rowFulfills(row.active))
+			let target = game.components.findEntity(CardComponent, card.hermit, card.rowFulfills(row.active))
 			if (!target) return
-			let effect = game.ecs.add(StatusEffectComponent, player.entity, 'badomen')
-			effect.target = game.ecs.findEntity(CardComponent, card.hermit, card.rowFulfills(row.active))
+			let effect = game.components.new(StatusEffectComponent, player.entity, 'badomen')
+			effect.target = game.components.findEntity(CardComponent, card.hermit, card.rowFulfills(row.active))
 		})
 	}
 

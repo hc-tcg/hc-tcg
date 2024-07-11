@@ -143,27 +143,36 @@ export function getLocalPlayerState(
 ): LocalPlayerState {
 	let board = {
 		activeRow:
-			game.ecs.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
+			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
 		singleUseCard:
-			game.ecs
+			game.components
 				.find(CardComponent, card.singleUse, card.slotFulfills(slot.singleUseSlot))
 				?.toLocalCardInstance() || null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
-		rows: game.ecs.filter(RowComponent, row.player(playerState.entity)).map((row) => {
-			const hermit = game.ecs.findEntity(SlotComponent, slot.hermitSlot, slot.row(row.entity))
-			const hermitCard = game.ecs.find(CardComponent, card.slot(hermit))
+		rows: game.components.filter(RowComponent, row.player(playerState.entity)).map((row) => {
+			const hermit = game.components.findEntity(
+				SlotComponent,
+				slot.hermitSlot,
+				slot.row(row.entity)
+			)
+			const hermitCard = game.components.find(CardComponent, card.slot(hermit))
 
-			const attach = game.ecs.findEntity(SlotComponent, slot.attachSlot, slot.row(row.entity))
-			const attachCard = game.ecs.find(CardComponent, card.slot(attach))
+			const attach = game.components.findEntity(
+				SlotComponent,
+				slot.attachSlot,
+				slot.row(row.entity)
+			)
+			const attachCard = game.components.find(CardComponent, card.slot(attach))
 
-			const items = game.ecs
+			const items = game.components
 				.filter(SlotComponent, slot.itemSlot, slot.row(row.entity))
 				.map((itemSlot) => {
 					return {
 						slot: itemSlot.entity,
 						card:
-							game.ecs.find(CardComponent, card.slot(itemSlot.entity))?.toLocalCardInstance() ||
-							null,
+							game.components
+								.find(CardComponent, card.slot(itemSlot.entity))
+								?.toLocalCardInstance() || null,
 					}
 				})
 
@@ -192,7 +201,7 @@ export function getLocalPlayerState(
 }
 
 export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGameState | null {
-	const playerState = game.ecs.find(
+	const playerState = game.components.find(
 		PlayerComponent,
 		(game, playerState) => playerState.id == player.id
 	)
@@ -249,19 +258,19 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 				: turnState.opponentAvailableActions,
 		},
 		order: game.state.order,
-		statusEffects: game.ecs
+		statusEffects: game.components
 			.filter(StatusEffectComponent)
 			.map((effect) => effect.toLocalStatusEffectInstance()),
 
 		// personal info
-		hand: game.ecs
+		hand: game.components
 			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
-		pileCount: game.ecs.filter(
+		pileCount: game.components.filter(
 			CardComponent,
 			card.slotFulfills(slot.player(playerState.entity), slot.pile)
 		).length,
-		discarded: game.ecs
+		discarded: game.components
 			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 

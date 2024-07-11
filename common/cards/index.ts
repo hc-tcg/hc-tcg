@@ -13,30 +13,30 @@ import alterEgosIIHermitCards from './alter-egos-ii/hermits/index'
 
 const effectCardClasses: Array<Card> = [
 	...defaultEffectCards,
-	...alterEgosEffectCards,
-	...adventOfTcgEffectCards,
+	// ...alterEgosEffectCards,
+	// ...adventOfTcgEffectCards,
 ]
 
 const hermitCardClasses: Array<Card> = [
-	...defaultHermitCards,
-	...alterEgosHermitCards,
-	...adventOfTcgHermitCards,
-	...alterEgosIIHermitCards,
+	// ...defaultHermitCards,
+	// ...alterEgosHermitCards,
+	// ...adventOfTcgHermitCards,
+	// ...alterEgosIIHermitCards,
 ]
 
 const itemCardClasses: Array<Card> = [...defaultItemCards]
 
 const singleUseCardClasses: Array<Card> = [
-	...defaultSingleUseCards,
-	...alterEgosSingleUseCards,
-	...adventOfTcgSingleUseCards,
+	// ...defaultSingleUseCards,
+	// ...alterEgosSingleUseCards,
+	// ...adventOfTcgSingleUseCards,
 ]
 
 const allCardClasses: Array<Card> = [
-	...effectCardClasses,
-	...hermitCardClasses,
-	...itemCardClasses,
-	...singleUseCardClasses,
+	// ...effectCardClasses,
+	// ...hermitCardClasses,
+	// ...itemCardClasses,
+	// ...singleUseCardClasses,
 ]
 
 export const CARDS: Record<string, Card> = allCardClasses.reduce(

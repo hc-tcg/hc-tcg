@@ -1,6 +1,7 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Item, item} from '../../base/card'
+import {CardComponent} from '../../../types/components'
+import Card, {Item} from '../../base/card'
+import {item} from '../../base/defaults'
 
 class FarmRareItemCard extends Card {
 	props: Item = {

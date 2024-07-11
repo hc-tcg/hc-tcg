@@ -2,7 +2,8 @@ import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../filters'
 import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card, {SingleUse} from '../../base/card'
+import {singleUse} from '../../base/defaults'
 
 class LavaBucketSingleUseCard extends Card {
 	props: SingleUse = {

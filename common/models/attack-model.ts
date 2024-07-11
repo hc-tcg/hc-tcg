@@ -104,12 +104,12 @@ export class AttackModel {
 
 	/** Returns the current attacker for this attack */
 	get attacker(): CardComponent | StatusEffectComponent | null {
-		return this.game.ecs.get(this.attackerEntity)
+		return this.game.components.get(this.attackerEntity)
 	}
 
 	/** Returns the current target for this attack */
 	get target(): RowComponent | null {
-		return this.game.ecs.get(this.targetEntity)
+		return this.game.components.get(this.targetEntity)
 	}
 
 	// Setters / modifier methods

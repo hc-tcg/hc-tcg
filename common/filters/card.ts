@@ -1,7 +1,6 @@
-import {Predicate, filters} from '.'
+import {Predicate, query} from '.'
 import {CardComponent, RowComponent, SlotComponent} from '../types/components'
 import {PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
-
 import {slot as slotCombinators} from '.'
 
 export const hermit: Predicate<CardComponent> = (game, card) => card.isHermit()
@@ -17,7 +16,7 @@ export function slotFulfills(
 	...predicates: Array<Predicate<SlotComponent>>
 ): Predicate<CardComponent> {
 	return (game, card) => {
-		return card.slot !== null ? filters.every(...predicates)(game, card.slot) : null || false
+		return card.slot !== null ? query.every(...predicates)(game, card.slot) : null || false
 	}
 }
 
@@ -26,7 +25,7 @@ export function rowFulfills(
 ): Predicate<CardComponent> {
 	return (game, card) => {
 		if (!card.slot?.onBoard() || card.slot.row === null) return false
-		return card.slot !== null ? filters.every(...predicates)(game, card.slot.row) : null || false
+		return card.slot !== null ? query.every(...predicates)(game, card.slot.row) : null || false
 	}
 }
 

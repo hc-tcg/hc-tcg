@@ -1,6 +1,6 @@
 import {Predicate, card} from '.'
 import {CardComponent, SlotComponent} from '../types/components'
-import {PlayerComponent, TurnAction} from '../types/game-state'
+import {PlayerComponent, PlayerEntity, TurnAction} from '../types/game-state'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: Predicate<SlotComponent> = (game, pos) => {
@@ -12,7 +12,7 @@ export const opponent: Predicate<SlotComponent> = (game, pos) => {
 	return pos.player?.entity === game.opponentPlayer.entity
 }
 
-export function player(player: PlayerComponent | null): Predicate<SlotComponent> {
+export function player(player: PlayerEntity | null): Predicate<SlotComponent> {
 	return (game, slot) => {
 		return slot.playerId === player
 	}
@@ -20,7 +20,7 @@ export function player(player: PlayerComponent | null): Predicate<SlotComponent>
 
 /** Return true if the spot is empty. */
 export const empty: Predicate<SlotComponent> = (game, pos) => {
-	return !game.ecs.somethingFulfills(CardComponent, card.slot(pos.entity))
+	return !game.components.somethingFulfills(CardComponent, card.slot(pos.entity))
 }
 
 /** Return true if the card is attached to a hermit slot. */
@@ -144,7 +144,7 @@ export const actionAvailable = (action: TurnAction): Predicate<SlotComponent> =>
 export const someSlotFulfills =
 	(predicate: Predicate<SlotComponent>): Predicate<SlotComponent> =>
 	(game, pos) => {
-		return game.ecs.somethingFulfills(SlotComponent, predicate)
+		return game.components.somethingFulfills(SlotComponent, predicate)
 	}
 
 /* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
@@ -152,7 +152,7 @@ export const adjacentTo = (predicate: Predicate<SlotComponent>): Predicate<SlotC
 	return (game, pos) => {
 		if (!pos.onBoard() || pos.row === null) return false
 		return (
-			game.ecs.filter(SlotComponent, predicate).filter((pickedPos) => {
+			game.components.filter(SlotComponent, predicate).filter((pickedPos) => {
 				if (!pickedPos.onBoard()) return false
 				if (pos.row === null || pickedPos.row === null) return false
 				return [pos.row.index - 1, pos.row.index + 1].includes(pickedPos.row.index)

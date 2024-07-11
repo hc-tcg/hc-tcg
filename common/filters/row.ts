@@ -19,11 +19,11 @@ export const opponentPlayer: Predicate<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export const hasHermit: Predicate<RowComponent> = (game, row) =>
-	game.ecs.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
+	game.components.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
 
 export function hasCard(cardEntity: CardEntity): Predicate<RowComponent> {
 	return (game, row) => {
-		let card = game.ecs.get(cardEntity)
+		let card = game.components.get(cardEntity)
 		if (!card?.slot?.onBoard()) return false
 		return card.slot.rowEntity === row.entity
 	}

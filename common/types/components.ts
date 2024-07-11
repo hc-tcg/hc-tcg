@@ -40,7 +40,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		game: GameModel,
 		localCardInstance: LocalCardInstance
 	): CardComponent {
-		for (const card of game.ecs.filter(CardComponent)) {
+		for (const card of game.components.filter(CardComponent)) {
 			if (card.entity == localCardInstance.instance) {
 				return card
 			}
@@ -61,7 +61,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	}
 
 	public get slot(): SlotComponent | null {
-		return this.game.ecs.get(this.slotEntity)
+		return this.game.components.get(this.slotEntity)
 	}
 
 	public set slot(component: SlotComponent) {
@@ -69,11 +69,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	}
 
 	public get player(): PlayerComponent {
-		return this.game.ecs.getOrError(this.playerId)
+		return this.game.components.getOrError(this.playerId)
 	}
 
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.ecs.getOrError(this.game.otherPlayer(this.playerId))
+		return this.game.components.getOrError(this.game.otherPlayer(this.playerId))
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -135,11 +135,11 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	}
 
 	public get target(): CardComponent | null {
-		return this.game.ecs.get(this.targetEntity)
+		return this.game.components.get(this.targetEntity)
 	}
 
 	public set target(cardEntity: CardEntity | null) {
-		let cardComponent = this.game.ecs.get(cardEntity)
+		let cardComponent = this.game.components.get(cardEntity)
 		if (cardComponent) {
 			this.statusEffect.onApply(this.game, this, cardComponent)
 		}
@@ -147,11 +147,11 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	}
 
 	public get player(): PlayerComponent {
-		return this.game.ecs.getOrError(this.playerId)
+		return this.game.components.getOrError(this.playerId)
 	}
 
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.ecs.getOrError(this.game.otherPlayer(this.playerId))
+		return this.game.components.getOrError(this.game.otherPlayer(this.playerId))
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {
@@ -175,7 +175,7 @@ export class RowComponent {
 	}
 
 	get player() {
-		return this.game.ecs.getOrError(this.playerId)
+		return this.game.components.getOrError(this.playerId)
 	}
 
 	public damage(amount: number) {
@@ -186,7 +186,7 @@ export class RowComponent {
 	}
 
 	public heal(amount: number) {
-		let hermit = this.game.ecs.find(CardComponent, card.hermit, card.row(this.entity))
+		let hermit = this.game.components.find(CardComponent, card.hermit, card.row(this.entity))
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
 		this.health = Math.min(this.health + amount, hermit.props.health)
@@ -223,12 +223,12 @@ export class SlotComponent {
 
 	get player() {
 		if (!this.playerId) return null
-		return this.game.ecs.getOrError(this.playerId)
+		return this.game.components.getOrError(this.playerId)
 	}
 
 	get opponentPlayer() {
 		if (!this.playerId) return null
-		return this.game.ecs.get(this.game.otherPlayer(this.playerId))
+		return this.game.components.get(this.game.otherPlayer(this.playerId))
 	}
 }
 
@@ -255,7 +255,7 @@ export class BoardSlotComponent extends SlotComponent {
 
 	get row() {
 		if (!this.rowEntity) return null
-		return this.game.ecs.get(this.rowEntity)
+		return this.game.components.get(this.rowEntity)
 	}
 }
 

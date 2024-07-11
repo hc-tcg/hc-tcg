@@ -8,7 +8,7 @@ import {
 } from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {Predicate} from '../../filters'
+import {Predicate, row} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
 import {WithoutFunctions} from '../../types/server-requests'
@@ -171,7 +171,7 @@ abstract class Card<Props extends CardProps = CardProps> {
 	): AttackModel | null {
 		const attack = game.newAttack({
 			attacker: component.entity,
-			target: game.ecs.findEntity(RowComponent, row.opponentPlayer, row.active),
+			target: game.components.findEntity(RowComponent, row.opponentPlayer, row.active),
 			type: hermitAttackType,
 			createWeakness: 'ifWeak',
 			log: (values) =>

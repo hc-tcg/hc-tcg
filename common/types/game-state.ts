@@ -174,8 +174,8 @@ export class PlayerComponent {
 				continue
 			}
 
-			let card = game.ecs.add(CardComponent, id, this.entity)
-			card.slot = game.ecs.add(HandSlotComponent, this.entity)
+			let card = game.components.new(CardComponent, id, this.entity)
+			card.slot = game.components.new(HandSlotComponent, this.entity)
 		}
 
 		this.hooks = {
@@ -211,7 +211,7 @@ export class PlayerComponent {
 	}
 
 	get opponentPlayer() {
-		let player = this.game.ecs.find(
+		let player = this.game.components.find(
 			PlayerComponent,
 			(game, player) => player.entity !== this.entity
 		)

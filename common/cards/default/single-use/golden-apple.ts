@@ -1,11 +1,12 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../filters'
-import {CardComponent} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../filters'
+import Card, {SingleUse} from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {CardComponent} from '../../../types/components'
 
 class GoldenAppleSingleUseCard extends Card {
-	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.activeRow), slot.not(slot.empty))
+	pickCondition = query.every(slot.hermitSlot, query.not(slot.activeRow), query.not(slot.empty))
 
 	props: SingleUse = {
 		...singleUse,
@@ -17,7 +18,7 @@ class GoldenAppleSingleUseCard extends Card {
 		tokens: 3,
 		description: 'Heal one of your AFK Hermits 100hp.',
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g100hp$`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.playerHasActiveHermit,
 			slot.someSlotFulfills(this.pickCondition)
@@ -25,7 +26,7 @@ class GoldenAppleSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -33,16 +34,11 @@ class GoldenAppleSingleUseCard extends Card {
 			message: 'Pick one of your AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.cardId || rowIndex === null) return
-
-				const row = player.board.rows[rowIndex]
-				if (!row.health) return
-
+				if (!pickedSlot.onBoard()) throw new Error('Can not pick slot that is not on board')
 				// Apply
 				applySingleUse(game, pickedSlot)
 
-				healHermit(row, 100)
+				pickedSlot.row?.heal(100)
 			},
 		})
 	}

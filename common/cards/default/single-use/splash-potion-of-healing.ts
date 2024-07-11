@@ -1,7 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../filters'
-import {CardComponent} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {row} from '../../../filters'
+import Card, {SingleUse} from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, RowComponent} from '../../../types/components'
 
 class SplashPotionOfHealingSingleUseCard extends Card {
 	props: SingleUse = {
@@ -21,12 +22,14 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		const {player} = component
 
 		player.hooks.onApply.add(component, () =>
-			game.state.rows.filterEntities(row.player(player?.id || null)).forEach((row) => row.heal(20))
+			game.components
+				.filter(RowComponent, row.player(player?.entity))
+				.forEach((row) => row.heal(20))
 		)
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

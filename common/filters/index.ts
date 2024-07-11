@@ -16,7 +16,7 @@ export {slot, row, effect, card}
 
 export type Predicate<Value> = (game: GameModel, value: Value) => boolean
 
-export namespace filters {
+export namespace query {
 	/** Always return true */
 	export function anything<T>(game: GameModel, value: T) {
 		return true

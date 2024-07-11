@@ -39,7 +39,7 @@ export const getTimerForSeconds = (seconds: number): number => {
 function getAvailableEnergy(game: GameModel) {
 	const {currentPlayer} = game
 
-	const energy = game.ecs
+	const energy = game.components
 		.filter(
 			CardComponent,
 			card.slotFulfills(slot.player(game.currentPlayer.entity)),
@@ -64,7 +64,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const {activeRowEntity: activeRowId, singleUseCardUsed: suUsed} = currentPlayer
 	const actions: TurnActions = []
 
-	const su = game.ecs.find(
+	const su = game.components.find(
 		CardComponent,
 		card.singleUse,
 		card.attached
@@ -106,7 +106,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	// There is no action currently active for the opponent, clear the time
 	game.state.timer.opponentActionStartTime = null
-	const hasOtherHermit = game.ecs.filter(
+	const hasOtherHermit = game.components.filter(
 		CardComponent,
 		card.attach,
 		card.slotFulfills(slot.not(slot.row(activeRowId)))
@@ -127,7 +127,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 		// Attack actions
 		if (activeRowId !== null && turnState.turnNumber > 1) {
-			const hermitCard = game.ecs.find(
+			const hermitCard = game.components.find(
 				CardComponent,
 				card.slotFulfills(slot.row(activeRowId), slot.hermitSlot)
 			)
@@ -161,10 +161,10 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_ITEM_CARD',
 			'PLAY_SINGLE_USE_CARD'
 		)
-		const desiredActions = game.ecs
+		const desiredActions = game.components
 			.filter(CardComponent, card.slotFulfills(slot.player(currentPlayer.entity), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
-				const pickableSlots = game.ecs.filter(SlotComponent, card.card.props.attachCondition)
+				const pickableSlots = game.components.filter(SlotComponent, card.card.props.attachCondition)
 
 				if (pickableSlots.length === 0) return reducer
 
@@ -212,7 +212,7 @@ function playerAction(actionType: string, playerId: string) {
 // @TODO completely redo how we calculate if a hermit is dead etc
 function* checkHermitHealth(game: GameModel) {
 	const deadPlayerIds: Array<string> = []
-	for (let playerState of game.ecs.filter(PlayerComponent)) {
+	for (let playerState of game.components.filter(PlayerComponent)) {
 		// Players are not allowed to die before they place their first hermit to prevent bugs
 		if (!playerState.hasPlacedHermit) {
 			continue
@@ -261,7 +261,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.ecs.somethingFulfills(CardComponent, card.attached, card.hermit)
+		const noHermitsLeft = !game.components.somethingFulfills(CardComponent, card.attached, card.hermit)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -605,13 +605,13 @@ function* turnSaga(game: GameModel) {
 	}
 
 	// Draw a card from deck when turn ends
-	const newCard = game.ecs.find(
+	const newCard = game.components.find(
 		CardComponent,
 		card.player(currentPlayer.entity),
 		card.slotFulfills(slot.pile)
 	)
 	if (newCard) {
-		newCard.slot = game.ecs.add(HandSlotComponent, currentPlayer.entity)
+		newCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

@@ -16,6 +16,7 @@ type Component = {
 	entity: Entity
 }
 
+// I am sorry - Jake
 // prettier-ignore
 type ComponentFromEntity<T> = 
 	T extends CardEntity ? CardComponent :
@@ -47,7 +48,7 @@ export default class ECS {
 	}
 
 	/** Add a entity linked to a component and return the ID of the value */
-	public add<T extends Component, Args extends Array<any>>(
+	public new<T extends Component, Args extends Array<any>>(
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
