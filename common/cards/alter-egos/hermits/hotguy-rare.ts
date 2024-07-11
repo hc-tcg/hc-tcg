@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import { BoardSlotComponent } from '../../../types/cards'
+import {BoardSlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Hermit, hermit} from '../../base/card'
 
@@ -30,7 +30,7 @@ class HotguyRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent, , BoardSlotComponent) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		let usingSecondaryAttack = false
@@ -52,7 +52,7 @@ class HotguyRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent,) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		player.hooks.beforeAttack.remove(component)

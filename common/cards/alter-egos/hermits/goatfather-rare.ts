@@ -36,7 +36,6 @@ class GoatfatherRareHermitCard extends Card {
 	override getAttack(
 		game: GameModel,
 		component: CardComponent,
-		, ,,
 		hermitAttackType: HermitAttackType
 	) {
 		const attack = super.getAttack(game, component, pos, hermitAttackType)

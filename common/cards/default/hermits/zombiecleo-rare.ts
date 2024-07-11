@@ -45,7 +45,6 @@ class ZombieCleoRareHermitCard extends Card {
 	override getAttack(
 		game: GameModel,
 		component: CardComponent,
-		, ,,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos

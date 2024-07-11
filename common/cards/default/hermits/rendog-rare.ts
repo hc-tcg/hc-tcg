@@ -44,7 +44,6 @@ class RendogRareHermitCard extends Card {
 	override getAttack(
 		game: GameModel,
 		component: CardComponent,
-		, ,,
 		hermitAttackType: HermitAttackType
 	) {
 		const {player} = pos
@@ -78,7 +77,7 @@ class RendogRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, component: CardComponent,) {
+	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
@@ -164,7 +163,7 @@ class RendogRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent,) {
+	override onDetach(game: GameModel, component: CardComponent) {
 		const {player} = pos
 
 		// If the card we are imitating is still attached, detach it
