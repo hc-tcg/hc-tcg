@@ -6,9 +6,9 @@ import StatusEffect, {
 import {GameModel} from '../models/game-model'
 import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {applyStatusEffect, removeStatusEffect} from '../utils/board'
-import {card, query, slot} from '../components/query'
-import {StatusEffectComponent} from '../components'
+import {card, query} from '../components/query'
+import {CardComponent, StatusEffectComponent} from '../components'
+import {STATUS_EFFECT_CLASSES} from '.'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -20,50 +20,57 @@ export class AussiePingStatusEffect extends StatusEffect {
 		applyCondition: query.not(card.hasStatusEffect('aussie-ping-immune')),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent) {
-		let {player} = instance
+	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		let {player} = target
 
 		let coinFlipResult: CoinFlipT | null = null
 
-		player.hooks.beforeAttack.add(instance, (attack) => {
+		player.hooks.beforeAttack.add(effect, (attack) => {
 			if (!attack.isType('primary', 'secondary') || attack.isBacklash) return
-			if (!attack.getAttacker()) return
+			if (!attack.attacker) return
 
 			// No need to flip a coin for multiple attacks
 			if (!coinFlipResult) {
-				const coinFlip = flipCoin(player, instance.target)
+				const coinFlip = flipCoin(player, effect.target)
 				coinFlipResult = coinFlip[0]
 			}
 
 			if (coinFlipResult === 'heads') {
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(effect.entity, 0).lockDamage(effect.entity)
 			}
 		})
 
-		player.hooks.afterAttack.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		player.hooks.afterAttack.add(effect, (_) => {
+			effect.remove()
 			if (coinFlipResult === 'heads') {
-				applyStatusEffect(game, 'aussie-ping-immune', instance.target)
+				game.components
+					.new(StatusEffectComponent, STATUS_EFFECT_CLASSES['aussie-ping-immune'])
+					.apply(target.entity)
 			}
 		})
 
-		player.hooks.onTurnEnd.add(instance, (_) => {
-			removeStatusEffect(game, pos, instance)
+		player.hooks.onTurnEnd.add(effect, (_) => {
+			effect.remove()
 			if (coinFlipResult === 'heads') {
-				applyStatusEffect(game, 'aussie-ping-immune', instance.target)
+				game.components
+					.new(StatusEffectComponent, STATUS_EFFECT_CLASSES['aussie-ping-immune'])
+					.apply(target.entity)
 			}
 		})
 
-		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
+		player.hooks.onActiveRowChange.add(effect, (_, newActiveHermit) => {
+			effect.remove()
+			effect.apply(newActiveHermit.entity)
+		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent) {
-		const {player} = instance
+	override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player} = target
 
-		player.hooks.beforeAttack.remove(instance)
-		player.hooks.afterAttack.remove(instance)
-		player.hooks.onActiveRowChange.remove(instance)
-		player.hooks.onTurnEnd.remove(instance)
+		player.hooks.beforeAttack.remove(effect)
+		player.hooks.afterAttack.remove(effect)
+		player.hooks.onActiveRowChange.remove(effect)
+		player.hooks.onTurnEnd.remove(effect)
 	}
 }
 
@@ -75,22 +82,25 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectComponent<StatusEffectProps>
+		effect: StatusEffectComponent,
+		target: CardComponent
 	): void {
-		const {player} = instance
-
-		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
-		player.hooks.onTurnStart.add(instance, () => {
-			removeStatusEffect(game, getCardPos(game, instance.target), instance)
-			player.hooks.onTurnStart.remove(instance)
+		const {player} = target
+		player.hooks.onTurnStart.add(effect, () => {
+			player.hooks.onTurnStart.remove(effect)
+		})
+		player.hooks.onActiveRowChange.add(effect, (_, newActiveHermit) => {
+			effect.remove()
+			effect.apply(newActiveHermit.entity)
 		})
 	}
 
 	public override onRemoval(
 		game: GameModel,
-		instance: StatusEffectComponent<StatusEffectProps>
+		effect: StatusEffectComponent<StatusEffectProps>,
+		target: CardComponent
 	): void {
-		const {player} = instance
-		player.hooks.onActiveRowChange.remove(instance)
+		const {player} = target
+		player.hooks.onActiveRowChange.remove(effect)
 	}
 }

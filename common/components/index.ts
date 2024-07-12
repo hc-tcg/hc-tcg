@@ -406,9 +406,9 @@ export class PlayerComponent {
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
-		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
+		beforeActiveRowChange: GameHook<(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => boolean>
 		/** Hook called when the active row is changed. */
-		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
+		onActiveRowChange: GameHook<(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
 		 * Locked slots cannot be chosen in some combinator expressions.
