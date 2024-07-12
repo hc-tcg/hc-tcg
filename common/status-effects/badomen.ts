@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {removeStatusEffect} from '../utils/board'
 import {CARDS} from '../cards'
 import {slot} from '../components/query'
-import {StatusEffectComponent} from '../components/components'
+import {StatusEffectComponent} from '../components'
 
 class BadOmenStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

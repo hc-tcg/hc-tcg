@@ -4,7 +4,7 @@ import {FormattedTextNode, formatText} from '../../utils/formatting'
 import {row} from '../../components/query'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {CardComponent, RowComponent} from '../../components/components'
+import {CardComponent, RowComponent} from '../../components'
 import {
 	Attach,
 	CardProps,

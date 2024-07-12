@@ -10,7 +10,7 @@ import {
 	DeckSlotComponent,
 	RowComponent,
 	PlayerComponent,
-} from '../components/components'
+} from '../components'
 import ECS from '../types/ecs'
 import {GameState, PlayerEntity} from '../types/game-state'
 

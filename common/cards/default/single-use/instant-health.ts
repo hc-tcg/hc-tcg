@@ -3,7 +3,7 @@ import {applySingleUse} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
 import Card, {SingleUse} from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import { CardComponent } from '../../../components/components'
+import { CardComponent } from '../../../components'
 
 class InstantHealthSingleUseCard extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))

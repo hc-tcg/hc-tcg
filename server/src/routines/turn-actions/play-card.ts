@@ -1,7 +1,7 @@
+import { CardComponent } from 'common/components'
 import {GameModel} from 'common/models/game-model'
 import {PlayCardActionData} from 'common/types/action-data'
 import {ActionResult} from 'common/types/game-state'
-import {CardComponent} from 'common/components/components'
 
 function* playCardSaga(
 	game: GameModel,

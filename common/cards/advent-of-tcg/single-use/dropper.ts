@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components/components'
+import {CardComponent} from '../../../components'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class DropperSingleUseCard extends Card {

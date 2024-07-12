@@ -6,7 +6,7 @@ import {
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from '../components/components'
+} from '../components'
 import {
 	CardEntity,
 	Entity,

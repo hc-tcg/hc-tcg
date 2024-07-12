@@ -3,7 +3,7 @@ import {card, row, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {Hermit} from '../../base/interfaces'
 import {hermit} from '../../base/defaults'
-import {CardComponent, RowComponent} from '../../../components/components'
+import {CardComponent, RowComponent} from '../../../components'
 
 class PotatoBoyRareHermitCard extends Card {
 	props: Hermit = {

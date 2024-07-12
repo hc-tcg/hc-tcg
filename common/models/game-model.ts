@@ -18,7 +18,7 @@ import {
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
 import {ComponentQuery, card, slot} from '../components/query'
-import {CardComponent, RowComponent, SlotComponent} from '../components/components'
+import {CardComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
 import ECS from '../types/ecs'

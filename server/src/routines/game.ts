@@ -24,7 +24,7 @@ import {
 	DiscardSlotComponent,
 	HandSlotComponent,
 	SlotComponent,
-} from 'common/components/components'
+} from 'common/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

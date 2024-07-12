@@ -7,7 +7,7 @@ import type {
 	PlayCardLog,
 	TypeT,
 } from '../../types/cards'
-import type {SlotComponent} from '../../components/components'
+import type {SlotComponent} from '../../components'
 import type {WithoutFunctions} from '../../types/server-requests'
 
 export type CardProps = {

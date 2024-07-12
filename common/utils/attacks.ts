@@ -5,7 +5,7 @@ import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
 import {card, slot} from '../components/query'
 import {STRENGTHS} from '../const/strengths'
-import {CardComponent} from '../components/components'
+import {CardComponent} from '../components'
 
 function executeAttack(game: GameModel, attack: AttackModel) {
 	attack.target?.damage(attack.calculateDamage())

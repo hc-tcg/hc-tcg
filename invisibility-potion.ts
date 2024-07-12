@@ -1,7 +1,7 @@
 import {GameModel} from './common/models/game-model'
 import {removeStatusEffect} from './common/utils/board'
 import StatusEffect, {StatusEffectProps, statusEffect} from './common/status-effects/status-effect'
-import {StatusEffectComponent} from './common/components/components'
+import {StatusEffectComponent} from './common/components'
 
 export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

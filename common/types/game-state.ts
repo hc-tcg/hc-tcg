@@ -10,7 +10,7 @@ import type {
 	PickInfo,
 	PickRequest,
 } from './server-requests'
-import type {CardComponent} from '../components/components'
+import type {CardComponent} from '../components'
 import { PlayerId } from '../models/player-model'
 
 export type Entity = string & {__instance_id: never}

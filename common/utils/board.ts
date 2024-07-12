@@ -2,7 +2,7 @@ import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {GameModel} from '../models/game-model'
 import {GenericActionResult, PlayerComponent} from '../types/game-state'
 import {card} from '../components/query'
-import {CardComponent, SlotComponent, StatusEffectComponent} from '../components/components'
+import {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
 
 export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game

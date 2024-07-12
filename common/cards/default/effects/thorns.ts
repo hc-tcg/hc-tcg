@@ -4,7 +4,7 @@ import {slot} from '../../../components/query'
 import {executeExtraAttacks, isTargeting} from '../../../utils/attacks'
 import Card, {Attach} from '../../base/card'
 import {attach} from '../../base/defaults'
-import {CardComponent} from '../../../components/components'
+import {CardComponent} from '../../../components'
 
 class ThornsEffectCard extends Card {
 	props: Attach = {

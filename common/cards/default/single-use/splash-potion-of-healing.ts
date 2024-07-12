@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {row} from '../../../components/query'
 import Card, {SingleUse} from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import {CardComponent, RowComponent} from '../../../components/components'
+import {CardComponent, RowComponent} from '../../../components'
 
 class SplashPotionOfHealingSingleUseCard extends Card {
 	props: SingleUse = {

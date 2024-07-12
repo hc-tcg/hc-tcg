@@ -1,5 +1,5 @@
 import {ComponentQuery, card} from '.'
-import {CardComponent, SlotComponent} from '../components'
+import {CardComponent, SlotComponent} from '..'
 import {PlayerComponent, PlayerEntity, TurnAction} from '../../types/game-state'
 
 /** Return true if the card is attached to the player's side. */

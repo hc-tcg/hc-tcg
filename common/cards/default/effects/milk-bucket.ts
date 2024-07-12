@@ -3,7 +3,7 @@ import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
 import Card, {Attach, SingleUse} from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
-import { CardComponent } from '../../../components/components'
+import { CardComponent } from '../../../components'
 
 class MilkBucketEffectCard extends Card {
 	props: Attach & SingleUse = {

@@ -4,7 +4,7 @@ import {query, slot} from '../../../components/query'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card, {Attach} from '../../base/card'
 import {attach} from '../../base/defaults'
-import {CardComponent} from '../../../components/components'
+import {CardComponent} from '../../../components'
 
 class WolfEffectCard extends Card {
 	props: Attach = {

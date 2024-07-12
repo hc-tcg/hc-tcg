@@ -1,6 +1,6 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
 import {ComponentQuery, query} from '.'
-import {CardComponent, RowComponent, SlotComponent} from '../components'
+import {CardComponent, RowComponent, SlotComponent} from '..'
 import {slot as slotCombinators} from '.'
 
 export const hermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()

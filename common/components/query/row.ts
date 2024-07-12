@@ -1,5 +1,5 @@
 import {ComponentQuery, card, slot} from '.'
-import {RowComponent} from '../components'
+import {RowComponent} from '..'
 import {CardEntity, PlayerEntity} from '../../types/game-state'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>

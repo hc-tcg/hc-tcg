@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardComponent, StatusEffectComponent} from '../../../components/components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
 import {card, row, slot} from '../../../components/query'
 
 class BadOmenSingleUseCard extends Card {

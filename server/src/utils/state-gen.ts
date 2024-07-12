@@ -18,7 +18,7 @@ import {
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from 'common/components/components'
+} from 'common/components'
 import {Hermit} from 'common/cards/base/interfaces'
 
 ////////////////////////////////////////

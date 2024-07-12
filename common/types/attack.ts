@@ -1,4 +1,4 @@
-import {CardComponent} from '../components/components'
+import {CardComponent} from '../components'
 import {ComponentQuery} from '../components/query'
 import {CardEntity, RowEntity, StatusEffectEntity} from './game-state'
 

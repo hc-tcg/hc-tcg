@@ -1,4 +1,4 @@
-import {SlotComponent} from 'common/components/components'
+import {SlotComponent} from 'common/components'
 import {slot} from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'

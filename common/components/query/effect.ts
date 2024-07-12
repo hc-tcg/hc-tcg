@@ -1,4 +1,4 @@
-import {StatusEffectComponent} from '../components'
+import {StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
 import {CardEntity} from '../../types/game-state'
 
