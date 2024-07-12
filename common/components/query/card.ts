@@ -3,16 +3,16 @@ import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
 
-export const hermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()
-export const attach: ComponentQuery<CardComponent> = (game, card) => card.isAttach()
-export const item: ComponentQuery<CardComponent> = (game, card) => card.isItem()
-export const singleUse: ComponentQuery<CardComponent> = (game, card) => card.isSingleUse()
+export const isHermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()
+export const isAttach: ComponentQuery<CardComponent> = (game, card) => card.isAttach()
+export const isItem: ComponentQuery<CardComponent> = (game, card) => card.isItem()
+export const isSingleUse: ComponentQuery<CardComponent> = (game, card) => card.isSingleUse()
 
 /** Return true if the card is on the board */
 export const attached: ComponentQuery<CardComponent> = (game, card) =>
 	card.slot !== null && ['hermit', 'attach', 'item', 'single_use'].includes(card.slot.type)
 
-export function slotFulfills(
+export function slot(
 	...predicates: Array<ComponentQuery<SlotComponent>>
 ): ComponentQuery<CardComponent> {
 	return (game, card) => {
@@ -20,7 +20,7 @@ export function slotFulfills(
 	}
 }
 
-export function rowFulfills(
+export function row(
 	...predicates: Array<ComponentQuery<ComponentQuery<RowComponent>>>
 ): ComponentQuery<CardComponent> {
 	return (game, card) => {
@@ -29,14 +29,11 @@ export function rowFulfills(
 	}
 }
 
-export const pile: ComponentQuery<CardComponent> = slotFulfills(slotCombinators.deck)
-export const hand: ComponentQuery<CardComponent> = slotFulfills(slotCombinators.hand)
-
-export function slot(slot: SlotEntity | null | undefined): ComponentQuery<CardComponent> {
+export function slotIs(slot: SlotEntity | null | undefined): ComponentQuery<CardComponent> {
 	return (game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
 }
 
-export function row(row: RowEntity | null): ComponentQuery<CardComponent> {
+export function rowIs(row: RowEntity | null): ComponentQuery<CardComponent> {
 	return (game, card) => {
 		if (!row) return false
 		if (!card.slot?.onBoard()) return false

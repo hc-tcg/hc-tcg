@@ -19,7 +19,7 @@ class FishingRodSingleUseCard extends Card {
 		attachCondition: slot.every(
 			singleUse.attachCondition,
 			(game, pos) =>
-				game.state.cards.filterEntities(card.slotFulfills(slot.currentPlayer, slot.deck)).length > 2
+				game.state.cards.filterEntities(card.slot(slot.currentPlayer, slot.deck)).length > 2
 		),
 	}
 

@@ -257,7 +257,7 @@ export class GameModel {
 	public updateCardsCanBePlacedIn() {
 		const getCardsCanBePlacedIn = (player: PlayerComponent) => {
 			return this.components
-				.filter(CardComponent, card.slotFulfills(slot.hand, slot.player(player.entity)))
+				.filter(CardComponent, card.slot(slot.hand, slot.player(player.entity)))
 				.map(
 					(card) =>
 						[card, this.getPickableSlots(card.card.props.attachCondition)] as [
@@ -288,13 +288,13 @@ export class GameModel {
 		if (newRow !== null) {
 			const newHermit = this.components.findEntity(
 				CardComponent,
-				card.hermit,
-				card.slotFulfills(slot.row(currentActiveRow?.entity))
+				card.isHermit,
+				card.slot(slot.row(currentActiveRow?.entity))
 			)
 			const oldHermit = this.components.findEntity(
 				CardComponent,
-				card.hermit,
-				card.slotFulfills(slot.row(newRow.entity))
+				card.isHermit,
+				card.slot(slot.row(newRow.entity))
 			)
 			this.battleLog.addChangeRowEntry(player, newRow.entity, oldHermit, newHermit)
 		}
@@ -328,8 +328,8 @@ export class GameModel {
 	): void {
 		if (!slotA || !slotB) return
 
-		const slotACards = this.components.filter(CardComponent, card.slot(slotA.entity))
-		const slotBCards = this.components.filter(CardComponent, card.slot(slotB.entity))
+		const slotACards = this.components.filter(CardComponent, card.slotIs(slotA.entity))
+		const slotBCards = this.components.filter(CardComponent, card.slotIs(slotB.entity))
 
 		slotACards.forEach((card) => {
 			card.slot = slotB

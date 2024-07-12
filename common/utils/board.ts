@@ -7,7 +7,7 @@ import {CardComponent, SlotComponent, StatusEffectComponent} from '../components
 export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.state.cards.find(card.singleUse)
+	const suCard = game.state.cards.find(card.isSingleUse)
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 

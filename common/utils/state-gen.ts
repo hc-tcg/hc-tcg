@@ -43,7 +43,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 
 	// Ensure there is a hermit in the first 5 cards
 	const sortedCards = components
-		.filter(CardComponent, card.player(playerEntity), card.slotFulfills(slot.deck))
+		.filter(CardComponent, card.player(playerEntity), card.slot(slot.deck))
 		.sort((a, b) => {
 			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
 			return a.slot.order - b.slot.order

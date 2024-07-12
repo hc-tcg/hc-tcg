@@ -40,8 +40,8 @@ class PotatoBoyRareHermitCard extends Card {
 				row.heal(40)
 				let hermit = game.components.find(
 					CardComponent,
-					card.row(row.entity),
-					card.slotFulfills(slot.activeRow)
+					card.rowIs(row.entity),
+					card.slot(slot.activeRow)
 				)
 				game.battleLog.addEntry(
 					player.entity,

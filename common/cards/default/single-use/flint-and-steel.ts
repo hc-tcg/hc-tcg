@@ -21,8 +21,10 @@ class FlintAndSteelSingleUseCard extends Card {
 			singleUse.attachCondition,
 			(game, pos) =>
 				// What should player be here?
-				game.state.cards.filterEntities(card.player(game.currentPlayer.entity), card.pile).length >
-				3
+				game.state.cards.filterEntities(
+					card.player(game.currentPlayer.entity),
+					card.slot(slot.discardPile)
+				).length > 3
 		),
 	}
 

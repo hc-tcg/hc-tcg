@@ -54,7 +54,7 @@ export const damageEffect = {
 		!game.components.exists(
 			StatusEffectComponent,
 			effect.target(target.entity),
-			effect.damage
+			effect.type('damage')
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,

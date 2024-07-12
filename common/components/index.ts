@@ -194,7 +194,7 @@ export class RowComponent {
 	}
 
 	public heal(amount: number) {
-		let hermit = this.game.components.find(CardComponent, card.hermit, card.row(this.entity))
+		let hermit = this.game.components.find(CardComponent, card.isHermit, card.rowIs(this.entity))
 		if (this.health === null) return
 		if (!hermit?.isHealth()) return
 		this.health = Math.min(this.health + amount, hermit.props.health)

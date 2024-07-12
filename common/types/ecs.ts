@@ -17,7 +17,7 @@ import {
 	newEntity,
 } from './game-state'
 
-type Component = {
+export type Component = {
 	entity: Entity
 }
 
