@@ -29,7 +29,7 @@ export function rowFulfills(
 	}
 }
 
-export const pile: Predicate<CardComponent> = slotFulfills(slotCombinators.pile)
+export const pile: Predicate<CardComponent> = slotFulfills(slotCombinators.deck)
 export const hand: Predicate<CardComponent> = slotFulfills(slotCombinators.hand)
 
 export function slot(slot: SlotEntity | null | undefined): Predicate<CardComponent> {

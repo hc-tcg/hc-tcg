@@ -261,7 +261,11 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.components.somethingFulfills(CardComponent, card.attached, card.hermit)
+		const noHermitsLeft = !game.components.somethingFulfills(
+			CardComponent,
+			card.attached,
+			card.hermit
+		)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -595,21 +599,24 @@ function* turnSaga(game: GameModel) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	const singleUseCard = game.state.cards.findComponent(card.attached, card.singleUse)
+	const singleUseCard = game.components.find(CardComponent, card.attached, card.singleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
-			singleUseCard.slot = game.state.slots.new(HandSlotComponent, currentPlayer.entity)
+			singleUseCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
 		} else {
-			singleUseCard.slot = game.state.slots.new(DiscardSlotComponent, currentPlayer.entity)
+			singleUseCard.slot = game.components.new(DiscardSlotComponent, currentPlayer.entity)
 		}
 	}
 
 	// Draw a card from deck when turn ends
-	const newCard = game.components.find(
-		CardComponent,
-		card.player(currentPlayer.entity),
-		card.slotFulfills(slot.pile)
-	)
+	const newCard = game.components
+		.filter(CardComponent, card.player(currentPlayer.entity), card.slotFulfills(slot.deck))
+		.sort((a, b) => {
+			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
+			return a.slot.order - b.slot.order
+		})
+		.at(0)
+
 	if (newCard) {
 		newCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
 	}

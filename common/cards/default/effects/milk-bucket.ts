@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {slot} from '../../../filters'
+import {query, slot} from '../../../filters'
 import Card, {Attach, SingleUse} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 import {attach, singleUse} from '../../base/defaults'
@@ -18,7 +18,7 @@ class MilkBucketEffectCard extends Card {
 		tokens: 0,
 		description:
 			'Remove poison and bad omen from one of your Hermits.\nIf attached, prevents the Hermit this card is attached to from being poisoned.',
-		attachCondition: slot.some(attach.attachCondition, singleUse.attachCondition),
+		attachCondition: query.some(attach.attachCondition, singleUse.attachCondition),
 		log: (values) => {
 			if (values.pos.slotType === 'single_use')
 				return `${values.defaultLog} on $p${values.pick.name}$`

@@ -6,7 +6,7 @@ import {
 	BoardSlotComponent,
 	CardComponent,
 	HandSlotComponent,
-	PileSlotComponent,
+	DeckSlotComponent,
 	RowComponent,
 } from '../types/components'
 import ECS from '../types/ecs'
@@ -36,7 +36,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 
 	for (const card of cards) {
 		const cardInstance = components.new(CardComponent, card.props.id, playerEntity)
-		cardInstance.slotEntity = components.new(PileSlotComponent, playerEntity).entity
+		cardInstance.slotEntity = components.new(DeckSlotComponent, playerEntity).entity
 	}
 
 	const pack = components.filter(CardComponent, card.player(playerEntity))

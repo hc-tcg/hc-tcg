@@ -213,7 +213,7 @@ export class SlotComponent {
 		return false
 	}
 
-	public inPile(): this is PileSlotComponent {
+	public inDeck(): this is DeckSlotComponent {
 		return false
 	}
 
@@ -269,12 +269,38 @@ export class HandSlotComponent extends SlotComponent {
 	}
 }
 
-export class PileSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
-		super(game, entity, playerId, 'pile')
+type DeckPosition =
+	| {position: 'random'}
+	| {position: 'front'}
+	| {position: 'back'}
+	| {position: 'before'; spot: DeckSlotComponent}
+	| {position: 'after'; spot: DeckSlotComponent}
+
+export class DeckSlotComponent extends SlotComponent {
+	order: number = 1000
+
+	constructor(
+		game: GameModel,
+		entity: SlotEntity,
+		playerId: PlayerEntity | null,
+		position: DeckPosition
+	) {
+		super(game, entity, playerId, 'deck')
+
+		if (position.position == 'random') {
+			this.order = Math.random()
+		} else if (position.position == 'front') {
+			this.order = 0
+		} else if (position.position == 'back') {
+			this.order = 0
+		} else if (position.position == 'before') {
+			this.order = 0
+		} else if (position.position == 'after') {
+			this.order = 0
+		}
 	}
 
-	override inPile(): this is PileSlotComponent {
+	override inDeck(): this is DeckSlotComponent {
 		return true
 	}
 }

@@ -54,8 +54,8 @@ export const hand: Predicate<SlotComponent> = (game, pos) => {
 }
 
 /* Return true if the slot is in a player's hand */
-export const pile: Predicate<SlotComponent> = (game, pos) => {
-	return pos.type === 'pile'
+export const deck: Predicate<SlotComponent> = (game, pos) => {
+	return pos.type === 'deck'
 }
 
 /* Return true if the slot is in a player's hand */

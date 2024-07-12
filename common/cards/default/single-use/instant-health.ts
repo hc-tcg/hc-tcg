@@ -1,11 +1,12 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../filters'
-import {CardComponent} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../filters'
+import Card, {SingleUse} from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import { CardComponent } from '../../../types/components'
 
 class InstantHealthSingleUseCard extends Card {
-	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
+	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
 
 	props: SingleUse = {
 		...singleUse,
@@ -16,7 +17,7 @@ class InstantHealthSingleUseCard extends Card {
 		rarity: 'common',
 		tokens: 0,
 		description: 'Heal one of your Hermits 30hp.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.playerHasActiveHermit,
 			slot.someSlotFulfills(this.pickCondition)
@@ -25,7 +26,7 @@ class InstantHealthSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,

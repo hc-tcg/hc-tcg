@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {query, slot} from '../../../filters'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card, {Attach} from '../../base/card'
 import {attach} from '../../base/defaults'
@@ -17,7 +17,7 @@ class WolfEffectCard extends Card {
 		tokens: 1,
 		description:
 			"Attach to your active Hermit.\nIf any of your Hermits take damage on your opponent's turn, your opponent's active Hermit takes 20hp damage for each Wolf card you have on the game board.",
-		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {

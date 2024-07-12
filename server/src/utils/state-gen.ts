@@ -268,7 +268,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 			.map((inst) => inst.toLocalCardInstance()),
 		pileCount: game.components.filter(
 			CardComponent,
-			card.slotFulfills(slot.player(playerState.entity), slot.pile)
+			card.slotFulfills(slot.player(playerState.entity), slot.deck)
 		).length,
 		discarded: game.components
 			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.discardPile))

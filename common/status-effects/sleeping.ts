@@ -1,9 +1,8 @@
 import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
 import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
-import {slot} from '../filters'
+import {query, slot} from '../filters'
+import { StatusEffectComponent } from '../types/components'
 
 class SleepingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -14,11 +13,11 @@ class SleepingStatusEffect extends StatusEffect {
 			'While your Hermit is sleeping, you can not attack or make your active Hermit go AFK. If sleeping Hermit is made AFK by your opponent, they wake up.',
 		counter: 3,
 		counterType: 'turns',
-		applyCondition: slot.every(slot.hermitSlot, slot.not(slot.empty)),
+		applyCondition: query.every(slot.hermitSlot, query.not(slot.empty)),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player, cardId: card, rowId: row, rowIndex} = pos
+	override onApply(game: GameModel, instance: StatusEffectComponent) {
+		const {player, cardId: card, rowId: row, rowIndex} = instance
 
 		if (!card || !row?.hermitCard || rowIndex === null || !card.card.isHealth()) return
 

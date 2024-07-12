@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
-import {slot} from '../../../filters'
+import {query, slot} from '../../../filters'
 import Card, {Attach} from '../../base/card'
+import { attach } from '../../base/defaults'
 
 class BedEffectCard extends Card {
 	props: Attach = {
@@ -21,7 +22,7 @@ class BedEffectCard extends Card {
 				name: 'sleeping',
 			},
 		],
-		attachCondition: slot.every(attach.attachCondition, slot.activeRow),
+		attachCondition: query.every(attach.attachCondition, slot.activeRow),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
