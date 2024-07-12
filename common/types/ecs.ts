@@ -1,51 +1,27 @@
 import {ComponentQuery} from '../components/query'
 import {GameModel} from '../models/game-model'
-import {
-	CardComponent,
-	PlayerComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '../components'
-import {
-	CardEntity,
-	Entity,
-	PlayerEntity,
-	RowEntity,
-	SlotEntity,
-	StatusEffectEntity,
-	newEntity,
-} from './game-state'
+import {Entity, newEntity} from './game-state'
 
 export type Component = {
-	entity: Entity
+	entity: Entity<any>
 }
-
-// I am sorry - Jake
-// prettier-ignore
-type ComponentFromEntity<T> = 
-	T extends CardEntity ? CardComponent :
-	T extends StatusEffectEntity ? StatusEffectComponent :
-	T extends SlotEntity ? SlotComponent :
-	T extends RowEntity ? RowComponent :
-	T extends PlayerEntity ? PlayerComponent : null
 
 export default class ECS {
 	game: GameModel
-	data: Record<Entity, Component>
+	data: Record<Entity<any>, Component>
 
 	constructor(game: GameModel) {
 		this.game = game
-		this.data = {} as Record<Entity, Component>
+		this.data = {} as Record<Entity<any>, Component>
 	}
 
-	public get<T extends Entity>(id: T | null): ComponentFromEntity<T> | null {
+	public get<T>(id: Entity<T> | null): T | null {
 		if (!id) return null
 		// @ts-ignore
 		return this.data[id] || null
 	}
 
-	public getOrError<T extends Entity>(id: T): ComponentFromEntity<T> {
+	public getOrError<T>(id: Entity<T>): T {
 		if (!id || !(id in this.data))
 			throw new Error(`Could not find component with ID \`${id}\ in ECS`)
 		// @ts-ignore

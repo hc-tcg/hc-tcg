@@ -3,7 +3,6 @@ import {
 	AttackHistoryType,
 	AttackDefs,
 	AttackType,
-	ShouldIgnoreCard,
 	WeaknessType,
 	AttackLog,
 	AttackerEntity,

@@ -10,18 +10,24 @@ import type {
 	PickInfo,
 	PickRequest,
 } from './server-requests'
-import type {CardComponent} from '../components'
+import type {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components'
 import {PlayerId} from '../models/player-model'
 
-export type Entity = string & {__instance_id: never}
-export type PlayerEntity = Entity & {__player_id: never}
-export type SlotEntity = Entity & {__slot_id: never}
-export type RowEntity = Entity & {__row_id: never}
-export type CardEntity = Entity & {__card_id: never}
-export type StatusEffectEntity = Entity & {__status_effect_id: never}
+export type Entity<Wrapping> = string & {__entity: never}
+export type PlayerEntity = Entity<PlayerComponent>
+export type SlotEntity = Entity<SlotComponent>
+export type RowEntity = Entity<RowComponent>
+export type CardEntity = Entity<CardComponent>
+export type StatusEffectEntity = Entity<StatusEffectComponent>
 
-export function newEntity(entityName: string): Entity {
-	return (entityName + '-' + Math.random().toString()) as Entity
+export function newEntity<T>(entityName: string): Entity<T> {
+	return (entityName + '-' + Math.random().toString()) as Entity<T>
 }
 
 export type LocalRowState = {
