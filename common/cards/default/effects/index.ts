@@ -12,19 +12,19 @@ import WaterBucketEffectCard from './water-bucket'
 import MilkBucketEffectCard from './milk-bucket'
 import type Card from '../../base/card'
 
-const effectCardClasses: Array<Card> = [
-	new BedEffectCard(),
-	new WolfEffectCard(),
-	new GoldArmorEffectCard(),
-	new IronArmorEffectCard(),
-	new ShieldEffectCard(),
-	new DiamondArmorEffectCard(),
-	new NetheriteArmorEffectCard(),
-	new TotemEffectCard(),
-	new ThornsEffectCard(),
-	new LoyaltyEffectCard(),
-	new WaterBucketEffectCard(),
-	new MilkBucketEffectCard(),
+const effectCardClasses: Array<new () => Card> = [
+	BedEffectCard,
+	WolfEffectCard,
+	GoldArmorEffectCard,
+	IronArmorEffectCard,
+	ShieldEffectCard,
+	DiamondArmorEffectCard,
+	NetheriteArmorEffectCard,
+	TotemEffectCard,
+	ThornsEffectCard,
+	LoyaltyEffectCard,
+	WaterBucketEffectCard,
+	MilkBucketEffectCard,
 ]
 
 export default effectCardClasses

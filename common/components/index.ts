@@ -30,6 +30,9 @@ import {
 	WithoutFunctions,
 } from '../types/server-requests'
 
+const STATUS_EFFECTS = import('../status-effects').then((mod) => mod.STATUS_EFFECTS)
+const CARDS = import('../cards').then((mod) => mod.CARDS)
+
 export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
@@ -38,10 +41,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	slotEntity: SlotEntity | null
 
-	constructor(game: GameModel, entity: CardEntity, card: Card, playerId: PlayerEntity) {
+	constructor(game: GameModel, entity: CardEntity, card: new () => Card, playerId: PlayerEntity) {
 		this.game = game
 		this.entity = entity
-		this.card = card as Card<Props>
+		this.card = CARDS[card.name] as Card<Props>
 		this.playerEntity = playerId
 		this.slotEntity = null
 		this.playerEntity = playerId
@@ -111,10 +114,10 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	private targetEntity: CardEntity | null
 	public counter: number | null
 
-	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: StatusEffect) {
+	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: new () => StatusEffect) {
 		this.game = game
 		this.entity = entity
-		this.statusEffect = statusEffect as StatusEffect<Props>
+		this.statusEffect = STATUS_EFFECTS[statusEffect.name] as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
 	}
@@ -406,9 +409,13 @@ export class PlayerComponent {
 
 		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
 		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
-		beforeActiveRowChange: GameHook<(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => boolean>
+		beforeActiveRowChange: GameHook<
+			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => boolean
+		>
 		/** Hook called when the active row is changed. */
-		onActiveRowChange: GameHook<(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void>
+		onActiveRowChange: GameHook<
+			(oldActiveHermit: CardComponent, newActiveHermit: CardComponent) => void
+		>
 		/** Hook called when the `slot.locked` combinator is called.
 		 * Returns a combinator that verifies if the slot is locked or not.
 		 * Locked slots cannot be chosen in some combinator expressions.

@@ -20,27 +20,27 @@ import MinerCommonItemCard from './miner-common'
 import MinerRareItemCard from './miner-rare'
 import Card from '../../base/card'
 
-const itemCardClasses: Array<Card> = [
-	new BuilderCommonItemCard(),
-	new BuilderRareItemCard(),
-	new BalancedCommonItemCard(),
-	new BalancedRareItemCard(),
-	new RedstoneCommonItemCard(),
-	new RedstoneRareItemCard(),
-	new PranksterCommonItemCard(),
-	new PranksterRareItemCard(),
-	new ExplorerCommonItemCard(),
-	new ExplorerRareItemCard(),
-	new FarmCommonItemCard(),
-	new FarmRareItemCard(),
-	new PvPCommonItemCard(),
-	new PvPRareItemCard(),
-	new SpeedrunnerCommonItemCard(),
-	new SpeedrunnerRareItemCard(),
-	new TerraformCommonItemCard(),
-	new TerraformRareItemCard(),
-	new MinerCommonItemCard(),
-	new MinerRareItemCard(),
+const itemCardClasses: Array<new () => Card> = [
+	BuilderCommonItemCard,
+	BuilderRareItemCard,
+	BalancedCommonItemCard,
+	BalancedRareItemCard,
+	RedstoneCommonItemCard,
+	RedstoneRareItemCard,
+	PranksterCommonItemCard,
+	PranksterRareItemCard,
+	ExplorerCommonItemCard,
+	ExplorerRareItemCard,
+	FarmCommonItemCard,
+	FarmRareItemCard,
+	PvPCommonItemCard,
+	PvPRareItemCard,
+	SpeedrunnerCommonItemCard,
+	SpeedrunnerRareItemCard,
+	TerraformCommonItemCard,
+	TerraformRareItemCard,
+	MinerCommonItemCard,
+	MinerRareItemCard,
 ]
 
 export default itemCardClasses

@@ -20,33 +20,32 @@ import type StatusEffect from './status-effect'
 // 	InvisibilityPotionTailsStatusEffect,
 // } from '../../invisibility-potion'
 
-const effectClasses: Array<StatusEffect> = [
-	// new FireStatusEffect(),
-	// new PoisonStatusEffect(),
-	// new SleepingStatusEffect(),
-	// new BadOmenStatusEffect(),
-	// new SlownessStatusEffect(),
-	// new WeaknessStatusEffect(),
-	// new ProtectedStatusEffect(),
-	// new DyedStatusEffect(),
-	// new MuseumCollectionStatusEffect(),
-	// new SmeltingStatusEffect(),
-	// new MelodyStatusEffect(),
-	// new UsedClockStatusEffect(),
-	// new RevivedByDeathloopStatusEffect(),
-	// new BetrayedStatusEffect(),
-	// new SheepStareStatusEffect(),
-	// new AussiePingStatusEffect(),
-	// new AussiePingImmuneStatusEffect(),
-	// new InvisibilityPotionHeadsStatusEffect(),
-	// new InvisibilityPotionTailsStatusEffect(),
+const effectClasses: Array<new () => StatusEffect> = [
+	// FireStatusEffect,
+	// PoisonStatusEffect,
+	// SleepingStatusEffect,
+	// BadOmenStatusEffect,
+	// SlownessStatusEffect,
+	// WeaknessStatusEffect,
+	// ProtectedStatusEffect,
+	// DyedStatusEffect,
+	// MuseumCollectionStatusEffect,
+	// SmeltingStatusEffect,
+	// MelodyStatusEffect,
+	// UsedClockStatusEffect,
+	// RevivedByDeathloopStatusEffect,
+	// BetrayedStatusEffect,
+	// SheepStareStatusEffect,
+	// AussiePingStatusEffect,
+	// AussiePingImmuneStatusEffect,
+	// InvisibilityPotionHeadsStatusEffect,
+	// InvisibilityPotionTailsStatusEffect,
 ]
 
-export const STATUS_EFFECT_CLASSES: Record<string, StatusEffect> = effectClasses.reduce(
-	(result: Record<string, StatusEffect>, effect) => {
+export const STATUS_EFFECTS: Record<(typeof StatusEffect)['name'], StatusEffect> =
+	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
+		let effect = new effectClass()
 		if (!effect.props) return result
-		result[effect.props.id] = effect
+		result[effectClass.name] = effect
 		return result
-	},
-	{}
-)
+	}, {})

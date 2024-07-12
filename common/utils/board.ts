@@ -1,4 +1,4 @@
-import {STATUS_EFFECT_CLASSES} from '../status-effects'
+import {STATUS_EFFECTS} from '../status-effects'
 import {GameModel} from '../models/game-model'
 import {GenericActionResult} from '../types/game-state'
 import {card} from '../components/query'
@@ -47,7 +47,7 @@ export function applyStatusEffect(
 	if (!pos) return 'FAILURE_INVALID_DATA'
 
 	const statusEffectInstance = new StatusEffectComponent(
-		STATUS_EFFECT_CLASSES[statusEffectId],
+		STATUS_EFFECTS[statusEffectId],
 		Math.random().toString(),
 		targetInstance
 	)
@@ -78,7 +78,7 @@ export function removeStatusEffect(
 	)
 	if (statusEffects.length === 0) return 'FAILURE_NOT_APPLICABLE'
 
-	const statusEffectObject = STATUS_EFFECT_CLASSES[statusEffects[0].props.id]
+	const statusEffectObject = STATUS_EFFECTS[statusEffects[0].props.id]
 	statusEffectObject.onRemoval(game, statusEffects[0], pos)
 
 	if (statusEffectInstance.props.removeLog) {

@@ -6,7 +6,7 @@ import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
-import {STATUS_EFFECT_CLASSES} from 'common/status-effects'
+import {STATUS_EFFECTS} from 'common/status-effects'
 import {GLOSSARY} from 'common/glossary'
 import {useSelector} from 'react-redux'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
@@ -143,9 +143,9 @@ const getSidebarDescriptions = (card: WithoutFunctions<CardProps>): React.ReactN
 			return (
 				<div key={i} className={classNames(css.cardTooltip, css.small)}>
 					<b>
-						<u>{STATUS_EFFECT_CLASSES[statusEffect].props.name}</u>
+						<u>{STATUS_EFFECTS[statusEffect].props.name}</u>
 					</b>
-					<p>{STATUS_EFFECT_CLASSES[statusEffect].props.description}</p>
+					<p>{STATUS_EFFECTS[statusEffect].props.description}</p>
 				</div>
 			)
 		}

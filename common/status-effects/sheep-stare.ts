@@ -1,6 +1,6 @@
 import StatusEffect, {
 	StatusEffectProps,
-	followActiveHermit,
+	// followActiveHermit,
 	systemStatusEffect,
 } from './status-effect'
 import {GameModel} from '../models/game-model'

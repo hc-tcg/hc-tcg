@@ -8,7 +8,7 @@ import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {card, query} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
-import {STATUS_EFFECT_CLASSES} from '.'
+import {STATUS_EFFECTS} from '.'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -44,7 +44,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, STATUS_EFFECT_CLASSES['aussie-ping-immune'])
+					.new(StatusEffectComponent, STATUS_EFFECTS['aussie-ping-immune'])
 					.apply(target.entity)
 			}
 		})
@@ -53,7 +53,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, STATUS_EFFECT_CLASSES['aussie-ping-immune'])
+					.new(StatusEffectComponent, STATUS_EFFECTS['aussie-ping-immune'])
 					.apply(target.entity)
 			}
 		})
