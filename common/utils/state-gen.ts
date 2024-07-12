@@ -1,6 +1,6 @@
 import {CARDS} from '../cards'
 import {DEBUG_CONFIG} from '../config'
-import {card} from '../filters'
+import {card, slot} from '../filters'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {
@@ -33,30 +33,39 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 		components.new(BoardSlotComponent, playerEntity, 'hermit', 4, row.entity)
 	}
 
-	const cards = [...playerModel.deck.cards].sort(() => Math.random() - 0.5)
-
-	for (const card of cards) {
+	for (const card of playerModel.deck.cards) {
 		const cardInstance = components.new(CardComponent, CARDS[card.props.id], playerEntity)
 		cardInstance.slotEntity = components.new(DeckSlotComponent, playerEntity, {
-			position: 'back',
+			position: 'random',
 		}).entity
 	}
 
-	const pack = components.filter(CardComponent, card.player(playerEntity))
+	// Ensure there is a hermit in the first 5 cards
+	const sortedCards = components
+		.filter(CardComponent, card.player(playerEntity), card.slotFulfills(slot.deck))
+		.sort((a, b) => {
+			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
+			return a.slot.order - b.slot.order
+		})
 
-	// ensure a hermit in first 5 cards
-	const hermitIndex = pack.findIndex((card) => {
-		return card.props.category === 'hermit'
-	})
-	if (hermitIndex > 5) {
-		;[pack[0], pack[hermitIndex]] = [pack[hermitIndex], pack[0]]
+	let index = sortedCards.findIndex((card) => card.isHermit())
+
+	if (index > 5) {
+		let a = sortedCards[index]
+		let b = sortedCards[Math.floor(Math.random() * 5)]
+
+		if (a.slot?.inDeck() && b.slot?.inDeck()) {
+			let tmp = b.slot.order
+			a.slot.order = b.slot.order
+			b.slot.order = tmp
+		}
 	}
 
 	const amountOfStartingCards =
-		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? pack.length : 7
+		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? sortedCards.length : 7
 
-	for (let i = 0; i < amountOfStartingCards && i < pack.length; i++) {
-		pack[i].slotEntity = components.new(HandSlotComponent, playerEntity).entity
+	for (let i = 0; i < amountOfStartingCards && i < sortedCards.length; i++) {
+		sortedCards[i].slotEntity = components.new(HandSlotComponent, playerEntity).entity
 	}
 }
 

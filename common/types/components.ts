@@ -107,18 +107,12 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		game: GameModel,
 		entity: StatusEffectEntity,
 		playerId: PlayerEntity,
-		statusEffect: string
+		statusEffect: StatusEffect
 	) {
 		this.game = game
 		this.entity = entity
 		this.playerId = playerId
-
-		let effect = STATUS_EFFECT_CLASSES[statusEffect]
-		if (!effect) {
-			throw new Error('Could not create status effect: ' + statusEffect)
-		}
-		this.statusEffect = effect as any
-
+		this.statusEffect = statusEffect  as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
 	}
@@ -290,6 +284,7 @@ export class DeckSlotComponent extends SlotComponent {
 		super(game, entity, playerId, 'deck')
 
 		if (position.position == 'random') {
+
 			this.order = Math.random()
 		} else if (position.position == 'front') {
 			this.order = 0

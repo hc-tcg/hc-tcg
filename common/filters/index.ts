@@ -1,11 +1,4 @@
-import {GameModel} from '../models/game-model'
-import {
-	CardComponent,
-	RowComponent,
-	SlotComponent,
-	StatusEffectComponent,
-} from '../types/components'
-import {CardEntity, PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
+import type {GameModel} from '../models/game-model'
 
 import * as query from './query'
 import * as slot from './slot'
