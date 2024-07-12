@@ -1,3 +1,4 @@
+import {CARDS} from '../cards'
 import {DEBUG_CONFIG} from '../config'
 import {card} from '../filters'
 import {GameModel} from '../models/game-model'
@@ -35,8 +36,10 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 	const cards = [...playerModel.deck.cards].sort(() => Math.random() - 0.5)
 
 	for (const card of cards) {
-		const cardInstance = components.new(CardComponent, card.props.id, playerEntity)
-		cardInstance.slotEntity = components.new(DeckSlotComponent, playerEntity).entity
+		const cardInstance = components.new(CardComponent, CARDS[card.props.id], playerEntity)
+		cardInstance.slotEntity = components.new(DeckSlotComponent, playerEntity, {
+			position: 'back',
+		}).entity
 	}
 
 	const pack = components.filter(CardComponent, card.player(playerEntity))

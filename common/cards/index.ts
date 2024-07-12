@@ -1,4 +1,5 @@
-import Card from './base/card'
+import type Card from './base/card'
+
 import defaultEffectCards from './default/effects'
 // import alterEgosEffectCards from './alter-egos/effects'
 // import adventOfTcgEffectCards from './advent-of-tcg/effects'

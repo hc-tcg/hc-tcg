@@ -7,7 +7,7 @@ import {getAvailableActions, getPlayerStateById} from 'logic/game/game-selectors
 import {startAttack} from 'logic/game/game-actions'
 import Attack from './attack'
 import HermitSelector from './hermit-selector'
-import {isHermit} from 'common/cards/base/card'
+import {isHermit} from 'common/cards/base/interfaces'
 
 type Props = {
 	closeModal: () => void

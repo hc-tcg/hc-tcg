@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from 'react'
 import {useSelector, useDispatch} from 'react-redux'
-import {CardComponent} from 'common/types/game-state'
 import CardList from 'components/card-list'
 import Board from './board'
 import css from './game.module.scss'

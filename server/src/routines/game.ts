@@ -18,7 +18,7 @@ import {discardCard} from 'common/utils/movement'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import {card, row, slot} from 'common/filters'
+import {card, query, row, slot} from 'common/filters'
 import {SingleUse} from 'common/cards/base/card'
 import {
 	CardComponent,
@@ -109,7 +109,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const hasOtherHermit = game.components.filter(
 		CardComponent,
 		card.attach,
-		card.slotFulfills(slot.not(slot.row(activeRowId)))
+		card.slotFulfills(query.not(slot.row(activeRowId)))
 	)
 
 	// Actions that require us to have an active row
@@ -218,7 +218,8 @@ function* checkHermitHealth(game: GameModel) {
 			continue
 		}
 
-		const hermitCards = game.state.cards.filterComponents(
+		const hermitCards = game.components.filter(
+			CardComponent,
 			card.attached,
 			card.player(game.currentPlayer.entity)
 		)

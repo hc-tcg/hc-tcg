@@ -10,7 +10,7 @@ import {
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
-import Card, {Hermit} from 'common/cards/base/card'
+import Card from 'common/cards/base/card'
 import {card, row, slot} from 'common/filters'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {
@@ -19,6 +19,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from 'common/types/components'
+import {Hermit} from 'common/cards/base/interfaces'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

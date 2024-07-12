@@ -1,10 +1,6 @@
-import {CARDS} from '../cards'
-import Card, {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/card'
-import type {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from '../cards/base/card'
-
-import {card} from '../filters'
+import type Card from '../cards/base/card'
+import type {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from '../cards/base/interfaces'
 import type {GameModel} from '../models/game-model'
-import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import type {Counter, StatusEffectProps} from '../status-effects/status-effect'
 import type StatusEffect from '../status-effects/status-effect'
 import type {isCounter} from '../status-effects/status-effect'
@@ -17,6 +13,9 @@ import type {
 	SlotEntity,
 	StatusEffectEntity,
 } from './game-state'
+
+import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/interfaces'
+import {card} from '../filters'
 import {LocalCardInstance, LocalStatusEffectInstance, WithoutFunctions} from './server-requests'
 
 export class CardComponent<Props extends CardProps = CardProps> {
@@ -27,10 +26,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 
 	slotEntity: SlotEntity | null
 
-	constructor(game: GameModel, entity: CardEntity, id: string, playerId: PlayerEntity) {
+	constructor(game: GameModel, entity: CardEntity, card: Card, playerId: PlayerEntity) {
 		this.game = game
 		this.entity = entity
-		this.card = CARDS[id] as any
+		this.card = card as Card<Props>
 		this.playerId = playerId
 		this.slotEntity = null
 		this.playerId = playerId
@@ -73,7 +72,10 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	}
 
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.getOrError(this.game.otherPlayer(this.playerId))
+		return this.game.components.find(
+			PlayerComponent,
+			(game, player) => player.entity != this.playerId
+		)
 	}
 
 	public isItem(): this is CardComponent<Item> {

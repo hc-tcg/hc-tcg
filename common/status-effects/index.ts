@@ -1,4 +1,4 @@
-import StatusEffect from './status-effect'
+import type StatusEffect from './status-effect'
 // import FireStatusEffect from './fire'
 // import PoisonStatusEffect from './poison'
 // import SleepingStatusEffect from './sleeping'

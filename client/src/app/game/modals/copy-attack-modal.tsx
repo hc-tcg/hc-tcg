@@ -6,7 +6,7 @@ import Attack from './attack-modal/attack'
 import {getGameState} from 'logic/game/game-selectors'
 import {ModalData} from 'common/types/game-state'
 import {RowPos} from 'common/types/cards'
-import {isHermit} from 'common/cards/base/card'
+import {isHermit} from 'common/cards/base/interfaces'
 
 type Props = {
 	closeModal: () => void

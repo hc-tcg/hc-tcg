@@ -1,4 +1,4 @@
-import {Attach, CardProps, HasHealth} from '../cards/base/card'
+import {Attach, CardProps, HasHealth} from '../cards/base/interfaces'
 import {AttackModel} from '../models/attack-model'
 import {BattleLogModel} from '../models/battle-log-model'
 import {FormattedTextNode} from '../utils/formatting'
@@ -13,12 +13,11 @@ import {
 	PickInfo,
 	PickRequest,
 } from './server-requests'
-import {CardComponent, HandSlotComponent, SlotComponent} from './components'
 import {GameModel} from '../models/game-model'
 import {PlayerId, PlayerModel} from '../models/player-model'
 import {DEBUG_CONFIG} from '../config'
 import {CARDS} from '../cards'
-import {Predicate} from '../filters'
+import type {Predicate} from '../filters'
 
 export type Entity = string & {__instance_id: never}
 

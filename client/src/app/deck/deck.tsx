@@ -28,7 +28,7 @@ import {
 } from 'logic/saved-decks/saved-decks'
 import {playSound} from 'logic/sound/sound-actions'
 import {MassExportModal} from 'components/import-export/mass-export-modal'
-import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/card'
+import {isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/interfaces'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 const TYPE_ORDER = {

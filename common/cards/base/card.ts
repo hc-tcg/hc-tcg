@@ -1,18 +1,23 @@
-import {
-	PlayCardLog,
-	CardRarityT,
-	TypeT,
-	HermitAttackInfo,
-	ExpansionT,
-	CardCategoryT,
-} from '../../types/cards'
+import {PlayCardLog, TypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {Predicate, row} from '../../filters'
+import {row} from '../../filters'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {WithoutFunctions} from '../../types/server-requests'
-import {CardComponent, RowComponent, SlotComponent} from '../../types/components'
+import {CardComponent, RowComponent} from '../../types/components'
+import {
+	Attach,
+	CardProps,
+	HasHealth,
+	Hermit,
+	Item,
+	SingleUse,
+	isAttach,
+	isHealth,
+	isHermit,
+	isItem,
+	isSingleUse,
+} from './interfaces'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'
@@ -22,88 +27,6 @@ export type CanAttachError =
 	| 'UNKNOWN_ERROR'
 
 export type CanAttachResult = Array<CanAttachError>
-
-export type CardProps = {
-	id: string
-	category: CardCategoryT
-	expansion: ExpansionT
-	numericId: number
-	name: string
-	shortName?: string
-	rarity: CardRarityT
-	tokens: number
-	attachCondition: Predicate<SlotComponent>
-	sidebarDescriptions?: Array<{type: string; name: string}>
-	/** The battle log attached to this card */
-	/** Set to string when the card should generate a log when played or applied, and null otherwise */
-	log?: (values: PlayCardLog) => string
-}
-
-export type Item = CardProps & {
-	item: null
-	type: TypeT
-}
-
-export function isItem(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Item>
-export function isItem(props: CardProps): props is Item
-export function isItem(props: CardProps | WithoutFunctions<CardProps> | null): props is Item {
-	return props !== null && 'item' in props
-}
-
-export type HasHealth = CardProps & {
-	health: number
-}
-
-export function isHealth(props: WithoutFunctions<CardProps>): props is WithoutFunctions<HasHealth>
-export function isHealth(props: CardProps): props is HasHealth
-export function isHealth(
-	props: CardProps | WithoutFunctions<CardProps> | null
-): props is HasHealth {
-	return props !== null && 'health' in props
-}
-
-export type Hermit = HasHealth & {
-	hermit: null
-	type: TypeT
-	primary: HermitAttackInfo
-	secondary: HermitAttackInfo
-	palette?: 'alter_egos' | 'advent_of_tcg' | 'pharoah'
-	background?: 'alter_egos' | 'advent_of_tcg'
-}
-
-export function isHermit(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Hermit>
-export function isHermit(props: CardProps): props is Hermit
-export function isHermit(props: CardProps | WithoutFunctions<CardProps> | null): props is Hermit {
-	return props !== null && 'hermit' in props
-}
-
-export type Attach = CardProps & {
-	attachable: null
-	description: string
-}
-
-export function isAttach(props: WithoutFunctions<CardProps>): props is WithoutFunctions<Attach>
-export function isAttach(props: CardProps): props is Attach
-export function isAttach(props: CardProps | WithoutFunctions<CardProps> | null): props is Attach {
-	return props !== null && 'attachable' in props
-}
-
-export type SingleUse = CardProps & {
-	singleUse: null
-	showConfirmationModal: boolean
-	hasAttack: boolean
-	description: string
-}
-
-export function isSingleUse(
-	props: WithoutFunctions<CardProps>
-): props is WithoutFunctions<SingleUse>
-export function isSingleUse(props: CardProps): props is SingleUse
-export function isSingleUse(
-	props: CardProps | WithoutFunctions<CardProps> | null
-): props is SingleUse {
-	return props !== null && 'singleUse' in props
-}
 
 /** Type that allows multiple functions in a card to share values. */
 export class InstancedValue<T> {

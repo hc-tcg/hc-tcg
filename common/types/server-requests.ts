@@ -1,8 +1,8 @@
-import {CardProps} from '../cards/base/card'
-import {SlotCondition} from '../filters'
+import type {CardProps} from '../cards/base/interfaces'
+import type {Predicate} from '../filters'
+import type {SlotComponent} from './components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
-import {SlotComponent} from './components'
 import {ActionResult, CardEntity, SlotEntity} from './game-state'
 
 /* A type to remove functions from.props to prevent issues when sending cards to the cient */
@@ -40,7 +40,7 @@ export type PickRequest = {
 	/** The message to display to the player */
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
-	canPick: SlotCondition
+	canPick: Predicate<SlotComponent>
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
 	onResult: (pickedSlot: SlotComponent) => void //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */
