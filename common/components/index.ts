@@ -30,8 +30,13 @@ import {
 	WithoutFunctions,
 } from '../types/server-requests'
 
-const STATUS_EFFECTS = import('../status-effects').then((mod) => mod.STATUS_EFFECTS)
-const CARDS = import('../cards').then((mod) => mod.CARDS)
+let STATUS_EFFECTS: Record<any, StatusEffect>
+let CARDS: Record<any, Card>
+
+// These are imported lazily to prevent circular imports.
+// I am sorry but I have given up.
+import('../status-effects').then((mod) => (STATUS_EFFECTS = mod.STATUS_EFFECTS))
+import('../cards').then((mod) => (CARDS = mod.CARDS))
 
 export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel

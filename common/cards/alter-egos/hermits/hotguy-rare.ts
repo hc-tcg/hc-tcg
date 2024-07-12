@@ -1,7 +1,10 @@
+import {CardComponent} from '../../../components'
+import {card, slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {BoardSlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import BowSingleUseCard from '../../default/single-use/bow'
 
 class HotguyRareHermitCard extends Card {
 	props: Hermit = {
@@ -36,24 +39,25 @@ class HotguyRareHermitCard extends Card {
 		let usingSecondaryAttack = false
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
+			if (attack.attacker?.entity !== component.entity) return
 			usingSecondaryAttack = attack.type === 'secondary'
 		})
 
-		// How do I avoid using the id here? | Impossible so long as this is about a specific card - sense
 		player.hooks.beforeAttack.add(component, (attack) => {
-			const singleUseCard = player.board.singleUseCard
-			if (singleUseCard?.props.id !== 'bow' || !usingSecondaryAttack) return
-
-			const bowId = singleUseCard.card.getInstanceKey(singleUseCard)
-			if (attack.id === bowId) {
-				attack.addDamage(this.props.id, attack.getDamage())
+			if (!usingSecondaryAttack) return
+			let bow = game.components.find(
+				CardComponent,
+				card.is(BowSingleUseCard),
+				card.slot(slot.singleUseSlot)
+			)
+			if (bow) {
+				attack.addDamage(bow.entity, attack.getDamage())
 			}
 		})
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.beforeAttack.remove(component)
 		player.hooks.onTurnEnd.remove(component)

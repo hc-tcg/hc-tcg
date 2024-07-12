@@ -44,7 +44,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, STATUS_EFFECTS['aussie-ping-immune'])
+					.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
 					.apply(target.entity)
 			}
 		})
@@ -53,7 +53,7 @@ export class AussiePingStatusEffect extends StatusEffect {
 			effect.remove()
 			if (coinFlipResult === 'heads') {
 				game.components
-					.new(StatusEffectComponent, STATUS_EFFECTS['aussie-ping-immune'])
+					.new(StatusEffectComponent, AussiePingImmuneStatusEffect)
 					.apply(target.entity)
 			}
 		})

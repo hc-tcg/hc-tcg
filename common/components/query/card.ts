@@ -1,7 +1,10 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
+import type Card from '../../cards/base/card'
 import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
-import {slot as slotCombinators} from '.'
+
+let CARDS: Record<string, Card>
+import('../../cards').then((mod) => (CARDS = mod.CARDS))
 
 export const isHermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()
 export const isAttach: ComponentQuery<CardComponent> = (game, card) => card.isAttach()
@@ -55,6 +58,10 @@ export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 
 export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
 	return (game, card) => cardIds.includes(card.props.id)
+}
+
+export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComponent> {
+	return (game, card) => cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.id)
 }
 
 export const hasStatusEffect = (statusEffect: string): ComponentQuery<CardComponent> => {
