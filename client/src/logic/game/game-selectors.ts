@@ -1,6 +1,7 @@
 import {RootState} from 'store'
 import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
+import {PlayerId} from 'common/models/player-model'
 
 export const getGame = (state: RootState) => {
 	return state.game
@@ -22,7 +23,7 @@ export const getPlayerStates = (state: RootState) => {
 	return getGameState(state)?.players || null
 }
 
-export const getPlayerStateById = (playerId: string) => (state: RootState) => {
+export const getPlayerStateById = (playerId: PlayerId) => (state: RootState) => {
 	return getPlayerStates(state)?.[playerId] || null
 }
 
@@ -57,9 +58,10 @@ export const getInactivePlayerState = (state: RootState) => {
 	const gameState = getGameState(state)
 	if (!gameState) return null
 	const currentPlayerId = gameState.turn.currentPlayerId
-	const inactiveId = gameState.order.filter((id) => id !== currentPlayerId)[0]
-	if (!inactiveId) return null
-	return getPlayerStateById(inactiveId)(state)
+	let inactivePlayerId = [gameState.playerId, gameState.opponentPlayerId].filter(
+		(id) => id != currentPlayerId
+	)[0]
+	return getPlayerStateById(inactivePlayerId)(state)
 }
 
 export const getAvailableActions = (state: RootState) => {

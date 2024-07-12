@@ -3,7 +3,7 @@ import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
 import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
-import {PlayerModel} from 'common/models/player-model'
+import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
 import {card, row, slot} from 'common/components/query'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
@@ -184,7 +184,7 @@ export function getLocalPlayerState(
 	}
 
 	const localPlayerState: LocalPlayerState = {
-		id: playerState.entity,
+		id: playerState.id,
 		playerName: playerState.playerName,
 		minecraftName: playerState.minecraftName,
 		censoredPlayerName: playerState.censoredPlayerName,
@@ -209,7 +209,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
 	// convert player states
-	const players: Record<string, LocalPlayerState> = {}
+	const players: Record<PlayerId, LocalPlayerState> = {}
 	players[player.id] = getLocalPlayerState(game, playerState)
 	players[opponentState.id] = getLocalPlayerState(game, opponentState)
 
@@ -248,6 +248,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		turn: {
 			turnNumber: turnState.turnNumber,
 			currentPlayerId: turnState.currentPlayerId,
+			currentPlayerEntity: turnState.currentPlayerEntity,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
 				: turnState.opponentAvailableActions,

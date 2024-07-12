@@ -97,6 +97,7 @@ export type TurnState = {
 export type LocalTurnState = {
 	turnNumber: number
 	currentPlayerId: PlayerId
+	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 }
 
@@ -162,7 +163,7 @@ export type GameEndOutcomeT =
 export type GameEndReasonT = 'hermits' | 'lives' | 'cards' | 'time' | null
 
 export type LocalPlayerState = {
-	id: PlayerEntity
+	id: PlayerId
 	playerName: string
 	minecraftName: string
 	censoredPlayerName: string
@@ -200,7 +201,7 @@ export type LocalGameState = {
 	currentPickMessage: string | null
 	currentModalData: ModalData | null
 
-	players: Record<string, LocalPlayerState>
+	players: Record<PlayerId, LocalPlayerState>
 
 	timer: {
 		turnStartTime: number
