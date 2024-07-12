@@ -36,20 +36,18 @@ class PotatoBoyRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			game.components.filter(RowComponent, row.currentPlayer).forEach((row) => {
-				row.heal(40)
-				let hermit = game.components.find(
-					CardComponent,
-					card.rowIs(row.entity),
-					card.slot(slot.activeRow)
-				)
-				game.battleLog.addEntry(
-					player.entity,
-					`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
-						component.props.name
-					}$`
-				)
-			})
+			game.components
+				.filter(RowComponent, row.currentPlayer, row.adjacent(player.activeRowEntity))
+				.forEach((row) => {
+					row.heal(40)
+					let hermit = game.components.find(CardComponent, card.rowIs(row.entity))
+					game.battleLog.addEntry(
+						player.entity,
+						`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
+							component.props.name
+						}$`
+					)
+				})
 		})
 	}
 

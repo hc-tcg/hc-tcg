@@ -1,6 +1,6 @@
 import {ComponentQuery, card, slot} from '.'
 import {CardComponent, RowComponent} from '..'
-import {CardEntity, PlayerEntity} from '../../types/game-state'
+import {CardEntity, PlayerEntity, RowEntity} from '../../types/game-state'
 
 export const active: ComponentQuery<RowComponent> = (game, row) =>
 	[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
@@ -26,5 +26,13 @@ export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 		let card = game.components.get(cardEntity)
 		if (!card?.slot?.onBoard()) return false
 		return card.slot.rowEntity === row.entity
+	}
+}
+
+export function adjacent(adjacentRow: RowEntity | null): ComponentQuery<RowComponent> {
+	return (game, row) => {
+		const adjacentRowComponent = game.components.get(adjacentRow)
+		if (!adjacentRowComponent) return false
+		return Math.abs(row.index - adjacentRowComponent.index) == 1
 	}
 }
