@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {card, slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {card, query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {discardFromHand, drawCards} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class FlintAndSteelSingleUseCard extends Card {
 	props: SingleUse = {
@@ -17,7 +19,7 @@ class FlintAndSteelSingleUseCard extends Card {
 			'Discard your hand. Draw 3 cards.\nCan be used even if you do not have any cards in your hand.',
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} to discard {your|their} hand and draw 3 cards`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) =>
 				// What should player be here?
@@ -29,7 +31,7 @@ class FlintAndSteelSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
 			const hand = player.hand
@@ -42,7 +44,7 @@ class FlintAndSteelSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

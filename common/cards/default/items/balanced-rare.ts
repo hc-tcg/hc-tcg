@@ -1,6 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import Card, {Item} from '../../base/card'
+import Card from '../../base/card'
+import {Item} from '../../base/types'
 import {item} from '../../base/defaults'
 
 class BalancedRareItemCard extends Card {

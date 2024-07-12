@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse, retrieveCard} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class ChestSingleUseCard extends Card {
 	props: SingleUse = {
@@ -15,13 +17,13 @@ class ChestSingleUseCard extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description: 'Choose one card from your discard pile to return to your hand.',
-		attachCondition: slot.every(singleUse.attachCondition, (game, pos) => {
+		attachCondition: query.every(singleUse.attachCondition, (game, pos) => {
 			if (pos.player.discarded.filter((card) => card.props.id !== 'clock').length <= 0) return false
 			return true
 		}),
 	}
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addModalRequest({
 			playerId: player.id,

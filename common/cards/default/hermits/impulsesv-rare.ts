@@ -1,7 +1,13 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {card, query} from '../../../components/query'
+import Card from '../../base/card'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
+import {CardComponent} from '../../../components'
+import BdoubleO100CommonHermitCard from './bdoubleo100-common'
+import BdoubleO100RareHermitCard from './bdoubleo100-rare'
+import TangoTekCommonHermitCard from './tangotek-common'
+import TangoTekRareHermitCard from './tangotek-rare'
 
 class ImpulseSVRareHermitCard extends Card {
 	props: Hermit = {
@@ -30,22 +36,28 @@ class ImpulseSVRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
-			const boomerAmount = game.filterSlots(
-				slot.player,
-				slot.hasId('bdoubleo100_common', 'bdoubleo100_rare', 'tangotek_common', 'tangotek_rare'),
-				slot.not(slot.activeRow)
+			const boomerAmount = game.components.filter(
+				CardComponent,
+				card.currentPlayer,
+				card.attached,
+				card.is(
+					BdoubleO100CommonHermitCard,
+					BdoubleO100RareHermitCard,
+					TangoTekCommonHermitCard,
+					TangoTekRareHermitCard
+				),
+				query.not(card.active)
 			).length
 
-			attack.addDamage(this.props.id, Math.min(boomerAmount, 2) * 40)
+			attack.addDamage(component.entity, Math.min(boomerAmount, 2) * 40)
 		})
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}

@@ -1,25 +1,26 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../components/query'
-import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class LeadSingleUseCard extends Card {
-	firstPickCondition = slot.every(
+	firstPickCondition = query.every(
 		slot.opponent,
 		slot.itemSlot,
-		slot.not(slot.empty),
+		query.not(slot.empty),
 		slot.activeRow,
-		slot.not(slot.frozen)
+		query.not(slot.frozen)
 	)
-	secondPickCondition = slot.every(
+	secondPickCondition = query.every(
 		slot.opponent,
 		slot.itemSlot,
 		slot.empty,
 		slot.rowFulfills(row.hasHermit),
-		slot.not(slot.activeRow),
-		slot.not(slot.frozen)
+		query.not(slot.activeRow),
+		query.not(slot.frozen)
 	)
 
 	props: SingleUse = {
@@ -34,7 +35,7 @@ class LeadSingleUseCard extends Card {
 			"Move one of your opponent's attached item cards from their active Hermit to any of their AFK Hermits.",
 		log: (values) =>
 			`${values.defaultLog} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.firstPickCondition),
 			slot.someSlotFulfills(this.secondPickCondition)

@@ -1,9 +1,11 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class OrionSoundRareHermitCard extends Card {
 	props: Hermit = {

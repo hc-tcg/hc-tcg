@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {slot, SlotCondition} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {singleUse, SingleUse} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class BrushSingleUseCard extends Card {
 	props: SingleUse = {
@@ -22,7 +24,7 @@ class BrushSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
 			game.addModalRequest({
@@ -68,7 +70,7 @@ class BrushSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

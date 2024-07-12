@@ -8,15 +8,15 @@ import LightningRodEffectCard from './lightning-rod'
 import ArmorStandEffectCard from './armor-stand'
 import Card from '../../base/card'
 
-const effectCardClasses: Array<Card> = [
-	new ArmorStandEffectCard(),
-	new ChainmailArmorEffectCard(),
-	new CommandBlockEffectCard(),
-	new LightningRodEffectCard(),
-	new StringEffectCard(),
-	new ThornsIIEffectCard(),
-	new ThornsIIIEffectCard(),
-	new TurtleShellEffectCard(),
+const effectCardClasses: Array<new () => Card> = [
+	ArmorStandEffectCard,
+	ChainmailArmorEffectCard,
+	CommandBlockEffectCard,
+	LightningRodEffectCard,
+	StringEffectCard,
+	ThornsIIEffectCard,
+	ThornsIIIEffectCard,
+	TurtleShellEffectCard,
 ]
 
 export default effectCardClasses

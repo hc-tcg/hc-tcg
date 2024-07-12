@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class EmeraldSingleUseCard extends Card {
 	props: SingleUse = {
@@ -14,18 +16,18 @@ class EmeraldSingleUseCard extends Card {
 		tokens: 2,
 		description: "Steal or swap the attached effect card of your opponent's active Hermit.",
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(
-				slot.every(slot.player, slot.activeRow, slot.attachSlot, slot.not(slot.frozen))
+				query.every(slot.currentPlayer, slot.activeRow, slot.attachSlot, query.not(slot.frozen))
 			),
 			slot.someSlotFulfills(
-				slot.every(
+				query.every(
 					slot.opponent,
 					slot.activeRow,
 					slot.attachSlot,
-					slot.not(slot.empty),
-					slot.not(slot.frozen)
+					query.not(slot.empty),
+					query.not(slot.frozen)
 				)
 			)
 		),
@@ -43,7 +45,7 @@ class EmeraldSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

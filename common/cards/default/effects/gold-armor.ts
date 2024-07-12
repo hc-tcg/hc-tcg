@@ -1,7 +1,8 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
 import {isTargeting} from '../../../utils/attacks'
-import Card, {Attach} from '../../base/card'
+import Card from '../../base/card'
+import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
 class GoldArmorEffectCard extends Card {

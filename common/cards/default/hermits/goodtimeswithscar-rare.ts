@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {applyStatusEffect, hasStatusEffect, removeStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class GoodTimesWithScarRareHermitCard extends Card {
 	props: Hermit = {
@@ -81,7 +83,7 @@ class GoodTimesWithScarRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}

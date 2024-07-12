@@ -50,7 +50,7 @@ class SheepStareEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)

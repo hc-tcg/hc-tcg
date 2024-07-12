@@ -1,16 +1,18 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {discardCard} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class CurseOfVanishingSingleUseCard extends Card {
-	discardCondition = slot.every(
+	discardCondition = query.every(
 		slot.opponent,
 		slot.activeRow,
 		slot.attachSlot,
-		slot.not(slot.empty),
-		slot.not(slot.frozen)
+		query.not(slot.empty),
+		query.not(slot.frozen)
 	)
 
 	props: SingleUse = {
@@ -23,14 +25,14 @@ class CurseOfVanishingSingleUseCard extends Card {
 		tokens: 1,
 		description: 'Your opponent must discard any effect card attached to their active Hermit.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.discardCondition)
 		),
 	}
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
 			game
@@ -40,7 +42,7 @@ class CurseOfVanishingSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

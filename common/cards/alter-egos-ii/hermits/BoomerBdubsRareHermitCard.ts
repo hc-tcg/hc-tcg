@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {getActiveRow} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 export class BoomerBdubsRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,7 +36,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 	}
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
@@ -114,7 +116,7 @@ export class BoomerBdubsRareHermitCard extends Card {
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 		delete player.custom[componentKey]
 

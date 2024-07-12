@@ -13,20 +13,20 @@ import SplashPotionOfHealingIISingleUseCard from './splash-potion-of-healing-ii'
 import TargetBlockSingleUseCard from './target-block'
 import Card from '../../base/card'
 
-const singleUseCardClasses: Array<Card> = [
-	new AnvilSingleUseCard(),
-	new BadOmenSingleUseCard(),
-	new EggSingleUseCard(),
-	new EnderPearlSingleUseCard(),
-	new FireChargeSingleUseCard(),
-	new LadderSingleUseCard(),
-	new PistonSingleUseCard(),
-	new PotionOfSlownessSingleUseCard(),
-	new PotionOfWeaknessSingleUseCard(),
-	new SplashPotionOfHealingIISingleUseCard(),
-	new SweepingEdgeSingleUseCard(),
-	new TargetBlockSingleUseCard(),
-	new TridentSingleUseCard(),
+const singleUseCardClasses: Array<new () => Card> = [
+	AnvilSingleUseCard,
+	BadOmenSingleUseCard,
+	EggSingleUseCard,
+	EnderPearlSingleUseCard,
+	FireChargeSingleUseCard,
+	LadderSingleUseCard,
+	PistonSingleUseCard,
+	PotionOfSlownessSingleUseCard,
+	PotionOfWeaknessSingleUseCard,
+	SplashPotionOfHealingIISingleUseCard,
+	SweepingEdgeSingleUseCard,
+	TargetBlockSingleUseCard,
+	TridentSingleUseCard,
 ]
 
 export default singleUseCardClasses

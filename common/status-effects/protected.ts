@@ -13,7 +13,7 @@ class ProtectedStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		let canBlock = true
 
@@ -57,7 +57,7 @@ class ProtectedStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onDefence.remove(instance)
 		player.hooks.onTurnEnd.remove(instance)

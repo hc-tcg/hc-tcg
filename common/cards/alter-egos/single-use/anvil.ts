@@ -1,8 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class AnvilSingleUseCard extends Card {
 	props: SingleUse = {
@@ -66,7 +68,7 @@ class AnvilSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.getAttack.remove(component)
 		player.hooks.onAttack.remove(component)
 	}

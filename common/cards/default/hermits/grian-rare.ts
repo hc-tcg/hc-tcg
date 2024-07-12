@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 // The tricky part about this one are destroyable items (shield, totem, loyalty) since they are available at the moment of attack, but not after
 
@@ -123,7 +125,7 @@ class GrianRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}
 }

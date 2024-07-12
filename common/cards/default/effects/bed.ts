@@ -5,6 +5,7 @@ import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class BedEffectCard extends Card {
 	props: Attach = {
@@ -71,7 +72,7 @@ class BedEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onTurnEnd.remove(component)
 		player.hooks.onTurnStart.remove(component)
 		player.hooks.beforeApply.remove(component)

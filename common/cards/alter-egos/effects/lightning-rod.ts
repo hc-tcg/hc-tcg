@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent, DiscardSlotComponent} from '../../../components'
 import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
-import Card, {attach, Attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class LightningRodEffectCard extends Card {
 	props: Attach = {
@@ -16,44 +18,39 @@ class LightningRodEffectCard extends Card {
 		tokens: 2,
 		description:
 			"All damage done to your Hermits on your opponent's turn is taken by the Hermit this card is attached to.\nDiscard after damage is taken. Only one of these cards can be attached to your Hermits at a time.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			attach.attachCondition,
-			slot.not(
-				slot.someSlotFulfills(slot.every(slot.player, slot.attachSlot, slot.hasId('lightning_rod')))
+			query.not(
+				slot.someSlotFulfills(
+					query.every(slot.currentPlayer, slot.attachSlot, slot.has(LightningRodEffectCard))
+				)
 			)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer, rowId: row, rowIndex} = pos
+		const {player, opponentPlayer} = component
+
+		let used = false
 
 		opponentPlayer.hooks.beforeAttack.add(component, (attack) => {
-			if (attack.isType('status-effect') || attack.isBacklash) return
-			if (!row || rowIndex === null || !row.hermitCard) return
+			if (!component.slot?.onBoard() || !component.slot.row) return
+			if (attack.type === 'status-effect' || attack.isBacklash) return
+			if (game.currentPlayer.entity !== opponentPlayer.entity) return
+			if (attack.target?.player.id !== player.id) return
 
-			// Only on opponents turn
-			if (game.currentPlayerEntity !== opponentPlayer.id) return
-
-			// Attack already has to be targeting us
-			if (attack.getTarget()?.player.id !== player.id) return
-
-			attack.setTarget(this.props.id, {
-				player,
-				rowIndex,
-				row,
-			})
+			attack.setTarget(component.entity, component.slot.row?.entity)
+			used = true
 		})
 
 		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
-			if (!isTargeting(attack, pos)) return
-			if (attack.calculateDamage() <= 0) return
-
-			discardCard(game, pos.cardId)
+			if (!used) return
+			component.slot = game.components.new(DiscardSlotComponent, component.player.entity)
 		})
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {opponentPlayer} = pos
+		const {opponentPlayer} = component
 		opponentPlayer.hooks.beforeAttack.remove(component)
 		opponentPlayer.hooks.afterAttack.remove(component)
 	}

@@ -6,7 +6,9 @@ import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
 import {PickRequest} from '../../../types/server-requests'
 import {hasStatusEffect} from '../../../utils/board'
 import {discardCard} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 /*
 - Has to support having two different afk targets (one for hypno, one for su effect like bow)
@@ -106,7 +108,7 @@ class HypnotizdRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 	}
 }

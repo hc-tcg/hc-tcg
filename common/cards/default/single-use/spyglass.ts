@@ -1,10 +1,12 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import {getFormattedName} from '../../../utils/game'
 import {discardFromHand} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class SpyglassSingleUseCard extends Card {
 	props: SingleUse = {
@@ -19,7 +21,7 @@ class SpyglassSingleUseCard extends Card {
 			"Look at your opponent's hand, and then flip a coin.\nIf heads, choose one card to discard from your opponent's hand.",
 		showConfirmationModal: true,
 		log: (values) => `${values.defaultLog} and ${values.coinFlip}`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => game.state.turn.turnNumber !== 1
 		),
@@ -78,7 +80,7 @@ class SpyglassSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Attach, attach} from '../../base/card'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class SlimeballEffectCard extends Card {
 	props: Attach = {
@@ -14,18 +16,18 @@ class SlimeballEffectCard extends Card {
 		expansion: 'advent_of_tcg',
 		description:
 			"Attach to any Hermit, including your opponent's. That Hermit and its attached items will not be removed from the slot they are attached to, unless that Hermit is knocked out. Attached cards cannot be removed until slimeball is discarded.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			slot.opponent,
 			slot.attachSlot,
 			slot.empty,
 			slot.rowFulfills(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
-			slot.not(slot.frozen)
+			query.not(slot.frozen)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.freezeSlots.add(component, () => {
 			return slot.every(

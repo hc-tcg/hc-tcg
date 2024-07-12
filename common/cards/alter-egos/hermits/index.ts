@@ -14,20 +14,20 @@ import RenbobRareHermitCard from './renbob-rare'
 import HumanCleoRareHermitCard from './humancleo-rare'
 import Card from '../../base/card'
 
-const hermitCardClasses: Array<Card> = [
+const hermitCardClasses: Array<new () => Card> = [
 	// AE Cards
-	new BeetlejhostCommonHermitCard(),
-	new EvilJevinCommonHermitCard(),
-	new EvilXisumaRareHermitCard(),
-	new GoatfatherRareHermitCard(),
-	new HelsknightRareHermitCard(),
-	new HotguyRareHermitCard(),
-	new HumanCleoRareHermitCard(),
-	new JinglerRareHermitCard(),
-	new LlamadadRareHermitCard(),
-	new PotatoBoyRareHermitCard(),
-	new PoultrymanCommonHermitCard(),
-	new RenbobRareHermitCard(),
+	BeetlejhostCommonHermitCard,
+	EvilJevinCommonHermitCard,
+	EvilXisumaRareHermitCard,
+	GoatfatherRareHermitCard,
+	HelsknightRareHermitCard,
+	HotguyRareHermitCard,
+	HumanCleoRareHermitCard,
+	JinglerRareHermitCard,
+	LlamadadRareHermitCard,
+	PotatoBoyRareHermitCard,
+	PoultrymanCommonHermitCard,
+	RenbobRareHermitCard,
 ]
 
 export default hermitCardClasses

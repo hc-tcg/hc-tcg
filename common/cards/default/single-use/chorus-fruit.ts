@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import {applySingleUse, getActiveRow} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
+import {applySingleUse} from '../../../utils/board'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class ChorusFruitSingleUseCard extends Card {
 	props: SingleUse = {
@@ -15,18 +17,25 @@ class ChorusFruitSingleUseCard extends Card {
 		tokens: 1,
 		description: 'After your attack, choose an AFK Hermit to set as your active Hermit.',
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.not(
-				slot.someSlotFulfills(
-					slot.every(slot.player, slot.hermitSlot, slot.activeRow, slot.hasStatusEffect('sleeping'))
+			query.not(
+				query.exists(
+					SlotComponent,
+					query.every(
+						slot.currentPlayer,
+						slot.hermitSlot,
+						slot.activeRow,
+						// @todo Implement this
+						// slot.hasStatusEffect('sleeping')
+					)
 				)
 			)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		let removedBlock = false
 
@@ -59,7 +68,7 @@ class ChorusFruitSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}
 }

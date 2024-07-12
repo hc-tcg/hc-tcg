@@ -2,8 +2,10 @@ import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
 import {slot} from '../../../components/query'
-import Card, {Attach, attach} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class BrewingStandEffectCard extends Card {
 	props: Attach = {
@@ -19,7 +21,7 @@ class BrewingStandEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.add(component, () => {
 			if (!pos.rowId?.itemCards || pos.rowId.itemCards.filter((card) => card !== null).length === 0)
@@ -52,7 +54,7 @@ class BrewingStandEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.remove(component)
 	}

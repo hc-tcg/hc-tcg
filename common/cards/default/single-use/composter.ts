@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {discardFromHand, drawCards} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class ComposterSingleUseCard extends Card {
 	props: SingleUse = {
@@ -17,7 +19,7 @@ class ComposterSingleUseCard extends Card {
 		description:
 			'Discard 2 cards in your hand. Draw 2.\nCan not be used if you do not have 2 cards to discard.',
 		log: (values) => `${values.defaultLog} to discard 2 cards and draw 2 cards`,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => pos.player.hand.length >= 2,
 			(game, pos) => pos.player.pile.length > 2
@@ -25,7 +27,7 @@ class ComposterSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		let firstPickedCard: CardComponent | null = null
 

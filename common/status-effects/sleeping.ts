@@ -64,7 +64,7 @@ class SleepingStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onTurnStart.remove(instance)
 		player.hooks.afterDefence.remove(instance)
 	}

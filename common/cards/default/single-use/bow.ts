@@ -1,16 +1,18 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class BowSingleUseCard extends Card {
-	pickCondition = slot.every(
+	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
-		slot.not(slot.empty),
-		slot.not(slot.activeRow)
+		query.not(slot.empty),
+		query.not(slot.activeRow)
 	)
 
 	props: SingleUse = {
@@ -23,9 +25,9 @@ class BowSingleUseCard extends Card {
 		tokens: 1,
 		description: "Do 40hp damage to one of your opponent's AFK Hermits.",
 		hasAttack: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
@@ -78,7 +80,7 @@ class BowSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.getAttack.remove(component)
 		player.hooks.onAttack.remove(component)

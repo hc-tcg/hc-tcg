@@ -1,6 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PixlriffsRareHermitCard extends Card {
 	props: Hermit = {
@@ -31,7 +33,7 @@ class PixlriffsRareHermitCard extends Card {
 	}
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 
 		let startingRow = pos.rowId
 
@@ -47,7 +49,7 @@ class PixlriffsRareHermitCard extends Card {
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}
 }

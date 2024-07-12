@@ -1,18 +1,19 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class EggSingleUseCard extends Card {
-	pickCondition = slot.every(
+	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
-		slot.not(slot.activeRow),
-		slot.not(slot.empty)
+		query.not(slot.activeRow),
+		query.not(slot.empty)
 	)
 
 	props: SingleUse = {
@@ -25,7 +26,7 @@ class EggSingleUseCard extends Card {
 		tokens: 1,
 		description:
 			"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.pickCondition)
 		),
@@ -94,7 +95,7 @@ class EggSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.onAttack.remove(component)

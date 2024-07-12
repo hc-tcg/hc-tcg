@@ -1,12 +1,14 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class InvisibilityPotionSingleUseCard extends Card {
-	applyTo = slot.every(slot.opponent, slot.activeRow, slot.hermitSlot)
+	applyTo = query.every(slot.opponent, slot.activeRow, slot.hermitSlot)
 
 	props: SingleUse = {
 		...singleUse,
@@ -25,7 +27,7 @@ class InvisibilityPotionSingleUseCard extends Card {
 				name: 'missed',
 			},
 		],
-		attachCondition: slot.every(singleUse.attachCondition, slot.someSlotFulfills(this.applyTo)),
+		attachCondition: query.every(singleUse.attachCondition, query.exists(SlotComponent, this.applyTo)),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}
 
@@ -45,7 +47,7 @@ class InvisibilityPotionSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

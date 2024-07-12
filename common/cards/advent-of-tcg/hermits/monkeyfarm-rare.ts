@@ -2,8 +2,10 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {flipCoin} from '../../../utils/coinFlips'
 import {slot} from '../../../components/query'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class MonkeyfarmRareHermitCard extends Card {
 	props: Hermit = {
@@ -67,7 +69,7 @@ class MonkeyfarmRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.afterAttack.remove(component)
 	}

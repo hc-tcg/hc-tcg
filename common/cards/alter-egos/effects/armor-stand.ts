@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import Card, {Attach, HasHealth, attach, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {CardComponent} from '../../../components'
+import {Attach, HasHealth} from '../../base/types'
+import {attach, hermit} from '../../base/defaults'
 
 class ArmorStandEffectCard extends Card {
 	props: Attach & HasHealth = {
@@ -27,8 +29,8 @@ class ArmorStandEffectCard extends Card {
 
 	override onAttach(game: GameModel, component: CardComponent) {
 		component.player.hooks.freezeSlots.add(component, () => {
-			if (!component.slot?.onBoard()) return slot.nothing
-			return slot.every(slot.currentPlayer, slot.row(component.slot.row?.entity))
+			if (!component.slot?.onBoard()) return query.nothing
+			return query.every(slot.currentPlayer, slot.row(component.slot.row?.entity))
 		})
 	}
 

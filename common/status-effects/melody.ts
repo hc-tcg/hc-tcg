@@ -15,7 +15,7 @@ class MelodyStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.add(instance, () => {
 			const targetPos = game.findSlot(slot.hasInstance(instance.target))
@@ -39,7 +39,7 @@ class MelodyStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.remove(instance)
 		player.hooks.afterDefence.remove(instance)

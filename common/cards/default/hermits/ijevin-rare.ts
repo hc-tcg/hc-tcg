@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class IJevinRareHermitCard extends Card {
 	props: Hermit = {
@@ -63,7 +65,7 @@ class IJevinRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.afterAttack.remove(component)
 	}

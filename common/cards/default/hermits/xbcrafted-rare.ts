@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class XBCraftedRareHermitCard extends Card {
 	props: Hermit = {
@@ -30,7 +32,7 @@ class XBCraftedRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.beforeAttack.addBefore(component, (attack) => {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
@@ -40,7 +42,7 @@ class XBCraftedRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		// Remove hooks
 		player.hooks.beforeAttack.remove(component)

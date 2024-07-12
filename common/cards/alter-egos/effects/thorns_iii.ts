@@ -1,9 +1,11 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {executeExtraAttacks, isTargeting} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class ThornsIIIEffectCard extends Card {
 	props: Attach = {

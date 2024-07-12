@@ -1,7 +1,6 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {removeStatusEffect} from '../utils/board'
-import {CARDS} from '../cards'
 import {slot} from '../components/query'
 import {StatusEffectComponent} from '../components'
 

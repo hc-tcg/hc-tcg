@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {query, slot} from '../../../components/query'
 import {HermitAttackType} from '../../../types/attack'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card, {InstancedValue} from '../../base/card'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
 
 class ZombieCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -29,13 +31,13 @@ class ZombieCleoRareHermitCard extends Card {
 		},
 	}
 
-	pickCondition = slot.every(
-		slot.player,
+	pickCondition = query.every(
+		slot.currentPlayer,
 		slot.hermitSlot,
-		slot.not(slot.empty),
-		slot.not(slot.activeRow),
-		slot.not(slot.hasId(this.props.id)),
-		slot.not(slot.hasId('armor_stand'))
+		query.not(slot.empty),
+		query.not(slot.activeRow),
+		query.not(slot.hasId(this.props.id)),
+		query.not(slot.hasId('armor_stand'))
 	)
 
 	pickedAttack = new InstancedValue<{card: CardComponent; attack: HermitAttackType} | null>(
@@ -47,7 +49,7 @@ class ZombieCleoRareHermitCard extends Card {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	) {
-		const {player} = pos
+		const {player} = component
 		const attack = super.getAttack(game, component, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
@@ -75,8 +77,8 @@ class ZombieCleoRareHermitCard extends Card {
 		return newAttack
 	}
 
-	override onAttach(game: GameModel, component: CardComponent,) {
-		const {player} = pos
+	override onAttach(game: GameModel, component: CardComponent) {
+		const {player} = component
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -157,8 +159,8 @@ class ZombieCleoRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent,) {
-		const {player} = pos
+	override onDetach(game: GameModel, component: CardComponent) {
+		const {player} = component
 		this.pickedAttack.clear(component)
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.blockedActions.remove(component)

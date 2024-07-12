@@ -1,17 +1,19 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class MendingSingleUseCard extends Card {
-	pickCondition = slot.every(
+	pickCondition = query.every(
 		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
 		slot.rowFulfills(row.hasHermit),
-		slot.not(slot.frozen),
-		slot.not(slot.activeRow)
+		query.not(slot.frozen),
+		query.not(slot.activeRow)
 	)
 
 	props: SingleUse = {
@@ -23,11 +25,11 @@ class MendingSingleUseCard extends Card {
 		rarity: 'ultra_rare',
 		tokens: 1,
 		description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.pickCondition),
 			slot.someSlotFulfills(
-				slot.every(slot.activeRow, slot.attachSlot, slot.not(slot.frozen), slot.not(slot.empty))
+				query.every(slot.activeRow, slot.attachSlot, query.not(slot.frozen), query.not(slot.empty))
 			)
 		),
 		log: (values) =>
@@ -35,7 +37,7 @@ class MendingSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,

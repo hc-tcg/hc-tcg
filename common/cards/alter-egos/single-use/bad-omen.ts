@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 import {CardComponent, StatusEffectComponent} from '../../../components'
-import {card, row, slot} from '../../../components/query'
+import {card, query, row, slot} from '../../../components/query'
 
 class BadOmenSingleUseCard extends Card {
 	props: SingleUse = {
@@ -20,7 +22,7 @@ class BadOmenSingleUseCard extends Card {
 				name: 'badomen',
 			},
 		],
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {

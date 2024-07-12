@@ -1,3 +1,4 @@
+import type Card from '../../cards/base/card'
 import {ComponentQuery, card, query} from '.'
 import {CardComponent, RowComponent, SlotComponent} from '..'
 import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
@@ -99,6 +100,12 @@ export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent>
 export const hasId = (...cardIds: Array<string>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		return game.components.exists(CardComponent, card.id(...cardIds), card.slotIs(pos.entity))
+	}
+}
+
+export const has = (...cards: Array<new () => Card>): ComponentQuery<SlotComponent> => {
+	return (game, pos) => {
+		return game.components.exists(CardComponent, card.is(...cards), card.slotIs(pos.entity))
 	}
 }
 

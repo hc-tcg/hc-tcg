@@ -2,8 +2,10 @@ import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
 import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
-import Card, {hermit, Hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class IskallmanRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,7 +36,7 @@ class IskallmanRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		let pickedAfkHermit: SlotComponent | null = null
 
 		const pickCondition = slot.every(
@@ -142,7 +144,7 @@ class IskallmanRareHermitCard extends Card {
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.onAttack.remove(component)

@@ -2,10 +2,12 @@ import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
 import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {PickRequest} from '../../../types/server-requests'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class CrossbowSingleUseCard extends Card {
 	props: SingleUse = {
@@ -110,7 +112,7 @@ class CrossbowSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.getAttack.remove(component)
 		player.hooks.onAttack.remove(component)

@@ -2,16 +2,18 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {slot} from '../../../components/query'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent, SlotComponent} from '../../../components'
 
 class FireChargeSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.player,
-		slot.not(slot.frozen),
-		slot.not(slot.empty),
-		slot.some(slot.itemSlot, slot.attachSlot)
+	pickCondition = query.every(
+		slot.currentPlayer,
+			query.not(slot.frozen),
+			query.not(slot.empty),
+			query.some(slot.itemSlot, slot.attachSlot)
 	)
 
 	props: SingleUse = {
@@ -24,15 +26,15 @@ class FireChargeSingleUseCard extends Card {
 		tokens: 0,
 		description:
 			'Discard one attached item or effect card from any of your Hermits.\nYou can use another single use effect card this turn.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} to discard ${getFormattedName(values.pick.id, false)}`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -59,7 +61,7 @@ class FireChargeSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.afterApply.remove(component)
 	}

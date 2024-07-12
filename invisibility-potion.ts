@@ -15,7 +15,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 		game: GameModel,
 		instance: StatusEffectComponent<StatusEffectProps>
 	): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
@@ -33,7 +33,7 @@ export class InvisibilityPotionHeadsStatusEffect extends StatusEffect {
 		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onActiveRowChange.remove(instance)
 		player.hooks.afterAttack.remove(instance)
 		player.hooks.beforeAttack.remove(instance)
@@ -53,7 +53,7 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 
 		player.hooks.beforeAttack.add(instance, (attack) => {
@@ -71,7 +71,7 @@ export class InvisibilityPotionTailsStatusEffect extends StatusEffect {
 		instance: StatusEffectComponent<StatusEffectProps>,
 		pos: CardPosModel
 	): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onActiveRowChange.remove(instance)
 	}
 }

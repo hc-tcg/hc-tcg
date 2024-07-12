@@ -1,7 +1,6 @@
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import {card, row, slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
-import {STATUS_EFFECTS} from '../../../status-effects'
 import SlownessStatusEffect from '../../../status-effects/slowness'
 import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'

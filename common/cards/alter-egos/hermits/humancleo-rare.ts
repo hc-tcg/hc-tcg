@@ -2,8 +2,10 @@ import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../components/query'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class HumanCleoRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,7 +36,7 @@ class HumanCleoRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.onAttack.add(component, (attack) => {
@@ -55,7 +57,7 @@ class HumanCleoRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}

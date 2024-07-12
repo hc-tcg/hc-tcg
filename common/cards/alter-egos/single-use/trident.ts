@@ -4,7 +4,9 @@ import {CardComponent, CoinFlipT} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardSingleUse} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class TridentSingleUseCard extends Card {
 	props: SingleUse = {
@@ -63,7 +65,7 @@ class TridentSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.getAttack.remove(component)
 		player.hooks.onApply.remove(component)

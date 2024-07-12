@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {discardSingleUse} from '../../../utils/movement'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 // Because of this card we can't rely elsewhere on the suCard to be in state on turnEnd hook
 class GeminiTayRareHermitCard extends Card {
@@ -30,7 +32,7 @@ class GeminiTayRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
@@ -50,7 +52,7 @@ class GeminiTayRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		// Remove hook
 		player.hooks.onAttack.remove(component)

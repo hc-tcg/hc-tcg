@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {applyStatusEffect} from '../../../utils/board'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PearlescentMoonRareHermitCard extends Card {
 	props: Hermit = {
@@ -36,7 +38,7 @@ class PearlescentMoonRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
 			const attacker = attack.getAttacker()
@@ -47,7 +49,7 @@ class PearlescentMoonRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}
 }

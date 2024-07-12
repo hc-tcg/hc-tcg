@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {discardCard} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class SweepingEdgeSingleUseCard extends Card {
 	discardCondition = slot.every(
@@ -41,7 +43,7 @@ class SweepingEdgeSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

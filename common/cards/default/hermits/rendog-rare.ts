@@ -1,9 +1,12 @@
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
-import {CardComponent} from '../../../types/game-state'
-import {slot} from '../../../components/query'
-import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import {query, slot} from '../../../components/query'
+import Card, {InstancedValue} from '../../base/card'
 import {CopyAttack} from '../../../types/server-requests'
+import {Hermit} from '../../base/types'
+import {hermit} from '../../base/defaults'
+import ArmorStandEffectCard from '../../alter-egos/effects/armor-stand'
 
 class RendogRareHermitCard extends Card {
 	props: Hermit = {
@@ -30,12 +33,12 @@ class RendogRareHermitCard extends Card {
 		},
 	}
 
-	pickCondition = slot.every(
+	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
-		slot.not(slot.empty),
-		slot.not(slot.hasId(this.props.id)),
-		slot.not(slot.hasId('armor_stand'))
+		query.not(slot.empty),
+		query.not(slot.has(RendogRareHermitCard)),
+		query.not(slot.has(ArmorStandEffectCard))
 	)
 
 	imitatingCard = new InstancedValue<CardComponent | null>(() => null)
@@ -46,7 +49,7 @@ class RendogRareHermitCard extends Card {
 		component: CardComponent,
 		hermitAttackType: HermitAttackType
 	) {
-		const {player} = pos
+		const {player} = component
 		const attack = super.getAttack(game, component, pos, hermitAttackType)
 
 		if (!attack || attack.type !== 'secondary') return attack
@@ -78,7 +81,7 @@ class RendogRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
 			// Make sure we are attacking
@@ -166,7 +169,7 @@ class RendogRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		// If the card we are imitating is still attached, detach it
 		const imitatingCard = this.imitatingCard.get(component)

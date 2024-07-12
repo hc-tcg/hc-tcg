@@ -1,14 +1,16 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class LadderSingleUseCard extends Card {
-	pickCondition = slot.every(
-		slot.player,
+	pickCondition = query.every(
+		slot.currentPlayer,
 		slot.hermitSlot,
-		slot.not(slot.empty),
+		query.not(slot.empty),
 		slot.adjacentTo(slot.activeRow)
 	)
 
@@ -22,14 +24,14 @@ class LadderSingleUseCard extends Card {
 		tokens: 2,
 		description:
 			'Before your attack, swap your active Hermit card with one of your adjacent AFK Hermit cards.\nAll cards attached to both Hermits, including health, remain in place. Your active Hermit remains active after swapping.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,

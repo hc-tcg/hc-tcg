@@ -1,6 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import Card, {Attach, attach} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class CatEffectCard extends Card {
 	props: Attach = {
@@ -16,7 +18,7 @@ class CatEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.afterAttack.add(component, (attack) => {
 			if (!pos.rowId || !pos.rowId.hermitCard) return
 			if (attack.id !== pos.rowId.hermitCard.card.getInstanceKey(pos.rowId.hermitCard)) return
@@ -59,7 +61,7 @@ class CatEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}
 }

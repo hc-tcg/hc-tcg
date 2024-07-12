@@ -1,4 +1,6 @@
-import Card, {hermit, Hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class ArchitectFalseCommonHermitCard extends Card {
 	props: Hermit = {

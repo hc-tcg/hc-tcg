@@ -14,7 +14,7 @@ class DyedStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
 			if (player.board.activeRow === null) return availableEnergy

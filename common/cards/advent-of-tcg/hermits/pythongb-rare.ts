@@ -1,6 +1,8 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import {CardComponent} from '../../../components'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class PythonGBRareHermitCard extends Card {
 	props: Hermit = {
@@ -30,7 +32,7 @@ class PythonGBRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
@@ -52,7 +54,7 @@ class PythonGBRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}

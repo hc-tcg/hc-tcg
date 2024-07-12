@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../components/query'
-import Card, {SingleUse} from '../../base/card'
-import { singleUse } from '../../base/defaults'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class SplashPotionOfPoisonSingleUseCard extends Card {
 	props: SingleUse = {
@@ -21,11 +23,11 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 				name: 'poison',
 			},
 		],
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.onApply.add(component, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
@@ -39,7 +41,7 @@ class SplashPotionOfPoisonSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

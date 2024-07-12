@@ -15,7 +15,7 @@ class UsedClockStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		if (!instance.counter) instance.counter = this.props.counter
 

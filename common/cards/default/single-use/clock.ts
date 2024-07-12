@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {query, slot} from '../../../components/query'
 import {TurnActions} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
-import Card, {SingleUse} from '../../base/card'
+import Card from '../../base/card'
 import {CardComponent} from '../../../components'
-import singleUse from '.'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class ClockSingleUseCard extends Card {
 	props: SingleUse = {
@@ -24,17 +25,17 @@ class ClockSingleUseCard extends Card {
 				name: 'turnSkip',
 			},
 		],
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.not(slot.someSlotFulfills(slot.hasStatusEffect('used-clock'))),
+			// @todo Implement has status effect
+			// query.not(slot.someSlotFulfills(slot.hasStatusEffect('used-clock'))),
 			(game, pos) => game.state.turn.turnNumber !== 1
 		),
 		log: (values) => `${values.defaultLog} and skipped {$o${values.opponent}'s$|your} turn`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {opponentPlayer, player} = pos
-
+		const {opponentPlayer, player} = component
 		player.hooks.onApply.add(component, () => {
 			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				game.addBlockedActions(
@@ -57,7 +58,7 @@ class ClockSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

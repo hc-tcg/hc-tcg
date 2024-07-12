@@ -1,6 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {CardComponent, DeckSlotComponent} from '../../../components'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import FletchingTableSingleUseCard from './fletching-table'
 
 class DropperSingleUseCard extends Card {
 	props: SingleUse = {
@@ -16,21 +19,18 @@ class DropperSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent): void {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
-				opponentPlayer.pile.splice(
-					Math.round(Math.random() * opponentPlayer.pile.length),
-					0,
-					CardComponent.fromCardId('fletching_table')
-				)
+				let card = game.components.new(CardComponent, FletchingTableSingleUseCard, player.entity)
+				card.slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
 			}
 		})
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onApply.remove(component)
 	}

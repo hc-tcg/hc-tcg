@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class BoomerBdubsRareHermitCard extends Card {
 	props: Hermit = {
@@ -33,7 +35,7 @@ class BoomerBdubsRareHermitCard extends Card {
 	}
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 
 		let extraDamage = 0
@@ -106,7 +108,7 @@ class BoomerBdubsRareHermitCard extends Card {
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.getAttackRequests.remove(component)

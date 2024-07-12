@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
-import Card, {Attach, attach} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class FurnaceEffectCard extends Card {
 	props: Attach = {

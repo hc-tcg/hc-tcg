@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
-import Card, {Attach, attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class TurtleShellEffectCard extends Card {
 	props: Attach = {
@@ -16,11 +18,11 @@ class TurtleShellEffectCard extends Card {
 		tokens: 1,
 		description:
 			"Attach to any of your AFK Hermits. On that Hermit's first turn after becoming active, any damage done by your opponent to that Hermit is prevented, and then this card is discarded.",
-		attachCondition: slot.every(attach.attachCondition, slot.not(slot.activeRow)),
+		attachCondition: query.every(attach.attachCondition, query.not(slot.activeRow)),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		let firstActiveTurn = true
 
 		player.hooks.onTurnEnd.add(component, () => {
@@ -52,7 +54,7 @@ class TurtleShellEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.onDefence.remove(component)

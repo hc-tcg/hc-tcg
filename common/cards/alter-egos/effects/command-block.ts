@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {slot} from '../../../components/query'
-import Card, {Attach, attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class CommandBlockEffectCard extends Card {
 	props: Attach = {
@@ -17,7 +19,7 @@ class CommandBlockEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.availableEnergy.add(component, (availableEnergy) => {
 			const {activeRow, rows} = player.board
@@ -40,7 +42,7 @@ class CommandBlockEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.availableEnergy.remove(component)
 		player.hooks.freezeSlots.remove(component)
 	}

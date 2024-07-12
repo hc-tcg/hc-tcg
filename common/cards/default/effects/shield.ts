@@ -2,7 +2,8 @@ import {row} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
 import {discardCard} from '../../../utils/movement'
-import Card, {Attach} from '../../base/card'
+import Card from '../../base/card'
+import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
 class ShieldEffectCard extends Card {
@@ -45,7 +46,7 @@ class ShieldEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onDefence.remove(component)
 		player.hooks.afterDefence.remove(component)
 	}

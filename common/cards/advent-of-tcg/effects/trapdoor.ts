@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {AttackModel} from '../../../models/attack-model'
 import {CardComponent, RowStateWithHermit} from '../../../types/game-state'
-import Card, {Attach, attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class TrapdoorEffectCard extends Card {
 	props: Attach = {
@@ -50,13 +52,13 @@ class TrapdoorEffectCard extends Card {
 		})
 
 		player.hooks.afterDefence.add(component, (attack) => {
-			const {player} = pos
+			const {player} = component
 			totalReduction = 0
 		})
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onDefence.remove(component)
 		player.hooks.afterDefence.remove(component)

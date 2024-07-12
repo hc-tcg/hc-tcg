@@ -19,7 +19,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 		let oldHandSize = player.hand.length
 
 		player.hooks.onAttach.add(instance, (cardInstance) => {
@@ -84,7 +84,7 @@ class MuseumCollectionStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 		// Remove hooks
 		player.hooks.onApply.remove(instance)
 		player.hooks.onAttach.remove(instance)

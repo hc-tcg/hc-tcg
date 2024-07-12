@@ -1,10 +1,11 @@
 import {GameModel} from '../../../models/game-model'
 import {row, slot} from '../../../components/query'
-import {SlotComponent} from '../../../types/cards'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse} from '../../../utils/movement'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class PistonSingleUseCard extends Card {
 	firstPickCondition = slot.every(
@@ -38,12 +39,10 @@ class PistonSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		const itemInstanceKey = this.getInstanceKey(component, 'itemInstance')
 
 		let pickedItemSlot: SlotComponent | null = null
-
-		let pickedItemSlot: SlotInfo | null = null
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -96,7 +95,7 @@ class PistonSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.afterApply.remove(component)
 	}

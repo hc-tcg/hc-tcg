@@ -2,6 +2,7 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
 import type Card from '../../cards/base/card'
 import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
+import {slot as slotCombinators} from '.'
 
 let CARDS: Record<string, Card>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
@@ -63,6 +64,9 @@ export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
 export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComponent> {
 	return (game, card) => cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.id)
 }
+
+/** Return true if this card is on the active row */
+export const active: ComponentQuery<CardComponent> = slot(slotCombinators.activeRow)
 
 export const hasStatusEffect = (statusEffect: string): ComponentQuery<CardComponent> => {
 	return (game, card) => {

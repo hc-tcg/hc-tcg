@@ -6,13 +6,13 @@ import BerryBushEffectCard from './berry-bush'
 import TrapdoorEffectCard from './trapdoor'
 import Card from '../../base/card'
 
-const effectCardClasses: Array<Card> = [
-	new BrewingStandEffectCard(),
-	new FurnaceEffectCard(),
-	new SlimeballEffectCard(),
-	new CatEffectCard(),
-	new BerryBushEffectCard(),
-	new TrapdoorEffectCard(),
+const effectCardClasses: Array<new () => Card> = [
+	BrewingStandEffectCard,
+	FurnaceEffectCard,
+	SlimeballEffectCard,
+	CatEffectCard,
+	BerryBushEffectCard,
+	TrapdoorEffectCard,
 ]
 
 export default effectCardClasses

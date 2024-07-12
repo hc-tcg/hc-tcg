@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
-import {SlotComponent} from '../../../types/cards'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {
@@ -29,10 +30,10 @@ class KeralisRareHermitCard extends Card {
 		},
 	}
 
-	pickCondition = slot.every(slot.not(slot.activeRow), slot.not(slot.empty), slot.hermitSlot)
+	pickCondition = query.every(query.not(slot.activeRow), query.not(slot.empty), slot.hermitSlot)
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		let pickedAfkHermit: SlotComponent | null = null
 
@@ -91,7 +92,7 @@ class KeralisRareHermitCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.onAttack.remove(component)
 	}

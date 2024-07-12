@@ -17,7 +17,7 @@ class BetrayedStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		const pickCondition = slot.every(
 			slot.player,
@@ -118,7 +118,7 @@ class BetrayedStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.remove(instance)
 		player.hooks.onAttach.remove(instance)

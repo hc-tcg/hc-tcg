@@ -1,8 +1,10 @@
 import {CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/game-state'
+import {CardComponent} from '../../../components'
 import {isTargeting} from '../../../utils/attacks'
-import Card, {Attach, attach} from '../../base/card'
+import Card from '../../base/card'
+import {attach} from '../../base/defaults'
+import {Attach} from '../../base/types'
 
 class ChainmailArmorEffectCard extends Card {
 	props: Attach = {
@@ -18,7 +20,7 @@ class ChainmailArmorEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onDefence.add(component, (attack) => {
 			if (!isTargeting(attack, pos)) {
@@ -41,7 +43,7 @@ class ChainmailArmorEffectCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onDefence.remove(component)
 	}
 }

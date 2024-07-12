@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../components/query'
-import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent} from '../../../components'
 
 class PotionOfWeaknessSingleUseCard extends Card {
 	props: SingleUse = {
@@ -35,7 +37,7 @@ class PotionOfWeaknessSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

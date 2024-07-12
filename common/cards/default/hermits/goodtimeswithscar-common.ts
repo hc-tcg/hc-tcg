@@ -1,4 +1,6 @@
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
 
 class GoodTimesWithScarCommonHermitCard extends Card {
 	props: Hermit = {

@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent} from '../../../components'
 import {applyStatusEffect} from '../../../utils/board'
-import Card, {SingleUse} from '../../base/card'
+import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
+import {SingleUse} from '../../base/types'
 
 class LavaBucketSingleUseCard extends Card {
 	props: SingleUse = {
@@ -16,7 +17,7 @@ class LavaBucketSingleUseCard extends Card {
 		tokens: 3,
 		description: "Burn your opponent's active Hermit.",
 		showConfirmationModal: true,
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 		sidebarDescriptions: [
 			{
 				type: 'statusEffect',
@@ -26,7 +27,7 @@ class LavaBucketSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.onApply.add(component, () => {
 			const opponentActiveRow = opponentPlayer.board.activeRow
@@ -36,7 +37,7 @@ class LavaBucketSingleUseCard extends Card {
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onApply.remove(component)
 	}
 }

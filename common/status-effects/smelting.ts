@@ -16,7 +16,7 @@ class SmeltingStatusEffect extends StatusEffect {
 	}
 
 	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.add(instance, () => {
 			if (instance.counter === null) return
@@ -32,7 +32,7 @@ class SmeltingStatusEffect extends StatusEffect {
 	}
 
 	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onTurnStart.remove(instance)
 	}

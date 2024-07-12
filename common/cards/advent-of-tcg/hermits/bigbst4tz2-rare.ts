@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {AttackModel} from '../../../models/attack-model'
 import {executeAttacks} from '../../../utils/attacks'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class BigBSt4tzRareHermitCard extends Card {
 	props: Hermit = {

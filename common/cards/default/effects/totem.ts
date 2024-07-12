@@ -3,7 +3,8 @@ import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'
 import {removeStatusEffect} from '../../../utils/board'
 import {AttackModel} from '../../../models/attack-model'
-import Card, {Attach} from '../../base/card'
+import Card from '../../base/card'
+import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
 
 class TotemEffectCard extends Card {

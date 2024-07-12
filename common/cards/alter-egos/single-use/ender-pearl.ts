@@ -1,13 +1,15 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
+import {query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {executeAttacks} from '../../../utils/attacks'
 import {applySingleUse} from '../../../utils/board'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
 
 class EnderPearlSingleUseCard extends Card {
-	pickCondition = slot.every(slot.empty, slot.hermitSlot, slot.player)
+	pickCondition = query.every(slot.empty, slot.hermitSlot, slot.currentPlayer)
 
 	props: SingleUse = {
 		...singleUse,
@@ -19,16 +21,16 @@ class EnderPearlSingleUseCard extends Card {
 		tokens: 0,
 		description:
 			'Before your attack, move your active Hermit and any attached cards to an open row on your board. This Hermit also takes 10hp damage.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) =>
 			`${values.defaultLog} to move $p${values.pick.name}$ to row #${values.pick.rowIndex}`,
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 		const attackId = this.getInstanceKey(component)
 
 		game.addPickRequest({

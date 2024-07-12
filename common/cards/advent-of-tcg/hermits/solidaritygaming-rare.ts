@@ -1,8 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import {slot} from '../../../components/query'
-import Card, {Hermit, hermit} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
+import Card from '../../base/card'
+import {hermit} from '../../base/defaults'
+import {Hermit} from '../../base/types'
+import {CardComponent} from '../../../components'
 
 class SolidaritygamingRareHermitCard extends Card {
 	props: Hermit = {
@@ -33,7 +35,7 @@ class SolidaritygamingRareHermitCard extends Card {
 	}
 
 	public override onAttach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'primary') return
@@ -77,7 +79,7 @@ class SolidaritygamingRareHermitCard extends Card {
 	}
 
 	public override onDetach(game: GameModel, component: CardComponent): void {
-		const {player} = pos
+		const {player} = component
 		player.hooks.onAttack.remove(component)
 	}
 }

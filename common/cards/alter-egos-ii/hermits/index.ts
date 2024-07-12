@@ -14,21 +14,21 @@ import SteampunkTangoCommonHermitCard from '../../alter-egos-ii/hermits/steampun
 import WormManCommonHermitCard from '../../alter-egos-ii/hermits/wormman-common'
 import Card from '../../base/card'
 
-const hermitCardClasses: Array<Card> = [
-	new ArchitectFalseCommonHermitCard(),
-	new BoomerBdubsRareHermitCard(),
-	new DwarfImpulseCommonHermitCard(),
-	new FiveAMPearlRareHermitCard(),
-	new FrenchKeralisCommonHermitCard(),
-	new HorseHeadHypnoCommonHermitCard(),
-	new IskallmanRareHermitCard(),
-	new OriginalXbCommonHermitCard(),
-	new OverseerRareHermitCard(),
-	new PrincessGemCommonHermitCard(),
-	new ShadEECommonHermitCard(),
-	new SpookyStressCommonHermitCard(),
-	new SteampunkTangoCommonHermitCard(),
-	new WormManCommonHermitCard(),
+const hermitCardClasses: Array<new () => Card> = [
+	ArchitectFalseCommonHermitCard,
+	BoomerBdubsRareHermitCard,
+	DwarfImpulseCommonHermitCard,
+	FiveAMPearlRareHermitCard,
+	FrenchKeralisCommonHermitCard,
+	HorseHeadHypnoCommonHermitCard,
+	IskallmanRareHermitCard,
+	OriginalXbCommonHermitCard,
+	OverseerRareHermitCard,
+	PrincessGemCommonHermitCard,
+	ShadEECommonHermitCard,
+	SpookyStressCommonHermitCard,
+	SteampunkTangoCommonHermitCard,
+	WormManCommonHermitCard,
 ]
 
 export default hermitCardClasses
