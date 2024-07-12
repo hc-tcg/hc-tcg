@@ -21,7 +21,7 @@ export function slot(
 }
 
 export function row(
-	...predicates: Array<ComponentQuery<ComponentQuery<RowComponent>>>
+	...predicates: Array<ComponentQuery<RowComponent>>
 ): ComponentQuery<CardComponent> {
 	return (game, card) => {
 		if (!card.slot?.onBoard() || card.slot.row === null) return false

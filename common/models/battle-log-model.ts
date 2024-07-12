@@ -12,6 +12,7 @@ import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import StatusEffect, {statusEffect, StatusEffectLog} from '../status-effects/status-effect'
 import {SlotInfo} from '../types/cards'
+import { CardComponent, SlotComponent } from '../components'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -88,7 +89,7 @@ export class BattleLogModel {
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlipT>,
-		pos: SlotComponent
+		pos: SlotComponent | null,
 	) {
 		let {player, opponentPlayer} = card
 

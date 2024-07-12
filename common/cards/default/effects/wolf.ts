@@ -1,10 +1,10 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import {executeExtraAttacks} from '../../../utils/attacks'
-import Card, {Attach} from '../../base/card'
+import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {CardComponent} from '../../../components'
+import {Attach} from '../../base/types'
 
 class WolfEffectCard extends Card {
 	props: Attach = {
@@ -31,41 +31,34 @@ class WolfEffectCard extends Card {
 
 		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
 			if (attack.isType('status-effect') || attack.isBacklash) return
-
 			// Only on opponents turn
-			if (game.currentPlayerEntity !== opponentPlayer.id) return
+			if (game.currentPlayerEntity !== opponentPlayer.entity) return
 
 			// Make sure they are targeting this player
-			const target = attack.getTarget()
-			if (!target || target.player.id !== player.id) return
+			if (attack.target?.player.entity !== player.entity) return
 
 			// Make sure the attack is doing some damage
 			if (attack.calculateDamage() <= 0) return
 
 			if (activated) return
 			activated = true
-			if (!pos.rowId || !pos.rowId.hermitCard || pos.rowIndex === null) return
 
-			// Add a backlash attack, targeting the opponent's active hermit.
-			// Note that the opponent active row could be null, but then the attack will just do nothing.
-			const opponentActiveRow = getActiveRowPos(opponentPlayer)
-
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(component, 'backlash'),
-				attacker: {row: pos.rowId, player: pos.player, rowIndex: pos.rowIndex},
-				target: opponentActiveRow,
-				type: 'effect',
-				isBacklash: true,
-				log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
-			}).addDamage(this.props.id, 20)
+			const backlashAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: attack.target.entity,
+					type: 'effect',
+					isBacklash: true,
+					log: (values) => `${values.target} took ${values.damage} damage from $eWolf$`,
+				})
+				.addDamage(component.entity, 20)
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
 	}
 
 	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-
+		const {player, opponentPlayer} = component
 		// Delete hooks and custom
 		opponentPlayer.hooks.onTurnStart.remove(component)
 		opponentPlayer.hooks.afterAttack.remove(component)

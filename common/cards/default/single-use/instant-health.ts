@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
-import Card, {SingleUse} from '../../base/card'
+import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import { CardComponent } from '../../../components'
+import {CardComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
 class InstantHealthSingleUseCard extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
@@ -34,16 +35,10 @@ class InstantHealthSingleUseCard extends Card {
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.cardId || rowIndex === null) return
-
-				const row = player.board.rows[rowIndex]
-				if (!row.health) return
-
+				if (!pickedSlot.onBoard()) return
 				// Apply
+				pickedSlot.row?.heal(30)
 				applySingleUse(game, pickedSlot)
-
-				healHermit(row, 30)
 			},
 		})
 	}

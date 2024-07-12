@@ -109,18 +109,11 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
 	private targetEntity: CardEntity | null
-	public playerEntity: PlayerEntity
 	public counter: number | null
 
-	constructor(
-		game: GameModel,
-		entity: StatusEffectEntity,
-		playerId: PlayerEntity,
-		statusEffect: StatusEffect
-	) {
+	constructor(game: GameModel, entity: StatusEffectEntity, statusEffect: StatusEffect) {
 		this.game = game
 		this.entity = entity
-		this.playerEntity = playerId
 		this.statusEffect = statusEffect as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
@@ -146,20 +139,16 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		return this.game.components.get(this.targetEntity)
 	}
 
-	public set target(cardEntity: CardEntity | null) {
+	public apply(cardEntity: CardEntity | null) {
 		let cardComponent = this.game.components.get(cardEntity)
 		if (cardComponent) {
-			// this.statusEffect.onApply(this.game, this, cardComponent)
+			this.statusEffect.onApply(this.game, this, cardComponent)
 		}
-		this.targetEntity = null
 	}
 
-	public get player() {
-		return this.game.components.getOrError(this.playerEntity)
-	}
-
-	public get opponentPlayer() {
-		return this.game.components.getOrError(this.game.otherPlayerEntity(this.playerEntity))
+	public remove() {
+		if (!this.target) return
+		this.statusEffect.onRemoval(this.game, this, this.target)
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {
@@ -172,6 +161,7 @@ export class RowComponent {
 	readonly entity: RowEntity
 	playerId: PlayerEntity
 	index: number
+	/* The health of the hermit. Health is null then there is no hermit residing in this row */
 	health: number | null
 
 	constructor(game: GameModel, entity: RowEntity, playerId: PlayerEntity, index: number) {

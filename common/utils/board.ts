@@ -1,13 +1,16 @@
 import {STATUS_EFFECT_CLASSES} from '../status-effects'
 import {GameModel} from '../models/game-model'
-import {GenericActionResult, PlayerComponent} from '../types/game-state'
+import {GenericActionResult} from '../types/game-state'
 import {card} from '../components/query'
 import {CardComponent, SlotComponent, StatusEffectComponent} from '../components'
 
-export function applySingleUse(game: GameModel, slotInfo: SlotComponent): GenericActionResult {
+export function applySingleUse(
+	game: GameModel,
+	slotInfo: SlotComponent | null
+): GenericActionResult {
 	const {currentPlayer} = game
 
-	const suCard = game.state.cards.find(card.isSingleUse)
+	const suCard = game.components.find(CardComponent, card.isSingleUse)
 
 	if (!suCard) return 'FAILURE_NOT_APPLICABLE'
 

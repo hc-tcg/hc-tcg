@@ -1,11 +1,13 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {SingleUse, singleUse} from '../../base/card'
+import {query, slot} from '../../../components/query'
+import Card from '../../base/card'
+import {SingleUse} from '../../base/types'
+import {singleUse} from '../../base/defaults'
+import {CardComponent} from '../../../components'
 
 class InstantHealthIISingleUseCard extends Card {
-	pickCondition = slot.every(slot.hermitSlot, slot.not(slot.empty))
+	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
 
 	props: SingleUse = {
 		...singleUse,
@@ -16,7 +18,7 @@ class InstantHealthIISingleUseCard extends Card {
 		rarity: 'rare',
 		tokens: 2,
 		description: 'Heal one of your Hermits 60hp.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.playerHasActiveHermit,
 			slot.someSlotFulfills(this.pickCondition)
@@ -25,7 +27,7 @@ class InstantHealthIISingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player} = pos
+		const {player} = component
 
 		game.addPickRequest({
 			playerId: player.id,
@@ -33,16 +35,10 @@ class InstantHealthIISingleUseCard extends Card {
 			message: 'Pick an active or AFK Hermit',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				const rowIndex = pickedSlot.rowIndex
-				if (!pickedSlot.cardId || rowIndex === null) return
-
-				const row = player.board.rows[rowIndex]
-				if (!row.health) return
-
+				if (!pickedSlot.onBoard()) return
 				// Apply
+				pickedSlot.row?.heal(60)
 				applySingleUse(game, pickedSlot)
-
-				healHermit(row, 60)
 			},
 		})
 	}
