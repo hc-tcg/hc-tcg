@@ -34,7 +34,7 @@ const singleUseCardClasses: Array<Card> = [
 ]
 
 const allCardClasses: Array<Card> = [
-	// ...effectCardClasses,
+	...effectCardClasses,
 	// ...hermitCardClasses,
 	// ...itemCardClasses,
 	// ...singleUseCardClasses,

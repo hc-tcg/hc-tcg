@@ -3,7 +3,6 @@ import CardComponent from 'components/card'
 import css from './card-list.module.scss'
 
 import {CSSTransition, TransitionGroup} from 'react-transition-group'
-import {equalCard} from 'common/utils/cards'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 type CardListProps = {

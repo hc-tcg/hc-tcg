@@ -133,7 +133,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			instance: newEntity('card-entity') as CardEntity,
+			instance: card.props.id as CardEntity,
 			slot: null,
 		})
 	)
@@ -150,7 +150,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			// Don't show disabled cards
 			!EXPANSIONS.disabled.includes(card.props.expansion)
 	)
-
+	
 	const selectedCards = {
 		hermits: loadedDeck.cards.filter((card) => card.props.category === 'hermit'),
 		items: loadedDeck.cards.filter((card) => card.props.category === 'item'),
