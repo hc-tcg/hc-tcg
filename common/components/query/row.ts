@@ -19,7 +19,7 @@ export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export const hasHermit: ComponentQuery<RowComponent> = (game, row) =>
-	game.components.somethingFulfills(card.hermit, card.slotFulfills(slot.row(row.entity)))
+	game.components.exists(card.hermit, card.slotFulfills(slot.row(row.entity)))
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {

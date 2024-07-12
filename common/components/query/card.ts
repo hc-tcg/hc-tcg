@@ -62,7 +62,7 @@ export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
 
 export const hasStatusEffect = (statusEffect: string): ComponentQuery<CardComponent> => {
 	return (game, card) => {
-		return game.components.somethingFulfills(
+		return game.components.exists(
 			StatusEffectComponent,
 			effect.id(statusEffect),
 			effect.target(card.entity)

@@ -51,7 +51,7 @@ export const hiddenStatusEffect = {
 export const damageEffect = {
 	type: 'damage' as StatusEffectProps['type'],
 	applyCondition: (game: GameModel, target: CardComponent) =>
-		!game.components.somethingFulfills(
+		!game.components.exists(
 			StatusEffectComponent,
 			effect.target(target.entity),
 			effect.damage

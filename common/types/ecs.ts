@@ -96,7 +96,7 @@ export default class ECS {
 		return this.find(type, ...predicates)?.entity || null
 	}
 
-	public somethingFulfills<T extends Component>(
+	public exists<T extends Component>(
 		type: new (...args: Array<any>) => T,
 		...predicates: Array<ComponentQuery<T>>
 	): boolean {
