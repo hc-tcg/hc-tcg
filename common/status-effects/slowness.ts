@@ -1,7 +1,5 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {removeStatusEffect} from '../utils/board'
-import {slot} from '../components/query'
 import {CardComponent, StatusEffectComponent} from '../components'
 
 class SlownessStatusEffect extends StatusEffect {

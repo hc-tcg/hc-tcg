@@ -141,9 +141,10 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 
 	public apply(cardEntity: CardEntity | null) {
 		let cardComponent = this.game.components.get(cardEntity)
-		if (cardComponent) {
-			this.statusEffect.onApply(this.game, this, cardComponent)
+		if (!cardComponent) {
+			return
 		}
+		this.statusEffect.onApply(this.game, this, cardComponent)
 	}
 
 	public remove() {
