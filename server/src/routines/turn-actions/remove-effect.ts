@@ -1,6 +1,5 @@
 import {GameModel} from 'common/models/game-model'
 import {GenericActionResult} from 'common/types/game-state'
-import {discardSingleUse} from 'common/utils/movement'
 
 function* removeEffectSaga(game: GameModel): Generator<never, GenericActionResult> {
 	const {currentPlayer} = game

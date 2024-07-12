@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, CoinFlipT} from '../../../types/game-state'
+import {CoinFlipT} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardSingleUse} from '../../../utils/movement'
