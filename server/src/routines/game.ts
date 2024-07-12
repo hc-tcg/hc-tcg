@@ -23,8 +23,10 @@ import {
 	CardComponent,
 	DiscardSlotComponent,
 	HandSlotComponent,
+	PlayerComponent,
 	SlotComponent,
 } from 'common/components'
+import {SingleUse} from 'common/cards/base/types'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -41,9 +43,9 @@ function getAvailableEnergy(game: GameModel) {
 	const energy = game.components
 		.filter(
 			CardComponent,
-			card.slotFulfills(slot.player(game.currentPlayer.entity)),
-			card.item,
-			card.attached
+			card.isItem,
+			card.attached,
+			card.slot(slot.player(game.currentPlayer.entity))
 		)
 		.flatMap((card) => {
 			if (!card.isItem()) return []
@@ -65,7 +67,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 
 	const su = game.components.find(
 		CardComponent,
-		card.singleUse,
+		card.isSingleUse,
 		card.attached
 	) as CardComponent<SingleUse> | null
 
@@ -107,8 +109,8 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	game.state.timer.opponentActionStartTime = null
 	const hasOtherHermit = game.components.filter(
 		CardComponent,
-		card.attach,
-		card.slotFulfills(query.not(slot.row(activeRowId)))
+		card.isAttach,
+		card.slot(query.not(slot.row(activeRowId)))
 	)
 
 	// Actions that require us to have an active row
@@ -128,7 +130,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		if (activeRowId !== null && turnState.turnNumber > 1) {
 			const hermitCard = game.components.find(
 				CardComponent,
-				card.slotFulfills(slot.row(activeRowId), slot.hermitSlot)
+				card.slot(slot.row(activeRowId), slot.hermitSlot)
 			)
 
 			// only add attack options if not sleeping
@@ -161,7 +163,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 			'PLAY_SINGLE_USE_CARD'
 		)
 		const desiredActions = game.components
-			.filter(CardComponent, card.slotFulfills(slot.player(currentPlayer.entity), slot.hand))
+			.filter(CardComponent, card.slot(slot.player(currentPlayer.entity), slot.hand))
 			.reduce((reducer: TurnActions, card: CardComponent): TurnActions => {
 				const pickableSlots = game.components.filter(SlotComponent, card.card.props.attachCondition)
 
@@ -224,7 +226,7 @@ function* checkHermitHealth(game: GameModel) {
 		)
 
 		for (const card of hermitCards) {
-			if (!card.slot?.onBoard()) return
+			if (!card.slot?.onBoard()) continue
 			if (card.slot?.row?.health && card.slot.row.health <= 0) {
 				// Add battle log entry. Non Hermit cards can create their detach message themselves.
 				if (card.props.category === 'hermit') {
@@ -261,11 +263,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.components.somethingFulfills(
-			CardComponent,
-			card.attached,
-			card.hermit
-		)
+		const noHermitsLeft = !game.components.exists(CardComponent, card.attached, card.hermit)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -288,11 +286,11 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayerId} = game
+	const {currentPlayerEntity} = game
 	const actionType = turnAction.type as TurnAction
 
 	const availableActions =
-		turnAction.playerId === currentPlayerId
+		turnAction.playerId === currentPlayerEntity
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -357,11 +355,11 @@ function* turnActionSaga(game: GameModel, turnAction: any) {
 }
 
 function* turnActionsSaga(game: GameModel) {
-	const {opponentPlayer, opponentPlayerId, currentPlayer, currentPlayerId} = game
+	const {opponentPlayer, currentPlayer} = game
 
 	const turnActionChannel = yield* actionChannel(
 		[
-			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayerId)),
+			...['PICK_REQUEST', 'MODAL_REQUEST'].map((type) => playerAction(type, opponentPlayer.id)),
 			...[
 				'PLAY_HERMIT_CARD',
 				'PLAY_ITEM_CARD',
@@ -376,7 +374,7 @@ function* turnActionsSaga(game: GameModel) {
 				'PRIMARY_ATTACK',
 				'SECONDARY_ATTACK',
 				'END_TURN',
-			].map((type) => playerAction(type, currentPlayerId)),
+			].map((type) => playerAction(type, currentPlayer.id)),
 		],
 		buffers.dropping(10)
 	)
@@ -413,9 +411,9 @@ function* turnActionsSaga(game: GameModel) {
 
 			// Set final actions in state
 			let opponentAction: TurnAction = 'WAIT_FOR_TURN'
-			if (game.state.pickRequests[0]?.playerId === opponentPlayerId) {
+			if (game.state.pickRequests[0]?.playerId === opponentPlayer.id) {
 				opponentAction = 'PICK_REQUEST'
-			} else if (game.state.modalRequests[0]?.playerId === opponentPlayerId) {
+			} else if (game.state.modalRequests[0]?.playerId === opponentPlayer.id) {
 				opponentAction = 'MODAL_REQUEST'
 			}
 			game.state.turn.opponentAvailableActions = [opponentAction]
@@ -469,7 +467,7 @@ function* turnActionsSaga(game: GameModel) {
 				// First check to see if the opponent had a pick request active
 				const currentPickRequest = game.state.pickRequests[0]
 				if (currentPickRequest) {
-					if (currentPickRequest.playerId === currentPlayerId) {
+					if (currentPickRequest.playerId === currentPlayer.id) {
 						if (!!currentAttack) {
 							reset = true
 						}
@@ -481,7 +479,7 @@ function* turnActionsSaga(game: GameModel) {
 				// Check to see if the opponent had a modal request active
 				const currentModalRequest = game.state.modalRequests[0]
 				if (currentModalRequest) {
-					if (currentModalRequest.playerId === currentPlayerId) {
+					if (currentModalRequest.playerId === currentPlayer.id) {
 						if (!!currentAttack) {
 							reset = true
 						}
@@ -508,7 +506,7 @@ function* turnActionsSaga(game: GameModel) {
 						const turnAction: AttackActionData = {
 							type: attackToAttackAction[currentAttack],
 							payload: {
-								playerId: game.currentPlayerId,
+								playerId: game.currentPlayer.id,
 							},
 						}
 						yield* call(attackSaga, game, turnAction, false)
@@ -517,7 +515,11 @@ function* turnActionsSaga(game: GameModel) {
 					continue
 				}
 
-				const hasActiveHermit = currentPlayer.board.activeRow !== null
+				const hasActiveHermit = game.components.exists(
+					CardComponent,
+					card.player(currentPlayer.entity),
+					card.slot(slot.activeRow, slot.hermitSlot)
+				)
 				if (hasActiveHermit) {
 					break
 				}
@@ -540,11 +542,11 @@ function* turnActionsSaga(game: GameModel) {
 }
 
 function* turnSaga(game: GameModel) {
-	const {currentPlayerId, currentPlayer} = game
+	const {currentPlayerEntity, currentPlayer} = game
 
 	// Reset turn state
 	game.state.turn.availableActions = []
-	game.state.turn.currentPlayerEntity = currentPlayerId
+	game.state.turn.currentPlayerEntity = currentPlayerEntity
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
@@ -599,7 +601,7 @@ function* turnSaga(game: GameModel) {
 
 	// If player has not used his single use card return it to hand
 	// otherwise move it to discarded pile
-	const singleUseCard = game.components.find(CardComponent, card.attached, card.singleUse)
+	const singleUseCard = game.components.find(CardComponent, card.attached, card.isSingleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
 			singleUseCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
@@ -610,7 +612,7 @@ function* turnSaga(game: GameModel) {
 
 	// Draw a card from deck when turn ends
 	const newCard = game.components
-		.filter(CardComponent, card.player(currentPlayer.entity), card.slotFulfills(slot.deck))
+		.filter(CardComponent, card.player(currentPlayer.entity), card.slot(slot.deck))
 		.sort((a, b) => {
 			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
 			return a.slot.order - b.slot.order

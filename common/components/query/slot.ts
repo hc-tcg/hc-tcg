@@ -1,4 +1,4 @@
-import {ComponentQuery, card} from '.'
+import {ComponentQuery, card, query} from '.'
 import {CardComponent, RowComponent, SlotComponent} from '..'
 import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
 
@@ -68,7 +68,7 @@ export function rowFulfills(
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
 		if (!pos.onBoard() || pos.row === null) return false
-		return rowCombinators.every(...predicates)(game, pos.row)
+		return query.every(...predicates)(game, pos.row)
 	}
 }
 
@@ -98,7 +98,7 @@ export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent>
 /** Return true if the spot contains any of the card IDs. */
 export const hasId = (...cardIds: Array<string>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
-		return game.components.exists(card.id(...cardIds), card.slotIs(pos.entity))
+		return game.components.exists(CardComponent, card.id(...cardIds), card.slotIs(pos.entity))
 	}
 }
 
@@ -108,8 +108,8 @@ export const hasId = (...cardIds: Array<string>): ComponentQuery<SlotComponent> 
  */
 export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 	return false
-	if (!pos.onBoard()) return false
-	if (pos.row?.index === null || !pos.type) return false
+	if (!pos.onBoard()) return true
+	if (!pos.row?.index || !pos.type) return false
 
 	const playerResult = game.currentPlayer.hooks.freezeSlots
 		.call()
@@ -141,7 +141,9 @@ export const someSlotFulfills =
 	}
 
 /* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
-export const adjacentTo = (predicate: ComponentQuery<SlotComponent>): ComponentQuery<SlotComponent> => {
+export const adjacentTo = (
+	predicate: ComponentQuery<SlotComponent>
+): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		if (!pos.onBoard() || pos.row === null) return false
 		return (

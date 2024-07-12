@@ -1,12 +1,7 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
-import {
-	LocalGameState,
-	LocalPlayerState,
-	newEntity,
-	CardEntity,
-} from 'common/types/game-state'
+import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
@@ -19,7 +14,7 @@ import {
 	SlotComponent,
 	StatusEffectComponent,
 } from 'common/components'
-import {Hermit} from 'common/cards/base/interfaces'
+import {Hermit} from 'common/cards/base/types'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -146,9 +141,8 @@ export function getLocalPlayerState(
 		activeRow:
 			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
 		singleUseCard:
-			game.components
-				.find(CardComponent, card.singleUse, card.slotFulfills(slot.singleUseSlot))
-				?.toLocalCardInstance() || null,
+			game.components.find(CardComponent, card.slot(slot.singleUseSlot))?.toLocalCardInstance() ||
+			null,
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components.filter(RowComponent, row.player(playerState.entity)).map((row) => {
 			const hermit = game.components.findEntity(
@@ -156,14 +150,14 @@ export function getLocalPlayerState(
 				slot.hermitSlot,
 				slot.row(row.entity)
 			)
-			const hermitCard = game.components.find(CardComponent, card.slot(hermit))
+			const hermitCard = game.components.find(CardComponent, card.slotIs(hermit))
 
 			const attach = game.components.findEntity(
 				SlotComponent,
 				slot.attachSlot,
 				slot.row(row.entity)
 			)
-			const attachCard = game.components.find(CardComponent, card.slot(attach))
+			const attachCard = game.components.find(CardComponent, card.slotIs(attach))
 
 			const items = game.components
 				.filter(SlotComponent, slot.itemSlot, slot.row(row.entity))
@@ -172,7 +166,7 @@ export function getLocalPlayerState(
 						slot: itemSlot.entity,
 						card:
 							game.components
-								.find(CardComponent, card.slot(itemSlot.entity))
+								.find(CardComponent, card.slotIs(itemSlot.entity))
 								?.toLocalCardInstance() || null,
 					}
 				})
@@ -212,7 +206,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	const opponentState = playerState.opponentPlayer
 
 	const turnState = game.state.turn
-	const isCurrentPlayer = turnState.currentPlayerEntity === player.id
+	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
 	// convert player states
 	const players: Record<string, LocalPlayerState> = {}
@@ -253,7 +247,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
-			currentPlayerId: turnState.currentPlayerEntity,
+			currentPlayerId: turnState.currentPlayerId,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
 				: turnState.opponentAvailableActions,
@@ -265,14 +259,14 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 		// personal info
 		hand: game.components
-			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.hand))
+			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.hand))
 			.map((inst) => inst.toLocalCardInstance()),
 		pileCount: game.components.filter(
 			CardComponent,
-			card.slotFulfills(slot.player(playerState.entity), slot.deck)
+			card.slot(slot.player(playerState.entity), slot.deck)
 		).length,
 		discarded: game.components
-			.filter(CardComponent, card.slotFulfills(slot.player(playerState.entity), slot.discardPile))
+			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.discardPile))
 			.map((inst) => inst.toLocalCardInstance()),
 
 		// ids

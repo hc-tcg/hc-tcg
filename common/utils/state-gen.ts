@@ -71,22 +71,20 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 }
 
 export function getGameState(game: GameModel): GameState {
-	const playerEntities = game.components
-		.filter(PlayerComponent)
-		.map((x) => x.entity)
-		.sort(() => Math.random())
+	const playerEntities = game.components.filter(PlayerComponent).sort(() => Math.random())
 
 	const gameState: GameState = {
 		turn: {
 			turnNumber: 0,
-			currentPlayerEntity: playerEntities[0],
+			currentPlayerId: playerEntities[0].id,
+			currentPlayerEntity: playerEntities[0].entity,
 			availableActions: [],
 			opponentAvailableActions: [],
 			completedActions: [],
 			blockedActions: {},
 			currentAttack: null,
 		},
-		order: playerEntities,
+		order: playerEntities.map((x) => x.entity),
 		lastActionResult: null,
 
 		pickRequests: [],
