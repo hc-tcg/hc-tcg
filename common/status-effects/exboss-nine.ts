@@ -1,44 +1,41 @@
 import {CardPosModel} from '../models/card-pos-model'
 import {GameModel} from '../models/game-model'
 import {slot} from '../slot'
-import {StatusEffectT} from '../types/game-state'
+import {StatusEffectInstance} from '../types/game-state'
 import {getActiveRow, removeStatusEffect} from '../utils/board'
 import {discardCard, discardFromHand} from '../utils/movement'
-import StatusEffect from './status-effect'
+import StatusEffect, {Counter, statusEffect, StatusEffectProps} from './status-effect'
 import {broadcast} from '../../server/src/utils/comm'
 
 const effectDiscardCondition = slot.every(
 	slot.opponent,
 	slot.activeRow,
-	slot.effectSlot,
+	slot.attachSlot,
 	slot.not(slot.empty),
 	slot.not(slot.frozen)
 )
 
 class ExBossNineStatusEffect extends StatusEffect {
-	constructor() {
-		super({
-			id: 'exboss-nine',
-			name: 'Boss Rules',
-			description: "At the end of EX's ninth turn, an additional move will be performed.",
-			duration: 1,
-			counter: true,
-			damageEffect: false,
-			visible: true,
-		})
+	props: StatusEffectProps & Counter = {
+		...statusEffect,
+		id: 'exboss-nine',
+		name: 'Boss Rules',
+		description: "At the end of EX's ninth turn, an additional move will be performed.",
+		counter: 8, // Starts at 8 and triggers at 0 turns remaining
+		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, statusEffectInfo: StatusEffectT, pos: CardPosModel): void {
-		game.state.statusEffects.push(statusEffectInfo)
+	override onApply(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel): void {
 		const {player, opponentPlayer} = pos
+		if (instance.counter === null) instance.counter = this.props.counter
 
-		player.hooks.onTurnStart.add(statusEffectInfo.statusEffectInstance, () => {
-			if (statusEffectInfo.duration === undefined) statusEffectInfo.duration = 1
-			statusEffectInfo.duration += 1
+		player.hooks.onTurnStart.add(instance, () => {
+			if (instance.counter === null) instance.counter = this.props.counter
+			instance.counter -= 1
 		})
 
-		player.hooks.onTurnEnd.add(statusEffectInfo.statusEffectInstance, () => {
-			if (statusEffectInfo.duration !== 9) return
+		player.hooks.onTurnEnd.add(instance, () => {
+			if (instance.counter !== 0) return
 
 			let voiceLine: string
 			if (Math.random() > 0.5) {
@@ -46,7 +43,7 @@ class ExBossNineStatusEffect extends StatusEffect {
 				voiceLine = 'NINEDISCARD'
 				game.battleLog.addEntry(
 					player.id,
-					`{$pYour$|$o${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|$pyou$} must discard {their|your} hand and draw a new card`
+					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard {their|your} hand and draw a new card`
 				)
 				opponentPlayer.hand.forEach((card) => discardFromHand(opponentPlayer, card))
 				const newCard = opponentPlayer.pile.shift()
@@ -56,7 +53,7 @@ class ExBossNineStatusEffect extends StatusEffect {
 				voiceLine = 'NINEATTACHED'
 				game.battleLog.addEntry(
 					player.id,
-					`{$pYour$|$o${player.playerName}'s$} $eRules$ dictated that {$o${opponentPlayer.playerName}$|$pyou$} must discard everything from {their|your} active Hermit`
+					`$p{Your|${player.playerName}'s}$ $eRules$ dictated that $o{${opponentPlayer.playerName}|you}$ must discard everything from {their|your} active Hermit`
 				)
 				const opponentActiveRow = getActiveRow(opponentPlayer)
 				if (opponentActiveRow) {
@@ -68,16 +65,17 @@ class ExBossNineStatusEffect extends StatusEffect {
 				}
 			}
 
-			removeStatusEffect(game, pos, statusEffectInfo.statusEffectInstance)
+			removeStatusEffect(game, pos, instance)
 			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: [voiceLine]})
+			game.battleLog.sendLogs()
 		})
 	}
 
-	override onRemoval(game: GameModel, ailmentInfo: StatusEffectT, pos: CardPosModel): void {
+	override onRemoval(game: GameModel, instance: StatusEffectInstance, pos: CardPosModel): void {
 		const {player} = pos
 
-		player.hooks.onTurnStart.remove(ailmentInfo.statusEffectInstance)
-		player.hooks.onTurnEnd.remove(ailmentInfo.statusEffectInstance)
+		player.hooks.onTurnStart.remove(instance)
+		player.hooks.onTurnEnd.remove(instance)
 	}
 }
 

@@ -4,7 +4,7 @@ import {GameModel} from 'common/models/game-model'
 import {AttackAction, PlayerState} from 'common/types/game-state'
 import {broadcast} from '../../utils/comm'
 import {VirtualAI, VirtualAIReturn} from './virtual-action'
-import {BOSS_ATTACK} from '../../../../common/cards/boss/hermits/evilxisuma_boss'
+import {BOSS_ATTACK, supplyBossAttack} from 'common/cards/boss/hermits/evilxisuma_boss'
 
 class ExBossAI implements VirtualAI {
 	get id(): string {
@@ -61,7 +61,7 @@ class ExBossAI implements VirtualAI {
 		const {currentPlayer, currentPlayerId} = game
 
 		if (game.state.turn.turnNumber === 2) {
-			const bossCard = currentPlayer.hand.find((card) => card.cardId === 'evilxisuma_boss')
+			const bossCard = currentPlayer.hand.find((card) => card.props.id === 'evilxisuma_boss')
 			if (bossCard) {
 				const playHermitCard: PlayCardActionData & {playerId: string} = {
 					type: 'PLAY_HERMIT_CARD',
@@ -73,7 +73,7 @@ class ExBossAI implements VirtualAI {
 							type: 'hermit',
 							index: 0,
 						},
-						card: bossCard,
+						card: bossCard.toLocalCardInstance(),
 					},
 					playerId: currentPlayerId,
 				}
@@ -94,8 +94,10 @@ class ExBossAI implements VirtualAI {
 				playerId: currentPlayerId,
 			}
 
+			const bossCard = currentPlayer.board.rows[0].hermitCard
+			if (bossCard === null) throw new Error(`EX's active hermit cannot be found, please report`)
 			const bossAttack = this.getBossAttack(currentPlayer)
-			currentPlayer.custom['BOSS_ATTACK'] = bossAttack
+			supplyBossAttack(bossCard, bossAttack)
 			broadcast(game.getPlayers(), '@sound/VOICE_ANNOUNCE', {lines: bossAttack})
 			yield* delay(bossAttack.length * 3000)
 			// Waits after announcing attack to perform the action
@@ -106,13 +108,10 @@ class ExBossAI implements VirtualAI {
 			throw new Error('EX does not know what to do in this state, please report')
 
 		const nineEffect = game.state.statusEffects.find(
-			(statusEffect) => statusEffect.statusEffectId === 'exboss-nine'
+			(statusEffect) => statusEffect.props.id === 'exboss-nine'
 		)
-		if (nineEffect && nineEffect.duration === 9) {
-			currentPlayer.hooks.onTurnEnd.callSome(
-				[[]],
-				(ignoreInstance) => ignoreInstance !== nineEffect.statusEffectInstance
-			)
+		if (nineEffect && nineEffect.counter === 0) {
+			currentPlayer.hooks.onTurnEnd.callSome([[]], (instance) => instance === nineEffect)
 			yield* delay(10600)
 		}
 

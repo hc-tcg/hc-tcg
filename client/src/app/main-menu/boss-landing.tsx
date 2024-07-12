@@ -4,12 +4,18 @@ import MenuLayout from 'components/menu-layout'
 import Button from 'components/button'
 import {createBossGame} from 'logic/matchmaking/matchmaking-actions'
 import CardList from 'components/card-list'
-import {getCardExpansion} from 'common/utils/cards'
+import {CARDS} from 'common/cards'
 import {EXPANSIONS} from 'common/config'
+import {CardInstance} from 'common/types/game-state'
 
 type Props = {
 	setMenuSection: (section: string) => void
 }
+
+function createUICardInstance(cardId: string) {
+	return new CardInstance(CARDS[cardId], cardId).toLocalCardInstance()
+}
+
 function BossLanding({setMenuSection}: Props) {
 	const dispatch = useDispatch()
 
@@ -35,10 +41,8 @@ function BossLanding({setMenuSection}: Props) {
 		'glowstone',
 		'berry_bush',
 	]
-		.filter((cardId) => !EXPANSIONS.disabled.includes(getCardExpansion(cardId)))
-		.map((cardId) => {
-			return {cardId, cardInstance: cardId}
-		})
+		.filter((cardId) => !EXPANSIONS.disabled.includes(CARDS[cardId].props.expansion))
+		.map(createUICardInstance)
 
 	return (
 		<MenuLayout
@@ -47,7 +51,7 @@ function BossLanding({setMenuSection}: Props) {
 			returnText="Main Menu"
 			className={css.bossLanding}
 		>
-			<CardList cards={[{cardId: 'evilxisuma_boss', cardInstance: 'preview'}]} />
+			<CardList cards={[createUICardInstance('evilxisuma_boss')]} />
 			<div className={css.bossRules}>
 				<p>
 					That's right, the Hermitcraft TCG has its first boss fight! This is no challenge deck,

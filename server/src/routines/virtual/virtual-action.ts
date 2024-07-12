@@ -1,7 +1,12 @@
 import {GameModel} from 'common/models/game-model'
 import {delay, put} from 'typed-redux-saga'
 import {TurnAction} from 'common/types/game-state'
-import {formatText} from 'common/utils/formatting'
+import {
+	concatFormattedTextNodes,
+	formatNodefromShorthand,
+	formatText,
+	TextNode,
+} from 'common/utils/formatting'
 import {broadcast} from '../../utils/comm'
 
 function getRandomDelay() {
@@ -24,7 +29,10 @@ export default function* virtualPlayerActionSaga(game: GameModel, ai: VirtualAI)
 	} catch (e) {
 		game.chat.push({
 			createdAt: Date.now(),
-			message: formatText(`$oAI$: "${ai.id}" $b${e}$`),
+			message: concatFormattedTextNodes(
+				formatText(`$oAI$: "${ai.id}" `),
+				formatNodefromShorthand('b', TextNode(`${e}`))
+			),
 			sender: game.currentPlayerId,
 			systemMessage: true,
 		})

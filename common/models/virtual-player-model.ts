@@ -1,5 +1,6 @@
-import {CardT} from '../types/game-state'
 import {PlayerDeckT} from '../types/deck'
+import {CardInstance} from '../types/game-state'
+import {LocalCardInstance} from '../types/server-requests'
 import {validateDeck} from '../utils/validation'
 import {censorString} from '../utils/formatting'
 import {encode, decode} from 'js-base64'
@@ -11,7 +12,7 @@ export class VirtualPlayerModel {
 	private internalDeck: {
 		name: string
 		icon: string
-		cards: Array<CardT>
+		cards: Array<LocalCardInstance>
 	}
 	public name: string
 	public minecraftName: string
@@ -42,7 +43,7 @@ export class VirtualPlayerModel {
 
 	private possibleDecks = ['woHCgcKBUVFRwojCiMKVwpUODg4YGDw8PDs7Ozs7Ozs7Ozs7Ozs7wogjI8KWGTsaGgca']
 
-	private getHashFromDeck(hash: string): Array<CardT> {
+	private getHashFromDeck(hash: string): Array<LocalCardInstance> {
 		try {
 			var b64 = decode(hash)
 				.split('')
@@ -52,15 +53,11 @@ export class VirtualPlayerModel {
 		}
 		const deck = []
 		for (let i = 0; i < b64.length; i++) {
-			const cardId = Object.values(CARDS).find((value) => value.numericId === b64[i])?.id
-			if (!cardId) continue
-			deck.push({
-				cardId: cardId,
-				cardInstance: Math.random().toString(),
-			})
+			const card = Object.values(CARDS).find((value) => value.props.numericId === b64[i])
+			if (!card) continue
+			deck.push(new CardInstance(card, Math.random().toString()).toLocalCardInstance())
 		}
-		const deckCards = deck.filter((card: CardT) => CARDS[card.cardId])
-		return deckCards
+		return deck
 	}
 
 	public get id() {
@@ -86,9 +83,13 @@ export class VirtualPlayerModel {
 
 	setPlayerDeck(newDeck: PlayerDeckT) {
 		if (!newDeck || !newDeck.cards) return
-		const validationMessage = validateDeck(newDeck.cards.map((card) => card.cardId))
+		const validationMessage = validateDeck(newDeck.cards)
 		if (validationMessage) return
-		this.internalDeck = newDeck
+		this.internalDeck = {
+			name: newDeck.name,
+			icon: newDeck.icon,
+			cards: newDeck.cards,
+		}
 	}
 
 	setMinecraftName(name: string) {

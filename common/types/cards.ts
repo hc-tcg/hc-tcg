@@ -1,3 +1,4 @@
+import {EXPANSIONS} from '../config'
 import {CardInstance, PlayerState, RowState, RowStateWithHermit} from './game-state'
 
 export type CardRarityT = 'common' | 'rare' | 'ultra_rare'
@@ -21,7 +22,7 @@ export type EnergyT = TypeT | 'any'
 export type CardCategoryT = 'item' | 'single_use' | 'attach' | 'hermit' | 'health'
 export type BoardSlotTypeT = 'item' | 'attach' | 'hermit' | 'health'
 export type SlotTypeT = BoardSlotTypeT | 'single_use' | 'hand'
-export type ExpansionT = 'default' | 'alter_egos' | 'alter_egos_ii' | 'advent_of_tcg' | 'dream'
+export type ExpansionT = keyof typeof EXPANSIONS.expansions
 
 export type DamageT = {
 	target?: number

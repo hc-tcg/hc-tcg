@@ -7,6 +7,8 @@ import {getLocalGameState} from '../utils/state-gen'
 import {PlayerModel} from 'common/models/player-model'
 import root from '../serverRoot'
 import {VirtualPlayerModel} from 'common/models/virtual-player-model'
+import {CardInstance} from 'common/types/game-state'
+import {CARDS} from 'common/cards'
 
 export type ClientMessage = {
 	type: string
@@ -205,7 +207,9 @@ function* createBossGame(msg: ClientMessage) {
 	broadcast([player], 'CREATE_BOSS_GAME_SUCCESS')
 
 	const EX_BOSS_PLAYER = new VirtualPlayerModel('EX', 'EvilXisuma', 'evilxisuma_boss')
-	EX_BOSS_PLAYER.deck.cards = [{cardId: 'evilxisuma_boss', cardInstance: Math.random().toString()}]
+	EX_BOSS_PLAYER.deck.cards = [
+		new CardInstance(CARDS['evilxisuma_boss'], Math.random().toString()).toLocalCardInstance(),
+	]
 
 	const newBossGame = new GameModel(player, EX_BOSS_PLAYER, 'BOSS')
 	newBossGame.state.isBossGame = true

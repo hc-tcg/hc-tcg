@@ -42,7 +42,7 @@ class AnvilSingleUseCard extends Card {
 					type: 'effect',
 					log: (values) =>
 						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-				}).addDamage(this.id, 30)
+				}).addDamage(this.props.id, 30)
 			}
 
 			const attack = opponentRows.reduce((r: null | AttackModel, row, rowIndex) => {
