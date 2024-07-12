@@ -1,7 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {card, row, slot} from '../../../components/query'
-import {CardComponent} from '../../../types/game-state'
-import Card, {Hermit, hermit} from '../../base/card'
+import Card from '../../base/card'
+import {Hermit} from '../../base/interfaces'
+import {hermit} from '../../base/defaults'
+import {CardComponent, RowComponent} from '../../../components/components'
 
 class PotatoBoyRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,11 +36,15 @@ class PotatoBoyRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			game.state.rows.filterEntities(row.currentPlayer).forEach((row) => {
+			game.components.filter(RowComponent, row.currentPlayer).forEach((row) => {
 				row.heal(40)
-				let hermit = game.state.cards.find(card.row(row.entity), card.slotFulfills(slot.activeRow))
+				let hermit = game.components.find(
+					CardComponent,
+					card.row(row.entity),
+					card.slotFulfills(slot.activeRow)
+				)
 				game.battleLog.addEntry(
-					player.id,
+					player.entity,
 					`$p${hermit?.props.name} (${row.index + 1})$ was healed $g40hp$ by $p${
 						component.props.name
 					}$`
