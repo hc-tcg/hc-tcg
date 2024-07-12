@@ -1,6 +1,6 @@
 import React from 'react'
 import {TypeT} from 'common/types/cards'
-import {CardProps, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/interfaces'
+import {CardProps, isAttach, isHermit, isItem, isSingleUse} from 'common/cards/base/types'
 import css from './card-tooltip.module.scss'
 import {STRENGTHS} from 'common/const/strengths'
 import {getCardRank} from 'common/utils/ranks'

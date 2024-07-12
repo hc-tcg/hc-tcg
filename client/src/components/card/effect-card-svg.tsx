@@ -5,7 +5,7 @@ import {getCardRank} from 'common/utils/ranks'
 import {EXPANSIONS} from 'common/config'
 import classNames from 'classnames'
 import {memo} from 'react'
-import {Attach, SingleUse} from 'common/cards/base/interfaces'
+import {Attach, SingleUse} from 'common/cards/base/types'
 import {WithoutFunctions} from 'common/types/server-requests'
 
 export type EffectCardProps = {

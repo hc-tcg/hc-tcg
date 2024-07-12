@@ -4,7 +4,7 @@ import {SagaIterator} from 'redux-saga'
 import {LocalGameState} from 'common/types/game-state'
 import {getPlayerId} from 'logic/session/session-selectors'
 import {setOpenedModal} from 'logic/game/game-actions'
-import {isSingleUse} from 'common/cards/base/interfaces'
+import {isSingleUse} from 'common/cards/base/types'
 import {LocalCardInstance} from 'common/types/server-requests'
 
 function* singleUseSaga(card: LocalCardInstance): SagaIterator {
