@@ -132,7 +132,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 	return deck.map((card) => {
 		return {
 			props: WithoutFunctions(CARDS[card.props.id].props),
-			instance: newEntity() as CardEntity,
+			instance: newEntity('card-entity') as CardEntity,
 			slot: null,
 		}
 	})

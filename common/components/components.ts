@@ -15,11 +15,12 @@ import type {
 	TurnActions,
 	CoinFlipT,
 } from '../types/game-state'
-import type {GameHook, WaterfallHook} from '../types/hooks'
+import {GameHook, WaterfallHook} from '../types/hooks'
 import type {HermitAttackType} from '../types/attack'
 import type {AttackModel} from '../models/attack-model'
 import type {PlayerId, PlayerModel} from '../models/player-model'
 
+import {DEBUG_CONFIG} from '../config'
 import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/interfaces'
 import {Predicate, card} from './query'
 import {
@@ -435,10 +436,10 @@ export class PlayerComponent {
 
 		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
 			const id = DEBUG_CONFIG.extraStartingCards[i]
-			if (!CARDS[id]) {
-				console.log('Invalid extra starting card in debug config:', id)
-				continue
-			}
+			// if (!CARDS[id]) {
+			// 	console.log('Invalid extra starting card in debug config:', id)
+			// 	continue
+			// }
 
 			let card = game.components.new(CardComponent, id, this.entity)
 			card.slot = game.components.new(HandSlotComponent, this.entity)

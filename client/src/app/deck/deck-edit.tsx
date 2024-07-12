@@ -133,7 +133,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			instance: newEntity() as CardEntity,
+			instance: newEntity('card-entity') as CardEntity,
 			slot: null,
 		})
 	)
@@ -167,7 +167,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			...loadedDeck,
 			cards: [
 				...loadedDeck.cards,
-				{props: card.props, instance: newEntity() as CardEntity, slot: null},
+				{props: card.props, instance: newEntity('card-entity') as CardEntity, slot: null},
 			],
 		}))
 	}

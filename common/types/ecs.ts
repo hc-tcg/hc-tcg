@@ -1,10 +1,15 @@
 import {Predicate} from '../components/query'
 import {GameModel} from '../models/game-model'
-import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '../components/components'
+import {
+	CardComponent,
+	PlayerComponent,
+	RowComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '../components/components'
 import {
 	CardEntity,
 	Entity,
-	PlayerComponent,
 	PlayerEntity,
 	RowEntity,
 	SlotEntity,
@@ -52,7 +57,11 @@ export default class ECS {
 		newValue: new (game: GameModel, id: T['entity'], ...args: Args) => T,
 		...args: Args
 	): T {
-		const value = new newValue(this.game, newEntity() as T['entity'], ...args)
+		const value = new newValue(
+			this.game,
+			newEntity(newValue.name + '-entity') as T['entity'],
+			...args
+		)
 		this.data[value.entity] = value
 		return value
 	}

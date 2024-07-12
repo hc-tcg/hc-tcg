@@ -21,7 +21,7 @@ export type CardEntity = Entity & {__card_id: never}
 export type StatusEffectEntity = Entity & {__status_effect_id: never}
 
 export function newEntity(entityName: string): Entity {
-	return (entityName + '_' + Math.random().toString()) as Entity
+	return (entityName + '-' + Math.random().toString()) as Entity
 }
 
 export type LocalRowState = {
