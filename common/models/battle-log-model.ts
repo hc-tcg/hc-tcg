@@ -302,7 +302,7 @@ export class BattleLogModel {
 	) {
 		const pos = getCardPos(this.game, statusEffect.targetInstance)
 		if (!pos || !pos.rowIndex) return
-		const targetFormatting = pos.player.id === this.game.currentPlayerId ? 'p' : 'o'
+		const targetFormatting = pos.player.id === this.game.currentPlayerEntity ? 'p' : 'o'
 		const rowNumberString =
 			pos.player.board.activeRow === pos.rowIndex ? '' : `(${pos.rowIndex + 1})`
 
@@ -312,7 +312,7 @@ export class BattleLogModel {
 		})
 
 		this.logMessageQueue.push({
-			player: this.game.currentPlayerId,
+			player: this.game.currentPlayerEntity,
 			description: logMessage,
 		})
 

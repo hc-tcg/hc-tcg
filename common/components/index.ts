@@ -34,7 +34,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
 	readonly entity: CardEntity
-	readonly playerId: PlayerEntity
+	readonly playerEntity: PlayerEntity
 
 	slotEntity: SlotEntity | null
 
@@ -42,9 +42,9 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.game = game
 		this.entity = entity
 		this.card = card as Card<Props>
-		this.playerId = playerId
+		this.playerEntity = playerId
 		this.slotEntity = null
-		this.playerId = playerId
+		this.playerEntity = playerId
 	}
 
 	static fromLocalCardInstance(
@@ -80,14 +80,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	}
 
 	public get player(): PlayerComponent {
-		return this.game.components.getOrError(this.playerId)
+		return this.game.components.getOrError(this.playerEntity)
 	}
 
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.find(
-			PlayerComponent,
-			(game, player) => player.entity != this.playerId
-		)
+		return this.game.components.getOrError(this.game.otherPlayerEntity(this.playerEntity))
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -112,7 +109,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	readonly entity: StatusEffectEntity
 	readonly statusEffect: StatusEffect<Props>
 	private targetEntity: CardEntity | null
-	public playerId: PlayerEntity
+	public playerEntity: PlayerEntity
 	public counter: number | null
 
 	constructor(
@@ -123,17 +120,20 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	) {
 		this.game = game
 		this.entity = entity
-		this.playerId = playerId
+		this.playerEntity = playerId
 		this.statusEffect = statusEffect as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
 	}
 
 	public toLocalStatusEffectInstance(): LocalStatusEffectInstance {
+		if (!this.target) {
+			throw new Error('Can not convert to local status effect instance because target is not set')
+		}
 		return {
 			props: WithoutFunctions(this.props),
 			instance: this.entity,
-			targetInstance: this.target?.toLocalCardInstance(),
+			targetInstance: this.target.toLocalCardInstance(),
 			counter: this.counter,
 		}
 	}
@@ -149,17 +149,17 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 	public set target(cardEntity: CardEntity | null) {
 		let cardComponent = this.game.components.get(cardEntity)
 		if (cardComponent) {
-			this.statusEffect.onApply(this.game, this, cardComponent)
+			// this.statusEffect.onApply(this.game, this, cardComponent)
 		}
 		this.targetEntity = null
 	}
 
-	public get player(): PlayerComponent {
-		return this.game.components.getOrError(this.playerId)
+	public get player() {
+		return this.game.components.getOrError(this.playerEntity)
 	}
 
-	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.getOrError(this.game.otherPlayer(this.playerId))
+	public get opponentPlayer() {
+		return this.game.components.getOrError(this.game.otherPlayerEntity(this.playerEntity))
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {
@@ -203,13 +203,18 @@ export class RowComponent {
 export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
-	readonly playerId: PlayerEntity | null
+	readonly playerEntity: PlayerEntity | null
 	readonly type: SlotTypeT
 
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null, type: SlotTypeT) {
+	constructor(
+		game: GameModel,
+		entity: SlotEntity,
+		playerEntity: PlayerEntity | null,
+		type: SlotTypeT
+	) {
 		this.entity = entity
 		this.game = game
-		this.playerId = playerId
+		this.playerEntity = playerEntity
 		this.type = type
 	}
 
@@ -230,13 +235,13 @@ export class SlotComponent {
 	}
 
 	get player() {
-		if (!this.playerId) return null
-		return this.game.components.getOrError(this.playerId)
+		if (!this.playerEntity) return null
+		return this.game.components.getOrError(this.playerEntity)
 	}
 
 	get opponentPlayer() {
-		if (!this.playerId) return null
-		return this.game.components.get(this.game.otherPlayer(this.playerId))
+		if (!this.playerEntity) return null
+		return this.game.components.get(this.game.otherPlayerEntity(this.playerEntity))
 	}
 }
 
@@ -351,7 +356,8 @@ export class PlayerComponent {
 		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
 
 		/** Hook called when a card is attached */
-		// onAttach: GameHook<(instance: CardComponent) => void>
+		onAttach: GameHook<(instance: CardComponent) => void>
+
 		/** Hook called when a card is detached */
 		onDetach: GameHook<(instance: CardComponent) => void>
 
@@ -449,30 +455,24 @@ export class PlayerComponent {
 			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
 			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
 
-			onAttach: new GameHook<(instance: CardComponent) => void>(),
-			onDetach: new GameHook<(instance: CardComponent) => void>(),
-			beforeApply: new GameHook<() => void>(),
-			onApply: new GameHook<() => void>(),
-			afterApply: new GameHook<() => void>(),
-			getAttackRequests: new GameHook<
-				(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
-			>(),
-			getAttack: new GameHook<() => AttackModel | null>(),
-			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
-			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
-			onAttack: new GameHook<(attack: AttackModel) => void>(),
-			onDefence: new GameHook<(attack: AttackModel) => void>(),
-			afterAttack: new GameHook<(attack: AttackModel) => void>(),
-			afterDefence: new GameHook<(attack: AttackModel) => void>(),
-			onTurnStart: new GameHook<() => void>(),
-			onTurnEnd: new GameHook<(drawCards: Array<CardComponent | null>) => void>(),
-			onCoinFlip: new GameHook<
-				(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
-			>(),
-			beforeActiveRowChange: new GameHook<
-				(oldRow: number | null, newRow: number | null) => boolean
-			>(),
-			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
+			onAttach: new GameHook(),
+			onDetach: new GameHook(),
+			beforeApply: new GameHook(),
+			onApply: new GameHook(),
+			afterApply: new GameHook(),
+			getAttackRequests: new GameHook(),
+			getAttack: new GameHook(),
+			beforeAttack: new GameHook(),
+			beforeDefence: new GameHook(),
+			onAttack: new GameHook(),
+			onDefence: new GameHook(),
+			afterAttack: new GameHook(),
+			afterDefence: new GameHook(),
+			onTurnStart: new GameHook(),
+			onTurnEnd: new GameHook(),
+			onCoinFlip: new GameHook(),
+			beforeActiveRowChange: new GameHook(),
+			onActiveRowChange: new GameHook(),
 			freezeSlots: new GameHook(),
 		}
 	}

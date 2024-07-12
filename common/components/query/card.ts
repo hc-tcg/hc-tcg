@@ -43,7 +43,7 @@ export function rowIs(row: RowEntity | null): ComponentQuery<CardComponent> {
 
 export function player(player: PlayerEntity): ComponentQuery<CardComponent> {
 	return (game, card) => {
-		return card.playerId === player
+		return card.playerEntity === player
 	}
 }
 

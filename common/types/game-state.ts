@@ -19,7 +19,11 @@ import type {
 } from '../components'
 import {PlayerId} from '../models/player-model'
 
-export type Entity<Wrapping> = string & {__entity: never}
+// Due to how typescript works, we need `Wrapping` to show up in the type for type inference to work.
+export type Entity<Wrapping> = string & {
+	__entity_type_do_not_use_ever_the_program_will_crash: Wrapping
+}
+
 export type PlayerEntity = Entity<PlayerComponent>
 export type SlotEntity = Entity<SlotComponent>
 export type RowEntity = Entity<RowComponent>

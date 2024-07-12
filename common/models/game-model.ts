@@ -4,7 +4,6 @@ import {
 	GameState,
 	ActionResult,
 	TurnActions,
-	PlayerComponent,
 	Message,
 	PlayerEntity,
 } from '../types/game-state'
@@ -17,8 +16,8 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {ComponentQuery, card, slot} from '../components/query'
-import {CardComponent, RowComponent, SlotComponent} from '../components'
+import {ComponentQuery, card, query, row, slot} from '../components/query'
+import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
 import ECS from '../types/ecs'
@@ -69,25 +68,24 @@ export class GameModel {
 		this.state = getGameState(this)
 	}
 
-	public get currentPlayerId() {
+	public get currentPlayerEntity() {
 		return this.state.order[(this.state.turn.turnNumber + 1) % 2]
 	}
 
-	public get opponentPlayerId() {
+	public get opponentPlayerEntity() {
 		return this.state.order[this.state.turn.turnNumber % 2]
 	}
 
-	public get currentPlayer() {
-		return this.components.getOrError(this.currentPlayerId)
+	public get currentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.currentPlayerEntity)
 	}
 
-	public get opponentPlayer() {
-		return this.components.getOrError(this.opponentPlayerId)
+	public get opponentPlayer(): PlayerComponent {
+		return this.components.getOrError(this.opponentPlayerEntity)
 	}
 
-	public get opponentActiveRow() {
-		const player = this.opponentPlayer
-		return player.activeRowEntity !== null ? this.components.get(player.activeRowEntity) : null
+	public findOpponentActiveRow(): RowComponent | null {
+		return this.components.find(RowComponent, row.active, row.player(this.opponentPlayerEntity))
 	}
 
 	public getPlayerIds() {
@@ -110,8 +108,14 @@ export class GameModel {
 		return this.internalCode
 	}
 
-	public otherPlayer(player: PlayerEntity) {
-		return this.getPlayerIds().filter((id) => id != player)[0]
+	public otherPlayerEntity(player: PlayerEntity): PlayerEntity {
+		const otherPlayer = this.components.findEntity(
+			PlayerComponent,
+			(game, otherPlayer) => player !== otherPlayer.entity
+		)
+		if (!otherPlayer)
+			throw new Error('Can not query for other before because both player components are created')
+		return otherPlayer
 	}
 
 	// Functions
@@ -218,7 +222,7 @@ export class GameModel {
 		}
 	}
 	public cancelPickRequests() {
-		if (this.state.pickRequests[0]?.playerId === this.currentPlayerId) {
+		if (this.state.pickRequests[0]?.playerId === this.currentPlayerEntity) {
 			// Cancel and clear pick requests
 			for (let i = 0; i < this.state.pickRequests.length; i++) {
 				this.state.pickRequests[i].onCancel?.()

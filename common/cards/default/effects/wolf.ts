@@ -33,7 +33,7 @@ class WolfEffectCard extends Card {
 			if (attack.isType('status-effect') || attack.isBacklash) return
 
 			// Only on opponents turn
-			if (game.currentPlayerId !== opponentPlayer.id) return
+			if (game.currentPlayerEntity !== opponentPlayer.id) return
 
 			// Make sure they are targeting this player
 			const target = attack.getTarget()

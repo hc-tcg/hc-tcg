@@ -32,7 +32,7 @@ class LightningRodEffectCard extends Card {
 			if (!row || rowIndex === null || !row.hermitCard) return
 
 			// Only on opponents turn
-			if (game.currentPlayerId !== opponentPlayer.id) return
+			if (game.currentPlayerEntity !== opponentPlayer.id) return
 
 			// Attack already has to be targeting us
 			if (attack.getTarget()?.player.id !== player.id) return

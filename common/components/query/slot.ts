@@ -14,7 +14,7 @@ export const opponent: ComponentQuery<SlotComponent> = (game, pos) => {
 
 export function player(player: PlayerEntity | null): ComponentQuery<SlotComponent> {
 	return (game, slot) => {
-		return slot.playerId === player
+		return slot.playerEntity === player
 	}
 }
 
