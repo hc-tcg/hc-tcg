@@ -1,4 +1,4 @@
-import {Predicate} from '../components/query'
+import {ComponentQuery} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {
 	CardComponent,
@@ -68,7 +68,7 @@ export default class ECS {
 
 	public filter<T extends Component>(
 		type: new (...args: Array<any>) => T,
-		...predicates: Array<Predicate<T>>
+		...predicates: Array<ComponentQuery<T>>
 	): Array<T> {
 		return Object.values(this.data)
 			.filter((x) => x instanceof type)
@@ -77,28 +77,28 @@ export default class ECS {
 
 	public filterEntities<T extends Component>(
 		type: new (...args: Array<any>) => T,
-		...predicates: Array<Predicate<T>>
+		...predicates: Array<ComponentQuery<T>>
 	): Array<T['entity']> {
 		return this.filter(type, ...predicates)?.map((x) => x.entity)
 	}
 
 	public find<T extends Component>(
 		type: new (...args: Array<any>) => T,
-		...predicates: Array<Predicate<T>>
+		...predicates: Array<ComponentQuery<T>>
 	): T | null {
 		return this.filter(type, ...predicates)[0] || null
 	}
 
 	public findEntity<T extends Component>(
 		type: new (...args: Array<any>) => T,
-		...predicates: Array<Predicate<T>>
+		...predicates: Array<ComponentQuery<T>>
 	): T['entity'] | null {
 		return this.find(type, ...predicates)?.entity || null
 	}
 
 	public somethingFulfills<T extends Component>(
 		type: new (...args: Array<any>) => T,
-		...predicates: Array<Predicate<T>>
+		...predicates: Array<ComponentQuery<T>>
 	): boolean {
 		return this.find(type, ...predicates) !== null
 	}

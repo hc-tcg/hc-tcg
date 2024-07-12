@@ -8,4 +8,4 @@ import * as card from './card'
 
 export {slot, row, effect, card, query}
 
-export type Predicate<Value> = (game: GameModel, value: Value) => boolean
+export type ComponentQuery<Value> = (game: GameModel, value: Value) => boolean

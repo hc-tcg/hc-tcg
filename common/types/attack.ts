@@ -1,5 +1,5 @@
 import {CardComponent} from '../components/components'
-import {Predicate} from '../components/query'
+import {ComponentQuery} from '../components/query'
 import {CardEntity, RowEntity, StatusEffectEntity} from './game-state'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
@@ -39,7 +39,7 @@ export type AttackDefs = {
 	attacker?: AttackerEntity | null | undefined
 	target?: RowEntity | null | undefined
 	type: AttackType
-	shouldIgnoreSlots?: Array<Predicate<CardComponent>>
+	shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
 	isBacklash?: boolean
 	createWeakness?: WeaknessType
 	log?: (values: AttackLog) => string

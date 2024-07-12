@@ -1,5 +1,5 @@
 import type {CardProps} from '../cards/base/interfaces'
-import type {Predicate} from '../components/query'
+import type {ComponentQuery} from '../components/query'
 import type {SlotComponent} from '../components/components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
@@ -40,7 +40,7 @@ export type PickRequest = {
 	/** The message to display to the player */
 	message: string
 	/** A function that returns if the card can be attached to a specific slot */
-	canPick: Predicate<SlotComponent>
+	canPick: ComponentQuery<SlotComponent>
 	/** The function that will be called when we receive a pick result. This will return whether this was a success or not*/
 	onResult: (pickedSlot: SlotComponent) => void //
 	/** Called when the pick request is cancelled. This can only occur with a single use card */

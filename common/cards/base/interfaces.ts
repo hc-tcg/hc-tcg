@@ -1,4 +1,4 @@
-import type {Predicate} from '../../components/query'
+import type {ComponentQuery} from '../../components/query'
 import type {
 	CardCategoryT,
 	CardRarityT,
@@ -19,7 +19,7 @@ export type CardProps = {
 	shortName?: string
 	rarity: CardRarityT
 	tokens: number
-	attachCondition: Predicate<SlotComponent>
+	attachCondition: ComponentQuery<SlotComponent>
 	sidebarDescriptions?: Array<{type: string; name: string}>
 	/** The battle log attached to this card */
 	/** Set to string when the card should generate a log when played or applied, and null otherwise */

@@ -22,7 +22,7 @@ import type {PlayerId, PlayerModel} from '../models/player-model'
 
 import {DEBUG_CONFIG} from '../config'
 import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/interfaces'
-import {Predicate, card} from './query'
+import {ComponentQuery, card} from './query'
 import {
 	LocalCardInstance,
 	LocalStatusEffectInstance,
@@ -416,7 +416,7 @@ export class PlayerComponent {
 		 * Returns a combinator that verifies if the slot is locked or not.
 		 * Locked slots cannot be chosen in some combinator expressions.
 		 */
-		freezeSlots: GameHook<() => Predicate<SlotComponent>>
+		freezeSlots: GameHook<() => ComponentQuery<SlotComponent>>
 	}
 
 	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {

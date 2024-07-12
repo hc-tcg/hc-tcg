@@ -17,7 +17,7 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {Predicate, card, slot} from '../components/query'
+import {ComponentQuery, card, slot} from '../components/query'
 import {CardComponent, RowComponent, SlotComponent} from '../components/components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
@@ -347,7 +347,7 @@ export class GameModel {
 		}
 	}
 
-	public getPickableSlots(predicate: Predicate<SlotComponent>): Array<PickInfo> {
+	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<PickInfo> {
 		return this.components.filter(SlotComponent, predicate).map((slotInfo) => {
 			return {
 				entity: slotInfo.entity,
