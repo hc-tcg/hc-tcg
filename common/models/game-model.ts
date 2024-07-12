@@ -325,30 +325,18 @@ export class GameModel {
 	 * Swaps the positions of two cards on the board.
 	 * This function does not check whether the cards can be placed in the other card's slot.
 	 */
-	public swapSlots(
-		slotA: SlotComponent | null,
-		slotB: SlotComponent | null,
-		withoutDetach: boolean = false
-	): void {
+	public swapSlots(slotA: SlotComponent | null, slotB: SlotComponent | null): void {
 		if (!slotA || !slotB) return
 
 		const slotACards = this.components.filter(CardComponent, card.slotIs(slotA.entity))
 		const slotBCards = this.components.filter(CardComponent, card.slotIs(slotB.entity))
 
 		slotACards.forEach((card) => {
-			card.slot = slotB
+			card.slotEntity = slotB.entity
 		})
 		slotBCards.forEach((card) => {
-			card.slot = slotA
+			card.slotEntity = slotA.entity
 		})
-
-		if (!withoutDetach) {
-			// onAttach
-			;[...slotACards, ...slotBCards].forEach((card) => {
-				card.card.onAttach(this, card)
-				card.player.hooks.onAttach.call(card)
-			})
-		}
 	}
 
 	public getPickableSlots(predicate: ComponentQuery<SlotComponent>): Array<PickInfo> {

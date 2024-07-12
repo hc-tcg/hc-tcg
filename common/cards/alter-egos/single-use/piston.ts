@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {discardSingleUse} from '../../../utils/movement'
 import Card from '../../base/card'
@@ -8,16 +8,21 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class PistonSingleUseCard extends Card {
-	firstPickCondition = slot.every(
+	firstPickCondition = query.every(
 		slot.currentPlayer,
 		slot.itemSlot,
 		slot.rowFulfills(row.hasHermit),
-		slot.not(slot.frozen),
-		slot.not(slot.empty),
+		query.not(slot.frozen),
+		query.not(slot.empty),
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
 		slot.adjacentTo(
-			slot.every(slot.rowFulfills(row.hasHermit), slot.itemSlot, slot.empty, slot.not(slot.frozen))
+			query.every(
+				slot.rowFulfills(row.hasHermit),
+				slot.itemSlot,
+				slot.empty,
+				query.not(slot.frozen)
+			)
 		)
 	)
 
@@ -31,9 +36,9 @@ class PistonSingleUseCard extends Card {
 		tokens: 0,
 		description:
 			'Move one of your attached item cards to an adjacent Hermit.\nYou can use another single use effect card this turn.',
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.firstPickCondition)
+			query.exists(SlotComponent, this.firstPickCondition)
 		),
 		log: (values) => `${values.defaultLog} to move $m${values.pick.name}$`,
 	}
