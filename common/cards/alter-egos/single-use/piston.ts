@@ -43,6 +43,8 @@ class PistonSingleUseCard extends Card {
 
 		let pickedItemSlot: SlotComponent | null = null
 
+		let pickedItemSlot: SlotInfo | null = null
+
 		game.addPickRequest({
 			playerId: player.id,
 			id: this.props.id,

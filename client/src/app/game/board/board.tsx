@@ -8,7 +8,7 @@ import Timer from '../timer'
 import Actions from '../actions/actions'
 import {getSettings} from 'logic/local-settings/local-settings-selectors'
 import MobileActions from '../actions/mobile-actions'
-import {PickInfo} from 'common/types/server-requests'
+import {LocalCardInstance, PickInfo} from 'common/types/server-requests'
 import {SlotTypeT} from 'common/types/cards'
 
 type Props = {

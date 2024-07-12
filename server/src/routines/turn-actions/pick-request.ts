@@ -1,5 +1,5 @@
 import {GameModel} from 'common/models/game-model'
-import {ActionResult} from 'common/types/game-state'
+import {ActionResult, CardInstance} from 'common/types/game-state'
 import {PickInfo} from 'common/types/server-requests'
 import attackSaga from './attack'
 import {call} from 'typed-redux-saga'

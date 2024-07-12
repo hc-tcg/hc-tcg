@@ -304,6 +304,12 @@ export class BattleLogModel {
 			player: this.game.currentPlayer.entity,
 			description: `$e${statusEffect.props.name}$ wore off`,
 		})
+
+		this.logMessageQueue.push({
+			player: this.game.currentPlayerId,
+			description: logMessage,
+		})
+
 		this.sendLogs()
 	}
 }
