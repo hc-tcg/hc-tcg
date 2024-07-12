@@ -1,6 +1,6 @@
-import {StatusEffectComponent} from '../types/components'
+import {StatusEffectComponent} from '../components'
 import {Predicate} from '.'
-import {CardEntity} from '../types/game-state'
+import {CardEntity} from '../../types/game-state'
 
 export const damageEffect: Predicate<StatusEffectComponent> = (game, effect) =>
 	effect.props.damageEffect == false

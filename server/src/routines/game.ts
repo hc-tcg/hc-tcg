@@ -10,7 +10,7 @@ import connectionStatusSaga from './background/connection-status'
 import {CONFIG, DEBUG_CONFIG} from 'common/config'
 import pickRequestSaga from './turn-actions/pick-request'
 import modalRequestSaga from './turn-actions/modal-request'
-import {TurnActions, ActionResult, TurnAction, PlayerComponent} from 'common/types/game-state'
+import {TurnActions, ActionResult, TurnAction} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {EnergyT} from 'common/types/cards'
 import {hasEnoughEnergy} from 'common/utils/attacks'
@@ -18,14 +18,13 @@ import {discardCard} from 'common/utils/movement'
 import {printHooksState} from '../utils'
 import {buffers} from 'redux-saga'
 import {AttackActionData, PickSlotActionData, attackToAttackAction} from 'common/types/action-data'
-import {card, query, row, slot} from 'common/filters'
-import {SingleUse} from 'common/cards/base/card'
+import {card, query, row, slot} from 'common/components/query'
 import {
 	CardComponent,
 	DiscardSlotComponent,
 	HandSlotComponent,
 	SlotComponent,
-} from 'common/types/components'
+} from 'common/components/components'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly

@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import {CardComponent} from '../../../types/game-state'
 import {isTargeting} from '../../../utils/attacks'
 import {discardCard} from '../../../utils/movement'

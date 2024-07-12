@@ -1,10 +1,10 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../filters'
+import {query, slot} from '../../../components/query'
 import {executeExtraAttacks} from '../../../utils/attacks'
 import Card, {Attach} from '../../base/card'
 import {attach} from '../../base/defaults'
-import {CardComponent} from '../../../types/components'
+import {CardComponent} from '../../../components/components'
 
 class WolfEffectCard extends Card {
 	props: Attach = {

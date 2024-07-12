@@ -1,4 +1,4 @@
-import {row, slot} from '../../../filters'
+import {row, slot} from '../../../components/query'
 import Card, {Attach, attach} from '../../base/card'
 
 class StringEffectCard extends Card {

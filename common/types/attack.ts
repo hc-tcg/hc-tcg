@@ -1,4 +1,5 @@
-import {SlotCondition} from '../filters'
+import {CardComponent} from '../components/components'
+import {Predicate} from '../components/query'
 import {CardEntity, RowEntity, StatusEffectEntity} from './game-state'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
@@ -10,8 +11,6 @@ export type WeaknessType = 'always' | 'ifWeak' | 'never'
 export type AttackDefence = {
 	damageReduction: number
 }
-
-export type ShouldIgnoreCard = SlotCondition
 
 export type AttackLog = {
 	/**The default log for attacks.*/
@@ -40,7 +39,7 @@ export type AttackDefs = {
 	attacker?: AttackerEntity | null | undefined
 	target?: RowEntity | null | undefined
 	type: AttackType
-	shouldIgnoreSlots?: Array<ShouldIgnoreCard>
+	shouldIgnoreSlots?: Array<Predicate<CardComponent>>
 	isBacklash?: boolean
 	createWeakness?: WeaknessType
 	log?: (values: AttackLog) => string

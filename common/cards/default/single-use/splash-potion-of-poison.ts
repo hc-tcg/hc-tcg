@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {SingleUse} from '../../base/card'
 import { singleUse } from '../../base/defaults'
 

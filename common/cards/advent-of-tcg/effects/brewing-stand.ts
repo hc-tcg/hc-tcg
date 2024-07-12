@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {discardCard} from '../../../utils/movement'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {Attach, attach} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 

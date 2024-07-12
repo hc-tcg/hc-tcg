@@ -1,6 +1,6 @@
 import {Predicate, card} from '.'
-import {CardComponent, SlotComponent} from '../types/components'
-import {PlayerComponent, PlayerEntity, TurnAction} from '../types/game-state'
+import {CardComponent, SlotComponent} from '../components'
+import {PlayerComponent, PlayerEntity, TurnAction} from '../../types/game-state'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: Predicate<SlotComponent> = (game, pos) => {

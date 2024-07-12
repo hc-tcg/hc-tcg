@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
-import {query, slot} from '../../../filters'
+import {query, slot} from '../../../components/query'
 import Card, {Attach, SingleUse} from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'
-import { CardComponent } from '../../../types/components'
+import { CardComponent } from '../../../components/components'
 
 class WaterBucketEffectCard extends Card {
 	props: Attach & SingleUse = {

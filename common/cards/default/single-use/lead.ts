@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../filters'
+import {row, slot} from '../../../components/query'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent} from '../../../types/game-state'
 import {applySingleUse} from '../../../utils/board'

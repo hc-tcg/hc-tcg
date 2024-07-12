@@ -5,8 +5,8 @@ import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
-import {card, row, slot} from 'common/filters'
-import {CardComponent} from 'common/types/components'
+import {card, row, slot} from 'common/components/query'
+import {CardComponent} from 'common/components/components'
 
 function getAttack(
 	game: GameModel,

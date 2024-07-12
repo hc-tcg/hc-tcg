@@ -2,7 +2,7 @@ import {GameModel} from '../../../models/game-model'
 import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {SingleUse, singleUse} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 

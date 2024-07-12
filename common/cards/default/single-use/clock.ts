@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import {TurnActions} from '../../../types/game-state'
 import {applyStatusEffect} from '../../../utils/board'
 import Card, {SingleUse} from '../../base/card'
-import {CardComponent} from '../../../types/components'
+import {CardComponent} from '../../../components/components'
 import singleUse from '.'
 
 class ClockSingleUseCard extends Card {

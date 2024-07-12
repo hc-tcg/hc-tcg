@@ -1,4 +1,4 @@
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {SingleUse, singleUse} from '../../base/card'
 
 class FletchingTableSingleUseCard extends Card {

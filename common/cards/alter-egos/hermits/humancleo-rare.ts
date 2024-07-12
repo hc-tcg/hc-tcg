@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {flipCoin} from '../../../utils/coinFlips'
 import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {Hermit, hermit} from '../../base/card'
 import {CardComponent} from '../../../types/game-state'
 

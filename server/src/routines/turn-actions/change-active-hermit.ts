@@ -1,4 +1,5 @@
-import {slot} from 'common/filters'
+import {SlotComponent} from 'common/components/components'
+import {slot} from 'common/components/query'
 import {GameModel} from 'common/models/game-model'
 import {ChangeActiveHermitActionData} from 'common/types/action-data'
 import {GenericActionResult} from 'common/types/game-state'
@@ -10,7 +11,8 @@ function* changeActiveHermit(
 	const {currentPlayer} = game
 
 	// Find the row we are trying to change to
-	const pickedSlot = game.state.slots.findComponent(
+	const pickedSlot = game.components.find(
+		SlotComponent,
 		slot.entity(turnAction?.payload?.pickInfo?.entity)
 	)
 	if (!pickedSlot?.onBoard()) return 'FAILURE_INVALID_DATA'

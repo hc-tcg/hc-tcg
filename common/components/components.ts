@@ -4,19 +4,30 @@ import type {GameModel} from '../models/game-model'
 import type {Counter, StatusEffectProps} from '../status-effects/status-effect'
 import type StatusEffect from '../status-effects/status-effect'
 import type {isCounter} from '../status-effects/status-effect'
-import type {SlotTypeT} from './cards'
+import type {EnergyT, SlotTypeT} from '../types/cards'
 import type {
 	CardEntity,
 	PlayerEntity,
-	PlayerComponent,
 	RowEntity,
 	SlotEntity,
 	StatusEffectEntity,
-} from './game-state'
+	CurrentCoinFlipT,
+	TurnActions,
+	CoinFlipT,
+} from '../types/game-state'
+import type {GameHook, WaterfallHook} from '../types/hooks'
+import type {HermitAttackType} from '../types/attack'
+import type {AttackModel} from '../models/attack-model'
+import type {PlayerId, PlayerModel} from '../models/player-model'
 
 import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/interfaces'
-import {card} from '../filters'
-import {LocalCardInstance, LocalStatusEffectInstance, WithoutFunctions} from './server-requests'
+import {Predicate, card} from './query'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+	PickInfo,
+	WithoutFunctions,
+} from '../types/server-requests'
 
 export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
@@ -112,7 +123,7 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		this.game = game
 		this.entity = entity
 		this.playerId = playerId
-		this.statusEffect = statusEffect  as StatusEffect<Props>
+		this.statusEffect = statusEffect as StatusEffect<Props>
 		this.targetEntity = null
 		this.counter = null
 	}
@@ -284,7 +295,6 @@ export class DeckSlotComponent extends SlotComponent {
 		super(game, entity, playerId, 'deck')
 
 		if (position.position == 'random') {
-
 			this.order = Math.random()
 		} else if (position.position == 'front') {
 			this.order = 0
@@ -309,5 +319,169 @@ export class DiscardSlotComponent extends SlotComponent {
 
 	override inDiscardPile(): this is DiscardSlotComponent {
 		return true
+	}
+}
+
+export class PlayerComponent {
+	readonly game: GameModel
+	readonly entity: PlayerEntity
+
+	readonly playerName: string
+	readonly minecraftName: string
+	readonly censoredPlayerName: string
+
+	readonly id: PlayerId
+
+	coinFlips: Array<CurrentCoinFlipT>
+	lives: number
+	hasPlacedHermit: boolean
+	singleUseCardUsed: boolean
+
+	pickableSlots: Array<PickInfo> | null
+	cardsCanBePlacedIn: Array<[CardComponent, Array<PickInfo>]>
+
+	activeRowEntity: RowEntity | null
+
+	hooks: {
+		/** Hook that modifies and returns available energy from item cards */
+		availableEnergy: WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>
+
+		/** Hook that modifies and returns blockedActions */
+		blockedActions: WaterfallHook<(blockedActions: TurnActions) => TurnActions>
+
+		/** Hook called when a card is attached */
+		onAttach: GameHook<(instance: CardComponent) => void>
+		/** Hook called when a card is detached */
+		onDetach: GameHook<(instance: CardComponent) => void>
+
+		/** Hook called before a single use card is applied */
+		beforeApply: GameHook<() => void>
+		/** Hook called when a single use card is applied */
+		onApply: GameHook<() => void>
+		/** Hook called after a single use card is applied */
+		afterApply: GameHook<() => void>
+
+		/**
+		 * Hook called once before each attack loop.
+		 *
+		 * This is the place to add pick/modal requests if they need to be resolved before the attack loop.
+		 */
+		getAttackRequests: GameHook<
+			(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
+		>
+
+		/** Hook that returns attacks to execute */
+		getAttack: GameHook<() => AttackModel | null>
+		/** Hook called before the main attack loop, for every attack from our side of the board */
+		beforeAttack: GameHook<(attack: AttackModel) => void>
+		/** Hook called before the main attack loop, for every attack targeting our side of the board */
+		beforeDefence: GameHook<(attack: AttackModel) => void>
+		/** Hook called for every attack from our side of the board */
+		onAttack: GameHook<(attack: AttackModel) => void>
+		/** Hook called for every attack that targets our side of the board */
+		onDefence: GameHook<(attack: AttackModel) => void>
+		/**
+		 * Hook called after the main attack loop is completed, for every attack from our side of the board.
+		 * Attacks added from this hook will not be executed.
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
+		afterAttack: GameHook<(attack: AttackModel) => void>
+		/**
+		 * Hook called after the main attack loop, for every attack targeting our side of the board
+		 *
+		 * This is called after actions are marked as completed and blocked
+		 */
+		afterDefence: GameHook<(attack: AttackModel) => void>
+
+		/**
+		 * Hook called at the start of the turn
+		 *
+		 * This is a great place to add blocked actions for the turn, as it's called before actions are calculated
+		 */
+		onTurnStart: GameHook<() => void>
+		/** Hook called at the end of the turn */
+		onTurnEnd: GameHook<(drawCards: Array<CardComponent | null>) => void>
+
+		/** Hook called when the player flips a coin */
+		onCoinFlip: GameHook<(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>>
+
+		// @TODO eventually to simplify a lot more code this could potentially be called whenever anything changes the row, using a helper.
+		/** Hook called before the active row is changed. Returns whether or not the change can be completed. */
+		beforeActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => boolean>
+		/** Hook called when the active row is changed. */
+		onActiveRowChange: GameHook<(oldRow: number | null, newRow: number | null) => void>
+		/** Hook called when the `slot.locked` combinator is called.
+		 * Returns a combinator that verifies if the slot is locked or not.
+		 * Locked slots cannot be chosen in some combinator expressions.
+		 */
+		freezeSlots: GameHook<() => Predicate<SlotComponent>>
+	}
+
+	constructor(game: GameModel, entity: PlayerEntity, player: PlayerModel) {
+		this.game = game
+		this.entity = entity
+		this.playerName = player.name
+		this.minecraftName = player.minecraftName
+		this.censoredPlayerName = player.censoredName
+		this.id = player.id
+		this.coinFlips = []
+		this.lives = 3
+		this.hasPlacedHermit = false
+		this.singleUseCardUsed = false
+		this.cardsCanBePlacedIn = []
+		this.pickableSlots = null
+		this.activeRowEntity = null
+
+		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
+			const id = DEBUG_CONFIG.extraStartingCards[i]
+			if (!CARDS[id]) {
+				console.log('Invalid extra starting card in debug config:', id)
+				continue
+			}
+
+			let card = game.components.new(CardComponent, id, this.entity)
+			card.slot = game.components.new(HandSlotComponent, this.entity)
+		}
+
+		this.hooks = {
+			availableEnergy: new WaterfallHook<(availableEnergy: Array<EnergyT>) => Array<EnergyT>>(),
+			blockedActions: new WaterfallHook<(blockedActions: TurnActions) => TurnActions>(),
+
+			onAttach: new GameHook<(instance: CardComponent) => void>(),
+			onDetach: new GameHook<(instance: CardComponent) => void>(),
+			beforeApply: new GameHook<() => void>(),
+			onApply: new GameHook<() => void>(),
+			afterApply: new GameHook<() => void>(),
+			getAttackRequests: new GameHook<
+				(activeInstance: CardComponent, hermitAttackType: HermitAttackType) => void
+			>(),
+			getAttack: new GameHook<() => AttackModel | null>(),
+			beforeAttack: new GameHook<(attack: AttackModel) => void>(),
+			beforeDefence: new GameHook<(attack: AttackModel) => void>(),
+			onAttack: new GameHook<(attack: AttackModel) => void>(),
+			onDefence: new GameHook<(attack: AttackModel) => void>(),
+			afterAttack: new GameHook<(attack: AttackModel) => void>(),
+			afterDefence: new GameHook<(attack: AttackModel) => void>(),
+			onTurnStart: new GameHook<() => void>(),
+			onTurnEnd: new GameHook<(drawCards: Array<CardComponent | null>) => void>(),
+			onCoinFlip: new GameHook<
+				(card: CardComponent, coinFlips: Array<CoinFlipT>) => Array<CoinFlipT>
+			>(),
+			beforeActiveRowChange: new GameHook<
+				(oldRow: number | null, newRow: number | null) => boolean
+			>(),
+			onActiveRowChange: new GameHook<(oldRow: number | null, newRow: number | null) => void>(),
+			freezeSlots: new GameHook(),
+		}
+	}
+
+	get opponentPlayer() {
+		let player = this.game.components.find(
+			PlayerComponent,
+			(game, player) => player.entity !== this.entity
+		)
+		if (!player) throw new Error('Both players should be added to ECS before fetching opponent.')
+		return player
 	}
 }

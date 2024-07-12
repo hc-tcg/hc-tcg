@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {applySingleUse} from '../../../utils/board'
-import {query, slot} from '../../../filters'
+import {query, slot} from '../../../components/query'
 import Card, {SingleUse} from '../../base/card'
 import {singleUse} from '../../base/defaults'
-import {CardComponent} from '../../../types/components'
+import {CardComponent} from '../../../components/components'
 
 class GoldenAppleSingleUseCard extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.activeRow), query.not(slot.empty))

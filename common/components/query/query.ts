@@ -1,4 +1,4 @@
-import type {GameModel} from '../models/game-model.js'
+import type {GameModel} from '../../models/game-model.js'
 import type {Predicate} from './index.js'
 
 /** Always return true */

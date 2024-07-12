@@ -1,7 +1,7 @@
 import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {CardComponent, StatusEffectComponent} from '../types/game-state'
-import {SlotCondition, effect, slot} from '../filters'
+import {SlotCondition, effect, slot} from '../components/query'
 import {SlotComponent} from '../types/cards'
 
 export type StatusEffectProps = {

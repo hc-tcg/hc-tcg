@@ -1,6 +1,6 @@
 import {CARDS} from '../cards'
 import {DEBUG_CONFIG} from '../config'
-import {card, slot} from '../filters'
+import {card, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {
@@ -9,9 +9,10 @@ import {
 	HandSlotComponent,
 	DeckSlotComponent,
 	RowComponent,
-} from '../types/components'
+	PlayerComponent,
+} from '../components/components'
 import ECS from '../types/ecs'
-import {GameState, PlayerComponent, PlayerEntity} from '../types/game-state'
+import {GameState, PlayerEntity} from '../types/game-state'
 
 export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerModel) {
 	let player1Component = components.new(PlayerComponent, player1)

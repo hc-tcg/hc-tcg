@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import {HermitAttackType} from '../../../types/attack'
 import {CardComponent} from '../../../types/game-state'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {Hermit, InstancedValue, hermit} from '../../base/card'
 import {CopyAttack} from '../../../types/server-requests'
 

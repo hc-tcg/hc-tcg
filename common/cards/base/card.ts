@@ -1,10 +1,10 @@
 import {PlayCardLog, TypeT} from '../../types/cards'
 import {GameModel} from '../../models/game-model'
 import {FormattedTextNode, formatText} from '../../utils/formatting'
-import {row} from '../../filters'
+import {row} from '../../components/query'
 import {HermitAttackType} from '../../types/attack'
 import {AttackModel} from '../../models/attack-model'
-import {CardComponent, RowComponent} from '../../types/components'
+import {CardComponent, RowComponent} from '../../components/components'
 import {
 	Attach,
 	CardProps,

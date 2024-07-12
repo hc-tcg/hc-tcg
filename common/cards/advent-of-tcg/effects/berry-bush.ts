@@ -1,9 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {discardCard} from '../../../utils/movement'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {Attach, attach} from '../../base/card'
 import {CARDS} from '../..'
-import {CardComponent} from '../../../types/components'
+import {CardComponent} from '../../../components/components'
 
 class BerryBushEffectCard extends Card {
 	props: Attach = {

@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
-import {slot} from '../filters'
+import {slot} from '../components/query'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

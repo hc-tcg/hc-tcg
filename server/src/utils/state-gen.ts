@@ -6,19 +6,19 @@ import {
 	LocalPlayerState,
 	newEntity,
 	CardEntity,
-	PlayerComponent,
 } from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
-import {card, row, slot} from 'common/filters'
+import {card, row, slot} from 'common/components/query'
 import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
 import {
 	CardComponent,
+	PlayerComponent,
 	RowComponent,
 	SlotComponent,
 	StatusEffectComponent,
-} from 'common/types/components'
+} from 'common/components/components'
 import {Hermit} from 'common/cards/base/interfaces'
 
 ////////////////////////////////////////

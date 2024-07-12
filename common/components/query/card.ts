@@ -1,6 +1,6 @@
-import type {PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
+import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
 import {Predicate, query} from '.'
-import {CardComponent, RowComponent, SlotComponent} from '../types/components'
+import {CardComponent, RowComponent, SlotComponent} from '../components'
 import {slot as slotCombinators} from '.'
 
 export const hermit: Predicate<CardComponent> = (game, card) => card.isHermit()

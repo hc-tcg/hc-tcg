@@ -1,6 +1,6 @@
 import type {CardProps} from '../cards/base/interfaces'
-import type {Predicate} from '../filters'
-import type {SlotComponent} from './components'
+import type {Predicate} from '../components/query'
+import type {SlotComponent} from '../components/components'
 import {StatusEffectProps} from '../status-effects/status-effect'
 import {SlotTypeT} from './cards'
 import {ActionResult, CardEntity, SlotEntity} from './game-state'

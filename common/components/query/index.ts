@@ -1,4 +1,4 @@
-import type {GameModel} from '../models/game-model'
+import type {GameModel} from '../../models/game-model'
 
 import * as query from './query'
 import * as slot from './slot'

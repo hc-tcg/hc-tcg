@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {row, slot} from '../../../filters'
+import {row, slot} from '../../../components/query'
 import {CardComponent} from '../../../types/game-state'
 import Card, {Attach, attach} from '../../base/card'
 

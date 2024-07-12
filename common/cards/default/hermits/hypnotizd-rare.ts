@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import {HermitAttackType} from '../../../types/attack'
 import {SlotComponent} from '../../../types/cards'
 import {CardComponent, RowStateWithHermit} from '../../../types/game-state'

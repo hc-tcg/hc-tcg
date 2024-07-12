@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {card, slot} from '../../../filters'
+import {card, slot} from '../../../components/query'
 import {CardComponent} from '../../../types/game-state'
 import {discardFromHand, drawCards} from '../../../utils/movement'
 import Card, {SingleUse, singleUse} from '../../base/card'

@@ -13,8 +13,8 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import Card from '../cards/base/card'
 import StatusEffect from '../status-effects/status-effect'
-import {CardComponent, SlotComponent} from '../types/components'
-import {card} from '../filters'
+import {CardComponent, SlotComponent} from '../components/components'
+import {card} from '../components/query'
 
 export class BattleLogModel {
 	private game: GameModel

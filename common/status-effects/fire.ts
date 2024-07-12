@@ -5,7 +5,7 @@ import {AttackModel} from '../models/attack-model'
 import {removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
-import {slot} from '../filters'
+import {slot} from '../components/query'
 
 class FireStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

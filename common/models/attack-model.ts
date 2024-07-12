@@ -8,7 +8,7 @@ import {
 	AttackLog,
 	AttackerEntity,
 } from '../types/attack'
-import {CardComponent, RowComponent, StatusEffectComponent} from '../types/components'
+import {CardComponent, RowComponent, StatusEffectComponent} from '../components/components'
 import {RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
 

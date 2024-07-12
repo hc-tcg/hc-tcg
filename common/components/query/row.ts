@@ -1,6 +1,6 @@
 import {Predicate, card, slot} from '.'
-import {RowComponent} from '../types/components'
-import {CardEntity, PlayerEntity} from '../types/game-state'
+import {RowComponent} from '../components'
+import {CardEntity, PlayerEntity} from '../../types/game-state'
 
 export const active: Predicate<RowComponent> = (game, row) =>
 	[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)

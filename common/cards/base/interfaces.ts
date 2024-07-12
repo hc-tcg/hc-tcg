@@ -1,4 +1,4 @@
-import type {Predicate} from '../../filters'
+import type {Predicate} from '../../components/query'
 import type {
 	CardCategoryT,
 	CardRarityT,
@@ -7,7 +7,7 @@ import type {
 	PlayCardLog,
 	TypeT,
 } from '../../types/cards'
-import type {SlotComponent} from '../../types/components'
+import type {SlotComponent} from '../../components/components'
 import type {WithoutFunctions} from '../../types/server-requests'
 
 export type CardProps = {

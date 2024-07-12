@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import Card, {Attach, attach} from '../../base/card'
 
 class CommandBlockEffectCard extends Card {

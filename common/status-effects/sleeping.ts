@@ -1,8 +1,8 @@
 import StatusEffect, {StatusEffectProps, Counter, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
 import {removeStatusEffect} from '../utils/board'
-import {query, slot} from '../filters'
-import { StatusEffectComponent } from '../types/components'
+import {query, slot} from '../components/query'
+import { StatusEffectComponent } from '../components/components'
 
 class SleepingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

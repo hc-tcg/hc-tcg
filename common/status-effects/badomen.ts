@@ -2,8 +2,8 @@ import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-e
 import {GameModel} from '../models/game-model'
 import {removeStatusEffect} from '../utils/board'
 import {CARDS} from '../cards'
-import {slot} from '../filters'
-import {StatusEffectComponent} from '../types/components'
+import {slot} from '../components/query'
+import {StatusEffectComponent} from '../components/components'
 
 class BadOmenStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

@@ -1,7 +1,7 @@
 import {GameModel} from '../../../models/game-model'
 import Card, {SingleUse, singleUse} from '../../base/card'
-import {CardComponent, StatusEffectComponent} from '../../../types/components'
-import {card, row, slot} from '../../../filters'
+import {CardComponent, StatusEffectComponent} from '../../../components/components'
+import {card, row, slot} from '../../../components/query'
 
 class BadOmenSingleUseCard extends Card {
 	props: SingleUse = {

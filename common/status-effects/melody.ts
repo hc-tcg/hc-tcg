@@ -3,7 +3,7 @@ import {GameModel} from '../models/game-model'
 import {CardPosModel} from '../models/card-pos-model'
 import {hasStatusEffect, removeStatusEffect} from '../utils/board'
 import {StatusEffectComponent} from '../types/game-state'
-import {slot} from '../filters'
+import {slot} from '../components/query'
 
 class MelodyStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {

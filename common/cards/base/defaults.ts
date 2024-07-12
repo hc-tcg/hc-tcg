@@ -1,5 +1,5 @@
 import type {CardCategoryT, PlayCardLog} from '../../types/cards'
-import {query, row, slot} from '../../filters'
+import {query, row, slot} from '../../components/query'
 
 export const item = {
 	item: null,

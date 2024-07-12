@@ -17,8 +17,8 @@ import {
 	SelectCards,
 } from '../types/server-requests'
 import {BattleLogModel} from './battle-log-model'
-import {Predicate, card, slot} from '../filters'
-import {CardComponent, RowComponent, SlotComponent} from '../types/components'
+import {Predicate, card, slot} from '../components/query'
+import {CardComponent, RowComponent, SlotComponent} from '../components/components'
 import {AttackDefs} from '../types/attack'
 import {AttackModel} from './attack-model'
 import ECS from '../types/ecs'

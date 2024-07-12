@@ -1,6 +1,6 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../filters'
+import {slot} from '../../../components/query'
 import {CardComponent} from '../../../types/game-state'
 import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import Card, {Hermit, hermit} from '../../base/card'

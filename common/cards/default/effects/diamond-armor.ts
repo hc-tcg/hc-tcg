@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../types/components'
+import {CardComponent} from '../../../components/components'
 import Card, {Attach} from '../../base/card'
 import {attach} from '../../base/defaults'
 

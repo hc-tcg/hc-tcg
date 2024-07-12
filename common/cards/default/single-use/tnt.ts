@@ -1,4 +1,4 @@
-import {row} from '../../../filters'
+import {row} from '../../../components/query'
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../types/game-state'

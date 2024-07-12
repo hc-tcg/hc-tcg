@@ -1,6 +1,6 @@
-import {Predicate} from '../filters'
+import {Predicate} from '../components/query'
 import {GameModel} from '../models/game-model'
-import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from './components'
+import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '../components/components'
 import {
 	CardEntity,
 	Entity,
