@@ -1,6 +1,6 @@
 import {ComponentQuery, card} from '.'
-import {CardComponent, SlotComponent} from '..'
-import {PlayerComponent, PlayerEntity, TurnAction} from '../../types/game-state'
+import {CardComponent, RowComponent, SlotComponent} from '..'
+import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: ComponentQuery<SlotComponent> = (game, pos) => {
@@ -98,14 +98,7 @@ export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent>
 /** Return true if the spot contains any of the card IDs. */
 export const hasId = (...cardIds: Array<string>): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
-		return game.state.cards.somethingFulfills(card.id(...cardIds), card.slot(pos.entity))
-	}
-}
-
-/** Return true if the hermit in a slot has a certian status effect */
-export const hasStatusEffect = (statusEffect: string): ComponentQuery<SlotComponent> => {
-	return (game, pos) => {
-		return game.state.statusEffects.somethingFulfills(effect.id(statusEffect))
+		return game.components.somethingFulfills(card.id(...cardIds), card.slot(pos.entity))
 	}
 }
 

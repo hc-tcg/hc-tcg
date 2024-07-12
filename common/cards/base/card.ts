@@ -17,7 +17,7 @@ import {
 	isHermit,
 	isItem,
 	isSingleUse,
-} from './interfaces'
+} from './types'
 
 export type CanAttachError =
 	| 'INVALID_PLAYER'

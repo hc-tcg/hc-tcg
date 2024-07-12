@@ -1,5 +1,5 @@
 import type Card from '../cards/base/card'
-import type {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from '../cards/base/interfaces'
+import type {Attach, CardProps, HasHealth, Hermit, Item, SingleUse} from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
 import type {Counter, StatusEffectProps} from '../status-effects/status-effect'
 import type StatusEffect from '../status-effects/status-effect'
@@ -21,7 +21,7 @@ import type {AttackModel} from '../models/attack-model'
 import type {PlayerId, PlayerModel} from '../models/player-model'
 
 import {DEBUG_CONFIG} from '../config'
-import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/interfaces'
+import {isAttach, isHealth, isHermit, isItem, isSingleUse} from '../cards/base/types'
 import {ComponentQuery, card} from './query'
 import {
 	LocalCardInstance,

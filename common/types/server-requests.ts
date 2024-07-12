@@ -1,4 +1,4 @@
-import type {CardProps} from '../cards/base/interfaces'
+import type {CardProps} from '../cards/base/types'
 import type {ComponentQuery} from '../components/query'
 import type {SlotComponent} from '../components'
 import {StatusEffectProps} from '../status-effects/status-effect'

@@ -1,14 +1,14 @@
 import StatusEffect, {
 	StatusEffectProps,
-	followActiveHermit,
 	hiddenStatusEffect,
 	systemStatusEffect,
 } from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
+import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
 import {applyStatusEffect, removeStatusEffect} from '../utils/board'
-import {slot} from '../components/query'
+import {card, query, slot} from '../components/query'
+import {StatusEffectComponent} from '../components'
 
 export class AussiePingStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -17,11 +17,11 @@ export class AussiePingStatusEffect extends StatusEffect {
 		name: 'Aussie Ping',
 		description:
 			'When this hermit attacks, flip a coin. If heads, this hermit misses. Lasts until this hermit attacks or the end of the turn.',
-		applyCondition: slot.not(slot.hasStatusEffect('aussie-ping-immune')),
+		applyCondition: query.not(card.hasStatusEffect('aussie-ping-immune')),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		let {player} = pos
+	override onApply(game: GameModel, instance: StatusEffectComponent) {
+		let {player} = instance
 
 		let coinFlipResult: CoinFlipT | null = null
 
@@ -57,8 +57,8 @@ export class AussiePingStatusEffect extends StatusEffect {
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = pos
+	override onRemoval(game: GameModel, instance: StatusEffectComponent) {
+		const {player} = instance
 
 		player.hooks.beforeAttack.remove(instance)
 		player.hooks.afterAttack.remove(instance)
@@ -75,10 +75,9 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 	public override onApply(
 		game: GameModel,
-		instance: StatusEffectComponent<StatusEffectProps>,
-		pos: CardPosModel
+		instance: StatusEffectComponent<StatusEffectProps>
 	): void {
-		const {player} = pos
+		const {player} = instance
 
 		player.hooks.onActiveRowChange.add(instance, followActiveHermit(game, instance))
 		player.hooks.onTurnStart.add(instance, () => {
@@ -89,10 +88,9 @@ export class AussiePingImmuneStatusEffect extends StatusEffect {
 
 	public override onRemoval(
 		game: GameModel,
-		instance: StatusEffectComponent<StatusEffectProps>,
-		pos: CardPosModel
+		instance: StatusEffectComponent<StatusEffectProps>
 	): void {
-		const {player} = pos
+		const {player} = instance
 		player.hooks.onActiveRowChange.remove(instance)
 	}
 }

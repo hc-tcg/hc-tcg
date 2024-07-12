@@ -1,4 +1,4 @@
-import type {Attach, CardProps, HasHealth} from '../cards/base/interfaces'
+import type {Attach, CardProps, HasHealth} from '../cards/base/types'
 import type {BattleLogModel} from '../models/battle-log-model'
 import type {FormattedTextNode} from '../utils/formatting'
 import type {HermitAttackType} from './attack'

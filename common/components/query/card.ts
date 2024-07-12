@@ -1,6 +1,6 @@
 import type {PlayerEntity, RowEntity, SlotEntity} from '../../types/game-state'
-import {ComponentQuery, query} from '.'
-import {CardComponent, RowComponent, SlotComponent} from '..'
+import {ComponentQuery, effect, query} from '.'
+import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
 
 export const hermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()
@@ -58,4 +58,14 @@ export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 
 export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
 	return (game, card) => cardIds.includes(card.props.id)
+}
+
+export const hasStatusEffect = (statusEffect: string): ComponentQuery<CardComponent> => {
+	return (game, card) => {
+		return game.components.somethingFulfills(
+			StatusEffectComponent,
+			effect.id(statusEffect),
+			effect.target(card.entity)
+		)
+	}
 }

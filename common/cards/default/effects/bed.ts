@@ -4,7 +4,7 @@ import {applyStatusEffect, hasStatusEffect} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
-import {Attach} from '../../base/interfaces'
+import {Attach} from '../../base/types'
 
 class BedEffectCard extends Card {
 	props: Attach = {

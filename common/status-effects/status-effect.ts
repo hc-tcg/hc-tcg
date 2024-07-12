@@ -16,7 +16,7 @@ export type StatusEffectProps = {
 	type: 'normal' | 'damage' | 'system' | 'hiddenSystem'
 	applyLog: ((values: StatusEffectLog) => string) | null
 	removeLog: ((values: StatusEffectLog) => string) | null
-	applyCondition: SlotCondition
+	applyCondition: ComponentQuery<CardComponent>
 }
 
 export type Counter = StatusEffectProps & {
@@ -26,7 +26,7 @@ export type Counter = StatusEffectProps & {
 
 export const statusEffect = {
 	type: 'normal' as StatusEffectProps['type'],
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
 	removeLog: (values: StatusEffectLog) => `${values.statusEffect} on ${values.target} wore off`,
@@ -34,7 +34,7 @@ export const statusEffect = {
 
 export const systemStatusEffect = {
 	type: 'system' as StatusEffectProps['type'],
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
@@ -43,16 +43,18 @@ export const hiddenStatusEffect = {
 	type: 'hiddenSystem' as StatusEffectProps['type'],
 	name: '',
 	description: '',
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 	applyLog: null,
 	removeLog: null,
 }
 
 export const damageEffect = {
 	type: 'damage' as StatusEffectProps['type'],
-	applyCondition: (game: GameModel, pos: SlotInfo) =>
-		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.type === 'damage'
+	applyCondition: (game: GameModel, target: CardComponent) =>
+		!game.components.somethingFulfills(
+			StatusEffectComponent,
+			effect.target(target.entity),
+			effect.damage
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
