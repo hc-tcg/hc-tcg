@@ -42,10 +42,11 @@ const effectClasses: Array<new () => StatusEffect> = [
 	// InvisibilityPotionTailsStatusEffect,
 ]
 
-export const STATUS_EFFECTS: Record<(typeof StatusEffect)['name'], StatusEffect> =
+export const STATUS_EFFECTS: Record<string, StatusEffect> =
 	effectClasses.reduce((result: Record<string, StatusEffect>, effectClass) => {
 		let effect = new effectClass()
 		if (!effect.props) return result
 		result[effectClass.name] = effect
+		result[effect.props.id] = effect
 		return result
 	}, {})
