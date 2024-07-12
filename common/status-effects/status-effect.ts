@@ -1,15 +1,13 @@
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {CardComponent, StatusEffectComponent} from '../types/game-state'
-import {SlotCondition, effect, slot} from '../components/query'
-import {SlotComponent} from '../types/cards'
+import {ComponentQuery, effect, query} from '../components/query'
+import {CardComponent, StatusEffectComponent} from '../components'
 
 export type StatusEffectProps = {
 	id: string
 	name: string
 	description: string
 	damageEffect?: boolean
-	applyCondition: SlotCondition
+	applyCondition: ComponentQuery<CardComponent>
 	hidden?: boolean
 }
 
@@ -20,20 +18,20 @@ export type Counter = StatusEffectProps & {
 
 export const statusEffect = {
 	damageEffect: false,
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 }
 
 export const hiddenStatusEffect = {
 	hidden: true,
 	name: '',
 	description: '',
-	applyCondition: slot.anything,
+	applyCondition: query.anything,
 }
 
 export const damageEffect = {
 	damageEffect: true,
 	applyCondition: (game: GameModel, card: CardComponent) =>
-		!game.state.statusEffects.somethingFulfills(effect.target(card.entity), effect.damageEffect),
+		!game.components.somethingFulfills(StatusEffectComponent, effect.target(card.entity), effect.damageEffect),
 }
 
 export function isCounter(props: StatusEffectProps | null): props is Counter {
