@@ -23,8 +23,8 @@ class DropperSingleUseCard extends Card {
 
 		player.hooks.onApply.add(component, () => {
 			for (let i = 0; i < 2; i++) {
-				let card = game.components.new(CardComponent, FletchingTableSingleUseCard, player.entity)
-				card.slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
+				let slot = game.components.new(DeckSlotComponent, player.entity, {position: 'random'})
+				game.components.new(CardComponent, FletchingTableSingleUseCard, slot.entity)
 			}
 		})
 	}

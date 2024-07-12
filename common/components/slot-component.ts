@@ -4,22 +4,24 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
 import {CardComponent} from './card-component'
 import {card, slot} from './query'
 
+type SlotDefs =
+	| {
+			type: 'single_use'
+	  }
+	| {
+			type: SlotTypeT
+			player: PlayerEntity
+	  }
+
 export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
-	readonly playerEntity: PlayerEntity | null
-	readonly type: SlotTypeT
+	readonly defs: SlotDefs
 
-	constructor(
-		game: GameModel,
-		entity: SlotEntity,
-		playerEntity: PlayerEntity | null,
-		type: SlotTypeT
-	) {
+	constructor(game: GameModel, entity: SlotEntity, defs: SlotDefs) {
 		this.entity = entity
 		this.game = game
-		this.playerEntity = playerEntity
-		this.type = type
+		this.defs = defs
 	}
 
 	public onBoard(): this is BoardSlotComponent {
@@ -38,14 +40,17 @@ export class SlotComponent {
 		return false
 	}
 
+	/* Return the player who owns the slot. For single use slots this is the current player. */
 	get player() {
-		if (!this.playerEntity) return null
-		return this.game.components.getOrError(this.playerEntity)
+		if (this.defs.type === 'single_use')
+			return this.game.components.getOrError(this.game.currentPlayerEntity)
+		return this.game.components.getOrError(this.defs.player)
 	}
 
 	get opponentPlayer() {
-		if (!this.playerEntity) return null
-		return this.game.components.get(this.game.otherPlayerEntity(this.playerEntity))
+		if (this.defs.type === 'single_use')
+			return this.game.components.getOrError(this.game.opponentPlayerEntity)
+		return this.game.components.get(this.game.otherPlayerEntity(this.defs.player))
 	}
 }
 
@@ -56,12 +61,11 @@ export class BoardSlotComponent extends SlotComponent {
 	constructor(
 		game: GameModel,
 		entity: SlotEntity,
-		playerId: PlayerEntity | null,
-		type: SlotTypeT,
+		defs: SlotDefs,
 		index: number | null,
-		row: RowEntity | null
+		row: RowEntity | null,
 	) {
-		super(game, entity, playerId, type)
+		super(game, entity, defs)
 		this.index = index
 		this.rowEntity = row
 	}
@@ -77,8 +81,8 @@ export class BoardSlotComponent extends SlotComponent {
 }
 
 export class HandSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
-		super(game, entity, playerId, 'hand')
+	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
+		super(game, entity, {player: playerEntity, type: 'hand'})
 	}
 
 	override inHand(): this is HandSlotComponent {
@@ -165,10 +169,10 @@ export class DeckSlotComponent extends SlotComponent {
 	constructor(
 		game: GameModel,
 		entity: SlotEntity,
-		playerId: PlayerEntity | null,
+		playerEntity: PlayerEntity,
 		position: DeckPosition
 	) {
-		super(game, entity, playerId, 'deck')
+		super(game, entity, {player: playerEntity, type: 'deck'})
 		this.order = findDeckPosition(game, position)
 	}
 
@@ -178,8 +182,8 @@ export class DeckSlotComponent extends SlotComponent {
 }
 
 export class DiscardSlotComponent extends SlotComponent {
-	constructor(game: GameModel, entity: SlotEntity, playerId: PlayerEntity | null) {
-		super(game, entity, playerId, 'discardPile')
+	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
+		super(game, entity, {player: playerEntity, type: 'discardPile'})
 	}
 
 	override inDiscardPile(): this is DiscardSlotComponent {

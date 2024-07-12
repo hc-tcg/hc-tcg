@@ -20,25 +20,25 @@ export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerM
 
 	setupEcsForPlayer(components, player1, player1Component.entity)
 	setupEcsForPlayer(components, player2, player2Component.entity)
-	components.new(BoardSlotComponent, null, 'single_use', null, null)
+	components.new(BoardSlotComponent, {type: 'single_use'}, null, null)
 }
 
 function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEntity: PlayerEntity) {
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = components.new(RowComponent, playerEntity, rowIndex)
 
-		components.new(BoardSlotComponent, playerEntity, 'item', 0, row.entity)
-		components.new(BoardSlotComponent, playerEntity, 'item', 1, row.entity)
-		components.new(BoardSlotComponent, playerEntity, 'item', 2, row.entity)
-		components.new(BoardSlotComponent, playerEntity, 'attach', 3, row.entity)
-		components.new(BoardSlotComponent, playerEntity, 'hermit', 4, row.entity)
+		components.new(BoardSlotComponent, {player: playerEntity, type: 'item'}, 0, row.entity)
+		components.new(BoardSlotComponent, {player: playerEntity, type: 'item'}, 1, row.entity)
+		components.new(BoardSlotComponent, {player: playerEntity, type: 'item'}, 2, row.entity)
+		components.new(BoardSlotComponent, {player: playerEntity, type: 'attach'}, 3, row.entity)
+		components.new(BoardSlotComponent, {player: playerEntity, type: 'hermit'}, 4, row.entity)
 	}
 
 	for (const card of playerModel.deck.cards) {
-		const cardInstance = components.new(CardComponent, CARDS[card.props.id], playerEntity)
-		cardInstance.slotEntity = components.new(DeckSlotComponent, playerEntity, {
+		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',
-		}).entity
+		})
+		const cardInstance = components.new(CardComponent, card.props.id, slot.entity)
 	}
 
 	// Ensure there is a hermit in the first 5 cards

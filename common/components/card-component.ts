@@ -14,7 +14,7 @@ import {
 	isHermit,
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
-import {CardEntity, PlayerEntity, SlotEntity} from '../types/game-state'
+import {CardEntity, SlotEntity} from '../types/game-state'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 
 let CARDS: Record<any, Card>
@@ -24,17 +24,23 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	readonly game: GameModel
 	readonly card: Card<Props>
 	readonly entity: CardEntity
-	readonly playerEntity: PlayerEntity
 
-	slotEntity: SlotEntity | null
+	slotEntity: SlotEntity
 
-	constructor(game: GameModel, entity: CardEntity, card: new () => Card, playerId: PlayerEntity) {
+	constructor(
+		game: GameModel,
+		entity: CardEntity,
+		card: string | (new () => Card),
+		slot: SlotEntity
+	) {
 		this.game = game
 		this.entity = entity
-		this.card = CARDS[card.name] as Card<Props>
-		this.playerEntity = playerId
-		this.slotEntity = null
-		this.playerEntity = playerId
+		if (card instanceof Object) {
+			this.card = CARDS[card.name] as Card<Props>
+		} else {
+			this.card = CARDS[card] as Card<Props>
+		}
+		this.slotEntity = slot
 	}
 
 	static fromLocalCardInstance(
@@ -53,16 +59,18 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return this.card.props
 	}
 
-	public get slot(): SlotComponent | null {
-		return this.game.components.get(this.slotEntity)
+	public get slot(): SlotComponent {
+		return this.game.components.getOrError(this.slotEntity)
 	}
 
+	/** Get the player who owns the slot this card is in */
 	public get player(): PlayerComponent {
-		return this.game.components.getOrError(this.playerEntity)
+		return this.game.components.getOrError(this.slot?.player.entity)
 	}
 
+	/** Get the player who does not own the slot this card is in */
 	public get opponentPlayer(): PlayerComponent {
-		return this.game.components.getOrError(this.game.otherPlayerEntity(this.playerEntity))
+		return this.game.components.getOrError(this.game.otherPlayerEntity(this.slot?.player.entity))
 	}
 
 	public isItem(): this is CardComponent<Item> {
@@ -93,7 +101,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		this.slotEntity = component.entity
 		if (component.onBoard()) {
 			this.card.onAttach(this.game, this)
-			this.player.hooks.onAttach.call(this)
+			this.player?.hooks.onAttach.call(this)
 		}
 	}
 
@@ -101,8 +109,8 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public discard() {
 		if (this.slot?.onBoard()) {
 			this.card.onDetach(this.game, this)
-			this.player.hooks.onDetach.call(this)
+			this.player?.hooks.onDetach.call(this)
 		}
-		this.slotEntity = this.game.components.new(DiscardSlotComponent, this.playerEntity).entity
+		this.slotEntity = this.game.components.new(DiscardSlotComponent, this.slot.player.entity).entity
 	}
 }
