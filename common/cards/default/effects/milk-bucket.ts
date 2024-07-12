@@ -2,8 +2,8 @@ import {GameModel} from '../../../models/game-model'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {query, slot} from '../../../filters'
 import Card, {Attach, SingleUse} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
 import {attach, singleUse} from '../../base/defaults'
+import { CardComponent } from '../../../types/components'
 
 class MilkBucketEffectCard extends Card {
 	props: Attach & SingleUse = {

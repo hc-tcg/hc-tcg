@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"target": "esnext",
 		"module": "esnext",
-		"moduleResolution": "node",
+		"moduleResolution": "nodenext",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"strict": true,
@@ -11,5 +11,5 @@
 		"esModuleInterop": true,
 		"outDir": "./dist"
 	},
-	"include": [".", "../invisibility-potion.ts"]
+	"include": ["."]
 }

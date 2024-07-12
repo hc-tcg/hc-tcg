@@ -3,8 +3,8 @@ import {discardCard} from '../../../utils/movement'
 import {applySingleUse, removeStatusEffect} from '../../../utils/board'
 import {query, slot} from '../../../filters'
 import Card, {Attach, SingleUse} from '../../base/card'
-import {CardComponent} from '../../../types/game-state'
 import {attach, singleUse} from '../../base/defaults'
+import { CardComponent } from '../../../types/components'
 
 class WaterBucketEffectCard extends Card {
 	props: Attach & SingleUse = {
@@ -28,7 +28,7 @@ class WaterBucketEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer, rowId: row} = pos
+		const {player, opponentPlayer, rowId: row} = component
 		if (pos.type === 'single_use') {
 			game.addPickRequest({
 				playerId: player.id,
