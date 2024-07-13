@@ -143,7 +143,7 @@ function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckP
 	}
 
 	if (position.position === 'before') {
-		if (positonOfTargetCard === 1) {
+		if (positonOfTargetCard === 0) {
 			return findDeckPosition(game, player, {position: 'front'})
 		}
 
