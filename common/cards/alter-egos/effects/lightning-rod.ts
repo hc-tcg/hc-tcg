@@ -1,8 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, DiscardSlotComponent} from '../../../components'
-import {isTargeting} from '../../../utils/attacks'
-import {discardCard} from '../../../utils/movement'
+import {CardComponent, DiscardSlotComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -21,7 +19,8 @@ class LightningRodEffectCard extends Card {
 		attachCondition: query.every(
 			attach.attachCondition,
 			query.not(
-				slot.someSlotFulfills(
+				query.exists(
+					SlotComponent,
 					query.every(slot.currentPlayer, slot.attachSlot, slot.has(LightningRodEffectCard))
 				)
 			)

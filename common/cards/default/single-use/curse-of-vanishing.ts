@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -26,7 +26,7 @@ class CurseOfVanishingSingleUseCard extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.discardCondition)
+			query.exists(SlotComponent, this.discardCondition)
 		),
 	}
 

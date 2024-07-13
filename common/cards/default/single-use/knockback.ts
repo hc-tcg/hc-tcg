@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -27,7 +27,7 @@ class KnockbackSingleUseCard extends Card {
 		log: (values) => `${values.defaultLog} with {your|their} attack`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 	}
 

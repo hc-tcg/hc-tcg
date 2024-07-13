@@ -1,13 +1,13 @@
 import {GameModel} from '../../../models/game-model'
 import {card, query, row, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class SweepingEdgeSingleUseCard extends Card {
 	discardCondition = query.every(
-		query.some(slot.activeRow, slot.rowIs(row.adjacent(row.active))),
+		query.some(slot.activeRow, slot.row(row.adjacent(row.active))),
 		slot.attachSlot,
 		slot.opponent,
 		query.not(slot.empty),
@@ -27,7 +27,7 @@ class SweepingEdgeSingleUseCard extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.discardCondition)
+			query.exists(SlotComponent, this.discardCondition)
 		),
 	}
 

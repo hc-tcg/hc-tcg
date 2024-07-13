@@ -4,7 +4,7 @@ import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 
 class InstantHealthIISingleUseCard extends Card {
 	pickCondition = query.every(slot.hermitSlot, query.not(slot.empty))
@@ -21,7 +21,7 @@ class InstantHealthIISingleUseCard extends Card {
 		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.playerHasActiveHermit,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} on $p${values.pick.name}$ and healed $g60hp$`,
 	}

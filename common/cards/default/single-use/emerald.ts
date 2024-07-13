@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -18,10 +18,12 @@ class EmeraldSingleUseCard extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(
+			query.exists(
+				SlotComponent,
 				query.every(slot.currentPlayer, slot.activeRow, slot.attachSlot, query.not(slot.frozen))
 			),
-			slot.someSlotFulfills(
+			query.exists(
+				SlotComponent,
 				query.every(
 					slot.opponent,
 					slot.activeRow,
@@ -34,11 +36,21 @@ class EmeraldSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			const playerSlot = game.findSlot(slot.player, slot.activeRow, slot.attachSlot)
-			const opponentSlot = game.findSlot(slot.opponent, slot.activeRow, slot.attachSlot)
+			const playerSlot = game.components.find(
+				SlotComponent,
+				slot.currentPlayer,
+				slot.activeRow,
+				slot.attachSlot
+			)
+			const opponentSlot = game.components.find(
+				SlotComponent,
+				slot.opponent,
+				slot.activeRow,
+				slot.attachSlot
+			)
 
 			game.swapSlots(playerSlot, opponentSlot)
 		})

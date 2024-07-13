@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent, HandSlotComponent} from '../../../components'
+import {CardComponent, HandSlotComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -22,7 +22,7 @@ class LootingSingleUseCard extends Card {
 		showConfirmationModal: true,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog}, and ${values.coinFlip}`,
 	}

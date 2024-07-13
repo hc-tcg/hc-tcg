@@ -1,6 +1,5 @@
-import {StatusEffectComponent} from '..'
+import {CardComponent, StatusEffectComponent} from '..'
 import {ComponentQuery} from '.'
-import {CardEntity} from '../../types/game-state'
 import StatusEffect, {StatusEffectProps} from '../../status-effects/status-effect'
 
 let STATUS_EFFECTS: Record<any, StatusEffect>
@@ -14,8 +13,10 @@ export function is(effect: new () => StatusEffect): ComponentQuery<StatusEffectC
 	return (_game, statusEffect) => STATUS_EFFECTS[effect.name].props.id == statusEffect.props.id
 }
 
-export function target(target: CardEntity): ComponentQuery<StatusEffectComponent> {
-	return (_game, statusEffect) => statusEffect.target?.entity === target
+export function target(
+	target: ComponentQuery<CardComponent>
+): ComponentQuery<StatusEffectComponent> {
+	return (game, statusEffect) => statusEffect.target !== null && target(game, statusEffect.target)
 }
 
 export function type(type: StatusEffectProps['type']): ComponentQuery<StatusEffectComponent> {

@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, row, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -27,8 +27,9 @@ class MendingSingleUseCard extends Card {
 		description: "Move your active Hermit's attached effect card to any of your AFK Hermits.",
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition),
-			slot.someSlotFulfills(
+			query.exists(SlotComponent, this.pickCondition),
+			query.exists(
+				SlotComponent,
 				query.every(slot.activeRow, slot.attachSlot, query.not(slot.frozen), query.not(slot.empty))
 			)
 		),

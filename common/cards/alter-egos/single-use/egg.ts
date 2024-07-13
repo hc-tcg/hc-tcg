@@ -1,7 +1,7 @@
 import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
@@ -28,7 +28,7 @@ class EggSingleUseCard extends Card {
 			"After your attack, choose one of your opponent's AFK Hermits to set as their active Hermit, and then flip a coin.\nIf heads, also do 10hp damage to that Hermit.",
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.pickCondition)
+			query.exists(SlotComponent, this.pickCondition)
 		),
 		log: (values) => `${values.defaultLog} on $o${values.pick.name}$`,
 	}

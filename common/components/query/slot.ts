@@ -141,18 +141,17 @@ export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponen
 	return (game, pos) => game.state.turn.availableActions.includes(action)
 }
 
-export function hasStatusEffect(statusEffect: new () => StatusEffect): ComponentQuery<SlotComponent> {
+export function hasStatusEffect(
+	statusEffect: new () => StatusEffect
+): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
-		return game.components.exists(StatusEffectComponent, effect.is(statusEffect), effect.target(card.slotIs(pos.entity)))
+		return game.components.exists(
+			StatusEffectComponent,
+			effect.is(statusEffect),
+			effect.target(card.slotIs(pos.entity))
+		)
 	}
 }
-
-/** Return true if a slot on the board exists that fullfils the condition given by the predicate */
-export const someSlotFulfills =
-	(predicate: ComponentQuery<SlotComponent>): ComponentQuery<SlotComponent> =>
-	(game, pos) => {
-		return game.components.exists(SlotComponent, predicate)
-	}
 
 /* *Returns true if an adjacent row to a given slot fulfills the condition given by the predicate. */
 export const adjacentTo = (

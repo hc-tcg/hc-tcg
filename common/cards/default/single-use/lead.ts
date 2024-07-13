@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, row, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -37,8 +37,8 @@ class LeadSingleUseCard extends Card {
 			`${values.defaultLog} to move $m${values.pick.name}$ to $o${values.pick.hermitCard}$`,
 		attachCondition: query.every(
 			singleUse.attachCondition,
-			slot.someSlotFulfills(this.firstPickCondition),
-			slot.someSlotFulfills(this.secondPickCondition)
+			query.exists(SlotComponent, this.firstPickCondition),
+			query.exists(SlotComponent, this.secondPickCondition)
 		),
 	}
 
