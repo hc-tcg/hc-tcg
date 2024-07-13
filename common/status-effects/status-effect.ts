@@ -54,7 +54,7 @@ export const damageEffect = {
 	type: 'damage' as StatusEffectProps['type'],
 	applyCondition: (game: GameModel, pos: SlotInfo) =>
 		game.state.statusEffects.every(
-			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.type === 'damage'
+			(a) => a.targetInstance.instance !== pos.card?.instance || a.props.type !== 'damage'
 		),
 	applyLog: (values: StatusEffectLog) =>
 		`${values.target} was inflicted with ${values.statusEffect}`,
