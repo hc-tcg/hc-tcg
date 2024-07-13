@@ -101,15 +101,15 @@ type DeckPosition =
 	| {position: 'before'; spot: DeckSlotComponent}
 	| {position: 'after'; spot: DeckSlotComponent}
 
-function findDeckPosition(game: GameModel, position: DeckPosition): number {
+function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckPosition): number {
 	let deckPositionsWithCards = game.components
-		.filter(CardComponent, card.slot(slot.deck))
+		.filter(CardComponent, card.slot(slot.deck, slot.player(player)))
 		.map((card) => card.slot as DeckSlotComponent)
 		.sort((a, b) => a.order - b.order)
 
 	// If there is no cards in the deck, lets give the first card a position.
 	if (deckPositionsWithCards.length === 0) {
-		return 0.5
+		return 0
 	}
 
 	if (position.position === 'random') {
@@ -117,11 +117,11 @@ function findDeckPosition(game: GameModel, position: DeckPosition): number {
 		let targetPosition = Math.floor(Math.random() * numberOfPossibleSpots)
 
 		if (targetPosition === 0) {
-			return findDeckPosition(game, {position: 'front'})
+			return findDeckPosition(game, player, {position: 'front'})
 		} else {
-			return findDeckPosition(game, {
+			return findDeckPosition(game, player, {
 				position: 'after',
-				spot: deckPositionsWithCards[targetPosition],
+				spot: deckPositionsWithCards[targetPosition - 1],
 			})
 		}
 	}
@@ -131,7 +131,7 @@ function findDeckPosition(game: GameModel, position: DeckPosition): number {
 	}
 
 	if (position.position === 'back') {
-		return deckPositionsWithCards[-1].order + 1
+		return deckPositionsWithCards[deckPositionsWithCards.length - 1].order + 1
 	}
 
 	let positonOfTargetCard = deckPositionsWithCards.findIndex(
@@ -144,23 +144,23 @@ function findDeckPosition(game: GameModel, position: DeckPosition): number {
 
 	if (position.position === 'before') {
 		if (positonOfTargetCard === 1) {
-			return findDeckPosition(game, {position: 'front'})
+			return findDeckPosition(game, player, {position: 'front'})
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard - 1].order
 		deckPositionsWithCards[positonOfTargetCard - 1].order =
-			(targetOrder + deckPositionsWithCards[positonOfTargetCard - 2].order) / 2
+			(targetOrder + deckPositionsWithCards[positonOfTargetCard].order) / 2
 		return targetOrder
 	}
 
 	if (position.position === 'after') {
 		if (positonOfTargetCard === deckPositionsWithCards.length - 1) {
-			return findDeckPosition(game, {position: 'back'})
+			return findDeckPosition(game, player, {position: 'back'})
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard + 1].order
 		deckPositionsWithCards[positonOfTargetCard + 1].order =
-			(targetOrder + deckPositionsWithCards[positonOfTargetCard + 2].order) / 2
+			(targetOrder + deckPositionsWithCards[positonOfTargetCard].order) / 2
 		return targetOrder
 	}
 
@@ -177,7 +177,7 @@ export class DeckSlotComponent extends SlotComponent {
 		position: DeckPosition
 	) {
 		super(game, entity, {player: playerEntity, type: 'deck'})
-		this.order = findDeckPosition(game, position)
+		this.order = findDeckPosition(game, playerEntity, position)
 	}
 
 	override inDeck(): this is DeckSlotComponent {

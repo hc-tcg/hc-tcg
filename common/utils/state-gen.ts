@@ -1,6 +1,5 @@
-import {CARDS} from '../cards'
 import {DEBUG_CONFIG} from '../config'
-import {card, slot} from '../components/query'
+import {card, query, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {
@@ -13,6 +12,7 @@ import {
 } from '../components'
 import ECS from '../types/ecs'
 import {GameState, PlayerEntity} from '../types/game-state'
+import {singleUse} from '../cards/base/defaults'
 
 export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerModel) {
 	let player1Component = components.new(PlayerComponent, player1)
@@ -24,6 +24,13 @@ export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerM
 }
 
 function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEntity: PlayerEntity) {
+	for (const card of playerModel.deck.cards) {
+		let slot = components.new(DeckSlotComponent, playerEntity, {
+			position: 'random',
+		})
+		const cardInstance = components.new(CardComponent, card.props.id, slot.entity)
+	}
+
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
 		let row = components.new(RowComponent, playerEntity, rowIndex)
 
@@ -32,13 +39,6 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 		components.new(BoardSlotComponent, {player: playerEntity, type: 'item'}, 2, row.entity)
 		components.new(BoardSlotComponent, {player: playerEntity, type: 'attach'}, 3, row.entity)
 		components.new(BoardSlotComponent, {player: playerEntity, type: 'hermit'}, 4, row.entity)
-	}
-
-	for (const card of playerModel.deck.cards) {
-		let slot = components.new(DeckSlotComponent, playerEntity, {
-			position: 'random',
-		})
-		const cardInstance = components.new(CardComponent, card.props.id, slot.entity)
 	}
 
 	// Ensure there is a hermit in the first 5 cards
