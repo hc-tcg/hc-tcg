@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {CardComponent, HandSlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -28,7 +28,7 @@ class LootingSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.onApply.add(component, () => {
 			const coinFlip = flipCoin(player, component)
@@ -41,14 +41,9 @@ class LootingSingleUseCard extends Card {
 				message: 'Pick an item card to add to your hand',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (pickedSlot.rowIndex === null || pickedSlot.cardId === null) {
-						return
-					}
-
-					const playerRow = opponentPlayer.board.rows[pickedSlot.rowIndex]
-					const hermitCard = playerRow.hermitCard
-					if (!hermitCard || !playerRow.health) return
-					moveCardInstanceoHand(game, pickedSlot.cardId, player)
+					const card = pickedSlot.getCard()
+					if (!card) return
+					card.attach(card.game.components.new(HandSlotComponent, opponentPlayer.entity))
 				},
 			})
 		})
