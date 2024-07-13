@@ -1,7 +1,5 @@
 import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
 import {isTargeting} from '../utils/attacks'
 
 class ProtectedStatusEffect extends StatusEffect {

@@ -1,8 +1,5 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
 import {executeAttacks} from '../utils/attacks'
 import {AttackModel} from '../models/attack-model'
 import {slot} from '../components/query'

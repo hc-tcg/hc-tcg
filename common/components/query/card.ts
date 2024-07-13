@@ -3,6 +3,7 @@ import type Card from '../../cards/base/card'
 import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
+import StatusEffect from '../../status-effects/status-effect'
 
 let CARDS: Record<string, Card>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
@@ -68,11 +69,13 @@ export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComp
 /** Return true if this card is on the active row */
 export const active: ComponentQuery<CardComponent> = slot(slotCombinators.activeRow)
 
-export const hasStatusEffect = (statusEffect: string): ComponentQuery<CardComponent> => {
+export const hasStatusEffect = (
+	statusEffect: new () => StatusEffect
+): ComponentQuery<CardComponent> => {
 	return (game, card) => {
 		return game.components.exists(
 			StatusEffectComponent,
-			effect.id(statusEffect),
+			effect.is(statusEffect),
 			effect.target(card.entity)
 		)
 	}

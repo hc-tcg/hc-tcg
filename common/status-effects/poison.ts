@@ -1,9 +1,6 @@
 import StatusEffect, {StatusEffectProps, damageEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
 import {AttackModel} from '../models/attack-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
 import {executeExtraAttacks} from '../utils/attacks'
 
 class PoisonStatusEffect extends StatusEffect {

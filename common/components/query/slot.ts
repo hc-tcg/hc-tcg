@@ -1,7 +1,8 @@
 import type Card from '../../cards/base/card'
-import {ComponentQuery, card, query} from '.'
-import {CardComponent, RowComponent, SlotComponent} from '..'
+import {ComponentQuery, card, effect, query} from '.'
+import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {PlayerEntity, RowEntity, SlotEntity, TurnAction} from '../../types/game-state'
+import StatusEffect from '../../status-effects/status-effect'
 
 /** Return true if the card is attached to the player's side. */
 export const currentPlayer: ComponentQuery<SlotComponent> = (game, pos) => {
@@ -138,6 +139,12 @@ export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 
 export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponent> => {
 	return (game, pos) => game.state.turn.availableActions.includes(action)
+}
+
+export function hasStatusEffect(statusEffect: new () => StatusEffect): ComponentQuery<SlotComponent> {
+	return (game, pos) => {
+		return game.components.exists(StatusEffectComponent, effect.is(statusEffect), effect.target(card.slotIs(pos.entity)))
+	}
 }
 
 /** Return true if a slot on the board exists that fullfils the condition given by the predicate */

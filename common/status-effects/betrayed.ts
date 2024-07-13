@@ -1,11 +1,8 @@
 import StatusEffect, {StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
-import {slot} from '../components/query'
+import {query, slot} from '../components/query'
 import {hasEnoughEnergy} from '../utils/attacks'
-import {SlotComponent} from '../types/cards'
+import {CardComponent, StatusEffectComponent} from '../components'
 
 class BetrayedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -16,13 +13,13 @@ class BetrayedStatusEffect extends StatusEffect {
 			'This Hermit must attack an AFK hermit if one exists and they have the neccesary items attached to attack.',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
+	override onApply(game: GameModel, instance: StatusEffectComponent, component: CardComponent) {
 		const {player} = component
 
-		const pickCondition = slot.every(
-			slot.player,
-			slot.not(slot.activeRow),
-			slot.not(slot.empty),
+		const pickCondition = query.every(
+			slot.currentPlayer,
+			query.not(slot.activeRow),
+			query.not(slot.empty),
 			slot.hermitSlot
 		)
 

@@ -1,8 +1,7 @@
 import StatusEffect, {StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectComponent} from '../types/game-state'
-import {slot} from '../components/query'
+import {card, query} from '../components/query'
+import {CardComponent, StatusEffectComponent} from '../components'
 
 class DyedStatusEffect extends StatusEffect {
 	props: StatusEffectProps = {
@@ -10,28 +9,22 @@ class DyedStatusEffect extends StatusEffect {
 		id: 'dyed',
 		name: 'Dyed',
 		description: 'Items attached to this Hermit become any type.',
-		applyCondition: slot.not(slot.hasStatusEffect('dyed')),
+		applyCondition: query.not(card.hasStatusEffect(DyedStatusEffect)),
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = component
-
-		player.hooks.availableEnergy.add(instance, (availableEnergy) => {
-			if (player.board.activeRow === null) return availableEnergy
-
-			const activeRow = player.board.rows[player.board.activeRow]
-
-			if (instance.target.entity !== activeRow.hermitCard?.instance) return availableEnergy
-
+	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		target.player.hooks.availableEnergy.add(effect, (availableEnergy) => {
+			if (!target.slot.inRow() || target.player.activeRowEntity !== target.slot.row.entity)
+				return availableEnergy
 			return availableEnergy.map(() => 'any')
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
+	override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player, opponentPlayer} = target
 
-		player.hooks.availableEnergy.remove(instance)
-		opponentPlayer.hooks.onTurnEnd.remove(instance)
+		player.hooks.availableEnergy.remove(effect)
+		opponentPlayer.hooks.onTurnEnd.remove(effect)
 	}
 }
 

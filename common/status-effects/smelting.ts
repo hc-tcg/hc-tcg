@@ -1,8 +1,5 @@
 import StatusEffect, {Counter, StatusEffectProps, statusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {StatusEffectComponent} from '../types/game-state'
-import {discardCard} from '../utils/movement'
 
 class SmeltingStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

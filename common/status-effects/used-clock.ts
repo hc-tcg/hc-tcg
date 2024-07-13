@@ -1,8 +1,5 @@
 import StatusEffect, {Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {removeStatusEffect} from '../utils/board'
-import {StatusEffectComponent} from '../types/game-state'
 
 class UsedClockStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {

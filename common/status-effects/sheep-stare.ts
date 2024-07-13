@@ -4,10 +4,8 @@ import StatusEffect, {
 	systemStatusEffect,
 } from './status-effect'
 import {GameModel} from '../models/game-model'
-import {CardPosModel} from '../models/card-pos-model'
-import {CoinFlipT, StatusEffectComponent} from '../types/game-state'
+import {CoinFlipT} from '../types/game-state'
 import {flipCoin} from '../utils/coinFlips'
-import {removeStatusEffect} from '../utils/board'
 
 class SheepStareEffect extends StatusEffect {
 	props: StatusEffectProps = {
