@@ -65,7 +65,7 @@ export function loadSavedDeck(deck: SavedDeckT | null): PlayerDeckT | null {
 			if (!cardInfo) return null
 			return {
 				props: WithoutFunctions(cardInfo.props),
-				instance: card.cardInstance,
+				entity: card.cardInstance,
 			}
 		})
 		.filter((card) => card !== null) as Array<LocalCardInstance>
