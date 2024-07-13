@@ -61,6 +61,10 @@ export class SlotComponent {
 			return this.game.components.getOrError(this.game.opponentPlayerEntity)
 		return this.game.components.get(this.game.otherPlayerEntity(this.defs.player))
 	}
+
+	public getCard() {
+		return this.game.components.find(CardComponent, card.slotIs(this.entity))
+	}
 }
 
 export class BoardSlotComponent extends SlotComponent {
