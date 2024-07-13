@@ -1,6 +1,5 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import {isTargeting} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
@@ -18,19 +17,23 @@ class NetheriteArmorEffectCard extends Card {
 			'When the Hermit this card is attached to takes damage, that damage is reduced by up to 40hp each turn.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-		const componentKey = this.getInstanceKey(component)
+	override onAttach(_game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 
 		let damageBlocked = 0
 
 		player.hooks.onDefence.add(component, (attack) => {
-			if (!isTargeting(attack, pos) || attack.isType('status-effect')) return
+			if (
+				!component.slot.onBoard() ||
+				attack.targetEntity !== component.slot?.row?.entity ||
+				attack.isType('status-effect')
+			)
+				return
 
 			if (damageBlocked < 40) {
 				const damageReduction = Math.min(attack.calculateDamage(), 40 - damageBlocked)
 				damageBlocked += damageReduction
-				attack.reduceDamage(this.props.id, damageReduction)
+				attack.reduceDamage(component.entity, damageReduction)
 			}
 		})
 
@@ -43,8 +46,8 @@ class NetheriteArmorEffectCard extends Card {
 		opponentPlayer.hooks.onTurnStart.add(component, resetCounter)
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+	override onDetach(_game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 		player.hooks.onDefence.remove(component)
 		player.hooks.onTurnStart.remove(component)
 		opponentPlayer.hooks.onTurnStart.remove(component)

@@ -1,18 +1,19 @@
 import {
 	CurrentCoinFlipT,
-	PlayerComponent,
 	BattleLogT,
-	StatusEffectInstance,
+	CardEntity,
+	RowEntity,
+	PlayerEntity,
+    StatusEffectEntity,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
 import {GameModel} from './game-model'
 import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
-import Card from '../cards/base/card'
-import StatusEffect, {statusEffect, StatusEffectLog} from '../status-effects/status-effect'
-import {SlotInfo} from '../types/cards'
-import { CardComponent, SlotComponent } from '../components'
+import {StatusEffectLog} from '../status-effects/status-effect'
+import {CardComponent, SlotComponent} from '../components'
+import {card} from '../components/query'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -89,7 +90,7 @@ export class BattleLogModel {
 	public addPlayCardEntry(
 		card: CardComponent,
 		coinFlips: Array<CurrentCoinFlipT>,
-		pos: SlotComponent | null,
+		pos: SlotComponent | null
 	) {
 		let {player, opponentPlayer} = card
 
@@ -212,7 +213,7 @@ export class BattleLogModel {
 		log += DEBUG_CONFIG.logAttackHistory
 			? attack.getHistory().reduce((reduce, hist) => {
 					return reduce + `\n\t${hist.source} → ${hist.type} ${hist.value}`
-			  }, '')
+				}, '')
 			: ''
 
 		this.logMessageQueue.push({
@@ -249,9 +250,9 @@ export class BattleLogModel {
 		oldHermitEntity: CardEntity | null,
 		newHermitEntity: CardEntity | null
 	) {
-		let newRow = this.game.state.rows.get(newRowEntity)
-		let oldHermit = this.game.state.cards.get(oldHermitEntity)
-		let newHermit = this.game.state.cards.get(newHermitEntity)
+		let newRow = this.game.components.get(newRowEntity)
+		let oldHermit = this.game.components.get(oldHermitEntity)
+		let newHermit = this.game.components.get(newHermitEntity)
 
 		if (!newRow || !oldHermit || !newHermit) return
 
@@ -272,8 +273,8 @@ export class BattleLogModel {
 		}
 	}
 
-	public addDeathEntry(player: PlayerComponent, row: RowEntity) {
-		const hermitCard = this.game.state.cards.find(card.hermit, card.row(row))
+	public addDeathEntry(player: PlayerEntity, row: RowEntity) {
+		const hermitCard = this.game.components.find(CardComponent, card.isHermit, card.rowIs(row))
 		if (!hermitCard) return
 		const cardName = hermitCard.props.name
 
@@ -298,11 +299,11 @@ export class BattleLogModel {
 	}
 
 	public addStatusEffectEntry(
-		statusEffect: StatusEffectInstance,
+		statusEffect: StatusEffectEntity,
 		log: (values: StatusEffectLog) => string
 	) {
-		const pos = getCardPos(this.game, statusEffect.targetInstance)
-		if (!pos || !pos.rowIndex) return
+		const pos = this.game.components.get(statusEffect)?.target
+		if (!pos) return
 		const targetFormatting = pos.player.id === this.game.currentPlayerEntity ? 'p' : 'o'
 		const rowNumberString =
 			pos.player.board.activeRow === pos.rowIndex ? '' : `(${pos.rowIndex + 1})`

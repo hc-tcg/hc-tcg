@@ -26,6 +26,7 @@ import {
 	SlotComponent,
 } from 'common/components'
 import {SingleUse} from 'common/cards/base/types'
+import {PlayerId} from 'common/models/player-model'
 
 ////////////////////////////////////////
 // @TODO sort this whole thing out properly
@@ -204,7 +205,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	return filteredActions
 }
 
-function playerAction(actionType: string, playerId: string) {
+function playerAction(actionType: string, playerId: PlayerId) {
 	return (action: any) => action.type === actionType && action.playerId === playerId
 }
 
@@ -229,7 +230,7 @@ function* checkHermitHealth(game: GameModel) {
 			if (card.slot?.row?.health && card.slot.row.health <= 0) {
 				// Add battle log entry. Non Hermit cards can create their detach message themselves.
 				if (card.props.category === 'hermit') {
-					game.battleLog.addDeathEntry(playerState, row)
+					game.battleLog.addDeathEntry(playerState.entity, card.slot.row.entity)
 				}
 
 				continue
@@ -262,7 +263,7 @@ function* checkHermitHealth(game: GameModel) {
 			playerState.lives >= 3 &&
 			game.state.turn.turnNumber <= game.getPlayerIds().findIndex((id) => id === playerState.id) + 1
 
-		const noHermitsLeft = !game.components.exists(CardComponent, card.attached, card.hermit)
+		const noHermitsLeft = !game.components.exists(CardComponent, card.attached, card.isHermit)
 		if (isDead || noHermitsLeft) {
 			deadPlayerIds.push(playerState.id)
 		}
@@ -285,11 +286,11 @@ function* sendGameState(game: GameModel) {
 }
 
 function* turnActionSaga(game: GameModel, turnAction: any) {
-	const {currentPlayerEntity} = game
+	const {currentPlayer} = game
 	const actionType = turnAction.type as TurnAction
 
 	const availableActions =
-		turnAction.playerId === currentPlayerEntity
+		turnAction.playerId === currentPlayer.id
 			? game.state.turn.availableActions
 			: game.state.turn.opponentAvailableActions
 
@@ -541,11 +542,10 @@ function* turnActionsSaga(game: GameModel) {
 }
 
 function* turnSaga(game: GameModel) {
-	const {currentPlayerEntity, currentPlayer} = game
+	const {currentPlayer} = game
 
 	// Reset turn state
 	game.state.turn.availableActions = []
-	game.state.turn.currentPlayerEntity = currentPlayerEntity
 	game.state.turn.completedActions = []
 	game.state.turn.blockedActions = {}
 	game.state.turn.currentAttack = null
@@ -603,23 +603,20 @@ function* turnSaga(game: GameModel) {
 	const singleUseCard = game.components.find(CardComponent, card.attached, card.isSingleUse)
 	if (singleUseCard) {
 		if (currentPlayer.singleUseCardUsed) {
-			singleUseCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
+			singleUseCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
 		} else {
-			singleUseCard.slot = game.components.new(DiscardSlotComponent, currentPlayer.entity)
+			singleUseCard.attach(game.components.new(DiscardSlotComponent, currentPlayer.entity))
 		}
 	}
 
 	// Draw a card from deck when turn ends
 	const newCard = game.components
 		.filter(CardComponent, card.player(currentPlayer.entity), card.slot(slot.deck))
-		.sort((a, b) => {
-			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
-			return a.slot.order - b.slot.order
-		})
+		.sort(CardComponent.compareOrder)
 		.at(0)
 
 	if (newCard) {
-		newCard.slot = game.components.new(HandSlotComponent, currentPlayer.entity)
+		newCard.attach(game.components.new(HandSlotComponent, currentPlayer.entity))
 	}
 
 	// for (let i = 0; i < drawCards.length; i++) {

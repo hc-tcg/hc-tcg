@@ -1,4 +1,4 @@
-import { CardComponent } from 'common/components'
+import {CardComponent} from 'common/components'
 import {GameModel} from 'common/models/game-model'
 import {PlayCardActionData} from 'common/types/action-data'
 import {ActionResult} from 'common/types/game-state'
@@ -10,7 +10,7 @@ function* playCardSaga(
 	// Make sure data sent from client is correct
 	const pickInfo = turnAction?.payload?.pickInfo
 	const localCard = turnAction?.payload?.card
-	if (!pickInfo || !localCard || !pickInfo) {
+	if (!pickInfo || !localCard) {
 		return 'FAILURE_INVALID_DATA'
 	}
 
@@ -18,7 +18,7 @@ function* playCardSaga(
 
 	const {currentPlayer} = game
 
-	const pickedSlot = game.state.slots.get(pickInfo.entity)
+	const pickedSlot = game.components.get(pickInfo.entity)
 	if (!pickedSlot || !pickedSlot.onBoard()) {
 		throw new Error('A slot that is not on the board can not be picked: ' + pickedSlot)
 	}

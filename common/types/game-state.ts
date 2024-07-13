@@ -83,8 +83,6 @@ export type {ModalData} from './server-requests'
 
 export type TurnState = {
 	turnNumber: number
-	currentPlayerId: PlayerId
-	currentPlayerEntity: PlayerEntity
 	availableActions: TurnActions
 	opponentAvailableActions: TurnActions
 	completedActions: TurnActions

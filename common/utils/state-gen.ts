@@ -1,5 +1,5 @@
 import {DEBUG_CONFIG} from '../config'
-import {card, query, slot} from '../components/query'
+import {card, slot} from '../components/query'
 import {GameModel} from '../models/game-model'
 import {PlayerModel} from '../models/player-model'
 import {
@@ -12,7 +12,6 @@ import {
 } from '../components'
 import ECS from '../types/ecs'
 import {GameState, PlayerEntity} from '../types/game-state'
-import {singleUse} from '../cards/base/defaults'
 
 export function setupEcs(components: ECS, player1: PlayerModel, player2: PlayerModel) {
 	let player1Component = components.new(PlayerComponent, player1)
@@ -28,7 +27,7 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 		let slot = components.new(DeckSlotComponent, playerEntity, {
 			position: 'random',
 		})
-		const cardInstance = components.new(CardComponent, card.props.id, slot.entity)
+		components.new(CardComponent, card.props.id, slot.entity)
 	}
 
 	for (let rowIndex = 0; rowIndex < 5; rowIndex++) {
@@ -44,30 +43,31 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 	// Ensure there is a hermit in the first 5 cards
 	const sortedCards = components
 		.filter(CardComponent, card.player(playerEntity), card.slot(slot.deck))
-		.sort((a, b) => {
-			if (!a.slot?.inDeck() || !b.slot?.inDeck()) return 0
-			return a.slot.order - b.slot.order
-		})
+		.sort(CardComponent.compareOrder)
 
 	let index = sortedCards.findIndex((card) => card.isHermit())
 
 	if (index > 5) {
 		let a = sortedCards[index]
-		let b = sortedCards[Math.floor(Math.random() * 5)]
+		const swapIndex = Math.floor(Math.random() * 5)
+		let b = sortedCards[swapIndex]
 
 		if (a.slot?.inDeck() && b.slot?.inDeck()) {
 			let tmp = b.slot.order
 			a.slot.order = b.slot.order
 			b.slot.order = tmp
+			let tmpCard = sortedCards[index]
+			sortedCards[index] = sortedCards[swapIndex]
+			sortedCards[swapIndex] = tmpCard
 		}
 	}
 
 	const amountOfStartingCards =
 		DEBUG_CONFIG.startWithAllCards || DEBUG_CONFIG.unlimitedCards ? sortedCards.length : 7
 
-	for (let i = 0; i < amountOfStartingCards && i < sortedCards.length; i++) {
-		sortedCards[i].slotEntity = components.new(HandSlotComponent, playerEntity).entity
-	}
+	sortedCards.slice(0, amountOfStartingCards).forEach((card) => {
+		card.attach(components.new(HandSlotComponent, playerEntity))
+	})
 }
 
 export function getGameState(game: GameModel): GameState {
@@ -76,8 +76,6 @@ export function getGameState(game: GameModel): GameState {
 	const gameState: GameState = {
 		turn: {
 			turnNumber: 0,
-			currentPlayerId: playerEntities[0].id,
-			currentPlayerEntity: playerEntities[0].entity,
 			availableActions: [],
 			opponentAvailableActions: [],
 			completedActions: [],

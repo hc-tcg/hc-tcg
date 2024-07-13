@@ -85,8 +85,11 @@ export class BoardSlotComponent extends SlotComponent {
 }
 
 export class HandSlotComponent extends SlotComponent {
+	readonly order: number
+
 	constructor(game: GameModel, entity: SlotEntity, playerEntity: PlayerEntity) {
 		super(game, entity, {player: playerEntity, type: 'hand'})
+		this.order = game.components.filter(HandSlotComponent).length
 	}
 
 	override inHand(): this is HandSlotComponent {

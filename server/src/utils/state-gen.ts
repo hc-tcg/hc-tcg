@@ -205,8 +205,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 
 	const opponentState = playerState.opponentPlayer
 
+	const isCurrentPlayer = game.currentPlayer.id === player.id
 	const turnState = game.state.turn
-	const isCurrentPlayer = turnState.currentPlayerId === player.id
 
 	// convert player states
 	const players: Record<PlayerId, LocalPlayerState> = {}
@@ -247,8 +247,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 	const localGameState: LocalGameState = {
 		turn: {
 			turnNumber: turnState.turnNumber,
-			currentPlayerId: turnState.currentPlayerId,
-			currentPlayerEntity: turnState.currentPlayerEntity,
+			currentPlayerId: game.currentPlayer.id,
+			currentPlayerEntity: game.currentPlayer.entity,
 			availableActions: isCurrentPlayer
 				? turnState.availableActions
 				: turnState.opponentAvailableActions,
@@ -261,6 +261,7 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		// personal info
 		hand: game.components
 			.filter(CardComponent, card.slot(slot.player(playerState.entity), slot.hand))
+			.sort(CardComponent.compareOrder)
 			.map((inst) => inst.toLocalCardInstance()),
 		pileCount: game.components.filter(
 			CardComponent,

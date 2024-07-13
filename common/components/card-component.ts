@@ -55,6 +55,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		throw new Error('An ID for a nonexistent card should never be created')
 	}
 
+	static compareOrder(a: CardComponent, b: CardComponent) {
+		if (!('order' in a.slot) || !('order' in b.slot)) return 0
+		return (a.slot.order as number) - (b.slot.order as number)
+	}
+
 	public get props(): Props {
 		return this.card.props
 	}
