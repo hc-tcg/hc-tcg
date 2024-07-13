@@ -20,7 +20,7 @@ import {
 	isHermit,
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
-import StatusEffect from '../status-effects/status-effect'
+import type StatusEffect from '../status-effects/status-effect'
 import {CardEntity, SlotEntity} from '../types/game-state'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
 import {effect} from './query'

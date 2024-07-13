@@ -53,7 +53,7 @@ export const damageEffect = {
 	applyCondition: (game: GameModel, target: CardComponent) =>
 		!game.components.exists(
 			StatusEffectComponent,
-			effect.target(target.entity),
+			effect.targetIs(target.entity),
 			effect.type('damage')
 		),
 	applyLog: (values: StatusEffectLog) =>
