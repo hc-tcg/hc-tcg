@@ -170,6 +170,10 @@ export class PlayerComponent {
 		}
 	}
 
+	get activeRow() {
+		return this.game.components.get(this.activeRowEntity)
+	}
+
 	get opponentPlayer() {
 		let player = this.game.components.find(
 			PlayerComponent,
