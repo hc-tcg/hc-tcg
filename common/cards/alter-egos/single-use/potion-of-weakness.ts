@@ -1,6 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect} from '../../../utils/board'
-import {slot} from '../../../components/query'
+import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -23,7 +22,7 @@ class PotionOfWeaknessSingleUseCard extends Card {
 			},
 		],
 		showConfirmationModal: true,
-		attachCondition: slot.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
+		attachCondition: query.every(singleUse.attachCondition, slot.opponentHasActiveHermit),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {

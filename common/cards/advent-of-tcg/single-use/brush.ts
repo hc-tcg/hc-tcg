@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot, SlotCondition} from '../../../components/query'
+import {query} from '../../../components/query'
 import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -17,7 +17,7 @@ class BrushSingleUseCard extends Card {
 		description:
 			'View the top 3 cards of your deck, then choose any number to keep on the top of your deck. The rest will be placed on the bottom in their original order.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => pos.player.pile.length >= 3
 		),

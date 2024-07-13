@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {query, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
@@ -7,11 +7,11 @@ import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class TargetBlockSingleUseCard extends Card {
-	pickCondition = slot.every(
+	pickCondition = query.every(
 		slot.opponent,
 		slot.hermitSlot,
-		slot.not(slot.activeRow),
-		slot.not(slot.empty)
+		query.not(slot.activeRow),
+		query.not(slot.empty)
 	)
 
 	props: SingleUse = {
@@ -24,14 +24,14 @@ class TargetBlockSingleUseCard extends Card {
 		tokens: 3,
 		description:
 			"Choose one of your opponent's AFK Hermits to take all damage done during this turn.",
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.pickCondition)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		game.addPickRequest({
 			playerId: player.id,

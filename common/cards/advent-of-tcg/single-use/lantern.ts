@@ -1,5 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {query} from '../../../components/query'
 import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
@@ -17,7 +17,7 @@ class LanternSingleUseCard extends Card {
 		description:
 			'Look at the top 4 cards of your deck, and choose 2 to draw. Show these 2 cards to your opponent.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			(game, pos) => pos.player.pile.length >= 4
 		),
