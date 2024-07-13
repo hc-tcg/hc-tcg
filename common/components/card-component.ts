@@ -1,4 +1,10 @@
-import {DiscardSlotComponent, HandSlotComponent, PlayerComponent, SlotComponent} from '.'
+import {
+	DiscardSlotComponent,
+	HandSlotComponent,
+	PlayerComponent,
+	SlotComponent,
+	StatusEffectComponent,
+} from '.'
 import type Card from '../cards/base/card'
 import {
 	type Attach,
@@ -14,8 +20,10 @@ import {
 	isHermit,
 } from '../cards/base/types'
 import type {GameModel} from '../models/game-model'
+import StatusEffect from '../status-effects/status-effect'
 import {CardEntity, SlotEntity} from '../types/game-state'
 import {LocalCardInstance, WithoutFunctions} from '../types/server-requests'
+import {effect} from './query'
 
 let CARDS: Record<any, Card>
 import('../cards').then((mod) => (CARDS = mod.CARDS))
@@ -127,5 +135,13 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Move this card to the discard pile */
 	public discard() {
 		this.attach(this.game.components.new(DiscardSlotComponent, this.slot.player.entity))
+	}
+
+	public hasStatusEffect(statusEffect: new () => StatusEffect) {
+		return this.game.components.find(
+			StatusEffectComponent,
+			effect.is(statusEffect),
+			effect.targetIs(this.entity)
+		)
 	}
 }

@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
+import {card, query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
+import SleepingStatusEffect from '../../../status-effects/sleeping'
 
 class BedEffectCard extends Card {
 	props: Attach = {
@@ -27,49 +28,37 @@ class BedEffectCard extends Card {
 
 	override onAttach(game: GameModel, component: CardComponent) {
 		// Give the current row sleeping for 3 turns
-		const {player, rowId: row} = pos
+		const {player} = component
 
-		let hermitCard: CardComponent | null = null
+		if (!component.slot.inRow()) return
 
-		if (row && row.hermitCard) {
-			applyStatusEffect(game, 'sleeping', row.hermitCard)
+		let hermitCard = game.components.find(
+			CardComponent,
+			card.rowIs(component.slot.row.entity),
+			card.slot(slot.hermitSlot)
+		)
+
+		if (hermitCard) {
+			game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(hermitCard.entity)
 		}
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(component, () => {
-			const isSleeping = game.state.statusEffects.some(
-				(a) => a.targetInstance.component == row?.hermitCard?.component && a.props.id == 'sleeping'
-			)
-			if (!isSleeping) {
-				discardCard(game, row?.effectCard || null)
-				return
-			}
-		})
-
-		player.hooks.beforeApply.add(component, () => {
-			hermitCard = row?.hermitCard || null
-		})
-
-		//Ladder
-		player.hooks.afterApply.add(component, () => {
-			if (hermitCard?.entity != row?.hermitCard?.component && row && row.hermitCard) {
-				row.health = row.hermitCard.props.health
-
-				// Add new sleeping statusEffect
-				applyStatusEffect(game, 'sleeping', row.hermitCard)
+			if (!component.hasStatusEffect(SleepingStatusEffect)) {
+				component.discard()
 			}
 		})
 
 		player.hooks.onTurnEnd.add(component, () => {
 			// if sleeping has worn off, discard the bed
-			if (!hasStatusEffect(game, component, 'sleeping')) {
-				discardCard(game, row?.effectCard || null)
+			if (!component.hasStatusEffect(SleepingStatusEffect)) {
+				component.discard()
 				player.hooks.onTurnEnd.remove(component)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onTurnEnd.remove(component)
 		player.hooks.onTurnStart.remove(component)
