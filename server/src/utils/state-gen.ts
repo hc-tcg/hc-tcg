@@ -1,13 +1,7 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
-import {
-	LocalGameState,
-	LocalPlayerState,
-	newEntity,
-	CardEntity,
-	SlotEntity,
-} from 'common/types/game-state'
+import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
@@ -82,7 +76,7 @@ export function getStarterPack(): Array<LocalCardInstance> {
 		const hermitCard = hermitCards[randomIndex]
 
 		// remove this option
-		hermitCards = hermitCards.filter((card, index) => index !== randomIndex)
+		hermitCards = hermitCards.filter((_card, index) => index !== randomIndex)
 
 		// add 1 - 3 of this hermit
 		const hermitAmount = Math.min(randomBetween(1, 3), hermitCount - deck.length)
@@ -157,38 +151,34 @@ export function getLocalPlayerState(
 		singleUse: {slot: singleUseSlot, card: singleUseCard},
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components.filter(RowComponent, row.player(playerState.entity)).map((row) => {
-			const hermit = game.components.findEntity(
-				SlotComponent,
-				slot.hermitSlot,
-				slot.rowIs(row.entity)
-			)
-			const hermitCard = game.components.find(CardComponent, card.slotIs(hermit))
+			const hermitCard = row.getHermit()
+			const hermitSlot = row.getHermitSlot()
+			const attachCard = row.getAttach()
+			const attachSlot = row.getAttachSlot()
 
-			const attach = game.components.findEntity(
-				SlotComponent,
-				slot.attachSlot,
-				slot.rowIs(row.entity)
-			)
-			const attachCard = game.components.find(CardComponent, card.slotIs(attach))
+			const items = row.getItemSlots().map((itemSlot) => {
+				return {
+					slot: itemSlot.entity,
+					card:
+						game.components
+							.find(CardComponent, card.slotIs(itemSlot.entity))
+							?.toLocalCardInstance() || null,
+				}
+			})
 
-			const items = game.components
-				.filter(SlotComponent, slot.itemSlot, slot.rowIs(row.entity))
-				.map((itemSlot) => {
-					return {
-						slot: itemSlot.entity,
-						card:
-							game.components
-								.find(CardComponent, card.slotIs(itemSlot.entity))
-								?.toLocalCardInstance() || null,
-					}
-				})
-
-			if (!hermit || !attach) throw new Error('Slot is missing when generating local game state.')
+			if (!hermitCard || !attachCard)
+				throw new Error('Slot is missing when generating local game state.')
 
 			return {
 				entity: row.entity,
-				hermit: {slot: hermit, card: (hermitCard?.toLocalCardInstance() as any) || null},
-				attach: {slot: attach, card: (attachCard?.toLocalCardInstance() as any) || null},
+				hermit: {
+					slot: hermitSlot.entity,
+					card: (hermitCard.toLocalCardInstance() as any) || null,
+				},
+				attach: {
+					slot: attachSlot.entity,
+					card: (attachCard.toLocalCardInstance() as any) || null,
+				},
 				items: items,
 				health: row.health,
 			}

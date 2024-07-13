@@ -1,4 +1,4 @@
-import {row} from '../../../components/query'
+import {card, row, slot} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
 import Card from '../../base/card'
@@ -24,8 +24,12 @@ class ShieldEffectCard extends Card {
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 		player.hooks.onDefence.add(component, (attack) => {
-			let rowWithCard = game.state.rows.findEntity(row.hasCard(component.entity))
-			if (attack.getTarget() !== rowWithCard || attack.isType('status-effect')) return attack
+			if (
+				!component.slot.inRow() ||
+				attack.target?.entity !== component.slot.row.entity ||
+				attack.isType('status-effect')
+			)
+				return attack
 
 			if (damageBlocked < 60) {
 				const damageReduction = Math.min(attack.calculateDamage(), 60 - damageBlocked)
@@ -35,16 +39,19 @@ class ShieldEffectCard extends Card {
 		})
 
 		player.hooks.afterDefence.add(component, (attack) => {
-			if (damageBlocked > 0 && row) {
-				discardCard(game, row.effectCard)
-				if (!row.hermitCard) return attack
-				const hermitName = row.hermitCard?.props.name
+			if (damageBlocked > 0) {
+				component.discard()
+				const hermitName = game.components.find(
+					CardComponent,
+					card.slot(slot.hermitSlot),
+					card.row(row.row(attack.target?.entity))
+				)
 				game.battleLog.addEntry(player.entity, `$p${hermitName}'s$ $eShield$ was broken`)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onDefence.remove(component)
 		player.hooks.afterDefence.remove(component)

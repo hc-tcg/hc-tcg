@@ -57,8 +57,8 @@ class WolfEffectCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = component
+	override onDetach(_game: GameModel, component: CardComponent) {
+		const {opponentPlayer} = component
 		// Delete hooks and custom
 		opponentPlayer.hooks.onTurnStart.remove(component)
 		opponentPlayer.hooks.afterAttack.remove(component)

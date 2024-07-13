@@ -6,7 +6,7 @@ export const active: ComponentQuery<RowComponent> = (game, row) =>
 	[game.currentPlayer.activeRowEntity, game.opponentPlayer.activeRowEntity].includes(row.entity)
 
 export function player(player: PlayerEntity | null): ComponentQuery<RowComponent> {
-	return (game, row) => {
+	return (_game, row) => {
 		if (!player) return false
 		return row.playerId === player
 	}
@@ -26,6 +26,13 @@ export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 		let card = game.components.get(cardEntity)
 		if (!card?.slot?.onBoard()) return false
 		return card.slot.rowEntity === row.entity
+	}
+}
+
+export function row(rowEntity: RowEntity | null | undefined): ComponentQuery<RowComponent> {
+	return (_game, row) => {
+		if (!rowEntity) return false
+		return row.entity === rowEntity
 	}
 }
 

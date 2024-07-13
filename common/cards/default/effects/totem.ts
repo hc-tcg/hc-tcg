@@ -1,9 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {isTargeting} from '../../../utils/attacks'
 import {AttackModel} from '../../../models/attack-model'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import {CardComponent, StatusEffectComponent} from '../../../components'
+import {effect} from '../../../components/query'
 
 class TotemEffectCard extends Card {
 	props: Attach = {
@@ -25,28 +26,31 @@ class TotemEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		const reviveHook = (attack: AttackModel) => {
-			const target = attack.getTarget()
-			if (!isTargeting(attack, pos) || !target) return
-			const {row} = target
-			if (row.health) return
+			if (!component.slot.inRow()) return
+			if (attack.target?.entity !== component.slot.rowEntity) return
+			if (attack.target.health) return
 
-			row.health = 10
+			attack.target.health = 10
 
-			const statusEffectsToRemove = game.state.statusEffects.filterEntities((ail) => {
-				return ail.targetInstance.component === pos.cardId?.component
-			})
-			statusEffectsToRemove.forEach((ail) => {
-				removeStatusEffect(game, pos, ail)
-			})
+			let targetHermit = attack.target.getHermit()
 
-			const revivedHermit = row.hermitCard.props.name
-			game.battleLog.addEntry(player.id, `Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`)
+			game.components
+				.filter(StatusEffectComponent, effect.targetIs(targetHermit?.entity))
+				.forEach((ail) => {
+					ail.remove()
+				})
+
+			const revivedHermit = targetHermit?.props.name
+			game.battleLog.addEntry(
+				player.entity,
+				`Using $eTotem$, $p${revivedHermit}$ revived with $g10hp$`
+			)
 
 			// This will remove this hook, so it'll only be called once
-			discardCard(game, row.effectCard)
+			component.discard()
 		}
 
 		// If we are attacked from any source
@@ -58,9 +62,9 @@ class TotemEffectCard extends Card {
 		opponentPlayer.hooks.afterAttack.addBefore(component, (attack) => reviveHook(attack))
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		pos.player.hooks.afterDefence.remove(component)
-		pos.opponentPlayer.hooks.afterAttack.remove(component)
+	override onDetach(_game: GameModel, component: CardComponent) {
+		component.player.hooks.afterDefence.remove(component)
+		component.opponentPlayer.hooks.afterAttack.remove(component)
 	}
 }
 

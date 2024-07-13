@@ -15,14 +15,23 @@ export function is(effect: new () => StatusEffect): ComponentQuery<StatusEffectC
 }
 
 export function target(
-	target: ComponentQuery<CardComponent>
+	target: ComponentQuery<CardComponent> | null | undefined
 ): ComponentQuery<StatusEffectComponent> {
-	return (game, statusEffect) => statusEffect.target !== null && target(game, statusEffect.target)
+	return (game, statusEffect) =>
+		statusEffect.target !== null &&
+		target !== null &&
+		target !== undefined &&
+		target(game, statusEffect.target)
 }
 
-export function targetIs(target: CardEntity): ComponentQuery<StatusEffectComponent> {
+export function targetIs(
+	target: CardEntity | null | undefined
+): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) =>
-		statusEffect.target !== null && target == statusEffect.target.entity
+		statusEffect.target !== null &&
+		target !== null &&
+		target !== undefined &&
+		target == statusEffect.target.entity
 }
 
 export function type(type: StatusEffectProps['type']): ComponentQuery<StatusEffectComponent> {
