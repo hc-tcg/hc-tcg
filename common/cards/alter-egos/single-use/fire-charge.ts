@@ -10,9 +10,9 @@ import {CardComponent, SlotComponent} from '../../../components'
 class FireChargeSingleUseCard extends Card {
 	pickCondition = query.every(
 		slot.currentPlayer,
-			query.not(slot.frozen),
-			query.not(slot.empty),
-			query.some(slot.itemSlot, slot.attachSlot)
+		query.not(slot.frozen),
+		query.not(slot.empty),
+		query.some(slot.itemSlot, slot.attachSlot)
 	)
 
 	props: SingleUse = {
@@ -41,25 +41,20 @@ class FireChargeSingleUseCard extends Card {
 			message: 'Pick an item or effect card from one of your active or AFK Hermits',
 			canPick: this.pickCondition,
 			onResult(pickedSlot) {
-				if (!pickedSlot.cardId) return
-
-				// Discard the picked card and apply su card
-				discardCard(game, pickedSlot.cardId)
+				pickedSlot.getCard()?.discard()
 				applySingleUse(game, pickedSlot)
 			},
 		})
 
 		player.hooks.afterApply.add(component, () => {
-			discardSingleUse(game, player)
-
+			component.discard()
 			// Remove playing a single use from completed actions so it can be done again
 			game.removeCompletedActions('PLAY_SINGLE_USE_CARD')
-
 			player.hooks.afterApply.remove(component)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.afterApply.remove(component)
