@@ -4,7 +4,7 @@ import {
 	CardEntity,
 	RowEntity,
 	PlayerEntity,
-    StatusEffectEntity,
+	StatusEffectEntity,
 } from '../types/game-state'
 import {broadcast} from '../../server/src/utils/comm'
 import {AttackModel} from './attack-model'
@@ -13,7 +13,7 @@ import {formatText} from '../utils/formatting'
 import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, SlotComponent} from '../components'
-import {card} from '../components/query'
+import {card, slot} from '../components/query'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -158,7 +158,7 @@ export class BattleLogModel {
 		singleUse: CardComponent | null
 	) {
 		if (!attack.attacker) return
-		const playerId = attack.attacker.player.entity
+		const playerId = attack
 
 		if (!playerId) return
 
@@ -175,9 +175,10 @@ export class BattleLogModel {
 			if (subAttack.getDamage() === 0) return reducer
 
 			const attackingHermitInfo = attack.attacker
-			const targetHermitInfo = this.game.state.cards.find(
-				card.hermit,
-				card.row(attack.target.entity)
+			const targetHermitInfo = this.game.components.find(
+				CardComponent,
+				card.active,
+				card.slot(slot.hermitSlot)
 			)
 
 			const targetFormatting = attack.target.player.entity === playerId ? 'p' : 'o'

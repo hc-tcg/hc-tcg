@@ -37,7 +37,7 @@ class XBCraftedRareHermitCard extends Card {
 		player.hooks.beforeAttack.addBefore(component, (attack) => {
 			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary') return
 			// All attacks from our side should ignore opponent attached effect card this turn
-			attack.shouldIgnoreSlots.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
+			attack.shouldIgnoreCards.push(slot.every(slot.opponent, slot.attachSlot, slot.activeRow))
 		})
 	}
 

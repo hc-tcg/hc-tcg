@@ -46,7 +46,7 @@ class ThornsEffectCard extends Card {
 				log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
 			}).addDamage(this.props.id, 20)
 
-			backlashAttack.shouldIgnoreSlots.push(
+			backlashAttack.shouldIgnoreCards.push(
 				slot.hasId('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
 			)
 

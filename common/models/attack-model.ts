@@ -8,8 +8,9 @@ import {
 	AttackerEntity,
 } from '../types/attack'
 import {CardComponent, RowComponent, StatusEffectComponent} from '../components'
-import {RowEntity} from '../types/game-state'
+import {Entity, RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
+import {ComponentQuery} from '../components/query'
 
 export class AttackModel {
 	private readonly game: GameModel
@@ -25,7 +26,7 @@ export class AttackModel {
 	private history: Array<AttackHistory> = []
 
 	/** The attacker */
-	public attackerEntity: AttackerEntity | null
+	public attackerEntity: Entity<StatusEffectComponent | CardComponent> | null
 	/** The attack target */
 	public targetEntity: RowEntity | null
 
@@ -41,7 +42,7 @@ export class AttackModel {
 	/** Attacks to perform after this attack */
 	public nextAttacks: Array<AttackModel> = []
 	/** Array of checks to filter out hooks this attack should not trigger */
-	public shouldIgnoreSlots: Array<ShouldIgnoreCard> = []
+	public shouldIgnoreCards: Array<ComponentQuery<CardComponent>> = []
 	/** Is this attack a backlash attack*/
 	public isBacklash: boolean = false
 	/** Whether or not the attack should create a weakness attack */
@@ -54,7 +55,7 @@ export class AttackModel {
 
 		this.attackerEntity = defs.attacker || null
 		this.targetEntity = defs.target || null
-		this.shouldIgnoreSlots = defs.shouldIgnoreSlots || []
+		this.shouldIgnoreCards = defs.shouldIgnoreSlots || []
 		this.createWeakness = defs.createWeakness || 'never'
 
 		if (defs.log) this.log.push(defs.log)

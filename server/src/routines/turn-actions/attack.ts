@@ -5,8 +5,8 @@ import {HermitAttackType} from 'common/types/attack'
 import {GenericActionResult} from 'common/types/game-state'
 import {AttackActionData, attackActionToAttack} from 'common/types/action-data'
 import {executeAttacks} from 'common/utils/attacks'
-import {card, row, slot} from 'common/components/query'
-import {CardComponent} from 'common/components/components'
+import {card, slot} from 'common/components/query'
+import {CardComponent} from 'common/components'
 
 function getAttack(
 	game: GameModel,
@@ -48,11 +48,8 @@ function* attackSaga(
 	}
 
 	const hermitAttackType = attackActionToAttack[turnAction.type]
-	const {currentPlayer, opponentPlayer, state} = game
-	const activeInstance = game.state.cards.findComponent(
-		card.currentPlayer,
-		card.rowFulfills(row.active)
-	)
+	const {currentPlayer, state} = game
+	const activeInstance = game.components.find(CardComponent, card.currentPlayer, card.active)
 	if (!activeInstance) return 'FAILURE_CANNOT_COMPLETE'
 
 	if (checkForRequests) {
@@ -71,7 +68,7 @@ function* attackSaga(
 	// Get initial attacks
 	let attacks: Array<AttackModel> = getAttack(game, activeInstance, hermitAttackType)
 
-	const thisAttackSU = game.state.cards.findComponent(card.slotFulfills(slot.singleUseSlot))
+	const thisAttackSU = game.components.find(CardComponent, card.slot(slot.singleUseSlot))
 
 	// Run all the code stuff
 	executeAttacks(game, attacks)

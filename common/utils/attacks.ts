@@ -126,7 +126,7 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: CardComponent): boolean {
 	if (!instance.slot) return false
-	if (slot.some(...attack.shouldIgnoreSlots)(game, instance.slot)) {
+	if (slot.some(...attack.shouldIgnoreCards)(game, instance.slot)) {
 		return true
 	}
 

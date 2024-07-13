@@ -125,7 +125,7 @@ class IskallmanRareHermitCard extends Card {
 				isBacklash: true,
 			})
 			backlashAttack.addDamage(this.props.id, 50)
-			backlashAttack.shouldIgnoreSlots.push(slot.anything)
+			backlashAttack.shouldIgnoreCards.push(slot.anything)
 			attack.addNewAttack(backlashAttack)
 
 			const attackerInfo = attacker.row.hermitCard.card
