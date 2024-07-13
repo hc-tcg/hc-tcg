@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import SleepingStatusEffect from '../../../status-effects/sleeping'
 
 class BdoubleO100RareHermitCard extends Card {
 	props: Hermit = {
@@ -40,17 +41,9 @@ class BdoubleO100RareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (!attacker) return
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
-
-			const row = getActiveRow(player)
-
-			if (!row) return
-
-			// Add new sleeping statusEffect
-			applyStatusEffect(game, 'sleeping', row.hermitCard)
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
+			game.components.new(StatusEffectComponent, SleepingStatusEffect)
+				.apply(component.entity)
 		})
 	}
 

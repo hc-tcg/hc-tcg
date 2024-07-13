@@ -3,6 +3,7 @@ import type {SlotTypeT} from '../types/cards'
 import type {PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
 import {CardComponent} from './card-component'
 import {card, slot} from './query'
+import {RowComponent} from './row-component'
 
 type BoardSlotDefs =
 	| {
@@ -25,6 +26,10 @@ export class SlotComponent {
 	}
 
 	public onBoard(): this is BoardSlotComponent {
+		return false
+	}
+
+	public inRow(): this is BoardSlotComponent & {row: RowComponent} {
 		return false
 	}
 
@@ -75,6 +80,10 @@ export class BoardSlotComponent extends SlotComponent {
 	}
 
 	override onBoard(): this is BoardSlotComponent {
+		return true
+	}
+
+	override inRow(): this is BoardSlotComponent & {row: RowComponent} {
 		return true
 	}
 
