@@ -1,7 +1,13 @@
 import {CARDS} from 'common/cards'
 import {STRENGTHS} from 'common/const/strengths'
 import {CONFIG, EXPANSIONS} from 'common/config'
-import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/types/game-state'
+import {
+	LocalGameState,
+	LocalPlayerState,
+	newEntity,
+	CardEntity,
+	SlotEntity,
+} from 'common/types/game-state'
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
@@ -137,12 +143,18 @@ export function getLocalPlayerState(
 	game: GameModel,
 	playerState: PlayerComponent
 ): LocalPlayerState {
+	let singleUseSlot = game.components.find(SlotComponent, slot.singleUseSlot)?.entity
+	let singleUseCard =
+		game.components.find(CardComponent, card.slotIs(singleUseSlot))?.toLocalCardInstance() || null
+
+	if (!singleUseSlot) {
+		throw new Error('Slot is missing when generating local game state.')
+	}
+
 	let board = {
 		activeRow:
 			game.components.findEntity(RowComponent, row.active, row.player(playerState.entity)) || null,
-		singleUseCard:
-			game.components.find(CardComponent, card.slot(slot.singleUseSlot))?.toLocalCardInstance() ||
-			null,
+		singleUse: {slot: singleUseSlot, card: singleUseCard},
 		singleUseCardUsed: playerState.singleUseCardUsed,
 		rows: game.components.filter(RowComponent, row.player(playerState.entity)).map((row) => {
 			const hermit = game.components.findEntity(

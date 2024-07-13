@@ -32,7 +32,6 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 	const playerState = useSelector(getPlayerState)
 	const playerId = useSelector(getPlayerId)
 	const boardState = currentPlayer?.board
-	const singleUseCard = boardState?.singleUseCard || null
 	const singleUseCardUsed = boardState?.singleUseCardUsed || false
 	const availableActions = useSelector(getAvailableActions)
 	const currentCoinFlip = useSelector(getCurrentCoinFlip)
@@ -94,18 +93,21 @@ const Actions = ({onClick, localGameState, mobile, id}: Props) => {
 
 		const handleClick = () => {
 			isPlayable &&
+				boardState &&
 				onClick({
 					type: 'single_use',
-					index: null,
-					rowIndex: null,
-					playerId: localGameState.turn.currentPlayerId,
-					card: singleUseCard,
+					entity: boardState?.singleUse.slot,
 				})
 		}
 
 		return (
 			<div className={cn(css.slot, {[css.used]: singleUseCardUsed})}>
-				<Slot card={singleUseCard} type={'single_use'} onClick={handleClick} />
+				<Slot
+					card={boardState?.singleUse.card || null}
+					type={'single_use'}
+					entity={boardState?.singleUse.slot}
+					onClick={handleClick}
+				/>
 			</div>
 		)
 	}

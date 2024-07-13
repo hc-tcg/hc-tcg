@@ -169,7 +169,7 @@ export type LocalPlayerState = {
 	lives: number
 	board: {
 		activeRow: RowEntity | null
-		singleUseCard: LocalCardInstance | null
+		singleUse: {slot: SlotEntity; card: LocalCardInstance | null}
 		singleUseCardUsed: boolean
 		rows: Array<LocalRowState>
 	}

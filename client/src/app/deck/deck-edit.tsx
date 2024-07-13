@@ -133,7 +133,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const allCards = Object.values(CARDS).map(
 		(card: Card): LocalCardInstance => ({
 			props: WithoutFunctions(card.props),
-			instance: card.props.id as CardEntity,
+			entity: card.props.id as CardEntity,
 			slot: null,
 		})
 	)
@@ -167,7 +167,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 			...loadedDeck,
 			cards: [
 				...loadedDeck.cards,
-				{props: card.props, instance: newEntity('card-entity') as CardEntity, slot: null},
+				{props: card.props, entity: newEntity('card-entity') as CardEntity, slot: null},
 			],
 		}))
 	}
@@ -175,7 +175,7 @@ function EditDeck({back, title, saveDeck, deck}: Props) {
 	const removeCard = (card: LocalCardInstance) => {
 		setLoadedDeck((loadedDeck) => ({
 			...loadedDeck,
-			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.instance !== card.instance),
+			cards: loadedDeck.cards.filter((pickedCard) => pickedCard.entity !== card.entity),
 		}))
 	}
 

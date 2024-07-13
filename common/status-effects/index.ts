@@ -1,9 +1,9 @@
 import type StatusEffect from './status-effect'
-// import FireStatusEffect from './fire'
+import FireStatusEffect from './fire'
 // import PoisonStatusEffect from './poison'
 // import SleepingStatusEffect from './sleeping'
 // import BadOmenStatusEffect from './badomen'
-// import SlownessStatusEffect from './slowness'
+import SlownessStatusEffect from './slowness'
 // import WeaknessStatusEffect from './weakness'
 // import ProtectedStatusEffect from './protected'
 // import DyedStatusEffect from './dyed'
@@ -21,11 +21,11 @@ import type StatusEffect from './status-effect'
 // } from '../../invisibility-potion'
 
 const effectClasses: Array<new () => StatusEffect> = [
-	// FireStatusEffect,
+	FireStatusEffect,
 	// PoisonStatusEffect,
 	// SleepingStatusEffect,
 	// BadOmenStatusEffect,
-	// SlownessStatusEffect,
+	SlownessStatusEffect,
 	// WeaknessStatusEffect,
 	// ProtectedStatusEffect,
 	// DyedStatusEffect,

@@ -16,7 +16,7 @@ export function WithoutFunctions<T>(t: T): WithoutFunctions<T> {
 
 export type LocalCardInstance<Props extends CardProps = CardProps> = {
 	readonly props: WithoutFunctions<Props>
-	readonly instance: CardEntity
+	readonly entity: CardEntity
 	readonly slot: SlotEntity | null
 }
 

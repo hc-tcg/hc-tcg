@@ -42,7 +42,7 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 				key={slotType + '-' + slotIndex}
 				type={slotType}
 				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.instance == slot.card?.instance && slotType != 'hermit'
+					(a) => a.targetInstance.entity == slot.card?.entity && slotType != 'hermit'
 				)}
 			/>
 		)
@@ -59,7 +59,7 @@ const BoardRow = ({type, onClick, rowState, active, statusEffects}: BoardRowProp
 			<HealthSlot
 				rowState={rowState}
 				statusEffects={statusEffects.filter(
-					(a) => a.targetInstance.instance == rowState.hermit?.card?.instance
+					(a) => a.targetInstance.entity == rowState.hermit?.card?.entity
 				)}
 			/>
 		</div>

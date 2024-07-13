@@ -43,7 +43,7 @@ export function deckToSavedDeck(deck: PlayerDeckT): SavedDeckT {
 	let icon = deck.icon
 
 	let cards = deck.cards.map((card) => {
-		return {cardId: card.props.id, cardInstance: card.instance}
+		return {cardId: card.props.id, cardInstance: card.entity}
 	})
 
 	return {

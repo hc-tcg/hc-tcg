@@ -38,7 +38,7 @@ const Slot = ({type, entity, onClick, card, active, statusEffects, cssId}: SlotP
 
 		if (!cardsCanBePlacedIn || !selectedCard) return []
 
-		return cardsCanBePlacedIn.filter(([card, _]) => card?.instance == selectedCard.instance)[0][1]
+		return cardsCanBePlacedIn.filter(([card, _]) => card?.entity == selectedCard.entity)[0][1]
 	}
 
 	const getIsPickable = () => {

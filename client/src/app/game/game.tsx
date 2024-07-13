@@ -24,6 +24,7 @@ import {
 	getEndGameOverlay,
 	getAvailableActions,
 	getPickRequestPickableSlots,
+    getCardsCanBePlacedIn,
 } from 'logic/game/game-selectors'
 import {setOpenedModal, setSelectedCard, slotPicked} from 'logic/game/game-actions'
 import {DEBUG_CONFIG} from 'common/config'
@@ -216,7 +217,7 @@ function Game() {
 
 	if (pickableCards != undefined) {
 		for (let card of filteredCards) {
-			if (!pickableCards.includes(card.instance)) unpickableCards.push(card)
+			if (!pickableCards.includes(card.entity)) unpickableCards.push(card)
 		}
 	}
 

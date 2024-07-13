@@ -1,30 +1,11 @@
 import {CardCategoryT} from '../types/cards'
-import {CardComponent} from '../types/game-state'
 import {LocalCardInstance} from '../types/server-requests'
 
 /**
  * Returns true if the two cards are equal
  */
-export function equalCard(
-	card1: CardComponent | LocalCardInstance | null,
-	card2: CardComponent | LocalCardInstance | null
-) {
-	if (!card1 && !card2) return true
-	if (!card1 || !card2) return false
-
-	let id1, id2
-	if ('card' in card1) {
-		id1 = card1.card.props.id
-	} else {
-		id1 = card1.props.id
-	}
-	if ('card' in card2) {
-		id2 = card2.card.props.id
-	} else {
-		id2 = card2.props.id
-	}
-
-	return id1 === id2 && card1.props.id === card2.props.id
+export function equalCard(card1: LocalCardInstance | null, card2: LocalCardInstance | null) {
+	return card1?.entity === card2?.entity
 }
 
 /**

@@ -48,7 +48,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		localCardInstance: LocalCardInstance
 	): CardComponent {
 		for (const card of game.components.filter(CardComponent)) {
-			if (card.entity == localCardInstance.instance) {
+			if (card.entity == localCardInstance.entity) {
 				return card
 			}
 		}
@@ -97,7 +97,7 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	public toLocalCardInstance(): LocalCardInstance<Props> {
 		return {
 			props: this.card.props as WithoutFunctions<Props>,
-			instance: this.entity,
+			entity: this.entity,
 			slot: this.slotEntity,
 		}
 	}
