@@ -45,6 +45,8 @@ function setupEcsForPlayer(components: ECS, playerModel: PlayerModel, playerEnti
 		.filter(CardComponent, card.player(playerEntity), card.slot(slot.deck))
 		.sort(CardComponent.compareOrder)
 
+	console.log(sortedCards.map(card => [card.props.id, card.slot.order]))
+		
 	let index = sortedCards.findIndex((card) => card.isHermit())
 
 	if (index > 5) {
