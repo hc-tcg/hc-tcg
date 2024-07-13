@@ -37,7 +37,7 @@ class PotatoBoyRareHermitCard extends Card {
 
 		player.hooks.onAttack.add(component, (attack) => {
 			game.components
-				.filter(RowComponent, row.currentPlayer, row.adjacent(player.activeRowEntity))
+				.filter(RowComponent, row.currentPlayer, row.adjacent(row.active))
 				.forEach((row) => {
 					row.heal(40)
 					let hermit = game.components.find(CardComponent, card.rowIs(row.entity))

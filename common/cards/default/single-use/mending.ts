@@ -11,7 +11,7 @@ class MendingSingleUseCard extends Card {
 		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
-		slot.rowFulfills(row.hasHermit),
+		slot.row(row.hasHermit),
 		query.not(slot.frozen),
 		query.not(slot.activeRow)
 	)

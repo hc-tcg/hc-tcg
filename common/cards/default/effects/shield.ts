@@ -1,7 +1,6 @@
 import {row} from '../../../components/query'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import {discardCard} from '../../../utils/movement'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'

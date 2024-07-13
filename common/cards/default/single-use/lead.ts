@@ -18,7 +18,7 @@ class LeadSingleUseCard extends Card {
 		slot.opponent,
 		slot.itemSlot,
 		slot.empty,
-		slot.rowFulfills(row.hasHermit),
+		slot.row(row.hasHermit),
 		query.not(slot.activeRow),
 		query.not(slot.frozen)
 	)

@@ -30,7 +30,7 @@ class ArmorStandEffectCard extends Card {
 	override onAttach(game: GameModel, component: CardComponent) {
 		component.player.hooks.freezeSlots.add(component, () => {
 			if (!component.slot?.onBoard()) return query.nothing
-			return query.every(slot.currentPlayer, slot.row(component.slot.row?.entity))
+			return query.every(slot.currentPlayer, slot.rowIs(component.slot.row?.entity))
 		})
 	}
 

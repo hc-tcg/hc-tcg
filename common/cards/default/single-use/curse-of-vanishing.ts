@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import {discardCard} from '../../../utils/movement'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'

@@ -1,7 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {query, slot} from '../../../components/query'
-import {TurnActions} from '../../../types/game-state'
-import {applyStatusEffect} from '../../../utils/board'
+import {query} from '../../../components/query'
 import Card from '../../base/card'
 import {CardComponent} from '../../../components'
 import {SingleUse} from '../../base/types'

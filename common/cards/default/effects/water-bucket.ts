@@ -1,6 +1,5 @@
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
-import {applySingleUse, removeStatusEffect} from '../../../utils/board'
+import {applySingleUse} from '../../../utils/board'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach, singleUse} from '../../base/defaults'

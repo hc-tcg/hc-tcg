@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {discardCard} from '../../../utils/movement'
 import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'

@@ -293,12 +293,12 @@ export class GameModel {
 			const newHermit = this.components.findEntity(
 				CardComponent,
 				card.isHermit,
-				card.slot(slot.row(currentActiveRow?.entity))
+				card.slot(slot.rowIs(currentActiveRow?.entity))
 			)
 			const oldHermit = this.components.findEntity(
 				CardComponent,
 				card.isHermit,
-				card.slot(slot.row(newRow.entity))
+				card.slot(slot.rowIs(newRow.entity))
 			)
 			this.battleLog.addChangeRowEntry(player, newRow.entity, oldHermit, newHermit)
 		}

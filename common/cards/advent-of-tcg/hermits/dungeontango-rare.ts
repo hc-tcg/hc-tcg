@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import {discardCard} from '../../../utils/movement'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'

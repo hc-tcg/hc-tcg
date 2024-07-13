@@ -4,7 +4,7 @@ import type {PlayerEntity, RowEntity, SlotEntity} from '../types/game-state'
 import {CardComponent} from './card-component'
 import {card, slot} from './query'
 
-type SlotDefs =
+type BoardSlotDefs =
 	| {
 			type: 'single_use'
 	  }
@@ -16,9 +16,9 @@ type SlotDefs =
 export class SlotComponent {
 	readonly game: GameModel
 	readonly entity: SlotEntity
-	readonly defs: SlotDefs
+	private readonly defs: BoardSlotDefs
 
-	constructor(game: GameModel, entity: SlotEntity, defs: SlotDefs) {
+	constructor(game: GameModel, entity: SlotEntity, defs: BoardSlotDefs) {
 		this.entity = entity
 		this.game = game
 		this.defs = defs
@@ -38,6 +38,10 @@ export class SlotComponent {
 
 	public inDiscardPile(): this is DiscardSlotComponent {
 		return false
+	}
+
+	get type() {
+		return this.defs.type
 	}
 
 	/* Return the player who owns the slot. For single use slots this is the current player. */
@@ -61,9 +65,9 @@ export class BoardSlotComponent extends SlotComponent {
 	constructor(
 		game: GameModel,
 		entity: SlotEntity,
-		defs: SlotDefs,
+		defs: BoardSlotDefs,
 		index: number | null,
-		row: RowEntity | null,
+		row: RowEntity | null
 	) {
 		super(game, entity, defs)
 		this.index = index

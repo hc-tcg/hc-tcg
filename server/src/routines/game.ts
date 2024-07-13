@@ -109,7 +109,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 	const hasOtherHermit = game.components.filter(
 		CardComponent,
 		card.isAttach,
-		card.slot(query.not(slot.row(activeRowId)))
+		card.slot(query.not(slot.rowIs(activeRowId)))
 	)
 
 	// Actions that require us to have an active row
@@ -129,7 +129,7 @@ function getAvailableActions(game: GameModel, availableEnergy: Array<EnergyT>): 
 		if (activeRowId !== null && turnState.turnNumber > 1) {
 			const hermitCard = game.components.find(
 				CardComponent,
-				card.slot(slot.row(activeRowId), slot.hermitSlot)
+				card.slot(slot.rowIs(activeRowId), slot.hermitSlot)
 			)
 
 			// only add attack options if not sleeping

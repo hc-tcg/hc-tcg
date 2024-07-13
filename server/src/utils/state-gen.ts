@@ -148,19 +148,19 @@ export function getLocalPlayerState(
 			const hermit = game.components.findEntity(
 				SlotComponent,
 				slot.hermitSlot,
-				slot.row(row.entity)
+				slot.rowIs(row.entity)
 			)
 			const hermitCard = game.components.find(CardComponent, card.slotIs(hermit))
 
 			const attach = game.components.findEntity(
 				SlotComponent,
 				slot.attachSlot,
-				slot.row(row.entity)
+				slot.rowIs(row.entity)
 			)
 			const attachCard = game.components.find(CardComponent, card.slotIs(attach))
 
 			const items = game.components
-				.filter(SlotComponent, slot.itemSlot, slot.row(row.entity))
+				.filter(SlotComponent, slot.itemSlot, slot.rowIs(row.entity))
 				.map((itemSlot) => {
 					return {
 						slot: itemSlot.entity,

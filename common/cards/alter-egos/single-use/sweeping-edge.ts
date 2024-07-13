@@ -1,18 +1,17 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {card, query, row, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import {discardCard} from '../../../utils/movement'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
 
 class SweepingEdgeSingleUseCard extends Card {
-	discardCondition = slot.every(
-		slot.some(slot.activeRow, slot.adjacentTo(slot.activeRow)),
+	discardCondition = query.every(
+		query.some(slot.activeRow, slot.rowIs(row.adjacent(row.active))),
 		slot.attachSlot,
 		slot.opponent,
-		slot.not(slot.empty),
-		slot.not(slot.frozen)
+		query.not(slot.empty),
+		query.not(slot.frozen)
 	)
 
 	props: SingleUse = {
@@ -26,19 +25,19 @@ class SweepingEdgeSingleUseCard extends Card {
 		description:
 			'Your opponent must discard any effect cards attached to their active Hermit and any adjacent Hermits.',
 		showConfirmationModal: true,
-		attachCondition: slot.every(
+		attachCondition: query.every(
 			singleUse.attachCondition,
 			slot.someSlotFulfills(this.discardCondition)
 		),
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {opponentPlayer, player} = pos
+		const {player} = component
 
 		player.hooks.onApply.add(component, () => {
-			game
-				.filterSlots(this.discardCondition)
-				.map((slot) => slot.cardId && discardCard(game, slot.cardId))
+			game.components
+				.filter(CardComponent, card.slot(this.discardCondition))
+				.map((card) => card.discard())
 		})
 	}
 

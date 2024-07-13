@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
-import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'

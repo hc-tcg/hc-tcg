@@ -64,7 +64,7 @@ export const discardPile: ComponentQuery<SlotComponent> = (game, pos) => {
 	return pos.type === 'discardPile'
 }
 
-export function rowFulfills(
+export function row(
 	...predicates: Array<ComponentQuery<RowComponent>>
 ): ComponentQuery<SlotComponent> {
 	return (game, pos) => {
@@ -81,7 +81,7 @@ export const opponentHasActiveHermit: ComponentQuery<SlotComponent> = (game, pos
 	return game.opponentPlayer.activeRowEntity !== null
 }
 
-export const row = (row: RowEntity | null | undefined): ComponentQuery<SlotComponent> => {
+export const rowIs = (row: RowEntity | null | undefined): ComponentQuery<SlotComponent> => {
 	return (game, pos) => {
 		if (row === null || !pos.onBoard()) return false
 		return pos.row?.entity === row

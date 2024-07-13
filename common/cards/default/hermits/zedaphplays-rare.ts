@@ -1,6 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent, CoinFlipT} from '../../../types/game-state'
-import {applyStatusEffect} from '../../../utils/board'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'

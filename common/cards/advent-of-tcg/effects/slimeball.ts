@@ -20,7 +20,7 @@ class SlimeballEffectCard extends Card {
 			slot.opponent,
 			slot.attachSlot,
 			slot.empty,
-			slot.rowFulfills(row.hasHermit),
+			slot.row(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			query.not(slot.frozen)
 		),

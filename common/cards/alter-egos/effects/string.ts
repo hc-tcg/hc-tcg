@@ -18,7 +18,7 @@ class StringEffectCard extends Card {
 		attachCondition: query.every(
 			slot.opponent,
 			slot.empty,
-			slot.rowFulfills(row.hasHermit),
+			slot.row(row.hasHermit),
 			slot.actionAvailable('PLAY_EFFECT_CARD'),
 			query.some(slot.attachSlot, slot.itemSlot),
 			query.not(slot.frozen)

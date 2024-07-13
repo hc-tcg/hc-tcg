@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect} from '../../../utils/board'
 import {slot} from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'

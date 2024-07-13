@@ -19,7 +19,7 @@ export const opponentPlayer: ComponentQuery<RowComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export const hasHermit: ComponentQuery<RowComponent> = (game, row) =>
-	game.components.exists(CardComponent, card.isHermit, card.slot(slot.row(row.entity)))
+	game.components.exists(CardComponent, card.isHermit, card.slot(slot.rowIs(row.entity)))
 
 export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	return (game, row) => {
@@ -29,10 +29,11 @@ export function hasCard(cardEntity: CardEntity): ComponentQuery<RowComponent> {
 	}
 }
 
-export function adjacent(adjacentRow: RowEntity | null): ComponentQuery<RowComponent> {
+export function adjacent(adjacentRow: ComponentQuery<RowComponent>): ComponentQuery<RowComponent> {
 	return (game, row) => {
-		const adjacentRowComponent = game.components.get(adjacentRow)
-		if (!adjacentRowComponent) return false
-		return Math.abs(row.index - adjacentRowComponent.index) == 1
+		return game.components.filter(RowComponent, adjacentRow).some((adjacentRow) => {
+			if (!adjacentRow) return false
+			return Math.abs(row.index - adjacentRow.index) == 1
+		})
 	}
 }

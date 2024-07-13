@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {applyStatusEffect, removeStatusEffect} from '../../../utils/board'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'

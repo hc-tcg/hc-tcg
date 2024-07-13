@@ -97,9 +97,12 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 	}
 
+	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached
+	 * to a board slot and is not currently on the board. */
 	public attach(component: SlotComponent) {
+		let oldSlotWasOnBoard = this.slot.onBoard()
 		this.slotEntity = component.entity
-		if (component.onBoard()) {
+		if (!oldSlotWasOnBoard && component.onBoard()) {
 			this.card.onAttach(this.game, this)
 			this.player?.hooks.onAttach.call(this)
 		}

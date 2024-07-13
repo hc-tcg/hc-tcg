@@ -1,5 +1,4 @@
 import {GameModel} from '../../../models/game-model'
-import {discardCard, discardSingleUse} from '../../../utils/movement'
 import {applySingleUse} from '../../../utils/board'
 import {getFormattedName} from '../../../utils/game'
 import {query, slot} from '../../../components/query'

@@ -8,7 +8,7 @@ export const item = {
 		slot.currentPlayer,
 		slot.itemSlot,
 		slot.empty,
-		slot.rowFulfills(row.hasHermit),
+		slot.row(row.hasHermit),
 		slot.actionAvailable('PLAY_ITEM_CARD'),
 		query.not(slot.frozen)
 	),
@@ -37,7 +37,7 @@ export const attach = {
 		slot.currentPlayer,
 		slot.attachSlot,
 		slot.empty,
-		slot.rowFulfills(row.hasHermit),
+		slot.row(row.hasHermit),
 		slot.actionAvailable('PLAY_EFFECT_CARD'),
 		query.not(slot.frozen)
 	),

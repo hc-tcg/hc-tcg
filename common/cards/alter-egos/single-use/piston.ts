@@ -2,7 +2,6 @@ import {GameModel} from '../../../models/game-model'
 import {query, row, slot} from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
 import {applySingleUse} from '../../../utils/board'
-import {discardSingleUse} from '../../../utils/movement'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
@@ -11,14 +10,14 @@ class PistonSingleUseCard extends Card {
 	firstPickCondition = query.every(
 		slot.currentPlayer,
 		slot.itemSlot,
-		slot.rowFulfills(row.hasHermit),
+		slot.row(row.hasHermit),
 		query.not(slot.frozen),
 		query.not(slot.empty),
 		// This condition needs to be different than the one for the second pick request in this case
 		// The reason is that we don't know the row that's chosen until after the first pick request is over
 		slot.adjacentTo(
 			query.every(
-				slot.rowFulfills(row.hasHermit),
+				slot.row(row.hasHermit),
 				slot.itemSlot,
 				slot.empty,
 				query.not(slot.frozen)
@@ -70,7 +69,7 @@ class PistonSingleUseCard extends Card {
 				slot.currentPlayer,
 				slot.itemSlot,
 				slot.empty,
-				slot.rowFulfills(row.hasHermit),
+				slot.row(row.hasHermit),
 				slot.not(slot.frozen),
 				slot.adjacentTo(
 					(game, pos) =>

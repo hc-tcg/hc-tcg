@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
-import {moveCardInstanceoHand} from '../../../utils/movement'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
