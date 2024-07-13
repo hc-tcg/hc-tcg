@@ -41,7 +41,7 @@ class FlintAndSteelSingleUseCard extends Card {
 				.filter(CardComponent, card.currentPlayer, card.slot(slot.deck))
 				.sort(CardComponent.compareOrder)
 				.slice(0, 3)
-				.forEach((card) => card.discard())
+				.forEach((card) => card.draw())
 		})
 	}
 

@@ -1,4 +1,4 @@
-import {DiscardSlotComponent, PlayerComponent, SlotComponent} from '.'
+import {DiscardSlotComponent, HandSlotComponent, PlayerComponent, SlotComponent} from '.'
 import type Card from '../cards/base/card'
 import {
 	type Attach,
@@ -105,7 +105,13 @@ export class CardComponent<Props extends CardProps = CardProps> {
 	/** Change this cards slot. Run the `onAttach` function and hooks if this card is being attached
 	 * to a board slot and is not currently on the board. */
 	public attach(component: SlotComponent) {
+		if (this.slot?.onBoard()) {
+			this.card.onDetach(this.game, this)
+			this.player?.hooks.onDetach.call(this)
+		}
+
 		let oldSlotWasOnBoard = this.slot.onBoard()
+
 		this.slotEntity = component.entity
 		if (!oldSlotWasOnBoard && component.onBoard()) {
 			this.card.onAttach(this.game, this)
@@ -113,12 +119,13 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		}
 	}
 
+	// Move this card to the hand
+	public draw() {
+		this.attach(this.game.components.new(HandSlotComponent, this.slot.player.entity))
+	}
+
 	/** Move this card to the discard pile */
 	public discard() {
-		if (this.slot?.onBoard()) {
-			this.card.onDetach(this.game, this)
-			this.player?.hooks.onDetach.call(this)
-		}
-		this.slotEntity = this.game.components.new(DiscardSlotComponent, this.slot.player.entity).entity
+		this.attach(this.game.components.new(DiscardSlotComponent, this.slot.player.entity))
 	}
 }
