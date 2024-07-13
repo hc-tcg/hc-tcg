@@ -84,7 +84,7 @@ export class BoardSlotComponent extends SlotComponent {
 	}
 
 	override inRow(): this is BoardSlotComponent & {row: RowComponent} {
-		return true
+		return this.type !== 'single_use'
 	}
 
 	get row() {
@@ -161,7 +161,7 @@ function findDeckPosition(game: GameModel, player: PlayerEntity, position: DeckP
 		}
 
 		let targetOrder = deckPositionsWithCards[positonOfTargetCard - 1].order
-		deckPositionsWithCards.slice(positonOfTargetCard - 1).map((spot) => (spot.order += 1))
+		deckPositionsWithCards.slice(0, positonOfTargetCard).map((spot) => (spot.order -= 1))
 		return targetOrder
 	}
 
