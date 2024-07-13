@@ -8,7 +8,7 @@ import type {
 	TurnActions,
 } from '../types/game-state'
 import type {PickInfo} from '../types/server-requests'
-import type {CardComponent} from './card-component'
+import {CardComponent} from './card-component'
 import type {EnergyT} from '../types/cards'
 import type {AttackModel} from '../models/attack-model'
 import type {HermitAttackType} from '../types/attack'
@@ -135,13 +135,8 @@ export class PlayerComponent {
 
 		for (let i = 0; i < DEBUG_CONFIG.extraStartingCards.length; i++) {
 			const id = DEBUG_CONFIG.extraStartingCards[i]
-			// if (!CARDS[id]) {
-			// 	console.log('Invalid extra starting card in debug config:', id)
-			// 	continue
-			// }
-
-			let card = game.components.new(CardComponent, id, this.entity)
-			card.slot = game.components.new(HandSlotComponent, this.entity)
+			let slot = game.components.new(HandSlotComponent, this.entity)
+			game.components.new(CardComponent, id, slot.entity)
 		}
 
 		this.hooks = {
