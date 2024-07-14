@@ -4,7 +4,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {card} from '../../../components/query'
+import {card, slot} from '../../../components/query'
 
 class LoyaltyEffectCard extends Card {
 	props: Attach = {
@@ -24,7 +24,7 @@ class LoyaltyEffectCard extends Card {
 
 		const afterAttack = (_attack: AttackModel) => {
 			game.components
-				.filter(CardComponent, card.currentPlayer, card.isItem)
+				.filter(CardComponent, card.currentPlayer, card.slot(slot.itemSlot))
 				.forEach((card) => card.draw())
 		}
 
