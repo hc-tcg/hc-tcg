@@ -30,25 +30,24 @@ class Docm77RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+			if (attack.attacker?.entity !== component.entity || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] === 'heads') {
-				attack.addDamage(this.props.id, this.props.secondary.damage)
+				attack.addDamage(component.entity, this.props.secondary.damage)
 			} else {
-				attack.reduceDamage(this.props.id, this.props.secondary.damage / 2)
+				attack.reduceDamage(component.entity, this.props.secondary.damage / 2)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

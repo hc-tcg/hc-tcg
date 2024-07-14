@@ -1,6 +1,6 @@
-import {CardComponent} from '../components'
+import {CardComponent, StatusEffectComponent} from '../components'
 import {ComponentQuery} from '../components/query'
-import {CardEntity, RowEntity, StatusEffectEntity} from './game-state'
+import {Entity, RowEntity} from './game-state'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
@@ -33,7 +33,7 @@ export type AttackLog = {
 	previousLog?: string
 }
 
-export type AttackerEntity = CardEntity | StatusEffectEntity
+export type AttackerEntity = Entity<CardComponent | StatusEffectComponent>
 
 export type AttackDefs = {
 	attacker?: AttackerEntity | null | undefined

@@ -42,13 +42,13 @@ class LightningRodEffectCard extends Card {
 			used = true
 		})
 
-		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+		opponentPlayer.hooks.afterAttack.add(component, (_attack) => {
 			if (!used) return
-			component.slot = game.components.new(DiscardSlotComponent, component.player.entity)
+			component.discard()
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {opponentPlayer} = component
 		opponentPlayer.hooks.beforeAttack.remove(component)
 		opponentPlayer.hooks.afterAttack.remove(component)

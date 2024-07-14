@@ -1,4 +1,3 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import {CardComponent, SlotComponent} from '../../../components'
@@ -6,6 +5,7 @@ import {applySingleUse} from '../../../utils/board'
 import Card from '../../base/card'
 import {SingleUse} from '../../base/types'
 import {singleUse} from '../../base/defaults'
+import {RowEntity} from '../../../types/game-state'
 
 class BowSingleUseCard extends Card {
 	pickCondition = query.every(
@@ -32,10 +32,9 @@ class BowSingleUseCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player} = component
 
-		let pickedRow: RowState | null = null
-		let pickedRowIndex: number | null = null
+		let pickedRow: RowEntity | null = null
 
 		player.hooks.getAttackRequests.add(component, () => {
 			game.addPickRequest({
@@ -44,42 +43,33 @@ class BowSingleUseCard extends Card {
 				message: "Pick one of your opponent's AFK Hermits",
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					pickedRow = pickedSlot.rowId
-					pickedRowIndex = pickedSlot.rowIndex
+					if (!pickedSlot.inRow()) return
+					pickedRow = pickedSlot.rowEntity
 				},
 			})
 		})
 
 		player.hooks.getAttack.add(component, () => {
-			const activePos = getActiveRowPos(player)
-			if (!activePos) return null
-
-			if (!pickedRow || !pickedRow.hermitCard || !pickedRowIndex) return null
-
-			const bowAttack = new AttackModel({
-				id: this.getInstanceKey(component),
-				attacker: activePos,
-				target: {
-					player: opponentPlayer,
-					rowIndex: pickedRowIndex,
-					row: pickedRow,
-				},
-				type: 'effect',
-				log: (values) =>
-					`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
-			}).addDamage(this.props.id, 40)
+			const bowAttack = game
+				.newAttack({
+					attacker: component.entity,
+					target: pickedRow,
+					type: 'effect',
+					log: (values) =>
+						`${values.defaultLog} to attack ${values.target} for ${values.damage} damage`,
+				})
+				.addDamage(component.entity, 40)
 
 			return bowAttack
 		})
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId) return
-			applySingleUse(game)
+			if (attack.attacker?.entity !== component.entity) return
+			applySingleUse(game, component.slot)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.getAttack.remove(component)

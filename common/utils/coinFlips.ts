@@ -1,5 +1,6 @@
+import {CardComponent, PlayerComponent} from '../components'
 import {DEBUG_CONFIG} from '../config'
-import {CardComponent, CoinFlipT, PlayerComponent} from '../types/game-state'
+import {CoinFlipT} from '../types/game-state'
 
 export function flipCoin(
 	playerTossingCoin: PlayerComponent,
@@ -8,7 +9,7 @@ export function flipCoin(
 	currentPlayer: PlayerComponent | null = null
 ): Array<CoinFlipT> {
 	const forceHeads = DEBUG_CONFIG.forceCoinFlip
-	const activeRowIndex = playerTossingCoin.board.activeRow
+	const activeRowIndex = playerTossingCoin.game.components.get(playerTossingCoin.activeRowEntity)
 	if (activeRowIndex === null) {
 		console.log(
 			`${card.card.props.id} attempted to flip coin with no active row!, that shouldn't be possible`

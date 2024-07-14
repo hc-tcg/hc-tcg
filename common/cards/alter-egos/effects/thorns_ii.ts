@@ -1,11 +1,14 @@
-import {AttackModel} from '../../../models/attack-model'
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
+import {card} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import {executeExtraAttacks, isTargeting} from '../../../utils/attacks'
+import {executeExtraAttacks} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
+import GoldArmorEffectCard from '../../default/effects/gold-armor'
+import IronArmorEffectCard from '../../default/effects/iron-armor'
+import DiamondArmorEffectCard from '../../default/effects/diamond-armor'
+import NetheriteArmorEffectCard from '../../default/effects/netherite-armor'
 
 class ThornsIIEffectCard extends Card {
 	props: Attach = {
@@ -21,41 +24,47 @@ class ThornsIIEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-
+		const {opponentPlayer} = component
 		let hasTriggered = false
 
+		// Only when the opponent attacks us
 		opponentPlayer.hooks.afterAttack.add(component, (attack) => {
+			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
+			if (!component.slot.inRow()) return
+			if (!attack.isTargetting(component)) return
 
 			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack did damage
 			if (attack.calculateDamage() <= 0) return
 
-			if (!attack.getAttacker() || !isTargeting(attack, pos)) return
-
 			hasTriggered = true
 
-			const backlashAttack = new AttackModel({
-				id: this.getInstanceKey(component, 'backlash'),
-				attacker: attack.getTarget(),
-				target: attack.getAttacker(),
-				type: 'effect',
-				isBacklash: true,
-				log: (values) => `${values.target} took ${values.damage} damage from $eThorns II$`,
-			}).addDamage(this.props.id, 30)
+			const backlashAttack = game
+				.newAttack({
+					attacker: attack.target?.getHermit()?.entity,
+					target: component.slot.row.entity,
+					type: 'effect',
+					isBacklash: true,
+					log: (values) => `${values.target} took ${values.damage} damage from $eThorns$`,
+				})
+				.addDamage(component.entity, 30)
 
 			backlashAttack.shouldIgnoreCards.push(
-				slot.hasId('gold_armor', 'iron_armor', 'diamond_armor', 'netherite_armor')
+				card.is(
+					GoldArmorEffectCard,
+					IronArmorEffectCard,
+					DiamondArmorEffectCard,
+					NetheriteArmorEffectCard
+				)
 			)
 
 			executeExtraAttacks(game, [backlashAttack])
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-		const triggeredKey = this.getInstanceKey(component, 'triggered')
+	override onDetach(_game: GameModel, component: CardComponent) {
+		const {opponentPlayer} = component
 		opponentPlayer.hooks.afterAttack.remove(component)
 		opponentPlayer.hooks.onTurnEnd.remove(component)
 	}

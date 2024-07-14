@@ -3,7 +3,9 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
+import FireStatusEffect from '../../../status-effects/fire'
+import {card, slot} from '../../../components/query'
 
 class EthosLabRareHermitCard extends Card {
 	props: Hermit = {
@@ -37,26 +39,29 @@ class EthosLabRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attack.getTarget() || !attacker)
-				return
+			if (attack.attacker?.entity === component.entity || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, attack.attacker)
 
 			if (coinFlip[0] !== 'heads') return
 
-			const opponentActiveRow = getActiveRow(opponentPlayer)
-			if (!opponentActiveRow || !opponentActiveRow.hermitCard) return
-
-			applyStatusEffect(game, 'fire', opponentActiveRow?.hermitCard)
+			let opponentActiveHermit = game.components.find(
+				CardComponent,
+				card.opponentPlayer,
+				card.active,
+				card.slot(slot.hermitSlot)
+			)
+			game.components
+				.new(StatusEffectComponent, FireStatusEffect)
+				.apply(opponentActiveHermit?.entity)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

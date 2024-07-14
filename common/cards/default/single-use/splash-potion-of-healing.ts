@@ -1,8 +1,9 @@
 import {GameModel} from '../../../models/game-model'
 import {row} from '../../../components/query'
-import Card, {SingleUse} from '../../base/card'
+import Card from '../../base/card'
 import {singleUse} from '../../base/defaults'
 import {CardComponent, RowComponent} from '../../../components'
+import {SingleUse} from '../../base/types'
 
 class SplashPotionOfHealingSingleUseCard extends Card {
 	props: SingleUse = {
@@ -28,7 +29,7 @@ class SplashPotionOfHealingSingleUseCard extends Card {
 		)
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onApply.remove(component)
 	}

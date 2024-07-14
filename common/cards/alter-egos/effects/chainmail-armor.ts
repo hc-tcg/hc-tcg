@@ -1,7 +1,5 @@
-import {CARDS} from '../..'
 import {GameModel} from '../../../models/game-model'
 import {CardComponent} from '../../../components'
-import {isTargeting} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -19,11 +17,11 @@ class ChainmailArmorEffectCard extends Card {
 			'Prevents any damage from effect cards and any damage redirected by effect cards to the Hermit this card is attached to.',
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onDefence.add(component, (attack) => {
-			if (!isTargeting(attack, pos)) {
+			if (!attack.isTargetting(component)) {
 				return
 			}
 
@@ -31,18 +29,18 @@ class ChainmailArmorEffectCard extends Card {
 			let suRedirect = false
 
 			const lastTargetChange = attack.getHistory('set_target').pop()
-			if (lastTargetChange && CARDS[lastTargetChange.sourceId]) {
+			if (lastTargetChange) {
 				// This attack has been redirected to us by a su card
 				suRedirect = true
 			}
 
 			if (attack.isType('effect') || suRedirect) {
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.onDefence.remove(component)
 	}

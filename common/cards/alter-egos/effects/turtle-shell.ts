@@ -1,7 +1,6 @@
 import {GameModel} from '../../../models/game-model'
 import {query, slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
-import {isTargeting} from '../../../utils/attacks'
 import Card from '../../base/card'
 import {attach} from '../../base/defaults'
 import {Attach} from '../../base/types'
@@ -20,42 +19,42 @@ class TurtleShellEffectCard extends Card {
 		attachCondition: query.every(attach.attachCondition, query.not(slot.activeRow)),
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		let firstActiveTurn = true
 
 		player.hooks.onTurnEnd.add(component, () => {
-			if (player.board.activeRow === pos.rowIndex) {
-				firstActiveTurn = true
+			if (!component.slot.inRow()) return
+			if (player.activeRowEntity !== component.slot.row.entity) {
+				firstActiveTurn = false
 			}
 		})
 
 		player.hooks.onTurnStart.add(component, () => {
-			if (firstActiveTurn) {
-				discardCard(game, pos.cardId)
+			if (!firstActiveTurn) {
+				component.discard()
 			}
 		})
 
 		player.hooks.onDefence.add(component, (attack) => {
 			// Only block if just became active
 			if (!firstActiveTurn) return
+			if (!component.slot.inRow()) return
 			// Only block damage when we are active
-			const isActive = player.board.activeRow === pos.rowIndex
-			if (!isActive || !isTargeting(attack, pos)) return
+			const isActive = player.activeRowEntity === component.slot.row.entity
+			if (!isActive || !attack.isTargetting(component)) return
 			// Do not block backlash attacks
 			if (attack.isBacklash) return
 
 			if (attack.getDamage() > 0) {
 				// Block all damage
-				attack.multiplyDamage(this.props.id, 0).lockDamage(this.props.id)
+				attack.multiplyDamage(component.entity, 0).lockDamage(component.entity)
 			}
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
-		const componentKey = this.getInstanceKey(component)
-
 		player.hooks.onDefence.remove(component)
 		player.hooks.onTurnEnd.remove(component)
 		player.hooks.onTurnStart.remove(component)

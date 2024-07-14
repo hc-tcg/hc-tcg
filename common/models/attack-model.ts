@@ -8,7 +8,7 @@ import {
 	AttackerEntity,
 } from '../types/attack'
 import {CardComponent, RowComponent, StatusEffectComponent} from '../components'
-import {Entity, RowEntity} from '../types/game-state'
+import {RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
 import {ComponentQuery} from '../components/query'
 
@@ -26,7 +26,7 @@ export class AttackModel {
 	private history: Array<AttackHistory> = []
 
 	/** The attacker */
-	public attackerEntity: Entity<StatusEffectComponent | CardComponent> | null
+	public attackerEntity: AttackerEntity | null
 	/** The attack target */
 	public targetEntity: RowEntity | null
 
