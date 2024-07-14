@@ -10,8 +10,8 @@ export function id(id: string): ComponentQuery<StatusEffectComponent> {
 	return (_game, statusEffect) => statusEffect.props.id === id
 }
 
-export function is(effect: new () => StatusEffect): ComponentQuery<StatusEffectComponent> {
-	return (_game, statusEffect) => STATUS_EFFECTS[effect.name].props.id == statusEffect.props.id
+export function is(...effect: Array<new () => StatusEffect>): ComponentQuery<StatusEffectComponent> {
+	return (_game, statusEffect) => effect.some(e => STATUS_EFFECTS[e.name].props.id === statusEffect.props.id)
 }
 
 export function target(

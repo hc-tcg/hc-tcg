@@ -4,6 +4,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
+import {card, slot} from '../../../components/query'
 
 class LoyaltyEffectCard extends Card {
 	props: Attach = {
@@ -19,28 +20,20 @@ class LoyaltyEffectCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
-		const afterAttack = (attack: AttackModel) => {
-			const attackTarget = attack.getTarget()
-			if (!attackTarget || attackTarget.row.health > 0) return
-			if (attackTarget.player !== pos.player || attackTarget.rowIndex !== pos.rowIndex) return
-
-			// Return all attached item cards to the hand
-			for (let i = 0; i < attackTarget.row.itemCards.length; i++) {
-				const card = attackTarget.row.itemCards[i]
-				if (card) {
-					moveCardInstanceoHand(game, card)
-				}
-			}
+		const afterAttack = (_attack: AttackModel) => {
+			game.components
+				.filter(CardComponent, card.currentPlayer, card.isItem)
+				.forEach((card) => card.draw())
 		}
 
 		player.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
 		opponentPlayer.hooks.afterAttack.add(component, (attack) => afterAttack(attack))
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+	override onDetach(_game: GameModel, component: CardComponent) {
+		const {player, opponentPlayer} = component
 		player.hooks.afterAttack.remove(component)
 		opponentPlayer.hooks.afterAttack.remove(component)
 	}
