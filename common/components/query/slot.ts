@@ -15,7 +15,7 @@ export const opponent: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 export function player(player: PlayerEntity | null): ComponentQuery<SlotComponent> {
-	return (game, slot) => {
+	return (_game, slot) => {
 		return slot.player.entity === player
 	}
 }
@@ -26,42 +26,42 @@ export const empty: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 /** Return true if the card is attached to a hermit slot. */
-export const hermitSlot: ComponentQuery<SlotComponent> = (game, pos) => {
+export const hermitSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'hermit'
 }
 
 /** Return true if the card is attached to an effect slot. */
-export const attachSlot: ComponentQuery<SlotComponent> = (game, pos) => {
+export const attachSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'attach'
 }
 
 /** Return true if this slot is the single use slot. */
-export const singleUseSlot: ComponentQuery<SlotComponent> = (game, pos) => {
+export const singleUseSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'single_use'
 }
 
 /** Return true if the card is attached to an item slot. */
-export const itemSlot: ComponentQuery<SlotComponent> = (game, pos) => {
+export const itemSlot: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'item'
 }
 
 /** Return true if the card is attached to the active row. */
-export const activeRow: ComponentQuery<SlotComponent> = (game, pos) => {
+export const activeRow: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.onBoard() && pos.player?.activeRowEntity === pos.rowEntity
 }
 
 /* Return true if the slot is in a player's hand */
-export const hand: ComponentQuery<SlotComponent> = (game, pos) => {
+export const hand: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'hand'
 }
 
 /* Return true if the slot is in a player's hand */
-export const deck: ComponentQuery<SlotComponent> = (game, pos) => {
+export const deck: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'deck'
 }
 
 /* Return true if the slot is in a player's hand */
-export const discardPile: ComponentQuery<SlotComponent> = (game, pos) => {
+export const discardPile: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.type === 'discardPile'
 }
 
@@ -74,27 +74,27 @@ export function row(
 	}
 }
 
-export const playerHasActiveHermit: ComponentQuery<SlotComponent> = (game, pos) => {
+export const playerHasActiveHermit: ComponentQuery<SlotComponent> = (_game, pos) => {
 	return pos.player?.activeRowEntity !== null
 }
 
-export const opponentHasActiveHermit: ComponentQuery<SlotComponent> = (game, pos) => {
+export const opponentHasActiveHermit: ComponentQuery<SlotComponent> = (game, _pos) => {
 	return game.opponentPlayer.activeRowEntity !== null
 }
 
 export const rowIs = (row: RowEntity | null | undefined): ComponentQuery<SlotComponent> => {
-	return (game, pos) => {
+	return (_game, pos) => {
 		if (row === null || !pos.onBoard()) return false
 		return pos.row?.entity === row
 	}
 }
 
 export const index = (index: number | null): ComponentQuery<SlotComponent> => {
-	return (game, pos) => pos.onBoard() && index !== null && pos.index === index
+	return (_game, pos) => pos.onBoard() && index !== null && pos.index === index
 }
 
 export const entity = (entity: SlotEntity | null): ComponentQuery<SlotComponent> => {
-	return (game, pos) => pos.entity === entity
+	return (_game, pos) => pos.entity === entity
 }
 
 /** Return true if the spot contains any of the card IDs. */
@@ -113,22 +113,13 @@ export const has = (...cards: Array<new () => Card>): ComponentQuery<SlotCompone
 /**
  * Returns if a slot is marked as frozen through the `freezeSlots` hook
  * A frozen slot is a slot that can not have card placed in it or removed from it.
+ * NOTE: When freezing a slot, do not use the `slot.currentPlayer` combinator.
+ * Use slot.player(player.entity) instead.
  */
 export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
-	return false
-	if (!pos.onBoard()) return true
-	if (!pos.row?.index || !pos.type) return false
-
 	const playerResult = game.currentPlayer.hooks.freezeSlots
 		.call()
 		.some((result) => result(game, pos))
-
-	/// Figure out how to redo this
-	// pos = {
-	// 	...pos,
-	// 	player: pos.opponentPlayer,
-	// 	opponentPlayer: pos.player,
-	// }
 
 	const opponentResult = game.opponentPlayer.hooks.freezeSlots
 		.call()
@@ -138,7 +129,7 @@ export const frozen: ComponentQuery<SlotComponent> = (game, pos) => {
 }
 
 export const actionAvailable = (action: TurnAction): ComponentQuery<SlotComponent> => {
-	return (game, pos) => game.state.turn.availableActions.includes(action)
+	return (game, _pos) => game.state.turn.availableActions.includes(action)
 }
 
 export function hasStatusEffect(
