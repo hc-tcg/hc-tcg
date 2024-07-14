@@ -24,12 +24,7 @@ class ShieldEffectCard extends Card {
 
 		// Note that we are using onDefence because we want to activate on any attack to us, not just from the opponent
 		player.hooks.onDefence.add(component, (attack) => {
-			if (
-				!component.slot.inRow() ||
-				attack.target?.entity !== component.slot.row.entity ||
-				attack.isType('status-effect')
-			)
-				return attack
+			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 60) {
 				const damageReduction = Math.min(attack.calculateDamage(), 60 - damageBlocked)

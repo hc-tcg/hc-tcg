@@ -23,12 +23,7 @@ class NetheriteArmorEffectCard extends Card {
 		let damageBlocked = 0
 
 		player.hooks.onDefence.add(component, (attack) => {
-			if (
-				!component.slot.onBoard() ||
-				attack.targetEntity !== component.slot?.row?.entity ||
-				attack.isType('status-effect')
-			)
-				return
+			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 40) {
 				const damageReduction = Math.min(attack.calculateDamage(), 40 - damageBlocked)

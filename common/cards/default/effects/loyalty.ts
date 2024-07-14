@@ -4,7 +4,7 @@ import {CardComponent} from '../../../components'
 import Card from '../../base/card'
 import {Attach} from '../../base/types'
 import {attach} from '../../base/defaults'
-import {card, slot} from '../../../components/query'
+import {card} from '../../../components/query'
 
 class LoyaltyEffectCard extends Card {
 	props: Attach = {

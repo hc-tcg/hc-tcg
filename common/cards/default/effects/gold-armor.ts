@@ -23,12 +23,7 @@ class GoldArmorEffectCard extends Card {
 		let damageBlocked = 0
 
 		player.hooks.onDefence.add(component, (attack) => {
-			if (
-				!component.slot.inRow() ||
-				attack.target?.entity !== component.slot.row.entity ||
-				attack.isType('status-effect')
-			)
-				return
+			if (!attack.isTargetting(component) || attack.isType('status-effect')) return
 
 			if (damageBlocked < 10) {
 				const damageReduction = Math.min(attack.calculateDamage(), 10 - damageBlocked)

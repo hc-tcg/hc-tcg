@@ -47,7 +47,7 @@ class BdoubleO100RareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)

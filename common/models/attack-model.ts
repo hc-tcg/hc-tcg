@@ -79,6 +79,11 @@ export class AttackModel {
 		return types.includes(this.type)
 	}
 
+	/** Returns true if this attack is targetting a card in a specific row */
+	public isTargetting(card: CardComponent) {
+		return card.slot.inRow() && card.slot.row.entity === this.target?.entity
+	}
+
 	/** Calculates the damage for this attack */
 	public calculateDamage() {
 		return Math.max(this.damage * this.damageMultiplier - this.damageReduction, 0)

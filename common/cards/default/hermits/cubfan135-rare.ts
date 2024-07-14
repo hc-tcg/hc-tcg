@@ -31,10 +31,9 @@ class Cubfan135RareHermitCard extends Card {
 
 	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = component
-		const componentKey = this.getInstanceKey(component)
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== componentKey || attack.type !== 'secondary') return
+			if (!attack.isTargetting(component) || attack.type !== 'secondary') return
 
 			// We used our secondary attack, activate power
 			// AKA remove change active hermit from blocked actions

@@ -32,7 +32,7 @@ class ThornsEffectCard extends Card {
 			// If we have already triggered once this turn do not do so again
 			if (hasTriggered) return
 			if (!component.slot.inRow()) return
-			if (attack.target?.entity !== component.slot.row.entity) return
+			if (!attack.isTargetting(component)) return
 
 			if (!attack.isType('primary', 'secondary', 'effect') || attack.isBacklash) return
 			// Only return a backlash attack if the attack did damage
@@ -42,7 +42,7 @@ class ThornsEffectCard extends Card {
 
 			const backlashAttack = game
 				.newAttack({
-					attacker: attack.target.getHermit()?.entity,
+					attacker: attack.target?.getHermit()?.entity,
 					target: component.slot.row.entity,
 					type: 'effect',
 					isBacklash: true,
