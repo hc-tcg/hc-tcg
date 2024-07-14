@@ -30,23 +30,22 @@ class EthosLabUltraRareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const attacker = attack.getAttacker()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !attacker) return
+			if (attack.isTargetting(component) || attack.type !== 'secondary') return
+			if (!(attack.attacker instanceof CardComponent)) return
+			if (!attack.attacker.slot.inRow()) return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 3)
+			const coinFlip = flipCoin(player, attack.attacker, 3)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			attack.addDamage(this.props.id, headsAmount * 20)
+			attack.addDamage(component.entity, headsAmount * 20)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
-		// Remove hooks
 		player.hooks.onAttack.remove(component)
 	}
 }

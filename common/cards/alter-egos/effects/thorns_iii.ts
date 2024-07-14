@@ -42,7 +42,7 @@ class ThornsIIIEffectCard extends Card {
 
 			const backlashAttack = game
 				.newAttack({
-					attacker: attack.target?.getHermit()?.entity,
+					attacker: component.entity,
 					target: component.slot.row.entity,
 					type: 'effect',
 					isBacklash: true,
