@@ -16,6 +16,8 @@ class SleepingStatusEffect extends StatusEffect {
 	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
 		const {player} = target
 
+		effect.counter = this.props.counter
+		
 		if (!target.slot.inRow()) return
 		if (!target.isHealth()) return
 

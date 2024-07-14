@@ -6,6 +6,8 @@ import {Attach} from '../../base/types'
 import {CardComponent, StatusEffectComponent} from '../../../components'
 import SleepingStatusEffect from '../../../status-effects/sleeping'
 
+// @todo Figure out how ladder is supposed to work
+
 class BedEffectCard extends Card {
 	props: Attach = {
 		...attach,
@@ -30,28 +32,27 @@ class BedEffectCard extends Card {
 		// Give the current row sleeping for 3 turns
 		const {player} = component
 
-		if (!component.slot.inRow()) return
-
-		let hermitCard = game.components.find(
-			CardComponent,
-			card.rowIs(component.slot.row.entity),
-			card.slot(slot.hermitSlot)
-		)
-
-		if (hermitCard) {
-			game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(hermitCard.entity)
+		let hermitCard = () => {
+			if (!component.slot.inRow()) return
+			return game.components.find(
+				CardComponent,
+				card.rowIs(component.slot.row.entity),
+				card.slot(slot.hermitSlot)
+			)
 		}
+
+		game.components.new(StatusEffectComponent, SleepingStatusEffect).apply(hermitCard()?.entity)
 
 		// Knockback/Tango/Jevin/etc
 		player.hooks.onTurnStart.add(component, () => {
-			if (!component.hasStatusEffect(SleepingStatusEffect)) {
+			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
 				component.discard()
 			}
 		})
 
 		player.hooks.onTurnEnd.add(component, () => {
 			// if sleeping has worn off, discard the bed
-			if (!component.hasStatusEffect(SleepingStatusEffect)) {
+			if (!hermitCard()?.hasStatusEffect(SleepingStatusEffect)) {
 				component.discard()
 				player.hooks.onTurnEnd.remove(component)
 			}

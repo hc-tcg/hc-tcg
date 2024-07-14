@@ -5,8 +5,12 @@ import {LocalGameState, LocalPlayerState, newEntity, CardEntity} from 'common/ty
 import {GameModel} from 'common/models/game-model'
 import {PlayerId, PlayerModel} from 'common/models/player-model'
 import Card from 'common/cards/base/card'
-import {card, row, slot} from 'common/components/query'
-import {LocalCardInstance, WithoutFunctions} from 'common/types/server-requests'
+import {card, effect, query, row, slot} from 'common/components/query'
+import {
+	LocalCardInstance,
+	LocalStatusEffectInstance,
+	WithoutFunctions,
+} from 'common/types/server-requests'
 import {
 	CardComponent,
 	PlayerComponent,
@@ -166,18 +170,18 @@ export function getLocalPlayerState(
 				}
 			})
 
-			if (!hermitCard || !attachCard)
+			if (!hermitSlot || !attachSlot)
 				throw new Error('Slot is missing when generating local game state.')
 
 			return {
 				entity: row.entity,
 				hermit: {
 					slot: hermitSlot.entity,
-					card: (hermitCard.toLocalCardInstance() as any) || null,
+					card: (hermitCard?.toLocalCardInstance() as any) || null,
 				},
 				attach: {
 					slot: attachSlot.entity,
-					card: (attachCard.toLocalCardInstance() as any) || null,
+					card: (attachCard?.toLocalCardInstance() as any) || null,
 				},
 				items: items,
 				health: row.health,
@@ -258,7 +262,8 @@ export function getLocalGameState(game: GameModel, player: PlayerModel): LocalGa
 		order: game.state.order,
 		statusEffects: game.components
 			.filter(StatusEffectComponent)
-			.map((effect) => effect.toLocalStatusEffectInstance()),
+			.map((effect) => effect.toLocalStatusEffectInstance())
+			.filter((effect) => effect !== null) as Array<LocalStatusEffectInstance>,
 
 		// personal info
 		hand: game.components

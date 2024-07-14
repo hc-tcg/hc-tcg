@@ -22,9 +22,9 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		this.counter = null
 	}
 
-	public toLocalStatusEffectInstance(): LocalStatusEffectInstance {
+	public toLocalStatusEffectInstance(): LocalStatusEffectInstance | null {
 		if (!this.target) {
-			throw new Error('Can not convert to local status effect instance because target is not set')
+			return null
 		}
 		return {
 			props: WithoutFunctions(this.props),
@@ -42,17 +42,20 @@ export class StatusEffectComponent<Props extends StatusEffectProps = StatusEffec
 		return this.game.components.get(this.targetEntity)
 	}
 
-	public apply(cardEntity: CardEntity | null) {
+	public apply(cardEntity: CardEntity | null | undefined) {
+		if (!cardEntity) return
 		let cardComponent = this.game.components.get(cardEntity)
 		if (!cardComponent) {
 			return
 		}
+		this.targetEntity = cardEntity
 		this.statusEffect.onApply(this.game, this, cardComponent)
 	}
 
 	public remove() {
 		if (!this.target) return
 		this.statusEffect.onRemoval(this.game, this, this.target)
+		this.targetEntity = null
 	}
 
 	public isCounter(): this is StatusEffectComponent<Counter> {

@@ -8,13 +8,13 @@ import StatusEffect from '../../status-effects/status-effect'
 let CARDS: Record<string, Card>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
 
-export const isHermit: ComponentQuery<CardComponent> = (game, card) => card.isHermit()
-export const isAttach: ComponentQuery<CardComponent> = (game, card) => card.isAttach()
-export const isItem: ComponentQuery<CardComponent> = (game, card) => card.isItem()
-export const isSingleUse: ComponentQuery<CardComponent> = (game, card) => card.isSingleUse()
+export const isHermit: ComponentQuery<CardComponent> = (_game, card) => card.isHermit()
+export const isAttach: ComponentQuery<CardComponent> = (_game, card) => card.isAttach()
+export const isItem: ComponentQuery<CardComponent> = (_game, card) => card.isItem()
+export const isSingleUse: ComponentQuery<CardComponent> = (_game, card) => card.isSingleUse()
 
 /** Return true if the card is on the board */
-export const attached: ComponentQuery<CardComponent> = (game, card) =>
+export const attached: ComponentQuery<CardComponent> = (_game, card) =>
 	card.slot !== null && ['hermit', 'attach', 'item', 'single_use'].includes(card.slot.type)
 
 export function slot(
@@ -35,11 +35,11 @@ export function row(
 }
 
 export function slotIs(slot: SlotEntity | null | undefined): ComponentQuery<CardComponent> {
-	return (game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
+	return (_game, card) => slot !== null && slot !== undefined && slot === card.slot?.entity
 }
 
 export function rowIs(row: RowEntity | null): ComponentQuery<CardComponent> {
-	return (game, card) => {
+	return (_game, card) => {
 		if (!row) return false
 		if (!card.slot?.onBoard()) return false
 		return row === card.slot?.row?.entity
@@ -47,7 +47,7 @@ export function rowIs(row: RowEntity | null): ComponentQuery<CardComponent> {
 }
 
 export function player(player: PlayerEntity): ComponentQuery<CardComponent> {
-	return (game, card) => {
+	return (_game, card) => {
 		return card.player.entity === player
 	}
 }
@@ -59,11 +59,11 @@ export const opponentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.opponentPlayer.entity)(game, pos)
 
 export function id(...cardIds: Array<string>): ComponentQuery<CardComponent> {
-	return (game, card) => cardIds.includes(card.props.id)
+	return (_game, card) => cardIds.includes(card.props.id)
 }
 
 export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComponent> {
-	return (game, card) => cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.id)
+	return (_game, card) => cardTypes.map((t) => CARDS[t.name].props.id).includes(card.props.id)
 }
 
 /** Return true if this card is on the active row */
@@ -76,7 +76,7 @@ export const hasStatusEffect = (
 		return game.components.exists(
 			StatusEffectComponent,
 			effect.is(statusEffect),
-			effect.target(card.entity)
+			effect.targetIs(card.entity)
 		)
 	}
 }
