@@ -3,13 +3,9 @@ import {WEAKNESS_DAMAGE} from '../const/damage'
 import {EnergyT} from '../types/cards'
 import {DEBUG_CONFIG} from '../config'
 import {GameModel} from '../models/game-model'
-import {card, slot} from '../components/query'
+import {card, query} from '../components/query'
 import {STRENGTHS} from '../const/strengths'
 import {CardComponent} from '../components'
-
-function executeAttack(game: GameModel, attack: AttackModel) {
-	attack.target?.damage(attack.calculateDamage())
-}
 
 /**
  * Call before attack hooks for each attack that has an attacker
@@ -20,7 +16,7 @@ function runBeforeAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		if (!attack.attacker) return
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attack.player
 
 		if (DEBUG_CONFIG.disableDamage) {
 			attack.multiplyDamage('debug', 0).lockDamage('debug')
@@ -63,7 +59,7 @@ function runOnAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		if (!attack.attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attack.player
 
 		// Call on attack hooks
 		player.hooks.onAttack.callSome([attack], (instance) => {
@@ -98,7 +94,7 @@ function runAfterAttackHooks(game: GameModel, attacks: Array<AttackModel>) {
 		if (!attack.attacker) continue
 
 		// The hooks we call are determined by the source of the attack
-		const player = attack.attacker.player
+		const player = attack.player
 
 		// Call after attack hooks
 		player.hooks.afterAttack.callSome([attack], (instance) => {
@@ -126,7 +122,7 @@ function runAfterDefenceHooks(game: GameModel, attacks: Array<AttackModel>) {
 
 function shouldIgnoreCard(attack: AttackModel, game: GameModel, instance: CardComponent): boolean {
 	if (!instance.slot) return false
-	if (slot.some(...attack.shouldIgnoreCards)(game, instance.slot)) {
+	if (query.some(...attack.shouldIgnoreCards)(game, instance)) {
 		return true
 	}
 
@@ -148,7 +144,7 @@ export function executeAttacks(
 
 	// STEP 3 - Execute all attacks
 	attacks.forEach((attack) => {
-		executeAttack(game, attack)
+		attack.target?.damage(attack.calculateDamage())
 
 		if (attack.nextAttacks.length > 0) {
 			executeAttacks(game, attack.nextAttacks, withoutBlockingActions)
@@ -217,6 +213,7 @@ export function hasEnoughEnergy(energy: Array<EnergyT>, cost: Array<EnergyT>) {
 
 export function isTargeting() {}
 
+// @todo
 function createWeaknessAttack(game: GameModel, attack: AttackModel): AttackModel | null {
 	if (attack.createWeakness === 'never') return null
 	if (attack.getDamage() * attack.getDamageMultiplier() === 0) return null

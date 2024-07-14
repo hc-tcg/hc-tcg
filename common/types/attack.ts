@@ -1,6 +1,6 @@
 import {CardComponent, StatusEffectComponent} from '../components'
 import {ComponentQuery} from '../components/query'
-import {Entity, RowEntity} from './game-state'
+import {Entity, PlayerEntity, RowEntity} from './game-state'
 
 export type HermitAttackType = 'primary' | 'secondary' | 'single-use'
 
@@ -33,17 +33,28 @@ export type AttackLog = {
 	previousLog?: string
 }
 
-export type AttackerEntity = Entity<CardComponent | StatusEffectComponent>
+export type AttackerEntity = Entity<CardComponent | StatusEffectComponent> | 'debug'
 
-export type AttackDefs = {
-	attacker?: AttackerEntity | null | undefined
-	target?: RowEntity | null | undefined
-	type: AttackType
-	shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
-	isBacklash?: boolean
-	createWeakness?: WeaknessType
-	log?: (values: AttackLog) => string
-}
+export type AttackDefs =
+	| {
+			attacker?: Entity<StatusEffectComponent> | null | undefined
+			player: PlayerEntity
+			target?: RowEntity | null | undefined
+			type: 'status-effect'
+			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
+			isBacklash?: boolean
+			createWeakness?: WeaknessType
+			log?: (values: AttackLog) => string
+	  }
+	| {
+			attacker?: Entity<CardComponent> | null | undefined
+			target?: RowEntity | null | undefined
+			type: AttackType
+			shouldIgnoreSlots?: Array<ComponentQuery<CardComponent>>
+			isBacklash?: boolean
+			createWeakness?: WeaknessType
+			log?: (values: AttackLog) => string
+	  }
 
 export type AttackHistoryType =
 	| 'add_damage'

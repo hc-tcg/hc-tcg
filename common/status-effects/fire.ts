@@ -21,6 +21,7 @@ class FireStatusEffect extends StatusEffect {
 			const statusEffectAttack = game.newAttack({
 				attacker: effect.entity,
 				target: target.slot.row.entity,
+				player: opponentPlayer.entity,
 				type: 'status-effect',
 				log: (values) => `${values.target} took ${values.damage} damage from $bBurn$`,
 			})

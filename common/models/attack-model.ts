@@ -7,8 +7,8 @@ import {
 	AttackLog,
 	AttackerEntity,
 } from '../types/attack'
-import {CardComponent, RowComponent, StatusEffectComponent} from '../components'
-import {RowEntity} from '../types/game-state'
+import {CardComponent, PlayerComponent, RowComponent, StatusEffectComponent} from '../components'
+import {PlayerEntity, RowEntity} from '../types/game-state'
 import {GameModel} from './game-model'
 import {ComponentQuery} from '../components/query'
 
@@ -24,6 +24,9 @@ export class AttackModel {
 	private damageLocked: boolean = false
 	/** The list of all changes made to this attack */
 	private history: Array<AttackHistory> = []
+
+	/** The player that created this attack */
+	private playerEntity: PlayerEntity | null
 
 	/** The attacker */
 	public attackerEntity: AttackerEntity | null
@@ -58,6 +61,12 @@ export class AttackModel {
 		this.shouldIgnoreCards = defs.shouldIgnoreSlots || []
 		this.createWeakness = defs.createWeakness || 'never'
 
+		if ('player' in defs) {
+			this.playerEntity = defs.player
+		} else {
+			this.playerEntity = null
+		}
+
 		if (defs.log) this.log.push(defs.log)
 
 		return this
@@ -77,6 +86,20 @@ export class AttackModel {
 	/** Returns true if one of the passed in types are this attacks type */
 	public isType(...types: Array<AttackType>) {
 		return types.includes(this.type)
+	}
+
+	/** Return the player that created this attack. For cards, this is the player who owns the card.
+	 * For status effects this is provided in the constructor.
+	 */
+	get player(): PlayerComponent {
+		if (this.playerEntity) {
+			return this.game.components.getOrError(this.playerEntity)
+		} else if (this.attackerEntity === 'debug') {
+			return this.game.currentPlayer
+		} else {
+			let card = this.game.components.get(this.attackerEntity) as CardComponent
+			return card.player
+		}
 	}
 
 	/** Returns true if this attack is targetting a card in a specific row */
@@ -109,6 +132,7 @@ export class AttackModel {
 
 	/** Returns the current attacker for this attack */
 	get attacker(): CardComponent | StatusEffectComponent | null {
+		if (this.attackerEntity === 'debug') return null
 		return this.game.components.get(this.attackerEntity)
 	}
 
