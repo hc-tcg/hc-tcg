@@ -7,15 +7,18 @@ const require = createRequire(import.meta.url)
 
 export function registerApis(app: import('express').Express) {
 	let apiKeys: any = null
+	let botKey: any = null
 
 	const env = process.env.NODE_ENV || 'development'
-	if (env == 'development' && false) {
+	if (env == 'development') {
 		console.log('running in dev mode, not activating api')
 		return
 	}
 
 	try {
-		apiKeys = require('./apiKeys.json')
+		apiKeys = JSON.parse(process.env.API_KEYS || "")
+		botKey = process.env.BOT_KEY
+		console.log(apiKeys, botKey, process.env.BOT_URL)
 
 		// get info about games
 		app.get('/api/games', (req, res) => {
@@ -71,7 +74,7 @@ export function registerApis(app: import('express').Express) {
 
 		root.hooks.newGame.add('api', (game: GameModel) => {
 			try {
-				fetch(`${apiKeys.botUrl}/admin/game_start`, {
+				fetch(`${process.env.BOT_URL}/admin/game_start`, {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
@@ -93,7 +96,7 @@ export function registerApis(app: import('express').Express) {
 
 		root.hooks.gameRemoved.add('api', (game: GameModel) => {
 			try {
-				fetch(`${apiKeys.botUrl}/admin/game_end`, {
+				fetch(`${process.env.BOT_URL}/admin/game_end`, {
 					method: 'POST',
 					headers: [
 						['Content-type', 'application/json'],
@@ -131,7 +134,7 @@ export function registerApis(app: import('express').Express) {
 			}
 		})
 
-		fetch(`${apiKeys.botUrl}/updates`)
+		fetch(`${process.env.BOT_URL}/updates`)
 			.then(async (response) => {
 				response.json().then((jsonResponse) => {
 					root.updates = jsonResponse as Record<string, Array<string>>
