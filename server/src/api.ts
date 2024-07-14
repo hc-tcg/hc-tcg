@@ -16,7 +16,7 @@ export function registerApis(app: import('express').Express) {
 	}
 
 	try {
-		apiKeys = JSON.parse(process.env.API_KEYS || "")
+		apiKeys = JSON.parse(process.env.API_KEYS || '')
 		botKey = process.env.BOT_KEY
 		console.log(apiKeys, botKey, process.env.BOT_URL)
 
