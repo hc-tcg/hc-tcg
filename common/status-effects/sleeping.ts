@@ -17,7 +17,7 @@ class SleepingStatusEffect extends StatusEffect {
 		const {player} = target
 
 		effect.counter = this.props.counter
-		
+
 		if (!target.slot.inRow()) return
 		if (!target.isHealth()) return
 
@@ -28,7 +28,7 @@ class SleepingStatusEffect extends StatusEffect {
 			'CHANGE_ACTIVE_HERMIT'
 		)
 
-		target.slot.row.health = target.props.health
+		target.slot.row.heal(target.props.health)
 
 		game.battleLog.addEntry(
 			player.entity,
@@ -54,18 +54,15 @@ class SleepingStatusEffect extends StatusEffect {
 			}
 		})
 
-		player.hooks.afterDefence.add(target, (attack) => {
-			if (!target.slot.inRow()) return
-			if (attack.target?.entity !== target.slot.row.entity) return
-			if (target.slot.row.health) return
-			effect.remove()
+		player.hooks.afterDefence.add(effect, (_attack) => {
+			if (!target.isAlive()) effect.remove()
 		})
 	}
 
-	override onRemoval(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
 		const {player} = target
-		player.hooks.onTurnStart.remove(target)
-		player.hooks.afterDefence.remove(target)
+		player.hooks.onTurnStart.remove(effect)
+		player.hooks.afterDefence.remove(effect)
 	}
 }
 

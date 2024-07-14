@@ -102,6 +102,11 @@ export class CardComponent<Props extends CardProps = CardProps> {
 		return isHermit(this.props)
 	}
 
+	/** Return true if this hermit is in a row and this hermits HP is greater than 0 */
+	public isAlive(): boolean {
+		return this.slot.inRow() && !!this.slot.row.health
+	}
+
 	public toLocalCardInstance(): LocalCardInstance<Props> {
 		return {
 			props: this.card.props as WithoutFunctions<Props>,
