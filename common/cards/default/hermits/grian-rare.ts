@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {card, query, slot} from '../../../components/query'
+import {CardComponent, SlotComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
@@ -43,27 +43,35 @@ class GrianRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer, rowIndex, rowId: row} = pos
+		const {player} = component
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
-			const attacker = attack.getAttacker()
-			if (attack.type !== 'primary' || !attacker) return
+			if (!component.slot.inRow()) return
+			if (attack.attacker?.entity !== component.entity) return
+			if (attack.type !== 'primary') return
 
-			const opponentRowPos = getActiveRowPos(opponentPlayer)
-			if (rowIndex === null || !row || !opponentRowPos) return
-
-			const opponentEffectCard = opponentRowPos.row.effectCard
-			if (!opponentEffectCard) return
-
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] === 'tails') return
 
-			const effectSlot = game.findSlot(slot.player, slot.rowIndex(rowIndex), slot.attachSlot)
-			const canAttach = game.findSlot(
-				slot.player,
-				slot.not(slot.frozen),
+			const opponentAttachCard = game.components.find(
+				CardComponent,
+				card.opponentPlayer,
+				card.active,
+				card.attached
+			)
+			if (!opponentAttachCard) return
+
+			const attachSlot = game.components.find(
+				SlotComponent,
+				slot.currentPlayer,
+				slot.activeRow,
+				slot.attachSlot
+			)
+			const canAttach = game.components.find(
+				SlotComponent,
+				slot.currentPlayer,
+				query.not(slot.frozen),
 				slot.attachSlot,
 				slot.activeRow,
 				slot.empty
@@ -75,14 +83,14 @@ class GrianRareHermitCard extends Card {
 					modalId: 'selectCards',
 					payload: {
 						modalName: 'Grian - Borrow',
-						modalDescription: `Would you like to attach or discard your opponent's ${opponentEffectCard.props.name} card?`,
-						cards: [opponentEffectCard.toLocalCardInstance()],
+						modalDescription: `Would you like to attach or discard your opponent's ${opponentAttachCard.props.name} card?`,
+						cards: [opponentAttachCard.toLocalCardInstance()],
 						selectionSize: 0,
 						primaryButton: canAttach
 							? {
 									text: 'Attach',
 									variant: 'default',
-							  }
+								}
 							: null,
 						secondaryButton: {
 							text: 'Discard',
@@ -94,36 +102,21 @@ class GrianRareHermitCard extends Card {
 					if (!modalResult || modalResult.result === undefined) return 'FAILURE_INVALID_DATA'
 
 					if (modalResult.result) {
-						// Discard our current attached card if there is one
-						discardCard(game, row.effectCard)
-
-						// Move their effect card over
-						const opponentEffectSlot = game.findSlot(slot.opponent, slot.attachSlot, slot.activeRow)
-						game.swapSlots(effectSlot, opponentEffectSlot)
-
-						const newPos = getCardPos(game, opponentEffectCard)
-
-						if (newPos) {
-							// Call onAttach
-							opponentEffectCard.card.onAttach(game, opponentEffectCard, newPos)
-							player.hooks.onAttach.call(opponentEffectCard)
-						}
+						if (attachSlot) opponentAttachCard.attach(attachSlot)
 					} else {
-						// Discard
-						discardCard(game, opponentEffectCard, player)
+						opponentAttachCard.discard()
 					}
 
 					return 'SUCCESS'
 				},
 				onTimeout() {
-					// Discard
-					discardCard(game, opponentEffectCard, player)
+					opponentAttachCard.discard()
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}
