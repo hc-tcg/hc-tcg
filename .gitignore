@@ -33,8 +33,5 @@ common/config/debug-config.json
 # Fly
 fly.toml
 
-# admin key for firebase
-*adminKey*
-
-# api keys
-*apiKeys*
+# Environment variables
+.env
