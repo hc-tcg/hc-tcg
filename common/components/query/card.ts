@@ -4,6 +4,7 @@ import {ComponentQuery, effect, query} from '.'
 import {CardComponent, RowComponent, SlotComponent, StatusEffectComponent} from '..'
 import {slot as slotCombinators} from '.'
 import StatusEffect from '../../status-effects/status-effect'
+import {TypeT} from '../../types/cards'
 
 let CARDS: Record<string, Card>
 import('../../cards').then((mod) => (CARDS = mod.CARDS))
@@ -52,6 +53,10 @@ export function player(player: PlayerEntity): ComponentQuery<CardComponent> {
 	}
 }
 
+export function type(type: TypeT): ComponentQuery<CardComponent> {
+	return (_game, card) => card.isHermit() && card.props.type === type
+}
+
 export const currentPlayer: ComponentQuery<CardComponent> = (game, pos) =>
 	player(game.currentPlayer.entity)(game, pos)
 
@@ -68,6 +73,9 @@ export function is(...cardTypes: Array<new () => Card>): ComponentQuery<CardComp
 
 /** Return true if this card is on the active row */
 export const active: ComponentQuery<CardComponent> = slot(slotCombinators.activeRow)
+
+/** Return true if this card is not on the active row */
+export const afk: ComponentQuery<CardComponent> = query.not(slot(slotCombinators.activeRow))
 
 export const hasStatusEffect = (
 	statusEffect: new () => StatusEffect

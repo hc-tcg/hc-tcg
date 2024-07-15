@@ -4,6 +4,7 @@ import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {card} from '../../../components/query'
 
 /*
 - Beef confirmed that double damage condition includes other rare mumbos.
@@ -38,26 +39,23 @@ class MumboJumboRareHermitCard extends Card {
 		const {player} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			const attacker = attack.getAttacker()
-			if (attack.id !== this.getInstanceKey(component) || attack.type !== 'secondary' || !attacker)
-				return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 2)
+			const coinFlip = flipCoin(player, component, 2)
 			const headsAmount = coinFlip.filter((flip) => flip === 'heads').length
-			const pranksterAmount = player.board.rows.filter(
-				(row, index) =>
-					row.hermitCard &&
-					index !== player.board.activeRow &&
-					row.hermitCard.isHermit() &&
-					row.hermitCard.props.type === 'prankster'
+			const pranksterAmount = game.components.filter(
+				CardComponent,
+				card.currentPlayer,
+				card.afk,
+				card.type('prankster')
 			).length
 
-			attack.addDamage(this.props.id, headsAmount * 20)
-			if (pranksterAmount > 0) attack.multiplyDamage(this.props.id, 2)
+			attack.addDamage(component.entity, headsAmount * 20)
+			if (pranksterAmount > 0) attack.multiplyDamage(component.entity, 2)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.onAttack.remove(component)
