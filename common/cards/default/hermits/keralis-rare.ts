@@ -3,7 +3,7 @@ import {query, slot} from '../../../components/query'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
-import {CardComponent} from '../../../components'
+import {CardComponent, SlotComponent} from '../../../components'
 
 class KeralisRareHermitCard extends Card {
 	props: Hermit = {
@@ -35,7 +35,7 @@ class KeralisRareHermitCard extends Card {
 	override onAttach(game: GameModel, component: CardComponent) {
 		const {player} = component
 
-		let pickedAfkHermit: SlotComponent | null = null
+		let pickedAfkSlot: SlotComponent | null = null
 
 		// Pick the hermit to heal
 		player.hooks.getAttackRequests.add(component, (activeInstance, hermitAttackType) => {
@@ -46,18 +46,16 @@ class KeralisRareHermitCard extends Card {
 			if (hermitAttackType !== 'secondary') return
 
 			// Make sure there is something to select
-			if (!game.someSlotFulfills(this.pickCondition)) return
+			if (!game.components.exists(SlotComponent, this.pickCondition)) return
 
 			game.addPickRequest({
 				playerId: player.id,
-				id: this.props.id,
+				id: component.entity,
 				message: 'Pick an AFK Hermit from either side of the board',
 				canPick: this.pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.cardId || pickedSlot.rowIndex === null) return
-
 					// Store the info to use later
-					pickedAfkHermit = pickedSlot
+					pickedAfkSlot = pickedSlot
 				},
 				onTimeout() {
 					// We didn't pick anyone to heal, so heal no one
@@ -67,31 +65,22 @@ class KeralisRareHermitCard extends Card {
 
 		// Heals the afk hermit *before* we actually do damage
 		player.hooks.onAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			if (attack.id !== attackId || attack.type !== 'secondary') return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			if (!pickedAfkHermit) return
-			const pickedRowIndex = pickedAfkHermit.rowIndex
-			const pickedRow = pickedAfkHermit.rowId
-			if (!pickedRow || !pickedRow.hermitCard || pickedRowIndex === null) return
+			if (!pickedAfkSlot?.inRow()) return
+			pickedAfkSlot.row.heal(100)
+			let hermit = pickedAfkSlot.row.getHermit()
 
-			const activeHermit = getActiveRow(player)?.hermitCard
-			if (!activeHermit) return
-
-			if (pickedRow.hermitCard) {
-				healHermit(pickedRow, 100)
-
-				game.battleLog.addEntry(
-					player.id,
-					`$p${pickedRow.hermitCard.props.name} (${pickedRowIndex + 1})$ was healed $g100hp$ by $p${
-						activeHermit.props.name
-					}$`
-				)
-			}
+			game.battleLog.addEntry(
+				player.id,
+				`$p${hermit?.props.name} (${pickedAfkSlot.row.index + 1})$ was healed $g100hp$ by $p${
+					hermit?.props.name
+				}$`
+			)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.getAttackRequests.remove(component)
 		player.hooks.onAttack.remove(component)
