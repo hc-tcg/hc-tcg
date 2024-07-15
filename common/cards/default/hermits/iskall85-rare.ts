@@ -29,22 +29,21 @@ class Iskall85RareHermitCard extends Card {
 		},
 	}
 
-	override onAttach(game: GameModel, component: CardComponent) {
+	override onAttach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.beforeAttack.add(component, (attack) => {
-			const attackId = this.getInstanceKey(component)
-			const target = attack.getTarget()
-			if (attack.id !== attackId || attack.type !== 'secondary' || !target) return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const isBuilder =
-				target.row.hermitCard.isHermit() && target.row.hermitCard.props.type === 'builder' ? 2 : 1
+			const hermit = attack.target?.getHermit()
+			if (!hermit) return
+			if (!hermit.isHermit() || hermit.props.type !== 'builder') return
 
-			attack.multiplyDamage(this.props.id, isBuilder)
+			attack.multiplyDamage(component.entity, 2)
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		// Remove hooks
 		player.hooks.beforeAttack.remove(component)

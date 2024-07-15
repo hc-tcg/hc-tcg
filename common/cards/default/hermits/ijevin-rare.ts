@@ -1,6 +1,6 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
-import {CardComponent} from '../../../components'
+import {query, row, slot} from '../../../components/query'
+import {CardComponent, RowComponent, SlotComponent} from '../../../components'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
@@ -32,19 +32,18 @@ class IJevinRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
-			if (attack.type !== 'secondary' || !attack.getTarget()) return
+			if (attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const pickCondition = slot.every(
-				slot.not(slot.activeRow),
-				slot.not(slot.empty),
+			const pickCondition = query.every(
+				query.not(slot.activeRow),
+				query.not(slot.empty),
 				slot.hermitSlot
 			)
 
-			if (!game.someSlotFulfills(pickCondition)) return
+			if (!game.components.exists(SlotComponent, pickCondition)) return
 
 			game.addPickRequest({
 				playerId: opponentPlayer.id, // For opponent player to pick
@@ -52,19 +51,19 @@ class IJevinRareHermitCard extends Card {
 				message: 'Choose a new active Hermit from your AFK Hermits.',
 				canPick: pickCondition,
 				onResult(pickedSlot) {
-					if (!pickedSlot.cardId || pickedSlot.row === null) return
+					if (!pickedSlot.inRow()) return
 					game.changeActiveRow(opponentPlayer, pickedSlot.row)
 				},
 				onTimeout() {
-					const row = game.state.slots.filterEntities(pickCondition)[0].row
-					if (!row) return
-					game.changeActiveRow(opponentPlayer, row)
+					let rowComponent = game.components.find(RowComponent, query.not(row.active))
+					if (!rowComponent) return
+					game.changeActiveRow(opponentPlayer, rowComponent)
 				},
 			})
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 
 		player.hooks.afterAttack.remove(component)
