@@ -102,6 +102,11 @@ export class AttackModel {
 		}
 	}
 
+	/** Returns true if the attacker is a given status effect or card component.*/
+	public isAttacker(component: AttackerEntity) {
+		return this.attacker?.entity === component
+	}
+
 	/** Returns true if this attack is targetting a card in a specific row */
 	public isTargetting(card: CardComponent) {
 		return card.slot.inRow() && card.slot.row.entity === this.target?.entity

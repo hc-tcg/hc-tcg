@@ -1,10 +1,10 @@
 import {GameModel} from '../../../models/game-model'
-import {slot} from '../../../components/query'
 import {CardComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {card, query} from '../../../components/query'
 
 class EvilXisumaRareHermitCard extends Card {
 	props: Hermit = {
@@ -34,23 +34,29 @@ class EvilXisumaRareHermitCard extends Card {
 		},
 	}
 
+	opponentActiveHermitQuery = query.every(card.opponentPlayer, card.active, card.isHermit)
+
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
+		const {player, opponentPlayer} = component
+
+		player.hooks.blockedActions.add(component, (blockedActions) => {
+			if (!game.components.exists(CardComponent, this.opponentActiveHermitQuery)) {
+				blockedActions.push('SECONDARY_ATTACK')
+			}
+			return blockedActions
+		})
 
 		player.hooks.afterAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
-			const attacker = attack.getAttacker()
-			if (attack.type !== 'secondary' || !attacker) return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			const opponentActiveRow = getActiveRowPos(opponentPlayer)
-			if (!opponentActiveRow) return
-			if (opponentActiveRow.row.health <= 0) return
-
-			const coinFlip = flipCoin(player, attacker.row.hermitCard)
+			const coinFlip = flipCoin(player, component)
 
 			if (coinFlip[0] !== 'heads') return
 
 			let playerPick: any = null
+
+			let opponentActiveHermit = game.components.find(CardComponent, this.opponentActiveHermitQuery)
+			if (!opponentActiveHermit) return
 
 			game.addModalRequest({
 				playerId: player.id,
@@ -59,7 +65,7 @@ class EvilXisumaRareHermitCard extends Card {
 					payload: {
 						modalName: 'Evil X: Disable an attack for 1 turn',
 						modalDescription: "Which of the opponent's attacks do you want to disable?",
-						hermitCard: opponentActiveRow.row.hermitCard.toLocalCardInstance(),
+						hermitCard: opponentActiveHermit?.toLocalCardInstance(),
 					},
 				},
 				onResult(modalResult) {
@@ -78,9 +84,6 @@ class EvilXisumaRareHermitCard extends Card {
 			opponentPlayer.hooks.onTurnStart.add(component, () => {
 				const disable = playerPick
 
-				const activeRow = opponentPlayer.board.activeRow
-				if (activeRow === null) return
-
 				const actionToBlock = disable === 'primary' ? 'PRIMARY_ATTACK' : 'SECONDARY_ATTACK'
 				// This will add a blocked action for the duration of their turn
 				game.addBlockedActions(this.props.id, actionToBlock)
@@ -90,7 +93,7 @@ class EvilXisumaRareHermitCard extends Card {
 		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
 		player.hooks.afterAttack.remove(component)
 	}
