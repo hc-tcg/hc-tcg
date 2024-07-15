@@ -1,9 +1,11 @@
 import {GameModel} from '../../../models/game-model'
-import {CardComponent} from '../../../components'
+import {CardComponent, StatusEffectComponent} from '../../../components'
 import {flipCoin} from '../../../utils/coinFlips'
 import Card from '../../base/card'
 import {hermit} from '../../base/defaults'
 import {Hermit} from '../../base/types'
+import {effect} from '../../../components/query'
+import UsedClockStatusEffect from '../../../status-effects/used-clock'
 
 class JoeHillsRareHermitCard extends Card {
 	props: Hermit = {
@@ -38,30 +40,28 @@ class JoeHillsRareHermitCard extends Card {
 	}
 
 	override onAttach(game: GameModel, component: CardComponent) {
-		const {player, opponentPlayer} = pos
-		let skipped: CardComponent | null = null
+		const {player, opponentPlayer} = component
 
 		player.hooks.onAttack.add(component, (attack) => {
-			if (attack.id !== this.getInstanceKey(component)) return
-			const attacker = attack.getAttacker()
-			if (!attacker || attack.type !== 'secondary') return
+			if (!attack.isAttacker(component.entity) || attack.type !== 'secondary') return
 
-			if (game.state.statusEffects.some((effect) => effect.props.id === 'used-clock')) {
+			if (
+				game.components.exists(
+					StatusEffectComponent,
+					effect.is(UsedClockStatusEffect),
+					effect.targetIs(component.entity)
+				)
+			)
 				return
-			}
 
-			const coinFlip = flipCoin(player, attacker.row.hermitCard, 1)
+			const coinFlip = flipCoin(player, component)
 			if (coinFlip[0] !== 'heads') return
 
 			attack.updateLog(
 				(values) => ` ${values.previousLog}, then skipped {$o${values.opponent}'s$|your} turn`
 			)
 
-			// This will tell us to block actions at the start of our next turn
-			// Storing the cardInstance of the card that attacked
-			skipped = attacker.row.hermitCard
-
-			applyStatusEffect(game, 'used-clock', getActiveRow(opponentPlayer)?.hermitCard)
+			game.components.new(StatusEffectComponent, UsedClockStatusEffect).apply(component.entity)
 
 			// Block all actions of opponent for one turn
 			opponentPlayer.hooks.onTurnStart.add(component, () => {
@@ -80,24 +80,11 @@ class JoeHillsRareHermitCard extends Card {
 				opponentPlayer.hooks.onTurnStart.remove(component)
 			})
 		})
-
-		// Block secondary attack if we skipped
-		player.hooks.onTurnStart.add(component, () => {
-			const sameActive = game.activeRow?.hermitCard === skipped
-			if (skipped !== null && sameActive) {
-				// We skipped last turn and we are still the active hermit, block secondary attacks
-				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
-			}
-
-			skipped = null
-		})
 	}
 
-	override onDetach(game: GameModel, component: CardComponent) {
+	override onDetach(_game: GameModel, component: CardComponent) {
 		const {player} = component
-		// Remove hooks
 		player.hooks.onAttack.remove(component)
-		player.hooks.onTurnStart.remove(component)
 	}
 }
 

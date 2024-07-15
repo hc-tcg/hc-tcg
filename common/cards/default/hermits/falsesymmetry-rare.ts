@@ -47,7 +47,7 @@ class FalseSymmetryRareHermitCard extends Card {
 
 			// Heal 40hp
 			component.slot.inRow() && component.slot.row.heal(40)
-			game.battleLog.addEntry(player.entity, `$p${this.props.name}$ healed $g40hp$`)
+			game.battleLog.addEntry(player.entity, `$p${component.props.name}$ healed $g40hp$`)
 		})
 	}
 

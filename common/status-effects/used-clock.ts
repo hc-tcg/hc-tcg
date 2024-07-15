@@ -1,5 +1,6 @@
 import StatusEffect, {Counter, StatusEffectProps, systemStatusEffect} from './status-effect'
 import {GameModel} from '../models/game-model'
+import {CardComponent, StatusEffectComponent} from '../components'
 
 class UsedClockStatusEffect extends StatusEffect {
 	props: StatusEffectProps & Counter = {
@@ -11,23 +12,27 @@ class UsedClockStatusEffect extends StatusEffect {
 		counterType: 'turns',
 	}
 
-	override onApply(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player} = component
+	override onApply(game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player} = target
 
-		if (!instance.counter) instance.counter = this.props.counter
+		if (effect.counter === null) effect.counter = this.props.counter
 
-		player.hooks.onTurnEnd.add(instance, () => {
-			if (!instance.counter) return
-			instance.counter--
+		player.hooks.onTurnEnd.add(effect, () => {
+			if (effect.counter === null) return
+			if (effect.counter === 0) effect.remove()
+			effect.counter--
+		})
 
-			if (instance.counter === 0) removeStatusEffect(game, pos, instance)
+		player.hooks.onTurnStart.add(effect, () => {
+			if (target.slot.inRow() && target.slot.row.entity === player.activeRow?.entity)
+				game.addBlockedActions(this.props.id, 'SECONDARY_ATTACK')
 		})
 	}
 
-	override onRemoval(game: GameModel, instance: StatusEffectComponent, pos: CardPosModel) {
-		const {player, opponentPlayer} = pos
-		opponentPlayer.hooks.beforeAttack.remove(instance)
-		player.hooks.onTurnStart.remove(instance)
+	override onRemoval(_game: GameModel, effect: StatusEffectComponent, target: CardComponent) {
+		const {player, opponentPlayer} = target
+		opponentPlayer.hooks.beforeAttack.remove(effect)
+		player.hooks.onTurnStart.remove(effect)
 	}
 }
 

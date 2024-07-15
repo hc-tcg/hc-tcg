@@ -45,7 +45,7 @@ export type LocalRowState = {
 export type CoinFlipT = 'heads' | 'tails'
 
 export type CurrentCoinFlipT = {
-	card: CardComponent
+	card: LocalCardInstance
 	opponentFlip: boolean
 	name: string
 	tosses: Array<CoinFlipT>

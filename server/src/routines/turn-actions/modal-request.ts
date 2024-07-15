@@ -23,7 +23,7 @@ function* modalRequestSaga(game: GameModel, modalResult: any): Generator<any, Ac
 			const turnAction: AttackActionData = {
 				type: attackToAttackAction[game.state.turn.currentAttack],
 				payload: {
-					playerId: game.currentPlayerId,
+					playerId: game.currentPlayer.id,
 				},
 			}
 			const attackResult = yield* call(attackSaga, game, turnAction, false)

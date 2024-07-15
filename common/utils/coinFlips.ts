@@ -34,7 +34,7 @@ export function flipCoin(
 	const name = card.props.name
 	const player = currentPlayer || playerTossingCoin
 	player.coinFlips.push({
-		card: card,
+		card: card.toLocalCardInstance(),
 		opponentFlip: currentPlayer !== null,
 		name: !currentPlayer ? name : 'Opponent ' + name,
 		tosses: coinFlips,

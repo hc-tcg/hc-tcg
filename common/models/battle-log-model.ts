@@ -14,6 +14,8 @@ import {DEBUG_CONFIG} from '../config'
 import {StatusEffectLog} from '../status-effects/status-effect'
 import {CardComponent, PlayerComponent, RowComponent, SlotComponent} from '../components'
 import {card, slot} from '../components/query'
+import {PlayerId} from './player-model'
+import { isHermit } from '../cards/base/types'
 
 export class BattleLogModel {
 	private game: GameModel
@@ -55,8 +57,8 @@ export class BattleLogModel {
 			const description = this.generateCoinFlipDescription(coinFlip)
 
 			if (coinFlip.opponentFlip) return r
-			if (coinFlip.card.card.isHermit() && attack.type === 'effect') return r
-			if (coinFlip.card.card.isHermit() && attack.type !== 'effect') return r
+			if (isHermit(coinFlip.card.props) && attack.type === 'effect') return r
+			if (isHermit(coinFlip.card.props) && attack.type !== 'effect') return r
 
 			return description
 		}, null)
@@ -113,7 +115,7 @@ export class BattleLogModel {
 			return `${card.props.name}`
 		}
 
-		const thisFlip = coinFlips.find((flip) => flip.card.card.props.id === card.props.id)
+		const thisFlip = coinFlips.find((flip) => flip.card.props.id === card.props.id)
 		const invalid = '$bINVALID VALUE$'
 
 		const logMessage = card.getLog({
@@ -234,7 +236,7 @@ export class BattleLogModel {
 		})
 	}
 
-	public addEntry(player: PlayerEntity, entry: string) {
+	public addEntry(player: PlayerId, entry: string) {
 		this.logMessageQueue.push({
 			player: player,
 			description: entry,
